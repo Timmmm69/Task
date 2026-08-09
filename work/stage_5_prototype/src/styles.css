@@ -1030,12 +1030,19 @@ select:focus-visible {
 }
 
 .titlebar {
+  -webkit-app-region: drag;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
   background: #fff;
   user-select: none;
+}
+
+.titlebar button,
+.titlebar a,
+.titlebar input {
+  -webkit-app-region: no-drag;
 }
 
 .titlebar__brand {
