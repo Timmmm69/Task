@@ -1,13 +1,13 @@
-# Moderated Usability Session Protocol
+# Протокол модерируемых usability-сессий
 
 ## Coverage
 
-All four roles—Admin, Manager, Employee and Observer—must be represented. The UX owner records the target participant count before recruitment; the Gate validator checks role coverage and completed evidence, not a fabricated sample-size claim. Use the canonical UT-01–UT-10 tasks from the packaged Stage 5.5 script.
+Должны быть представлены Admin, Manager, Employee и Observer. UX owner фиксирует целевое число участников до рекрутинга; валидатор Gate проверяет ролевое покрытие и завершённые доказательства, а не выдуманный размер выборки. Использовать канонические UT-01–UT-10 из Stage 5.5.
 
-## Moderation
+## Проведение
 
-Use neutral prompts only. Capture task completion, time on task, wrong turns, help requests, confidence 1–5, accessibility/focus observations and participant quotes. Stop for security misunderstanding, data-loss risk, unrecoverable focus trap or failure after two neutral prompts. Do not include personal data in the package.
+Использовать только нейтральные prompts. Зафиксировать completion, time on task, wrong turns, help requests, confidence 1–5 и наблюдения за управлением с клавиатуры/фокусом. Остановить сессию при misunderstanding безопасности, риске потери данных, невосстановимом focus trap или неуспехе после двух нейтральных prompts. Не включать персональные данные в пакет.
 
-## Acceptance
+## Принятие
 
-Every scenario must have completed evidence from its intended role lens, all four roles must be represented, and no Critical/High finding may remain open. Medium findings require explicit owner disposition and may not force developers to invent behavior.
+Каждый сценарий должен иметь результат для назначенной роли; все четыре роли должны быть представлены; Critical/High не могут оставаться открытыми. Medium допускается только с явным owner disposition.

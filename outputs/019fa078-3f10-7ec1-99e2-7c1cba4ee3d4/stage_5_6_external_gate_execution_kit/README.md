@@ -1,18 +1,18 @@
-# Task — Gate 5.6 External Evidence Execution Kit 0.1.0
+# Task — Gate 5.6: пакет повторной технической проверки 0.2.0
 
-**Date:** 2026-08-02  
-**Purpose:** make the remaining external readiness work reproducible without claiming that it has already happened.
+**Дата:** 2026-08-09
+**Цель:** воспроизводимо оформить оставшуюся Windows UIA/клавиатурную проверку, не выдавая подготовку или черновой результат за закрытие Gate.
 
-## Execution order
+## Порядок выполнения
 
-1. Freeze the exact compiled Windows client build and record its SHA-256 in every result file.
-2. Run the UIA/Inspect and Narrator protocol.
-3. Run the Windows DPI/multi-monitor matrix at 100/125/150/175/200%.
-4. Conduct moderated sessions with all four role lenses using the canonical 10 scenarios.
-5. Resolve or formally disposition every new Critical/High/Medium finding.
-6. Obtain Product owner, Design owner, Desktop tech lead and QA decisions.
-7. Place signed/approved evidence under `evidence/incoming/`, update the evidence index, and run `node tools/validate-gate-evidence.mjs`.
+1. Зафиксировать в каждом результате утверждённый portable x64-клиент и его SHA-256.
+2. Выполнить UIA-проверку через Inspect.exe по 12 контрольным точкам.
+3. Выполнить отдельный keyboard-only walkthrough по тем же точкам и сохранить ссылки на доказательства.
+4. Провести модерируемые сессии по десяти каноническим сценариям и четырём ролевым линзам.
+5. Закрыть либо формально принять каждую новую находку Critical, High или Medium.
+6. Получить решения Product owner, Design owner, Desktop tech lead и QA.
+7. Поместить проверенные доказательства в evidence/incoming/, указать SHA-256, обновить индекс и запустить node tools/validate-gate-evidence.mjs.
 
-## Honest status
+## Граница доказательств
 
-The kit itself is validated, but Gate 5.6 is **NOT_READY** until every required evidence row is present, hash-addressed and accepted by its named owner. Templates are not evidence and blank signature fields are not approvals.
+Пакет имеет статус проверки структуры, но Gate 5.6 остаётся **NOT_READY**, пока каждая из девяти строк не будет обеспечена хэшированным доказательством и явным принятием указанным владельцем. Шаблоны, пустые файлы и неподписанные черновики доказательствами не являются.

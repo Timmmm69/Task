@@ -3,9 +3,9 @@
   "accepted": 0,
   "total": 9,
   "missing": [
+    "EVD-CLIENT-ID",
     "EVD-WIN-UIA",
-    "EVD-WIN-NARR",
-    "EVD-WIN-DPI",
+    "EVD-WIN-KEYBOARD",
     "EVD-USR",
     "EVD-FIND",
     "EVD-PO",
@@ -13,5 +13,5 @@
     "EVD-TECH",
     "EVD-QA"
   ],
-  "reason": "External native Windows, participant and named approval evidence has not been supplied."
+  "reason": "Техническая проверка, сессии и решения владельцев не представлены как принятые хэшированные доказательства."
 }

@@ -1,3 +1,3 @@
-# Incoming Gate evidence
+# Входящие доказательства Gate
 
-Place only reviewed, non-secret external evidence here. Update `../GATE_EVIDENCE_INDEX.csv` with `ACCEPTED` and the file SHA-256 after owner review. Templates and empty files do not satisfy the Gate.
+Помещайте сюда только проверенные, не содержащие секретов внешние доказательства. После owner review укажите `ACCEPTED` и SHA-256 в `../GATE_EVIDENCE_INDEX.csv`. Шаблоны, пустые файлы и неподписанные черновики Gate не закрывают.

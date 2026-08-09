@@ -1,11 +1,11 @@
-# Task — Gate 5.6 Execution Kit Validation 0.1.0
+# Task — Gate 5.6: валидация пакета повторной технической проверки 0.2.0
 
-**Kit validation:** PASS.  
-**Gate status:** NOT_READY.
+**Валидация пакета:** PASS.
+**Статус Gate:** NOT_READY.
 
-- 12 native Windows accessibility checkpoints defined.
-- 8 actual DPI/multi-monitor cases defined.
-- UT-01–UT-10 moderated-session result rows and four-role coverage template included.
-- Four named approval roles and nine immutable evidence requirements defined.
-- Gate validator included and expected to report NOT_READY until real accepted evidence is added.
-- No template is counted as test evidence or approval.
+- Зафиксирован допустимый portable x64-клиент и точная ревизия PR #3.
+- Определены 12 контрольных точек Windows UIA и keyboard-only walkthrough.
+- Inspect.exe в данном окружении не обнаружен; инструментальный прогон не заявляется выполненным.
+- Все девять строк доказательств имеют статус PENDING: заполненный предварительный identity report не считается принятием.
+- Включены десять строк модерируемых сессий, четыре ролевые линзы, журнал находок и четыре решения владельцев.
+- Валидатор подтверждает NOT_READY, пока не появятся принятые доказательства с совпадающими SHA-256.

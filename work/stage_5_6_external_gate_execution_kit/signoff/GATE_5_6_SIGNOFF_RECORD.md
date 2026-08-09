@@ -1,13 +1,13 @@
-# Gate 5.6 Sign-off Record
+# Gate 5.6: запись о подписании
 
-**Package under review:** Task Stage 5.6 final visual baseline and handoff 1.0.0  
-**Gate decision:** PENDING
+**Пакет под рассмотрением:** Task Stage 5.6 final visual baseline and handoff 1.0.0
+**Решение Gate:** PENDING
 
-| Role | Named approver | Decision | Date | Evidence reviewed | Conditions / finding IDs | Signature reference |
+| Роль | Назначенный approver | Решение | Дата | Проверенные доказательства | Условия / finding IDs | Ссылка на подпись |
 |---|---|---|---|---|---|---|
 | Product owner |  | PENDING |  |  |  |  |
 | Design owner |  | PENDING |  |  |  |  |
 | Desktop tech lead |  | PENDING |  |  |  |  |
 | QA |  | PENDING |  |  |  |  |
 
-A typed template row is not an approval. Replace PENDING only after the named approver has reviewed the referenced immutable evidence.
+Строка шаблона не является одобрением. PENDING заменяется только после рассмотрения named approver неизменяемых доказательств по хэшам.

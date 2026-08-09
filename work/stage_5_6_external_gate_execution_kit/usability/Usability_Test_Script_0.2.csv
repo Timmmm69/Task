@@ -1,0 +1,11 @@
+Test case ID,Role,Scenario,Participant task,Expected outcome
+UT-01,Admin,First connection and sign-in,Connect to an approved endpoint and sign in,Reach the authorized Shell context
+UT-02,Observer,Normal sign-in,Restore an authorized session,Reach a safe Shell context without restricted data
+UT-03,Manager,Create task,Create a task with required fields,See an authoritative created-task result
+UT-04,Employee,Quick create,Create a minimum valid task,Return to the invocation context
+UT-05,Observer,Global search,Navigate a redacted search result,Protected data and counts stay hidden
+UT-06,Employee,Connection loss,Browse the authorized read-only cache,Writes are prevented with a reason
+UT-07,Observer,Read-only cache,Inspect unavailable data state,No prohibited action becomes available
+UT-08,Manager,Reconnect,Restore the connection,Writes return only after synchronization
+UT-09,Manager,Optimistic conflict,Recover a local draft from conflict,Draft remains unchanged until a deliberate choice
+UT-10,Employee,Inbox conversion,Convert an Inbox item into a task,Task is created and the source is resolved
