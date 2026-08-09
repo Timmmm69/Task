@@ -50,6 +50,7 @@ const runbook = `# Gate 5.6 Windows machine runbook\n\n## Exact executable\n\nUs
 
 async function main() {
   await mkdir(workPackage, { recursive: true });
+  await write(".gitattributes", "* -text\n");
   await copy(`work/stage_5_6_windows_client/dist/${artifactName}`, `bin/${artifactName}`);
   await copy("work/stage_5_6_windows_client/fixtures/gate-test-accounts.json", "fixtures/gate-test-accounts.json");
   await write("VERSION.txt", `${version}\n`);
@@ -58,7 +59,7 @@ async function main() {
   await write("docs/GATE_5_6_WINDOWS_RUNBOOK.md", runbook);
 
   for (const [id, label] of [["admin","Admin"],["manager","Manager"],["employee","Employee"],["observer","Observer"]]) {
-    await write(`launch/Run-As-${label}.cmd`, `@echo off\r\nstart "" "%~dp0..\\bin\\${artifactName}" --gate-account=${id}\r\n`);
+    await write(`launch/Run-As-${label}.cmd`, `@echo off\nstart "" "%~dp0..\\bin\\${artifactName}" --gate-account=${id}\n`);
   }
 
   const buildInputs = [
