@@ -1,6 +1,7 @@
-# Task — Gate 5.6 External Evidence Execution Kit 0.1.0
+# Task — Gate 5.6 External Evidence Execution Kit 0.2.0
 
-**Date:** 2026-08-02  
+**Date:** 2026-08-09
+
 **Purpose:** make the remaining external readiness work reproducible without claiming that it has already happened.
 
 ## Execution order

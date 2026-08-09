@@ -1,4 +1,4 @@
-# Task — Gate 5.6 Execution Kit Validation 0.1.0
+# Task — Gate 5.6 Execution Kit Validation 0.2.0
 
 **Kit validation:** PASS.  
 **Gate status:** NOT_READY.
@@ -7,5 +7,6 @@
 - 8 actual DPI/multi-monitor cases defined.
 - UT-01–UT-10 moderated-session result rows and four-role coverage template included.
 - Four named approval roles and nine immutable evidence requirements defined.
+- An unaccepted Electron UIA recheck attempt is retained separately; it does not count as accepted evidence.
 - Gate validator included and expected to report NOT_READY until real accepted evidence is added.
 - No template is counted as test evidence or approval.

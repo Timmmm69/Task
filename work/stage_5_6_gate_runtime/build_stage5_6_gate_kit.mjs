@@ -7,8 +7,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const packageName = 'stage_5_6_external_gate_execution_kit';
 const workPackage = path.join(root, 'work', packageName);
 const outputPackage = path.join(root, 'outputs', '019fa078-3f10-7ec1-99e2-7c1cba4ee3d4', packageName);
-const version = '0.1.0';
-const date = '2026-08-02';
+const version = '0.2.0';
+const date = '2026-08-09';
 
 function csvEscape(value) {
   const text = String(value ?? '');
@@ -60,7 +60,7 @@ async function main() {
   await mkdir(workPackage, { recursive: true });
 
   const readme = `# Task — Gate 5.6 External Evidence Execution Kit ${version}\n\n` +
-`**Date:** ${date}  \n**Purpose:** make the remaining external readiness work reproducible without claiming that it has already happened.\n\n` +
+`**Date:** ${date}\n\n**Purpose:** make the remaining external readiness work reproducible without claiming that it has already happened.\n\n` +
 `## Execution order\n\n1. Freeze the exact compiled Windows client build and record its SHA-256 in every result file.\n2. Run the UIA/Inspect and Narrator protocol.\n3. Run the Windows DPI/multi-monitor matrix at 100/125/150/175/200%.\n4. Conduct moderated sessions with all four role lenses using the canonical 10 scenarios.\n5. Resolve or formally disposition every new Critical/High/Medium finding.\n6. Obtain Product owner, Design owner, Desktop tech lead and QA decisions.\n7. Place signed/approved evidence under \`evidence/incoming/\`, update the evidence index, and run \`node tools/validate-gate-evidence.mjs\`.\n\n` +
 `## Honest status\n\nThe kit itself is validated, but Gate 5.6 is **NOT_READY** until every required evidence row is present, hash-addressed and accepted by its named owner. Templates are not evidence and blank signature fields are not approvals.\n`;
   await write('README.md', readme);
@@ -135,6 +135,42 @@ async function main() {
   ];
   await write('evidence/GATE_EVIDENCE_INDEX.csv', toCsv(['Evidence ID','Artifact','Owner','Required path','Status','Acceptance criterion','SHA-256'], evidenceRows));
   await write('evidence/incoming/README.md', '# Incoming Gate evidence\n\nPlace only reviewed, non-secret external evidence here. Update `../GATE_EVIDENCE_INDEX.csv` with `ACCEPTED` and the file SHA-256 after owner review. Templates and empty files do not satisfy the Gate.\n');
+  const recheckReport = [
+    '# Native Windows UIA recheck — unaccepted attempt',
+    '',
+    `Date: ${date}`,
+    'Client: Task Gate 5.6 Client 0.1.1 portable x64',
+    'Executable SHA-256: 8B047DD69E1A64269F8961FE0416727E5083E0C2B30285A73DD2E92A2D412E53',
+    'Source commit: 6a16be2fb371d41af0540569c77daf59eb902a9d (PR #3 head; not merged to main).',
+    'Windows: 10.0.26200.0; one active 2560x1600 display; interactive session.',
+    'Tool: .NET System.Windows.Automation plus native keyboard injection. Inspect.exe was absent after searching C:\\Program Files (x86)\\Windows Kits\\10\\bin.',
+    '',
+    'This is an Electron-client attempt, not browser-prototype evidence. It is not accepted EVD-WIN-UIA evidence: Inspect capture, full role/flow coverage, Narrator observation, and QA + Desktop tech lead review are absent.',
+    '',
+    'Observed: native Electron window Task — Сегодня (Chrome_WidgetWin_1) with Chromium RootWebArea; named focusable shell controls; Search redaction copy; and CalendarEvent editor with named title/date/timezone/attendees controls, validation/mutation guards, and a synthetic save result.',
+    'Observed focus concern: after transition to sign-in, UIA could not set keyboard focus to Login or Password although they were reported enabled/focusable. This is a manual Inspect/Narrator retest candidate, not a confirmed production defect.',
+    '',
+    '| ID | Result | Basis / limitation |',
+    '|---|---|---|',
+    '| WIN-A11Y-01 | PARTIAL | Manager shell names and a foreground keyboard route observed; not Employee/full focus return. |',
+    '| WIN-A11Y-02 | PARTIAL | Connection/sign-in controls named; authentication and announcement not demonstrated; focus retest required. |',
+    '| WIN-A11Y-03 | NOT_RUN | New Task flow not reached after sign-in focus limitation. |',
+    '| WIN-A11Y-04 | PARTIAL | Desktop CalendarEvent editor and synthetic save observed; full keyboard/focus/guard coverage unverified. |',
+    '| WIN-A11Y-05 | PARTIAL | Manager Search route and permission-safe redaction observed; Observer flow not run. |',
+    '| WIN-A11Y-06 | NOT_RUN | Offline read-only not executed. |',
+    '| WIN-A11Y-07 | NOT_RUN | Reconnect not executed. |',
+    '| WIN-A11Y-08 | NOT_RUN | Conflict/draft restoration not executed. |',
+    '| WIN-A11Y-09 | NOT_RUN | Observer restriction not executed. |',
+    '| WIN-A11Y-10 | NOT_RUN | Admin restore guard not executed. |',
+    '| WIN-A11Y-11 | PARTIAL | Archive/Trash controls present; Admin destructive flow not run. |',
+    '| WIN-A11Y-12 | PARTIAL | Tabs/comboboxes/state-bearing controls observed; menu/table/tree/progress coverage incomplete. |',
+    '',
+    'Narrator.exe is installed but this session has no auditable speech-output capture or listener, so no Narrator smoke result is claimed. DPI/multi-monitor, moderated sessions, finding disposition, and owner approvals were unavailable.',
+    '',
+    'Decision: all nine evidence rows remain PENDING. Do not sign Gate 5.6 or change any row to ACCEPTED based on this report.',
+    '',
+  ].join('\n');
+  await write('evidence/incoming/windows-uia-report.md', recheckReport);
 
   const validator = `import { createHash } from 'node:crypto';\nimport { readFile } from 'node:fs/promises';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nconst root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');\nconst text=await readFile(path.join(root,'evidence','GATE_EVIDENCE_INDEX.csv'),'utf8');\nconst lines=text.trim().split(/\\r?\\n/).slice(1);\nconst rows=lines.map(line=>{const fields=[];let field='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(q){if(c==='"'&&line[i+1]==='"'){field+='"';i++;}else if(c==='"')q=false;else field+=c;}else if(c==='"')q=true;else if(c===','){fields.push(field);field='';}else field+=c;}fields.push(field);return fields;});\nconst results=[];\nfor(const [id,artifact,owner,requiredPath,status,criterion,expectedHash] of rows){let actualHash='',present=false;try{const data=await readFile(path.join(root,requiredPath));actualHash=createHash('sha256').update(data).digest('hex').toUpperCase();present=data.length>0;}catch{}const accepted=status==='ACCEPTED'&&present&&/^[A-F0-9]{64}$/.test(expectedHash)&&expectedHash===actualHash;results.push({id,artifact,owner,requiredPath,status,present,hashMatches:present&&expectedHash===actualHash,accepted,criterion});}\nconst accepted=results.filter(r=>r.accepted).length;\nconsole.log(JSON.stringify({result:accepted===results.length?'READY':'NOT_READY',accepted,total:results.length,missing:results.filter(r=>!r.accepted).map(r=>r.id),results},null,2));\n`;
   await write('tools/validate-gate-evidence.mjs', validator);
@@ -149,6 +185,7 @@ async function main() {
 `- 8 actual DPI/multi-monitor cases defined.\n` +
 `- UT-01–UT-10 moderated-session result rows and four-role coverage template included.\n` +
 `- Four named approval roles and nine immutable evidence requirements defined.\n` +
+`- An unaccepted Electron UIA recheck attempt is retained separately; it does not count as accepted evidence.\n` +
 `- Gate validator included and expected to report NOT_READY until real accepted evidence is added.\n` +
 `- No template is counted as test evidence or approval.\n`;
   await write('VALIDATION_REPORT.md', validationReport);
@@ -164,7 +201,7 @@ async function main() {
     scope: { windowsAccessibilityCheckpoints: 12, dpiCases: 8, usabilityScenarios: 10, roleLenses: 4, evidenceRequirements: evidenceRows.length, namedApprovalRoles: 4 },
     gateStatus: { result: 'NOT_READY', acceptedEvidence: 0, requiredEvidence: evidenceRows.length },
     builderSha256, artifactHashes,
-    evidenceBoundaries: ['No native Windows result is claimed', 'No participant session is claimed', 'No stakeholder approval is claimed', 'Templates are not Gate evidence'],
+    evidenceBoundaries: ['The retained Electron UIA attempt is incomplete and unaccepted', 'No Narrator or actual DPI/multi-monitor result is claimed', 'No participant session is claimed', 'No stakeholder approval is claimed', 'Templates are not Gate evidence'],
   };
   await write('manifest.json', `${JSON.stringify(manifest, null, 2)}\n`);
   const manifestSha256 = await sha256(path.join(workPackage, 'manifest.json'));
