@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getGateAccount, hasCapability } from "./gateFixture.js";
 import {
   AddRegular,
   AlertRegular,
@@ -416,11 +417,11 @@ function NewTaskDialog({ onClose, onCreate }) {
   );
 }
 
-function AuthSurface({ onAuthenticated }) {
+function AuthSurface({ onAuthenticated, account }) {
   const [step, setStep] = useState("endpoint");
   const [endpoint, setEndpoint] = useState("https://task.company.local");
   const [endpointStatus, setEndpointStatus] = useState("idle");
-  const [username, setUsername] = useState("ivan.s");
+  const [username, setUsername] = useState(account.login);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [errorCode, setErrorCode] = useState("");
@@ -449,7 +450,7 @@ function AuthSurface({ onAuthenticated }) {
     setEndpointStatus("verified");
   }
 
-  function submitLogin(event) {
+  async function submitLogin(event) {
     event.preventDefault();
     const normalizedUser = username.trim().toLowerCase();
     if (normalizedUser === "locked.s") {
@@ -463,7 +464,13 @@ function AuthSurface({ onAuthenticated }) {
       return;
     }
     const validScenarioUsers = ["ivan.s", "cursor.s", "scope.s", "storage.s", "maintenance.s", "signature.s", "download.s"];
-    if (!validScenarioUsers.includes(normalizedUser) || password !== "task2026") {
+    const fixtureAuthenticated = globalThis.taskDesktop?.authenticate
+      ? await globalThis.taskDesktop.authenticate(normalizedUser, password)
+      : false;
+    const credentialsValid = globalThis.taskDesktop
+      ? fixtureAuthenticated
+      : validScenarioUsers.includes(normalizedUser) && password === "task2026";
+    if (!credentialsValid) {
       setErrorCode("INVALID_CREDENTIALS");
       setError("Неверный логин или пароль. Проверьте данные и повторите вход.");
       return;
@@ -551,7 +558,7 @@ function AuthSurface({ onAuthenticated }) {
                 <span>Пароль</span>
                 <input type="password" value={password} onChange={(event) => { setPassword(event.target.value); setError(""); setErrorCode(""); }} autoComplete="current-password" />
               </label>
-              <small className="field-hint">Для прототипа: пароль <strong>task2026</strong>.</small>
+              <small className="field-hint">{globalThis.taskDesktop ? `Локальная Gate fixture · ${account.roleLabel}` : <>Для прототипа: пароль <strong>task2026</strong>.</>}</small>
               {error && <div className="inline-message inline-message--error" role="alert"><ShieldErrorRegular aria-hidden="true" /><span>{errorCode && <strong>{errorCode}</strong>}{error}</span></div>}
               <div className="auth-actions">
                 <button className="button button--secondary" type="button" onClick={() => setStep("endpoint")}>Назад</button>
@@ -1093,7 +1100,7 @@ function LifecycleSurface({ offline, onToast }) {
 }
 
 
-function SettingsSurface({ offline, onToast, onForceSignIn }) {
+function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
   const sections = [
     { id: "profile", label: "Профиль", scope: "Личные", icon: PersonRegular },
     { id: "security", label: "Безопасность", scope: "Личные", icon: KeyRegular },
@@ -1106,7 +1113,7 @@ function SettingsSurface({ offline, onToast, onForceSignIn }) {
     { id: "sessions", label: "Сессии и устройства", scope: "Личные", icon: LockClosedRegular },
   ];
   const [activeSection, setActiveSection] = useState("profile");
-  const [profile, setProfile] = useState({ name: "Иван Сергеев", role: "Сотрудник", department: "Отдел продаж", locale: "Русский", timezone: "Europe/Minsk" });
+  const [profile, setProfile] = useState({ name: account.displayName, role: account.roleLabel, department: account.department, locale: "Русский", timezone: "Europe/Minsk" });
   const [passwords, setPasswords] = useState({ current: "", next: "", confirm: "" });
   const [passwordError, setPasswordError] = useState("");
   const [notifications, setNotifications] = useState({ desktop: true, sound: false, digest: true, dnd: true, quietFrom: "19:00", quietTo: "08:30" });
@@ -2533,6 +2540,7 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
 }
 
 export function App() {
+  const gateAccount = useMemo(() => getGateAccount(), []);
   const [authenticated, setAuthenticated] = useState(true);
   const [activeView, setActiveView] = useState("today");
   const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
@@ -2577,7 +2585,13 @@ export function App() {
   ], []);
   const isDegraded = [1, 3, 4].includes(connectionIndex) || Boolean(recoveryState);
   const isOffline = isDegraded;
-  const isWritable = !isDegraded;
+  const isWritable = !isDegraded && hasCapability(gateAccount, "Task.Write");
+  const canReadAdmin = hasCapability(gateAccount, "Admin.Read");
+  const canReadOperations = hasCapability(gateAccount, "Operations.Read");
+
+  function windowAction(action) {
+    globalThis.taskDesktop?.windowAction?.(action);
+  }
 
   useEffect(() => {
     function onKeyDown(event) {
@@ -2797,12 +2811,12 @@ export function App() {
           <header className="titlebar">
             <div className="titlebar__brand"><span className="app-mark"><TaskListSquareLtrFilled aria-hidden="true" /></span><span>Task</span></div>
             <div className="window-controls" aria-label="Управление окном">
-              <button type="button" aria-label="Свернуть"><SubtractRegular aria-hidden="true" /></button>
-              <button type="button" aria-label="Развернуть"><SquareRegular aria-hidden="true" /></button>
-              <button type="button" aria-label="Закрыть"><DismissRegular aria-hidden="true" /></button>
+              <button type="button" aria-label="Свернуть" onClick={() => windowAction("minimize")}><SubtractRegular aria-hidden="true" /></button>
+              <button type="button" aria-label="Развернуть" onClick={() => windowAction("toggleMaximize")}><SquareRegular aria-hidden="true" /></button>
+              <button type="button" aria-label="Закрыть" onClick={() => windowAction("close")}><DismissRegular aria-hidden="true" /></button>
             </div>
           </header>
-          <AuthSurface onAuthenticated={() => { setAuthenticated(true); setConnectionIndex(0); setRecoveryState(""); setToast("Вход выполнен, данные синхронизированы"); }} />
+          <AuthSurface account={gateAccount} onAuthenticated={() => { setAuthenticated(true); setConnectionIndex(0); setRecoveryState(""); setToast("Вход выполнен, данные синхронизированы"); }} />
           {toast && <div className="toast" role="status">{toast}</div>}
         </div>
       </div>
@@ -2818,9 +2832,9 @@ export function App() {
             <span>Task</span>
           </div>
           <div className="window-controls" aria-label="Управление окном">
-            <button type="button" aria-label="Свернуть"><SubtractRegular aria-hidden="true" /></button>
-            <button type="button" aria-label="Развернуть"><SquareRegular aria-hidden="true" /></button>
-            <button type="button" aria-label="Закрыть"><DismissRegular aria-hidden="true" /></button>
+            <button type="button" aria-label="Свернуть" onClick={() => windowAction("minimize")}><SubtractRegular aria-hidden="true" /></button>
+            <button type="button" aria-label="Развернуть" onClick={() => windowAction("toggleMaximize")}><SquareRegular aria-hidden="true" /></button>
+            <button type="button" aria-label="Закрыть" onClick={() => windowAction("close")}><DismissRegular aria-hidden="true" /></button>
           </div>
         </header>
 
@@ -2839,8 +2853,8 @@ export function App() {
               <NavItem icon={PersonRegular} label="CRM" active={activeView === "crm"} onClick={() => showSection("CRM")} />
               <NavItem icon={SearchRegular} label="Поиск" active={activeView === "search"} onClick={() => showSection("Поиск")} />
               <NavItem icon={ArchiveRegular} label="Архив и корзина" active={activeView === "lifecycle"} onClick={() => showSection("Архив и корзина")} />
-              <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />
-              <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />
+              {canReadAdmin && <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />}
+              {canReadOperations && <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />}
               <NavItem icon={AddRegular} label="Создать задачу" onClick={() => isWritable ? setDialogOpen(true) : setToast("Создание отключено: сервер недоступен")} />
             </nav>
             <div className="sidebar__bottom">
@@ -2891,15 +2905,15 @@ export function App() {
                   <small>{connection.subtitle}</small>
                 </span>
               </button>
-              <button className="user-menu" type="button" onClick={() => setUserOpen((open) => !open)} aria-expanded={userOpen} aria-label="Профиль Ивана С.">
-                <span className="avatar">ИС</span>
-                <span>Иван С.</span>
+              <button className="user-menu" type="button" onClick={() => setUserOpen((open) => !open)} aria-expanded={userOpen} aria-label={`Профиль ${gateAccount.displayName}, роль ${gateAccount.roleLabel}`}>
+                <span className="avatar">{gateAccount.initials}</span>
+                <span>{gateAccount.shortName}</span>
                 <ChevronDownRegular aria-hidden="true" />
               </button>
               {userOpen && (
                 <div className="user-popover">
-                  <strong>Иван С.</strong>
-                  <span>ivan.s · Сотрудник</span>
+                  <strong>{gateAccount.displayName}</strong>
+                  <span>{gateAccount.login} · {gateAccount.roleLabel}</span>
                   <button type="button" onClick={() => { setSessionRevoked(true); setUserOpen(false); }}>
                     <LockClosedRegular aria-hidden="true" /> Прервать сессию (демо)
                   </button>
@@ -3220,6 +3234,7 @@ export function App() {
               <SettingsSurface
                 offline={isOffline}
                 onToast={setToast}
+                account={gateAccount}
                 onForceSignIn={() => {
                   setAuthenticated(false);
                   setRecoveryState("");
