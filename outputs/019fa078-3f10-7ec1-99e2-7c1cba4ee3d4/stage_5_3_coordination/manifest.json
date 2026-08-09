@@ -2,8 +2,8 @@
   "product": "Task",
   "stage": "5",
   "package": "cross-stage coordination",
-  "version": "0.3.1",
-  "date": "2026-08-02",
+  "version": "0.3.2",
+  "date": "2026-08-09",
   "direction": "Direction 2 — Timeline planner",
   "goalStatus": "ACTIVE",
   "result": "Stage 5.6 final package 1.0.1 and Gate execution kit verified; external evidence remains 0/9",
@@ -25,29 +25,29 @@
   "artifacts": [
     {
       "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/VERSION.txt",
-      "sha256": "98D4967B88C8871A31E75E86BC20D47788292CF95FA483BAA9ECEDA610C81796"
+      "sha256": "F2902D7DDF7C0BEAE08BE41275D46D967590BB5CD095817DAE2E7232657F3CD3"
     },
     {
-      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/Stage_5_Coordination_Report_0.3.1.md",
-      "sha256": "169931CBBDAEB6637FE7FD8A27F7C39920F92DCCEDD7C49309C6D5E01B9C6A89"
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/Stage_5_Coordination_Report_0.3.2.md",
+      "sha256": "310BD8A4CC78C44F8E034A69AB2D77F0E47BD2CD4DF48C1F0628E6E70C87F900"
     },
     {
-      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/Stage_5_Coordination_Validation_0.3.1.md",
-      "sha256": "C539DFEA886D07718F2DEFFB0AE8652B64A943A61291AD3D681F75BA6449ADA2"
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/Stage_5_Coordination_Validation_0.3.2.md",
+      "sha256": "69C054CDBC68C0AE5F72AE1BAB78C932D25557E557625C82AF1872F64D5CE919"
     }
   ],
   "acceptedInputs": [
     {
       "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx",
-      "sha256": "63B446393F771F42E1E91D36372031F2D4FE4CB0406F1DB90E6DB77C1479BB03"
+      "sha256": "A042D7ED6BCBCA4235C6707591E379254837C9218C4C05F1AAEDB2C009CB87E6"
     },
     {
       "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx.inspect.ndjson",
-      "sha256": "C813D42B6BAA77D5F19E33C9644E87FC82FE444A16EDEDA0DBDA0DBD15417D51"
+      "sha256": "9C53284426156C2C803F299459A263F6863AB5D46B4A3BF5F27CDF907A7872AA"
     },
     {
       "path": "work/stage_5_board_runtime/build_stage5_board.mjs",
-      "sha256": "43DB0A5B5DB07B13FBA25653E3CCE7F73BDEC2C3973F26859E6789547F7CE7CC"
+      "sha256": "FBD88E285E651818ABB127BAE84994A07B411E01AED26B319D6BF58D0A407F65"
     },
     {
       "path": "work/stage_5_board_runtime/previews/all-sheets-contact-sheet.png",
@@ -83,19 +83,27 @@
     },
     {
       "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_6_final_visual_baseline_and_handoff/manifest.json",
-      "sha256": "E40289F8062A5A80060C0E396AF5CA7FF2ADD76139BFE91AB2AB8FBF97786F59"
+      "sha256": "304F6EE8A21D76A13E187249D7C388C352D5F2141148D28508943DA85536F408"
     },
     {
       "path": "work/stage_5_6_runtime/build_stage5_6_final_package.mjs",
-      "sha256": "8D57BC7531BEB2F2308EBC6B745EB2D6F2123F3423BCA18506D6FDF67EEE3C91"
+      "sha256": "8A1D666744E1255C5926972E7F6A4818697176FD0B614FB626B9E515E31A3036"
     },
     {
       "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_6_external_gate_execution_kit/manifest.json",
-      "sha256": "6ADE96D427118E5F11F5937D22C2C61E71B45190741B52049682A51580704A35"
+      "sha256": "FE7F02A2D88D76456D014128910DBB4F6C980E975FB9EEFB35690CCD53D33561"
     },
     {
       "path": "work/stage_5_6_gate_runtime/build_stage5_6_gate_kit.mjs",
-      "sha256": "C830AB1AF1BB385D594211B4B05327333557A3E9C4315032206077C33D16D1B4"
+      "sha256": "75A0129E4AC7815F39F34037ED824C8A287344A47D0EE7619DE33B432EB6BE83"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_completion_audit/manifest.json",
+      "sha256": "7A9460B93ABD7B6C3626DFA6444E68F40CAE594632D067E81B0A743FBEFA0EC3"
+    },
+    {
+      "path": "work/stage_5_completion_audit_runtime/build_stage5_completion_audit.mjs",
+      "sha256": "61CF756C4266CDB33610591257DE47EC63FA39AA58BBEB7468EBAF246CA4FCE8"
     }
   ]
 }

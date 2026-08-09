@@ -1,5 +1,39 @@
 # handoff-1 — Task Stage 5 continuation
 
+## -2. Authoritative package-consistency state — 2026-08-09
+
+This section overrides every older package version, SHA-256, Gate status and next-action statement below.
+
+### Scope and status
+
+- Stage 5 package consistency was repaired without changing `sources/`, prototype source or backend behavior.
+- Goal remains **ACTIVE_NOT_COMPLETE**. Gate 5.6 remains **NOT_READY: 0/9** accepted evidence items.
+- No native Windows result, moderated-session evidence, finding disposition or stakeholder approval was created or inferred.
+- The cryptographic dependency order is now acyclic: Gate kit → final package → completion audit → coordination package.
+
+### Rebuilt packages and exact SHA-256
+
+| Package | Version | Manifest SHA-256 | Builder SHA-256 | Verification |
+|---|---:|---|---|---|
+| Gate 5.6 external execution kit | `0.1.1` | `FE7F02A2D88D76456D014128910DBB4F6C980E975FB9EEFB35690CCD53D33561` | `75A0129E4AC7815F39F34037ED824C8A287344A47D0EE7619DE33B432EB6BE83` | PASS; 19/19 work/output files; Gate NOT_READY 0/9 |
+| Stage 5.6 final visual baseline and handoff | `1.0.1` | `304F6EE8A21D76A13E187249D7C388C352D5F2141148D28508943DA85536F408` | `8A1D666744E1255C5926972E7F6A4818697176FD0B614FB626B9E515E31A3036` | PASS; 83/83 work/output files; 6/6 prerequisite manifests |
+| Stage 5 completion audit | `0.1.1` | `7A9460B93ABD7B6C3626DFA6444E68F40CAE594632D067E81B0A743FBEFA0EC3` | `61CF756C4266CDB33610591257DE47EC63FA39AA58BBEB7468EBAF246CA4FCE8` | PASS; 6/6 work/output files; 7/7 package hashes; ACTIVE_NOT_COMPLETE |
+| Stage 5 coordination | `0.3.2` | `0DDAC7DF6F893D68E9662CCFFBF21F6606DE5F3A2FEDFE104A41CD5FCE14E99F` | `10E91824A4DC7E0344BC6B7D03664A76F0239067E2078A68AF6815B40850C3A2` | PASS; 17/17 accepted-input hashes; completion audit included |
+
+### Consistency repair and validation
+
+- The Gate sign-off template now names final package `1.0.1`, not `1.0.0`.
+- The Gate manifest names final package `1.0.1` as the review target but deliberately defers its manifest-hash binding to real external approval evidence. The final package includes the Gate kit, so embedding the final manifest SHA-256 in the kit would create a hash cycle.
+- Completion audit no longer hashes coordination; coordination `0.3.2` is downstream and includes the completion-audit manifest and builder.
+- Manifest SHA-256, every manifest artifact hash, all 17 coordination accepted-input hashes and all three work/output mirrors were recomputed from disk and passed.
+- All 83 final-package files are now present in Git in both mirrors, including the five production `dist` files previously hidden by the repository-wide ignore rule.
+- Gate validator result is exactly `NOT_READY`, accepted `0`, required `9`; all nine required evidence IDs remain missing/PENDING.
+- Production frontend build passed with Vite 6.4.2 / 224 modules. Automated tests passed 15/15. The existing >500 kB chunk warning remains non-blocking.
+
+### Exact next action
+
+Execute the packaged Gate 5.6 kit against the exact final package `1.0.1`: collect genuine native Windows UIA/Narrator and DPI evidence, moderated-session results, final finding disposition, and four named approvals. Bind each accepted item to immutable SHA-256 values, rerun the Gate validator, and rebuild the downstream final/audit/coordination chain only after factual evidence changes. Do not mark Stage 5 complete before the validator reaches READY 9/9.
+
 ## -1. Authoritative current state — 2026-08-02
 
 This section overrides every older status block below.

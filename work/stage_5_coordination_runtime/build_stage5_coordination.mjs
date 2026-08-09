@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const version = '0.3.1';
-const date = '2026-08-02';
+const version = '0.3.2';
+const date = '2026-08-09';
 const relativePackage = 'outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination';
 const packageDir = path.join(root, relativePackage);
 
@@ -15,6 +15,9 @@ async function sha256(relative) {
 
 async function main() {
   await mkdir(packageDir, { recursive: true });
+  for (const name of await readdir(packageDir)) {
+    if (/^Stage_5_Coordination_(Report|Validation)_.*\.md$/.test(name)) await unlink(path.join(packageDir, name));
+  }
   const accepted = [
     'outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx',
     'outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx.inspect.ndjson',
@@ -31,6 +34,8 @@ async function main() {
     'work/stage_5_6_runtime/build_stage5_6_final_package.mjs',
     'outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_6_external_gate_execution_kit/manifest.json',
     'work/stage_5_6_gate_runtime/build_stage5_6_gate_kit.mjs',
+    'outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_completion_audit/manifest.json',
+    'work/stage_5_completion_audit_runtime/build_stage5_completion_audit.mjs',
   ];
   const acceptedInputs = [];
   for (const relative of accepted) acceptedInputs.push({ path: relative, sha256: await sha256(relative) });
@@ -45,6 +50,7 @@ async function main() {
 `- Stage 5.4 is 75.8% (76% shown): 38/38 role contracts, 56/56 state contracts and 45/45 component families are mapped; prototype audit Critical/High = 0.\n` +
 `- Stage 5.5 is 68.75% (69% shown): 10/10 expert-proxy scenarios passed after remediation; 13/13 current-run screenshots were inspected; open Critical/High/Medium = 0.\n` +
 `- Stage 5.6 is 80%: four design-delivery tasks are complete; the external Gate task remains open. Final package 1.0.1 contains 83/83 mirrored files, includes the Gate execution kit and validates 128 SCR, 37 FLOW, 38 roles, 56 states and 45 component families.\n` +
+`- Completion audit 0.1.1 passes package-integrity execution and keeps the objective ACTIVE_NOT_COMPLETE because Gate evidence remains 0/9.\n` +
 `- Production build passes with Vite 6.4.2 / 224 modules; automated tests pass 15/15.\n\n` +
 `## Gate boundary\n\nExternal moderated participant sessions, native Windows UIA/Narrator, actual OS-level 100–200% multi-monitor scaling and named owner approvals remain readiness evidence. They do not reduce accepted delivery percentages and are not falsely claimed.\n\n` +
 `## Next action\n\nExecute the packaged Gate 5.6 kit. The evidence validator currently reports NOT_READY 0/9; collect native Windows, moderated-session and named approval evidence without changing accepted design-delivery percentages.\n`;
@@ -56,6 +62,7 @@ async function main() {
 `| Referenced current artifacts | ${acceptedInputs.length}/${acceptedInputs.length} SHA-256 computed from disk |\n` +
 `| Stage 5.6 final package | 83 work files / 83 output files; mirror mismatches 0 |\n` +
 `| External Gate kit | 19 work files / 19 output files; validator NOT_READY 0/9 |\n` +
+`| Completion audit | Package manifest and builder included in accepted-input SHA-256 checks; objective ACTIVE_NOT_COMPLETE |\n` +
 `| Final traceability | 128/128 SCR; 37/37 FLOW; 38/38 roles; 56/56 states; 45/45 components |\n` +
 `| Usability evidence | 10/10 expert-proxy scenarios; 13/13 screenshots; open Critical/High/Medium 0 |\n` +
 `| Prototype build/tests | Vite 6.4.2 build PASS; 15/15 tests PASS |\n` +

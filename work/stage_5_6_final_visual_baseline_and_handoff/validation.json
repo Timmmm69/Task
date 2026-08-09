@@ -1,7 +1,7 @@
 {
   "package": "Task Stage 5.6 final visual baseline and development handoff",
   "version": "1.0.1",
-  "date": "2026-08-02",
+  "date": "2026-08-09",
   "result": "PASS",
   "direction": "Direction 2 — Timeline planner",
   "delivery": {
@@ -22,7 +22,7 @@
     },
     "build": "PASS — Vite 6.4.2 / 224 modules",
     "tests": "15/15 PASS",
-    "externalGateKit": "0.1.0 validated; Gate NOT_READY 0/9"
+    "externalGateKit": "0.1.1 validated; Gate NOT_READY 0/9"
   },
   "checks": {
     "scrCoverage": true,

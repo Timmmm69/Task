@@ -1,2 +1,2 @@
-0.3.1
+0.3.2
 Stage 5 cross-stage coordination; Gate 5.6 kit ready, external evidence 0/9

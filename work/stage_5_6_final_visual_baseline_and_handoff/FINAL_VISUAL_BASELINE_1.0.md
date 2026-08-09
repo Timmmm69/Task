@@ -1,6 +1,6 @@
 # Task — Stage 5 Final Visual Baseline 1.0.1
 
-**Frozen:** 2026-08-02  
+**Frozen:** 2026-08-09  
 **Direction:** Direction 2 — Timeline planner.  
 **Editable baseline:** code-based React/CSS source in `prototype/src`; no external Figma file is claimed.
 

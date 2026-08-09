@@ -7,8 +7,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const packageName = 'stage_5_completion_audit';
 const workPackage = path.join(root, 'work', packageName);
 const outputPackage = path.join(root, 'outputs', '019fa078-3f10-7ec1-99e2-7c1cba4ee3d4', packageName);
-const version = '0.1.0';
-const date = '2026-08-02';
+const version = '0.1.1';
+const date = '2026-08-09';
 
 async function sha256(file) {
   return createHash('sha256').update(await readFile(file)).digest('hex').toUpperCase();
@@ -50,10 +50,13 @@ async function main() {
     'work/stage_5_5_usability_increment',
     'work/stage_5_6_external_gate_execution_kit',
     'work/stage_5_6_final_visual_baseline_and_handoff',
-    'outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination',
   ];
   const packages = [];
   for (const relative of packagePaths) packages.push(await verifyPackage(relative));
+  const invalidPackages = packages.filter((item) => !item.valid);
+  if (invalidPackages.length) {
+    throw new Error(`Package manifest SHA-256 mismatch: ${invalidPackages.map((item) => item.relative).join(', ')}`);
+  }
   const boardPath = path.join(root, 'outputs', '019fa078-3f10-7ec1-99e2-7c1cba4ee3d4', 'Stage_5_Task_Board.xlsx');
   const inspectPath = `${boardPath}.inspect.ndjson`;
   const gateStatus = JSON.parse(await readFile(path.join(root, 'work', 'stage_5_6_external_gate_execution_kit', 'INITIAL_GATE_STATUS.json'), 'utf8'));
@@ -62,9 +65,9 @@ async function main() {
 
   const requirements = [
     ['REQ-01','Canonical CalendarEvent editor for SCR-044/FLOW-031','ACHIEVED','Calendar package 0.1.0 manifest hash-valid; create/edit fields, validation, attendees, recurrence, offline/version/permission states and tests packaged.'],
-    ['REQ-02','Evidence packages remain current and reproducible','ACHIEVED',`${packages.filter((item) => item.valid).length}/${packages.length} current prerequisite/final/coordination manifests match recorded SHA-256.`],
+    ['REQ-02','Evidence packages remain current and reproducible','ACHIEVED',`${packages.filter((item) => item.valid).length}/${packages.length} current prerequisite and final package manifests match recorded SHA-256.`],
     ['REQ-03','Dynamic board remains current without lowering Stage 5.0–5.2','ACHIEVED','Board rebuilt from existing builder; 18/18 sheets reimported, formula-error scan 0; 5.0–5.2 remain 100%; Gate shown separately.'],
-    ['REQ-04','Coordination package remains current','ACHIEVED','Coordination 0.3.1 validates 15 current accepted-input hashes and keeps Goal ACTIVE.'],
+    ['REQ-04','Coordination package remains current','ACHIEVED','Coordination is rebuilt downstream as 0.3.2 and includes this completion audit; it is intentionally excluded from the audit input hashes to keep the dependency chain acyclic.'],
     ['REQ-05','Stage 5.3 implementation and traceability','ACHIEVED',`CalendarEvent and Operations verified; consolidated coverage ${traceManifest.coverage?.scr ?? '128/128 SCR'} / ${traceManifest.coverage?.flow ?? '37/37 FLOW'}.`],
     ['REQ-06','Stage 5.4 role/state/accessibility/high-DPI design audit','PARTIAL_EXTERNAL','Prototype audit achieved: 38/38 roles, 56/56 states, 45/45 component families, forced-colors support. Native Windows UIA/Narrator and real DPI evidence remain external.'],
     ['REQ-07','Stage 5.5 usability and remediation','PARTIAL_EXTERNAL','10/10 expert-proxy scenarios pass; confirmed High and Medium defects remediated; moderated participant evidence and Product owner acceptance remain external.'],

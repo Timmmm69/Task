@@ -7,8 +7,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const packageName = 'stage_5_6_external_gate_execution_kit';
 const workPackage = path.join(root, 'work', packageName);
 const outputPackage = path.join(root, 'outputs', '019fa078-3f10-7ec1-99e2-7c1cba4ee3d4', packageName);
-const version = '0.1.0';
-const date = '2026-08-02';
+const version = '0.1.1';
+const date = '2026-08-09';
 
 function csvEscape(value) {
   const text = String(value ?? '');
@@ -118,7 +118,7 @@ async function main() {
     ['','Admin','','','NO','',''],['','Manager','','','NO','',''],['','Employee','','','NO','',''],['','Observer','','','NO','',''],
   ]));
 
-  const signoff = `# Gate 5.6 Sign-off Record\n\n**Package under review:** Task Stage 5.6 final visual baseline and handoff 1.0.0  \n**Gate decision:** PENDING\n\n| Role | Named approver | Decision | Date | Evidence reviewed | Conditions / finding IDs | Signature reference |\n|---|---|---|---|---|---|---|\n| Product owner |  | PENDING |  |  |  |  |\n| Design owner |  | PENDING |  |  |  |  |\n| Desktop tech lead |  | PENDING |  |  |  |  |\n| QA |  | PENDING |  |  |  |  |\n\nA typed template row is not an approval. Replace PENDING only after the named approver has reviewed the referenced immutable evidence.\n`;
+  const signoff = `# Gate 5.6 Sign-off Record\n\n**Package under review:** Task Stage 5.6 final visual baseline and handoff 1.0.1  \n**Gate decision:** PENDING\n\n| Role | Named approver | Decision | Date | Evidence reviewed | Conditions / finding IDs | Signature reference |\n|---|---|---|---|---|---|---|\n| Product owner |  | PENDING |  |  |  |  |\n| Design owner |  | PENDING |  |  |  |  |\n| Desktop tech lead |  | PENDING |  |  |  |  |\n| QA |  | PENDING |  |  |  |  |\n\nA typed template row is not an approval. Replace PENDING only after the named approver has reviewed the exact 1.0.1 package and the referenced immutable evidence. Record the final package manifest SHA-256 in the real approval evidence at execution time; it is intentionally not embedded in this kit because the final package includes the kit.\n`;
   await write('signoff/GATE_5_6_SIGNOFF_RECORD.md', signoff);
   await write('signoff/Finding_Disposition_Template.csv', toCsv(['Finding ID','Severity','Summary','State','Resolution/acceptance rationale','Owner','Evidence path','Decision date'], [['','','','OPEN','','','','']]));
 
@@ -150,6 +150,7 @@ async function main() {
 `- UT-01–UT-10 moderated-session result rows and four-role coverage template included.\n` +
 `- Four named approval roles and nine immutable evidence requirements defined.\n` +
 `- Gate validator included and expected to report NOT_READY until real accepted evidence is added.\n` +
+`- Review target is final package 1.0.1; its manifest hash is bound by external approval evidence, avoiding a cyclic package-hash dependency.\n` +
 `- No template is counted as test evidence or approval.\n`;
   await write('VALIDATION_REPORT.md', validationReport);
 
@@ -160,7 +161,12 @@ async function main() {
   const manifest = {
     package: 'Task Stage 5.6 external Gate execution kit', version, date,
     status: 'PASS — executable evidence kit; Gate 5.6 remains NOT_READY',
-    prerequisitePackage: { path: 'stage_5_6_final_visual_baseline_and_handoff', version: '1.0.0', manifestSha256: '6E04E294CC8CED59CC1686EE8BF1F33C8706068B17D92572ABE8516F82C8B400' },
+    reviewTargetPackage: {
+      path: 'stage_5_6_final_visual_baseline_and_handoff',
+      version: '1.0.1',
+      manifestHashBinding: 'DEFERRED_TO_EXTERNAL_APPROVAL_EVIDENCE',
+      reason: 'The final package includes this Gate kit, so embedding its manifest SHA-256 here would create a cyclic hash dependency.',
+    },
     scope: { windowsAccessibilityCheckpoints: 12, dpiCases: 8, usabilityScenarios: 10, roleLenses: 4, evidenceRequirements: evidenceRows.length, namedApprovalRoles: 4 },
     gateStatus: { result: 'NOT_READY', acceptedEvidence: 0, requiredEvidence: evidenceRows.length },
     builderSha256, artifactHashes,
