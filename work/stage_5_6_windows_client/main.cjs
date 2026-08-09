@@ -2,6 +2,10 @@ const path = require("node:path");
 const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const { authenticate, resolveAccount } = require("./fixture.cjs");
 
+// Must be present before `ready` so Chromium starts the renderer with the
+// accessibility tree enabled. This complements the runtime API call below.
+app.commandLine.appendSwitch("force-renderer-accessibility");
+
 const selectedAccount = resolveAccount(process.argv);
 
 function clientIndexPath() {
@@ -40,6 +44,11 @@ ipcMain.on("task:window-action", (event, action) => {
 ipcMain.handle("task:authenticate", (_event, credentials) => authenticate(credentials?.login, credentials?.password, selectedAccount.id));
 
 app.whenReady().then(() => {
+  // Gate 5.6 is evaluated with native Windows UI Automation and Narrator.
+  // Electron does not always detect those tools early enough in a portable
+  // process, so expose Chromium's accessibility tree explicitly before the
+  // renderer is created.
+  app.setAccessibilitySupportEnabled(true);
   app.setAppUserModelId("by.company.task.gate56");
   createWindow();
   app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });

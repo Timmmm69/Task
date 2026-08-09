@@ -1,4 +1,4 @@
-# Compiled Windows client discovery — 0.1.0
+# Compiled Windows client discovery — 0.1.1
 
 ## Decision
 

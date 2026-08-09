@@ -2,7 +2,7 @@
 
 ## Exact executable
 
-Use `bin\Task-Gate-5.6-Client-0.1.0-win-x64.exe` from this package. Before execution, compare its SHA-256 with `ARTIFACT.sha256`. This is a portable unsigned x64 executable and does not require installation or administrator rights. Do not rename or replace it after recording evidence.
+Use `bin\Task-Gate-5.6-Client-0.1.1-win-x64.exe` from this package. Before execution, compare its SHA-256 with `ARTIFACT.sha256`. This is a portable unsigned x64 executable and does not require installation or administrator rights. Do not rename or replace it after recording evidence.
 
 ## Synthetic test accounts
 

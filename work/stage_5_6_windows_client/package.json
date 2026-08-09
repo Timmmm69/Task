@@ -1,6 +1,6 @@
 {
   "name": "task-stage-5-windows-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Compiled Windows wrapper for the Task Stage 5 prototype",
   "main": "main.cjs",
@@ -18,7 +18,7 @@
     "asar": true,
     "compression": "normal",
     "files": ["main.cjs", "preload.cjs", "fixture.cjs", "fixtures/**/*"],
-    "extraResources": [{"from": "../stage_5_prototype/dist/client", "to": "client"}],
+    "extraResources": [{"from": "runtime/client", "to": "client"}],
     "win": {"target": "portable", "artifactName": "Task-Gate-5.6-Client-${version}-win-x64.${ext}"},
     "portable": {"artifactName": "Task-Gate-5.6-Client-${version}-win-x64.${ext}", "requestExecutionLevel": "user"},
     "directories": {"output": "dist"}

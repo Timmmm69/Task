@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const packageName = "stage_5_6_windows_client_prerequisites";
-const version = "0.1.0";
+const version = "0.1.1";
 const workPackage = path.join(root, "work", packageName);
 const outputPackage = path.join(root, "outputs", "019fb732-ad08-7de1-b27d-c86bae8a2937", packageName);
 const clientRoot = path.join(root, "work", "stage_5_6_windows_client");
