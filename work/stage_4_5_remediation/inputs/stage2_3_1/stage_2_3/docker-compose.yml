@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16.10-alpine
+    environment:
+      POSTGRES_DB: organizer_stage_2_1
+      POSTGRES_USER: organizer_migrator
+      POSTGRES_PASSWORD: organizer_local_validation_only
+    ports:
+      - "55439:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U organizer_migrator -d organizer_stage_2_1"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    tmpfs:
+      - /var/lib/postgresql/data

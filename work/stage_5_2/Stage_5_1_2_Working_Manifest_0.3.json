@@ -1,0 +1,21 @@
+{
+  "name": "Task Stage 5.1-5.2 Direction 2 Edge-State Working Baseline",
+  "version": "0.3",
+  "date": "2026-07-28",
+  "status": "working-pass",
+  "gate_closed": false,
+  "visual_direction": "Direction 2 - Timeline planner",
+  "prototype": "work/stage_5_prototype",
+  "validation_report": "work/stage_5_2/Stage_5_1_2_Working_Validation_0.3.md",
+  "design_qa": "work/stage_5_prototype/design-qa-stage5-edge-states.md",
+  "accessibility_evidence": "work/stage_5_2/Accessibility_Evidence_Working_0.2.md",
+  "task_board": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx",
+  "task_board_sha256": "0CCE09540D733B0FC48B616D2FA315DEED0534A85EC87A7EFEFC6450A6B803E2",
+  "production_build": "pass",
+  "browser_qa": "pass",
+  "visual_qa": "pass",
+  "formula_error_scan": 0,
+  "overall_progress": 0.45875,
+  "stage_5_1_progress": 0.8111111111111111,
+  "stage_5_2_progress": 0.73375
+}

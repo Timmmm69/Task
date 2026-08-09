@@ -1,0 +1,45 @@
+﻿code,http,user_meaning,technical,retryable,desktop,logging
+VALIDATION_FAILED,422,Поля запроса некорректны,fieldErrors содержит стабильные paths,False,Подсветить поля,Warning; no security audit
+MALFORMED_JSON,400,Некорректный JSON,Parser rejected body,False,Общее сообщение,Warning
+REQUEST_TOO_LARGE,413,Запрос превышает лимит,Body/batch limit exceeded,False,Предложить уменьшить объём,Warning
+AUTHENTICATION_REQUIRED,401,Требуется вход,No/expired access token,True,Перейти к refresh/login,Security log sampled
+INVALID_CREDENTIALS,401,Неверный логин или пароль,Credential check failed,False,"Не уточнять, что неверно",Security audit
+ACCOUNT_BLOCKED,423,Учётная запись заблокирована,Account status blocked,False,Обратиться к администратору,Security audit mandatory
+ACCOUNT_LOCKED_TEMPORARILY,423,Временная блокировка входа,Brute-force threshold,True,Показать retryAfter,Security audit
+SESSION_EXPIRED,401,Сессия истекла,Session/token expired,True,Refresh or login,Security audit
+SESSION_REVOKED,401,Сессия отозвана,Server session inactive,False,Очистить secure storage,Security audit
+REFRESH_TOKEN_REUSE,401,Сессия завершена из-за риска,Rotated token reused,False,Повторный вход,Critical security audit
+FORBIDDEN,403,Нет права на действие,Policy denied,False,Скрыть/запретить действие,Authorization deny audit for sensitive actions
+OBJECT_NOT_VISIBLE,404,Объект не найден,Not found or hidden by BOLA policy,False,Не раскрывать существование,Security audit sampled
+VERSION_CONFLICT,409,Объект изменён другим пользователем,If-Match != current version,True,Показать diff/обновить,Conflict audit
+PRECONDITION_REQUIRED,428,Нужна версия объекта,If-Match missing for versioned write,False,Обновить карточку,Warning
+INVALID_STATE_TRANSITION,409,Переход состояния запрещён,State machine rejected transition,False,Показать допустимые действия,Domain audit
+OBJECT_DELETED,409,Объект находится в корзине,Write against trashed object,False,Предложить восстановление при наличии права,Domain audit
+OBJECT_ARCHIVED,409,Архивный объект доступен только для чтения,Write against archived object,False,Вернуть из архива,Domain audit
+DUPLICATE_RESOURCE,409,Такой объект/связь уже существует,Unique constraint mapped,False,Открыть существующий объект,Warning
+DEPENDENCY_CYCLE,422,Зависимость создаёт цикл,Graph cycle check,False,Убрать связь,Domain audit
+SUBTASK_DEPTH_EXCEEDED,422,Допустим один уровень подзадач,Parent already has parent,False,Создать рядом,Warning
+RECURRENCE_RULE_INVALID,422,Правило повторения некорректно,RRULE/domain validation,False,Исправить правило,Warning
+RECURRENCE_OCCURRENCE_EXISTS,409,Экземпляр уже создан,Unique occurrence key hit,True,Считать операцию успешной после GET,Info
+CALENDAR_RANGE_TOO_LARGE,422,Слишком большой диапазон календаря,Query range limit,False,Сократить период,Warning
+FILE_NO_LOCATION,409,Нет подходящего пути,No location applicable to device,False,Предложить перепривязку,Domain telemetry
+FILE_NOT_FOUND,424,Файл не найден,Desktop probe: not found,True,Выбрать другой путь/перепривязать,"Telemetry, path redacted"
+FILE_ACCESS_DENIED,403,Windows/SMB отказал в доступе,OS ACL failure,False,Обратиться к владельцу ресурса,Security telemetry
+NETWORK_RESOURCE_UNAVAILABLE,424,Сетевой ресурс недоступен,DNS/SMB/timeout,True,Повторить или другой location,Operational log
+UNSAFE_PATH,422,Путь запрещён политикой,Path traversal/scheme/root validation,False,Выбрать разрешённый путь,Security audit mandatory
+UNSAFE_FILE_TYPE,422,Тип файла запрещён политикой,Extension/MIME policy,False,Не открывать,Security audit
+DEVICE_REVOKED,403,Устройство отозвано,Device status revoked,False,Очистить кэш и войти с разрешённого устройства,Security audit
+SYNC_CURSOR_EXPIRED,410,Курсор больше недоступен,Change feed compacted,True,Выполнить bootstrap sync,Operational log
+SEARCH_CURSOR_INVALID,400,Курсор поиска не соответствует запросу,Malformed cursor or normalized filter hash mismatch,False,Сбросить курсор и повторить поиск с первой страницы,Warning
+SEARCH_CURSOR_EXPIRED,410,Снимок поиска больше недоступен,Search index snapshot or authorization-scope version expired,True,Повторить поиск с первой страницы,Operational log
+SYNC_SCOPE_CHANGED,409,Права изменились,Client scope version stale,True,Purge affected cache and bootstrap,Authorization audit
+IDEMPOTENCY_KEY_REUSED,409,Ключ использован с другим запросом,Request hash mismatch,False,Создать новый ключ,Security/operational log
+RATE_LIMITED,429,Слишком много запросов,Rate policy exceeded,True,Повторить после Retry-After,Rate log
+TIMEOUT,504,Операция не завершилась вовремя,Server/dependency timeout,True,Повторить безопасный запрос,Error log
+DATABASE_UNAVAILABLE,503,База данных недоступна,Connection/readiness failure,True,Режим просмотра кэша,Critical alert
+DATABASE_CONSTRAINT_FAILED,500,Нарушена внутренняя целостность,Unmapped constraint/invariant bug,False,Сообщить traceId,Error + incident
+STORAGE_FULL,507,Недостаточно места на сервере,DB/WAL/backup volume threshold,True,"Запретить writes, уведомить admin",Critical alert/audit
+DEPENDENCY_UNAVAILABLE,503,Зависимость недоступна,Backup/realtime/internal dependency,True,Повторить позднее,Error log
+MAINTENANCE_MODE,503,Сервер на обслуживании,Writes temporarily blocked,True,Показать статус/retryAfter,Info
+CLIENT_VERSION_UNSUPPORTED,426,Требуется обновление приложения,Client below minimum supported,False,Запустить updater,Audit/telemetry
+INTERNAL_ERROR,500,Внутренняя ошибка,Unhandled error with sanitized response,True,Показать traceId,Error + incident threshold

@@ -1,0 +1,92 @@
+﻿code,resource,action,description,sensitive
+Audit.ReadAll,Audit,ReadAll,Просмотр общего аудита,True
+Archive.Restore,Archive,Restore,Восстановление архивированного объекта с дополнительной проверкой доменного права,True
+Authorization.Explain,Authorization,Explain,Диагностика вычисленного решения доступа,True
+Backup.Execute,Backup,Execute,Ручной запуск резервного копирования,True
+Backup.Read,Backup,Read,Просмотр состояния резервного копирования,True
+Backup.Restore,Backup,Restore,Запрос контролируемого восстановления,True
+Backup.RestoreTest,Backup,RestoreTest,Запуск тестового восстановления,True
+Calendar.Read,Calendar,Read,Просмотр календаря в доступной области,False
+CalendarEvent.Create,CalendarEvent,Create,Создание календарного события,False
+CalendarEvent.Delete,CalendarEvent,Delete,Удаление календарного события,False
+CalendarEvent.Respond,CalendarEvent,Respond,Ответ участника на приглашение,False
+CalendarEvent.Update,CalendarEvent,Update,Изменение календарного события,False
+Comment.Create,Comment,Create,Добавление комментария,False
+Comment.DeleteOwnOrModerate,Comment,Delete,Удаление своего комментария; модерация отдельно,False
+Comment.Moderate,Comment,Moderate,Модерация и восстановление комментариев,True
+Comment.Read,Comment,Read,Просмотр комментариев доступного объекта,False
+Comment.UpdateOwnOrModerate,Comment,Update,Редактирование своего комментария; модерация отдельно,False
+Contact.Create,Contact,Create,Создание контакта или компании,False
+Contact.Delete,Contact,Delete,Помещение контакта в корзину,False
+Contact.Read,Contact,Read,Просмотр доступных контактов и компаний,False
+Contact.Restore,Contact,Restore,Восстановление контакта,False
+Contact.Update,Contact,Update,Изменение контакта или компании,False
+Department.Manage,Department,Manage,Создание и изменение отделов,True
+Department.Read,Department,Read,Просмотр отделов,False
+Device.ReadOwnOrAll,Device,Read,Свои устройства; все устройства для администратора,True
+Device.Revoke,Device,Revoke,Отзыв устройства или сессии,True
+Device.UpdateOwnOrAll,Device,Update,Переименование своего устройства или административное изменение,True
+FileCatalog.Create,FileCatalog,Create,Создание элемента каталога,False
+FileCatalog.Delete,FileCatalog,Delete,Помещение записи каталога в корзину,False
+FileCatalog.Read,FileCatalog,Read,Просмотр каталога и метаданных,False
+FileCatalog.Restore,FileCatalog,Restore,Восстановление записи каталога,False
+FileCatalog.Update,FileCatalog,Update,Изменение метаданных и виртуальной структуры,False
+FileLocation.Update,FileLocation,Update,Добавление и перепривязка физических путей,True
+FileLocation.ReadSensitivePath,FileLocation,ReadSensitivePath,Просмотр полного физического пути чужого устройства,True
+FileReference.Open,FileReference,Open,Получение разрешённых путей для открытия,False
+History.Read,History,Read,Просмотр истории доступного объекта,False
+Inbox.ManageOwn,Inbox,ManageOwn,Управление собственными входящими,False
+Inbox.ReadOwn,Inbox,ReadOwn,Просмотр собственных входящих,False
+Interaction.Create,Interaction,Create,Добавление взаимодействия,False
+Interaction.Update,Interaction,Update,Изменение взаимодействия,False
+NetworkResource.Manage,NetworkResource,Manage,Управление разрешёнными сетевыми корнями,True
+Notification.ManageOwn,Notification,ManageOwn,"Чтение, скрытие и отсрочка собственных уведомлений",False
+Notification.ReadOwn,Notification,ReadOwn,Просмотр собственных уведомлений,False
+ObjectLink.Create,ObjectLink,Create,Создание связи между доступными объектами,False
+ObjectLink.Delete,ObjectLink,Delete,Удаление связи между доступными объектами,False
+ObjectLink.Read,ObjectLink,Read,Просмотр связей доступного объекта,False
+Organization.Read,Organization,Read,Просмотр организации,False
+Organization.Update,Organization,Update,Изменение настроек организации,True
+Project.Archive,Project,Archive,Архивирование проекта,False
+Project.Create,Project,Create,Создание проекта,False
+Project.Delete,Project,Delete,Помещение проекта в корзину,True
+Project.ManageMembers,Project,ManageMembers,Управление участниками и проектными ролями,True
+Project.Read,Project,Read,Просмотр проекта по области доступа,False
+Project.Restore,Project,Restore,Восстановление проекта,True
+Project.TransferOwnership,Project,TransferOwnership,Разрешение Project.TransferOwnership,False
+Project.Update,Project,Update,Изменение проекта,False
+Reminder.ManageOwn,Reminder,ManageOwn,Управление собственными напоминаниями,False
+Role.Manage,Role,Manage,Изменение ролей и разрешений,True
+Role.Read,Role,Read,Просмотр ролей и разрешений,True
+Search.Use,Search,Use,Глобальный поиск,False
+SecurityAudit.Read,SecurityAudit,Read,Просмотр событий безопасности,True
+Session.ReadOwnOrAll,Session,Read,Свои сессии; чужие только с административным scope,True
+Session.RevokeOwnOrAll,Session,Revoke,Отзыв своей сессии или чужой при административном праве,True
+Settings.ReadOwn,Settings,ReadOwn,Разрешение Settings.ReadOwn,False
+Settings.UpdateOwn,Settings,UpdateOwn,Изменение пользовательских настроек,False
+Sync.Read,Sync,Read,Bootstrap и incremental sync собственных доступных данных,True
+System.Configure,System,Configure,Изменение разрешённых системных параметров,True
+System.HealthRead,System,HealthRead,Просмотр состояния сервера,True
+System.JobRun,System,JobRun,Разрешение System.JobRun,False
+Tag.Assign,Tag,Assign,Назначение тегов доступному объекту,False
+Tag.Manage,Tag,Manage,Управление тегами,False
+Tag.Read,Tag,Read,Просмотр справочника тегов,False
+Task.Archive,Task,Archive,Архивирование задачи,False
+Task.Assign,Task,Assign,Назначение исполнителей,False
+Task.ChangeStatus,Task,ChangeStatus,Изменение статуса задачи,False
+Task.Create,Task,Create,Создание задачи,False
+Task.Delete,Task,Delete,Помещение задачи в корзину,False
+Task.ManageRecurrence,Task,ManageRecurrence,Изменение серии повторений,False
+Task.ManageWatchers,Task,ManageWatchers,Управление наблюдателями задачи,False
+Task.Read,Task,Read,Просмотр задач по области доступа,False
+Task.Restore,Task,Restore,Восстановление задачи,False
+Task.Update,Task,Update,Редактирование задачи,False
+Trash.Purge,Trash,Purge,Физическая очистка метаданных после retention,True
+Trash.Read,Trash,Read,Просмотр доступной корзины,False
+Trash.Restore,Trash,Restore,Восстановление объекта из корзины с дополнительной проверкой доменного права,True
+User.Block,User,Block,Блокировка и разблокировка учётной записи,True
+User.Create,User,Create,Создание учётной записи и профиля,True
+User.ManageRoles,User,ManageRoles,Назначение системных ролей,True
+User.Read,User,Read,Просмотр доступных сотрудников,False
+User.ResetPassword,User,ResetPassword,Административный сброс пароля,True
+User.Update,User,Update,Редактирование профиля сотрудника,True

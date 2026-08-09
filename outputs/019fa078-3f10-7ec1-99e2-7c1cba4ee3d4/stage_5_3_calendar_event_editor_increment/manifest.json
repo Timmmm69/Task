@@ -1,0 +1,48 @@
+{
+  "package": "Task Stage 5.3 canonical CalendarEvent editor increment",
+  "version": "0.1.0",
+  "date": "2026-08-01",
+  "direction": 2,
+  "status": "PASS for SCR-044/FLOW-031 prototype implementation increment; Gate 5.3 remains open",
+  "sourceThreadId": "019fb732-ad08-7de1-b27d-c86bae8a2937",
+  "scope": [
+    "Canonical CalendarEvent create and edit form",
+    "User and contact attendee replacement",
+    "Attendee response",
+    "Validation, version, authorization, deleted-target and session states",
+    "Offline read-only and no offline mutation queue",
+    "Overlap and idempotency behavior",
+    "Responsive and accessible interaction evidence"
+  ],
+  "verification": {
+    "serenaDiagnostics": { "appJsxErrors": 0, "appJsxWarnings": 0, "calendarModelErrors": 0, "calendarModelWarnings": 0 },
+    "productionBuild": { "result": "pass", "viteVersion": "6.4.2", "modulesTransformed": 224, "css": "index-k9PF7Ym4.css", "cssBytes": 93808, "js": "index-BiOLM8rD.js", "jsBytes": 500191, "nonBlockingWarning": "single application chunk exceeds 500 kB" },
+    "sitesPreparation": { "result": "pass", "serverWorker": "prototype/dist/server/index.js", "hostingDescriptor": "prototype/dist/.openai/hosting.json" },
+    "nodeTests": { "result": "pass", "passed": 15, "failed": 0, "calendarEventModelTests": 6 },
+    "browserInteraction": { "result": "pass", "browser": "Codex in-app Browser", "scenarios": ["edit", "create from slot", "attendees", "RSVP", "validation", "version conflict", "all-day", "offline read-only", "responsive 700x800"], "warningErrorLogs": 0 },
+    "responsive": { "result": "pass", "viewport": "700x800", "documentHorizontalOverflow": false, "dialogBounds": { "left": 10, "right": 690, "width": 680 } }
+  },
+  "artifactHashes": {
+    "prototype/dist/.openai/hosting.json": "D532ABB65CF9AE20634B464D954CB4A08A0DE9F3CD3CDF7F9C3EC8948826D947",
+    "prototype/dist/client/assets/index-BiOLM8rD.js": "0EFDD8FFBD95511512FDAC8B465F4425FC34DCDA0549F60C040B37DBDAC40CB6",
+    "prototype/dist/client/assets/index-k9PF7Ym4.css": "794CE9467FD92961850A9E69D921EBD8CEC6C13378413EDD71FDF9C80BD3AC9A",
+    "prototype/dist/client/index.html": "0F0B82B5715F06EC900F7D26B524A85E7753EE71842DF383A0E9DBB48AE76FE3",
+    "prototype/dist/server/index.js": "2DD0615A445143933D88D4271F54F5D63EE951421FCD08C5A7617BB09C564389",
+    "prototype/src/App.jsx": "A58E233D45D69A493935CC4E55B4D7FE907C5CD93D6998EF8B5DB758690386D3",
+    "prototype/src/calendarEventModel.js": "EE61FD1E595DDEC245F8B171DE47C079743B941D28286DA1DDA72C4AACE3D77E",
+    "prototype/src/styles.css": "6C28C9B86EB811B58E5FD1DF54836E3A12C5D42D97E71EBC792FABADF9075B6F",
+    "prototype/tests/calendar-event-model.test.mjs": "32EAFA568237B289EEC0F49BB01E3F5729AD2B45898E089145EDEFA4C6764472",
+    "qa/design-qa-calendar-event-editor.md": "D5FE74F1E74A51AC8D21902DAA0EF364EFFE11CBE9904F8EAB996ACD92CD5BDB",
+    "qa/qa-wave-c-calendar-event-editor.png": "B725FEC6047C918B86FDEBC4EAEDEF22D798390329FE4F52EEC6AE48A9AE039F",
+    "qa/qa-wave-c-calendar-event-editor-offline.png": "E2E1B072CBDC03483AC5E682297C68ED61DC07048766990BD2788FAE7454C2BF",
+    "qa/qa-wave-c-calendar-event-editor-responsive.png": "6FEF0C59286B0CC235516AAB38D55F8F330D3B7F6B0ED766B528587FFD83E9CF",
+    "qa/qa-wave-c-calendar-event-editor-validation.png": "50C3D00036CE298A9E89E7DD879D0C77DEDAEC5D5996F36134BB4B92B0EA3CD3",
+    "VALIDATION_REPORT.md": "F95E8D6BF27539DFD5A05C7056642E027AA5E4207BE1C31FBCC6DFC875CF07F1",
+    "VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67"
+  },
+  "evidenceBoundaries": [
+    "No live Calendar API or real authorization/concurrency claim",
+    "No native Windows runtime, UI Automation, Narrator or actual OS DPI claim",
+    "No Gate 5.3 or Stage 5 closure claim"
+  ]
+}

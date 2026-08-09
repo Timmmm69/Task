@@ -1,0 +1,131 @@
+{
+  "modules": 21,
+  "fr": 279,
+  "br": 113,
+  "ac": 1911,
+  "nfr": 25,
+  "operation_coverage": {
+    "covered": 244,
+    "total": 244,
+    "unknown_candidate_refs": [],
+    "missing": []
+  },
+  "field_level_coverage": {
+    "covered": 21,
+    "total": 21,
+    "checks": {
+      "query.types.employee": true,
+      "SearchSuggestion.resultType": true,
+      "SearchSuggestion.employee": true,
+      "EmployeeSearchResult.userId": true,
+      "EmployeeSearchResult.displayName": true,
+      "EmployeeSearchResult.departmentId": true,
+      "EmployeeSearchResult.departmentName": true,
+      "EmployeeSearchResult.jobTitle": true,
+      "EmployeeSearchResult.accountStatus": true,
+      "EmployeeSearchResult.deepLink": true,
+      "EmployeeSearchResult.isRedacted": true,
+      "UrgencyScaleInterval.urgencyLevel": true,
+      "UrgencyScaleInterval.minScore": true,
+      "UrgencyScaleInterval.maxScore": true,
+      "UrgencyScaleInterval.displayToken": true,
+      "NotificationUrgencyScale.scope": true,
+      "NotificationUrgencyScale.intervals": true,
+      "NotificationUrgencyScale.version": true,
+      "NotificationUrgencyScale.updatedAt": true,
+      "NotificationUrgencyScale.updatedByUserId": true,
+      "NotificationUrgencyScalePatch.intervals": true
+    },
+    "contract_controls": {
+      "If-Match": true,
+      "ETag": true,
+      "Idempotency-Key": true,
+      "no_avatar": true,
+      "no_client_postfilter": true
+    },
+    "all_pass": true
+  },
+  "full_dto_constraint_validation": {
+    "validated": false,
+    "catalog_rows": 1340,
+    "statement": "Not claimed; Stage 4.3 validates all fields/parameters affected by the audit findings."
+  },
+  "fr_without_ac": 0,
+  "ac_without_valid_primary_owner": 0,
+  "ac_without_direct_fr": 0,
+  "ac_invalid_fr": [],
+  "ac_blank_or_non_gherkin": [],
+  "br_without_fr": [],
+  "br_invalid_fr": [],
+  "orphaned_requirements": [],
+  "invalid_ac_refs": [],
+  "requirements_without_source": [],
+  "unknown_permissions": [],
+  "unknown_stable_errors": [],
+  "duplicate_ids": {
+    "trace": [],
+    "br": [],
+    "ac": [],
+    "nfr": [],
+    "operation": []
+  },
+  "unknown_ux": {
+    "SCR": [],
+    "FLOW": [],
+    "STATE": [],
+    "CMP": []
+  },
+  "broken_targets": [],
+  "broken_occurrences": 0,
+  "old_field_trace_target_occurrences": 0,
+  "deprecated_without_replacement": [],
+  "unverified": [],
+  "provisional": [],
+  "nfr_incomplete": [],
+  "stale_active_refs": {
+    "stage_2_2": 0,
+    "stage_3_4": 0
+  },
+  "oq": {
+    "OQ-001": [
+      "| OQ-001 | Concept required configurable urgency thresholds; Stage 2.2 had no writable contract. | GET/PUT/reset organizational scale; NotificationUrgencyScale/Patch/UrgencyScaleInterval/UrgencyLevel; organization owner; no personal override; Settings.ReadOwn/System.Configure; ETag/If-Match; Idempotency-Key; audit. | SCR-153/CMP-001; candidate normalizes the duplicate new flow reference to FLOW-038 while preserving historical project FLOW-035; states 007/014/025; accessibility and non-color semantics. | FR-261, FR-264–266, FR-269–274, FR-279; BR-098–104; AC-1426,1429–1431,1435,1790–1803,1819,1821–1824; DEC-055–057,060–061 | Primary and addendum FR/AC semantics aligned; 3 operation mapping; exact DTO fields/defaults; permission/error/state/accessibility/backward/audit checks | **Fixed in candidate 4.3; independent confirmation pending Stage 4.4** |"
+    ],
+    "OQ-003": [
+      "| OQ-003 | Concept required employee search/group; Stage 2.2 omitted employee type. | `types` includes employee with 1–10 unique values; resultType/employee; EmployeeSearchResult; server authorization/redaction/blocked/ranking/filtering before cursor; cursor binds visibility policy. | SCR-133/134/135, CMP-002, FLOW-019, STATE-030; distinct accessible group; deep-link recheck; no avatar; no client post-filter. | FR-159,160,243,244,260,275–278; BR-070 deprecated → BR-105; BR-105–112; AC-070,1002,1006,1404,1405,1425,1693,1804–1820; DEC-058–059,062 | Legacy enum/maxItems and AC-070 removed; primary/addendum FR/AC aligned; DTO/permission/redaction/cursor/deep-link/partial-failure/accessibility gates | **Fixed in candidate 4.3; independent confirmation pending Stage 4.4** |"
+    ],
+    "OQ-008": [
+      "| OQ-008 | Architecture included availability/RPO/RTO assumptions without a contractual owner or approval. | No technical-contract change: honest outage/read-only/recovery behavior and backup/restore mechanisms remain normative. | Existing outage, read-only, conflict and recovery flows remain; no numeric SLA is introduced. | NFR-024; DEC-064 | Product PRD contains no unapproved numeric SLA; production deployment requires a separate company-approved operational contract and outage/restore evidence. | **Fixed as external deployment-policy gate** |"
+    ],
+    "OQ-010": [
+      "| OQ-010 | External analytics platform and persistence model were unspecified. | No new API/DTO/permission: minimized product/diagnostic events use server-side structured application logs; security/business audit remains separate. | Existing privacy/accessibility surfaces unchanged. | Analytics/Audit Requirements 4.3 §5; DEC-049, DEC-065; NFR-014 | No external analytics store; retention inherits company-approved Stage 1 §6.10 range 30–90 days; exact configured duration and rotation/expiration test are mandatory before deployment. | **Fixed in candidate 4.3** |"
+    ]
+  },
+  "primary_updated_fr_checks": {
+    "FR-159": true,
+    "FR-160": true,
+    "FR-243": true,
+    "FR-244": true,
+    "FR-260": true,
+    "FR-261": true,
+    "FR-265": true,
+    "FR-266": true,
+    "FR-269": true
+  },
+  "mod014_checks": {
+    "employee_enum": true,
+    "max_items_10": true,
+    "no_max_items_9": true,
+    "no_employee_unsupported": true,
+    "ac070_replacement": true
+  },
+  "risk_lint": {
+    "rows": 25,
+    "all_fields_nonempty": true
+  },
+  "remediation_registry_statuses": {
+    "Fixed": 16
+  },
+  "open_findings_by_severity": {},
+  "flow_038_definition_present": true,
+  "all_documentation_gates_pass": true
+}

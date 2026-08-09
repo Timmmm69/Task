@@ -1,0 +1,20 @@
+{
+  "package": "Task Stage 5.3 Wave C coverage and Stage 5.4 execution checklist",
+  "version": "0.1",
+  "status": "working; gates remain open",
+  "created": "2026-07-28",
+  "scope": ["Search", "Archive", "Trash", "Settings", "Admin users/departments/roles/sessions/devices", "health/jobs/backups/audit"],
+  "source_authority": [
+    "outputs/stage_5_plan/Stage_5_Visual_Design_Plan_1.0.md",
+    "work/stage_5_2/Component_Inventory_0.1.csv",
+    "work/stage_5_2/Flow_Design_Inventory_0.1.csv",
+    "work/stage_5_2/Role_Capability_Design_Matrix_0.1.csv",
+    "work/stage_5_2/State_Component_Coverage_Matrix_0.1.csv"
+  ],
+  "files": [
+    {"path": "Wave_C_Coverage_Backlog_0.1.csv", "sha256": "F7139F2FA24CB8279E3ACE588AB093088633B71E726CD9D619A99D262C03B0EC"},
+    {"path": "Wave_C_Coverage_and_Stage_5_4_Checklist_0.1.md", "sha256": "9B15295B3B982DA508FA3C8222CE73FBE440E4CE85FBB60115AE2B16908872A5"},
+    {"path": "Validation_Report_0.1.md", "sha256": "C2AA58AABA81B2079D355CA245A6BB4CDD17FD542D398CCF3FE2EB898D258009"}
+  ],
+  "integrity_note": "The manifest is intentionally excluded from its own file list; recompute hashes after any edit."
+}

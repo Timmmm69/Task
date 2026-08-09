@@ -1,0 +1,48 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+export type Task = {
+    readonly id: string;
+    readonly organizationId: string;
+    readonly version: number;
+    /**
+     * RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.
+     */
+    readonly createdAt?: string;
+    /**
+     * RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.
+     */
+    readonly updatedAt?: string;
+    projectId?: string | null;
+    parentTaskId?: string | null;
+    title: string;
+    description?: string | null;
+    authorUserId: string;
+    requesterUserId?: string | null;
+    primaryCounterpartyObjectId?: string | null;
+    status: 'new' | 'in_progress' | 'review' | 'completed' | 'cancelled';
+    priority: 'low' | 'normal' | 'high' | 'critical';
+    /**
+     * Calendar date without a time zone.
+     */
+    scheduledDate?: string | null;
+    /**
+     * Local wall-clock time. Interpret only together with the companion IANA time-zone field.
+     */
+    startTimeLocal?: string | null;
+    scheduleTimeZone?: string | null;
+    /**
+     * RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.
+     */
+    readonly startAtUtc?: string | null;
+    plannedDurationMinutes?: number | null;
+    /**
+     * RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.
+     */
+    deadlineAt?: string | null;
+    assigneeIds: Array<string>;
+    watcherIds: Array<string>;
+    readonly recurrenceSeriesId?: string | null;
+};
+

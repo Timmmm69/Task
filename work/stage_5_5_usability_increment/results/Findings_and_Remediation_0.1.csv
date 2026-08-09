@@ -1,0 +1,3 @@
+Finding ID,Scenario,Initial severity,Finding,Final state,Correction,Evidence
+UX-055-001,UT-09,High,Conflict close discarded the visible editor despite promising that the draft was saved.,REMEDIATED,Added explicit return-to-draft action and retained editorDraft until resolution.,08-conflict-safe-choice.png; 09-conflict-draft-restored.png
+UX-055-002,UT-10,Medium,Inbox conversion callout text overlapped at the canonical desktop viewport.,REMEDIATED,Changed callout to a flex row with a grid text stack and fixed icon sizing.,10-inbox-conversion.png; 10b-inbox-conversion-fixed.png

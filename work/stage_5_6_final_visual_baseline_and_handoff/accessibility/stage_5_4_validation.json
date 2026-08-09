@@ -1,0 +1,63 @@
+{
+  "package": "Task Stage 5.4 design audit increment",
+  "version": "0.1.0",
+  "date": "2026-08-01",
+  "result": "PASS",
+  "scope": "Prototype design audit; native Windows and stakeholder gates excluded",
+  "counts": {
+    "roleContracts": 38,
+    "stateContracts": 56,
+    "componentFamilies": 45
+  },
+  "semantics": {
+    "dialog": 25,
+    "alert": 51,
+    "status": 37,
+    "tablist": 6,
+    "tab": 7,
+    "tabpanel": 8,
+    "menu": 1,
+    "menuitem": 4,
+    "progressbar": 1,
+    "ariaLive": 3,
+    "ariaExpanded": 10,
+    "ariaSelected": 10,
+    "ariaCurrent": 3
+  },
+  "cssChecks": {
+    "focusVisibleRules": 10,
+    "reducedMotionRules": 1,
+    "forcedColorsRules": 1,
+    "responsiveBreakpoints": 7
+  },
+  "longRussianStrings": 573,
+  "checks": {
+    "roleContracts": true,
+    "roleIdsExactAndUnique": true,
+    "roleRowsMapped": true,
+    "stateContracts": true,
+    "stateIdsExactAndUnique": true,
+    "stateRowsMapped": true,
+    "referencedEvidencePresent": true,
+    "semanticDialogsAlertsStatuses": true,
+    "semanticNavigationAndSelection": true,
+    "semanticMenusAndProgress": true,
+    "focusVisibility": true,
+    "reducedMotion": true,
+    "forcedColors": true,
+    "responsiveRules": true,
+    "longRussianFixtures": true
+  },
+  "missingEvidence": [],
+  "findings": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "externalGateEvidence": {
+    "nativeWindowsUiaNarrator": "PENDING",
+    "actualWindowsScaling100To200": "PENDING",
+    "stakeholderApproval": "PENDING"
+  }
+}

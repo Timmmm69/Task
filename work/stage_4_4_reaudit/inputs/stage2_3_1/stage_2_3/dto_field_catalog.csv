@@ -1,0 +1,1341 @@
+schema,field_path,type,format,required,nullable,enum,default,minimum,maximum,min_length,max_length,min_items,max_items,unique_items,read_only,write_only,referenced_schema,date_time_semantics,patch_semantics,version_semantics,lifecycle_semantics,capability_semantics,partial_access,redaction,description,validation_rules
+ActionResult,operationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ActionResult,status,string,,True,False,"[""accepted"", ""completed"", ""rejected""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ActionResult,resourceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+ActivationRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Address,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Address,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Address,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Address,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Address,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Address,ownerObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Address,addressType,string,,True,False,"[""work"", ""legal"", ""postal"", ""other""]",,,,,,,,,False,False,,,,,,,False,,,
+Address,countryCode,string|null,,False,True,,,,,2,2,,,,False,False,,,,,,,False,,,minLength=2; maxLength=2
+Address,region,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+Address,city,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+Address,street,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+Address,postalCode,string|null,,False,True,,,,,,40,,,,False,False,,,,,,,False,,,maxLength=40
+Address,formattedAddress,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+Address,isPrimary,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+AddressCreate,ownerObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+AddressCreate,addressType,string,,True,False,"[""work"", ""legal"", ""postal"", ""other""]",,,,,,,,,False,False,,,,,,,False,,,
+AddressCreate,countryCode,string|null,,False,True,,,,,2,2,,,,False,False,,,,,,,False,,,minLength=2; maxLength=2
+AddressCreate,region,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+AddressCreate,city,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+AddressCreate,street,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+AddressCreate,postalCode,string|null,,False,True,,,,,,40,,,,False,False,,,,,,,False,,,maxLength=40
+AddressCreate,formattedAddress,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+AddressCreate,isPrimary,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+AdminResetPasswordRequest,targetUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+AdminResetPasswordRequest,temporaryPassword,string,,True,False,,,,,12,1024,,,,False,True,,,,,,,False,,,minLength=12; maxLength=1024
+AdminResetPasswordRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ArchiveEntry,object,ref,,True,False,,,,,,,,,,False,False,ObjectReference,,,,,,False,,,
+ArchiveEntry,archivedBy,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ArchiveEntry,archivedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ArchiveEntry,reason,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+ArchiveEntry,status,string,,True,False,"[""archived"", ""restored""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ArchiveEntryPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ArchiveEntryPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ArchiveEntryPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ArchiveRequest,reason,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+AttendeeResponse,responseStatus,string,,True,False,"[""accepted"", ""declined"", ""tentative""]",,,,,,,,,False,False,,,,,,,False,,,
+AttendeeResponse,expectedAttendeeVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+AttendeesReplace,users,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+AttendeesReplace,contacts,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+AuditEntry,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+AuditEntry,occurredAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+AuditEntry,actorUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+AuditEntry,actionCode,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+AuditEntry,objectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+AuditEntry,outcome,string,,True,False,"[""success"", ""denied"", ""failure""]",,,,,,,,,False,False,,,,,,,False,,,
+AuditEntry,reasonCode,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+AuditEntry,correlationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+AuditEntryPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+AuditEntryPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+AuditEntryPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+BackgroundJob,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BackgroundJob,jobCode,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+BackgroundJob,scheduleKind,string,,True,False,"[""cron"", ""interval"", ""event"", ""continuous""]",,,,,,,,,False,False,,,,,,,False,,,
+BackgroundJob,scheduleExpression,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+BackgroundJob,enabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BackgroundJob,maxParallelism,integer,int32,True,False,,,1,32,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=32
+BackgroundJob,maxAttempts,integer,int32,True,False,,,1,50,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=50
+BackgroundJob,timeoutSeconds,integer,int32,True,False,,,1,86400,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=86400
+BackgroundJob,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+BackgroundJobPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+BackgroundJobPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+BackgroundJobPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+BackgroundJobRun,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+BackgroundJobRun,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+BackgroundJobRun,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+BackgroundJobRun,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackgroundJobRun,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackgroundJobRun,jobCode,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+BackgroundJobRun,status,string,,True,False,"[""queued"", ""running"", ""succeeded"", ""failed"", ""dead_letter"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+BackgroundJobRun,attempt,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+BackgroundJobRun,scheduledAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackgroundJobRun,startedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackgroundJobRun,finishedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackgroundJobRun,errorCode,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+BackgroundJobRunPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+BackgroundJobRunPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+BackgroundJobRunPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+BackupRequest,backupType,string,,True,False,"[""base"", ""incremental"", ""config""]",,,,,,,,,False,False,,,,,,,False,,,
+BackupRun,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+BackupRun,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+BackupRun,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+BackupRun,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackupRun,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackupRun,backupType,string,,True,False,"[""base"", ""incremental"", ""wal_archive"", ""config"", ""restore_test""]",,,,,,,,,False,False,,,,,,,False,,,
+BackupRun,status,string,,True,False,"[""running"", ""succeeded"", ""failed"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+BackupRun,startedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackupRun,finishedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+BackupRun,encrypted,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BackupRun,sizeBytes,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+BackupRun,checksum,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+BackupRunPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+BackupRunPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+BackupRunPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+BackupVerifyRequest,backupRunId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BackupVerifyRequest,deepVerify,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BlockUserRequest,reason,string,,True,False,,,,,1,2000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=2000
+BlockUserRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+BulkOperationItemResult,itemId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BulkOperationItemResult,status,string,,True,False,"[""succeeded"", ""failed"", ""skipped""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+BulkOperationItemResult,code,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+BulkOperationItemResult,version,integer|null,int64,False,True,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+BulkOperationResult,items,array,,True,False,,,,,,,1,500,,False,False,,,,,,,False,,,minItems=1; maxItems=500
+BulkTaskTransition,items,array,,True,False,,,,,,,1,500,,False,False,,,,,,,False,,,minItems=1; maxItems=500
+BulkTaskTransition,items[].taskId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+BulkTaskTransition,items[].expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+BulkTaskTransition,items[].targetStatus,string,,True,False,"[""new"", ""in_progress"", ""review"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,,,,,False,,,
+CalendarEvent,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+CalendarEvent,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+CalendarEvent,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+CalendarEvent,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEvent,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEvent,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+CalendarEvent,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+CalendarEvent,description,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+CalendarEvent,eventDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+CalendarEvent,isAllDay,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CalendarEvent,startAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEvent,endAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEvent,timeZone,string,,True,False,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+CalendarEvent,status,string,,True,False,"[""scheduled"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+CalendarEvent,userAttendees,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CalendarEvent,contactAttendees,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CalendarEventCreate,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+CalendarEventCreate,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+CalendarEventCreate,description,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+CalendarEventCreate,eventDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+CalendarEventCreate,isAllDay,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CalendarEventCreate,startAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEventCreate,endAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEventCreate,timeZone,string,,True,False,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+CalendarEventCreate,status,string,,False,False,"[""scheduled"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+CalendarEventCreate,userAttendees,array,,False,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CalendarEventCreate,contactAttendees,array,,False,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CalendarEventPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CalendarEventPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+CalendarEventPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+CalendarEventPatch,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CalendarEventPatch,title,string,,False,False,,,,,1,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=500
+CalendarEventPatch,description,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+CalendarEventPatch,eventDate,string,date,False,False,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+CalendarEventPatch,isAllDay,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CalendarEventPatch,startAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEventPatch,endAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CalendarEventPatch,timeZone,string,,False,False,,,,,,64,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=64
+CalendarEventPatch,status,string,,False,False,"[""scheduled"", ""cancelled""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+CalendarEventPatch,userAttendees,array,,False,False,,,,,,,,500,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=500
+CalendarEventPatch,contactAttendees,array,,False,False,,,,,,,,500,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=500
+CatalogItem,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+CatalogItem,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+CatalogItem,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+CatalogItem,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CatalogItem,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CatalogItem,parentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+CatalogItem,itemType,string,,True,False,"[""virtual_folder"", ""file_reference"", ""folder_reference"", ""web_link"", ""text_note""]",,,,,,,,,False,False,,,,,,,False,,,
+CatalogItem,name,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+CatalogItem,description,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+CatalogItem,noteContent,string|null,,False,True,,,,,,100000,,,,False,False,,,,,,,False,,,maxLength=100000
+CatalogItem,webUrl,string|null,uri,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+CatalogItem,mimeType,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+CatalogItem,fileExtension,string|null,,False,True,,,,,,32,,,,False,False,,,,,,,False,,,maxLength=32
+CatalogItem,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CatalogItemCreate,parentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+CatalogItemCreate,itemType,string,,True,False,"[""virtual_folder"", ""file_reference"", ""folder_reference"", ""web_link"", ""text_note""]",,,,,,,,,False,False,,,,,,,False,,,
+CatalogItemCreate,name,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+CatalogItemCreate,description,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+CatalogItemCreate,noteContent,string|null,,False,True,,,,,,100000,,,,False,False,,,,,,,False,,,maxLength=100000
+CatalogItemCreate,webUrl,string|null,uri,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+CatalogItemCreate,mimeType,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+CatalogItemCreate,fileExtension,string|null,,False,True,,,,,,32,,,,False,False,,,,,,,False,,,maxLength=32
+CatalogItemCreate,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+CatalogItemPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CatalogItemPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+CatalogItemPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+CatalogItemPatch,parentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CatalogItemPatch,itemType,string,,False,False,"[""virtual_folder"", ""file_reference"", ""folder_reference"", ""web_link"", ""text_note""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CatalogItemPatch,name,string,,False,False,,,,,1,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=500
+CatalogItemPatch,description,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+CatalogItemPatch,noteContent,string|null,,False,True,,,,,,100000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=100000
+CatalogItemPatch,webUrl,string|null,uri,False,True,,,,,,2048,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=2048
+CatalogItemPatch,mimeType,string|null,,False,True,,,,,,200,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=200
+CatalogItemPatch,fileExtension,string|null,,False,True,,,,,,32,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=32
+CatalogItemPatch,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CatalogMoveRequest,parentCatalogItemId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+CatalogMoveRequest,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CatalogMoveRequest,expectedParentVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+CatalogTree,rootItems,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CatalogTree,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+CatalogTreeNode,item,ref,,True,False,,,,,,,,,,False,False,CatalogItem,,,,,,False,,,
+CatalogTreeNode,childIds,array,,True,False,,,,,,,,1000,,False,False,,,,,,,False,,,maxItems=1000
+ChangePasswordRequest,currentPassword,string,,True,False,,,,,1,1024,,,,False,True,,,,,,,False,,,minLength=1; maxLength=1024
+ChangePasswordRequest,newPassword,string,,True,False,,,,,12,1024,,,,False,True,,,,,,,False,,,minLength=12; maxLength=1024
+ChangeRecord,sequence,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+ChangeRecord,sourceEventId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChangeRecord,objectType,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+ChangeRecord,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChangeRecord,operation,string,,True,False,"[""upsert"", ""tombstone"", ""scope_revoke""]",,,,,,,,,False,False,,,,,,,False,,,
+ChangeRecord,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ChangeRecord,changedFields,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+Checklist,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Checklist,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Checklist,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Checklist,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Checklist,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Checklist,taskId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Checklist,title,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+Checklist,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Checklist,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ChecklistCreate,taskId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistCreate,title,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+ChecklistCreate,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistCreate,items,array,,False,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ChecklistItem,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ChecklistItem,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ChecklistItem,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ChecklistItem,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ChecklistItem,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ChecklistItem,checklistId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItem,text,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+ChecklistItem,isCompleted,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItem,completedBy,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItem,completedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ChecklistItem,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItemCreate,checklistId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItemCreate,text,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+ChecklistItemCreate,isCompleted,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItemCreate,completedBy,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItemCreate,completedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ChecklistItemCreate,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ChecklistItemPatch,checklistId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ChecklistItemPatch,text,string,,False,False,,,,,1,1000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=1000
+ChecklistItemPatch,isCompleted,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ChecklistItemPatch,completedBy,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ChecklistItemPatch,completedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ChecklistItemPatch,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ChecklistPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ChecklistPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ChecklistPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ChecklistPatch,taskId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ChecklistPatch,title,string,,False,False,,,,,1,300,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=300
+ChecklistPatch,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ChecklistPatch,items,array,,False,False,,,,,,,,500,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=500
+Comment,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Comment,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Comment,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Comment,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Comment,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Comment,targetObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Comment,parentCommentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Comment,authorUserId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Comment,body,string,,True,False,,,,,1,20000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=20000
+Comment,status,string,,True,False,"[""active"", ""deleted""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Comment,deletedAt,string|null,date-time,False,True,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CommentCreate,targetObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommentCreate,parentCommentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+CommentCreate,body,string,,True,False,,,,,1,20000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=20000
+CommentCreate,status,string,,False,False,"[""active"", ""deleted""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+CommentPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CommentPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+CommentPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+CommentPatch,targetObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CommentPatch,parentCommentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CommentPatch,body,string,,False,False,,,,,1,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=20000
+CommentPatch,status,string,,False,False,"[""active"", ""deleted""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+CommentVersion,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+CommentVersion,body,string,,True,False,,,,,1,20000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=20000
+CommentVersion,changedBy,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommentVersion,changedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CommentVersionPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CommentVersionPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+CommentVersionPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+CommunicationChannel,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+CommunicationChannel,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+CommunicationChannel,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+CommunicationChannel,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CommunicationChannel,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+CommunicationChannel,ownerObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannel,channelType,string,,True,False,"[""phone"", ""email"", ""telegram"", ""whatsapp"", ""viber"", ""other_messenger"", ""website""]",,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannel,label,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+CommunicationChannel,value,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+CommunicationChannel,isPrimary,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannel,isVerified,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannelCreate,ownerObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannelCreate,channelType,string,,True,False,"[""phone"", ""email"", ""telegram"", ""whatsapp"", ""viber"", ""other_messenger"", ""website""]",,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannelCreate,label,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+CommunicationChannelCreate,value,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+CommunicationChannelCreate,isPrimary,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannelCreate,isVerified,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+CommunicationChannelPatch,ownerObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CommunicationChannelPatch,channelType,string,,False,False,"[""phone"", ""email"", ""telegram"", ""whatsapp"", ""viber"", ""other_messenger"", ""website""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CommunicationChannelPatch,label,string|null,,False,True,,,,,,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=100
+CommunicationChannelPatch,value,string,,False,False,,,,,1,1000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=1000
+CommunicationChannelPatch,isPrimary,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CommunicationChannelPatch,isVerified,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+CompactionRequest,relation,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+CompactionRequest,before,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Company,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Company,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Company,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Company,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Company,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Company,name,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+Company,legalName,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+Company,industry,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+Company,website,string|null,uri,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+Company,taxIdentifier,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+Company,notes,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+Company,status,string,,True,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+CompanyCreate,name,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+CompanyCreate,legalName,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+CompanyCreate,industry,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+CompanyCreate,website,string|null,uri,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+CompanyCreate,taxIdentifier,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+CompanyCreate,notes,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+CompanyCreate,status,string,,False,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+CompanyPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+CompanyPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+CompanyPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+CompanyPatch,name,string,,False,False,,,,,1,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=500
+CompanyPatch,legalName,string|null,,False,True,,,,,,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=500
+CompanyPatch,industry,string|null,,False,True,,,,,,200,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=200
+CompanyPatch,website,string|null,uri,False,True,,,,,,2048,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=2048
+CompanyPatch,taxIdentifier,string|null,,False,True,,,,,,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=100
+CompanyPatch,notes,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+CompanyPatch,status,string,,False,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+Contact,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Contact,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Contact,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Contact,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Contact,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Contact,firstName,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+Contact,lastName,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+Contact,middleName,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+Contact,displayName,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+Contact,notes,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+Contact,status,string,,True,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ContactAttendee,contactId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactAttendee,role,string,,True,False,"[""required"", ""optional"", ""observer""]",,,,,,,,,False,False,,,,,,,False,,,
+ContactAttendee,responseStatus,string,,True,False,"[""pending"", ""accepted"", ""declined"", ""tentative""]",,,,,,,,,False,False,,,,,,,False,,,
+ContactAttendee,respondedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ContactCompanyRole,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ContactCompanyRole,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ContactCompanyRole,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ContactCompanyRole,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ContactCompanyRole,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ContactCompanyRole,contactId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactCompanyRole,companyId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactCompanyRole,jobTitle,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+ContactCompanyRole,departmentName,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+ContactCompanyRole,isPrimary,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactCompanyRole,validFrom,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ContactCompanyRole,validTo,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ContactCompanyRoleCreate,contactId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactCompanyRoleCreate,companyId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactCompanyRoleCreate,jobTitle,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+ContactCompanyRoleCreate,departmentName,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+ContactCompanyRoleCreate,isPrimary,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ContactCompanyRoleCreate,validFrom,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ContactCompanyRoleCreate,validTo,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ContactCreate,firstName,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+ContactCreate,lastName,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+ContactCreate,middleName,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+ContactCreate,displayName,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+ContactCreate,notes,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+ContactCreate,status,string,,False,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ContactPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ContactPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ContactPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ContactPatch,firstName,string,,False,False,,,,,1,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=100
+ContactPatch,lastName,string|null,,False,True,,,,,,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=100
+ContactPatch,middleName,string|null,,False,True,,,,,,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=100
+ContactPatch,displayName,string,,False,False,,,,,1,300,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=300
+ContactPatch,notes,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+ContactPatch,status,string,,False,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+CurrentSession,sessionId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CurrentSession,organizationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+CurrentSession,user,ref,,True,False,,,,,,,,,,False,False,User,,,,,,False,,,
+CurrentSession,device,ref,,True,False,,,,,,,,,,False,False,Device,,,,,,False,,,
+CurrentSession,permissionCodes,array,,True,False,,,,,,,,200,True,False,False,,,,,,server-derived capability/permission data,False,,,maxItems=200; uniqueItems=true
+CurrentSession,capabilities,array,,True,False,,,,,,,,200,True,False,False,,,,,,server-derived capability/permission data,False,,,maxItems=200; uniqueItems=true
+CurrentSession,scopeVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+CurrentSession,accessExpiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+DeactivateUserRequest,reason,string,,True,False,,,,,1,2000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=2000
+DeactivateUserRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+DeletionReceipt,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+DeletionReceipt,objectType,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+DeletionReceipt,deletedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+DeletionReceipt,purgeAfter,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+DeletionReceipt,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Department,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Department,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Department,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Department,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Department,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Department,code,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+Department,name,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+Department,description,string|null,,False,True,,,,,,4000,,,,False,False,,,,,,,False,,,maxLength=4000
+Department,parentDepartmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Department,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+DepartmentCreate,code,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+DepartmentCreate,name,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+DepartmentCreate,description,string|null,,False,True,,,,,,4000,,,,False,False,,,,,,,False,,,maxLength=4000
+DepartmentCreate,parentDepartmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+DepartmentCreate,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+DepartmentManagersReplace,managerUserIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+DepartmentPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+DepartmentPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+DepartmentPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+DepartmentPatch,code,string,,False,False,,,,,1,60,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=60
+DepartmentPatch,name,string,,False,False,,,,,1,200,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=200
+DepartmentPatch,description,string|null,,False,True,,,,,,4000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=4000
+DepartmentPatch,parentDepartmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+DepartmentPatch,sortOrder,integer,int32,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+DepartmentTree,departments,array,,True,False,,,,,,,,1000,,False,False,,,,,,,False,,,maxItems=1000
+Device,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Device,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Device,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Device,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Device,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Device,deviceKey,string,,True,False,,,,,16,200,,,,False,True,,,,,,,False,,,minLength=16; maxLength=200
+Device,deviceName,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+Device,platform,string,,True,False,"[""windows"", ""linux"", ""macos""]",,,,,,,,,False,False,,,,,,,False,,,
+Device,appVersion,string,,True,False,,,,,1,32,,,,False,False,,,,,,,False,,,minLength=1; maxLength=32
+Device,status,string,,True,False,"[""active"", ""revoked""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Device,lastSeenAt,string|null,date-time,False,True,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+DeviceHeartbeat,appVersion,string,,True,False,,,,,1,32,,,,False,False,,,,,,,False,,,minLength=1; maxLength=32
+DeviceHeartbeat,osVersion,string,,False,False,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+DeviceHeartbeat,observedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+DevicePage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+DevicePage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+DevicePage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+DevicePatch,deviceKey,string,,False,False,,,,,16,200,,,,False,True,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=16; maxLength=200
+DevicePatch,deviceName,string,,False,False,,,,,1,200,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=200
+DevicePatch,platform,string,,False,False,"[""windows"", ""linux"", ""macos""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+DevicePatch,appVersion,string,,False,False,,,,,1,32,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=32
+DevicePatch,status,string,,False,False,"[""active"", ""revoked""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+DeviceRegistration,deviceKey,string,,True,False,,,,,16,200,,,,False,True,,,,,,,False,,,minLength=16; maxLength=200
+DeviceRegistration,deviceName,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+DeviceRegistration,platform,string,,True,False,"[""windows"", ""linux"", ""macos""]",,,,,,,,,False,False,,,,,,,False,,,
+DeviceRegistration,appVersion,string,,True,False,,,,,1,32,,,,False,False,,,,,,,False,,,minLength=1; maxLength=32
+DeviceRegistration,osVersion,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+DismissReminderRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+EffectivePermissions,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+EffectivePermissions,allowed,array,,True,False,,,,,,,,200,True,False,False,,,,,,,False,,,maxItems=200; uniqueItems=true
+EffectivePermissions,denied,array,,True,False,,,,,,,,200,True,False,False,,,,,,,False,,,maxItems=200; uniqueItems=true
+EffectivePermissions,scopeVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+EffectivePermissions,explanationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+EventAttendee,userAccountId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+EventAttendee,role,string,,True,False,"[""required"", ""optional"", ""observer""]",,,,,,,,,False,False,,,,,,,False,,,
+EventAttendee,responseStatus,string,,True,False,"[""pending"", ""accepted"", ""declined"", ""tentative""]",,,,,,,,,False,False,,,,,,,False,,,
+EventAttendee,respondedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ExportJob,jobId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ExportJob,status,string,,True,False,"[""queued"", ""running"", ""succeeded"", ""failed"", ""expired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ExportJob,downloadUrl,string|null,uri,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+ExportJob,expiresAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FeatureFlag,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+FeatureFlag,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+FeatureFlag,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+FeatureFlag,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FeatureFlag,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FeatureFlag,key,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+FeatureFlag,enabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FeatureFlag,minimumClientVersion,string|null,,False,True,,,,,,32,,,,False,False,,,,,,,False,,,maxLength=32
+FeatureFlag,configuration,object,,True,False,,,,,,,,,,False,False,,,,,,,False,,Flag-specific validated configuration.,maxProperties=100
+FeatureFlagPatch,key,string,,False,False,,,,,1,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=100
+FeatureFlagPatch,enabled,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FeatureFlagPatch,minimumClientVersion,string|null,,False,True,,,,,,32,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=32
+FeatureFlagPatch,configuration,object,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,Flag-specific validated configuration.,maxProperties=100
+FeatureFlags,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+FieldError,path,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+FieldError,code,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+FieldError,message,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+FileLocation,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+FileLocation,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+FileLocation,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+FileLocation,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FileLocation,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FileLocation,catalogItemId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocation,locationType,string,,True,False,"[""local_path"", ""unc_path"", ""mapped_drive""]",,,,,,,,,False,False,,,,,,,False,,,
+FileLocation,displayPath,string,,True,False,,,,,1,4096,,,,True,False,,,,,,,False,,,minLength=1; maxLength=4096
+FileLocation,rawPath,string|null,,False,True,,,,,1,4096,,,,True,False,,,,,,,True,null unless the caller is the owning device/user or has FileLocation.ReadSensitivePath,,minLength=1; maxLength=4096
+FileLocation,deviceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocation,networkResourceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocation,ownerUserId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+FileLocation,priority,integer,int32,True,False,,,0,32767,,,,,,False,False,,,,,,,False,,,minimum=0; maximum=32767
+FileLocation,isEnabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocation,isPrimary,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocation,deviceAvailability,array,,False,False,,,,,,,,500,,True,False,,,,,,,False,,,maxItems=500
+FileLocation,redactedFields,array,,True,False,,,,,,,,1,True,True,False,,,,,,,False,,,maxItems=1; uniqueItems=true
+FileLocationCheckCreate,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCheckCreate,status,string,,True,False,"[""available"", ""not_found"", ""access_denied"", ""resource_unavailable"", ""invalid_path"", ""timeout""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+FileLocationCheckCreate,latencyMs,integer|null,int32,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+FileLocationCheckCreate,osErrorCode,string|null,,False,True,,,,,,80,,,,False,False,,,,,,,False,,,maxLength=80
+FileLocationCheckCreate,checkedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FileLocationCheckCreate,expectedLocationVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+FileLocationCreate,catalogItemId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCreate,locationType,string,,True,False,"[""local_path"", ""unc_path"", ""mapped_drive""]",,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCreate,rawPath,string,,True,False,,,,,1,4096,,,,False,True,,,,,,,False,,,minLength=1; maxLength=4096
+FileLocationCreate,deviceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCreate,networkResourceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCreate,priority,integer,int32,False,False,,,0,32767,,,,,,False,False,,,,,,,False,,,minimum=0; maximum=32767
+FileLocationCreate,isEnabled,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCreate,isPrimary,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationCreate,deviceAvailability,array,,False,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+FileLocationDeviceState,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationDeviceState,userAccountId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+FileLocationDeviceState,status,string,,True,False,"[""unknown"", ""available"", ""not_found"", ""access_denied"", ""resource_unavailable"", ""invalid_path"", ""timeout""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+FileLocationDeviceState,lastCheckedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+FileLocationDeviceState,latencyMs,integer|null,int32,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+FileLocationDeviceState,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+FileLocationPatch,catalogItemId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FileLocationPatch,locationType,string,,False,False,"[""local_path"", ""unc_path"", ""mapped_drive""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FileLocationPatch,rawPath,string,,False,False,,,,,1,4096,,,,False,True,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=4096
+FileLocationPatch,deviceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FileLocationPatch,networkResourceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FileLocationPatch,priority,integer,int32,False,False,,,0,32767,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=0; maximum=32767
+FileLocationPatch,isEnabled,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FileLocationPatch,isPrimary,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+FileLocationPatch,deviceAvailability,array,,False,False,,,,,,,,500,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=500
+FileLocationPatch,expectedCatalogItemVersion,integer,int64,False,False,,,1,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,aggregate version or expected version,,,False,,,minimum=1
+GenerateOccurrencesRequest,throughDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+GenerateOccurrencesRequest,expectedSeriesVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+GenerationSummary,seriesId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+GenerationSummary,generatedCount,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+GenerationSummary,skippedCount,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+GenerationSummary,throughDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+GenerationSummary,seriesVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+Health,status,string,,True,False,"[""healthy"", ""degraded"", ""unhealthy""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Health,checkedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Health,version,string,,True,False,,,,,1,32,,,,False,False,,,,aggregate version or expected version,,,False,,,minLength=1; maxLength=32
+HealthDetails,status,string,,True,False,"[""healthy"", ""degraded"", ""unhealthy""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+HealthDetails,checks,array,,True,False,,,,,,,,100,,False,False,,,,,,,False,,,maxItems=100
+HealthDetails,checks[].name,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+HealthDetails,checks[].status,string,,True,False,"[""healthy"", ""degraded"", ""unhealthy""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+HealthDetails,checks[].latencyMs,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+HealthDetails,checks[].code,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+HealthDetails,checkedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+HistoryEntry,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+HistoryEntry,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+HistoryEntry,objectVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+HistoryEntry,changedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+HistoryEntry,changeType,string,,True,False,,,,,1,24,,,,False,False,,,,,,,False,,,minLength=1; maxLength=24
+HistoryEntry,changedFields,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+HistoryEntry,correlationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+HistoryEntryPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+HistoryEntryPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+HistoryEntryPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+HistoryVersion,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+HistoryVersion,objectVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+HistoryVersion,changeType,string,,True,False,"[""created"", ""updated"", ""state_changed"", ""archived"", ""restored"", ""trashed"", ""purged""]",,,,,,,,,False,False,,,,,,,False,,,
+HistoryVersion,changedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+HistoryVersion,changedBy,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+HistoryVersion,changedFields,array,,True,False,,,,,,,,500,True,False,False,,,,,,,False,,,maxItems=500; uniqueItems=true
+HistoryVersion,correlationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+InboxConvertCatalog,itemType,string,,True,False,"[""file_reference"", ""folder_reference"", ""web_link"", ""text_note""]",,,,,,,,,False,False,,,,,,,False,,,
+InboxConvertCatalog,parentCatalogItemId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+InboxConvertCatalog,expectedInboxVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+InboxConvertTask,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+InboxConvertTask,scheduledDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+InboxConvertTask,expectedInboxVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+InboxItem,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+InboxItem,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+InboxItem,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+InboxItem,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+InboxItem,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+InboxItem,ownerUserId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+InboxItem,itemType,string,,True,False,"[""task"", ""note"", ""file_link"", ""web_link"", ""idea"", ""assignment""]",,,,,,,,,False,False,,,,,,,False,,,
+InboxItem,title,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+InboxItem,content,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+InboxItem,rawUrl,string|null,uri,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+InboxItem,rawPath,string|null,,False,True,,,,,,4096,,,,False,False,,,,,,,False,,,maxLength=4096
+InboxItem,status,string,,True,False,"[""unprocessed"", ""converted"", ""discarded""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+InboxItem,convertedObjectId,string|null,uuid,False,True,,,,,,,,,,True,False,,,,,,,False,,,
+InboxItemCreate,itemType,string,,True,False,"[""task"", ""note"", ""file_link"", ""web_link"", ""idea"", ""assignment""]",,,,,,,,,False,False,,,,,,,False,,,
+InboxItemCreate,title,string|null,,False,True,,,,,,500,,,,False,False,,,,,,,False,,,maxLength=500
+InboxItemCreate,content,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+InboxItemCreate,rawUrl,string|null,uri,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+InboxItemCreate,rawPath,string|null,,False,True,,,,,,4096,,,,False,False,,,,,,,False,,,maxLength=4096
+InboxItemCreate,status,string,,False,False,"[""unprocessed"", ""converted"", ""discarded""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+InboxItemPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+InboxItemPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+InboxItemPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+InboxItemPatch,itemType,string,,False,False,"[""task"", ""note"", ""file_link"", ""web_link"", ""idea"", ""assignment""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+InboxItemPatch,title,string|null,,False,True,,,,,,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=500
+InboxItemPatch,content,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+InboxItemPatch,rawUrl,string|null,uri,False,True,,,,,,2048,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=2048
+InboxItemPatch,rawPath,string|null,,False,True,,,,,,4096,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=4096
+InboxItemPatch,status,string,,False,False,"[""unprocessed"", ""converted"", ""discarded""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+IncrementalSyncBatch,mode,string,,True,False,"[""incremental""]",,,,,,,,,False,False,,,,,,,False,,,
+IncrementalSyncBatch,fromSequence,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+IncrementalSyncBatch,toSequence,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+IncrementalSyncBatch,scopeVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+IncrementalSyncBatch,changes,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+IncrementalSyncBatch,hasMore,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+IncrementalSyncBatch,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+Interaction,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Interaction,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Interaction,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Interaction,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Interaction,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Interaction,counterpartyObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Interaction,interactionType,string,,True,False,"[""call"", ""meeting"", ""email"", ""agreement"", ""note"", ""next_step""]",,,,,,,,,False,False,,,,,,,False,,,
+Interaction,occurredAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Interaction,subject,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+Interaction,details,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+Interaction,nextStep,string|null,,False,True,,,,,,5000,,,,False,False,,,,,,,False,,,maxLength=5000
+Interaction,nextStepDueAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Interaction,participantObjectIds,array,,True,False,,,,,,,,500,True,False,False,,,,,,,False,,,maxItems=500; uniqueItems=true
+InteractionCreate,counterpartyObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+InteractionCreate,interactionType,string,,True,False,"[""call"", ""meeting"", ""email"", ""agreement"", ""note"", ""next_step""]",,,,,,,,,False,False,,,,,,,False,,,
+InteractionCreate,occurredAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+InteractionCreate,subject,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+InteractionCreate,details,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+InteractionCreate,nextStep,string|null,,False,True,,,,,,5000,,,,False,False,,,,,,,False,,,maxLength=5000
+InteractionCreate,nextStepDueAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+InteractionCreate,participantObjectIds,array,,False,False,,,,,,,,500,True,False,False,,,,,,,False,,,maxItems=500; uniqueItems=true
+InteractionPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+InteractionPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+InteractionPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+InteractionParticipants,participantObjectIds,array,,True,False,,,,,,,,500,True,False,False,,,,,,,False,,,maxItems=500; uniqueItems=true
+InteractionPatch,counterpartyObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+InteractionPatch,interactionType,string,,False,False,"[""call"", ""meeting"", ""email"", ""agreement"", ""note"", ""next_step""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+InteractionPatch,occurredAt,string,date-time,False,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+InteractionPatch,subject,string,,False,False,,,,,1,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=500
+InteractionPatch,details,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+InteractionPatch,nextStep,string|null,,False,True,,,,,,5000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=5000
+InteractionPatch,nextStepDueAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+InteractionPatch,participantObjectIds,array,,False,False,,,,,,,,500,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=500; uniqueItems=true
+JobRunRequest,jobCode,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+JobRunRequest,input,object,,True,False,,,,,,,,,,False,False,,,,,,,False,,Job-specific schema-validated input.,maxProperties=100
+LoginAttempt,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+LoginAttempt,login,string,,True,False,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+LoginAttempt,userAccountId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+LoginAttempt,deviceId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+LoginAttempt,ipAddress,string|null,ipv4,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+LoginAttempt,occurredAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+LoginAttempt,succeeded,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+LoginAttempt,failureCode,string|null,,False,True,,,,,,40,,,,False,False,,,,,,,False,,,maxLength=40
+LoginAttempt,correlationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+LoginAttemptPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+LoginAttemptPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+LoginAttemptPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+LoginRequest,login,string,,True,False,,,,,3,100,,,,False,False,,,,,,,False,,,minLength=3; maxLength=100
+LoginRequest,password,string,,True,False,,,,,1,1024,,,,False,True,,,,,,,False,,,minLength=1; maxLength=1024
+LoginRequest,device,ref,,True,False,,,,,,,,,,False,False,DeviceRegistration,,,,,,False,,,
+LogoutAllRequest,keepCurrentSession,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+MaintenanceMode,enabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+MaintenanceMode,reason,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+MaintenanceMode,enabledAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+MaintenanceMode,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+MaintenanceModeRequest,enabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+MaintenanceModeRequest,reason,string,,True,False,,,,,1,2000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=2000
+MaintenanceModeRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+NetworkResource,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+NetworkResource,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+NetworkResource,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+NetworkResource,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+NetworkResource,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+NetworkResource,name,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+NetworkResource,rootUncPath,string,,True,False,,,,,3,4096,,,,False,False,,,,,,,False,,,"pattern=""^\\\\\\\\""; minLength=3; maxLength=4096"
+NetworkResource,status,string,,True,False,"[""active"", ""degraded"", ""unavailable"", ""retired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+NetworkResource,allowWriteMetadata,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+NetworkResource,lastHealthAt,string|null,date-time,False,True,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+NetworkResourceCreate,name,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+NetworkResourceCreate,rootUncPath,string,,True,False,,,,,3,4096,,,,False,False,,,,,,,False,,,"pattern=""^\\\\\\\\""; minLength=3; maxLength=4096"
+NetworkResourceCreate,status,string,,False,False,"[""active"", ""degraded"", ""unavailable"", ""retired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+NetworkResourceCreate,allowWriteMetadata,boolean,,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+NetworkResourcePage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+NetworkResourcePage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+NetworkResourcePage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+NetworkResourcePatch,name,string,,False,False,,,,,1,300,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=300
+NetworkResourcePatch,rootUncPath,string,,False,False,,,,,3,4096,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,"pattern=""^\\\\\\\\""; minLength=3; maxLength=4096"
+NetworkResourcePatch,status,string,,False,False,"[""active"", ""degraded"", ""unavailable"", ""retired""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+NetworkResourcePatch,allowWriteMetadata,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+Notification,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Notification,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Notification,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Notification,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Notification,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Notification,recipientUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Notification,notificationType,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+Notification,sourceObjectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Notification,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+Notification,body,string,,True,False,,,,,1,10000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=10000
+Notification,severity,string,,True,False,"[""info"", ""warning"", ""critical""]",,,,,,,,,False,False,,,,,,,False,,,
+Notification,status,string,,True,False,"[""pending"", ""delivered"", ""read"", ""dismissed"", ""failed"", ""expired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Notification,notBefore,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Notification,expiresAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+NotificationActionRequest,action,string,,True,False,"[""mark_read"", ""dismiss""]",,,,,,,,,False,False,,,,,,,False,,,
+NotificationActionRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+NotificationPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+NotificationPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+NotificationPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+NotificationPreferences,notificationType,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+NotificationPreferences,enabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+NotificationPreferences,desktopEnabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+NotificationPreferences,soundEnabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+NotificationPreferences,defaultSnoozeMinutes,integer,int32,True,False,,,1,10080,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=10080
+NotificationPreferences,quietHoursStart,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+NotificationPreferences,quietHoursEnd,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+NotificationPreferences,quietHoursTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+NotificationPreferences,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+NotificationPreferencesPatch,enabled,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+NotificationPreferencesPatch,desktopEnabled,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+NotificationPreferencesPatch,soundEnabled,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+NotificationPreferencesPatch,defaultSnoozeMinutes,integer,int32,False,False,,,1,10080,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1; maximum=10080
+NotificationPreferencesPatch,quietHoursStart,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,omitted=unchanged; explicit null=clear when nullable,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+NotificationPreferencesPatch,quietHoursEnd,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,omitted=unchanged; explicit null=clear when nullable,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+NotificationPreferencesPatch,quietHoursTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=64
+ObjectLink,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ObjectLink,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ObjectLink,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ObjectLink,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ObjectLink,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ObjectLink,sourceObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ObjectLink,targetObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ObjectLink,linkType,string,,True,False,"[""related"", ""task_file"", ""project_file"", ""contact_file"", ""task_contact"", ""project_contact"", ""task_project"", ""parent_reference""]",,,,,,,,,False,False,,,,,,,False,,,
+ObjectLinkCreate,sourceObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ObjectLinkCreate,targetObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ObjectLinkCreate,linkType,string,,True,False,"[""related"", ""task_file"", ""project_file"", ""contact_file"", ""task_contact"", ""project_contact"", ""task_project"", ""parent_reference""]",,,,,,,,,False,False,,,,,,,False,,,
+ObjectLinkPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ObjectLinkPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ObjectLinkPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ObjectReference,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ObjectReference,objectType,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+ObjectReference,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+ObjectReference,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+OccurrencePreview,occurrenceKey,string,,True,False,,,,,1,64,,,,False,False,,,,,,,False,,,minLength=1; maxLength=64
+OccurrencePreview,localDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+OccurrencePreview,startAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+OccurrencePreview,deadlineAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+OccurrencePreview,dstAdjustment,string,,True,False,"[""none"", ""shifted_forward"", ""earlier_offset"", ""later_offset"", ""skipped""]",,,,,,,,,False,False,,,,,,,False,,,
+OrderKeys,items,array,,True,False,,,,,,,1,500,,False,False,,,,,,,False,,,minItems=1; maxItems=500
+OrderKeys,items[].id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+OrderKeys,items[].sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+OrderKeys,items[].expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+OrganizationSettings,trashRetentionDays,integer,int32,True,False,,,1,3650,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=3650
+OrganizationSettings,historyRetentionDays,integer,int32,True,False,,,90,36500,,,,,,False,False,,,,,,,False,,,minimum=90; maximum=36500
+OrganizationSettings,changeFeedRetentionDays,integer,int32,True,False,,,7,3650,,,,,,False,False,,,,,,,False,,,minimum=7; maximum=3650
+OrganizationSettings,recurrenceHorizonDays,integer,int32,True,False,,,7,730,,,,,,False,False,,,,,,,False,,,minimum=7; maximum=730
+OrganizationSettings,maxRequestBytes,integer,int32,True,False,,,65536,10485760,,,,,,False,False,,,,,,,False,,,minimum=65536; maximum=10485760
+OrganizationSettings,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+OrganizationSettingsPatch,trashRetentionDays,integer,int32,False,False,,,1,3650,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1; maximum=3650
+OrganizationSettingsPatch,historyRetentionDays,integer,int32,False,False,,,90,36500,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=90; maximum=36500
+OrganizationSettingsPatch,changeFeedRetentionDays,integer,int32,False,False,,,7,3650,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=7; maximum=3650
+OrganizationSettingsPatch,recurrenceHorizonDays,integer,int32,False,False,,,7,730,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=7; maximum=730
+OrganizationSettingsPatch,maxRequestBytes,integer,int32,False,False,,,65536,10485760,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=65536; maximum=10485760
+Permission,code,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+Permission,resource,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+Permission,action,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+Permission,description,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+Permission,sensitive,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+PermissionCodes,codes,array,,True,False,,,,,,,,200,True,False,False,,,,,,,False,,,maxItems=200; uniqueItems=true
+PermissionOverrides,allow,array,,True,False,,,,,,,,200,True,False,False,,,,,,,False,,,maxItems=200; uniqueItems=true
+PermissionOverrides,deny,array,,True,False,,,,,,,,200,True,False,False,,,,,,,False,,,maxItems=200; uniqueItems=true
+PermissionOverrides,expectedMemberVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ProbeRequest,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProbeRequest,timeoutSeconds,integer,int32,True,False,,,1,60,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=60
+ProbeResult,resourceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProbeResult,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProbeResult,status,string,,True,False,"[""available"", ""not_found"", ""access_denied"", ""timeout"", ""invalid_path""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ProbeResult,latencyMs,integer|null,int32,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ProbeResult,checkedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProblemDetails,type,string,uri-reference,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProblemDetails,title,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+ProblemDetails,status,integer,int32,True,False,,,400,599,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,minimum=400; maximum=599
+ProblemDetails,detail,string|null,,False,True,,,,,,4000,,,,False,False,,,,,,,False,,,maxLength=4000
+ProblemDetails,instance,string|null,,False,True,,,,,,2048,,,,False,False,,,,,,,False,,,maxLength=2048
+ProblemDetails,code,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+ProblemDetails,traceId,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+ProblemDetails,correlationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProblemDetails,fieldErrors,array,,True,False,,,,,,,,100,,False,False,,,,,,,False,,,maxItems=100
+ProblemDetails,currentVersion,integer|null,int64,False,True,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+ProblemDetails,currentEtag,string|null,,False,True,,,,,,100,,,,False,False,,,,,,,False,,,maxLength=100
+ProblemDetails,retryAfterSeconds,integer|null,int32,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+Project,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Project,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Project,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Project,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Project,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Project,name,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+Project,description,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+Project,ownerUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Project,managerUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Project,status,string,,True,False,"[""planning"", ""active"", ""paused"", ""completed""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Project,startDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+Project,plannedEndDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+Project,actualEndAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Project,defaultTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+Project,colorCode,string|null,,False,True,,,,,,9,,,,False,False,,,,,,,False,,,"pattern=""^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$""; maxLength=9"
+ProjectCreate,name,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+ProjectCreate,description,string|null,,False,True,,,,,,20000,,,,False,False,,,,,,,False,,,maxLength=20000
+ProjectCreate,ownerUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectCreate,managerUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectCreate,status,string,,False,False,"[""planning"", ""active"", ""paused"", ""completed""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ProjectCreate,startDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ProjectCreate,plannedEndDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ProjectCreate,actualEndAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectCreate,defaultTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+ProjectCreate,colorCode,string|null,,False,True,,,,,,9,,,,False,False,,,,,,,False,,,"pattern=""^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$""; maxLength=9"
+ProjectMember,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ProjectMember,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ProjectMember,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ProjectMember,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMember,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMember,projectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectMember,userAccountId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectMember,projectRoleId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectMember,status,string,,True,False,"[""invited"", ""active"", ""removed""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ProjectMember,joinedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMember,removedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMemberCreate,projectId,string,uuid,False,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectMemberCreate,userAccountId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectMemberCreate,projectRoleId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ProjectMemberCreate,status,string,,False,False,"[""invited"", ""active"", ""removed""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ProjectMemberCreate,joinedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMemberCreate,removedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMemberPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ProjectMemberPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ProjectMemberPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ProjectMemberPatch,projectId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ProjectMemberPatch,userAccountId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ProjectMemberPatch,projectRoleId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ProjectMemberPatch,status,string,,False,False,"[""invited"", ""active"", ""removed""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+ProjectMemberPatch,joinedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMemberPatch,removedAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectMemberPatch,expectedProjectVersion,integer,int64,False,False,,,1,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,aggregate version or expected version,,,False,,,minimum=1
+ProjectPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ProjectPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ProjectPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ProjectPatch,name,string,,False,False,,,,,1,300,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=300
+ProjectPatch,description,string|null,,False,True,,,,,,20000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=20000
+ProjectPatch,ownerUserId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ProjectPatch,managerUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ProjectPatch,status,string,,False,False,"[""planning"", ""active"", ""paused"", ""completed""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+ProjectPatch,startDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+ProjectPatch,plannedEndDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+ProjectPatch,actualEndAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectPatch,defaultTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=64
+ProjectPatch,colorCode,string|null,,False,True,,,,,,9,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,"pattern=""^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$""; maxLength=9"
+ProjectRole,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ProjectRole,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ProjectRole,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ProjectRole,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectRole,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ProjectRole,code,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+ProjectRole,name,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+ProjectRole,isSystem,boolean,,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ProjectRole,status,string,,True,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ProjectRole,permissionCodes,array,,True,False,,,,,,,,100,True,False,False,,,,,,server-derived capability/permission data,False,,,maxItems=100; uniqueItems=true
+PurgeRequest,reason,string,,True,False,,,,,1,2000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=2000
+PurgeRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+PurgeRequest,confirmObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ReadAllRequest,notificationIds,array,,True,False,,,,,,,1,500,True,False,False,,,,,,,False,,,minItems=1; maxItems=500; uniqueItems=true
+ReadAllResult,updatedCount,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ReadAllResult,latestVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+RealtimeNegotiation,url,string,uri,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RealtimeNegotiation,accessToken,string,,True,False,,,,,20,4096,,,,True,False,,,,,,,False,,,minLength=20; maxLength=4096
+RealtimeNegotiation,expiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RealtimeNegotiation,protocols,array,,True,False,,,,,,,1,2,,False,False,,,,,,,False,,,minItems=1; maxItems=2
+RecurrenceChangeResult,series,ref,,True,False,,,,,,,,,,False,False,RecurrenceSeries,,,,,,False,,,
+RecurrenceChangeResult,changedTaskIds,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+RecurrenceChangeResult,regeneratedOccurrenceCount,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+RecurrenceOccurrence,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+RecurrenceOccurrence,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+RecurrenceOccurrence,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+RecurrenceOccurrence,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RecurrenceOccurrence,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RecurrenceOccurrence,seriesId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceOccurrence,occurrenceKey,string,,True,False,,,,,1,64,,,,False,False,,,,,,,False,,,minLength=1; maxLength=64
+RecurrenceOccurrence,localDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceOccurrence,status,string,,True,False,"[""planned"", ""generated"", ""skipped"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+RecurrenceOccurrence,taskId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrencePreviewRequest,rule,ref,,True,False,,,,,,,,,,False,False,RecurrenceSeriesCreate,,,,,,False,,,
+RecurrencePreviewRequest,fromDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrencePreviewRequest,limit,integer,int32,True,False,,,1,500,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=500
+RecurrenceScopedChange,scope,string,,True,False,"[""this_occurrence"", ""this_and_future"", ""entire_series""]",,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceScopedChange,patch,ref,,True,False,,,,,,,,,,False,False,TaskPatch,,,,,,False,,,
+RecurrenceScopedChange,expectedTaskVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+RecurrenceSeries,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+RecurrenceSeries,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+RecurrenceSeries,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+RecurrenceSeries,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RecurrenceSeries,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RecurrenceSeries,status,string,,True,False,"[""active"", ""paused"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+RecurrenceSeries,frequency,string,,True,False,"[""daily"", ""weekly"", ""monthly"", ""yearly""]",,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceSeries,interval,integer,int32,True,False,,,1,999,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=999
+RecurrenceSeries,weekdays,array,,False,False,,,,,,,,7,True,False,False,,,,,,,False,,,maxItems=7; uniqueItems=true
+RecurrenceSeries,monthDays,array,,False,False,,,,,,,,62,True,False,False,,,,,,,False,,,maxItems=62; uniqueItems=true
+RecurrenceSeries,monthOfYear,integer|null,int32,False,True,,,1,12,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=12
+RecurrenceSeries,occurrenceStartDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceSeries,localStartTime,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+RecurrenceSeries,timeZone,string,,True,False,,,,,1,64,,,,False,False,,,,,,,False,,,minLength=1; maxLength=64
+RecurrenceSeries,untilDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceSeries,maxOccurrences,integer|null,int32,False,True,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+RecurrenceSeries,nextGenerationDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceSeries,template,ref,,True,False,,,,,,,,,,False,False,RecurrenceTaskTemplate,,,,,,False,,,
+RecurrenceSeriesCreate,status,string,,False,False,"[""active"", ""paused"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+RecurrenceSeriesCreate,frequency,string,,True,False,"[""daily"", ""weekly"", ""monthly"", ""yearly""]",,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceSeriesCreate,interval,integer,int32,True,False,,,1,999,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=999
+RecurrenceSeriesCreate,weekdays,array,,False,False,,,,,,,,7,True,False,False,,,,,,,False,,,maxItems=7; uniqueItems=true
+RecurrenceSeriesCreate,monthDays,array,,False,False,,,,,,,,62,True,False,False,,,,,,,False,,,maxItems=62; uniqueItems=true
+RecurrenceSeriesCreate,monthOfYear,integer|null,int32,False,True,,,1,12,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=12
+RecurrenceSeriesCreate,occurrenceStartDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceSeriesCreate,localStartTime,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+RecurrenceSeriesCreate,timeZone,string,,True,False,,,,,1,64,,,,False,False,,,,,,,False,,,minLength=1; maxLength=64
+RecurrenceSeriesCreate,untilDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceSeriesCreate,maxOccurrences,integer|null,int32,False,True,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+RecurrenceSeriesCreate,nextGenerationDate,string,date,False,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+RecurrenceSeriesCreate,template,ref,,True,False,,,,,,,,,,False,False,RecurrenceTaskTemplate,,,,,,False,,,
+RecurrenceSeriesPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+RecurrenceSeriesPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+RecurrenceSeriesPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+RecurrenceSeriesPatch,status,string,,False,False,"[""active"", ""paused"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+RecurrenceSeriesPatch,frequency,string,,False,False,"[""daily"", ""weekly"", ""monthly"", ""yearly""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+RecurrenceSeriesPatch,interval,integer,int32,False,False,,,1,999,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1; maximum=999
+RecurrenceSeriesPatch,weekdays,array,,False,False,,,,,,,,7,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=7; uniqueItems=true
+RecurrenceSeriesPatch,monthDays,array,,False,False,,,,,,,,62,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=62; uniqueItems=true
+RecurrenceSeriesPatch,monthOfYear,integer|null,int32,False,True,,,1,12,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1; maximum=12
+RecurrenceSeriesPatch,occurrenceStartDate,string,date,False,False,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+RecurrenceSeriesPatch,localStartTime,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,omitted=unchanged; explicit null=clear when nullable,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+RecurrenceSeriesPatch,timeZone,string,,False,False,,,,,1,64,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=64
+RecurrenceSeriesPatch,untilDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+RecurrenceSeriesPatch,maxOccurrences,integer|null,int32,False,True,,,1,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1
+RecurrenceSeriesPatch,nextGenerationDate,string,date,False,False,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+RecurrenceSeriesPatch,template,ref,,False,False,,,,,,,,,,False,False,RecurrenceTaskTemplate,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+RecurrenceTaskTemplate,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTaskTemplate,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+RecurrenceTaskTemplate,description,string|null,,False,True,,,,,,50000,,,,False,False,,,,,,,False,,,maxLength=50000
+RecurrenceTaskTemplate,authorUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTaskTemplate,requesterUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTaskTemplate,primaryCounterpartyObjectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTaskTemplate,priority,string,,True,False,"[""low"", ""normal"", ""high"", ""critical""]",,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTaskTemplate,plannedDurationMinutes,integer|null,int32,False,True,,,1,10080,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=10080
+RecurrenceTaskTemplate,deadlineOffsetMinutes,integer|null,int32,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTaskTemplate,assigneeIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+RecurrenceTaskTemplate,watcherIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+RecurrenceTaskTemplate,checklists,array,,True,False,,,,,,,,50,,False,False,,,,,,,False,,,maxItems=50
+RecurrenceTaskTemplate,reminderRules,array,,True,False,,,,,,,,50,,False,False,,,,,,,False,,,maxItems=50
+RecurrenceTaskTemplate,templateVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+RecurrenceTemplateChecklist,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateChecklist,title,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+RecurrenceTemplateChecklist,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateChecklist,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+RecurrenceTemplateChecklistItem,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateChecklistItem,text,string,,True,False,,,,,1,1000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=1000
+RecurrenceTemplateChecklistItem,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateReminderRule,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateReminderRule,recipientUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateReminderRule,triggerType,string,,True,False,"[""before_start"", ""before_deadline"", ""at_start"", ""at_deadline""]",,,,,,,,,False,False,,,,,,,False,,,
+RecurrenceTemplateReminderRule,offsetMinutes,integer|null,int32,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+RefreshRequest,refreshToken,string,,True,False,,,,,32,4096,,,,False,True,,,,,,,False,,,minLength=32; maxLength=4096
+RefreshRequest,deviceKey,string,,True,False,,,,,16,200,,,,False,True,,,,,,,False,,,minLength=16; maxLength=200
+ReindexRequest,objectTypes,array,,True,False,,,,,,,,50,True,False,False,,,,,,,False,,,maxItems=50; uniqueItems=true
+Reminder,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Reminder,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Reminder,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Reminder,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Reminder,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Reminder,targetObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Reminder,recipientUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Reminder,triggerType,string,,True,False,"[""absolute"", ""before_start"", ""before_deadline"", ""at_start"", ""at_deadline""]",,,,,,,,,False,False,,,,,,,False,,,
+Reminder,offsetMinutes,integer|null,int32,False,True,,,0,525600,,,,,,False,False,,,,,,,False,,,minimum=0; maximum=525600
+Reminder,absoluteTriggerAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Reminder,nextTriggerAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Reminder,status,string,,True,False,"[""scheduled"", ""due"", ""delivered"", ""snoozed"", ""cancelled"", ""expired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Reminder,snoozedUntil,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Reminder,deliveredAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderCreate,targetObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ReminderCreate,recipientUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ReminderCreate,triggerType,string,,True,False,"[""absolute"", ""before_start"", ""before_deadline"", ""at_start"", ""at_deadline""]",,,,,,,,,False,False,,,,,,,False,,,
+ReminderCreate,offsetMinutes,integer|null,int32,False,True,,,0,525600,,,,,,False,False,,,,,,,False,,,minimum=0; maximum=525600
+ReminderCreate,absoluteTriggerAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderCreate,nextTriggerAt,string,date-time,False,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderCreate,status,string,,False,False,"[""scheduled"", ""due"", ""delivered"", ""snoozed"", ""cancelled"", ""expired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ReminderCreate,snoozedUntil,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderCreate,deliveredAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderOccurrence,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ReminderOccurrence,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+ReminderOccurrence,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+ReminderOccurrence,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderOccurrence,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderOccurrence,reminderId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ReminderOccurrence,dueAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderOccurrence,status,string,,True,False,"[""created"", ""claimed"", ""delivered"", ""failed"", ""dead_letter"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+ReminderOccurrence,attemptCount,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ReminderOccurrence,nextAttemptAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+ReminderPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+ReminderPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ReminderPatch,targetObjectId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ReminderPatch,recipientUserId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ReminderPatch,triggerType,string,,False,False,"[""absolute"", ""before_start"", ""before_deadline"", ""at_start"", ""at_deadline""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+ReminderPatch,offsetMinutes,integer|null,int32,False,True,,,0,525600,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=0; maximum=525600
+ReminderPatch,absoluteTriggerAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderPatch,nextTriggerAt,string,date-time,False,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderPatch,status,string,,False,False,"[""scheduled"", ""due"", ""delivered"", ""snoozed"", ""cancelled"", ""expired""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+ReminderPatch,snoozedUntil,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ReminderPatch,deliveredAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ResolveLocationRequest,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ResolveLocationRequest,includeUnavailable,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ResolvedLocation,catalogItemId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ResolvedLocation,locationId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ResolvedLocation,displayPath,string,,True,False,,,,,1,4096,,,,False,False,,,,,,,False,,,minLength=1; maxLength=4096
+ResolvedLocation,rawPath,string|null,,False,True,,,,,1,4096,,,,False,False,,,,,,,False,,,minLength=1; maxLength=4096
+ResolvedLocation,rawPathVisible,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ResolvedLocation,availability,string,,True,False,"[""unknown"", ""available"", ""not_found"", ""access_denied"", ""resource_unavailable""]",,,,,,,,,False,False,,,,,,,False,,,
+ResolvedLocation,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+RestoreBackupRequest,backupRunId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RestoreBackupRequest,restorePlanId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RestoreBackupRequest,confirmationCode,string,,True,False,,,,,12,200,,,,False,False,,,,,,,False,,,minLength=12; maxLength=200
+RestorePlan,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RestorePlan,backupRunId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+RestorePlan,status,string,,True,False,"[""draft"", ""validated"", ""approved"", ""executing"", ""completed"", ""failed""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+RestorePlan,steps,array,,True,False,,,,,,,1,100,,False,False,,,,,,,False,,,minItems=1; maxItems=100
+RestorePlan,expiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RestoreRequest,reason,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+RestoreRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+RevocationSummary,revokedSessions,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+RevocationSummary,revokedRefreshTokens,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+RevocationSummary,effectiveAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+RevokeDeviceRequest,reason,string,,True,False,,,,,1,2000,,,,False,False,,,,,,,False,,,minLength=1; maxLength=2000
+RevokeDeviceRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Role,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Role,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Role,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Role,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Role,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Role,code,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+Role,name,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+Role,scopeType,string,,True,False,"[""organization"", ""department""]",,,,,,,,,False,False,,,,,,,False,,,
+Role,isSystem,boolean,,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Role,status,string,,True,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Role,permissionCodes,array,,True,False,,,,,,,,200,True,False,False,,,,,,server-derived capability/permission data,False,,,maxItems=200; uniqueItems=true
+RoleCreate,code,string,,True,False,,,,,1,60,,,,False,False,,,,,,,False,,,minLength=1; maxLength=60
+RoleCreate,name,string,,True,False,,,,,1,200,,,,False,False,,,,,,,False,,,minLength=1; maxLength=200
+RoleCreate,scopeType,string,,True,False,"[""organization"", ""department""]",,,,,,,,,False,False,,,,,,,False,,,
+RoleCreate,status,string,,False,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+RoleCreate,permissionCodes,array,,False,False,,,,,,,,200,True,False,False,,,,,,server-derived capability/permission data,False,,,maxItems=200; uniqueItems=true
+RolePage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+RolePage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+RolePage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+RolePatch,code,string,,False,False,,,,,1,60,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=60
+RolePatch,name,string,,False,False,,,,,1,200,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=200
+RolePatch,scopeType,string,,False,False,"[""organization"", ""department""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+RolePatch,status,string,,False,False,"[""active"", ""inactive""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+RolePatch,permissionCodes,array,,False,False,,,,,,,,200,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,server-derived capability/permission data,False,,,maxItems=200; uniqueItems=true
+ScheduleConflict,leftObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ScheduleConflict,rightObjectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ScheduleConflict,overlapStart,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ScheduleConflict,overlapEnd,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ScheduleConflict,severity,string,,True,False,"[""info"", ""warning"", ""blocking""]",,,,,,,,,False,False,,,,,,,False,,,
+ScheduleItem,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ScheduleItem,itemType,string,,True,False,"[""task"", ""calendar_event""]",,,,,,,,,False,False,,,,,,,False,,,
+ScheduleItem,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+ScheduleItem,localDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+ScheduleItem,startAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ScheduleItem,endAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ScheduleItem,isAllDay,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+ScheduleItem,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+ScheduleItem,status,string,,True,False,,,,,1,20,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,minLength=1; maxLength=20
+ScheduleItem,priority,string|null,,False,True,"[""low"", ""normal"", ""high"", ""critical"", null]",,,,,,,,,False,False,,,,,,,False,,,
+SchedulePage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+SchedulePage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+SchedulePage,rangeStart,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SchedulePage,rangeEnd,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SearchPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+SearchPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+SearchPage,tookMs,integer,int32,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SearchSuggestion,object,ref,,True,False,,,,,,,,,,False,False,ObjectReference,,,,,,False,,,
+SearchSuggestion,matchedField,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+SearchSuggestion,highlight,string,,True,False,,,,,,1000,,,,False,False,,,,,,,False,,,maxLength=1000
+SearchSuggestion,score,number,double,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+ServerCapabilities,capabilities,array,,True,False,,,,,,,,500,True,False,False,,,,,,server-derived capability/permission data,False,,,maxItems=500; uniqueItems=true
+ServerCapabilities,minimumApiVersion,string,,True,False,,,,,1,16,,,,False,False,,,,,,,False,,,minLength=1; maxLength=16
+ServerCapabilities,minimumDesktopVersion,string,,True,False,,,,,1,32,,,,False,False,,,,,,,False,,,minLength=1; maxLength=32
+ServerTime,utc,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+ServerTime,monotonicSequence,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+Session,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Session,userAccountId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Session,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Session,status,string,,True,False,"[""active"", ""revoked"", ""expired""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Session,createdAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Session,lastSeenAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Session,idleExpiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Session,absoluteExpiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SessionPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+SessionPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+SessionPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SessionTokens,accessToken,string,,True,False,,,,,20,4096,,,,True,False,,,,,,,False,,,minLength=20; maxLength=4096
+SessionTokens,accessExpiresAt,string,date-time,True,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SessionTokens,refreshToken,string,,True,False,,,,,32,4096,,,,True,False,,,,,,,False,,,minLength=32; maxLength=4096
+SessionTokens,refreshExpiresAt,string,date-time,True,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SessionTokens,sessionId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+SkipOccurrenceRequest,reason,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+SkipOccurrenceRequest,expectedSeriesVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+SnapshotItem,ordinal,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+SnapshotItem,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+SnapshotItem,objectType,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+SnapshotItem,objectVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+SnapshotItem,payload,oneOf,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+SnapshotPage,mode,string,,True,False,"[""snapshot""]",,,,,,,,,False,False,,,,,,,False,,,
+SnapshotPage,snapshotSessionId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+SnapshotPage,cutSequence,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SnapshotPage,scopeVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+SnapshotPage,dataset,string,,True,False,,,,,1,40,,,,False,False,,,,,,,False,,,minLength=1; maxLength=40
+SnapshotPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+SnapshotPage,nextDataset,string|null,,False,True,,,,,,40,,,,False,False,,,,,,,False,,,maxLength=40
+SnapshotPage,nextOrdinal,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SnapshotPage,snapshotComplete,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+SnapshotPage,catchUpFromSequence,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SnapshotPage,expiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SnoozeRequest,until,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SnoozeRequest,expectedVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+StorageStatus,databaseBytes,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+StorageStatus,freeBytes,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+StorageStatus,walBytes,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+StorageStatus,checkedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+SyncAck,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+SyncAck,acknowledgedSequence,integer,int64,True,False,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SyncAck,scopeVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+SyncBootstrapRequest,deviceId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+SyncBootstrapRequest,snapshotSessionId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+SyncBootstrapRequest,dataset,string|null,,False,True,,,,,,40,,,,False,False,,,,,,,False,,,maxLength=40
+SyncBootstrapRequest,afterOrdinal,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+SyncBootstrapRequest,pageSize,integer,int32,True,False,,,1,500,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=500
+SyncBootstrapRequest,cacheSchemaVersion,integer,int32,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+SystemVersion,serverVersion,string,,True,False,,,,,1,32,,,,False,False,,,,,,,False,,,minLength=1; maxLength=32
+SystemVersion,apiVersion,string,,True,False,,,,,1,16,,,,False,False,,,,,,,False,,,minLength=1; maxLength=16
+SystemVersion,databaseSchemaVersion,integer,int32,True,False,,,1,,,,,,,False,False,,,,,,,False,,,minimum=1
+SystemVersion,minimumDesktopVersion,string,,True,False,,,,,1,32,,,,False,False,,,,,,,False,,,minLength=1; maxLength=32
+Tag,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Tag,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Tag,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Tag,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Tag,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Tag,name,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+Tag,colorCode,string|null,,False,True,,,,,,9,,,,False,False,,,,,,,False,,,"pattern=""^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$""; maxLength=9"
+Tag,description,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+TagCreate,name,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+TagCreate,colorCode,string|null,,False,True,,,,,,9,,,,False,False,,,,,,,False,,,"pattern=""^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$""; maxLength=9"
+TagCreate,description,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+TagIds,tagIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+TagPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+TagPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+TagPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+TagPatch,name,string,,False,False,,,,,1,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=100
+TagPatch,colorCode,string|null,,False,True,,,,,,9,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,"pattern=""^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$""; maxLength=9"
+TagPatch,description,string|null,,False,True,,,,,,2000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=2000
+Task,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Task,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+Task,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+Task,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Task,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Task,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Task,parentTaskId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Task,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+Task,description,string|null,,False,True,,,,,,50000,,,,False,False,,,,,,,False,,,maxLength=50000
+Task,authorUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+Task,requesterUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Task,primaryCounterpartyObjectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+Task,status,string,,True,False,"[""new"", ""in_progress"", ""review"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+Task,priority,string,,True,False,"[""low"", ""normal"", ""high"", ""critical""]",,,,,,,,,False,False,,,,,,,False,,,
+Task,scheduledDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+Task,startTimeLocal,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+Task,scheduleTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+Task,startAtUtc,string|null,date-time,False,True,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Task,plannedDurationMinutes,integer|null,int32,False,True,,,1,10080,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=10080
+Task,deadlineAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+Task,assigneeIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+Task,watcherIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+Task,recurrenceSeriesId,string|null,uuid,False,True,,,,,,,,,,True,False,,,,,,,False,,,
+TaskAssigneesReplace,assigneeIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+TaskAssigneesReplace,primaryAssigneeId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,parentTaskId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+TaskCreate,description,string|null,,False,True,,,,,,50000,,,,False,False,,,,,,,False,,,maxLength=50000
+TaskCreate,authorUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,requesterUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,primaryCounterpartyObjectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,status,string,,False,False,"[""new"", ""in_progress"", ""review"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+TaskCreate,priority,string,,False,False,"[""low"", ""normal"", ""high"", ""critical""]",,,,,,,,,False,False,,,,,,,False,,,
+TaskCreate,scheduledDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+TaskCreate,startTimeLocal,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+TaskCreate,scheduleTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,,,,,False,,,maxLength=64
+TaskCreate,plannedDurationMinutes,integer|null,int32,False,True,,,1,10080,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=10080
+TaskCreate,deadlineAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TaskCreate,assigneeIds,array,,False,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+TaskCreate,watcherIds,array,,False,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+TaskDependency,predecessorTaskId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TaskDependency,successorTaskId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TaskDependency,dependencyType,string,,True,False,"[""finish_to_start"", ""start_to_start""]",,,,,,,,,False,False,,,,,,,False,,,
+TaskDependencyCreate,predecessorTaskId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TaskDependencyCreate,dependencyType,string,,True,False,"[""finish_to_start"", ""start_to_start""]",,,,,,,,,False,False,,,,,,,False,,,
+TaskDependencyCreate,expectedPredecessorVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+TaskMoveRequest,parentTaskId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskMoveRequest,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TaskMoveRequest,sortOrder,integer,int32,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TaskMoveRequest,expectedParentVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+TaskPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+TaskPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+TaskPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+TaskPatch,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+TaskPatch,parentTaskId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+TaskPatch,title,string,,False,False,,,,,1,500,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=500
+TaskPatch,description,string|null,,False,True,,,,,,50000,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=50000
+TaskPatch,authorUserId,string,uuid,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+TaskPatch,requesterUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+TaskPatch,primaryCounterpartyObjectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+TaskPatch,status,string,,False,False,"[""new"", ""in_progress"", ""review"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,canonical lifecycle/status literal,,False,,,
+TaskPatch,priority,string,,False,False,"[""low"", ""normal"", ""high"", ""critical""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+TaskPatch,scheduledDate,string|null,date,False,True,,,,,,,,,,False,False,,Calendar date without a time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,Calendar date without a time zone.,
+TaskPatch,startTimeLocal,string|null,time,False,True,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,omitted=unchanged; explicit null=clear when nullable,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+TaskPatch,scheduleTimeZone,string|null,,False,True,,,,,,64,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=64
+TaskPatch,plannedDurationMinutes,integer|null,int32,False,True,,,1,10080,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1; maximum=10080
+TaskPatch,deadlineAt,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,omitted=unchanged; explicit null=clear when nullable,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TaskPatch,assigneeIds,array,,False,False,,,,,,,,100,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=100; uniqueItems=true
+TaskPatch,watcherIds,array,,False,False,,,,,,,,100,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxItems=100; uniqueItems=true
+TaskTransitionRequest,targetStatus,string,,True,False,"[""new"", ""in_progress"", ""review"", ""completed"", ""cancelled""]",,,,,,,,,False,False,,,,,,,False,,,
+TaskTransitionRequest,reason,string|null,,False,True,,,,,,2000,,,,False,False,,,,,,,False,,,maxLength=2000
+TaskWatchersReplace,watcherIds,array,,True,False,,,,,,,,100,True,False,False,,,,,,,False,,,maxItems=100; uniqueItems=true
+TemporaryCredentialReceipt,userId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TemporaryCredentialReceipt,temporaryPassword,string,,True,False,,,,,12,1024,,,,True,False,,,,,,,False,,,minLength=12; maxLength=1024
+TemporaryCredentialReceipt,expiresAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TemporaryCredentialReceipt,mustChangePassword,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TodayItem,objectId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TodayItem,itemType,string,,True,False,"[""task"", ""calendar_event"", ""reminder""]",,,,,,,,,False,False,,,,,,,False,,,
+TodayItem,title,string,,True,False,,,,,1,500,,,,False,False,,,,,,,False,,,minLength=1; maxLength=500
+TodayItem,localDate,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+TodayItem,startAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TodayItem,endAtUtc,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TodayItem,isAllDay,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TodayItem,projectId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TodayItem,status,string,,True,False,,,,,1,20,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,minLength=1; maxLength=20
+TodayItem,priority,string|null,,False,True,"[""low"", ""normal"", ""high"", ""critical"", null]",,,,,,,,,False,False,,,,,,,False,,,
+TodayItem,recipientUserId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+TodayPage,date,string,date,True,False,,,,,,,,,,False,False,,Calendar date without a time zone,,,,,False,,Calendar date without a time zone.,
+TodayPage,timeZone,string,,True,False,,,,,1,64,,,,False,False,,,,,,,False,,,minLength=1; maxLength=64
+TodayPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+TodayPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+TransferOwnershipRequest,newOwnerUserId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TransferOwnershipRequest,expectedNewOwnerMembershipVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+TrashEntry,object,ref,,True,False,,,,,,,,,,False,False,ObjectReference,,,,,,False,,,
+TrashEntry,deletedBy,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+TrashEntry,deletedAt,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TrashEntry,purgeAfter,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+TrashEntry,status,string,,True,False,"[""retained"", ""restored"", ""purged"", ""blocked_by_hold""]",,,,,,,,,False,False,,,,,canonical lifecycle/status literal,,False,,,
+TrashEntryPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+TrashEntryPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+TrashEntryPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+User,id,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+User,organizationId,string,uuid,True,False,,,,,,,,,,True,False,,,,,,,False,,,
+User,version,integer,int64,True,False,,,1,,,,,,,True,False,,,,aggregate version or expected version,,,False,,,minimum=1
+User,createdAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+User,updatedAt,string,date-time,False,False,,,,,,,,,,True,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+User,displayName,string,,True,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+User,firstName,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+User,lastName,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+User,login,string,,True,False,,,,,3,100,,,,False,False,,,,,,,False,,,minLength=3; maxLength=100
+User,workEmail,string|null,email,False,True,,,,,,320,,,,False,False,,,,,,,False,,,maxLength=320
+User,departmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+User,jobTitle,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+User,accountStatus,string,,True,False,"[""pending_activation"", ""active"", ""blocked"", ""deactivated""]",,,,,,,,,False,False,,,,,,,False,,,
+UserCreate,displayName,string,,False,False,,,,,1,300,,,,False,False,,,,,,,False,,,minLength=1; maxLength=300
+UserCreate,firstName,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+UserCreate,lastName,string,,True,False,,,,,1,100,,,,False,False,,,,,,,False,,,minLength=1; maxLength=100
+UserCreate,login,string,,True,False,,,,,3,100,,,,False,False,,,,,,,False,,,minLength=3; maxLength=100
+UserCreate,workEmail,string|null,email,False,True,,,,,,320,,,,False,False,,,,,,,False,,,maxLength=320
+UserCreate,departmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+UserCreate,jobTitle,string|null,,False,True,,,,,,200,,,,False,False,,,,,,,False,,,maxLength=200
+UserCreate,accountStatus,string,,False,False,"[""pending_activation"", ""active"", ""blocked"", ""deactivated""]",,,,,,,,,False,False,,,,,,,False,,,
+UserPage,items,array,,True,False,,,,,,,,500,,False,False,,,,,,,False,,,maxItems=500
+UserPage,nextCursor,string|null,,False,True,,,,,,512,,,,False,False,,,,,,,False,,,maxLength=512
+UserPage,total,integer|null,int64,False,True,,,0,,,,,,,False,False,,,,,,,False,,,minimum=0
+UserPatch,displayName,string,,False,False,,,,,1,300,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=300
+UserPatch,firstName,string,,False,False,,,,,1,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=100
+UserPatch,lastName,string,,False,False,,,,,1,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=1; maxLength=100
+UserPatch,login,string,,False,False,,,,,3,100,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=3; maxLength=100
+UserPatch,workEmail,string|null,email,False,True,,,,,,320,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=320
+UserPatch,departmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UserPatch,jobTitle,string|null,,False,True,,,,,,200,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,maxLength=200
+UserPatch,accountStatus,string,,False,False,"[""pending_activation"", ""active"", ""blocked"", ""deactivated""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UserRole,id,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+UserRole,roleId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+UserRole,roleCode,string,,True,False,,,,,,60,,,,False,False,,,,,,,False,,,maxLength=60
+UserRole,departmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+UserRole,validFrom,string,date-time,True,False,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+UserRole,validUntil,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+UserRolesReplace,roles,array,,True,False,,,,,,,,100,,False,False,,,,,,,False,,,maxItems=100
+UserRolesReplace,roles[].roleId,string,uuid,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+UserRolesReplace,roles[].departmentId,string|null,uuid,False,True,,,,,,,,,,False,False,,,,,,,False,,,
+UserRolesReplace,roles[].validUntil,string|null,date-time,False,True,,,,,,,,,,False,False,,RFC 3339 instant; UTC on the wire; preserve the instant when rendering in a user time zone,,,,,False,,RFC 3339 instant. Serialize in UTC with an explicit Z offset; render in the applicable user or object time zone.,
+UserRolesReplace,expectedUserVersion,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+UserSettings,language,string,,True,False,,,,,2,16,,,,False,False,,,,,,,False,,,minLength=2; maxLength=16
+UserSettings,timeFormat,string,,True,False,"[""12h"", ""24h""]",,,,,,,,,False,False,,,,,,,False,,,
+UserSettings,firstDayOfWeek,integer,int32,True,False,,,1,7,,,,,,False,False,,,,,,,False,,,minimum=1; maximum=7
+UserSettings,workdayStart,string,time,True,False,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+UserSettings,workdayEnd,string,time,True,False,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+UserSettings,weekendDays,array,,True,False,,,,,,,1,6,True,False,False,,,,,,,False,,,minItems=1; maxItems=6; uniqueItems=true
+UserSettings,defaultTaskDurationMinutes,integer,int32,True,False,,,5,1440,,,,,,False,False,,,,,,,False,,,minimum=5; maximum=1440
+UserSettings,defaultReminderOffsetMinutes,integer,int32,True,False,,,0,525600,,,,,,False,False,,,,,,,False,,,minimum=0; maximum=525600
+UserSettings,autostartEnabled,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+UserSettings,allowLocalPaths,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+UserSettings,confirmCatalogDelete,boolean,,True,False,,,,,,,,,,False,False,,,,,,,False,,,
+UserSettings,missingFileBehavior,string,,True,False,"[""show_actions"", ""keep_inactive"", ""prompt_relink""]",,,,,,,,,False,False,,,,,,,False,,,
+UserSettings,version,integer,int64,True,False,,,1,,,,,,,False,False,,,,aggregate version or expected version,,,False,,,minimum=1
+UserSettingsPatch,language,string,,False,False,,,,,2,16,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minLength=2; maxLength=16
+UserSettingsPatch,timeFormat,string,,False,False,"[""12h"", ""24h""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UserSettingsPatch,firstDayOfWeek,integer,int32,False,False,,,1,7,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=1; maximum=7
+UserSettingsPatch,workdayStart,string,time,False,False,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,omitted=unchanged; explicit null=clear when nullable,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+UserSettingsPatch,workdayEnd,string,time,False,False,,,,,,,,,,False,False,,Local wall-clock time; interpret only with the companion time-zone field,omitted=unchanged; explicit null=clear when nullable,,,,False,,Local wall-clock time. Interpret only together with the companion IANA time-zone field.,
+UserSettingsPatch,weekendDays,array,,False,False,,,,,,,1,6,True,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minItems=1; maxItems=6; uniqueItems=true
+UserSettingsPatch,defaultTaskDurationMinutes,integer,int32,False,False,,,5,1440,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=5; maximum=1440
+UserSettingsPatch,defaultReminderOffsetMinutes,integer,int32,False,False,,,0,525600,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,minimum=0; maximum=525600
+UserSettingsPatch,autostartEnabled,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UserSettingsPatch,allowLocalPaths,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UserSettingsPatch,confirmCatalogDelete,boolean,,False,False,,,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UserSettingsPatch,missingFileBehavior,string,,False,False,"[""show_actions"", ""keep_inactive"", ""prompt_relink""]",,,,,,,,,False,False,,,omitted=unchanged; explicit null=clear when nullable,,,,False,,,
+UrgencyScaleInterval,urgencyLevel,reference,,true,,,,,,,,,,,,,,,,,,,,,,
+UrgencyScaleInterval,minScore,integer,,true,,,,,,,,,,,,,,,,,,,,,,
+UrgencyScaleInterval,maxScore,integer,,true,,,,,,,,,,,,,,,,,,,,,,
+UrgencyScaleInterval,displayToken,string,,true,,,,,,,,,,,,,,,,,,,,,,
+NotificationUrgencyScale,scope,string,,true,,,,,,,,,,,,,,,,,,,,,,
+NotificationUrgencyScale,intervals,array,,true,,,,,,,,,,,,,,,,,,,,,,
+NotificationUrgencyScale,version,integer,,true,,,,,,,,,,,,,,,,,,,,,,
+NotificationUrgencyScale,updatedAt,string,,true,,,,,,,,,,,,,,,,,,,,,,
+NotificationUrgencyScale,updatedByUserId,"['string', 'null']",,false,,,,,,,,,,,,,,,,,,,,,,
+NotificationUrgencyScalePatch,intervals,array,,true,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,userId,string,,true,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,displayName,string,,true,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,departmentId,"['string', 'null']",,false,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,departmentName,"['string', 'null']",,false,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,jobTitle,"['string', 'null']",,false,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,accountStatus,string,,true,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,deepLink,string,,true,,,,,,,,,,,,,,,,,,,,,,
+EmployeeSearchResult,isRedacted,boolean,,true,,,,,,,,,,,,,,,,,,,,,,

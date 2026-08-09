@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "file": "Stage_4_Business_Rules_Catalog_4.3.csv",
+      "rows": 113,
+      "previewPath": "C:\\Users\\novik\\Таск\\work\\stage_4_3_remediation\\sheet_runtime\\Stage_4_Business_Rules_Catalog_4.3_preview.png"
+    },
+    {
+      "file": "Stage_4_Acceptance_Criteria_Catalog_4.3.csv",
+      "rows": 1911,
+      "previewPath": "C:\\Users\\novik\\Таск\\work\\stage_4_3_remediation\\sheet_runtime\\Stage_4_Acceptance_Criteria_Catalog_4.3_preview.png"
+    },
+    {
+      "file": "Stage_4_NFR_Catalog_4.3.csv",
+      "rows": 25,
+      "previewPath": "C:\\Users\\novik\\Таск\\work\\stage_4_3_remediation\\sheet_runtime\\Stage_4_NFR_Catalog_4.3_preview.png"
+    },
+    {
+      "file": "Stage_4_Requirements_Traceability_4.3.csv",
+      "rows": 497,
+      "previewPath": "C:\\Users\\novik\\Таск\\work\\stage_4_3_remediation\\sheet_runtime\\Stage_4_Requirements_Traceability_4.3_preview.png"
+    }
+  ],
+  "brMapped": 113,
+  "acTotal": 1911,
+  "acAdded": 87,
+  "originalBlankGherkinFixed": 211,
+  "dataOwnerRelations": 354,
+  "crossCuttingAdded": 87,
+  "traceRows": 497,
+  "nfrRows": 25,
+  "checks": {
+    "blankGherkin": 0,
+    "ownerless": 0,
+    "vague": 0,
+    "blankBr": 0,
+    "blankTrace": 0,
+    "oldRefs": 0
+  }
+}

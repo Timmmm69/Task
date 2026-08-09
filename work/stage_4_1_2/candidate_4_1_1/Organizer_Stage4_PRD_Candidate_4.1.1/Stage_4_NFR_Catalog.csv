@@ -1,0 +1,26 @@
+﻿NFR ID,Area,Requirement,Target,Measurement,Source/Assumption,Modules
+NFR-001,Platform,Desktop client supports corporate Windows 10/11 editions approved by the company.,Windows 10/11; supported .NET LTS build,Installation/smoke matrix on approved images,Architecture §0.5/technology profile,ALL
+NFR-002,Desktop,All primary and destructive actions have keyboard-only paths.,100% critical flows keyboard-completable,Accessibility test scripts for SCR/FLOW,Stage 3 accessibility,ALL
+NFR-003,Accessibility,"Focus is visible, order is deterministic, controls have accessible names and states.",No critical WCAG/Windows accessibility blocker,UIA/Screen Reader + manual audit,Stage 3 accessibility,ALL
+NFR-004,High DPI,Layouts remain usable at 100–200% Windows scaling and multiple monitors.,No clipped critical control at 200%,Visual/interaction matrix,Architecture/Stage 3,ALL
+NFR-005,Color,Status/urgency/error is never communicated by color alone.,Text/icon/state alternative for every colored signal,Accessibility review,Stage 3,ALL
+NFR-006,Performance,Large lists use server pagination and client virtualization.,No full dataset load; stable interaction on source scale,Profile with production-like fixtures,Architecture scale; DEC-034,ALL
+NFR-007,Calendar,Calendar reads are range-bounded and virtualized.,No unbounded multi-year query,Contract/UI tests,Architecture §3.12,ALL
+NFR-008,Search,Filtering and cursor pagination execute server-side before result delivery.,No client post-filter of paged results,Contract tests with filter-bound cursor,Search Contract; DEC-040,ALL
+NFR-009,Resilience,Server outage changes application to honest read-only cache mode.,0 accepted business writes while API unavailable,Fault injection desktop tests,ADR-015; DEC-006,ALL
+NFR-010,Recovery,"After reconnect client authenticates, applies change feed, and bootstraps when cursor/scope is invalid.",No stale unauthorized projection after recovery,Fault injection/integration,ADR-005; DEC-032,ALL
+NFR-011,Concurrency,Versioned writes require If-Match and reject stale/missing version.,100% versioned writes covered by 412/428/409 tests,Generated contract test suite,DEC-038,ALL
+NFR-012,Idempotency,Idempotent commands do not duplicate side effects for same key/hash.,Exactly one business result/event for duplicate delivery,Integration/replay tests,Stage 2.2,ALL
+NFR-013,Security,"Server evaluates authentication, capability and relation on every request.",No authorization decision based solely on UI,BOLA/permission tests,ADR-002; DEC-004,ALL
+NFR-014,Security,"Tokens, passwords, secrets and sensitive full paths are absent from logs/analytics.",0 secret findings in log scan,Automated redaction/security test,Architecture audit rules,ALL
+NFR-015,Transport,Client-server traffic uses approved TLS inside local network.,No plaintext API endpoint,Deployment/security test,Architecture,ALL
+NFR-016,Local data,"User-specific cache is encrypted, disposable and cleared on logout/revoke/scope changes as specified.",No readable cache after cleanup,Desktop storage/security test,ADR-015; DEC-032,ALL
+NFR-017,Errors,Client displays stable recovery message and traceId without stack trace.,All stable errors mapped; no raw exception,Catalog coverage test,errors.csv; DEC-035,ALL
+NFR-018,File safety,Application never deletes or moves physical working files as a metadata side effect.,0 physical mutations in delete/move/purge tests,Filesystem sandbox tests,DEC-017/018,ALL
+NFR-019,File access,OS/SMB ACL remains authoritative and failures are categorized.,No ACL bypass; differentiated error,Windows/SMB integration tests,Architecture A1-06,ALL
+NFR-020,Compatibility,Unsupported client is blocked with 426/update route.,No writable shell below min version,Version compatibility tests,ADR-012; CLIENT_VERSION_UNSUPPORTED,ALL
+NFR-021,Audit,Audit/history is append-only and authorization/redaction aware.,No update/delete path for audit; current-right filtering,DB/API/security tests,Architecture; ADR-009,ALL
+NFR-022,Backup UX,"Admin UI shows backup result, last success and verification status; backup bytes are not exposed.",No success claim without completed result/verification metadata,Admin integration test,Architecture backup agent,ALL
+NFR-023,Scale,"Candidate is designed for up to 300 active employees, 100 concurrent connections and approximately 2M tasks/events.",Architecture target; validate with load fixtures,Load test report,Architecture §0.5 assumption,ALL
+NFR-024,Availability,"Working-hours target 99.5%, RPO ≤15 min, RTO ≤4 h are architecture assumptions, not contractual SLA.",Measure and confirm before production baseline,Operations validation,Architecture §0.5 assumption,ALL
+NFR-025,Request limits,"Requests, text and batch sizes respect OpenAPI/Stage 2.2 limits.",0 client request beyond contract limit,Generated boundary tests,OpenAPI/Stage 2.2,ALL

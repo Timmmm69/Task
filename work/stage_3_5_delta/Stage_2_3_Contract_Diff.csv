@@ -1,0 +1,7 @@
+kind,name,change,compatibility
+path,/api/v1/settings/notification-urgency-scale,added,additive
+path,/api/v1/settings/notification-urgency-scale/reset,added,additive
+search,types.employee,added,additive
+schema,EmployeeSearchResult,added,additive
+schema,NotificationUrgencyScale,added,additive
+schema,NotificationUrgencyScalePatch,added,additive

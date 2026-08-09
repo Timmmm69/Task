@@ -1,0 +1,8 @@
+﻿Check,Expected,Actual,Result,Evidence
+Current technical contract,Stage 2.3.1,Stage 2.3.1,Pass,Candidate sources and Stage 2.3.1 OpenAPI
+Current UX baseline,Stage 3.5,Stage 3.5,Pass,Candidate sources and Stage 3.5 package
+FLOW-035 urgency misuse,0 active misuse,9 documented historical/repair mentions,Pass,Contexts retain FLOW-035 as project flow and FLOW-038 as urgency flow
+FLOW-038 downstream definition,Addressable,True,Pass,Stage_4_3_Reference_Repair_Report.md
+Unknown STATE IDs,0,30,Fail,STATE-001;STATE-002;STATE-003;STATE-004;STATE-005;STATE-006;STATE-008;STATE-009;STATE-010;STATE-011;STATE-012;STATE-013;STATE-015;STATE-016;STATE-017;STATE-018;STATE-019;STATE-020;STATE-021;STATE-022;STATE-023;STATE-024;STATE-032;STATE-033;STATE-034;STATE-035;STATE-036;STATE-037;STATE-038;STATE-039
+Duplicate IDs,0,0,Pass,Independent ID recount
+Broken AC targets,0,0,Pass,Traceability to AC catalog

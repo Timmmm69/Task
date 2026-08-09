@@ -1,0 +1,17 @@
+{
+  "result": "NOT_READY",
+  "accepted": 0,
+  "total": 9,
+  "missing": [
+    "EVD-WIN-UIA",
+    "EVD-WIN-NARR",
+    "EVD-WIN-DPI",
+    "EVD-USR",
+    "EVD-FIND",
+    "EVD-PO",
+    "EVD-DESIGN",
+    "EVD-TECH",
+    "EVD-QA"
+  ],
+  "reason": "External native Windows, participant and named approval evidence has not been supplied."
+}

@@ -1,0 +1,10 @@
+Evidence ID,Artifact,Owner,Required path,Status,Acceptance criterion,SHA-256
+EVD-WIN-UIA,Native Windows Inspect/UIA report,QA + Desktop tech lead,evidence/incoming/windows-uia-report.md,PENDING,Report identifies client SHA and all 12 checkpoints; no open Critical/High,
+EVD-WIN-NARR,Narrator walkthrough report,QA + Design owner,evidence/incoming/narrator-report.md,PENDING,Announcements/focus documented for all required flows; no open Critical/High,
+EVD-WIN-DPI,Windows DPI results,QA + Desktop tech lead,evidence/incoming/windows-dpi-results.csv,PENDING,All 8 matrix rows PASS or have accepted non-blocking disposition,
+EVD-USR,Moderated session results,UX + Product owner,evidence/incoming/moderated-session-results.csv,PENDING,"UT-01–UT-10 completed, four roles represented, no open Critical/High",
+EVD-FIND,Final finding disposition,Design owner + QA,evidence/incoming/final-finding-disposition.csv,PENDING,Every finding closed or Medium formally accepted with implementation-complete logic,
+EVD-PO,Product owner decision,Product owner,evidence/incoming/product-owner-approval.md,PENDING,Named approval references exact package and evidence hashes,
+EVD-DESIGN,Design owner decision,Design owner,evidence/incoming/design-owner-approval.md,PENDING,Named approval references exact package and evidence hashes,
+EVD-TECH,Desktop technical decision,Desktop tech lead,evidence/incoming/desktop-tech-approval.md,PENDING,Named approval references native Windows results and exact package,
+EVD-QA,QA decision,QA,evidence/incoming/qa-approval.md,PENDING,Named approval references test evidence and exact package,

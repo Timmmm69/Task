@@ -1,0 +1,208 @@
+{
+  "status": "PASS",
+  "checks": {
+    "files_15": {
+      "pass": true,
+      "detail": []
+    },
+    "modules_21": {
+      "pass": true,
+      "detail": [
+        "MOD-001",
+        "MOD-002",
+        "MOD-003",
+        "MOD-004",
+        "MOD-005",
+        "MOD-006",
+        "MOD-007",
+        "MOD-008",
+        "MOD-009",
+        "MOD-010",
+        "MOD-011",
+        "MOD-012",
+        "MOD-013",
+        "MOD-014",
+        "MOD-015",
+        "MOD-016",
+        "MOD-017",
+        "MOD-018",
+        "MOD-019",
+        "MOD-020",
+        "MOD-021"
+      ]
+    },
+    "BR_count_unique": {
+      "pass": true,
+      "detail": {
+        "count": 113,
+        "unique": 113
+      }
+    },
+    "BR_continuous": {
+      "pass": true,
+      "detail": []
+    },
+    "AC_count_unique": {
+      "pass": true,
+      "detail": {
+        "count": 1824,
+        "unique": 1824
+      }
+    },
+    "AC_continuous": {
+      "pass": true,
+      "detail": []
+    },
+    "NFR_count_unique": {
+      "pass": true,
+      "detail": {
+        "count": 25,
+        "unique": 25
+      }
+    },
+    "NFR_continuous": {
+      "pass": true,
+      "detail": []
+    },
+    "FR_total_unique": {
+      "pass": true,
+      "detail": {
+        "count": 279,
+        "unique": 279
+      }
+    },
+    "FR_continuous": {
+      "pass": true,
+      "detail": ""
+    },
+    "BR_trace_complete": {
+      "pass": true,
+      "detail": ""
+    },
+    "FR_without_AC_0": {
+      "pass": true,
+      "detail": []
+    },
+    "new_AC_35": {
+      "pass": true,
+      "detail": 35
+    },
+    "new_AC_all_Gherkin": {
+      "pass": true,
+      "detail": []
+    },
+    "openapi_operations_244": {
+      "pass": true,
+      "detail": 244
+    },
+    "operations_mapped_244": {
+      "pass": true,
+      "detail": []
+    },
+    "new_permissions_known": {
+      "pass": true,
+      "detail": []
+    },
+    "new_stable_errors_known": {
+      "pass": true,
+      "detail": []
+    },
+    "stage3_field_rows_1078": {
+      "pass": true,
+      "detail": 1078
+    },
+    "stage3_unverified_0": {
+      "pass": true,
+      "detail": ""
+    },
+    "stage3_provisional_0": {
+      "pass": true,
+      "detail": ""
+    },
+    "new_fields_in_stage3_trace": {
+      "pass": true,
+      "detail": []
+    },
+    "OQ_001_fixed": {
+      "pass": true,
+      "detail": ""
+    },
+    "OQ_003_fixed": {
+      "pass": true,
+      "detail": ""
+    },
+    "no_avatar_in_employee_contract": {
+      "pass": true,
+      "detail": ""
+    },
+    "no_client_postfilter": {
+      "pass": true,
+      "detail": ""
+    },
+    "non_color_accessibility": {
+      "pass": true,
+      "detail": ""
+    },
+    "source_hash_Organizer_Stage2_Technical_Specification_2.3_Final.zip": {
+      "pass": true,
+      "detail": "75EFC3E83F09FBCC41AE7DA68A96F2EC0EBDFC74E61F62615F4DA3478AFE5019"
+    },
+    "source_hash_Organizer_Stage3_Final_Baseline_3.5.zip": {
+      "pass": true,
+      "detail": "6C2447E935DD413488E482F7DB3C481C8DC6E53AEB57A07D1DF23D3ADA85381E"
+    },
+    "source_hash_Organizer_Stage4_1_2_PRD_Delta_Input.zip": {
+      "pass": true,
+      "detail": "866F5DAC06ABA44B847F3C06D6AC8C326363B71DCB594F8E92C7A06A2E8AD21A"
+    },
+    "package_hash_Organizer_Stage4_PRD_Candidate_4.1.2.zip": {
+      "pass": true,
+      "detail": "84260071D3917AE00AA617FDBF2E5AB540A719F7D717367B0504E36159845AF9"
+    },
+    "sidecar_Organizer_Stage4_PRD_Candidate_4.1.2.zip": {
+      "pass": true,
+      "detail": "84260071D3917AE00AA617FDBF2E5AB540A719F7D717367B0504E36159845AF9 *Organizer_Stage4_PRD_Candidate_4.1.2.zip"
+    },
+    "crc_Organizer_Stage4_PRD_Candidate_4.1.2.zip": {
+      "pass": true,
+      "detail": ""
+    },
+    "entries_Organizer_Stage4_PRD_Candidate_4.1.2.zip": {
+      "pass": true,
+      "detail": 15
+    },
+    "package_hash_Organizer_Stage4_2_Audit_Input.zip": {
+      "pass": true,
+      "detail": "4CC6DF2A7CF54F3E692971BDB2A39322615442748E95AD7104A1564229CD845F"
+    },
+    "sidecar_Organizer_Stage4_2_Audit_Input.zip": {
+      "pass": true,
+      "detail": "4CC6DF2A7CF54F3E692971BDB2A39322615442748E95AD7104A1564229CD845F *Organizer_Stage4_2_Audit_Input.zip"
+    },
+    "crc_Organizer_Stage4_2_Audit_Input.zip": {
+      "pass": true,
+      "detail": ""
+    },
+    "entries_Organizer_Stage4_2_Audit_Input.zip": {
+      "pass": true,
+      "detail": 24
+    },
+    "candidate_manifest_hashes": {
+      "pass": true,
+      "detail": []
+    },
+    "audit_manifest_hashes": {
+      "pass": true,
+      "detail": []
+    },
+    "normalized_stage3_hash": {
+      "pass": true,
+      "detail": ""
+    },
+    "root_docs_current_baselines": {
+      "pass": true,
+      "detail": ""
+    }
+  },
+  "errors": []
+}

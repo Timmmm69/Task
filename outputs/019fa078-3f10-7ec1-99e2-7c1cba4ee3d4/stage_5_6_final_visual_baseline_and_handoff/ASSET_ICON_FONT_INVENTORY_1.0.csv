@@ -1,0 +1,7 @@
+Asset,Source/package,Version,License,Use,Handoff note
+Fluent UI React Icons,@fluentui/react-icons,2.0.334,MIT,Interface icons,Bundled dependency; keep accessible names on controls
+React,react,19.2.0,MIT,Prototype runtime,Development handoff dependency
+React DOM,react-dom,19.2.0,MIT,Prototype rendering,Development handoff dependency
+Vite,vite,6.4.2,MIT,Build tool,Development-only; not a visual asset
+System UI font stack,Windows system fonts,OS-provided,Operating-system license,Desktop typography,No font binaries redistributed
+Task app mark,Prototype source asset,1.0,Project-owned,Window/app identity,No third-party raster asset

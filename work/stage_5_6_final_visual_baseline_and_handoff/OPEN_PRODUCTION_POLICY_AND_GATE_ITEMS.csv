@@ -1,0 +1,9 @@
+Item ID,Item,Owner,Status,Required action
+OQ-004,Avatar in MVP,Product owner,OPEN,Confirm exclusion or authorize contract change.
+OQ-005,Windows toast fallback,Product owner + QA,OPEN,Confirm Notification Center + diagnostics fallback.
+OQ-006,SMB diagnostics boundary,IT owner + QA,OPEN,Confirm metadata permission versus OS/SMB access split.
+OQ-009,First-release locales,Product owner,OPEN,Confirm RU-only versus multi-locale scope.
+GATE-WIN-UIA,Native Windows UIA/Narrator verification,QA + desktop tech lead,PENDING,Run against compiled Windows client.
+GATE-WIN-DPI,Actual Windows 100/125/150/175/200% multi-monitor verification,QA + desktop tech lead,PENDING,Run in controlled Windows environment.
+GATE-USABILITY,Moderated employee/admin participant sessions,UX + Product owner,PENDING,"Collect participant metrics, quotes and acceptance."
+GATE-5.6,Product/design/desktop/QA handoff signatures,Named owners,PENDING,Sign after external evidence review.

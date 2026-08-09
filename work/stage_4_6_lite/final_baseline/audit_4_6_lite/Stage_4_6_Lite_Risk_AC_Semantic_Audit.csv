@@ -1,0 +1,591 @@
+﻿AC ID,Categories,Module,One scenario,One expected result,Correct owner,Unambiguous test,No hidden tests,No FR/BR conflict,No duplicate,No MVP expansion,Known entities,Result,Evidence
+AC-1917,stratified 10% remainder,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-243;DATA-002; scenario=Contract projection for FR-243
+AC-1923,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-002;PERM-001; scenario=Permission denial for FR-002
+AC-1924,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-003;PERM-001; scenario=Permission denial for FR-003
+AC-1925,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-004;PERM-001; scenario=Permission denial for FR-004
+AC-1926,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-005;PERM-001; scenario=Permission denial for FR-005
+AC-1927,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-006;PERM-001; scenario=Permission denial for FR-006
+AC-1928,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-007;PERM-001; scenario=Permission denial for FR-007
+AC-1929,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-008;PERM-001; scenario=Permission denial for FR-008
+AC-1930,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-009;PERM-001; scenario=Permission denial for FR-009
+AC-1931,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-010;PERM-001; scenario=Permission denial for FR-010
+AC-1932,permissions/partial access; security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-242;PERM-001; scenario=Permission denial for FR-242
+AC-1933,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-012;PERM-002; scenario=Permission denial for FR-012
+AC-1934,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-013;PERM-002; scenario=Permission denial for FR-013
+AC-1935,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-014;PERM-002; scenario=Permission denial for FR-014
+AC-1936,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-015;PERM-002; scenario=Permission denial for FR-015
+AC-1937,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-016;PERM-002; scenario=Permission denial for FR-016
+AC-1938,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-243;PERM-002; scenario=Permission denial for FR-243
+AC-1939,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-244;PERM-002; scenario=Permission denial for FR-244
+AC-1940,permissions/partial access; security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-245;PERM-002; scenario=Permission denial for FR-245
+AC-1941,permissions/partial access; security audit,MOD-003,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-246;PERM-003; scenario=Permission denial for FR-246
+AC-1942,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-019;PERM-004; scenario=Permission denial for FR-019
+AC-1943,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-020;PERM-004; scenario=Permission denial for FR-020
+AC-1944,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-021;PERM-004; scenario=Permission denial for FR-021
+AC-1945,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-022;PERM-004; scenario=Permission denial for FR-022
+AC-1946,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-023;PERM-004; scenario=Permission denial for FR-023
+AC-1947,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-024;PERM-004; scenario=Permission denial for FR-024
+AC-1948,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-025;PERM-004; scenario=Permission denial for FR-025
+AC-1949,permissions/partial access; security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-247;PERM-004; scenario=Permission denial for FR-247
+AC-1950,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-027;PERM-005; scenario=Permission denial for FR-027
+AC-1951,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-028;PERM-005; scenario=Permission denial for FR-028
+AC-1952,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-029;PERM-005; scenario=Permission denial for FR-029
+AC-1953,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-030;PERM-005; scenario=Permission denial for FR-030
+AC-1954,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-031;PERM-005; scenario=Permission denial for FR-031
+AC-1955,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-032;PERM-005; scenario=Permission denial for FR-032
+AC-1956,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-033;PERM-005; scenario=Permission denial for FR-033
+AC-1957,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-034;PERM-005; scenario=Permission denial for FR-034
+AC-1958,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-035;PERM-005; scenario=Permission denial for FR-035
+AC-1959,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-036;PERM-005; scenario=Permission denial for FR-036
+AC-1960,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-037;PERM-005; scenario=Permission denial for FR-037
+AC-1961,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-038;PERM-005; scenario=Permission denial for FR-038
+AC-1962,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-039;PERM-005; scenario=Permission denial for FR-039
+AC-1963,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-040;PERM-005; scenario=Permission denial for FR-040
+AC-1964,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-248;PERM-005; scenario=Permission denial for FR-248
+AC-1965,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-249;PERM-005; scenario=Permission denial for FR-249
+AC-1966,permissions/partial access; security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-250;PERM-005; scenario=Permission denial for FR-250
+AC-1967,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-042;PERM-006; scenario=Permission denial for FR-042
+AC-1968,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-043;PERM-006; scenario=Permission denial for FR-043
+AC-1969,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-044;PERM-006; scenario=Permission denial for FR-044
+AC-1970,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-045;PERM-006; scenario=Permission denial for FR-045
+AC-1971,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-046;PERM-006; scenario=Permission denial for FR-046
+AC-1972,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-047;PERM-006; scenario=Permission denial for FR-047
+AC-1973,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-048;PERM-006; scenario=Permission denial for FR-048
+AC-1974,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-049;PERM-006; scenario=Permission denial for FR-049
+AC-1975,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-050;PERM-006; scenario=Permission denial for FR-050
+AC-1976,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-051;PERM-006; scenario=Permission denial for FR-051
+AC-1977,permissions/partial access; security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-251;PERM-006; scenario=Permission denial for FR-251
+AC-1978,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-053;PERM-007; scenario=Permission denial for FR-053
+AC-1979,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-054;PERM-007; scenario=Permission denial for FR-054
+AC-1980,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-055;PERM-007; scenario=Permission denial for FR-055
+AC-1981,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-056;PERM-007; scenario=Permission denial for FR-056
+AC-1982,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-057;PERM-007; scenario=Permission denial for FR-057
+AC-1983,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-058;PERM-007; scenario=Permission denial for FR-058
+AC-1984,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-059;PERM-007; scenario=Permission denial for FR-059
+AC-1985,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-060;PERM-007; scenario=Permission denial for FR-060
+AC-1986,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-061;PERM-007; scenario=Permission denial for FR-061
+AC-1987,permissions/partial access; security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-252;PERM-007; scenario=Permission denial for FR-252
+AC-1988,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-063;PERM-008; scenario=Permission denial for FR-063
+AC-1989,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-064;PERM-008; scenario=Permission denial for FR-064
+AC-1990,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-065;PERM-008; scenario=Permission denial for FR-065
+AC-1991,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-066;PERM-008; scenario=Permission denial for FR-066
+AC-1992,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-067;PERM-008; scenario=Permission denial for FR-067
+AC-1993,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-068;PERM-008; scenario=Permission denial for FR-068
+AC-1994,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-069;PERM-008; scenario=Permission denial for FR-069
+AC-1995,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-070;PERM-008; scenario=Permission denial for FR-070
+AC-1996,permissions/partial access; security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-253;PERM-008; scenario=Permission denial for FR-253
+AC-1997,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-072;PERM-009; scenario=Permission denial for FR-072
+AC-1998,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-073;PERM-009; scenario=Permission denial for FR-073
+AC-1999,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-074;PERM-009; scenario=Permission denial for FR-074
+AC-2000,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-075;PERM-009; scenario=Permission denial for FR-075
+AC-2001,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-076;PERM-009; scenario=Permission denial for FR-076
+AC-2002,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-077;PERM-009; scenario=Permission denial for FR-077
+AC-2003,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-078;PERM-009; scenario=Permission denial for FR-078
+AC-2004,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-079;PERM-009; scenario=Permission denial for FR-079
+AC-2005,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-080;PERM-009; scenario=Permission denial for FR-080
+AC-2006,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-081;PERM-009; scenario=Permission denial for FR-081
+AC-2007,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-082;PERM-009; scenario=Permission denial for FR-082
+AC-2008,permissions/partial access; security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-254;PERM-009; scenario=Permission denial for FR-254
+AC-2009,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-084;PERM-010; scenario=Permission denial for FR-084
+AC-2010,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-085;PERM-010; scenario=Permission denial for FR-085
+AC-2011,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-086;PERM-010; scenario=Permission denial for FR-086
+AC-2012,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-087;PERM-010; scenario=Permission denial for FR-087
+AC-2013,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-088;PERM-010; scenario=Permission denial for FR-088
+AC-2014,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-089;PERM-010; scenario=Permission denial for FR-089
+AC-2015,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-090;PERM-010; scenario=Permission denial for FR-090
+AC-2016,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-091;PERM-010; scenario=Permission denial for FR-091
+AC-2017,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-092;PERM-010; scenario=Permission denial for FR-092
+AC-2018,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-093;PERM-010; scenario=Permission denial for FR-093
+AC-2019,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-094;PERM-010; scenario=Permission denial for FR-094
+AC-2020,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-095;PERM-010; scenario=Permission denial for FR-095
+AC-2021,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-096;PERM-010; scenario=Permission denial for FR-096
+AC-2022,permissions/partial access; security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-255;PERM-010; scenario=Permission denial for FR-255
+AC-2023,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-098;PERM-011; scenario=Permission denial for FR-098
+AC-2024,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-099;PERM-011; scenario=Permission denial for FR-099
+AC-2025,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-100;PERM-011; scenario=Permission denial for FR-100
+AC-2026,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-101;PERM-011; scenario=Permission denial for FR-101
+AC-2027,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-102;PERM-011; scenario=Permission denial for FR-102
+AC-2028,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-103;PERM-011; scenario=Permission denial for FR-103
+AC-2029,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-104;PERM-011; scenario=Permission denial for FR-104
+AC-2030,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-105;PERM-011; scenario=Permission denial for FR-105
+AC-2031,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-106;PERM-011; scenario=Permission denial for FR-106
+AC-2032,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-107;PERM-011; scenario=Permission denial for FR-107
+AC-2033,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-108;PERM-011; scenario=Permission denial for FR-108
+AC-2034,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-109;PERM-011; scenario=Permission denial for FR-109
+AC-2035,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-110;PERM-011; scenario=Permission denial for FR-110
+AC-2036,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-111;PERM-011; scenario=Permission denial for FR-111
+AC-2037,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-112;PERM-011; scenario=Permission denial for FR-112
+AC-2038,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-256;PERM-011; scenario=Permission denial for FR-256
+AC-2039,permissions/partial access; security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-257;PERM-011; scenario=Permission denial for FR-257
+AC-2040,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-114;PERM-012; scenario=Permission denial for FR-114
+AC-2041,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-115;PERM-012; scenario=Permission denial for FR-115
+AC-2042,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-116;PERM-012; scenario=Permission denial for FR-116
+AC-2043,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-117;PERM-012; scenario=Permission denial for FR-117
+AC-2044,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-118;PERM-012; scenario=Permission denial for FR-118
+AC-2045,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-119;PERM-012; scenario=Permission denial for FR-119
+AC-2046,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-120;PERM-012; scenario=Permission denial for FR-120
+AC-2047,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-121;PERM-012; scenario=Permission denial for FR-121
+AC-2048,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-122;PERM-012; scenario=Permission denial for FR-122
+AC-2049,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-123;PERM-012; scenario=Permission denial for FR-123
+AC-2050,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-124;PERM-012; scenario=Permission denial for FR-124
+AC-2051,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-125;PERM-012; scenario=Permission denial for FR-125
+AC-2052,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-126;PERM-012; scenario=Permission denial for FR-126
+AC-2053,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-127;PERM-012; scenario=Permission denial for FR-127
+AC-2054,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-128;PERM-012; scenario=Permission denial for FR-128
+AC-2055,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-129;PERM-012; scenario=Permission denial for FR-129
+AC-2056,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-130;PERM-012; scenario=Permission denial for FR-130
+AC-2057,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-131;PERM-012; scenario=Permission denial for FR-131
+AC-2058,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-132;PERM-012; scenario=Permission denial for FR-132
+AC-2059,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-133;PERM-012; scenario=Permission denial for FR-133
+AC-2060,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-134;PERM-012; scenario=Permission denial for FR-134
+AC-2061,permissions/partial access; security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-258;PERM-012; scenario=Permission denial for FR-258
+AC-2062,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-136;PERM-013; scenario=Permission denial for FR-136
+AC-2063,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-137;PERM-013; scenario=Permission denial for FR-137
+AC-2064,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-138;PERM-013; scenario=Permission denial for FR-138
+AC-2065,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-139;PERM-013; scenario=Permission denial for FR-139
+AC-2066,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-140;PERM-013; scenario=Permission denial for FR-140
+AC-2067,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-141;PERM-013; scenario=Permission denial for FR-141
+AC-2068,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-142;PERM-013; scenario=Permission denial for FR-142
+AC-2069,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-143;PERM-013; scenario=Permission denial for FR-143
+AC-2070,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-144;PERM-013; scenario=Permission denial for FR-144
+AC-2071,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-145;PERM-013; scenario=Permission denial for FR-145
+AC-2072,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-146;PERM-013; scenario=Permission denial for FR-146
+AC-2073,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-147;PERM-013; scenario=Permission denial for FR-147
+AC-2074,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-148;PERM-013; scenario=Permission denial for FR-148
+AC-2075,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-149;PERM-013; scenario=Permission denial for FR-149
+AC-2076,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-150;PERM-013; scenario=Permission denial for FR-150
+AC-2077,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-151;PERM-013; scenario=Permission denial for FR-151
+AC-2078,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-152;PERM-013; scenario=Permission denial for FR-152
+AC-2079,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-153;PERM-013; scenario=Permission denial for FR-153
+AC-2080,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-154;PERM-013; scenario=Permission denial for FR-154
+AC-2081,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-155;PERM-013; scenario=Permission denial for FR-155
+AC-2082,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-156;PERM-013; scenario=Permission denial for FR-156
+AC-2083,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-157;PERM-013; scenario=Permission denial for FR-157
+AC-2084,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-158;PERM-013; scenario=Permission denial for FR-158
+AC-2085,permissions/partial access; security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-259;PERM-013; scenario=Permission denial for FR-259
+AC-2086,OQ-003/MOD-014; permissions/partial access; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-160;PERM-014; scenario=Permission denial for FR-160
+AC-2087,OQ-003/MOD-014; permissions/partial access; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-260;PERM-014; scenario=Permission denial for FR-260
+AC-2088,OQ-003/MOD-014; permissions/partial access; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-275;PERM-014; scenario=Permission denial for FR-275
+AC-2089,OQ-003/MOD-014; permissions/partial access; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-276;PERM-014; scenario=Permission denial for FR-276
+AC-2090,OQ-003/MOD-014; permissions/partial access; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-277;PERM-014; scenario=Permission denial for FR-277
+AC-2091,OQ-003/MOD-014; permissions/partial access; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-278;PERM-014; scenario=Permission denial for FR-278
+AC-2092,permissions/partial access; security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-162;PERM-015; scenario=Permission denial for FR-162
+AC-2093,permissions/partial access; security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-163;PERM-015; scenario=Permission denial for FR-163
+AC-2094,permissions/partial access; security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-164;PERM-015; scenario=Permission denial for FR-164
+AC-2095,permissions/partial access; security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-165;PERM-015; scenario=Permission denial for FR-165
+AC-2096,permissions/partial access; security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-261;PERM-015; scenario=Permission denial for FR-261
+AC-2097,permissions/partial access; security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-279;PERM-015; scenario=Permission denial for FR-279
+AC-2098,permissions/partial access; security audit,MOD-016,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-167;PERM-016; scenario=Permission denial for FR-167
+AC-2099,permissions/partial access; security audit,MOD-016,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-262;PERM-016; scenario=Permission denial for FR-262
+AC-2100,permissions/partial access; security audit,MOD-017,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-169;PERM-017; scenario=Permission denial for FR-169
+AC-2101,permissions/partial access; security audit,MOD-017,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-170;PERM-017; scenario=Permission denial for FR-170
+AC-2102,permissions/partial access; security audit,MOD-017,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-263;PERM-017; scenario=Permission denial for FR-263
+AC-2103,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-172;PERM-018; scenario=Permission denial for FR-172
+AC-2104,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-173;PERM-018; scenario=Permission denial for FR-173
+AC-2105,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-174;PERM-018; scenario=Permission denial for FR-174
+AC-2106,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-175;PERM-018; scenario=Permission denial for FR-175
+AC-2107,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-176;PERM-018; scenario=Permission denial for FR-176
+AC-2108,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-264;PERM-018; scenario=Permission denial for FR-264
+AC-2109,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-270;PERM-018; scenario=Permission denial for FR-270
+AC-2110,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-271;PERM-018; scenario=Permission denial for FR-271
+AC-2111,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-272;PERM-018; scenario=Permission denial for FR-272
+AC-2112,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-273;PERM-018; scenario=Permission denial for FR-273
+AC-2113,permissions/partial access; security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-274;PERM-018; scenario=Permission denial for FR-274
+AC-2114,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-178;PERM-019; scenario=Permission denial for FR-178
+AC-2115,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-179;PERM-019; scenario=Permission denial for FR-179
+AC-2116,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-180;PERM-019; scenario=Permission denial for FR-180
+AC-2117,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-181;PERM-019; scenario=Permission denial for FR-181
+AC-2118,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-182;PERM-019; scenario=Permission denial for FR-182
+AC-2119,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-183;PERM-019; scenario=Permission denial for FR-183
+AC-2120,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-184;PERM-019; scenario=Permission denial for FR-184
+AC-2121,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-185;PERM-019; scenario=Permission denial for FR-185
+AC-2122,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-186;PERM-019; scenario=Permission denial for FR-186
+AC-2123,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-187;PERM-019; scenario=Permission denial for FR-187
+AC-2124,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-188;PERM-019; scenario=Permission denial for FR-188
+AC-2125,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-189;PERM-019; scenario=Permission denial for FR-189
+AC-2126,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-190;PERM-019; scenario=Permission denial for FR-190
+AC-2127,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-191;PERM-019; scenario=Permission denial for FR-191
+AC-2128,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-192;PERM-019; scenario=Permission denial for FR-192
+AC-2129,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-193;PERM-019; scenario=Permission denial for FR-193
+AC-2130,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-194;PERM-019; scenario=Permission denial for FR-194
+AC-2131,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-195;PERM-019; scenario=Permission denial for FR-195
+AC-2132,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-196;PERM-019; scenario=Permission denial for FR-196
+AC-2133,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-197;PERM-019; scenario=Permission denial for FR-197
+AC-2134,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-198;PERM-019; scenario=Permission denial for FR-198
+AC-2135,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-199;PERM-019; scenario=Permission denial for FR-199
+AC-2136,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-200;PERM-019; scenario=Permission denial for FR-200
+AC-2137,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-201;PERM-019; scenario=Permission denial for FR-201
+AC-2138,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-202;PERM-019; scenario=Permission denial for FR-202
+AC-2139,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-203;PERM-019; scenario=Permission denial for FR-203
+AC-2140,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-204;PERM-019; scenario=Permission denial for FR-204
+AC-2141,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-205;PERM-019; scenario=Permission denial for FR-205
+AC-2142,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-206;PERM-019; scenario=Permission denial for FR-206
+AC-2143,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-207;PERM-019; scenario=Permission denial for FR-207
+AC-2144,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-208;PERM-019; scenario=Permission denial for FR-208
+AC-2145,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-209;PERM-019; scenario=Permission denial for FR-209
+AC-2146,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-210;PERM-019; scenario=Permission denial for FR-210
+AC-2147,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-211;PERM-019; scenario=Permission denial for FR-211
+AC-2148,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-212;PERM-019; scenario=Permission denial for FR-212
+AC-2149,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-213;PERM-019; scenario=Permission denial for FR-213
+AC-2150,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-214;PERM-019; scenario=Permission denial for FR-214
+AC-2151,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-215;PERM-019; scenario=Permission denial for FR-215
+AC-2152,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-216;PERM-019; scenario=Permission denial for FR-216
+AC-2153,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-217;PERM-019; scenario=Permission denial for FR-217
+AC-2154,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-218;PERM-019; scenario=Permission denial for FR-218
+AC-2155,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-219;PERM-019; scenario=Permission denial for FR-219
+AC-2156,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-220;PERM-019; scenario=Permission denial for FR-220
+AC-2157,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-221;PERM-019; scenario=Permission denial for FR-221
+AC-2158,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-222;PERM-019; scenario=Permission denial for FR-222
+AC-2159,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-223;PERM-019; scenario=Permission denial for FR-223
+AC-2160,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-224;PERM-019; scenario=Permission denial for FR-224
+AC-2161,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-225;PERM-019; scenario=Permission denial for FR-225
+AC-2162,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-226;PERM-019; scenario=Permission denial for FR-226
+AC-2163,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-227;PERM-019; scenario=Permission denial for FR-227
+AC-2164,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-228;PERM-019; scenario=Permission denial for FR-228
+AC-2165,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-229;PERM-019; scenario=Permission denial for FR-229
+AC-2166,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-230;PERM-019; scenario=Permission denial for FR-230
+AC-2167,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-265;PERM-019; scenario=Permission denial for FR-265
+AC-2168,permissions/partial access; security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-232;PERM-020; scenario=Permission denial for FR-232
+AC-2169,permissions/partial access; security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-233;PERM-020; scenario=Permission denial for FR-233
+AC-2170,permissions/partial access; security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-234;PERM-020; scenario=Permission denial for FR-234
+AC-2171,permissions/partial access; security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-266;PERM-020; scenario=Permission denial for FR-266
+AC-2172,permissions/partial access; security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-267;PERM-020; scenario=Permission denial for FR-267
+AC-2173,permissions/partial access; security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-268;PERM-020; scenario=Permission denial for FR-268
+AC-2174,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-236;PERM-021; scenario=Permission denial for FR-236
+AC-2175,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-237;PERM-021; scenario=Permission denial for FR-237
+AC-2176,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-238;PERM-021; scenario=Permission denial for FR-238
+AC-2177,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-239;PERM-021; scenario=Permission denial for FR-239
+AC-2178,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-240;PERM-021; scenario=Permission denial for FR-240
+AC-2179,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-241;PERM-021; scenario=Permission denial for FR-241
+AC-2180,permissions/partial access; security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-269;PERM-021; scenario=Permission denial for FR-269
+AC-2182,redaction/blocked users,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-003;ERR-001; scenario=Stable error handling for FR-003
+AC-2188,stratified 10% remainder,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-009;ERR-001; scenario=Stable error handling for FR-009
+AC-2193,stratified 10% remainder,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-014;ERR-002; scenario=Stable error handling for FR-014
+AC-2201,stratified 10% remainder,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-020;ERR-004; scenario=Stable error handling for FR-020
+AC-2210,stratified 10% remainder,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-029;ERR-005; scenario=Stable error handling for FR-029
+AC-2212,stratified 10% remainder,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-031;ERR-005; scenario=Stable error handling for FR-031
+AC-2234,stratified 10% remainder,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-051;ERR-006; scenario=Stable error handling for FR-051
+AC-2244,stratified 10% remainder,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-061;ERR-007; scenario=Stable error handling for FR-061
+AC-2248,stratified 10% remainder,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-065;ERR-008; scenario=Stable error handling for FR-065
+AC-2255,stratified 10% remainder,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-072;ERR-009; scenario=Stable error handling for FR-072
+AC-2269,stratified 10% remainder,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-086;ERR-010; scenario=Stable error handling for FR-086
+AC-2283,stratified 10% remainder,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-100;ERR-011; scenario=Stable error handling for FR-100
+AC-2293,stratified 10% remainder,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-110;ERR-011; scenario=Stable error handling for FR-110
+AC-2303,stratified 10% remainder,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-119;ERR-012; scenario=Stable error handling for FR-119
+AC-2319,stratified 10% remainder,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-258;ERR-012; scenario=Stable error handling for FR-258
+AC-2320,stratified 10% remainder,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-136;ERR-013; scenario=Stable error handling for FR-136
+AC-2321,stratified 10% remainder,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-137;ERR-013; scenario=Stable error handling for FR-137
+AC-2344,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-160;ERR-014; scenario=Stable error handling for FR-160
+AC-2345,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-260;ERR-014; scenario=Stable error handling for FR-260
+AC-2346,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-275;ERR-014; scenario=Stable error handling for FR-275
+AC-2347,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-276;ERR-014; scenario=Stable error handling for FR-276
+AC-2348,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-277;ERR-014; scenario=Stable error handling for FR-277
+AC-2349,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-278;ERR-014; scenario=Stable error handling for FR-278
+AC-2354,stratified 10% remainder,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-261;ERR-015; scenario=Stable error handling for FR-261
+AC-2365,stratified 10% remainder,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-176;ERR-018; scenario=Stable error handling for FR-176
+AC-2374,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-180;ERR-019; scenario=Stable error handling for FR-180
+AC-2389,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-195;ERR-019; scenario=Stable error handling for FR-195
+AC-2390,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-196;ERR-019; scenario=Stable error handling for FR-196
+AC-2392,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-198;ERR-019; scenario=Stable error handling for FR-198
+AC-2404,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-210;ERR-019; scenario=Stable error handling for FR-210
+AC-2406,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-212;ERR-019; scenario=Stable error handling for FR-212
+AC-2413,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-219;ERR-019; scenario=Stable error handling for FR-219
+AC-2420,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-226;ERR-019; scenario=Stable error handling for FR-226
+AC-2422,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-228;ERR-019; scenario=Stable error handling for FR-228
+AC-2429,stratified 10% remainder,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-266;ERR-020; scenario=Stable error handling for FR-266
+AC-2432,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-236;ERR-021; scenario=Stable error handling for FR-236
+AC-2433,stratified 10% remainder,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-237;ERR-021; scenario=Stable error handling for FR-237
+AC-2440,stratified 10% remainder,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-003;SYNC-001; scenario=Command outage behavior for FR-003
+AC-2452,stratified 10% remainder,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-015;SYNC-002; scenario=Read outage behavior for FR-015
+AC-2462,stratified 10% remainder,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-023;SYNC-004; scenario=Command outage behavior for FR-023
+AC-2477,stratified 10% remainder,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-038;SYNC-005; scenario=Command outage behavior for FR-038
+AC-2481,stratified 10% remainder,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-249;SYNC-005; scenario=Read outage behavior for FR-249
+AC-2489,stratified 10% remainder,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-048;SYNC-006; scenario=Read outage behavior for FR-048
+AC-2494,stratified 10% remainder,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-053;SYNC-007; scenario=Command outage behavior for FR-053
+AC-2505,stratified 10% remainder,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-064;SYNC-008; scenario=Read outage behavior for FR-064
+AC-2515,stratified 10% remainder,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-074;SYNC-009; scenario=Command outage behavior for FR-074
+AC-2527,stratified 10% remainder,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-086;SYNC-010; scenario=Read outage behavior for FR-086
+AC-2542,stratified 10% remainder,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-101;SYNC-011; scenario=Command outage behavior for FR-101
+AC-2545,stratified 10% remainder,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-104;SYNC-011; scenario=Command outage behavior for FR-104
+AC-2561,stratified 10% remainder,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-119;SYNC-012; scenario=Command outage behavior for FR-119
+AC-2565,stratified 10% remainder,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-123;SYNC-012; scenario=Read outage behavior for FR-123
+AC-2584,stratified 10% remainder,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-142;SYNC-013; scenario=Read outage behavior for FR-142
+AC-2591,stratified 10% remainder,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-149;SYNC-013; scenario=Read outage behavior for FR-149
+AC-2602,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-160;SYNC-014; scenario=Read outage behavior for FR-160
+AC-2603,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-260;SYNC-014; scenario=Read outage behavior for FR-260
+AC-2604,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-275;SYNC-014; scenario=Read outage behavior for FR-275
+AC-2605,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-276;SYNC-014; scenario=Read outage behavior for FR-276
+AC-2606,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-277;SYNC-014; scenario=Read outage behavior for FR-277
+AC-2607,OQ-003/MOD-014,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-278;SYNC-014; scenario=Read outage behavior for FR-278
+AC-2613,stratified 10% remainder,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-279;SYNC-015; scenario=Read outage behavior for FR-279
+AC-2627,stratified 10% remainder,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-272;SYNC-018; scenario=Command outage behavior for FR-272
+AC-2632,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-180;SYNC-019; scenario=Command outage behavior for FR-180
+AC-2633,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-181;SYNC-019; scenario=Command outage behavior for FR-181
+AC-2652,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-200;SYNC-019; scenario=Read outage behavior for FR-200
+AC-2661,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-209;SYNC-019; scenario=Read outage behavior for FR-209
+AC-2662,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-210;SYNC-019; scenario=Read outage behavior for FR-210
+AC-2664,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-212;SYNC-019; scenario=Command outage behavior for FR-212
+AC-2671,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-219;SYNC-019; scenario=Command outage behavior for FR-219
+AC-2680,permissions/partial access,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-228;SYNC-019; scenario=Read outage behavior for FR-228
+AC-2683,stratified 10% remainder,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-265;SYNC-019; scenario=Read outage behavior for FR-265
+AC-2684,stratified 10% remainder,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-232;SYNC-020; scenario=Command outage behavior for FR-232
+AC-2690,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-236;SYNC-021; scenario=Read outage behavior for FR-236
+AC-2691,stratified 10% remainder,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-237;SYNC-021; scenario=Read outage behavior for FR-237
+AC-2697,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-002;AUDIT-001; scenario=Audit evidence for FR-002
+AC-2698,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-003;AUDIT-001; scenario=Audit evidence for FR-003
+AC-2699,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-004;AUDIT-001; scenario=Audit evidence for FR-004
+AC-2700,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-005;AUDIT-001; scenario=Audit evidence for FR-005
+AC-2701,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-006;AUDIT-001; scenario=Audit evidence for FR-006
+AC-2702,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-007;AUDIT-001; scenario=Audit evidence for FR-007
+AC-2703,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-008;AUDIT-001; scenario=Audit evidence for FR-008
+AC-2704,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-009;AUDIT-001; scenario=Audit evidence for FR-009
+AC-2705,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-010;AUDIT-001; scenario=Audit evidence for FR-010
+AC-2706,security audit,MOD-001,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-242;AUDIT-001; scenario=Audit evidence for FR-242
+AC-2707,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-012;AUDIT-002; scenario=Audit evidence for FR-012
+AC-2708,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-013;AUDIT-002; scenario=Audit evidence for FR-013
+AC-2709,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-014;AUDIT-002; scenario=Audit evidence for FR-014
+AC-2710,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-015;AUDIT-002; scenario=Audit evidence for FR-015
+AC-2711,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-016;AUDIT-002; scenario=Audit evidence for FR-016
+AC-2712,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-243;AUDIT-002; scenario=Audit evidence for FR-243
+AC-2713,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-244;AUDIT-002; scenario=Audit evidence for FR-244
+AC-2714,security audit,MOD-002,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-245;AUDIT-002; scenario=Audit evidence for FR-245
+AC-2715,security audit,MOD-003,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-246;AUDIT-003; scenario=Audit evidence for FR-246
+AC-2716,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-019;AUDIT-004; scenario=Audit evidence for FR-019
+AC-2717,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-020;AUDIT-004; scenario=Audit evidence for FR-020
+AC-2718,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-021;AUDIT-004; scenario=Audit evidence for FR-021
+AC-2719,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-022;AUDIT-004; scenario=Audit evidence for FR-022
+AC-2720,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-023;AUDIT-004; scenario=Audit evidence for FR-023
+AC-2721,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-024;AUDIT-004; scenario=Audit evidence for FR-024
+AC-2722,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-025;AUDIT-004; scenario=Audit evidence for FR-025
+AC-2723,security audit,MOD-004,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-247;AUDIT-004; scenario=Audit evidence for FR-247
+AC-2724,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-027;AUDIT-005; scenario=Audit evidence for FR-027
+AC-2725,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-028;AUDIT-005; scenario=Audit evidence for FR-028
+AC-2726,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-029;AUDIT-005; scenario=Audit evidence for FR-029
+AC-2727,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-030;AUDIT-005; scenario=Audit evidence for FR-030
+AC-2728,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-031;AUDIT-005; scenario=Audit evidence for FR-031
+AC-2729,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-032;AUDIT-005; scenario=Audit evidence for FR-032
+AC-2730,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-033;AUDIT-005; scenario=Audit evidence for FR-033
+AC-2731,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-034;AUDIT-005; scenario=Audit evidence for FR-034
+AC-2732,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-035;AUDIT-005; scenario=Audit evidence for FR-035
+AC-2733,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-036;AUDIT-005; scenario=Audit evidence for FR-036
+AC-2734,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-037;AUDIT-005; scenario=Audit evidence for FR-037
+AC-2735,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-038;AUDIT-005; scenario=Audit evidence for FR-038
+AC-2736,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-039;AUDIT-005; scenario=Audit evidence for FR-039
+AC-2737,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-040;AUDIT-005; scenario=Audit evidence for FR-040
+AC-2738,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-248;AUDIT-005; scenario=Audit evidence for FR-248
+AC-2739,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-249;AUDIT-005; scenario=Audit evidence for FR-249
+AC-2740,security audit,MOD-005,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-250;AUDIT-005; scenario=Audit evidence for FR-250
+AC-2741,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-042;AUDIT-006; scenario=Audit evidence for FR-042
+AC-2742,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-043;AUDIT-006; scenario=Audit evidence for FR-043
+AC-2743,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-044;AUDIT-006; scenario=Audit evidence for FR-044
+AC-2744,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-045;AUDIT-006; scenario=Audit evidence for FR-045
+AC-2745,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-046;AUDIT-006; scenario=Audit evidence for FR-046
+AC-2746,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-047;AUDIT-006; scenario=Audit evidence for FR-047
+AC-2747,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-048;AUDIT-006; scenario=Audit evidence for FR-048
+AC-2748,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-049;AUDIT-006; scenario=Audit evidence for FR-049
+AC-2749,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-050;AUDIT-006; scenario=Audit evidence for FR-050
+AC-2750,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-051;AUDIT-006; scenario=Audit evidence for FR-051
+AC-2751,security audit,MOD-006,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-251;AUDIT-006; scenario=Audit evidence for FR-251
+AC-2752,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-053;AUDIT-007; scenario=Audit evidence for FR-053
+AC-2753,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-054;AUDIT-007; scenario=Audit evidence for FR-054
+AC-2754,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-055;AUDIT-007; scenario=Audit evidence for FR-055
+AC-2755,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-056;AUDIT-007; scenario=Audit evidence for FR-056
+AC-2756,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-057;AUDIT-007; scenario=Audit evidence for FR-057
+AC-2757,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-058;AUDIT-007; scenario=Audit evidence for FR-058
+AC-2758,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-059;AUDIT-007; scenario=Audit evidence for FR-059
+AC-2759,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-060;AUDIT-007; scenario=Audit evidence for FR-060
+AC-2760,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-061;AUDIT-007; scenario=Audit evidence for FR-061
+AC-2761,security audit,MOD-007,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-252;AUDIT-007; scenario=Audit evidence for FR-252
+AC-2762,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-063;AUDIT-008; scenario=Audit evidence for FR-063
+AC-2763,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-064;AUDIT-008; scenario=Audit evidence for FR-064
+AC-2764,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-065;AUDIT-008; scenario=Audit evidence for FR-065
+AC-2765,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-066;AUDIT-008; scenario=Audit evidence for FR-066
+AC-2766,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-067;AUDIT-008; scenario=Audit evidence for FR-067
+AC-2767,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-068;AUDIT-008; scenario=Audit evidence for FR-068
+AC-2768,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-069;AUDIT-008; scenario=Audit evidence for FR-069
+AC-2769,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-070;AUDIT-008; scenario=Audit evidence for FR-070
+AC-2770,security audit,MOD-008,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-253;AUDIT-008; scenario=Audit evidence for FR-253
+AC-2771,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-072;AUDIT-009; scenario=Audit evidence for FR-072
+AC-2772,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-073;AUDIT-009; scenario=Audit evidence for FR-073
+AC-2773,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-074;AUDIT-009; scenario=Audit evidence for FR-074
+AC-2774,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-075;AUDIT-009; scenario=Audit evidence for FR-075
+AC-2775,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-076;AUDIT-009; scenario=Audit evidence for FR-076
+AC-2776,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-077;AUDIT-009; scenario=Audit evidence for FR-077
+AC-2777,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-078;AUDIT-009; scenario=Audit evidence for FR-078
+AC-2778,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-079;AUDIT-009; scenario=Audit evidence for FR-079
+AC-2779,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-080;AUDIT-009; scenario=Audit evidence for FR-080
+AC-2780,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-081;AUDIT-009; scenario=Audit evidence for FR-081
+AC-2781,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-082;AUDIT-009; scenario=Audit evidence for FR-082
+AC-2782,security audit,MOD-009,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-254;AUDIT-009; scenario=Audit evidence for FR-254
+AC-2783,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-084;AUDIT-010; scenario=Audit evidence for FR-084
+AC-2784,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-085;AUDIT-010; scenario=Audit evidence for FR-085
+AC-2785,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-086;AUDIT-010; scenario=Audit evidence for FR-086
+AC-2786,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-087;AUDIT-010; scenario=Audit evidence for FR-087
+AC-2787,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-088;AUDIT-010; scenario=Audit evidence for FR-088
+AC-2788,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-089;AUDIT-010; scenario=Audit evidence for FR-089
+AC-2789,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-090;AUDIT-010; scenario=Audit evidence for FR-090
+AC-2790,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-091;AUDIT-010; scenario=Audit evidence for FR-091
+AC-2791,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-092;AUDIT-010; scenario=Audit evidence for FR-092
+AC-2792,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-093;AUDIT-010; scenario=Audit evidence for FR-093
+AC-2793,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-094;AUDIT-010; scenario=Audit evidence for FR-094
+AC-2794,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-095;AUDIT-010; scenario=Audit evidence for FR-095
+AC-2795,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-096;AUDIT-010; scenario=Audit evidence for FR-096
+AC-2796,security audit,MOD-010,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-255;AUDIT-010; scenario=Audit evidence for FR-255
+AC-2797,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-098;AUDIT-011; scenario=Audit evidence for FR-098
+AC-2798,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-099;AUDIT-011; scenario=Audit evidence for FR-099
+AC-2799,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-100;AUDIT-011; scenario=Audit evidence for FR-100
+AC-2800,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-101;AUDIT-011; scenario=Audit evidence for FR-101
+AC-2801,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-102;AUDIT-011; scenario=Audit evidence for FR-102
+AC-2802,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-103;AUDIT-011; scenario=Audit evidence for FR-103
+AC-2803,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-104;AUDIT-011; scenario=Audit evidence for FR-104
+AC-2804,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-105;AUDIT-011; scenario=Audit evidence for FR-105
+AC-2805,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-106;AUDIT-011; scenario=Audit evidence for FR-106
+AC-2806,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-107;AUDIT-011; scenario=Audit evidence for FR-107
+AC-2807,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-108;AUDIT-011; scenario=Audit evidence for FR-108
+AC-2808,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-109;AUDIT-011; scenario=Audit evidence for FR-109
+AC-2809,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-110;AUDIT-011; scenario=Audit evidence for FR-110
+AC-2810,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-111;AUDIT-011; scenario=Audit evidence for FR-111
+AC-2811,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-112;AUDIT-011; scenario=Audit evidence for FR-112
+AC-2812,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-256;AUDIT-011; scenario=Audit evidence for FR-256
+AC-2813,security audit,MOD-011,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-257;AUDIT-011; scenario=Audit evidence for FR-257
+AC-2814,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-114;AUDIT-012; scenario=Audit evidence for FR-114
+AC-2815,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-115;AUDIT-012; scenario=Audit evidence for FR-115
+AC-2816,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-116;AUDIT-012; scenario=Audit evidence for FR-116
+AC-2817,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-117;AUDIT-012; scenario=Audit evidence for FR-117
+AC-2818,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-118;AUDIT-012; scenario=Audit evidence for FR-118
+AC-2819,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-119;AUDIT-012; scenario=Audit evidence for FR-119
+AC-2820,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-120;AUDIT-012; scenario=Audit evidence for FR-120
+AC-2821,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-121;AUDIT-012; scenario=Audit evidence for FR-121
+AC-2822,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-122;AUDIT-012; scenario=Audit evidence for FR-122
+AC-2823,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-123;AUDIT-012; scenario=Audit evidence for FR-123
+AC-2824,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-124;AUDIT-012; scenario=Audit evidence for FR-124
+AC-2825,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-125;AUDIT-012; scenario=Audit evidence for FR-125
+AC-2826,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-126;AUDIT-012; scenario=Audit evidence for FR-126
+AC-2827,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-127;AUDIT-012; scenario=Audit evidence for FR-127
+AC-2828,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-128;AUDIT-012; scenario=Audit evidence for FR-128
+AC-2829,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-129;AUDIT-012; scenario=Audit evidence for FR-129
+AC-2830,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-130;AUDIT-012; scenario=Audit evidence for FR-130
+AC-2831,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-131;AUDIT-012; scenario=Audit evidence for FR-131
+AC-2832,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-132;AUDIT-012; scenario=Audit evidence for FR-132
+AC-2833,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-133;AUDIT-012; scenario=Audit evidence for FR-133
+AC-2834,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-134;AUDIT-012; scenario=Audit evidence for FR-134
+AC-2835,security audit,MOD-012,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-258;AUDIT-012; scenario=Audit evidence for FR-258
+AC-2836,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-136;AUDIT-013; scenario=Audit evidence for FR-136
+AC-2837,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-137;AUDIT-013; scenario=Audit evidence for FR-137
+AC-2838,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-138;AUDIT-013; scenario=Audit evidence for FR-138
+AC-2839,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-139;AUDIT-013; scenario=Audit evidence for FR-139
+AC-2840,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-140;AUDIT-013; scenario=Audit evidence for FR-140
+AC-2841,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-141;AUDIT-013; scenario=Audit evidence for FR-141
+AC-2842,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-142;AUDIT-013; scenario=Audit evidence for FR-142
+AC-2843,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-143;AUDIT-013; scenario=Audit evidence for FR-143
+AC-2844,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-144;AUDIT-013; scenario=Audit evidence for FR-144
+AC-2845,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-145;AUDIT-013; scenario=Audit evidence for FR-145
+AC-2846,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-146;AUDIT-013; scenario=Audit evidence for FR-146
+AC-2847,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-147;AUDIT-013; scenario=Audit evidence for FR-147
+AC-2848,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-148;AUDIT-013; scenario=Audit evidence for FR-148
+AC-2849,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-149;AUDIT-013; scenario=Audit evidence for FR-149
+AC-2850,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-150;AUDIT-013; scenario=Audit evidence for FR-150
+AC-2851,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-151;AUDIT-013; scenario=Audit evidence for FR-151
+AC-2852,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-152;AUDIT-013; scenario=Audit evidence for FR-152
+AC-2853,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-153;AUDIT-013; scenario=Audit evidence for FR-153
+AC-2854,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-154;AUDIT-013; scenario=Audit evidence for FR-154
+AC-2855,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-155;AUDIT-013; scenario=Audit evidence for FR-155
+AC-2856,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-156;AUDIT-013; scenario=Audit evidence for FR-156
+AC-2857,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-157;AUDIT-013; scenario=Audit evidence for FR-157
+AC-2858,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-158;AUDIT-013; scenario=Audit evidence for FR-158
+AC-2859,security audit,MOD-013,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-259;AUDIT-013; scenario=Audit evidence for FR-259
+AC-2860,OQ-003/MOD-014; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-160;AUDIT-014; scenario=Audit evidence for FR-160
+AC-2861,OQ-003/MOD-014; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-260;AUDIT-014; scenario=Audit evidence for FR-260
+AC-2862,OQ-003/MOD-014; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-275;AUDIT-014; scenario=Audit evidence for FR-275
+AC-2863,OQ-003/MOD-014; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-276;AUDIT-014; scenario=Audit evidence for FR-276
+AC-2864,OQ-003/MOD-014; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-277;AUDIT-014; scenario=Audit evidence for FR-277
+AC-2865,OQ-003/MOD-014; security audit,MOD-014,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-278;AUDIT-014; scenario=Audit evidence for FR-278
+AC-2866,security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-162;AUDIT-015; scenario=Audit evidence for FR-162
+AC-2867,security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-163;AUDIT-015; scenario=Audit evidence for FR-163
+AC-2868,security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-164;AUDIT-015; scenario=Audit evidence for FR-164
+AC-2869,security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-165;AUDIT-015; scenario=Audit evidence for FR-165
+AC-2870,security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-261;AUDIT-015; scenario=Audit evidence for FR-261
+AC-2871,security audit,MOD-015,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-279;AUDIT-015; scenario=Audit evidence for FR-279
+AC-2872,security audit,MOD-016,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-167;AUDIT-016; scenario=Audit evidence for FR-167
+AC-2873,security audit,MOD-016,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-262;AUDIT-016; scenario=Audit evidence for FR-262
+AC-2874,security audit,MOD-017,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-169;AUDIT-017; scenario=Audit evidence for FR-169
+AC-2875,security audit,MOD-017,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-170;AUDIT-017; scenario=Audit evidence for FR-170
+AC-2876,security audit,MOD-017,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-263;AUDIT-017; scenario=Audit evidence for FR-263
+AC-2877,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-172;AUDIT-018; scenario=Audit evidence for FR-172
+AC-2878,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-173;AUDIT-018; scenario=Audit evidence for FR-173
+AC-2879,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-174;AUDIT-018; scenario=Audit evidence for FR-174
+AC-2880,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-175;AUDIT-018; scenario=Audit evidence for FR-175
+AC-2881,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-176;AUDIT-018; scenario=Audit evidence for FR-176
+AC-2882,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-264;AUDIT-018; scenario=Audit evidence for FR-264
+AC-2883,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-270;AUDIT-018; scenario=Audit evidence for FR-270
+AC-2884,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-271;AUDIT-018; scenario=Audit evidence for FR-271
+AC-2885,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-272;AUDIT-018; scenario=Audit evidence for FR-272
+AC-2886,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-273;AUDIT-018; scenario=Audit evidence for FR-273
+AC-2887,security audit,MOD-018,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-274;AUDIT-018; scenario=Audit evidence for FR-274
+AC-2888,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-178;AUDIT-019; scenario=Audit evidence for FR-178
+AC-2889,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-179;AUDIT-019; scenario=Audit evidence for FR-179
+AC-2890,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-180;AUDIT-019; scenario=Audit evidence for FR-180
+AC-2891,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-181;AUDIT-019; scenario=Audit evidence for FR-181
+AC-2892,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-182;AUDIT-019; scenario=Audit evidence for FR-182
+AC-2893,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-183;AUDIT-019; scenario=Audit evidence for FR-183
+AC-2894,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-184;AUDIT-019; scenario=Audit evidence for FR-184
+AC-2895,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-185;AUDIT-019; scenario=Audit evidence for FR-185
+AC-2896,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-186;AUDIT-019; scenario=Audit evidence for FR-186
+AC-2897,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-187;AUDIT-019; scenario=Audit evidence for FR-187
+AC-2898,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-188;AUDIT-019; scenario=Audit evidence for FR-188
+AC-2899,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-189;AUDIT-019; scenario=Audit evidence for FR-189
+AC-2900,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-190;AUDIT-019; scenario=Audit evidence for FR-190
+AC-2901,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-191;AUDIT-019; scenario=Audit evidence for FR-191
+AC-2902,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-192;AUDIT-019; scenario=Audit evidence for FR-192
+AC-2903,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-193;AUDIT-019; scenario=Audit evidence for FR-193
+AC-2904,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-194;AUDIT-019; scenario=Audit evidence for FR-194
+AC-2905,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-195;AUDIT-019; scenario=Audit evidence for FR-195
+AC-2906,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-196;AUDIT-019; scenario=Audit evidence for FR-196
+AC-2907,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-197;AUDIT-019; scenario=Audit evidence for FR-197
+AC-2908,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-198;AUDIT-019; scenario=Audit evidence for FR-198
+AC-2909,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-199;AUDIT-019; scenario=Audit evidence for FR-199
+AC-2910,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-200;AUDIT-019; scenario=Audit evidence for FR-200
+AC-2911,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-201;AUDIT-019; scenario=Audit evidence for FR-201
+AC-2912,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-202;AUDIT-019; scenario=Audit evidence for FR-202
+AC-2913,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-203;AUDIT-019; scenario=Audit evidence for FR-203
+AC-2914,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-204;AUDIT-019; scenario=Audit evidence for FR-204
+AC-2915,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-205;AUDIT-019; scenario=Audit evidence for FR-205
+AC-2916,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-206;AUDIT-019; scenario=Audit evidence for FR-206
+AC-2917,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-207;AUDIT-019; scenario=Audit evidence for FR-207
+AC-2918,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-208;AUDIT-019; scenario=Audit evidence for FR-208
+AC-2919,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-209;AUDIT-019; scenario=Audit evidence for FR-209
+AC-2920,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-210;AUDIT-019; scenario=Audit evidence for FR-210
+AC-2921,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-211;AUDIT-019; scenario=Audit evidence for FR-211
+AC-2922,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-212;AUDIT-019; scenario=Audit evidence for FR-212
+AC-2923,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-213;AUDIT-019; scenario=Audit evidence for FR-213
+AC-2924,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-214;AUDIT-019; scenario=Audit evidence for FR-214
+AC-2925,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-215;AUDIT-019; scenario=Audit evidence for FR-215
+AC-2926,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-216;AUDIT-019; scenario=Audit evidence for FR-216
+AC-2927,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-217;AUDIT-019; scenario=Audit evidence for FR-217
+AC-2928,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-218;AUDIT-019; scenario=Audit evidence for FR-218
+AC-2929,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-219;AUDIT-019; scenario=Audit evidence for FR-219
+AC-2930,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-220;AUDIT-019; scenario=Audit evidence for FR-220
+AC-2931,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-221;AUDIT-019; scenario=Audit evidence for FR-221
+AC-2932,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-222;AUDIT-019; scenario=Audit evidence for FR-222
+AC-2933,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-223;AUDIT-019; scenario=Audit evidence for FR-223
+AC-2934,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-224;AUDIT-019; scenario=Audit evidence for FR-224
+AC-2935,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-225;AUDIT-019; scenario=Audit evidence for FR-225
+AC-2936,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-226;AUDIT-019; scenario=Audit evidence for FR-226
+AC-2937,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-227;AUDIT-019; scenario=Audit evidence for FR-227
+AC-2938,permissions/partial access; security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-228;AUDIT-019; scenario=Audit evidence for FR-228
+AC-2939,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-229;AUDIT-019; scenario=Audit evidence for FR-229
+AC-2940,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-230;AUDIT-019; scenario=Audit evidence for FR-230
+AC-2941,security audit,MOD-019,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-265;AUDIT-019; scenario=Audit evidence for FR-265
+AC-2942,security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-232;AUDIT-020; scenario=Audit evidence for FR-232
+AC-2943,security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-233;AUDIT-020; scenario=Audit evidence for FR-233
+AC-2944,security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-234;AUDIT-020; scenario=Audit evidence for FR-234
+AC-2945,security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-266;AUDIT-020; scenario=Audit evidence for FR-266
+AC-2946,security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-267;AUDIT-020; scenario=Audit evidence for FR-267
+AC-2947,security audit,MOD-020,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-268;AUDIT-020; scenario=Audit evidence for FR-268
+AC-2948,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-236;AUDIT-021; scenario=Audit evidence for FR-236
+AC-2949,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-237;AUDIT-021; scenario=Audit evidence for FR-237
+AC-2950,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-238;AUDIT-021; scenario=Audit evidence for FR-238
+AC-2951,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-239;AUDIT-021; scenario=Audit evidence for FR-239
+AC-2952,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-240;AUDIT-021; scenario=Audit evidence for FR-240
+AC-2953,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-241;AUDIT-021; scenario=Audit evidence for FR-241
+AC-2954,security audit,MOD-021,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,Full row semantic/rule review; refs=FR-269;AUDIT-021; scenario=Audit evidence for FR-269

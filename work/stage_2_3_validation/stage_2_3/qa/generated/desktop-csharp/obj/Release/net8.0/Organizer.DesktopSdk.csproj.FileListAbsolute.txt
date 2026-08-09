@@ -1,0 +1,11 @@
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\bin\Release\net8.0\Organizer.DesktopSdk.deps.json
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\bin\Release\net8.0\Organizer.DesktopSdk.dll
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\bin\Release\net8.0\Organizer.DesktopSdk.pdb
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\Organizer.DesktopSdk.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\Organizer.DesktopSdk.AssemblyInfoInputs.cache
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\Organizer.DesktopSdk.AssemblyInfo.cs
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\Organizer.DesktopSdk.csproj.CoreCompileInputs.cache
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\Organizer.DesktopSdk.dll
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\refint\Organizer.DesktopSdk.dll
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\Organizer.DesktopSdk.pdb
+C:\Users\novik\Таск\work\stage_2_3_validation\stage_2_3\qa\generated\desktop-csharp\obj\Release\net8.0\ref\Organizer.DesktopSdk.dll

@@ -1,0 +1,7 @@
+# Package Validation
+
+Package: `Organizer_Stage4_Final_Baseline.zip`
+
+SHA-256: `E0D10D98771D0B933A0899C196D77F6D8D4026DD22C940654DFA7DC22C1F6A9E`
+
+CRC: PASS; full read: PASS; reopen: PASS; manifest: PASS.

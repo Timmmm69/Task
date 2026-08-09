@@ -1,0 +1,6 @@
+Task · Stage 5.3 consolidated traceability package
+Version: 0.1.2
+Date: 2026-08-01
+Direction: 2 — Timeline planner
+Gate status: open
+Result: 128/128 SCR and 37/37 FLOW evidence sources mapped; explicit gaps retained

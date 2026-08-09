@@ -1,0 +1,5 @@
+﻿Audit ID,Severity,Root cause,Changed artifacts,Changed IDs,Applied fix,Verification,Residual risk,Status
+AUDIT-4.4-001,Medium,87 broad cross-cutting AC templates,AC catalog; Module PRDs; Traceability; Atomicity Analysis,AC-1825..AC-2954,1130 one-FR atomic AC replace 87 broad rows,Atomicity/precheck counters,None identified,Fixed
+AUDIT-4.4-002,Medium,30 non-published STATE IDs,Product PRD; Module PRDs; AC catalog; Traceability; State Resolution,STATE-001..STATE-039 listed in resolution,Active references replaced with published behavior or error/UI condition,State/reference scan,None identified,Fixed
+AUDIT-4.2-004,High,Residual non-atomic acceptance criteria,AC catalog; Module PRDs; Atomicity Analysis,AC-1825..AC-2954,Cross-cutting criteria made independently executable,No multi-FR or multi-outcome AC,None identified,Fixed
+AUDIT-4.2-006,Medium,Residual semantic gap for cross-cutting verification,Traceability; AC catalog; Atomicity Analysis,DATA/PERM/ERR/SYNC/AUDIT requirement owners,Concrete owner-to-FR atomic mapping,No orphaned cross-cutting owner,None identified,Fixed

@@ -1,0 +1,43 @@
+criterion_id,criterion,status,evidence
+C-01,"Одна компания, локальный сервер, отсутствие внешнего облака",Pass,docs/01_core_domain_and_data.md; db/001_initial_schema.sql
+C-02,"Пользователи, сотрудники, отделы, роли",Pass,db/001_initial_schema.sql; db/003_audit_corrections.sql
+C-03,Read-model «Сегодня»,Pass,db/004_stage_2_1_foundation.sql:calendar.today_read_model; GET /api/v1/today
+C-04,Входящие и конвертация,Pass,work.inbox_items; /api/v1/inbox-items
+C-05,"Задачи, подзадачи и чек-листы",Pass,work.tasks/checklists/checklist_items; graph locks
+C-06,Повторяющиеся задачи,Pass,work.recurrence_task_templates; recurrence API
+C-07,Календарь и конфликты,Pass,calendar schema; /api/v1/calendar
+C-08,"Проекты, участники и проектные роли",Pass,projects schema; five canonical project roles
+C-09,Файловый каталог и несколько путей,Pass,files schema; approved roots; per-device availability
+C-10,"Контакты, контрагенты и взаимодействия",Pass,crm schema and API
+C-11,Напоминания и desktop-уведомления,Pass,calendar.reminders; notify; lease protocol
+C-12,Совместная работа и optimistic concurrency,Pass,If-Match/412/428; comments and replies
+C-13,Работа без сервера без offline writes,Pass,docs/03 runtime; snapshot/cache contract
+C-14,Глобальный поиск,Pass,search.search_documents; bounded query parameters
+C-15,История изменений,Pass,append-only history; global object/version uniqueness
+C-16,"Архив, корзина и purge",Pass,lifecycle matrix; tombstones/redactions
+C-17,Настройки пользователя и уведомлений,Pass,org.user_settings + notify.notification_preferences without duplicate ownership
+C-18,Авторизация и server-derived scope,Pass,91 permissions; roles; tenant guards
+A-01,Desktop + modular local server,Pass,Stage 2 bounded schemas and module tags
+A-02,Transactional outbox,Pass,governance.domain_events/outbox_messages
+A-03,Desktop sync coordinator and cache,Pass,snapshot sessions + projected change feed
+A-04,Authorization policy module,Pass,canonical permission/role matrices and database tenant guards
+A-05,Background worker and backup agent,Pass,token leases; background job catalog
+S21-01,PostgreSQL 16 clean deploy,Pass,db/001...004; qa/database_contract_tests.sql
+S21-02,Canonical authorization,Pass,91 permissions; bootstrap; role matrices
+S21-03,Concrete OpenAPI,Pass,openapi/openapi.yaml; validation/codegen reports
+S21-04,Durable idempotency,Pass,iam.idempotency_records; API headers
+S21-05,Lifecycle matrix,Pass,docs/06 section 4
+S21-06,Recurrence task template,Pass,work.recurrence_task_templates and children
+S21-07,Concurrent graph locks,Pass,core.lock_graph_nodes; concurrency tests
+S21-08,Tenant boundaries,Pass,generated database tenant guards; negative tests
+S21-09,Append-only audit/history,Pass,"runtime roles, triggers, version key, tombstones"
+S21-10,Canonical change feed and snapshots,Pass,"event projector, source dedupe, snapshot sessions"
+S21-11,Worker leases,Pass,claim/heartbeat/complete/fail functions
+S21-12,File security,Pass,"owner/device binding, approved roots, redaction, per-device state"
+S21-13,Reminder state machine,Pass,strict state dates and occurrence lease/retry
+S21-14,Source traceability,Pass,"sources directory, hashes, semantic matrix"
+S21-15,Medium audit findings,Pass,"Today, settings ownership, relations, retention, indexes, limits"
+S22-01,Machine-readable OpenAPI provenance and content identity,Pass,"Stage_2_2_Contract_Recovery.md; source_integrity_report.md"
+S22-02,Search filters required by product concept,Pass,"openapi/openapi.yaml GET /api/v1/search; Search_Contract.md"
+S22-03,Field-level DTO catalog,Pass,dto_field_catalog.csv
+S22-04,C# desktop client and server stub generation,Pass,codegen_validation_report.md

@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Organizer.DesktopSdk/1.0.0": {
+        "runtime": {
+          "Organizer.DesktopSdk.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Organizer.DesktopSdk/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "package": "Task Stage 5 completion audit",
+  "version": "0.1.0",
+  "date": "2026-08-02",
+  "auditResult": "PASS — requirement-by-requirement audit executed",
+  "objectiveStatus": "ACTIVE_NOT_COMPLETE",
+  "requirements": [
+    {
+      "id": "REQ-01",
+      "requirement": "Canonical CalendarEvent editor for SCR-044/FLOW-031",
+      "result": "ACHIEVED",
+      "evidence": "Calendar package 0.1.0 manifest hash-valid; create/edit fields, validation, attendees, recurrence, offline/version/permission states and tests packaged."
+    },
+    {
+      "id": "REQ-02",
+      "requirement": "Evidence packages remain current and reproducible",
+      "result": "ACHIEVED",
+      "evidence": "8/8 current prerequisite/final/coordination manifests match recorded SHA-256."
+    },
+    {
+      "id": "REQ-03",
+      "requirement": "Dynamic board remains current without lowering Stage 5.0–5.2",
+      "result": "ACHIEVED",
+      "evidence": "Board rebuilt from existing builder; 18/18 sheets reimported, formula-error scan 0; 5.0–5.2 remain 100%; Gate shown separately."
+    },
+    {
+      "id": "REQ-04",
+      "requirement": "Coordination package remains current",
+      "result": "ACHIEVED",
+      "evidence": "Coordination 0.3.1 validates 15 current accepted-input hashes and keeps Goal ACTIVE."
+    },
+    {
+      "id": "REQ-05",
+      "requirement": "Stage 5.3 implementation and traceability",
+      "result": "ACHIEVED",
+      "evidence": "CalendarEvent and Operations verified; consolidated coverage 128/128 SCR / 37/37 FLOW."
+    },
+    {
+      "id": "REQ-06",
+      "requirement": "Stage 5.4 role/state/accessibility/high-DPI design audit",
+      "result": "PARTIAL_EXTERNAL",
+      "evidence": "Prototype audit achieved: 38/38 roles, 56/56 states, 45/45 component families, forced-colors support. Native Windows UIA/Narrator and real DPI evidence remain external."
+    },
+    {
+      "id": "REQ-07",
+      "requirement": "Stage 5.5 usability and remediation",
+      "result": "PARTIAL_EXTERNAL",
+      "evidence": "10/10 expert-proxy scenarios pass; confirmed High and Medium defects remediated; moderated participant evidence and Product owner acceptance remain external."
+    },
+    {
+      "id": "REQ-08",
+      "requirement": "Stage 5.6 final visual baseline and development handoff",
+      "result": "ACHIEVED",
+      "evidence": "Final package 1.0.1 validates 128 SCR, 37 FLOW, 38 roles, 56 states, 45 components, 10 scenarios, build and 15/15 tests; 83/83 work/output mirror."
+    },
+    {
+      "id": "REQ-09",
+      "requirement": "Gate 5.6 and full Stage 5 completion",
+      "result": "NOT_ACHIEVED",
+      "evidence": "External evidence validator reports NOT_READY 0/9: UIA, Narrator, DPI, moderated sessions, final finding disposition and four named approvals are missing."
+    }
+  ],
+  "packageHashChecks": [
+    {
+      "relative": "work/stage_5_3_calendar_event_editor_increment",
+      "version": "0.1.0",
+      "expected": "F65F3C0212E105923A532029916820F7C0C54E0D86188A56C6C3DB1CA782CB3C",
+      "actual": "F65F3C0212E105923A532029916820F7C0C54E0D86188A56C6C3DB1CA782CB3C",
+      "valid": true
+    },
+    {
+      "relative": "work/stage_5_3_wave_c_operations_increment",
+      "version": "0.2.0",
+      "expected": "22CE8716BE58935692155AE50B320690366327C5EFF3752636A45D78ADAF481D",
+      "actual": "22CE8716BE58935692155AE50B320690366327C5EFF3752636A45D78ADAF481D",
+      "valid": true
+    },
+    {
+      "relative": "work/stage_5_3_traceability",
+      "version": "0.1.2",
+      "expected": "D6E6615592A9A6A5813584F22F602B577146BB5B8E6E3617539642AFFD0BB3E7",
+      "actual": "D6E6615592A9A6A5813584F22F602B577146BB5B8E6E3617539642AFFD0BB3E7",
+      "valid": true
+    },
+    {
+      "relative": "work/stage_5_4_design_audit_increment",
+      "version": "0.1.0",
+      "expected": "019C96A9C4A2967A902F81397F26283DCE7B761F378A7476035572BDA95EEE3A",
+      "actual": "019C96A9C4A2967A902F81397F26283DCE7B761F378A7476035572BDA95EEE3A",
+      "valid": true
+    },
+    {
+      "relative": "work/stage_5_5_usability_increment",
+      "version": "0.1.0",
+      "expected": "1DE3FE57C0B4A103B89062365B27BDFF55D2E1AE15EA65BCB303896DCD26897F",
+      "actual": "1DE3FE57C0B4A103B89062365B27BDFF55D2E1AE15EA65BCB303896DCD26897F",
+      "valid": true
+    },
+    {
+      "relative": "work/stage_5_6_external_gate_execution_kit",
+      "version": "0.1.0",
+      "expected": "6ADE96D427118E5F11F5937D22C2C61E71B45190741B52049682A51580704A35",
+      "actual": "6ADE96D427118E5F11F5937D22C2C61E71B45190741B52049682A51580704A35",
+      "valid": true
+    },
+    {
+      "relative": "work/stage_5_6_final_visual_baseline_and_handoff",
+      "version": "1.0.1",
+      "expected": "4C3536862FE4AA2F09A044C980EA3CEF0C3034395FC178CA4F18AFB87DBE3D95",
+      "actual": "4C3536862FE4AA2F09A044C980EA3CEF0C3034395FC178CA4F18AFB87DBE3D95",
+      "valid": true
+    },
+    {
+      "relative": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination",
+      "version": "0.3.1",
+      "expected": "181C46571B5393DBDDADC1844FFF82D4313CCEF4D712D89A3AC432FA951C1CB9",
+      "actual": "181C46571B5393DBDDADC1844FFF82D4313CCEF4D712D89A3AC432FA951C1CB9",
+      "valid": true
+    }
+  ],
+  "board": {
+    "sha256": "A042D7ED6BCBCA4235C6707591E379254837C9218C4C05F1AAEDB2C009CB87E6",
+    "inspectSha256": "9C53284426156C2C803F299459A263F6863AB5D46B4A3BF5F27CDF907A7872AA",
+    "reimportedSheets": 18,
+    "formulaErrors": 0,
+    "delivery": {
+      "stage5_0": 100,
+      "stage5_1": 100,
+      "stage5_2": 100,
+      "stage5_3": 84.7,
+      "stage5_4": 75.8,
+      "stage5_5": 68.75,
+      "stage5_6": 80
+    }
+  },
+  "finalPackage": {
+    "version": "1.0.1",
+    "result": "PASS",
+    "gate": {
+      "status": "OPEN",
+      "nativeWindowsUiaNarrator": "PENDING",
+      "actualWindowsDpi": "PENDING",
+      "moderatedParticipants": "PENDING",
+      "namedApprovals": "PENDING"
+    }
+  },
+  "externalGate": {
+    "result": "NOT_READY",
+    "accepted": 0,
+    "total": 9,
+    "missing": [
+      "EVD-WIN-UIA",
+      "EVD-WIN-NARR",
+      "EVD-WIN-DPI",
+      "EVD-USR",
+      "EVD-FIND",
+      "EVD-PO",
+      "EVD-DESIGN",
+      "EVD-TECH",
+      "EVD-QA"
+    ],
+    "reason": "External native Windows, participant and named approval evidence has not been supplied."
+  }
+}

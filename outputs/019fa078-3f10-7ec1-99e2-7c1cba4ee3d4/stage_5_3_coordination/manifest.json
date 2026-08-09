@@ -1,0 +1,101 @@
+{
+  "product": "Task",
+  "stage": "5",
+  "package": "cross-stage coordination",
+  "version": "0.3.1",
+  "date": "2026-08-02",
+  "direction": "Direction 2 — Timeline planner",
+  "goalStatus": "ACTIVE",
+  "result": "Stage 5.6 final package 1.0.1 and Gate execution kit verified; external evidence remains 0/9",
+  "delivery": {
+    "stage5_0": "100%",
+    "stage5_1": "100%",
+    "stage5_2": "100%",
+    "stage5_3": "84.7% (85%)",
+    "stage5_4": "75.8% (76%)",
+    "stage5_5": "68.75% (69%)",
+    "stage5_6": "80%"
+  },
+  "gates": {
+    "stage5_3": "OPEN — formal approval/native runtime",
+    "stage5_4": "OPEN — native UIA/Narrator, actual Windows DPI, stakeholder approval",
+    "stage5_5": "OPEN — external moderated sessions and owner approval",
+    "stage5_6": "OPEN — native Windows, participant and named approval evidence"
+  },
+  "artifacts": [
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/VERSION.txt",
+      "sha256": "98D4967B88C8871A31E75E86BC20D47788292CF95FA483BAA9ECEDA610C81796"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/Stage_5_Coordination_Report_0.3.1.md",
+      "sha256": "169931CBBDAEB6637FE7FD8A27F7C39920F92DCCEDD7C49309C6D5E01B9C6A89"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_coordination/Stage_5_Coordination_Validation_0.3.1.md",
+      "sha256": "C539DFEA886D07718F2DEFFB0AE8652B64A943A61291AD3D681F75BA6449ADA2"
+    }
+  ],
+  "acceptedInputs": [
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx",
+      "sha256": "63B446393F771F42E1E91D36372031F2D4FE4CB0406F1DB90E6DB77C1479BB03"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx.inspect.ndjson",
+      "sha256": "C813D42B6BAA77D5F19E33C9644E87FC82FE444A16EDEDA0DBDA0DBD15417D51"
+    },
+    {
+      "path": "work/stage_5_board_runtime/build_stage5_board.mjs",
+      "sha256": "43DB0A5B5DB07B13FBA25653E3CCE7F73BDEC2C3973F26859E6789547F7CE7CC"
+    },
+    {
+      "path": "work/stage_5_board_runtime/previews/all-sheets-contact-sheet.png",
+      "sha256": "DAD2B57A43437A4BFBD769D9DB4C155D8C14B9B6DBE45A9F83FF69635480180D"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_calendar_event_editor_increment/manifest.json",
+      "sha256": "F65F3C0212E105923A532029916820F7C0C54E0D86188A56C6C3DB1CA782CB3C"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_wave_c_operations_increment/manifest.json",
+      "sha256": "22CE8716BE58935692155AE50B320690366327C5EFF3752636A45D78ADAF481D"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_3_traceability/manifest.json",
+      "sha256": "D6E6615592A9A6A5813584F22F602B577146BB5B8E6E3617539642AFFD0BB3E7"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_4_design_audit_increment/manifest.json",
+      "sha256": "019C96A9C4A2967A902F81397F26283DCE7B761F378A7476035572BDA95EEE3A"
+    },
+    {
+      "path": "work/stage_5_4_audit_runtime/build_stage5_4_audit.mjs",
+      "sha256": "8A6F0D9180AEF405194593CBDCE6F5BB75C7219ADD34B05A15D343704FC4CE26"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_5_usability_increment/manifest.json",
+      "sha256": "1DE3FE57C0B4A103B89062365B27BDFF55D2E1AE15EA65BCB303896DCD26897F"
+    },
+    {
+      "path": "work/stage_5_5_usability_runtime/build_stage5_5_package.mjs",
+      "sha256": "9988CF51FAD31813B9EC18BBBE49A8E606AAD1D74AFC4B98ECA57E10D9E1D1F1"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_6_final_visual_baseline_and_handoff/manifest.json",
+      "sha256": "E40289F8062A5A80060C0E396AF5CA7FF2ADD76139BFE91AB2AB8FBF97786F59"
+    },
+    {
+      "path": "work/stage_5_6_runtime/build_stage5_6_final_package.mjs",
+      "sha256": "8D57BC7531BEB2F2308EBC6B745EB2D6F2123F3423BCA18506D6FDF67EEE3C91"
+    },
+    {
+      "path": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/stage_5_6_external_gate_execution_kit/manifest.json",
+      "sha256": "6ADE96D427118E5F11F5937D22C2C61E71B45190741B52049682A51580704A35"
+    },
+    {
+      "path": "work/stage_5_6_gate_runtime/build_stage5_6_gate_kit.mjs",
+      "sha256": "C830AB1AF1BB385D594211B4B05327333557A3E9C4315032206077C33D16D1B4"
+    }
+  ]
+}

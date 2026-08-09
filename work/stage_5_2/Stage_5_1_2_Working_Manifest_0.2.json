@@ -1,0 +1,18 @@
+{
+  "name": "Task Stage 5.1-5.2 Direction 2 P0 Working Baseline",
+  "version": "0.2",
+  "date": "2026-07-28",
+  "status": "working-pass",
+  "gate_closed": false,
+  "visual_direction": "Direction 2 - Timeline planner",
+  "prototype": "work/stage_5_prototype",
+  "validation_report": "work/stage_5_2/Stage_5_1_2_Working_Validation_0.2.md",
+  "task_board": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx",
+  "task_board_sha256": "572020D80A67E7C448A91C7E605CB268A4A4E6E571B7D795D7B3356E37CB1243",
+  "design_qa": "work/stage_5_prototype/design-qa-stage5-p0.md",
+  "production_build": "pass",
+  "browser_qa": "pass",
+  "formula_error_scan": 0,
+  "stage_5_1_progress": 0.8111111111111111,
+  "stage_5_2_progress": 0.68875
+}

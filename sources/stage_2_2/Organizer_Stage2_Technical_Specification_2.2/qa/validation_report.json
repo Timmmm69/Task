@@ -1,0 +1,523 @@
+{
+  "stage": "2.1",
+  "status": "pass",
+  "source_hashes": {
+    "concept": "74482a0d463a4831228f96847496152d93887aece6f498e2cd1dec0054d5f7f4",
+    "architecture": "309492241dcd63bac970b467e729fb878ae265cca6f592cf43c3bb4ac0cdbe16",
+    "stage_2_1_acceptance": "3898cfcf31c3c766cafede3861f813fd5e81dd34eb7b92aa1df795164c25843f"
+  },
+  "metrics": {
+    "api_operations": 241,
+    "openapi_schemas": 232,
+    "permissions": 91,
+    "events": 172,
+    "background_jobs": 18
+  },
+  "checks": [
+    {
+      "name": "openapi_spec_validator",
+      "status": "pass",
+      "detail": "OpenAPI 3.1 schema validation passed"
+    },
+    {
+      "name": "openapi_31_version",
+      "status": "pass",
+      "detail": "3.1.0"
+    },
+    {
+      "name": "no_openapi_30_nullable_keywords",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "api_catalog_openapi_parity",
+      "status": "pass",
+      "detail": {
+        "catalog": 241,
+        "openapi": 241,
+        "catalogOnly": [],
+        "openapiOnly": []
+      }
+    },
+    {
+      "name": "api_operation_count",
+      "status": "pass",
+      "detail": 241
+    },
+    {
+      "name": "no_empty_or_unbounded_object_schemas",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "all_schema_references_resolve",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "generic_object_removed",
+      "status": "pass",
+      "detail": [
+        "ActionResult",
+        "ActivationRequest",
+        "Address",
+        "AddressCreate",
+        "AdminResetPasswordRequest",
+        "ArchiveEntry",
+        "ArchiveEntryPage",
+        "ArchiveRequest",
+        "AttendeeResponse",
+        "AttendeesReplace",
+        "AuditEntry",
+        "AuditEntryPage",
+        "BackgroundJob",
+        "BackgroundJobPage",
+        "BackgroundJobRun",
+        "BackgroundJobRunPage",
+        "BackupRequest",
+        "BackupRun",
+        "BackupRunPage",
+        "BackupVerifyRequest",
+        "BlockUserRequest",
+        "BulkOperationItemResult",
+        "BulkOperationResult",
+        "BulkTaskTransition",
+        "CalendarEvent",
+        "CalendarEventCreate",
+        "CalendarEventPage",
+        "CalendarEventPatch",
+        "CatalogItem",
+        "CatalogItemCreate",
+        "CatalogItemPage",
+        "CatalogItemPatch",
+        "CatalogMoveRequest",
+        "CatalogTree",
+        "CatalogTreeNode",
+        "ChangePasswordRequest",
+        "ChangeRecord",
+        "Checklist",
+        "ChecklistCreate",
+        "ChecklistItem",
+        "ChecklistItemCreate",
+        "ChecklistItemPatch",
+        "ChecklistPage",
+        "ChecklistPatch",
+        "Comment",
+        "CommentCreate",
+        "CommentPage",
+        "CommentPatch",
+        "CommentVersion",
+        "CommentVersionPage",
+        "CommunicationChannel",
+        "CommunicationChannelCreate",
+        "CommunicationChannelPatch",
+        "CompactionRequest",
+        "Company",
+        "CompanyCreate",
+        "CompanyPage",
+        "CompanyPatch",
+        "Contact",
+        "ContactAttendee",
+        "ContactCompanyRole",
+        "ContactCompanyRoleCreate",
+        "ContactCreate",
+        "ContactPage",
+        "ContactPatch",
+        "CurrentSession",
+        "DeactivateUserRequest",
+        "DeletionReceipt",
+        "Department",
+        "DepartmentCreate",
+        "DepartmentManagersReplace",
+        "DepartmentPage",
+        "DepartmentPatch",
+        "DepartmentTree",
+        "Device",
+        "DeviceHeartbeat",
+        "DevicePage",
+        "DevicePatch",
+        "DeviceRegistration",
+        "DismissReminderRequest",
+        "EffectivePermissions",
+        "EventAttendee",
+        "ExportJob",
+        "FeatureFlag",
+        "FeatureFlagPatch",
+        "FeatureFlags",
+        "FieldError",
+        "FileLocation",
+        "FileLocationCheckCreate",
+        "FileLocationCreate",
+        "FileLocationDeviceState",
+        "FileLocationPatch",
+        "GenerateOccurrencesRequest",
+        "GenerationSummary",
+        "Health",
+        "HealthDetails",
+        "HistoryEntry",
+        "HistoryEntryPage",
+        "HistoryVersion",
+        "InboxConvertCatalog",
+        "InboxConvertTask",
+        "InboxItem",
+        "InboxItemCreate",
+        "InboxItemPage",
+        "InboxItemPatch",
+        "IncrementalSyncBatch",
+        "Interaction",
+        "InteractionCreate",
+        "InteractionPage",
+        "InteractionParticipants",
+        "InteractionPatch",
+        "JobRunRequest",
+        "LoginAttempt",
+        "LoginAttemptPage",
+        "LoginRequest",
+        "LogoutAllRequest",
+        "MaintenanceMode",
+        "MaintenanceModeRequest",
+        "NetworkResource",
+        "NetworkResourceCreate",
+        "NetworkResourcePage",
+        "NetworkResourcePatch",
+        "Notification",
+        "NotificationActionRequest",
+        "NotificationPage",
+        "NotificationPreferences",
+        "NotificationPreferencesPatch",
+        "ObjectLink",
+        "ObjectLinkCreate",
+        "ObjectLinkPage",
+        "ObjectReference",
+        "OccurrencePreview",
+        "OrderKeys",
+        "OrganizationSettings",
+        "OrganizationSettingsPatch",
+        "Permission",
+        "PermissionCodes",
+        "PermissionOverrides",
+        "ProbeRequest",
+        "ProbeResult",
+        "ProblemDetails",
+        "Project",
+        "ProjectCreate",
+        "ProjectMember",
+        "ProjectMemberCreate",
+        "ProjectMemberPage",
+        "ProjectMemberPatch",
+        "ProjectPage",
+        "ProjectPatch",
+        "ProjectRole",
+        "PurgeRequest",
+        "ReadAllRequest",
+        "ReadAllResult",
+        "RealtimeNegotiation",
+        "RecurrenceChangeResult",
+        "RecurrenceOccurrence",
+        "RecurrencePreviewRequest",
+        "RecurrenceScopedChange",
+        "RecurrenceSeries",
+        "RecurrenceSeriesCreate",
+        "RecurrenceSeriesPage",
+        "RecurrenceSeriesPatch",
+        "RecurrenceTaskTemplate",
+        "RecurrenceTemplateChecklist",
+        "RecurrenceTemplateChecklistItem",
+        "RecurrenceTemplateReminderRule",
+        "RefreshRequest",
+        "ReindexRequest",
+        "Reminder",
+        "ReminderCreate",
+        "ReminderOccurrence",
+        "ReminderPage",
+        "ReminderPatch",
+        "ResolveLocationRequest",
+        "ResolvedLocation",
+        "RestoreBackupRequest",
+        "RestorePlan",
+        "RestoreRequest",
+        "RevocationSummary",
+        "RevokeDeviceRequest",
+        "Role",
+        "RoleCreate",
+        "RolePage",
+        "RolePatch",
+        "ScheduleConflict",
+        "ScheduleItem",
+        "SchedulePage",
+        "SearchPage",
+        "SearchSuggestion",
+        "ServerCapabilities",
+        "ServerTime",
+        "Session",
+        "SessionPage",
+        "SessionTokens",
+        "SkipOccurrenceRequest",
+        "SnapshotItem",
+        "SnapshotPage",
+        "SnoozeRequest",
+        "StorageStatus",
+        "SyncAck",
+        "SyncBatch",
+        "SyncBootstrapRequest",
+        "SystemVersion",
+        "Tag",
+        "TagCreate",
+        "TagIds",
+        "TagPage",
+        "TagPatch",
+        "Task",
+        "TaskAssigneesReplace",
+        "TaskCreate",
+        "TaskDependency",
+        "TaskDependencyCreate",
+        "TaskMoveRequest",
+        "TaskPage",
+        "TaskPatch",
+        "TaskTransitionRequest",
+        "TaskWatchersReplace",
+        "TemporaryCredentialReceipt",
+        "TodayItem",
+        "TodayPage",
+        "TransferOwnershipRequest",
+        "TrashEntry",
+        "TrashEntryPage",
+        "User",
+        "UserCreate",
+        "UserPage",
+        "UserPatch",
+        "UserRole",
+        "UserRolesReplace",
+        "UserSettings",
+        "UserSettingsPatch"
+      ]
+    },
+    {
+      "name": "idempotency_headers",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "optimistic_lock_headers_and_codes",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "all_permissions_used",
+      "status": "pass",
+      "detail": {
+        "used": 91,
+        "canonical": 91,
+        "unused": [],
+        "unknown": []
+      }
+    },
+    {
+      "name": "refresh_without_bearer",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "project_status_canonical",
+      "status": "pass",
+      "detail": [
+        "planning",
+        "active",
+        "paused",
+        "completed"
+      ]
+    },
+    {
+      "name": "multi_version_contracts",
+      "status": "pass",
+      "detail": "all secondary versions are explicit DTO fields"
+    },
+    {
+      "name": "lifecycle_endpoints",
+      "status": "pass",
+      "detail": "status-owned resources no longer use universal restore"
+    },
+    {
+      "name": "today_endpoint",
+      "status": "pass",
+      "detail": "/api/v1/today"
+    },
+    {
+      "name": "recurrence_template_contract",
+      "status": "pass",
+      "detail": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "paused",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly",
+              "yearly"
+            ]
+          },
+          "interval": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 999
+          },
+          "weekdays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1,
+              "maximum": 7
+            },
+            "maxItems": 7,
+            "uniqueItems": true
+          },
+          "monthDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": -31,
+              "maximum": 31
+            },
+            "maxItems": 62,
+            "uniqueItems": true
+          },
+          "monthOfYear": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "occurrenceStartDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Calendar date without a time zone."
+          },
+          "localStartTime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "time",
+            "description": "Local wall-clock time. Interpret only together with the companion IANA time-zone field."
+          },
+          "timeZone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "untilDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Calendar date without a time zone."
+          },
+          "maxOccurrences": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 1
+          },
+          "nextGenerationDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Calendar date without a time zone."
+          },
+          "template": {
+            "$ref": "#/components/schemas/RecurrenceTaskTemplate"
+          }
+        },
+        "required": [
+          "frequency",
+          "interval",
+          "occurrenceStartDate",
+          "timeZone",
+          "template"
+        ]
+      }
+    },
+    {
+      "name": "sync_snapshot_contract",
+      "status": "pass",
+      "detail": "snapshot/incremental discriminated contract"
+    },
+    {
+      "name": "event_catalog_coverage",
+      "status": "pass",
+      "detail": []
+    },
+    {
+      "name": "required_background_jobs",
+      "status": "pass",
+      "detail": [
+        "audit.partition",
+        "backup.base",
+        "backup.restore-verify",
+        "backup.wal/archive",
+        "changefeed.compact",
+        "idempotency.cleanup",
+        "logs.rotate",
+        "notifications.dispatch",
+        "operational.retention",
+        "outbox.publish",
+        "recurrence.generate",
+        "reminders.materialize",
+        "search.index",
+        "sessions.cleanup",
+        "storage.health",
+        "sync.snapshot-cleanup",
+        "tasks.detect-overdue",
+        "trash.purge"
+      ]
+    },
+    {
+      "name": "ddl_stage_2_1_objects",
+      "status": "pass",
+      "detail": [
+        "iam.idempotency_records",
+        "work.recurrence_task_templates",
+        "sync.snapshot_sessions",
+        "source_event_id",
+        "lock_token",
+        "organizer_runtime",
+        "governance.object_history_version_keys",
+        "files.file_location_device_states",
+        "calendar.today_read_model"
+      ]
+    },
+    {
+      "name": "archive_ddl_syntax_regression",
+      "status": "pass",
+      "detail": "no trailing comma before archive_entries close"
+    },
+    {
+      "name": "source_files_packaged",
+      "status": "pass",
+      "detail": {
+        "concept": "74482a0d463a4831228f96847496152d93887aece6f498e2cd1dec0054d5f7f4",
+        "architecture": "309492241dcd63bac970b467e729fb878ae265cca6f592cf43c3bb4ac0cdbe16",
+        "stage_2_1_acceptance": "3898cfcf31c3c766cafede3861f813fd5e81dd34eb7b92aa1df795164c25843f"
+      }
+    }
+  ]
+}

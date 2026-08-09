@@ -1,0 +1,27 @@
+{
+  "name": "Task Stage 5.1-5.2 Direction 2 Core Surfaces Working Baseline",
+  "version": "0.4",
+  "date": "2026-07-28",
+  "status": "working-pass",
+  "gate_closed": false,
+  "visual_direction": "Direction 2 - Timeline planner",
+  "prototype": "work/stage_5_prototype",
+  "validation_report": "work/stage_5_2/Stage_5_1_2_Working_Validation_0.4.md",
+  "design_qa": "work/stage_5_prototype/design-qa-stage5-surfaces.md",
+  "accessibility_evidence": "work/stage_5_2/Accessibility_Evidence_Working_0.3.md",
+  "task_board": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx",
+  "task_board_sha256": "EE3348AEB3F12CD3A6B1ACA446150760BB104ABF0CAC4C537FB3AC39211ED2DA",
+  "production_build": "pass",
+  "browser_qa": "pass",
+  "visual_qa": "pass",
+  "formula_error_scan": 0,
+  "overall_progress": 0.48,
+  "stage_5_1_progress": 0.8166666666666667,
+  "stage_5_2_progress": 0.8049999999999999,
+  "artifacts": {
+    "app_js_sha256": "E546221641CFE715F6C71EF98068A71890C2C19309AF3DAE8B511C2640854017",
+    "styles_css_sha256": "2EA74051902FAEB7BBDD427375A410C7EB577FCF86703106FDA2AEEE3458B976",
+    "design_qa_sha256": "DE54E6F9ADBEE80B371002AA90A24CFC41DBAE182AD84C998F601AF762FA35A0",
+    "accessibility_evidence_sha256": "5A078CAB245042A5F997DEDAA31C689968B66D95124EBA20A9E73C9894997A55"
+  }
+}

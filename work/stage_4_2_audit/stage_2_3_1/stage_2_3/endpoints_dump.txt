@@ -1,0 +1,247 @@
+# Organizer Stage 2.3 endpoint dump
+# Operations: 244
+
+GET    /api/v1/admin/backups | Backup.Read | query:type,status,from,to,page -> Page<BackupRun> | 200,401,403
+POST   /api/v1/admin/backups | Backup.Execute | BackupRequest -> BackupRun | 202,400,401,403,409,429
+POST   /api/v1/admin/backups/{id}/restore | Backup.Restore | RestoreBackupRequest -> RestorePlan | 202,400,401,403,404,409,422
+POST   /api/v1/admin/backups/{id}/verify | Backup.RestoreTest | BackupVerifyRequest -> BackupRun | 202,400,401,403,404,409
+POST   /api/v1/admin/change-feed/compact | System.Configure | CompactionRequest -> BackgroundJobRun | 202,400,401,403,409
+PUT    /api/v1/admin/feature-flags/{key} | System.Configure | FeatureFlagPatch -> FeatureFlag | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/admin/jobs | System.HealthRead | query:status,page -> Page<BackgroundJob> | 200,401,403
+POST   /api/v1/admin/jobs/{code}/run | System.Configure | JobRunRequest -> BackgroundJobRun | 202,400,401,403,409,429
+GET    /api/v1/admin/jobs/{code}/runs | System.HealthRead | query:from,to,status,page -> Page<BackgroundJobRun> | 200,401,403,404
+POST   /api/v1/admin/maintenance-mode | System.Configure | MaintenanceModeRequest -> MaintenanceMode | 200,400,401,403,409,412,428
+POST   /api/v1/admin/search/reindex | System.Configure | ReindexRequest -> BackgroundJobRun | 202,400,401,403,409
+GET    /api/v1/admin/server-capabilities | System.Configure | — -> ServerCapabilities | 200,401,403
+GET    /api/v1/admin/storage | System.HealthRead | — -> StorageStatus | 200,401,403,503
+GET    /api/v1/archive | History.Read | query:type,projectId,page -> Page<ArchiveEntry> | 200,400,401,403
+POST   /api/v1/archive/{objectId}/restore | Archive.Restore | — -> ObjectReference | 200,401,403,404,409,412,422,428
+GET    /api/v1/audit | Audit.ReadAll | query:actor,action,object,outcome,from,to,cursor -> Page<AuditEntry> | 200,400,401,403
+GET    /api/v1/audit/export | Audit.ReadAll | query:filters,format -> ExportJob | 202,400,401,403,429
+POST   /api/v1/auth/admin-reset-password | User.ResetPassword | AdminResetPasswordRequest -> TemporaryCredentialReceipt | 200,400,401,403,404,409
+POST   /api/v1/auth/change-password | Authenticated | ChangePasswordRequest -> 204 | 204,400,401,409,422
+POST   /api/v1/auth/login | Anonymous | LoginRequest -> SessionTokens | 200,400,401,423,429
+GET    /api/v1/auth/login-attempts | SecurityAudit.Read | query:userId,result,from,to,page -> Page<LoginAttempt> | 200,400,401,403
+POST   /api/v1/auth/logout | Authenticated | — -> 204 | 204,401
+POST   /api/v1/auth/logout-all | Authenticated | LogoutAllRequest -> RevocationSummary | 200,401,403
+POST   /api/v1/auth/refresh | Anonymous.SessionRefresh | RefreshRequest -> SessionTokens | 200,400,401,409
+GET    /api/v1/auth/session | Authenticated | — -> CurrentSession | 200,401
+GET    /api/v1/auth/sessions | Session.ReadOwnOrAll | query:userId,page -> Page<Session> | 200,401,403
+POST   /api/v1/auth/sessions/{sessionId}/revoke | Session.RevokeOwnOrAll | path:sessionId -> 204 | 204,401,403,404
+GET    /api/v1/calendar | Calendar.Read | query:from,to,users,departments,projects,status,timezone,cursor -> SchedulePage | 200,400,401,403,422
+GET    /api/v1/calendar-events | Calendar.Read | query: filter,sort,page,cursor -> Page<CalendarEvent> | 200,400,401,403
+POST   /api/v1/calendar-events | CalendarEvent.Create | CalendarEventCreate -> CalendarEvent | 201,400,401,403,409,422
+DELETE /api/v1/calendar-events/{id} | CalendarEvent.Delete | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/calendar-events/{id} | Calendar.Read | path:id -> CalendarEvent | 200,401,403,404
+PATCH  /api/v1/calendar-events/{id} | CalendarEvent.Update | CalendarEventPatch -> CalendarEvent | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/calendar-events/{id}/archive | CalendarEvent.Update | ArchiveRequest -> CalendarEvent | 200,401,403,404,409,412,422,428
+PUT    /api/v1/calendar-events/{id}/attendees | CalendarEvent.Update | AttendeesReplace -> CalendarEvent | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/calendar-events/{id}/respond | CalendarEvent.Respond | AttendeeResponse -> EventAttendee | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/calendar-events/{id}/restore | CalendarEvent.Delete | RestoreRequest -> CalendarEvent | 200,401,403,404,409,412,422,428
+POST   /api/v1/calendar-events/{id}/unarchive | CalendarEvent.Update | — -> CalendarEvent | 200,401,403,404,409,412,428
+GET    /api/v1/calendar/conflicts | Calendar.Read | query:from,to,userIds,excludeObjectId -> ScheduleConflict[] | 200,400,401,403,422
+GET    /api/v1/capabilities | Authenticated | — -> ServerCapabilities | 200,401
+GET    /api/v1/catalog-items | FileCatalog.Read | query: filter,sort,page,cursor -> Page<CatalogItem> | 200,400,401,403
+POST   /api/v1/catalog-items | FileCatalog.Create | CatalogItemCreate -> CatalogItem | 201,400,401,403,409,422
+DELETE /api/v1/catalog-items/{id} | FileCatalog.Delete | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/catalog-items/{id} | FileCatalog.Read | path:id -> CatalogItem | 200,401,403,404
+PATCH  /api/v1/catalog-items/{id} | FileCatalog.Update | CatalogItemPatch -> CatalogItem | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/catalog-items/{id}/archive | FileCatalog.Update | ArchiveRequest -> CatalogItem | 200,401,403,404,409,412,422,428
+GET    /api/v1/catalog-items/{id}/locations | FileReference.Open | query:deviceId -> FileLocation[] | 200,401,403,404
+POST   /api/v1/catalog-items/{id}/locations | FileLocation.Update | FileLocationCreate -> FileLocation | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/catalog-items/{id}/locations/{locationId} | FileLocation.Update | — -> 204 | 204,401,403,404,409,412,422,428
+PATCH  /api/v1/catalog-items/{id}/locations/{locationId} | FileLocation.Update | FileLocationPatch -> FileLocation | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/catalog-items/{id}/move | FileCatalog.Update | CatalogMoveRequest -> CatalogItem | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/catalog-items/{id}/resolve-location | FileReference.Open | ResolveLocationRequest -> ResolvedLocation | 200,400,401,403,404,409,422
+POST   /api/v1/catalog-items/{id}/restore | FileCatalog.Restore | RestoreRequest -> CatalogItem | 200,401,403,404,409,412,422,428
+POST   /api/v1/catalog-items/{id}/unarchive | FileCatalog.Update | — -> CatalogItem | 200,401,403,404,409,412,428
+GET    /api/v1/catalog/tree | FileCatalog.Read | query:parentId,depth,includeArchived -> CatalogTree | 200,400,401,403
+POST   /api/v1/comments/{id}/restore | Comment.Moderate | — -> Comment | 200,401,403,404,409,412,428
+GET    /api/v1/comments/{id}/versions | History.Read | query:page -> Page<CommentVersion> | 200,401,403,404
+GET    /api/v1/companies | Contact.Read | query: filter,sort,page,cursor -> Page<Company> | 200,400,401,403
+POST   /api/v1/companies | Contact.Create | CompanyCreate -> Company | 201,400,401,403,409,422
+DELETE /api/v1/companies/{id} | Contact.Delete | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/companies/{id} | Contact.Read | path:id -> Company | 200,401,403,404
+PATCH  /api/v1/companies/{id} | Contact.Update | CompanyPatch -> Company | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/companies/{id}/archive | Contact.Update | ArchiveRequest -> Company | 200,401,403,404,409,412,422,428
+POST   /api/v1/companies/{id}/contacts | Contact.Update | ContactCompanyRoleCreate -> ContactCompanyRole | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/companies/{id}/contacts/{contactId} | Contact.Update | — -> 204 | 204,401,403,404,409,412,428
+POST   /api/v1/companies/{id}/restore | Contact.Restore | RestoreRequest -> Company | 200,401,403,404,409,412,422,428
+POST   /api/v1/companies/{id}/unarchive | Contact.Update | — -> Company | 200,401,403,404,409,412,428
+GET    /api/v1/contacts | Contact.Read | query: filter,sort,page,cursor -> Page<Contact> | 200,400,401,403
+POST   /api/v1/contacts | Contact.Create | ContactCreate -> Contact | 201,400,401,403,409,422
+DELETE /api/v1/contacts/{id} | Contact.Delete | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/contacts/{id} | Contact.Read | path:id -> Contact | 200,401,403,404
+PATCH  /api/v1/contacts/{id} | Contact.Update | ContactPatch -> Contact | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/contacts/{id}/addresses | Contact.Update | AddressCreate -> Address | 201,400,401,403,404,409,412,422,428
+POST   /api/v1/contacts/{id}/archive | Contact.Update | ArchiveRequest -> Contact | 200,401,403,404,409,412,422,428
+POST   /api/v1/contacts/{id}/channels | Contact.Update | CommunicationChannelCreate -> CommunicationChannel | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/contacts/{id}/channels/{channelId} | Contact.Update | — -> 204 | 204,401,403,404,409,412,428
+PATCH  /api/v1/contacts/{id}/channels/{channelId} | Contact.Update | CommunicationChannelPatch -> CommunicationChannel | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/contacts/{id}/restore | Contact.Restore | RestoreRequest -> Contact | 200,401,403,404,409,412,422,428
+POST   /api/v1/contacts/{id}/unarchive | Contact.Update | — -> Contact | 200,401,403,404,409,412,428
+GET    /api/v1/departments | Department.Read | query: filter,sort,page,cursor -> Page<Department> | 200,400,401,403
+POST   /api/v1/departments | Department.Manage | DepartmentCreate -> Department | 201,400,401,403,409,422
+GET    /api/v1/departments/tree | Department.Read | query:includeArchived -> DepartmentTree | 200,401,403
+DELETE /api/v1/departments/{id} | Department.Manage | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/departments/{id} | Department.Read | path:id -> Department | 200,401,403,404
+PATCH  /api/v1/departments/{id} | Department.Manage | DepartmentPatch -> Department | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/departments/{id}/archive | Department.Manage | ArchiveRequest -> Department | 200,401,403,404,409,412,422,428
+PUT    /api/v1/departments/{id}/managers | Department.Manage | DepartmentManagersReplace -> Department | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/departments/{id}/restore | Department.Manage | RestoreRequest -> Department | 200,401,403,404,409,412,422,428
+POST   /api/v1/departments/{id}/unarchive | Department.Manage | — -> Department | 200,401,403,404,409,412,428
+GET    /api/v1/devices | Device.ReadOwnOrAll | query: filter,sort,page,cursor -> Page<Device> | 200,400,401,403
+GET    /api/v1/devices/{id} | Device.ReadOwnOrAll | path:id -> Device | 200,401,403,404
+PATCH  /api/v1/devices/{id} | Device.UpdateOwnOrAll | DevicePatch -> Device | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/devices/{id}/heartbeat | Authenticated | DeviceHeartbeat -> 204 | 204,400,401,403,404
+POST   /api/v1/devices/{id}/revoke | Device.Revoke | RevokeDeviceRequest -> Device | 200,401,403,404,409,412,428
+GET    /api/v1/feature-flags | Authenticated | — -> FeatureFlags | 200,401
+POST   /api/v1/file-locations/{id}/check-result | FileReference.Open | FileLocationCheckCreate -> 204 | 204,400,401,403,404,422
+GET    /api/v1/inbox-items | Inbox.ReadOwn | query: filter,sort,page,cursor -> Page<InboxItem> | 200,400,401,403
+POST   /api/v1/inbox-items | Inbox.ManageOwn | InboxItemCreate -> InboxItem | 201,400,401,403,409,422
+DELETE /api/v1/inbox-items/{id} | Inbox.ManageOwn | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/inbox-items/{id} | Inbox.ReadOwn | path:id -> InboxItem | 200,401,403,404
+PATCH  /api/v1/inbox-items/{id} | Inbox.ManageOwn | InboxItemPatch -> InboxItem | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/inbox-items/{id}/convert-to-catalog-item | Inbox.ManageOwn | InboxConvertCatalog -> CatalogItem | 201,400,401,403,404,409,412,422,428
+POST   /api/v1/inbox-items/{id}/convert-to-task | Inbox.ManageOwn | InboxConvertTask -> Task | 201,400,401,403,404,409,412,422,428
+POST   /api/v1/inbox-items/{id}/restore | Inbox.ManageOwn | RestoreRequest -> InboxItem | 200,401,403,404,409,412,422,428
+GET    /api/v1/interactions | Contact.Read | query: filter,sort,page,cursor -> Page<Interaction> | 200,400,401,403
+POST   /api/v1/interactions | Interaction.Create | InteractionCreate -> Interaction | 201,400,401,403,409,422
+DELETE /api/v1/interactions/{id} | Interaction.Update | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/interactions/{id} | Contact.Read | path:id -> Interaction | 200,401,403,404
+PATCH  /api/v1/interactions/{id} | Interaction.Update | InteractionPatch -> Interaction | 200,400,401,403,404,409,412,422,428
+PUT    /api/v1/interactions/{id}/participants | Interaction.Update | InteractionParticipants -> Interaction | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/interactions/{id}/restore | Interaction.Update | RestoreRequest -> Interaction | 200,401,403,404,409,412,422,428
+GET    /api/v1/network-resources | FileCatalog.Read | query:status,page -> Page<NetworkResource> | 200,401,403
+POST   /api/v1/network-resources | NetworkResource.Manage | NetworkResourceCreate -> NetworkResource | 201,400,401,403,409,422
+PATCH  /api/v1/network-resources/{id} | NetworkResource.Manage | NetworkResourcePatch -> NetworkResource | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/network-resources/{id}/probe | NetworkResource.Manage | ProbeRequest -> ProbeResult | 200,400,401,403,404,422
+GET    /api/v1/notifications | Notification.ReadOwn | query: filter,sort,page,cursor -> Page<Notification> | 200,400,401,403
+GET    /api/v1/notifications/preferences | Settings.ReadOwn | — -> NotificationPreferences | 200,401
+PUT    /api/v1/notifications/preferences | Settings.UpdateOwn | NotificationPreferencesPatch -> NotificationPreferences | 200,400,401,409,412,422,428
+POST   /api/v1/notifications/read-all | Notification.ReadOwn | ReadAllRequest -> ReadAllResult | 200,400,401,403
+GET    /api/v1/notifications/{id} | Notification.ReadOwn | path:id -> Notification | 200,401,403,404
+POST   /api/v1/notifications/{id}/action | Notification.ManageOwn | NotificationActionRequest -> ActionResult | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/notifications/{id}/read | Notification.ReadOwn | — -> Notification | 200,401,403,404,409
+GET    /api/v1/objects/{objectId}/comments | Comment.Read | query: filter,sort,page,cursor -> Page<Comment> | 200,400,401,403
+POST   /api/v1/objects/{objectId}/comments | Comment.Create | CommentCreate -> Comment | 201,400,401,403,409,422
+DELETE /api/v1/objects/{objectId}/comments/{id} | Comment.DeleteOwnOrModerate | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/objects/{objectId}/comments/{id} | Comment.Read | path:id -> Comment | 200,401,403,404
+PATCH  /api/v1/objects/{objectId}/comments/{id} | Comment.UpdateOwnOrModerate | CommentPatch -> Comment | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/objects/{objectId}/history | History.Read | query:cursor,limit -> Page<HistoryEntry> | 200,401,403,404
+GET    /api/v1/objects/{objectId}/history/{version} | History.Read | path:version -> HistoryVersion | 200,401,403,404
+GET    /api/v1/objects/{objectId}/links | ObjectLink.Read | query:type,page -> Page<ObjectLink> | 200,401,403,404
+POST   /api/v1/objects/{objectId}/links | ObjectLink.Create | ObjectLinkCreate -> ObjectLink | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/objects/{objectId}/links/{linkId} | ObjectLink.Delete | — -> 204 | 204,401,403,404,409,412,428
+PUT    /api/v1/objects/{objectId}/tags | Tag.Assign | TagIds -> Tag[] | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/permissions | Role.Read | query:resource -> Permission[] | 200,401,403
+GET    /api/v1/project-roles | Project.Read | — -> ProjectRole[] | 200,401,403
+PUT    /api/v1/project-roles/{id}/permissions | Role.Manage | PermissionCodes -> ProjectRole | 200,400,401,403,404,409,412,428
+GET    /api/v1/projects | Project.Read | query: filter,sort,page,cursor -> Page<Project> | 200,400,401,403
+POST   /api/v1/projects | Project.Create | ProjectCreate -> Project | 201,400,401,403,409,422
+DELETE /api/v1/projects/{id} | Project.Delete | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/projects/{id} | Project.Read | path:id -> Project | 200,401,403,404
+PATCH  /api/v1/projects/{id} | Project.Update | ProjectPatch -> Project | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/projects/{id}/archive | Project.Archive | ArchiveRequest -> Project | 200,401,403,404,409,412,422,428
+GET    /api/v1/projects/{id}/history | History.Read | query:cursor,page -> Page<HistoryEntry> | 200,401,403,404
+GET    /api/v1/projects/{id}/members | Project.ManageMembers | query:status,page -> Page<ProjectMember> | 200,401,403,404
+POST   /api/v1/projects/{id}/members | Project.ManageMembers | ProjectMemberCreate -> ProjectMember | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/projects/{id}/members/{userId} | Project.ManageMembers | — -> 204 | 204,401,403,404,409,412,422,428
+PATCH  /api/v1/projects/{id}/members/{userId} | Project.ManageMembers | ProjectMemberPatch -> ProjectMember | 200,400,401,403,404,409,412,422,428
+PUT    /api/v1/projects/{id}/members/{userId}/overrides | Project.ManageMembers | PermissionOverrides -> ProjectMember | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/projects/{id}/restore | Project.Restore | RestoreRequest -> Project | 200,401,403,404,409,412,422,428
+POST   /api/v1/projects/{id}/transfer-ownership | Project.TransferOwnership | TransferOwnershipRequest -> Project | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/projects/{id}/unarchive | Project.Archive | — -> Project | 200,401,403,404,409,412,428
+GET    /api/v1/realtime/negotiate | Authenticated | query:cursor -> RealtimeNegotiation | 200,401,403,409
+GET    /api/v1/recurrence-series | Task.Read | query: filter,sort,page,cursor -> Page<RecurrenceSeries> | 200,400,401,403
+POST   /api/v1/recurrence-series | Task.ManageRecurrence | RecurrenceSeriesCreate -> RecurrenceSeries | 201,400,401,403,409,422
+DELETE /api/v1/recurrence-series/{id} | Task.ManageRecurrence | path:id -> RecurrenceSeries | 202,401,403,404,409,412,428
+GET    /api/v1/recurrence-series/{id} | Task.Read | path:id -> RecurrenceSeries | 200,401,403,404
+PATCH  /api/v1/recurrence-series/{id} | Task.ManageRecurrence | RecurrenceSeriesPatch -> RecurrenceSeries | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/recurrence-series/{id}/apply-change | Task.ManageRecurrence | RecurrenceScopedChange -> RecurrenceChangeResult | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/recurrence-series/{id}/generate | System.JobRun | GenerateOccurrencesRequest -> GenerationSummary | 200,400,401,403,404,409
+POST   /api/v1/recurrence-series/{id}/preview | Task.Read | RecurrencePreviewRequest -> OccurrencePreview[] | 200,400,401,403,404,422
+POST   /api/v1/recurrence-series/{id}/resume | Task.ManageRecurrence | RestoreRequest -> RecurrenceSeries | 200,401,403,404,409,412,422,428
+POST   /api/v1/recurrence-series/{id}/skip/{occurrenceKey} | Task.ManageRecurrence | SkipOccurrenceRequest -> RecurrenceOccurrence | 200,400,401,403,404,409,412,428
+GET    /api/v1/reminders | Reminder.ManageOwn | query: filter,sort,page,cursor -> Page<Reminder> | 200,400,401,403
+POST   /api/v1/reminders | Reminder.ManageOwn | ReminderCreate -> Reminder | 201,400,401,403,409,422
+GET    /api/v1/reminders/upcoming | Reminder.ManageOwn | query:until,limit -> ReminderOccurrence[] | 200,400,401,403
+DELETE /api/v1/reminders/{id} | Reminder.ManageOwn | path:id -> Reminder | 202,401,403,404,409,412,428
+GET    /api/v1/reminders/{id} | Reminder.ManageOwn | path:id -> Reminder | 200,401,403,404
+PATCH  /api/v1/reminders/{id} | Reminder.ManageOwn | ReminderPatch -> Reminder | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/reminders/{id}/dismiss | Reminder.ManageOwn | DismissReminderRequest -> 204 | 204,401,403,404,409,412,428
+POST   /api/v1/reminders/{id}/reschedule | Reminder.ManageOwn | RestoreRequest -> Reminder | 200,401,403,404,409,412,422,428
+POST   /api/v1/reminders/{id}/snooze | Reminder.ManageOwn | SnoozeRequest -> ReminderOccurrence | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/roles | Role.Read | query: filter,sort,page,cursor -> Page<Role> | 200,400,401,403
+POST   /api/v1/roles | Role.Manage | RoleCreate -> Role | 201,400,401,403,409,422
+DELETE /api/v1/roles/{id} | Role.Manage | path:id -> Role | 202,401,403,404,409,412,428
+GET    /api/v1/roles/{id} | Role.Read | path:id -> Role | 200,401,403,404
+PATCH  /api/v1/roles/{id} | Role.Manage | RolePatch -> Role | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/roles/{id}/activate | Role.Manage | RestoreRequest -> Role | 200,401,403,404,409,412,422,428
+PUT    /api/v1/roles/{id}/permissions | Role.Manage | PermissionCodes -> Role | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/search | Search.Use | query:q,types,projectIds,userIds,departments,contactIds,hasFiles,lifecycle,from,to,cursor,limit -> SearchPage | 200,400,401,403,410,422
+GET    /api/v1/search/suggestions | Search.Use | query:q,types,limit -> SearchSuggestion[] | 200,400,401,403
+GET    /api/v1/settings/me | Settings.ReadOwn | — -> UserSettings | 200,401
+PATCH  /api/v1/settings/me | Settings.UpdateOwn | UserSettingsPatch -> UserSettings | 200,400,401,409,412,422,428
+GET    /api/v1/settings/notification-urgency-scale | Settings.ReadOwn | — -> NotificationUrgencyScale | 200,401,403
+PUT    /api/v1/settings/notification-urgency-scale | System.Configure | NotificationUrgencyScalePatch -> NotificationUrgencyScale | 200,400,401,403,409,412,422,428
+POST   /api/v1/settings/notification-urgency-scale/reset | System.Configure | — -> NotificationUrgencyScale | 200,401,403,409,412,428
+GET    /api/v1/settings/organization | Organization.Read | — -> OrganizationSettings | 200,401,403
+PATCH  /api/v1/settings/organization | Organization.Update | OrganizationSettingsPatch -> OrganizationSettings | 200,400,401,403,409,412,422,428
+POST   /api/v1/sync/ack | Sync.Read | SyncAck -> 204 | 204,400,401,403,409,412,428
+POST   /api/v1/sync/bootstrap | Sync.Read | SyncBootstrapRequest -> SyncBatch | 200,400,401,403,409,413,422
+GET    /api/v1/sync/changes | Sync.Read | query:cursor,limit,scopeVersion -> SyncBatch | 200,400,401,403,409,410,422
+GET    /api/v1/system/time | Authenticated | — -> ServerTime | 200,401
+GET    /api/v1/system/version | Authenticated | — -> SystemVersion | 200,401
+GET    /api/v1/tags | Tag.Read | query: filter,sort,page,cursor -> Page<Tag> | 200,400,401,403
+POST   /api/v1/tags | Tag.Manage | TagCreate -> Tag | 201,400,401,403,409,422
+DELETE /api/v1/tags/{id} | Tag.Manage | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/tags/{id} | Tag.Read | path:id -> Tag | 200,401,403,404
+PATCH  /api/v1/tags/{id} | Tag.Manage | TagPatch -> Tag | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/tags/{id}/restore | Tag.Manage | RestoreRequest -> Tag | 200,401,403,404,409,412,422,428
+GET    /api/v1/tasks | Task.Read | query: filter,sort,page,cursor -> Page<Task> | 200,400,401,403
+POST   /api/v1/tasks | Task.Create | TaskCreate -> Task | 201,400,401,403,409,422
+POST   /api/v1/tasks/bulk-transition | Task.ChangeStatus | BulkTaskTransition -> BulkOperationResult | 200,207,400,401,403,409,412,422,428
+DELETE /api/v1/tasks/{id} | Task.Delete | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/tasks/{id} | Task.Read | path:id -> Task | 200,401,403,404
+PATCH  /api/v1/tasks/{id} | Task.Update | TaskPatch -> Task | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/tasks/{id}/archive | Task.Archive | ArchiveRequest -> Task | 200,401,403,404,409,412,422,428
+PUT    /api/v1/tasks/{id}/assignees | Task.Assign | TaskAssigneesReplace -> Task | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/tasks/{id}/dependencies | Task.Update | TaskDependencyCreate -> TaskDependency | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/tasks/{id}/dependencies/{dependencyId} | Task.Update | — -> 204 | 204,401,403,404,409,412,428
+GET    /api/v1/tasks/{id}/history | History.Read | query:cursor,page -> Page<HistoryEntry> | 200,401,403,404
+POST   /api/v1/tasks/{id}/move | Task.Update | TaskMoveRequest -> Task | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/tasks/{id}/restore | Task.Restore | RestoreRequest -> Task | 200,401,403,404,409,412,422,428
+GET    /api/v1/tasks/{id}/subtasks | Task.Read | query:sort -> Task[] | 200,401,403,404
+POST   /api/v1/tasks/{id}/subtasks | Task.Create | TaskCreate -> Task | 201,400,401,403,404,409,412,422,428
+POST   /api/v1/tasks/{id}/transition | Task.ChangeStatus | TaskTransitionRequest -> Task | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/tasks/{id}/unarchive | Task.Archive | — -> Task | 200,401,403,404,409,412,428
+PUT    /api/v1/tasks/{id}/watchers | Task.ManageWatchers | TaskWatchersReplace -> Task | 200,400,401,403,404,409,412,428
+GET    /api/v1/tasks/{taskId}/checklists | Task.Read | query: filter,sort,page,cursor -> Page<Checklist> | 200,400,401,403
+POST   /api/v1/tasks/{taskId}/checklists | Task.Update | ChecklistCreate -> Checklist | 201,400,401,403,409,422
+POST   /api/v1/tasks/{taskId}/checklists/{checklistId}/items | Task.Update | ChecklistItemCreate -> ChecklistItem | 201,400,401,403,404,409,412,422,428
+DELETE /api/v1/tasks/{taskId}/checklists/{checklistId}/items/{itemId} | Task.Update | — -> 204 | 204,401,403,404,409,412,428
+PATCH  /api/v1/tasks/{taskId}/checklists/{checklistId}/items/{itemId} | Task.ChangeStatus | ChecklistItemPatch -> ChecklistItem | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/tasks/{taskId}/checklists/{checklistId}/reorder | Task.Update | OrderKeys -> Checklist | 200,400,401,403,404,409,412,422,428
+DELETE /api/v1/tasks/{taskId}/checklists/{id} | Task.Update | path:id -> DeletionReceipt | 202,401,403,404,409,412,428
+GET    /api/v1/tasks/{taskId}/checklists/{id} | Task.Read | path:id -> Checklist | 200,401,403,404
+PATCH  /api/v1/tasks/{taskId}/checklists/{id} | Task.Update | ChecklistPatch -> Checklist | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/today | Calendar.Read | query:timezone,cursor,limit -> TodayPage | 200,400,401,403,422
+GET    /api/v1/trash | Trash.Read | query:type,deletedBy,purgeBefore,page -> Page<TrashEntry> | 200,400,401,403
+DELETE /api/v1/trash/{objectId} | Trash.Purge | PurgeRequest -> BackgroundJobRun | 202,400,401,403,404,409,412,422,428
+POST   /api/v1/trash/{objectId}/restore | Trash.Restore | RestoreRequest -> ObjectReference | 200,400,401,403,404,409,412,422,428
+GET    /api/v1/users | User.Read | query: filter,sort,page,cursor -> Page<User> | 200,400,401,403
+POST   /api/v1/users | User.Create | UserCreate -> User | 201,400,401,403,409,422
+GET    /api/v1/users/{id} | User.Read | path:id -> User | 200,401,403,404
+PATCH  /api/v1/users/{id} | User.Update | UserPatch -> User | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/users/{id}/activate | User.Create | ActivationRequest -> User | 200,401,403,404,409,412,422,428
+POST   /api/v1/users/{id}/block | User.Block | BlockUserRequest -> User | 200,401,403,404,409,412,428
+POST   /api/v1/users/{id}/deactivate | User.Block | DeactivateUserRequest -> User | 200,401,403,404,409,412,428
+GET    /api/v1/users/{id}/effective-permissions | Authorization.Explain | query:objectType,objectId -> EffectivePermissions | 200,400,401,403,404
+GET    /api/v1/users/{id}/history | History.Read | query:cursor,page -> Page<HistoryEntry> | 200,401,403,404
+POST   /api/v1/users/{id}/reactivate | User.Block | — -> User | 200,401,403,404,409,412,428
+PUT    /api/v1/users/{id}/roles | User.ManageRoles | UserRolesReplace -> UserRole[] | 200,400,401,403,404,409,412,422,428
+POST   /api/v1/users/{id}/unblock | User.Block | — -> User | 200,401,403,404,409,412,428
+GET    /health/details | System.HealthRead | — -> HealthDetails | 200,401,403,503
+GET    /health/live | Anonymous/Network allowlist | — -> Health | 200,503
+GET    /health/ready | Anonymous/Network allowlist | — -> Health | 200,503

@@ -1,0 +1,35 @@
+{
+  "verdict": "PASS",
+  "failures": [],
+  "counters": {
+    "modules": 21,
+    "fr": 279,
+    "br": 113,
+    "ac": 2954,
+    "nfr": 25,
+    "api_coverage": 244,
+    "fr_without_ac": 0,
+    "ac_without_owner": 0,
+    "duplicate_ac": 0,
+    "original_87": 87,
+    "original_87_pass": 87,
+    "new_ac": 1043,
+    "new_ac_structural_pass": 1043,
+    "semantic_checked": 590,
+    "sample_remainder": 51,
+    "multi_fr": 386,
+    "multi_fr_unjustified": 0,
+    "state_aliases": 20,
+    "state_corrected": 10,
+    "hidden_states": 0,
+    "unknown_state_ux": 0
+  },
+  "risk_categories": {
+    "permissions/partial access": 270,
+    "security audit": 518,
+    "OQ-003/MOD-014": 24,
+    "redaction/blocked users": 1,
+    "structural suspects": 0,
+    "stratified 10% remainder": 51
+  }
+}

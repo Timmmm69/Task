@@ -1,0 +1,22 @@
+{
+  "version": "2.3.1",
+  "status": "PASS",
+  "archives": [
+    {
+      "archive": "Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "sha256": "75EFC3E83F09FBCC41AE7DA68A96F2EC0EBDFC74E61F62615F4DA3478AFE5019",
+      "entries": 377,
+      "crc": "PASS",
+      "manifest": "PASS",
+      "forbiddenFiles": "PASS"
+    },
+    {
+      "archive": "Organizer_Stage3_5_Contract_Delta_Input_Final.zip",
+      "sha256": "099E125F20FBB1F952B789D0BB5B8C276250576EC44A73F9B95350079C97E9C9",
+      "entries": 13,
+      "crc": "PASS",
+      "manifest": "PASS",
+      "forbiddenFiles": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "package": "Codex external coding tools setup",
+  "version": "1.0.0",
+  "created_at": "2026-07-26T15:18:30+03:00",
+  "scope": "Current Windows user; global Codex configuration",
+  "installed": {
+    "node": "24.18.0",
+    "npm": "11.16.0",
+    "uv": "0.11.32",
+    "serena-agent": "1.6.1",
+    "semble": "0.5.2"
+  },
+  "mcp_servers": ["context7", "serena", "semble"],
+  "modified_files": [
+    {"path": "C:\\Users\\novik\\.codex\\config.toml", "sha256": "C4D35696A2397EA97D8E813976D76E9CD9F411F39B3543052F9852C2DEAB7223"},
+    {"path": "C:\\Users\\novik\\.codex\\AGENTS.md", "sha256": "2B53DB5AE61DFFDD23C79532E7906B30FE569EF628766AF1EB13F70D244D8175"},
+    {"path": "C:\\Users\\novik\\.codex\\hooks.json", "sha256": "DF2014CC5EE5B6978F3A763CB88BA8D970FE4EE3425B59C9C025BF36873CBC36"},
+    {"path": "C:\\Users\\novik\\.codex\\agents\\semble-search.toml", "sha256": "98FAF443B3ED0994DA93A19A25E95C7B72A38A926E611BAD91FBD5F5FA112812"},
+    {"path": "C:\\Users\\novik\\.serena\\serena_config.yml", "sha256": "97A344454496219324F1BA92DAD801A9321F3CE51B2E43535B97C3F4C5DD1147"}
+  ],
+  "backup": {
+    "path": "C:\\Users\\novik\\.codex\\backups\\external-coding-tools-20260726-150349",
+    "manifest": "manifest.json"
+  },
+  "validation_report": "validation-report.md"
+}

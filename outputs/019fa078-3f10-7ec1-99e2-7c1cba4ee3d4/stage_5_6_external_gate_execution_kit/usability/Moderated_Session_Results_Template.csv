@@ -1,0 +1,11 @@
+Test case ID,Participant role,Anonymized participant ID,Client build SHA-256,Result,Time seconds,Wrong turns,Help requests,Confidence 1-5,Quote/observation,Finding IDs,Moderator,Evidence path
+UT-01,Admin,,,PENDING,,,,,,,,
+UT-02,Observer,,,PENDING,,,,,,,,
+UT-03,Manager,,,PENDING,,,,,,,,
+UT-04,Employee,,,PENDING,,,,,,,,
+UT-05,Observer,,,PENDING,,,,,,,,
+UT-06,Employee,,,PENDING,,,,,,,,
+UT-07,Observer,,,PENDING,,,,,,,,
+UT-08,Manager,,,PENDING,,,,,,,,
+UT-09,Manager,,,PENDING,,,,,,,,
+UT-10,Employee,,,PENDING,,,,,,,,

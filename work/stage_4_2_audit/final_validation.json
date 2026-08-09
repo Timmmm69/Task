@@ -1,0 +1,60 @@
+{
+  "version": "4.2-audit.1",
+  "audit_zip": {
+    "path": "C:\\Users\\novik\\Таск\\outputs\\Organizer_Stage4_2_Audit_Report.zip",
+    "sha256": "359EFBCA60A5D84FC5FFB23469B72E46A32477331F2F2AAF229F8BE2A9BE0115",
+    "entries": 15,
+    "expected_entries": 15,
+    "entry_count_pass": true,
+    "crc_pass": true,
+    "read_to_completion_pass": true,
+    "reopen_pass": true,
+    "duplicate_names_pass": true,
+    "unsafe_paths_pass": true
+  },
+  "remediation_zip": {
+    "path": "C:\\Users\\novik\\Таск\\outputs\\Organizer_Stage4_3_Remediation_Input.zip",
+    "sha256": "2495AF8559169FB7F0507E1B0ACF0B20B5EBC11C1E83708F2E8BF1DC068C6729",
+    "entries": 19,
+    "expected_entries": 19,
+    "entry_count_pass": true,
+    "crc_pass": true,
+    "read_to_completion_pass": true,
+    "reopen_pass": true,
+    "duplicate_names_pass": true,
+    "unsafe_paths_pass": true
+  },
+  "audit_output_file_count": 15,
+  "audit_outputs_nonempty_pass": true,
+  "csv": {
+    "findings": {
+      "rows": 16,
+      "expected_rows": 16,
+      "row_count_pass": true,
+      "required_columns_pass": true,
+      "blank_header_pass": true
+    },
+    "traceability": {
+      "rows": 497,
+      "expected_rows": 497,
+      "row_count_pass": true,
+      "required_columns_pass": true,
+      "blank_header_pass": true
+    },
+    "api": {
+      "rows": 244,
+      "expected_rows": 244,
+      "row_count_pass": true,
+      "required_columns_pass": true,
+      "blank_header_pass": true
+    },
+    "fr_br_ac": {
+      "rows": 2216,
+      "expected_rows": 2216,
+      "row_count_pass": true,
+      "required_columns_pass": true,
+      "blank_header_pass": true
+    }
+  },
+  "all_pass": true
+}

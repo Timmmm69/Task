@@ -1,0 +1,11 @@
+Test case ID,FLOW ID,Role,Scenario,Expert proxy result,Evidence,Observed outcome,Participant execution
+UT-01,FLOW-001,Admin,Первый вход,PASS,02-first-connection.png; 03-bootstrap-progress.png,"Endpoint, login, bootstrap and safe Shell landing verified.",PENDING_EXTERNAL_SESSION
+UT-02,FLOW-002,Observer,Обычный вход,PASS,01-shell-start.png,Restored authenticated Shell context verified.,PENDING_EXTERNAL_SESSION
+UT-03,FLOW-004,Manager,Создание задачи,PASS,04-task-create-keyboard.png,Editor opened by keyboard and task creation completed.,PENDING_EXTERNAL_SESSION
+UT-04,FLOW-005,Employee,Быстрое создание задачи,PASS,04-task-create-keyboard.png,Alt+N path and minimum valid creation verified.,PENDING_EXTERNAL_SESSION
+UT-05,FLOW-019,Observer,Глобальный поиск,PASS,05-search-redaction.png; 05b-search-redaction-detail.png,Permission-safe partial result and non-disclosure verified.,PENDING_EXTERNAL_SESSION
+UT-06,FLOW-022,Employee,Потеря сервера,PASS,06-offline-readonly.png,Connection loss and explicit read-only cache state verified.,PENDING_EXTERNAL_SESSION
+UT-07,FLOW-023,Observer,Работа в read-only cache,PASS,06-offline-readonly.png,Cached browsing remains available and writes are disabled.,PENDING_EXTERNAL_SESSION
+UT-08,FLOW-024,Manager,Восстановление соединения,PASS,07-reconnected.png,"Reconnect state, synchronized status and restored writes verified.",PENDING_EXTERNAL_SESSION
+UT-09,FLOW-025,Manager,Optimistic conflict,PASS_AFTER_REMEDIATION,08-conflict-safe-choice.png; 09-conflict-draft-restored.png,Initial High draft-loss defect fixed; explicit return restores the unchanged local draft.,PENDING_EXTERNAL_SESSION
+UT-10,FLOW-034,Employee,Inbox capture и conversion,PASS_AFTER_REMEDIATION,10-inbox-conversion.png; 10b-inbox-conversion-fixed.png; 11-inbox-conversion-success.png,"Initial Medium callout overlap fixed; capture, conversion and source closure verified.",PENDING_EXTERNAL_SESSION

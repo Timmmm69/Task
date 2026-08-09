@@ -1,0 +1,23 @@
+work/tmp/
+work/cache/
+outputs/tmp/
+archive/quarantine/*
+!archive/quarantine/.gitkeep
+*.log
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
+
+# Local/generated dependencies and build output
+**/node_modules/
+**/dist/
+**/coverage/
+**/python-packages/
+**/.pydeps/
+**/.venv/
+**/venv/
+
+# Codex/local tool state
+.serena/
+.pnpm-store/

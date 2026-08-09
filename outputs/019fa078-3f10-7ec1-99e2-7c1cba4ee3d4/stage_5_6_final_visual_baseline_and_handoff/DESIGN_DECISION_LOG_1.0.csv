@@ -1,0 +1,8 @@
+Decision ID,Decision,Status,Evidence,Date
+DD-001,Direction 2 — Timeline planner is the canonical visual direction.,Accepted,Product owner decision VIS-001,2026-07-28
+DD-002,45 reusable component families cover the normative surface inventory.,Accepted,Component usage and implementation specs,2026-07-28
+DD-003,Offline mode is an honest authorized-cache read-only experience.,Accepted,FLOW-022/023 evidence,2026-07-28
+DD-004,Permission-safe partial results never disclose hidden object identity or count.,Accepted,Search/Admin evidence,2026-07-30
+DD-005,CalendarEvent uses the canonical DTO-aligned editor and guarded mutation states.,Accepted,SCR-044 / FLOW-031 package,2026-08-01
+DD-006,Final visual baseline is editable code because no external Figma artifact exists.,Accepted for delivery,User handoff constraint,2026-08-02
+DD-007,Delivery completion and external Gate/readiness are reported separately.,Accepted,Stage 5 coordination rule,2026-08-02

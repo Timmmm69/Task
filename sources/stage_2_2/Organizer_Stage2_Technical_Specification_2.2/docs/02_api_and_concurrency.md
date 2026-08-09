@@ -1,0 +1,323 @@
+# Этап 2. Детальная модель данных, PostgreSQL, API, права и технические сценарии
+
+**Продукт:** десктопный органайзер для одной компании  
+**Статус:** нормативная техническая спецификация перед реализацией  
+**Архитектурная база:** Этап 1, версия 1.0  
+**Целевая БД:** PostgreSQL 16+  
+**API:** REST `/api/v1`, OpenAPI 3.1.0  
+**Идентификаторы:** UUIDv7, генерируются приложением  
+**Конкурентность:** optimistic locking через ETag/If-Match  
+**Синхронизация:** bootstrap + change feed + WebSocket invalidation  
+
+> Нормативный приоритет: концепция определяет бизнес-функции; Этап 1 определяет архитектуру; данный пакет конкретизирует реализацию. При расхождении действует явно зафиксированное решение раздела 1.
+
+# 18. API-стандарты
+
+- Стиль: resource-oriented REST, commands как явные subresources (`/transition`, `/snooze`, `/restore`) там, где PATCH не выражает доменную операцию.
+- Версия: major в URL `/api/v1`; backward-compatible additions не меняют major.
+- JSON: UTF-8, camelCase, unknown request fields по умолчанию отклоняются для command DTO (`additionalProperties:false` в production schemas).
+- Success envelope отсутствует: ресурс/страница возвращается напрямую; metadata через headers/typed page.
+- Errors: `application/problem+json`, стабильный `code`, HTTP status не используется как единственный машинный признак.
+- Pagination: cursor preferred; `limit=100` default, `500` max; offset запрещён для change feed/history/audit.
+- Filtering: allowlist query fields; сортировка `sort=field,-field`; произвольный SQL-like filter запрещён.
+- Idempotency: mutating-команды принимают opaque `Idempotency-Key` длиной 8–200, хранят SHA-256 request + HTTP result; reuse с другим body → `409`.
+- Correlation: клиент посылает `X-Correlation-ID` UUID; сервер генерирует при отсутствии и возвращает его.
+- Locking: versioned write требует `If-Match: "v<version>"`; отсутствие → 428; stale ETag корневого агрегата → 412; secondary/domain conflict → 409.
+- Rate limit: login 5/min login+IP и 20/min IP; обычный API 600/min/user; тяжёлый search/calendar 60/min/user; admin jobs 5/hour.
+- Body: 1 MiB default; batch 100; timeout 15 s ordinary, 30 s search/export request start; jobs asynchronous 202.
+- TLS only; CORS disabled unless explicit admin origin; CSRF not применим к Authorization bearer без cookies.
+
+## 18.1. Формат ошибки
+
+```json
+{
+  "type": "urn:organizer:error:VERSION_CONFLICT",
+  "title": "Объект изменён другим пользователем",
+  "status": 409,
+  "code": "VERSION_CONFLICT",
+  "traceId": "00-...",
+  "correlationId": "0190...",
+  "currentVersion": 8,
+  "currentEtag": ""8"",
+  "conflictingFields": ["deadlineAt", "assigneeIds"]
+}
+```
+
+# 19. Полный каталог API
+
+Канонический каталог содержит 241 операций. `catalogs/api_catalog.csv` и `openapi/openapi.yaml` генерируются и проверяются совместно.
+
+| Module | Method | URL | Назначение | Permission | Request | Response | Codes | Idempotency | Transaction | Lock | Effects | Events |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| admin | GET | /api/v1/admin/backups | Результаты резервного копирования | Backup.Read | query:type,status,from,to,page | Page<BackupRun> | 200,401,403 | Safe | Read-only | — | — | — |
+| admin | POST | /api/v1/admin/backups | Запустить backup | Backup.Execute | BackupRequest | BackupRun | 202,400,401,403,409,429 | Idempotency-Key | Backup job tx | — | external agent command allowlist | BackupRequested |
+| admin | POST | /api/v1/admin/backups/{id}/restore | Запросить controlled restore | Backup.Restore | RestoreBackupRequest | RestorePlan | 202,400,401,403,404,409,422 | Idempotency-Key | Maintenance plan tx | — | requires two-person approval outside MVP API execution | RestoreRequested |
+| admin | POST | /api/v1/admin/backups/{id}/verify | Запустить restore verification | Backup.RestoreTest | BackupVerifyRequest | BackupRun | 202,400,401,403,404,409 | Idempotency-Key | Verification job tx | — | isolated restore | BackupVerificationRequested |
+| admin | POST | /api/v1/admin/change-feed/compact | Запустить compaction change feed | System.Configure | CompactionRequest | BackgroundJobRun | 202,400,401,403,409 | Idempotency-Key | Job tx | — | respect client watermark | ChangeFeedCompactionRequested |
+| admin | PUT | /api/v1/admin/feature-flags/{key} | Изменить feature flag | System.Configure | FeatureFlagPatch | FeatureFlag | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Flag tx | If-Match | realtime capability invalidate | FeatureFlagChanged |
+| admin | GET | /api/v1/admin/jobs | Фоновые задания | System.HealthRead | query:status,page | Page<BackgroundJob> | 200,401,403 | Safe | Read-only | — | — | — |
+| admin | POST | /api/v1/admin/jobs/{code}/run | Запустить разрешённый job | System.Configure | JobRunRequest | BackgroundJobRun | 202,400,401,403,409,429 | Idempotency-Key | Lease/job tx | — | no shell | BackgroundJobRequested |
+| admin | GET | /api/v1/admin/jobs/{code}/runs | История job | System.HealthRead | query:from,to,status,page | Page<BackgroundJobRun> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| admin | POST | /api/v1/admin/maintenance-mode | Включить/выключить maintenance mode | System.Configure | MaintenanceModeRequest | MaintenanceMode | 200,400,401,403,409,412,428 | Idempotency-Key | Settings tx | If-Match | reject writes except admins | MaintenanceModeChanged |
+| admin | POST | /api/v1/admin/search/reindex | Запустить переиндексацию | System.Configure | ReindexRequest | BackgroundJobRun | 202,400,401,403,409 | Idempotency-Key | Job tx | — | outbox-backed | SearchReindexRequested |
+| admin | GET | /api/v1/admin/server-capabilities | Административные capabilities | System.Configure | — | ServerCapabilities | 200,401,403 | Safe | Read-only | — | — | — |
+| admin | GET | /api/v1/admin/storage | Использование диска БД/backup/log | System.HealthRead | — | StorageStatus | 200,401,403,503 | Safe | Read-only probe | — | — | — |
+| archive | GET | /api/v1/archive | Архив | History.Read | query:type,projectId,page | Page<ArchiveEntry> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| archive | POST | /api/v1/archive/{objectId}/restore | Вернуть из архива | Archive.Restore | — | ObjectReference | 200,401,403,404,409,412,422,428 | Idempotent | Object+archive tx | If-Match | reindex | ObjectUnarchived |
+| audit | GET | /api/v1/audit | Технический аудит | Audit.ReadAll | query:actor,action,object,outcome,from,to,cursor | Page<AuditEntry> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| audit | GET | /api/v1/audit/export | Экспорт ограниченного журнала | Audit.ReadAll | query:filters,format | ExportJob | 202,400,401,403,429 | Idempotency-Key | Job create tx | — | async secure export | AuditExportRequested |
+| auth | POST | /api/v1/auth/admin-reset-password | Администратор задаёт временный пароль | User.ResetPassword | AdminResetPasswordRequest | TemporaryCredentialReceipt | 200,400,401,403,404,409 | Idempotency-Key | Identity tx | target version | revoke all sessions | PasswordResetByAdmin |
+| auth | POST | /api/v1/auth/change-password | Смена собственного пароля | Authenticated | ChangePasswordRequest | 204 | 204,400,401,409,422 | Idempotency-Key | Identity tx + row lock | security stamp | revoke other sessions | PasswordChanged |
+| auth | POST | /api/v1/auth/login | Вход по логину/паролю | Anonymous | LoginRequest | SessionTokens | 200,400,401,423,429 | Idempotency-Key optional | Identity tx | — | session+refresh token, login audit | UserLoggedIn |
+| auth | GET | /api/v1/auth/login-attempts | Журнал входов | SecurityAudit.Read | query:userId,result,from,to,page | Page<LoginAttempt> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| auth | POST | /api/v1/auth/logout | Завершить текущую сессию | Authenticated | — | 204 | 204,401 | Idempotent | Identity tx | — | revoke refresh family | UserLoggedOut |
+| auth | POST | /api/v1/auth/logout-all | Отозвать все сессии пользователя | Authenticated | LogoutAllRequest | RevocationSummary | 200,401,403 | Idempotency-Key | Identity tx | user security version | revoke sessions/cache | AllSessionsRevoked |
+| auth | POST | /api/v1/auth/refresh | Ротация refresh token | Anonymous.SessionRefresh | RefreshRequest | SessionTokens | 200,400,401,409 | Single-use token | Identity tx + row lock | token family version | rotate secret | SessionRefreshed |
+| auth | GET | /api/v1/auth/session | Текущая сессия и capabilities | Authenticated | — | CurrentSession | 200,401 | Safe | Read-only | — | — | — |
+| auth | GET | /api/v1/auth/sessions | Список собственных/разрешённых сессий | Session.ReadOwnOrAll | query:userId,page | Page<Session> | 200,401,403 | Safe | Read-only | — | — | — |
+| auth | POST | /api/v1/auth/sessions/{sessionId}/revoke | Отозвать сессию | Session.RevokeOwnOrAll | path:sessionId | 204 | 204,401,403,404 | Idempotent | Identity tx | — | revoke token family | SessionRevoked |
+| calendar | GET | /api/v1/calendar | Объединённая проекция Task + Event | Calendar.Read | query:from,to,users,departments,projects,status,timezone,cursor | SchedulePage | 200,400,401,403,422 | Safe | Read-only | — | — | — |
+| calendar | GET | /api/v1/calendar-events | Список календарное событие | Calendar.Read | query: filter,sort,page,cursor | Page<CalendarEvent> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| calendar | POST | /api/v1/calendar-events | Создать календарное событие | CalendarEvent.Create | CalendarEventCreate | CalendarEvent | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | CalendarEventCreated |
+| calendar | DELETE | /api/v1/calendar-events/{id} | Переместить календарное событие в корзину | CalendarEvent.Delete | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | CalendarEventDeleted |
+| calendar | GET | /api/v1/calendar-events/{id} | Получить календарное событие | Calendar.Read | path:id | CalendarEvent | 200,401,403,404 | Safe | Read-only | — | — | — |
+| calendar | PATCH | /api/v1/calendar-events/{id} | Изменить календарное событие | CalendarEvent.Update | CalendarEventPatch | CalendarEvent | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | CalendarEventUpdated |
+| calendar | POST | /api/v1/calendar-events/{id}/archive | Архивировать календарное событие | CalendarEvent.Update | ArchiveRequest | CalendarEvent | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | CalendarEventArchived |
+| calendar | PUT | /api/v1/calendar-events/{id}/attendees | Заменить участников события | CalendarEvent.Update | AttendeesReplace | CalendarEvent | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Event aggregate tx | If-Match event | notify attendees | CalendarAttendeesChanged |
+| calendar | POST | /api/v1/calendar-events/{id}/respond | Ответить на приглашение | CalendarEvent.Respond | AttendeeResponse | EventAttendee | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Attendee tx | If-Match attendee | notify organizer | CalendarInvitationResponded |
+| calendar | POST | /api/v1/calendar-events/{id}/restore | Восстановить календарное событие | CalendarEvent.Delete | RestoreRequest | CalendarEvent | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | CalendarEventRestored |
+| calendar | POST | /api/v1/calendar-events/{id}/unarchive | Вернуть календарное событие из архива | CalendarEvent.Update | — | CalendarEvent | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | CalendarEventUnarchived |
+| calendar | GET | /api/v1/calendar/conflicts | Пересечения расписания | Calendar.Read | query:from,to,userIds,excludeObjectId | ScheduleConflict[] | 200,400,401,403,422 | Safe | Read-only | — | — | — |
+| settings | GET | /api/v1/capabilities | Возможности сервера и min client | Authenticated | — | ServerCapabilities | 200,401 | Safe | Read-only | — | — | — |
+| files | GET | /api/v1/catalog-items | Список элемент каталога | FileCatalog.Read | query: filter,sort,page,cursor | Page<CatalogItem> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| files | POST | /api/v1/catalog-items | Создать элемент каталога | FileCatalog.Create | CatalogItemCreate | CatalogItem | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | CatalogItemCreated |
+| files | DELETE | /api/v1/catalog-items/{id} | Переместить элемент каталога в корзину | FileCatalog.Delete | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | CatalogItemDeleted |
+| files | GET | /api/v1/catalog-items/{id} | Получить элемент каталога | FileCatalog.Read | path:id | CatalogItem | 200,401,403,404 | Safe | Read-only | — | — | — |
+| files | PATCH | /api/v1/catalog-items/{id} | Изменить элемент каталога | FileCatalog.Update | CatalogItemPatch | CatalogItem | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | CatalogItemUpdated |
+| files | POST | /api/v1/catalog-items/{id}/archive | Архивировать элемент каталога | FileCatalog.Update | ArchiveRequest | CatalogItem | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | CatalogItemArchived |
+| files | GET | /api/v1/catalog-items/{id}/locations | Разрешённые locations | FileReference.Open | query:deviceId | FileLocation[] | 200,401,403,404 | Safe | Read-only | — | rawPath only for owning device/user or FileLocation.ReadSensitivePath | — |
+| files | POST | /api/v1/catalog-items/{id}/locations | Добавить location | FileLocation.Update | FileLocationCreate | FileLocation | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Catalog location tx | If-Match item | validate allowlist,notify; rawPath only for owning device/user or FileLocation.ReadSensitivePath | FileLocationAdded |
+| files | DELETE | /api/v1/catalog-items/{id}/locations/{locationId} | Удалить location | FileLocation.Update | — | 204 | 204,401,403,404,409,412,422,428 | Idempotent | Catalog location tx | If-Match item | may mark item unavailable | FileLocationRemoved |
+| files | PATCH | /api/v1/catalog-items/{id}/locations/{locationId} | Перепривязать location | FileLocation.Update | FileLocationPatch | FileLocation | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Catalog location tx | If-Match location/item | invalidate devices | FileLocationChanged |
+| files | POST | /api/v1/catalog-items/{id}/move | Переместить в виртуальном дереве | FileCatalog.Update | CatalogMoveRequest | CatalogItem | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Catalog tx | If-Match | cycle check,reindex | CatalogItemMoved |
+| files | POST | /api/v1/catalog-items/{id}/resolve-location | Выбрать путь для устройства | FileReference.Open | ResolveLocationRequest | ResolvedLocation | 200,400,401,403,404,409,422 | Idempotency-Key | Read + telemetry | — | no physical open; rawPath only for owning device/user or FileLocation.ReadSensitivePath | FileOpenRequested |
+| files | POST | /api/v1/catalog-items/{id}/restore | Восстановить элемент каталога | FileCatalog.Restore | RestoreRequest | CatalogItem | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | CatalogItemRestored |
+| files | POST | /api/v1/catalog-items/{id}/unarchive | Вернуть элемент каталога из архива | FileCatalog.Update | — | CatalogItem | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | CatalogItemUnarchived |
+| files | GET | /api/v1/catalog/tree | Дерево виртуального каталога | FileCatalog.Read | query:parentId,depth,includeArchived | CatalogTree | 200,400,401,403 | Safe | Read-only | — | — | — |
+| comments | POST | /api/v1/comments/{id}/restore | Восстановить удалённый комментарий | Comment.Moderate | — | Comment | 200,401,403,404,409,412,428 | Idempotent | Comment tx | If-Match | — | CommentRestored |
+| comments | GET | /api/v1/comments/{id}/versions | Версии комментария | History.Read | query:page | Page<CommentVersion> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| companies | GET | /api/v1/companies | Список контрагента | Contact.Read | query: filter,sort,page,cursor | Page<Company> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| companies | POST | /api/v1/companies | Создать контрагента | Contact.Create | CompanyCreate | Company | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | CompanyCreated |
+| companies | DELETE | /api/v1/companies/{id} | Переместить контрагента в корзину | Contact.Delete | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | CompanyDeleted |
+| companies | GET | /api/v1/companies/{id} | Получить контрагента | Contact.Read | path:id | Company | 200,401,403,404 | Safe | Read-only | — | — | — |
+| companies | PATCH | /api/v1/companies/{id} | Изменить контрагента | Contact.Update | CompanyPatch | Company | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | CompanyUpdated |
+| companies | POST | /api/v1/companies/{id}/archive | Архивировать контрагента | Contact.Update | ArchiveRequest | Company | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | CompanyArchived |
+| companies | POST | /api/v1/companies/{id}/contacts | Связать контакт с компанией | Contact.Update | ContactCompanyRoleCreate | ContactCompanyRole | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | CRM relation tx | If-Match company | search update | CompanyContactLinked |
+| companies | DELETE | /api/v1/companies/{id}/contacts/{contactId} | Удалить связь с контактом | Contact.Update | — | 204 | 204,401,403,404,409,412,428 | Idempotent | CRM relation tx | If-Match company | search update | CompanyContactUnlinked |
+| companies | POST | /api/v1/companies/{id}/restore | Восстановить контрагента | Contact.Restore | RestoreRequest | Company | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | CompanyRestored |
+| companies | POST | /api/v1/companies/{id}/unarchive | Вернуть контрагента из архива | Contact.Update | — | Company | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | CompanyUnarchived |
+| contacts | GET | /api/v1/contacts | Список контакт | Contact.Read | query: filter,sort,page,cursor | Page<Contact> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| contacts | POST | /api/v1/contacts | Создать контакт | Contact.Create | ContactCreate | Contact | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | ContactCreated |
+| contacts | DELETE | /api/v1/contacts/{id} | Переместить контакт в корзину | Contact.Delete | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | ContactDeleted |
+| contacts | GET | /api/v1/contacts/{id} | Получить контакт | Contact.Read | path:id | Contact | 200,401,403,404 | Safe | Read-only | — | — | — |
+| contacts | PATCH | /api/v1/contacts/{id} | Изменить контакт | Contact.Update | ContactPatch | Contact | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | ContactUpdated |
+| contacts | POST | /api/v1/contacts/{id}/addresses | Добавить адрес | Contact.Update | AddressCreate | Address | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Contact aggregate tx | If-Match contact | — | ContactAddressAdded |
+| contacts | POST | /api/v1/contacts/{id}/archive | Архивировать контакт | Contact.Update | ArchiveRequest | Contact | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | ContactArchived |
+| contacts | POST | /api/v1/contacts/{id}/channels | Добавить средство связи | Contact.Update | CommunicationChannelCreate | CommunicationChannel | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Contact aggregate tx | If-Match contact | search update | ContactChannelAdded |
+| contacts | DELETE | /api/v1/contacts/{id}/channels/{channelId} | Удалить средство связи | Contact.Update | — | 204 | 204,401,403,404,409,412,428 | Idempotent | Contact aggregate tx | If-Match contact | search update | ContactChannelDeleted |
+| contacts | PATCH | /api/v1/contacts/{id}/channels/{channelId} | Изменить средство связи | Contact.Update | CommunicationChannelPatch | CommunicationChannel | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Contact aggregate tx | If-Match contact | search update | ContactChannelChanged |
+| contacts | POST | /api/v1/contacts/{id}/restore | Восстановить контакт | Contact.Restore | RestoreRequest | Contact | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | ContactRestored |
+| contacts | POST | /api/v1/contacts/{id}/unarchive | Вернуть контакт из архива | Contact.Update | — | Contact | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | ContactUnarchived |
+| departments | GET | /api/v1/departments | Список отдел | Department.Read | query: filter,sort,page,cursor | Page<Department> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| departments | POST | /api/v1/departments | Создать отдел | Department.Manage | DepartmentCreate | Department | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | DepartmentCreated |
+| departments | GET | /api/v1/departments/tree | Дерево отделов | Department.Read | query:includeArchived | DepartmentTree | 200,401,403 | Safe | Read-only | — | — | — |
+| departments | DELETE | /api/v1/departments/{id} | Переместить отдел в корзину | Department.Manage | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | DepartmentDeleted |
+| departments | GET | /api/v1/departments/{id} | Получить отдел | Department.Read | path:id | Department | 200,401,403,404 | Safe | Read-only | — | — | — |
+| departments | PATCH | /api/v1/departments/{id} | Изменить отдел | Department.Manage | DepartmentPatch | Department | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | DepartmentUpdated |
+| departments | POST | /api/v1/departments/{id}/archive | Архивировать отдел | Department.Manage | ArchiveRequest | Department | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | DepartmentArchived |
+| departments | PUT | /api/v1/departments/{id}/managers | Заменить список руководителей отдела | Department.Manage | DepartmentManagersReplace | Department | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Department tx | If-Match | scope version++ | DepartmentManagersChanged |
+| departments | POST | /api/v1/departments/{id}/restore | Восстановить отдел | Department.Manage | RestoreRequest | Department | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | DepartmentRestored |
+| departments | POST | /api/v1/departments/{id}/unarchive | Вернуть отдел из архива | Department.Manage | — | Department | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | DepartmentUnarchived |
+| devices | GET | /api/v1/devices | Список устройство | Device.ReadOwnOrAll | query: filter,sort,page,cursor | Page<Device> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| devices | GET | /api/v1/devices/{id} | Получить устройство | Device.ReadOwnOrAll | path:id | Device | 200,401,403,404 | Safe | Read-only | — | — | — |
+| devices | PATCH | /api/v1/devices/{id} | Изменить устройство | Device.UpdateOwnOrAll | DevicePatch | Device | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | DeviceUpdated |
+| devices | POST | /api/v1/devices/{id}/heartbeat | Обновить last_seen и версию клиента | Authenticated | DeviceHeartbeat | 204 | 204,400,401,403,404 | Idempotent | Small tx | — | capability telemetry | — |
+| devices | POST | /api/v1/devices/{id}/revoke | Отозвать устройство | Device.Revoke | RevokeDeviceRequest | Device | 200,401,403,404,409,412,428 | Idempotency-Key | Device+sessions tx | If-Match | revoke sessions,cache purge marker | DeviceRevoked |
+| settings | GET | /api/v1/feature-flags | Доступные пользователю флаги | Authenticated | — | FeatureFlags | 200,401 | Safe | Read-only | — | — | — |
+| files | POST | /api/v1/file-locations/{id}/check-result | Передать результат desktop probe | FileReference.Open | FileLocationCheckCreate | 204 | 204,400,401,403,404,422 | Idempotency-Key | Telemetry tx | — | update last health | FileLocationChecked |
+| inbox | GET | /api/v1/inbox-items | Список входящий элемент | Inbox.ReadOwn | query: filter,sort,page,cursor | Page<InboxItem> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| inbox | POST | /api/v1/inbox-items | Создать входящий элемент | Inbox.ManageOwn | InboxItemCreate | InboxItem | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | InboxItemCreated |
+| inbox | DELETE | /api/v1/inbox-items/{id} | Переместить входящий элемент в корзину | Inbox.ManageOwn | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | InboxItemDeleted |
+| inbox | GET | /api/v1/inbox-items/{id} | Получить входящий элемент | Inbox.ReadOwn | path:id | InboxItem | 200,401,403,404 | Safe | Read-only | — | — | — |
+| inbox | PATCH | /api/v1/inbox-items/{id} | Изменить входящий элемент | Inbox.ManageOwn | InboxItemPatch | InboxItem | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | InboxItemUpdated |
+| inbox | POST | /api/v1/inbox-items/{id}/convert-to-catalog-item | Преобразовать в элемент каталога | Inbox.ManageOwn | InboxConvertCatalog | CatalogItem | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Inbox+Catalog tx | If-Match inbox item | mark converted | InboxItemConvertedToCatalog |
+| inbox | POST | /api/v1/inbox-items/{id}/convert-to-task | Преобразовать во task | Inbox.ManageOwn | InboxConvertTask | Task | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Inbox+Task tx | If-Match inbox item | trash/mark converted | InboxItemConvertedToTask |
+| inbox | POST | /api/v1/inbox-items/{id}/restore | Восстановить входящий элемент | Inbox.ManageOwn | RestoreRequest | InboxItem | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | InboxItemRestored |
+| interactions | GET | /api/v1/interactions | Список взаимодействие | Contact.Read | query: filter,sort,page,cursor | Page<Interaction> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| interactions | POST | /api/v1/interactions | Создать взаимодействие | Interaction.Create | InteractionCreate | Interaction | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | InteractionCreated |
+| interactions | DELETE | /api/v1/interactions/{id} | Переместить взаимодействие в корзину | Interaction.Update | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | InteractionDeleted |
+| interactions | GET | /api/v1/interactions/{id} | Получить взаимодействие | Contact.Read | path:id | Interaction | 200,401,403,404 | Safe | Read-only | — | — | — |
+| interactions | PATCH | /api/v1/interactions/{id} | Изменить взаимодействие | Interaction.Update | InteractionPatch | Interaction | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | InteractionUpdated |
+| interactions | PUT | /api/v1/interactions/{id}/participants | Заменить участников взаимодействия | Interaction.Update | InteractionParticipants | Interaction | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Interaction tx | If-Match | search update | InteractionParticipantsChanged |
+| interactions | POST | /api/v1/interactions/{id}/restore | Восстановить взаимодействие | Interaction.Update | RestoreRequest | Interaction | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | InteractionRestored |
+| files | GET | /api/v1/network-resources | Сетевые ресурсы | FileCatalog.Read | query:status,page | Page<NetworkResource> | 200,401,403 | Safe | Read-only | — | — | — |
+| files | POST | /api/v1/network-resources | Создать сетевой ресурс | NetworkResource.Manage | NetworkResourceCreate | NetworkResource | 201,400,401,403,409,422 | Idempotency-Key | Resource tx | — | validate UNC root | NetworkResourceCreated |
+| files | PATCH | /api/v1/network-resources/{id} | Изменить сетевой ресурс | NetworkResource.Manage | NetworkResourcePatch | NetworkResource | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Resource tx | If-Match | invalidate locations | NetworkResourceChanged |
+| files | POST | /api/v1/network-resources/{id}/probe | Проверить ресурс без credentials | NetworkResource.Manage | ProbeRequest | ProbeResult | 200,400,401,403,404,422 | Idempotency-Key | No business tx | — | audit result | NetworkResourceProbed |
+| notifications | GET | /api/v1/notifications | Список уведомление | Notification.ReadOwn | query: filter,sort,page,cursor | Page<Notification> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| notifications | GET | /api/v1/notifications/preferences | Настройки уведомлений | Settings.ReadOwn | — | NotificationPreferences | 200,401 | Safe | Read-only | — | — | — |
+| notifications | PUT | /api/v1/notifications/preferences | Обновить настройки уведомлений | Settings.UpdateOwn | NotificationPreferencesPatch | NotificationPreferences | 200,400,401,409,412,422,428 | Idempotency-Key | Preferences tx | If-Match | reschedule local plan | NotificationPreferencesChanged |
+| notifications | POST | /api/v1/notifications/read-all | Прочитать все в scope | Notification.ReadOwn | ReadAllRequest | ReadAllResult | 200,400,401,403 | Idempotency-Key | Batch tx | — | badge reset | NotificationsRead |
+| notifications | GET | /api/v1/notifications/{id} | Получить уведомление | Notification.ReadOwn | path:id | Notification | 200,401,403,404 | Safe | Read-only | — | — | — |
+| notifications | POST | /api/v1/notifications/{id}/action | Выполнить разрешённое действие toast | Notification.ManageOwn | NotificationActionRequest | ActionResult | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Target aggregate tx | target If-Match when required | delegated command | NotificationActionExecuted |
+| notifications | POST | /api/v1/notifications/{id}/read | Пометить прочитанным | Notification.ReadOwn | — | Notification | 200,401,403,404,409 | Idempotent | Notification tx | If-Match optional | badge decrement | NotificationRead |
+| comments | GET | /api/v1/objects/{objectId}/comments | Список комментарий | Comment.Read | query: filter,sort,page,cursor | Page<Comment> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| comments | POST | /api/v1/objects/{objectId}/comments | Создать комментарий | Comment.Create | CommentCreate | Comment | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | CommentAdded |
+| comments | DELETE | /api/v1/objects/{objectId}/comments/{id} | Переместить комментарий в корзину | Comment.DeleteOwnOrModerate | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | CommentDeleted |
+| comments | GET | /api/v1/objects/{objectId}/comments/{id} | Получить комментарий | Comment.Read | path:id | Comment | 200,401,403,404 | Safe | Read-only | — | — | — |
+| comments | PATCH | /api/v1/objects/{objectId}/comments/{id} | Изменить комментарий | Comment.UpdateOwnOrModerate | CommentPatch | Comment | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | CommentEdited |
+| history | GET | /api/v1/objects/{objectId}/history | История доступного объекта | History.Read | query:cursor,limit | Page<HistoryEntry> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| history | GET | /api/v1/objects/{objectId}/history/{version} | Снимок/изменения версии | History.Read | path:version | HistoryVersion | 200,401,403,404 | Safe | Read-only | — | — | — |
+| tags | GET | /api/v1/objects/{objectId}/links | Связи объекта | ObjectLink.Read | query:type,page | Page<ObjectLink> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| tags | POST | /api/v1/objects/{objectId}/links | Создать связь объектов | ObjectLink.Create | ObjectLinkCreate | ObjectLink | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Relation tx | If-Match source | validate both permissions | ObjectLinked |
+| tags | DELETE | /api/v1/objects/{objectId}/links/{linkId} | Удалить связь объектов | ObjectLink.Delete | — | 204 | 204,401,403,404,409,412,428 | Idempotent | Relation tx | If-Match source | — | ObjectUnlinked |
+| tags | PUT | /api/v1/objects/{objectId}/tags | Заменить теги объекта | Tag.Assign | TagIds | Tag[] | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Object tag tx | If-Match object | search update | ObjectTagsChanged |
+| roles | GET | /api/v1/permissions | Каталог разрешений | Role.Read | query:resource | Permission[] | 200,401,403 | Safe | Read-only | — | — | — |
+| roles | GET | /api/v1/project-roles | Каталог проектных ролей | Project.Read | — | ProjectRole[] | 200,401,403 | Safe | Read-only | — | — | — |
+| roles | PUT | /api/v1/project-roles/{id}/permissions | Изменить проектную роль | Role.Manage | PermissionCodes | ProjectRole | 200,400,401,403,404,409,412,428 | Idempotency-Key | Role tx | If-Match | scope version++ | ProjectRolePermissionsChanged |
+| projects | GET | /api/v1/projects | Список проект | Project.Read | query: filter,sort,page,cursor | Page<Project> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| projects | POST | /api/v1/projects | Создать проект | Project.Create | ProjectCreate | Project | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | ProjectCreated |
+| projects | DELETE | /api/v1/projects/{id} | Переместить проект в корзину | Project.Delete | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | ProjectDeleted |
+| projects | GET | /api/v1/projects/{id} | Получить проект | Project.Read | path:id | Project | 200,401,403,404 | Safe | Read-only | — | — | — |
+| projects | PATCH | /api/v1/projects/{id} | Изменить проект | Project.Update | ProjectPatch | Project | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | ProjectUpdated |
+| projects | POST | /api/v1/projects/{id}/archive | Архивировать проект | Project.Archive | ArchiveRequest | Project | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | ProjectArchived |
+| projects | GET | /api/v1/projects/{id}/history | История проекта | History.Read | query:cursor,page | Page<HistoryEntry> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| projects | GET | /api/v1/projects/{id}/members | Участники проекта | Project.ManageMembers | query:status,page | Page<ProjectMember> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| projects | POST | /api/v1/projects/{id}/members | Добавить участника | Project.ManageMembers | ProjectMemberCreate | ProjectMember | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Project membership tx | If-Match project | scope version++,notify | ProjectMemberAdded |
+| projects | DELETE | /api/v1/projects/{id}/members/{userId} | Удалить участника | Project.ManageMembers | — | 204 | 204,401,403,404,409,412,422,428 | Idempotent | Project membership tx | If-Match project | scope version++,cache invalidation | ProjectMemberRemoved |
+| projects | PATCH | /api/v1/projects/{id}/members/{userId} | Изменить роль участника | Project.ManageMembers | ProjectMemberPatch | ProjectMember | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Project membership tx | If-Match member/project | scope version++,notify | ProjectMemberRoleChanged |
+| projects | PUT | /api/v1/projects/{id}/members/{userId}/overrides | Задать permission overrides | Project.ManageMembers | PermissionOverrides | ProjectMember | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Authorization tx | If-Match member | scope version++ | ProjectMemberPermissionsChanged |
+| projects | POST | /api/v1/projects/{id}/restore | Восстановить проект | Project.Restore | RestoreRequest | Project | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | ProjectRestored |
+| projects | POST | /api/v1/projects/{id}/transfer-ownership | Передать владение проектом | Project.TransferOwnership | TransferOwnershipRequest | Project | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Project+membership tx | If-Match project | notify,scope version++ | ProjectOwnershipTransferred |
+| projects | POST | /api/v1/projects/{id}/unarchive | Вернуть проект из архива | Project.Archive | — | Project | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | ProjectUnarchived |
+| sync | GET | /api/v1/realtime/negotiate | Параметры WebSocket/realtime | Authenticated | query:cursor | RealtimeNegotiation | 200,401,403,409 | Safe | Read-only | — | — | — |
+| recurrence | GET | /api/v1/recurrence-series | Список серию повторений | Task.Read | query: filter,sort,page,cursor | Page<RecurrenceSeries> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| recurrence | POST | /api/v1/recurrence-series | Создать серию повторений | Task.ManageRecurrence | RecurrenceSeriesCreate | RecurrenceSeries | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | RecurrenceSeriesCreated |
+| recurrence | DELETE | /api/v1/recurrence-series/{id} | Отменить серию без помещения в универсальную корзину | Task.ManageRecurrence | path:id | RecurrenceSeries | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | RecurrenceSeriesCancelled |
+| recurrence | GET | /api/v1/recurrence-series/{id} | Получить серию повторений | Task.Read | path:id | RecurrenceSeries | 200,401,403,404 | Safe | Read-only | — | — | — |
+| recurrence | PATCH | /api/v1/recurrence-series/{id} | Изменить серию повторений | Task.ManageRecurrence | RecurrenceSeriesPatch | RecurrenceSeries | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | RecurrenceSeriesUpdated |
+| recurrence | POST | /api/v1/recurrence-series/{id}/apply-change | Изменить one/future/all | Task.ManageRecurrence | RecurrenceScopedChange | RecurrenceChangeResult | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Series+occurrences tx | If-Match series/task | exceptions/split series | RecurrenceSeriesChanged |
+| recurrence | POST | /api/v1/recurrence-series/{id}/generate | Административно расширить горизонт | System.JobRun | GenerateOccurrencesRequest | GenerationSummary | 200,400,401,403,404,409 | Idempotency-Key | Batched worker tx | advisory lock series | create tasks | RecurrenceOccurrencesGenerated |
+| recurrence | POST | /api/v1/recurrence-series/{id}/preview | Предпросмотр будущих occurrence | Task.Read | RecurrencePreviewRequest | OccurrencePreview[] | 200,400,401,403,404,422 | Safe | Read-only | — | — | — |
+| recurrence | POST | /api/v1/recurrence-series/{id}/resume | Возобновить приостановленную серию | Task.ManageRecurrence | RestoreRequest | RecurrenceSeries | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | RecurrenceSeriesRestored |
+| recurrence | POST | /api/v1/recurrence-series/{id}/skip/{occurrenceKey} | Пропустить экземпляр | Task.ManageRecurrence | SkipOccurrenceRequest | RecurrenceOccurrence | 200,400,401,403,404,409,412,428 | Idempotency-Key | Series occurrence tx | If-Match series | cancel reminders | RecurrenceOccurrenceSkipped |
+| reminders | GET | /api/v1/reminders | Список напоминание | Reminder.ManageOwn | query: filter,sort,page,cursor | Page<Reminder> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| reminders | POST | /api/v1/reminders | Создать напоминание | Reminder.ManageOwn | ReminderCreate | Reminder | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | ReminderCreated |
+| reminders | GET | /api/v1/reminders/upcoming | Ближайшие напоминания | Reminder.ManageOwn | query:until,limit | ReminderOccurrence[] | 200,400,401,403 | Safe | Read-only | — | — | — |
+| reminders | DELETE | /api/v1/reminders/{id} | Отменить напоминание | Reminder.ManageOwn | path:id | Reminder | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | ReminderCancelled |
+| reminders | GET | /api/v1/reminders/{id} | Получить напоминание | Reminder.ManageOwn | path:id | Reminder | 200,401,403,404 | Safe | Read-only | — | — | — |
+| reminders | PATCH | /api/v1/reminders/{id} | Изменить напоминание | Reminder.ManageOwn | ReminderPatch | Reminder | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | ReminderUpdated |
+| reminders | POST | /api/v1/reminders/{id}/dismiss | Закрыть срабатывание | Reminder.ManageOwn | DismissReminderRequest | 204 | 204,401,403,404,409,412,428 | Idempotent | Reminder tx | If-Match occurrence | cancel pending delivery | ReminderDismissed |
+| reminders | POST | /api/v1/reminders/{id}/reschedule | Перепланировать отменённое напоминание | Reminder.ManageOwn | RestoreRequest | Reminder | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | ReminderRestored |
+| reminders | POST | /api/v1/reminders/{id}/snooze | Отложить напоминание | Reminder.ManageOwn | SnoozeRequest | ReminderOccurrence | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Reminder tx | If-Match occurrence | schedule new occurrence | ReminderSnoozed |
+| roles | GET | /api/v1/roles | Список системную роль | Role.Read | query: filter,sort,page,cursor | Page<Role> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| roles | POST | /api/v1/roles | Создать системную роль | Role.Manage | RoleCreate | Role | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | RoleCreated |
+| roles | DELETE | /api/v1/roles/{id} | Деактивировать пользовательскую роль | Role.Manage | path:id | Role | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | RoleDeactivated |
+| roles | GET | /api/v1/roles/{id} | Получить системную роль | Role.Read | path:id | Role | 200,401,403,404 | Safe | Read-only | — | — | — |
+| roles | PATCH | /api/v1/roles/{id} | Изменить системную роль | Role.Manage | RolePatch | Role | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | RoleUpdated |
+| roles | POST | /api/v1/roles/{id}/activate | Активировать неактивную роль | Role.Manage | RestoreRequest | Role | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | RoleRestored |
+| roles | PUT | /api/v1/roles/{id}/permissions | Заменить разрешения роли | Role.Manage | PermissionCodes | Role | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Role tx | If-Match | authorization scope version++ | RolePermissionsChanged |
+| search | GET | /api/v1/search | Глобальный авторизационный поиск | Search.Use | query:q,types,projectIds,userIds,departments,status,from,to,cursor,limit | SearchPage | 200,400,401,403,422 | Safe | Read-only | — | — | — |
+| search | GET | /api/v1/search/suggestions | Подсказки по префиксу | Search.Use | query:q,types,limit | SearchSuggestion[] | 200,400,401,403 | Safe | Read-only | — | — | — |
+| settings | GET | /api/v1/settings/me | Пользовательские настройки | Settings.ReadOwn | — | UserSettings | 200,401 | Safe | Read-only | — | — | — |
+| settings | PATCH | /api/v1/settings/me | Изменить пользовательские настройки | Settings.UpdateOwn | UserSettingsPatch | UserSettings | 200,400,401,409,412,422,428 | Idempotency-Key | Settings tx | If-Match | desktop reschedule | UserSettingsChanged |
+| settings | GET | /api/v1/settings/organization | Настройки организации | Organization.Read | — | OrganizationSettings | 200,401,403 | Safe | Read-only | — | — | — |
+| settings | PATCH | /api/v1/settings/organization | Изменить настройки организации | Organization.Update | OrganizationSettingsPatch | OrganizationSettings | 200,400,401,403,409,412,422,428 | Idempotency-Key | Settings tx | If-Match | capabilities/scope version | OrganizationSettingsChanged |
+| sync | POST | /api/v1/sync/ack | Подтвердить применённый cursor | Sync.Read | SyncAck | 204 | 204,400,401,403,409,412,428 | Idempotent | Cursor tx | If-Match state | compaction watermark input | SyncCursorAcknowledged |
+| sync | POST | /api/v1/sync/bootstrap | Начальная авторизационная синхронизация | Sync.Read | SyncBootstrapRequest | SyncBatch | 200,400,401,403,409,413,422 | Idempotency-Key | Repeatable read chunks | scope version | cache replace plan | SyncBootstrapped |
+| sync | GET | /api/v1/sync/changes | Изменения после cursor | Sync.Read | query:cursor,limit,scopeVersion | SyncBatch | 200,400,401,403,409,410,422 | Safe | Read-only snapshot | — | — | — |
+| health | GET | /api/v1/system/time | Серверное UTC-время | Authenticated | — | ServerTime | 200,401 | Safe | Read-only | — | — | — |
+| health | GET | /api/v1/system/version | Версия сервера/API/схемы | Authenticated | — | SystemVersion | 200,401 | Safe | Read-only | — | — | — |
+| tags | GET | /api/v1/tags | Список тег | Tag.Read | query: filter,sort,page,cursor | Page<Tag> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| tags | POST | /api/v1/tags | Создать тег | Tag.Manage | TagCreate | Tag | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | TagCreated |
+| tags | DELETE | /api/v1/tags/{id} | Переместить тег в корзину | Tag.Manage | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | TagDeleted |
+| tags | GET | /api/v1/tags/{id} | Получить тег | Tag.Read | path:id | Tag | 200,401,403,404 | Safe | Read-only | — | — | — |
+| tags | PATCH | /api/v1/tags/{id} | Изменить тег | Tag.Manage | TagPatch | Tag | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | TagUpdated |
+| tags | POST | /api/v1/tags/{id}/restore | Восстановить тег | Tag.Manage | RestoreRequest | Tag | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | TagRestored |
+| tasks | GET | /api/v1/tasks | Список задачу | Task.Read | query: filter,sort,page,cursor | Page<Task> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| tasks | POST | /api/v1/tasks | Создать задачу | Task.Create | TaskCreate | Task | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | TaskCreated |
+| tasks | POST | /api/v1/tasks/bulk-transition | Пакетная смена статуса | Task.ChangeStatus | BulkTaskTransition | BulkOperationResult | 200,207,400,401,403,409,412,422,428 | Idempotency-Key | Per-item tx, max100 | Per-item If-Match | events per success | TaskStatusChanged |
+| tasks | DELETE | /api/v1/tasks/{id} | Переместить задачу в корзину | Task.Delete | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | TaskDeleted |
+| tasks | GET | /api/v1/tasks/{id} | Получить задачу | Task.Read | path:id | Task | 200,401,403,404 | Safe | Read-only | — | — | — |
+| tasks | PATCH | /api/v1/tasks/{id} | Изменить задачу | Task.Update | TaskPatch | Task | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | TaskUpdated |
+| tasks | POST | /api/v1/tasks/{id}/archive | Архивировать задачу | Task.Archive | ArchiveRequest | Task | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + archive tx | If-Match required | hide from active | TaskArchived |
+| tasks | PUT | /api/v1/tasks/{id}/assignees | Заменить исполнителей | Task.Assign | TaskAssigneesReplace | Task | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Task aggregate tx | If-Match required | notify,watcher visibility | TaskAssigneesChanged |
+| tasks | POST | /api/v1/tasks/{id}/dependencies | Добавить зависимость | Task.Update | TaskDependencyCreate | TaskDependency | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Two-task validation tx | If-Match task | cycle check | TaskDependencyAdded |
+| tasks | DELETE | /api/v1/tasks/{id}/dependencies/{dependencyId} | Удалить зависимость | Task.Update | — | 204 | 204,401,403,404,409,412,428 | Idempotent | Task tx | If-Match task | — | TaskDependencyRemoved |
+| tasks | GET | /api/v1/tasks/{id}/history | История задачи | History.Read | query:cursor,page | Page<HistoryEntry> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| tasks | POST | /api/v1/tasks/{id}/move | Изменить дату/время/длительность | Task.Update | TaskMoveRequest | Task | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Task tx | If-Match required | reschedule reminders | TaskScheduled |
+| tasks | POST | /api/v1/tasks/{id}/restore | Восстановить задачу | Task.Restore | RestoreRequest | Task | 200,401,403,404,409,412,422,428 | Idempotency-Key | Object + trash tx | If-Match/trashed version | reindex,invalidate | TaskRestored |
+| tasks | GET | /api/v1/tasks/{id}/subtasks | Список подзадач | Task.Read | query:sort | Task[] | 200,401,403,404 | Safe | Read-only | — | — | — |
+| tasks | POST | /api/v1/tasks/{id}/subtasks | Создать подзадачу | Task.Create | TaskCreate | Task | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Parent+child tx | If-Match parent | depth check,notify | SubtaskCreated |
+| tasks | POST | /api/v1/tasks/{id}/transition | Изменить статус задачи | Task.ChangeStatus | TaskTransitionRequest | Task | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Task aggregate tx | If-Match required | timestamps,notify,outbox | TaskStatusChanged |
+| tasks | POST | /api/v1/tasks/{id}/unarchive | Вернуть задачу из архива | Task.Archive | — | Task | 200,401,403,404,409,412,428 | Idempotent | Object + archive tx | If-Match required | reindex | TaskUnarchived |
+| tasks | PUT | /api/v1/tasks/{id}/watchers | Заменить наблюдателей | Task.ManageWatchers | TaskWatchersReplace | Task | 200,400,401,403,404,409,412,428 | Idempotency-Key | Task aggregate tx | If-Match required | notify/invalidate | TaskWatchersChanged |
+| checklists | GET | /api/v1/tasks/{taskId}/checklists | Список чек-лист | Task.Read | query: filter,sort,page,cursor | Page<Checklist> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| checklists | POST | /api/v1/tasks/{taskId}/checklists | Создать чек-лист | Task.Update | ChecklistCreate | Checklist | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | ChecklistCreated |
+| checklists | POST | /api/v1/tasks/{taskId}/checklists/{checklistId}/items | Добавить пункт чек-листа | Task.Update | ChecklistItemCreate | ChecklistItem | 201,400,401,403,404,409,412,422,428 | Idempotency-Key | Task aggregate tx | If-Match task | renumber if needed | ChecklistItemCreated |
+| checklists | DELETE | /api/v1/tasks/{taskId}/checklists/{checklistId}/items/{itemId} | Удалить пункт | Task.Update | — | 204 | 204,401,403,404,409,412,428 | Idempotent | Task aggregate tx | If-Match task | renumber optional | ChecklistItemDeleted |
+| checklists | PATCH | /api/v1/tasks/{taskId}/checklists/{checklistId}/items/{itemId} | Изменить/выполнить пункт | Task.ChangeStatus | ChecklistItemPatch | ChecklistItem | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Task aggregate tx | If-Match task | completed_by/time | ChecklistItemChanged |
+| checklists | POST | /api/v1/tasks/{taskId}/checklists/{checklistId}/reorder | Изменить порядок пунктов | Task.Update | OrderKeys | Checklist | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Task aggregate tx | If-Match task | fractional order normalize | ChecklistReordered |
+| checklists | DELETE | /api/v1/tasks/{taskId}/checklists/{id} | Переместить чек-лист в корзину | Task.Update | path:id | DeletionReceipt | 202,401,403,404,409,412,428 | Idempotent | Object + trash tx | If-Match required | hide from active/search | ChecklistDeleted |
+| checklists | GET | /api/v1/tasks/{taskId}/checklists/{id} | Получить чек-лист | Task.Read | path:id | Checklist | 200,401,403,404 | Safe | Read-only | — | — | — |
+| checklists | PATCH | /api/v1/tasks/{taskId}/checklists/{id} | Изменить чек-лист | Task.Update | ChecklistPatch | Checklist | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | ChecklistUpdated |
+| calendar | GET | /api/v1/today | Агрегированный read-model «Сегодня» в часовом поясе пользователя | Calendar.Read | query:timezone,cursor,limit | TodayPage | 200,400,401,403,422 | Safe | Read-only repeatable snapshot | — | — | — |
+| trash | GET | /api/v1/trash | Корзина | Trash.Read | query:type,deletedBy,purgeBefore,page | Page<TrashEntry> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| trash | DELETE | /api/v1/trash/{objectId} | Purge объекта после retention | Trash.Purge | PurgeRequest | 202 | 202,400,401,403,404,409,412,422,428 | Idempotency-Key | Mark purge job tx | If-Match | background purge | ObjectPurgeRequested |
+| trash | POST | /api/v1/trash/{objectId}/restore | Восстановить универсальный объект | Trash.Restore | RestoreRequest | ObjectReference | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Object+trash tx | If-Match | reindex,invalidate | ObjectRestored |
+| users | GET | /api/v1/users | Список пользователя | User.Read | query: filter,sort,page,cursor | Page<User> | 200,400,401,403 | Safe | Read-only | — | — | — |
+| users | POST | /api/v1/users | Создать пользователя | User.Create | UserCreate | User | 201,400,401,403,409,422 | Idempotency-Key | Single aggregate tx | — | audit,domain-event,outbox | UserCreated |
+| users | GET | /api/v1/users/{id} | Получить пользователя | User.Read | path:id | User | 200,401,403,404 | Safe | Read-only | — | — | — |
+| users | PATCH | /api/v1/users/{id} | Изменить пользователя | User.Update | UserPatch | User | 200,400,401,403,404,409,412,422,428 | Conditional | Single aggregate tx | If-Match required | audit,domain-event,outbox | UserUpdated |
+| users | POST | /api/v1/users/{id}/activate | Активировать учётную запись | User.Create | ActivationRequest | User | 200,401,403,404,409,412,422,428 | Idempotency-Key | Account tx | If-Match | issue no session | UserActivated |
+| users | POST | /api/v1/users/{id}/block | Заблокировать пользователя | User.Block | BlockUserRequest | User | 200,401,403,404,409,412,428 | Idempotency-Key | Account + sessions tx | If-Match | revoke sessions,scope version++ | UserBlocked |
+| users | POST | /api/v1/users/{id}/deactivate | Деактивировать учётную запись без удаления профиля | User.Block | DeactivateUserRequest | User | 200,401,403,404,409,412,428 | Idempotency-Key | Account + sessions tx | If-Match required | revoke sessions; preserve history | UserDeactivated |
+| users | GET | /api/v1/users/{id}/effective-permissions | Диагностика эффективных прав | Authorization.Explain | query:objectType,objectId | EffectivePermissions | 200,400,401,403,404 | Safe | Read-only | — | — | — |
+| users | GET | /api/v1/users/{id}/history | История пользователя | History.Read | query:cursor,page | Page<HistoryEntry> | 200,401,403,404 | Safe | Read-only | — | — | — |
+| users | POST | /api/v1/users/{id}/reactivate | Повторно активировать деактивированную учётную запись | User.Block | — | User | 200,401,403,404,409,412,428 | Idempotent | Account tx | If-Match required | scope-version++ | UserReactivated |
+| roles | PUT | /api/v1/users/{id}/roles | Заменить scoped-роли пользователя | User.ManageRoles | UserRolesReplace | UserRole[] | 200,400,401,403,404,409,412,422,428 | Idempotency-Key | Authorization tx | If-Match user | scope version++,realtime invalidate | UserRolesChanged |
+| users | POST | /api/v1/users/{id}/unblock | Разблокировать пользователя | User.Block | — | User | 200,401,403,404,409,412,428 | Idempotent | Account tx | If-Match | scope version++ | UserUnblocked |
+| health | GET | /health/details | Детальный health | System.HealthRead | — | HealthDetails | 200,401,403,503 | Safe | Read-only probes | — | — | — |
+| health | GET | /health/live | Liveness без зависимостей | Anonymous/Network allowlist | — | Health | 200,503 | Safe | No DB required | — | — | — |
+| health | GET | /health/ready | Readiness основных зависимостей | Anonymous/Network allowlist | — | Health | 200,503 | Safe | Read-only probes | — | — | — |
+
+# 20. OpenAPI
+
+Полная OpenAPI 3.1.0 находится в `openapi/openapi.yaml`. Она содержит **241 operation**, bearer security, Problem Details, конкретные DTO и vendor extensions:
+
+- `x-permission` — server policy requirement;
+- `x-transaction` — boundary;
+- `x-optimistic-lock` — ETag rule;
+- `x-idempotency` — retry contract;
+- `x-domain-events` — события после commit.
+
+Все используемые request/response schemas являются конкретными; server contract и desktop SDK генерируются и компилируются validation gate.
+
+# 21. Optimistic locking и конкурентное редактирование
+
+1. GET возвращает `ETag: "v7"` и body `version: 7`.
+2. PATCH/command посылает `If-Match: "v7"`.
+3. Repository выполняет `UPDATE ... SET ..., version=version+1 WHERE id=@id AND version=@expected`.
+4. affected rows = 0: сервер отличает hidden/not found/trashed/current version без раскрытия BOLA и возвращает 412/404.
+5. 412 содержит current version/ETag только если caller всё ещё имеет право; иначе 404/403. 409 используется для secondary expected version и доменных конфликтов.
+
+| Сценарий | Поведение |
+| --- | --- |
+| Разные поля | Сервер всё равно отклоняет устаревшую команду; клиент может предложить автоматический rebase только после сравнения field masks и повторной команды с новой версией. |
+| Одно поле | Явный конфликт; пользователь выбирает актуальное или своё значение. |
+| Один завершил, другой редактирует | Update отклоняется; UI показывает terminal transition и доступные команды reopen/copy. |
+| Объект удалён | `OBJECT_DELETED`; при праве Restore предлагается восстановление, stale edit автоматически не применяется. |
+| Изменён состав проекта | scopeVersion mismatch; client purges affected cache и повторяет authorization/bootstrap, не повторяет write автоматически. |
+| Перепривязан file location | stale relink отклоняется; клиент показывает оба location states, физический файл не изменяется. |
+
+Conflict attempts пишутся в audit без чувствительного body; успешная повторная команда получает новый idempotency key, потому что body/expected version изменились.

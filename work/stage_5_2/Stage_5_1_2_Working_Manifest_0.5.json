@@ -1,0 +1,30 @@
+{
+  "name": "Task Stage 5.1-5.2 Direction 2 Component Spec Freeze",
+  "version": "0.5",
+  "date": "2026-07-28",
+  "status": "working-pass",
+  "gate_closed": false,
+  "visual_direction": "Direction 2 - Timeline planner",
+  "prototype": "work/stage_5_prototype",
+  "usage_map": "work/stage_5_2/Component_Usage_Map_1.0.csv",
+  "implementation_specs": "work/stage_5_2/Component_Implementation_Specs_0.9.csv",
+  "component_validation": "work/stage_5_2/Component_Spec_Freeze_Validation_0.1.md",
+  "validation_report": "work/stage_5_2/Stage_5_1_2_Working_Validation_0.5.md",
+  "task_board": "outputs/019fa078-3f10-7ec1-99e2-7c1cba4ee3d4/Stage_5_Task_Board.xlsx",
+  "task_board_sha256": "E1E1A92D1F95735B86DDC35801B6316E94895867E64AAC5A5C5434A732ECB4D1",
+  "formula_error_scan": 0,
+  "component_count": 45,
+  "scr_coverage": 128,
+  "flow_coverage": 37,
+  "prototype_verified_families": 34,
+  "partially_verified_families": 4,
+  "specified_families": 7,
+  "overall_progress": 0.48982142857142846,
+  "stage_5_1_progress": 0.8166666666666667,
+  "stage_5_2_progress": 0.839375,
+  "artifacts": {
+    "usage_map_sha256": "A723D84BB300BF99D23D59822A90453B34F380FE46082A0508032B64FB98B9A1",
+    "implementation_specs_sha256": "040B27584E99B679EFBFA2E4B4252628C8B71D75C97B88159FA1C28743A4F534",
+    "component_validation_sha256": "8823CF111CA9DEA296C3A8DAB4D5399CC9E2ADE330F10D0A55AF9011CB835CA4"
+  }
+}

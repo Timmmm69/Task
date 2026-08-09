@@ -1,0 +1,24 @@
+{
+  "audit_report": {
+    "path": "C:\\Users\\novik\\Таск\\outputs\\Organizer_Stage4_4_Reaudit_Report.zip",
+    "sha256": "A568C8437E37703CBB46E8F9DC15BC7812004E7E81FCCA48B911A7CCEF0FB003",
+    "members": 17,
+    "crc_pass": true,
+    "complete_read_bytes": 322205,
+    "reopen_pass": true,
+    "inventory_pass": true,
+    "manifest_pass": true,
+    "manifest_failures": []
+  },
+  "remediation_input": {
+    "path": "C:\\Users\\novik\\Таск\\outputs\\Organizer_Stage4_5_Remediation_Input.zip",
+    "sha256": "18377B19BF48159F322C228CCB938C5089751A12180CD048F5CBC82B492479B4",
+    "members": 11,
+    "crc_pass": true,
+    "complete_read_bytes": 1892748,
+    "reopen_pass": true,
+    "inventory_pass": true,
+    "manifest_pass": true,
+    "manifest_failures": []
+  }
+}

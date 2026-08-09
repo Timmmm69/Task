@@ -1,0 +1,19 @@
+job,schedule_trigger,lock,idempotency,retry_dlq,metrics
+audit.partition,ежемесячно + 30 дней ahead,advisory lock,CREATE IF NOT EXISTS,alert on failure,partition readiness
+backup.base,ежедневно 01:00,external agent singleton,backup run id,retry 1; critical alert,duration/bytes/RPO
+backup.restore-verify,еженедельно,isolated target lock,backup id + verifier version,no automatic destructive retry,verification result/RTO
+backup.wal/archive,continuous/≤15 min,backup agent,WAL segment checksum,critical alert,archive lag
+changefeed.compact,ежедневно 02:30,singleton lease,watermark-based,retry 3,retained rows/oldest cursor
+idempotency.cleanup,каждый час,singleton lease token,delete only expires_at below database clock,3 retries; alert on persistent failure,expired rows/deletion lag
+logs.rotate,daily/size,OS lock,file generation,OS policy,retention/disk
+notifications.dispatch,каждые 5 сек,SKIP LOCKED delivery rows,delivery idempotency key,exponential 10; failed state,delivery latency/success
+operational.retention,ежедневно 04:00,singleton lease token,bounded primary-key batches below retention cut,3 retries; quarantine relation on policy violation,rows deleted/batch latency/retention lag
+outbox.publish,каждую секунду,FOR UPDATE SKIP LOCKED,message id,exponential; DLQ table/state,outbox age/backlog
+recurrence.generate,каждые 15 мин + on-demand horizon read,advisory lock per series,ledger unique; batch 100,5 exponential; DLQ after 5,"generated count, lag, failures"
+reminders.materialize,каждые 5 мин,range lease,unique reminder occurrence,retry 5; DLQ,materialization lag
+search.index,каждые 2 сек/event-driven,SKIP LOCKED,objectId+version,retry 5; reindex queue,index lag/backlog
+sessions.cleanup,каждый час,singleton lease,status transition conditional,retry 3,expired/revoked count
+storage.health,каждую минуту,no lock,read-only,alert debounce,disk/WAL/DB size
+sync.snapshot-cleanup,каждые 15 минут,singleton lease token,snapshot status + expires_at,3 retries; no destructive DLQ,active sessions/expired rows/oldest session
+tasks.detect-overdue,каждую минуту,singleton lease,dedupe key taskId+deadline version,retry 3; no DLQ event loss,overdue lag/count
+trash.purge,ежедневно 03:00,singleton lease + batches,state/version/legal hold checks,retry 3; quarantine failures,purged/skipped/legal holds

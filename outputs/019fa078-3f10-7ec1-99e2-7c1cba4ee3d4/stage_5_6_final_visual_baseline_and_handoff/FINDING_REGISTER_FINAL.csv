@@ -1,0 +1,6 @@
+Finding ID,Finding,Initial severity,Final state,Resolution
+DF-001,Operations selection retained stale scroll position.,Medium,REMEDIATED,Inspector/workspace scroll reset on selected object or section change.
+DF-002,Disabled destructive action contrast was too weak.,Medium,REMEDIATED,Readable semantic disabled-danger contrast retained.
+DF-003,Forced-colors support was absent from the shared prototype stylesheet.,Medium,REMEDIATED,"Windows system-colour borders, focus and disabled differentiation added."
+DF-004,Conflict close could lose the visible local draft.,High,REMEDIATED,Explicit return-to-draft action restores retained editor state.
+DF-005,Inbox conversion explanation overlapped at desktop viewport.,Medium,REMEDIATED,Resilient flex/grid callout layout added.

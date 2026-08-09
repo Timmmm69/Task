@@ -1,0 +1,70 @@
+{
+  "operations": 244,
+  "schemas": 237,
+  "refs": 2776,
+  "request_schemas": 124,
+  "success_schemas": 231,
+  "permission_checks": 230,
+  "stable_error_checks": 4579,
+  "functional_contract_tests": [
+    "urgency_default_scale_schema",
+    "urgency_organization_scope",
+    "urgency_exactly_four_intervals",
+    "urgency_semantic_levels",
+    "urgency_authorized_update_permission",
+    "urgency_forbidden_contract",
+    "urgency_invalid_interval_contract",
+    "urgency_reset_contract",
+    "urgency_if_match",
+    "urgency_etag",
+    "urgency_idempotency",
+    "urgency_audit_event",
+    "urgency_semantic_color_independence",
+    "urgency_old_client_compatibility",
+    "employee_separate_result_type",
+    "employee_name_and_confirmed_fields",
+    "employee_result_group_contract",
+    "employee_mixed_type_query",
+    "employee_permission_filtering",
+    "employee_redaction",
+    "employee_partial_access",
+    "employee_blocked_user_policy",
+    "employee_cursor_pagination",
+    "employee_cursor_policy_binding",
+    "employee_server_side_filtering",
+    "employee_deep_link",
+    "employee_not_admin_user_search"
+  ],
+  "dto_catalog_rows": 1340,
+  "permissions": 91,
+  "stable_errors": 44,
+  "compatibility": {
+    "existing_operations_preserved": 241,
+    "new_operations": [
+      "GET_api_v1_settings_notification_urgency_scale",
+      "POST_api_v1_settings_notification_urgency_scale_reset",
+      "PUT_api_v1_settings_notification_urgency_scale"
+    ],
+    "new_schemas": [
+      "EmployeeSearchResult",
+      "NotificationUrgencyScale",
+      "NotificationUrgencyScalePatch",
+      "UrgencyLevel",
+      "UrgencyScaleInterval"
+    ],
+    "changed_schemas": [
+      "SearchSuggestion"
+    ],
+    "new_fields": [
+      "SearchSuggestion.employee",
+      "SearchSuggestion.resultType"
+    ],
+    "new_enum_values": [],
+    "new_permissions": [],
+    "new_errors": [],
+    "new_migrations": [
+      "005_stage_2_3_contract_alignment.sql"
+    ]
+  },
+  "status": "PASS"
+}

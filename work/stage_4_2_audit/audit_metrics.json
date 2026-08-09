@@ -1,0 +1,3363 @@
+{
+  "manifest": {
+    "rows": [
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "exists": true,
+        "expected_size": 34887,
+        "actual_size": 34887,
+        "size_pass": true,
+        "expected_sha256": "E2640A181F84C63B1DA9054955DEB04C4C19C9BC508DBD4B299B8EB1D0D70ED2",
+        "actual_sha256": "E2640A181F84C63B1DA9054955DEB04C4C19C9BC508DBD4B299B8EB1D0D70ED2",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "exists": true,
+        "expected_size": 1338295,
+        "actual_size": 1338295,
+        "size_pass": true,
+        "expected_sha256": "A30C06432E94DDFCC18EAD0C0F1252B8727D22319F0122894A3BC34C3AD143F3",
+        "actual_sha256": "A30C06432E94DDFCC18EAD0C0F1252B8727D22319F0122894A3BC34C3AD143F3",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "exists": true,
+        "expected_size": 19110,
+        "actual_size": 19110,
+        "size_pass": true,
+        "expected_sha256": "93BA93E2FB8409ACC5134233163B1CCB4D777B46B1EA6590AF47667CC0273FFC",
+        "actual_sha256": "93BA93E2FB8409ACC5134233163B1CCB4D777B46B1EA6590AF47667CC0273FFC",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "exists": true,
+        "expected_size": 1184664,
+        "actual_size": 1184664,
+        "size_pass": true,
+        "expected_sha256": "4D2E39ECD270EECD9F836CCAD73DBFA8221F543A388112534100F16E08B84DF1",
+        "actual_sha256": "4D2E39ECD270EECD9F836CCAD73DBFA8221F543A388112534100F16E08B84DF1",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_NFR_Catalog_4.1.2.csv",
+        "exists": true,
+        "expected_size": 5840,
+        "actual_size": 5840,
+        "size_pass": true,
+        "expected_sha256": "0C6A6CCB3CCBF2EA6D7204416FE1E4E80F69BC48A5573A050A577EB28B1D51F8",
+        "actual_sha256": "0C6A6CCB3CCBF2EA6D7204416FE1E4E80F69BC48A5573A050A577EB28B1D51F8",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Analytics_Audit_Requirements_4.1.2.md",
+        "exists": true,
+        "expected_size": 24697,
+        "actual_size": 24697,
+        "size_pass": true,
+        "expected_sha256": "A93193018521359B924F1A9A41C7B0A3A285C70359F2987F60245B51D41C58A2",
+        "actual_sha256": "A93193018521359B924F1A9A41C7B0A3A285C70359F2987F60245B51D41C58A2",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "exists": true,
+        "expected_size": 286639,
+        "actual_size": 286639,
+        "size_pass": true,
+        "expected_sha256": "ADFA2F9AA24825C4FD0227A7E429C3DF15B9A468F30901C60D6BD3C8DDC892BC",
+        "actual_sha256": "ADFA2F9AA24825C4FD0227A7E429C3DF15B9A468F30901C60D6BD3C8DDC892BC",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Dependency_Risk_Register_4.1.2.md",
+        "exists": true,
+        "expected_size": 11158,
+        "actual_size": 11158,
+        "size_pass": true,
+        "expected_sha256": "BFB6F141E252F5CDD0C3A733C44AB42190535F0A4577BD2538659D1C93058819",
+        "actual_sha256": "BFB6F141E252F5CDD0C3A733C44AB42190535F0A4577BD2538659D1C93058819",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Decision_Log_4.1.2.md",
+        "exists": true,
+        "expected_size": 3964,
+        "actual_size": 3964,
+        "size_pass": true,
+        "expected_sha256": "9C20945A8228F43F069BFB6FE8F8F9C6782EF2B043DAEF3F689B0A78B96F3791",
+        "actual_sha256": "9C20945A8228F43F069BFB6FE8F8F9C6782EF2B043DAEF3F689B0A78B96F3791",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Open_Questions_4.1.2.md",
+        "exists": true,
+        "expected_size": 3463,
+        "actual_size": 3463,
+        "size_pass": true,
+        "expected_sha256": "073BC05FE43BD551A89BEED0E99E4398D16E7DC6214E170D31D8C563EE0B2F3C",
+        "actual_sha256": "073BC05FE43BD551A89BEED0E99E4398D16E7DC6214E170D31D8C563EE0B2F3C",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_Candidate_Validation_4.1.2.md",
+        "exists": true,
+        "expected_size": 1316,
+        "actual_size": 1316,
+        "size_pass": true,
+        "expected_sha256": "A25D9FC3D30179BFDE819E58D7CD81D9A6B27784C27EF4268021D07861BC4F82",
+        "actual_sha256": "A25D9FC3D30179BFDE819E58D7CD81D9A6B27784C27EF4268021D07861BC4F82",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "exists": true,
+        "expected_size": 10829,
+        "actual_size": 10829,
+        "size_pass": true,
+        "expected_sha256": "35D10400150CC0DAD1410DBCE8E83B5CDD8D6227CC4E7D168BFBDABA0BBC2DFA",
+        "actual_sha256": "35D10400150CC0DAD1410DBCE8E83B5CDD8D6227CC4E7D168BFBDABA0BBC2DFA",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_1_2_Delta_Plan.md",
+        "exists": true,
+        "expected_size": 2467,
+        "actual_size": 2467,
+        "size_pass": true,
+        "expected_sha256": "79E09BB76CDFFBA4AA71983E5D15F9A0C187D210379C25B0CC5081333149CB64",
+        "actual_sha256": "79E09BB76CDFFBA4AA71983E5D15F9A0C187D210379C25B0CC5081333149CB64",
+        "sha256_pass": true
+      },
+      {
+        "file": "Stage_4_1_2_Update_Report.md",
+        "exists": true,
+        "expected_size": 1462,
+        "actual_size": 1462,
+        "size_pass": true,
+        "expected_sha256": "D084C781C3EF1D95E686A5BF04A395A56F9A48BE121E9CF5916E579DB65FFB65",
+        "actual_sha256": "D084C781C3EF1D95E686A5BF04A395A56F9A48BE121E9CF5916E579DB65FFB65",
+        "sha256_pass": true
+      }
+    ],
+    "all_pass": true
+  },
+  "counts": {
+    "modules_unique": 21,
+    "module_ids": [
+      "MOD-001",
+      "MOD-002",
+      "MOD-003",
+      "MOD-004",
+      "MOD-005",
+      "MOD-006",
+      "MOD-007",
+      "MOD-008",
+      "MOD-009",
+      "MOD-010",
+      "MOD-011",
+      "MOD-012",
+      "MOD-013",
+      "MOD-014",
+      "MOD-015",
+      "MOD-016",
+      "MOD-017",
+      "MOD-018",
+      "MOD-019",
+      "MOD-020",
+      "MOD-021"
+    ],
+    "trace_rows": 497,
+    "fr_rows": 279,
+    "fr_unique": 279,
+    "br_rows": 113,
+    "br_unique": 113,
+    "ac_rows": 1824,
+    "ac_unique": 1824,
+    "nfr_rows": 25,
+    "nfr_unique": 25,
+    "openapi_operations": 244,
+    "openapi_operations_unique": 244,
+    "api_covered_by_fr": 244,
+    "api_covered_any_trace": 244,
+    "permissions_catalog": 91,
+    "stable_errors_catalog": 44
+  },
+  "duplicates": {
+    "trace_requirement_ids": {},
+    "fr_ids": {},
+    "br_ids": {},
+    "ac_ids": {},
+    "nfr_ids": {},
+    "openapi_operation_ids": {}
+  },
+  "relationships": {
+    "fr_without_ac": [],
+    "fr_broken_ac_refs": {},
+    "ac_without_valid_parent": [
+      "AC-1436",
+      "AC-1437",
+      "AC-1438",
+      "AC-1439",
+      "AC-1440",
+      "AC-1441",
+      "AC-1442",
+      "AC-1443",
+      "AC-1444",
+      "AC-1445",
+      "AC-1446",
+      "AC-1447",
+      "AC-1448",
+      "AC-1449",
+      "AC-1450",
+      "AC-1451",
+      "AC-1452",
+      "AC-1453",
+      "AC-1454",
+      "AC-1455",
+      "AC-1456",
+      "AC-1457",
+      "AC-1458",
+      "AC-1459",
+      "AC-1460",
+      "AC-1461",
+      "AC-1462",
+      "AC-1463",
+      "AC-1464",
+      "AC-1465",
+      "AC-1466",
+      "AC-1467",
+      "AC-1468",
+      "AC-1469",
+      "AC-1470",
+      "AC-1471",
+      "AC-1472",
+      "AC-1473",
+      "AC-1474",
+      "AC-1475",
+      "AC-1476",
+      "AC-1477",
+      "AC-1478",
+      "AC-1479",
+      "AC-1480",
+      "AC-1481",
+      "AC-1482",
+      "AC-1483",
+      "AC-1484",
+      "AC-1485",
+      "AC-1486",
+      "AC-1487",
+      "AC-1488",
+      "AC-1489",
+      "AC-1490",
+      "AC-1491",
+      "AC-1492",
+      "AC-1493",
+      "AC-1494",
+      "AC-1495",
+      "AC-1496",
+      "AC-1497",
+      "AC-1498",
+      "AC-1499",
+      "AC-1500",
+      "AC-1501",
+      "AC-1502",
+      "AC-1503",
+      "AC-1504",
+      "AC-1505",
+      "AC-1506",
+      "AC-1507",
+      "AC-1508",
+      "AC-1509",
+      "AC-1510",
+      "AC-1511",
+      "AC-1512",
+      "AC-1513",
+      "AC-1514",
+      "AC-1515",
+      "AC-1516",
+      "AC-1517",
+      "AC-1518",
+      "AC-1519",
+      "AC-1520",
+      "AC-1521",
+      "AC-1522",
+      "AC-1523",
+      "AC-1524",
+      "AC-1525",
+      "AC-1526",
+      "AC-1527",
+      "AC-1528",
+      "AC-1529",
+      "AC-1530",
+      "AC-1531",
+      "AC-1532",
+      "AC-1533",
+      "AC-1534",
+      "AC-1535",
+      "AC-1536",
+      "AC-1537",
+      "AC-1538",
+      "AC-1539",
+      "AC-1540",
+      "AC-1541",
+      "AC-1542",
+      "AC-1543",
+      "AC-1544",
+      "AC-1545",
+      "AC-1546",
+      "AC-1547",
+      "AC-1548",
+      "AC-1549",
+      "AC-1550",
+      "AC-1551",
+      "AC-1552",
+      "AC-1553",
+      "AC-1554",
+      "AC-1555",
+      "AC-1556",
+      "AC-1557",
+      "AC-1558",
+      "AC-1559",
+      "AC-1560",
+      "AC-1561",
+      "AC-1562",
+      "AC-1563",
+      "AC-1564",
+      "AC-1565",
+      "AC-1566",
+      "AC-1567",
+      "AC-1568",
+      "AC-1569",
+      "AC-1570",
+      "AC-1571",
+      "AC-1572",
+      "AC-1573",
+      "AC-1574",
+      "AC-1575",
+      "AC-1576",
+      "AC-1577",
+      "AC-1578",
+      "AC-1579",
+      "AC-1580",
+      "AC-1581",
+      "AC-1582",
+      "AC-1583",
+      "AC-1584",
+      "AC-1585",
+      "AC-1586",
+      "AC-1587",
+      "AC-1588",
+      "AC-1589",
+      "AC-1590",
+      "AC-1591",
+      "AC-1592",
+      "AC-1593",
+      "AC-1594",
+      "AC-1595",
+      "AC-1596",
+      "AC-1597",
+      "AC-1598",
+      "AC-1599",
+      "AC-1600",
+      "AC-1601",
+      "AC-1602",
+      "AC-1603",
+      "AC-1604",
+      "AC-1605",
+      "AC-1606",
+      "AC-1607",
+      "AC-1608",
+      "AC-1609",
+      "AC-1610",
+      "AC-1611",
+      "AC-1612",
+      "AC-1613",
+      "AC-1614",
+      "AC-1615",
+      "AC-1616",
+      "AC-1617",
+      "AC-1618",
+      "AC-1619",
+      "AC-1620",
+      "AC-1621",
+      "AC-1622",
+      "AC-1623",
+      "AC-1624",
+      "AC-1625",
+      "AC-1626",
+      "AC-1627",
+      "AC-1628",
+      "AC-1629",
+      "AC-1630",
+      "AC-1631",
+      "AC-1632",
+      "AC-1633",
+      "AC-1634",
+      "AC-1635",
+      "AC-1636",
+      "AC-1637",
+      "AC-1638",
+      "AC-1639",
+      "AC-1640",
+      "AC-1641",
+      "AC-1642",
+      "AC-1643",
+      "AC-1644",
+      "AC-1645",
+      "AC-1646",
+      "AC-1647",
+      "AC-1648",
+      "AC-1649",
+      "AC-1650",
+      "AC-1651",
+      "AC-1652",
+      "AC-1653",
+      "AC-1654",
+      "AC-1655",
+      "AC-1656",
+      "AC-1657",
+      "AC-1658",
+      "AC-1659",
+      "AC-1660",
+      "AC-1661",
+      "AC-1662",
+      "AC-1663",
+      "AC-1664",
+      "AC-1665",
+      "AC-1666",
+      "AC-1667",
+      "AC-1668",
+      "AC-1669",
+      "AC-1670",
+      "AC-1671",
+      "AC-1672",
+      "AC-1673",
+      "AC-1674",
+      "AC-1675",
+      "AC-1676",
+      "AC-1677",
+      "AC-1678",
+      "AC-1679",
+      "AC-1680",
+      "AC-1681",
+      "AC-1682",
+      "AC-1683",
+      "AC-1684",
+      "AC-1685",
+      "AC-1686",
+      "AC-1687",
+      "AC-1688",
+      "AC-1689",
+      "AC-1690",
+      "AC-1691",
+      "AC-1692",
+      "AC-1693",
+      "AC-1694",
+      "AC-1695",
+      "AC-1696",
+      "AC-1697",
+      "AC-1698",
+      "AC-1699",
+      "AC-1700",
+      "AC-1701",
+      "AC-1702",
+      "AC-1703",
+      "AC-1704",
+      "AC-1705",
+      "AC-1706",
+      "AC-1707",
+      "AC-1708",
+      "AC-1709",
+      "AC-1710",
+      "AC-1711",
+      "AC-1712",
+      "AC-1713",
+      "AC-1714",
+      "AC-1715",
+      "AC-1716",
+      "AC-1717",
+      "AC-1718",
+      "AC-1719",
+      "AC-1720",
+      "AC-1721",
+      "AC-1722",
+      "AC-1723",
+      "AC-1724",
+      "AC-1725",
+      "AC-1726",
+      "AC-1727",
+      "AC-1728",
+      "AC-1729",
+      "AC-1730",
+      "AC-1731",
+      "AC-1732",
+      "AC-1733",
+      "AC-1734",
+      "AC-1735",
+      "AC-1736",
+      "AC-1737",
+      "AC-1738",
+      "AC-1739",
+      "AC-1740",
+      "AC-1741",
+      "AC-1742",
+      "AC-1743",
+      "AC-1744",
+      "AC-1745",
+      "AC-1746",
+      "AC-1747",
+      "AC-1748",
+      "AC-1749",
+      "AC-1750",
+      "AC-1751",
+      "AC-1752",
+      "AC-1753",
+      "AC-1754",
+      "AC-1755",
+      "AC-1756",
+      "AC-1757",
+      "AC-1758",
+      "AC-1759",
+      "AC-1760",
+      "AC-1761",
+      "AC-1762",
+      "AC-1763",
+      "AC-1764",
+      "AC-1765",
+      "AC-1766",
+      "AC-1767",
+      "AC-1768",
+      "AC-1769",
+      "AC-1770",
+      "AC-1771",
+      "AC-1772",
+      "AC-1773",
+      "AC-1774",
+      "AC-1775",
+      "AC-1776",
+      "AC-1777",
+      "AC-1778",
+      "AC-1779",
+      "AC-1780",
+      "AC-1781",
+      "AC-1782",
+      "AC-1783",
+      "AC-1784",
+      "AC-1785",
+      "AC-1786",
+      "AC-1787",
+      "AC-1788",
+      "AC-1789"
+    ],
+    "ac_without_direct_fr_count": 466,
+    "ac_without_direct_fr_sample": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-005",
+      "AC-006",
+      "AC-007",
+      "AC-008",
+      "AC-009",
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-015",
+      "AC-016",
+      "AC-017",
+      "AC-018",
+      "AC-019",
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-024",
+      "AC-025",
+      "AC-026",
+      "AC-027",
+      "AC-028",
+      "AC-029",
+      "AC-030"
+    ],
+    "ac_orphan_references": [],
+    "br_without_related_fr_count": 96,
+    "br_without_related_fr_sample": [
+      "BR-001",
+      "BR-002",
+      "BR-003",
+      "BR-004",
+      "BR-005",
+      "BR-006",
+      "BR-007",
+      "BR-008",
+      "BR-009",
+      "BR-010",
+      "BR-011",
+      "BR-012",
+      "BR-013",
+      "BR-014",
+      "BR-015",
+      "BR-016",
+      "BR-017",
+      "BR-018",
+      "BR-019",
+      "BR-020",
+      "BR-021",
+      "BR-022",
+      "BR-023",
+      "BR-024",
+      "BR-025",
+      "BR-026",
+      "BR-027",
+      "BR-028",
+      "BR-029",
+      "BR-030"
+    ],
+    "br_without_module": [],
+    "br_without_fr_or_module": [],
+    "requirements_without_source": [],
+    "orphaned_requirements": []
+  },
+  "acceptance_quality": {
+    "missing_given_count": 211,
+    "missing_given_sample": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-005",
+      "AC-006",
+      "AC-007",
+      "AC-008",
+      "AC-009",
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-015",
+      "AC-016",
+      "AC-017",
+      "AC-018",
+      "AC-019",
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-024",
+      "AC-025",
+      "AC-026",
+      "AC-027",
+      "AC-028",
+      "AC-029",
+      "AC-030"
+    ],
+    "missing_when_count": 211,
+    "missing_when_sample": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-005",
+      "AC-006",
+      "AC-007",
+      "AC-008",
+      "AC-009",
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-015",
+      "AC-016",
+      "AC-017",
+      "AC-018",
+      "AC-019",
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-024",
+      "AC-025",
+      "AC-026",
+      "AC-027",
+      "AC-028",
+      "AC-029",
+      "AC-030"
+    ],
+    "missing_then_count": 211,
+    "missing_then_sample": [
+      "AC-001",
+      "AC-002",
+      "AC-003",
+      "AC-004",
+      "AC-005",
+      "AC-006",
+      "AC-007",
+      "AC-008",
+      "AC-009",
+      "AC-010",
+      "AC-011",
+      "AC-012",
+      "AC-013",
+      "AC-014",
+      "AC-015",
+      "AC-016",
+      "AC-017",
+      "AC-018",
+      "AC-019",
+      "AC-020",
+      "AC-021",
+      "AC-022",
+      "AC-023",
+      "AC-024",
+      "AC-025",
+      "AC-026",
+      "AC-027",
+      "AC-028",
+      "AC-029",
+      "AC-030"
+    ],
+    "vague_terms_count": 9,
+    "vague_terms_sample": {
+      "AC-1486": [
+        "корректно"
+      ],
+      "AC-1487": [
+        "корректно"
+      ],
+      "AC-1501": [
+        "корректно"
+      ],
+      "AC-1579": [
+        "корректно"
+      ],
+      "AC-1709": [
+        "корректно"
+      ],
+      "AC-1710": [
+        "корректно"
+      ],
+      "AC-1715": [
+        "корректно"
+      ],
+      "AC-1716": [
+        "корректно"
+      ],
+      "AC-1767": [
+        "корректно"
+      ]
+    }
+  },
+  "references": {
+    "unknown_scr": [],
+    "unknown_flow_except_FLOW_038_alias": [],
+    "unknown_state": [
+      "STATE-002",
+      "STATE-004",
+      "STATE-005",
+      "STATE-006",
+      "STATE-008",
+      "STATE-009",
+      "STATE-010",
+      "STATE-011",
+      "STATE-012",
+      "STATE-015",
+      "STATE-016",
+      "STATE-017",
+      "STATE-018",
+      "STATE-020",
+      "STATE-021",
+      "STATE-022",
+      "STATE-024",
+      "STATE-032",
+      "STATE-033",
+      "STATE-034",
+      "STATE-036",
+      "STATE-037",
+      "STATE-038",
+      "STATE-039"
+    ],
+    "unknown_cmp": [],
+    "unknown_permissions": [
+      "Anonymous.SessionRefresh"
+    ],
+    "unknown_stable_errors": [],
+    "unknown_operation_refs": [],
+    "uncovered_openapi_operations_by_fr": [],
+    "uncovered_openapi_operations_any_trace": []
+  },
+  "module_completeness": {
+    "MOD-001": [],
+    "MOD-002": [],
+    "MOD-003": [],
+    "MOD-004": [],
+    "MOD-005": [],
+    "MOD-006": [],
+    "MOD-007": [],
+    "MOD-008": [],
+    "MOD-009": [],
+    "MOD-010": [],
+    "MOD-011": [],
+    "MOD-012": [],
+    "MOD-013": [],
+    "MOD-014": [],
+    "MOD-015": [],
+    "MOD-016": [],
+    "MOD-017": [],
+    "MOD-018": [],
+    "MOD-019": [],
+    "MOD-020": [],
+    "MOD-021": []
+  },
+  "stale_or_conflicting_occurrences": {
+    "241_operations": [
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 107,
+        "text": "- One API-backed FR per each of the 241 OpenAPI operations."
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 127,
+        "text": "The Stage 4.1 author must preserve all 21 modules, map all 241 operations, keep FR→AC coverage complete, avoid unknown permissions/errors, retain SCR/FLOW/STATE traceability, preserve MVP boundaries, and publish a candidate manifest/validation. Any unresolved concept-to-contract mismatch remains an OQ and is not repaired by silently deleting a concept requirement."
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 621,
+        "text": "AC-241,MOD-005,FR-032,[STATE-017/STATE-020] Idempotency: повтор с тем же key/hash не создаёт двойной side effect,Critical,Integration,OpenAPI `POST_api_v1_tasks_id_archive`; Stage_3_Field_Traceability.csv,\"Given первая команда `POST_api_v1_tasks_id_archive` уже принята с idempotency key и payload hash"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4957,
+        "text": "AC-1400,MOD-021,FR-241,Happy path: История пользователя,High,Contract/integration,OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability.csv,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4958,
+        "text": "AC-1401,MOD-021,FR-241,[STATE-008/STATE-009] Permission denied: История пользователя не выполняется и данные не раскрываются,Critical,Security/authorization,OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability.csv,\"Given пользователь аутентифицирован, но не имеет `History.Read` или требуемой relation"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4962,
+        "text": "AC-1402,MOD-021,FR-241,[STATE-032/STATE-033/STATE-034] Session/device interruption: операция прекращается без сохранения неподтверждённого состояния,Critical,Security/session,OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability.csv,\"Given access/refresh session или device больше не действительны"
+      },
+      {
+        "file": "Stage_4_Candidate_Validation_4.1.2.md",
+        "line": 33,
+        "text": "FR/BR contradictions, untestable AC, duplicates, missing traceability, wrong DTO fields, unknown permissions, scope creep, stale 241-operation totals, normative Stage 2.2/3.4 references and open OQ-001/OQ-003 were checked. The Stage 3.5 duplicate FLOW-035 was corrected at the downstream PRD layer by DEC-060."
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1266,
+        "text": "| AC-241 | FR-032 | [STATE-017/STATE-020] Idempotency: повтор с тем же key/hash не создаёт двойной side effect | Critical | Integration | OpenAPI `POST_api_v1_tasks_id_archive`; Stage_3_Field_Traceability_Final_3.5.csv |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6564,
+        "text": "| FR-241 | Система должна позволять пользователю с capability `History.Read` выполнить действие «История пользователя» и считать его успешным только после подтверждения сервера. | Capability `History.Read` | Открытие/обновление поверхности | сервер доступен; сессия действительна | Получен контрактный ответ `HistoryEntryPage`; UI обновлён из authoritative response; side effects: —. | — | — | GET /api/v1/users/{id}/history (GET_api_v1_users_id_history) | — → HistoryEntryPage; fields: см. OpenAPI |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6670,
+        "text": "| AC-1400 | FR-241 | Happy path: История пользователя | High | Contract/integration | OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability_Final_3.5.csv |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6671,
+        "text": "| AC-1401 | FR-241 | [STATE-008/STATE-009] Permission denied: История пользователя не выполняется и данные не раскрываются | Critical | Security/authorization | OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability_Final_3.5.csv |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6672,
+        "text": "| AC-1402 | FR-241 | [STATE-032/STATE-033/STATE-034] Session/device interruption: операция прекращается без сохранения неподтверждённого состояния | Critical | Security/session | OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability_Final_3.5.csv |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 191,
+        "text": "- 241/241 OpenAPI operations имеют FR и AC."
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 33,
+        "text": "FR-032,MOD-005,\"§11, §27.1.5–16, §29, §33\",,FLOW-026,STATE-007;STATE-008;STATE-009;STATE-014;STATE-017;STATE-018;STATE-020;STATE-024;STATE-025;STATE-031;STATE-032;STATE-033;STATE-034;STATE-039,POST /api/v1/tasks/{id}/archive (POST_api_v1_tasks_id_archive),ArchiveRequest → Task; fields: см. OpenAPI,Task.Archive,AUTHENTICATION_REQUIRED;CALENDAR_RANGE_TOO_LARGE;DEPENDENCY_CYCLE;DEVICE_REVOKED;DUPLICATE_RESOURCE;FILE_ACCESS_DENIED;FILE_NO_LOCATION;FORBIDDEN;IDEMPOTENCY_KEY_REUSED;INVALID_CREDENTIALS"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 242,
+        "text": "FR-241,MOD-021,\"§21, §25, §27.1.34\",,,STATE-008;STATE-009;STATE-031;STATE-032;STATE-033;STATE-034;STATE-039,GET /api/v1/users/{id}/history (GET_api_v1_users_id_history),— → HistoryEntryPage; fields: см. OpenAPI,History.Read,AUTHENTICATION_REQUIRED;DEVICE_REVOKED;FILE_ACCESS_DENIED;FORBIDDEN;INVALID_CREDENTIALS;OBJECT_NOT_VISIBLE;REFRESH_TOKEN_REUSE;SESSION_EXPIRED;SESSION_REVOKED,AC-1400;AC-1401;AC-1402,OpenAPI `GET_api_v1_users_id_history`; Stage_3_Field_Traceability.csv"
+      }
+    ],
+    "stage_2_2": [
+      {
+        "file": "00_MANIFEST.md",
+        "line": 37,
+        "text": "Stage 2.2 and Stage 3.4 are historical baselines only."
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 11,
+        "text": "This file was not available as a complete artifact when Stage 4.1 was generated. It is reconstructed from: the final concept, Stage 1 architecture, Stage 2.2 contracts embedded in Stage 3.4, Stage 3.4 UX baseline, the stated Stage 4.0 summary (88/100, 21 modules, three blockers), and the modular structure actually used by the Stage 4.1 candidate. Reconstruction records only decisions demonstrably present in those sources or in the generated candidate. It does not change OpenAPI, DTO, permissions"
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 17,
+        "text": "3. Stage 2.2 contract baseline: OpenAPI 1.2.0-stage2.3, DTO catalog, permissions, stable errors, concurrency, sync and Search Contract contained in `Organizer_Stage3_Final_Baseline_3.4.zip`."
+      },
+      {
+        "file": "Stage_4_1_2_Update_Report.md",
+        "line": 10,
+        "text": "- Historical baselines retained: Stage 2.2 and Stage 3.4."
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 71,
+        "text": "BR-070,MOD-014,DEPRECATED in 4.1.2; replaced by BR-105. Исторически Stage 2.2 не поддерживал employee result type; Stage 2.3.1 добавил его.,Historical Stage 2.2; superseded by Stage 2.3.1,FR-159;FR-275;FR-277,AC-070;AC-1805"
+      },
+      {
+        "file": "Stage_4_Candidate_Validation_4.1.2.md",
+        "line": 33,
+        "text": "FR/BR contradictions, untestable AC, duplicates, missing traceability, wrong DTO fields, unknown permissions, scope creep, stale 241-operation totals, normative Stage 2.2/3.4 references and open OQ-001/OQ-003 were checked. The Stage 3.5 duplicate FLOW-035 was corrected at the downstream PRD layer by DEC-060."
+      },
+      {
+        "file": "Stage_4_Decision_Log_4.1.2.md",
+        "line": 25,
+        "text": "| DEC-053 | Stage 2.3.1 is the normative technical contract | Final hash/validation and 244-operation catalog | Stage 2.2 is historical/backward only | Accepted |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4428,
+        "text": "| BR-070 | **Deprecated in 4.1.2; replaced by BR-105.** Исторически Stage 2.2 не поддерживал EmployeeProfile как result type; Stage 2.3.1 добавил `employee`. | §20, §27.1.35; Stage 3.4 | AC-070 |"
+      },
+      {
+        "file": "Stage_4_NFR_Catalog_4.1.2.csv",
+        "line": 13,
+        "text": "NFR-012,Idempotency,Idempotent commands do not duplicate side effects for same key/hash.,Exactly one business result/event for duplicate delivery,Integration/replay tests,Stage 2.2,ALL"
+      },
+      {
+        "file": "Stage_4_NFR_Catalog_4.1.2.csv",
+        "line": 21,
+        "text": "NFR-020,Compatibility,Unsupported clients are blocked for writes; Stage 2.2 notification clients retain built-in urgency presentation mapping.,No writable shell below min version,Version compatibility tests,Stage 2.3.1 OpenAPI 1.2.0-stage2.3; Stage 3.5 UX baseline; Stage 4.1.2 delta,ALL"
+      },
+      {
+        "file": "Stage_4_Open_Questions_4.1.2.md",
+        "line": 21,
+        "text": "| OQ-001 | Concept required configurable urgency thresholds; Stage 2.2 had no writable contract. | GET/PUT/reset organizational scale; NotificationUrgencyScale/Patch/UrgencyScaleInterval/UrgencyLevel; Settings.ReadOwn/System.Configure; ETag/If-Match; audit. | SCR-153/CMP-001, duplicate flow normalized downstream as FLOW-038; states 007/014/025; exact 38-row delta evidence. | FR-264, FR-270–274, FR-279; BR-098–104; AC-1790–1803,1819,1821–1824 | 3 operation mapping; DTO field gate; permission/erro"
+      },
+      {
+        "file": "Stage_4_Open_Questions_4.1.2.md",
+        "line": 22,
+        "text": "| OQ-003 | Concept required employee search/group; Stage 2.2 omitted employee type. | types=employee; resultType/employee; EmployeeSearchResult; server redaction/blocked/cursor policy. | SCR-133/134/135, CMP-002, FLOW-019, STATE-030; no avatar; no post-filter. | FR-159,160,260,275–278; BR-070 deprecated → BR-105; BR-105–112; AC-1804–1820 | Search DTO/field, permission/redaction/cursor/deep-link and Gherkin gates | **Fixed** |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 169,
+        "text": "| NFR-012 | Idempotency | Idempotent commands do not duplicate side effects for same key/hash. | Exactly one business result/event for duplicate delivery | Integration/replay tests | Stage 2.2 |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 182,
+        "text": "| NFR-025 | Request limits | Requests, text and batch sizes respect OpenAPI/Stage 2.3.1 limits. | 0 client request beyond contract limit | Generated boundary tests | OpenAPI/Stage 2.2 |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 204,
+        "text": "Stage 2.3.1 (`OpenAPI 1.2.0-stage2.3`, 244 operations, 237 schemas, 91 permissions, 44 stable errors) является текущим technical contract. Stage 3.5 является текущим UX baseline. Stage 2.2 и 3.4 используются только как historical/backward-compatibility evidence."
+      }
+    ],
+    "stage_3_4": [
+      {
+        "file": "00_MANIFEST.md",
+        "line": 37,
+        "text": "Stage 2.2 and Stage 3.4 are historical baselines only."
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 11,
+        "text": "This file was not available as a complete artifact when Stage 4.1 was generated. It is reconstructed from: the final concept, Stage 1 architecture, Stage 2.2 contracts embedded in Stage 3.4, Stage 3.4 UX baseline, the stated Stage 4.0 summary (88/100, 21 modules, three blockers), and the modular structure actually used by the Stage 4.1 candidate. Reconstruction records only decisions demonstrably present in those sources or in the generated candidate. It does not change OpenAPI, DTO, permissions"
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 18,
+        "text": "4. Stage 3.4 UX baseline: 128 SCR, 37 FLOW, State Matrix, Screen Catalog, Role Interface Matrix, UX/API and 1040-row field traceability."
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 26,
+        "text": "- Field-level work was no longer blocked because Stage 3.4 contained validated OpenAPI/DTO evidence."
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 101,
+        "text": "| Notification urgency thresholds | Concept requires configurable thresholds; contract and Stage 3.4 controls do not contain writable fields. | Carry as OQ; do not invent DTO/settings. |"
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 102,
+        "text": "| Stable STATE IDs | Stage 3.0 registry existed for STATE-001…024, while Stage 3.4 contract-dependent table exposed only selected IDs and lost full mechanical traceability. | Carry as documentation blocker; normalize without product change. |"
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 117,
+        "text": "- Stage 3.4 screen/flow/field traceability available: PASS."
+      },
+      {
+        "file": "Stage_4_1_2_Update_Report.md",
+        "line": 10,
+        "text": "- Historical baselines retained: Stage 2.2 and Stage 3.4."
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 17,
+        "text": "AC-016,MOD-001,BR-016,Проверить бизнес-правило: Каждый сотрудник использует отдельную учётную запись.,High,Integration/domain,\"§§3.2, 24, 25, 29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 18,
+        "text": "AC-017,MOD-001,BR-017,Проверить бизнес-правило: Refresh token ротируется; повторное использование завершает семейство сессий.,High,Integration/domain,\"§§3.2, 24, 25, 29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 19,
+        "text": "AC-018,MOD-001,BR-018,Проверить бизнес-правило: Блокировка или деактивация пользователя отзывает активные сессии.,High,Integration/domain,\"§§3.2, 24, 25, 29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 20,
+        "text": "AC-019,MOD-001,BR-019,\"Проверить бизнес-правило: Клиент не раскрывает, логин или пароль были неверны.\",High,Integration/domain,\"§§3.2, 24, 25, 29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 21,
+        "text": "AC-020,MOD-002,BR-020,Проверить бизнес-правило: Маршрут восстанавливается только после повторной авторизации.,High,Integration/domain,\"§8, §17.2, §23.5, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 22,
+        "text": "AC-021,MOD-002,BR-021,\"Проверить бизнес-правило: Command bar, context menu и palette используют единый command registry.\",High,Integration/domain,\"§8, §17.2, §23.5, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 23,
+        "text": "AC-022,MOD-002,BR-022,Проверить бизнес-правило: Скрытая кнопка не является проверкой permission.,High,Integration/domain,\"§8, §17.2, §23.5, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 24,
+        "text": "AC-023,MOD-002,BR-023,Проверить бизнес-правило: Deep link не раскрывает данные скрытого объекта.,High,Integration/domain,\"§8, §17.2, §23.5, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 25,
+        "text": "AC-024,MOD-003,BR-024,\"Проверить бизнес-правило: Просрочка вычисляется, а не хранится как статус.\",High,Integration/domain,\"§9, §27.1.17, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 26,
+        "text": "AC-025,MOD-003,BR-025,Проверить бизнес-правило: Ошибка одной секции не заменяет весь экран ошибкой.,High,Integration/domain,\"§9, §27.1.17, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 27,
+        "text": "AC-026,MOD-003,BR-026,Проверить бизнес-правило: В offline показывается только кэш с timestamp.,High,Integration/domain,\"§9, §27.1.17, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 28,
+        "text": "AC-027,MOD-003,BR-027,Проверить бизнес-правило: Scope-фильтр отправляется только контрактно поддерживаемыми параметрами.,High,Integration/domain,\"§9, §27.1.17, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 29,
+        "text": "AC-028,MOD-004,BR-028,Проверить бизнес-правило: InboxItem принадлежит создателю до явного преобразования.,High,Integration/domain,\"§10, §27.1, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 30,
+        "text": "AC-029,MOD-004,BR-029,Проверить бизнес-правило: Преобразование создаёт целевой объект и помечает source как converted в одной транзакции.,High,Integration/domain,\"§10, §27.1, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 31,
+        "text": "AC-030,MOD-004,BR-030,Проверить бизнес-правило: При отказе целевого permission исходный InboxItem остаётся неизменён.,High,Integration/domain,\"§10, §27.1, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 32,
+        "text": "AC-031,MOD-005,BR-031,\"Проверить бизнес-правило: Статусы: new, in_progress, review, completed, cancelled; overdue вычисляется.\",High,Integration/domain,\"§11, §27.1.5–16, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 33,
+        "text": "AC-032,MOD-005,BR-032,Проверить бизнес-правило: Business completion не архивирует задачу автоматически.,High,Integration/domain,\"§11, §27.1.5–16, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 34,
+        "text": "AC-033,MOD-005,BR-033,Проверить бизнес-правило: Полный editor сохраняется явно; узкие команды отправляются отдельно.,High,Integration/domain,\"§11, §27.1.5–16, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 35,
+        "text": "AC-034,MOD-005,BR-034,Проверить бизнес-правило: Переходы определяет сервер; клиент не формирует их из названия роли.,High,Integration/domain,\"§11, §27.1.5–16, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 36,
+        "text": "AC-035,MOD-005,BR-035,Проверить бизнес-правило: Review → completed и review → in_progress выполняются только разрешёнными transition.,High,Integration/domain,\"§11, §27.1.5–16, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 37,
+        "text": "AC-036,MOD-006,BR-036,Проверить бизнес-правило: Подзадача является Task с parentTaskId.,High,Integration/domain,\"§11.4–11.5, §27.1.9–10; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 38,
+        "text": "AC-037,MOD-006,BR-037,Проверить бизнес-правило: Глубина вложенности ограничена одним уровнем.,High,Integration/domain,\"§11.4–11.5, §27.1.9–10; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 39,
+        "text": "AC-038,MOD-006,BR-038,Проверить бизнес-правило: Checklist item не имеет самостоятельного lifecycle вне родительского Task.,High,Integration/domain,\"§11.4–11.5, §27.1.9–10; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 40,
+        "text": "AC-039,MOD-006,BR-039,Проверить бизнес-правило: Reorder сохраняет стабильный порядок без дубликатов.,High,Integration/domain,\"§11.4–11.5, §27.1.9–10; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 41,
+        "text": "AC-040,MOD-007,BR-040,\"Проверить бизнес-правило: Series имеет timezone и ровно один termination mode, если завершение задано.\",High,Integration/domain,\"§11.6, §27.1.16; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 42,
+        "text": "AC-041,MOD-007,BR-041,Проверить бизнес-правило: Occurrence key уникален; повторная генерация идемпотентна.,High,Integration/domain,\"§11.6, §27.1.16; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 43,
+        "text": "AC-042,MOD-007,BR-042,Проверить бизнес-правило: Изменение scope выбирается явно.,High,Integration/domain,\"§11.6, §27.1.16; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 44,
+        "text": "AC-043,MOD-007,BR-043,Проверить бизнес-правило: Отмена серии не помещает её в универсальную корзину.,High,Integration/domain,\"§11.6, §27.1.16; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 45,
+        "text": "AC-044,MOD-008,BR-044,Проверить бизнес-правило: Напоминание имеет ровно один trigger mode.,High,Integration/domain,\"§17, §27.1.19–21; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 46,
+        "text": "AC-045,MOD-008,BR-045,\"Проверить бизнес-правило: Snooze меняет время reminder, но не расписание Task/Event.\",High,Integration/domain,\"§17, §27.1.19–21; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 47,
+        "text": "AC-046,MOD-008,BR-046,Проверить бизнес-правило: Повторное срабатывание дедуплицируется сервером.,High,Integration/domain,\"§17, §27.1.19–21; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 48,
+        "text": "AC-047,MOD-009,BR-047,Проверить бизнес-правило: Overlap разрешён и только предупреждается.,High,Integration/domain,\"§12, §27.1.18, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 49,
+        "text": "AC-048,MOD-009,BR-048,Проверить бизнес-правило: Date-only Task отображается вне временной шкалы.,High,Integration/domain,\"§12, §27.1.18, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 50,
+        "text": "AC-049,MOD-009,BR-049,Проверить бизнес-правило: Deadline не используется как позиция на timeline.,High,Integration/domain,\"§12, §27.1.18, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 51,
+        "text": "AC-050,MOD-009,BR-050,Проверить бизнес-правило: Все локальные времена интерпретируются с timezone.,High,Integration/domain,\"§12, §27.1.18, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 52,
+        "text": "AC-051,MOD-010,BR-051,Проверить бизнес-правило: У проекта всегда остаётся владелец.,High,Integration/domain,\"§13, §27.1.7–8, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 53,
+        "text": "AC-052,MOD-010,BR-052,Проверить бизнес-правило: Завершение проекта и архивирование различаются.,High,Integration/domain,\"§13, §27.1.7–8, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 54,
+        "text": "AC-053,MOD-010,BR-053,Проверить бизнес-правило: Удаление проекта не удаляет каскадно Task и физические файлы.,High,Integration/domain,\"§13, §27.1.7–8, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 55,
+        "text": "AC-054,MOD-010,BR-054,Проверить бизнес-правило: Explicit deny сильнее allow; сервер пересчитывает scopeVersion.,High,Integration/domain,\"§13, §27.1.7–8, §29, §33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 56,
+        "text": "AC-055,MOD-011,BR-055,Проверить бизнес-правило: Приложение хранит только metadata и paths.,High,Integration/domain,\"§§14–15, §27.1.22–31, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 57,
+        "text": "AC-056,MOD-011,BR-056,Проверить бизнес-правило: OS/SMB ACL остаётся авторитетным для физического открытия.,High,Integration/domain,\"§§14–15, §27.1.22–31, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 58,
+        "text": "AC-057,MOD-011,BR-057,Проверить бизнес-правило: Move в дереве меняет только parent metadata.,High,Integration/domain,\"§§14–15, §27.1.22–31, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 59,
+        "text": "AC-058,MOD-011,BR-058,[STATE-018] Проверить бизнес-правило: Удаление/архив/purge не затрагивает физический файл.,High,Integration/domain,\"§§14–15, §27.1.22–31, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 60,
+        "text": "AC-059,MOD-011,BR-059,Проверить бизнес-правило: Выбранный location видим пользователю и может быть заменён альтернативным.,High,Integration/domain,\"§§14–15, §27.1.22–31, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 61,
+        "text": "AC-060,MOD-012,BR-060,Проверить бизнес-правило: Contact может существовать без Company.,High,Integration/domain,\"§16, §27.1.32, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 62,
+        "text": "AC-061,MOD-012,BR-061,Проверить бизнес-правило: Удаление или архивирование не разрывает историю без явного действия.,High,Integration/domain,\"§16, §27.1.32, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 63,
+        "text": "AC-062,MOD-012,BR-062,Проверить бизнес-правило: Контактные каналы валидируются по типу; primary определяется контрактом.,High,Integration/domain,\"§16, §27.1.32, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 64,
+        "text": "AC-063,MOD-013,BR-063,Проверить бизнес-правило: Изменение комментария сохраняет предыдущую версию.,High,Integration/domain,\"§16.5, §18, §21, §27.1.33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 65,
+        "text": "AC-064,MOD-013,BR-064,[STATE-018] Проверить бизнес-правило: Удаление комментария создаёт tombstone и допускает moderation restore.,High,Integration/domain,\"§16.5, §18, §21, §27.1.33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 66,
+        "text": "AC-065,MOD-013,BR-065,Проверить бизнес-правило: Interaction вводится вручную и является versioned object.,High,Integration/domain,\"§16.5, §18, §21, §27.1.33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 67,
+        "text": "AC-066,MOD-013,BR-066,Проверить бизнес-правило: Object links не дают permission на target автоматически.,High,Integration/domain,\"§16.5, §18, §21, §27.1.33; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 68,
+        "text": "AC-067,MOD-014,BR-067,Проверить бизнес-правило: Authorization filtering выполняется до pagination.,High,Integration/domain,\"§20, §27.1.35; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 69,
+        "text": "AC-068,MOD-014,BR-068,Проверить бизнес-правило: Cursor связан со всеми фильтрами и scopeVersion.,High,Integration/domain,\"§20, §27.1.35; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 70,
+        "text": "AC-069,MOD-014,BR-069,Проверить бизнес-правило: Изменение фильтра сбрасывает cursor.,High,Integration/domain,\"§20, §27.1.35; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 75,
+        "text": "AC-071,MOD-015,BR-071,Проверить бизнес-правило: Notification content после создания неизменно; меняются только состояния доставки/прочтения.,High,Integration/domain,\"§17, §27.1.19–21, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 76,
+        "text": "AC-072,MOD-015,BR-072,Проверить бизнес-правило: Toast action не изменяет бизнес-объект локально.,High,Integration/domain,\"§17, §27.1.19–21, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 77,
+        "text": "AC-073,MOD-015,BR-073,Проверить бизнес-правило: Target permission и version проверяются при каждом действии.,High,Integration/domain,\"§17, §27.1.19–21, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 78,
+        "text": "AC-074,MOD-015,BR-074,Проверить бизнес-правило: Недоступный target не раскрывается.,High,Integration/domain,\"§17, §27.1.19–21, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 79,
+        "text": "AC-075,MOD-016,BR-075,[STATE-017] Проверить бизнес-правило: Archived object сохраняется и по умолчанию read-only.,High,Integration/domain,\"§22.1, §27.1.36; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 80,
+        "text": "AC-076,MOD-016,BR-076,[STATE-018] Проверить бизнес-правило: Архив не является удалением и не запускает retention purge.,High,Integration/domain,\"§22.1, §27.1.36; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 81,
+        "text": "AC-077,MOD-016,BR-077,\"[STATE-017] Проверить бизнес-правило: Unarchive проверяет текущие parent, uniqueness и permissions.\",High,Integration/domain,\"§22.1, §27.1.36; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 82,
+        "text": "AC-078,MOD-017,BR-078,[STATE-018] Проверить бизнес-правило: Trashed object не редактируется обычными командами.,High,Integration/domain,\"§22.2, §27.1.37, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 83,
+        "text": "AC-079,MOD-017,BR-079,\"[STATE-018] Проверить бизнес-правило: Restore валидирует parent, uniqueness и текущие permissions.\",High,Integration/domain,\"§22.2, §27.1.37, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 84,
+        "text": "AC-080,MOD-017,BR-080,[STATE-018] Проверить бизнес-правило: Purge необратим и доступен только после retention.,High,Integration/domain,\"§22.2, §27.1.37, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 85,
+        "text": "AC-081,MOD-017,BR-081,[STATE-018] Проверить бизнес-правило: UserAccount не удаляется через generic trash.,High,Integration/domain,\"§22.2, §27.1.37, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 86,
+        "text": "AC-082,MOD-018,BR-082,\"Проверить бизнес-правило: Каждая настройка маркируется как user-synced, device-local или server-managed.\",High,Integration/domain,\"§23, §24; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 87,
+        "text": "AC-083,MOD-018,BR-083,Проверить бизнес-правило: PATCH omitted означает unchanged; null очищает только nullable field.,High,Integration/domain,\"§23, §24; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 88,
+        "text": "AC-084,MOD-018,BR-084,Проверить бизнес-правило: Unsupported controls не отображаются.,High,Integration/domain,\"§23, §24; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 89,
+        "text": "AC-085,MOD-019,BR-085,Проверить бизнес-правило: Administrative action требует отдельной capability и server-side check.,High,Integration/domain,\"§7.1, §24–26, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 90,
+        "text": "AC-086,MOD-019,BR-086,Проверить бизнес-правило: System roles/canonical permissions не меняются произвольно.,High,Integration/domain,\"§7.1, §24–26, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 91,
+        "text": "AC-087,MOD-019,BR-087,\"Проверить бизнес-правило: Backup success подтверждается проверкой результата, а не существованием файла.\",High,Integration/domain,\"§7.1, §24–26, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 92,
+        "text": "AC-088,MOD-019,BR-088,Проверить бизнес-правило: Любая sensitive admin command журналируется.,High,Integration/domain,\"§7.1, §24–26, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 93,
+        "text": "AC-089,MOD-020,BR-089,Проверить бизнес-правило: Сервер является единственным источником истины.,High,Integration/domain,\"§18–19, §27.2, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 94,
+        "text": "AC-090,MOD-020,BR-090,Проверить бизнес-правило: Без сервера общие writes заблокированы.,High,Integration/domain,\"§18–19, §27.2, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 95,
+        "text": "AC-091,MOD-020,BR-091,Проверить бизнес-правило: Scope change удаляет чувствительные projections до render.,High,Integration/domain,\"§18–19, §27.2, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 96,
+        "text": "AC-092,MOD-020,BR-092,\"[STATE-007] Проверить бизнес-правило: Realtime является invalidation, durable truth идёт через change feed.\",High,Integration/domain,\"§18–19, §27.2, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 97,
+        "text": "AC-093,MOD-020,BR-093,Проверить бизнес-правило: Conflict никогда не перезаписывается автоматически.,High,Integration/domain,\"§18–19, §27.2, §29; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 98,
+        "text": "AC-094,MOD-021,BR-094,Проверить бизнес-правило: Audit append-only.,High,Integration/domain,\"§21, §25, §27.1.34; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 99,
+        "text": "AC-095,MOD-021,BR-095,Проверить бизнес-правило: История фильтруется текущими правами.,High,Integration/domain,\"§21, §25, §27.1.34; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 100,
+        "text": "AC-096,MOD-021,BR-096,\"Проверить бизнес-правило: Пароли, tokens, secrets и чувствительные полные paths не журналируются.\",High,Integration/domain,\"§21, §25, §27.1.34; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 101,
+        "text": "AC-097,MOD-021,BR-097,Проверить бизнес-правило: Экспорт аудита создаётся как контролируемая фоновая операция.,High,Integration/domain,\"§21, §25, §27.1.34; Stage 3.4\","
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4966,
+        "text": "AC-1403,MOD-001,FR-242,Desktop behavior: Клиент должен хранить refresh secret только в Windows Credential Manager и очищать его при revoke/reuse.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4967,
+        "text": "AC-1404,MOD-002,FR-243,Desktop behavior: Shell должен восстанавливать только последний безопасный маршрут после повторной проверки capabilities.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4968,
+        "text": "AC-1405,MOD-002,FR-244,Desktop behavior: Все глобальные команды должны иметь keyboard route и не зависеть только от pointer/drag.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4969,
+        "text": "AC-1406,MOD-002,FR-245,Desktop behavior: Toast/deep link должен фокусировать существующий экземпляр приложения и повторно загрузить target.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4970,
+        "text": "AC-1407,MOD-003,FR-246,Desktop behavior: Today должен независимо показывать loading/error для каждой секции и сохранять успешно загруженные секции.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4971,
+        "text": "AC-1408,MOD-004,FR-247,Desktop behavior: При неуспешном преобразовании InboxItem локальный source не должен исчезать или помечаться converted.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4972,
+        "text": "AC-1409,MOD-005,FR-248,Desktop behavior: Полный редактор Task должен сохранять draft только по явной команде и сохранять его в памяти при recoverable error.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4973,
+        "text": "AC-1410,MOD-005,FR-249,\"Desktop behavior: Task list должен поддерживать представления по датам, проектам, исполнителям, статусам и приоритетам без client-side обхода permissions.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4975,
+        "text": "AC-1412,MOD-005,FR-250,\"Desktop behavior: Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4976,
+        "text": "AC-1413,MOD-006,FR-251,\"Desktop behavior: Интерфейс должен предлагать создать sibling вместо child, если parent уже является подзадачей.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4977,
+        "text": "AC-1414,MOD-007,FR-252,Desktop behavior: Перед изменением серии интерфейс должен показать preview affected count и потребовать scope one/future/all.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4979,
+        "text": "AC-1416,MOD-008,FR-253,Desktop behavior: Snooze action должен явно показывать новое время и не менять Task/Event schedule.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4980,
+        "text": "AC-1417,MOD-009,FR-254,Desktop behavior: Каждое drag/resize действие должно иметь keyboard-equivalent dialog с теми же полями.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4981,
+        "text": "AC-1418,MOD-010,FR-255,Desktop behavior: Project tabs должны сохранять единый context и скрывать недоступные relations без скрытых counts.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4983,
+        "text": "AC-1420,MOD-011,FR-256,\"[STATE-031] Desktop behavior: Desktop File Access Adapter должен различать no location, not found, access denied, network unavailable, unsafe path и unsafe type.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4984,
+        "text": "AC-1421,MOD-011,FR-257,Desktop behavior: Физическое открытие должно выполняться через Windows Shell только после выбора и проверки разрешённого location.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4985,
+        "text": "AC-1422,MOD-012,FR-258,\"Desktop behavior: Карточка CRM должна редактировать channels/addresses отдельными commands, не подменяя их одним несуществующим aggregate field.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4986,
+        "text": "AC-1423,MOD-013,FR-259,Desktop behavior: Создание object link не должно автоматически предоставлять read permission на target.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4988,
+        "text": "AC-1425,MOD-014,FR-260,Desktop behavior: При offline search интерфейс должен показывать cache-only banner и не заявлять полноту результатов.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4989,
+        "text": "AC-1426,MOD-015,FR-261,Desktop behavior: Windows toast должен иметь текстовую альтернативу в Notification Center и не полагаться только на цвет.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4990,
+        "text": "AC-1427,MOD-016,FR-262,[STATE-018] Desktop behavior: Archived banner должен отличаться от completed status и Trash.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4991,
+        "text": "AC-1428,MOD-017,FR-263,\"[STATE-018] Desktop behavior: Подтверждение purge должно явно сообщать, что удаляется metadata, а физический файл не удаляется.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4993,
+        "text": "AC-1430,MOD-019,FR-265,\"Desktop behavior: Admin UI должен предоставлять только allowlisted операции, без shell/SQL/file browser к серверу.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4994,
+        "text": "AC-1431,MOD-020,FR-266,Desktop behavior: При отсутствии сервера все бизнес-команды должны быть disabled до подтверждённого reconnect и sync.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4995,
+        "text": "AC-1432,MOD-020,FR-267,\"Desktop behavior: Conflict resolver должен сохранять локальный draft и предлагать reload, compare, reapply или discard без автоматического merge одинакового field.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4996,
+        "text": "AC-1433,MOD-020,FR-268,Desktop behavior: При SYNC_SCOPE_CHANGED чувствительные projections должны быть удалены до отображения нового scope.,High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Acceptance_Criteria_Catalog_4.1.2.csv",
+        "line": 4998,
+        "text": "AC-1435,MOD-021,FR-269,\"[STATE-016/STATE-030] Desktop behavior: Пользовательская история должна отображать actor, time, action и redacted before/after только при текущем доступе к объекту.\",High,Desktop/UI,Stage 3.4 UX Architecture,"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 17,
+        "text": "BR-016,MOD-001,Каждый сотрудник использует отдельную учётную запись.,\"§§3.2, 24, 25, 29; Stage 3.4\",,AC-016"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 18,
+        "text": "BR-017,MOD-001,Refresh token ротируется; повторное использование завершает семейство сессий.,\"§§3.2, 24, 25, 29; Stage 3.4\",,AC-017"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 19,
+        "text": "BR-018,MOD-001,Блокировка или деактивация пользователя отзывает активные сессии.,\"§§3.2, 24, 25, 29; Stage 3.4\",,AC-018"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 20,
+        "text": "BR-019,MOD-001,\"Клиент не раскрывает, логин или пароль были неверны.\",\"§§3.2, 24, 25, 29; Stage 3.4\",,AC-019"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 21,
+        "text": "BR-020,MOD-002,Маршрут восстанавливается только после повторной авторизации.,\"§8, §17.2, §23.5, §29; Stage 3.4\",,AC-020"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 22,
+        "text": "BR-021,MOD-002,\"Command bar, context menu и palette используют единый command registry.\",\"§8, §17.2, §23.5, §29; Stage 3.4\",,AC-021"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 23,
+        "text": "BR-022,MOD-002,Скрытая кнопка не является проверкой permission.,\"§8, §17.2, §23.5, §29; Stage 3.4\",,AC-022"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 24,
+        "text": "BR-023,MOD-002,Deep link не раскрывает данные скрытого объекта.,\"§8, §17.2, §23.5, §29; Stage 3.4\",,AC-023"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 25,
+        "text": "BR-024,MOD-003,\"Просрочка вычисляется, а не хранится как статус.\",\"§9, §27.1.17, §29; Stage 3.4\",,AC-024"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 26,
+        "text": "BR-025,MOD-003,Ошибка одной секции не заменяет весь экран ошибкой.,\"§9, §27.1.17, §29; Stage 3.4\",,AC-025"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 27,
+        "text": "BR-026,MOD-003,В offline показывается только кэш с timestamp.,\"§9, §27.1.17, §29; Stage 3.4\",,AC-026"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 28,
+        "text": "BR-027,MOD-003,Scope-фильтр отправляется только контрактно поддерживаемыми параметрами.,\"§9, §27.1.17, §29; Stage 3.4\",,AC-027"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 29,
+        "text": "BR-028,MOD-004,InboxItem принадлежит создателю до явного преобразования.,\"§10, §27.1, §33; Stage 3.4\",,AC-028"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 30,
+        "text": "BR-029,MOD-004,Преобразование создаёт целевой объект и помечает source как converted в одной транзакции.,\"§10, §27.1, §33; Stage 3.4\",,AC-029"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 31,
+        "text": "BR-030,MOD-004,При отказе целевого permission исходный InboxItem остаётся неизменён.,\"§10, §27.1, §33; Stage 3.4\",,AC-030"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 32,
+        "text": "BR-031,MOD-005,\"Статусы: new, in_progress, review, completed, cancelled; overdue вычисляется.\",\"§11, §27.1.5–16, §29, §33; Stage 3.4\",,AC-031"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 33,
+        "text": "BR-032,MOD-005,Business completion не архивирует задачу автоматически.,\"§11, §27.1.5–16, §29, §33; Stage 3.4\",,AC-032"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 34,
+        "text": "BR-033,MOD-005,Полный editor сохраняется явно; узкие команды отправляются отдельно.,\"§11, §27.1.5–16, §29, §33; Stage 3.4\",,AC-033"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 35,
+        "text": "BR-034,MOD-005,Переходы определяет сервер; клиент не формирует их из названия роли.,\"§11, §27.1.5–16, §29, §33; Stage 3.4\",,AC-034"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 36,
+        "text": "BR-035,MOD-005,Review → completed и review → in_progress выполняются только разрешёнными transition.,\"§11, §27.1.5–16, §29, §33; Stage 3.4\",,AC-035"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 37,
+        "text": "BR-036,MOD-006,Подзадача является Task с parentTaskId.,\"§11.4–11.5, §27.1.9–10; Stage 3.4\",,AC-036"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 38,
+        "text": "BR-037,MOD-006,Глубина вложенности ограничена одним уровнем.,\"§11.4–11.5, §27.1.9–10; Stage 3.4\",,AC-037"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 39,
+        "text": "BR-038,MOD-006,Checklist item не имеет самостоятельного lifecycle вне родительского Task.,\"§11.4–11.5, §27.1.9–10; Stage 3.4\",,AC-038"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 40,
+        "text": "BR-039,MOD-006,Reorder сохраняет стабильный порядок без дубликатов.,\"§11.4–11.5, §27.1.9–10; Stage 3.4\",,AC-039"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 41,
+        "text": "BR-040,MOD-007,\"Series имеет timezone и ровно один termination mode, если завершение задано.\",\"§11.6, §27.1.16; Stage 3.4\",,AC-040"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 42,
+        "text": "BR-041,MOD-007,Occurrence key уникален; повторная генерация идемпотентна.,\"§11.6, §27.1.16; Stage 3.4\",,AC-041"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 43,
+        "text": "BR-042,MOD-007,Изменение scope выбирается явно.,\"§11.6, §27.1.16; Stage 3.4\",,AC-042"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 44,
+        "text": "BR-043,MOD-007,Отмена серии не помещает её в универсальную корзину.,\"§11.6, §27.1.16; Stage 3.4\",,AC-043"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 45,
+        "text": "BR-044,MOD-008,Напоминание имеет ровно один trigger mode.,\"§17, §27.1.19–21; Stage 3.4\",,AC-044"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 46,
+        "text": "BR-045,MOD-008,\"Snooze меняет время reminder, но не расписание Task/Event.\",\"§17, §27.1.19–21; Stage 3.4\",,AC-045"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 47,
+        "text": "BR-046,MOD-008,Повторное срабатывание дедуплицируется сервером.,\"§17, §27.1.19–21; Stage 3.4\",,AC-046"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 48,
+        "text": "BR-047,MOD-009,Overlap разрешён и только предупреждается.,\"§12, §27.1.18, §29; Stage 3.4\",,AC-047"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 49,
+        "text": "BR-048,MOD-009,Date-only Task отображается вне временной шкалы.,\"§12, §27.1.18, §29; Stage 3.4\",,AC-048"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 50,
+        "text": "BR-049,MOD-009,Deadline не используется как позиция на timeline.,\"§12, §27.1.18, §29; Stage 3.4\",,AC-049"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 51,
+        "text": "BR-050,MOD-009,Все локальные времена интерпретируются с timezone.,\"§12, §27.1.18, §29; Stage 3.4\",,AC-050"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 52,
+        "text": "BR-051,MOD-010,У проекта всегда остаётся владелец.,\"§13, §27.1.7–8, §29, §33; Stage 3.4\",,AC-051"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 53,
+        "text": "BR-052,MOD-010,Завершение проекта и архивирование различаются.,\"§13, §27.1.7–8, §29, §33; Stage 3.4\",,AC-052"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 54,
+        "text": "BR-053,MOD-010,Удаление проекта не удаляет каскадно Task и физические файлы.,\"§13, §27.1.7–8, §29, §33; Stage 3.4\",,AC-053"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 55,
+        "text": "BR-054,MOD-010,Explicit deny сильнее allow; сервер пересчитывает scopeVersion.,\"§13, §27.1.7–8, §29, §33; Stage 3.4\",,AC-054"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 56,
+        "text": "BR-055,MOD-011,Приложение хранит только metadata и paths.,\"§§14–15, §27.1.22–31, §29; Stage 3.4\",,AC-055"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 57,
+        "text": "BR-056,MOD-011,OS/SMB ACL остаётся авторитетным для физического открытия.,\"§§14–15, §27.1.22–31, §29; Stage 3.4\",,AC-056"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 58,
+        "text": "BR-057,MOD-011,Move в дереве меняет только parent metadata.,\"§§14–15, §27.1.22–31, §29; Stage 3.4\",,AC-057"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 59,
+        "text": "BR-058,MOD-011,Удаление/архив/purge не затрагивает физический файл.,\"§§14–15, §27.1.22–31, §29; Stage 3.4\",,AC-058"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 60,
+        "text": "BR-059,MOD-011,Выбранный location видим пользователю и может быть заменён альтернативным.,\"§§14–15, §27.1.22–31, §29; Stage 3.4\",,AC-059"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 61,
+        "text": "BR-060,MOD-012,Contact может существовать без Company.,\"§16, §27.1.32, §29; Stage 3.4\",,AC-060"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 62,
+        "text": "BR-061,MOD-012,Удаление или архивирование не разрывает историю без явного действия.,\"§16, §27.1.32, §29; Stage 3.4\",,AC-061"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 63,
+        "text": "BR-062,MOD-012,Контактные каналы валидируются по типу; primary определяется контрактом.,\"§16, §27.1.32, §29; Stage 3.4\",,AC-062"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 64,
+        "text": "BR-063,MOD-013,Изменение комментария сохраняет предыдущую версию.,\"§16.5, §18, §21, §27.1.33; Stage 3.4\",,AC-063"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 65,
+        "text": "BR-064,MOD-013,Удаление комментария создаёт tombstone и допускает moderation restore.,\"§16.5, §18, §21, §27.1.33; Stage 3.4\",,AC-064"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 66,
+        "text": "BR-065,MOD-013,Interaction вводится вручную и является versioned object.,\"§16.5, §18, §21, §27.1.33; Stage 3.4\",,AC-065"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 67,
+        "text": "BR-066,MOD-013,Object links не дают permission на target автоматически.,\"§16.5, §18, §21, §27.1.33; Stage 3.4\",,AC-066"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 68,
+        "text": "BR-067,MOD-014,Authorization filtering выполняется до pagination.,\"§20, §27.1.35; Stage 3.4\",,AC-067"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 69,
+        "text": "BR-068,MOD-014,Cursor связан со всеми фильтрами и scopeVersion.,\"§20, §27.1.35; Stage 3.4\",,AC-068"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 70,
+        "text": "BR-069,MOD-014,Изменение фильтра сбрасывает cursor.,\"§20, §27.1.35; Stage 3.4\",,AC-069"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 72,
+        "text": "BR-071,MOD-015,Notification content после создания неизменно; меняются только состояния доставки/прочтения.,\"§17, §27.1.19–21, §29; Stage 3.4\",,AC-071"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 73,
+        "text": "BR-072,MOD-015,Toast action не изменяет бизнес-объект локально.,\"§17, §27.1.19–21, §29; Stage 3.4\",,AC-072"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 74,
+        "text": "BR-073,MOD-015,Target permission и version проверяются при каждом действии.,\"§17, §27.1.19–21, §29; Stage 3.4\",,AC-073"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 75,
+        "text": "BR-074,MOD-015,Недоступный target не раскрывается.,\"§17, §27.1.19–21, §29; Stage 3.4\",,AC-074"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 76,
+        "text": "BR-075,MOD-016,Archived object сохраняется и по умолчанию read-only.,\"§22.1, §27.1.36; Stage 3.4\",,AC-075"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 77,
+        "text": "BR-076,MOD-016,Архив не является удалением и не запускает retention purge.,\"§22.1, §27.1.36; Stage 3.4\",,AC-076"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 78,
+        "text": "BR-077,MOD-016,\"Unarchive проверяет текущие parent, uniqueness и permissions.\",\"§22.1, §27.1.36; Stage 3.4\",,AC-077"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 79,
+        "text": "BR-078,MOD-017,Trashed object не редактируется обычными командами.,\"§22.2, §27.1.37, §29; Stage 3.4\",,AC-078"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 80,
+        "text": "BR-079,MOD-017,\"Restore валидирует parent, uniqueness и текущие permissions.\",\"§22.2, §27.1.37, §29; Stage 3.4\",,AC-079"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 81,
+        "text": "BR-080,MOD-017,Purge необратим и доступен только после retention.,\"§22.2, §27.1.37, §29; Stage 3.4\",,AC-080"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 82,
+        "text": "BR-081,MOD-017,UserAccount не удаляется через generic trash.,\"§22.2, §27.1.37, §29; Stage 3.4\",,AC-081"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 83,
+        "text": "BR-082,MOD-018,\"Каждая настройка маркируется как user-synced, device-local или server-managed.\",\"§23, §24; Stage 3.4\",,AC-082"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 84,
+        "text": "BR-083,MOD-018,PATCH omitted означает unchanged; null очищает только nullable field.,\"§23, §24; Stage 3.4\",,AC-083"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 85,
+        "text": "BR-084,MOD-018,Unsupported controls не отображаются.,\"§23, §24; Stage 3.4\",,AC-084"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 86,
+        "text": "BR-085,MOD-019,Administrative action требует отдельной capability и server-side check.,\"§7.1, §24–26, §29; Stage 3.4\",,AC-085"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 87,
+        "text": "BR-086,MOD-019,System roles/canonical permissions не меняются произвольно.,\"§7.1, §24–26, §29; Stage 3.4\",,AC-086"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 88,
+        "text": "BR-087,MOD-019,\"Backup success подтверждается проверкой результата, а не существованием файла.\",\"§7.1, §24–26, §29; Stage 3.4\",,AC-087"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 89,
+        "text": "BR-088,MOD-019,Любая sensitive admin command журналируется.,\"§7.1, §24–26, §29; Stage 3.4\",,AC-088"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 90,
+        "text": "BR-089,MOD-020,Сервер является единственным источником истины.,\"§18–19, §27.2, §29; Stage 3.4\",,AC-089"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 91,
+        "text": "BR-090,MOD-020,Без сервера общие writes заблокированы.,\"§18–19, §27.2, §29; Stage 3.4\",,AC-090"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 92,
+        "text": "BR-091,MOD-020,Scope change удаляет чувствительные projections до render.,\"§18–19, §27.2, §29; Stage 3.4\",,AC-091"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 93,
+        "text": "BR-092,MOD-020,\"Realtime является invalidation, durable truth идёт через change feed.\",\"§18–19, §27.2, §29; Stage 3.4\",,AC-092"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 94,
+        "text": "BR-093,MOD-020,Conflict никогда не перезаписывается автоматически.,\"§18–19, §27.2, §29; Stage 3.4\",,AC-093"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 95,
+        "text": "BR-094,MOD-021,Audit append-only.,\"§21, §25, §27.1.34; Stage 3.4\",,AC-094"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 96,
+        "text": "BR-095,MOD-021,История фильтруется текущими правами.,\"§21, §25, §27.1.34; Stage 3.4\",,AC-095"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 97,
+        "text": "BR-096,MOD-021,\"Пароли, tokens, secrets и чувствительные полные paths не журналируются.\",\"§21, §25, §27.1.34; Stage 3.4\",,AC-096"
+      },
+      {
+        "file": "Stage_4_Business_Rules_Catalog_4.1.2.csv",
+        "line": 98,
+        "text": "BR-097,MOD-021,Экспорт аудита создаётся как контролируемая фоновая операция.,\"§21, §25, §27.1.34; Stage 3.4\",,AC-097"
+      },
+      {
+        "file": "Stage_4_Decision_Log_4.1.2.md",
+        "line": 26,
+        "text": "| DEC-054 | Stage 3.5 is the normative UX baseline | Final baseline hash/validation | Stage 3.4 is historical | Accepted |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 96,
+        "text": "| BR-016 | Каждый сотрудник использует отдельную учётную запись. | §§3.2, 24, 25, 29; Stage 3.4 | AC-016 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 97,
+        "text": "| BR-017 | Refresh token ротируется; повторное использование завершает семейство сессий. | §§3.2, 24, 25, 29; Stage 3.4 | AC-017 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 98,
+        "text": "| BR-018 | Блокировка или деактивация пользователя отзывает активные сессии. | §§3.2, 24, 25, 29; Stage 3.4 | AC-018 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 99,
+        "text": "| BR-019 | Клиент не раскрывает, логин или пароль были неверны. | §§3.2, 24, 25, 29; Stage 3.4 | AC-019 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 179,
+        "text": "| AC-016 | BR-016 | Проверить бизнес-правило: Каждый сотрудник использует отдельную учётную запись. | High | Integration/domain | §§3.2, 24, 25, 29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 180,
+        "text": "| AC-017 | BR-017 | Проверить бизнес-правило: Refresh token ротируется; повторное использование завершает семейство сессий. | High | Integration/domain | §§3.2, 24, 25, 29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 181,
+        "text": "| AC-018 | BR-018 | Проверить бизнес-правило: Блокировка или деактивация пользователя отзывает активные сессии. | High | Integration/domain | §§3.2, 24, 25, 29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 182,
+        "text": "| AC-019 | BR-019 | Проверить бизнес-правило: Клиент не раскрывает, логин или пароль были неверны. | High | Integration/domain | §§3.2, 24, 25, 29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 383,
+        "text": "| BR-020 | Маршрут восстанавливается только после повторной авторизации. | §8, §17.2, §23.5, §29; Stage 3.4 | AC-020 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 384,
+        "text": "| BR-021 | Command bar, context menu и palette используют единый command registry. | §8, §17.2, §23.5, §29; Stage 3.4 | AC-021 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 385,
+        "text": "| BR-022 | Скрытая кнопка не является проверкой permission. | §8, §17.2, §23.5, §29; Stage 3.4 | AC-022 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 386,
+        "text": "| BR-023 | Deep link не раскрывает данные скрытого объекта. | §8, §17.2, §23.5, §29; Stage 3.4 | AC-023 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 439,
+        "text": "| AC-020 | BR-020 | Проверить бизнес-правило: Маршрут восстанавливается только после повторной авторизации. | High | Integration/domain | §8, §17.2, §23.5, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 440,
+        "text": "| AC-021 | BR-021 | Проверить бизнес-правило: Command bar, context menu и palette используют единый command registry. | High | Integration/domain | §8, §17.2, §23.5, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 441,
+        "text": "| AC-022 | BR-022 | Проверить бизнес-правило: Скрытая кнопка не является проверкой permission. | High | Integration/domain | §8, §17.2, §23.5, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 442,
+        "text": "| AC-023 | BR-023 | Проверить бизнес-правило: Deep link не раскрывает данные скрытого объекта. | High | Integration/domain | §8, §17.2, §23.5, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 590,
+        "text": "| BR-024 | Просрочка вычисляется, а не хранится как статус. | §9, §27.1.17, §29; Stage 3.4 | AC-024 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 591,
+        "text": "| BR-025 | Ошибка одной секции не заменяет весь экран ошибкой. | §9, §27.1.17, §29; Stage 3.4 | AC-025 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 592,
+        "text": "| BR-026 | В offline показывается только кэш с timestamp. | §9, §27.1.17, §29; Stage 3.4 | AC-026 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 593,
+        "text": "| BR-027 | Scope-фильтр отправляется только контрактно поддерживаемыми параметрами. | §9, §27.1.17, §29; Stage 3.4 | AC-027 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 651,
+        "text": "| AC-024 | BR-024 | Проверить бизнес-правило: Просрочка вычисляется, а не хранится как статус. | High | Integration/domain | §9, §27.1.17, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 652,
+        "text": "| AC-025 | BR-025 | Проверить бизнес-правило: Ошибка одной секции не заменяет весь экран ошибкой. | High | Integration/domain | §9, §27.1.17, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 653,
+        "text": "| AC-026 | BR-026 | Проверить бизнес-правило: В offline показывается только кэш с timestamp. | High | Integration/domain | §9, §27.1.17, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 654,
+        "text": "| AC-027 | BR-027 | Проверить бизнес-правило: Scope-фильтр отправляется только контрактно поддерживаемыми параметрами. | High | Integration/domain | §9, §27.1.17, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 802,
+        "text": "| BR-028 | InboxItem принадлежит создателю до явного преобразования. | §10, §27.1, §33; Stage 3.4 | AC-028 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 803,
+        "text": "| BR-029 | Преобразование создаёт целевой объект и помечает source как converted в одной транзакции. | §10, §27.1, §33; Stage 3.4 | AC-029 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 804,
+        "text": "| BR-030 | При отказе целевого permission исходный InboxItem остаётся неизменён. | §10, §27.1, §33; Stage 3.4 | AC-030 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 888,
+        "text": "| AC-028 | BR-028 | Проверить бизнес-правило: InboxItem принадлежит создателю до явного преобразования. | High | Integration/domain | §10, §27.1, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 889,
+        "text": "| AC-029 | BR-029 | Проверить бизнес-правило: Преобразование создаёт целевой объект и помечает source как converted в одной транзакции. | High | Integration/domain | §10, §27.1, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 890,
+        "text": "| AC-030 | BR-030 | Проверить бизнес-правило: При отказе целевого permission исходный InboxItem остаётся неизменён. | High | Integration/domain | §10, §27.1, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1122,
+        "text": "| BR-031 | Статусы: new, in_progress, review, completed, cancelled; overdue вычисляется. | §11, §27.1.5–16, §29, §33; Stage 3.4 | AC-031 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1123,
+        "text": "| BR-032 | Business completion не архивирует задачу автоматически. | §11, §27.1.5–16, §29, §33; Stage 3.4 | AC-032 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1124,
+        "text": "| BR-033 | Полный editor сохраняется явно; узкие команды отправляются отдельно. | §11, §27.1.5–16, §29, §33; Stage 3.4 | AC-033 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1125,
+        "text": "| BR-034 | Переходы определяет сервер; клиент не формирует их из названия роли. | §11, §27.1.5–16, §29, §33; Stage 3.4 | AC-034 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1126,
+        "text": "| BR-035 | Review → completed и review → in_progress выполняются только разрешёнными transition. | §11, §27.1.5–16, §29, §33; Stage 3.4 | AC-035 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1221,
+        "text": "| AC-031 | BR-031 | Проверить бизнес-правило: Статусы: new, in_progress, review, completed, cancelled; overdue вычисляется. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1222,
+        "text": "| AC-032 | BR-032 | Проверить бизнес-правило: Business completion не архивирует задачу автоматически. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1223,
+        "text": "| AC-033 | BR-033 | Проверить бизнес-правило: Полный editor сохраняется явно; узкие команды отправляются отдельно. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1224,
+        "text": "| AC-034 | BR-034 | Проверить бизнес-правило: Переходы определяет сервер; клиент не формирует их из названия роли. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1225,
+        "text": "| AC-035 | BR-035 | Проверить бизнес-правило: Review → completed и review → in_progress выполняются только разрешёнными transition. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1505,
+        "text": "| BR-036 | Подзадача является Task с parentTaskId. | §11.4–11.5, §27.1.9–10; Stage 3.4 | AC-036 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1506,
+        "text": "| BR-037 | Глубина вложенности ограничена одним уровнем. | §11.4–11.5, §27.1.9–10; Stage 3.4 | AC-037 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1507,
+        "text": "| BR-038 | Checklist item не имеет самостоятельного lifecycle вне родительского Task. | §11.4–11.5, §27.1.9–10; Stage 3.4 | AC-038 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1508,
+        "text": "| BR-039 | Reorder сохраняет стабильный порядок без дубликатов. | §11.4–11.5, §27.1.9–10; Stage 3.4 | AC-039 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1598,
+        "text": "| AC-036 | BR-036 | Проверить бизнес-правило: Подзадача является Task с parentTaskId. | High | Integration/domain | §11.4–11.5, §27.1.9–10; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1599,
+        "text": "| AC-037 | BR-037 | Проверить бизнес-правило: Глубина вложенности ограничена одним уровнем. | High | Integration/domain | §11.4–11.5, §27.1.9–10; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1600,
+        "text": "| AC-038 | BR-038 | Проверить бизнес-правило: Checklist item не имеет самостоятельного lifecycle вне родительского Task. | High | Integration/domain | §11.4–11.5, §27.1.9–10; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1601,
+        "text": "| AC-039 | BR-039 | Проверить бизнес-правило: Reorder сохраняет стабильный порядок без дубликатов. | High | Integration/domain | §11.4–11.5, §27.1.9–10; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1842,
+        "text": "| BR-040 | Series имеет timezone и ровно один termination mode, если завершение задано. | §11.6, §27.1.16; Stage 3.4 | AC-040 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1843,
+        "text": "| BR-041 | Occurrence key уникален; повторная генерация идемпотентна. | §11.6, §27.1.16; Stage 3.4 | AC-041 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1844,
+        "text": "| BR-042 | Изменение scope выбирается явно. | §11.6, §27.1.16; Stage 3.4 | AC-042 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1845,
+        "text": "| BR-043 | Отмена серии не помещает её в универсальную корзину. | §11.6, §27.1.16; Stage 3.4 | AC-043 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1934,
+        "text": "| AC-040 | BR-040 | Проверить бизнес-правило: Series имеет timezone и ровно один termination mode, если завершение задано. | High | Integration/domain | §11.6, §27.1.16; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1935,
+        "text": "| AC-041 | BR-041 | Проверить бизнес-правило: Occurrence key уникален; повторная генерация идемпотентна. | High | Integration/domain | §11.6, §27.1.16; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1936,
+        "text": "| AC-042 | BR-042 | Проверить бизнес-правило: Изменение scope выбирается явно. | High | Integration/domain | §11.6, §27.1.16; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 1937,
+        "text": "| AC-043 | BR-043 | Проверить бизнес-правило: Отмена серии не помещает её в универсальную корзину. | High | Integration/domain | §11.6, §27.1.16; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2164,
+        "text": "| BR-044 | Напоминание имеет ровно один trigger mode. | §17, §27.1.19–21; Stage 3.4 | AC-044 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2165,
+        "text": "| BR-045 | Snooze меняет время reminder, но не расписание Task/Event. | §17, §27.1.19–21; Stage 3.4 | AC-045 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2166,
+        "text": "| BR-046 | Повторное срабатывание дедуплицируется сервером. | §17, §27.1.19–21; Stage 3.4 | AC-046 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2253,
+        "text": "| AC-044 | BR-044 | Проверить бизнес-правило: Напоминание имеет ровно один trigger mode. | High | Integration/domain | §17, §27.1.19–21; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2254,
+        "text": "| AC-045 | BR-045 | Проверить бизнес-правило: Snooze меняет время reminder, но не расписание Task/Event. | High | Integration/domain | §17, §27.1.19–21; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2255,
+        "text": "| AC-046 | BR-046 | Проверить бизнес-правило: Повторное срабатывание дедуплицируется сервером. | High | Integration/domain | §17, §27.1.19–21; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2478,
+        "text": "| BR-047 | Overlap разрешён и только предупреждается. | §12, §27.1.18, §29; Stage 3.4 | AC-047 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2479,
+        "text": "| BR-048 | Date-only Task отображается вне временной шкалы. | §12, §27.1.18, §29; Stage 3.4 | AC-048 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2480,
+        "text": "| BR-049 | Deadline не используется как позиция на timeline. | §12, §27.1.18, §29; Stage 3.4 | AC-049 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2481,
+        "text": "| BR-050 | Все локальные времена интерпретируются с timezone. | §12, §27.1.18, §29; Stage 3.4 | AC-050 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2572,
+        "text": "| AC-047 | BR-047 | Проверить бизнес-правило: Overlap разрешён и только предупреждается. | High | Integration/domain | §12, §27.1.18, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2573,
+        "text": "| AC-048 | BR-048 | Проверить бизнес-правило: Date-only Task отображается вне временной шкалы. | High | Integration/domain | §12, §27.1.18, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2574,
+        "text": "| AC-049 | BR-049 | Проверить бизнес-правило: Deadline не используется как позиция на timeline. | High | Integration/domain | §12, §27.1.18, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2575,
+        "text": "| AC-050 | BR-050 | Проверить бизнес-правило: Все локальные времена интерпретируются с timezone. | High | Integration/domain | §12, §27.1.18, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2828,
+        "text": "| BR-051 | У проекта всегда остаётся владелец. | §13, §27.1.7–8, §29, §33; Stage 3.4 | AC-051 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2829,
+        "text": "| BR-052 | Завершение проекта и архивирование различаются. | §13, §27.1.7–8, §29, §33; Stage 3.4 | AC-052 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2830,
+        "text": "| BR-053 | Удаление проекта не удаляет каскадно Task и физические файлы. | §13, §27.1.7–8, §29, §33; Stage 3.4 | AC-053 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2831,
+        "text": "| BR-054 | Explicit deny сильнее allow; сервер пересчитывает scopeVersion. | §13, §27.1.7–8, §29, §33; Stage 3.4 | AC-054 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2925,
+        "text": "| AC-051 | BR-051 | Проверить бизнес-правило: У проекта всегда остаётся владелец. | High | Integration/domain | §13, §27.1.7–8, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2926,
+        "text": "| AC-052 | BR-052 | Проверить бизнес-правило: Завершение проекта и архивирование различаются. | High | Integration/domain | §13, §27.1.7–8, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2927,
+        "text": "| AC-053 | BR-053 | Проверить бизнес-правило: Удаление проекта не удаляет каскадно Task и физические файлы. | High | Integration/domain | §13, §27.1.7–8, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 2928,
+        "text": "| AC-054 | BR-054 | Проверить бизнес-правило: Explicit deny сильнее allow; сервер пересчитывает scopeVersion. | High | Integration/domain | §13, §27.1.7–8, §29, §33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3205,
+        "text": "| BR-055 | Приложение хранит только metadata и paths. | §§14–15, §27.1.22–31, §29; Stage 3.4 | AC-055 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3206,
+        "text": "| BR-056 | OS/SMB ACL остаётся авторитетным для физического открытия. | §§14–15, §27.1.22–31, §29; Stage 3.4 | AC-056 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3207,
+        "text": "| BR-057 | Move в дереве меняет только parent metadata. | §§14–15, §27.1.22–31, §29; Stage 3.4 | AC-057 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3208,
+        "text": "| BR-058 | Удаление/архив/purge не затрагивает физический файл. | §§14–15, §27.1.22–31, §29; Stage 3.4 | AC-058 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3209,
+        "text": "| BR-059 | Выбранный location видим пользователю и может быть заменён альтернативным. | §§14–15, §27.1.22–31, §29; Stage 3.4 | AC-059 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3302,
+        "text": "| AC-055 | BR-055 | Проверить бизнес-правило: Приложение хранит только metadata и paths. | High | Integration/domain | §§14–15, §27.1.22–31, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3303,
+        "text": "| AC-056 | BR-056 | Проверить бизнес-правило: OS/SMB ACL остаётся авторитетным для физического открытия. | High | Integration/domain | §§14–15, §27.1.22–31, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3304,
+        "text": "| AC-057 | BR-057 | Проверить бизнес-правило: Move в дереве меняет только parent metadata. | High | Integration/domain | §§14–15, §27.1.22–31, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3305,
+        "text": "| AC-058 | BR-058 | [STATE-018] Проверить бизнес-правило: Удаление/архив/purge не затрагивает физический файл. | High | Integration/domain | §§14–15, §27.1.22–31, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3306,
+        "text": "| AC-059 | BR-059 | Проверить бизнес-правило: Выбранный location видим пользователю и может быть заменён альтернативным. | High | Integration/domain | §§14–15, §27.1.22–31, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3595,
+        "text": "| BR-060 | Contact может существовать без Company. | §16, §27.1.32, §29; Stage 3.4 | AC-060 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3596,
+        "text": "| BR-061 | Удаление или архивирование не разрывает историю без явного действия. | §16, §27.1.32, §29; Stage 3.4 | AC-061 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3597,
+        "text": "| BR-062 | Контактные каналы валидируются по типу; primary определяется контрактом. | §16, §27.1.32, §29; Stage 3.4 | AC-062 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3688,
+        "text": "| AC-060 | BR-060 | Проверить бизнес-правило: Contact может существовать без Company. | High | Integration/domain | §16, §27.1.32, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3689,
+        "text": "| AC-061 | BR-061 | Проверить бизнес-правило: Удаление или архивирование не разрывает историю без явного действия. | High | Integration/domain | §16, §27.1.32, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 3690,
+        "text": "| AC-062 | BR-062 | Проверить бизнес-правило: Контактные каналы валидируются по типу; primary определяется контрактом. | High | Integration/domain | §16, §27.1.32, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4021,
+        "text": "| BR-063 | Изменение комментария сохраняет предыдущую версию. | §16.5, §18, §21, §27.1.33; Stage 3.4 | AC-063 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4022,
+        "text": "| BR-064 | Удаление комментария создаёт tombstone и допускает moderation restore. | §16.5, §18, §21, §27.1.33; Stage 3.4 | AC-064 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4023,
+        "text": "| BR-065 | Interaction вводится вручную и является versioned object. | §16.5, §18, §21, §27.1.33; Stage 3.4 | AC-065 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4024,
+        "text": "| BR-066 | Object links не дают permission на target автоматически. | §16.5, §18, §21, §27.1.33; Stage 3.4 | AC-066 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4125,
+        "text": "| AC-063 | BR-063 | Проверить бизнес-правило: Изменение комментария сохраняет предыдущую версию. | High | Integration/domain | §16.5, §18, §21, §27.1.33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4126,
+        "text": "| AC-064 | BR-064 | [STATE-018] Проверить бизнес-правило: Удаление комментария создаёт tombstone и допускает moderation restore. | High | Integration/domain | §16.5, §18, §21, §27.1.33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4127,
+        "text": "| AC-065 | BR-065 | Проверить бизнес-правило: Interaction вводится вручную и является versioned object. | High | Integration/domain | §16.5, §18, §21, §27.1.33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4128,
+        "text": "| AC-066 | BR-066 | Проверить бизнес-правило: Object links не дают permission на target автоматически. | High | Integration/domain | §16.5, §18, §21, §27.1.33; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4425,
+        "text": "| BR-067 | Authorization filtering выполняется до pagination. | §20, §27.1.35; Stage 3.4 | AC-067 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4426,
+        "text": "| BR-068 | Cursor связан со всеми фильтрами и scopeVersion. | §20, §27.1.35; Stage 3.4 | AC-068 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4427,
+        "text": "| BR-069 | Изменение фильтра сбрасывает cursor. | §20, §27.1.35; Stage 3.4 | AC-069 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4428,
+        "text": "| BR-070 | **Deprecated in 4.1.2; replaced by BR-105.** Исторически Stage 2.2 не поддерживал EmployeeProfile как result type; Stage 2.3.1 добавил `employee`. | §20, §27.1.35; Stage 3.4 | AC-070 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4505,
+        "text": "| AC-067 | BR-067 | Проверить бизнес-правило: Authorization filtering выполняется до pagination. | High | Integration/domain | §20, §27.1.35; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4506,
+        "text": "| AC-068 | BR-068 | Проверить бизнес-правило: Cursor связан со всеми фильтрами и scopeVersion. | High | Integration/domain | §20, §27.1.35; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4507,
+        "text": "| AC-069 | BR-069 | Проверить бизнес-правило: Изменение фильтра сбрасывает cursor. | High | Integration/domain | §20, §27.1.35; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4508,
+        "text": "| AC-070 | BR-070 | Проверить бизнес-правило: EmployeeProfile как самостоятельный result type не поддержан текущим контрактом и зафиксирован OQ. | High | Integration/domain | §20, §27.1.35; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4673,
+        "text": "| BR-071 | Notification content после создания неизменно; меняются только состояния доставки/прочтения. | §17, §27.1.19–21, §29; Stage 3.4 | AC-071 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4674,
+        "text": "| BR-072 | Toast action не изменяет бизнес-объект локально. | §17, §27.1.19–21, §29; Stage 3.4 | AC-072 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4675,
+        "text": "| BR-073 | Target permission и version проверяются при каждом действии. | §17, §27.1.19–21, §29; Stage 3.4 | AC-073 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4676,
+        "text": "| BR-074 | Недоступный target не раскрывается. | §17, §27.1.19–21, §29; Stage 3.4 | AC-074 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4743,
+        "text": "| AC-071 | BR-071 | Проверить бизнес-правило: Notification content после создания неизменно; меняются только состояния доставки/прочтения. | High | Integration/domain | §17, §27.1.19–21, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4744,
+        "text": "| AC-072 | BR-072 | Проверить бизнес-правило: Toast action не изменяет бизнес-объект локально. | High | Integration/domain | §17, §27.1.19–21, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4745,
+        "text": "| AC-073 | BR-073 | Проверить бизнес-правило: Target permission и version проверяются при каждом действии. | High | Integration/domain | §17, §27.1.19–21, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4746,
+        "text": "| AC-074 | BR-074 | Проверить бизнес-правило: Недоступный target не раскрывается. | High | Integration/domain | §17, §27.1.19–21, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4913,
+        "text": "| BR-075 | Archived object сохраняется и по умолчанию read-only. | §22.1, §27.1.36; Stage 3.4 | AC-075 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4914,
+        "text": "| BR-076 | Архив не является удалением и не запускает retention purge. | §22.1, §27.1.36; Stage 3.4 | AC-076 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4915,
+        "text": "| BR-077 | Unarchive проверяет текущие parent, uniqueness и permissions. | §22.1, §27.1.36; Stage 3.4 | AC-077 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4974,
+        "text": "| AC-075 | BR-075 | [STATE-017] Проверить бизнес-правило: Archived object сохраняется и по умолчанию read-only. | High | Integration/domain | §22.1, §27.1.36; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4975,
+        "text": "| AC-076 | BR-076 | [STATE-018] Проверить бизнес-правило: Архив не является удалением и не запускает retention purge. | High | Integration/domain | §22.1, §27.1.36; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 4976,
+        "text": "| AC-077 | BR-077 | [STATE-017] Проверить бизнес-правило: Unarchive проверяет текущие parent, uniqueness и permissions. | High | Integration/domain | §22.1, §27.1.36; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5127,
+        "text": "| BR-078 | Trashed object не редактируется обычными командами. | §22.2, §27.1.37, §29; Stage 3.4 | AC-078 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5128,
+        "text": "| BR-079 | Restore валидирует parent, uniqueness и текущие permissions. | §22.2, §27.1.37, §29; Stage 3.4 | AC-079 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5129,
+        "text": "| BR-080 | Purge необратим и доступен только после retention. | §22.2, §27.1.37, §29; Stage 3.4 | AC-080 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5130,
+        "text": "| BR-081 | UserAccount не удаляется через generic trash. | §22.2, §27.1.37, §29; Stage 3.4 | AC-081 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5200,
+        "text": "| AC-078 | BR-078 | [STATE-018] Проверить бизнес-правило: Trashed object не редактируется обычными командами. | High | Integration/domain | §22.2, §27.1.37, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5201,
+        "text": "| AC-079 | BR-079 | [STATE-018] Проверить бизнес-правило: Restore валидирует parent, uniqueness и текущие permissions. | High | Integration/domain | §22.2, §27.1.37, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5202,
+        "text": "| AC-080 | BR-080 | [STATE-018] Проверить бизнес-правило: Purge необратим и доступен только после retention. | High | Integration/domain | §22.2, §27.1.37, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5203,
+        "text": "| AC-081 | BR-081 | [STATE-018] Проверить бизнес-правило: UserAccount не удаляется через generic trash. | High | Integration/domain | §22.2, §27.1.37, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5373,
+        "text": "| BR-082 | Каждая настройка маркируется как user-synced, device-local или server-managed. | §23, §24; Stage 3.4 | AC-082 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5374,
+        "text": "| BR-083 | PATCH omitted означает unchanged; null очищает только nullable field. | §23, §24; Stage 3.4 | AC-083 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5375,
+        "text": "| BR-084 | Unsupported controls не отображаются. | §23, §24; Stage 3.4 | AC-084 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5465,
+        "text": "| AC-082 | BR-082 | Проверить бизнес-правило: Каждая настройка маркируется как user-synced, device-local или server-managed. | High | Integration/domain | §23, §24; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5466,
+        "text": "| AC-083 | BR-083 | Проверить бизнес-правило: PATCH omitted означает unchanged; null очищает только nullable field. | High | Integration/domain | §23, §24; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5467,
+        "text": "| AC-084 | BR-084 | Проверить бизнес-правило: Unsupported controls не отображаются. | High | Integration/domain | §23, §24; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5716,
+        "text": "| BR-085 | Administrative action требует отдельной capability и server-side check. | §7.1, §24–26, §29; Stage 3.4 | AC-085 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5717,
+        "text": "| BR-086 | System roles/canonical permissions не меняются произвольно. | §7.1, §24–26, §29; Stage 3.4 | AC-086 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5718,
+        "text": "| BR-087 | Backup success подтверждается проверкой результата, а не существованием файла. | §7.1, §24–26, §29; Stage 3.4 | AC-087 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5719,
+        "text": "| BR-088 | Любая sensitive admin command журналируется. | §7.1, §24–26, §29; Stage 3.4 | AC-088 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5828,
+        "text": "| AC-085 | BR-085 | Проверить бизнес-правило: Administrative action требует отдельной capability и server-side check. | High | Integration/domain | §7.1, §24–26, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5829,
+        "text": "| AC-086 | BR-086 | Проверить бизнес-правило: System roles/canonical permissions не меняются произвольно. | High | Integration/domain | §7.1, §24–26, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5830,
+        "text": "| AC-087 | BR-087 | Проверить бизнес-правило: Backup success подтверждается проверкой результата, а не существованием файла. | High | Integration/domain | §7.1, §24–26, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 5831,
+        "text": "| AC-088 | BR-088 | Проверить бизнес-правило: Любая sensitive admin command журналируется. | High | Integration/domain | §7.1, §24–26, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6279,
+        "text": "| BR-089 | Сервер является единственным источником истины. | §18–19, §27.2, §29; Stage 3.4 | AC-089 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6280,
+        "text": "| BR-090 | Без сервера общие writes заблокированы. | §18–19, §27.2, §29; Stage 3.4 | AC-090 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6281,
+        "text": "| BR-091 | Scope change удаляет чувствительные projections до render. | §18–19, §27.2, §29; Stage 3.4 | AC-091 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6282,
+        "text": "| BR-092 | Realtime является invalidation, durable truth идёт через change feed. | §18–19, §27.2, §29; Stage 3.4 | AC-092 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6283,
+        "text": "| BR-093 | Conflict никогда не перезаписывается автоматически. | §18–19, §27.2, §29; Stage 3.4 | AC-093 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6371,
+        "text": "| AC-089 | BR-089 | Проверить бизнес-правило: Сервер является единственным источником истины. | High | Integration/domain | §18–19, §27.2, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6372,
+        "text": "| AC-090 | BR-090 | Проверить бизнес-правило: Без сервера общие writes заблокированы. | High | Integration/domain | §18–19, §27.2, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6373,
+        "text": "| AC-091 | BR-091 | Проверить бизнес-правило: Scope change удаляет чувствительные projections до render. | High | Integration/domain | §18–19, §27.2, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6374,
+        "text": "| AC-092 | BR-092 | [STATE-007] Проверить бизнес-правило: Realtime является invalidation, durable truth идёт через change feed. | High | Integration/domain | §18–19, §27.2, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6375,
+        "text": "| AC-093 | BR-093 | Проверить бизнес-правило: Conflict никогда не перезаписывается автоматически. | High | Integration/domain | §18–19, §27.2, §29; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6571,
+        "text": "| BR-094 | Audit append-only. | §21, §25, §27.1.34; Stage 3.4 | AC-094 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6572,
+        "text": "| BR-095 | История фильтруется текущими правами. | §21, §25, §27.1.34; Stage 3.4 | AC-095 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6573,
+        "text": "| BR-096 | Пароли, tokens, secrets и чувствительные полные paths не журналируются. | §21, §25, §27.1.34; Stage 3.4 | AC-096 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6574,
+        "text": "| BR-097 | Экспорт аудита создаётся как контролируемая фоновая операция. | §21, §25, §27.1.34; Stage 3.4 | AC-097 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6647,
+        "text": "| AC-094 | BR-094 | Проверить бизнес-правило: Audit append-only. | High | Integration/domain | §21, §25, §27.1.34; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6648,
+        "text": "| AC-095 | BR-095 | Проверить бизнес-правило: История фильтруется текущими правами. | High | Integration/domain | §21, §25, §27.1.34; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6649,
+        "text": "| AC-096 | BR-096 | Проверить бизнес-правило: Пароли, tokens, secrets и чувствительные полные paths не журналируются. | High | Integration/domain | §21, §25, §27.1.34; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Module_PRDs_4.1.2.md",
+        "line": 6650,
+        "text": "| AC-097 | BR-097 | Проверить бизнес-правило: Экспорт аудита создаётся как контролируемая фоновая операция. | High | Integration/domain | §21, §25, §27.1.34; Stage 3.4 |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 152,
+        "text": "- `STATE-001…024` are restored from the Stage 3.0 registry; `STATE-025…031` are retained from Stage 3.4 without reuse. `OQ-002` is closed."
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 243,
+        "text": "FR-242,MOD-001,\"§§3.2, 24, 25, 29\",SCR-001;SCR-002;SCR-006;SCR-161,FLOW-001;FLOW-002;FLOW-003,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1403,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 246,
+        "text": "FR-245,MOD-002,\"§8, §17.2, §23.5, §29\",SCR-004;SCR-005;SCR-007;SCR-008;SCR-200;SCR-204;SCR-205;SCR-207;SCR-208;SCR-209;SCR-211;SCR-212;SCR-213,FLOW-002;FLOW-005;FLOW-020,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1406,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 247,
+        "text": "FR-246,MOD-003,\"§9, §27.1.17, §29\",SCR-010;SCR-011,FLOW-005;FLOW-007;FLOW-008;FLOW-020;FLOW-021,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1407,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 248,
+        "text": "FR-247,MOD-004,\"§10, §27.1, §33\",SCR-012;SCR-013;SCR-014,FLOW-034,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1408,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 249,
+        "text": "FR-248,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1409,Stage 3.4 UX Architecture/Decision"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 250,
+        "text": "FR-249,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1410;AC-1411,Stage 3.4 UX Architecture/"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 251,
+        "text": "FR-250,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1412,Stage 3.4 UX Architecture/Decision"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 252,
+        "text": "FR-251,MOD-006,\"§11.4–11.5, §27.1.9–10\",SCR-033,FLOW-009,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1413,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 253,
+        "text": "FR-252,MOD-007,\"§11.6, §27.1.16\",SCR-026;SCR-027,FLOW-010;FLOW-011;FLOW-012,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1414;AC-1415,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 254,
+        "text": "FR-253,MOD-008,\"§17, §27.1.19–21\",SCR-028,FLOW-021,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1416,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 255,
+        "text": "FR-254,MOD-009,\"§12, §27.1.18, §29\",SCR-040;SCR-041;SCR-042;SCR-043;SCR-044;SCR-045;SCR-046;SCR-047,FLOW-031;FLOW-032,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1417,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 256,
+        "text": "FR-255,MOD-010,\"§13, §27.1.7–8, §29, §33\",SCR-060;SCR-061;SCR-062;SCR-063;SCR-064;SCR-065;SCR-066;SCR-067;SCR-068;SCR-069;SCR-070;SCR-071;SCR-072,FLOW-013;FLOW-014;FLOW-035,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1418;AC-1419,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 257,
+        "text": "FR-256,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1420,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 258,
+        "text": "FR-257,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1421,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 259,
+        "text": "FR-258,MOD-012,\"§16, §27.1.32, §29\",SCR-110;SCR-111;SCR-112;SCR-113;SCR-114;SCR-115;SCR-118;SCR-119,FLOW-018,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1422,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 260,
+        "text": "FR-259,MOD-013,\"§16.5, §18, §21, §27.1.33\",SCR-035;SCR-067;SCR-116;SCR-117;SCR-202;SCR-203,FLOW-037,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1423;AC-1424,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 263,
+        "text": "FR-262,MOD-016,\"§22.1, §27.1.36\",SCR-140,FLOW-026,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1427,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 264,
+        "text": "FR-263,MOD-017,\"§22.2, §27.1.37, §29\",SCR-141;SCR-142;SCR-143,FLOW-027;FLOW-028,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1428,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 268,
+        "text": "FR-267,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1432,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 269,
+        "text": "FR-268,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,STATE-008;STATE-010;STATE-014;STATE-032,Desktop-only; использует существующие read/command API при необходимости,Существующие DTO; новых полей не вводится,Capability-driven; server recheck для команд,FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT,AC-1433;AC-1434,Stage 3.4 UX Architecture/Decision Log"
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 286,
+        "text": "BR-016,MOD-001,\"§§3.2, 24, 25, 29\",SCR-001;SCR-002;SCR-006;SCR-161,FLOW-001;FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-016,\"§§3.2, 24, 25, 29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 287,
+        "text": "BR-017,MOD-001,\"§§3.2, 24, 25, 29\",SCR-001;SCR-002;SCR-006;SCR-161,FLOW-001;FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-017,\"§§3.2, 24, 25, 29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 288,
+        "text": "BR-018,MOD-001,\"§§3.2, 24, 25, 29\",SCR-001;SCR-002;SCR-006;SCR-161,FLOW-001;FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-018,\"§§3.2, 24, 25, 29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 289,
+        "text": "BR-019,MOD-001,\"§§3.2, 24, 25, 29\",SCR-001;SCR-002;SCR-006;SCR-161,FLOW-001;FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-019,\"§§3.2, 24, 25, 29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 290,
+        "text": "BR-020,MOD-002,\"§8, §17.2, §23.5, §29\",SCR-004;SCR-005;SCR-007;SCR-008;SCR-200;SCR-204;SCR-205;SCR-207;SCR-208;SCR-209;SCR-211;SCR-212;SCR-213,FLOW-002;FLOW-005;FLOW-020,,Business rule; see related module operations,,,,AC-020,\"§8, §17.2, §23.5, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 291,
+        "text": "BR-021,MOD-002,\"§8, §17.2, §23.5, §29\",SCR-004;SCR-005;SCR-007;SCR-008;SCR-200;SCR-204;SCR-205;SCR-207;SCR-208;SCR-209;SCR-211;SCR-212;SCR-213,FLOW-002;FLOW-005;FLOW-020,,Business rule; see related module operations,,,,AC-021,\"§8, §17.2, §23.5, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 292,
+        "text": "BR-022,MOD-002,\"§8, §17.2, §23.5, §29\",SCR-004;SCR-005;SCR-007;SCR-008;SCR-200;SCR-204;SCR-205;SCR-207;SCR-208;SCR-209;SCR-211;SCR-212;SCR-213,FLOW-002;FLOW-005;FLOW-020,,Business rule; see related module operations,,,,AC-022,\"§8, §17.2, §23.5, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 293,
+        "text": "BR-023,MOD-002,\"§8, §17.2, §23.5, §29\",SCR-004;SCR-005;SCR-007;SCR-008;SCR-200;SCR-204;SCR-205;SCR-207;SCR-208;SCR-209;SCR-211;SCR-212;SCR-213,FLOW-002;FLOW-005;FLOW-020,,Business rule; see related module operations,,,,AC-023,\"§8, §17.2, §23.5, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 294,
+        "text": "BR-024,MOD-003,\"§9, §27.1.17, §29\",SCR-010;SCR-011,FLOW-005;FLOW-007;FLOW-008;FLOW-020;FLOW-021,,Business rule; see related module operations,,,,AC-024,\"§9, §27.1.17, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 295,
+        "text": "BR-025,MOD-003,\"§9, §27.1.17, §29\",SCR-010;SCR-011,FLOW-005;FLOW-007;FLOW-008;FLOW-020;FLOW-021,,Business rule; see related module operations,,,,AC-025,\"§9, §27.1.17, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 296,
+        "text": "BR-026,MOD-003,\"§9, §27.1.17, §29\",SCR-010;SCR-011,FLOW-005;FLOW-007;FLOW-008;FLOW-020;FLOW-021,,Business rule; see related module operations,,,,AC-026,\"§9, §27.1.17, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 297,
+        "text": "BR-027,MOD-003,\"§9, §27.1.17, §29\",SCR-010;SCR-011,FLOW-005;FLOW-007;FLOW-008;FLOW-020;FLOW-021,,Business rule; see related module operations,,,,AC-027,\"§9, §27.1.17, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 298,
+        "text": "BR-028,MOD-004,\"§10, §27.1, §33\",SCR-012;SCR-013;SCR-014,FLOW-034,,Business rule; see related module operations,,,,AC-028,\"§10, §27.1, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 299,
+        "text": "BR-029,MOD-004,\"§10, §27.1, §33\",SCR-012;SCR-013;SCR-014,FLOW-034,,Business rule; see related module operations,,,,AC-029,\"§10, §27.1, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 300,
+        "text": "BR-030,MOD-004,\"§10, §27.1, §33\",SCR-012;SCR-013;SCR-014,FLOW-034,,Business rule; see related module operations,,,,AC-030,\"§10, §27.1, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 301,
+        "text": "BR-031,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,,Business rule; see related module operations,,,,AC-031,\"§11, §27.1.5–16, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 302,
+        "text": "BR-032,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,,Business rule; see related module operations,,,,AC-032,\"§11, §27.1.5–16, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 303,
+        "text": "BR-033,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,,Business rule; see related module operations,,,,AC-033,\"§11, §27.1.5–16, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 304,
+        "text": "BR-034,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,,Business rule; see related module operations,,,,AC-034,\"§11, §27.1.5–16, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 305,
+        "text": "BR-035,MOD-005,\"§11, §27.1.5–16, §29, §33\",SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034,FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033,,Business rule; see related module operations,,,,AC-035,\"§11, §27.1.5–16, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 306,
+        "text": "BR-036,MOD-006,\"§11.4–11.5, §27.1.9–10\",SCR-033,FLOW-009,,Business rule; see related module operations,,,,AC-036,\"§11.4–11.5, §27.1.9–10; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 307,
+        "text": "BR-037,MOD-006,\"§11.4–11.5, §27.1.9–10\",SCR-033,FLOW-009,,Business rule; see related module operations,,,,AC-037,\"§11.4–11.5, §27.1.9–10; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 308,
+        "text": "BR-038,MOD-006,\"§11.4–11.5, §27.1.9–10\",SCR-033,FLOW-009,,Business rule; see related module operations,,,,AC-038,\"§11.4–11.5, §27.1.9–10; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 309,
+        "text": "BR-039,MOD-006,\"§11.4–11.5, §27.1.9–10\",SCR-033,FLOW-009,,Business rule; see related module operations,,,,AC-039,\"§11.4–11.5, §27.1.9–10; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 310,
+        "text": "BR-040,MOD-007,\"§11.6, §27.1.16\",SCR-026;SCR-027,FLOW-010;FLOW-011;FLOW-012,,Business rule; see related module operations,,,,AC-040,\"§11.6, §27.1.16; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 311,
+        "text": "BR-041,MOD-007,\"§11.6, §27.1.16\",SCR-026;SCR-027,FLOW-010;FLOW-011;FLOW-012,,Business rule; see related module operations,,,,AC-041,\"§11.6, §27.1.16; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 312,
+        "text": "BR-042,MOD-007,\"§11.6, §27.1.16\",SCR-026;SCR-027,FLOW-010;FLOW-011;FLOW-012,,Business rule; see related module operations,,,,AC-042,\"§11.6, §27.1.16; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 313,
+        "text": "BR-043,MOD-007,\"§11.6, §27.1.16\",SCR-026;SCR-027,FLOW-010;FLOW-011;FLOW-012,,Business rule; see related module operations,,,,AC-043,\"§11.6, §27.1.16; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 314,
+        "text": "BR-044,MOD-008,\"§17, §27.1.19–21\",SCR-028,FLOW-021,,Business rule; see related module operations,,,,AC-044,\"§17, §27.1.19–21; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 315,
+        "text": "BR-045,MOD-008,\"§17, §27.1.19–21\",SCR-028,FLOW-021,,Business rule; see related module operations,,,,AC-045,\"§17, §27.1.19–21; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 316,
+        "text": "BR-046,MOD-008,\"§17, §27.1.19–21\",SCR-028,FLOW-021,,Business rule; see related module operations,,,,AC-046,\"§17, §27.1.19–21; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 317,
+        "text": "BR-047,MOD-009,\"§12, §27.1.18, §29\",SCR-040;SCR-041;SCR-042;SCR-043;SCR-044;SCR-045;SCR-046;SCR-047,FLOW-031;FLOW-032,,Business rule; see related module operations,,,,AC-047,\"§12, §27.1.18, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 318,
+        "text": "BR-048,MOD-009,\"§12, §27.1.18, §29\",SCR-040;SCR-041;SCR-042;SCR-043;SCR-044;SCR-045;SCR-046;SCR-047,FLOW-031;FLOW-032,,Business rule; see related module operations,,,,AC-048,\"§12, §27.1.18, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 319,
+        "text": "BR-049,MOD-009,\"§12, §27.1.18, §29\",SCR-040;SCR-041;SCR-042;SCR-043;SCR-044;SCR-045;SCR-046;SCR-047,FLOW-031;FLOW-032,,Business rule; see related module operations,,,,AC-049,\"§12, §27.1.18, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 320,
+        "text": "BR-050,MOD-009,\"§12, §27.1.18, §29\",SCR-040;SCR-041;SCR-042;SCR-043;SCR-044;SCR-045;SCR-046;SCR-047,FLOW-031;FLOW-032,,Business rule; see related module operations,,,,AC-050,\"§12, §27.1.18, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 321,
+        "text": "BR-051,MOD-010,\"§13, §27.1.7–8, §29, §33\",SCR-060;SCR-061;SCR-062;SCR-063;SCR-064;SCR-065;SCR-066;SCR-067;SCR-068;SCR-069;SCR-070;SCR-071;SCR-072,FLOW-013;FLOW-014;FLOW-035,,Business rule; see related module operations,,,,AC-051,\"§13, §27.1.7–8, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 322,
+        "text": "BR-052,MOD-010,\"§13, §27.1.7–8, §29, §33\",SCR-060;SCR-061;SCR-062;SCR-063;SCR-064;SCR-065;SCR-066;SCR-067;SCR-068;SCR-069;SCR-070;SCR-071;SCR-072,FLOW-013;FLOW-014;FLOW-035,,Business rule; see related module operations,,,,AC-052,\"§13, §27.1.7–8, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 323,
+        "text": "BR-053,MOD-010,\"§13, §27.1.7–8, §29, §33\",SCR-060;SCR-061;SCR-062;SCR-063;SCR-064;SCR-065;SCR-066;SCR-067;SCR-068;SCR-069;SCR-070;SCR-071;SCR-072,FLOW-013;FLOW-014;FLOW-035,,Business rule; see related module operations,,,,AC-053,\"§13, §27.1.7–8, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 324,
+        "text": "BR-054,MOD-010,\"§13, §27.1.7–8, §29, §33\",SCR-060;SCR-061;SCR-062;SCR-063;SCR-064;SCR-065;SCR-066;SCR-067;SCR-068;SCR-069;SCR-070;SCR-071;SCR-072,FLOW-013;FLOW-014;FLOW-035,,Business rule; see related module operations,,,,AC-054,\"§13, §27.1.7–8, §29, §33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 325,
+        "text": "BR-055,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,,Business rule; see related module operations,,,,AC-055,\"§§14–15, §27.1.22–31, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 326,
+        "text": "BR-056,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,,Business rule; see related module operations,,,,AC-056,\"§§14–15, §27.1.22–31, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 327,
+        "text": "BR-057,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,,Business rule; see related module operations,,,,AC-057,\"§§14–15, §27.1.22–31, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 328,
+        "text": "BR-058,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,,Business rule; see related module operations,,,,AC-058,\"§§14–15, §27.1.22–31, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 329,
+        "text": "BR-059,MOD-011,\"§§14–15, §27.1.22–31, §29\",SCR-080;SCR-081;SCR-082;SCR-083;SCR-084;SCR-085;SCR-086;SCR-087;SCR-088;SCR-089;SCR-090;SCR-210,FLOW-015;FLOW-016;FLOW-017;FLOW-036,,Business rule; see related module operations,,,,AC-059,\"§§14–15, §27.1.22–31, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 330,
+        "text": "BR-060,MOD-012,\"§16, §27.1.32, §29\",SCR-110;SCR-111;SCR-112;SCR-113;SCR-114;SCR-115;SCR-118;SCR-119,FLOW-018,,Business rule; see related module operations,,,,AC-060,\"§16, §27.1.32, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 331,
+        "text": "BR-061,MOD-012,\"§16, §27.1.32, §29\",SCR-110;SCR-111;SCR-112;SCR-113;SCR-114;SCR-115;SCR-118;SCR-119,FLOW-018,,Business rule; see related module operations,,,,AC-061,\"§16, §27.1.32, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 332,
+        "text": "BR-062,MOD-012,\"§16, §27.1.32, §29\",SCR-110;SCR-111;SCR-112;SCR-113;SCR-114;SCR-115;SCR-118;SCR-119,FLOW-018,,Business rule; see related module operations,,,,AC-062,\"§16, §27.1.32, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 333,
+        "text": "BR-063,MOD-013,\"§16.5, §18, §21, §27.1.33\",SCR-035;SCR-067;SCR-116;SCR-117;SCR-202;SCR-203,FLOW-037,,Business rule; see related module operations,,,,AC-063,\"§16.5, §18, §21, §27.1.33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 334,
+        "text": "BR-064,MOD-013,\"§16.5, §18, §21, §27.1.33\",SCR-035;SCR-067;SCR-116;SCR-117;SCR-202;SCR-203,FLOW-037,,Business rule; see related module operations,,,,AC-064,\"§16.5, §18, §21, §27.1.33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 335,
+        "text": "BR-065,MOD-013,\"§16.5, §18, §21, §27.1.33\",SCR-035;SCR-067;SCR-116;SCR-117;SCR-202;SCR-203,FLOW-037,,Business rule; see related module operations,,,,AC-065,\"§16.5, §18, §21, §27.1.33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 336,
+        "text": "BR-066,MOD-013,\"§16.5, §18, §21, §27.1.33\",SCR-035;SCR-067;SCR-116;SCR-117;SCR-202;SCR-203,FLOW-037,,Business rule; see related module operations,,,,AC-066,\"§16.5, §18, §21, §27.1.33; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 337,
+        "text": "BR-067,MOD-014,\"§20, §27.1.35\",SCR-133;SCR-134;SCR-135;SCR-136,FLOW-019,,Business rule; see related module operations,,,,AC-067,\"§20, §27.1.35; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 338,
+        "text": "BR-068,MOD-014,\"§20, §27.1.35\",SCR-133;SCR-134;SCR-135;SCR-136,FLOW-019,,Business rule; see related module operations,,,,AC-068,\"§20, §27.1.35; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 339,
+        "text": "BR-069,MOD-014,\"§20, §27.1.35\",SCR-133;SCR-134;SCR-135;SCR-136,FLOW-019,,Business rule; see related module operations,,,,AC-069,\"§20, §27.1.35; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 340,
+        "text": "BR-070,MOD-014,\"§20, §27.1.35\",SCR-133;SCR-134;SCR-135;SCR-136,FLOW-019,,Business rule; see related module operations,,,,AC-070,\"§20, §27.1.35; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 341,
+        "text": "BR-071,MOD-015,\"§17, §27.1.19–21, §29\",SCR-130;SCR-131;SCR-132;SCR-212,FLOW-020,,Business rule; see related module operations,,,,AC-071,\"§17, §27.1.19–21, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 342,
+        "text": "BR-072,MOD-015,\"§17, §27.1.19–21, §29\",SCR-130;SCR-131;SCR-132;SCR-212,FLOW-020,,Business rule; see related module operations,,,,AC-072,\"§17, §27.1.19–21, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 343,
+        "text": "BR-073,MOD-015,\"§17, §27.1.19–21, §29\",SCR-130;SCR-131;SCR-132;SCR-212,FLOW-020,,Business rule; see related module operations,,,,AC-073,\"§17, §27.1.19–21, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 344,
+        "text": "BR-074,MOD-015,\"§17, §27.1.19–21, §29\",SCR-130;SCR-131;SCR-132;SCR-212,FLOW-020,,Business rule; see related module operations,,,,AC-074,\"§17, §27.1.19–21, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 345,
+        "text": "BR-075,MOD-016,\"§22.1, §27.1.36\",SCR-140,FLOW-026,,Business rule; see related module operations,,,,AC-075,\"§22.1, §27.1.36; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 346,
+        "text": "BR-076,MOD-016,\"§22.1, §27.1.36\",SCR-140,FLOW-026,,Business rule; see related module operations,,,,AC-076,\"§22.1, §27.1.36; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 347,
+        "text": "BR-077,MOD-016,\"§22.1, §27.1.36\",SCR-140,FLOW-026,,Business rule; see related module operations,,,,AC-077,\"§22.1, §27.1.36; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 348,
+        "text": "BR-078,MOD-017,\"§22.2, §27.1.37, §29\",SCR-141;SCR-142;SCR-143,FLOW-027;FLOW-028,,Business rule; see related module operations,,,,AC-078,\"§22.2, §27.1.37, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 349,
+        "text": "BR-079,MOD-017,\"§22.2, §27.1.37, §29\",SCR-141;SCR-142;SCR-143,FLOW-027;FLOW-028,,Business rule; see related module operations,,,,AC-079,\"§22.2, §27.1.37, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 350,
+        "text": "BR-080,MOD-017,\"§22.2, §27.1.37, §29\",SCR-141;SCR-142;SCR-143,FLOW-027;FLOW-028,,Business rule; see related module operations,,,,AC-080,\"§22.2, §27.1.37, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 351,
+        "text": "BR-081,MOD-017,\"§22.2, §27.1.37, §29\",SCR-141;SCR-142;SCR-143,FLOW-027;FLOW-028,,Business rule; see related module operations,,,,AC-081,\"§22.2, §27.1.37, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 352,
+        "text": "BR-082,MOD-018,\"§23, §24\",SCR-150;SCR-151;SCR-152;SCR-153;SCR-154;SCR-155;SCR-156;SCR-157;SCR-158;SCR-159;SCR-161,FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-082,\"§23, §24; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 353,
+        "text": "BR-083,MOD-018,\"§23, §24\",SCR-150;SCR-151;SCR-152;SCR-153;SCR-154;SCR-155;SCR-156;SCR-157;SCR-158;SCR-159;SCR-161,FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-083,\"§23, §24; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 354,
+        "text": "BR-084,MOD-018,\"§23, §24\",SCR-150;SCR-151;SCR-152;SCR-153;SCR-154;SCR-155;SCR-156;SCR-157;SCR-158;SCR-159;SCR-161,FLOW-002;FLOW-003,,Business rule; see related module operations,,,,AC-084,\"§23, §24; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 355,
+        "text": "BR-085,MOD-019,\"§7.1, §24–26, §29\",SCR-170;SCR-171;SCR-172;SCR-173;SCR-174;SCR-175;SCR-176;SCR-177;SCR-178;SCR-179;SCR-180;SCR-181;SCR-182;SCR-183;SCR-184;SCR-185;SCR-186;SCR-187;SCR-188,FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-085,\"§7.1, §24–26, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 356,
+        "text": "BR-086,MOD-019,\"§7.1, §24–26, §29\",SCR-170;SCR-171;SCR-172;SCR-173;SCR-174;SCR-175;SCR-176;SCR-177;SCR-178;SCR-179;SCR-180;SCR-181;SCR-182;SCR-183;SCR-184;SCR-185;SCR-186;SCR-187;SCR-188,FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-086,\"§7.1, §24–26, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 357,
+        "text": "BR-087,MOD-019,\"§7.1, §24–26, §29\",SCR-170;SCR-171;SCR-172;SCR-173;SCR-174;SCR-175;SCR-176;SCR-177;SCR-178;SCR-179;SCR-180;SCR-181;SCR-182;SCR-183;SCR-184;SCR-185;SCR-186;SCR-187;SCR-188,FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-087,\"§7.1, §24–26, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 358,
+        "text": "BR-088,MOD-019,\"§7.1, §24–26, §29\",SCR-170;SCR-171;SCR-172;SCR-173;SCR-174;SCR-175;SCR-176;SCR-177;SCR-178;SCR-179;SCR-180;SCR-181;SCR-182;SCR-183;SCR-184;SCR-185;SCR-186;SCR-187;SCR-188,FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-088,\"§7.1, §24–26, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 359,
+        "text": "BR-089,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,,Business rule; see related module operations,,,,AC-089,\"§18–19, §27.2, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 360,
+        "text": "BR-090,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,,Business rule; see related module operations,,,,AC-090,\"§18–19, §27.2, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 361,
+        "text": "BR-091,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,,Business rule; see related module operations,,,,AC-091,\"§18–19, §27.2, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 362,
+        "text": "BR-092,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,,Business rule; see related module operations,,,,AC-092,\"§18–19, §27.2, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 363,
+        "text": "BR-093,MOD-020,\"§18–19, §27.2, §29\",SCR-003;SCR-032;SCR-047;SCR-136;SCR-156;SCR-160;SCR-205;SCR-206;SCR-209,FLOW-022;FLOW-023;FLOW-024;FLOW-025;FLOW-030,,Business rule; see related module operations,,,,AC-093,\"§18–19, §27.2, §29; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 364,
+        "text": "BR-094,MOD-021,\"§21, §25, §27.1.34\",SCR-036;SCR-068;SCR-172;SCR-186;SCR-201,FLOW-025;FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-094,\"§21, §25, §27.1.34; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 365,
+        "text": "BR-095,MOD-021,\"§21, §25, §27.1.34\",SCR-036;SCR-068;SCR-172;SCR-186;SCR-201,FLOW-025;FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-095,\"§21, §25, §27.1.34; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 366,
+        "text": "BR-096,MOD-021,\"§21, §25, §27.1.34\",SCR-036;SCR-068;SCR-172;SCR-186;SCR-201,FLOW-025;FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-096,\"§21, §25, §27.1.34; Stage 3.4\""
+      },
+      {
+        "file": "Stage_4_Requirements_Traceability_4.1.2.csv",
+        "line": 367,
+        "text": "BR-097,MOD-021,\"§21, §25, §27.1.34\",SCR-036;SCR-068;SCR-172;SCR-186;SCR-201,FLOW-025;FLOW-029;FLOW-030,,Business rule; see related module operations,,,,AC-097,\"§21, §25, §27.1.34; Stage 3.4\""
+      }
+    ],
+    "oq_remain_high": [
+      {
+        "file": "Stage_4_Dependency_Risk_Register_4.1.2.md",
+        "line": 63,
+        "text": "- `OQ-002` is closed by stable-state normalization. Source-backed `OQ-001` and `OQ-003` remain High and block the Stage 4.2 audit gate until a product/contract decision is made."
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 186,
+        "text": "Candidate не придумывает отсутствующие поля или операции. После нормализации `OQ-002` закрыт как документационный дефект. `OQ-001` остаётся High: концепция прямо требует настраиваемые пороги/цветовые интервалы (§17.3, §23.2, §27.1 item 20), а writable contract отсутствует. `OQ-003` остаётся High: концепция прямо включает сотрудников в область и группы глобального поиска (§20.1–20.2), а Search Contract не содержит employee/user result type. OpenAPI/DTO не изменялись. Независимый аудит 4.2 не запу"
+      }
+    ],
+    "unverified": [
+      {
+        "file": "00_MANIFEST.md",
+        "line": 41,
+        "text": "21 modules; 279 FR; 113 BR; 1824 AC; 25 NFR; 244/244 API operations; FR without AC=0; unverified=0; unknown permissions/errors=0; duplicate IDs=0; OQ-001/OQ-003=Fixed; Critical/High/Medium=0/0/0; readiness=100/100."
+      },
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 133,
+        "text": "- Current UX baseline: Stage 3.5; 1078 field/action rows, unverified=0, provisional=0."
+      },
+      {
+        "file": "Stage_4_1_2_Update_Report.md",
+        "line": 28,
+        "text": "FR without AC=0; unverified=0; provisional=0; unknown permissions/errors/UX IDs=0; duplicate IDs=0; lost references=0; client post-filter=0. OQ-001/OQ-003=Fixed. Internal candidate validation Critical/High/Medium=0/0/0. Candidate is ready for Stage 4.2."
+      },
+      {
+        "file": "Stage_4_Candidate_Validation_4.1.2.md",
+        "line": 19,
+        "text": "| Unverified | 0 |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 228,
+        "text": "- FR without AC, unknown permissions/errors/UX IDs, unverified, provisional, duplicate IDs и lost references: 0."
+      }
+    ],
+    "provisional": [
+      {
+        "file": "Stage_4_0_PRD_Readiness_4.1.2.md",
+        "line": 133,
+        "text": "- Current UX baseline: Stage 3.5; 1078 field/action rows, unverified=0, provisional=0."
+      },
+      {
+        "file": "Stage_4_1_2_Update_Report.md",
+        "line": 28,
+        "text": "FR without AC=0; unverified=0; provisional=0; unknown permissions/errors/UX IDs=0; duplicate IDs=0; lost references=0; client post-filter=0. OQ-001/OQ-003=Fixed. Internal candidate validation Critical/High/Medium=0/0/0. Candidate is ready for Stage 4.2."
+      },
+      {
+        "file": "Stage_4_Candidate_Validation_4.1.2.md",
+        "line": 20,
+        "text": "| Provisional | 0 |"
+      },
+      {
+        "file": "Stage_4_Product_PRD_4.1.2.md",
+        "line": 228,
+        "text": "- FR without AC, unknown permissions/errors/UX IDs, unverified, provisional, duplicate IDs и lost references: 0."
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+kind,name,change,compatibility
+operation,GET_api_v1_settings_notification_urgency_scale,added GET /api/v1/settings/notification-urgency-scale,additive
+operation,POST_api_v1_settings_notification_urgency_scale_reset,added POST /api/v1/settings/notification-urgency-scale/reset,additive
+operation,PUT_api_v1_settings_notification_urgency_scale,added PUT /api/v1/settings/notification-urgency-scale,additive
+field,SearchSuggestion.employee,added optional field,additive
+field,SearchSuggestion.resultType,added optional field,additive
+schema,EmployeeSearchResult,added,additive
+schema,NotificationUrgencyScale,added,additive
+schema,NotificationUrgencyScalePatch,added,additive
+schema,UrgencyLevel,added,additive
+schema,UrgencyScaleInterval,added,additive
+migration,005_stage_2_3_contract_alignment.sql,added,additive forward-fix

@@ -1,0 +1,9 @@
+Case ID,Scaling,Resolution,Topology/action,Required surfaces,Result,Evidence path,Finding IDs
+DPI-100,100%,1920x1080,Single monitor,"Today, Tasks, Search, Admin, Operations",PENDING,,
+DPI-125,125%,1920x1080,Single monitor,"Today, Calendar editor, Inbox conversion, Settings",PENDING,,
+DPI-150,150%,1920x1080,Single monitor,"Today, Projects, Files recovery, CRM",PENDING,,
+DPI-175,175%,1920x1080,Single monitor,"Search redaction, conflict, Archive/Trash",PENDING,,
+DPI-200,200%,1920x1080,Single monitor,"Auth, Today, editors, dialogs, Operations",PENDING,,
+DPI-LAPTOP,150%,1366x768,Laptop panel,"Shell navigation, Today, task editor, Inbox conversion",PENDING,,
+DPI-MULTI-1,100% → 200%,1920x1080 → 3840x2160,Move active window between monitors,"Editor, conflict dialog, menus, inspector and focus target",PENDING,,
+DPI-MULTI-2,200% → 125%,3840x2160 → 1920x1080,Move active window between monitors,"Today, Admin and Operations with open overlay",PENDING,,

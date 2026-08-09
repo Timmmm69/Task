@@ -1,0 +1,14 @@
+{
+  "stage": "2.2",
+  "status": "pass",
+  "openapi": "3.1.0",
+  "openapi_sha256": "052738F7BF1B02CAB054B92827E17E3EA79EB0C8832C0F5A6E60681E4B363161",
+  "operations": 241,
+  "schemas": 232,
+  "dto_fields": 1322,
+  "permissions": 91,
+  "errors": 44,
+  "references": 2741,
+  "contract_differences": 0,
+  "failures": []
+}
