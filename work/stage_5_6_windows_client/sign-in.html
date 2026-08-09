@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task — Вход</title>
+    <style>
+      :root { color-scheme: light; font-family: "Segoe UI", sans-serif; background: #f3f5f7; color: #16212c; }
+      body { align-items: center; display: grid; margin: 0; min-height: 100vh; padding: 24px; }
+      main { background: #fff; border: 1px solid #c8d0d9; border-radius: 12px; box-shadow: 0 12px 32px #16212c22; margin: auto; max-width: 440px; padding: 32px; width: min(100%, 440px); }
+      h1 { font-size: 28px; margin: 0 0 8px; }
+      p { line-height: 1.5; margin: 0 0 24px; }
+      form { display: grid; gap: 16px; }
+      label { display: grid; font-weight: 600; gap: 6px; }
+      input { border: 1px solid #64748b; border-radius: 6px; font: inherit; min-height: 42px; padding: 0 10px; }
+      input:focus-visible, button:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+      button { background: #155e75; border: 0; border-radius: 6px; color: #fff; cursor: pointer; font: inherit; font-weight: 600; min-height: 44px; padding: 0 16px; }
+      [role="alert"] { color: #a21c1c; font-weight: 600; min-height: 1.5em; }
+      .hint { color: #475569; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main aria-labelledby="sign-in-title">
+      <h1 id="sign-in-title">Первое подключение</h1>
+      <p>Войдите в тестовый клиент Task, чтобы открыть только разрешённые данные.</p>
+      <form id="sign-in-form">
+        <label for="login">Логин<input id="login" name="login" autocomplete="username" required></label>
+        <label for="password">Пароль<input id="password" name="password" type="password" autocomplete="current-password" required></label>
+        <p id="error" role="alert" aria-live="assertive"></p>
+        <button type="submit">Войти</button>
+      </form>
+      <p class="hint">Используются только синтетические Gate-учётные данные.</p>
+    </main>
+    <script>
+      const form = document.querySelector('#sign-in-form');
+      const login = document.querySelector('#login');
+      const password = document.querySelector('#password');
+      const error = document.querySelector('#error');
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        error.textContent = '';
+        if (!await window.taskDesktop.authenticate(login.value, password.value)) {
+          error.textContent = 'Логин или пароль не подходят для выбранной тестовой роли.';
+          password.focus();
+          return;
+        }
+        if (!await window.taskDesktop.completeSignIn()) error.textContent = 'Не удалось открыть клиент после входа. Повторите попытку.';
+      });
+      login.focus();
+    </script>
+  </body>
+</html>

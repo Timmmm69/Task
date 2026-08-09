@@ -8,6 +8,6 @@ Build from the repository root on Windows with:
 powershell -ExecutionPolicy Bypass -File work\stage_5_6_windows_client\build.ps1
 ```
 
-The portable artifact is written to `dist\Task-Gate-5.6-Client-0.1.0-win-x64.exe`. Select a synthetic role with `--gate-account=admin`, `manager`, `employee`, or `observer`.
+The portable artifact is written to `dist\Task-Gate-5.6-Client-0.1.2-win-x64.exe`. Select a synthetic role with `--gate-account=admin`, `manager`, `employee`, or `observer`.
 
 This client is an unsigned Gate prerequisite. It is not evidence that UIA, Narrator, DPI, participant sessions, or owner approvals passed.

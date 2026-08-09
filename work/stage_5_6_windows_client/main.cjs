@@ -12,6 +12,10 @@ function clientIndexPath() {
   return app.isPackaged ? path.join(process.resourcesPath, "client", "index.html") : path.resolve(__dirname, "..", "stage_5_prototype", "dist", "client", "index.html");
 }
 
+function signInIndexPath() {
+  return path.join(__dirname, "sign-in.html");
+}
+
 function createWindow() {
   const account = selectedAccount;
   const mainWindow = new BrowserWindow({
@@ -30,7 +34,7 @@ function createWindow() {
   });
   mainWindow.webContents.on("will-navigate", (event) => event.preventDefault());
   mainWindow.once("ready-to-show", () => mainWindow.show());
-  mainWindow.loadFile(clientIndexPath()).catch((error) => { console.error("Failed to load Stage 5 client:", error); app.exit(1); });
+  mainWindow.loadFile(signInIndexPath()).catch((error) => { console.error("Failed to load Stage 5 sign-in screen:", error); app.exit(1); });
 }
 
 ipcMain.on("task:window-action", (event, action) => {
@@ -42,6 +46,15 @@ ipcMain.on("task:window-action", (event, action) => {
 });
 
 ipcMain.handle("task:authenticate", (_event, credentials) => authenticate(credentials?.login, credentials?.password, selectedAccount.id));
+
+ipcMain.handle("task:complete-sign-in", (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  if (!window) return false;
+  return window.loadFile(clientIndexPath()).then(() => true).catch((error) => {
+    console.error("Failed to load Stage 5 client after sign-in:", error);
+    return false;
+  });
+});
 
 app.whenReady().then(() => {
   // Gate 5.6 is evaluated with native Windows UI Automation and Narrator.

@@ -41,6 +41,6 @@ finally {
   Pop-Location
 }
 
-$artifact = Join-Path $client 'dist\Task-Gate-5.6-Client-0.1.1-win-x64.exe'
+$artifact = Join-Path $client 'dist\Task-Gate-5.6-Client-0.1.2-win-x64.exe'
 if (-not (Test-Path -LiteralPath $artifact)) { throw "Expected artifact not found: $artifact" }
 Get-FileHash -Algorithm SHA256 -LiteralPath $artifact

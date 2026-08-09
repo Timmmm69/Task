@@ -3,9 +3,9 @@
   "accepted": 0,
   "total": 9,
   "missing": [
+    "EVD-CLIENT-ID",
     "EVD-WIN-UIA",
-    "EVD-WIN-NARR",
-    "EVD-WIN-DPI",
+    "EVD-WIN-KEYBOARD",
     "EVD-USR",
     "EVD-FIND",
     "EVD-PO",
@@ -13,5 +13,5 @@
     "EVD-TECH",
     "EVD-QA"
   ],
-  "reason": "External native Windows, participant and named approval evidence has not been supplied."
+  "reason": "Narrator, voice control, DPI scaling and multi-monitor testing are explicitly out of scope. Partial native UIA/keyboard observations exist, but remaining technical coverage, participant evidence and any still-required owner decisions are pending."
 }
