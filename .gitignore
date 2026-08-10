@@ -12,6 +12,7 @@ Thumbs.db
 # Local/generated dependencies and build output
 **/node_modules/
 **/dist/
+**/runtime/
 **/coverage/
 **/python-packages/
 **/.pydeps/
