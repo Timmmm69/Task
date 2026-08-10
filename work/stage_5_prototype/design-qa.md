@@ -84,3 +84,71 @@ The post-fix comparison contains no remaining actionable P0/P1/P2 differences. B
 - [x] Pass Design QA with P0/P1/P2 = 0.
 
 final result: passed
+
+---
+
+# User feedback — planner and new-task form QA
+
+## Comparison target
+
+- Source visual truth: user-provided screenshots:
+  - `C:\Users\novik\AppData\Local\Temp\codex-clipboard-db2b902c-58c3-4dc2-8792-bdb5eb83cf00.png` — remove the current-time line;
+  - `C:\Users\novik\AppData\Local\Temp\codex-clipboard-da0742d2-4130-419d-8518-673535ab6161.png` — keep the profile and primary actions aligned in the header;
+  - `C:\Users\novik\AppData\Local\Temp\codex-clipboard-6d3acdf3-adbb-4391-95bd-e8f7c8aa83d0.png` — extend New task;
+  - `C:\Users\novik\AppData\Local\Temp\codex-clipboard-bc03afa9-0c61-4eee-b87e-51da54ee2898.png` — make the planner/details split adjustable.
+- Combined visual comparison: `qa-user-feedback-comparison.png` (source and implementation pairs for the header and New task form).
+- Browser-rendered implementation captures:
+  - `qa-user-feedback-planner.png` — Today view after the header and divider changes;
+  - `qa-user-feedback-new-task.png` — New task dialog with all requested fields.
+- Viewport: 1280 × 720 CSS px, device density 1; implementation captures are 1280 × 720 px. Source screenshots have varying desktop dimensions, so the combined image normalizes each comparison pair to 720 px wide for visual review rather than asserting pixel-for-pixel equality.
+- State: authenticated online desktop client; Today view, selected planned task; New task dialog open where applicable.
+
+## Full-view and focused comparison evidence
+
+- Header: the profile button stays in the same horizontal grid row as search, New task and notifications. The active header layout has six explicit grid tracks; this removes the former implicit wrap that placed the profile below the bar. At this viewport, the connection-status control intentionally collapses so the labelled search control remains visible.
+- Planner: the red current-time line and marker are absent. The split has a visible narrow divider and no overlapping borders.
+- New task: the dialog now has `День недели`, `Проект (необязательно)` with `Без проекта` as the default, and `Приоритет` in one row.
+- Divider interaction: browser test moved the separator by pointer and then by ArrowRight; its CSS custom property changed from `519px` to `543px`. Arrow keys operate the focused separator; Shift increases the adjustment step.
+
+## Primary interactions verified
+
+- Opened New task, selected `Четверг`, left project as `Без проекта`, entered a title and created the task. The created list entry displays `Проект: Без проекта` and `Четверг`.
+- Verified that the divider is exposed as the labelled vertical separator `Изменить ширину плана дня` and responds to keyboard resizing.
+- Reloaded the screen to verify the corrected header and absent current-time line in the rendered implementation.
+- Browser console: no error-level messages.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. The existing Segoe UI hierarchy is retained; search text and the New task label stay readable without wrapping the profile into a second row.
+- Spacing and layout rhythm: passed. The explicit header tracks keep actions centred, the form uses a wider modal with three balanced fields, and the divider preserves minimum widths for both panels.
+- Colors and tokens: passed. Existing blue primary actions, neutral surfaces, borders and status colours are unchanged; divider hover/focus uses the existing primary blue token.
+- Image quality and asset fidelity: passed. These targeted desktop controls do not introduce imagery. Existing Fluent UI icons remain in use; no placeholder or custom-drawn asset was added.
+- Copy and content: passed. The new labels state the intent directly and `Без проекта` makes the optional choice explicit.
+- Accessibility and behavior: passed for the implemented scope. The divider is keyboard-focusable, labelled, vertically oriented and exposes its current width as accessible text. The form fields retain native select semantics.
+
+## Findings
+
+No actionable P0, P1 or P2 findings remain.
+
+## Comparison history
+
+### Pass 1 — blocked
+
+- [P2] At the 1280 × 720 review viewport, the old responsive header hid the `Поиск по Task` label, which made the requested alignment change incomplete.
+- Fix: retained the labelled search control, hid only the lower-priority connection-status control at this breakpoint, and used a five-track responsive header that keeps the profile in the same row.
+- Post-fix evidence: `qa-user-feedback-planner.png` and `qa-user-feedback-comparison.png`.
+
+### Final pass — passed
+
+The header, dialog and split view have no remaining actionable P0/P1/P2 differences against the requested changes. Build and both targeted test suites pass.
+
+## Implementation checklist
+
+- [x] Remove the current-time line.
+- [x] Keep profile, search and New task aligned on all desktop header layouts.
+- [x] Add weekday selection to New task.
+- [x] Make project optional with an explicit no-project value.
+- [x] Add pointer and keyboard resizing for the planner/details divider.
+- [x] Verify build, tests, browser interactions and console.
+
+final result: passed

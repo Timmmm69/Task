@@ -366,18 +366,19 @@ function TimelineCard({ task, selected, onSelect }) {
 
 function NewTaskDialog({ onClose, onCreate }) {
   const [title, setTitle] = useState("");
-  const [project, setProject] = useState("Отчётность");
+  const [date, setDate] = useState("2026-07-28");
+  const [project, setProject] = useState("");
   const [priority, setPriority] = useState("Средняя");
 
   function submit(event) {
     event.preventDefault();
     if (!title.trim()) return;
-    onCreate({ title: title.trim(), project, priority });
+    onCreate({ title: title.trim(), date, project, priority });
   }
 
   return (
     <div className="dialog-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className="dialog" role="dialog" aria-modal="true" aria-labelledby="new-task-title" onMouseDown={(event) => event.stopPropagation()}>
+      <section className="dialog dialog--new-task" role="dialog" aria-modal="true" aria-labelledby="new-task-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="dialog__header">
           <h2 id="new-task-title">Новая задача</h2>
           <button className="icon-button" type="button" onClick={onClose} aria-label="Закрыть">
@@ -389,10 +390,15 @@ function NewTaskDialog({ onClose, onCreate }) {
             <span>Название</span>
             <input autoFocus value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Что нужно сделать?" />
           </label>
-          <div className="dialog__grid">
+          <div className="dialog__grid dialog__grid--new-task">
             <label className="field">
-              <span>Проект</span>
+              <span>Дата</span>
+              <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+            </label>
+            <label className="field">
+              <span>Проект <small className="field-hint">необязательно</small></span>
               <select value={project} onChange={(event) => setProject(event.target.value)}>
+                <option value="">Без проекта</option>
                 <option>Отчётность</option>
                 <option>Внутренние процессы</option>
                 <option>Коммуникации</option>
@@ -2338,11 +2344,11 @@ function SessionRevokedDialog({ onSignIn }) {
 }
 
 const calendarSeed = [
-  { id: "calendar-planning", title: "Ежедневное планирование команды", project: "Внутренние процессы", assignee: "Иван С.", status: "Готово", start: 540, duration: 45, tone: "done", description: "Короткая синхронизация приоритетов.", userAttendees: ["Иван С."], contactAttendees: [], response: "accepted", version: 3 },
-  { id: "calendar-analysis", title: "Подготовить анализ продаж за июнь", project: "Отчётность", assignee: "Иван С.", status: "В работе", start: 600, duration: 60, tone: "high", description: "Сверить показатели с утверждённой витриной.", userAttendees: ["Иван С.", "Мария С."], contactAttendees: ["Алексей В. · клиент"], response: "tentative", version: 7 },
-  { id: "calendar-client", title: "Звонок с клиентом", project: "Коммуникации", assignee: "Мария С.", status: "Запланировано", start: 660, duration: 45, tone: "medium", description: "Статус интеграции и следующие шаги.", userAttendees: ["Мария С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 2 },
-  { id: "calendar-presentation", title: "Согласование макета презентации", project: "Маркетинговая кампания", assignee: "Мария С.", status: "Запланировано", start: 690, duration: 45, tone: "medium", description: "Проверить макет перед передачей в производство.", userAttendees: ["Мария С."], contactAttendees: [], response: "accepted", version: 4 },
-  { id: "calendar-contract", title: "Проверить договор с ООО «Вектор»", project: "Юридическая поддержка", assignee: "Иван С.", status: "Запланировано", start: 855, duration: 45, tone: "high", description: "Согласовать замечания юридического отдела.", userAttendees: ["Иван С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 5 },
+  { id: "calendar-planning", eventDate: "2026-07-28", title: "Ежедневное планирование команды", project: "Внутренние процессы", assignee: "Иван С.", status: "Готово", start: 540, duration: 45, tone: "done", description: "Короткая синхронизация приоритетов.", userAttendees: ["Иван С."], contactAttendees: [], response: "accepted", version: 3 },
+  { id: "calendar-analysis", eventDate: "2026-07-28", title: "Подготовить анализ продаж за июнь", project: "Отчётность", assignee: "Иван С.", status: "В работе", start: 600, duration: 60, tone: "high", description: "Сверить показатели с утверждённой витриной.", userAttendees: ["Иван С.", "Мария С."], contactAttendees: ["Алексей В. · клиент"], response: "tentative", version: 7 },
+  { id: "calendar-client", eventDate: "2026-07-28", title: "Звонок с клиентом", project: "Коммуникации", assignee: "Мария С.", status: "Запланировано", start: 660, duration: 45, tone: "medium", description: "Статус интеграции и следующие шаги.", userAttendees: ["Мария С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 2 },
+  { id: "calendar-presentation", eventDate: "2026-07-28", title: "Согласование макета презентации", project: "Маркетинговая кампания", assignee: "Мария С.", status: "Запланировано", start: 690, duration: 45, tone: "medium", description: "Проверить макет перед передачей в производство.", userAttendees: ["Мария С."], contactAttendees: [], response: "accepted", version: 4 },
+  { id: "calendar-contract", eventDate: "2026-07-28", title: "Проверить договор с ООО «Вектор»", project: "Юридическая поддержка", assignee: "Иван С.", status: "Запланировано", start: 855, duration: 45, tone: "high", description: "Согласовать замечания юридического отдела.", userAttendees: ["Иван С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 5 },
 ];
 
 function minutesLabel(value) {
@@ -2353,6 +2359,7 @@ function minutesLabel(value) {
 
 function CalendarSurface({ isWritable, onToast, onSelect }) {
   const [mode, setMode] = useState("week");
+  const [cursorDate, setCursorDate] = useState(() => new Date(2026, 6, 28));
   const [items, setItems] = useState(calendarSeed);
   const [selectedId, setSelectedId] = useState("calendar-analysis");
   const [projectFilter, setProjectFilter] = useState("Все проекты");
@@ -2373,16 +2380,69 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
   ));
   const projects = [...new Set(items.map((item) => item.project))];
   const assignees = [...new Set(items.map((item) => item.assignee))];
-  const days = ["Пн 27", "Вт 28", "Ср 29", "Чт 30", "Пт 31"];
+  const monthNames = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+  const monthNamesNominative = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+  const shortWeekdays = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+  const todayKey = "2026-07-28";
+  const toDateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const copyDate = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const getWeekStart = (date) => {
+    const start = copyDate(date);
+    start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+    return start;
+  };
+  const formatDate = (date) => `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+  const formatDay = (date) => `${shortWeekdays[date.getDay()]} ${date.getDate()}`;
+  const weekStart = getWeekStart(cursorDate);
+  const weekDates = Array.from({ length: 5 }, (_, index) => {
+    const day = copyDate(weekStart);
+    day.setDate(day.getDate() + index);
+    return day;
+  });
+  const visibleDates = mode === "week" ? weekDates : [cursorDate];
+  const periodTitle = mode === "day"
+    ? formatDate(cursorDate)
+    : mode === "week"
+      ? `${weekStart.getDate()}–${weekDates[4].getDate()} ${monthNames[weekStart.getMonth()]} ${weekStart.getFullYear()}`
+      : mode === "month"
+        ? `${monthNames[cursorDate.getMonth()]} ${cursorDate.getFullYear()}`
+        : String(cursorDate.getFullYear());
+  const periodUnit = mode === "day" ? "день" : mode === "week" ? "неделя" : mode === "month" ? "месяц" : "год";
+  const monthStartOffset = (new Date(cursorDate.getFullYear(), cursorDate.getMonth(), 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(cursorDate.getFullYear(), cursorDate.getMonth() + 1, 0).getDate();
+  const monthCells = Array.from({ length: monthStartOffset + daysInMonth }, (_, index) => index < monthStartOffset ? null : index - monthStartOffset + 1);
+  const datesWithEvents = new Set(visibleItems.map((item) => item.eventDate));
+  const yearMonths = Array.from({ length: 12 }, (_, month) => ({
+    month,
+    label: monthNamesNominative[month],
+    eventCount: visibleItems.filter((item) => item.eventDate?.startsWith(`${cursorDate.getFullYear()}-${String(month + 1).padStart(2, "0")}`)).length,
+  }));
 
   function selectCalendarItem(item) {
     setSelectedId(item.id);
     onSelect({ ...item, priority: item.tone === "high" ? "Высокая" : item.tone === "medium" ? "Средняя" : "Низкая", priorityTone: item.tone === "done" ? "low" : item.tone });
   }
 
+  function shiftPeriod(direction) {
+    setCursorDate((current) => {
+      const next = copyDate(current);
+      if (mode === "day") next.setDate(next.getDate() + direction);
+      if (mode === "week") next.setDate(next.getDate() + direction * 7);
+      if (mode === "month") next.setMonth(next.getMonth() + direction);
+      if (mode === "year") next.setFullYear(next.getFullYear() + direction);
+      return next;
+    });
+    setSlot(null);
+  }
+
+  function returnToToday() {
+    setCursorDate(new Date(2026, 6, 28));
+    setSlot(null);
+  }
+
   function openEditor(item = null, start = 600, title = "") {
     if (!isWritable) return onToast("Редактор событий недоступен в режиме только для чтения");
-    setEditor(createCalendarEventDraft({ ...(item || {}), title: item?.title || title, start: item?.start ?? start, isNew: !item }));
+    setEditor(createCalendarEventDraft({ ...(item || {}), eventDate: item?.eventDate || toDateKey(cursorDate), title: item?.title || title, start: item?.start ?? start, isNew: !item }));
   }
 
   function updateEditor(field, value) {
@@ -2501,9 +2561,23 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
   return (
     <section className="calendar-surface" ref={surfaceRef} aria-label="Календарь">
       <div className="calendar-surface__header">
-        <div><p className="eyebrow">Планирование</p><h2>Календарь</h2><span>28 июля 2026 · Europe/Minsk</span></div>
+        <div>
+          <p className="eyebrow">Планирование</p>
+          <h2>Календарь</h2>
+          <span>{periodTitle} · Europe/Minsk</span>
+          <div className="calendar-navigation" role="group" aria-label="Навигация по календарю">
+            <button className="icon-button icon-button--bordered" type="button" onClick={() => shiftPeriod(-1)} aria-label={`Предыдущ${mode === "week" ? "ая" : "ий"} ${periodUnit}`}>
+              <ChevronLeftRegular aria-hidden="true" />
+            </button>
+            <button className="button button--secondary" type="button" onClick={returnToToday}>Сегодня</button>
+            <button className="icon-button icon-button--bordered" type="button" onClick={() => shiftPeriod(1)} aria-label={`Следующ${mode === "week" ? "ая" : "ий"} ${periodUnit}`}>
+              <ChevronRightRegular aria-hidden="true" />
+            </button>
+            <strong>{periodTitle}</strong>
+          </div>
+        </div>
         <div className="view-switcher" role="group" aria-label="Вид календаря">
-          {[['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц']].map(([value, label]) => <button key={value} type="button" className={mode === value ? "is-active" : ""} onClick={() => setMode(value)} aria-pressed={mode === value}>{label}</button>)}
+          {[['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц'], ['year', 'Год']].map(([value, label]) => <button key={value} type="button" className={mode === value ? "is-active" : ""} onClick={() => setMode(value)} aria-pressed={mode === value}>{label}</button>)}
         </div>
       </div>
       {!isWritable && <div className="calendar-readonly" role="status"><LockClosedRegular aria-hidden="true" /><span><strong>Только чтение.</strong> Данные календаря из разрешённого кэша; создание, перемещение и изменение длительности отключены.</span></div>}
@@ -2514,15 +2588,39 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
         <label><span>Исполнитель</span><select value={assigneeFilter} onChange={(event) => setAssigneeFilter(event.target.value)}><option>Все исполнители</option>{assignees.map((value) => <option key={value}>{value}</option>)}</select></label>
       </div>
       {mode === "month" ? (
-        <div className="month-grid" role="grid" aria-label="Июль 2026">
+        <div className="month-grid" role="grid" aria-label={periodTitle}>
           {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((day) => <strong key={day}>{day}</strong>)}
-          {Array.from({ length: 31 }, (_, index) => index + 1).map((day) => <button key={day} type="button" className={day === 28 ? "is-today" : ""} onClick={() => { setMode("day"); onToast(`Открыт день ${day} июля`); }}><span>{day}</span>{day >= 27 && day <= 31 && <i aria-label="Есть события" />}</button>)}
+          {monthCells.map((day, index) => day === null
+            ? <span className="month-grid__blank" key={`blank-${index}`} aria-hidden="true" />
+            : (() => {
+              const date = new Date(cursorDate.getFullYear(), cursorDate.getMonth(), day);
+              const dateKey = toDateKey(date);
+              return <button key={day} type="button" className={`${dateKey === todayKey ? "is-today" : ""} ${dateKey === toDateKey(cursorDate) ? "is-selected-day" : ""}`} onClick={() => { setCursorDate(date); setMode("day"); onToast(`Открыт день ${formatDate(date)}`); }}><span>{day}</span>{datesWithEvents.has(dateKey) && <i aria-label="Есть события" />}</button>;
+            })())}
+        </div>
+      ) : mode === "year" ? (
+        <div className="year-grid" role="grid" aria-label={`Календарный год ${periodTitle}`}>
+          {yearMonths.map(({ month, label, eventCount }) => (
+            <button
+              key={month}
+              type="button"
+              className={cursorDate.getMonth() === month ? "is-current-month" : ""}
+              onClick={() => {
+                setCursorDate(new Date(cursorDate.getFullYear(), month, 1));
+                setMode("month");
+              }}
+              aria-label={`Открыть ${label.toLowerCase()} ${cursorDate.getFullYear()}`}
+            >
+              <strong>{label}</strong>
+              <span>{eventCount ? `${eventCount} ${eventCount === 1 ? "событие" : "события"}` : "Нет событий"}</span>
+            </button>
+          ))}
         </div>
       ) : (
         <div className={`calendar-grid calendar-grid--${mode}`}>
-          <div className="calendar-grid__days"><span>Время</span>{(mode === "day" ? [days[1]] : days).map((day) => <strong key={day} className={day.startsWith("Вт") ? "is-today" : ""}>{day}</strong>)}</div>
+          <div className="calendar-grid__days"><span>Время</span>{visibleDates.map((day) => <strong key={toDateKey(day)} className={toDateKey(day) === todayKey ? "is-today" : ""}>{formatDay(day)}</strong>)}</div>
           <div className="calendar-grid__body">
-            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{(mode === "day" ? [0] : days).map((day, dayIndex) => <div key={dayIndex} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={() => { const moved = items.find((item) => item.id === draggedId); if (moved) applySchedule({ ...moved, start: hour * 60 }, "drag"); setDraggedId(null); }}>{mode === "day" || dayIndex === 1 ? visibleItems.filter((item) => item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week")) : null}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00${mode === "week" ? `, ${days[dayIndex]}` : ""}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
+            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{visibleDates.map((date) => <div key={toDateKey(date)} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={() => { const moved = items.find((item) => item.id === draggedId); if (moved) applySchedule({ ...moved, eventDate: toDateKey(date), start: hour * 60 }, "drag"); setDraggedId(null); }}>{visibleItems.filter((item) => item.eventDate === toDateKey(date) && item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week"))}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00, ${formatDate(date)}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
           </div>
         </div>
       )}
@@ -2575,6 +2673,7 @@ export function App() {
   const [sessionRevoked, setSessionRevoked] = useState(false);
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
   const [fileLocationState, setFileLocationState] = useState("available");
+  const [plannerWidth, setPlannerWidth] = useState(null);
 
   const connections = useMemo(() => [
     { title: "Подключено к серверу компании", subtitle: "Онлайн", tone: "online" },
@@ -2717,16 +2816,37 @@ export function App() {
     const newTask = {
       id: `task-${Date.now()}`,
       title: values.title,
-      project: values.project,
+      project: values.project || "Без проекта",
       priority: values.priority,
       priorityTone: tone,
-      due: "Нет срока",
+      due: new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${values.date}T00:00:00`)),
       status: "Запланировано",
     };
     setUnscheduled((items) => [newTask, ...items]);
     selectTask(newTask);
     setDialogOpen(false);
-    setToast("Задача добавлена в несрочные");
+    setToast(`Задача создана на ${new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" }).format(new Date(`${values.date}T00:00:00`))}`);
+  }
+
+  function resizePlanner(event) {
+    const grid = event.currentTarget.parentElement;
+    if (!grid) return;
+    const bounds = grid.getBoundingClientRect();
+    const minPanelWidth = 360;
+    const nextWidth = Math.round(Math.min(Math.max(event.clientX - bounds.left, minPanelWidth), bounds.width - minPanelWidth));
+    setPlannerWidth(nextWidth);
+  }
+
+  function handlePlannerResizerKeyDown(event) {
+    if (!event.key.startsWith("Arrow")) return;
+    event.preventDefault();
+    const amount = event.shiftKey ? 48 : 24;
+    const direction = event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 : 0;
+    if (!direction) return;
+    const grid = event.currentTarget.parentElement;
+    const width = grid?.getBoundingClientRect().width || 0;
+    const current = plannerWidth ?? Math.round(width * 0.476);
+    setPlannerWidth(Math.min(Math.max(current + direction * amount, 360), width - 360));
   }
 
   function convertInboxItem(values) {
@@ -2954,7 +3074,7 @@ export function App() {
               </section>
             )}
 
-            {activeView === "today" ? <div className="content-grid">
+            {activeView === "today" ? <div className="content-grid" style={plannerWidth ? { "--planner-width": `${plannerWidth}px` } : undefined}>
               <section className="planner" aria-label="План дня">
                 <div className="date-toolbar">
                   <button className="icon-button icon-button--bordered" type="button" onClick={() => setDateIndex((index) => Math.max(0, index - 1))} aria-label="Предыдущий день">
@@ -3018,12 +3138,28 @@ export function App() {
                   <div className="timeline-event event--tomorrow">
                     <TimelineCard task={baseTasks[6]} selected={selectedTask.id === "tomorrow"} onSelect={selectTask} />
                   </div>
-                  <div className="current-time" aria-label="Текущее время 10:23">
-                    <span>10:23</span>
-                    <i />
-                  </div>
                 </div>
               </section>
+
+              <div
+                className="planner-resizer"
+                role="separator"
+                aria-label="Изменить ширину плана дня"
+                aria-orientation="vertical"
+                aria-valuemin={360}
+                aria-valuetext={plannerWidth ? `${plannerWidth} пикселей` : "Стандартная ширина"}
+                tabIndex={0}
+                onPointerDown={(event) => {
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  resizePlanner(event);
+                }}
+                onPointerMove={(event) => {
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) resizePlanner(event);
+                }}
+                onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)}
+                onKeyDown={handlePlannerResizerKeyDown}
+                title="Перетащите, чтобы изменить ширину панелей"
+              />
 
               <aside className="right-panel">
                 <section className="unscheduled">
