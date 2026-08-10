@@ -20,8 +20,8 @@ const artifactHashes = Object.fromEntries(await Promise.all((await files(root)).
   return [relative, createHash('sha256').update(data).digest('hex').toUpperCase()];
 })));
 const manifest = {
-  package: 'Task Stage 5.6 external Gate execution kit', version: '0.2.0', date: '2026-08-09',
-  status: 'PARTIAL — technical recheck captured; Gate 5.6 remains NOT_READY',
+  package: 'Task Stage 5.6 external Gate execution kit', version: '0.2.1', date: '2026-08-10',
+  status: 'PARTIAL — native EXE identity/UIA shell recheck captured; remaining scenarios unverified; Gate 5.6 remains NOT_READY',
   scope: { windowsUIAKeyboardCheckpoints: 12, usabilityScenarios: 10, roleLenses: 4, evidenceRequirements: 9, namedApprovalRoles: 4, excluded: ['Narrator', 'voice control', 'DPI scaling', 'multi-monitor'] },
   gateStatus: { result: 'NOT_READY', acceptedEvidence: 0, requiredEvidence: 9 },
   artifactHashes,

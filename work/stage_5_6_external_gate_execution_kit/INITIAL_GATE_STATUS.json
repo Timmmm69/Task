@@ -13,5 +13,5 @@
     "EVD-TECH",
     "EVD-QA"
   ],
-  "reason": "Narrator, voice control, DPI scaling and multi-monitor testing are explicitly out of scope. Partial native UIA/keyboard observations exist, but remaining technical coverage, participant evidence and any still-required owner decisions are pending."
+  "reason": "Narrator, voice control, DPI scaling and multi-monitor testing are explicitly out of scope. Native EXE identity, synthetic login and selected UIA shell controls were rechecked on 2026-08-10, but all remaining functional scenario groups are still unverified or blocked by the automation session; participant evidence and any still-required owner decisions remain pending."
 }

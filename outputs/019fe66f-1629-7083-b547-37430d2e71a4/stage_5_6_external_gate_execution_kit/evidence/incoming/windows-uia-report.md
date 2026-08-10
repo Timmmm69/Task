@@ -12,3 +12,5 @@ Client: `Task-Gate-5.6-Client-0.1.2-win-x64.exe`, SHA-256 `7E0B7439975E8009A51A0
 | Inbox sample | `Быстро добавить во входящие` is an enabled keyboard-focusable Edit. | PASS sample |
 
 Task editor, CalendarEvent editor, safe unavailable search, offline/reconnect, conflict draft, Admin/Observer, dangerous actions, Archive/Trash and all tab/list states remain untested here. Narrator, voice control, DPI scaling and multi-monitor are out of scope.
+
+2026-08-10 continuation: Inspect.exe x64 was launched, but its automated surface did not expose a property pane to this session. A separate native-EXE UIA snapshot confirmed the signed-in Employee shell and selected named Buttons; it does not promote any remaining checkpoint to PASS. See `windows-remaining-scenarios-recheck.md`.

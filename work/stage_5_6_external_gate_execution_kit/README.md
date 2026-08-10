@@ -1,6 +1,6 @@
-﻿# Task — Gate 5.6 External Evidence Execution Kit 0.2.0
+# Task — Gate 5.6 External Evidence Execution Kit 0.2.1
 
-**Date:** 2026-08-02  
+**Date:** 2026-08-10
 **Purpose:** make the remaining external readiness work reproducible without claiming that it has already happened.
 
 ## Execution order
@@ -19,3 +19,5 @@ Narrator, Windows voice control, OS DPI scaling and multi-monitor testing are no
 ## Honest status
 
 The kit itself is validated, but Gate 5.6 is **NOT_READY** until every required evidence row is present, hash-addressed and accepted by its named owner. Templates are not evidence and blank signature fields are not approvals.
+
+The 2026-08-10 native EXE recheck is recorded in `evidence/incoming/windows-remaining-scenarios-recheck.md`. It confirms artifact identity, synthetic fixture login and selected UIA shell controls, but does not claim completion of any remaining scenario whose editor or state could not be driven by this Windows automation session.
