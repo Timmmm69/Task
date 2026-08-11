@@ -17,6 +17,8 @@
   --surface-soft: #fafafa;
   --row-height: 69px;
   --focus: #0f6cbd;
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
 }
 
 /* Stage 5.3 Wave B — Projects, Files/FileLocations and CRM. */
@@ -7216,4 +7218,56 @@ button {
   display: flex;
   gap: 12px;
   margin-top: 8px;
+}
+
+/* === Глобальные transition-ы (P0-3) === */
+
+button,
+.nav-item,
+.catalog-item,
+.crm-list-item,
+.lifecycle-row,
+.search-result,
+.settings-nav button,
+.admin-list > button,
+.operations-list > button,
+.task-table tbody tr,
+.timeline-card,
+.month-grid button,
+.segmented-filter button,
+.view-switcher button,
+.notification-filters button,
+.project-tabs button,
+.inbox-list > button,
+.calendar-slot,
+.calendar-event,
+.calendar-keyboard button,
+.calendar-editor__responses button,
+.calendar-editor__scenarios button {
+  transition: background-color var(--transition-fast);
+}
+
+.status-pill,
+.timeline-card__status,
+.priority,
+.checklist__row span,
+.semantic-badge,
+.semantic-status,
+.lifecycle-banner {
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.comments-toggle svg,
+.section-heading svg {
+  transition: transform var(--transition-normal);
+}
+
+.dialog-backdrop,
+.search-backdrop {
+  animation: fadeIn 200ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
