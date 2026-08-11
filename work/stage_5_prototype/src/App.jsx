@@ -1805,7 +1805,7 @@ function PickerField({ label, icon: Icon, value, onChange, options, helper }) {
   );
 }
 
-function TasksSurface({ isWritable, onOpenTask, onToast }) {
+function TasksSurface({ isWritable, onOpenTask, onToast, onPushUndo }) {
   const [taskRows, setTaskRows] = useState(taskTableRows);
   const [statusFilter, setStatusFilter] = useState("Все статусы");
   const [projectFilter, setProjectFilter] = useState("Все проекты");
@@ -1875,7 +1875,9 @@ function TasksSurface({ isWritable, onOpenTask, onToast }) {
       return;
     }
     if (action === "ready") {
+      const previousStatus = task.status;
       setTaskRows((rows) => rows.map((item) => item.id === task.id ? { ...item, status: "Готово" } : item));
+      onPushUndo("Изменён статус", () => setTaskRows((rows) => rows.map((item) => item.id === task.id ? { ...item, status: previousStatus } : item)));
       onToast(`Задача «${task.title}» завершена`);
       return;
     }
@@ -2357,7 +2359,7 @@ function minutesLabel(value) {
   return `${hours}:${minutes}`;
 }
 
-function CalendarSurface({ isWritable, onToast, onSelect }) {
+function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
   const [mode, setMode] = useState("week");
   const [cursorDate, setCursorDate] = useState(() => new Date(2026, 6, 28));
   const [items, setItems] = useState(calendarSeed);
@@ -2620,7 +2622,7 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
         <div className={`calendar-grid calendar-grid--${mode}`}>
           <div className="calendar-grid__days"><span>Время</span>{visibleDates.map((day) => <strong key={toDateKey(day)} className={toDateKey(day) === todayKey ? "is-today" : ""}>{formatDay(day)}</strong>)}</div>
           <div className="calendar-grid__body">
-            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{visibleDates.map((date) => <div key={toDateKey(date)} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={() => { const moved = items.find((item) => item.id === draggedId); if (moved) applySchedule({ ...moved, eventDate: toDateKey(date), start: hour * 60 }, "drag"); setDraggedId(null); }}>{visibleItems.filter((item) => item.eventDate === toDateKey(date) && item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week"))}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00, ${formatDate(date)}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
+            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{visibleDates.map((date) => <div key={toDateKey(date)} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={() => { const moved = items.find((item) => item.id === draggedId); if (moved) { const previous = { ...moved }; onPushUndo("Перемещено событие", () => setItems((current) => current.map((item) => item.id === previous.id ? previous : item))); applySchedule({ ...moved, eventDate: toDateKey(date), start: hour * 60 }, "drag"); } setDraggedId(null); }}>{visibleItems.filter((item) => item.eventDate === toDateKey(date) && item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week"))}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00, ${formatDate(date)}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
           </div>
         </div>
       )}
@@ -2640,6 +2642,7 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
 export function App() {
   const gateAccount = useMemo(() => getGateAccount(), []);
   const [authenticated, setAuthenticated] = useState(true);
+  const [undoStack, setUndoStack] = useState([]);
   const [nowMinutes, setNowMinutes] = useState(() => {
     const d = new Date();
     return d.getHours() * 60 + d.getMinutes();
@@ -2703,8 +2706,34 @@ export function App() {
     globalThis.taskDesktop?.windowAction?.(action);
   }
 
+  function pushUndo(label, rollback) {
+    setUndoStack((previous) => {
+      const next = [...previous, { label, rollback }];
+      return next.length > 20 ? next.slice(-20) : next;
+    });
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    const action = undoStack[undoStack.length - 1];
+    action.rollback();
+    setUndoStack((previous) => previous.slice(0, -1));
+    setToast(`Отменено: ${action.label}`);
+  }
+
   useEffect(() => {
     function onKeyDown(event) {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
+        const editing = document.activeElement?.tagName === "INPUT"
+          || document.activeElement?.tagName === "TEXTAREA"
+          || document.activeElement?.tagName === "SELECT"
+          || document.activeElement?.isContentEditable;
+        if (!editing) {
+          event.preventDefault();
+          undo();
+          return;
+        }
+      }
       if (event.altKey && event.key.toLowerCase() === "n") {
         event.preventDefault();
         if (authenticated && isWritable) setDialogOpen(true);
@@ -2732,7 +2761,7 @@ export function App() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [authenticated, isWritable]);
+  }, [authenticated, isWritable, undo]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -2842,6 +2871,7 @@ export function App() {
       status: "Запланировано",
     };
     setUnscheduled((items) => [newTask, ...items]);
+    pushUndo("Создана задача", () => setUnscheduled((items) => items.filter((item) => item.id !== newTask.id)));
     selectTask(newTask);
     setDialogOpen(false);
     setToast(`Задача создана на ${new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" }).format(new Date(`${values.date}T00:00:00`))}`);
@@ -2888,9 +2918,18 @@ export function App() {
   }
 
   function saveTaskDraft(draft) {
+    const previousTask = selectedTask;
+    const previousEditorDraft = editorDraft;
+    const previousConflictDraft = conflictDraft;
+    setSelectedTask(draft);
     setEditorOpen(false);
     setEditorDraft(draft);
     setConflictDraft(draft);
+    pushUndo("Изменена задача", () => {
+      setSelectedTask(previousTask);
+      setEditorDraft(previousEditorDraft);
+      setConflictDraft(previousConflictDraft);
+    });
   }
 
   function returnToConflictDraft() {
@@ -3243,7 +3282,7 @@ export function App() {
                       <div className="details__topline">
                         <label className="status-control">
                           <PlayCircleRegular aria-hidden="true" />
-                          <select value={taskStatus} disabled={!isWritable} onChange={(event) => setTaskStatus(event.target.value)} aria-label="Статус задачи">
+                          <select value={taskStatus} disabled={!isWritable} onChange={(event) => { const previousStatus = taskStatus; setTaskStatus(event.target.value); pushUndo("Изменён статус", () => setTaskStatus(previousStatus)); }} aria-label="Статус задачи">
                             <option>Запланировано</option>
                             <option>В работе</option>
                             <option>Готово</option>
@@ -3365,6 +3404,7 @@ export function App() {
               <TasksSurface
                 isWritable={isWritable}
                 onToast={setToast}
+                onPushUndo={pushUndo}
                 onOpenTask={(task) => {
                   selectTask(task);
                   setActiveView("today");
@@ -3376,6 +3416,7 @@ export function App() {
                 isWritable={isWritable}
                 onToast={setToast}
                 onSelect={(task) => selectTask(task)}
+                onPushUndo={pushUndo}
               />
             ) : activeView === "projects" ? (
               <ProjectsSurface isWritable={isWritable} onToast={setToast} />
