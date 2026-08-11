@@ -2120,7 +2120,7 @@ function ProjectsSurface({ isWritable, onToast }) {
           <div><p className="eyebrow">{selected.status}</p><h2 id="project-title">{selected.title}</h2><span>Ответственный: {selected.owner}</span></div>
           <button className="button button--secondary" type="button" disabled={!canWriteProject} onClick={() => { setProjectDraft({ title: selected.title, owner: selected.owner, deadline: selected.deadline }); setValidation(""); setDialog("edit"); }}><EditRegular aria-hidden="true" />Изменить</button>
         </div>
-        <div className="project-progress"><span><strong>Выполнение проекта</strong><em>{selected.progress}%</em></span><i><b style={{ width: `${selected.progress}%` }} /></i></div>
+        <div className="project-progress"><span><strong>Выполнение проекта</strong><em>{selected.progress}%</em></span><progress value={selected.progress} max={100} aria-label={`Прогресс: ${selected.progress}%`} /></div>
         <dl className="project-facts">
           <div><dt>Задачи</dt><dd>{selected.tasks}</dd></div><div><dt>Срок</dt><dd>{selected.deadline}</dd></div>
           <div><dt>Участники</dt><dd><span className="avatar-stack">{selected.members.map((member) => <span key={member}>{member}</span>)}</span>{selected.members.length} человека</dd></div>
