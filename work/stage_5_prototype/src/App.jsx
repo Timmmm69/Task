@@ -366,14 +366,22 @@ function TimelineCard({ task, selected, onSelect }) {
 
 function NewTaskDialog({ onClose, onCreate }) {
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("2026-07-28");
   const [project, setProject] = useState("");
   const [priority, setPriority] = useState("Средняя");
+  const [dueDate, setDueDate] = useState("");
+  const [dueTime, setDueTime] = useState("");
 
   function submit(event) {
     event.preventDefault();
     if (!title.trim()) return;
-    onCreate({ title: title.trim(), date, project, priority });
+    onCreate({
+      title: title.trim(),
+      project,
+      priority,
+      dueDate: dueDate || null,
+      dueTime: dueTime || null,
+      due: dueDate ? (dueTime ? `${dueDate} ${dueTime}` : dueDate) : "Нет срока",
+    });
   }
 
   return (
@@ -392,10 +400,6 @@ function NewTaskDialog({ onClose, onCreate }) {
           </label>
           <div className="dialog__grid dialog__grid--new-task">
             <label className="field">
-              <span>Дата</span>
-              <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
-            </label>
-            <label className="field">
               <span>Проект <small className="field-hint">необязательно</small></span>
               <select value={project} onChange={(event) => setProject(event.target.value)}>
                 <option value="">Без проекта</option>
@@ -411,6 +415,16 @@ function NewTaskDialog({ onClose, onCreate }) {
                 <option>Средняя</option>
                 <option>Высокая</option>
               </select>
+            </label>
+          </div>
+          <div className="dialog__grid">
+            <label className="field">
+              <span>Срок</span>
+              <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
+            </label>
+            <label className="field">
+              <span>Время</span>
+              <input type="time" value={dueTime} onChange={(event) => setDueTime(event.target.value)} />
             </label>
           </div>
           <div className="dialog__actions">
@@ -2867,14 +2881,14 @@ export function App() {
       project: values.project || "Без проекта",
       priority: values.priority,
       priorityTone: tone,
-      due: new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${values.date}T00:00:00`)),
+      due: values.due,
       status: "Запланировано",
     };
     setUnscheduled((items) => [newTask, ...items]);
     pushUndo("Создана задача", () => setUnscheduled((items) => items.filter((item) => item.id !== newTask.id)));
     selectTask(newTask);
     setDialogOpen(false);
-    setToast(`Задача создана на ${new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" }).format(new Date(`${values.date}T00:00:00`))}`);
+    setToast(values.due === "Нет срока" ? "Задача создана без срока" : `Задача создана: ${values.due}`);
   }
 
   function resizePlanner(event) {
