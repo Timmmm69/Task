@@ -9,6 +9,7 @@ import {
   ArrowSyncRegular,
   ArrowUpRegular,
   BranchForkRegular,
+  CalendarDayRegular,
   CalendarRegular,
   CheckmarkCircleRegular,
   CheckmarkRegular,
@@ -1240,20 +1241,16 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
   const [passwordError, setPasswordError] = useState("");
   const [notifications, setNotifications] = useState({ desktop: true, sound: false, digest: true, dnd: true, quietFrom: "19:00", quietTo: "08:30" });
   const [quietError, setQuietError] = useState("");
-  const [osDenied, setOsDenied] = useState(false);
   const [calendarPrefs, setCalendarPrefs] = useState({ firstDay: "Понедельник", workFrom: "09:00", workTo: "18:00", defaultView: "Неделя" });
   const [devicePrefs, setDevicePrefs] = useState({ autostart: true, tray: true, closeToTray: false });
-  const [windowsDenied, setWindowsDenied] = useState(false);
   const [syncState, setSyncState] = useState("ready");
-  const [connectionIssue, setConnectionIssue] = useState("");
   const [accessibilityPrefs, setAccessibilityPrefs] = useState({ scale: "100%", reducedMotion: false, strongFocus: true });
   const [saveState, setSaveState] = useState("");
   const [dialog, setDialog] = useState("");
   const [revokedSessions, setRevokedSessions] = useState([]);
-  const [deviceRevoked, setDeviceRevoked] = useState(false);
   const [loading, setLoading] = useState(false);
   const currentSection = sections.find((item) => item.id === activeSection);
-  const isWritable = !offline && !["conflict", "forbidden"].includes(saveState) && !deviceRevoked;
+  const isWritable = !offline;
 
   function saveProfile() {
     if (!profile.name.trim()) {
@@ -1312,7 +1309,7 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
         <label className="field settings-managed settings-span-two"><span>Подразделение</span><input value={profile.department} disabled /><small>Server-managed field · изменение доступно администратору с User.Update.</small></label>
       </div>
       {saveState === "validation" && <div className="error-message" role="alert">ValidationError · укажите имя для отображения.</div>}
-      <div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={saveProfile}><SaveRegular aria-hidden="true" />Сохранить профиль</button><button className="button button--secondary" type="button" disabled={offline} onClick={() => setSaveState("conflict")}>Проверить конфликт</button><button className="button button--secondary" type="button" disabled={offline} onClick={() => setSaveState("forbidden")}>Проверить запрет</button></div>
+      <div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={saveProfile}><SaveRegular aria-hidden="true" />Сохранить профиль</button></div>
     </>;
   }
 
@@ -1325,14 +1322,13 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
 
   function renderNotifications() {
     return <>
-      {osDenied && <div className="inline-alert inline-alert--warning" role="alert"><AlertRegular aria-hidden="true" /><span><strong>Windows запретила системные уведомления</strong><small>Task не может изменить разрешение самостоятельно.</small></span><button className="button button--secondary" type="button" onClick={() => onToast("Переход в параметры Windows доступен только в desktop-клиенте")}>Открыть параметры Windows</button></div>}
       <div className="settings-toggle-list">
         <label><span><strong>Системные уведомления</strong><small>Баннеры Windows для разрешённых событий</small></span><input type="checkbox" checked={notifications.desktop} disabled={!isWritable} onChange={(event) => setNotifications((value) => ({ ...value, desktop: event.target.checked }))} /></label>
         <label><span><strong>Звук</strong><small>Звуковой сигнал без раскрытия содержимого</small></span><input type="checkbox" checked={notifications.sound} disabled={!isWritable} onChange={(event) => setNotifications((value) => ({ ...value, sound: event.target.checked }))} /></label>
         <label><span><strong>Ежедневная сводка</strong><small>Личная сводка в Task</small></span><input type="checkbox" checked={notifications.digest} disabled={!isWritable} onChange={(event) => setNotifications((value) => ({ ...value, digest: event.target.checked }))} /></label>
       </div>
       <section className="settings-card"><h4>Не беспокоить</h4><label className="settings-check"><input type="checkbox" checked={notifications.dnd} disabled={!isWritable} onChange={(event) => setNotifications((value) => ({ ...value, dnd: event.target.checked }))} />Использовать тихие часы</label><div className="settings-time-row"><label className="field"><span>С</span><input type="time" value={notifications.quietFrom} disabled={!isWritable || !notifications.dnd} onChange={(event) => setNotifications((value) => ({ ...value, quietFrom: event.target.value }))} /></label><label className="field"><span>До</span><input type="time" value={notifications.quietTo} disabled={!isWritable || !notifications.dnd} onChange={(event) => setNotifications((value) => ({ ...value, quietTo: event.target.value }))} /></label></div>{quietError && <div className="error-message" role="alert">{quietError}</div>}</section>
-      <div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={saveNotifications}>Сохранить</button><button className="button button--secondary" type="button" disabled={offline} onClick={() => setOsDenied(true)}>Проверить доступ Windows</button><button className="button button--secondary" type="button" disabled={!isWritable} onClick={() => { setNotifications((value) => ({ ...value, dnd: true, quietTo: value.quietFrom })); setQuietError("ValidationError · начало и конец тихих часов не могут совпадать."); }}>Проверить invalid hours</button></div>
+      <div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={saveNotifications}>Сохранить</button></div>
     </>;
   }
 
@@ -1341,16 +1337,15 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
   }
 
   function renderDevice() {
-    return <>{windowsDenied && <div className="inline-alert inline-alert--warning" role="alert"><WarningRegular aria-hidden="true" /><span><strong>Windows отклонила автозапуск</strong><small>Политика устройства запрещает изменение. Остальные настройки не потеряны.</small></span></div>}<div className="settings-toggle-list"><label><span><strong>Запускать Task при входе в Windows</strong><small>Локальная настройка этого устройства</small></span><input type="checkbox" checked={devicePrefs.autostart} disabled={!isWritable || windowsDenied} onChange={(event) => setDevicePrefs((value) => ({ ...value, autostart: event.target.checked }))} /></label><label><span><strong>Показывать значок в области уведомлений</strong><small>Не влияет на серверные уведомления</small></span><input type="checkbox" checked={devicePrefs.tray} disabled={!isWritable} onChange={(event) => setDevicePrefs((value) => ({ ...value, tray: event.target.checked }))} /></label><label><span><strong>Сворачивать в область уведомлений при закрытии</strong><small>Физическое завершение приложения остаётся отдельным действием</small></span><input type="checkbox" checked={devicePrefs.closeToTray} disabled={!isWritable || !devicePrefs.tray} onChange={(event) => setDevicePrefs((value) => ({ ...value, closeToTray: event.target.checked }))} /></label></div><div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={() => onToast("Настройки устройства сохранены локально")}>Сохранить</button><button className="button button--secondary" type="button" disabled={offline} onClick={() => setWindowsDenied(true)}>Проверить ограничение Windows</button></div></>;
+    return <><div className="settings-toggle-list"><label><span><strong>Запускать Task при входе в Windows</strong><small>Локальная настройка этого устройства</small></span><input type="checkbox" checked={devicePrefs.autostart} disabled={!isWritable} onChange={(event) => setDevicePrefs((value) => ({ ...value, autostart: event.target.checked }))} /></label><label><span><strong>Показывать значок в области уведомлений</strong><small>Не влияет на серверные уведомления</small></span><input type="checkbox" checked={devicePrefs.tray} disabled={!isWritable} onChange={(event) => setDevicePrefs((value) => ({ ...value, tray: event.target.checked }))} /></label><label><span><strong>Сворачивать в область уведомлений при закрытии</strong><small>Физическое завершение приложения остаётся отдельным действием</small></span><input type="checkbox" checked={devicePrefs.closeToTray} disabled={!isWritable || !devicePrefs.tray} onChange={(event) => setDevicePrefs((value) => ({ ...value, closeToTray: event.target.checked }))} /></label></div><div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={() => onToast("Настройки устройства сохранены локально")}>Сохранить</button></div></>;
   }
 
   function renderCache() {
-    return <><div className="settings-stat-grid"><article><span>Разрешённый кэш</span><strong>684 МБ</strong><small>Последнее обновление сегодня в 10:23</small></article><article><span>Синхронизация</span><strong>{syncState === "syncing" ? "Выполняется…" : syncState === "expired" ? "Нужен bootstrap" : "Актуально"}</strong><small>{syncState === "expired" ? "SYNC_CURSOR_EXPIRED" : "Область доступа проверена"}</small></article></div>{syncState === "expired" && <div className="inline-alert inline-alert--warning" role="alert"><ArrowSyncRegular aria-hidden="true" /><span><strong>SYNC_CURSOR_EXPIRED</strong><small>Локальный cursor устарел. Task повторно загрузит только разрешённую область.</small></span><button className="button button--secondary" type="button" onClick={refreshSync}>Начать bootstrap</button></div>}<div className="settings-actions"><button className="button button--primary" type="button" disabled={offline || syncState === "syncing"} onClick={refreshSync}>{syncState === "syncing" ? "Синхронизация…" : "Синхронизировать"}</button><button className="button button--secondary" type="button" disabled={offline} onClick={() => setSyncState("expired")}>Проверить устаревший cursor</button><button className="button button--danger" type="button" disabled={!isWritable} onClick={() => setDialog("clear-cache")}>Очистить кэш</button></div><p className="helper-copy">Очистка удалит только разрешённую локальную копию. Серверные задачи, проекты и file metadata не удаляются.</p></>;
+    return <><div className="settings-stat-grid"><article><span>Разрешённый кэш</span><strong>684 МБ</strong><small>Последнее обновление сегодня в 10:23</small></article><article><span>Синхронизация</span><strong>{syncState === "syncing" ? "Выполняется…" : syncState === "expired" ? "Нужен bootstrap" : "Актуально"}</strong><small>{syncState === "expired" ? "SYNC_CURSOR_EXPIRED" : "Область доступа проверена"}</small></article></div>{syncState === "expired" && <div className="inline-alert inline-alert--warning" role="alert"><ArrowSyncRegular aria-hidden="true" /><span><strong>SYNC_CURSOR_EXPIRED</strong><small>Локальный cursor устарел. Task повторно загрузит только разрешённую область.</small></span><button className="button button--secondary" type="button" onClick={refreshSync}>Начать bootstrap</button></div>}<div className="settings-actions"><button className="button button--primary" type="button" disabled={offline || syncState === "syncing"} onClick={refreshSync}>{syncState === "syncing" ? "Синхронизация…" : "Синхронизировать"}</button><button className="button button--danger" type="button" disabled={!isWritable} onClick={() => setDialog("clear-cache")}>Очистить кэш</button></div><p className="helper-copy">Очистка удалит только разрешённую локальную копию. Серверные задачи, проекты и file metadata не удаляются.</p></>;
   }
 
   function renderConnection() {
-    const issueCopy = connectionIssue === "tls" ? ["TLS_ERROR", "Сертификат сервера не прошёл проверку. Подмена endpoint запрещена."] : connectionIssue === "version" ? ["CLIENT_VERSION_UNSUPPORTED", "Версия клиента несовместима; запись заблокирована до обновления."] : ["", ""];
-    return <><div className="settings-form-grid"><label className="field settings-managed settings-span-two"><span>Сервер организации</span><input value="https://task.company.local" disabled /><small>Управляется организацией; endpoint нельзя заменить локально.</small></label></div><div className={`settings-connection ${connectionIssue ? "is-error" : ""}`}><ServerRegular aria-hidden="true" /><span><strong>{connectionIssue ? issueCopy[0] : "Подключение защищено"}</strong><small>{connectionIssue ? issueCopy[1] : "TLS проверен · сервер доступен · client 1.4.2 поддерживается"}</small></span></div>{connectionIssue && <div className="safe-report"><strong>Ограниченная диагностика</strong><span>endpoint: organization-managed; account: redacted; result: {issueCopy[0]}; request id: unavailable.</span></div>}<div className="settings-actions"><button className="button button--primary" type="button" disabled={offline} onClick={() => { setConnectionIssue(""); onToast("Подключение проверено повторно"); }}>Проверить подключение</button><button className="button button--secondary" type="button" onClick={() => setConnectionIssue("tls")}>Проверить TLS error</button><button className="button button--secondary" type="button" onClick={() => setConnectionIssue("version")}>Проверить версию</button>{connectionIssue && <button className="button button--quiet" type="button" onClick={() => onToast("Безопасный диагностический отчёт скопирован без endpoint и account data")}>Копировать безопасный отчёт</button>}</div></>;
+    return <><div className="settings-form-grid"><label className="field settings-managed settings-span-two"><span>Сервер организации</span><input value="https://task.company.local" disabled /><small>Управляется организацией; endpoint нельзя заменить локально.</small></label></div><div className="settings-connection"><ServerRegular aria-hidden="true" /><span><strong>Подключение защищено</strong><small>TLS проверен · сервер доступен · client 1.4.2 поддерживается</small></span></div></>;
   }
 
   function renderAccessibility() {
@@ -1359,7 +1354,7 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
   }
 
   function renderSessions() {
-    return <>{deviceRevoked && <div className="inline-alert inline-alert--warning" role="alert"><LockClosedRegular aria-hidden="true" /><span><strong>DEVICE_REVOKED · это устройство отозвано</strong><small>Локальный кэш заблокирован. Требуется повторный вход.</small></span><button className="button button--primary" type="button" onClick={onForceSignIn}>Войти снова</button></div>}<div className="settings-session-list"><article><span className="settings-session-icon"><SettingsRegular aria-hidden="true" /></span><span><strong>Windows 11 · этот компьютер</strong><small>Текущая сессия · Минск · сейчас</small></span><em>Текущая</em><button className="button button--secondary" type="button" disabled title="Текущую сессию можно завершить только через выход">Защищена</button></article><article className={revokedSessions.includes("laptop") ? "is-revoked" : ""}><span className="settings-session-icon"><SettingsRegular aria-hidden="true" /></span><span><strong>Ноутбук отдела продаж</strong><small>{revokedSessions.includes("laptop") ? "SESSION_REVOKED" : "Windows 11 · последняя активность вчера, 18:42"}</small></span><em>{revokedSessions.includes("laptop") ? "Завершена" : "Активна"}</em><button className="button button--danger" type="button" disabled={!isWritable || revokedSessions.includes("laptop")} onClick={() => setDialog("revoke-session")}>Завершить</button></article></div><div className="settings-actions"><button className="button button--secondary" type="button" disabled={offline} onClick={() => setDeviceRevoked(true)}>Проверить отзыв устройства</button></div></>;
+    return <><div className="settings-session-list"><article><span className="settings-session-icon"><SettingsRegular aria-hidden="true" /></span><span><strong>Windows 11 · этот компьютер</strong><small>Текущая сессия · Минск · сейчас</small></span><em>Текущая</em><button className="button button--secondary" type="button" disabled title="Текущую сессию можно завершить только через выход">Защищена</button></article><article className={revokedSessions.includes("laptop") ? "is-revoked" : ""}><span className="settings-session-icon"><SettingsRegular aria-hidden="true" /></span><span><strong>Ноутбук отдела продаж</strong><small>{revokedSessions.includes("laptop") ? "SESSION_REVOKED" : "Windows 11 · последняя активность вчера, 18:42"}</small></span><em>{revokedSessions.includes("laptop") ? "Завершена" : "Активна"}</em><button className="button button--danger" type="button" disabled={!isWritable || revokedSessions.includes("laptop")} onClick={() => setDialog("revoke-session")}>Завершить</button></article></div></>;
   }
 
   function renderActivePanel() {
@@ -1378,10 +1373,9 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
     <section className="settings-page" aria-labelledby="settings-page-title">
       <header className="settings-page__heading"><div><p className="eyebrow">Wave C · SCR-150–159 · SCR-161</p><h2 id="settings-page-title">Настройки</h2><p>Личные, локальные и server-managed параметры с явными scope, recovery и destructive boundaries.</p></div><button className="button button--secondary" type="button" disabled={offline || loading} onClick={refreshSettings}><ArrowSyncRegular aria-hidden="true" />{loading ? "Обновление…" : "Обновить"}</button></header>
       {offline && <div className="settings-banner settings-banner--offline" role="status"><PlugDisconnectedRegular aria-hidden="true" /><span><strong>Offline · настройки только для чтения</strong><small>Показана разрешённая локальная копия. Сохранение, revoke, очистка кэша и серверная проверка отключены.</small></span></div>}
-      {deviceRevoked && <div className="settings-banner settings-banner--offline" role="alert"><LockClosedRegular aria-hidden="true" /><span><strong>Доступ этого устройства отозван</strong><small>Изменения заблокированы до повторного входа.</small></span></div>}
       <div className="settings-layout" aria-busy={loading}>
         <nav className="settings-nav" aria-label="Разделы настроек">{sections.map((item) => { const Icon = item.icon; return <button key={item.id} type="button" className={activeSection === item.id ? "is-active" : ""} aria-current={activeSection === item.id ? "page" : undefined} onClick={() => { setActiveSection(item.id); setSaveState(""); }} title={item.label}><Icon aria-hidden="true" /><span><strong>{item.label}</strong><small>{item.scope}</small></span><ChevronRightRegular aria-hidden="true" /></button>; })}</nav>
-        <main className="settings-panel"><header><div><small>{currentSection.scope}</small><h3>{currentSection.label}</h3></div><span className={`settings-scope ${currentSection.scope === "Организация" ? "is-managed" : ""}`}>{currentSection.scope === "Организация" ? "Server-managed" : "Settings.UpdateOwn"}</span></header>{saveState === "conflict" && <div className="inline-alert inline-alert--warning settings-conflict" role="alert"><WarningRegular aria-hidden="true" /><span><strong>VERSION_CONFLICT · настройки изменились на сервере</strong><small>Локальное сохранение отменено. Выберите актуальную версию или повторите свои изменения после reload.</small></span><button className="button button--secondary" type="button" onClick={() => { setSaveState(""); onToast("Загружена актуальная версия настроек"); }}>Загрузить серверную</button><button className="button button--primary" type="button" onClick={() => { setSaveState(""); onToast("Локальные изменения повторно применены после server recheck"); }}>Повторить свои</button></div>}{saveState === "forbidden" && <div className="inline-alert inline-alert--warning" role="alert"><ShieldErrorRegular aria-hidden="true" /><span><strong>Forbidden · Settings.UpdateOwn недоступно</strong><small>Раздел остаётся доступным только для чтения. Task не применяет оптимистичное сохранение.</small></span><button className="button button--secondary" type="button" onClick={() => setSaveState("")}>Закрыть</button></div>}{loading ? <div className="settings-loading" role="status" aria-label="Настройки обновляются"><span /><span /><span /></div> : renderActivePanel()}</main>
+        <main className="settings-panel"><header><div><small>{currentSection.scope}</small><h3>{currentSection.label}</h3></div><span className={`settings-scope ${currentSection.scope === "Организация" ? "is-managed" : ""}`}>{currentSection.scope === "Организация" ? "Server-managed" : "Settings.UpdateOwn"}</span></header>{loading ? <div className="settings-loading" role="status" aria-label="Настройки обновляются"><span /><span /><span /></div> : renderActivePanel()}</main>
       </div>
 
       {dialog === "logout-all" && <div className="dialog-backdrop" role="presentation"><section className="dialog wave-dialog settings-dialog" role="dialog" aria-modal="true" aria-labelledby="logout-all-title"><div className="dialog__header"><div><p className="eyebrow">Session.ReadOwn · destructive</p><h2 id="logout-all-title">Завершить активные сессии</h2></div><button className="icon-button" type="button" aria-label="Закрыть" onClick={() => setDialog("")}><DismissRegular aria-hidden="true" /></button></div><div className="inline-alert inline-alert--warning"><WarningRegular aria-hidden="true" /><span><strong>Выход на всех устройствах включает текущую сессию</strong><small>Несохранённые локальные черновики могут стать недоступны. Завершение других сессий оставляет текущую защищённой.</small></span></div><div className="dialog__actions"><button className="button button--secondary" type="button" onClick={() => setDialog("")}>Отмена</button><button className="button button--secondary" type="button" onClick={() => { setDialog(""); setRevokedSessions(["laptop"]); onToast("Другие сессии завершены; текущая сохранена"); }}>Завершить другие</button><button className="button button--danger" type="button" onClick={() => { setDialog(""); onForceSignIn(); }}>Выйти на всех устройствах</button></div></section></div>}
@@ -2774,7 +2768,7 @@ function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
       )}
       <section className="calendar-keyboard" aria-label="Управление выбранным событием">
         <div><strong>{selected?.title || "Событие не выбрано"}</strong><span>{selected && `${minutesLabel(selected.start)}–${minutesLabel(selected.start + selected.duration)}`}</span></div>
-        <div><button type="button" disabled={!isWritable} onClick={() => adjustSelected("move", -30)} aria-label="Переместить на 30 минут раньше">← 30 мин</button><button type="button" disabled={!isWritable} onClick={() => adjustSelected("move", 30)} aria-label="Переместить на 30 минут позже">30 мин →</button><button type="button" disabled={!isWritable} onClick={() => adjustSelected("resize", -15)} aria-label="Уменьшить длительность на 15 минут">− 15 мин</button><button type="button" disabled={!isWritable} onClick={() => adjustSelected("resize", 15)} aria-label="Увеличить длительность на 15 минут">+ 15 мин</button><button type="button" disabled={!isWritable} onClick={() => selected && setStaleRollback({ candidate: { ...selected, start: selected.start + 60 }, previous: selected })}>Проверить конфликт</button></div>
+        <div><button type="button" disabled={!isWritable} onClick={() => adjustSelected("move", -30)} aria-label="Переместить на 30 минут раньше">← 30 мин</button><button type="button" disabled={!isWritable} onClick={() => adjustSelected("move", 30)} aria-label="Переместить на 30 минут позже">30 мин →</button><button type="button" disabled={!isWritable} onClick={() => adjustSelected("resize", -15)} aria-label="Уменьшить длительность на 15 минут">− 15 мин</button><button type="button" disabled={!isWritable} onClick={() => adjustSelected("resize", 15)} aria-label="Увеличить длительность на 15 минут">+ 15 мин</button></div>
         <small>Клавиатура: Alt + ←/→ перемещает на 30 минут; Alt + ↑/↓ меняет длительность на 15 минут.</small>
       </section>
       {slot !== null && <div className="calendar-composer" role="dialog" aria-modal="false" aria-labelledby="slot-composer-title"><form onSubmit={createFromSlot}><strong id="slot-composer-title">Новое событие · {minutesLabel(slot)}</strong><input autoFocus value={newTitle} onChange={(event) => setNewTitle(event.target.value)} placeholder="Название события" aria-label="Название нового события" /><button className="button button--primary" type="submit" disabled={!isWritable || !newTitle.trim()}>Продолжить в редакторе</button><button className="button button--ghost" type="button" onClick={() => setSlot(null)}>Отмена</button></form></div>}
@@ -2782,6 +2776,18 @@ function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
       {overlapDraft && <div className="calendar-alert" role="alert"><WarningRegular aria-hidden="true" /><div><strong>Обнаружено пересечение: {overlapDraft.collision.title}</strong><span>{minutesLabel(overlapDraft.candidate.start)}–{minutesLabel(overlapDraft.candidate.start + overlapDraft.candidate.duration)} пересекается с занятым временем. Подтвердите сохранение или вернитесь к расписанию.</span></div><button className="button button--secondary" type="button" onClick={() => setOverlapDraft(null)}>Отменить</button><button className="button button--primary" type="button" onClick={forceOverlap}>Сохранить всё равно</button></div>}
       {staleRollback && <div className="calendar-alert calendar-alert--stale" role="alert"><ArrowSyncRegular aria-hidden="true" /><div><strong>Расписание изменилось на сервере</strong><span>Перетаскивание не сохранено: версия события устарела. Локальное положение возвращено к {minutesLabel(staleRollback.previous.start)}–{minutesLabel(staleRollback.previous.start + staleRollback.previous.duration)}.</span></div><button className="button button--secondary" type="button" onClick={() => { setStaleRollback(null); onToast("Загружена актуальная версия расписания"); }}>Обновить</button><button className="button button--primary" type="button" onClick={() => { setStaleRollback(null); onToast("Черновик перемещения отменён; события не потеряны"); }}>Понятно</button></div>}
     </section>
+  );
+}
+
+function Toast({ message, leaving, onClose }) {
+  if (!message) return null;
+  return (
+    <div className={`toast ${leaving ? "is-leaving" : ""}`} role="status" aria-live="polite">
+      <span>{message}</span>
+      <button className="toast__close" type="button" aria-label="Закрыть уведомление" onClick={onClose}>
+        <DismissRegular aria-hidden="true" />
+      </button>
+    </div>
   );
 }
 
@@ -2807,6 +2813,21 @@ export function App() {
   useEffect(() => {
     localStorage.setItem("task-sidebar-collapsed", JSON.stringify(collapsedGroups));
   }, [collapsedGroups]);
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("task-sidebar-icon") === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("task-sidebar-icon", sidebarCollapsed ? "1" : "0");
+    } catch { /* noop */ }
+  }, [sidebarCollapsed]);
+
   const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
   const [taskStatus, setTaskStatus] = useState("В работе");
   const [checklist, setChecklist] = useState([
@@ -2815,6 +2836,7 @@ export function App() {
   ]);
   const [checklistDraft, setChecklistDraft] = useState("");
   const [completedOpen, setCompletedOpen] = useState(false);
+  const [unscheduledOpen, setUnscheduledOpen] = useState(true);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [watchersOpen, setWatchersOpen] = useState(false);
   const [watchingTask, setWatchingTask] = useState(true);
@@ -2828,6 +2850,7 @@ export function App() {
   const [toastLeaving, setToastLeaving] = useState(false);
   const toastTimerRef = useRef(null);
   const toastExitTimerRef = useRef(null);
+  const onboardingRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchRequest, setSearchRequest] = useState({ query: "", filter: "Все" });
   const [userOpen, setUserOpen] = useState(false);
@@ -2880,7 +2903,14 @@ export function App() {
         setToastMessage("");
         setToastLeaving(false);
       }, 200);
-    }, 3000);
+    }, 5000);
+  }
+
+  function dismissToast() {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
+    setToastMessage("");
+    setToastLeaving(false);
   }
 
   function pushUndo(label, rollback) {
@@ -2900,6 +2930,25 @@ export function App() {
 
   useEffect(() => {
     function onKeyDown(event) {
+      if (event.key === "Tab") {
+        const modal = document.querySelector('[aria-modal="true"]');
+        if (modal) {
+          const focusable = [...modal.querySelectorAll("button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [href], [tabindex]:not([tabindex='-1'])")]
+            .filter((element) => element.offsetParent !== null);
+          if (focusable.length) {
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {
+              event.preventDefault();
+              first.focus();
+            }
+          }
+        }
+        return;
+      }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
         const editing = document.activeElement?.tagName === "INPUT"
           || document.activeElement?.tagName === "TEXTAREA"
@@ -2927,6 +2976,11 @@ export function App() {
         setActiveView("search");
       }
       if (event.key === "Escape") {
+        if (onboardingStep !== null && onboardingStep < 3) {
+          event.preventDefault();
+          setOnboardingStep(null);
+          return;
+        }
         setDialogOpen(false);
         setSearchOpen(false);
         setUserOpen(false);
@@ -2938,7 +2992,7 @@ export function App() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [authenticated, isWritable, undo]);
+  }, [authenticated, isWritable, undo, onboardingStep]);
 
   useEffect(() => () => {
     if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
@@ -2952,6 +3006,8 @@ export function App() {
     }, 60_000);
     return () => window.clearInterval(timer);
   }, []);
+
+  useDialogFocusTrap(onboardingRef, () => setOnboardingStep(null));
 
   function dismissOnboarding(view, message) {
     setShowOnboarding(false);
@@ -3134,13 +3190,6 @@ export function App() {
   }
 
   const selectedPriority = selectedTask.priorityTone || "medium";
-  const connection = recoveryState === "reconnecting"
-    ? { title: "Восстановление подключения", subtitle: "Проверка сессии и сервера", tone: "offline" }
-    : recoveryState === "scope"
-      ? { title: "Проверка области доступа", subtitle: "Запись пока отключена", tone: "offline" }
-      : recoveryState === "failed"
-        ? { title: "Восстановление не удалось", subtitle: "Повторные попытки остановлены", tone: "offline" }
-      : connections[connectionIndex];
   const viewMeta = activeView === "today"
     ? ["Сегодня", dateLabels[dateIndex]]
     : activeView === "inbox"
@@ -3179,7 +3228,7 @@ export function App() {
             </div>
           </header>
           <AuthSurface account={gateAccount} onAuthenticated={() => { setAuthenticated(true); setOnboardingStep(0); setConnectionIndex(0); setRecoveryState(""); onToast("Вход выполнен, данные синхронизированы"); }} />
-          {toast && <div className={`toast ${toastLeaving ? "is-leaving" : ""}`} role="status">{toast}</div>}
+          {toast && <Toast message={toast} leaving={toastLeaving} onClose={dismissToast} />}
         </div>
       </div>
     );
@@ -3200,9 +3249,15 @@ export function App() {
           </div>
         </header>
 
-        <div className="app-shell">
-          <aside className="sidebar">
-            <button className="sidebar__menu" type="button" aria-label="Свернуть меню">
+        <div className={`app-shell ${sidebarCollapsed ? "is-collapsed" : ""}`}>
+          <aside className={`sidebar ${sidebarCollapsed ? "is-collapsed" : ""}`}>
+            <button
+              className="sidebar__menu"
+              type="button"
+              aria-label={sidebarCollapsed ? "Развернуть меню" : "Свернуть меню"}
+              aria-expanded={!sidebarCollapsed}
+              onClick={() => setSidebarCollapsed((value) => !value)}
+            >
               <NavigationRegular aria-hidden="true" />
             </button>
             <nav aria-label="Основная навигация">
@@ -3217,7 +3272,7 @@ export function App() {
               </button>
               {!collapsedGroups.main && (
                 <>
-                  <NavItem icon={CalendarRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
+                  <NavItem icon={CalendarDayRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
                   <NavItem icon={CalendarRegular} label="Календарь" active={activeView === "calendar"} onClick={() => showSection("Календарь")} />
                   <NavItem icon={MailInboxRegular} label="Входящие" active={activeView === "inbox"} onClick={() => showSection("Входящие")} />
                   <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
@@ -3280,18 +3335,6 @@ export function App() {
                   onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); onToast(`Открыто: ${notification.meta}`); }}
                 />
               )}
-              <button
-                className={`connection connection--${connection.tone}`}
-                type="button"
-                onClick={() => { setRecoveryState(""); setConnectionIndex((index) => (index + 1) % connections.length); }}
-                aria-label="Переключить демонстрационное состояние подключения"
-              >
-                <span className="connection__dot" />
-                <span>
-                  <strong title={connection.title}>{connection.title}</strong>
-                  <small>{connection.subtitle}</small>
-                </span>
-              </button>
               <button className="user-menu" type="button" onClick={() => setUserOpen((open) => !open)} aria-expanded={userOpen} aria-label={`Профиль ${gateAccount.displayName}, роль ${gateAccount.roleLabel}`}>
                 <span className="avatar">{gateAccount.initials}</span>
                 <span>{gateAccount.shortName}</span>
@@ -3347,7 +3390,7 @@ export function App() {
                   <button className="icon-button icon-button--bordered" type="button" onClick={() => setDateIndex((index) => Math.max(0, index - 1))} aria-label="Предыдущий день">
                     <ChevronLeftRegular aria-hidden="true" />
                   </button>
-                  <button className="icon-button icon-button--bordered" type="button" onClick={() => setDateIndex(1)} aria-label="Открыть календарь">
+                  <button className="icon-button icon-button--bordered" type="button" onClick={() => setActiveView("calendar")} aria-label="Открыть календарь">
                     <CalendarRegular aria-hidden="true" />
                   </button>
                   <button className="icon-button icon-button--bordered" type="button" onClick={() => setDateIndex((index) => Math.min(2, index + 1))} aria-label="Следующий день">
@@ -3436,35 +3479,39 @@ export function App() {
 
               <aside className="right-panel">
                 <section className="unscheduled">
-                  <button className="section-heading" type="button" onClick={() => setCompletedOpen((open) => open)} aria-expanded="true">
+                  <button className="section-heading" type="button" onClick={() => setUnscheduledOpen((open) => !open)} aria-expanded={unscheduledOpen}>
                     <span>Несрочные и просроченные ({unscheduled.length})</span>
-                    <ChevronUpRegular aria-hidden="true" />
+                    {unscheduledOpen ? <ChevronUpRegular aria-hidden="true" /> : <ChevronDownRegular aria-hidden="true" />}
                   </button>
-                  <div className="unscheduled-list">
-                    {unscheduled.map((task) => (
-                      <button className={`unscheduled-row ${selectedTask.id === task.id ? "is-selected" : ""}`} type="button" key={task.id} onClick={() => selectTask(task)}>
-                        <PriorityIcon tone={task.priorityTone} />
-                        <span className="unscheduled-row__body">
-                          <strong>{task.quickCreated && <span className="quick-created-dot" title="Задача создана быстро — уточните проект и срок"><span className="quick-created-dot__mark" aria-hidden="true" /></span>}{task.title}</strong>
-                          <small>Проект: {task.project}{task.project === "Без проекта" ? " · можно уточнить позже" : ""}</small>
-                        </span>
-                        <span className="unscheduled-row__meta">
-                          <Priority tone={task.priorityTone} label={task.priority} />
-                          <small className={task.due?.includes("Просрочено") ? "overdue" : ""}>{task.due}</small>
-                        </span>
+                  {unscheduledOpen && (
+                    <>
+                      <div className="unscheduled-list">
+                        {unscheduled.map((task) => (
+                          <button className={`unscheduled-row ${selectedTask.id === task.id ? "is-selected" : ""}`} type="button" key={task.id} onClick={() => selectTask(task)}>
+                            <PriorityIcon tone={task.priorityTone} />
+                            <span className="unscheduled-row__body">
+                              <strong>{task.quickCreated && <span className="quick-created-dot" title="Задача создана быстро — уточните проект и срок"><span className="quick-created-dot__mark" aria-hidden="true" /></span>}{task.title}</strong>
+                              <small>Проект: {task.project}{task.project === "Без проекта" ? " · можно уточнить позже" : ""}</small>
+                            </span>
+                            <span className="unscheduled-row__meta">
+                              <Priority tone={task.priorityTone} label={task.priority} />
+                              <small className={task.due?.includes("Просрочено") ? "overdue" : ""}>{task.due}</small>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                      <button className="completed-toggle" type="button" onClick={() => setCompletedOpen((open) => !open)} aria-expanded={completedOpen}>
+                        <span>{completedOpen ? "Скрыть завершённые (3)" : "Показать завершённые (3)"}</span>
+                        {completedOpen ? <ChevronUpRegular aria-hidden="true" /> : <ChevronDownRegular aria-hidden="true" />}
                       </button>
-                    ))}
-                  </div>
-                  <button className="completed-toggle" type="button" onClick={() => setCompletedOpen((open) => !open)} aria-expanded={completedOpen}>
-                    <span>{completedOpen ? "Скрыть завершённые (3)" : "Показать завершённые (3)"}</span>
-                    {completedOpen ? <ChevronUpRegular aria-hidden="true" /> : <ChevronDownRegular aria-hidden="true" />}
-                  </button>
-                  {completedOpen && (
-                    <div className="completed-list">
-                      <span><CheckmarkCircleRegular aria-hidden="true" /> Отправить еженедельный отчёт</span>
-                      <span><CheckmarkCircleRegular aria-hidden="true" /> Проверить план команды</span>
-                      <span><CheckmarkCircleRegular aria-hidden="true" /> Ответить бухгалтерии</span>
-                    </div>
+                      {completedOpen && (
+                        <div className="completed-list">
+                          <span><CheckmarkCircleRegular aria-hidden="true" /> Отправить еженедельный отчёт</span>
+                          <span><CheckmarkCircleRegular aria-hidden="true" /> Проверить план команды</span>
+                          <span><CheckmarkCircleRegular aria-hidden="true" /> Ответить бухгалтерии</span>
+                        </div>
+                      )}
+                    </>
                   )}
                 </section>
 
@@ -3736,22 +3783,22 @@ export function App() {
         )}
         {sessionRevoked && <SessionRevokedDialog onSignIn={() => { setSessionRevoked(false); setAuthenticated(false); setRecoveryState(""); setNotificationOpen(false); }} />}
         {onboardingStep !== null && onboardingStep < 3 && (
-          <div className="onboarding-overlay" role="dialog" aria-modal="true" aria-label="Знакомство с Task">
+          <div className="onboarding-overlay" ref={onboardingRef} role="dialog" aria-modal="true" aria-label="Знакомство с Task">
             <h3>{["Сегодня", "Разделы", "Новая задача"][onboardingStep]}</h3>
             <p>{[
               "Здесь твой план на день. Задачи из календаря слева, несрочное — справа.",
               "Проекты, поиск, архив — слева в меню. Начни с Сегодня.",
-              "Синяя кнопка вверху или Ctrl+N. Всё готово.",
+              "Синяя кнопка вверху или Alt+N. Всё готово.",
             ][onboardingStep]}</p>
             <div>
               <button className="button button--secondary" type="button" onClick={() => setOnboardingStep(null)}>Пропустить</button>
-              <button className="button button--primary" type="button" onClick={() => setOnboardingStep((step) => step === 2 ? null : step + 1)}>
+              <button className="button button--primary" type="button" autoFocus onClick={() => setOnboardingStep((step) => step === 2 ? null : step + 1)}>
                 {onboardingStep === 2 ? "Начать работу" : "Далее"}
               </button>
             </div>
           </div>
         )}
-        {toast && <div className={`toast ${toastLeaving ? "is-leaving" : ""}`} role="status">{toast}</div>}
+        {toast && <Toast message={toast} leaving={toastLeaving} onClose={dismissToast} />}
       </div>
     </div>
   );
