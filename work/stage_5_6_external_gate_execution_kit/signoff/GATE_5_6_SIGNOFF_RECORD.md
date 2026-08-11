@@ -1,4 +1,4 @@
-# Gate 5.6 Sign-off Record
+﻿# Gate 5.6 Sign-off Record
 
 **Package under review:** Task Stage 5.6 final visual baseline and handoff 1.0.1  
 **Gate decision:** PENDING

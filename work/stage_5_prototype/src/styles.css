@@ -12,11 +12,14 @@
   --text: #1b1a19;
   --muted: #605e5c;
   --subtle: #8a8886;
+  --hover: #f4f6f8;
   --border: #e1dfdd;
   --surface: #ffffff;
   --surface-soft: #fafafa;
   --row-height: 69px;
   --focus: #0f6cbd;
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
 }
 
 /* Stage 5.3 Wave B — Projects, Files/FileLocations and CRM. */
@@ -210,7 +213,7 @@
 .catalog-item.is-selected,
 .crm-list-item:hover,
 .crm-list-item.is-selected {
-  background: #edf5fc;
+  background: var(--hover);
 }
 
 .catalog-item.is-selected,
@@ -472,6 +475,29 @@
 
 .calendar-surface__header > div:first-child > span {
   color: var(--muted);
+  font-size: 13px;
+}
+
+.calendar-navigation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.calendar-navigation .icon-button {
+  width: 32px;
+  height: 32px;
+}
+
+.calendar-navigation .button {
+  min-height: 32px;
+  padding-inline: 11px;
+}
+
+.calendar-navigation strong {
+  margin-left: 6px;
+  color: #323130;
   font-size: 13px;
 }
 
@@ -788,9 +814,12 @@
 .calendar-composer {
   position: fixed;
   z-index: 20;
-  right: 30px;
-  bottom: 66px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: min(460px, calc(100vw - 90px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
   padding: 15px;
   border: 1px solid #a8adb3;
   border-radius: 7px;
@@ -900,6 +929,14 @@
   font-size: 12px;
 }
 
+.month-grid__blank {
+  min-width: 95px;
+  min-height: 78px;
+  border-right: 1px solid #edebe9;
+  border-bottom: 1px solid #edebe9;
+  background: #fafafa;
+}
+
 .month-grid button {
   position: relative;
   min-width: 95px;
@@ -916,6 +953,10 @@
 .month-grid button:hover,
 .month-grid button.is-today {
   background: #f3f8fd;
+}
+
+.month-grid button.is-selected-day:not(.is-today) {
+  box-shadow: inset 0 0 0 2px #9cc7eb;
 }
 
 .month-grid button.is-today span {
@@ -938,6 +979,41 @@
   background: var(--blue);
 }
 
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.year-grid button {
+  display: grid;
+  min-height: 104px;
+  align-content: space-between;
+  gap: 8px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.year-grid button:hover,
+.year-grid button.is-current-month {
+  border-color: #9cc7eb;
+  background: #f3f8fd;
+}
+
+.year-grid strong {
+  color: #323130;
+  font-size: 15px;
+}
+
+.year-grid span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 @media (max-width: 900px) {
   .calendar-surface {
     padding: 16px;
@@ -951,6 +1027,19 @@
 
   .view-switcher {
     width: max-content;
+  }
+
+  .calendar-navigation {
+    flex-wrap: wrap;
+  }
+
+  .calendar-navigation strong {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  .year-grid {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
   }
 
   .calendar-filters > svg {
@@ -1002,9 +1091,7 @@ button {
   color: inherit;
 }
 
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
+*:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -1030,12 +1117,19 @@ select:focus-visible {
 }
 
 .titlebar {
+  -webkit-app-region: drag;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
   background: #fff;
   user-select: none;
+}
+
+.titlebar button,
+.titlebar a,
+.titlebar input {
+  -webkit-app-region: no-drag;
 }
 
 .titlebar__brand {
@@ -1152,7 +1246,7 @@ select:focus-visible {
 }
 
 .nav-item:hover {
-  background: #f3f2f1;
+  background: var(--hover);
 }
 
 .nav-item.is-active {
@@ -1386,7 +1480,7 @@ select:focus-visible {
 
 .content-grid {
   display: grid;
-  grid-template-columns: 47.6% minmax(0, 1fr);
+  grid-template-columns: minmax(0, var(--planner-width, 47.6%)) 10px minmax(0, 1fr);
   min-height: 0;
   overflow: hidden;
 }
@@ -1396,8 +1490,37 @@ select:focus-visible {
   grid-template-rows: 68px 56px minmax(0, 1fr);
   min-width: 0;
   min-height: 0;
-  border-right: 1px solid var(--border);
   background: #fff;
+}
+
+.planner-resizer {
+  position: relative;
+  z-index: 5;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+
+.planner-resizer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4px;
+  width: 1px;
+  background: var(--border);
+  transition: background 120ms ease, width 120ms ease;
+}
+
+.planner-resizer:hover::before,
+.planner-resizer:focus-visible::before {
+  left: 3px;
+  width: 3px;
+  background: var(--blue);
+}
+
+.planner-resizer:focus-visible {
+  box-shadow: inset 0 0 0 2px #0f6cbd;
 }
 
 .date-toolbar {
@@ -1524,18 +1647,54 @@ select:focus-visible {
 .timeline-event {
   position: absolute;
   left: 104px;
-  right: 14px;
+  right: 0;
   z-index: 2;
 }
 
-.event--planning { top: 8px; height: 64px; }
+.event--planning { top: 8px; height: 74px; }
 .event--analysis { top: 97px; height: 101px; }
-.event--presentation { top: 205px; height: 71px; }
+.event--presentation { top: 205px; height: 74px; }
 .event--lunch { top: 289px; height: 48px; }
-.event--meeting { top: 344px; height: 70px; }
-.event--contract { top: 426px; height: 69px; }
-.event--mail { top: 505px; height: 69px; }
-.event--tomorrow { top: 583px; height: 69px; }
+.event--meeting { top: 344px; height: 74px; }
+.event--contract { top: 426px; height: 74px; }
+.event--mail { top: 505px; height: 74px; }
+.event--tomorrow { top: 583px; height: 74px; }
+
+.current-time {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  color: var(--red);
+  pointer-events: none;
+}
+
+.current-time span {
+  width: 89px;
+  padding-left: 17px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.current-time i {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--red);
+}
+
+.current-time i::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+}
 
 .timeline-card {
   display: grid;
@@ -1543,7 +1702,7 @@ select:focus-visible {
   gap: 10px;
   width: 100%;
   height: 100%;
-  padding: 10px 12px 9px 10px;
+  padding: 8px 10px 7px;
   border: 1px solid transparent;
   border-radius: 4px;
   background: #fff;
@@ -1551,8 +1710,12 @@ select:focus-visible {
   cursor: pointer;
 }
 
+.timeline-card__body {
+  min-width: 0;
+}
+
 .timeline-card:hover {
-  background: #f7f7f7;
+  background: var(--hover);
 }
 
 .timeline-card.is-selected {
@@ -1577,7 +1740,7 @@ select:focus-visible {
 }
 
 .timeline-card__time {
-  margin-bottom: 2px;
+  margin-bottom: 0;
   color: #484644;
   font-size: 13px;
 }
@@ -1591,12 +1754,19 @@ select:focus-visible {
 }
 
 .timeline-card__meta {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: 10px;
-  margin-top: 4px;
+  margin-top: 2px;
   color: var(--muted);
   font-size: 12px;
+}
+
+.timeline-card__meta > :first-child {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .timeline-card__right,
@@ -1604,6 +1774,11 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.timeline-card__right {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .people-count svg {
@@ -1663,43 +1838,6 @@ select:focus-visible {
   font-size: 14px;
 }
 
-.current-time {
-  position: absolute;
-  top: 138px;
-  left: 0;
-  right: 0;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  color: var(--red);
-  pointer-events: none;
-}
-
-.current-time span {
-  width: 89px;
-  padding-left: 17px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.current-time i {
-  position: relative;
-  flex: 1;
-  height: 1px;
-  background: var(--red);
-}
-
-.current-time i::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: -4px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--red);
-}
-
 .right-panel {
   min-width: 0;
   min-height: 0;
@@ -1757,7 +1895,7 @@ select:focus-visible {
 
 .unscheduled-row:hover,
 .unscheduled-row.is-selected {
-  background: #f7fbff;
+  background: var(--hover);
 }
 
 .unscheduled-row > svg {
@@ -1822,7 +1960,7 @@ select:focus-visible {
 
 .completed-toggle:hover,
 .comments-toggle:hover {
-  background: #fafafa;
+  background: var(--hover);
 }
 
 .completed-list {
@@ -2248,6 +2386,10 @@ select:focus-visible {
   box-shadow: 0 18px 50px rgb(0 0 0 / 28%);
 }
 
+.dialog--new-task {
+  width: min(680px, calc(100% - 40px));
+}
+
 .dialog__header {
   display: flex;
   align-items: center;
@@ -2285,6 +2427,10 @@ select:focus-visible {
   gap: 14px;
 }
 
+.dialog__grid--new-task {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.86fr);
+}
+
 .dialog__actions {
   display: flex;
   justify-content: flex-end;
@@ -2294,16 +2440,32 @@ select:focus-visible {
 
 .toast {
   position: absolute;
-  right: 24px;
-  bottom: 62px;
-  z-index: 30;
-  max-width: 360px;
-  padding: 12px 16px;
-  border-radius: 5px;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 22px;
+  border-radius: 8px;
   color: #fff;
   background: #323130;
-  box-shadow: 0 8px 22px rgb(0 0 0 / 28%);
-  font-size: 13px;
+  font-size: 14px;
+  box-shadow: 0 6px 22px rgb(0 0 0 / 18%);
+  z-index: 50;
+  pointer-events: none;
+  animation: toastIn 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.is-leaving {
+  animation: toastOut 200ms ease forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to { opacity: 0; transform: translateX(-50%) translateY(12px); }
 }
 
 .sr-only {
@@ -2359,8 +2521,12 @@ select:focus-visible {
 
 .workspace-header {
   position: relative;
-  grid-template-columns: minmax(250px, 1fr) auto auto minmax(250px, 0.8fr) auto;
+  grid-template-columns: minmax(250px, 1fr) minmax(240px, 286px) 220px 40px minmax(220px, 0.8fr) max-content;
   gap: 14px;
+}
+
+.workspace-header > * {
+  min-width: 0;
 }
 
 .user-popover {
@@ -2995,7 +3161,7 @@ select:focus-visible {
 
 .search-result:hover,
 .search-result.is-selected {
-  background: var(--blue-soft);
+  background: var(--hover);
 }
 
 .search-result__icon {
@@ -3226,7 +3392,7 @@ select:focus-visible {
 
 .search-page__result:hover,
 .search-page__result:focus-visible {
-  background: var(--blue-soft);
+  background: var(--hover);
 }
 
 .search-page__result > span:nth-child(2) > * {
@@ -3292,11 +3458,33 @@ select:focus-visible {
 }
 
 .search-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 250px;
+  gap: 12px;
+  padding: 42px 20px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.search-page__empty > svg {
+  width: 42px;
+  height: 42px;
+  color: #8d9aaa;
 }
 
 .search-page__empty .button {
-  margin-top: 14px;
+  margin-top: 8px;
+}
+
+.search-page__examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .search-loading {
@@ -3412,41 +3600,6 @@ select:focus-visible {
   height: 17px;
 }
 
-.lifecycle-banner {
-  display: flex;
-  padding: 9px 12px;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #c7d9ee;
-  border-radius: 7px;
-  background: #f1f7fd;
-  color: #194c77;
-}
-
-.lifecycle-banner--offline {
-  border-color: #ead39b;
-  background: #fff8e7;
-  color: #6d4c0d;
-}
-
-.lifecycle-banner > svg {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 auto;
-}
-
-.lifecycle-banner span,
-.lifecycle-banner strong,
-.lifecycle-banner small {
-  display: block;
-}
-
-.lifecycle-banner small {
-  margin-top: 2px;
-  color: inherit;
-  opacity: 0.8;
-}
-
 .lifecycle-toolbar {
   display: grid;
   grid-template-columns: minmax(280px, 1fr) 180px auto;
@@ -3557,7 +3710,7 @@ select:focus-visible {
 }
 
 .lifecycle-row:hover {
-  background: #f1f5f9;
+  background: var(--hover);
 }
 
 .lifecycle-row.is-selected {
@@ -3618,7 +3771,7 @@ select:focus-visible {
 
 .lifecycle-detail {
   min-height: 0;
-  padding: 20px 22px;
+  padding: 20px;
   overflow: auto;
 }
 
@@ -3913,12 +4066,12 @@ select:focus-visible {
 }
 
 .settings-nav button:hover {
-  background: #edf1f5;
+  background: var(--hover);
 }
 
 .settings-nav button.is-active {
   background: #e4effa;
-  color: #155f9e;
+  color: #0b3d6b;
   box-shadow: inset 3px 0 #2270b5;
 }
 
@@ -3955,7 +4108,7 @@ select:focus-visible {
 
 .settings-panel {
   min-height: 0;
-  padding: 20px 24px 26px;
+  padding: 20px 24px 24px;
   overflow: auto;
 }
 
@@ -4401,7 +4554,7 @@ select:focus-visible {
 .admin-tabs button small {
   margin-top: 1px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .admin-workspace {
@@ -4499,7 +4652,7 @@ select:focus-visible {
 }
 
 .admin-list > button:hover {
-  background: #f0f4f8;
+  background: var(--hover);
 }
 
 .admin-list > button.is-selected {
@@ -4576,7 +4729,7 @@ select:focus-visible {
 
 .admin-inspector {
   min-height: 0;
-  padding: 20px 22px 24px;
+  padding: 20px 20px 24px;
   overflow: auto;
 }
 
@@ -4622,7 +4775,7 @@ select:focus-visible {
 .semantic-badge.is-success {
   border-color: #b9ddc9;
   background: #eaf7ef;
-  color: #17633d;
+  color: #0d3d24;
 }
 
 .semantic-badge.is-warning {
@@ -4907,8 +5060,37 @@ select:focus-visible {
   opacity: 0.84;
 }
 
-.admin-loading {
-  padding: 18px;
+.admin-loading,
+.operations-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 200px;
+  padding: 32px;
+  color: var(--muted);
+}
+
+.admin-loading::before,
+.operations-loading::before {
+  content: "";
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: connection-spin 0.7s linear infinite;
+}
+
+.admin-loading::after {
+  content: "Загрузка данных организации...";
+  font-size: 13px;
+}
+
+.operations-loading::after {
+  content: "Загрузка состояния системы...";
+  font-size: 13px;
 }
 
 .admin-dialog {
@@ -5078,7 +5260,7 @@ select:focus-visible {
 .operations-tabs button small {
   margin-top: 1px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .operations-workspace {
@@ -5090,9 +5272,7 @@ select:focus-visible {
   overflow: hidden;
 }
 
-.operations-loading {
-  padding: 18px;
-}
+
 
 .operations-health,
 .operations-audit,
@@ -5278,7 +5458,7 @@ select:focus-visible {
 }
 
 .operations-list > button:hover {
-  background: #f0f4f8;
+  background: var(--hover);
 }
 
 .operations-list > button.is-selected {
@@ -5325,7 +5505,7 @@ select:focus-visible {
 
 .operations-inspector {
   min-height: 0;
-  padding: 18px 20px 22px;
+  padding: 20px 20px 24px;
   overflow: auto;
 }
 
@@ -5656,7 +5836,8 @@ select:focus-visible {
   }
 
   .settings-layout {
-    grid-template-columns: 220px minmax(460px, 1fr);
+    display: block;
+    overflow: auto;
   }
 
   .settings-panel {
@@ -5755,7 +5936,7 @@ select:focus-visible {
 .inbox-list > button:hover,
 .inbox-list > button.is-selected {
   border-color: #9cc5f1;
-  background: var(--blue-soft);
+  background: var(--hover);
 }
 
 .inbox-list > button.is-done {
@@ -5860,7 +6041,9 @@ select:focus-visible {
 }
 
 .task-editor {
-  width: min(600px, calc(100% - 40px));
+  width: min(680px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
 }
 
 .conflict-dialog {
@@ -6083,10 +6266,18 @@ select:focus-visible {
 }
 
 .task-table-wrap {
-  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border);
   border-radius: 7px;
-  background: #fff;
+  background:
+    linear-gradient(to right, white 30%, transparent),
+    linear-gradient(to right, transparent, white 70%) 100% 0,
+    linear-gradient(to right, rgb(0 0 0 / 8%), transparent),
+    linear-gradient(to left, rgb(0 0 0 / 8%), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 .task-table {
@@ -6118,7 +6309,7 @@ select:focus-visible {
 }
 
 .task-table tbody tr:hover {
-  background: #f7fbff;
+  background: var(--hover);
 }
 
 .table-title {
@@ -6162,7 +6353,7 @@ select:focus-visible {
   border-radius: 50%;
   color: #fff;
   background: #476582;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -6304,7 +6495,7 @@ select:focus-visible {
 
 .project-node:hover,
 .project-node.is-selected {
-  background: #edf5fc;
+  background: var(--hover);
 }
 
 .project-node.is-selected {
@@ -6416,7 +6607,7 @@ select:focus-visible {
   border-radius: 50%;
   color: #fff;
   background: #476582;
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .project-tabs {
@@ -6625,11 +6816,6 @@ select:focus-visible {
   background: rgb(32 31 30 / 76%);
 }
 
-.task-editor {
-  max-height: calc(100vh - 48px);
-  overflow: auto;
-}
-
 .editor-section {
   display: grid;
   gap: 12px;
@@ -6794,8 +6980,10 @@ select:focus-visible {
   gap: 12px;
   margin-bottom: 18px;
   padding: 12px 14px;
-  border: 1px solid;
+  border: 1px solid #c7d9ee;
   border-radius: 7px;
+  background: #f1f7fd;
+  color: #194c77;
 }
 
 .lifecycle-banner > svg {
@@ -6804,8 +6992,15 @@ select:focus-visible {
 }
 
 .lifecycle-banner span,
-.lifecycle-banner strong {
+.lifecycle-banner strong,
+.lifecycle-banner small {
   display: block;
+}
+
+.lifecycle-banner small {
+  margin-top: 2px;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .lifecycle-banner span {
@@ -6822,6 +7017,12 @@ select:focus-visible {
   border-color: #9fd89f;
   color: #0b5c0b;
   background: #effbef;
+}
+
+.lifecycle-banner--offline {
+  border-color: #ead39b;
+  color: #6d4c0d;
+  background: #fff8e7;
 }
 
 .lifecycle-banner--paused {
@@ -6995,7 +7196,7 @@ select:focus-visible {
   }
 
   .workspace-header {
-    grid-template-columns: minmax(190px, 1fr) auto auto 40px minmax(190px, 0.7fr) auto;
+    grid-template-columns: minmax(190px, 1fr) 240px 208px 40px max-content;
     gap: 10px;
     padding-right: 18px;
   }
@@ -7011,25 +7212,12 @@ select:focus-visible {
   }
 
   .search-trigger {
-    min-width: 40px;
-    width: 40px;
-    padding: 0 10px;
-  }
-
-  .search-trigger span,
-  .search-trigger kbd {
-    display: none;
+    min-width: 240px;
+    width: 240px;
   }
 
   .connection {
-    min-width: 190px;
-  }
-
-  .connection strong {
-    max-width: 200px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    display: none;
   }
 
   .user-menu > span:not(.avatar) {
@@ -7192,6 +7380,10 @@ select:focus-visible {
     overflow: auto;
   }
 
+  .planner-resizer {
+    display: none;
+  }
+
   .planner {
     min-height: 820px;
     border-bottom: 1px solid var(--border);
@@ -7277,4 +7469,236 @@ select:focus-visible {
     width: 100%;
     justify-content: center;
   }
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .sidebar {
+    overflow-x: auto;
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .workspace-header {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .page-title h1 {
+    font-size: 20px;
+  }
+
+  .connection {
+    display: none;
+  }
+}
+
+.onboarding-overlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  background: rgb(15 23 42 / 50%);
+  color: #fff;
+  text-align: center;
+}
+
+.onboarding-overlay h3 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.onboarding-overlay p {
+  max-width: 380px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+.onboarding-overlay > div {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* === Глобальные transition-ы (P0-3) === */
+
+button,
+.nav-item,
+.catalog-item,
+.crm-list-item,
+.lifecycle-row,
+.search-result,
+.settings-nav button,
+.admin-list > button,
+.operations-list > button,
+.task-table tbody tr,
+.timeline-card,
+.month-grid button,
+.segmented-filter button,
+.view-switcher button,
+.notification-filters button,
+.project-tabs button,
+.inbox-list > button,
+.calendar-slot,
+.calendar-event,
+.calendar-keyboard button,
+.calendar-editor__responses button,
+.calendar-editor__scenarios button {
+  transition: background-color var(--transition-fast);
+}
+
+.status-pill,
+.timeline-card__status,
+.priority,
+.checklist__row span,
+.semantic-badge,
+.semantic-status,
+.lifecycle-banner {
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.comments-toggle svg,
+.section-heading svg {
+  transition: transform var(--transition-normal);
+}
+
+.dialog-backdrop,
+.search-backdrop {
+  animation: fadeIn 200ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Progress-бар */
+progress {
+  width: 100%;
+  height: 7px;
+  border: 0;
+  border-radius: 4px;
+  background: #e1dfdd;
+}
+
+progress::-webkit-progress-bar {
+  border-radius: 4px;
+  background: #e1dfdd;
+}
+
+progress::-webkit-progress-value {
+  border-radius: 4px;
+  background: var(--blue);
+}
+
+progress::-moz-progress-bar {
+  border-radius: 4px;
+  background: var(--blue);
+}
+
+/* P2-4: Collapsible sidebar groups */
+.sidebar-group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.sidebar-group-toggle:hover {
+  color: var(--text);
+}
+
+.sidebar-group-toggle svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-fast);
+}
+
+/* P3-2: Clickable mini avatars */
+.mini-avatar.is-clickable {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.mini-avatar.is-clickable:hover {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* P3-3: Inbox archive / conversion drawer extras */
+.conversion-source > span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.conversion-source strong,
+.conversion-source small {
+  display: block;
+}
+
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field-inline input {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #c8c6c4;
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 400;
+}
+
+/* P3-4: Date range filter in search */
+.search-page__date-range .search-page__custom-dates {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.fuzzy-hint {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #fff3cd;
+  color: #856404;
+  font-size: 10px;
+  font-weight: 700;
 }

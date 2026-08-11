@@ -1,0 +1,52 @@
+{
+  "package": "Task Stage 5.6 external Gate execution kit",
+  "version": "0.2.1",
+  "date": "2026-08-10",
+  "status": "PARTIAL — native EXE identity/UIA shell recheck captured; remaining scenarios unverified; Gate 5.6 remains NOT_READY",
+  "scope": {
+    "windowsUIAKeyboardCheckpoints": 12,
+    "usabilityScenarios": 10,
+    "roleLenses": 4,
+    "evidenceRequirements": 9,
+    "namedApprovalRoles": 4,
+    "excluded": [
+      "Narrator",
+      "voice control",
+      "DPI scaling",
+      "multi-monitor"
+    ]
+  },
+  "gateStatus": {
+    "result": "NOT_READY",
+    "acceptedEvidence": 0,
+    "requiredEvidence": 9
+  },
+  "artifactHashes": {
+    "INITIAL_GATE_STATUS.json": "1FEA546E72E17B5FAD14B7E200C33E710EAB6D8857C83E30D31E1F07786435CC",
+    "README.md": "631B4C13C7D62CEBA2947014E9D9C4BDF10B9999077509B194E16452284EC683",
+    "VALIDATION_REPORT.md": "31FB6B09FA7D26293C226C3038782AE1D1380138F812BEDA4D298A6258C9CE7A",
+    "VALIDATOR_RESULT.json": "B5BE6C2143C0C81A7085FE20C5806668763C023160B5C3F4B2990A0D2F920B5F",
+    "VERSION.txt": "71015C979CCB0FC8A0BE7CA0AE83046AB045CDC2C8FAA09FB2F0F7E440F9B4A6",
+    "bin/Task-Gate-5.6-Client-0.1.2-win-x64.exe": "7E0B7439975E8009A51A0DBB4865D5AD1DFCD9EFEA6B0C93A4141F57845DFA9F",
+    "evidence/GATE_EVIDENCE_INDEX.csv": "542D45FE47DBC521B79211F6AB57FB78A8593EC144BD99112A5F436640A4A7EF",
+    "evidence/incoming/README.md": "FD96BBE9A31CB6454B0EA2CCC991D056894BC7376643555D64B1542B343D41B1",
+    "evidence/incoming/client-identity-recheck.md": "F74E3FD85AD3F6FD4579E64FC10264E2B19046217FD29E2372FFABDCBB53F94B",
+    "evidence/incoming/windows-keyboard-report.md": "9D76FD235546391F35292A5E2943E3BC0BD1CA96CDF293A624A43D6250E4453A",
+    "evidence/incoming/windows-remaining-scenarios-recheck.md": "FB7F839986621CE99B28C39C00E4021B9B5E3CF4031BFD52D6BBCC83F97B80B0",
+    "evidence/incoming/windows-uia-report.md": "7076E6EEC4E1B65233B6AC5B8F37ADB56E4458692749B984A468EA812F299DB9",
+    "signoff/Finding_Disposition_Template.csv": "870EFDBD55ACDAEEC3602E880209AB4E60925A301B60C409F19943C42803CA97",
+    "signoff/GATE_5_6_SIGNOFF_RECORD.md": "C06A6A913B418C93BE93CBFF7D020A0DA4FDDB8A41D32BC6C5181950118C115C",
+    "tools/build-manifest.mjs": "0C70B98BF25389D278C37635ED4ECBCB455B0256319852BF4842452CB91EC48C",
+    "tools/validate-gate-evidence.mjs": "CA62BF410E1F5A9C8A3A7D934329D4F196FF0CCFAC00E2B4A20E7FDB4892D35F",
+    "usability/MODERATED_SESSION_PROTOCOL.md": "502E746C51FC350FDB48EF1C7A021F685C942E35292DBC80EFEFBCB041473545",
+    "usability/Moderated_Session_Results_Template.csv": "CDD0D6ED50EC8E01E7E77CD60F8CF953D84503862755857F2C19805C53E7572E",
+    "usability/Participant_Coverage_Template.csv": "8121FEAF5818E356956FA27533D15A52C8B88B6499FCBF7652D0F6E6C62B40A9",
+    "usability/Usability_Test_Script_0.1.csv": "AFE7B1BE0FFDEFC52BB03D513BAA4272A5529ABE33300D462D0E23600F5A1F9F",
+    "windows/Windows_Accessibility_Checkpoints.csv": "FE5E3AB75DDFBFCC2D72C9CF700A67A5F0824BACACCAC5736CFB9999B4B5994B"
+  },
+  "evidenceBoundaries": [
+    "Partial technical reports are not owner acceptance",
+    "No participant session is claimed",
+    "No stakeholder approval is claimed"
+  ]
+}

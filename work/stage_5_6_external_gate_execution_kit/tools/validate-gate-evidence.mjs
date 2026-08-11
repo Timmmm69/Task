@@ -10,4 +10,5 @@ const rows=lines.map(line=>{const fields=[];let field='',q=false;for(let i=0;i<l
 const results=[];
 for(const [id,artifact,owner,requiredPath,status,criterion,expectedHash] of rows){let actualHash='',present=false;try{const data=await readFile(path.join(root,requiredPath));actualHash=createHash('sha256').update(data).digest('hex').toUpperCase();present=data.length>0;}catch{}const accepted=status==='ACCEPTED'&&present&&/^[A-F0-9]{64}$/.test(expectedHash)&&expectedHash===actualHash;results.push({id,artifact,owner,requiredPath,status,present,hashMatches:present&&expectedHash===actualHash,accepted,criterion});}
 const accepted=results.filter(r=>r.accepted).length;
-console.log(JSON.stringify({result:accepted===results.length?'READY':'NOT_READY',accepted,total:results.length,missing:results.filter(r=>!r.accepted).map(r=>r.id),results},null,2));
+const technicalPartial=results.filter(r=>r.status==='TECHNICAL_PARTIAL'&&r.present).map(r=>r.id);
+console.log(JSON.stringify({result:accepted===results.length?'READY':'NOT_READY',accepted,total:results.length,technicalPartial,missing:results.filter(r=>!r.accepted).map(r=>r.id),results},null,2));

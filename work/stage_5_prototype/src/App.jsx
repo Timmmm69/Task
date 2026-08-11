@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getGateAccount, hasCapability } from "./gateFixture.js";
 import {
   AddRegular,
   AlertRegular,
@@ -60,6 +61,34 @@ import {
   createCalendarEventDraft,
   validateCalendarEventDraft,
 } from "./calendarEventModel.js";
+
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      const cost = a[j - 1].toLowerCase() === b[i - 1].toLowerCase() ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function fuzzyMatch(text, query, maxDistance = 2) {
+  const words = text.toLowerCase().split(/\s+/);
+  const queryLower = query.toLowerCase();
+  for (const word of words) {
+    if (word.includes(queryLower)) return { match: true, fuzzy: false };
+    if (word.length >= 3 && levenshteinDistance(word, queryLower) <= maxDistance) return { match: true, fuzzy: true };
+  }
+  if (text.toLowerCase().includes(queryLower)) return { match: true, fuzzy: false };
+  return { match: false, fuzzy: false };
+}
 
 const baseTasks = [
   {
@@ -152,9 +181,9 @@ const initialInboxItems = [
 ];
 
 const searchResults = [
-  { id: "search-task", group: "Задачи", type: "Задача", title: "Подготовить анализ продаж за июнь", meta: "Отчётность · срок сегодня", authorized: true },
-  { id: "search-task-overdue", group: "Задачи", type: "Задача", title: "Проверить инциденты поддержки", meta: "Техподдержка · просрочено 24.07", authorized: true },
-  { id: "search-project", group: "Проекты", type: "Проект", title: "Альфа", meta: "8 активных задач", authorized: true },
+  { id: "search-task", group: "Задачи", type: "Задача", title: "Подготовить анализ продаж за июнь", meta: "Отчётность · срок сегодня", dueDate: "2026-08-11", dueDays: 0, authorized: true },
+  { id: "search-task-overdue", group: "Задачи", type: "Задача", title: "Проверить инциденты поддержки", meta: "Техподдержка · просрочено 24.07", dueDate: "2026-07-24", dueDays: 18, authorized: true },
+  { id: "search-project", group: "Проекты", type: "Проект", title: "Альфа", meta: "8 активных задач", dueDate: "2026-09-30", dueDays: 50, authorized: true },
   { id: "search-project-marketing", group: "Проекты", type: "Проект", title: "Маркетинговая кампания", meta: "12 задач · 3 участника", authorized: true },
   { id: "search-file", group: "Файлы", type: "Файл", title: "Отчёт_июль.xlsx", meta: "Каталог · доступное расположение", authorized: true },
   { id: "search-contact", group: "CRM", type: "Контакт", title: "Мария Соколова", meta: "ООО «Вектор» · разрешённые поля", authorized: true },
@@ -378,18 +407,27 @@ function TimelineCard({ task, selected, onSelect }) {
 
 function NewTaskDialog({ onClose, onCreate }) {
   const [title, setTitle] = useState("");
-  const [project, setProject] = useState("Отчётность");
+  const [project, setProject] = useState("");
   const [priority, setPriority] = useState("Средняя");
+  const [dueDate, setDueDate] = useState("");
+  const [dueTime, setDueTime] = useState("");
 
   function submit(event) {
     event.preventDefault();
     if (!title.trim()) return;
-    onCreate({ title: title.trim(), project, priority });
+    onCreate({
+      title: title.trim(),
+      project,
+      priority,
+      dueDate: dueDate || null,
+      dueTime: dueTime || null,
+      due: dueDate ? (dueTime ? `${dueDate} ${dueTime}` : dueDate) : "Нет срока",
+    });
   }
 
   return (
     <div className="dialog-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className="dialog" role="dialog" aria-modal="true" aria-labelledby="new-task-title" onMouseDown={(event) => event.stopPropagation()}>
+      <section className="dialog dialog--new-task" role="dialog" aria-modal="true" aria-labelledby="new-task-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="dialog__header">
           <h2 id="new-task-title">Новая задача</h2>
           <button className="icon-button" type="button" onClick={onClose} aria-label="Закрыть">
@@ -401,10 +439,11 @@ function NewTaskDialog({ onClose, onCreate }) {
             <span>Название</span>
             <input autoFocus value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Что нужно сделать?" />
           </label>
-          <div className="dialog__grid">
+          <div className="dialog__grid dialog__grid--new-task">
             <label className="field">
-              <span>Проект</span>
+              <span>Проект <small className="field-hint">необязательно</small></span>
               <select value={project} onChange={(event) => setProject(event.target.value)}>
+                <option value="">Без проекта</option>
                 <option>Отчётность</option>
                 <option>Внутренние процессы</option>
                 <option>Коммуникации</option>
@@ -419,6 +458,16 @@ function NewTaskDialog({ onClose, onCreate }) {
               </select>
             </label>
           </div>
+          <div className="dialog__grid">
+            <label className="field">
+              <span>Срок</span>
+              <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
+            </label>
+            <label className="field">
+              <span>Время</span>
+              <input type="time" value={dueTime} onChange={(event) => setDueTime(event.target.value)} />
+            </label>
+          </div>
           <div className="dialog__actions">
             <button className="button button--secondary" type="button" onClick={onClose}>Отмена</button>
             <button className="button button--primary" type="submit" disabled={!title.trim()}>Создать задачу</button>
@@ -429,72 +478,11 @@ function NewTaskDialog({ onClose, onCreate }) {
   );
 }
 
-const ONBOARDING_TIPS = [
-  "Alt+N — создать задачу из любого места программы.",
-  "Ctrl+K — быстрый поиск по задачам, файлам и контактам.",
-  "Кликните на задачу — откроется панель с деталями и файлами.",
-  "Входящие: быстро сбросьте мысль, а оформите задачу позже.",
-];
-
-function OnboardingSurface({ onStart }) {
-  const [tipIndex] = useState(() => Math.floor(Math.random() * ONBOARDING_TIPS.length));
-
-  const todayStr = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
-
-  return (
-    <main className="onboarding-surface" aria-label="Добро пожаловать в Task">
-      <section className="onboarding-hero">
-        <span className="onboarding-hero__mark"><TaskListSquareLtrFilled aria-hidden="true" /></span>
-        <h1>Добро пожаловать в Task</h1>
-        <p>Всё готово к работе. С чего начнём?</p>
-      </section>
-
-      <div className="onboarding-cards">
-        <button className="onboarding-card" type="button" onClick={() => onStart("tasks", "Создайте первую задачу через Alt+N или кнопку в шапке")}>
-          <ClipboardTaskListLtrRegular aria-hidden="true" />
-          <strong>Создайте первую задачу</strong>
-          <span>Alt+N или кнопка «Новая задача» вверху</span>
-          <small>Начать</small>
-        </button>
-        <button className="onboarding-card" type="button" onClick={() => onStart("projects", "Раздел «Проекты» открыт")}>
-          <FolderRegular aria-hidden="true" />
-          <strong>Откройте проекты</strong>
-          <span>Просмотрите текущие проекты и задачи команды</span>
-          <small>Проекты</small>
-        </button>
-        <button className="onboarding-card" type="button" onClick={() => onStart("settings", "Раздел «Настройки» открыт")}>
-          <SettingsRegular aria-hidden="true" />
-          <strong>Настройте профиль</strong>
-          <span>Укажите отдел и настройте уведомления</span>
-          <small>Профиль</small>
-        </button>
-      </div>
-
-      <section className="onboarding-context">
-        <span className="onboarding-context__date">Сегодня: {todayStr}</span>
-        <div className="onboarding-context__stats">
-          <span><ClipboardTaskListLtrRegular aria-hidden="true" /> Назначенные вам задачи: <strong>0</strong></span>
-        </div>
-      </section>
-
-      <aside className="onboarding-tip" role="status">
-        <span>Совет дня</span>
-        <p>{ONBOARDING_TIPS[tipIndex]}</p>
-      </aside>
-
-      <div className="onboarding-actions">
-        <button className="button button--primary" type="button" onClick={() => onStart("tasks")}>Перейти к задачам</button>
-        <button className="button button--secondary" type="button" onClick={() => onStart("tasks", "Этот экран больше не появится. Alt+N для быстрой задачи.")}>Понятно, начать работу</button>
-      </div>
-    </main>
-  );
-}
-
-function AuthSurface({ onAuthenticated }) {
+function AuthSurface({ onAuthenticated, account }) {
   const [step, setStep] = useState("endpoint");
   const [endpoint, setEndpoint] = useState("https://task.company.local");
   const [endpointStatus, setEndpointStatus] = useState("idle");
-  const [username, setUsername] = useState("ivan.s");
+  const [username, setUsername] = useState(account.login);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [errorCode, setErrorCode] = useState("");
@@ -523,7 +511,7 @@ function AuthSurface({ onAuthenticated }) {
     setEndpointStatus("verified");
   }
 
-  function submitLogin(event) {
+  async function submitLogin(event) {
     event.preventDefault();
     const normalizedUser = username.trim().toLowerCase();
     if (normalizedUser === "locked.s") {
@@ -537,7 +525,13 @@ function AuthSurface({ onAuthenticated }) {
       return;
     }
     const validScenarioUsers = ["ivan.s", "cursor.s", "scope.s", "storage.s", "maintenance.s", "signature.s", "download.s"];
-    if (!validScenarioUsers.includes(normalizedUser) || password !== "task2026") {
+    const fixtureAuthenticated = globalThis.taskDesktop?.authenticate
+      ? await globalThis.taskDesktop.authenticate(normalizedUser, password)
+      : false;
+    const credentialsValid = globalThis.taskDesktop
+      ? fixtureAuthenticated
+      : validScenarioUsers.includes(normalizedUser) && password === "task2026";
+    if (!credentialsValid) {
       setErrorCode("INVALID_CREDENTIALS");
       setError("Неверный логин или пароль. Проверьте данные и повторите вход.");
       return;
@@ -625,7 +619,7 @@ function AuthSurface({ onAuthenticated }) {
                 <span>Пароль</span>
                 <input type="password" value={password} onChange={(event) => { setPassword(event.target.value); setError(""); setErrorCode(""); }} autoComplete="current-password" />
               </label>
-              <small className="field-hint">Для прототипа: пароль <strong>task2026</strong>.</small>
+              <small className="field-hint">{globalThis.taskDesktop ? `Локальная Gate fixture · ${account.roleLabel}` : <>Для прототипа: пароль <strong>task2026</strong>.</>}</small>
               {error && <div className="inline-message inline-message--error" role="alert"><ShieldErrorRegular aria-hidden="true" /><span>{errorCode && <strong>{errorCode}</strong>}{error}</span></div>}
               <div className="auth-actions">
                 <button className="button button--secondary" type="button" onClick={() => setStep("endpoint")}>Назад</button>
@@ -737,8 +731,9 @@ function SearchOverlay({ offline, onClose, onOpenResult, onShowAll, onToast }) {
       || (filter === "Сотрудники" && result.group === "Сотрудники");
     if (!matchesFilter) return false;
     if (!query.trim()) return true;
-    const haystack = `${result.group} ${result.type} ${result.title} ${result.meta}`.toLowerCase();
-    return haystack.includes(query.trim().toLowerCase());
+    const haystack = `${result.title} ${result.meta}`;
+    const m = fuzzyMatch(haystack, query.trim());
+    return m.match;
   });
 
   function activate(result) {
@@ -828,6 +823,9 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
   const [query, setQuery] = useState(initialQuery || "");
   const [filter, setFilter] = useState(initialFilter || "Все");
   const [loading, setLoading] = useState(false);
+  const [dateRange, setDateRange] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const filterOptions = ["Все", "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники"];
 
   useEffect(() => {
@@ -844,12 +842,27 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
       || (filter === "Сотрудники" && result.group === "Сотрудники");
     if (!matchesFilter) return false;
     if (!query.trim()) return true;
-    return `${result.group} ${result.type} ${result.title} ${result.meta}`
-      .toLowerCase()
-      .includes(query.trim().toLowerCase());
+    const haystack = `${result.title} ${result.meta}`;
+    const m = fuzzyMatch(haystack, query.trim());
+    return m.match;
   }), [filter, query]);
   const allowedResults = visibleResults.filter((result) => result.authorized);
   const unavailableResults = visibleResults.filter((result) => !result.authorized);
+
+  const applyDateFilter = (results) => {
+    if (dateRange === "all") return results;
+    return results.filter((r) => {
+      if (dateRange === "week") return r.dueDays !== undefined && r.dueDays <= 7;
+      if (dateRange === "month") return r.dueDays !== undefined && r.dueDays <= 30;
+      if (dateRange === "custom" && dateFrom && dateTo) {
+        return r.dueDate && r.dueDate >= dateFrom && r.dueDate <= dateTo;
+      }
+      return true;
+    });
+  };
+
+  const allowedResultsFinal = applyDateFilter(allowedResults);
+  const unavailableResultsFinal = applyDateFilter(unavailableResults);
 
   function runSearch(event) {
     event?.preventDefault();
@@ -908,6 +921,35 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
         </div>
       </div>
 
+      <div className="search-page__filters search-page__date-range" aria-label="Фильтр по сроку">
+        <span><CalendarRegular aria-hidden="true" />Срок</span>
+        <div>
+          {[{ value: "all", label: "Все" }, { value: "week", label: "≤ 7 дней" }, { value: "month", label: "≤ 30 дней" }, { value: "custom", label: "Произвольно" }].map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              className={dateRange === item.value ? "is-active" : ""}
+              aria-pressed={dateRange === item.value}
+              onClick={() => setDateRange(item.value)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        {dateRange === "custom" && (
+          <div className="search-page__custom-dates">
+            <label className="field-inline">
+              <span>С</span>
+              <input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
+            </label>
+            <label className="field-inline">
+              <span>До</span>
+              <input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} />
+            </label>
+          </div>
+        )}
+      </div>
+
       {offline ? (
         <div className="search-page__notice search-page__notice--offline" role="status">
           <PlugDisconnectedRegular aria-hidden="true" />
@@ -921,7 +963,7 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
       )}
 
       <div className="search-page__summary" aria-live="polite">
-        <span><strong>{allowedResults.length}</strong> доступных результатов</span>
+        <span><strong>{allowedResultsFinal.length}</strong> доступных результатов</span>
         <span>{offline ? "Кэш обновлён сегодня в 10:23" : "Область доступа проверена сервером"}</span>
       </div>
 
@@ -930,17 +972,30 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
           <div className="search-loading" role="status" aria-label="Поиск выполняется">
             {[0, 1, 2].map((item) => <div key={item}><span /><p><span /><span /></p></div>)}
           </div>
-        ) : allowedResults.length === 0 && unavailableResults.length === 0 ? (
-          <div className="empty-state search-page__empty">
-            <SearchRegular aria-hidden="true" />
-            <strong>Ничего не найдено</strong>
-            <span>Измените запрос или очистите выбранный тип результата.</span>
-            <button className="button button--secondary" type="button" onClick={() => { setQuery(""); setFilter("Все"); }}>Сбросить фильтры</button>
-          </div>
+        ) : allowedResultsFinal.length === 0 && unavailableResultsFinal.length === 0 ? (
+          !query.trim() ? (
+            <div className="empty-state search-page__empty">
+              <SearchRegular aria-hidden="true" />
+              <strong>Начните поиск</strong>
+              <span>Введите запрос — например, название задачи, проекта, файла или имя сотрудника.</span>
+              <div className="search-page__examples">
+                <button type="button" className="button button--quiet" onClick={() => setQuery("анализ продаж")}>анализ продаж</button>
+                <button type="button" className="button button--quiet" onClick={() => setQuery("инциденты")}>инциденты</button>
+                <button type="button" className="button button--quiet" onClick={() => setQuery("Альфа")}>Альфа</button>
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state search-page__empty">
+              <SearchRegular aria-hidden="true" />
+              <strong>Ничего не найдено</strong>
+              <span>Измените запрос или очистите выбранный тип результата.</span>
+              <button className="button button--secondary" type="button" onClick={() => { setQuery(""); setFilter("Все"); }}>Сбросить фильтры</button>
+            </div>
+          )
         ) : (
           <>
             <div className="search-page__list" role="list" aria-label="Доступные результаты">
-              {allowedResults.map((result) => (
+              {allowedResultsFinal.map((result) => (
                 <button key={result.id} type="button" role="listitem" className="search-page__result" onClick={() => activate(result)}>
                   <span className="search-result__icon">
                     {result.type === "Проект" ? <FolderRegular aria-hidden="true" /> : result.type === "Сотрудник" || result.type === "Контакт" ? <PersonRegular aria-hidden="true" /> : result.type === "Задача" ? <ClipboardTaskListLtrRegular aria-hidden="true" /> : <DocumentRegular aria-hidden="true" />}
@@ -950,7 +1005,7 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
                 </button>
               ))}
             </div>
-            {unavailableResults.length > 0 && (
+            {unavailableResultsFinal.length > 0 && (
               <section className="search-page__unavailable" aria-label="Недоступный результат">
                 <div><LockClosedRegular aria-hidden="true" /><span><strong>Один из результатов недоступен</strong><small>Название, подразделение, совпавшие поля и общее количество скрытых объектов не раскрываются.</small></span></div>
                 <button className="button button--quiet" type="button" onClick={() => onToast("Доступ проверяется сервером; оптимистичное открытие недоступно.")}>Почему недоступно</button>
@@ -1122,9 +1177,9 @@ function LifecycleSurface({ offline, onToast }) {
           ) : visibleItems.length === 0 ? (
             <div className="empty-state lifecycle-empty"><ArchiveRegular aria-hidden="true" /><strong>Объектов не найдено</strong><span>Измените запрос или сбросьте фильтр типа.</span><button className="button button--secondary" type="button" onClick={() => { setQuery(""); setTypeFilter("Все типы"); }}>Сбросить фильтры</button></div>
           ) : visibleItems.map((item) => (
-            <button key={item.id} type="button" className={`lifecycle-row ${selected?.id === item.id ? "is-selected" : ""} ${item.authorized === false ? "is-redacted" : ""}`} onClick={() => { setSelectedId(item.id); setOperationStatus(""); }} aria-pressed={selected?.id === item.id}>
+            <button key={item.id} type="button" className={`lifecycle-row ${selected?.id === item.id ? "is-selected" : ""} ${item.authorized === false ? "is-redacted" : ""}`} onClick={() => { setSelectedId(item.id); setOperationStatus(""); }} aria-pressed={selected?.id === item.id} title={item.title}>
               <span className="lifecycle-row__icon">{typeIcon(item)}</span>
-              <span><small>{item.type}</small><strong>{item.title}</strong><span>{item.meta}</span></span>
+              <span><small>{item.type}</small><strong title={item.title}>{item.title}</strong><span>{item.meta}</span></span>
               <ChevronRightRegular aria-hidden="true" />
             </button>
           ))}
@@ -1167,7 +1222,7 @@ function LifecycleSurface({ offline, onToast }) {
 }
 
 
-function SettingsSurface({ offline, onToast, onForceSignIn }) {
+function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
   const sections = [
     { id: "profile", label: "Профиль", scope: "Личные", icon: PersonRegular },
     { id: "security", label: "Безопасность", scope: "Личные", icon: KeyRegular },
@@ -1180,7 +1235,7 @@ function SettingsSurface({ offline, onToast, onForceSignIn }) {
     { id: "sessions", label: "Сессии и устройства", scope: "Личные", icon: LockClosedRegular },
   ];
   const [activeSection, setActiveSection] = useState("profile");
-  const [profile, setProfile] = useState({ name: "Иван Сергеев", role: "Сотрудник", department: "Отдел продаж", locale: "Русский", timezone: "Europe/Minsk" });
+  const [profile, setProfile] = useState({ name: account.displayName, role: account.roleLabel, department: account.department, locale: "Русский", timezone: "Europe/Minsk" });
   const [passwords, setPasswords] = useState({ current: "", next: "", confirm: "" });
   const [passwordError, setPasswordError] = useState("");
   const [notifications, setNotifications] = useState({ desktop: true, sound: false, digest: true, dnd: true, quietFrom: "19:00", quietTo: "08:30" });
@@ -1325,7 +1380,7 @@ function SettingsSurface({ offline, onToast, onForceSignIn }) {
       {offline && <div className="settings-banner settings-banner--offline" role="status"><PlugDisconnectedRegular aria-hidden="true" /><span><strong>Offline · настройки только для чтения</strong><small>Показана разрешённая локальная копия. Сохранение, revoke, очистка кэша и серверная проверка отключены.</small></span></div>}
       {deviceRevoked && <div className="settings-banner settings-banner--offline" role="alert"><LockClosedRegular aria-hidden="true" /><span><strong>Доступ этого устройства отозван</strong><small>Изменения заблокированы до повторного входа.</small></span></div>}
       <div className="settings-layout" aria-busy={loading}>
-        <nav className="settings-nav" aria-label="Разделы настроек">{sections.map((item) => { const Icon = item.icon; return <button key={item.id} type="button" className={activeSection === item.id ? "is-active" : ""} aria-current={activeSection === item.id ? "page" : undefined} onClick={() => { setActiveSection(item.id); setSaveState(""); }}><Icon aria-hidden="true" /><span><strong>{item.label}</strong><small>{item.scope}</small></span><ChevronRightRegular aria-hidden="true" /></button>; })}</nav>
+        <nav className="settings-nav" aria-label="Разделы настроек">{sections.map((item) => { const Icon = item.icon; return <button key={item.id} type="button" className={activeSection === item.id ? "is-active" : ""} aria-current={activeSection === item.id ? "page" : undefined} onClick={() => { setActiveSection(item.id); setSaveState(""); }} title={item.label}><Icon aria-hidden="true" /><span><strong>{item.label}</strong><small>{item.scope}</small></span><ChevronRightRegular aria-hidden="true" /></button>; })}</nav>
         <main className="settings-panel"><header><div><small>{currentSection.scope}</small><h3>{currentSection.label}</h3></div><span className={`settings-scope ${currentSection.scope === "Организация" ? "is-managed" : ""}`}>{currentSection.scope === "Организация" ? "Server-managed" : "Settings.UpdateOwn"}</span></header>{saveState === "conflict" && <div className="inline-alert inline-alert--warning settings-conflict" role="alert"><WarningRegular aria-hidden="true" /><span><strong>VERSION_CONFLICT · настройки изменились на сервере</strong><small>Локальное сохранение отменено. Выберите актуальную версию или повторите свои изменения после reload.</small></span><button className="button button--secondary" type="button" onClick={() => { setSaveState(""); onToast("Загружена актуальная версия настроек"); }}>Загрузить серверную</button><button className="button button--primary" type="button" onClick={() => { setSaveState(""); onToast("Локальные изменения повторно применены после server recheck"); }}>Повторить свои</button></div>}{saveState === "forbidden" && <div className="inline-alert inline-alert--warning" role="alert"><ShieldErrorRegular aria-hidden="true" /><span><strong>Forbidden · Settings.UpdateOwn недоступно</strong><small>Раздел остаётся доступным только для чтения. Task не применяет оптимистичное сохранение.</small></span><button className="button button--secondary" type="button" onClick={() => setSaveState("")}>Закрыть</button></div>}{loading ? <div className="settings-loading" role="status" aria-label="Настройки обновляются"><span /><span /><span /></div> : renderActivePanel()}</main>
       </div>
 
@@ -1633,10 +1688,13 @@ function OperationsSurface({ offline, onToast }) {
   </section>;
 }
 
-function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
+function InboxSurface({ items, setItems, isWritable, onConvert, onToast, archiveAfterConvert, setArchiveAfterConvert }) {
   const [selectedId, setSelectedId] = useState(items[0]?.id);
   const [capture, setCapture] = useState("");
+  const [showArchive, setShowArchive] = useState(false);
   const selected = items.find((item) => item.id === selectedId) || items[0];
+  const visibleItems = items.filter((item) => showArchive || item.status !== "Архивировано");
+  const hasArchived = items.some((item) => item.status === "Архивировано");
 
   function addCapture(event) {
     event.preventDefault();
@@ -1662,14 +1720,20 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
         </form>
         {!isWritable && <div className="inline-message inline-message--warning"><PlugDisconnectedRegular aria-hidden="true" />Входящие доступны только для чтения до восстановления сервера.</div>}
         <div className="inbox-list" role="listbox" aria-label="Записи входящих">
-          {items.map((item) => (
-            <button key={item.id} type="button" role="option" aria-selected={selected?.id === item.id} className={`${selected?.id === item.id ? "is-selected" : ""} ${item.status === "Преобразовано" ? "is-done" : ""}`} onClick={() => setSelectedId(item.id)}>
+          {visibleItems.map((item) => (
+            <button key={item.id} type="button" role="option" aria-selected={selected?.id === item.id} className={`${selected?.id === item.id ? "is-selected" : ""} ${item.status === "Преобразовано" || item.status === "Архивировано" ? "is-done" : ""}`} onClick={() => setSelectedId(item.id)}>
               <MailInboxRegular aria-hidden="true" />
               <span><strong>{item.title}</strong><small>{item.source} · {item.created}</small></span>
               <em>{item.status}</em>
             </button>
           ))}
         </div>
+        {hasArchived && (
+          <label className="settings-check" style={{ marginTop: "12px" }}>
+            <input type="checkbox" checked={showArchive} onChange={(event) => setShowArchive(event.target.checked)} />
+            Показать архив ({items.filter((item) => item.status === "Архивировано").length})
+          </label>
+        )}
       </div>
       <aside className="inbox-inspector">
         {selected ? (
@@ -1682,7 +1746,7 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
               <dt>Состояние</dt><dd>{selected.status}</dd>
             </dl>
             <p className="inbox-inspector__copy">Классифицируйте запись: преобразуйте её в задачу или оставьте во входящих до следующего разбора.</p>
-            <button className="button button--primary" type="button" disabled={!isWritable} onClick={() => onConvert(selected)}>Преобразовать в задачу</button>
+            <button className="button button--primary" type="button" disabled={!isWritable} onClick={() => { setArchiveAfterConvert(false); onConvert(selected); }}>Преобразовать в задачу</button>
             {!isWritable && <small className="disabled-reason">Недоступно офлайн: требуется подтверждение сервера.</small>}
           </>
         ) : <div className="empty-state"><MailInboxRegular aria-hidden="true" /><strong>Входящие пусты</strong></div>}
@@ -1691,7 +1755,7 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
   );
 }
 
-function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
+function ConversionDrawer({ item, isWritable, onClose, onConvert, archiveAfterConvert, setArchiveAfterConvert }) {
   const [title, setTitle] = useState(item.title);
   const [project, setProject] = useState("Без проекта");
   const [priority, setPriority] = useState("Средняя");
@@ -1700,14 +1764,18 @@ function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
   function submit(event) {
     event.preventDefault();
     if (!title.trim() || !isWritable) return;
-    const isQuickDefault = project === "Без проекта" && priority === "Средняя";
-    onConvert({ ...item, title: title.trim(), project, priority, due, quickCreated: isQuickDefault });
+    if (archiveAfterConvert) {
+      onConvert({ ...item, title: title.trim(), project, priority, due, archiveAfterConvert: true });
+    } else {
+      onConvert({ ...item, title: title.trim(), project, priority, due });
+    }
   }
 
   return (
     <div className="drawer-backdrop" role="presentation" onMouseDown={onClose}>
       <section className="conversion-drawer" role="dialog" aria-modal="true" aria-labelledby="conversion-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="dialog__header"><div><p className="eyebrow">Inbox → Task</p><h2 id="conversion-title">Преобразовать в задачу</h2></div><button className="icon-button" type="button" onClick={onClose} aria-label="Закрыть преобразование"><DismissRegular aria-hidden="true" /></button></div>
+        <div className="conversion-source"><MailInboxRegular aria-hidden="true" /><span><strong>Источник: {item.title}</strong><small>Исходная запись будет закрыта. Связь с созданной задачей сохранится в истории.</small></span></div>
         <form onSubmit={submit}>
           <label className="field"><span>Название задачи</span><input value={title} onChange={(event) => setTitle(event.target.value)} autoFocus placeholder="Что нужно сделать?" /></label>
             <small className="field-hint">Только название обязательно. Остальное можно уточнить позже.</small>
@@ -1716,7 +1784,10 @@ function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
             <label className="field"><span>Приоритет</span><select value={priority} onChange={(event) => setPriority(event.target.value)}><option>Низкая</option><option>Средняя</option><option>Высокая</option></select></label>
             <label className="field"><span>Срок</span><input type="date" value={due} onChange={(event) => setDue(event.target.value)} /></label>
           </div>
-          <div className="conversion-source"><MailInboxRegular aria-hidden="true" /><span><strong>Исходная запись будет закрыта</strong><small>Связь с созданной задачей сохранится в истории.</small></span></div>
+          <label className="settings-check">
+            <input type="checkbox" checked={archiveAfterConvert} onChange={(event) => setArchiveAfterConvert(event.target.checked)} />
+            Архивировать заметку после конвертации
+          </label>
           <div className="dialog__actions"><button className="button button--secondary" type="button" onClick={onClose}>Отмена</button><button className="button button--primary" type="submit" disabled={!title.trim() || !isWritable}>Создать задачу</button></div>
         </form>
       </section>
@@ -1868,7 +1939,7 @@ function PickerField({ label, icon: Icon, value, onChange, options, helper }) {
   );
 }
 
-function TasksSurface({ isWritable, onOpenTask, onToast }) {
+function TasksSurface({ isWritable, onOpenTask, onToast, onPushUndo }) {
   const [taskRows, setTaskRows] = useState(taskTableRows);
   const [statusFilter, setStatusFilter] = useState("Все статусы");
   const [projectFilter, setProjectFilter] = useState("Все проекты");
@@ -1938,7 +2009,9 @@ function TasksSurface({ isWritable, onOpenTask, onToast }) {
       return;
     }
     if (action === "ready") {
+      const previousStatus = task.status;
       setTaskRows((rows) => rows.map((item) => item.id === task.id ? { ...item, status: "Готово" } : item));
+      onPushUndo("Изменён статус", () => setTaskRows((rows) => rows.map((item) => item.id === task.id ? { ...item, status: previousStatus } : item)));
       onToast(`Задача «${task.title}» завершена`);
       return;
     }
@@ -1979,7 +2052,7 @@ function TasksSurface({ isWritable, onOpenTask, onToast }) {
             {visible.map((task) => (
               <tr key={task.id} className={selectedIds.has(task.id) ? "is-selected" : ""}>
                 <td className="task-select-cell"><input type="checkbox" aria-label={`Выбрать: ${task.title}`} checked={selectedIds.has(task.id)} onChange={() => toggleSelected(task.id)} /></td>
-                <td><button type="button" className="table-title" onClick={() => onOpenTask(task)}>{task.quickCreated && <span className="quick-created-dot" title="Задача создана быстро — уточните проект и срок"><span className="quick-created-dot__mark" aria-hidden="true" /></span>}{task.title}</button></td>
+                <td><button type="button" className="table-title" onClick={() => onOpenTask(task)} title={task.title}>{task.title}</button></td>
                 <td>{task.project}</td>
                 <td><span className="table-person"><span className="mini-avatar">{task.assignee.split(" ").map((word) => word[0]).join("")}</span>{task.assignee}</span></td>
                 <td><span className={`status-pill status-pill--${task.status === "Просрочено" ? "danger" : task.status === "Готово" ? "done" : "neutral"}`}>{task.status}</span></td>
@@ -2012,7 +2085,7 @@ function TasksSurface({ isWritable, onOpenTask, onToast }) {
   );
 }
 
-function ProjectsSurface({ isWritable, onToast }) {
+function ProjectsSurface({ isWritable, onToast, onNavigateToTasks }) {
   const [projects, setProjects] = useState(projectTree);
   const [selectedId, setSelectedId] = useState("alpha");
   const [collapsed, setCollapsed] = useState({});
@@ -2167,7 +2240,7 @@ function ProjectsSurface({ isWritable, onToast }) {
           <div><p className="eyebrow">{selected.status}</p><h2 id="project-title">{selected.title}</h2><span>Ответственный: {selected.owner}</span></div>
           <button className="button button--secondary" type="button" disabled={!canWriteProject} onClick={() => { setProjectDraft({ title: selected.title, owner: selected.owner, deadline: selected.deadline }); setValidation(""); setDialog("edit"); }}><EditRegular aria-hidden="true" />Изменить</button>
         </div>
-        <div className="project-progress"><span><strong>Выполнение проекта</strong><em>{selected.progress}%</em></span><i><b style={{ width: `${selected.progress}%` }} /></i></div>
+        <div className="project-progress"><span><strong>Выполнение проекта</strong><em>{selected.progress}%</em></span><progress value={selected.progress} max={100} aria-label={`Прогресс: ${selected.progress}%`} /></div>
         <dl className="project-facts">
           <div><dt>Задачи</dt><dd>{selected.tasks}</dd></div><div><dt>Срок</dt><dd>{selected.deadline}</dd></div>
           <div><dt>Участники</dt><dd><span className="avatar-stack">{selected.members.map((member) => <span key={member}>{member}</span>)}</span>{selected.members.length} человека</dd></div>
@@ -2179,7 +2252,7 @@ function ProjectsSurface({ isWritable, onToast }) {
         {activeTab === "overview" && <section className="project-summary"><h3>Ближайшие контрольные точки</h3><div><CheckmarkCircleRegular aria-hidden="true" /><span><strong>Исходные данные собраны</strong><small>Завершено 24 июля</small></span></div><div><CalendarRegular aria-hidden="true" /><span><strong>Промежуточное согласование</strong><small>5 августа · 4 задачи открыты</small></span></div><div><BranchForkRegular aria-hidden="true" /><span><strong>Финальная проверка</strong><small>22 сентября · зависит от 2 задач</small></span></div></section>}
         {activeTab === "tasks" && <section className="project-tab-panel" role="tabpanel" aria-label="Задачи проекта"><div className="panel-heading"><h3>Задачи проекта</h3><button className="button button--secondary" type="button" disabled={!canWriteProject}>Создать задачу</button></div>{taskTableRows.filter((task) => task.project === selected.title || selected.id === "alpha").slice(0, 4).map((task) => <div className="project-task-row" key={task.id}><TaskListSquareLtrFilled aria-hidden="true" /><span><strong>{task.title}</strong><small>{task.assignee} · {task.due}</small></span><span className="status-pill status-pill--neutral">{task.status}</span></div>)}</section>}
         {activeTab === "calendar" && <section className="project-tab-panel" role="tabpanel" aria-label="Календарь проекта"><h3>Календарь проекта</h3><p className="helper-copy">Проектный диапазон использует общий Calendar pattern. Перемещение отключается при потере Calendar.Read или записи.</p><div className="linked-card"><CalendarRegular aria-hidden="true" /><span><strong>Планирование команды</strong><small>5 августа · 10:00–11:00</small></span><button className="button button--ghost" type="button" disabled={!canWriteProject}>Открыть</button></div></section>}
-        {activeTab === "members" && <section className="project-tab-panel" role="tabpanel" aria-label="Участники проекта"><div className="panel-heading"><div><h3>Участники</h3><p className="helper-copy">Владелец всегда остаётся в составе проекта.</p></div><button className="button button--secondary" type="button" disabled={!canWriteProject} onClick={addMember}><AddRegular aria-hidden="true" />Добавить</button></div>{selected.members.map((member, index) => <div className="member-row" key={member}><span className="mini-avatar">{member}</span><span><strong>{memberLabels[index]}</strong><small>{index === 0 ? "Владелец проекта" : "Участник"}</small></span><button className="button button--ghost" type="button" disabled={!canWriteProject} onClick={() => { setMemberDialog({ index, name: memberLabels[index] }); setValidation(""); }}>Изменить роль</button></div>)}</section>}
+        {activeTab === "members" && <section className="project-tab-panel" role="tabpanel" aria-label="Участники проекта"><div className="panel-heading"><div><h3>Участники</h3><p className="helper-copy">Владелец всегда остаётся в составе проекта.</p></div><button className="button button--secondary" type="button" disabled={!canWriteProject} onClick={addMember}><AddRegular aria-hidden="true" />Добавить</button></div>{selected.members.map((member, index) => <div className="member-row" key={member}><button className="mini-avatar is-clickable" type="button" title={`Задачи участника ${memberLabels[index]}`} onClick={() => onNavigateToTasks ? onNavigateToTasks(memberLabels[index]) : onToast(`Задачи участника ${memberLabels[index]} откроются после реализации перехода`)}>{member}</button><span><strong>{memberLabels[index]}</strong><small>{index === 0 ? "Владелец проекта" : "Участник"}</small></span><button className="button button--ghost" type="button" disabled={!canWriteProject} onClick={() => { setMemberDialog({ index, name: memberLabels[index] }); setValidation(""); }}>Изменить роль</button></div>)}</section>}
         {activeTab === "files" && <section className="project-tab-panel" role="tabpanel" aria-label="Файлы проекта"><div className="panel-heading"><h3>Связанные файлы</h3><button className="button button--secondary" type="button" disabled={!canWriteProject}>Связать</button></div><div className="linked-card"><DocumentRegular aria-hidden="true" /><span><strong>Отчёт_июль.xlsx</strong><small>Сетевое расположение · проверено 6 минут назад</small></span><button className="button button--ghost" type="button">Открыть</button></div><div className="linked-card is-unavailable"><LockClosedRegular aria-hidden="true" /><span><strong>Связанный объект недоступен</strong><small>Название и расположение скрыты текущей областью доступа.</small></span></div></section>}
         {activeTab === "contacts" && <section className="project-tab-panel" role="tabpanel" aria-label="Контакты проекта"><div className="panel-heading"><h3>Контакты</h3><button className="button button--secondary" type="button" disabled={!canWriteProject}>Связать</button></div><div className="linked-card"><PersonRegular aria-hidden="true" /><span><strong>Елена Морозова · ООО «Вектор»</strong><small>Заказчик · разрешённые контактные данные</small></span><button className="button button--ghost" type="button">Открыть</button></div></section>}
         {activeTab === "comments" && <section className="project-tab-panel" role="tabpanel" aria-label="Комментарии проекта"><h3>Комментарии</h3>{comments.map((comment) => <div className={`comment-row ${comment.deleted ? "is-deleted" : ""}`} key={comment.id}><CommentRegular aria-hidden="true" /><span><strong>{comment.deleted ? "Комментарий удалён" : comment.author}</strong><small>{comment.deleted ? "Текст недоступен; запись сохранена в истории." : comment.text}</small></span>{!comment.deleted && <button className="button button--ghost" type="button" disabled={!canWriteProject} onClick={() => setComments((items) => items.map((item) => item.id === comment.id ? { ...item, deleted: true } : item))}>Удалить</button>}</div>)}<div className="comment-composer"><label className="field"><span>Новый комментарий</span><textarea value={commentDraft} onChange={(event) => setCommentDraft(event.target.value)} disabled={!canWriteProject} /></label><button className="button button--primary" type="button" disabled={!canWriteProject || !commentDraft.trim()} onClick={addComment}>Добавить</button></div></section>}
@@ -2407,11 +2480,11 @@ function SessionRevokedDialog({ onSignIn }) {
 }
 
 const calendarSeed = [
-  { id: "calendar-planning", title: "Ежедневное планирование команды", project: "Внутренние процессы", assignee: "Иван С.", status: "Готово", start: 540, duration: 45, tone: "done", description: "Короткая синхронизация приоритетов.", userAttendees: ["Иван С."], contactAttendees: [], response: "accepted", version: 3 },
-  { id: "calendar-analysis", title: "Подготовить анализ продаж за июнь", project: "Отчётность", assignee: "Иван С.", status: "В работе", start: 600, duration: 60, tone: "high", description: "Сверить показатели с утверждённой витриной.", userAttendees: ["Иван С.", "Мария С."], contactAttendees: ["Алексей В. · клиент"], response: "tentative", version: 7 },
-  { id: "calendar-client", title: "Звонок с клиентом", project: "Коммуникации", assignee: "Мария С.", status: "Запланировано", start: 660, duration: 45, tone: "medium", description: "Статус интеграции и следующие шаги.", userAttendees: ["Мария С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 2 },
-  { id: "calendar-presentation", title: "Согласование макета презентации", project: "Маркетинговая кампания", assignee: "Мария С.", status: "Запланировано", start: 690, duration: 45, tone: "medium", description: "Проверить макет перед передачей в производство.", userAttendees: ["Мария С."], contactAttendees: [], response: "accepted", version: 4 },
-  { id: "calendar-contract", title: "Проверить договор с ООО «Вектор»", project: "Юридическая поддержка", assignee: "Иван С.", status: "Запланировано", start: 855, duration: 45, tone: "high", description: "Согласовать замечания юридического отдела.", userAttendees: ["Иван С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 5 },
+  { id: "calendar-planning", eventDate: "2026-07-28", title: "Ежедневное планирование команды", project: "Внутренние процессы", assignee: "Иван С.", status: "Готово", start: 540, duration: 45, tone: "done", description: "Короткая синхронизация приоритетов.", userAttendees: ["Иван С."], contactAttendees: [], response: "accepted", version: 3 },
+  { id: "calendar-analysis", eventDate: "2026-07-28", title: "Подготовить анализ продаж за июнь", project: "Отчётность", assignee: "Иван С.", status: "В работе", start: 600, duration: 60, tone: "high", description: "Сверить показатели с утверждённой витриной.", userAttendees: ["Иван С.", "Мария С."], contactAttendees: ["Алексей В. · клиент"], response: "tentative", version: 7 },
+  { id: "calendar-client", eventDate: "2026-07-28", title: "Звонок с клиентом", project: "Коммуникации", assignee: "Мария С.", status: "Запланировано", start: 660, duration: 45, tone: "medium", description: "Статус интеграции и следующие шаги.", userAttendees: ["Мария С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 2 },
+  { id: "calendar-presentation", eventDate: "2026-07-28", title: "Согласование макета презентации", project: "Маркетинговая кампания", assignee: "Мария С.", status: "Запланировано", start: 690, duration: 45, tone: "medium", description: "Проверить макет перед передачей в производство.", userAttendees: ["Мария С."], contactAttendees: [], response: "accepted", version: 4 },
+  { id: "calendar-contract", eventDate: "2026-07-28", title: "Проверить договор с ООО «Вектор»", project: "Юридическая поддержка", assignee: "Иван С.", status: "Запланировано", start: 855, duration: 45, tone: "high", description: "Согласовать замечания юридического отдела.", userAttendees: ["Иван С."], contactAttendees: ["ООО «Вектор»"], response: "pending", version: 5 },
 ];
 
 function minutesLabel(value) {
@@ -2420,8 +2493,9 @@ function minutesLabel(value) {
   return `${hours}:${minutes}`;
 }
 
-function CalendarSurface({ isWritable, onToast, onSelect }) {
+function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
   const [mode, setMode] = useState("week");
+  const [cursorDate, setCursorDate] = useState(() => new Date(2026, 6, 28));
   const [items, setItems] = useState(calendarSeed);
   const [selectedId, setSelectedId] = useState("calendar-analysis");
   const [projectFilter, setProjectFilter] = useState("Все проекты");
@@ -2442,16 +2516,69 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
   ));
   const projects = [...new Set(items.map((item) => item.project))];
   const assignees = [...new Set(items.map((item) => item.assignee))];
-  const days = ["Пн 27", "Вт 28", "Ср 29", "Чт 30", "Пт 31"];
+  const monthNames = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+  const monthNamesNominative = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+  const shortWeekdays = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+  const todayKey = "2026-07-28";
+  const toDateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const copyDate = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const getWeekStart = (date) => {
+    const start = copyDate(date);
+    start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+    return start;
+  };
+  const formatDate = (date) => `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+  const formatDay = (date) => `${shortWeekdays[date.getDay()]} ${date.getDate()}`;
+  const weekStart = getWeekStart(cursorDate);
+  const weekDates = Array.from({ length: 5 }, (_, index) => {
+    const day = copyDate(weekStart);
+    day.setDate(day.getDate() + index);
+    return day;
+  });
+  const visibleDates = mode === "week" ? weekDates : [cursorDate];
+  const periodTitle = mode === "day"
+    ? formatDate(cursorDate)
+    : mode === "week"
+      ? `${weekStart.getDate()}–${weekDates[4].getDate()} ${monthNames[weekStart.getMonth()]} ${weekStart.getFullYear()}`
+      : mode === "month"
+        ? `${monthNames[cursorDate.getMonth()]} ${cursorDate.getFullYear()}`
+        : String(cursorDate.getFullYear());
+  const periodUnit = mode === "day" ? "день" : mode === "week" ? "неделя" : mode === "month" ? "месяц" : "год";
+  const monthStartOffset = (new Date(cursorDate.getFullYear(), cursorDate.getMonth(), 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(cursorDate.getFullYear(), cursorDate.getMonth() + 1, 0).getDate();
+  const monthCells = Array.from({ length: monthStartOffset + daysInMonth }, (_, index) => index < monthStartOffset ? null : index - monthStartOffset + 1);
+  const datesWithEvents = new Set(visibleItems.map((item) => item.eventDate));
+  const yearMonths = Array.from({ length: 12 }, (_, month) => ({
+    month,
+    label: monthNamesNominative[month],
+    eventCount: visibleItems.filter((item) => item.eventDate?.startsWith(`${cursorDate.getFullYear()}-${String(month + 1).padStart(2, "0")}`)).length,
+  }));
 
   function selectCalendarItem(item) {
     setSelectedId(item.id);
     onSelect({ ...item, priority: item.tone === "high" ? "Высокая" : item.tone === "medium" ? "Средняя" : "Низкая", priorityTone: item.tone === "done" ? "low" : item.tone });
   }
 
+  function shiftPeriod(direction) {
+    setCursorDate((current) => {
+      const next = copyDate(current);
+      if (mode === "day") next.setDate(next.getDate() + direction);
+      if (mode === "week") next.setDate(next.getDate() + direction * 7);
+      if (mode === "month") next.setMonth(next.getMonth() + direction);
+      if (mode === "year") next.setFullYear(next.getFullYear() + direction);
+      return next;
+    });
+    setSlot(null);
+  }
+
+  function returnToToday() {
+    setCursorDate(new Date(2026, 6, 28));
+    setSlot(null);
+  }
+
   function openEditor(item = null, start = 600, title = "") {
     if (!isWritable) return onToast("Редактор событий недоступен в режиме только для чтения");
-    setEditor(createCalendarEventDraft({ ...(item || {}), title: item?.title || title, start: item?.start ?? start, isNew: !item }));
+    setEditor(createCalendarEventDraft({ ...(item || {}), eventDate: item?.eventDate || toDateKey(cursorDate), title: item?.title || title, start: item?.start ?? start, isNew: !item }));
   }
 
   function updateEditor(field, value) {
@@ -2559,7 +2686,19 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
       draggable={isWritable}
       className={`calendar-event calendar-event--${item.tone} ${selectedId === item.id ? "is-selected" : ""}`}
       onClick={() => { selectCalendarItem(item); openEditor(item); }}
-      onDragStart={() => setDraggedId(item.id)}
+      onDragStart={(event) => {
+        setDraggedId(item.id);
+        const ghost = event.currentTarget.cloneNode(true);
+        ghost.style.position = "absolute";
+        ghost.style.top = "-9999px";
+        ghost.style.opacity = "0.85";
+        ghost.style.width = `${event.currentTarget.offsetWidth}px`;
+        ghost.style.transform = "rotate(2deg)";
+        ghost.style.pointerEvents = "none";
+        document.body.appendChild(ghost);
+        event.dataTransfer.setDragImage(ghost, 15, 15);
+        requestAnimationFrame(() => document.body.removeChild(ghost));
+      }}
       aria-label={`${item.title}, ${minutesLabel(item.start)}–${minutesLabel(item.start + item.duration)}. Перетащите или используйте Alt со стрелками.`}
     >
       <strong>{compact ? item.title.slice(0, 18) : item.title}</strong>
@@ -2570,9 +2709,23 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
   return (
     <section className="calendar-surface" ref={surfaceRef} aria-label="Календарь">
       <div className="calendar-surface__header">
-        <div><p className="eyebrow">Планирование</p><h2>Календарь</h2><span>28 июля 2026 · Europe/Minsk</span></div>
+        <div>
+          <p className="eyebrow">Планирование</p>
+          <h2>Календарь</h2>
+          <span>{periodTitle} · Europe/Minsk</span>
+          <div className="calendar-navigation" role="group" aria-label="Навигация по календарю">
+            <button className="icon-button icon-button--bordered" type="button" onClick={() => shiftPeriod(-1)} aria-label={`Предыдущ${mode === "week" ? "ая" : "ий"} ${periodUnit}`}>
+              <ChevronLeftRegular aria-hidden="true" />
+            </button>
+            <button className="button button--secondary" type="button" onClick={returnToToday}>Сегодня</button>
+            <button className="icon-button icon-button--bordered" type="button" onClick={() => shiftPeriod(1)} aria-label={`Следующ${mode === "week" ? "ая" : "ий"} ${periodUnit}`}>
+              <ChevronRightRegular aria-hidden="true" />
+            </button>
+            <strong>{periodTitle}</strong>
+          </div>
+        </div>
         <div className="view-switcher" role="group" aria-label="Вид календаря">
-          {[['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц']].map(([value, label]) => <button key={value} type="button" className={mode === value ? "is-active" : ""} onClick={() => setMode(value)} aria-pressed={mode === value}>{label}</button>)}
+          {[['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц'], ['year', 'Год']].map(([value, label]) => <button key={value} type="button" className={mode === value ? "is-active" : ""} onClick={() => setMode(value)} aria-pressed={mode === value}>{label}</button>)}
         </div>
       </div>
       {!isWritable && <div className="calendar-readonly" role="status"><LockClosedRegular aria-hidden="true" /><span><strong>Только чтение.</strong> Данные календаря из разрешённого кэша; создание, перемещение и изменение длительности отключены.</span></div>}
@@ -2583,15 +2736,39 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
         <label><span>Исполнитель</span><select value={assigneeFilter} onChange={(event) => setAssigneeFilter(event.target.value)}><option>Все исполнители</option>{assignees.map((value) => <option key={value}>{value}</option>)}</select></label>
       </div>
       {mode === "month" ? (
-        <div className="month-grid" role="grid" aria-label="Июль 2026">
+        <div className="month-grid" role="grid" aria-label={periodTitle}>
           {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((day) => <strong key={day}>{day}</strong>)}
-          {Array.from({ length: 31 }, (_, index) => index + 1).map((day) => <button key={day} type="button" className={day === 28 ? "is-today" : ""} onClick={() => { setMode("day"); onToast(`Открыт день ${day} июля`); }}><span>{day}</span>{day >= 27 && day <= 31 && <i aria-label="Есть события" />}</button>)}
+          {monthCells.map((day, index) => day === null
+            ? <span className="month-grid__blank" key={`blank-${index}`} aria-hidden="true" />
+            : (() => {
+              const date = new Date(cursorDate.getFullYear(), cursorDate.getMonth(), day);
+              const dateKey = toDateKey(date);
+              return <button key={day} type="button" className={`${dateKey === todayKey ? "is-today" : ""} ${dateKey === toDateKey(cursorDate) ? "is-selected-day" : ""}`} onClick={() => { setCursorDate(date); setMode("day"); onToast(`Открыт день ${formatDate(date)}`); }}><span>{day}</span>{datesWithEvents.has(dateKey) && <i aria-label="Есть события" />}</button>;
+            })())}
+        </div>
+      ) : mode === "year" ? (
+        <div className="year-grid" role="grid" aria-label={`Календарный год ${periodTitle}`}>
+          {yearMonths.map(({ month, label, eventCount }) => (
+            <button
+              key={month}
+              type="button"
+              className={cursorDate.getMonth() === month ? "is-current-month" : ""}
+              onClick={() => {
+                setCursorDate(new Date(cursorDate.getFullYear(), month, 1));
+                setMode("month");
+              }}
+              aria-label={`Открыть ${label.toLowerCase()} ${cursorDate.getFullYear()}`}
+            >
+              <strong>{label}</strong>
+              <span>{eventCount ? `${eventCount} ${eventCount === 1 ? "событие" : "события"}` : "Нет событий"}</span>
+            </button>
+          ))}
         </div>
       ) : (
         <div className={`calendar-grid calendar-grid--${mode}`}>
-          <div className="calendar-grid__days"><span>Время</span>{(mode === "day" ? [days[1]] : days).map((day) => <strong key={day} className={day.startsWith("Вт") ? "is-today" : ""}>{day}</strong>)}</div>
+          <div className="calendar-grid__days"><span>Время</span>{visibleDates.map((day) => <strong key={toDateKey(day)} className={toDateKey(day) === todayKey ? "is-today" : ""}>{formatDay(day)}</strong>)}</div>
           <div className="calendar-grid__body">
-            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{(mode === "day" ? [0] : days).map((day, dayIndex) => <div key={dayIndex} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={() => { const moved = items.find((item) => item.id === draggedId); if (moved) applySchedule({ ...moved, start: hour * 60 }, "drag"); setDraggedId(null); }}>{mode === "day" || dayIndex === 1 ? visibleItems.filter((item) => item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week")) : null}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00${mode === "week" ? `, ${days[dayIndex]}` : ""}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
+            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{visibleDates.map((date) => <div key={toDateKey(date)} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const moved = items.find((item) => item.id === draggedId); if (moved) { const rect = event.currentTarget.getBoundingClientRect(); const y = event.clientY - rect.top; const slotHeight = 67; const minutes = Math.round((y / slotHeight) * 60 / 15) * 15; const start = hour * 60 + Math.min(minutes, 59); const previous = { ...moved }; onPushUndo("Перемещено событие", () => setItems((current) => current.map((item) => item.id === previous.id ? previous : item))); applySchedule({ ...moved, eventDate: toDateKey(date), start }, "drag"); } setDraggedId(null); }}>{visibleItems.filter((item) => item.eventDate === toDateKey(date) && item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week"))}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00, ${formatDate(date)}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
           </div>
         </div>
       )}
@@ -2609,8 +2786,27 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
 }
 
 export function App() {
+  const gateAccount = useMemo(() => getGateAccount(), []);
   const [authenticated, setAuthenticated] = useState(true);
-  const [activeView, setActiveView] = useState("tasks");
+  const [undoStack, setUndoStack] = useState([]);
+  const [nowMinutes, setNowMinutes] = useState(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
+  const [onboardingStep, setOnboardingStep] = useState(null);
+  const [activeView, setActiveView] = useState("today");
+  const [collapsedGroups, setCollapsedGroups] = useState(() => {
+    try {
+      const saved = localStorage.getItem("task-sidebar-collapsed");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("task-sidebar-collapsed", JSON.stringify(collapsedGroups));
+  }, [collapsedGroups]);
   const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
   const [taskStatus, setTaskStatus] = useState("В работе");
   const [checklist, setChecklist] = useState([
@@ -2628,12 +2824,16 @@ export function App() {
   const [unscheduled, setUnscheduled] = useState(initialUnscheduled);
   const [connectionIndex, setConnectionIndex] = useState(0);
   const [recoveryState, setRecoveryState] = useState("");
-  const [toast, setToast] = useState("");
+  const [toast, setToastMessage] = useState("");
+  const [toastLeaving, setToastLeaving] = useState(false);
+  const toastTimerRef = useRef(null);
+  const toastExitTimerRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchRequest, setSearchRequest] = useState({ query: "", filter: "Все" });
   const [userOpen, setUserOpen] = useState(false);
   const [inboxItems, setInboxItems] = useState(initialInboxItems);
   const [conversionItem, setConversionItem] = useState(null);
+  const [archiveAfterConvert, setArchiveAfterConvert] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorDraft, setEditorDraft] = useState(null);
   const [conflictDraft, setConflictDraft] = useState(null);
@@ -2643,10 +2843,13 @@ export function App() {
   const [sessionRevoked, setSessionRevoked] = useState(false);
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
   const [fileLocationState, setFileLocationState] = useState("available");
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    try { return localStorage.getItem("task-onboarding-shown") !== "1"; }
-    catch { return true; }
-  });
+  const [plannerWidth, setPlannerWidth] = useState(null);
+
+  const currentTimeTop = useMemo(() => {
+    const ROW = 69;
+    const START = 8;
+    return ((nowMinutes - START * 60) / 60) * ROW;
+  }, [nowMinutes]);
 
   const connections = useMemo(() => [
     { title: "Подключено к серверу компании", subtitle: "Онлайн", tone: "online" },
@@ -2657,15 +2860,61 @@ export function App() {
   ], []);
   const isDegraded = [1, 3, 4].includes(connectionIndex) || Boolean(recoveryState);
   const isOffline = isDegraded;
-  const isWritable = !isDegraded;
+  const isWritable = !isDegraded && hasCapability(gateAccount, "Task.Write");
+  const canReadAdmin = hasCapability(gateAccount, "Admin.Read");
+  const canReadOperations = hasCapability(gateAccount, "Operations.Read");
+
+  function windowAction(action) {
+    globalThis.taskDesktop?.windowAction?.(action);
+  }
+
+  function onToast(message) {
+    setToastMessage(message);
+    setToastLeaving(false);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
+    if (!message) return;
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastLeaving(true);
+      toastExitTimerRef.current = window.setTimeout(() => {
+        setToastMessage("");
+        setToastLeaving(false);
+      }, 200);
+    }, 3000);
+  }
+
+  function pushUndo(label, rollback) {
+    setUndoStack((previous) => {
+      const next = [...previous, { label, rollback }];
+      return next.length > 20 ? next.slice(-20) : next;
+    });
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    const action = undoStack[undoStack.length - 1];
+    action.rollback();
+    setUndoStack((previous) => previous.slice(0, -1));
+    onToast(`Отменено: ${action.label}`);
+  }
 
   useEffect(() => {
     function onKeyDown(event) {
-      if (showOnboarding) return;
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
+        const editing = document.activeElement?.tagName === "INPUT"
+          || document.activeElement?.tagName === "TEXTAREA"
+          || document.activeElement?.tagName === "SELECT"
+          || document.activeElement?.isContentEditable;
+        if (!editing) {
+          event.preventDefault();
+          undo();
+          return;
+        }
+      }
       if (event.altKey && event.key.toLowerCase() === "n") {
         event.preventDefault();
         if (authenticated && isWritable) setDialogOpen(true);
-        else if (authenticated) setToast("Создание отключено: сервер недоступен");
+        else if (authenticated) onToast("Создание отключено: сервер недоступен");
       }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && authenticated) {
         event.preventDefault();
@@ -2689,13 +2938,20 @@ export function App() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [authenticated, isWritable, showOnboarding]);
+  }, [authenticated, isWritable, undo]);
+
+  useEffect(() => () => {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
+  }, []);
 
   useEffect(() => {
-    if (!toast) return undefined;
-    const timer = window.setTimeout(() => setToast(""), 2400);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
+    const timer = window.setInterval(() => {
+      const d = new Date();
+      setNowMinutes(d.getHours() * 60 + d.getMinutes());
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   function dismissOnboarding(view, message) {
     setShowOnboarding(false);
@@ -2760,7 +3016,7 @@ export function App() {
       setActiveView("operations");
       return;
     }
-    setToast(`Раздел «${label}» вне текущего vertical slice`);
+    onToast(`Раздел «${label}» вне текущего vertical slice`);
   }
 
   function openSearchResult(result) {
@@ -2769,40 +3025,60 @@ export function App() {
       selectTask(baseTasks.find((task) => task.title === result.title) || baseTasks[0]);
     } else if (result.type === "Проект") {
       setActiveView("projects");
-      setToast(`Проект «${result.title}» открыт`);
+      onToast(`Проект «${result.title}» открыт`);
     } else if (result.type === "Файл") {
       setActiveView("files");
-      setToast(`Файл «${result.title}» открыт в каталоге`);
+      onToast(`Файл «${result.title}» открыт в каталоге`);
     } else if (result.group === "CRM") {
       setActiveView("crm");
-      setToast(`Контакт «${result.title}» открыт`);
+      onToast(`Контакт «${result.title}» открыт`);
     } else {
-      setToast(`${result.type} «${result.title}» открыт`);
+      onToast(`${result.type} «${result.title}» открыт`);
     }
     setSearchOpen(false);
   }
 
   function createTask(values) {
     if (!isWritable) {
-      setToast("Создание отключено: сервер недоступен");
+      onToast("Создание отключено: сервер недоступен");
       return;
     }
     const tone = values.priority === "Высокая" ? "high" : values.priority === "Низкая" ? "low" : "medium";
     const newTask = {
       id: `task-${Date.now()}`,
       title: values.title,
-      project: values.project,
+      project: values.project || "Без проекта",
       priority: values.priority,
       priorityTone: tone,
-      due: "Нет срока",
+      due: values.due,
       status: "Запланировано",
     };
     setUnscheduled((items) => [newTask, ...items]);
+    pushUndo("Создана задача", () => setUnscheduled((items) => items.filter((item) => item.id !== newTask.id)));
     selectTask(newTask);
     setDialogOpen(false);
-    setShowOnboarding(false);
-    try { localStorage.setItem("task-onboarding-shown", "1"); } catch { /* noop */ }
-    setToast("Задача добавлена в несрочные");
+    onToast(values.due === "Нет срока" ? "Задача создана без срока" : `Задача создана: ${values.due}`);
+  }
+
+  function resizePlanner(event) {
+    const grid = event.currentTarget.parentElement;
+    if (!grid) return;
+    const bounds = grid.getBoundingClientRect();
+    const minPanelWidth = 360;
+    const nextWidth = Math.round(Math.min(Math.max(event.clientX - bounds.left, minPanelWidth), bounds.width - minPanelWidth));
+    setPlannerWidth(nextWidth);
+  }
+
+  function handlePlannerResizerKeyDown(event) {
+    if (!event.key.startsWith("Arrow")) return;
+    event.preventDefault();
+    const amount = event.shiftKey ? 48 : 24;
+    const direction = event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 : 0;
+    if (!direction) return;
+    const grid = event.currentTarget.parentElement;
+    const width = grid?.getBoundingClientRect().width || 0;
+    const current = plannerWidth ?? Math.round(width * 0.476);
+    setPlannerWidth(Math.min(Math.max(current + direction * amount, 360), width - 360));
   }
 
   function convertInboxItem(values) {
@@ -2818,35 +3094,41 @@ export function App() {
       quickCreated: values.quickCreated || false,
     };
     setUnscheduled((items) => [newTask, ...items]);
-    setInboxItems((items) => items.map((item) => item.id === values.id ? { ...item, status: "Преобразовано" } : item));
+    setInboxItems((items) => items.map((item) => item.id === values.id ? { ...item, status: values.archiveAfterConvert ? "Архивировано" : "Преобразовано" } : item));
     setConversionItem(null);
     setSelectedTask(newTask);
-    setShowOnboarding(false);
-    try { localStorage.setItem("task-onboarding-shown", "1"); } catch { /* noop */ }
-    setActiveView("tasks");
-    setToast("Задача создана, исходная запись закрыта");
+    setActiveView("today");
+    onToast(values.archiveAfterConvert ? "Задача создана, заметка архивирована" : "Задача создана, исходная запись закрыта");
   }
 
   function saveTaskDraft(draft) {
+    const previousTask = selectedTask;
+    const previousEditorDraft = editorDraft;
+    const previousConflictDraft = conflictDraft;
+    setSelectedTask(draft);
     setEditorOpen(false);
     setEditorDraft(draft);
     setConflictDraft(draft);
+    pushUndo("Изменена задача", () => {
+      setSelectedTask(previousTask);
+      setEditorDraft(previousEditorDraft);
+      setConflictDraft(previousConflictDraft);
+    });
   }
 
   function returnToConflictDraft() {
     setConflictDraft(null);
     setEditorOpen(true);
-    setToast("Локальный черновик открыт без потери изменений");
+    onToast("Локальный черновик открыт без потери изменений");
   }
 
   function resolveConflict(action) {
     if (action === "reapply") {
-      setSelectedTask((task) => ({ ...task, ...conflictDraft, quickCreated: false }));
-      setUnscheduled((items) => items.map((item) => item.id === (conflictDraft?.id || selectedTask.id) ? { ...item, ...conflictDraft, quickCreated: false } : item));
-      setToast("Изменения повторно применены к актуальной версии");
+      setSelectedTask((task) => ({ ...task, ...conflictDraft }));
+      onToast("Изменения повторно применены к актуальной версии");
     }
-    if (action === "reload") setToast("Загружена актуальная версия сервера");
-    if (action === "discard") setToast("Локальный черновик отменён");
+    if (action === "reload") onToast("Загружена актуальная версия сервера");
+    if (action === "discard") onToast("Локальный черновик отменён");
     setEditorDraft(null);
     setConflictDraft(null);
   }
@@ -2888,21 +3170,16 @@ export function App() {
     return (
       <div className="desktop-stage">
         <div className="window" data-testid="task-window">
-          <Titlebar />
-          <AuthSurface onAuthenticated={() => { setAuthenticated(true); setShowOnboarding(true); setConnectionIndex(0); setRecoveryState(""); setToast("Вход выполнен, данные синхронизированы"); }} />
-          {toast && <div className="toast" role="status">{toast}</div>}
-        </div>
-      </div>
-    );
-  }
-
-  if (showOnboarding) {
-    return (
-      <div className="desktop-stage">
-        <div className="window" data-testid="task-window">
-          <Titlebar />
-          <OnboardingSurface onStart={dismissOnboarding} />
-          {toast && <div className="toast" role="status">{toast}</div>}
+          <header className="titlebar">
+            <div className="titlebar__brand"><span className="app-mark"><TaskListSquareLtrFilled aria-hidden="true" /></span><span>Task</span></div>
+            <div className="window-controls" aria-label="Управление окном">
+              <button type="button" aria-label="Свернуть" onClick={() => windowAction("minimize")}><SubtractRegular aria-hidden="true" /></button>
+              <button type="button" aria-label="Развернуть" onClick={() => windowAction("toggleMaximize")}><SquareRegular aria-hidden="true" /></button>
+              <button type="button" aria-label="Закрыть" onClick={() => windowAction("close")}><DismissRegular aria-hidden="true" /></button>
+            </div>
+          </header>
+          <AuthSurface account={gateAccount} onAuthenticated={() => { setAuthenticated(true); setOnboardingStep(0); setConnectionIndex(0); setRecoveryState(""); onToast("Вход выполнен, данные синхронизированы"); }} />
+          {toast && <div className={`toast ${toastLeaving ? "is-leaving" : ""}`} role="status">{toast}</div>}
         </div>
       </div>
     );
@@ -2911,7 +3188,17 @@ export function App() {
   return (
     <div className="desktop-stage">
       <div className="window" data-testid="task-window">
-        <Titlebar />
+        <header className="titlebar">
+          <div className="titlebar__brand">
+            <span className="app-mark"><TaskListSquareLtrFilled aria-hidden="true" /></span>
+            <span>Task</span>
+          </div>
+          <div className="window-controls" aria-label="Управление окном">
+            <button type="button" aria-label="Свернуть" onClick={() => windowAction("minimize")}><SubtractRegular aria-hidden="true" /></button>
+            <button type="button" aria-label="Развернуть" onClick={() => windowAction("toggleMaximize")}><SquareRegular aria-hidden="true" /></button>
+            <button type="button" aria-label="Закрыть" onClick={() => windowAction("close")}><DismissRegular aria-hidden="true" /></button>
+          </div>
+        </header>
 
         <div className="app-shell">
           <aside className="sidebar">
@@ -2919,18 +3206,43 @@ export function App() {
               <NavigationRegular aria-hidden="true" />
             </button>
             <nav aria-label="Основная навигация">
-              <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
-              <NavItem icon={CalendarRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
-              <NavItem icon={CalendarRegular} label="Календарь" active={activeView === "calendar"} onClick={() => showSection("Календарь")} />
-              <NavItem icon={MailInboxRegular} label="Входящие" active={activeView === "inbox"} onClick={() => showSection("Входящие")} />
-              <NavItem icon={FolderRegular} label="Проекты" active={activeView === "projects"} onClick={() => showSection("Проекты")} />
-              <NavItem icon={DocumentRegular} label="Файлы" active={activeView === "files"} onClick={() => showSection("Файлы")} />
-              <NavItem icon={PersonRegular} label="CRM" active={activeView === "crm"} onClick={() => showSection("CRM")} />
-              <NavItem icon={SearchRegular} label="Поиск" active={activeView === "search"} onClick={() => showSection("Поиск")} />
-              <NavItem icon={ArchiveRegular} label="Архив и корзина" active={activeView === "lifecycle"} onClick={() => showSection("Архив и корзина")} />
-              <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />
-              <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />
-              <NavItem icon={AddRegular} label="Создать задачу" onClick={() => isWritable ? setDialogOpen(true) : setToast("Создание отключено: сервер недоступен")} />
+              <button
+                type="button"
+                className="sidebar-group-toggle"
+                onClick={() => setCollapsedGroups((state) => ({ ...state, main: !state.main }))}
+                aria-expanded={!collapsedGroups.main}
+              >
+                <ChevronRightRegular aria-hidden="true" style={collapsedGroups.main ? undefined : { transform: "rotate(90deg)" }} />
+                <span>Основное</span>
+              </button>
+              {!collapsedGroups.main && (
+                <>
+                  <NavItem icon={CalendarRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
+                  <NavItem icon={CalendarRegular} label="Календарь" active={activeView === "calendar"} onClick={() => showSection("Календарь")} />
+                  <NavItem icon={MailInboxRegular} label="Входящие" active={activeView === "inbox"} onClick={() => showSection("Входящие")} />
+                  <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
+                  <NavItem icon={FolderRegular} label="Проекты" active={activeView === "projects"} onClick={() => showSection("Проекты")} />
+                  <NavItem icon={DocumentRegular} label="Файлы" active={activeView === "files"} onClick={() => showSection("Файлы")} />
+                  <NavItem icon={PersonRegular} label="CRM" active={activeView === "crm"} onClick={() => showSection("CRM")} />
+                  <NavItem icon={SearchRegular} label="Поиск" active={activeView === "search"} onClick={() => showSection("Поиск")} />
+                  <NavItem icon={ArchiveRegular} label="Архив и корзина" active={activeView === "lifecycle"} onClick={() => showSection("Архив и корзина")} />
+                </>
+              )}
+              <button
+                type="button"
+                className="sidebar-group-toggle"
+                onClick={() => setCollapsedGroups((state) => ({ ...state, admin: !state.admin }))}
+                aria-expanded={!collapsedGroups.admin}
+              >
+                <ChevronRightRegular aria-hidden="true" style={collapsedGroups.admin ? undefined : { transform: "rotate(90deg)" }} />
+                <span>Администрирование</span>
+              </button>
+              {!collapsedGroups.admin && (
+                <>
+                  {canReadAdmin && <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />}
+                  {canReadOperations && <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />}
+                </>
+              )}
             </nav>
             <div className="sidebar__bottom">
               <NavItem icon={SettingsRegular} label="Настройки" active={activeView === "settings"} onClick={() => showSection("Настройки")} />
@@ -2950,7 +3262,7 @@ export function App() {
                 <span>Поиск по Task</span>
                 <kbd>Ctrl+K</kbd>
               </button>
-              <button className="button button--primary new-task" type="button" aria-label="Новая задача" disabled={!isWritable} onClick={() => isWritable ? setDialogOpen(true) : setToast("Создание отключено: сервер недоступен")}>
+              <button className="button button--primary new-task" type="button" aria-label="Новая задача" disabled={!isWritable} onClick={() => isWritable ? setDialogOpen(true) : onToast("Создание отключено: сервер недоступен")}>
                 <AddRegular aria-hidden="true" />
                 <span>Новая задача</span>
                 <kbd>Alt+N</kbd>
@@ -2964,8 +3276,8 @@ export function App() {
                   notifications={notifications}
                   setNotifications={setNotifications}
                   onClose={() => setNotificationOpen(false)}
-                  onToast={setToast}
-                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "tasks"); setToast(`Открыто: ${notification.meta}`); }}
+                  onToast={onToast}
+                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); onToast(`Открыто: ${notification.meta}`); }}
                 />
               )}
               <button
@@ -2976,19 +3288,19 @@ export function App() {
               >
                 <span className="connection__dot" />
                 <span>
-                  <strong>{connection.title}</strong>
+                  <strong title={connection.title}>{connection.title}</strong>
                   <small>{connection.subtitle}</small>
                 </span>
               </button>
-              <button className="user-menu" type="button" onClick={() => setUserOpen((open) => !open)} aria-expanded={userOpen} aria-label="Профиль Ивана С.">
-                <span className="avatar">ИС</span>
-                <span>Иван С.</span>
+              <button className="user-menu" type="button" onClick={() => setUserOpen((open) => !open)} aria-expanded={userOpen} aria-label={`Профиль ${gateAccount.displayName}, роль ${gateAccount.roleLabel}`}>
+                <span className="avatar">{gateAccount.initials}</span>
+                <span>{gateAccount.shortName}</span>
                 <ChevronDownRegular aria-hidden="true" />
               </button>
               {userOpen && (
                 <div className="user-popover">
-                  <strong>Иван С.</strong>
-                  <span>ivan.s · Сотрудник</span>
+                  <strong>{gateAccount.displayName}</strong>
+                  <span>{gateAccount.login} · {gateAccount.roleLabel}</span>
                   <button type="button" onClick={() => { setSessionRevoked(true); setUserOpen(false); }}>
                     <LockClosedRegular aria-hidden="true" /> Прервать сессию (демо)
                   </button>
@@ -3021,15 +3333,15 @@ export function App() {
                   {!recoveryState && connectionIndex === 4 && <><strong>Локальное хранилище заполнено.</strong> Текущий кэш доступен только для чтения, но обновить или безопасно записать изменения сейчас нельзя. Освободите не менее 620 МБ.</>}
                 </span>
                 <button type="button" onClick={() => setDiagnosticsOpen(true)}>Диагностика</button>
-                {recoveryState === "reconnecting" && <button type="button" onClick={() => { setRecoveryState(""); setToast("Попытка восстановления прервана; режим только чтение сохранён"); }}>Прервать</button>}
+                {recoveryState === "reconnecting" && <button type="button" onClick={() => { setRecoveryState(""); onToast("Попытка восстановления прервана; режим только чтение сохранён"); }}>Прервать</button>}
                 {recoveryState === "reconnecting" && <button type="button" onClick={() => setRecoveryState("scope")}>Проверить область</button>}
-                {recoveryState === "scope" && <button type="button" onClick={() => { setRecoveryState(""); setConnectionIndex(2); setToast("Разрешённые данные обновлены, изменения снова доступны"); }}>Обновить данные</button>}
+                {recoveryState === "scope" && <button type="button" onClick={() => { setRecoveryState(""); setConnectionIndex(2); onToast("Разрешённые данные обновлены, изменения снова доступны"); }}>Обновить данные</button>}
                 {recoveryState === "failed" && <button type="button" onClick={() => { setRecoveryAttempts(0); setRecoveryState("reconnecting"); }}>Начать новую проверку</button>}
                 {!recoveryState && <button type="button" onClick={() => { setRecoveryAttempts((value) => value + 1); setRecoveryState("reconnecting"); }}>{connectionIndex === 4 ? "Проверить место" : "Повторить"}</button>}
               </section>
             )}
 
-            {activeView === "today" ? <div className="content-grid">
+            {activeView === "today" ? <div className="content-grid" style={plannerWidth ? { "--planner-width": `${plannerWidth}px` } : undefined}>
               <section className="planner" aria-label="План дня">
                 <div className="date-toolbar">
                   <button className="icon-button icon-button--bordered" type="button" onClick={() => setDateIndex((index) => Math.max(0, index - 1))} aria-label="Предыдущий день">
@@ -3046,7 +3358,7 @@ export function App() {
 
                 <div className="all-day">
                   <span className="all-day__label">Весь день</span>
-                  <button type="button" className="all-day__task" onClick={() => setToast("Открыта задача «Сформировать отчёт по проекту «Альфа»»")}>
+                  <button type="button" className="all-day__task" onClick={() => onToast("Открыта задача «Сформировать отчёт по проекту «Альфа»»")}>
                     <FlagRegular aria-hidden="true" />
                     <span>Сформировать отчёт по проекту «Альфа»</span>
                     <small>Крайний срок</small>
@@ -3076,7 +3388,7 @@ export function App() {
                     <TimelineCard task={baseTasks[2]} selected={selectedTask.id === "presentation"} onSelect={selectTask} />
                   </div>
                   <div className="timeline-event event--lunch">
-                    <button type="button" onClick={() => setToast("Обед: 12:00 – 12:45")}>
+                    <button type="button" onClick={() => onToast("Обед: 12:00 – 12:45")}>
                       <DrinkCoffeeRegular aria-hidden="true" />
                       <span><small>12:00 – 12:45</small><strong>Обед</strong></span>
                     </button>
@@ -3093,12 +3405,34 @@ export function App() {
                   <div className="timeline-event event--tomorrow">
                     <TimelineCard task={baseTasks[6]} selected={selectedTask.id === "tomorrow"} onSelect={selectTask} />
                   </div>
-                  <div className="current-time" aria-label="Текущее время 10:23">
-                    <span>10:23</span>
-                    <i />
-                  </div>
+                  {nowMinutes >= 480 && nowMinutes <= 1080 && (
+                    <div className="current-time" style={{ top: `${currentTimeTop}px` }} aria-label={`Текущее время ${minutesLabel(nowMinutes)}`}>
+                      <span>{minutesLabel(nowMinutes)}</span>
+                      <i />
+                    </div>
+                  )}
                 </div>
               </section>
+
+              <div
+                className="planner-resizer"
+                role="separator"
+                aria-label="Изменить ширину плана дня"
+                aria-orientation="vertical"
+                aria-valuemin={360}
+                aria-valuetext={plannerWidth ? `${plannerWidth} пикселей` : "Стандартная ширина"}
+                tabIndex={0}
+                onPointerDown={(event) => {
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  resizePlanner(event);
+                }}
+                onPointerMove={(event) => {
+                  if (event.currentTarget.hasPointerCapture(event.pointerId)) resizePlanner(event);
+                }}
+                onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)}
+                onKeyDown={handlePlannerResizerKeyDown}
+                title="Перетащите, чтобы изменить ширину панелей"
+              />
 
               <aside className="right-panel">
                 <section className="unscheduled">
@@ -3148,7 +3482,7 @@ export function App() {
                             setEditorDraft(null);
                             setEditorOpen(true);
                           } else {
-                            setToast("Редактирование отключено: сервер недоступен");
+                            onToast("Редактирование отключено: сервер недоступен");
                           }
                         }} aria-label="Редактировать задачу">
                           <EditRegular aria-hidden="true" />
@@ -3157,7 +3491,7 @@ export function App() {
                       <div className="details__topline">
                         <label className="status-control">
                           <PlayCircleRegular aria-hidden="true" />
-                          <select value={taskStatus} disabled={!isWritable} onChange={(event) => setTaskStatus(event.target.value)} aria-label="Статус задачи">
+                          <select value={taskStatus} disabled={!isWritable} onChange={(event) => { const previousStatus = taskStatus; setTaskStatus(event.target.value); pushUndo("Изменён статус", () => setTaskStatus(previousStatus)); }} aria-label="Статус задачи">
                             <option>Запланировано</option>
                             <option>В работе</option>
                             <option>Готово</option>
@@ -3205,7 +3539,7 @@ export function App() {
                             <button
                               type="button"
                               disabled={fileLocationState !== "available"}
-                              onClick={() => setToast("Открытие файла недоступно в прототипе")}
+                              onClick={() => onToast("Открытие файла недоступно в прототипе")}
                             >
                               Открыть файл
                             </button>
@@ -3248,12 +3582,12 @@ export function App() {
                               disabled={!isWritable}
                               onClick={() => {
                                 setWatchingTask((value) => !value);
-                                setToast(watchingTask ? "Вы больше не наблюдаете за задачей" : "Вы наблюдаете за задачей");
+                                onToast(watchingTask ? "Вы больше не наблюдаете за задачей" : "Вы наблюдаете за задачей");
                               }}
                             >
                               {watchingTask ? "Не наблюдать" : "Наблюдать"}
                             </button>
-                            <button type="button" className="button button--quiet" onClick={() => setToast("Список наблюдателей обновлён с сервера")}>
+                            <button type="button" className="button button--quiet" onClick={() => onToast("Список наблюдателей обновлён с сервера")}>
                               Обновить
                             </button>
                           </div>
@@ -3272,56 +3606,61 @@ export function App() {
                 items={inboxItems}
                 setItems={setInboxItems}
                 isWritable={isWritable}
-                onConvert={setConversionItem}
-                onToast={setToast}
+                onConvert={(item) => { setArchiveAfterConvert(false); setConversionItem(item); }}
+                onToast={onToast}
+                archiveAfterConvert={archiveAfterConvert}
+                setArchiveAfterConvert={setArchiveAfterConvert}
               />
             ) : activeView === "tasks" ? (
               <TasksSurface
                 isWritable={isWritable}
-                onToast={setToast}
+                onToast={onToast}
+                onPushUndo={pushUndo}
                 onOpenTask={(task) => {
                   selectTask(task);
                   setActiveView("today");
-                  setToast(`Открыта задача «${task.title}»`);
+                  onToast(`Открыта задача «${task.title}»`);
                 }}
               />
             ) : activeView === "calendar" ? (
               <CalendarSurface
                 isWritable={isWritable}
-                onToast={setToast}
+                onToast={onToast}
                 onSelect={(task) => selectTask(task)}
+                onPushUndo={pushUndo}
               />
             ) : activeView === "projects" ? (
-              <ProjectsSurface isWritable={isWritable} onToast={setToast} />
+              <ProjectsSurface isWritable={isWritable} onToast={onToast} onNavigateToTasks={(name) => { setActiveView("tasks"); onToast(`Задачи участника ${name}`); }} />
             ) : activeView === "files" ? (
-              <FilesSurface isWritable={isWritable} onToast={setToast} />
+              <FilesSurface isWritable={isWritable} onToast={onToast} />
             ) : activeView === "search" ? (
               <SearchSurface
                 offline={isOffline}
                 initialQuery={searchRequest.query}
                 initialFilter={searchRequest.filter}
                 onOpenResult={openSearchResult}
-                onToast={setToast}
+                onToast={onToast}
               />
             ) : activeView === "lifecycle" ? (
-              <LifecycleSurface offline={isOffline} onToast={setToast} />
+              <LifecycleSurface offline={isOffline} onToast={onToast} />
             ) : activeView === "settings" ? (
               <SettingsSurface
                 offline={isOffline}
-                onToast={setToast}
+                onToast={onToast}
+                account={gateAccount}
                 onForceSignIn={() => {
                   setAuthenticated(false);
                   setRecoveryState("");
                   setConnectionIndex(0);
-                  setToast("Сессия завершена; выполните вход снова");
+                  onToast("Сессия завершена; выполните вход снова");
                 }}
               />
             ) : activeView === "admin" ? (
-              <AdminSurface offline={isOffline} onToast={setToast} />
+              <AdminSurface offline={isOffline} onToast={onToast} />
             ) : activeView === "operations" ? (
-              <OperationsSurface offline={isOffline} onToast={setToast} />
+              <OperationsSurface offline={isOffline} onToast={onToast} />
             ) : (
-              <CrmSurface isWritable={isWritable} onToast={setToast} />
+              <CrmSurface isWritable={isWritable} onToast={onToast} />
             )}
 
             <footer className="statusbar">
@@ -3351,7 +3690,7 @@ export function App() {
           <SearchOverlay
             offline={isOffline}
             onClose={() => setSearchOpen(false)}
-            onToast={setToast}
+            onToast={onToast}
             onOpenResult={openSearchResult}
             onShowAll={(request) => {
               setSearchRequest(request);
@@ -3364,8 +3703,10 @@ export function App() {
           <ConversionDrawer
             item={conversionItem}
             isWritable={isWritable}
-            onClose={() => setConversionItem(null)}
+            onClose={() => { setConversionItem(null); setArchiveAfterConvert(false); }}
             onConvert={convertInboxItem}
+            archiveAfterConvert={archiveAfterConvert}
+            setArchiveAfterConvert={setArchiveAfterConvert}
           />
         )}
         {editorOpen && (
@@ -3389,12 +3730,28 @@ export function App() {
               const nextAttempt = recoveryAttempts + 1;
               setRecoveryAttempts(nextAttempt);
               setRecoveryState(nextAttempt >= 2 ? "failed" : "reconnecting");
-              setToast(nextAttempt >= 2 ? "Повторная проверка не удалась; цикл остановлен безопасно" : "Начата проверка подключения; запись остаётся отключённой");
+              onToast(nextAttempt >= 2 ? "Повторная проверка не удалась; цикл остановлен безопасно" : "Начата проверка подключения; запись остаётся отключённой");
             }}
           />
         )}
         {sessionRevoked && <SessionRevokedDialog onSignIn={() => { setSessionRevoked(false); setAuthenticated(false); setRecoveryState(""); setNotificationOpen(false); }} />}
-        {toast && <div className="toast" role="status">{toast}</div>}
+        {onboardingStep !== null && onboardingStep < 3 && (
+          <div className="onboarding-overlay" role="dialog" aria-modal="true" aria-label="Знакомство с Task">
+            <h3>{["Сегодня", "Разделы", "Новая задача"][onboardingStep]}</h3>
+            <p>{[
+              "Здесь твой план на день. Задачи из календаря слева, несрочное — справа.",
+              "Проекты, поиск, архив — слева в меню. Начни с Сегодня.",
+              "Синяя кнопка вверху или Ctrl+N. Всё готово.",
+            ][onboardingStep]}</p>
+            <div>
+              <button className="button button--secondary" type="button" onClick={() => setOnboardingStep(null)}>Пропустить</button>
+              <button className="button button--primary" type="button" onClick={() => setOnboardingStep((step) => step === 2 ? null : step + 1)}>
+                {onboardingStep === 2 ? "Начать работу" : "Далее"}
+              </button>
+            </div>
+          </div>
+        )}
+        {toast && <div className={`toast ${toastLeaving ? "is-leaving" : ""}`} role="status">{toast}</div>}
       </div>
     </div>
   );
