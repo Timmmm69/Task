@@ -811,9 +811,12 @@
 .calendar-composer {
   position: fixed;
   z-index: 20;
-  right: 30px;
-  bottom: 66px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: min(460px, calc(100vw - 90px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
   padding: 15px;
   border: 1px solid #a8adb3;
   border-radius: 7px;
@@ -1085,9 +1088,7 @@ button {
   color: inherit;
 }
 
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
+*:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -3345,41 +3346,6 @@ select:focus-visible {
   height: 17px;
 }
 
-.lifecycle-banner {
-  display: flex;
-  padding: 9px 12px;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #c7d9ee;
-  border-radius: 7px;
-  background: #f1f7fd;
-  color: #194c77;
-}
-
-.lifecycle-banner--offline {
-  border-color: #ead39b;
-  background: #fff8e7;
-  color: #6d4c0d;
-}
-
-.lifecycle-banner > svg {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 auto;
-}
-
-.lifecycle-banner span,
-.lifecycle-banner strong,
-.lifecycle-banner small {
-  display: block;
-}
-
-.lifecycle-banner small {
-  margin-top: 2px;
-  color: inherit;
-  opacity: 0.8;
-}
-
 .lifecycle-toolbar {
   display: grid;
   grid-template-columns: minmax(280px, 1fr) 180px auto;
@@ -3551,7 +3517,7 @@ select:focus-visible {
 
 .lifecycle-detail {
   min-height: 0;
-  padding: 20px 22px;
+  padding: 20px;
   overflow: auto;
 }
 
@@ -3851,7 +3817,7 @@ select:focus-visible {
 
 .settings-nav button.is-active {
   background: #e4effa;
-  color: #155f9e;
+  color: #0b3d6b;
   box-shadow: inset 3px 0 #2270b5;
 }
 
@@ -3888,7 +3854,7 @@ select:focus-visible {
 
 .settings-panel {
   min-height: 0;
-  padding: 20px 24px 26px;
+  padding: 20px 24px 24px;
   overflow: auto;
 }
 
@@ -4334,7 +4300,7 @@ select:focus-visible {
 .admin-tabs button small {
   margin-top: 1px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .admin-workspace {
@@ -4509,7 +4475,7 @@ select:focus-visible {
 
 .admin-inspector {
   min-height: 0;
-  padding: 20px 22px 24px;
+  padding: 20px 20px 24px;
   overflow: auto;
 }
 
@@ -4555,7 +4521,7 @@ select:focus-visible {
 .semantic-badge.is-success {
   border-color: #b9ddc9;
   background: #eaf7ef;
-  color: #17633d;
+  color: #0d3d24;
 }
 
 .semantic-badge.is-warning {
@@ -5011,7 +4977,7 @@ select:focus-visible {
 .operations-tabs button small {
   margin-top: 1px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .operations-workspace {
@@ -5258,7 +5224,7 @@ select:focus-visible {
 
 .operations-inspector {
   min-height: 0;
-  padding: 18px 20px 22px;
+  padding: 20px 20px 24px;
   overflow: auto;
 }
 
@@ -5589,7 +5555,8 @@ select:focus-visible {
   }
 
   .settings-layout {
-    grid-template-columns: 220px minmax(460px, 1fr);
+    display: block;
+    overflow: auto;
   }
 
   .settings-panel {
@@ -5793,7 +5760,9 @@ select:focus-visible {
 }
 
 .task-editor {
-  width: min(600px, calc(100% - 40px));
+  width: min(680px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
 }
 
 .conflict-dialog {
@@ -6016,10 +5985,18 @@ select:focus-visible {
 }
 
 .task-table-wrap {
-  overflow: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border);
   border-radius: 7px;
-  background: #fff;
+  background:
+    linear-gradient(to right, white 30%, transparent),
+    linear-gradient(to right, transparent, white 70%) 100% 0,
+    linear-gradient(to right, rgb(0 0 0 / 8%), transparent),
+    linear-gradient(to left, rgb(0 0 0 / 8%), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 .task-table {
@@ -6080,7 +6057,7 @@ select:focus-visible {
   border-radius: 50%;
   color: #fff;
   background: #476582;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -6334,7 +6311,7 @@ select:focus-visible {
   border-radius: 50%;
   color: #fff;
   background: #476582;
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .project-tabs {
@@ -6543,11 +6520,6 @@ select:focus-visible {
   background: rgb(32 31 30 / 76%);
 }
 
-.task-editor {
-  max-height: calc(100vh - 48px);
-  overflow: auto;
-}
-
 .editor-section {
   display: grid;
   gap: 12px;
@@ -6712,8 +6684,10 @@ select:focus-visible {
   gap: 12px;
   margin-bottom: 18px;
   padding: 12px 14px;
-  border: 1px solid;
+  border: 1px solid #c7d9ee;
   border-radius: 7px;
+  background: #f1f7fd;
+  color: #194c77;
 }
 
 .lifecycle-banner > svg {
@@ -6722,8 +6696,15 @@ select:focus-visible {
 }
 
 .lifecycle-banner span,
-.lifecycle-banner strong {
+.lifecycle-banner strong,
+.lifecycle-banner small {
   display: block;
+}
+
+.lifecycle-banner small {
+  margin-top: 2px;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .lifecycle-banner span {
@@ -6740,6 +6721,12 @@ select:focus-visible {
   border-color: #9fd89f;
   color: #0b5c0b;
   background: #effbef;
+}
+
+.lifecycle-banner--offline {
+  border-color: #ead39b;
+  color: #6d4c0d;
+  background: #fff8e7;
 }
 
 .lifecycle-banner--paused {
@@ -7126,4 +7113,71 @@ select:focus-visible {
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .sidebar {
+    overflow-x: auto;
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .workspace-header {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .page-title h1 {
+    font-size: 20px;
+  }
+
+  .connection {
+    display: none;
+  }
+}
+
+.onboarding-overlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  background: rgb(15 23 42 / 50%);
+  color: #fff;
+  text-align: center;
+}
+
+.onboarding-overlay h3 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.onboarding-overlay p {
+  max-width: 380px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+.onboarding-overlay > div {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
 }
