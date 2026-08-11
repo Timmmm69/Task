@@ -2692,7 +2692,10 @@ export function App() {
   const [unscheduled, setUnscheduled] = useState(initialUnscheduled);
   const [connectionIndex, setConnectionIndex] = useState(0);
   const [recoveryState, setRecoveryState] = useState("");
-  const [toast, setToast] = useState("");
+  const [toast, setToastMessage] = useState("");
+  const [toastLeaving, setToastLeaving] = useState(false);
+  const toastTimerRef = useRef(null);
+  const toastExitTimerRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchRequest, setSearchRequest] = useState({ query: "", filter: "Все" });
   const [userOpen, setUserOpen] = useState(false);
@@ -2732,6 +2735,21 @@ export function App() {
     globalThis.taskDesktop?.windowAction?.(action);
   }
 
+  function onToast(message) {
+    setToastMessage(message);
+    setToastLeaving(false);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
+    if (!message) return;
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastLeaving(true);
+      toastExitTimerRef.current = window.setTimeout(() => {
+        setToastMessage("");
+        setToastLeaving(false);
+      }, 200);
+    }, 3000);
+  }
+
   function pushUndo(label, rollback) {
     setUndoStack((previous) => {
       const next = [...previous, { label, rollback }];
@@ -2744,7 +2762,7 @@ export function App() {
     const action = undoStack[undoStack.length - 1];
     action.rollback();
     setUndoStack((previous) => previous.slice(0, -1));
-    setToast(`Отменено: ${action.label}`);
+    onToast(`Отменено: ${action.label}`);
   }
 
   useEffect(() => {
@@ -2763,7 +2781,7 @@ export function App() {
       if (event.altKey && event.key.toLowerCase() === "n") {
         event.preventDefault();
         if (authenticated && isWritable) setDialogOpen(true);
-        else if (authenticated) setToast("Создание отключено: сервер недоступен");
+        else if (authenticated) onToast("Создание отключено: сервер недоступен");
       }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k" && authenticated) {
         event.preventDefault();
@@ -2789,11 +2807,10 @@ export function App() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [authenticated, isWritable, undo]);
 
-  useEffect(() => {
-    if (!toast) return undefined;
-    const timer = window.setTimeout(() => setToast(""), 2400);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
+  useEffect(() => () => {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -2859,7 +2876,7 @@ export function App() {
       setActiveView("operations");
       return;
     }
-    setToast(`Раздел «${label}» вне текущего vertical slice`);
+    onToast(`Раздел «${label}» вне текущего vertical slice`);
   }
 
   function openSearchResult(result) {
@@ -2868,22 +2885,22 @@ export function App() {
       selectTask(baseTasks.find((task) => task.title === result.title) || baseTasks[0]);
     } else if (result.type === "Проект") {
       setActiveView("projects");
-      setToast(`Проект «${result.title}» открыт`);
+      onToast(`Проект «${result.title}» открыт`);
     } else if (result.type === "Файл") {
       setActiveView("files");
-      setToast(`Файл «${result.title}» открыт в каталоге`);
+      onToast(`Файл «${result.title}» открыт в каталоге`);
     } else if (result.group === "CRM") {
       setActiveView("crm");
-      setToast(`Контакт «${result.title}» открыт`);
+      onToast(`Контакт «${result.title}» открыт`);
     } else {
-      setToast(`${result.type} «${result.title}» открыт`);
+      onToast(`${result.type} «${result.title}» открыт`);
     }
     setSearchOpen(false);
   }
 
   function createTask(values) {
     if (!isWritable) {
-      setToast("Создание отключено: сервер недоступен");
+      onToast("Создание отключено: сервер недоступен");
       return;
     }
     const tone = values.priority === "Высокая" ? "high" : values.priority === "Низкая" ? "low" : "medium";
@@ -2900,7 +2917,7 @@ export function App() {
     pushUndo("Создана задача", () => setUnscheduled((items) => items.filter((item) => item.id !== newTask.id)));
     selectTask(newTask);
     setDialogOpen(false);
-    setToast(values.due === "Нет срока" ? "Задача создана без срока" : `Задача создана: ${values.due}`);
+    onToast(values.due === "Нет срока" ? "Задача создана без срока" : `Задача создана: ${values.due}`);
   }
 
   function resizePlanner(event) {
@@ -2940,7 +2957,7 @@ export function App() {
     setConversionItem(null);
     setSelectedTask(newTask);
     setActiveView("today");
-    setToast("Задача создана, исходная запись закрыта");
+    onToast("Задача создана, исходная запись закрыта");
   }
 
   function saveTaskDraft(draft) {
@@ -2961,16 +2978,16 @@ export function App() {
   function returnToConflictDraft() {
     setConflictDraft(null);
     setEditorOpen(true);
-    setToast("Локальный черновик открыт без потери изменений");
+    onToast("Локальный черновик открыт без потери изменений");
   }
 
   function resolveConflict(action) {
     if (action === "reapply") {
       setSelectedTask((task) => ({ ...task, ...conflictDraft }));
-      setToast("Изменения повторно применены к актуальной версии");
+      onToast("Изменения повторно применены к актуальной версии");
     }
-    if (action === "reload") setToast("Загружена актуальная версия сервера");
-    if (action === "discard") setToast("Локальный черновик отменён");
+    if (action === "reload") onToast("Загружена актуальная версия сервера");
+    if (action === "discard") onToast("Локальный черновик отменён");
     setEditorDraft(null);
     setConflictDraft(null);
   }
@@ -3020,8 +3037,8 @@ export function App() {
               <button type="button" aria-label="Закрыть" onClick={() => windowAction("close")}><DismissRegular aria-hidden="true" /></button>
             </div>
           </header>
-          <AuthSurface account={gateAccount} onAuthenticated={() => { setAuthenticated(true); setOnboardingStep(0); setConnectionIndex(0); setRecoveryState(""); setToast("Вход выполнен, данные синхронизированы"); }} />
-          {toast && <div className="toast" role="status">{toast}</div>}
+          <AuthSurface account={gateAccount} onAuthenticated={() => { setAuthenticated(true); setOnboardingStep(0); setConnectionIndex(0); setRecoveryState(""); onToast("Вход выполнен, данные синхронизированы"); }} />
+          {toast && <div className={`toast ${toastLeaving ? "is-leaving" : ""}`} role="status">{toast}</div>}
         </div>
       </div>
     );
@@ -3059,7 +3076,7 @@ export function App() {
               <NavItem icon={ArchiveRegular} label="Архив и корзина" active={activeView === "lifecycle"} onClick={() => showSection("Архив и корзина")} />
               {canReadAdmin && <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />}
               {canReadOperations && <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />}
-              <NavItem icon={AddRegular} label="Создать задачу" onClick={() => isWritable ? setDialogOpen(true) : setToast("Создание отключено: сервер недоступен")} />
+              <NavItem icon={AddRegular} label="Создать задачу" onClick={() => isWritable ? setDialogOpen(true) : onToast("Создание отключено: сервер недоступен")} />
             </nav>
             <div className="sidebar__bottom">
               <NavItem icon={SettingsRegular} label="Настройки" active={activeView === "settings"} onClick={() => showSection("Настройки")} />
@@ -3079,7 +3096,7 @@ export function App() {
                 <span>Поиск по Task</span>
                 <kbd>Ctrl+K</kbd>
               </button>
-              <button className="button button--primary new-task" type="button" aria-label="Новая задача" disabled={!isWritable} onClick={() => isWritable ? setDialogOpen(true) : setToast("Создание отключено: сервер недоступен")}>
+              <button className="button button--primary new-task" type="button" aria-label="Новая задача" disabled={!isWritable} onClick={() => isWritable ? setDialogOpen(true) : onToast("Создание отключено: сервер недоступен")}>
                 <AddRegular aria-hidden="true" />
                 <span>Новая задача</span>
                 <kbd>Alt+N</kbd>
@@ -3093,8 +3110,8 @@ export function App() {
                   notifications={notifications}
                   setNotifications={setNotifications}
                   onClose={() => setNotificationOpen(false)}
-                  onToast={setToast}
-                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); setToast(`Открыто: ${notification.meta}`); }}
+                  onToast={onToast}
+                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); onToast(`Открыто: ${notification.meta}`); }}
                 />
               )}
               <button
@@ -3150,9 +3167,9 @@ export function App() {
                   {!recoveryState && connectionIndex === 4 && <><strong>Локальное хранилище заполнено.</strong> Текущий кэш доступен только для чтения, но обновить или безопасно записать изменения сейчас нельзя. Освободите не менее 620 МБ.</>}
                 </span>
                 <button type="button" onClick={() => setDiagnosticsOpen(true)}>Диагностика</button>
-                {recoveryState === "reconnecting" && <button type="button" onClick={() => { setRecoveryState(""); setToast("Попытка восстановления прервана; режим только чтение сохранён"); }}>Прервать</button>}
+                {recoveryState === "reconnecting" && <button type="button" onClick={() => { setRecoveryState(""); onToast("Попытка восстановления прервана; режим только чтение сохранён"); }}>Прервать</button>}
                 {recoveryState === "reconnecting" && <button type="button" onClick={() => setRecoveryState("scope")}>Проверить область</button>}
-                {recoveryState === "scope" && <button type="button" onClick={() => { setRecoveryState(""); setConnectionIndex(2); setToast("Разрешённые данные обновлены, изменения снова доступны"); }}>Обновить данные</button>}
+                {recoveryState === "scope" && <button type="button" onClick={() => { setRecoveryState(""); setConnectionIndex(2); onToast("Разрешённые данные обновлены, изменения снова доступны"); }}>Обновить данные</button>}
                 {recoveryState === "failed" && <button type="button" onClick={() => { setRecoveryAttempts(0); setRecoveryState("reconnecting"); }}>Начать новую проверку</button>}
                 {!recoveryState && <button type="button" onClick={() => { setRecoveryAttempts((value) => value + 1); setRecoveryState("reconnecting"); }}>{connectionIndex === 4 ? "Проверить место" : "Повторить"}</button>}
               </section>
@@ -3175,7 +3192,7 @@ export function App() {
 
                 <div className="all-day">
                   <span className="all-day__label">Весь день</span>
-                  <button type="button" className="all-day__task" onClick={() => setToast("Открыта задача «Сформировать отчёт по проекту «Альфа»»")}>
+                  <button type="button" className="all-day__task" onClick={() => onToast("Открыта задача «Сформировать отчёт по проекту «Альфа»»")}>
                     <FlagRegular aria-hidden="true" />
                     <span>Сформировать отчёт по проекту «Альфа»</span>
                     <small>Крайний срок</small>
@@ -3205,7 +3222,7 @@ export function App() {
                     <TimelineCard task={baseTasks[2]} selected={selectedTask.id === "presentation"} onSelect={selectTask} />
                   </div>
                   <div className="timeline-event event--lunch">
-                    <button type="button" onClick={() => setToast("Обед: 12:00 – 12:45")}>
+                    <button type="button" onClick={() => onToast("Обед: 12:00 – 12:45")}>
                       <DrinkCoffeeRegular aria-hidden="true" />
                       <span><small>12:00 – 12:45</small><strong>Обед</strong></span>
                     </button>
@@ -3299,7 +3316,7 @@ export function App() {
                             setEditorDraft(null);
                             setEditorOpen(true);
                           } else {
-                            setToast("Редактирование отключено: сервер недоступен");
+                            onToast("Редактирование отключено: сервер недоступен");
                           }
                         }} aria-label="Редактировать задачу">
                           <EditRegular aria-hidden="true" />
@@ -3356,7 +3373,7 @@ export function App() {
                             <button
                               type="button"
                               disabled={fileLocationState !== "available"}
-                              onClick={() => setToast("Открытие файла недоступно в прототипе")}
+                              onClick={() => onToast("Открытие файла недоступно в прототипе")}
                             >
                               Открыть файл
                             </button>
@@ -3399,12 +3416,12 @@ export function App() {
                               disabled={!isWritable}
                               onClick={() => {
                                 setWatchingTask((value) => !value);
-                                setToast(watchingTask ? "Вы больше не наблюдаете за задачей" : "Вы наблюдаете за задачей");
+                                onToast(watchingTask ? "Вы больше не наблюдаете за задачей" : "Вы наблюдаете за задачей");
                               }}
                             >
                               {watchingTask ? "Не наблюдать" : "Наблюдать"}
                             </button>
-                            <button type="button" className="button button--quiet" onClick={() => setToast("Список наблюдателей обновлён с сервера")}>
+                            <button type="button" className="button button--quiet" onClick={() => onToast("Список наблюдателей обновлён с сервера")}>
                               Обновить
                             </button>
                           </div>
@@ -3424,58 +3441,58 @@ export function App() {
                 setItems={setInboxItems}
                 isWritable={isWritable}
                 onConvert={setConversionItem}
-                onToast={setToast}
+                onToast={onToast}
               />
             ) : activeView === "tasks" ? (
               <TasksSurface
                 isWritable={isWritable}
-                onToast={setToast}
+                onToast={onToast}
                 onPushUndo={pushUndo}
                 onOpenTask={(task) => {
                   selectTask(task);
                   setActiveView("today");
-                  setToast(`Открыта задача «${task.title}»`);
+                  onToast(`Открыта задача «${task.title}»`);
                 }}
               />
             ) : activeView === "calendar" ? (
               <CalendarSurface
                 isWritable={isWritable}
-                onToast={setToast}
+                onToast={onToast}
                 onSelect={(task) => selectTask(task)}
                 onPushUndo={pushUndo}
               />
             ) : activeView === "projects" ? (
-              <ProjectsSurface isWritable={isWritable} onToast={setToast} />
+              <ProjectsSurface isWritable={isWritable} onToast={onToast} />
             ) : activeView === "files" ? (
-              <FilesSurface isWritable={isWritable} onToast={setToast} />
+              <FilesSurface isWritable={isWritable} onToast={onToast} />
             ) : activeView === "search" ? (
               <SearchSurface
                 offline={isOffline}
                 initialQuery={searchRequest.query}
                 initialFilter={searchRequest.filter}
                 onOpenResult={openSearchResult}
-                onToast={setToast}
+                onToast={onToast}
               />
             ) : activeView === "lifecycle" ? (
-              <LifecycleSurface offline={isOffline} onToast={setToast} />
+              <LifecycleSurface offline={isOffline} onToast={onToast} />
             ) : activeView === "settings" ? (
               <SettingsSurface
                 offline={isOffline}
-                onToast={setToast}
+                onToast={onToast}
                 account={gateAccount}
                 onForceSignIn={() => {
                   setAuthenticated(false);
                   setRecoveryState("");
                   setConnectionIndex(0);
-                  setToast("Сессия завершена; выполните вход снова");
+                  onToast("Сессия завершена; выполните вход снова");
                 }}
               />
             ) : activeView === "admin" ? (
-              <AdminSurface offline={isOffline} onToast={setToast} />
+              <AdminSurface offline={isOffline} onToast={onToast} />
             ) : activeView === "operations" ? (
-              <OperationsSurface offline={isOffline} onToast={setToast} />
+              <OperationsSurface offline={isOffline} onToast={onToast} />
             ) : (
-              <CrmSurface isWritable={isWritable} onToast={setToast} />
+              <CrmSurface isWritable={isWritable} onToast={onToast} />
             )}
 
             <footer className="statusbar">
@@ -3505,7 +3522,7 @@ export function App() {
           <SearchOverlay
             offline={isOffline}
             onClose={() => setSearchOpen(false)}
-            onToast={setToast}
+            onToast={onToast}
             onOpenResult={openSearchResult}
             onShowAll={(request) => {
               setSearchRequest(request);
@@ -3543,7 +3560,7 @@ export function App() {
               const nextAttempt = recoveryAttempts + 1;
               setRecoveryAttempts(nextAttempt);
               setRecoveryState(nextAttempt >= 2 ? "failed" : "reconnecting");
-              setToast(nextAttempt >= 2 ? "Повторная проверка не удалась; цикл остановлен безопасно" : "Начата проверка подключения; запись остаётся отключённой");
+              onToast(nextAttempt >= 2 ? "Повторная проверка не удалась; цикл остановлен безопасно" : "Начата проверка подключения; запись остаётся отключённой");
             }}
           />
         )}
@@ -3564,7 +3581,7 @@ export function App() {
             </div>
           </div>
         )}
-        {toast && <div className="toast" role="status">{toast}</div>}
+        {toast && <div className={`toast ${toastLeaving ? "is-leaving" : ""}`} role="status">{toast}</div>}
       </div>
     </div>
   );
