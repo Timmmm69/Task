@@ -2640,6 +2640,10 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
 export function App() {
   const gateAccount = useMemo(() => getGateAccount(), []);
   const [authenticated, setAuthenticated] = useState(true);
+  const [nowMinutes, setNowMinutes] = useState(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
   const [onboardingStep, setOnboardingStep] = useState(null);
   const [activeView, setActiveView] = useState("today");
   const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
@@ -2675,6 +2679,12 @@ export function App() {
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
   const [fileLocationState, setFileLocationState] = useState("available");
   const [plannerWidth, setPlannerWidth] = useState(null);
+
+  const currentTimeTop = useMemo(() => {
+    const ROW = 69;
+    const START = 8;
+    return ((nowMinutes - START * 60) / 60) * ROW;
+  }, [nowMinutes]);
 
   const connections = useMemo(() => [
     { title: "Подключено к серверу компании", subtitle: "Онлайн", tone: "online" },
@@ -2729,6 +2739,14 @@ export function App() {
     const timer = window.setTimeout(() => setToast(""), 2400);
     return () => window.clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const d = new Date();
+      setNowMinutes(d.getHours() * 60 + d.getMinutes());
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   function selectTask(task) {
     setSelectedTask(task);
@@ -3139,6 +3157,12 @@ export function App() {
                   <div className="timeline-event event--tomorrow">
                     <TimelineCard task={baseTasks[6]} selected={selectedTask.id === "tomorrow"} onSelect={selectTask} />
                   </div>
+                  {nowMinutes >= 480 && nowMinutes <= 1080 && (
+                    <div className="current-time" style={{ top: `${currentTimeTop}px` }} aria-label={`Текущее время ${minutesLabel(nowMinutes)}`}>
+                      <span>{minutesLabel(nowMinutes)}</span>
+                      <i />
+                    </div>
+                  )}
                 </div>
               </section>
 

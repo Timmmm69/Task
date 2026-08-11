@@ -1657,6 +1657,42 @@ button {
 .event--mail { top: 505px; height: 74px; }
 .event--tomorrow { top: 583px; height: 74px; }
 
+.current-time {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  color: var(--red);
+  pointer-events: none;
+}
+
+.current-time span {
+  width: 89px;
+  padding-left: 17px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.current-time i {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--red);
+}
+
+.current-time i::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
 .timeline-card {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr);
