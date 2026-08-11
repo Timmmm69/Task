@@ -337,6 +337,19 @@ function NavItem({ icon: Icon, label, active, onClick }) {
   );
 }
 
+function Titlebar() {
+  return (
+    <header className="titlebar">
+      <div className="titlebar__brand"><span className="app-mark"><TaskListSquareLtrFilled aria-hidden="true" /></span><span>Task</span></div>
+      <div className="window-controls" aria-label="Управление окном">
+        <button type="button" aria-label="Свернуть"><SubtractRegular aria-hidden="true" /></button>
+        <button type="button" aria-label="Развернуть"><SquareRegular aria-hidden="true" /></button>
+        <button type="button" aria-label="Закрыть"><DismissRegular aria-hidden="true" /></button>
+      </div>
+    </header>
+  );
+}
+
 function TimelineCard({ task, selected, onSelect }) {
   const statusIcon = task.status === "Готово" ? CheckmarkCircleRegular : PlayCircleRegular;
   const StatusIcon = statusIcon;
@@ -413,6 +426,67 @@ function NewTaskDialog({ onClose, onCreate }) {
         </form>
       </section>
     </div>
+  );
+}
+
+const ONBOARDING_TIPS = [
+  "Alt+N — создать задачу из любого места программы.",
+  "Ctrl+K — быстрый поиск по задачам, файлам и контактам.",
+  "Кликните на задачу — откроется панель с деталями и файлами.",
+  "Входящие: быстро сбросьте мысль, а оформите задачу позже.",
+];
+
+function OnboardingSurface({ onStart }) {
+  const [tipIndex] = useState(() => Math.floor(Math.random() * ONBOARDING_TIPS.length));
+
+  const todayStr = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
+
+  return (
+    <main className="onboarding-surface" aria-label="Добро пожаловать в Task">
+      <section className="onboarding-hero">
+        <span className="onboarding-hero__mark"><TaskListSquareLtrFilled aria-hidden="true" /></span>
+        <h1>Добро пожаловать в Task</h1>
+        <p>Всё готово к работе. С чего начнём?</p>
+      </section>
+
+      <div className="onboarding-cards">
+        <button className="onboarding-card" type="button" onClick={() => onStart("tasks", "Создайте первую задачу через Alt+N или кнопку в шапке")}>
+          <ClipboardTaskListLtrRegular aria-hidden="true" />
+          <strong>Создайте первую задачу</strong>
+          <span>Alt+N или кнопка «Новая задача» вверху</span>
+          <small>Начать</small>
+        </button>
+        <button className="onboarding-card" type="button" onClick={() => onStart("projects", "Раздел «Проекты» открыт")}>
+          <FolderRegular aria-hidden="true" />
+          <strong>Откройте проекты</strong>
+          <span>Просмотрите текущие проекты и задачи команды</span>
+          <small>Проекты</small>
+        </button>
+        <button className="onboarding-card" type="button" onClick={() => onStart("settings", "Раздел «Настройки» открыт")}>
+          <SettingsRegular aria-hidden="true" />
+          <strong>Настройте профиль</strong>
+          <span>Укажите отдел и настройте уведомления</span>
+          <small>Профиль</small>
+        </button>
+      </div>
+
+      <section className="onboarding-context">
+        <span className="onboarding-context__date">Сегодня: {todayStr}</span>
+        <div className="onboarding-context__stats">
+          <span><ClipboardTaskListLtrRegular aria-hidden="true" /> Назначенные вам задачи: <strong>0</strong></span>
+        </div>
+      </section>
+
+      <aside className="onboarding-tip" role="status">
+        <span>Совет дня</span>
+        <p>{ONBOARDING_TIPS[tipIndex]}</p>
+      </aside>
+
+      <div className="onboarding-actions">
+        <button className="button button--primary" type="button" onClick={() => onStart("tasks")}>Перейти к задачам</button>
+        <button className="button button--secondary" type="button" onClick={() => onStart("tasks", "Этот экран больше не появится. Alt+N для быстрой задачи.")}>Понятно, начать работу</button>
+      </div>
+    </main>
   );
 }
 
@@ -1619,14 +1693,15 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
 
 function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
   const [title, setTitle] = useState(item.title);
-  const [project, setProject] = useState("Отчётность");
+  const [project, setProject] = useState("Без проекта");
   const [priority, setPriority] = useState("Средняя");
-  const [due, setDue] = useState("2026-07-29");
+  const [due, setDue] = useState(new Date().toISOString().slice(0, 10));
 
   function submit(event) {
     event.preventDefault();
     if (!title.trim() || !isWritable) return;
-    onConvert({ ...item, title: title.trim(), project, priority, due });
+    const isQuickDefault = project === "Без проекта" && priority === "Средняя";
+    onConvert({ ...item, title: title.trim(), project, priority, due, quickCreated: isQuickDefault });
   }
 
   return (
@@ -1634,8 +1709,9 @@ function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
       <section className="conversion-drawer" role="dialog" aria-modal="true" aria-labelledby="conversion-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="dialog__header"><div><p className="eyebrow">Inbox → Task</p><h2 id="conversion-title">Преобразовать в задачу</h2></div><button className="icon-button" type="button" onClick={onClose} aria-label="Закрыть преобразование"><DismissRegular aria-hidden="true" /></button></div>
         <form onSubmit={submit}>
-          <label className="field"><span>Название задачи</span><input value={title} onChange={(event) => setTitle(event.target.value)} autoFocus /></label>
-          <label className="field"><span>Проект</span><select value={project} onChange={(event) => setProject(event.target.value)}><option>Отчётность</option><option>Внутренние процессы</option><option>Коммуникации</option></select></label>
+          <label className="field"><span>Название задачи</span><input value={title} onChange={(event) => setTitle(event.target.value)} autoFocus placeholder="Что нужно сделать?" /></label>
+            <small className="field-hint">Только название обязательно. Остальное можно уточнить позже.</small>
+            <label className="field"><span>Проект</span><select value={project} onChange={(event) => setProject(event.target.value)}><option>Без проекта</option><option>Отчётность</option><option>Внутренние процессы</option><option>Коммуникации</option></select></label>
           <div className="dialog__grid">
             <label className="field"><span>Приоритет</span><select value={priority} onChange={(event) => setPriority(event.target.value)}><option>Низкая</option><option>Средняя</option><option>Высокая</option></select></label>
             <label className="field"><span>Срок</span><input type="date" value={due} onChange={(event) => setDue(event.target.value)} /></label>
@@ -1903,7 +1979,7 @@ function TasksSurface({ isWritable, onOpenTask, onToast }) {
             {visible.map((task) => (
               <tr key={task.id} className={selectedIds.has(task.id) ? "is-selected" : ""}>
                 <td className="task-select-cell"><input type="checkbox" aria-label={`Выбрать: ${task.title}`} checked={selectedIds.has(task.id)} onChange={() => toggleSelected(task.id)} /></td>
-                <td><button type="button" className="table-title" onClick={() => onOpenTask(task)}>{task.title}</button></td>
+                <td><button type="button" className="table-title" onClick={() => onOpenTask(task)}>{task.quickCreated && <span className="quick-created-dot" title="Задача создана быстро — уточните проект и срок"><span className="quick-created-dot__mark" aria-hidden="true" /></span>}{task.title}</button></td>
                 <td>{task.project}</td>
                 <td><span className="table-person"><span className="mini-avatar">{task.assignee.split(" ").map((word) => word[0]).join("")}</span>{task.assignee}</span></td>
                 <td><span className={`status-pill status-pill--${task.status === "Просрочено" ? "danger" : task.status === "Готово" ? "done" : "neutral"}`}>{task.status}</span></td>
@@ -2534,7 +2610,7 @@ function CalendarSurface({ isWritable, onToast, onSelect }) {
 
 export function App() {
   const [authenticated, setAuthenticated] = useState(true);
-  const [activeView, setActiveView] = useState("today");
+  const [activeView, setActiveView] = useState("tasks");
   const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
   const [taskStatus, setTaskStatus] = useState("В работе");
   const [checklist, setChecklist] = useState([
@@ -2567,6 +2643,10 @@ export function App() {
   const [sessionRevoked, setSessionRevoked] = useState(false);
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
   const [fileLocationState, setFileLocationState] = useState("available");
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    try { return localStorage.getItem("task-onboarding-shown") !== "1"; }
+    catch { return true; }
+  });
 
   const connections = useMemo(() => [
     { title: "Подключено к серверу компании", subtitle: "Онлайн", tone: "online" },
@@ -2581,6 +2661,7 @@ export function App() {
 
   useEffect(() => {
     function onKeyDown(event) {
+      if (showOnboarding) return;
       if (event.altKey && event.key.toLowerCase() === "n") {
         event.preventDefault();
         if (authenticated && isWritable) setDialogOpen(true);
@@ -2608,13 +2689,20 @@ export function App() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [authenticated, isWritable]);
+  }, [authenticated, isWritable, showOnboarding]);
 
   useEffect(() => {
     if (!toast) return undefined;
     const timer = window.setTimeout(() => setToast(""), 2400);
     return () => window.clearTimeout(timer);
   }, [toast]);
+
+  function dismissOnboarding(view, message) {
+    setShowOnboarding(false);
+    try { localStorage.setItem("task-onboarding-shown", "1"); } catch { /* noop */ }
+    if (view) setActiveView(view);
+    if (message) setToast(message);
+  }
 
   function selectTask(task) {
     setSelectedTask(task);
@@ -2677,7 +2765,7 @@ export function App() {
 
   function openSearchResult(result) {
     if (result.type === "Задача") {
-      setActiveView("today");
+      setActiveView("tasks");
       selectTask(baseTasks.find((task) => task.title === result.title) || baseTasks[0]);
     } else if (result.type === "Проект") {
       setActiveView("projects");
@@ -2712,6 +2800,8 @@ export function App() {
     setUnscheduled((items) => [newTask, ...items]);
     selectTask(newTask);
     setDialogOpen(false);
+    setShowOnboarding(false);
+    try { localStorage.setItem("task-onboarding-shown", "1"); } catch { /* noop */ }
     setToast("Задача добавлена в несрочные");
   }
 
@@ -2725,12 +2815,15 @@ export function App() {
       priorityTone: tone,
       due: values.due,
       status: "Запланировано",
+      quickCreated: values.quickCreated || false,
     };
     setUnscheduled((items) => [newTask, ...items]);
     setInboxItems((items) => items.map((item) => item.id === values.id ? { ...item, status: "Преобразовано" } : item));
     setConversionItem(null);
     setSelectedTask(newTask);
-    setActiveView("today");
+    setShowOnboarding(false);
+    try { localStorage.setItem("task-onboarding-shown", "1"); } catch { /* noop */ }
+    setActiveView("tasks");
     setToast("Задача создана, исходная запись закрыта");
   }
 
@@ -2748,7 +2841,8 @@ export function App() {
 
   function resolveConflict(action) {
     if (action === "reapply") {
-      setSelectedTask((task) => ({ ...task, ...conflictDraft }));
+      setSelectedTask((task) => ({ ...task, ...conflictDraft, quickCreated: false }));
+      setUnscheduled((items) => items.map((item) => item.id === (conflictDraft?.id || selectedTask.id) ? { ...item, ...conflictDraft, quickCreated: false } : item));
       setToast("Изменения повторно применены к актуальной версии");
     }
     if (action === "reload") setToast("Загружена актуальная версия сервера");
@@ -2770,7 +2864,7 @@ export function App() {
     : activeView === "inbox"
       ? ["Входящие", `${inboxItems.filter((item) => item.status !== "Преобразовано").length} необработанных записей`]
       : activeView === "tasks"
-        ? ["Мои задачи", "Список, фильтры и безопасные действия"]
+        ? ["Мои задачи", "Список, фильтры и действия с задачами"]
         : activeView === "calendar"
           ? ["Календарь", "День, неделя, месяц и планирование"]
           : activeView === "projects"
@@ -2794,15 +2888,20 @@ export function App() {
     return (
       <div className="desktop-stage">
         <div className="window" data-testid="task-window">
-          <header className="titlebar">
-            <div className="titlebar__brand"><span className="app-mark"><TaskListSquareLtrFilled aria-hidden="true" /></span><span>Task</span></div>
-            <div className="window-controls" aria-label="Управление окном">
-              <button type="button" aria-label="Свернуть"><SubtractRegular aria-hidden="true" /></button>
-              <button type="button" aria-label="Развернуть"><SquareRegular aria-hidden="true" /></button>
-              <button type="button" aria-label="Закрыть"><DismissRegular aria-hidden="true" /></button>
-            </div>
-          </header>
-          <AuthSurface onAuthenticated={() => { setAuthenticated(true); setConnectionIndex(0); setRecoveryState(""); setToast("Вход выполнен, данные синхронизированы"); }} />
+          <Titlebar />
+          <AuthSurface onAuthenticated={() => { setAuthenticated(true); setShowOnboarding(true); setConnectionIndex(0); setRecoveryState(""); setToast("Вход выполнен, данные синхронизированы"); }} />
+          {toast && <div className="toast" role="status">{toast}</div>}
+        </div>
+      </div>
+    );
+  }
+
+  if (showOnboarding) {
+    return (
+      <div className="desktop-stage">
+        <div className="window" data-testid="task-window">
+          <Titlebar />
+          <OnboardingSurface onStart={dismissOnboarding} />
           {toast && <div className="toast" role="status">{toast}</div>}
         </div>
       </div>
@@ -2812,17 +2911,7 @@ export function App() {
   return (
     <div className="desktop-stage">
       <div className="window" data-testid="task-window">
-        <header className="titlebar">
-          <div className="titlebar__brand">
-            <span className="app-mark"><TaskListSquareLtrFilled aria-hidden="true" /></span>
-            <span>Task</span>
-          </div>
-          <div className="window-controls" aria-label="Управление окном">
-            <button type="button" aria-label="Свернуть"><SubtractRegular aria-hidden="true" /></button>
-            <button type="button" aria-label="Развернуть"><SquareRegular aria-hidden="true" /></button>
-            <button type="button" aria-label="Закрыть"><DismissRegular aria-hidden="true" /></button>
-          </div>
-        </header>
+        <Titlebar />
 
         <div className="app-shell">
           <aside className="sidebar">
@@ -2830,10 +2919,10 @@ export function App() {
               <NavigationRegular aria-hidden="true" />
             </button>
             <nav aria-label="Основная навигация">
+              <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
               <NavItem icon={CalendarRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
               <NavItem icon={CalendarRegular} label="Календарь" active={activeView === "calendar"} onClick={() => showSection("Календарь")} />
               <NavItem icon={MailInboxRegular} label="Входящие" active={activeView === "inbox"} onClick={() => showSection("Входящие")} />
-              <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
               <NavItem icon={FolderRegular} label="Проекты" active={activeView === "projects"} onClick={() => showSection("Проекты")} />
               <NavItem icon={DocumentRegular} label="Файлы" active={activeView === "files"} onClick={() => showSection("Файлы")} />
               <NavItem icon={PersonRegular} label="CRM" active={activeView === "crm"} onClick={() => showSection("CRM")} />
@@ -2876,7 +2965,7 @@ export function App() {
                   setNotifications={setNotifications}
                   onClose={() => setNotificationOpen(false)}
                   onToast={setToast}
-                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); setToast(`Открыто: ${notification.meta}`); }}
+                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "tasks"); setToast(`Открыто: ${notification.meta}`); }}
                 />
               )}
               <button
@@ -3022,8 +3111,8 @@ export function App() {
                       <button className={`unscheduled-row ${selectedTask.id === task.id ? "is-selected" : ""}`} type="button" key={task.id} onClick={() => selectTask(task)}>
                         <PriorityIcon tone={task.priorityTone} />
                         <span className="unscheduled-row__body">
-                          <strong>{task.title}</strong>
-                          <small>Проект: {task.project}</small>
+                          <strong>{task.quickCreated && <span className="quick-created-dot" title="Задача создана быстро — уточните проект и срок"><span className="quick-created-dot__mark" aria-hidden="true" /></span>}{task.title}</strong>
+                          <small>Проект: {task.project}{task.project === "Без проекта" ? " · можно уточнить позже" : ""}</small>
                         </span>
                         <span className="unscheduled-row__meta">
                           <Priority tone={task.priorityTone} label={task.priority} />
