@@ -2566,7 +2566,19 @@ function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
       draggable={isWritable}
       className={`calendar-event calendar-event--${item.tone} ${selectedId === item.id ? "is-selected" : ""}`}
       onClick={() => { selectCalendarItem(item); openEditor(item); }}
-      onDragStart={() => setDraggedId(item.id)}
+      onDragStart={(event) => {
+        setDraggedId(item.id);
+        const ghost = event.currentTarget.cloneNode(true);
+        ghost.style.position = "absolute";
+        ghost.style.top = "-9999px";
+        ghost.style.opacity = "0.85";
+        ghost.style.width = `${event.currentTarget.offsetWidth}px`;
+        ghost.style.transform = "rotate(2deg)";
+        ghost.style.pointerEvents = "none";
+        document.body.appendChild(ghost);
+        event.dataTransfer.setDragImage(ghost, 15, 15);
+        requestAnimationFrame(() => document.body.removeChild(ghost));
+      }}
       aria-label={`${item.title}, ${minutesLabel(item.start)}–${minutesLabel(item.start + item.duration)}. Перетащите или используйте Alt со стрелками.`}
     >
       <strong>{compact ? item.title.slice(0, 18) : item.title}</strong>
@@ -2636,7 +2648,7 @@ function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
         <div className={`calendar-grid calendar-grid--${mode}`}>
           <div className="calendar-grid__days"><span>Время</span>{visibleDates.map((day) => <strong key={toDateKey(day)} className={toDateKey(day) === todayKey ? "is-today" : ""}>{formatDay(day)}</strong>)}</div>
           <div className="calendar-grid__body">
-            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{visibleDates.map((date) => <div key={toDateKey(date)} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={() => { const moved = items.find((item) => item.id === draggedId); if (moved) { const previous = { ...moved }; onPushUndo("Перемещено событие", () => setItems((current) => current.map((item) => item.id === previous.id ? previous : item))); applySchedule({ ...moved, eventDate: toDateKey(date), start: hour * 60 }, "drag"); } setDraggedId(null); }}>{visibleItems.filter((item) => item.eventDate === toDateKey(date) && item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week"))}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00, ${formatDate(date)}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
+            {Array.from({ length: 11 }, (_, index) => 8 + index).map((hour) => <div className="calendar-hour" key={hour}><time>{String(hour).padStart(2, "0")}:00</time>{visibleDates.map((date) => <div key={toDateKey(date)} className="calendar-slot" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const moved = items.find((item) => item.id === draggedId); if (moved) { const rect = event.currentTarget.getBoundingClientRect(); const y = event.clientY - rect.top; const slotHeight = 67; const minutes = Math.round((y / slotHeight) * 60 / 15) * 15; const start = hour * 60 + Math.min(minutes, 59); const previous = { ...moved }; onPushUndo("Перемещено событие", () => setItems((current) => current.map((item) => item.id === previous.id ? previous : item))); applySchedule({ ...moved, eventDate: toDateKey(date), start }, "drag"); } setDraggedId(null); }}>{visibleItems.filter((item) => item.eventDate === toDateKey(date) && item.start >= hour * 60 && item.start < (hour + 1) * 60).map((item) => renderItem(item, mode === "week"))}<button type="button" className="calendar-slot__create" disabled={!isWritable} onClick={() => setSlot(hour * 60)} aria-label={`Создать задачу в ${hour}:00, ${formatDate(date)}`}><AddRegular aria-hidden="true" /></button></div>)}</div>)}
           </div>
         </div>
       )}
