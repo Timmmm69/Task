@@ -12,6 +12,7 @@
   --text: #1b1a19;
   --muted: #605e5c;
   --subtle: #8a8886;
+  --hover: #f4f6f8;
   --border: #e1dfdd;
   --surface: #ffffff;
   --surface-soft: #fafafa;
@@ -212,7 +213,7 @@
 .catalog-item.is-selected,
 .crm-list-item:hover,
 .crm-list-item.is-selected {
-  background: #edf5fc;
+  background: var(--hover);
 }
 
 .catalog-item.is-selected,
@@ -1245,7 +1246,7 @@ button {
 }
 
 .nav-item:hover {
-  background: #f3f2f1;
+  background: var(--hover);
 }
 
 .nav-item.is-active {
@@ -1714,7 +1715,7 @@ button {
 }
 
 .timeline-card:hover {
-  background: #f7f7f7;
+  background: var(--hover);
 }
 
 .timeline-card.is-selected {
@@ -1894,7 +1895,7 @@ button {
 
 .unscheduled-row:hover,
 .unscheduled-row.is-selected {
-  background: #f7fbff;
+  background: var(--hover);
 }
 
 .unscheduled-row > svg {
@@ -1959,7 +1960,7 @@ button {
 
 .completed-toggle:hover,
 .comments-toggle:hover {
-  background: #fafafa;
+  background: var(--hover);
 }
 
 .completed-list {
@@ -2983,7 +2984,7 @@ button {
 
 .search-result:hover,
 .search-result.is-selected {
-  background: var(--blue-soft);
+  background: var(--hover);
 }
 
 .search-result__icon {
@@ -3214,7 +3215,7 @@ button {
 
 .search-page__result:hover,
 .search-page__result:focus-visible {
-  background: var(--blue-soft);
+  background: var(--hover);
 }
 
 .search-page__result > span:nth-child(2) > * {
@@ -3280,11 +3281,33 @@ button {
 }
 
 .search-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 250px;
+  gap: 12px;
+  padding: 42px 20px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.search-page__empty > svg {
+  width: 42px;
+  height: 42px;
+  color: #8d9aaa;
 }
 
 .search-page__empty .button {
-  margin-top: 14px;
+  margin-top: 8px;
+}
+
+.search-page__examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .search-loading {
@@ -3510,7 +3533,7 @@ button {
 }
 
 .lifecycle-row:hover {
-  background: #f1f5f9;
+  background: var(--hover);
 }
 
 .lifecycle-row.is-selected {
@@ -3866,7 +3889,7 @@ button {
 }
 
 .settings-nav button:hover {
-  background: #edf1f5;
+  background: var(--hover);
 }
 
 .settings-nav button.is-active {
@@ -4452,7 +4475,7 @@ button {
 }
 
 .admin-list > button:hover {
-  background: #f0f4f8;
+  background: var(--hover);
 }
 
 .admin-list > button.is-selected {
@@ -4860,8 +4883,37 @@ button {
   opacity: 0.84;
 }
 
-.admin-loading {
-  padding: 18px;
+.admin-loading,
+.operations-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 200px;
+  padding: 32px;
+  color: var(--muted);
+}
+
+.admin-loading::before,
+.operations-loading::before {
+  content: "";
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: connection-spin 0.7s linear infinite;
+}
+
+.admin-loading::after {
+  content: "Загрузка данных организации...";
+  font-size: 13px;
+}
+
+.operations-loading::after {
+  content: "Загрузка состояния системы...";
+  font-size: 13px;
 }
 
 .admin-dialog {
@@ -5043,9 +5095,7 @@ button {
   overflow: hidden;
 }
 
-.operations-loading {
-  padding: 18px;
-}
+
 
 .operations-health,
 .operations-audit,
@@ -5231,7 +5281,7 @@ button {
 }
 
 .operations-list > button:hover {
-  background: #f0f4f8;
+  background: var(--hover);
 }
 
 .operations-list > button.is-selected {
@@ -5709,7 +5759,7 @@ button {
 .inbox-list > button:hover,
 .inbox-list > button.is-selected {
   border-color: #9cc5f1;
-  background: var(--blue-soft);
+  background: var(--hover);
 }
 
 .inbox-list > button.is-done {
@@ -6082,7 +6132,7 @@ button {
 }
 
 .task-table tbody tr:hover {
-  background: #f7fbff;
+  background: var(--hover);
 }
 
 .table-title {
@@ -6253,7 +6303,7 @@ button {
 
 .project-node:hover,
 .project-node.is-selected {
-  background: #edf5fc;
+  background: var(--hover);
 }
 
 .project-node.is-selected {
@@ -7310,4 +7360,93 @@ progress::-webkit-progress-value {
 progress::-moz-progress-bar {
   border-radius: 4px;
   background: var(--blue);
+}
+
+/* P2-4: Collapsible sidebar groups */
+.sidebar-group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.sidebar-group-toggle:hover {
+  color: var(--text);
+}
+
+.sidebar-group-toggle svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-fast);
+}
+
+/* P3-2: Clickable mini avatars */
+.mini-avatar.is-clickable {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.mini-avatar.is-clickable:hover {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* P3-3: Inbox archive / conversion drawer extras */
+.conversion-source > span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.conversion-source strong,
+.conversion-source small {
+  display: block;
+}
+
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field-inline input {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #c8c6c4;
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 400;
+}
+
+/* P3-4: Date range filter in search */
+.search-page__date-range .search-page__custom-dates {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.fuzzy-hint {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #fff3cd;
+  color: #856404;
+  font-size: 10px;
+  font-weight: 700;
 }

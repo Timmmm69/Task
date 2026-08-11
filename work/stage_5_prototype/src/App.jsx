@@ -62,6 +62,34 @@ import {
   validateCalendarEventDraft,
 } from "./calendarEventModel.js";
 
+function levenshteinDistance(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      const cost = a[j - 1].toLowerCase() === b[i - 1].toLowerCase() ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function fuzzyMatch(text, query, maxDistance = 2) {
+  const words = text.toLowerCase().split(/\s+/);
+  const queryLower = query.toLowerCase();
+  for (const word of words) {
+    if (word.includes(queryLower)) return { match: true, fuzzy: false };
+    if (word.length >= 3 && levenshteinDistance(word, queryLower) <= maxDistance) return { match: true, fuzzy: true };
+  }
+  if (text.toLowerCase().includes(queryLower)) return { match: true, fuzzy: false };
+  return { match: false, fuzzy: false };
+}
+
 const baseTasks = [
   {
     id: "analysis",
@@ -153,9 +181,9 @@ const initialInboxItems = [
 ];
 
 const searchResults = [
-  { id: "search-task", group: "Задачи", type: "Задача", title: "Подготовить анализ продаж за июнь", meta: "Отчётность · срок сегодня", authorized: true },
-  { id: "search-task-overdue", group: "Задачи", type: "Задача", title: "Проверить инциденты поддержки", meta: "Техподдержка · просрочено 24.07", authorized: true },
-  { id: "search-project", group: "Проекты", type: "Проект", title: "Альфа", meta: "8 активных задач", authorized: true },
+  { id: "search-task", group: "Задачи", type: "Задача", title: "Подготовить анализ продаж за июнь", meta: "Отчётность · срок сегодня", dueDate: "2026-08-11", dueDays: 0, authorized: true },
+  { id: "search-task-overdue", group: "Задачи", type: "Задача", title: "Проверить инциденты поддержки", meta: "Техподдержка · просрочено 24.07", dueDate: "2026-07-24", dueDays: 18, authorized: true },
+  { id: "search-project", group: "Проекты", type: "Проект", title: "Альфа", meta: "8 активных задач", dueDate: "2026-09-30", dueDays: 50, authorized: true },
   { id: "search-project-marketing", group: "Проекты", type: "Проект", title: "Маркетинговая кампания", meta: "12 задач · 3 участника", authorized: true },
   { id: "search-file", group: "Файлы", type: "Файл", title: "Отчёт_июль.xlsx", meta: "Каталог · доступное расположение", authorized: true },
   { id: "search-contact", group: "CRM", type: "Контакт", title: "Мария Соколова", meta: "ООО «Вектор» · разрешённые поля", authorized: true },
@@ -690,8 +718,9 @@ function SearchOverlay({ offline, onClose, onOpenResult, onShowAll, onToast }) {
       || (filter === "Сотрудники" && result.group === "Сотрудники");
     if (!matchesFilter) return false;
     if (!query.trim()) return true;
-    const haystack = `${result.group} ${result.type} ${result.title} ${result.meta}`.toLowerCase();
-    return haystack.includes(query.trim().toLowerCase());
+    const haystack = `${result.title} ${result.meta}`;
+    const m = fuzzyMatch(haystack, query.trim());
+    return m.match;
   });
 
   function activate(result) {
@@ -781,6 +810,9 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
   const [query, setQuery] = useState(initialQuery || "");
   const [filter, setFilter] = useState(initialFilter || "Все");
   const [loading, setLoading] = useState(false);
+  const [dateRange, setDateRange] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const filterOptions = ["Все", "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники"];
 
   useEffect(() => {
@@ -797,12 +829,27 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
       || (filter === "Сотрудники" && result.group === "Сотрудники");
     if (!matchesFilter) return false;
     if (!query.trim()) return true;
-    return `${result.group} ${result.type} ${result.title} ${result.meta}`
-      .toLowerCase()
-      .includes(query.trim().toLowerCase());
+    const haystack = `${result.title} ${result.meta}`;
+    const m = fuzzyMatch(haystack, query.trim());
+    return m.match;
   }), [filter, query]);
   const allowedResults = visibleResults.filter((result) => result.authorized);
   const unavailableResults = visibleResults.filter((result) => !result.authorized);
+
+  const applyDateFilter = (results) => {
+    if (dateRange === "all") return results;
+    return results.filter((r) => {
+      if (dateRange === "week") return r.dueDays !== undefined && r.dueDays <= 7;
+      if (dateRange === "month") return r.dueDays !== undefined && r.dueDays <= 30;
+      if (dateRange === "custom" && dateFrom && dateTo) {
+        return r.dueDate && r.dueDate >= dateFrom && r.dueDate <= dateTo;
+      }
+      return true;
+    });
+  };
+
+  const allowedResultsFinal = applyDateFilter(allowedResults);
+  const unavailableResultsFinal = applyDateFilter(unavailableResults);
 
   function runSearch(event) {
     event?.preventDefault();
@@ -861,6 +908,35 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
         </div>
       </div>
 
+      <div className="search-page__filters search-page__date-range" aria-label="Фильтр по сроку">
+        <span><CalendarRegular aria-hidden="true" />Срок</span>
+        <div>
+          {[{ value: "all", label: "Все" }, { value: "week", label: "≤ 7 дней" }, { value: "month", label: "≤ 30 дней" }, { value: "custom", label: "Произвольно" }].map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              className={dateRange === item.value ? "is-active" : ""}
+              aria-pressed={dateRange === item.value}
+              onClick={() => setDateRange(item.value)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        {dateRange === "custom" && (
+          <div className="search-page__custom-dates">
+            <label className="field-inline">
+              <span>С</span>
+              <input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
+            </label>
+            <label className="field-inline">
+              <span>До</span>
+              <input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} />
+            </label>
+          </div>
+        )}
+      </div>
+
       {offline ? (
         <div className="search-page__notice search-page__notice--offline" role="status">
           <PlugDisconnectedRegular aria-hidden="true" />
@@ -874,7 +950,7 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
       )}
 
       <div className="search-page__summary" aria-live="polite">
-        <span><strong>{allowedResults.length}</strong> доступных результатов</span>
+        <span><strong>{allowedResultsFinal.length}</strong> доступных результатов</span>
         <span>{offline ? "Кэш обновлён сегодня в 10:23" : "Область доступа проверена сервером"}</span>
       </div>
 
@@ -883,17 +959,30 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
           <div className="search-loading" role="status" aria-label="Поиск выполняется">
             {[0, 1, 2].map((item) => <div key={item}><span /><p><span /><span /></p></div>)}
           </div>
-        ) : allowedResults.length === 0 && unavailableResults.length === 0 ? (
-          <div className="empty-state search-page__empty">
-            <SearchRegular aria-hidden="true" />
-            <strong>Ничего не найдено</strong>
-            <span>Измените запрос или очистите выбранный тип результата.</span>
-            <button className="button button--secondary" type="button" onClick={() => { setQuery(""); setFilter("Все"); }}>Сбросить фильтры</button>
-          </div>
+        ) : allowedResultsFinal.length === 0 && unavailableResultsFinal.length === 0 ? (
+          !query.trim() ? (
+            <div className="empty-state search-page__empty">
+              <SearchRegular aria-hidden="true" />
+              <strong>Начните поиск</strong>
+              <span>Введите запрос — например, название задачи, проекта, файла или имя сотрудника.</span>
+              <div className="search-page__examples">
+                <button type="button" className="button button--quiet" onClick={() => setQuery("анализ продаж")}>анализ продаж</button>
+                <button type="button" className="button button--quiet" onClick={() => setQuery("инциденты")}>инциденты</button>
+                <button type="button" className="button button--quiet" onClick={() => setQuery("Альфа")}>Альфа</button>
+              </div>
+            </div>
+          ) : (
+            <div className="empty-state search-page__empty">
+              <SearchRegular aria-hidden="true" />
+              <strong>Ничего не найдено</strong>
+              <span>Измените запрос или очистите выбранный тип результата.</span>
+              <button className="button button--secondary" type="button" onClick={() => { setQuery(""); setFilter("Все"); }}>Сбросить фильтры</button>
+            </div>
+          )
         ) : (
           <>
             <div className="search-page__list" role="list" aria-label="Доступные результаты">
-              {allowedResults.map((result) => (
+              {allowedResultsFinal.map((result) => (
                 <button key={result.id} type="button" role="listitem" className="search-page__result" onClick={() => activate(result)}>
                   <span className="search-result__icon">
                     {result.type === "Проект" ? <FolderRegular aria-hidden="true" /> : result.type === "Сотрудник" || result.type === "Контакт" ? <PersonRegular aria-hidden="true" /> : result.type === "Задача" ? <ClipboardTaskListLtrRegular aria-hidden="true" /> : <DocumentRegular aria-hidden="true" />}
@@ -903,7 +992,7 @@ function SearchSurface({ offline, initialQuery, initialFilter, onOpenResult, onT
                 </button>
               ))}
             </div>
-            {unavailableResults.length > 0 && (
+            {unavailableResultsFinal.length > 0 && (
               <section className="search-page__unavailable" aria-label="Недоступный результат">
                 <div><LockClosedRegular aria-hidden="true" /><span><strong>Один из результатов недоступен</strong><small>Название, подразделение, совпавшие поля и общее количество скрытых объектов не раскрываются.</small></span></div>
                 <button className="button button--quiet" type="button" onClick={() => onToast("Доступ проверяется сервером; оптимистичное открытие недоступно.")}>Почему недоступно</button>
@@ -1586,10 +1675,13 @@ function OperationsSurface({ offline, onToast }) {
   </section>;
 }
 
-function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
+function InboxSurface({ items, setItems, isWritable, onConvert, onToast, archiveAfterConvert, setArchiveAfterConvert }) {
   const [selectedId, setSelectedId] = useState(items[0]?.id);
   const [capture, setCapture] = useState("");
+  const [showArchive, setShowArchive] = useState(false);
   const selected = items.find((item) => item.id === selectedId) || items[0];
+  const visibleItems = items.filter((item) => showArchive || item.status !== "Архивировано");
+  const hasArchived = items.some((item) => item.status === "Архивировано");
 
   function addCapture(event) {
     event.preventDefault();
@@ -1615,14 +1707,20 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
         </form>
         {!isWritable && <div className="inline-message inline-message--warning"><PlugDisconnectedRegular aria-hidden="true" />Входящие доступны только для чтения до восстановления сервера.</div>}
         <div className="inbox-list" role="listbox" aria-label="Записи входящих">
-          {items.map((item) => (
-            <button key={item.id} type="button" role="option" aria-selected={selected?.id === item.id} className={`${selected?.id === item.id ? "is-selected" : ""} ${item.status === "Преобразовано" ? "is-done" : ""}`} onClick={() => setSelectedId(item.id)}>
+          {visibleItems.map((item) => (
+            <button key={item.id} type="button" role="option" aria-selected={selected?.id === item.id} className={`${selected?.id === item.id ? "is-selected" : ""} ${item.status === "Преобразовано" || item.status === "Архивировано" ? "is-done" : ""}`} onClick={() => setSelectedId(item.id)}>
               <MailInboxRegular aria-hidden="true" />
               <span><strong>{item.title}</strong><small>{item.source} · {item.created}</small></span>
               <em>{item.status}</em>
             </button>
           ))}
         </div>
+        {hasArchived && (
+          <label className="settings-check" style={{ marginTop: "12px" }}>
+            <input type="checkbox" checked={showArchive} onChange={(event) => setShowArchive(event.target.checked)} />
+            Показать архив ({items.filter((item) => item.status === "Архивировано").length})
+          </label>
+        )}
       </div>
       <aside className="inbox-inspector">
         {selected ? (
@@ -1635,7 +1733,7 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
               <dt>Состояние</dt><dd>{selected.status}</dd>
             </dl>
             <p className="inbox-inspector__copy">Классифицируйте запись: преобразуйте её в задачу или оставьте во входящих до следующего разбора.</p>
-            <button className="button button--primary" type="button" disabled={!isWritable} onClick={() => onConvert(selected)}>Преобразовать в задачу</button>
+            <button className="button button--primary" type="button" disabled={!isWritable} onClick={() => { setArchiveAfterConvert(false); onConvert(selected); }}>Преобразовать в задачу</button>
             {!isWritable && <small className="disabled-reason">Недоступно офлайн: требуется подтверждение сервера.</small>}
           </>
         ) : <div className="empty-state"><MailInboxRegular aria-hidden="true" /><strong>Входящие пусты</strong></div>}
@@ -1644,7 +1742,7 @@ function InboxSurface({ items, setItems, isWritable, onConvert, onToast }) {
   );
 }
 
-function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
+function ConversionDrawer({ item, isWritable, onClose, onConvert, archiveAfterConvert, setArchiveAfterConvert }) {
   const [title, setTitle] = useState(item.title);
   const [project, setProject] = useState("Отчётность");
   const [priority, setPriority] = useState("Средняя");
@@ -1653,13 +1751,18 @@ function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
   function submit(event) {
     event.preventDefault();
     if (!title.trim() || !isWritable) return;
-    onConvert({ ...item, title: title.trim(), project, priority, due });
+    if (archiveAfterConvert) {
+      onConvert({ ...item, title: title.trim(), project, priority, due, archiveAfterConvert: true });
+    } else {
+      onConvert({ ...item, title: title.trim(), project, priority, due });
+    }
   }
 
   return (
     <div className="drawer-backdrop" role="presentation" onMouseDown={onClose}>
       <section className="conversion-drawer" role="dialog" aria-modal="true" aria-labelledby="conversion-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="dialog__header"><div><p className="eyebrow">Inbox → Task</p><h2 id="conversion-title">Преобразовать в задачу</h2></div><button className="icon-button" type="button" onClick={onClose} aria-label="Закрыть преобразование"><DismissRegular aria-hidden="true" /></button></div>
+        <div className="conversion-source"><MailInboxRegular aria-hidden="true" /><span><strong>Источник: {item.title}</strong><small>Исходная запись будет закрыта. Связь с созданной задачей сохранится в истории.</small></span></div>
         <form onSubmit={submit}>
           <label className="field"><span>Название задачи</span><input value={title} onChange={(event) => setTitle(event.target.value)} autoFocus /></label>
           <label className="field"><span>Проект</span><select value={project} onChange={(event) => setProject(event.target.value)}><option>Отчётность</option><option>Внутренние процессы</option><option>Коммуникации</option></select></label>
@@ -1667,7 +1770,10 @@ function ConversionDrawer({ item, isWritable, onClose, onConvert }) {
             <label className="field"><span>Приоритет</span><select value={priority} onChange={(event) => setPriority(event.target.value)}><option>Низкая</option><option>Средняя</option><option>Высокая</option></select></label>
             <label className="field"><span>Срок</span><input type="date" value={due} onChange={(event) => setDue(event.target.value)} /></label>
           </div>
-          <div className="conversion-source"><MailInboxRegular aria-hidden="true" /><span><strong>Исходная запись будет закрыта</strong><small>Связь с созданной задачей сохранится в истории.</small></span></div>
+          <label className="settings-check">
+            <input type="checkbox" checked={archiveAfterConvert} onChange={(event) => setArchiveAfterConvert(event.target.checked)} />
+            Архивировать заметку после конвертации
+          </label>
           <div className="dialog__actions"><button className="button button--secondary" type="button" onClick={onClose}>Отмена</button><button className="button button--primary" type="submit" disabled={!title.trim() || !isWritable}>Создать задачу</button></div>
         </form>
       </section>
@@ -1965,7 +2071,7 @@ function TasksSurface({ isWritable, onOpenTask, onToast, onPushUndo }) {
   );
 }
 
-function ProjectsSurface({ isWritable, onToast }) {
+function ProjectsSurface({ isWritable, onToast, onNavigateToTasks }) {
   const [projects, setProjects] = useState(projectTree);
   const [selectedId, setSelectedId] = useState("alpha");
   const [collapsed, setCollapsed] = useState({});
@@ -2132,7 +2238,7 @@ function ProjectsSurface({ isWritable, onToast }) {
         {activeTab === "overview" && <section className="project-summary"><h3>Ближайшие контрольные точки</h3><div><CheckmarkCircleRegular aria-hidden="true" /><span><strong>Исходные данные собраны</strong><small>Завершено 24 июля</small></span></div><div><CalendarRegular aria-hidden="true" /><span><strong>Промежуточное согласование</strong><small>5 августа · 4 задачи открыты</small></span></div><div><BranchForkRegular aria-hidden="true" /><span><strong>Финальная проверка</strong><small>22 сентября · зависит от 2 задач</small></span></div></section>}
         {activeTab === "tasks" && <section className="project-tab-panel" role="tabpanel" aria-label="Задачи проекта"><div className="panel-heading"><h3>Задачи проекта</h3><button className="button button--secondary" type="button" disabled={!canWriteProject}>Создать задачу</button></div>{taskTableRows.filter((task) => task.project === selected.title || selected.id === "alpha").slice(0, 4).map((task) => <div className="project-task-row" key={task.id}><TaskListSquareLtrFilled aria-hidden="true" /><span><strong>{task.title}</strong><small>{task.assignee} · {task.due}</small></span><span className="status-pill status-pill--neutral">{task.status}</span></div>)}</section>}
         {activeTab === "calendar" && <section className="project-tab-panel" role="tabpanel" aria-label="Календарь проекта"><h3>Календарь проекта</h3><p className="helper-copy">Проектный диапазон использует общий Calendar pattern. Перемещение отключается при потере Calendar.Read или записи.</p><div className="linked-card"><CalendarRegular aria-hidden="true" /><span><strong>Планирование команды</strong><small>5 августа · 10:00–11:00</small></span><button className="button button--ghost" type="button" disabled={!canWriteProject}>Открыть</button></div></section>}
-        {activeTab === "members" && <section className="project-tab-panel" role="tabpanel" aria-label="Участники проекта"><div className="panel-heading"><div><h3>Участники</h3><p className="helper-copy">Владелец всегда остаётся в составе проекта.</p></div><button className="button button--secondary" type="button" disabled={!canWriteProject} onClick={addMember}><AddRegular aria-hidden="true" />Добавить</button></div>{selected.members.map((member, index) => <div className="member-row" key={member}><span className="mini-avatar">{member}</span><span><strong>{memberLabels[index]}</strong><small>{index === 0 ? "Владелец проекта" : "Участник"}</small></span><button className="button button--ghost" type="button" disabled={!canWriteProject} onClick={() => { setMemberDialog({ index, name: memberLabels[index] }); setValidation(""); }}>Изменить роль</button></div>)}</section>}
+        {activeTab === "members" && <section className="project-tab-panel" role="tabpanel" aria-label="Участники проекта"><div className="panel-heading"><div><h3>Участники</h3><p className="helper-copy">Владелец всегда остаётся в составе проекта.</p></div><button className="button button--secondary" type="button" disabled={!canWriteProject} onClick={addMember}><AddRegular aria-hidden="true" />Добавить</button></div>{selected.members.map((member, index) => <div className="member-row" key={member}><button className="mini-avatar is-clickable" type="button" title={`Задачи участника ${memberLabels[index]}`} onClick={() => onNavigateToTasks ? onNavigateToTasks(memberLabels[index]) : onToast(`Задачи участника ${memberLabels[index]} откроются после реализации перехода`)}>{member}</button><span><strong>{memberLabels[index]}</strong><small>{index === 0 ? "Владелец проекта" : "Участник"}</small></span><button className="button button--ghost" type="button" disabled={!canWriteProject} onClick={() => { setMemberDialog({ index, name: memberLabels[index] }); setValidation(""); }}>Изменить роль</button></div>)}</section>}
         {activeTab === "files" && <section className="project-tab-panel" role="tabpanel" aria-label="Файлы проекта"><div className="panel-heading"><h3>Связанные файлы</h3><button className="button button--secondary" type="button" disabled={!canWriteProject}>Связать</button></div><div className="linked-card"><DocumentRegular aria-hidden="true" /><span><strong>Отчёт_июль.xlsx</strong><small>Сетевое расположение · проверено 6 минут назад</small></span><button className="button button--ghost" type="button">Открыть</button></div><div className="linked-card is-unavailable"><LockClosedRegular aria-hidden="true" /><span><strong>Связанный объект недоступен</strong><small>Название и расположение скрыты текущей областью доступа.</small></span></div></section>}
         {activeTab === "contacts" && <section className="project-tab-panel" role="tabpanel" aria-label="Контакты проекта"><div className="panel-heading"><h3>Контакты</h3><button className="button button--secondary" type="button" disabled={!canWriteProject}>Связать</button></div><div className="linked-card"><PersonRegular aria-hidden="true" /><span><strong>Елена Морозова · ООО «Вектор»</strong><small>Заказчик · разрешённые контактные данные</small></span><button className="button button--ghost" type="button">Открыть</button></div></section>}
         {activeTab === "comments" && <section className="project-tab-panel" role="tabpanel" aria-label="Комментарии проекта"><h3>Комментарии</h3>{comments.map((comment) => <div className={`comment-row ${comment.deleted ? "is-deleted" : ""}`} key={comment.id}><CommentRegular aria-hidden="true" /><span><strong>{comment.deleted ? "Комментарий удалён" : comment.author}</strong><small>{comment.deleted ? "Текст недоступен; запись сохранена в истории." : comment.text}</small></span>{!comment.deleted && <button className="button button--ghost" type="button" disabled={!canWriteProject} onClick={() => setComments((items) => items.map((item) => item.id === comment.id ? { ...item, deleted: true } : item))}>Удалить</button>}</div>)}<div className="comment-composer"><label className="field"><span>Новый комментарий</span><textarea value={commentDraft} onChange={(event) => setCommentDraft(event.target.value)} disabled={!canWriteProject} /></label><button className="button button--primary" type="button" disabled={!canWriteProject || !commentDraft.trim()} onClick={addComment}>Добавить</button></div></section>}
@@ -2675,6 +2781,18 @@ export function App() {
   });
   const [onboardingStep, setOnboardingStep] = useState(null);
   const [activeView, setActiveView] = useState("today");
+  const [collapsedGroups, setCollapsedGroups] = useState(() => {
+    try {
+      const saved = localStorage.getItem("task-sidebar-collapsed");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("task-sidebar-collapsed", JSON.stringify(collapsedGroups));
+  }, [collapsedGroups]);
   const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
   const [taskStatus, setTaskStatus] = useState("В работе");
   const [checklist, setChecklist] = useState([
@@ -2701,6 +2819,7 @@ export function App() {
   const [userOpen, setUserOpen] = useState(false);
   const [inboxItems, setInboxItems] = useState(initialInboxItems);
   const [conversionItem, setConversionItem] = useState(null);
+  const [archiveAfterConvert, setArchiveAfterConvert] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorDraft, setEditorDraft] = useState(null);
   const [conflictDraft, setConflictDraft] = useState(null);
@@ -2953,11 +3072,11 @@ export function App() {
       status: "Запланировано",
     };
     setUnscheduled((items) => [newTask, ...items]);
-    setInboxItems((items) => items.map((item) => item.id === values.id ? { ...item, status: "Преобразовано" } : item));
+    setInboxItems((items) => items.map((item) => item.id === values.id ? { ...item, status: values.archiveAfterConvert ? "Архивировано" : "Преобразовано" } : item));
     setConversionItem(null);
     setSelectedTask(newTask);
     setActiveView("today");
-    onToast("Задача создана, исходная запись закрыта");
+    onToast(values.archiveAfterConvert ? "Задача создана, заметка архивирована" : "Задача создана, исходная запись закрыта");
   }
 
   function saveTaskDraft(draft) {
@@ -3065,18 +3184,43 @@ export function App() {
               <NavigationRegular aria-hidden="true" />
             </button>
             <nav aria-label="Основная навигация">
-              <NavItem icon={CalendarRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
-              <NavItem icon={CalendarRegular} label="Календарь" active={activeView === "calendar"} onClick={() => showSection("Календарь")} />
-              <NavItem icon={MailInboxRegular} label="Входящие" active={activeView === "inbox"} onClick={() => showSection("Входящие")} />
-              <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
-              <NavItem icon={FolderRegular} label="Проекты" active={activeView === "projects"} onClick={() => showSection("Проекты")} />
-              <NavItem icon={DocumentRegular} label="Файлы" active={activeView === "files"} onClick={() => showSection("Файлы")} />
-              <NavItem icon={PersonRegular} label="CRM" active={activeView === "crm"} onClick={() => showSection("CRM")} />
-              <NavItem icon={SearchRegular} label="Поиск" active={activeView === "search"} onClick={() => showSection("Поиск")} />
-              <NavItem icon={ArchiveRegular} label="Архив и корзина" active={activeView === "lifecycle"} onClick={() => showSection("Архив и корзина")} />
-              {canReadAdmin && <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />}
-              {canReadOperations && <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />}
-              <NavItem icon={AddRegular} label="Создать задачу" onClick={() => isWritable ? setDialogOpen(true) : onToast("Создание отключено: сервер недоступен")} />
+              <button
+                type="button"
+                className="sidebar-group-toggle"
+                onClick={() => setCollapsedGroups((state) => ({ ...state, main: !state.main }))}
+                aria-expanded={!collapsedGroups.main}
+              >
+                <ChevronRightRegular aria-hidden="true" style={collapsedGroups.main ? undefined : { transform: "rotate(90deg)" }} />
+                <span>Основное</span>
+              </button>
+              {!collapsedGroups.main && (
+                <>
+                  <NavItem icon={CalendarRegular} label="Сегодня" active={activeView === "today"} onClick={() => showSection("Сегодня")} />
+                  <NavItem icon={CalendarRegular} label="Календарь" active={activeView === "calendar"} onClick={() => showSection("Календарь")} />
+                  <NavItem icon={MailInboxRegular} label="Входящие" active={activeView === "inbox"} onClick={() => showSection("Входящие")} />
+                  <NavItem icon={ClipboardTaskListLtrRegular} label="Мои задачи" active={activeView === "tasks"} onClick={() => showSection("Мои задачи")} />
+                  <NavItem icon={FolderRegular} label="Проекты" active={activeView === "projects"} onClick={() => showSection("Проекты")} />
+                  <NavItem icon={DocumentRegular} label="Файлы" active={activeView === "files"} onClick={() => showSection("Файлы")} />
+                  <NavItem icon={PersonRegular} label="CRM" active={activeView === "crm"} onClick={() => showSection("CRM")} />
+                  <NavItem icon={SearchRegular} label="Поиск" active={activeView === "search"} onClick={() => showSection("Поиск")} />
+                  <NavItem icon={ArchiveRegular} label="Архив и корзина" active={activeView === "lifecycle"} onClick={() => showSection("Архив и корзина")} />
+                </>
+              )}
+              <button
+                type="button"
+                className="sidebar-group-toggle"
+                onClick={() => setCollapsedGroups((state) => ({ ...state, admin: !state.admin }))}
+                aria-expanded={!collapsedGroups.admin}
+              >
+                <ChevronRightRegular aria-hidden="true" style={collapsedGroups.admin ? undefined : { transform: "rotate(90deg)" }} />
+                <span>Администрирование</span>
+              </button>
+              {!collapsedGroups.admin && (
+                <>
+                  {canReadAdmin && <NavItem icon={ShieldErrorRegular} label="Администрирование" active={activeView === "admin"} onClick={() => showSection("Администрирование")} />}
+                  {canReadOperations && <NavItem icon={DatabaseRegular} label="Операции" active={activeView === "operations"} onClick={() => showSection("Операции")} />}
+                </>
+              )}
             </nav>
             <div className="sidebar__bottom">
               <NavItem icon={SettingsRegular} label="Настройки" active={activeView === "settings"} onClick={() => showSection("Настройки")} />
@@ -3440,8 +3584,10 @@ export function App() {
                 items={inboxItems}
                 setItems={setInboxItems}
                 isWritable={isWritable}
-                onConvert={setConversionItem}
+                onConvert={(item) => { setArchiveAfterConvert(false); setConversionItem(item); }}
                 onToast={onToast}
+                archiveAfterConvert={archiveAfterConvert}
+                setArchiveAfterConvert={setArchiveAfterConvert}
               />
             ) : activeView === "tasks" ? (
               <TasksSurface
@@ -3462,7 +3608,7 @@ export function App() {
                 onPushUndo={pushUndo}
               />
             ) : activeView === "projects" ? (
-              <ProjectsSurface isWritable={isWritable} onToast={onToast} />
+              <ProjectsSurface isWritable={isWritable} onToast={onToast} onNavigateToTasks={(name) => { setActiveView("tasks"); onToast(`Задачи участника ${name}`); }} />
             ) : activeView === "files" ? (
               <FilesSurface isWritable={isWritable} onToast={onToast} />
             ) : activeView === "search" ? (
@@ -3535,8 +3681,10 @@ export function App() {
           <ConversionDrawer
             item={conversionItem}
             isWritable={isWritable}
-            onClose={() => setConversionItem(null)}
+            onClose={() => { setConversionItem(null); setArchiveAfterConvert(false); }}
             onConvert={convertInboxItem}
+            archiveAfterConvert={archiveAfterConvert}
+            setArchiveAfterConvert={setArchiveAfterConvert}
           />
         )}
         {editorOpen && (
