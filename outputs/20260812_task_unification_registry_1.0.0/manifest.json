@@ -1,0 +1,10 @@
+{
+  "artifact": "task-unification-registry",
+  "version": "1.0.0",
+  "created": "2026-08-12",
+  "files": [
+    "INTEGRATION_REGISTRY.md",
+    "VALIDATION_REPORT.md",
+    "VERSION.txt"
+  ]
+}
