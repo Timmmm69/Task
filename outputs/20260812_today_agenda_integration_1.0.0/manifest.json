@@ -1,0 +1,18 @@
+{
+  "artifact": "today-agenda-integration",
+  "version": "1.0.0",
+  "created": "2026-08-12",
+  "base_commit": "aa9b56d77f27651d2efb8cba5d08a41389840cda",
+  "product_files": [
+    "work/stage_5_prototype/package.json",
+    "work/stage_5_prototype/src/App.jsx",
+    "work/stage_5_prototype/src/styles.css",
+    "work/stage_5_prototype/src/todayAgendaModel.js",
+    "work/stage_5_prototype/tests/today-agenda-model.test.mjs"
+  ],
+  "package_files": [
+    "README.md",
+    "VALIDATION_REPORT.md",
+    "VERSION.txt"
+  ]
+}

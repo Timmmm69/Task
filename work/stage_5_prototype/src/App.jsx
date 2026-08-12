@@ -23,8 +23,6 @@ import {
   DeleteRegular,
   DismissRegular,
   DocumentRegular,
-  DrinkCoffeeRegular,
-  FlagRegular,
   FilterRegular,
   FolderRegular,
   EditRegular,
@@ -62,6 +60,7 @@ import {
   createCalendarEventDraft,
   validateCalendarEventDraft,
 } from "./calendarEventModel.js";
+import { sortScheduledTasks, sortUntimedTasks } from "./todayAgendaModel.js";
 
 function levenshteinDistance(a, b) {
   const matrix = [];
@@ -166,6 +165,54 @@ const initialUnscheduled = [
   { id: "training", title: "Подготовить материалы для обучения", project: "Обучение", priority: "Низкая", priorityTone: "low", due: "Нет срока" },
   { id: "office", title: "Заказать канцелярию в офис", project: "Административные задачи", priority: "Средняя", priorityTone: "medium", due: "Нет срока" },
   { id: "archive", title: "Архивировать старые отчёты", project: "Отчётность", priority: "Низкая", priorityTone: "low", due: "Нет срока" },
+];
+
+const initialScheduledTodayTasks = sortScheduledTasks(
+  baseTasks.filter((task) => ["analysis", "presentation", "meeting", "contract"].includes(task.id)),
+);
+
+const initialUntimedTodayTasks = [
+  {
+    id: "alpha-report",
+    title: "Сформировать отчёт по проекту «Альфа»",
+    project: "Альфа",
+    priority: "Высокая",
+    priorityTone: "high",
+    due: "Срок сегодня",
+    status: "Запланировано",
+  },
+  { ...baseTasks.find((task) => task.id === "mail"), time: "", due: "" },
+  { ...baseTasks.find((task) => task.id === "tomorrow"), time: "", due: "" },
+  {
+    id: "figures",
+    title: "Сверить итоговые показатели отдела",
+    project: "Отчётность",
+    priority: "Средняя",
+    priorityTone: "medium",
+    due: "",
+    status: "Запланировано",
+  },
+];
+
+const completedTodayTasks = [
+  baseTasks.find((task) => task.id === "planning"),
+  {
+    id: "weekly-report",
+    time: "08:30–08:50",
+    title: "Отправить еженедельный отчёт",
+    project: "Отчётность",
+    priority: "Средняя",
+    priorityTone: "medium",
+    status: "Готово",
+  },
+  {
+    id: "accounting-reply",
+    title: "Ответить бухгалтерии",
+    project: "Коммуникации",
+    priority: "Низкая",
+    priorityTone: "low",
+    status: "Готово",
+  },
 ];
 
 const dateLabels = [
@@ -380,28 +427,36 @@ function Titlebar() {
   );
 }
 
-function TimelineCard({ task, selected, onSelect }) {
-  const statusIcon = task.status === "Готово" ? CheckmarkCircleRegular : PlayCircleRegular;
+function AgendaTaskRow({ task, selected, onSelect, completed = false }) {
+  const statusIcon = completed ? CheckmarkCircleRegular : task.status === "В работе" ? PlayCircleRegular : SquareRegular;
   const StatusIcon = statusIcon;
   return (
     <button
-      className={`timeline-card ${selected ? "is-selected" : ""} ${task.id === "planning" ? "is-complete" : ""}`}
+      className={`agenda-row ${task.time ? "agenda-row--timed" : "agenda-row--untimed"} ${selected ? "is-selected" : ""} ${completed ? "is-complete" : ""}`}
       type="button"
       onClick={() => onSelect(task)}
       aria-pressed={selected}
     >
-      <StatusIcon className="timeline-card__status" aria-hidden="true" />
-      <div className="timeline-card__body">
-        <div className="timeline-card__time">{task.time}</div>
-        <div className="timeline-card__title">{task.title}</div>
-        <div className="timeline-card__meta">
-          <span>Проект: {task.project}</span>
-          <span className="timeline-card__right">
-            <Priority tone={task.priorityTone} label={task.priority} />
-            {task.people && <span className="people-count"><PersonRegular aria-hidden="true" />{task.people}</span>}
-          </span>
-        </div>
-      </div>
+      <span className="agenda-row__action"><StatusIcon aria-hidden="true" /></span>
+      {task.time && <span className="agenda-row__time">{task.time.replaceAll(" – ", "–")}{task.id === "analysis" && <small>Сейчас</small>}</span>}
+      <span className="agenda-row__content">
+        <strong>{task.title}</strong>
+        {(task.project || task.due) && <small>{task.project && <span className="agenda-row__project">Проект: {task.project}</span>}{task.project && task.due && <span aria-hidden="true"> · </span>}{task.due && <span>{task.due}</span>}</small>}
+      </span>
+      <span className="agenda-row__metadata">
+        {task.priority && <Priority tone={task.priorityTone} label={task.priority} />}
+        {task.people && <span className="people-count"><PersonRegular aria-hidden="true" />{task.people}</span>}
+        <MoreHorizontalRegular aria-hidden="true" />
+      </span>
+    </button>
+  );
+}
+
+function AgendaSectionHeading({ id, title, count, open, onToggle }) {
+  return (
+    <button className="agenda-section__heading" type="button" onClick={onToggle} aria-controls={id} aria-expanded={open}>
+      <span>{title} <small>{count}</small></span>
+      {open ? <ChevronUpRegular aria-hidden="true" /> : <ChevronDownRegular aria-hidden="true" />}
     </button>
   );
 }
@@ -2795,10 +2850,6 @@ export function App() {
   const gateAccount = useMemo(() => getGateAccount(), []);
   const [authenticated, setAuthenticated] = useState(true);
   const [undoStack, setUndoStack] = useState([]);
-  const [nowMinutes, setNowMinutes] = useState(() => {
-    const d = new Date();
-    return d.getHours() * 60 + d.getMinutes();
-  });
   const [onboardingStep, setOnboardingStep] = useState(null);
   const [activeView, setActiveView] = useState("today");
   const [collapsedGroups, setCollapsedGroups] = useState(() => {
@@ -2828,7 +2879,7 @@ export function App() {
     } catch { /* noop */ }
   }, [sidebarCollapsed]);
 
-  const [selectedTask, setSelectedTask] = useState(baseTasks[0]);
+  const [selectedTask, setSelectedTask] = useState(initialScheduledTodayTasks[0]);
   const [taskStatus, setTaskStatus] = useState("В работе");
   const [checklist, setChecklist] = useState([
     { id: "crm", label: "Собрать данные из CRM", done: true },
@@ -2844,6 +2895,11 @@ export function App() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dateIndex, setDateIndex] = useState(1);
   const [unscheduled, setUnscheduled] = useState(initialUnscheduled);
+  const [todayScheduledTasks, setTodayScheduledTasks] = useState(initialScheduledTodayTasks);
+  const [todayUntimedTasks, setTodayUntimedTasks] = useState(initialUntimedTodayTasks);
+  const [scheduledOpen, setScheduledOpen] = useState(true);
+  const [untimedOpen, setUntimedOpen] = useState(true);
+  const [agendaCompletedOpen, setAgendaCompletedOpen] = useState(false);
   const [connectionIndex, setConnectionIndex] = useState(0);
   const [recoveryState, setRecoveryState] = useState("");
   const [toast, setToastMessage] = useState("");
@@ -2868,11 +2924,8 @@ export function App() {
   const [fileLocationState, setFileLocationState] = useState("available");
   const [plannerWidth, setPlannerWidth] = useState(null);
 
-  const currentTimeTop = useMemo(() => {
-    const ROW = 69;
-    const START = 8;
-    return ((nowMinutes - START * 60) / 60) * ROW;
-  }, [nowMinutes]);
+  const scheduledTodayTasks = useMemo(() => sortScheduledTasks(todayScheduledTasks), [todayScheduledTasks]);
+  const untimedTodayTasks = useMemo(() => sortUntimedTasks(todayUntimedTasks), [todayUntimedTasks]);
 
   const connections = useMemo(() => [
     { title: "Подключено к серверу компании", subtitle: "Онлайн", tone: "online" },
@@ -2999,14 +3052,6 @@ export function App() {
     if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
   }, []);
 
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      const d = new Date();
-      setNowMinutes(d.getHours() * 60 + d.getMinutes());
-    }, 60_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
   useDialogFocusTrap(onboardingRef, () => setOnboardingStep(null));
 
   function dismissOnboarding(view, message) {
@@ -3109,9 +3154,16 @@ export function App() {
       due: values.due,
       status: "Запланировано",
     };
-    setUnscheduled((items) => [newTask, ...items]);
-    pushUndo("Создана задача", () => setUnscheduled((items) => items.filter((item) => item.id !== newTask.id)));
-    selectTask(newTask);
+    if (values.dueTime) {
+      const scheduledTask = { ...newTask, time: values.dueTime };
+      setTodayScheduledTasks((items) => sortScheduledTasks([...items, scheduledTask]));
+      pushUndo("Создана задача", () => setTodayScheduledTasks((items) => items.filter((item) => item.id !== scheduledTask.id)));
+      selectTask(scheduledTask);
+    } else {
+      setTodayUntimedTasks((items) => sortUntimedTasks([newTask, ...items]));
+      pushUndo("Создана задача", () => setTodayUntimedTasks((items) => items.filter((item) => item.id !== newTask.id)));
+      selectTask(newTask);
+    }
     setDialogOpen(false);
     onToast(values.due === "Нет срока" ? "Задача создана без срока" : `Задача создана: ${values.due}`);
   }
@@ -3149,7 +3201,7 @@ export function App() {
       status: "Запланировано",
       quickCreated: values.quickCreated || false,
     };
-    setUnscheduled((items) => [newTask, ...items]);
+    setTodayUntimedTasks((items) => sortUntimedTasks([newTask, ...items]));
     setInboxItems((items) => items.map((item) => item.id === values.id ? { ...item, status: values.archiveAfterConvert ? "Архивировано" : "Преобразовано" } : item));
     setConversionItem(null);
     setSelectedTask(newTask);
@@ -3399,61 +3451,22 @@ export function App() {
                   <button className="button button--secondary button--today" type="button" onClick={() => setDateIndex(1)}>Сегодня</button>
                 </div>
 
-                <div className="all-day">
-                  <span className="all-day__label">Весь день</span>
-                  <button type="button" className="all-day__task" onClick={() => onToast("Открыта задача «Сформировать отчёт по проекту «Альфа»»")}>
-                    <FlagRegular aria-hidden="true" />
-                    <span>Сформировать отчёт по проекту «Альфа»</span>
-                    <small>Крайний срок</small>
-                  </button>
-                </div>
-
-                <div className="timeline">
-                  <div className="hour-row hour-row--8"><time>08:00</time></div>
-                  <div className="hour-row hour-row--9"><time>09:00</time></div>
-                  <div className="hour-row hour-row--10"><time>10:00</time></div>
-                  <div className="hour-row hour-row--11"><time>11:00</time></div>
-                  <div className="hour-row hour-row--12"><time>12:00</time></div>
-                  <div className="hour-row hour-row--13"><time>13:00</time></div>
-                  <div className="hour-row hour-row--14"><time>14:00</time></div>
-                  <div className="hour-row hour-row--15"><time>15:00</time></div>
-                  <div className="hour-row hour-row--16"><time>16:00</time></div>
-                  <div className="hour-row hour-row--17"><time>17:00</time></div>
-                  <div className="hour-row hour-row--18"><time>18:00</time></div>
-
-                  <div className="timeline-event event--planning">
-                    <TimelineCard task={baseTasks[1]} selected={selectedTask.id === "planning"} onSelect={selectTask} />
-                  </div>
-                  <div className="timeline-event event--analysis">
-                    <TimelineCard task={baseTasks[0]} selected={selectedTask.id === "analysis"} onSelect={selectTask} />
-                  </div>
-                  <div className="timeline-event event--presentation">
-                    <TimelineCard task={baseTasks[2]} selected={selectedTask.id === "presentation"} onSelect={selectTask} />
-                  </div>
-                  <div className="timeline-event event--lunch">
-                    <button type="button" onClick={() => onToast("Обед: 12:00 – 12:45")}>
-                      <DrinkCoffeeRegular aria-hidden="true" />
-                      <span><small>12:00 – 12:45</small><strong>Обед</strong></span>
-                    </button>
-                  </div>
-                  <div className="timeline-event event--meeting">
-                    <TimelineCard task={baseTasks[3]} selected={selectedTask.id === "meeting"} onSelect={selectTask} />
-                  </div>
-                  <div className="timeline-event event--contract">
-                    <TimelineCard task={baseTasks[4]} selected={selectedTask.id === "contract"} onSelect={selectTask} />
-                  </div>
-                  <div className="timeline-event event--mail">
-                    <TimelineCard task={baseTasks[5]} selected={selectedTask.id === "mail"} onSelect={selectTask} />
-                  </div>
-                  <div className="timeline-event event--tomorrow">
-                    <TimelineCard task={baseTasks[6]} selected={selectedTask.id === "tomorrow"} onSelect={selectTask} />
-                  </div>
-                  {nowMinutes >= 480 && nowMinutes <= 1080 && (
-                    <div className="current-time" style={{ top: `${currentTimeTop}px` }} aria-label={`Текущее время ${minutesLabel(nowMinutes)}`}>
-                      <span>{minutesLabel(nowMinutes)}</span>
-                      <i />
-                    </div>
-                  )}
+                <div className="agenda" aria-label="Задачи на выбранный день">
+                  <section className="agenda-section" aria-labelledby="scheduled-heading">
+                    <h2 id="scheduled-heading" className="visually-hidden">Запланировано</h2>
+                    <AgendaSectionHeading id="scheduled-tasks" title="Запланировано" count={scheduledTodayTasks.length} open={scheduledOpen} onToggle={() => setScheduledOpen((open) => !open)} />
+                    {scheduledOpen && <div id="scheduled-tasks" className="agenda-list">{scheduledTodayTasks.map((task) => <AgendaTaskRow key={task.id} task={task} selected={selectedTask.id === task.id} onSelect={selectTask} />)}</div>}
+                  </section>
+                  <section className="agenda-section" aria-labelledby="untimed-heading">
+                    <h2 id="untimed-heading" className="visually-hidden">Без времени</h2>
+                    <AgendaSectionHeading id="untimed-tasks" title="Без времени" count={untimedTodayTasks.length} open={untimedOpen} onToggle={() => setUntimedOpen((open) => !open)} />
+                    {untimedOpen && <div id="untimed-tasks" className="agenda-list">{untimedTodayTasks.map((task) => <AgendaTaskRow key={task.id} task={task} selected={selectedTask.id === task.id} onSelect={selectTask} />)}</div>}
+                  </section>
+                  <section className="agenda-section agenda-section--completed" aria-labelledby="completed-heading">
+                    <h2 id="completed-heading" className="visually-hidden">Завершённые</h2>
+                    <AgendaSectionHeading id="completed-tasks" title="Завершённые" count={completedTodayTasks.length} open={agendaCompletedOpen} onToggle={() => setAgendaCompletedOpen((open) => !open)} />
+                    {agendaCompletedOpen && <div id="completed-tasks" className="agenda-list">{completedTodayTasks.map((task) => <AgendaTaskRow key={task.id} task={task} selected={selectedTask.id === task.id} onSelect={selectTask} completed />)}</div>}
+                  </section>
                 </div>
               </section>
 
