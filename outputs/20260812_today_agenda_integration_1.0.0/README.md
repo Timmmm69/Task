@@ -1,6 +1,6 @@
 # Today agenda integration package
 
-Version: 1.0.0  
+Version: 1.0.0
 Base: `origin/main` at `aa9b56d77f27651d2efb8cba5d08a41389840cda`
 
 ## Included product changes

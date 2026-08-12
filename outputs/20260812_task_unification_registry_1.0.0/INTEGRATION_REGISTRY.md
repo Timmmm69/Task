@@ -1,7 +1,7 @@
 # Task integration registry
 
-Version: 1.0.0  
-Generated: 2026-08-12  
+Version: 1.0.0
+Generated: 2026-08-12
 Canonical product baseline: `origin/main` at `aa9b56d77f27651d2efb8cba5d08a41389840cda`
 
 ## Decision register

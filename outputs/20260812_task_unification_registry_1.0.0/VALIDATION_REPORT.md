@@ -1,6 +1,6 @@
 # Validation report
 
-Version: 1.0.0  
+Version: 1.0.0
 Validated: 2026-08-12
 
 ## Result
