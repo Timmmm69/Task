@@ -6,6 +6,7 @@
 - Delegation policy tests: 7/7 pass.
 - Existing prototype tests: 29/29 pass.
 - Existing prototype production build: PASS.
+- Clean-checkout CI order: dependency install, production build, then tests that validate generated Sites artifacts.
 - Git diff whitespace validation: PASS.
 - Canonical `sources/` content: unchanged.
 - OpenCode runtime execution: pending installation and model selection on the user's OpenCode machine.

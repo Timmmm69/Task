@@ -32,8 +32,8 @@ jobs:
           cache: npm
           cache-dependency-path: work/stage_5_prototype/package-lock.json
       - run: npm ci
-      - run: npm test
       - run: npm run build
+      - run: npm test
 
   delegation-policy:
     name: Delegation policy
