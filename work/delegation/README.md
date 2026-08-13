@@ -1,6 +1,6 @@
 # DeepSeek delegation
 
-This subsystem accepts decision-complete tasks prepared by Codex and runs them through OpenCode in isolated Git worktrees.
+This subsystem supports two ways to delegate decision-complete tasks prepared by Codex.
 
 ## One-time setup
 
@@ -15,9 +15,18 @@ This subsystem accepts decision-complete tasks prepared by Codex and runs them t
 
 The selected model is stored in ignored `work/delegation/local.settings.json` and is never committed.
 
-## Usage
+## Default usage: copy and paste into DeepSeek
 
-Open OpenCode in this repository, select `task-delegate`, and paste the entire block supplied by Codex. Alternatively run `/delegate` and paste the block as its arguments. No Git knowledge is required.
+1. Ask Codex to continue Task development. Project `AGENTS.md` requires it to identify suitable low/medium tasks itself.
+2. When a task is suitable, Codex returns one complete `DELEGATION_PACKET`.
+3. Copy that whole packet into a normal new OpenCode chat with your chosen DeepSeek model.
+4. DeepSeek returns its result; give the result back to Codex for review and integration.
+
+You do not need to ask Codex separately whether to delegate or to build a DeepSeek prompt. You do not need to use the terminal in this default mode.
+
+## Optional automated usage
+
+If you choose the `task-delegate` OpenCode agent instead of a normal DeepSeek chat, paste the entire block supplied by Codex there. The dispatcher then creates the isolated worktree, invokes `task-worker`, validates scope, creates the PR, and routes it according to risk. This mode requires the one-time terminal setup described above.
 
 The dispatcher rejects incomplete/stale packets, dirty `main`, a third concurrent task, overlapping ownership, forbidden files, excessive diffs, failed checks, deletions, renames, binaries, and low-risk public-interface/dependency changes. Low-risk PRs are merged by a trusted GitHub workflow after required CI. Medium-risk PRs remain draft for Codex review.
 
