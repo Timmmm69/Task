@@ -1649,6 +1649,87 @@ button {
   color: var(--muted);
 }
 
+.day-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid #d7e7f7;
+  border-radius: 6px;
+  background: #f3f9ff;
+}
+
+.day-progress__ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+}
+
+.day-progress__ring svg {
+  position: absolute;
+  inset: 0;
+  width: 48px;
+  height: 48px;
+  transform: rotate(-90deg);
+}
+
+.day-progress__ring-track,
+.day-progress__ring-fill {
+  fill: none;
+  stroke-width: 5;
+}
+
+.day-progress__ring-track {
+  stroke: #dce7f2;
+}
+
+.day-progress__ring-fill {
+  stroke: var(--blue);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.day-progress__ring strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.day-progress__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.day-progress__copy strong {
+  font-size: 13px;
+}
+
+.day-progress__copy small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.day-progress.is-done {
+  border-color: #cfe6d0;
+  background: #f0f9f0;
+}
+
+.day-progress.is-done .day-progress__ring-fill {
+  stroke: var(--green);
+}
+
+.day-progress.is-empty .day-progress__ring-fill {
+  stroke: var(--muted);
+}
+
+.day-progress.is-empty .day-progress__ring-track {
+  stroke: #e4e4e4;
+}
+
 .agenda-list {
   display: grid;
   gap: 4px;
@@ -1656,7 +1737,7 @@ button {
 
 .agenda-row {
   display: grid;
-  grid-template-columns: 24px minmax(82px, 0.55fr) minmax(0, 1.4fr) auto;
+  grid-template-columns: 24px 1fr;
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -1667,7 +1748,6 @@ button {
   border-radius: 5px;
   background: #fff;
   text-align: left;
-  cursor: pointer;
 }
 
 .agenda-row:hover {
@@ -1682,6 +1762,47 @@ button {
 
 .agenda-row.is-complete {
   color: var(--muted);
+}
+
+.agenda-row__select {
+  display: grid;
+  grid-template-columns: minmax(82px, 0.55fr) minmax(0, 1.4fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.agenda-row__action {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.agenda-row__action:hover {
+  background: rgb(15 108 189 / 12%);
+}
+
+.agenda-row__action:focus-visible,
+.agenda-row__select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.agenda-row__action:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
 
 .agenda-row__action svg {
