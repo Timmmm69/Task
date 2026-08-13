@@ -61,3 +61,54 @@ Sources (`sources/**`) were read-only. No architecture, API, DTO, database, perm
 ## 7. Conclusion
 
 **PASS** — the two contract corrections (notification urgency, employee search) are consistent across Stage 2.3.1 OpenAPI/validation and the validated Stage 4 final baseline; all evidence hashes verified; change surface confined to `work/production_stage_1_baseline/**`; this increment freezes only the two corrections and their evidence inputs and does not declare Stage 1 or the full implementation baseline complete.
+
+---
+
+# VALIDATION_REPORT — TASK-PROD-S1-002
+
+Increment: record user-approved Product 1.0 policies. Base: `main` @ `7fd48019c421c257b6cb7113f92799cbcfaa2045` (local HEAD == origin/main before the increment; working tree clean except the pre-existing untracked `work/TASK_PRODUCTION_EXECUTION_PROMPT.md`).
+Date: 2026-08-14. Result: **PASS**.
+
+## 1. Repository state
+
+| Command | Result |
+|---|---|
+| `git status` / `git rev-parse HEAD` | `main` at `7fd48019c421c257b6cb7113f92799cbcfaa2045`; untracked: `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` (pre-existing) |
+| `git fetch origin main`; `git rev-parse origin/main` | `7fd48019c421c257b6cb7113f92799cbcfaa2045` — matches packet `base_sha` |
+| `git diff --check` | clean; exit 0 |
+
+## 2. Source-policy verification (stop conditions)
+
+| Check | Command (probe) | Result |
+|---|---|---|
+| Source present and complete | Read `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` §5 (lines 72–89); 17 fragments probed (`21 модуля`, `WPF/MVVM`, `ASP.NET Core`, `Windows Services`, `PostgreSQL`, `Caddy`, `SQLite`, `источник истины`, `только на чтение`, `Notification Center`, `Windows/SMB ACL`, `30 дней`, `99,5%`, `15 минут`, `4 часа`, `MSI/GPO`, `staging`) | PASS — all 17 approved policies present |
+| No forbidden change needed | Recorded all policies as documentation only | PASS — no source/contract/API/DTO/database/permission/code/deployment change required |
+| No new product decision | All policies map to existing approved decisions or the five listed candidate OQs | PASS (no stop condition triggered) |
+| Source untouched | `git status --porcelain` | `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` and Stage 4 candidate docs not modified |
+
+## 3. Required checks
+
+| Check | Command | Result |
+|---|---|---|
+| 1 | `Test-Path` on `VERSION.txt`, `PRODUCT_POLICIES_1_0.md`, `VALIDATION_REPORT.md` | PASS — all three present |
+| 2 | `VERSION.txt` trimmed content equals `0.2.0`; byte-level check: exactly 6 bytes `0.2.0` + LF | PASS |
+| 3 | Policy file contains markers `21`, `русск`, `avatar`, `Notification Center`, `30`, `99.5`, `15`, `4`, `OQ-004`, `OQ-005`, `OQ-007`, `OQ-008`, `OQ-009` | PASS |
+| 4 | `git diff --check` | PASS |
+
+## 4. Policy-trace and OQ mapping verification
+
+- 17 policy rows (P1–P17) each traced verbatim to `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` §5; probe: 17 source fragments all found, 17 policy-file fragments all found.
+- OQ mapping verified against `work/stage_4_6_lite/inputs/candidate/Stage_4_Open_Questions_4.5.md`: OQ-004 (avatar), OQ-005 (toast fallback), OQ-007 (Trash retention), OQ-009 (locales) are active rows; OQ-008 is the resolved external deployment-policy gate (no numeric SLA in the PRD; values now supplied by the approved operational policy P15). Mapping covers exactly the five listed OQs.
+
+## 5. Change-surface verification
+
+- `git status --porcelain` shows only: `M work/production_stage_1_baseline/VERSION.txt`, `?? work/production_stage_1_baseline/PRODUCT_POLICIES_1_0.md` (new), `M`-pending append to `work/production_stage_1_baseline/VALIDATION_REPORT.md`, and the pre-existing untracked prompt file (not part of this increment).
+- All changes are inside `owned_paths`; no edits in `forbidden_paths`; no deletions or renames; no code, script, source or output artifact changed.
+
+## 6. Read-only and no-change statement
+
+Sources (`sources/**`) were read-only. No API, DTO, database, permission, dependency, error, code file, deployment script, source or output artifact was changed; no file was deleted or renamed. `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` and the Stage 4 candidate documents were read but not edited.
+
+## 7. Conclusion
+
+**PASS** — the user-approved Product 1.0 policies are fully recorded from `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` §5 without modifying it; all 13 required markers present; OQ-004/005/007/008/009 mapped; change surface confined to the three owned files. This increment records policy inputs only and does not declare Stage 1 or the full implementation baseline complete.
