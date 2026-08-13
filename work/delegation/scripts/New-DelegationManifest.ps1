@@ -4,6 +4,7 @@ $output = Join-Path $root "outputs\delegation_system"
 $relativeFiles = @(
     ".github/CODEOWNERS",
     ".github/workflows/ci.yml",
+    ".github/workflows/delegation-automerge.yml",
     ".opencode/agents/task-delegate.md",
     ".opencode/agents/task-worker.md",
     ".opencode/commands/delegate.md",

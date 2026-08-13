@@ -1,0 +1,45 @@
+name: Delegation auto-merge
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  merge-low-risk:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      startsWith(github.event.workflow_run.head_branch, 'agent/deepseek/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify current head, packet route, and merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          prs="$(gh api "repos/$REPO/pulls?state=open&head=${REPO%%/*}:$HEAD_BRANCH")"
+          count="$(jq 'length' <<<"$prs")"
+          test "$count" -eq 1
+          pr_number="$(jq -r '.[0].number' <<<"$prs")"
+          draft="$(jq -r '.[0].draft' <<<"$prs")"
+          head_sha="$(jq -r '.[0].head.sha' <<<"$prs")"
+          body="$(jq -r '.[0].body // ""' <<<"$prs")"
+          test "$draft" = "false"
+          test "$head_sha" = "$RUN_HEAD_SHA"
+          metadata="$(sed -n 's/.*DELEGATION_PACKET_JSON:\([A-Za-z0-9+\/=]*\).*/\1/p' <<<"$body")"
+          test -n "$metadata"
+          packet="$(printf '%s' "$metadata" | base64 --decode)"
+          test "$(jq -r '.risk' <<<"$packet")" = "low"
+          test "$(jq -r '.merge' <<<"$packet")" = "automatic"
+          mergeable="$(gh api "repos/$REPO/pulls/$pr_number" --jq '.mergeable')"
+          test "$mergeable" = "true"
+          gh pr merge "$pr_number" --repo "$REPO" --squash --delete-branch

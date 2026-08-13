@@ -110,8 +110,7 @@ $($packet.title)
     $prUrl = (& gh pr create --repo Timmmm69/Task --base main --head $branch --title "[$($packet.task_id)] $($packet.title)" --body-file $bodyPath @draftArgs).Trim()
     if ($LASTEXITCODE -ne 0) { throw "Unable to create pull request." }
     if ($packet.merge -eq "automatic") {
-        & gh pr merge $prUrl --auto --squash --delete-branch
-        if ($LASTEXITCODE -ne 0) { throw "Unable to enable auto-merge." }
+        Write-Host "AUTOMERGE_QUEUED: trusted GitHub workflow will merge after required checks pass."
     }
     $registryMutex = [Threading.Mutex]::new($false, "Global\TaskDelegationRegistry")
     if (-not $registryMutex.WaitOne([TimeSpan]::FromSeconds(20))) { throw "Could not update delegation registry." }

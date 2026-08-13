@@ -19,8 +19,12 @@ The selected model is stored in ignored `work/delegation/local.settings.json` an
 
 Open OpenCode in this repository, select `task-delegate`, and paste the entire block supplied by Codex. Alternatively run `/delegate` and paste the block as its arguments. No Git knowledge is required.
 
-The dispatcher rejects incomplete/stale packets, dirty `main`, a third concurrent task, overlapping ownership, forbidden files, excessive diffs, failed checks, deletions, renames, binaries, and low-risk public-interface/dependency changes. Low-risk PRs use GitHub auto-merge after required CI. Medium-risk PRs remain draft for Codex review.
+The dispatcher rejects incomplete/stale packets, dirty `main`, a third concurrent task, overlapping ownership, forbidden files, excessive diffs, failed checks, deletions, renames, binaries, and low-risk public-interface/dependency changes. Low-risk PRs are merged by a trusted GitHub workflow after required CI. Medium-risk PRs remain draft for Codex review.
 
 The OpenCode worker may edit its isolated worktree, but `git` and `gh` are shadowed by blocking command shims inside the worker process. Git commit, push, PR creation, and auto-merge are performed by the dispatcher only after independent scope validation.
 
 Open PR worktrees and their path locks are retained under ignored `work/tmp/delegation-worktrees` until the PR is merged or closed. The dispatcher runs cleanup before each task; `Cleanup-Delegations.ps1` can also be run manually. Failed worktrees are retained for diagnosis but release their active slot.
+
+## GitHub Free limitation
+
+GitHub does not provide branch protection or native auto-merge for a private repository on the current Free plan. The repository remains private. The trusted merge workflow verifies the packet, branch, risk route, mergeable state, and successful current-head CI before merging. DeepSeek has no GitHub credentials and its local `git`/`gh` commands are blocked. An owner can still manually bypass this process by pushing to `main`; upgrading to GitHub Pro is required for server-enforced branch protection.
