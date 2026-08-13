@@ -9,6 +9,8 @@
   --red: #d13438;
   --green: #107c10;
   --amber: #f2a900;
+  --orange: #c83e00;
+  --dark-red: #b01e2c;
   --text: #1b1a19;
   --muted: #605e5c;
   --subtle: #707070;
@@ -2399,6 +2401,40 @@ button {
   animation: toastOut 200ms ease forwards;
 }
 
+.toast.is-urgency-hours {
+  box-shadow: inset 4px 0 0 var(--blue), 0 6px 22px rgb(0 0 0 / 18%);
+}
+
+.toast.is-urgency-soon {
+  box-shadow: inset 4px 0 0 var(--amber), 0 6px 22px rgb(0 0 0 / 18%);
+}
+
+.toast.is-urgency-critical {
+  box-shadow: inset 4px 0 0 var(--orange), 0 6px 22px rgb(0 0 0 / 18%);
+}
+
+.toast.is-urgency-overdue {
+  box-shadow: inset 4px 0 0 var(--dark-red), 0 6px 22px rgb(0 0 0 / 18%);
+}
+
+.toast__urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: rgb(255 255 255 / 16%);
+}
+
+.toast__urgency svg {
+  width: 13px;
+  height: 13px;
+}
+
 .toast__close {
   display: grid;
   place-items: center;
@@ -4120,6 +4156,26 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 1fr));
   gap: 14px;
+}
+
+.settings-hint {
+  margin: 8px 0 0;
+}
+
+.field-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-with-unit input {
+  min-width: 0;
+}
+
+.field-with-unit span {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .settings-span-two {
@@ -6753,6 +6809,79 @@ button {
 
 .notification-result svg {
   flex: 0 0 auto;
+}
+
+.notification-item.is-urgency-far,
+.notification-item.is-urgency-hours,
+.notification-item.is-urgency-soon,
+.notification-item.is-urgency-critical,
+.notification-item.is-urgency-overdue {
+  border-left: 3px solid var(--border);
+}
+
+.notification-item.is-urgency-hours {
+  border-left-color: var(--blue);
+}
+
+.notification-item.is-urgency-soon {
+  border-left-color: var(--amber);
+}
+
+.notification-item.is-urgency-critical {
+  border-left-color: var(--orange);
+  background: #fff4ec;
+}
+
+.notification-item.is-urgency-critical.is-unread {
+  background: #ffeade;
+}
+
+.notification-item.is-urgency-overdue {
+  border-left-color: var(--dark-red);
+  background: #fdf0f1;
+}
+
+.notification-item.is-urgency-overdue.is-unread {
+  background: #fbe3e5;
+}
+
+.urgency-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  background: #f3f2f1;
+  color: var(--muted);
+}
+
+.urgency-chip svg {
+  width: 12px;
+  height: 12px;
+}
+
+.urgency-chip--hours {
+  background: var(--blue-soft);
+  color: var(--blue-strong);
+}
+
+.urgency-chip--soon {
+  background: #fff4cd;
+  color: #7a5b00;
+}
+
+.urgency-chip--critical {
+  background: #ffe3d3;
+  color: var(--orange);
+}
+
+.urgency-chip--overdue {
+  background: #f9d4d7;
+  color: var(--dark-red);
 }
 
 .session-dialog {

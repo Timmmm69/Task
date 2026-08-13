@@ -13,6 +13,8 @@ import {
   CalendarRegular,
   CheckmarkCircleRegular,
   CheckmarkRegular,
+  ClockRegular,
+  TimerRegular,
   ChevronDownRegular,
   ChevronLeftRegular,
   ChevronRightRegular,
@@ -61,6 +63,10 @@ import {
   validateCalendarEventDraft,
 } from "./calendarEventModel.js";
 import { sortScheduledTasks, sortUntimedTasks } from "./todayAgendaModel.js";
+import {
+  DEFAULT_URGENCY_THRESHOLDS,
+  urgencyTierForNotification,
+} from "./notificationUrgencyModel.js";
 
 function levenshteinDistance(a, b) {
   const matrix = [];
@@ -350,10 +356,21 @@ const projectTree = [
 ];
 
 const initialNotifications = [
-  { id: "notice-1", title: "Срок задачи наступает через 37 минут", meta: "Подготовить анализ продаж за июнь", time: "10:23", unread: true, action: "Завершить", targetState: "changed" },
-  { id: "notice-2", title: "Анна К. назначила вас исполнителем", meta: "Согласовать макет презентации", time: "09:48", unread: true, action: "Открыть", targetState: "available" },
-  { id: "notice-3", title: "Проект «Альфа» обновлён", meta: "Изменён срок: 30 сентября 2026", time: "Вчера", unread: false, action: "Открыть", targetState: "available" },
+  { id: "notice-1", kind: "deadline", title: "Срок задачи наступает через 37 минут", meta: "Подготовить анализ продаж за июнь", time: "10:23", unread: true, action: "Завершить", targetState: "changed", deadlineMinutesFromNow: 37 },
+  { id: "notice-2", kind: "assignment", title: "Анна К. назначила вас исполнителем", meta: "Согласовать макет презентации", time: "09:48", unread: true, action: "Открыть", targetState: "available" },
+  { id: "notice-3", kind: "project", title: "Проект «Альфа» обновлён", meta: "Изменён срок: 30 сентября 2026", time: "Вчера", unread: false, action: "Открыть", targetState: "available" },
+  { id: "notice-4", kind: "deadline", title: "Дедлайн задачи через 10 часов", meta: "Подготовить регламент работы с клиентами", time: "08:12", unread: true, action: "Открыть", targetState: "available", deadlineMinutesFromNow: 600 },
+  { id: "notice-5", kind: "deadline", title: "Дедлайн задачи через 3 часа", meta: "Проверить договор с ООО «Вектор»", time: "07:40", unread: false, action: "Открыть", targetState: "available", deadlineMinutesFromNow: 180 },
+  { id: "notice-6", kind: "deadline", title: "Задача просрочена", meta: "Ответить на письма партнёров", time: "Вчера", unread: true, action: "Перенести", targetState: "available", deadlineMinutesFromNow: -1450 },
 ];
+
+const URGENCY_ICONS = {
+  far: CheckmarkCircleRegular,
+  hours: ClockRegular,
+  soon: TimerRegular,
+  critical: WarningRegular,
+  overdue: ShieldErrorRegular,
+};
 
 function useDialogFocusTrap(containerRef, onClose) {
   useEffect(() => {
@@ -1278,7 +1295,7 @@ function LifecycleSurface({ offline, onToast }) {
 }
 
 
-function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
+function SettingsSurface({ offline, onToast, onForceSignIn, account, urgencyThresholds, onUrgencyThresholdsChange }) {
   const sections = [
     { id: "profile", label: "Профиль", scope: "Личные", icon: PersonRegular },
     { id: "security", label: "Безопасность", scope: "Личные", icon: KeyRegular },
@@ -1383,6 +1400,7 @@ function SettingsSurface({ offline, onToast, onForceSignIn, account }) {
         <label><span><strong>Ежедневная сводка</strong><small>Личная сводка в Task</small></span><input type="checkbox" checked={notifications.digest} disabled={!isWritable} onChange={(event) => setNotifications((value) => ({ ...value, digest: event.target.checked }))} /></label>
       </div>
       <section className="settings-card"><h4>Не беспокоить</h4><label className="settings-check"><input type="checkbox" checked={notifications.dnd} disabled={!isWritable} onChange={(event) => setNotifications((value) => ({ ...value, dnd: event.target.checked }))} />Использовать тихие часы</label><div className="settings-time-row"><label className="field"><span>С</span><input type="time" value={notifications.quietFrom} disabled={!isWritable || !notifications.dnd} onChange={(event) => setNotifications((value) => ({ ...value, quietFrom: event.target.value }))} /></label><label className="field"><span>До</span><input type="time" value={notifications.quietTo} disabled={!isWritable || !notifications.dnd} onChange={(event) => setNotifications((value) => ({ ...value, quietTo: event.target.value }))} /></label></div>{quietError && <div className="error-message" role="alert">{quietError}</div>}</section>
+      <section className="settings-card"><h4>Пороги срочности</h4><p className="helper-copy">Задачи сортируются по срочности в зависимости от времени до дедлайна. Изменение применяется к центру уведомлений и баннерам.</p><div className="settings-form-grid"><label className="field"><span>Критично до</span><div className="field-with-unit"><input type="number" min="1" max="90" value={urgencyThresholds.criticalMinutes} disabled={!isWritable} onChange={(event) => onUrgencyThresholdsChange((value) => ({ ...value, criticalMinutes: Number(event.target.value) }))} /><span>мин</span></div></label><label className="field"><span>Скоро до</span><div className="field-with-unit"><input type="number" min="30" max="720" value={urgencyThresholds.soonMinutes} disabled={!isWritable} onChange={(event) => onUrgencyThresholdsChange((value) => ({ ...value, soonMinutes: Number(event.target.value) }))} /><span>мин</span></div></label><label className="field"><span>В течение дня до</span><div className="field-with-unit"><input type="number" min="120" max="2880" value={urgencyThresholds.hoursMinutes} disabled={!isWritable} onChange={(event) => onUrgencyThresholdsChange((value) => ({ ...value, hoursMinutes: Number(event.target.value) }))} /><span>мин</span></div></label></div>{urgencyThresholds.criticalMinutes >= urgencyThresholds.soonMinutes || urgencyThresholds.soonMinutes >= urgencyThresholds.hoursMinutes ? <div className="error-message" role="alert">ValidationError · пороги должны возрастать: критично &lt; скоро &lt; в течение дня.</div> : <p className="helper-copy settings-hint">Пороги в порядке возрастания: {urgencyThresholds.criticalMinutes} &lt; {urgencyThresholds.soonMinutes} &lt; {urgencyThresholds.hoursMinutes} мин.</p>}<div className="settings-actions"><button className="button button--secondary" type="button" disabled={!isWritable} onClick={() => { onUrgencyThresholdsChange(DEFAULT_URGENCY_THRESHOLDS); onToast("Пороги срочности восстановлены по умолчанию"); }}>Сбросить</button></div></section>
       <div className="settings-actions"><button className="button button--primary" type="button" disabled={!isWritable} onClick={saveNotifications}>Сохранить</button></div>
     </>;
   }
@@ -2480,7 +2498,7 @@ function CrmSurface({ isWritable, onToast }) {
   );
 }
 
-function NotificationCenter({ notifications, setNotifications, onClose, onOpen, onToast }) {
+function NotificationCenter({ notifications, setNotifications, onClose, onOpen, onToast, urgencyThresholds }) {
   const [filter, setFilter] = useState("Непрочитанные");
   const visible = notifications.filter((item) => filter === "Все" || item.unread || item.result);
 
@@ -2491,7 +2509,7 @@ function NotificationCenter({ notifications, setNotifications, onClose, onOpen, 
       onToast("Действие не применено: состояние задачи изменилось");
       return;
     }
-    onOpen(notification);
+    onOpen(notification, urgencyTierForNotification(notification, urgencyThresholds));
   }
 
   return (
@@ -2499,15 +2517,20 @@ function NotificationCenter({ notifications, setNotifications, onClose, onOpen, 
       <div className="notification-center__header"><div><p className="eyebrow">Центр уведомлений</p><h2 id="notifications-title">Уведомления</h2></div><button className="icon-button" type="button" onClick={onClose} aria-label="Закрыть уведомления"><DismissRegular aria-hidden="true" /></button></div>
       <div className="notification-filters" role="group" aria-label="Фильтр уведомлений"><button type="button" className={filter === "Непрочитанные" ? "is-active" : ""} onClick={() => setFilter("Непрочитанные")}>Непрочитанные</button><button type="button" className={filter === "Все" ? "is-active" : ""} onClick={() => setFilter("Все")}>Все</button><button type="button" onClick={() => setNotifications((items) => items.map((item) => ({ ...item, unread: false })))}>Прочитать все</button></div>
       <div className="notification-list">
-        {visible.map((notification) => (
-          <article key={notification.id} className={`notification-item ${notification.unread ? "is-unread" : ""}`}>
-            <span className="notification-item__marker" />
-            <div><span className="notification-item__time">{notification.time}</span><strong>{notification.title}</strong><p>{notification.meta}</p>
-              {notification.result && <div className="notification-result" role="status"><WarningRegular aria-hidden="true" /><span><strong>Состояние цели изменилось</strong>{notification.result}</span></div>}
-              <div className="notification-actions"><button className="button button--secondary" type="button" onClick={() => applyAction(notification)}>{notification.action}</button>{notification.unread && <button className="button button--ghost" type="button" onClick={() => setNotifications((items) => items.map((item) => item.id === notification.id ? { ...item, unread: false } : item))}>Отметить прочитанным</button>}</div>
-            </div>
-          </article>
-        ))}
+        {visible.map((notification) => {
+          const tier = urgencyTierForNotification(notification, urgencyThresholds);
+          const UrgencyIcon = tier ? URGENCY_ICONS[tier.key] : null;
+          return (
+            <article key={notification.id} className={`notification-item ${notification.unread ? "is-unread" : ""} ${tier ? `is-${tier.className}` : ""}`}>
+              <span className="notification-item__marker" />
+              <div><span className="notification-item__time">{notification.time}</span><strong>{notification.title}</strong><p>{notification.meta}</p>
+                {tier && <span className={`urgency-chip urgency-chip--${tier.key}`}>{UrgencyIcon && <UrgencyIcon aria-hidden="true" />}{tier.label}</span>}
+                {notification.result && <div className="notification-result" role="status"><WarningRegular aria-hidden="true" /><span><strong>Состояние цели изменилось</strong>{notification.result}</span></div>}
+                <div className="notification-actions"><button className="button button--secondary" type="button" onClick={() => applyAction(notification)}>{notification.action}</button>{notification.unread && <button className="button button--ghost" type="button" onClick={() => setNotifications((items) => items.map((item) => item.id === notification.id ? { ...item, unread: false } : item))}>Отметить прочитанным</button>}</div>
+              </div>
+            </article>
+          );
+        })}
         {visible.length === 0 && <div className="surface-empty"><CheckmarkCircleRegular aria-hidden="true" /><strong>Новых уведомлений нет</strong><span>Все события уже просмотрены.</span></div>}
       </div>
     </section>
@@ -2834,10 +2857,17 @@ function CalendarSurface({ isWritable, onToast, onSelect, onPushUndo }) {
   );
 }
 
-function Toast({ message, leaving, onClose }) {
+function Toast({ message, leaving, urgency, onClose }) {
   if (!message) return null;
+  const UrgencyIcon = urgency ? URGENCY_ICONS[urgency.key] : null;
   return (
-    <div className={`toast ${leaving ? "is-leaving" : ""}`} role="status" aria-live="polite">
+    <div className={`toast ${leaving ? "is-leaving" : ""} ${urgency ? `is-${urgency.className}` : ""}`} role="status" aria-live="polite">
+      {urgency && (
+        <span className="toast__urgency">
+          {UrgencyIcon && <UrgencyIcon aria-hidden="true" />}
+          {urgency.label}
+        </span>
+      )}
       <span>{message}</span>
       <button className="toast__close" type="button" aria-label="Закрыть уведомление" onClick={onClose}>
         <DismissRegular aria-hidden="true" />
@@ -2903,6 +2933,7 @@ export function App() {
   const [connectionIndex, setConnectionIndex] = useState(0);
   const [recoveryState, setRecoveryState] = useState("");
   const [toast, setToastMessage] = useState("");
+  const [toastUrgency, setToastUrgency] = useState(null);
   const [toastLeaving, setToastLeaving] = useState(false);
   const toastTimerRef = useRef(null);
   const toastExitTimerRef = useRef(null);
@@ -2919,6 +2950,7 @@ export function App() {
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
+  const [urgencyThresholds, setUrgencyThresholds] = useState(DEFAULT_URGENCY_THRESHOLDS);
   const [sessionRevoked, setSessionRevoked] = useState(false);
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
   const [fileLocationState, setFileLocationState] = useState("available");
@@ -2944,8 +2976,9 @@ export function App() {
     globalThis.taskDesktop?.windowAction?.(action);
   }
 
-  function onToast(message) {
+  function onToast(message, urgency = null) {
     setToastMessage(message);
+    setToastUrgency(urgency);
     setToastLeaving(false);
     if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
     if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
@@ -2954,6 +2987,7 @@ export function App() {
       setToastLeaving(true);
       toastExitTimerRef.current = window.setTimeout(() => {
         setToastMessage("");
+        setToastUrgency(null);
         setToastLeaving(false);
       }, 200);
     }, 5000);
@@ -2963,6 +2997,7 @@ export function App() {
     if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
     if (toastExitTimerRef.current) window.clearTimeout(toastExitTimerRef.current);
     setToastMessage("");
+    setToastUrgency(null);
     setToastLeaving(false);
   }
 
@@ -3280,7 +3315,7 @@ export function App() {
             </div>
           </header>
           <AuthSurface account={gateAccount} onAuthenticated={() => { setAuthenticated(true); setOnboardingStep(0); setConnectionIndex(0); setRecoveryState(""); onToast("Вход выполнен, данные синхронизированы"); }} />
-          {toast && <Toast message={toast} leaving={toastLeaving} onClose={dismissToast} />}
+          {toast && <Toast message={toast} leaving={toastLeaving} urgency={toastUrgency} onClose={dismissToast} />}
         </div>
       </div>
     );
@@ -3384,7 +3419,8 @@ export function App() {
                   setNotifications={setNotifications}
                   onClose={() => setNotificationOpen(false)}
                   onToast={onToast}
-                  onOpen={(notification) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); onToast(`Открыто: ${notification.meta}`); }}
+                  urgencyThresholds={urgencyThresholds}
+                  onOpen={(notification, tier) => { setNotificationOpen(false); setActiveView(notification.id === "notice-3" ? "projects" : "today"); onToast(`Открыто: ${notification.meta}`, tier); }}
                 />
               )}
               <button className="user-menu" type="button" onClick={() => setUserOpen((open) => !open)} aria-expanded={userOpen} aria-label={`Профиль ${gateAccount.displayName}, роль ${gateAccount.roleLabel}`}>
@@ -3708,6 +3744,8 @@ export function App() {
                 offline={isOffline}
                 onToast={onToast}
                 account={gateAccount}
+                urgencyThresholds={urgencyThresholds}
+                onUrgencyThresholdsChange={setUrgencyThresholds}
                 onForceSignIn={() => {
                   setAuthenticated(false);
                   setRecoveryState("");
@@ -3811,7 +3849,7 @@ export function App() {
             </div>
           </div>
         )}
-        {toast && <Toast message={toast} leaving={toastLeaving} onClose={dismissToast} />}
+        {toast && <Toast message={toast} leaving={toastLeaving} urgency={toastUrgency} onClose={dismissToast} />}
       </div>
     </div>
   );
