@@ -1,97 +1,102 @@
 ﻿{
     "artifact":  "Task DeepSeek Delegation System",
     "version":  "1.0.0",
-    "generated_at":  "2026-08-13T20:55:51.7757958Z",
+    "generated_at":  "2026-08-13T20:59:42.1838119Z",
     "files":  [
                   {
                       "path":  ".github/CODEOWNERS",
-                      "bytes":  202,
-                      "sha256":  "9c6099ccb18a63233e0e1bc1e735838373508be2e73265e29f2b2fe5349f5796"
+                      "bytes":  209,
+                      "sha256":  "664d393baad396bca189c4df800c685e3f0c813e7effc9a0c98a2f3a278ccda3"
                   },
                   {
                       "path":  ".github/workflows/ci.yml",
-                      "bytes":  1451,
-                      "sha256":  "645867a7cc8483da9f8ed5ecb204b4a06aa96ae10a8941e8481ebac3411b2beb"
+                      "bytes":  1507,
+                      "sha256":  "e840e949d6fe484cea992dfc93952c59adba21b9766c27fd3252ff10af2149a5"
+                  },
+                  {
+                      "path":  ".github/workflows/delegation-automerge.yml",
+                      "bytes":  1721,
+                      "sha256":  "f4593105da7973d9018cfc5209a6ea3f9d1213613835f8e1a7983a2c36b7ff66"
                   },
                   {
                       "path":  ".opencode/agents/task-delegate.md",
-                      "bytes":  1118,
-                      "sha256":  "9c6722c9e49549d58fea1fb0f47634e867fcc2f60978acd1e744d30dd2b5ea19"
+                      "bytes":  1145,
+                      "sha256":  "c0a8986fae7df26b36334c484ccccfe17e54b5e95ae9b46c0ee07684a639b6c9"
                   },
                   {
                       "path":  ".opencode/agents/task-worker.md",
-                      "bytes":  1081,
-                      "sha256":  "25bd0036550e2d6bcda3b4217416654aa3330a65fd0872a147807f156cdcfed8"
+                      "bytes":  1106,
+                      "sha256":  "280b802ea76c71c34dab0d1446f447778b843e4c289c11ffdc0eb6cb6ab8b545"
                   },
                   {
                       "path":  ".opencode/commands/delegate.md",
-                      "bytes":  120,
-                      "sha256":  "7ef62007ad9a4afe7324664e3bbeb019963167e21b522bb8e83806a020674841"
+                      "bytes":  127,
+                      "sha256":  "642b2df3dbcb51300be0149a2f4ff358e68551fe9a0c17880a16b4beff2ee7fc"
                   },
                   {
                       "path":  ".gitignore",
-                      "bytes":  379,
-                      "sha256":  "20b788ac8b6652e4c3086bc03a5b0a5205960bf1cb4327795491d077aa8b224b"
+                      "bytes":  381,
+                      "sha256":  "79294ab15bdbf4c101a796a6466b1aac2bf93cdbb2d63f904a9a17907ae51957"
                   },
                   {
                       "path":  "work/delegation/README.md",
-                      "bytes":  1832,
-                      "sha256":  "45637d9864d02b204af98eda64d927120dd0e6f04b612ca24765df3e95fbf98c"
+                      "bytes":  2407,
+                      "sha256":  "c2ffb4f83723a2a5906d90d312f854e78ef588ab62e3374f427298dce3e853c4"
                   },
                   {
                       "path":  "work/delegation/scripts/Cleanup-Delegations.ps1",
-                      "bytes":  1024,
-                      "sha256":  "260738b98aa0e62dcce961100ca8d98c984e720ab0a83749095b4817ca2dec9f"
+                      "bytes":  1043,
+                      "sha256":  "4f3e444dea07c04a694da258ca2fdc153d874bad5acd12964300f04c68473094"
                   },
                   {
                       "path":  "work/delegation/scripts/Delegation.Common.ps1",
-                      "bytes":  10722,
-                      "sha256":  "b57d10cf3b2b1206560b18470b1fd997e43f2703c73472dc744aa6bba21ffae8"
+                      "bytes":  10929,
+                      "sha256":  "4a5a33345cecdab68421152c7a1bff522794e5272190067a92e8d608feda7563"
                   },
                   {
                       "path":  "work/delegation/scripts/Invoke-Delegation.ps1",
-                      "bytes":  8375,
-                      "sha256":  "9753b7a0986e88e94606f56577ef625f99fe737b8cd85e640bd3f5229ad424af"
+                      "bytes":  8481,
+                      "sha256":  "78f6dfe2190eb4ef120454dd803d0c83a9901595d130f8157bc5b26c93acc816"
                   },
                   {
                       "path":  "work/delegation/scripts/New-DelegationManifest.ps1",
-                      "bytes":  2004,
-                      "sha256":  "45e4e201862134b74cc6010f0a170f151a09400aa005c7111044f084c55cb508"
+                      "bytes":  2097,
+                      "sha256":  "3e4a79261f593980f6fb023b712db61bb83664ba5177965985d475fcd498961a"
                   },
                   {
                       "path":  "work/delegation/scripts/Setup-Delegation.ps1",
-                      "bytes":  1132,
-                      "sha256":  "ca50f10fdcc0a2ad2280d0d053ea3fb4005813b344c57021a671186b38f6350e"
+                      "bytes":  1151,
+                      "sha256":  "1203faded4741025349fce317056a4585d5b9e2e833957b6d68eed747a55387c"
                   },
                   {
                       "path":  "work/delegation/scripts/Test-DelegationPacket.ps1",
-                      "bytes":  253,
-                      "sha256":  "a92d9fdc033648b301d458b2b1afe200e65ac3d79470e8bd786da7e9d6d95781"
+                      "bytes":  258,
+                      "sha256":  "1e99b3b63acd47fa4b3d9299495d7ac9242a093b467c1d7ae5cf32085d70daf5"
                   },
                   {
                       "path":  "work/delegation/scripts/Test-DelegationPr.ps1",
-                      "bytes":  1086,
-                      "sha256":  "00d1129e2a2de704f0b9dd7c696a3bc5aab9003b7409da2d76dd9762834947f2"
+                      "bytes":  1105,
+                      "sha256":  "d06d7d0eb0c0c510192394dad4120236279f28751171619ddcce3126348bb141"
                   },
                   {
                       "path":  "work/delegation/templates/DELEGATION_PACKET.yaml",
-                      "bytes":  608,
-                      "sha256":  "f615e0eca7cbf579225fe55e80fe27bee056b27bbf914f6a9ff8db325f4ee3c7"
+                      "bytes":  633,
+                      "sha256":  "7297c9a5bd72faeac2dd02957c3a7feb620a5b2227bdc0da0264017c807d5482"
                   },
                   {
                       "path":  "work/delegation/tests/Delegation.Tests.ps1",
-                      "bytes":  4331,
-                      "sha256":  "3a1cf0820c4cfb12e9b6866879cdf9995b29c1f0b43bc8ae5933d849f4c38eba"
+                      "bytes":  4420,
+                      "sha256":  "bc598e22287a14f4c9f758136cf23327d85b4fe2750d49e4e629e45dc3eae347"
                   },
                   {
                       "path":  "outputs/delegation_system/VERSION.txt",
-                      "bytes":  6,
-                      "sha256":  "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+                      "bytes":  7,
+                      "sha256":  "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
                   },
                   {
                       "path":  "outputs/delegation_system/VALIDATION_REPORT.md",
-                      "bytes":  877,
-                      "sha256":  "8f0c784f3340115ea2b77c1710eaae0ceff44eab930fd6ffc46c983697995d56"
+                      "bytes":  1164,
+                      "sha256":  "0b27d8e694e46e0e4cec623704ef21aa315ff57818ec0a8c6f9ba144ed7331da"
                   }
               ]
 }

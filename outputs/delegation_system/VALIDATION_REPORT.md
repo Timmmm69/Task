@@ -10,6 +10,8 @@
 - Git diff whitespace validation: PASS.
 - Canonical `sources/` content: unchanged.
 - OpenCode runtime execution: pending installation and model selection on the user's OpenCode machine.
-- GitHub Actions validation: pending publication of the infrastructure pull request.
+- GitHub Actions validation: PASS on clean Windows runner (delegation tests and prototype build/tests).
+- GitHub repository visibility: PRIVATE.
+- GitHub Free limitation: private-repository branch protection and native auto-merge are unavailable. A trusted low-risk merge workflow is used; owner-side manual push cannot be server-blocked without GitHub Pro.
 
 The runtime intentionally refuses to guess a model ID. `Setup-Delegation.ps1` refreshes the OpenCode catalog and requires exactly one matching DeepSeek Flash model or an explicit `provider/model` argument.
