@@ -1,4 +1,5 @@
 work/tmp/
+work/delegation/local.settings.json
 work/cache/
 outputs/tmp/
 archive/quarantine/*

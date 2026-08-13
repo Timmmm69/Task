@@ -1,0 +1,25 @@
+DELEGATION_PACKET:
+  task_id: TASK-XXXX
+  title: Short decision-complete title
+  base_branch: main
+  base_sha: 0000000000000000000000000000000000000000
+  risk: low
+  merge: automatic
+  owned_paths:
+    - work/example/**
+  forbidden_paths:
+    - sources/**
+    - outputs/**
+    - .github/**
+  max_files: 3
+  max_changed_lines: 150
+  requirements:
+    - One unambiguous requirement
+  acceptance:
+    - One objectively verifiable outcome
+  required_checks:
+    - npm.cmd test
+  reference_files:
+    - work/example/README.md
+  stop_conditions:
+    - Stop if a contract, dependency, or forbidden path must change

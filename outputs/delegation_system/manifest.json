@@ -1,0 +1,97 @@
+﻿{
+    "artifact":  "Task DeepSeek Delegation System",
+    "version":  "1.0.0",
+    "generated_at":  "2026-08-13T20:52:27.9712373Z",
+    "files":  [
+                  {
+                      "path":  ".github/CODEOWNERS",
+                      "bytes":  202,
+                      "sha256":  "9c6099ccb18a63233e0e1bc1e735838373508be2e73265e29f2b2fe5349f5796"
+                  },
+                  {
+                      "path":  ".github/workflows/ci.yml",
+                      "bytes":  1451,
+                      "sha256":  "37970302ea545edf0852ba181219742647dfc6eff37fa69d47f0ee243eb71212"
+                  },
+                  {
+                      "path":  ".opencode/agents/task-delegate.md",
+                      "bytes":  1118,
+                      "sha256":  "9c6722c9e49549d58fea1fb0f47634e867fcc2f60978acd1e744d30dd2b5ea19"
+                  },
+                  {
+                      "path":  ".opencode/agents/task-worker.md",
+                      "bytes":  1081,
+                      "sha256":  "25bd0036550e2d6bcda3b4217416654aa3330a65fd0872a147807f156cdcfed8"
+                  },
+                  {
+                      "path":  ".opencode/commands/delegate.md",
+                      "bytes":  120,
+                      "sha256":  "7ef62007ad9a4afe7324664e3bbeb019963167e21b522bb8e83806a020674841"
+                  },
+                  {
+                      "path":  ".gitignore",
+                      "bytes":  379,
+                      "sha256":  "20b788ac8b6652e4c3086bc03a5b0a5205960bf1cb4327795491d077aa8b224b"
+                  },
+                  {
+                      "path":  "work/delegation/README.md",
+                      "bytes":  1832,
+                      "sha256":  "45637d9864d02b204af98eda64d927120dd0e6f04b612ca24765df3e95fbf98c"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/Cleanup-Delegations.ps1",
+                      "bytes":  1024,
+                      "sha256":  "260738b98aa0e62dcce961100ca8d98c984e720ab0a83749095b4817ca2dec9f"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/Delegation.Common.ps1",
+                      "bytes":  10722,
+                      "sha256":  "b57d10cf3b2b1206560b18470b1fd997e43f2703c73472dc744aa6bba21ffae8"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/Invoke-Delegation.ps1",
+                      "bytes":  8375,
+                      "sha256":  "9753b7a0986e88e94606f56577ef625f99fe737b8cd85e640bd3f5229ad424af"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/New-DelegationManifest.ps1",
+                      "bytes":  2004,
+                      "sha256":  "45e4e201862134b74cc6010f0a170f151a09400aa005c7111044f084c55cb508"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/Setup-Delegation.ps1",
+                      "bytes":  1132,
+                      "sha256":  "ca50f10fdcc0a2ad2280d0d053ea3fb4005813b344c57021a671186b38f6350e"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/Test-DelegationPacket.ps1",
+                      "bytes":  253,
+                      "sha256":  "a92d9fdc033648b301d458b2b1afe200e65ac3d79470e8bd786da7e9d6d95781"
+                  },
+                  {
+                      "path":  "work/delegation/scripts/Test-DelegationPr.ps1",
+                      "bytes":  1086,
+                      "sha256":  "00d1129e2a2de704f0b9dd7c696a3bc5aab9003b7409da2d76dd9762834947f2"
+                  },
+                  {
+                      "path":  "work/delegation/templates/DELEGATION_PACKET.yaml",
+                      "bytes":  608,
+                      "sha256":  "f615e0eca7cbf579225fe55e80fe27bee056b27bbf914f6a9ff8db325f4ee3c7"
+                  },
+                  {
+                      "path":  "work/delegation/tests/Delegation.Tests.ps1",
+                      "bytes":  4331,
+                      "sha256":  "3a1cf0820c4cfb12e9b6866879cdf9995b29c1f0b43bc8ae5933d849f4c38eba"
+                  },
+                  {
+                      "path":  "outputs/delegation_system/VERSION.txt",
+                      "bytes":  6,
+                      "sha256":  "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+                  },
+                  {
+                      "path":  "outputs/delegation_system/VALIDATION_REPORT.md",
+                      "bytes":  760,
+                      "sha256":  "022a0b5448e733ba172f20d0e21d4868735d48e420e857aa08d2d3304a7a2010"
+                  }
+              ]
+}

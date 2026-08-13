@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  delegation-tests:
+    name: Delegation subsystem tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run delegation protocol tests
+        shell: powershell
+        run: ./work/delegation/tests/Delegation.Tests.ps1
+
+  prototype:
+    name: Prototype build and tests
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: work/stage_5_prototype
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: work/stage_5_prototype/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  delegation-policy:
+    name: Delegation policy
+    if: startsWith(github.head_ref, 'agent/deepseek/')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Validate packet metadata and diff scope
+        shell: powershell
+        run: ./work/delegation/scripts/Test-DelegationPr.ps1
+
+  delegation-policy-not-applicable:
+    name: Delegation policy (not applicable)
+    if: ${{ !startsWith(github.head_ref, 'agent/deepseek/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Not a delegated DeepSeek pull request."
