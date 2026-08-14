@@ -5,11 +5,15 @@ namespace Task.Desktop.ViewModels;
 /// </summary>
 public sealed class NavigationSection
 {
-    public NavigationSection(string title, string placeholderText)
+    public NavigationSection(string route, string title, string placeholderText)
     {
+        Route = route;
         Title = title;
         PlaceholderText = placeholderText;
     }
+
+    /// <summary>Canonical shell route of the section.</summary>
+    public string Route { get; }
 
     /// <summary>Display name of the section.</summary>
     public string Title { get; }
