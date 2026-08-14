@@ -28,29 +28,28 @@ var app = builder.Build();
 app.Use(async (context, next) =>
 {
     var supplied = context.Request.Headers[CorrelationIdHeader].ToString();
-    var correlationId = Guid.TryParse(supplied, out var parsed) ? parsed : Guid.NewGuid();
+    var correlationId = Guid.TryParseExact(supplied, "D", out var parsed) ? parsed : Guid.NewGuid();
     context.Response.Headers[CorrelationIdHeader] = correlationId.ToString();
 
     var logger = context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(LogCategory);
-    logger.LogInformation("HTTP {Method} {Path} started with correlation id {CorrelationId}",
-        context.Request.Method, context.Request.Path, correlationId);
 
     using (logger.BeginScope(new { CorrelationId = correlationId }))
     {
+        logger.LogInformation("HTTP {Method} {Path} started with correlation id {CorrelationId}",
+            context.Request.Method, context.Request.Path, correlationId);
+
         await next(context);
+
         logger.LogInformation("HTTP {Method} {Path} finished with status code {StatusCode}",
             context.Request.Method, context.Request.Path, context.Response.StatusCode);
     }
 });
 
-app.MapGet("/health/live", () => Results.Ok(new HealthResponse(
-    Status: "Alive",
-    CorrelationId: "See " + CorrelationIdHeader + " header")));
+app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive")));
 
 app.MapGet("/health/ready", () => Results.Json(
     new HealthResponse(
         Status: "NotReady",
-        CorrelationId: "See " + CorrelationIdHeader + " header",
         Details: new Dictionary<string, object>
         {
             ["persistence"] = "PostgreSQL and migrations are not implemented yet; persistence readiness is not configured.",
@@ -62,5 +61,6 @@ app.Run();
 
 internal sealed record HealthResponse(
     [property: JsonPropertyName("status")] string Status,
-    [property: JsonPropertyName("correlationId")] string CorrelationId,
-    [property: JsonPropertyName("details")] Dictionary<string, object>? Details = null);
+    [property: JsonPropertyName("details")]
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    Dictionary<string, object>? Details = null);
