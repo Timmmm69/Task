@@ -168,3 +168,66 @@ Sources (`sources/**`), `outputs/**` (including `openapi.yaml`), the React/Vite 
 ## 6. Conclusion
 
 **PASS** — the Wave A implementation matrix covers all 9 Wave A modules at FR/BR/AC/NFR granularity with module, OpenAPI operationId + path, planned server handler, Stage 3.5 screen and FLOW, test type and source; all 109 operationId references verified against the canonical OpenAPI; 13 desktop-only FRs explicitly marked without invented API. The matrix is reproducible from the generator script and does not declare Stage 1 or the implementation baseline complete.
+
+---
+
+# VALIDATION_REPORT — TASK-PROD-S1-004
+
+Increment: Wave B implementation matrix (replaces the interim 6-column `wave-b.csv` that was committed with TASK-PROD-S1-003). Base: `main` @ `cbaea48` (local HEAD == origin/main before the increment; working tree clean except the pre-existing untracked `work/TASK_PRODUCTION_EXECUTION_PROMPT.md`).
+Date: 2026-08-14. Result: **PASS**.
+
+## 1. Repository state
+
+| Command | Result |
+|---|---|
+| `git status` / `git rev-parse HEAD` | `main` at `cbaea48`; untracked: `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` (pre-existing) |
+| `git diff --check` | clean; exit 0 |
+
+## 2. Deliverable
+
+`work/production_stage_1_baseline/traceability/wave-b.csv` — implementation matrix for Wave B (проекты и участники; файловый каталог и SMB-диагностика; контакты и компании; комментарии и взаимодействия; аудит и история) = MOD-010 (Проекты), MOD-011 (Файловый каталог), MOD-012 (Контакты и компании), MOD-013 (Комментарии и взаимодействия), MOD-021 (Аудит и история).
+
+- Reproducible generator: `work/production_stage_1_baseline/traceability/build_wave_b_matrix.py` (mirrors `build_wave_a_matrix.py`; same 15-column layout, same source catalog, same conventions).
+- 15 columns, identical header and conventions as `wave-a.csv` (comma-separated, UTF-8 with BOM).
+- 1166 rows: 89 FR + 36 BR + 5 DATA + 5 PERM + 5 ERR + 5 SYNC + 5 AUDIT + 991 AC + 25 NFR. No duplicate requirement IDs within the file; no empty module/title cells; no bare SCR/FLOW IDs (every one resolved to a Stage 3.5 name).
+- Watchers (FR-040, MOD-005) are already covered by the Wave A matrix and are intentionally NOT duplicated here (no FR overlap between waves).
+- SHA-256 of `wave-b.csv`: `9EC40AE0FE06595352844EB94EA9479F34FB7875AB655FA7742C9365DAE48D21`.
+- Interim 6-column `wave-b.csv` (73 rows, semicolon-separated, wrong `Requirement title`/`Screen (Stage 3.5)`/`FLOW (Stage 3.5)`/`Source` semantics) replaced by this build.
+
+## 3. Source traceability (stop conditions)
+
+| Check | Result |
+|---|---|
+| Requirement set | 154 requirement rows (89 FR + 20 BR + 5×DATA/PERM/ERR/SYNC/AUDIT) of Wave B modules taken verbatim from `work/stage_4_6_lite/inputs/candidate/Stage_4_Requirements_Traceability_4.5.csv`; includes the 16 global `ALL` BRs (BR-001–BR-015, BR-113) as in Wave A |
+| FR titles | 89/89 found in clean copy `work/stage_4_6_lite/design_input/prd/Stage_4_Module_PRDs_4.5.md` |
+| BR rules | From `Stage_4_Business_Rules_Catalog_4.5.csv` (module rules of MOD-010…013, MOD-021 + 16 global `ALL` rules) |
+| AC set | 991 ACs = exactly the ACs referenced by Wave B requirement rows plus the 16 global `ALL` ACs (AC-001–AC-015, AC-1823); 0 referenced-but-missing; 0 orphans; all test types/priorities from `Stage_4_Acceptance_Criteria_Catalog_4.5.csv` |
+| NFR set | All 25 NFRs from `Stage_4_NFR_Catalog_4.5.csv` (module `ALL` → Wave B scope); test column = NFR `Measurement` |
+| Screen/FLOW | SCR/FLOW per row from Stage 4 traceability, else module-level defaults from the BR rows (MOD-010: SCR-060…072/FLOW-013,014,035; MOD-011: SCR-080…090+SCR-210/FLOW-015,016,017,036; MOD-012: SCR-110…115,118,119/FLOW-018; MOD-013: SCR-035,067,116,117,202,203/FLOW-037; MOD-021: SCR-036,068,172,186,201/FLOW-025,029,030); names resolved from `normative_stage3_5` catalogs + FLOW-038 (Stage 4.5, DEC-060, same fallback as Wave A) |
+| No invented API | 5 FRs (FR-255–FR-259, FR-269) marked `Desktop-only, без нового API` exactly as in the traceability CSV; BR/DATA/PERM/ERR/AUDIT rows marked «—» or «операции модуля»; no operationId invented anywhere |
+
+## 4. OpenAPI operationId verification
+
+Every operationId emitted in the matrix was verified against `outputs/stage_2_3/openapi/openapi.yaml`:
+
+| Probe | Result |
+|---|---|
+| Unique operationIds referenced by Wave B rows (Stage 4 CSV) | 98; all present in OpenAPI (244 total), method+path identical |
+| Sync operations (SYNC-010…021 Wave B inclusions) | `GET_api_v1_sync_changes`, `POST_api_v1_sync_bootstrap`, `POST_api_v1_sync_ack` — all present |
+
+Planned server handler = `OrganizerController.<operationId>` (method name == operationId of the generated stub `Organizer.ServerStubs.OrganizerControllerControllerBase`), same convention as Wave A.
+
+## 5. Cross-wave consistency
+
+| Probe | Result |
+|---|---|
+| Requirement ID collision between `wave-a.csv` and `wave-b.csv` | Only the intentional global `ALL` elements (16 BRs, 25 NFRs, 16 global ACs); 0 collisions on module-level FR/BR/AC/other IDs |
+| Column layout / encoding | Both files: 15 columns, identical header, UTF-8 with BOM, `\n` line endings |
+
+## 6. Read-only and no-change statement
+
+Sources (`sources/**`), `outputs/**` (including `openapi.yaml`), the React/Vite prototype and all Stage 4/Stage 3 baseline artifacts were read-only. Replaced: `work/production_stage_1_baseline/traceability/wave-b.csv` (interim build → canonical 15-column build). New file: `work/production_stage_1_baseline/traceability/build_wave_b_matrix.py`. Modified: `work/production_stage_1_baseline/VERSION.txt` (0.3.0 → 0.4.0), this report (appended section). No deletions, renames or changes outside `work/production_stage_1_baseline/**`.
+
+## 7. Conclusion
+
+**PASS** — the Wave B implementation matrix covers all 5 Wave B modules (incl. the 16 global BR/AC rows and all 25 NFRs) at FR/BR/AC/NFR granularity, replacing the interim non-canonical `wave-b.csv`; all 98 operationId references verified against the canonical OpenAPI; 5 desktop-only FRs explicitly marked without invented API; no overlap with Wave A besides the intentional global rows. The matrix is reproducible from `build_wave_b_matrix.py` and does not declare Stage 1 or the implementation baseline complete.
