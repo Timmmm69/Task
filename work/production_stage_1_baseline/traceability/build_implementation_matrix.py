@@ -19,10 +19,15 @@ INPUTS = (
     ("B", TRACEABILITY_DIR / "wave-b.csv"),
     ("C", TRACEABILITY_DIR / "wave-c.csv"),
 )
+GAP_OVERRIDE_INPUTS = (
+    ("A", TRACEABILITY_DIR / "gap_overrides_wave_a.csv"),
+    ("B", TRACEABILITY_DIR / "gap_overrides_wave_b.csv"),
+    ("C", TRACEABILITY_DIR / "gap_overrides_wave_c.csv"),
+)
 OPENAPI = ROOT / "outputs" / "stage_2_3" / "openapi" / "openapi.yaml"
 OUTPUT = TRACEABILITY_DIR / "implementation_matrix.csv"
 REPORT = TRACEABILITY_DIR / "MATRIX_VALIDATION.md"
-MATRIX_VERSION = "1.0.0"
+MATRIX_VERSION = "1.1.0"
 
 OPERATION_RE = re.compile(r"\b(?:GET|POST|PUT|PATCH|DELETE)_[A-Za-z0-9_]+\b")
 PATH_RE = re.compile(r"^  (/[^:]+):\s*$")
@@ -72,9 +77,40 @@ OUTPUT_FIELDS = (
     "Gap reference",
 )
 
+GAP_OVERRIDE_FIELDS = (
+    "Matrix source row",
+    "Requirement",
+    "Type",
+    "Module",
+    "Requirement title",
+    "Resolution status",
+    "API operationId",
+    "API method",
+    "API path",
+    "Permission",
+    "Server handler planned",
+    "Screen Stage 3.5",
+    "FLOW Stage 3.5",
+    "Test type",
+    "Source evidence",
+    "Resolution rationale",
+)
+
 
 @dataclass(frozen=True)
 class SourceRow:
+    wave: str
+    file_name: str
+    line_number: int
+    values: dict[str, str]
+
+    @property
+    def reference(self) -> str:
+        return f"{self.file_name}:{self.line_number}"
+
+
+@dataclass(frozen=True)
+class GapOverride:
     wave: str
     file_name: str
     line_number: int
@@ -104,6 +140,31 @@ def read_inputs(errors: list[str]) -> list[SourceRow]:
             for line_number, values in enumerate(reader, start=2):
                 rows.append(SourceRow(wave, path.name, line_number, dict(values)))
     return rows
+
+
+def read_gap_overrides(errors: list[str]) -> dict[str, list[GapOverride]]:
+    overrides: dict[str, list[GapOverride]] = {}
+    seen_links: set[tuple[str, str]] = set()
+    for wave, path in GAP_OVERRIDE_INPUTS:
+        with path.open("r", encoding="utf-8-sig", newline="") as stream:
+            reader = csv.DictReader(stream)
+            if tuple(reader.fieldnames or ()) != GAP_OVERRIDE_FIELDS:
+                errors.append(f"{path.name}: unexpected columns {reader.fieldnames!r}")
+            for line_number, values in enumerate(reader, start=2):
+                override = GapOverride(wave, path.name, line_number, dict(values))
+                source_row = values["Matrix source row"].strip()
+                operation_id = values["API operationId"].strip()
+                link = (source_row, operation_id)
+                if not source_row:
+                    errors.append(f"{override.reference}: Matrix source row is empty")
+                elif link in seen_links:
+                    errors.append(
+                        f"{override.reference}: duplicate gap resolution for "
+                        f"{source_row} and {operation_id or '<unresolved>'}"
+                    )
+                seen_links.add(link)
+                overrides.setdefault(source_row, []).append(override)
+    return overrides
 
 
 def read_openapi_operations(errors: list[str]) -> dict[str, str]:
@@ -190,8 +251,134 @@ def gap_reference(copies: list[SourceRow], source: str) -> str:
     return f"{refs}; Source={source}"
 
 
+def override_reference(override: GapOverride) -> str:
+    evidence = override.values["Source evidence"].strip()
+    return f"{override.reference}; {evidence}"
+
+
+def validate_override_identity(
+    override: GapOverride,
+    base: dict[str, str],
+    expected_wave: str,
+    errors: list[str],
+) -> None:
+    if override.wave != expected_wave:
+        errors.append(
+            f"{override.reference}: override wave {override.wave} does not match source wave {expected_wave}"
+        )
+    field_mapping = {
+        "Requirement": "Requirement",
+        "Type": "Type",
+        "Module": "Module",
+        "Requirement title": "Requirement title",
+        "Screen Stage 3.5": "Screen (Stage 3.5)",
+        "FLOW Stage 3.5": "FLOW (Stage 3.5)",
+        "Test type": "Test type",
+    }
+    for override_field, matrix_field in field_mapping.items():
+        if override.values[override_field] != base[matrix_field]:
+            errors.append(
+                f"{override.reference}: {override_field} does not match {base['Source row']}"
+            )
+
+
+def apply_gap_overrides(
+    row: SourceRow,
+    base: dict[str, str],
+    overrides: list[GapOverride],
+    openapi_operations: dict[str, str],
+    errors: list[str],
+) -> tuple[list[dict[str, str]], set[str]]:
+    output_rows: list[dict[str, str]] = []
+    unknown_operations: set[str] = set()
+    statuses = {override.values["Resolution status"].strip() for override in overrides}
+    if statuses not in ({"resolved"}, {"unresolved"}):
+        errors.append(
+            f"{base['Source row']}: gap overrides must be uniformly resolved or unresolved; "
+            f"found {sorted(statuses)}"
+        )
+
+    for override in overrides:
+        validate_override_identity(override, base, row.wave, errors)
+        values = override.values
+        status = values["Resolution status"].strip()
+        evidence = values["Source evidence"].strip()
+        rationale = values["Resolution rationale"].strip()
+        if status not in {"resolved", "unresolved"}:
+            errors.append(f"{override.reference}: invalid Resolution status {status!r}")
+        if not evidence:
+            errors.append(f"{override.reference}: Source evidence is empty")
+        if not rationale:
+            errors.append(f"{override.reference}: Resolution rationale is empty")
+
+        endpoint_fields = {
+            "API operationId": values["API operationId"].strip(),
+            "API method": values["API method"].strip(),
+            "API path": values["API path"].strip(),
+            "Permission": values["Permission"].strip(),
+            "Server handler planned": values["Server handler planned"].strip(),
+        }
+        if status == "unresolved":
+            if len(overrides) != 1:
+                errors.append(f"{base['Source row']}: unresolved gap must have exactly one override row")
+            populated = [name for name, value in endpoint_fields.items() if value]
+            if populated:
+                errors.append(
+                    f"{override.reference}: unresolved gap has endpoint fields: {', '.join(populated)}"
+                )
+            output_rows.append(
+                {
+                    **base,
+                    "API status": "gap",
+                    "API operationId": "",
+                    "API path (method)": "",
+                    "Server handler (planned)": "",
+                    "Disposition reason": rationale,
+                    "Gap reference": override_reference(override),
+                }
+            )
+            continue
+
+        missing = [name for name, value in endpoint_fields.items() if not value]
+        if missing:
+            errors.append(f"{override.reference}: resolved gap is missing {', '.join(missing)}")
+        operation_id = endpoint_fields["API operationId"]
+        method = endpoint_fields["API method"]
+        path = endpoint_fields["API path"]
+        canonical_path = openapi_operations.get(operation_id)
+        actual_path = f"{method} {path}".strip()
+        if canonical_path is None:
+            unknown_operations.add(operation_id)
+        elif actual_path != canonical_path:
+            errors.append(
+                f"{override.reference}: {operation_id} path is {actual_path!r}, "
+                f"OpenAPI declares {canonical_path!r}"
+            )
+        for field_name in ("Screen Stage 3.5", "FLOW Stage 3.5", "Test type"):
+            if is_placeholder(values[field_name]):
+                errors.append(f"{override.reference}: resolved gap has no {field_name}")
+        output_rows.append(
+            {
+                **base,
+                "API status": "api",
+                "API operationId": operation_id,
+                "API path (method)": actual_path,
+                "Permission": endpoint_fields["Permission"],
+                "Server handler (planned)": endpoint_fields["Server handler planned"],
+                "Screen (Stage 3.5)": values["Screen Stage 3.5"],
+                "FLOW (Stage 3.5)": values["FLOW Stage 3.5"],
+                "Test type": values["Test type"],
+                "Disposition reason": rationale,
+                "Gap reference": override_reference(override),
+            }
+        )
+
+    return output_rows, unknown_operations
+
+
 def build_rows(
     source_rows: list[tuple[SourceRow, list[SourceRow]]],
+    gap_overrides: dict[str, list[GapOverride]],
     openapi_operations: dict[str, str],
     errors: list[str],
 ) -> tuple[list[dict[str, str]], set[str]]:
@@ -207,11 +394,21 @@ def build_rows(
             marker = values["API operationId"].strip()
             is_gap = "операции модуля" in marker or "domain command + audit/history endpoints" in marker
             if is_gap:
-                reason = (
-                    "Source names module operations but does not identify operationId."
-                    if "операции модуля" in marker
-                    else "Source names domain/audit endpoints but does not identify operationId."
-                )
+                source_reference = base["Source row"]
+                matching_overrides = gap_overrides.pop(source_reference, [])
+                if matching_overrides:
+                    resolved_rows, override_unknown = apply_gap_overrides(
+                        row,
+                        base,
+                        matching_overrides,
+                        openapi_operations,
+                        errors,
+                    )
+                    output_rows.extend(resolved_rows)
+                    unknown_operations.update(override_unknown)
+                    continue
+                errors.append(f"{source_reference}: gap has no override")
+                reason = "Source gap has no reviewed override."
                 status = "gap"
                 reference = gap_reference(copies, values["Source"])
             elif "Desktop-only" in marker:
@@ -282,6 +479,9 @@ def build_rows(
 
     for operation_id in sorted(unknown_operations):
         errors.append(f"Unknown operationId: {operation_id}")
+    for source_reference, unused_overrides in sorted(gap_overrides.items()):
+        refs = ", ".join(override.reference for override in unused_overrides)
+        errors.append(f"{source_reference}: override does not match a source gap ({refs})")
     return output_rows, unknown_operations
 
 
@@ -303,6 +503,7 @@ def sha256(path: Path) -> str:
 def write_report(
     rows: list[dict[str, str]],
     source_count: int,
+    override_count: int,
     openapi_count: int,
     unknown_operations: set[str],
     errors: list[str],
@@ -311,6 +512,10 @@ def write_report(
     requirements = {row["Requirement"] for row in rows}
     api_operations = [row["API operationId"] for row in rows if row["API status"] == "api"]
     no_api_rows = counts["no_api"] + counts["gap"]
+    resolved_override_rows = sum(
+        row["API status"] == "api" and bool(row["Gap reference"])
+        for row in rows
+    )
     status = "PASS" if not errors else "FAIL"
     unknown_text = ", ".join(sorted(unknown_operations)) if unknown_operations else "none"
     error_lines = "\n".join(f"- {error}" for error in errors) if errors else "- None."
@@ -329,6 +534,7 @@ def write_report(
 | Metric | Count |
 |---|---:|
 | Source rows read | {source_count} |
+| Gap override rows read | {override_count} |
 | Output rows | {len(rows)} |
 | Requirements | {len(requirements)} |
 | API-operation rows | {counts['api']} |
@@ -336,6 +542,7 @@ def write_report(
 | Rows without API | {no_api_rows} |
 | `no_api` rows | {counts['no_api']} |
 | Documented `gap` rows | {counts['gap']} |
+| Gaps resolved to API rows | {resolved_override_rows} |
 | Unknown operations found | {len(unknown_operations)} |
 | Operations declared by OpenAPI | {openapi_count} |
 
@@ -347,12 +554,15 @@ Unknown operations: {unknown_text}.
 - Every multi-operation source cell is split into one row per requirement-to-operation link, with positional path and handler mapping.
 - Every API operation is checked against `outputs/stage_2_3/openapi/openapi.yaml`, including its HTTP method and path.
 - Every endpoint row is checked for a planned server handler, screen, FLOW and test type.
-- Every row without an operation uses `API status=no_api` with a reason or `API status=gap` with an exact source-row reference.
+- Every source gap has exactly one reviewed unresolved override or one or more reviewed resolved API links.
+- Every resolved override is checked against OpenAPI method/path and promoted to an `api` row with evidence.
+- Every unresolved override remains `API status=gap` with its rationale and exact evidence reference.
 
 ## Manifest
 
 - Matrix version: `{MATRIX_VERSION}`
 {input_manifest}
+{chr(10).join(f"- `{path.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(path)}`" for _, path in GAP_OVERRIDE_INPUTS)}
 - `{OPENAPI.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(OPENAPI)}`
 - `{OUTPUT.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(OUTPUT)}`
 
@@ -366,11 +576,20 @@ Unknown operations: {unknown_text}.
 def main() -> int:
     errors: list[str] = []
     input_rows = read_inputs(errors)
+    gap_overrides = read_gap_overrides(errors)
+    override_count = sum(len(overrides) for overrides in gap_overrides.values())
     openapi_operations = read_openapi_operations(errors)
     source_rows = deduplicate_all_rows(input_rows, errors)
-    rows, unknown_operations = build_rows(source_rows, openapi_operations, errors)
+    rows, unknown_operations = build_rows(source_rows, gap_overrides, openapi_operations, errors)
     write_csv(rows)
-    write_report(rows, len(input_rows), len(openapi_operations), unknown_operations, errors)
+    write_report(
+        rows,
+        len(input_rows),
+        override_count,
+        len(openapi_operations),
+        unknown_operations,
+        errors,
+    )
     print(f"Built {OUTPUT.relative_to(ROOT)} with {len(rows)} rows")
     print(f"Validation: {'PASS' if not errors else 'FAIL'}; report: {REPORT.relative_to(ROOT)}")
     return 0 if not errors else 1
