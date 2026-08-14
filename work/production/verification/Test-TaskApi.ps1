@@ -138,7 +138,7 @@ finally {
         }
         $stillAlive = $null -ne (Get-Process -Id $process.Id -ErrorAction SilentlyContinue)
         for ($i = 0; $stillAlive -and $i -lt 25; $i++) { Start-Sleep -Milliseconds 200; $stillAlive = $null -ne (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) }
-        if ($stillAlive) { taskkill /F /T /PID $process.Id 2>$null | Out-Null; Start-Sleep -Milliseconds 500; $stillAlive = $null -ne (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) }
+        if ($stillAlive) { cmd /c "taskkill /F /T /PID $process.Id >nul 2>nul"; Start-Sleep -Milliseconds 500; $stillAlive = $null -ne (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) }
         if ($stillAlive) { Write-Host "  warning: Task.Api process $($process.Id) is still running." }
         else { Write-Ok "Task.Api process $($process.Id) has stopped." }
     }
