@@ -40,6 +40,10 @@ function Fail-Project {
 }
 
 $projects = Get-ChildItem -LiteralPath $srcDir -Filter '*.csproj' -Recurse | Sort-Object FullName
+if ($projects.Count -eq 0) {
+    Write-Host '[FAIL] No production projects found under src.' -ForegroundColor Red
+    exit 1
+}
 foreach ($project in $projects) {
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($project.Name)
     if (-not $AllowedDependencies.ContainsKey($projectName)) {
@@ -58,7 +62,8 @@ foreach ($project in $projects) {
             Fail-Project $projectName 'ProjectReference without Include attribute'
             continue
         }
-        $resolved = [System.IO.Path]::GetFullPath((Join-Path $project.DirectoryName $include))
+        $includePath = if ([System.IO.Path]::IsPathRooted($include)) { $include } else { Join-Path $project.DirectoryName $include }
+        $resolved = [System.IO.Path]::GetFullPath($includePath)
         if (-not (Test-Path -LiteralPath $resolved)) {
             Fail-Project $projectName "ProjectReference points to non-existent project: $include"
             continue
