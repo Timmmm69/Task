@@ -112,3 +112,59 @@ Sources (`sources/**`) were read-only. No API, DTO, database, permission, depend
 ## 7. Conclusion
 
 **PASS** — the user-approved Product 1.0 policies are fully recorded from `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` §5 without modifying it; all 13 required markers present; OQ-004/005/007/008/009 mapped; change surface confined to the three owned files. This increment records policy inputs only and does not declare Stage 1 or the full implementation baseline complete.
+
+---
+
+# VALIDATION_REPORT — TASK-PROD-S1-003
+
+Increment: Wave A implementation matrix. Base: `main` @ `aec0fc9` (local HEAD == origin/main before the increment; working tree clean except the pre-existing untracked `work/TASK_PRODUCTION_EXECUTION_PROMPT.md`).
+Date: 2026-08-14. Result: **PASS**.
+
+## 1. Repository state
+
+| Command | Result |
+|---|---|
+| `git status` / `git rev-parse HEAD` | `main` at `aec0fc9`; untracked: `work/TASK_PRODUCTION_EXECUTION_PROMPT.md` (pre-existing) |
+| `git diff --check` | clean; exit 0 |
+
+## 2. Deliverable
+
+`work/production_stage_1_baseline/traceability/wave-a.csv` — implementation matrix for Wave A (вход в систему, оболочка приложения, «Сегодня», Inbox, задачи, чек-листы, повторения, напоминания, календарь) = MOD-001, MOD-002, MOD-003, MOD-004, MOD-005, MOD-006, MOD-007, MOD-008, MOD-009.
+
+- Reproducible generator: `work/production_stage_1_baseline/traceability/build_wave_a_matrix.py`.
+- 15 columns: `Requirement | Type | Module | Module name | Requirement title | API operationId | API path (method) | Permission | Server handler (planned) | Screen (Stage 3.5) | FLOW (Stage 3.5) | Acceptance criteria (AC) | Test type | Priority | Source`.
+- 1269 rows: 95 FR + 51 BR + 9 DATA + 9 PERM + 9 ERR + 9 SYNC + 9 AUDIT + 1053 AC + 25 NFR. No duplicate requirement IDs; no empty module/title cells.
+- Includes 16 global BRs (BR-001–BR-015, BR-113) with module `ALL` and their ACs (AC-001–AC-015, AC-1823): they directly constrain every Wave A module (organization boundary, RBAC evaluation, If-Match/versioned writes, idempotency, PATCH semantics, audit append-only, search authorization).
+- SHA-256 of `wave-a.csv`: `9BFC8E14CA1175732F2DECAE36AB4C5271C0DA2C630073AA2D7B52B25B2BD3D2`; UTF-8 with BOM; header + 1269 data rows.
+
+## 3. Source traceability (stop conditions)
+
+| Check | Result |
+|---|---|
+| Requirement set | 191 requirement rows (FR/BR/DATA/PERM/ERR/SYNC/AUDIT) of Wave A modules taken verbatim from `work/stage_4_6_lite/inputs/candidate/Stage_4_Requirements_Traceability_4.5.csv` (497 total); includes 16 global `ALL` BRs (BR-001–BR-015, BR-113) |
+| FR titles | 95/95 found in clean copy `work/stage_4_6_lite/design_input/prd/Stage_4_Module_PRDs_4.5.md` (the `inputs/candidate` copy has corrupted Cyrillic; ID structure identical) |
+| BR rules | From `Stage_4_Business_Rules_Catalog_4.5.csv` (BR-016–BR-050 module rules; BR-001–BR-015 + BR-113 global rules) |
+| AC set | 1053 ACs = exactly the ACs referenced by Wave A requirement rows (incl. AC-001–AC-015, AC-1823); 0 referenced-but-missing; 0 orphans; all test types/priorities from `Stage_4_Acceptance_Criteria_Catalog_4.5.csv` |
+| NFR set | All 25 NFRs from `Stage_4_NFR_Catalog_4.5.csv` (module `ALL` → Wave A scope); test column = NFR `Measurement` |
+| Screen/FLOW | SCR/FLOW per row from Stage 4 traceability, else module-level defaults (global `ALL` rows: row-level SCR/FLOW, else «—»); names resolved from `normative_stage3_5/Stage_3_Screen_Catalog_Final_3.5.md` and `Stage_3_User_Flows_Final_3.5.md` (37 FLOWs catalog) + FLOW-038 (Stage 4.5, DEC-060) |
+| No invented API | 13 FRs (FR-242–FR-254) marked `Desktop-only, без нового API` exactly as in the traceability CSV; BR/DATA/PERM/ERR/AUDIT rows marked «—» or «операции модуля»; no operationId invented anywhere |
+
+## 4. OpenAPI operationId verification
+
+Every operationId emitted in the matrix was verified against `outputs/stage_2_3/openapi/openapi.yaml` (paths + methods):
+
+| Probe | Result |
+|---|---|
+| Unique operationIds referenced by Wave A rows (Stage 4 CSV) | 82; all present in OpenAPI (244 total), method+path identical |
+| Sync operations (SYNC-001…009) | `GET_api_v1_sync_changes`, `POST_api_v1_sync_bootstrap`, `POST_api_v1_sync_ack` — all present |
+| OperationId references inside generated `wave-a.csv` (independent re-check, 109 references) | 0 missing, 0 mismatched |
+
+Planned server handler = the abstract method name of the generated stub `Organizer.ServerStubs.OrganizerControllerControllerBase` in `outputs/stage_2_3/qa/generated/server-csharp/OrganizerController.g.cs` (method name == operationId), rendered as `OrganizerController.<operationId>`.
+
+## 5. Read-only and no-change statement
+
+Sources (`sources/**`), `outputs/**` (including `openapi.yaml`), the React/Vite prototype and all Stage 4/Stage 3 baseline artifacts were read-only. New files only: `work/production_stage_1_baseline/traceability/wave-a.csv`, `work/production_stage_1_baseline/traceability/build_wave_a_matrix.py`; modified: `work/production_stage_1_baseline/VERSION.txt` (0.2.0 → 0.3.0), this report (appended section). No deletions, renames or changes outside `work/production_stage_1_baseline/**`.
+
+## 6. Conclusion
+
+**PASS** — the Wave A implementation matrix covers all 9 Wave A modules at FR/BR/AC/NFR granularity with module, OpenAPI operationId + path, planned server handler, Stage 3.5 screen and FLOW, test type and source; all 109 operationId references verified against the canonical OpenAPI; 13 desktop-only FRs explicitly marked without invented API. The matrix is reproducible from the generator script and does not declare Stage 1 or the implementation baseline complete.
