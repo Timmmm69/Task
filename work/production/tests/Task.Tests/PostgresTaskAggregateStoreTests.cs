@@ -334,6 +334,32 @@ public sealed class PostgresTaskAggregateStoreTests
                 Assert.True((bool)(noBootstrap.ExecuteScalar() ?? false));
             }
 
+            using (var incompatibleOrganizations = dataSource.CreateCommand(
+                "CREATE SCHEMA core; CREATE TABLE core.organizations (wrong_column integer);"))
+            {
+                incompatibleOrganizations.ExecuteNonQuery();
+            }
+
+            var failedMigration = await RunMigratorAsync("apply", databaseConnection);
+            Assert.Equal(9, failedMigration.ExitCode);
+            Assert.Contains("code=MigrationExecutionFailed", failedMigration.Stderr, StringComparison.Ordinal);
+            using (var rolledBackBootstrap = dataSource.CreateCommand(
+                "SELECT to_regclass('infrastructure.schema_migrations') IS NULL;"))
+            {
+                Assert.True((bool)(rolledBackBootstrap.ExecuteScalar() ?? false));
+            }
+
+            using (var rolledBackMigrationObjects = dataSource.CreateCommand(
+                "SELECT to_regclass('core.objects') IS NULL AND to_regclass('work.tasks') IS NULL;"))
+            {
+                Assert.True((bool)(rolledBackMigrationObjects.ExecuteScalar() ?? false));
+            }
+
+            using (var removeIncompatibleSchema = dataSource.CreateCommand("DROP SCHEMA core CASCADE;"))
+            {
+                removeIncompatibleSchema.ExecuteNonQuery();
+            }
+
             Assert.Equal(0, (await RunMigratorAsync("apply", databaseConnection)).ExitCode);
 
             using (var wrongName = dataSource.CreateCommand(

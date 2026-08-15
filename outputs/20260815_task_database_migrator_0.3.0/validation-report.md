@@ -18,6 +18,7 @@ Status: PASS for Task database migrator increment 0.3.0; NOT a deployment-readin
 - Complete history with missing required objects returns exit 7 and is not repaired.
 - CLI parsing, every inspection mapping, post-check, cancellation and credential-safe failures are covered by component tests.
 - PostgreSQL 16 process-level gate passed clean `status -> 6`, `apply -> 0/Applied`, `status -> 0/Ready`, repeat `apply -> 0/AlreadyCurrent`, actual API HTTP 200/`Ready`, lock refusal, history mismatch and missing-object refusal.
+- A deterministic failure after bootstrap began proved that migration DDL and history roll back together without partial objects.
 - PostgreSQL 15 process-level gate passed: `status/apply -> 5`; no `infrastructure` schema was created.
 - Temporary gate containers were removed.
 
@@ -36,7 +37,7 @@ Status: PASS for Task database migrator increment 0.3.0; NOT a deployment-readin
 - NuGet vulnerability audit including transitive packages — PASS, no vulnerable packages reported.
 - Real PostgreSQL 16 and 15 gates — PASS.
 - `git diff --check` — PASS.
-- Manifest SHA-256 verification — PASS.
+- Portable canonical manifest SHA-256 verification on a fresh CRLF checkout — PASS.
 - `sources/` unchanged and temporary gate containers absent — PASS.
 
 ## Scope
