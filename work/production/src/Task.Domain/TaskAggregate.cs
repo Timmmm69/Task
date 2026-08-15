@@ -12,13 +12,17 @@ public sealed class TaskAggregate
         string title,
         TaskWorkStatus workStatus,
         DateTimeOffset? completedAtUtc,
-        Guid? completedBy)
+        Guid? completedBy,
+        TaskPriority priority,
+        TaskSchedule schedule)
     {
         Metadata = metadata;
         Title = title;
         WorkStatus = workStatus;
         CompletedAtUtc = completedAtUtc;
         CompletedBy = completedBy;
+        Priority = priority;
+        Schedule = schedule;
     }
 
     public SyncableEntityMetadata Metadata { get; }
@@ -26,6 +30,10 @@ public sealed class TaskAggregate
     public string Title { get; }
 
     public TaskWorkStatus WorkStatus { get; }
+
+    public TaskPriority Priority { get; }
+
+    public TaskSchedule Schedule { get; }
 
     public DateTimeOffset? CompletedAtUtc { get; }
 
@@ -46,7 +54,9 @@ public sealed class TaskAggregate
             normalizedTitle,
             TaskWorkStatus.New,
             completedAtUtc: null,
-            completedBy: null);
+            completedBy: null,
+            TaskPriority.Normal,
+            TaskSchedule.Create(null, null));
     }
 
     public TaskAggregate Rename(Guid actorId, string title, DateTimeOffset occurredAtUtc)
@@ -56,7 +66,7 @@ public sealed class TaskAggregate
         var normalizedTitle = EnsureValidTitle(title);
         var metadata = Metadata.RecordVisibleChange(actorId, occurredAtUtc);
 
-        return new TaskAggregate(metadata, normalizedTitle, WorkStatus, CompletedAtUtc, CompletedBy);
+        return new TaskAggregate(metadata, normalizedTitle, WorkStatus, CompletedAtUtc, CompletedBy, Priority, Schedule);
     }
 
     public TaskAggregate Start(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -72,7 +82,9 @@ public sealed class TaskAggregate
             Title,
             TaskWorkStatus.InProgress,
             CompletedAtUtc,
-            CompletedBy);
+            CompletedBy,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate SubmitForReview(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -88,7 +100,9 @@ public sealed class TaskAggregate
             Title,
             TaskWorkStatus.Review,
             CompletedAtUtc,
-            CompletedBy);
+            CompletedBy,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate Complete(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -104,7 +118,9 @@ public sealed class TaskAggregate
             Title,
             TaskWorkStatus.Completed,
             occurredAtUtc,
-            actorId);
+            actorId,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate Cancel(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -120,7 +136,9 @@ public sealed class TaskAggregate
             Title,
             TaskWorkStatus.Cancelled,
             completedAtUtc: null,
-            completedBy: null);
+            completedBy: null,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate Archive(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -136,7 +154,9 @@ public sealed class TaskAggregate
             Title,
             WorkStatus,
             CompletedAtUtc,
-            CompletedBy);
+            CompletedBy,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate RestoreFromArchive(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -146,7 +166,9 @@ public sealed class TaskAggregate
             Title,
             WorkStatus,
             CompletedAtUtc,
-            CompletedBy);
+            CompletedBy,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate MoveToTrash(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -162,7 +184,9 @@ public sealed class TaskAggregate
             Title,
             WorkStatus,
             CompletedAtUtc,
-            CompletedBy);
+            CompletedBy,
+            Priority,
+            Schedule);
     }
 
     public TaskAggregate RestoreFromTrash(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -172,8 +196,61 @@ public sealed class TaskAggregate
             Title,
             WorkStatus,
             CompletedAtUtc,
-            CompletedBy);
+            CompletedBy,
+            Priority,
+            Schedule);
     }
+
+    public TaskAggregate ChangePriority(Guid actorId, TaskPriority priority, DateTimeOffset occurredAtUtc)
+    {
+        EnsureActive("An archived or trashed task must be restored before its priority can be changed.");
+        EnsureNotTerminal("A completed or cancelled task cannot be reprioritized.");
+        if (!Enum.IsDefined(priority))
+        {
+            throw new ArgumentOutOfRangeException(nameof(priority), "Unknown task priority.");
+        }
+
+        if (priority == Priority)
+        {
+            return this;
+        }
+
+        return new TaskAggregate(
+            Metadata.RecordVisibleChange(actorId, occurredAtUtc),
+            Title,
+            WorkStatus,
+            CompletedAtUtc,
+            CompletedBy,
+            priority,
+            Schedule);
+    }
+
+    public TaskAggregate Reschedule(Guid actorId, TaskSchedule schedule, DateTimeOffset occurredAtUtc)
+    {
+        EnsureActive("An archived or trashed task must be restored before it can be rescheduled.");
+        EnsureNotTerminal("A completed or cancelled task cannot be rescheduled.");
+        if (schedule is null)
+        {
+            throw new ArgumentNullException(nameof(schedule));
+        }
+
+        if (schedule == Schedule)
+        {
+            return this;
+        }
+
+        return new TaskAggregate(
+            Metadata.RecordVisibleChange(actorId, occurredAtUtc),
+            Title,
+            WorkStatus,
+            CompletedAtUtc,
+            CompletedBy,
+            Priority,
+            schedule);
+    }
+
+    public bool IsOverdue(DateTimeOffset nowUtc) =>
+        TaskOverduePolicy.IsOverdue(WorkStatus, Schedule.DeadlineUtc, nowUtc);
 
     private bool IsTerminal =>
         WorkStatus == TaskWorkStatus.Completed || WorkStatus == TaskWorkStatus.Cancelled;

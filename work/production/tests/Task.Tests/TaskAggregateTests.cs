@@ -345,6 +345,275 @@ public sealed class TaskAggregateTests
         Assert.Equal(EntityLifecycleState.Active, task.Metadata.LifecycleState);
     }
 
+    [Fact]
+    public void Create_SetsNormalPriorityAndEmptySchedule()
+    {
+        var task = NewTask();
+
+        Assert.Equal(TaskPriority.Normal, task.Priority);
+        Assert.NotNull(task.Schedule);
+        Assert.Null(task.Schedule.StartsAtUtc);
+        Assert.Null(task.Schedule.DeadlineUtc);
+    }
+
+    [Fact]
+    public void ChangePriority_UpdatesPriorityAndIncrementsVersion()
+    {
+        var reprioritized = NewTask().ChangePriority(EditorId, TaskPriority.Critical, CreatedAt.AddMinutes(1));
+
+        Assert.Equal(TaskPriority.Critical, reprioritized.Priority);
+        Assert.Equal(2, reprioritized.Metadata.Version);
+        Assert.Equal(EditorId, reprioritized.Metadata.UpdatedBy);
+        Assert.Equal(CreatedAt.AddMinutes(1), reprioritized.Metadata.UpdatedAtUtc);
+        Assert.Equal(TaskPriority.Normal, NewTask().Priority);
+    }
+
+    [Fact]
+    public void ChangePriority_AllowsTransitionToAnyDefinedValue()
+    {
+        var low = NewTask().ChangePriority(EditorId, TaskPriority.Low, CreatedAt.AddMinutes(1));
+        var high = NewTask().ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(1));
+
+        Assert.Equal(TaskPriority.Low, low.Priority);
+        Assert.Equal(TaskPriority.High, high.Priority);
+    }
+
+    [Fact]
+    public void ChangePriority_RejectsUndefinedValue()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            NewTask().ChangePriority(EditorId, (TaskPriority)99, CreatedAt.AddMinutes(1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            NewTask().ChangePriority(EditorId, (TaskPriority)(-1), CreatedAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void ChangePriority_IsNoOpWhenPriorityIsUnchanged()
+    {
+        var task = NewTask();
+
+        var result = task.ChangePriority(EditorId, TaskPriority.Normal, CreatedAt.AddMinutes(1));
+
+        Assert.Same(task, result);
+        Assert.Equal(1, result.Metadata.Version);
+    }
+
+    [Fact]
+    public void ChangePriority_AllowedFromAnyNonTerminalWorkStatus()
+    {
+        foreach (var task in new[]
+                 {
+                     NewTask(),
+                     NewTask().Start(CreatorId, CreatedAt.AddMinutes(1)),
+                     NewTask().Start(CreatorId, CreatedAt.AddMinutes(1))
+                         .SubmitForReview(CreatorId, CreatedAt.AddMinutes(2)),
+                 })
+        {
+            var reprioritized = task.ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(3));
+
+            Assert.Equal(TaskPriority.High, reprioritized.Priority);
+            Assert.Equal(task.Metadata.Version + 1, reprioritized.Metadata.Version);
+        }
+    }
+
+    [Fact]
+    public void ChangePriority_RejectedForTerminalWorkStatus()
+    {
+        var completed = NewTask().Complete(CreatorId, CreatedAt.AddMinutes(1));
+        var cancelled = NewTask().Cancel(CreatorId, CreatedAt.AddMinutes(1));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            completed.ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() =>
+            cancelled.ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(2)));
+    }
+
+    [Fact]
+    public void Reschedule_SetsPlanningWindowAndIncrementsVersion()
+    {
+        var startsAt = new DateTimeOffset(2026, 8, 20, 9, 0, 0, TimeSpan.Zero);
+        var deadline = new DateTimeOffset(2026, 8, 25, 18, 0, 0, TimeSpan.Zero);
+
+        var rescheduled = NewTask().Reschedule(EditorId, TaskSchedule.Create(startsAt, deadline), CreatedAt.AddMinutes(1));
+
+        Assert.Equal(startsAt, rescheduled.Schedule.StartsAtUtc);
+        Assert.Equal(deadline, rescheduled.Schedule.DeadlineUtc);
+        Assert.Equal(2, rescheduled.Metadata.Version);
+        Assert.Equal(EditorId, rescheduled.Metadata.UpdatedBy);
+        Assert.Equal(CreatedAt.AddMinutes(1), rescheduled.Metadata.UpdatedAtUtc);
+        Assert.Null(NewTask().Schedule.DeadlineUtc);
+    }
+
+    [Fact]
+    public void Reschedule_IsNoOpWhenScheduleIsUnchanged()
+    {
+        var schedule = TaskSchedule.Create(
+            new DateTimeOffset(2026, 8, 20, 9, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 8, 25, 18, 0, 0, TimeSpan.Zero));
+        var task = NewTask().Reschedule(EditorId, schedule, CreatedAt.AddMinutes(1));
+
+        var result = task.Reschedule(
+            EditorId,
+            TaskSchedule.Create(schedule.StartsAtUtc, schedule.DeadlineUtc),
+            CreatedAt.AddMinutes(2));
+
+        Assert.Same(task, result);
+        Assert.Equal(2, result.Metadata.Version);
+    }
+
+    [Fact]
+    public void Reschedule_RejectsNullSchedule()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            NewTask().Reschedule(EditorId, null!, CreatedAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void Reschedule_RejectedForTerminalWorkStatus()
+    {
+        var completed = NewTask().Complete(CreatorId, CreatedAt.AddMinutes(1));
+        var cancelled = NewTask().Cancel(CreatorId, CreatedAt.AddMinutes(1));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            completed.Reschedule(EditorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() =>
+            cancelled.Reschedule(EditorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(2)));
+    }
+
+    [Fact]
+    public void PlanningChanges_ForbiddenWhileArchivedOrTrashed()
+    {
+        var archived = NewTask()
+            .Complete(CreatorId, CreatedAt.AddMinutes(1))
+            .Archive(EditorId, CreatedAt.AddMinutes(2));
+        var trashed = NewTask()
+            .Cancel(CreatorId, CreatedAt.AddMinutes(1))
+            .MoveToTrash(EditorId, CreatedAt.AddMinutes(2));
+
+        Assert.Throws<InvalidOperationException>(() =>
+            archived.ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() =>
+            archived.Reschedule(EditorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() =>
+            trashed.ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() =>
+            trashed.Reschedule(EditorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(3)));
+    }
+
+    [Fact]
+    public void PlanningChanges_RejectBackdatedAndNonUtcTimestamps()
+    {
+        var task = NewTask().ChangePriority(EditorId, TaskPriority.High, CreatedAt.AddMinutes(5));
+        var nonUtcAt = new DateTimeOffset(2026, 8, 15, 14, 0, 0, TimeSpan.FromHours(5));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            task.ChangePriority(EditorId, TaskPriority.Critical, CreatedAt.AddMinutes(3)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            task.Reschedule(EditorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(3)));
+        Assert.Throws<ArgumentException>(() =>
+            NewTask().ChangePriority(EditorId, TaskPriority.High, nonUtcAt));
+        Assert.Throws<ArgumentException>(() =>
+            NewTask().Reschedule(EditorId, DeadlineOnlySchedule(), nonUtcAt));
+    }
+
+    [Fact]
+    public void IsOverdue_TrueWhenDeadlinePassedAndNonTerminal()
+    {
+        var overdue = NewTask().Reschedule(
+            EditorId,
+            TaskSchedule.Create(null, CreatedAt.AddMinutes(30)),
+            CreatedAt.AddMinutes(1));
+
+        Assert.True(overdue.IsOverdue(CreatedAt.AddHours(1)));
+    }
+
+    [Fact]
+    public void IsOverdue_FalseWithoutDeadline()
+    {
+        Assert.False(NewTask().IsOverdue(CreatedAt.AddHours(1)));
+    }
+
+    [Fact]
+    public void IsOverdue_FalseWhileDeadlineIsInTheFuture()
+    {
+        var scheduled = NewTask().Reschedule(
+            EditorId,
+            TaskSchedule.Create(null, CreatedAt.AddHours(3)),
+            CreatedAt.AddMinutes(1));
+
+        Assert.False(scheduled.IsOverdue(CreatedAt.AddHours(1)));
+    }
+
+    [Fact]
+    public void IsOverdue_FalseForTerminalWorkStatus()
+    {
+        var completed = NewTask()
+            .Reschedule(
+                EditorId,
+                TaskSchedule.Create(null, CreatedAt.AddMinutes(30)),
+                CreatedAt.AddMinutes(1))
+            .Complete(CreatorId, CreatedAt.AddMinutes(2));
+        var cancelled = NewTask()
+            .Reschedule(
+                EditorId,
+                TaskSchedule.Create(null, CreatedAt.AddMinutes(30)),
+                CreatedAt.AddMinutes(1))
+            .Cancel(CreatorId, CreatedAt.AddMinutes(2));
+
+        Assert.False(completed.IsOverdue(CreatedAt.AddHours(1)));
+        Assert.False(cancelled.IsOverdue(CreatedAt.AddHours(1)));
+    }
+
+    [Fact]
+    public void IsOverdue_FalseWhenDeadlineEqualsNow()
+    {
+        var deadline = CreatedAt.AddHours(1);
+        var scheduled = NewTask().Reschedule(
+            EditorId,
+            TaskSchedule.Create(null, deadline),
+            CreatedAt.AddMinutes(1));
+
+        Assert.False(scheduled.IsOverdue(deadline));
+    }
+
+    [Fact]
+    public void IsOverdue_DoesNotChangeVersion()
+    {
+        var scheduled = NewTask().Reschedule(
+            EditorId,
+            TaskSchedule.Create(null, CreatedAt.AddMinutes(30)),
+            CreatedAt.AddMinutes(1));
+
+        _ = scheduled.IsOverdue(CreatedAt.AddHours(1));
+
+        Assert.Equal(2, scheduled.Metadata.Version);
+    }
+
+    [Fact]
+    public void PlanningFields_SurviveFullLifecycleChainIncludingArchiveAndTrash()
+    {
+        var schedule = TaskSchedule.Create(
+            new DateTimeOffset(2026, 8, 20, 9, 0, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 8, 25, 18, 0, 0, TimeSpan.Zero));
+
+        var task = NewTask()
+            .ChangePriority(EditorId, TaskPriority.Critical, CreatedAt.AddMinutes(1))
+            .Reschedule(EditorId, schedule, CreatedAt.AddMinutes(2))
+            .Start(CreatorId, CreatedAt.AddMinutes(3))
+            .SubmitForReview(CreatorId, CreatedAt.AddMinutes(4))
+            .Complete(EditorId, CreatedAt.AddMinutes(5))
+            .Archive(EditorId, CreatedAt.AddMinutes(6))
+            .RestoreFromArchive(EditorId, CreatedAt.AddMinutes(7))
+            .MoveToTrash(EditorId, CreatedAt.AddMinutes(8))
+            .RestoreFromTrash(EditorId, CreatedAt.AddMinutes(9));
+
+        Assert.Equal(TaskPriority.Critical, task.Priority);
+        Assert.Equal(schedule, task.Schedule);
+    }
+
+    private static TaskSchedule DeadlineOnlySchedule() =>
+        TaskSchedule.Create(null, new DateTimeOffset(2026, 8, 20, 9, 0, 0, TimeSpan.Zero));
+
     private static TaskAggregate NewTask() =>
         TaskAggregate.Create(TaskId, OrganizationId, CreatorId, "Implement login screen", CreatedAt);
 }
