@@ -1,7 +1,8 @@
 # Task Stage 1 gap overrides verification:
 # validates gap_overrides_wave_{a,b,c}.csv exact columns, resolution statuses,
 # unresolved rows (empty API fields, non-empty evidence/rationale), resolved rows
-# (operationId/method/path consistent with outputs/stage_2_3/openapi/openapi.yaml),
+# (operationId/method/path consistent with outputs/stage_2_3/openapi/openapi.yaml,
+# non-empty Source evidence/Resolution rationale/Permission/Server handler planned),
 # duplicate (Matrix source row, API operationId) pairs and expected totals.
 # Exits 0 on success, 1 on any violation. No external modules required.
 [CmdletBinding()]
@@ -23,6 +24,7 @@ $ExpectedColumns = @(
 )
 $EmptyForUnresolved = @('API operationId', 'API method', 'API path', 'Permission', 'Server handler planned')
 $RequiredForUnresolved = @('Source evidence', 'Resolution rationale')
+$RequiredForResolved = @('Source evidence', 'Resolution rationale', 'Permission', 'Server handler planned')
 
 $errors = New-Object System.Collections.Generic.List[string]
 function Fail {
@@ -146,6 +148,11 @@ foreach ($wave in $waves) {
             }
             if ($row.'API path' -ne $op.Path) {
                 Fail "${loc}: path '$($row.'API path')' does not match openapi.yaml '$($op.Path)' for operationId '$opId'"
+            }
+        }
+        foreach ($col in $RequiredForResolved) {
+            if ([string]::IsNullOrWhiteSpace($row.$col)) {
+                Fail "${loc}: resolved row must have non-empty '$col'"
             }
         }
         $allRows += $row
