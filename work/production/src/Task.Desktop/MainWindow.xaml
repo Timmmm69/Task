@@ -12,7 +12,9 @@
         <Border DockPanel.Dock="Bottom" Background="#F5F5F5" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="12,6">
             <DockPanel>
                 <Ellipse DockPanel.Dock="Left" Width="10" Height="10" Fill="#C00000"
-                         VerticalAlignment="Center" Margin="0,0,8,0" />
+                         VerticalAlignment="Center" Margin="0,0,8,0"
+                         AutomationProperties.Name="Индикатор статуса подключения"
+                         AutomationProperties.HelpText="Подключение к серверу отсутствует, доступен только просмотр" />
                 <TextBlock Text="{Binding ConnectionStatus}"
                            AutomationProperties.AutomationId="ConnectionStatusText"
                            AutomationProperties.LiveSetting="Polite"
