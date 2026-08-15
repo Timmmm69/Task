@@ -59,6 +59,61 @@ public sealed class TaskAggregate
             TaskSchedule.Create(null, null));
     }
 
+    public static TaskAggregate Reconstitute(
+        SyncableEntityMetadata metadata,
+        string title,
+        TaskWorkStatus workStatus,
+        DateTimeOffset? completedAtUtc,
+        Guid? completedBy,
+        TaskPriority priority,
+        TaskSchedule schedule)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+        ArgumentNullException.ThrowIfNull(schedule);
+        var normalizedTitle = EnsureValidTitle(title);
+
+        if (!Enum.IsDefined(workStatus))
+        {
+            throw new ArgumentOutOfRangeException(nameof(workStatus), "Unknown task work status.");
+        }
+
+        if (!Enum.IsDefined(priority))
+        {
+            throw new ArgumentOutOfRangeException(nameof(priority), "Unknown task priority.");
+        }
+
+        var hasCompletion = completedAtUtc is not null && completedBy is not null;
+        if ((completedAtUtc is null) != (completedBy is null) ||
+            (workStatus == TaskWorkStatus.Completed) != hasCompletion)
+        {
+            throw new ArgumentException("Completion fields must be present only for a completed task.");
+        }
+
+        if (completedAtUtc is not null &&
+            (completedAtUtc.Value.Offset != TimeSpan.Zero ||
+             completedAtUtc.Value < metadata.CreatedAtUtc ||
+             completedAtUtc.Value > metadata.UpdatedAtUtc))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(completedAtUtc),
+                "Completion timestamp must be UTC and between creation and the last update.");
+        }
+
+        if (completedBy == Guid.Empty)
+        {
+            throw new ArgumentException("Completion actor must not be empty.", nameof(completedBy));
+        }
+
+        return new TaskAggregate(
+            metadata,
+            normalizedTitle,
+            workStatus,
+            completedAtUtc,
+            completedBy,
+            priority,
+            schedule);
+    }
+
     public TaskAggregate Rename(Guid actorId, string title, DateTimeOffset occurredAtUtc)
     {
         EnsureActive("An archived or trashed task must be restored before it can be renamed.");
@@ -277,6 +332,11 @@ public sealed class TaskAggregate
         if (string.IsNullOrEmpty(normalizedTitle))
         {
             throw new ArgumentException("Task title must not be empty.", nameof(title));
+        }
+
+        if (normalizedTitle.Length > 500)
+        {
+            throw new ArgumentException("Task title must not exceed 500 characters.", nameof(title));
         }
 
         return normalizedTitle;

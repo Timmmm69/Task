@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Hosting.WindowsServices;
+using Task.Application;
+using Task.Infrastructure.Persistence;
 
 const string CorrelationIdHeader = "X-Correlation-ID";
 const string LogCategory = "Task.Api";
@@ -22,6 +24,19 @@ if (WindowsServiceHelpers.IsWindowsService())
 }
 
 builder.Services.AddProblemDetails();
+
+var taskDatabaseConnectionString = builder.Configuration.GetConnectionString("TaskDatabase");
+builder.Services.AddSingleton<TaskPersistenceRuntime>(_ =>
+    new TaskPersistenceRuntime(taskDatabaseConnectionString));
+if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
+{
+    builder.Services.AddSingleton<ITaskAggregateStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateTaskStore());
+    builder.Services.AddSingleton(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateMigrator());
+    builder.Services.AddSingleton<TaskLifecycleService>();
+    builder.Services.AddSingleton<TaskQueryService>();
+}
 
 var app = builder.Build();
 
@@ -47,15 +62,27 @@ app.Use(async (context, next) =>
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive")));
 
-app.MapGet("/health/ready", () => Results.Json(
-    new HealthResponse(
-        Status: "NotReady",
-        Details: new Dictionary<string, object>
-        {
-            ["persistence"] = "PostgreSQL and migrations are not implemented yet; persistence readiness is not configured.",
-            ["ready"] = false
-        }),
-    statusCode: StatusCodes.Status503ServiceUnavailable));
+app.MapGet("/health/ready", async (
+    TaskPersistenceRuntime persistence,
+    CancellationToken cancellationToken) =>
+{
+    var readiness = await persistence.CheckReadinessAsync(cancellationToken);
+    return Results.Json(
+        new HealthResponse(
+            Status: readiness.Ready ? "Ready" : "NotReady",
+            Details: new Dictionary<string, object>
+            {
+                ["persistence"] = readiness.Message,
+                ["persistenceCode"] = readiness.Code.ToString(),
+                ["ready"] = readiness.Ready,
+                ["expectedMigrationVersion"] = readiness.ExpectedMigrationVersion,
+                ["actualMigrationVersion"] = readiness.ActualMigrationVersion?.ToString() ?? "unknown",
+                ["postgresVersionNumber"] = readiness.ServerVersionNumber?.ToString() ?? "unknown",
+            }),
+        statusCode: readiness.Ready
+            ? StatusCodes.Status200OK
+            : StatusCodes.Status503ServiceUnavailable);
+});
 
 app.Run();
 

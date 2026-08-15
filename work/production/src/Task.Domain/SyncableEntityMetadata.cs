@@ -84,6 +84,80 @@ public sealed record SyncableEntityMetadata
             archivedAtUtc: null);
     }
 
+    public static SyncableEntityMetadata Reconstitute(
+        Guid id,
+        Guid organizationId,
+        Guid createdBy,
+        DateTimeOffset createdAtUtc,
+        Guid updatedBy,
+        DateTimeOffset updatedAtUtc,
+        int version,
+        EntityLifecycleState lifecycleState,
+        EntityLifecycleState? lifecycleStateBeforeTrash,
+        DateTimeOffset? deletedAtUtc,
+        Guid? deletedBy,
+        DateTimeOffset? archivedAtUtc)
+    {
+        EnsureIdentifier(id, nameof(id));
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(createdBy, nameof(createdBy));
+        EnsureIdentifier(updatedBy, nameof(updatedBy));
+        EnsureUtc(createdAtUtc, nameof(createdAtUtc));
+        EnsureUtc(updatedAtUtc, nameof(updatedAtUtc));
+        EnsureOptionalUtc(deletedAtUtc, nameof(deletedAtUtc));
+        EnsureOptionalUtc(archivedAtUtc, nameof(archivedAtUtc));
+
+        if (version < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(version), "Version must be positive.");
+        }
+
+        if (!Enum.IsDefined(lifecycleState))
+        {
+            throw new ArgumentOutOfRangeException(nameof(lifecycleState), "Unknown lifecycle state.");
+        }
+
+        if (lifecycleStateBeforeTrash is not null && !Enum.IsDefined(lifecycleStateBeforeTrash.Value))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(lifecycleStateBeforeTrash),
+                "Unknown lifecycle state before trash.");
+        }
+
+        if (updatedAtUtc < createdAtUtc)
+        {
+            throw new ArgumentOutOfRangeException(nameof(updatedAtUtc), "Updated timestamp cannot precede creation.");
+        }
+
+        EnsureLifecycleTimestampRange(deletedAtUtc, createdAtUtc, updatedAtUtc, nameof(deletedAtUtc));
+        EnsureLifecycleTimestampRange(archivedAtUtc, createdAtUtc, updatedAtUtc, nameof(archivedAtUtc));
+        if (deletedBy is not null)
+        {
+            EnsureIdentifier(deletedBy.Value, nameof(deletedBy));
+        }
+
+        EnsureLifecycleConsistency(
+            lifecycleState,
+            lifecycleStateBeforeTrash,
+            deletedAtUtc,
+            deletedBy,
+            archivedAtUtc);
+
+        return new SyncableEntityMetadata(
+            id,
+            organizationId,
+            createdBy,
+            createdAtUtc,
+            updatedBy,
+            updatedAtUtc,
+            version,
+            lifecycleState,
+            lifecycleStateBeforeTrash,
+            deletedAtUtc,
+            deletedBy,
+            archivedAtUtc);
+    }
+
     public SyncableEntityMetadata RecordVisibleChange(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         EnsureChange(actorId, occurredAtUtc);
@@ -217,6 +291,62 @@ public sealed record SyncableEntityMetadata
         if (value.Offset != TimeSpan.Zero)
         {
             throw new ArgumentException("Timestamp must use the UTC offset.", parameterName);
+        }
+    }
+
+    private static void EnsureOptionalUtc(DateTimeOffset? value, string parameterName)
+    {
+        if (value.HasValue)
+        {
+            EnsureUtc(value.Value, parameterName);
+        }
+    }
+
+    private static void EnsureLifecycleTimestampRange(
+        DateTimeOffset? value,
+        DateTimeOffset createdAtUtc,
+        DateTimeOffset updatedAtUtc,
+        string parameterName)
+    {
+        if (value is not null && (value.Value < createdAtUtc || value.Value > updatedAtUtc))
+        {
+            throw new ArgumentOutOfRangeException(
+                parameterName,
+                "Lifecycle timestamp must be between creation and last update.");
+        }
+    }
+
+    private static void EnsureLifecycleConsistency(
+        EntityLifecycleState lifecycleState,
+        EntityLifecycleState? lifecycleStateBeforeTrash,
+        DateTimeOffset? deletedAtUtc,
+        Guid? deletedBy,
+        DateTimeOffset? archivedAtUtc)
+    {
+        var hasDeletion = deletedAtUtc is not null && deletedBy is not null;
+        var hasPartialDeletion = deletedAtUtc is null != (deletedBy is null);
+        if (hasPartialDeletion)
+        {
+            throw new ArgumentException("Deletion timestamp and actor must be either both present or both absent.");
+        }
+
+        switch (lifecycleState)
+        {
+            case EntityLifecycleState.Active when
+                lifecycleStateBeforeTrash is not null || hasDeletion || archivedAtUtc is not null:
+                throw new ArgumentException("Active lifecycle metadata contains archive or trash fields.");
+            case EntityLifecycleState.Archived when
+                lifecycleStateBeforeTrash is not null || hasDeletion || archivedAtUtc is null:
+                throw new ArgumentException("Archived lifecycle metadata is inconsistent.");
+            case EntityLifecycleState.Trashed:
+                if (lifecycleStateBeforeTrash is not (EntityLifecycleState.Active or EntityLifecycleState.Archived) ||
+                    !hasDeletion ||
+                    (lifecycleStateBeforeTrash == EntityLifecycleState.Archived) != (archivedAtUtc is not null))
+                {
+                    throw new ArgumentException("Trashed lifecycle metadata is inconsistent.");
+                }
+
+                break;
         }
     }
 }

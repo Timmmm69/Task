@@ -2,7 +2,12 @@
 [CmdletBinding()]
 param(
     [int]$ReadyTimeoutSeconds = 30,
-    [int]$HttpTimeoutSeconds = 5
+    [int]$HttpTimeoutSeconds = 5,
+    [string]$TaskDatabaseConnectionString,
+    [int]$ExpectedReadyStatusCode = 503,
+    [ValidateSet('Ready', 'NotReady')]
+    [string]$ExpectedReadyState = 'NotReady',
+    [string]$ExpectedPersistenceCode = 'NotConfigured'
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -62,7 +67,14 @@ $stderrLog = Join-Path ([System.IO.Path]::GetTempPath()) "task-api-$port.stderr.
 $process = $null
 try {
     $previousUrls = $env:ASPNETCORE_URLS
+    $previousTaskDatabase = $env:ConnectionStrings__TaskDatabase
     $env:ASPNETCORE_URLS = $script:BaseUri
+    if ([string]::IsNullOrWhiteSpace($TaskDatabaseConnectionString)) {
+        Remove-Item Env:\ConnectionStrings__TaskDatabase -Force -ErrorAction SilentlyContinue
+    }
+    else {
+        $env:ConnectionStrings__TaskDatabase = $TaskDatabaseConnectionString
+    }
     try {
         $process = Start-Process -FilePath $dotnet.Source `
             -ArgumentList @('"' + $dll + '"') `
@@ -75,6 +87,8 @@ try {
     finally {
         if ($null -eq $previousUrls) { Remove-Item Env:\ASPNETCORE_URLS -Force -ErrorAction SilentlyContinue }
         else { $env:ASPNETCORE_URLS = $previousUrls }
+        if ($null -eq $previousTaskDatabase) { Remove-Item Env:\ConnectionStrings__TaskDatabase -Force -ErrorAction SilentlyContinue }
+        else { $env:ConnectionStrings__TaskDatabase = $previousTaskDatabase }
     }
 
     $ready = $false
@@ -102,14 +116,16 @@ try {
     }
 
     $readyCheck = Invoke-TaskApiHttp '/health/ready'
-    Assert-Check ($readyCheck.StatusCode -eq 503) '/health/ready returned HTTP 503 (not ready).' "/health/ready returned HTTP $($readyCheck.StatusCode), expected 503."
+    Assert-Check ($readyCheck.StatusCode -eq $ExpectedReadyStatusCode) "/health/ready returned expected HTTP $ExpectedReadyStatusCode." "/health/ready returned HTTP $($readyCheck.StatusCode), expected $ExpectedReadyStatusCode."
     $readyJson = $null
     try { $readyJson = ConvertFrom-TaskJson $readyCheck.Body } catch { Write-Bad '/health/ready JSON body is unreadable.' }
     if ($null -ne $readyJson) {
-        Assert-Check ($readyJson.status -eq 'NotReady') '/health/ready JSON status is "NotReady".' "/health/ready JSON status is '$($readyJson.status)', expected 'NotReady'."
-        Assert-Check ($readyJson.details.ready -eq $false) '/health/ready details.ready is false.' "/health/ready details.ready is '$($readyJson.details.ready)', expected false."
+        $expectedReady = $ExpectedReadyState -eq 'Ready'
+        Assert-Check ($readyJson.status -eq $ExpectedReadyState) "/health/ready JSON status is '$ExpectedReadyState'." "/health/ready JSON status is '$($readyJson.status)', expected '$ExpectedReadyState'."
+        Assert-Check ($readyJson.details.ready -eq $expectedReady) "/health/ready details.ready is $($expectedReady.ToString().ToLowerInvariant())." "/health/ready details.ready is '$($readyJson.details.ready)', expected $expectedReady."
         $persistence = [string]$readyJson.details.persistence
         Assert-Check (-not [string]::IsNullOrWhiteSpace($persistence)) "/health/ready details.persistence is non-empty ($($persistence.Length) chars)." '/health/ready details.persistence is missing or empty.'
+        Assert-Check ($readyJson.details.persistenceCode -eq $ExpectedPersistenceCode) "/health/ready persistenceCode is '$ExpectedPersistenceCode'." "/health/ready persistenceCode is '$($readyJson.details.persistenceCode)', expected '$ExpectedPersistenceCode'."
     }
 
     $validCorr = [Guid]::NewGuid()
