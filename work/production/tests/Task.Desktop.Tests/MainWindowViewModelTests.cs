@@ -62,6 +62,46 @@ public class MainWindowViewModelTests
     }
 
     [Fact]
+    public void Sections_ExposeCanonicalRoutes_InExactOrder()
+    {
+        var vm = new MainWindowViewModel();
+        var expected = new[]
+        {
+            "today", "inbox", "calendar", "tasks", "projects", "catalog",
+            "contacts", "notifications", "archive", "trash", "settings",
+        };
+
+        var actual = vm.Sections.Select(section => section.Route).ToArray();
+
+        Assert.Equal(expected.Length, actual.Length);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void SectionText_DoesNotContainMojibakeCharacters()
+    {
+        var vm = new MainWindowViewModel();
+
+        foreach (var section in vm.Sections)
+        {
+            Assert.DoesNotContain('Ð', section.Title);
+            Assert.DoesNotContain('Ñ', section.Title);
+            Assert.DoesNotContain('Ð', section.PlaceholderText);
+            Assert.DoesNotContain('Ñ', section.PlaceholderText);
+        }
+    }
+
+    [Fact]
+    public void ConnectionStatus_IsPlainRussianText()
+    {
+        var vm = new MainWindowViewModel();
+
+        Assert.Equal("Нет подключения — только просмотр", vm.ConnectionStatus);
+        Assert.DoesNotContain('Ð', vm.ConnectionStatus);
+        Assert.DoesNotContain('Ñ', vm.ConnectionStatus);
+    }
+
+    [Fact]
     public void AssigningSameSelectedSection_DoesNotRaisePropertyChanged()
     {
         var vm = new MainWindowViewModel();
