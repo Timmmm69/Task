@@ -26,6 +26,26 @@ public sealed class TaskBackgroundWorkerLifecycleTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task TwoSequentialStopCalls_CompleteWithinTwoSeconds_AndLogLifecycleExactlyOnce()
+    {
+        var logger = new RecordingLogger<TaskBackgroundWorker>();
+        using var service = new TaskBackgroundWorker(logger);
+
+        await service.StartAsync(CancellationToken.None);
+
+        await logger.WaitUntilAsync(
+            messages => messages.Any(m => m.Contains("hosting loop started")), Timeout);
+
+        await service.StopAsync(CancellationToken.None).WaitAsync(Timeout);
+        await service.StopAsync(CancellationToken.None).WaitAsync(Timeout);
+
+        var messages = logger.Messages;
+        Assert.Equal(1, messages.Count(m => m.Contains("hosting loop started")));
+        Assert.Equal(1, messages.Count(m => m.Contains("cancellation received")));
+        Assert.Equal(1, messages.Count(m => m.Contains("hosting loop stopped")));
+    }
+
+    [Fact]
     public void ServiceName_IsTaskBackgroundWorker()
     {
         Assert.Equal("Task.BackgroundWorker", TaskBackgroundWorker.ServiceName);
