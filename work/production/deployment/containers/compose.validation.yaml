@@ -1,0 +1,120 @@
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:?POSTGRES_IMAGE is required}
+    platform: linux/amd64
+    environment:
+      POSTGRES_DB: ${TASK_DB_NAME:?TASK_DB_NAME is required}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?POSTGRES_ADMIN_PASSWORD is required}
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - database
+    restart: "no"
+
+  task-database-migrator:
+    image: ${TASK_DATABASE_MIGRATOR_IMAGE:?TASK_DATABASE_MIGRATOR_IMAGE is required}
+    platform: linux/amd64
+    environment:
+      ConnectionStrings__TaskDatabase: Host=postgres;Port=5432;Database=${TASK_DB_NAME};Username=task_migration;Password=${TASK_MIGRATION_PASSWORD};SSL Mode=Disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+    restart: "no"
+    profiles: ["tools"]
+
+  task-api:
+    image: ${TASK_API_IMAGE:?TASK_API_IMAGE is required}
+    platform: linux/amd64
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__TaskDatabase: Host=postgres;Port=5432;Database=${TASK_DB_NAME};Username=task_runtime;Password=${TASK_RUNTIME_PASSWORD};SSL Mode=Disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${TASK_API_HOST_PORT:?TASK_API_HOST_PORT is required}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+      - validation-edge
+    restart: unless-stopped
+    profiles: ["runtime"]
+
+  task-worker:
+    image: ${TASK_WORKER_IMAGE:?TASK_WORKER_IMAGE is required}
+    platform: linux/amd64
+    environment:
+      DOTNET_ENVIRONMENT: Production
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+    restart: unless-stopped
+    profiles: ["background"]
+
+  task-backup-agent:
+    image: ${TASK_BACKUP_AGENT_IMAGE:?TASK_BACKUP_AGENT_IMAGE is required}
+    platform: linux/amd64
+    environment:
+      DOTNET_ENVIRONMENT: Production
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+    restart: unless-stopped
+    profiles: ["background"]
+
+  task-container-validation:
+    image: ${TASK_CONTAINER_VALIDATION_IMAGE:?TASK_CONTAINER_VALIDATION_IMAGE is required}
+    platform: linux/amd64
+    environment:
+      ConnectionStrings__TaskDatabase: Host=postgres;Port=5432;Database=${TASK_DB_NAME};Username=task_runtime;Password=${TASK_RUNTIME_PASSWORD};SSL Mode=Disable
+      TASK_VALIDATION_ORGANIZATION_ID: ${TASK_VALIDATION_ORGANIZATION_ID:?TASK_VALIDATION_ORGANIZATION_ID is required}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+    restart: "no"
+    profiles: ["tools"]
+
+networks:
+  database:
+    internal: true
+  validation-edge:
+
+volumes:
+  postgres-data:

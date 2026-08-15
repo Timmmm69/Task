@@ -1,0 +1,9 @@
+**/bin
+**/obj
+**/*.user
+**/*.suo
+.vs
+docs
+tests
+verification/*.ps1
+deployment/containers/compose.validation.yaml
