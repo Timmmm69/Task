@@ -1,5 +1,6 @@
 # Task production architecture boundary check:
-# direct ProjectReference and target framework rules for src projects only.
+# direct ProjectReference and target framework rules for src projects,
+# and solution/test-project membership rules for tests projects.
 # Exits 0 on success, 1 on any violation. No external modules required.
 [CmdletBinding()]
 param()
@@ -94,9 +95,54 @@ foreach ($project in $projects) {
     Write-Host "[ OK ] $projectName (TargetFramework: $actualTfm, ProjectReferences: $(@($actualDeps)) )"
 }
 
+# Test solution boundary check:
+# Task.sln must contain exactly the known test projects,
+# and each test csproj must be explicitly marked IsTestProject=true.
+$slnPath = Join-Path (Join-Path $repoRoot 'work\production') 'Task.sln'
+$expectedTestProjects = @('Task.Tests', 'Task.ServiceHosts.Tests', 'Task.Desktop.Tests')
+if (-not (Test-Path -LiteralPath $slnPath)) {
+    Write-Host "[FAIL] Task.sln not found: $slnPath" -ForegroundColor Red
+    exit 1
+}
+
+$slnTestProjects = New-Object System.Collections.Generic.List[string]
+foreach ($line in Get-Content -LiteralPath $slnPath) {
+    if ($line -match '^Project\("{.*}"\)\s*=\s*"([^"]+)",\s*"([^"]+\.csproj)"') {
+        $slnProjectName = $matches[1]
+        if ($slnProjectName -like '*.Tests') {
+            $slnTestProjects.Add($slnProjectName)
+        }
+    }
+}
+
+$unexpectedTestProjects = @($slnTestProjects | Where-Object { $_ -notin $expectedTestProjects })
+$missingTestProjects = @($expectedTestProjects | Where-Object { $_ -notin $slnTestProjects })
+if ($unexpectedTestProjects.Count -gt 0 -or $missingTestProjects.Count -gt 0) {
+    $actualTestText = if ($slnTestProjects.Count -eq 0) { '(none)' } else { $slnTestProjects -join ', ' }
+    $expectedTestText = $expectedTestProjects -join ', '
+    Fail-Project 'Task.sln' "invalid test project set. Actual: $actualTestText. Expected: $expectedTestText."
+}
+
+foreach ($testProjectName in $expectedTestProjects) {
+    $testCsproj = Join-Path (Join-Path (Split-Path -Parent $slnPath) "tests\$testProjectName") "$testProjectName.csproj"
+    if (-not (Test-Path -LiteralPath $testCsproj)) {
+        Fail-Project $testProjectName "csproj not found at expected path: $testCsproj"
+        continue
+    }
+    $testXml = New-Object System.Xml.XmlDocument
+    $testXml.Load($testCsproj)
+    $isTestProjectNode = $testXml.SelectSingleNode('//*[local-name()="IsTestProject"]')
+    $isTestProjectValue = if ($isTestProjectNode -ne $null) { $isTestProjectNode.InnerText.Trim() } else { '' }
+    if (-not [string]::Equals($isTestProjectValue, 'true', [System.StringComparison]::OrdinalIgnoreCase)) {
+        Fail-Project $testProjectName "csproj is not marked as a test project (IsTestProject: '$isTestProjectValue')"
+        continue
+    }
+    Write-Host "[ OK ] $testProjectName (IsTestProject: $isTestProjectValue)"
+}
+
 if ($errors.Count -gt 0) {
     Write-Host "[FAIL] Project boundary check found $($errors.Count) violation(s)." -ForegroundColor Red
     exit 1
 }
-Write-Host '[ OK ] All production project boundaries and target frameworks are valid.'
+Write-Host '[ OK ] All production and test project boundaries are valid.'
 exit 0
