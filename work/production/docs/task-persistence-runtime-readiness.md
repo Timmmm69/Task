@@ -14,7 +14,7 @@ The API never invokes `TaskPersistenceMigrator.ApplyPending()` during startup or
 
 `/health/live` reports only process liveness and never contacts PostgreSQL.
 
-`/health/ready` performs a bounded PostgreSQL check and returns HTTP 200 only when all conditions hold:
+`/health/ready` uses the same read-only inspection contract as `Task.DatabaseMigrator status`; compatibility rules are not duplicated. It returns HTTP 200 only when all conditions hold:
 
 - the connection string is valid and PostgreSQL is reachable;
 - PostgreSQL server version is 16 or newer;

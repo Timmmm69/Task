@@ -1,4 +1,3 @@
-using System.Globalization;
 using Npgsql;
 using Task.Application;
 
@@ -9,7 +8,6 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     public static int ExpectedMigrationVersion => TaskPersistenceMigrationCatalog.LatestVersion;
     public static readonly TimeSpan DefaultReadinessTimeout = TimeSpan.FromSeconds(3);
 
-    private const int MinimumPostgresVersionNumber = 160000;
     private readonly NpgsqlDataSource? _dataSource;
     private readonly TimeSpan _readinessTimeout;
     private readonly bool _configurationInvalid;
@@ -67,61 +65,40 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 
         try
         {
-            await using var connection = await _dataSource.OpenConnectionAsync(timeout.Token);
-            var serverVersionNumber = await ReadServerVersionNumber(connection, timeout.Token);
-            if (serverVersionNumber < MinimumPostgresVersionNumber)
+            var inspection = await new TaskPersistenceMigrator(_dataSource).InspectAsync(timeout.Token);
+            return inspection.Status switch
             {
-                return NotReady(
-                    TaskPersistenceReadinessCode.UnsupportedServerVersion,
-                    "PostgreSQL 16 or newer is required.",
-                    serverVersionNumber);
-            }
-
-            if (!await MigrationHistoryExists(connection, timeout.Token))
-            {
-                return NotReady(
+                TaskPersistenceMigrationStatus.Current => new TaskPersistenceReadinessResult(
+                    Ready: true,
+                    TaskPersistenceReadinessCode.Ready,
+                    "PostgreSQL is reachable and the persistence schema is compatible.",
+                    inspection.ServerVersionNumber,
+                    inspection.ExpectedMigrationVersion,
+                    inspection.ActualMigrationVersion),
+                TaskPersistenceMigrationStatus.HistoryMissing or TaskPersistenceMigrationStatus.Pending => NotReady(
                     TaskPersistenceReadinessCode.MigrationsNotApplied,
                     "Persistence migrations have not been applied.",
-                    serverVersionNumber);
-            }
-
-            if (!await RequiredTablesExist(connection, timeout.Token))
-            {
-                return NotReady(
+                    inspection.ServerVersionNumber,
+                    inspection.ActualMigrationVersion),
+                TaskPersistenceMigrationStatus.UnsupportedServerVersion => NotReady(
+                    TaskPersistenceReadinessCode.UnsupportedServerVersion,
+                    "PostgreSQL 16 or newer is required.",
+                    inspection.ServerVersionNumber,
+                    inspection.ActualMigrationVersion),
+                TaskPersistenceMigrationStatus.SchemaObjectsMissing => NotReady(
                     TaskPersistenceReadinessCode.SchemaObjectsMissing,
                     "Required persistence schema objects are missing.",
-                    serverVersionNumber);
-            }
-
-            var migrations = await ReadAppliedMigrations(connection, timeout.Token);
-            var expectedMigrations = TaskPersistenceMigrationCatalog.All;
-            var schemaMatches = migrations.Count == expectedMigrations.Count;
-            for (var index = 0; schemaMatches && index < expectedMigrations.Count; index++)
-            {
-                schemaMatches = migrations[index].Version == expectedMigrations[index].Version &&
-                    string.Equals(migrations[index].Name, expectedMigrations[index].Name, StringComparison.Ordinal) &&
-                    string.Equals(
-                        migrations[index].Checksum,
-                        expectedMigrations[index].Sha256,
-                        StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (!schemaMatches)
-            {
-                return NotReady(
+                    inspection.ServerVersionNumber,
+                    inspection.ActualMigrationVersion),
+                TaskPersistenceMigrationStatus.HistoryMismatch => NotReady(
                     TaskPersistenceReadinessCode.SchemaVersionMismatch,
                     "Applied persistence schema is incompatible with this server version.",
-                    serverVersionNumber,
-                    migrations.Count == 0 ? null : migrations[^1].Version);
-            }
-
-            return new TaskPersistenceReadinessResult(
-                Ready: true,
-                TaskPersistenceReadinessCode.Ready,
-                "PostgreSQL is reachable and the persistence schema is compatible.",
-                serverVersionNumber,
-                ExpectedMigrationVersion,
-                ExpectedMigrationVersion);
+                    inspection.ServerVersionNumber,
+                    inspection.ActualMigrationVersion),
+                _ => NotReady(
+                    TaskPersistenceReadinessCode.CheckFailed,
+                    "PostgreSQL readiness check failed safely."),
+            };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -163,62 +140,6 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     private NpgsqlDataSource GetConfiguredDataSource() =>
         _dataSource ?? throw new InvalidOperationException("PostgreSQL persistence is not configured.");
 
-    private static async Task<int> ReadServerVersionNumber(
-        NpgsqlConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand("SHOW server_version_num;", connection);
-        var raw = (string?)await command.ExecuteScalarAsync(cancellationToken);
-        return int.TryParse(raw, NumberStyles.None, CultureInfo.InvariantCulture, out var version)
-            ? version
-            : throw new InvalidOperationException("PostgreSQL returned an invalid server version.");
-    }
-
-    private static async Task<bool> MigrationHistoryExists(
-        NpgsqlConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand(
-            "SELECT to_regclass('infrastructure.schema_migrations') IS NOT NULL;",
-            connection);
-        return (bool)(await command.ExecuteScalarAsync(cancellationToken) ?? false);
-    }
-
-    private static async Task<bool> RequiredTablesExist(
-        NpgsqlConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand(
-            """
-            SELECT to_regclass('core.organizations') IS NOT NULL
-               AND to_regclass('core.objects') IS NOT NULL
-               AND to_regclass('work.tasks') IS NOT NULL;
-            """,
-            connection);
-        return (bool)(await command.ExecuteScalarAsync(cancellationToken) ?? false);
-    }
-
-    private static async Task<List<AppliedMigration>> ReadAppliedMigrations(
-        NpgsqlConnection connection,
-        CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand(
-            """
-            SELECT version, name, btrim(sha256)
-            FROM infrastructure.schema_migrations
-            ORDER BY version;
-            """,
-            connection);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        var migrations = new List<AppliedMigration>();
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            migrations.Add(new AppliedMigration(reader.GetInt32(0), reader.GetString(1), reader.GetString(2)));
-        }
-
-        return migrations;
-    }
-
     private static TaskPersistenceReadinessResult NotReady(
         TaskPersistenceReadinessCode code,
         string message,
@@ -231,8 +152,6 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
             serverVersionNumber,
             ExpectedMigrationVersion,
             actualMigrationVersion);
-
-    private sealed record AppliedMigration(int Version, string Name, string Checksum);
 }
 
 public sealed record TaskPersistenceReadinessResult(

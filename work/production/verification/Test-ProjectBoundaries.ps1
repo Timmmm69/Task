@@ -16,7 +16,8 @@ if (-not (Test-Path -LiteralPath $srcDir)) {
 
 # Allowed architecture (direct references only):
 # Application -> Domain; Infrastructure -> Application+Domain;
-# Api/Worker/BackupAgent -> Application+Infrastructure; Desktop -> Application; Domain -> (none).
+# Api/Worker/BackupAgent -> Application+Infrastructure; DatabaseMigrator -> Infrastructure;
+# Desktop -> Application; Domain -> (none).
 $AllowedDependencies = @{
     'Task.Domain'        = @()
     'Task.Application'   = @('Task.Domain')
@@ -24,6 +25,7 @@ $AllowedDependencies = @{
     'Task.Api'           = @('Task.Application', 'Task.Infrastructure')
     'Task.Worker'        = @('Task.Application', 'Task.Infrastructure')
     'Task.BackupAgent'   = @('Task.Application', 'Task.Infrastructure')
+    'Task.DatabaseMigrator' = @('Task.Infrastructure')
     'Task.Desktop'       = @('Task.Application')
 }
 
