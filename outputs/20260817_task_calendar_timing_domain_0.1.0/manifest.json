@@ -30,7 +30,7 @@
   },
   "verification": {
     "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj",
-    "testResult": "PASS 323/323 (0 failed), incl. 36 new Calendar tests (previously 287)",
+    "testResult": "PASS 328/328 (0 failed), incl. 41 new Calendar tests (previously 287)",
     "buildCommand": "dotnet build work/production/Task.sln",
     "buildResult": "0 errors, 0 warnings",
     "diffCheck": "git diff --check clean",
@@ -52,12 +52,12 @@
   },
   "artifactHashes": {
     "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs": "CDDFE78B7BC7EF4CE66C8EECA13006654B1089C2B66A113022A500DEE241884F",
-    "work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs": "4B0FCD2924C856FC6AEFCDA7284F74778F5A3286F81F2E643F8006BDE288A638",
+    "work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs": "1DFA124B4C022F997B926ABDDBA709CDB8391E6864457092E39242BD85E299C8",
     "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs": "721F67633E8D05525779721E1DA08B5321AC027638EFD749A28D4AC064F5B7F3",
     "work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs": "A1192E7C9EF510040BC5B3D83E383CBE411BA1ED2B4AABCB0E90DF6EFA47DAD7",
-    "work/production/tests/Task.Tests/Calendar/CalendarEventTimingTests.cs": "0E4F09937D2B41CBAB88B18FBE4CB4152E52B849120F09D145F706EEDAD6A327",
+    "work/production/tests/Task.Tests/Calendar/CalendarEventTimingTests.cs": "E6EAD435F427A0D4262C46A033D6055919F7A6DD904E4B966AC0D01EDFC9FA03",
     "work/production/tests/Task.Tests/Calendar/CalendarTimelinePolicyTests.cs": "2CE2C26B59040C8814ABF196ABB1CAF92040FE0F7B2F56A204EDCBB6E3379522",
     "outputs/20260817_task_calendar_timing_domain_0.1.0/VERSION.txt": "6AD9613A455798D6D92E5F5F390AB4BAA70596BC869ED6B17F5CDD2B28635F06",
-    "outputs/20260817_task_calendar_timing_domain_0.1.0/VALIDATION_REPORT.md": "BCB6381D0620A047B77304325973DF296E80AEA92F0632DBCF705D2331750BF3"
+    "outputs/20260817_task_calendar_timing_domain_0.1.0/VALIDATION_REPORT.md": "155A8DD9890B93BC8EAE2D42BC99A6C77B987B6316603AB6C720736D43EC2F69"
   }
 }

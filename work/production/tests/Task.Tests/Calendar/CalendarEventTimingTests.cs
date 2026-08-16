@@ -159,4 +159,39 @@ public sealed class CalendarEventTimingTests
         Assert.Throws<ArgumentNullException>(
             () => CalendarEventTiming.CreateTimed(new DateOnly(2026, 8, 17), UtcNoon, UtcOnePm, null!));
     }
+
+    [Fact]
+    public void Create_AllDayWithStartInstant_IsRejected()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEventTiming.Create(new DateOnly(2026, 8, 17), isAllDay: true, UtcNoon, endAtUtc: null, TimeZoneId));
+    }
+
+    [Fact]
+    public void Create_AllDayWithEndInstant_IsRejected()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEventTiming.Create(new DateOnly(2026, 8, 17), isAllDay: true, startAtUtc: null, UtcOnePm, TimeZoneId));
+    }
+
+    [Fact]
+    public void Create_AllDayWithBothInstants_IsRejected()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEventTiming.Create(new DateOnly(2026, 8, 17), isAllDay: true, UtcNoon, UtcOnePm, TimeZoneId));
+    }
+
+    [Fact]
+    public void Create_TimedWithoutStart_IsRejected()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEventTiming.Create(new DateOnly(2026, 8, 17), isAllDay: false, startAtUtc: null, UtcOnePm, TimeZoneId));
+    }
+
+    [Fact]
+    public void Create_TimedWithoutEnd_IsRejected()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEventTiming.Create(new DateOnly(2026, 8, 17), isAllDay: false, UtcNoon, endAtUtc: null, TimeZoneId));
+    }
 }

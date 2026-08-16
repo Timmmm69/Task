@@ -22,8 +22,8 @@ Isolated domain foundation for MOD-009 temporal placement:
 
 - timezone is required, trimmed, 1..64 chars and must resolve via `TimeZoneInfo.TryFindSystemTimeZoneById`.
 - all non-null instants have the UTC offset (`Offset == TimeSpan.Zero`).
-- `isAllDay == true` requires both instants to be null; only the all-day shape is exposed, so instants cannot be supplied (rejection path is compile-time enforced by the factory shape).
-- `isAllDay == false` requires both instants; `endAtUtc` strictly later than `startAtUtc`.
+- `isAllDay == true` requires both instants to be null; the general `Create` factory rejects any all-day call that carries one or two instants at run time (the shape mirrors OpenAPI `CalendarEventCreate`, where all five fields arrive independently).
+- `isAllDay == false` requires both instants; `endAtUtc` strictly later than `startAtUtc`. The general `Create` factory rejects a timed call with an absent start or end.
 - a timed event's `eventDate` must equal the local start date of `startAtUtc` in the event time zone (BR-050/AC-050 local time is never interpreted without a time zone).
 - timed interval is half-open `[startAtUtc, endAtUtc)`; touching boundaries (`end == next.start`) do not overlap.
 - all-day events are date-based, not time-based, and never have a timeline interval.
@@ -37,19 +37,23 @@ Isolated domain foundation for MOD-009 temporal placement:
 | BR-049 Deadline не используется как позиция на timeline | AC-049 | `FromTaskSchedule`: timeline placement derives from `StartsAtUtc` only; `DeadlineUtc` never becomes start/end | `FromTaskSchedule_WithStart_YieldsTimelinePlacementDrivenByStartOnly`, `FromTaskSchedule_NoStartWithDeadline_YieldsNonePlacement` |
 | BR-050 Все локальные времена интерпретируются с timezone | AC-050 | `CalendarEventTiming`: required/resolvable time zone; `eventDate` equals local start date in that zone | `CreateTimed_ConvertsLocalDateAcrossUtcDateBoundary`, `CreateTimed_EventDateMustMatchLocalStartDate`, timezone rejection tests |
 
-## Acceptance tests (36 new, all PASS)
+## Acceptance tests (41 new, all PASS)
 
-`CalendarEventTimingTests` (20):
+`CalendarEventTimingTests` (23):
 - all-day event with null instants;
 - all-day trims the time zone;
 - all-day rejects empty / unknown / too-long / null time zone;
 - timed event with both UTC instants and matching local `eventDate`;
-- only-shape all-day: no all-day-with-instants shape exists (compile-time);
+- general `Create` rejects all-day with a start instant only;
+- general `Create` rejects all-day with an end instant only;
+- general `Create` rejects all-day with both instants;
+- general `Create` rejects timed without a start instant;
+- general `Create` rejects timed without an end instant;
 - timed rejects end before start, end equal to start, non-UTC start, non-UTC end, empty / unknown / too-long / null time zone;
 - timed time-zone conversion crossing the local/UTC date boundary;
 - timed rejects `eventDate` that does not match the local start date.
 
-`CalendarTimelinePolicyTests` (16):
+`CalendarTimelinePolicyTests` (18: 16 `Fact` + 1 `Theory` with 2 cases):
 - all-day => DateOnly placement;
 - timed => Timeline placement;
 - task without start (with and without deadline) => None placement;
@@ -71,7 +75,7 @@ Isolated domain foundation for MOD-009 temporal placement:
 
 | # | Command | Result |
 | --- | --- | --- |
-| 1 | `dotnet test work/production/tests/Task.Tests/Task.Tests.csproj` | PASS: 323/323, 0 failed (287 before + 36 new Calendar tests) |
+| 1 | `dotnet test work/production/tests/Task.Tests/Task.Tests.csproj` | PASS: 328/328, 0 failed (287 before + 41 new Calendar tests) |
 | 2 | `dotnet build work/production/Task.sln` | 0 errors, 0 warnings |
 | 3 | `git diff --check` | clean |
 | 4 | Scope check (`git status` + `git diff --stat` before commit) | only the two new Calendar directories and the one output package are present |
@@ -82,16 +86,16 @@ Isolated domain foundation for MOD-009 temporal placement:
 
 | File | Lines | Role |
 | --- | --- | --- |
-| `work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs` | 20 | `None` / `Timeline` / `DateOnly` placement kinds |
-| `work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs` | 139 | event timing value object with all invariants |
-| `work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs` | 101 | placement projection + factories (`FromTiming`, `FromTaskSchedule`) |
-| `work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs` | 102 | warm overlap policy + result/pair records |
-| `work/production/tests/Task.Tests/Calendar/CalendarEventTimingTests.cs` | 186 | 20 acceptance tests |
-| `work/production/tests/Task.Tests/Calendar/CalendarTimelinePolicyTests.cs` | 197 | 16 acceptance tests |
+| `work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs` | 19 | `None` / `Timeline` / `DateOnly` placement kinds |
+| `work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs` | 162 | event timing value object with all invariants |
+| `work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs` | 118 | placement projection + factories (`FromTiming`, `FromTaskSchedule`) |
+| `work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs` | 114 | warm overlap policy + result/pair records |
+| `work/production/tests/Task.Tests/Calendar/CalendarEventTimingTests.cs` | 197 | 23 acceptance tests |
+| `work/production/tests/Task.Tests/Calendar/CalendarTimelinePolicyTests.cs` | 220 | 18 acceptance tests |
 | `outputs/20260817_task_calendar_timing_domain_0.1.0/VERSION.txt` | 1 | version |
-| `outputs/20260817_task_calendar_timing_domain_0.1.0/manifest.json` | 1 | packet manifest |
-| `outputs/20260817_task_calendar_timing_domain_0.1.0/VALIDATION_REPORT.md` | 1 | this report |
-| `outputs/20260817_task_calendar_timing_domain_0.1.0/MANIFEST.sha256` | 1 | canonical-LF hashes |
+| `outputs/20260817_task_calendar_timing_domain_0.1.0/manifest.json` | 63 | packet manifest |
+| `outputs/20260817_task_calendar_timing_domain_0.1.0/VALIDATION_REPORT.md` | 117 | this report |
+| `outputs/20260817_task_calendar_timing_domain_0.1.0/MANIFEST.sha256` | 9 | canonical-LF hashes |
 
 ## Explicit confirmations
 

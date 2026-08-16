@@ -40,38 +40,53 @@ public sealed record CalendarEventTiming
     public string TimeZoneId { get; }
 
     /// <summary>
-    /// Creates an all-day event: no timeline instants, date-based only.
+    /// Creates timing from the shape of an OpenAPI
+    /// <c>CalendarEventCreate</c>: <c>eventDate</c>, <c>isAllDay</c>,
+    /// <c>startAtUtc</c>, <c>endAtUtc</c> and <c>timeZone</c> arrive
+    /// independently, so every combination is validated at run time. An
+    /// all-day event must carry no instants; a timed event requires both
+    /// instants (which must use the UTC offset, stay ordered with
+    /// <c>endAtUtc &gt; startAtUtc</c>, and keep <c>eventDate</c> equal to the
+    /// local start date in the event time zone). Otherwise the local time
+    /// would be interpreted without a time zone, which BR-050/AC-050 forbid.
     /// </summary>
-    public static CalendarEventTiming CreateAllDay(DateOnly eventDate, string timeZoneId)
-    {
-        var normalizedTimeZone = NormalizeTimeZone(timeZoneId);
-        return new CalendarEventTiming(
-            eventDate,
-            isAllDay: true,
-            startAtUtc: null,
-            endAtUtc: null,
-            normalizedTimeZone);
-    }
-
-    /// <summary>
-    /// Creates a timed event. Both instants are required and must carry the
-    /// UTC offset, <paramref name="endAtUtc"/> must be strictly later than
-    /// <paramref name="startAtUtc"/>, and <paramref name="eventDate"/> must be
-    /// the local start date of <paramref name="startAtUtc"/> in the event time
-    /// zone. Otherwise the local time would be interpreted without a time
-    /// zone, which BR-050/AC-050 forbid.
-    /// </summary>
-    public static CalendarEventTiming CreateTimed(
+    public static CalendarEventTiming Create(
         DateOnly eventDate,
-        DateTimeOffset startAtUtc,
-        DateTimeOffset endAtUtc,
+        bool isAllDay,
+        DateTimeOffset? startAtUtc,
+        DateTimeOffset? endAtUtc,
         string timeZoneId)
     {
         var normalizedTimeZone = NormalizeTimeZone(timeZoneId);
-        EnsureUtc(startAtUtc, nameof(startAtUtc));
-        EnsureUtc(endAtUtc, nameof(endAtUtc));
 
-        if (endAtUtc <= startAtUtc)
+        if (isAllDay)
+        {
+            if (startAtUtc.HasValue || endAtUtc.HasValue)
+            {
+                throw new ArgumentException(
+                    "An all-day event must not carry timeline instants.",
+                    nameof(startAtUtc));
+            }
+
+            return new CalendarEventTiming(
+                eventDate,
+                isAllDay: true,
+                startAtUtc: null,
+                endAtUtc: null,
+                normalizedTimeZone);
+        }
+
+        if (startAtUtc is null || endAtUtc is null)
+        {
+            throw new ArgumentException(
+                "A timed event requires both a start and an end instant.",
+                nameof(startAtUtc));
+        }
+
+        EnsureUtc(startAtUtc.Value, nameof(startAtUtc));
+        EnsureUtc(endAtUtc.Value, nameof(endAtUtc));
+
+        if (endAtUtc.Value <= startAtUtc.Value)
         {
             throw new ArgumentException(
                 "The end instant must be strictly later than the start instant.",
@@ -79,7 +94,7 @@ public sealed record CalendarEventTiming
         }
 
         var localStartDate = DateOnly.FromDateTime(
-            TimeZoneInfo.ConvertTime(startAtUtc, TimeZoneInfo.FindSystemTimeZoneById(normalizedTimeZone)).DateTime);
+            TimeZoneInfo.ConvertTime(startAtUtc.Value, TimeZoneInfo.FindSystemTimeZoneById(normalizedTimeZone)).DateTime);
 
         if (localStartDate != eventDate)
         {
@@ -91,10 +106,26 @@ public sealed record CalendarEventTiming
         return new CalendarEventTiming(
             eventDate,
             isAllDay: false,
-            startAtUtc,
-            endAtUtc,
+            startAtUtc.Value,
+            endAtUtc.Value,
             normalizedTimeZone);
     }
+
+    /// <summary>
+    /// Creates an all-day event: no timeline instants, date-based only.
+    /// </summary>
+    public static CalendarEventTiming CreateAllDay(DateOnly eventDate, string timeZoneId) =>
+        Create(eventDate, isAllDay: true, startAtUtc: null, endAtUtc: null, timeZoneId);
+
+    /// <summary>
+    /// Creates a timed event. Both instants are required.
+    /// </summary>
+    public static CalendarEventTiming CreateTimed(
+        DateOnly eventDate,
+        DateTimeOffset startAtUtc,
+        DateTimeOffset endAtUtc,
+        string timeZoneId) =>
+        Create(eventDate, isAllDay: false, startAtUtc, endAtUtc, timeZoneId);
 
     private static string NormalizeTimeZone(string timeZoneId)
     {
