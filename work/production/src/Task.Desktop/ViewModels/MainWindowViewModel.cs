@@ -41,5 +41,17 @@ public sealed class MainWindowViewModel : ViewModelBase
     /// <summary>Visible connection status. No network access is implemented yet.</summary>
     public string ConnectionStatus => "Нет подключения — только просмотр";
 
+    /// <summary>
+    /// True while the shell has no network client: the interface is view-only.
+    /// </summary>
+    public bool IsReadOnlyMode => true;
+
+    /// <summary>
+    /// Notice shown in read-only mode: the server is not connected,
+    /// no synchronization runs and data changes are unavailable.
+    /// </summary>
+    public string ReadOnlyNotice =>
+        "Сервер не подключён: синхронизация не выполняется, изменение данных недоступно.";
+
     private NavigationSection? _selectedSection;
 }

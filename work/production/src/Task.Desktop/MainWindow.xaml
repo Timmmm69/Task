@@ -15,6 +15,11 @@
                          VerticalAlignment="Center" Margin="0,0,8,0"
                          AutomationProperties.Name="Индикатор статуса подключения"
                          AutomationProperties.HelpText="Подключение к серверу отсутствует, доступен только просмотр" />
+                <TextBlock DockPanel.Dock="Right" Text="{Binding ReadOnlyNotice}"
+                           AutomationProperties.AutomationId="ReadOnlyNoticeText"
+                           AutomationProperties.LiveSetting="Polite"
+                           VerticalAlignment="Center" Foreground="#B0392B" FontSize="12"
+                           Margin="12,0,0,0" TextWrapping="Wrap" />
                 <TextBlock Text="{Binding ConnectionStatus}"
                            AutomationProperties.AutomationId="ConnectionStatusText"
                            AutomationProperties.LiveSetting="Polite"

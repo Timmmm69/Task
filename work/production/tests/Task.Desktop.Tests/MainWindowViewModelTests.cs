@@ -118,4 +118,34 @@ public class MainWindowViewModelTests
 
         Assert.Equal(0, raisedCount);
     }
+
+    [Fact]
+    public void IsReadOnlyMode_IsAlwaysTrue()
+    {
+        var vm = new MainWindowViewModel();
+
+        Assert.True(vm.IsReadOnlyMode);
+    }
+
+    [Fact]
+    public void ReadOnlyNotice_IsRussianAndCoversAllRestrictions()
+    {
+        var vm = new MainWindowViewModel();
+
+        Assert.False(string.IsNullOrWhiteSpace(vm.ReadOnlyNotice));
+
+        var notice = vm.ReadOnlyNotice.ToLowerInvariant();
+        Assert.Contains("сервер не подключён", notice);
+        Assert.Contains("синхронизация не выполняется", notice);
+        Assert.Contains("изменение данных недоступно", notice);
+    }
+
+    [Fact]
+    public void ReadOnlyNotice_DoesNotContainMojibakeCharacters()
+    {
+        var vm = new MainWindowViewModel();
+
+        Assert.DoesNotContain('Ð', vm.ReadOnlyNotice);
+        Assert.DoesNotContain('Ñ', vm.ReadOnlyNotice);
+    }
 }
