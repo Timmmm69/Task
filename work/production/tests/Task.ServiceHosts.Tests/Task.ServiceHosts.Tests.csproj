@@ -20,6 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\..\src\Task.Api\Task.Api.csproj" />
     <ProjectReference Include="..\..\src\Task.Worker\Task.Worker.csproj" />
     <ProjectReference Include="..\..\src\Task.BackupAgent\Task.BackupAgent.csproj" />
     <ProjectReference Include="..\..\src\Task.DatabaseMigrator\Task.DatabaseMigrator.csproj" />

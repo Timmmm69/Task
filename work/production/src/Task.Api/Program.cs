@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Task.Application;
+using Task.Api.Security;
 using Task.Infrastructure.Persistence;
 
 const string CorrelationIdHeader = "X-Correlation-ID";
@@ -24,6 +25,9 @@ if (WindowsServiceHelpers.IsWindowsService())
 }
 
 builder.Services.AddProblemDetails();
+builder.Services.Configure<TaskIdentityFoundationOptions>(
+    builder.Configuration.GetSection(TaskIdentityFoundationOptions.SectionName));
+builder.Services.AddTaskApiSecurityFoundation();
 
 var taskDatabaseConnectionString = builder.Configuration.GetConnectionString("TaskDatabase");
 builder.Services.AddSingleton<TaskPersistenceRuntime>(_ =>
@@ -40,11 +44,14 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 app.Use(async (context, next) =>
 {
     var supplied = context.Request.Headers[CorrelationIdHeader].ToString();
     var correlationId = Guid.TryParseExact(supplied, "D", out var parsed) ? parsed : Guid.NewGuid();
     context.Response.Headers[CorrelationIdHeader] = correlationId.ToString();
+    context.Items[TaskApiProblemResponse.CorrelationIdItemName] = correlationId.ToString();
 
     var logger = context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(LogCategory);
 
@@ -60,7 +67,10 @@ app.Use(async (context, next) =>
     }
 });
 
-app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive")));
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 
 app.MapGet("/health/ready", async (
     TaskPersistenceRuntime persistence,
@@ -82,7 +92,7 @@ app.MapGet("/health/ready", async (
         statusCode: readiness.Ready
             ? StatusCodes.Status200OK
             : StatusCodes.Status503ServiceUnavailable);
-});
+}).AllowAnonymous();
 
 app.Run();
 
