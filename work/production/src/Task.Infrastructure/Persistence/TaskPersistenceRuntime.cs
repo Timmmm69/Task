@@ -1,5 +1,6 @@
 using Npgsql;
 using Task.Application;
+using Task.Infrastructure.Identity;
 
 namespace Task.Infrastructure.Persistence;
 
@@ -41,6 +42,9 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
         new PostgresTaskAggregateStore(GetConfiguredDataSource());
 
     public TaskPersistenceMigrator CreateMigrator() =>
+        new(GetConfiguredDataSource());
+
+    public OfflineAdministratorBootstrapper CreateOfflineAdministratorBootstrapper() =>
         new(GetConfiguredDataSource());
 
     public async Task<TaskPersistenceReadinessResult> CheckReadinessAsync(

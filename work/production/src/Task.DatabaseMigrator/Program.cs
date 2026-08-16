@@ -1,4 +1,5 @@
 using Npgsql;
+using Task.Infrastructure.Identity;
 using Task.Infrastructure.Persistence;
 
 using var cancellation = new CancellationTokenSource();
@@ -15,19 +16,21 @@ var exitCode = await DatabaseMigratorCommand.RunAsync(
     runtime.IsConfigured ? new RuntimeMigrationOperations(runtime.CreateMigrator()) : null,
     Console.Out,
     Console.Error,
-    cancellation.Token);
+    cancellation.Token,
+    runtime.IsConfigured ? new RuntimeOfflineBootstrapOperations(runtime) : null);
 return exitCode;
 
 internal static class DatabaseMigratorCommand
 {
-    internal const string Usage = "Usage: Task.DatabaseMigrator <status|apply>";
+    internal const string Usage = "Usage: Task.DatabaseMigrator <status|apply|bootstrap-admin>";
 
     public static async Task<int> RunAsync(
         string[] args,
         IDatabaseMigrationOperations? operations,
         TextWriter standardOutput,
         TextWriter standardError,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IOfflineBootstrapOperations? bootstrapOperations = null)
     {
         if (args.Length == 1 && (args[0] == "--help" || args[0] == "-h"))
         {
@@ -37,7 +40,8 @@ internal static class DatabaseMigratorCommand
 
         if (args.Length != 1 ||
             (!args[0].Equals("status", StringComparison.OrdinalIgnoreCase) &&
-             !args[0].Equals("apply", StringComparison.OrdinalIgnoreCase)))
+             !args[0].Equals("apply", StringComparison.OrdinalIgnoreCase) &&
+             !args[0].Equals("bootstrap-admin", StringComparison.OrdinalIgnoreCase)))
         {
             await WriteErrorAsync(standardError, "InvalidArguments");
             return 2;
@@ -51,6 +55,20 @@ internal static class DatabaseMigratorCommand
 
         try
         {
+            if (args[0].Equals("bootstrap-admin", StringComparison.OrdinalIgnoreCase))
+            {
+                if (bootstrapOperations is null)
+                {
+                    await WriteErrorAsync(standardError, "NotConfigured");
+                    return 3;
+                }
+
+                var result = await bootstrapOperations.BootstrapAsync(cancellationToken);
+                await standardOutput.WriteLineAsync(
+                    $"TASK_DB_MIGRATOR code=BootstrapCompleted organizationId={result.OrganizationId} userId={result.UserId} roleId={result.RoleId}");
+                return 0;
+            }
+
             var inspection = await operations.InspectAsync(cancellationToken);
             if (args[0].Equals("status", StringComparison.OrdinalIgnoreCase))
             {
@@ -72,6 +90,18 @@ internal static class DatabaseMigratorCommand
                 TaskPersistenceMigrationError.UnsupportedServerVersion => (5, "UnsupportedServerVersion"),
                 TaskPersistenceMigrationError.SchemaIncompatible => (7, "SchemaIncompatible"),
                 _ => (9, "ApplyFailed"),
+            };
+            await WriteErrorAsync(standardError, mapping.Item2);
+            return mapping.Item1;
+        }
+        catch (OfflineAdministratorBootstrapException exception)
+        {
+            var mapping = exception.Error switch
+            {
+                OfflineAdministratorBootstrapError.InvalidInput => (2, "BootstrapInputInvalid"),
+                OfflineAdministratorBootstrapError.MigrationsRequired => (6, "MigrationsRequired"),
+                OfflineAdministratorBootstrapError.AlreadyCompleted => (7, "BootstrapAlreadyCompleted"),
+                _ => (9, "BootstrapFailed"),
             };
             await WriteErrorAsync(standardError, mapping.Item2);
             return mapping.Item1;
@@ -204,4 +234,58 @@ internal sealed class RuntimeMigrationOperations(TaskPersistenceMigrator migrato
 
     public global::System.Threading.Tasks.Task ApplyPendingAsync(CancellationToken cancellationToken) =>
         migrator.ApplyPendingAsync(cancellationToken);
+}
+
+internal interface IOfflineBootstrapOperations
+{
+    Task<OfflineAdministratorBootstrapResult> BootstrapAsync(CancellationToken cancellationToken);
+}
+
+internal sealed class RuntimeOfflineBootstrapOperations(TaskPersistenceRuntime runtime) : IOfflineBootstrapOperations
+{
+    public Task<OfflineAdministratorBootstrapResult> BootstrapAsync(CancellationToken cancellationToken) =>
+        runtime.CreateOfflineAdministratorBootstrapper().BootstrapAsync(
+            OfflineBootstrapEnvironment.Read(), cancellationToken);
+}
+
+internal static class OfflineBootstrapEnvironment
+{
+    public static OfflineAdministratorBootstrapRequest Read() => new(
+        Required("TASK_BOOTSTRAP_ORGANIZATION_CODE"),
+        Required("TASK_BOOTSTRAP_ORGANIZATION_NAME"),
+        Required("TASK_BOOTSTRAP_TIME_ZONE"),
+        Required("TASK_BOOTSTRAP_ADMIN_FIRST_NAME"),
+        Required("TASK_BOOTSTRAP_ADMIN_LAST_NAME"),
+        Required("TASK_BOOTSTRAP_ADMIN_LOGIN"),
+        ReadSecretFile("TASK_BOOTSTRAP_PASSWORD_FILE"),
+        ReadSecretFile("TASK_BOOTSTRAP_PEPPER_FILE"));
+
+    private static string Required(string name) =>
+        Environment.GetEnvironmentVariable(name) is { Length: > 0 } value
+            ? value
+            : throw new OfflineAdministratorBootstrapException(OfflineAdministratorBootstrapError.InvalidInput);
+
+    private static string ReadSecretFile(string variableName)
+    {
+        var path = Required(variableName);
+        try
+        {
+            var value = File.ReadAllText(path);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new OfflineAdministratorBootstrapException(OfflineAdministratorBootstrapError.InvalidInput);
+            }
+
+            return value.EndsWith("\r\n", StringComparison.Ordinal) ? value[..^2] :
+                value.EndsWith("\n", StringComparison.Ordinal) ? value[..^1] : value;
+        }
+        catch (OfflineAdministratorBootstrapException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            throw new OfflineAdministratorBootstrapException(OfflineAdministratorBootstrapError.InvalidInput);
+        }
+    }
 }

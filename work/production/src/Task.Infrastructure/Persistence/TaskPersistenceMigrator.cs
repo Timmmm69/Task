@@ -183,7 +183,10 @@ public sealed class TaskPersistenceMigrator
             """
             SELECT to_regclass('core.organizations') IS NOT NULL
                AND to_regclass('core.objects') IS NOT NULL
-               AND to_regclass('work.tasks') IS NOT NULL;
+               AND to_regclass('work.tasks') IS NOT NULL
+               AND to_regclass('org.employee_profiles') IS NOT NULL
+               AND to_regclass('iam.user_accounts') IS NOT NULL
+               AND to_regclass('governance.audit_entries') IS NOT NULL;
             """,
             connection,
             transaction);

@@ -8,6 +8,7 @@ internal static class TaskPersistenceMigrationCatalog
     public static IReadOnlyList<TaskPersistenceMigration> All { get; } =
     [
         Load(1, "task_persistence_foundation", "001_task_persistence_foundation.sql"),
+        Load(2, "identity_audit_foundation", "002_identity_audit_foundation.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

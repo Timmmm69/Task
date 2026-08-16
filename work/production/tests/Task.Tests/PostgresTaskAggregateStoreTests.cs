@@ -5,6 +5,7 @@ using System.Text.Json;
 using Npgsql;
 using Task.Application;
 using Task.Domain;
+using Task.Infrastructure.Identity;
 using Task.Infrastructure.Persistence;
 using Xunit.Abstractions;
 
@@ -74,6 +75,30 @@ public sealed class PostgresTaskAggregateStoreTests
             Assert.Equal(TaskPersistenceRuntime.ExpectedMigrationVersion, compatible.ActualMigrationVersion);
             Assert.NotNull(compatible.ServerVersionNumber);
             Assert.True(compatible.ServerVersionNumber >= 160000);
+
+            var bootstrap = runtime.CreateOfflineAdministratorBootstrapper();
+            var administrator = await bootstrap.BootstrapAsync(new OfflineAdministratorBootstrapRequest(
+                "task-validation", "Task validation organization", "Europe/Minsk", "System", "Administrator",
+                "admin", "temporary-bootstrap-password", "validation-bootstrap-pepper"));
+            Assert.NotEqual(Guid.Empty, administrator.OrganizationId);
+            Assert.NotEqual(Guid.Empty, administrator.UserId);
+            await Assert.ThrowsAsync<OfflineAdministratorBootstrapException>(() => bootstrap.BootstrapAsync(
+                new OfflineAdministratorBootstrapRequest(
+                    "another", "Another organization", "Europe/Minsk", "Another", "Administrator",
+                    "another-admin", "temporary-bootstrap-password", "validation-bootstrap-pepper")));
+            await using (var identityCheck = dataSource.CreateCommand(
+                "SELECT must_change_password AND account_status = 'active' FROM iam.user_accounts WHERE id = $1;"))
+            {
+                identityCheck.Parameters.AddWithValue(administrator.UserId);
+                Assert.True((bool)(await identityCheck.ExecuteScalarAsync() ?? false));
+            }
+            await using (var auditMutation = dataSource.CreateCommand(
+                "DELETE FROM governance.audit_entries WHERE organization_id = $1;"))
+            {
+                auditMutation.Parameters.AddWithValue(administrator.OrganizationId);
+                var auditError = await Assert.ThrowsAsync<PostgresException>(() => auditMutation.ExecuteNonQueryAsync());
+                Assert.Equal("42501", auditError.SqlState);
+            }
 
             await AssertApiReportsReady(databaseConnection);
 
