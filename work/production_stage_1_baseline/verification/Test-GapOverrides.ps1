@@ -6,6 +6,8 @@
 #     non-empty Source evidence/Resolution rationale/Permission/Server handler planned.
 #   - module-wide       : resolved, Related holds 2+ distinct sorted operationIds,
 #     API operationId/method/path empty, non-empty evidence/rationale/Permission/Handler.
+#   - no-API ledger      : one disposition for each initially unresolved Desktop AC,
+#                         with parent FR and `Task.Desktop` verification owner.
 #   - unresolved        : empty API fields and empty Related, non-empty evidence/rationale.
 # Checks duplicate (Matrix source row, API operationId) pairs and expected totals.
 # Exits 0 on success, 1 on any violation. No external modules required.
@@ -21,6 +23,7 @@ $openapiFile = Join-Path $repoRoot 'outputs\stage_2_3\openapi\openapi.yaml'
 # New baseline totals (mode-aware).
 $expectedResolvedSingle = 1074
 $expectedResolvedModuleWide = 92
+$expectedNoApiDispositions = 80
 $expectedUnresolved = 80
 
 $ExpectedColumns = @(
@@ -89,12 +92,35 @@ function Get-OpenApiOperations {
 $openApi = Get-OpenApiOperations -YamlPath $openapiFile
 Write-Host "[ OK ] parsed $($openApi.Count) operations from openapi.yaml"
 
+$noApiDispositionPath = Join-Path $traceDir 'desktop_no_api_dispositions.csv'
+$noApiDispositionRows = @(Import-Csv -LiteralPath $noApiDispositionPath)
+$expectedNoApiDispositionColumns = @('Matrix source row', 'Parent requirement', 'Verification owner')
+if (($noApiDispositionRows[0].PSObject.Properties.Name -join ',') -ne ($expectedNoApiDispositionColumns -join ',')) {
+    Fail "$noApiDispositionPath line 1: unexpected columns"
+}
+$noApiDispositionBySource = @{}
+foreach ($disposition in $noApiDispositionRows) {
+    $sourceRow = $disposition.'Matrix source row'
+    if ([string]::IsNullOrWhiteSpace($sourceRow) -or $noApiDispositionBySource.ContainsKey($sourceRow)) {
+        Fail "${noApiDispositionPath}: invalid or duplicate Matrix source row '$sourceRow'"
+        continue
+    }
+    if ($disposition.'Parent requirement' -notmatch '^FR-\d+$') {
+        Fail "${noApiDispositionPath}: invalid Parent requirement '$($disposition.'Parent requirement')'"
+    }
+    if ($disposition.'Verification owner' -ne 'Task.Desktop') {
+        Fail "${noApiDispositionPath}: Verification owner must be Task.Desktop"
+    }
+    $noApiDispositionBySource[$sourceRow] = $disposition
+}
+
 $waves = @('a', 'b', 'c')
 $waveCounts = @{}
 $allRows = @()
 $totalSingle = 0
 $totalModuleWide = 0
 $totalUnresolved = 0
+$unresolvedRows = @()
 
 foreach ($wave in $waves) {
     $csvPath = Join-Path $traceDir "gap_overrides_wave_$wave.csv"
@@ -211,6 +237,7 @@ foreach ($wave in $waves) {
         }
         else {
             $unresolved++
+            $unresolvedRows += $row
             foreach ($col in $EmptyForUnresolved) {
                 if (-not [string]::IsNullOrWhiteSpace($row.$col)) {
                     Fail "${loc}: unresolved row must have empty '$col', found '$($row.$col)'"
@@ -237,9 +264,29 @@ foreach ($wave in $waves) {
 foreach ($wave in $waves) {
     if (-not $waveCounts.ContainsKey($wave)) { continue }
     $c = $waveCounts[$wave]
-    Write-Host "[ OK ] wave_$wave`: single=$($c.single) moduleWide=$($c.moduleWide) unresolved=$($c.unresolved) total=$($c.single + $c.moduleWide + $c.unresolved)"
+    Write-Host "[ OK ] wave_$wave`: single=$($c.single) moduleWide=$($c.moduleWide) initialUnresolved=$($c.unresolved) total=$($c.single + $c.moduleWide + $c.unresolved)"
 }
-Write-Host "[ OK ] totals: single=$totalSingle moduleWide=$totalModuleWide unresolved=$totalUnresolved rows=$($totalSingle + $totalModuleWide + $totalUnresolved)"
+Write-Host "[ OK ] initial totals: single=$totalSingle moduleWide=$totalModuleWide unresolved=$totalUnresolved rows=$($totalSingle + $totalModuleWide + $totalUnresolved)"
+
+$ledgerSources = New-Object System.Collections.Generic.HashSet[string]
+foreach ($row in $unresolvedRows) {
+    $sourceRow = $row.'Matrix source row'
+    if (-not $noApiDispositionBySource.ContainsKey($sourceRow)) {
+        continue
+    }
+    [void]$ledgerSources.Add($sourceRow)
+    $disposition = $noApiDispositionBySource[$sourceRow]
+    $parent = $disposition.'Parent requirement'
+    if ($row.'Requirement title' -notmatch [regex]::Escape($parent)) {
+        Fail "${sourceRow}: no-api parent '$parent' is absent from Requirement title"
+    }
+}
+foreach ($sourceRow in $noApiDispositionBySource.Keys) {
+    if (-not $ledgerSources.Contains($sourceRow)) {
+        Fail "${sourceRow}: no-api disposition does not match an unresolved override"
+    }
+}
+Write-Host "[ OK ] no-api dispositions: $($ledgerSources.Count) with Task.Desktop verification owner"
 
 $seenPairs = New-Object System.Collections.Generic.HashSet[string]
 foreach ($row in $allRows) {
@@ -251,8 +298,8 @@ foreach ($row in $allRows) {
     }
 }
 
-if ($totalSingle -ne $expectedResolvedSingle -or $totalModuleWide -ne $expectedResolvedModuleWide -or $totalUnresolved -ne $expectedUnresolved) {
-    Fail "totals mismatch: actual single=$totalSingle moduleWide=$totalModuleWide unresolved=$totalUnresolved; expected single=$expectedResolvedSingle moduleWide=$expectedResolvedModuleWide unresolved=$expectedUnresolved"
+if ($totalSingle -ne $expectedResolvedSingle -or $totalModuleWide -ne $expectedResolvedModuleWide -or $ledgerSources.Count -ne $expectedNoApiDispositions -or $totalUnresolved -ne $expectedUnresolved) {
+    Fail "totals mismatch: actual single=$totalSingle moduleWide=$totalModuleWide noApiDispositions=$($ledgerSources.Count) unresolved=$totalUnresolved; expected single=$expectedResolvedSingle moduleWide=$expectedResolvedModuleWide noApiDispositions=$expectedNoApiDispositions unresolved=$expectedUnresolved"
 }
 
 if ($errors.Count -gt 0) {

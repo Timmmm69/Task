@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Build a deterministic report for unresolved Stage 1 gap overrides."""
+"""Build a deterministic audit of initially unresolved Stage 1 overrides."""
 
 import csv
 import sys
@@ -12,6 +12,7 @@ TRACEABILITY_DIR = ANALYSIS_DIR.parent / "traceability"
 REPORT_PATH = ANALYSIS_DIR / "UNRESOLVED_GAPS_REPORT.md"
 WAVES = ("a", "b", "c")
 EXPECTED_UNRESOLVED = 80
+NO_API_DISPOSITIONS_PATH = TRACEABILITY_DIR / "desktop_no_api_dispositions.csv"
 ABSENT_API_FIELDS = (
     "API operationId",
     "API method",
@@ -36,7 +37,7 @@ def examples(rows: list[dict[str, str]]) -> str:
     return " / ".join(f"`{md(reference)}`" for reference in references)
 
 
-def read_inputs() -> tuple[dict[str, list[dict[str, str]]], list[str]]:
+def read_inputs() -> tuple[dict[str, list[dict[str, str]]], set[str], list[str]]:
     sessions: dict[str, list[dict[str, str]]] = {}
     errors: list[str] = []
     for wave in WAVES:
@@ -61,7 +62,32 @@ def read_inputs() -> tuple[dict[str, list[dict[str, str]]], list[str]]:
             for field in ABSENT_API_FIELDS:
                 if (row[field] or "").strip() not in {"", ".", "-", "—"}:
                     errors.append(f"{wave}: {reference}: {field} is present")
-    return sessions, errors
+    no_api_sources: set[str] = set()
+    if not NO_API_DISPOSITIONS_PATH.exists():
+        errors.append(f"input missing: {NO_API_DISPOSITIONS_PATH}")
+    else:
+        with NO_API_DISPOSITIONS_PATH.open("r", encoding="utf-8-sig", newline="") as stream:
+            dispositions = list(csv.DictReader(stream))
+        for row in dispositions:
+            source_row = (row.get("Matrix source row") or "").strip()
+            if not source_row or source_row in no_api_sources:
+                errors.append(f"no-api disposition has invalid or duplicate source row: {source_row!r}")
+            else:
+                no_api_sources.add(source_row)
+            if row.get("Verification owner") != "Task.Desktop":
+                errors.append(f"no-api disposition {source_row}: owner is not Task.Desktop")
+    unresolved_sources = {
+        row["Matrix source row"]
+        for rows in sessions.values()
+        for row in rows
+        if row["Resolution status"] == "unresolved"
+    }
+    if no_api_sources != unresolved_sources:
+        errors.append(
+            "no-api disposition coverage mismatch: "
+            f"ledger={len(no_api_sources)} initial-unresolved={len(unresolved_sources)}"
+        )
+    return sessions, no_api_sources, errors
 
 
 def table(lines: list[str], title: str, headers: tuple[str, ...], rows: list[str]) -> None:
@@ -71,7 +97,9 @@ def table(lines: list[str], title: str, headers: tuple[str, ...], rows: list[str
     lines.append("")
 
 
-def build_report(sessions: dict[str, list[dict[str, str]]], errors: list[str]) -> str:
+def build_report(
+    sessions: dict[str, list[dict[str, str]]], no_api_sources: set[str], errors: list[str]
+) -> str:
     unresolved_by_wave: dict[str, list[dict[str, str]]] = {}
     resolved_by_wave: Counter[str] = Counter()
     by_module: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
@@ -93,21 +121,25 @@ def build_report(sessions: dict[str, list[dict[str, str]]], errors: list[str]) -
 
     total = sum(map(len, unresolved_by_wave.values()))
     lines = [
-        "# Stage 1 unresolved gap overrides — deterministic analysis",
+        "# Stage 1 initial gap overrides — deterministic disposition audit",
         "",
-        "This generated report is NOT a gap resolution. It neither resolves any row nor proves completion of Stage 1.",
+        "This generated report audits the original unresolved overrides and their no-API dispositions.",
+        "It does not prove Desktop implementation or Stage 1 completion.",
         "",
         "## Method",
         "",
         "- Inputs: the three `gap_overrides_wave_*.csv` files in `traceability/`.",
-        "- Selection: exact `Resolution status = unresolved` rows only.",
+        "- Selection: exact original `Resolution status = unresolved` rows only.",
+        "- Disposition ledger: `traceability/desktop_no_api_dispositions.csv`.",
         "- Classification uses exact CSV values; no endpoint or operationId is inferred.",
         "- Output contains no timestamps and all groupings are sorted.",
         "",
         "## Validation",
         "",
         f"- Validation errors: {len(errors)}.",
-        f"- Expected unresolved total: {EXPECTED_UNRESOLVED}; actual: {total}.",
+        f"- Initial unresolved override total: {EXPECTED_UNRESOLVED}; actual: {total}.",
+        f"- Reviewed no-API dispositions: {len(no_api_sources)}.",
+        f"- Initial unresolved rows covered by the ledger: {sum(row['Matrix source row'] in no_api_sources for rows in sessions.values() for row in rows if row['Resolution status'] == 'unresolved')}.",
         "",
     ]
     lines.extend(f"  - `{md(error)}`" for error in errors)
@@ -173,8 +205,9 @@ def build_report(sessions: dict[str, list[dict[str, str]]], errors: list[str]) -
             "",
             "## Scope and limitations",
             "",
-            "- This report resolves nothing and proves nothing about Stage 1 completion.",
             "- No endpoint, operationId, permission or handler has been guessed.",
+            "- A no-API disposition makes an API link inapplicable; it does not prove a Desktop test is implemented.",
+            "- This report does not prove Stage 1 completion.",
             "- Classification is limited to values read verbatim from the CSV inputs.",
             "",
         )
@@ -183,8 +216,8 @@ def build_report(sessions: dict[str, list[dict[str, str]]], errors: list[str]) -
 
 
 def main() -> int:
-    sessions, errors = read_inputs()
-    report = build_report(sessions, errors)
+    sessions, no_api_sources, errors = read_inputs()
+    report = build_report(sessions, no_api_sources, errors)
     REPORT_PATH.write_text(report, encoding="utf-8", newline="\n")
     unresolved = {
         wave: sum(row["Resolution status"] == "unresolved" for row in rows)
@@ -193,6 +226,7 @@ def main() -> int:
     total = sum(unresolved.values())
     print("unresolved by wave: " + ", ".join(f"{wave.upper()}={count}" for wave, count in sorted(unresolved.items())))
     print(f"total unresolved: {total}")
+    print(f"no-api dispositions: {len(no_api_sources)}")
     print(f"report: {REPORT_PATH.name}")
     if errors or total != EXPECTED_UNRESOLVED:
         for error in errors:

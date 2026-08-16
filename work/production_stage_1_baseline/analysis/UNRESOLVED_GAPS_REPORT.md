@@ -1,18 +1,22 @@
-# Stage 1 unresolved gap overrides — deterministic analysis
+# Stage 1 initial gap overrides — deterministic disposition audit
 
-This generated report is NOT a gap resolution. It neither resolves any row nor proves completion of Stage 1.
+This generated report audits the original unresolved overrides and their no-API dispositions.
+It does not prove Desktop implementation or Stage 1 completion.
 
 ## Method
 
 - Inputs: the three `gap_overrides_wave_*.csv` files in `traceability/`.
-- Selection: exact `Resolution status = unresolved` rows only.
+- Selection: exact original `Resolution status = unresolved` rows only.
+- Disposition ledger: `traceability/desktop_no_api_dispositions.csv`.
 - Classification uses exact CSV values; no endpoint or operationId is inferred.
 - Output contains no timestamps and all groupings are sorted.
 
 ## Validation
 
 - Validation errors: 0.
-- Expected unresolved total: 80; actual: 80.
+- Initial unresolved override total: 80; actual: 80.
+- Reviewed no-API dispositions: 80.
+- Initial unresolved rows covered by the ledger: 80.
 
 ## Totals by wave
 
@@ -99,6 +103,7 @@ Rows whose exact rationale contains "without an operationId": 0.
 
 ## Scope and limitations
 
-- This report resolves nothing and proves nothing about Stage 1 completion.
 - No endpoint, operationId, permission or handler has been guessed.
+- A no-API disposition makes an API link inapplicable; it does not prove a Desktop test is implemented.
+- This report does not prove Stage 1 completion.
 - Classification is limited to values read verbatim from the CSV inputs.

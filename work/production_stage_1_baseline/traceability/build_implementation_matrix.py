@@ -24,10 +24,11 @@ GAP_OVERRIDE_INPUTS = (
     ("B", TRACEABILITY_DIR / "gap_overrides_wave_b.csv"),
     ("C", TRACEABILITY_DIR / "gap_overrides_wave_c.csv"),
 )
+NO_API_DISPOSITIONS = TRACEABILITY_DIR / "desktop_no_api_dispositions.csv"
 OPENAPI = ROOT / "outputs" / "stage_2_3" / "openapi" / "openapi.yaml"
 OUTPUT = TRACEABILITY_DIR / "implementation_matrix.csv"
 REPORT = TRACEABILITY_DIR / "MATRIX_VALIDATION.md"
-MATRIX_VERSION = "1.2.0"
+MATRIX_VERSION = "1.3.0"
 
 OPERATION_RE = re.compile(r"\b(?:GET|POST|PUT|PATCH|DELETE)_[A-Za-z0-9_]+\b")
 PATH_RE = re.compile(r"^  (/[^:]+):\s*$")
@@ -99,6 +100,12 @@ GAP_OVERRIDE_FIELDS = (
     "Resolution rationale",
 )
 
+NO_API_DISPOSITION_FIELDS = (
+    "Matrix source row",
+    "Parent requirement",
+    "Verification owner",
+)
+
 
 @dataclass(frozen=True)
 class SourceRow:
@@ -168,6 +175,29 @@ def read_gap_overrides(errors: list[str]) -> dict[str, list[GapOverride]]:
                 seen_links.add(link)
                 overrides.setdefault(source_row, []).append(override)
     return overrides
+
+
+def read_no_api_dispositions(errors: list[str]) -> dict[str, dict[str, str]]:
+    dispositions: dict[str, dict[str, str]] = {}
+    with NO_API_DISPOSITIONS.open("r", encoding="utf-8-sig", newline="") as stream:
+        reader = csv.DictReader(stream)
+        if tuple(reader.fieldnames or ()) != NO_API_DISPOSITION_FIELDS:
+            errors.append(f"{NO_API_DISPOSITIONS.name}: unexpected columns {reader.fieldnames!r}")
+        for line_number, values in enumerate(reader, start=2):
+            source_row = values["Matrix source row"].strip()
+            parent = values["Parent requirement"].strip()
+            owner = values["Verification owner"].strip()
+            reference = f"{NO_API_DISPOSITIONS.name}:{line_number}"
+            if not source_row:
+                errors.append(f"{reference}: Matrix source row is empty")
+            elif source_row in dispositions:
+                errors.append(f"{reference}: duplicate Matrix source row {source_row}")
+            if not re.fullmatch(r"FR-\d+", parent):
+                errors.append(f"{reference}: invalid Parent requirement {parent!r}")
+            if owner != "Task.Desktop":
+                errors.append(f"{reference}: Verification owner must be Task.Desktop")
+            dispositions[source_row] = dict(values)
+    return dispositions
 
 
 def read_openapi_operations(errors: list[str]) -> dict[str, str]:
@@ -289,6 +319,7 @@ def apply_gap_overrides(
     row: SourceRow,
     base: dict[str, str],
     overrides: list[GapOverride],
+    no_api_dispositions: dict[str, dict[str, str]],
     openapi_operations: dict[str, str],
     errors: list[str],
 ) -> tuple[list[dict[str, str]], set[str]]:
@@ -328,6 +359,7 @@ def apply_gap_overrides(
             "Server handler planned": values["Server handler planned"].strip(),
         }
         if status == "unresolved":
+            no_api_disposition = no_api_dispositions.pop(base["Source row"], None)
             if mode != "unresolved":
                 errors.append(f"{override.reference}: unresolved gap must use unresolved mode")
             if related:
@@ -339,6 +371,39 @@ def apply_gap_overrides(
                 errors.append(
                     f"{override.reference}: unresolved gap has endpoint fields: {', '.join(populated)}"
                 )
+            if no_api_disposition is not None:
+                parent = no_api_disposition["Parent requirement"].strip()
+                owner = no_api_disposition["Verification owner"].strip()
+                if values["Type"] != "AC":
+                    errors.append(f"{override.reference}: no-api disposition is limited to AC requirements")
+                if parent not in values["Requirement title"]:
+                    errors.append(
+                        f"{override.reference}: no-api parent {parent} is absent from Requirement title"
+                    )
+                for field_name in ("Screen Stage 3.5", "FLOW Stage 3.5", "Test type"):
+                    if is_placeholder(values[field_name]):
+                        errors.append(f"{override.reference}: no-api disposition has no {field_name}")
+                rationale = (
+                    f"No API disposition: parent {parent} is Desktop-only (api=no_api in "
+                    "implementation_matrix); the Stage 1 source names no concrete operationId or "
+                    f"endpoint. Verification owner: {owner}. Planned verification remains the existing "
+                    "Stage 3.5 screen/FLOW and Test type columns."
+                )
+                output_rows.append(
+                    {
+                        **base,
+                        "API status": "no_api",
+                        "API operationId": "",
+                        "API path (method)": "",
+                        "Server handler (planned)": "",
+                        "Disposition reason": rationale,
+                        "Gap reference": (
+                            f"{override_reference(override)}; {NO_API_DISPOSITIONS.name}: "
+                            f"parent={parent}; owner={owner}"
+                        ),
+                    }
+                )
+                continue
             output_rows.append(
                 {
                     **base,
@@ -417,6 +482,8 @@ def apply_gap_overrides(
                 )
             continue
 
+        if mode != "single-operation":
+            errors.append(f"{override.reference}: resolved endpoint gap must use single-operation mode")
         if related != endpoint_fields["API operationId"]:
             errors.append(
                 f"{override.reference}: single-operation Related OpenAPI operationIds "
@@ -459,9 +526,28 @@ def apply_gap_overrides(
     return output_rows, unknown_operations
 
 
+def validate_no_api_parentage(
+    rows: list[dict[str, str]],
+    dispositions: dict[str, dict[str, str]],
+    errors: list[str],
+) -> None:
+    parent_requirements = {
+        row["Requirement"]
+        for row in rows
+        if row["API status"] == "no_api" and not row["Gap reference"]
+    }
+    for source_row, disposition in sorted(dispositions.items()):
+        parent = disposition["Parent requirement"].strip()
+        if parent not in parent_requirements:
+            errors.append(
+                f"{source_row}: no-api parent {parent} is not an independent no_api requirement"
+            )
+
+
 def build_rows(
     source_rows: list[tuple[SourceRow, list[SourceRow]]],
     gap_overrides: dict[str, list[GapOverride]],
+    no_api_dispositions: dict[str, dict[str, str]],
     openapi_operations: dict[str, str],
     errors: list[str],
 ) -> tuple[list[dict[str, str]], set[str]]:
@@ -484,6 +570,7 @@ def build_rows(
                         row,
                         base,
                         matching_overrides,
+                        no_api_dispositions,
                         openapi_operations,
                         errors,
                     )
@@ -565,6 +652,8 @@ def build_rows(
     for source_reference, unused_overrides in sorted(gap_overrides.items()):
         refs = ", ".join(override.reference for override in unused_overrides)
         errors.append(f"{source_reference}: override does not match a source gap ({refs})")
+    for source_reference in sorted(no_api_dispositions):
+        errors.append(f"{source_reference}: no-api disposition does not match an unresolved gap")
     return output_rows, unknown_operations
 
 
@@ -599,6 +688,10 @@ def write_report(
         row["API status"] == "api" and bool(row["Gap reference"])
         for row in rows
     )
+    no_api_dispositions = sum(
+        row["API status"] == "no_api" and bool(row["Gap reference"])
+        for row in rows
+    )
     status = "PASS" if not errors else "FAIL"
     unknown_text = ", ".join(sorted(unknown_operations)) if unknown_operations else "none"
     error_lines = "\n".join(f"- {error}" for error in errors) if errors else "- None."
@@ -626,6 +719,7 @@ def write_report(
 | `no_api` rows | {counts['no_api']} |
 | Documented `gap` rows | {counts['gap']} |
 | Gaps resolved to API rows | {resolved_override_rows} |
+| Gaps disposed as no-API rows | {no_api_dispositions} |
 | Unknown operations found | {len(unknown_operations)} |
 | Operations declared by OpenAPI | {openapi_count} |
 
@@ -637,8 +731,9 @@ Unknown operations: {unknown_text}.
 - Every multi-operation source cell is split into one row per requirement-to-operation link, with positional path and handler mapping.
 - Every API operation is checked against `outputs/stage_2_3/openapi/openapi.yaml`, including its HTTP method and path.
 - Every endpoint row is checked for a planned server handler, screen, FLOW and test type.
-- Every source gap has exactly one reviewed unresolved override or one or more reviewed resolved API links.
+- Every source gap has exactly one reviewed unresolved, no-API or resolved API disposition.
 - Every resolved override is checked against OpenAPI method/path and promoted to an `api` row with evidence.
+- Every no-API disposition proves its Desktop-only parent, names `Task.Desktop` as its verification owner and retains screen, FLOW and test scope.
 - Every unresolved override remains `API status=gap` with its rationale and exact evidence reference.
 
 ## Manifest
@@ -646,6 +741,7 @@ Unknown operations: {unknown_text}.
 - Matrix version: `{MATRIX_VERSION}`
 {input_manifest}
 {chr(10).join(f"- `{path.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(path)}`" for _, path in GAP_OVERRIDE_INPUTS)}
+- `{NO_API_DISPOSITIONS.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(NO_API_DISPOSITIONS)}`
 - `{OPENAPI.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(OPENAPI)}`
 - `{OUTPUT.relative_to(ROOT).as_posix()}` — SHA-256 `{sha256(OUTPUT)}`
 
@@ -660,10 +756,19 @@ def main() -> int:
     errors: list[str] = []
     input_rows = read_inputs(errors)
     gap_overrides = read_gap_overrides(errors)
+    no_api_dispositions = read_no_api_dispositions(errors)
+    all_no_api_dispositions = dict(no_api_dispositions)
     override_count = sum(len(overrides) for overrides in gap_overrides.values())
     openapi_operations = read_openapi_operations(errors)
     source_rows = deduplicate_all_rows(input_rows, errors)
-    rows, unknown_operations = build_rows(source_rows, gap_overrides, openapi_operations, errors)
+    rows, unknown_operations = build_rows(
+        source_rows,
+        gap_overrides,
+        no_api_dispositions,
+        openapi_operations,
+        errors,
+    )
+    validate_no_api_parentage(rows, all_no_api_dispositions, errors)
     write_csv(rows)
     write_report(
         rows,
