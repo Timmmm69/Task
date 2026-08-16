@@ -11,7 +11,7 @@ ANALYSIS_DIR = Path(__file__).resolve().parent
 TRACEABILITY_DIR = ANALYSIS_DIR.parent / "traceability"
 REPORT_PATH = ANALYSIS_DIR / "UNRESOLVED_GAPS_REPORT.md"
 WAVES = ("a", "b", "c")
-EXPECTED_UNRESOLVED = 245
+EXPECTED_UNRESOLVED = 80
 ABSENT_API_FIELDS = (
     "API operationId",
     "API method",

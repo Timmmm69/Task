@@ -23,3 +23,5 @@ Thumbs.db
 # Codex/local tool state
 .serena/
 .pnpm-store/
+
+__pycache__/

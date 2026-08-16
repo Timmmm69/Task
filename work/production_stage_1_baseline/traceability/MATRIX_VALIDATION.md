@@ -10,14 +10,14 @@
 |---|---:|
 | Source rows read | 3492 |
 | Gap override rows read | 1246 |
-| Output rows | 3968 |
+| Output rows | 4955 |
 | Requirements | 3378 |
-| API-operation rows | 3409 |
+| API-operation rows | 4561 |
 | Unique API operations used | 243 |
-| Rows without API | 559 |
+| Rows without API | 394 |
 | `no_api` rows | 314 |
-| Documented `gap` rows | 245 |
-| Gaps resolved to API rows | 1001 |
+| Documented `gap` rows | 80 |
+| Gaps resolved to API rows | 2153 |
 | Unknown operations found | 0 |
 | Operations declared by OpenAPI | 244 |
 
@@ -35,15 +35,15 @@ Unknown operations: none.
 
 ## Manifest
 
-- Matrix version: `1.1.0`
-- `work/production_stage_1_baseline/traceability/wave-a.csv` — SHA-256 `dd75d8404759d3045758528f045f8066af833a5dd987429d29cccca9f355ecca`
-- `work/production_stage_1_baseline/traceability/wave-b.csv` — SHA-256 `8675f380cff8ae719eb1da4407d5c1dae70f43b3b591b57e081c62859c1426f0`
-- `work/production_stage_1_baseline/traceability/wave-c.csv` — SHA-256 `3514f5596218d23c22386862ba13e4eba82502dcf9da65f84f75ecdc07109f7f`
-- `work/production_stage_1_baseline/traceability/gap_overrides_wave_a.csv` — SHA-256 `d477c9e097fcb12cb064a2c121bb3cce25f67812602489c4ed3f84680e1ad0ef`
-- `work/production_stage_1_baseline/traceability/gap_overrides_wave_b.csv` — SHA-256 `e13d1d2afaf119adee5ac7d4859962c35ae22d423e6c5c00ef589ac72f1fc29f`
-- `work/production_stage_1_baseline/traceability/gap_overrides_wave_c.csv` — SHA-256 `e7f8203f6ce5bce451a0b2a21f5f5dbf01068703b9871e2bfdb360f2cf016ea6`
-- `outputs/stage_2_3/openapi/openapi.yaml` — SHA-256 `5429a8c8be079157fba504900b6a0d6197dda8c2821c8b17aa3f8bc78c2e2614`
-- `work/production_stage_1_baseline/traceability/implementation_matrix.csv` — SHA-256 `4bbf9d2dd28049f5dfbbc750263c4362f0e991dd504c602206e34c9acaa8d0ea`
+- Matrix version: `1.2.0`
+- `work/production_stage_1_baseline/traceability/wave-a.csv` — SHA-256 `9bfc8e14ca1175732f2decae36ab4c5271c0da2c630073aa2d7b52b25b2bd3d2`
+- `work/production_stage_1_baseline/traceability/wave-b.csv` — SHA-256 `9ec40ae0fe06595352844eb94ea9479f34fb7875ab655fa7742c9365dae48d21`
+- `work/production_stage_1_baseline/traceability/wave-c.csv` — SHA-256 `f1d7a650a5fda6a406461cdba308fcd1fd8a3e017618c462855efb6d97dc6eca`
+- `work/production_stage_1_baseline/traceability/gap_overrides_wave_a.csv` — SHA-256 `5eaea30e2e8bcfe4760c52870f9d5afecb627d180125bebc09a98fb1ebe641ca`
+- `work/production_stage_1_baseline/traceability/gap_overrides_wave_b.csv` — SHA-256 `26858f8b15e5c3d9d8971f5c54f7c8d02fe9cab3097de482073304b322051d6d`
+- `work/production_stage_1_baseline/traceability/gap_overrides_wave_c.csv` — SHA-256 `ca0870e3aef8f1c11aad5a8085f0fcbc427168aa6fccaa40929ae7af67a7f479`
+- `outputs/stage_2_3/openapi/openapi.yaml` — SHA-256 `36c15dff5adba0041fcfd79f5a0d203835dac5cdd4ad24122bcd92177c13220d`
+- `work/production_stage_1_baseline/traceability/implementation_matrix.csv` — SHA-256 `daf8329d6c443f305885a26443db37214404f75f1ed920fec7dec1ecdda6e093`
 
 ## Errors
 

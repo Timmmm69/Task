@@ -27,7 +27,7 @@ GAP_OVERRIDE_INPUTS = (
 OPENAPI = ROOT / "outputs" / "stage_2_3" / "openapi" / "openapi.yaml"
 OUTPUT = TRACEABILITY_DIR / "implementation_matrix.csv"
 REPORT = TRACEABILITY_DIR / "MATRIX_VALIDATION.md"
-MATRIX_VERSION = "1.1.0"
+MATRIX_VERSION = "1.2.0"
 
 OPERATION_RE = re.compile(r"\b(?:GET|POST|PUT|PATCH|DELETE)_[A-Za-z0-9_]+\b")
 PATH_RE = re.compile(r"^  (/[^:]+):\s*$")
@@ -84,6 +84,8 @@ GAP_OVERRIDE_FIELDS = (
     "Module",
     "Requirement title",
     "Resolution status",
+    "Traceability mode",
+    "Related OpenAPI operationIds",
     "API operationId",
     "API method",
     "API path",
@@ -337,6 +339,58 @@ def apply_gap_overrides(
                     "Gap reference": override_reference(override),
                 }
             )
+            continue
+
+        mode = values["Traceability mode"].strip()
+        if mode == "module-wide":
+            related = values["Related OpenAPI operationIds"].strip()
+            related_ops = [op.strip() for op in related.split(";") if op.strip()]
+            if not related_ops:
+                errors.append(
+                    f"{override.reference}: module-wide resolved gap has empty "
+                    "Related OpenAPI operationIds"
+                )
+            if len(overrides) != 1:
+                errors.append(f"{base['Source row']}: module-wide gap must have exactly one override row")
+            populated_direct = [
+                name for name in ("API operationId", "API method", "API path")
+                if endpoint_fields[name]
+            ]
+            if populated_direct:
+                errors.append(
+                    f"{override.reference}: module-wide gap has direct endpoint fields: "
+                    + ", ".join(populated_direct)
+                )
+            if is_placeholder(values["Permission"]):
+                errors.append(f"{override.reference}: module-wide gap has no Permission")
+            if is_placeholder(values["Server handler planned"]):
+                errors.append(f"{override.reference}: module-wide gap has no Server handler planned")
+            for field_name in ("Screen Stage 3.5", "FLOW Stage 3.5", "Test type"):
+                if is_placeholder(values[field_name]):
+                    errors.append(f"{override.reference}: module-wide gap has no {field_name}")
+            for op_id in related_ops:
+                canonical = openapi_operations.get(op_id)
+                if canonical is None:
+                    unknown_operations.add(op_id)
+                    operation_path = ""
+                else:
+                    method, _, path = canonical.partition(" ")
+                    operation_path = f"{method} {path}".strip()
+                output_rows.append(
+                    {
+                        **base,
+                        "API status": "api",
+                        "API operationId": op_id,
+                        "API path (method)": operation_path,
+                        "Permission": endpoint_fields["Permission"],
+                        "Server handler (planned)": endpoint_fields["Server handler planned"],
+                        "Screen (Stage 3.5)": values["Screen Stage 3.5"],
+                        "FLOW (Stage 3.5)": values["FLOW Stage 3.5"],
+                        "Test type": values["Test type"],
+                        "Disposition reason": rationale,
+                        "Gap reference": override_reference(override),
+                    }
+                )
             continue
 
         missing = [name for name, value in endpoint_fields.items() if not value]
