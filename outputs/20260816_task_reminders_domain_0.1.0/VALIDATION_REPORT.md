@@ -28,7 +28,7 @@ pinned to evidence base `50d3d567acd981fdf21bd82d139df0f539da814f`
 | 2 | `dotnet build work/production/Task.sln` | PASS: 0 warnings, 0 errors |
 | 3 | `git diff --check 2056218..50d3d56` | clean |
 | 4 | `git diff --check` (working tree) | clean |
-| 5 | `git status --short` | only the four new files of this package (untracked) |
+| 5 | `git status --short` | no tracked-file modifications; the only additions are the four files of this package (the pre-existing untracked `outputs/20260817_task_reminders_domain_hardening_0.1.1/` directory belongs to a separate packet and was not touched) |
 | 6 | `manifest.json` parses via `ConvertFrom-Json` | PASS |
 | 7 | Every hash in `MANIFEST.sha256` recomputed against the files (`Get-FileHash`) | PASS, full match |
 | 8 | `manifest.json` `artifactHashes` vs `MANIFEST.sha256` | PASS, full match |
@@ -41,7 +41,7 @@ pinned to evidence base `50d3d567acd981fdf21bd82d139df0f539da814f`
 | `Reminder.cs` | Reminder aggregate root: Create/Reconstitute, MarkDue/MarkDelivered/Snooze/Cancel/Reschedule/Expire; firing before the scheduled instant rejected |
 | `ReminderTrigger.cs` | Single-trigger value object: absolute/relative modes, UTC invariant, contradictory configs rejected at construction |
 | `ReminderTriggerType.cs` | Trigger modes (absolute, before_start, before_deadline, at_start, at_deadline) |
-| `ReminderStatus.cs` | Reminder lifecycle statuses (scheduled, delivered, snoozed, cancelled, expired) |
+| `ReminderStatus.cs` | Reminder lifecycle statuses (Scheduled, Due, Delivered, Snoozed, Cancelled, Expired; cancelled and expired are terminal) |
 | `ReminderOccurrence.cs` | Occurrence aggregate: Create/Reconstitute, Claim/MarkDelivered/Fail/DeadLetter/Dismiss, deterministic `Deduplicate` |
 | `ReminderOccurrenceStatus.cs` | Occurrence lifecycle statuses |
 | `ReminderOccurrenceKey.cs` | Deterministic occurrence key value object (`<reminderId>|<dueAt>`), UTC-only |
@@ -74,9 +74,10 @@ pinned to evidence base `50d3d567acd981fdf21bd82d139df0f539da814f`
 
 This packet is a documentation-only deliverable. It **does not modify**
 production code, tests, project files, solutions, dependencies, migrations,
-configuration, `sources/**`, or any existing file: exactly four new files were
-created in `outputs/20260816_task_reminders_domain_0.1.0/` (`VERSION.txt`,
-`manifest.json`, `MANIFEST.sha256`, `VALIDATION_REPORT.md`).
+configuration, `sources/**`, or any existing file: exactly four files are added
+by this packet in `outputs/20260816_task_reminders_domain_0.1.0/`
+(`VERSION.txt`, `manifest.json`, `MANIFEST.sha256`, `VALIDATION_REPORT.md`), and
+nothing else in the repository is changed.
 
 Explicitly out of scope of MOD-008 implementation evidence here:
 - API/DTO classes and OpenAPI endpoints (incl. `GET/POST /api/v1/reminders*`);
