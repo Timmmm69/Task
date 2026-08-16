@@ -1,0 +1,63 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-TIMING-DOMAIN-0.1.0",
+  "product": "Task",
+  "packetType": "domain-foundation",
+  "module": "Task.Domain.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "fcb53db020c3ac54871f7d4d4ddf29d17dbec116",
+  "baseShaNote": "origin/main advanced from the packet-declared d0e886afbcaa43ccee1ab73f3beb4ab6b841caab to fcb53db020c3ac54871f7d4d4ddf29d17dbec116 by an explicit user decision: the previously uncommitted reminders hardening output package (outputs/20260817_task_reminders_domain_hardening_0.1.1) was committed and pushed as a standalone docs commit before this packet started.",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs",
+      "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs",
+      "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs",
+      "work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/Calendar/CalendarEventTimingTests.cs",
+      "work/production/tests/Task.Tests/Calendar/CalendarTimelinePolicyTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_timing_domain_0.1.0/"
+  },
+  "requirements": {
+    "BR-047": "Overlap разрешён и только предупреждается (AC-047). Implemented as CalendarOverlapPolicy: overlap is returned as a warning/result, never an exception and never a creation/placement veto.",
+    "BR-048": "Date-only Task отображается вне временной шкалы (AC-048). Implemented as CalendarTimelinePlacement: a TaskSchedule without StartsAtUtc yields None even when DeadlineUtc is present.",
+    "BR-049": "Deadline не используется как позиция на timeline (AC-049). Implemented as CalendarTimelinePlacement.FromTaskSchedule: timeline placement is driven only by StartsAtUtc; DeadlineUtc never becomes a start/end position.",
+    "BR-050": "Все локальные времена интерпретируются с timezone (AC-050). Implemented as CalendarEventTiming: timeZone is required/resolvable and eventDate must equal the local start date in that time zone.",
+    "FR-071..FR-082": "API endpoints, permissions and projection handlers stay out of scope for this packet (deferred to later MOD-009 slices)."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj",
+    "testResult": "PASS 323/323 (0 failed), incl. 36 new Calendar tests (previously 287)",
+    "buildCommand": "dotnet build work/production/Task.sln",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only Task.Domain/Calendar/, Task.Tests/Calendar/ (new dirs) and outputs/20260817_task_calendar_timing_domain_0.1.0/ are touched",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "CalendarEvent aggregate and attendee model",
+      "GET /api/v1/calendar, CRUD /api/v1/calendar-events, attendees, response status, archive/restore endpoints",
+      "permissions Calendar.Read / CalendarEvent.Create / CalendarEvent.Update",
+      "optimistic concurrency, idempotency, audit, sync, conflict UI",
+      "query/read-model, filters, storage, database or worker",
+      "Task/Event modification, drag/resize UI, real timeline rendering"
+    ],
+    "unchangedExistingFiles": true,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs": "CDDFE78B7BC7EF4CE66C8EECA13006654B1089C2B66A113022A500DEE241884F",
+    "work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs": "4B0FCD2924C856FC6AEFCDA7284F74778F5A3286F81F2E643F8006BDE288A638",
+    "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs": "721F67633E8D05525779721E1DA08B5321AC027638EFD749A28D4AC064F5B7F3",
+    "work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs": "A1192E7C9EF510040BC5B3D83E383CBE411BA1ED2B4AABCB0E90DF6EFA47DAD7",
+    "work/production/tests/Task.Tests/Calendar/CalendarEventTimingTests.cs": "0E4F09937D2B41CBAB88B18FBE4CB4152E52B849120F09D145F706EEDAD6A327",
+    "work/production/tests/Task.Tests/Calendar/CalendarTimelinePolicyTests.cs": "2CE2C26B59040C8814ABF196ABB1CAF92040FE0F7B2F56A204EDCBB6E3379522",
+    "outputs/20260817_task_calendar_timing_domain_0.1.0/VERSION.txt": "6AD9613A455798D6D92E5F5F390AB4BAA70596BC869ED6B17F5CDD2B28635F06",
+    "outputs/20260817_task_calendar_timing_domain_0.1.0/VALIDATION_REPORT.md": "BCB6381D0620A047B77304325973DF296E80AEA92F0632DBCF705D2331750BF3"
+  }
+}
