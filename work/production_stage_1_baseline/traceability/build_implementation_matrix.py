@@ -35,6 +35,7 @@ METHOD_RE = re.compile(r"^    (get|post|put|patch|delete):\s*$")
 OPERATION_LINE_RE = re.compile(r"^\s+operationId:\s*(\S+)\s*$")
 DASH = chr(0x2014)
 PLACEHOLDERS = {"", "-", DASH}
+TRACEABILITY_MODES = {"single-operation", "module-wide", "unresolved"}
 
 SOURCE_FIELDS = (
     "Requirement",
@@ -304,10 +305,16 @@ def apply_gap_overrides(
         validate_override_identity(override, base, row.wave, errors)
         values = override.values
         status = values["Resolution status"].strip()
+        mode = values["Traceability mode"].strip()
+        related = values["Related OpenAPI operationIds"].strip()
         evidence = values["Source evidence"].strip()
         rationale = values["Resolution rationale"].strip()
         if status not in {"resolved", "unresolved"}:
             errors.append(f"{override.reference}: invalid Resolution status {status!r}")
+            continue
+        if mode not in TRACEABILITY_MODES:
+            errors.append(f"{override.reference}: invalid Traceability mode {mode!r}")
+            continue
         if not evidence:
             errors.append(f"{override.reference}: Source evidence is empty")
         if not rationale:
@@ -321,6 +328,10 @@ def apply_gap_overrides(
             "Server handler planned": values["Server handler planned"].strip(),
         }
         if status == "unresolved":
+            if mode != "unresolved":
+                errors.append(f"{override.reference}: unresolved gap must use unresolved mode")
+            if related:
+                errors.append(f"{override.reference}: unresolved gap has Related OpenAPI operationIds")
             if len(overrides) != 1:
                 errors.append(f"{base['Source row']}: unresolved gap must have exactly one override row")
             populated = [name for name, value in endpoint_fields.items() if value]
@@ -341,14 +352,27 @@ def apply_gap_overrides(
             )
             continue
 
-        mode = values["Traceability mode"].strip()
+        if mode == "unresolved":
+            errors.append(f"{override.reference}: resolved gap must not use unresolved mode")
+
         if mode == "module-wide":
-            related = values["Related OpenAPI operationIds"].strip()
-            related_ops = [op.strip() for op in related.split(";") if op.strip()]
+            related_ops = [op.strip() for op in related.split(";")]
             if not related_ops:
                 errors.append(
                     f"{override.reference}: module-wide resolved gap has empty "
                     "Related OpenAPI operationIds"
+                )
+            elif any(not op_id for op_id in related_ops):
+                errors.append(
+                    f"{override.reference}: module-wide Related OpenAPI operationIds has an empty item"
+                )
+            elif len(set(related_ops)) != len(related_ops):
+                errors.append(
+                    f"{override.reference}: module-wide Related OpenAPI operationIds has duplicates"
+                )
+            elif related_ops != sorted(related_ops):
+                errors.append(
+                    f"{override.reference}: module-wide Related OpenAPI operationIds is not sorted"
                 )
             if len(overrides) != 1:
                 errors.append(f"{base['Source row']}: module-wide gap must have exactly one override row")
@@ -393,6 +417,11 @@ def apply_gap_overrides(
                 )
             continue
 
+        if related != endpoint_fields["API operationId"]:
+            errors.append(
+                f"{override.reference}: single-operation Related OpenAPI operationIds "
+                "must equal API operationId"
+            )
         missing = [name for name, value in endpoint_fields.items() if not value]
         if missing:
             errors.append(f"{override.reference}: resolved gap is missing {', '.join(missing)}")
@@ -547,11 +576,11 @@ def write_csv(rows: list[dict[str, str]]) -> None:
 
 
 def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    # Source inputs are text tracked by Git and may be checked out as CRLF on
+    # Windows. Hash their canonical LF representation so the validation report
+    # remains reproducible across supported worktrees.
+    content = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 def write_report(

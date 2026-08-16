@@ -39,11 +39,11 @@ Unknown operations: none.
 - `work/production_stage_1_baseline/traceability/wave-a.csv` — SHA-256 `9bfc8e14ca1175732f2decae36ab4c5271c0da2c630073aa2d7b52b25b2bd3d2`
 - `work/production_stage_1_baseline/traceability/wave-b.csv` — SHA-256 `9ec40ae0fe06595352844eb94ea9479f34fb7875ab655fa7742c9365dae48d21`
 - `work/production_stage_1_baseline/traceability/wave-c.csv` — SHA-256 `f1d7a650a5fda6a406461cdba308fcd1fd8a3e017618c462855efb6d97dc6eca`
-- `work/production_stage_1_baseline/traceability/gap_overrides_wave_a.csv` — SHA-256 `5eaea30e2e8bcfe4760c52870f9d5afecb627d180125bebc09a98fb1ebe641ca`
-- `work/production_stage_1_baseline/traceability/gap_overrides_wave_b.csv` — SHA-256 `26858f8b15e5c3d9d8971f5c54f7c8d02fe9cab3097de482073304b322051d6d`
-- `work/production_stage_1_baseline/traceability/gap_overrides_wave_c.csv` — SHA-256 `ca0870e3aef8f1c11aad5a8085f0fcbc427168aa6fccaa40929ae7af67a7f479`
-- `outputs/stage_2_3/openapi/openapi.yaml` — SHA-256 `36c15dff5adba0041fcfd79f5a0d203835dac5cdd4ad24122bcd92177c13220d`
-- `work/production_stage_1_baseline/traceability/implementation_matrix.csv` — SHA-256 `daf8329d6c443f305885a26443db37214404f75f1ed920fec7dec1ecdda6e093`
+- `work/production_stage_1_baseline/traceability/gap_overrides_wave_a.csv` — SHA-256 `964061c6486fae6442c044f0dc7d8470784c6674d1e4dba683d94cd517be3c6a`
+- `work/production_stage_1_baseline/traceability/gap_overrides_wave_b.csv` — SHA-256 `4326c486cc30ca7e3fc88e1c683067c6d31aa823d7d56ae34f4f068eb0b8bdca`
+- `work/production_stage_1_baseline/traceability/gap_overrides_wave_c.csv` — SHA-256 `225f5be9d5babd28265149d1cfa316cdaf781c86f9917562dcab186d96a14221`
+- `outputs/stage_2_3/openapi/openapi.yaml` — SHA-256 `5da115968490f2907ebe9aff1e7a639333280676fcc7e7c950c2276ae76f128f`
+- `work/production_stage_1_baseline/traceability/implementation_matrix.csv` — SHA-256 `8cf300610e7a66767f31da08f9f0e47f95e4db450f65032a34dcda6a219378e5`
 
 ## Errors
 
