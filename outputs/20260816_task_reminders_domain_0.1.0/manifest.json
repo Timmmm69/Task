@@ -1,0 +1,45 @@
+{
+  "package": "TASK-PROD-MOD-008 reminders domain model (MOD-008 «Напоминания»)",
+  "packetId": "TASK-PROD-MOD-008-REMINDERS-DOMAIN-0.1.0",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "implementationBaseSha": "2056218388cf362b07cdaf0cc613ebc5379a92d5",
+  "evidenceBaseSha": "50d3d567acd981fdf21bd82d139df0f539da814f",
+  "implementationCommits": [
+    { "sha": "e4bbfa434bdcfa9511c7009cf297b2c3e3e6b3d9", "purpose": "Add Task.Reminders domain: reminder aggregates with occurrence lifecycle" },
+    { "sha": "50d3d567acd981fdf21bd82d139df0f539da814f", "purpose": "Harden reminders: reject firing/claiming before the scheduled instant" }
+  ],
+  "stage": "production code, domain layer only",
+  "status": "verified",
+  "scope": [
+    "BR-044, BR-045, BR-046; Reminder aggregate, ReminderTrigger, ReminderOccurrence, occurrence key, status transitions and unit tests"
+  ],
+  "verification": {
+    "dotnetTest": { "project": "work/production/tests/Task.Tests/Task.Tests.csproj", "result": "pass", "passed": 287, "failed": 0, "skipped": 0 },
+    "dotnetBuild": { "solution": "work/production/Task.sln", "result": "pass", "warnings": 0, "errors": 0 },
+    "gitDiffCheck": { "range": "2056218..50d3d56", "result": "clean" },
+    "scopeCheck": { "result": "pass", "newPackageFiles": 4, "modifiedExisting": 0, "sourcesTouched": false, "outsideOutputTouched": false },
+    "integrityCheck": { "manifestJsonParses": true, "manifestHashesMatchFiles": true, "artifactHashesMatchManifest": true }
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Domain/Reminders/Reminder.cs": "C3649E3A8F898C3D6C8F5E274784D12088119B88D052BD8B722344D395F496D0",
+    "work/production/src/Task.Domain/Reminders/ReminderTrigger.cs": "1F306741AD79185503A274C5CDD873F29496F5526CFBE8ABBE26222B9CFF2E4F",
+    "work/production/src/Task.Domain/Reminders/ReminderTriggerType.cs": "CCE2AA336CD961328CAF33B63B0399DC787B0332BCAFED40137CB7EEF38A4F2E",
+    "work/production/src/Task.Domain/Reminders/ReminderStatus.cs": "6EA17AD2DDE37734E5BC5BC809C9028026FAF519DF1793ADA46D9FE20971D480",
+    "work/production/src/Task.Domain/Reminders/ReminderOccurrence.cs": "B73C06DA334B0F17097CEC08E49B028DC8D5457DECF511774FECD7B58A9C4484",
+    "work/production/src/Task.Domain/Reminders/ReminderOccurrenceStatus.cs": "290C3588549A356057CBECEBA64825A4B8AD407F44864B57A2AFE6B79493E368",
+    "work/production/src/Task.Domain/Reminders/ReminderOccurrenceKey.cs": "E487D0465C70667B0A66788A45866AC7F5D73F011B524CFBCCCA8FE284C3DE3F",
+    "work/production/tests/Task.Tests/Reminders/ReminderDomainTests.cs": "1EFAA76F368D0AF6FC8B8C6FABD2614A7207F9C613AAF5CA95E8AD6130CACDD5",
+    "work/production/tests/Task.Tests/Reminders/ReminderOccurrenceTests.cs": "8414EDAC76EE9AC2C78A8691B740557C4CE8B833EA35984A3DB76EBACAFD06D3",
+    "outputs/20260816_task_reminders_domain_0.1.0/VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67",
+    "outputs/20260816_task_reminders_domain_0.1.0/VALIDATION_REPORT.md": "33D27E58C4A17F9917C202DCB9E6BF3BB48D6C76B2892B4A1BC81324EEE7863E"
+  },
+  "integrityFile": "outputs/20260816_task_reminders_domain_0.1.0/MANIFEST.sha256",
+  "evidenceBoundaries": [
+    "No API/DTO classes, OpenAPI endpoints, or authorization (Reminder.ManageOwn) checks",
+    "No persistence, repositories, migrations, or real database gate",
+    "No worker delivery/claiming jobs; worker/persistence-level deduplication guarantee NOT implemented and NOT claimed (domain-only dedup per BR-046)",
+    "No audit/outbox publication or sync semantics",
+    "No Desktop UI (snooze/dismiss/reschedule surfaces)"
+  ]
+}
