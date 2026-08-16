@@ -110,13 +110,23 @@ public sealed record ReminderOccurrence
 
     /// <summary>
     /// Claims the occurrence for delivery. Allowed for a created or failed
-    /// occurrence; claiming counts one attempt.
+    /// occurrence; claiming counts one attempt. An occurrence cannot be
+    /// claimed before the instant it is scheduled to be attempted:
+    /// <paramref name="occurredAtUtc"/> must not precede
+    /// <see cref="NextAttemptAt"/>.
     /// </summary>
     public ReminderOccurrence Claim(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         if (Status is not (ReminderOccurrenceStatus.Created or ReminderOccurrenceStatus.Failed))
         {
             throw new InvalidOperationException("Only a created or failed occurrence can be claimed.");
+        }
+
+        if (occurredAtUtc < NextAttemptAt)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(occurredAtUtc),
+                "An occurrence cannot be claimed before its first attempt instant.");
         }
 
         return new ReminderOccurrence(

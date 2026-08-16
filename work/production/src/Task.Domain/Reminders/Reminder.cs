@@ -187,7 +187,9 @@ public sealed class Reminder
     /// Marks the reminder due. Allowed from <see cref="ReminderStatus.Scheduled"/>
     /// and from <see cref="ReminderStatus.Snoozed"/>; leaving snooze clears
     /// snoozedUntil while the previously configured trigger is retained
-    /// (BR-045, AC-045).
+    /// (BR-045, AC-045). A reminder cannot fire before its scheduled instant:
+    /// <paramref name="occurredAtUtc"/> must not precede
+    /// <see cref="NextTriggerAt"/> (equal to snoozedUntil while snoozed).
     /// </summary>
     public Reminder MarkDue(Guid actorId, DateTimeOffset occurredAtUtc)
     {
@@ -195,6 +197,13 @@ public sealed class Reminder
         if (Status is not (ReminderStatus.Scheduled or ReminderStatus.Snoozed))
         {
             throw new InvalidOperationException("Only a scheduled or snoozed reminder can become due.");
+        }
+
+        if (occurredAtUtc < NextTriggerAt)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(occurredAtUtc),
+                "A reminder cannot fire before its scheduled instant.");
         }
 
         return new Reminder(

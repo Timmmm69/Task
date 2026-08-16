@@ -74,49 +74,58 @@ public sealed class ReminderOccurrenceTests
     [Fact]
     public void Claim_Deliver_Fail_DeadLetter_AdvanceAttemptsAndStatuses()
     {
-        var claimed = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1));
+        var claimed = Occurrence().Claim(ActorId, DueAt);
         Assert.Equal(ReminderOccurrenceStatus.Claimed, claimed.Status);
         Assert.Equal(1, claimed.AttemptCount);
         Assert.Equal(DueAt, claimed.NextAttemptAt);
         Assert.Equal(2, claimed.Metadata.Version);
 
-        var delivered = claimed.MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
+        var delivered = claimed.MarkDelivered(ActorId, DueAt.AddMinutes(1));
         Assert.Equal(ReminderOccurrenceStatus.Delivered, delivered.Status);
         Assert.Equal(1, delivered.AttemptCount);
         Assert.Equal(3, delivered.Metadata.Version);
 
-        var failed = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).Fail(ActorId, CreatedAt.AddMinutes(2));
+        var failed = Occurrence().Claim(ActorId, DueAt).Fail(ActorId, DueAt.AddMinutes(1));
         Assert.Equal(ReminderOccurrenceStatus.Failed, failed.Status);
         Assert.Equal(1, failed.AttemptCount);
 
-        var retried = failed.Claim(ActorId, CreatedAt.AddMinutes(3));
+        var retried = failed.Claim(ActorId, DueAt.AddMinutes(2));
         Assert.Equal(ReminderOccurrenceStatus.Claimed, retried.Status);
         Assert.Equal(2, retried.AttemptCount);
 
-        var deadLetter = retried.DeadLetter(ActorId, CreatedAt.AddMinutes(4));
+        var deadLetter = retried.DeadLetter(ActorId, DueAt.AddMinutes(3));
         Assert.Equal(ReminderOccurrenceStatus.DeadLetter, deadLetter.Status);
         Assert.Equal(2, deadLetter.AttemptCount);
 
-        var directDeadLetter = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).DeadLetter(ActorId, CreatedAt.AddMinutes(2));
+        var directDeadLetter = Occurrence().Claim(ActorId, DueAt).DeadLetter(ActorId, DueAt.AddMinutes(1));
         Assert.Equal(ReminderOccurrenceStatus.DeadLetter, directDeadLetter.Status);
+    }
+
+    [Fact]
+    public void Claim_IsRejectedBeforeTheFirstAttemptInstant()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => Occurrence().Claim(ActorId, CreatedAt.AddMinutes(30)));
+        Assert.Equal(
+            ReminderOccurrenceStatus.Claimed,
+            Occurrence().Claim(ActorId, DueAt).Status);
     }
 
     [Fact]
     public void Transitions_RejectIllegalStatuses()
     {
         var created = Occurrence();
-        var claimed = created.Claim(ActorId, CreatedAt.AddMinutes(1));
-        var delivered = claimed.MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
-        var deadLettered = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).DeadLetter(ActorId, CreatedAt.AddMinutes(2));
+        var claimed = created.Claim(ActorId, DueAt);
+        var delivered = claimed.MarkDelivered(ActorId, DueAt.AddMinutes(1));
+        var deadLettered = Occurrence().Claim(ActorId, DueAt).DeadLetter(ActorId, DueAt.AddMinutes(1));
 
-        Assert.Throws<InvalidOperationException>(() => created.MarkDelivered(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => created.Fail(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => created.DeadLetter(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => claimed.Claim(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => delivered.Claim(ActorId, CreatedAt.AddMinutes(3)));
-        Assert.Throws<InvalidOperationException>(() => delivered.Fail(ActorId, CreatedAt.AddMinutes(3)));
-        Assert.Throws<InvalidOperationException>(() => deadLettered.Claim(ActorId, CreatedAt.AddMinutes(3)));
-        Assert.Throws<InvalidOperationException>(() => deadLettered.MarkDelivered(ActorId, CreatedAt.AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() => created.MarkDelivered(ActorId, DueAt.AddMinutes(1)));
+        Assert.Throws<InvalidOperationException>(() => created.Fail(ActorId, DueAt.AddMinutes(1)));
+        Assert.Throws<InvalidOperationException>(() => created.DeadLetter(ActorId, DueAt.AddMinutes(1)));
+        Assert.Throws<InvalidOperationException>(() => claimed.Claim(ActorId, DueAt.AddMinutes(1)));
+        Assert.Throws<InvalidOperationException>(() => delivered.Claim(ActorId, DueAt.AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() => delivered.Fail(ActorId, DueAt.AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() => deadLettered.Claim(ActorId, DueAt.AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() => deadLettered.MarkDelivered(ActorId, DueAt.AddMinutes(2)));
     }
 
     [Fact]
@@ -130,22 +139,22 @@ public sealed class ReminderOccurrenceTests
         Assert.Same(dismissed, same);
         Assert.Equal(2, same.Metadata.Version);
 
-        var claimedDismissed = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).Dismiss(ActorId, CreatedAt.AddMinutes(2));
+        var claimedDismissed = Occurrence().Claim(ActorId, DueAt).Dismiss(ActorId, DueAt.AddMinutes(1));
         Assert.Equal(ReminderOccurrenceStatus.Cancelled, claimedDismissed.Status);
 
-        var failedDismissed = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).Fail(ActorId, CreatedAt.AddMinutes(2))
-            .Dismiss(ActorId, CreatedAt.AddMinutes(3));
+        var failedDismissed = Occurrence().Claim(ActorId, DueAt).Fail(ActorId, DueAt.AddMinutes(1))
+            .Dismiss(ActorId, DueAt.AddMinutes(2));
         Assert.Equal(ReminderOccurrenceStatus.Cancelled, failedDismissed.Status);
     }
 
     [Fact]
     public void Dismiss_RejectsDeliveredAndDeadLetteredOccurrences()
     {
-        var delivered = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
-        var deadLettered = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1)).DeadLetter(ActorId, CreatedAt.AddMinutes(2));
+        var delivered = Occurrence().Claim(ActorId, DueAt).MarkDelivered(ActorId, DueAt.AddMinutes(1));
+        var deadLettered = Occurrence().Claim(ActorId, DueAt).DeadLetter(ActorId, DueAt.AddMinutes(1));
 
-        Assert.Throws<InvalidOperationException>(() => delivered.Dismiss(ActorId, CreatedAt.AddMinutes(3)));
-        Assert.Throws<InvalidOperationException>(() => deadLettered.Dismiss(ActorId, CreatedAt.AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() => delivered.Dismiss(ActorId, DueAt.AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() => deadLettered.Dismiss(ActorId, DueAt.AddMinutes(2)));
     }
 
     [Fact]
@@ -226,7 +235,7 @@ public sealed class ReminderOccurrenceTests
         Assert.Throws<ArgumentException>(() => Occurrence().Claim(
             ActorId, new DateTimeOffset(2026, 8, 16, 14, 0, 0, TimeSpan.FromHours(5))));
 
-        var claimed = Occurrence().Claim(ActorId, CreatedAt.AddMinutes(1));
+        var claimed = Occurrence().Claim(ActorId, DueAt);
         Assert.Throws<ArgumentOutOfRangeException>(() => claimed.MarkDelivered(ActorId, CreatedAt));
     }
 

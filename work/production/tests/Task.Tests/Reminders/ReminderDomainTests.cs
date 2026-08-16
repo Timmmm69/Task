@@ -116,29 +116,43 @@ public sealed class ReminderDomainTests
         var reminder = MakeReminder(
             ReminderTrigger.Create(ReminderTriggerType.AtStart, null, null));
 
-        var due = reminder.MarkDue(ActorId, CreatedAt.AddMinutes(1));
+        var due = reminder.MarkDue(ActorId, CreatedAt.AddHours(1));
         Assert.Equal(ReminderStatus.Due, due.Status);
         Assert.Equal(2, due.Metadata.Version);
 
-        var delivered = due.MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
+        var delivered = due.MarkDelivered(ActorId, CreatedAt.AddHours(1).AddMinutes(1));
         Assert.Equal(ReminderStatus.Delivered, delivered.Status);
-        Assert.Equal(CreatedAt.AddMinutes(2), delivered.DeliveredAt);
+        Assert.Equal(CreatedAt.AddHours(1).AddMinutes(1), delivered.DeliveredAt);
         Assert.Equal(3, delivered.Metadata.Version);
+    }
+
+    [Fact]
+    public void MarkDue_IsRejectedBeforeTheScheduledInstant()
+    {
+        var reminder = MakeReminder(ReminderTrigger.Create(ReminderTriggerType.AtStart, null, null));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => reminder.MarkDue(ActorId, CreatedAt.AddMinutes(1)));
+
+        var snoozed = MakeReminder(ReminderTrigger.Create(ReminderTriggerType.AtDeadline, null, null))
+            .Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => snoozed.MarkDue(ActorId, CreatedAt.AddHours(1).AddMinutes(30)));
+
+        Assert.Equal(ReminderStatus.Due, snoozed.MarkDue(ActorId, CreatedAt.AddHours(2)).Status);
     }
 
     [Fact]
     public void MarkDue_And_MarkDelivered_RejectIllegalTransitions()
     {
         var reminder = MakeReminder(ReminderTrigger.Create(ReminderTriggerType.AtStart, null, null));
-        var due = reminder.MarkDue(ActorId, CreatedAt.AddMinutes(1));
-        var delivered = due.MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
+        var due = reminder.MarkDue(ActorId, CreatedAt.AddHours(1));
+        var delivered = due.MarkDelivered(ActorId, CreatedAt.AddHours(1).AddMinutes(1));
         var cancelled = reminder.Cancel(ActorId, CreatedAt.AddMinutes(1));
         var expired = reminder.Expire(ActorId, CreatedAt.AddMinutes(1));
 
-        Assert.Throws<InvalidOperationException>(() => reminder.MarkDelivered(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => due.MarkDue(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => delivered.MarkDelivered(ActorId, CreatedAt.AddMinutes(3)));
-        Assert.Throws<InvalidOperationException>(() => delivered.MarkDue(ActorId, CreatedAt.AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() => reminder.MarkDelivered(ActorId, CreatedAt.AddHours(1).AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() => due.MarkDue(ActorId, CreatedAt.AddHours(1).AddMinutes(2)));
+        Assert.Throws<InvalidOperationException>(() => delivered.MarkDelivered(ActorId, CreatedAt.AddHours(1).AddMinutes(3)));
+        Assert.Throws<InvalidOperationException>(() => delivered.MarkDue(ActorId, CreatedAt.AddHours(1).AddMinutes(3)));
         Assert.Throws<InvalidOperationException>(() => cancelled.MarkDue(ActorId, CreatedAt.AddMinutes(2)));
         Assert.Throws<InvalidOperationException>(() => expired.MarkDelivered(ActorId, CreatedAt.AddMinutes(2)));
     }
@@ -166,13 +180,13 @@ public sealed class ReminderDomainTests
     public void Snooze_IsAllowedForScheduledDueAndDeliveredButNotInThePast()
     {
         var reminder = MakeReminder(ReminderTrigger.Create(ReminderTriggerType.BeforeDeadline, 60, null));
-        var due = reminder.MarkDue(ActorId, CreatedAt.AddMinutes(1));
-        var delivered = due.MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
+        var due = reminder.MarkDue(ActorId, CreatedAt.AddHours(1));
+        var delivered = due.MarkDelivered(ActorId, CreatedAt.AddHours(1).AddMinutes(1));
 
         Assert.Equal(ReminderStatus.Snoozed, reminder.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(1)).Status);
-        Assert.Equal(ReminderStatus.Snoozed, due.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(3)).Status);
-        Assert.Equal(ReminderStatus.Snoozed, delivered.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(4)).Status);
-        Assert.Null(delivered.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(4)).DeliveredAt);
+        Assert.Equal(ReminderStatus.Snoozed, due.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddHours(1).AddMinutes(15)).Status);
+        Assert.Equal(ReminderStatus.Snoozed, delivered.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddHours(1).AddMinutes(30)).Status);
+        Assert.Null(delivered.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddHours(1).AddMinutes(30)).DeliveredAt);
 
         var snoozed = reminder.Snooze(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(1));
         var reSnoozed = snoozed.Snooze(ActorId, CreatedAt.AddHours(4), CreatedAt.AddMinutes(3));
@@ -230,11 +244,11 @@ public sealed class ReminderDomainTests
     {
         var reminder = MakeReminder(ReminderTrigger.Create(ReminderTriggerType.AtDeadline, null, null));
         var cancelled = reminder.Cancel(ActorId, CreatedAt.AddMinutes(1));
-        var delivered = reminder.MarkDue(ActorId, CreatedAt.AddMinutes(1)).MarkDelivered(ActorId, CreatedAt.AddMinutes(2));
+        var delivered = reminder.MarkDue(ActorId, CreatedAt.AddHours(1)).MarkDelivered(ActorId, CreatedAt.AddHours(1).AddMinutes(1));
         var expired = reminder.Expire(ActorId, CreatedAt.AddMinutes(1));
 
         Assert.Throws<InvalidOperationException>(() => cancelled.Cancel(ActorId, CreatedAt.AddMinutes(2)));
-        Assert.Throws<InvalidOperationException>(() => delivered.Cancel(ActorId, CreatedAt.AddMinutes(3)).Cancel(ActorId, CreatedAt.AddMinutes(4)));
+        Assert.Throws<InvalidOperationException>(() => delivered.Cancel(ActorId, CreatedAt.AddHours(2)).Cancel(ActorId, CreatedAt.AddHours(2).AddMinutes(1)));
         Assert.Throws<InvalidOperationException>(() => reminder.Reschedule(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(1)));
         Assert.Throws<InvalidOperationException>(() => expired.Reschedule(ActorId, CreatedAt.AddHours(2), CreatedAt.AddMinutes(2)));
         Assert.Throws<InvalidOperationException>(() =>
