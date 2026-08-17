@@ -1,0 +1,72 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-STORE-SCHEDULE-0.1.0",
+  "product": "Task",
+  "packetType": "persistence-and-read-model-increment",
+  "module": "Task.Infrastructure.Persistence / Task.Application.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "9002d13",
+  "headSha": "f244b72",
+  "commits": [
+    "75ef2d4 feat: add PostgresCalendarEventStore with PostgreSQL integration tests",
+    "f244b72 feat: add unified calendar schedule read model with conflict detection"
+  ],
+  "scope": {
+    "production": [
+      "work/production/src/Task.Api/Program.cs",
+      "work/production/src/Task.Application/Calendar/IScheduleStore.cs",
+      "work/production/src/Task.Application/Calendar/ScheduleContracts.cs",
+      "work/production/src/Task.Application/Calendar/ScheduleQueryService.cs",
+      "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+      "work/production/src/Task.Infrastructure/Persistence/PostgresScheduleStore.cs",
+      "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/PostgresCalendarEventStoreTests.cs",
+      "work/production/tests/Task.Tests/PostgresScheduleStoreTests.cs",
+      "work/production/tests/Task.Tests/ScheduleQueryServiceTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_store_schedule_read_model_0.1.0/"
+  },
+  "requirements": {
+    "contract": "PostgresCalendarEventStore must implement ICalendarEventStore (Get/Add/Save) on the approved calendar schema with atomic optimistic concurrency (Save with expectedVersion, CalendarEventConcurrencyException, KeyNotFoundException), tenant boundary and attendee order preservation. The unified schedule read model must return active tasks and calendar events intersecting the window [fromUtc, toUtc) with exact all-day/timing semantics, optional users/projects/status filters, deterministic sorting, and overlap conflicts with the 30-minute severity threshold. Schema 003, Task.Domain and public application contracts were already approved and must not change.",
+    "rules": "Implementation follows the approved foundation conventions: NpgsqlDataSource, raw SQL with $N typed parameters, single transactions for writes, no ORM, no new dependencies, string enums matching schema CHECK values, store pre-filtering coarse and service filtering exact."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/Task.sln --no-restore",
+    "testResult": "PASS 495/495 (0 failed, 0 skipped) with TASK_POSTGRES_TEST_ADMIN_CONNECTION pointing at the local real PostgreSQL 16.14 (127.0.0.1:5432): calendar event round trip with tenant boundary and concurrency OK, schedule window/tenant/filters/DI coverage OK, all three existing real-PG task/migrator scenarios OK. PostgreSQL 15 rejection gate NOT RUN (TASK_POSTGRES15_TEST_ADMIN_CONNECTION not configured).",
+    "buildCommand": "dotnet build work/production/Task.sln --no-restore",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean over 9002d13..f244b72",
+    "scopeCheck": "only the ten production/test files of the two commits and the new output package are touched; no migration, domain, solution, dependency or sources/** file modified",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "API endpoints/controllers for calendar events and the schedule read model with permissions, If-Match/idempotency",
+      "attendee response workflow (/respond) with expectedAttendeeVersion",
+      "cursor pagination of SchedulePage (NextCursor is always null by contract)",
+      "audit/outbox, sync and notifications",
+      "recurrence, worker, Desktop UI, authorization and deployment",
+      "any change to migrations (calendar schema 003 untouched), Task.Domain/**, solution/project files, dependencies and sources/**"
+    ],
+    "unchangedExistingFiles": false,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Api/Program.cs": "83C5C1ACB839BBE6C00FEFF74F447A22D3BBB7004F73EFFCED4005FBF4B8871A",
+    "work/production/src/Task.Application/Calendar/IScheduleStore.cs": "E2D29D6EF18270D8378E1FCDB3CF354D759AC5246752AF5C87F7F1740E18AB82",
+    "work/production/src/Task.Application/Calendar/ScheduleContracts.cs": "EC9CF1359A37EEC2066E6D82B00DBE7378C2F20F9D2C1BD1C483F1EC7CA33383",
+    "work/production/src/Task.Application/Calendar/ScheduleQueryService.cs": "15185959B9D0602DF05E4EF31AA6AA9E82323FD1CAA00B00C4D0A1CDDD034223",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs": "C403BD9E82FBCBF6DCEB81DC1904B23D67E62BE8C28F8248E700E388BD941A7C",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresScheduleStore.cs": "9534A4C6186546FB8F692E9958296277ED3056B57410F9A4BDEDC61F66E8AD2E",
+    "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs": "8A9BB2B0901DC30389BCEF03EB177D2DDE7E9D4130330A7CF928E11B3BC032A9",
+    "work/production/tests/Task.Tests/PostgresCalendarEventStoreTests.cs": "131A4913FF7DE89A9AE8EB4BDC214214EF24488FD2856113BA68A0D90B38496E",
+    "work/production/tests/Task.Tests/PostgresScheduleStoreTests.cs": "1CA823FF9071EF776A510F00E51ADEDDF60C9CBB718BD0B673A524679049F124",
+    "work/production/tests/Task.Tests/ScheduleQueryServiceTests.cs": "841B95F21BAF9F5BAFC17CB06CDD4D33519CBC2654B1EE793ED2E6A83FDBCBCF",
+    "outputs/20260817_task_calendar_store_schedule_read_model_0.1.0/VERSION.txt": "6AD9613A455798D6D92E5F5F390AB4BAA70596BC869ED6B17F5CDD2B28635F06",
+    "outputs/20260817_task_calendar_store_schedule_read_model_0.1.0/VALIDATION_REPORT.md": "4EEEC0C0CFDD866582988E1A5A6EE2B240030893039E209634A4B8C18A354E5B"
+  }
+}
