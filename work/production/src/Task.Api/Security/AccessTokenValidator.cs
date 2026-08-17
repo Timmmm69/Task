@@ -110,8 +110,10 @@ internal sealed class AccessTokenValidator
                 ? AccessTokenValidationResult.Success(claims)
                 : AccessTokenValidationResult.Failed(AccessTokenFailureCode.Invalid);
         }
-        catch (SecurityTokenException)
+        catch (Exception)
         {
+            // Fail closed and never leak validation internals: any unexpected failure while
+            // parsing or validating the token is treated as an invalid token.
             return AccessTokenValidationResult.Failed(AccessTokenFailureCode.Invalid);
         }
     }
@@ -201,18 +203,26 @@ internal sealed class JwtVerificationKeys
     {
         var keys = new Dictionary<string, ECDsaSecurityKey>(StringComparer.Ordinal);
 
-        var reference = identityOptions.VerificationKeysDirectory;
-        if (!string.IsNullOrWhiteSpace(reference)
-            && reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+        try
         {
-            var directory = reference.Substring("file:".Length);
-            if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
+            var reference = identityOptions.VerificationKeysDirectory;
+            if (!string.IsNullOrWhiteSpace(reference)
+                && reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (var path in Directory.EnumerateFiles(directory, "*.pem"))
+                var directory = reference.Substring("file:".Length);
+                if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
                 {
-                    TryLoadKey(path, keys);
+                    foreach (var path in Directory.EnumerateFiles(directory, "*.pem"))
+                    {
+                        TryLoadKey(path, keys);
+                    }
                 }
             }
+        }
+        catch (Exception)
+        {
+            // Fail closed: an unreadable directory yields an empty key set.
+            keys.Clear();
         }
 
         return new JwtVerificationKeys(keys);

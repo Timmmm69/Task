@@ -196,6 +196,31 @@ public sealed class TaskJwtAuthenticationHandlerTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Authenticate_WithMissingKid_RejectsOnce()
+    {
+        var credentialKeyWithoutKid = new ECDsaSecurityKey(SigningKey);
+        var token = CreateToken(credentialKeyWithoutKid, DefaultClaims());
+        await AssertRejectedWithMatchingSessionAsync(token);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Authenticate_WithMultiValueAudience_RejectsOnce()
+    {
+        var claims = DefaultClaims();
+        claims["aud"] = new[] { Audience, "another-client" };
+        var descriptor = new SecurityTokenDescriptor
+        {
+            Issuer = Issuer,
+            Claims = claims,
+            SigningCredentials = new SigningCredentials(SigningCredentialsKey, SecurityAlgorithms.EcdsaSha256),
+            IssuedAt = DateTime.UtcNow,
+            Expires = DateTime.UtcNow.AddMinutes(4),
+        };
+        var token = new JsonWebTokenHandler().CreateToken(descriptor);
+        await AssertRejectedWithMatchingSessionAsync(token);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Authenticate_WithWrongIssuer_RejectsOnce()
     {
         var token = CreateToken(SigningCredentialsKey, DefaultClaims(), issuer: "https://evil.example.internal");
