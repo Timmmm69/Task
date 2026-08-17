@@ -1,0 +1,54 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-EVENT-READ-MODEL-0.1.0",
+  "product": "Task",
+  "packetType": "application-read-slice",
+  "module": "Task.Application.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "09d726e11dbe5a794620b98158376e81f92962bb",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Application/Calendar/CalendarEventDetails.cs",
+      "work/production/src/Task.Application/Calendar/CalendarEventQueryService.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/Calendar/CalendarEventQueryServiceTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_event_read_model_0.1.0/"
+  },
+  "requirements": {
+    "contract": "Organizer_Stage2_Technical_Specification_2.2/openapi/openapi.yaml schema CalendarEvent: id, organizationId, version, createdAt/updatedAt, projectId, title, description, eventDate, isAllDay, startAtUtc, endAtUtc, timeZone, status, userAttendees and contactAttendees; GET /api/v1/calendar-events/{id} maps to the read projection.",
+    "rules": "CalendarEventQueryService mirrors the approved TaskQueryService pattern: it only loads through ICalendarEventStore.Get and projects into an immutable CalendarEventDetails record; it never mutates the aggregate and never applies lifecycle transitions; a missing event or an event of another organization returns null; timing fields are flattened to the OpenAPI shape; attendee collections are projected in stored order without copying cost changes."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj --no-restore",
+    "testResult": "PASS 461/461 (0 failed, 0 skipped), incl. 7 new CalendarEventQueryServiceTests facts (previously 454)",
+    "buildCommand": "dotnet build work/production/Task.sln --no-restore",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only the two new Task.Application files, the new test file and the new output package are touched; no existing file modified",
+    "rebaseCheck": "git fetch origin --prune + git rebase origin/main before push: no conflicts; pushed HEAD == origin/main",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "PostgreSQL persistence implementation of ICalendarEventStore (next slices)",
+      "window/range queries and the unified calendar/conflict read model (SchedulePage, ScheduleConflict)",
+      "API endpoints, permissions, If-Match/idempotency, audit/outbox, sync and notifications",
+      "attendee response workflow (/respond) with expectedAttendeeVersion",
+      "recurrence, worker, Desktop UI, authorization and deployment",
+      "changes to Task.Domain, Task.Infrastructure, Task.Api, existing Task.Application files, solution/project files, dependencies and sources/**"
+    ],
+    "unchangedExistingFiles": true,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Application/Calendar/CalendarEventDetails.cs": "4CE7F3B7FADBB49726F935E8D9B93EF43F5EB5B4C217E07401296C03C473F178",
+    "work/production/src/Task.Application/Calendar/CalendarEventQueryService.cs": "7EB9763254EEC5994649F72EC04A3E3E745C09B050D5D34752077E761758F4E1",
+    "work/production/tests/Task.Tests/Calendar/CalendarEventQueryServiceTests.cs": "0A452AB7A6A4173E0F365B7228B37FF50C1ADCCA780F34591BF23D8FB0022E5E",
+    "outputs/20260817_task_calendar_event_read_model_0.1.0/VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67",
+    "outputs/20260817_task_calendar_event_read_model_0.1.0/VALIDATION_REPORT.md": "CD009672B18071B564DC20BD0032F6DD4B7918EB194BB6BF48AFB4DFE9E3B2A7"
+  }
+}
