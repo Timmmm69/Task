@@ -1,0 +1,54 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-ATTENDEE-DOMAIN-0.1.0",
+  "product": "Task",
+  "packetType": "domain-attendee-values",
+  "module": "Task.Domain.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "39f7dd134ab5b751653138eb2c8f4ec0bfd1e9d7",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Domain/Calendar/CalendarAttendeeTypes.cs",
+      "work/production/src/Task.Domain/Calendar/CalendarAttendees.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/Calendar/CalendarAttendeeTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_attendee_domain_0.1.0/"
+  },
+  "requirements": {
+    "contract": "Organizer_Stage2_Technical_Specification_2.2/openapi/openapi.yaml, schemas EventAttendee and ContactAttendee: userAccountId/contactId (uuid), role (required|optional|observer), responseStatus (pending|accepted|declined|tentative), respondedAt (nullable RFC 3339 UTC instant).",
+    "FR-073..FR-081": "attendee collections on CalendarEvent, replace-attendees, response workflow, notifications, permissions and API endpoints stay out of scope for this packet (deferred to later MOD-009 slices)."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj --no-restore",
+    "testResult": "PASS 396/396 (0 failed), incl. 30 new CalendarAttendeeTests (previously 366)",
+    "buildCommand": "dotnet build work/production/Task.sln --no-restore",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only the three new Calendar attendee files and the new output package are touched",
+    "rebaseCheck": "after rebase on origin/main: HEAD == origin/main, no conflicts",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "attendee collections attached to CalendarEvent (userAttendees/contactAttendees), max-500 enforcement, duplicate detection across attendee kinds",
+      "replace attendees, attendee response workflow, notifications, audit/outbox",
+      "API endpoints FR-073..FR-081, permissions, If-Match/idempotency",
+      "sync, persistence/repository, worker, calendar query/read model",
+      "Desktop attendee UI",
+      "changes to CalendarEvent, CalendarEventTiming, CalendarEventStatus, CalendarTimelinePlacement, SyncableEntityMetadata, TaskAggregate, solution/project files, dependencies"
+    ],
+    "unchangedExistingFiles": true,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Domain/Calendar/CalendarAttendeeTypes.cs": "86008B28D5BD3D694B31E16215A76A7BA2C865F84730FB31204B49FFB33ABC2E",
+    "work/production/src/Task.Domain/Calendar/CalendarAttendees.cs": "326F842A91ED654F5975D4D6A84840BF6F1DBC370D2B729EC6BEA42E63E22BD3",
+    "work/production/tests/Task.Tests/Calendar/CalendarAttendeeTests.cs": "628641AABAB79F89BF7DD12745C64CB86F45476B986EE15B2ABF69ECFD064BBE",
+    "outputs/20260817_task_calendar_attendee_domain_0.1.0/VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67",
+    "outputs/20260817_task_calendar_attendee_domain_0.1.0/VALIDATION_REPORT.md": "465C2D1368798791E49742A6D6D39D8BFFEEEB73A45D769BC7E1D045AF8F5731"
+  }
+}
