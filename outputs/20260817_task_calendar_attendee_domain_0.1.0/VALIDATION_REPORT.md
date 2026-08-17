@@ -25,7 +25,7 @@ Date: 2026-08-17
 | Scope | `git status --short` after implementation | only the 3 new attendee files and the output package |
 | Manifest parse | `ConvertFrom-Json` | valid JSON |
 | Hashes | canonical-LF SHA-256, UTF-8 without BOM, CRLF -> LF | every MANIFEST.sha256 entry and manifest.json artifactHash matches a fresh recomputation |
-| Rebase | `git fetch origin --prune` + `git rebase origin/main` before push | no conflicts; pushed HEAD == origin/main == base |
+| Rebase | `git fetch origin --prune` + `git rebase origin/main` before push | no conflicts; pushed HEAD == origin/main (b49a280), base 39f7dd1 is the parent commit |
 
 ## Invariant coverage
 - Non-empty identifier: `EventAttendee.Create`/`ContactAttendee.Create` throw
@@ -53,3 +53,12 @@ Date: 2026-08-17
 ## Hash rule
 UTF-8 without BOM; CRLF normalized to LF before SHA-256. MANIFEST.sha256 is
 not recursively hashed. All hashes verified after the final rebase.
+
+## Revision history
+- 2026-08-17, correction commit (after initial push of b49a280): validation
+  helpers of `EventAttendee`/`ContactAttendee` consolidated into one internal
+  `AttendeeValidation` class inside `CalendarAttendees.cs` (public API
+  unchanged; production + tests now 342 lines, within the 360-line guideline);
+  the rebase description was corrected — pushed HEAD == origin/main (b49a280),
+  base 39f7dd1 is the parent commit, not an equal state. All hashes and test
+  results were recomputed for the corrected files.

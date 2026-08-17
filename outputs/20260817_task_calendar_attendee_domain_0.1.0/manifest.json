@@ -28,7 +28,7 @@
     "buildResult": "0 errors, 0 warnings",
     "diffCheck": "git diff --check clean",
     "scopeCheck": "only the three new Calendar attendee files and the new output package are touched",
-    "rebaseCheck": "after rebase on origin/main: HEAD == origin/main, no conflicts",
+    "rebaseCheck": "fetch + rebase origin/main before push: no conflicts; pushed commit b49a280 on top of base 39f7dd1 (base is the parent commit), origin/main == HEAD after push",
     "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
     "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
   },
@@ -46,9 +46,9 @@
   },
   "artifactHashes": {
     "work/production/src/Task.Domain/Calendar/CalendarAttendeeTypes.cs": "86008B28D5BD3D694B31E16215A76A7BA2C865F84730FB31204B49FFB33ABC2E",
-    "work/production/src/Task.Domain/Calendar/CalendarAttendees.cs": "326F842A91ED654F5975D4D6A84840BF6F1DBC370D2B729EC6BEA42E63E22BD3",
+    "work/production/src/Task.Domain/Calendar/CalendarAttendees.cs": "B59038F1BF048E3D6EFD1AB53BB7CAFF2F3AC88B8875D3937E3467D6F3139274",
     "work/production/tests/Task.Tests/Calendar/CalendarAttendeeTests.cs": "628641AABAB79F89BF7DD12745C64CB86F45476B986EE15B2ABF69ECFD064BBE",
     "outputs/20260817_task_calendar_attendee_domain_0.1.0/VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67",
-    "outputs/20260817_task_calendar_attendee_domain_0.1.0/VALIDATION_REPORT.md": "465C2D1368798791E49742A6D6D39D8BFFEEEB73A45D769BC7E1D045AF8F5731"
+    "outputs/20260817_task_calendar_attendee_domain_0.1.0/VALIDATION_REPORT.md": "402B2BCAF9E77BB47D994BC744BB43054BEB45884E65E2A225D76F5FA171640A"
   }
 }

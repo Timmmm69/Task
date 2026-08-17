@@ -38,44 +38,12 @@ public sealed record EventAttendee
         CalendarAttendeeResponseStatus responseStatus,
         DateTimeOffset? respondedAtUtc)
     {
-        EnsureIdentifier(userAccountId, nameof(userAccountId));
-        EnsureRole(role);
-        EnsureResponseStatus(responseStatus);
-        EnsureOptionalUtc(respondedAtUtc, nameof(respondedAtUtc));
+        AttendeeValidation.EnsureIdentifier(userAccountId, nameof(userAccountId));
+        AttendeeValidation.EnsureRole(role);
+        AttendeeValidation.EnsureResponseStatus(responseStatus);
+        AttendeeValidation.EnsureOptionalUtc(respondedAtUtc, nameof(respondedAtUtc));
 
         return new EventAttendee(userAccountId, role, responseStatus, respondedAtUtc);
-    }
-
-    private static void EnsureIdentifier(Guid value, string parameterName)
-    {
-        if (value == Guid.Empty)
-        {
-            throw new ArgumentException("Identifier must not be empty.", parameterName);
-        }
-    }
-
-    private static void EnsureRole(CalendarAttendeeRole role)
-    {
-        if (!Enum.IsDefined(role))
-        {
-            throw new ArgumentOutOfRangeException(nameof(role), "Unknown attendee role.");
-        }
-    }
-
-    private static void EnsureResponseStatus(CalendarAttendeeResponseStatus responseStatus)
-    {
-        if (!Enum.IsDefined(responseStatus))
-        {
-            throw new ArgumentOutOfRangeException(nameof(responseStatus), "Unknown attendee response status.");
-        }
-    }
-
-    private static void EnsureOptionalUtc(DateTimeOffset? value, string parameterName)
-    {
-        if (value.HasValue && value.Value.Offset != TimeSpan.Zero)
-        {
-            throw new ArgumentException("Timestamp must use the UTC offset.", parameterName);
-        }
     }
 }
 
@@ -115,15 +83,22 @@ public sealed record ContactAttendee
         CalendarAttendeeResponseStatus responseStatus,
         DateTimeOffset? respondedAtUtc)
     {
-        EnsureIdentifier(contactId, nameof(contactId));
-        EnsureRole(role);
-        EnsureResponseStatus(responseStatus);
-        EnsureOptionalUtc(respondedAtUtc, nameof(respondedAtUtc));
+        AttendeeValidation.EnsureIdentifier(contactId, nameof(contactId));
+        AttendeeValidation.EnsureRole(role);
+        AttendeeValidation.EnsureResponseStatus(responseStatus);
+        AttendeeValidation.EnsureOptionalUtc(respondedAtUtc, nameof(respondedAtUtc));
 
         return new ContactAttendee(contactId, role, responseStatus, respondedAtUtc);
     }
+}
 
-    private static void EnsureIdentifier(Guid value, string parameterName)
+/// <summary>
+/// Private validation shared by the attendee value objects in this file
+/// (no public surface; not a framework abstraction).
+/// </summary>
+internal static class AttendeeValidation
+{
+    internal static void EnsureIdentifier(Guid value, string parameterName)
     {
         if (value == Guid.Empty)
         {
@@ -131,7 +106,7 @@ public sealed record ContactAttendee
         }
     }
 
-    private static void EnsureRole(CalendarAttendeeRole role)
+    internal static void EnsureRole(CalendarAttendeeRole role)
     {
         if (!Enum.IsDefined(role))
         {
@@ -139,7 +114,7 @@ public sealed record ContactAttendee
         }
     }
 
-    private static void EnsureResponseStatus(CalendarAttendeeResponseStatus responseStatus)
+    internal static void EnsureResponseStatus(CalendarAttendeeResponseStatus responseStatus)
     {
         if (!Enum.IsDefined(responseStatus))
         {
@@ -147,7 +122,7 @@ public sealed record ContactAttendee
         }
     }
 
-    private static void EnsureOptionalUtc(DateTimeOffset? value, string parameterName)
+    internal static void EnsureOptionalUtc(DateTimeOffset? value, string parameterName)
     {
         if (value.HasValue && value.Value.Offset != TimeSpan.Zero)
         {
