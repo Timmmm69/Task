@@ -55,6 +55,31 @@ public sealed class CalendarEventTests
             EventId, OrganizationId, CreatorId, CreatedAt, CreatorId, CreatedAt, version, EntityLifecycleState.Active,
             null, null, null, null);
 
+    private static SyncableEntityMetadata ArchivedMetadata(int version = 2) =>
+        SyncableEntityMetadata.Reconstitute(
+            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, version, EntityLifecycleState.Archived,
+            null, null, null, OccurredAt);
+
+    private static SyncableEntityMetadata TrashedMetadata(
+        EntityLifecycleState beforeTrash = EntityLifecycleState.Active,
+        int version = 3) =>
+        SyncableEntityMetadata.Reconstitute(
+            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, version, EntityLifecycleState.Trashed,
+            beforeTrash, OccurredAt, ActorId, beforeTrash == EntityLifecycleState.Archived ? OccurredAt : null);
+
+    private static SyncableEntityMetadata LifecycleMetadata(EntityLifecycleState state, int version) => state switch
+    {
+        EntityLifecycleState.Active => SyncableEntityMetadata.Reconstitute(
+            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, version, EntityLifecycleState.Active,
+            null, null, null, null),
+        EntityLifecycleState.Archived => SyncableEntityMetadata.Reconstitute(
+            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, version, EntityLifecycleState.Archived,
+            null, null, null, OccurredAt),
+        _ => SyncableEntityMetadata.Reconstitute(
+            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, version, EntityLifecycleState.Trashed,
+            EntityLifecycleState.Active, OccurredAt, ActorId, null),
+    };
+
     [Fact]
     public void Create_WithTimedTiming_CreatesScheduledActiveEvent()
     {
@@ -231,26 +256,36 @@ public sealed class CalendarEventTests
                 null, "X", null, TimedTiming, (CalendarEventStatus)42));
     }
 
-    [Fact]
-    public void Reconstitute_RejectsArchivedLifecycleMetadata()
+    [Theory]
+    [InlineData(EntityLifecycleState.Active)]
+    [InlineData(EntityLifecycleState.Archived)]
+    [InlineData(EntityLifecycleState.Trashed)]
+    public void Reconstitute_AcceptsValidLifecycleMetadataWithoutAlteringState(EntityLifecycleState lifecycleState)
     {
-        var metadata = SyncableEntityMetadata.Reconstitute(
-            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, 2, EntityLifecycleState.Archived,
-            null, null, null, OccurredAt);
+        var metadata = LifecycleMetadata(lifecycleState, version: 5);
+        var userAttendees = new[]
+        {
+            MakeUserAttendee(UserId1),
+            MakeUserAttendee(UserId2, CalendarAttendeeRole.Observer, CalendarAttendeeResponseStatus.Tentative),
+        };
+        var contactAttendees = new[]
+        {
+            MakeContactAttendee(ContactId1),
+            MakeContactAttendee(ContactId2, CalendarAttendeeRole.Required, CalendarAttendeeResponseStatus.Declined),
+        };
 
-        Assert.Throws<InvalidOperationException>(
-            () => CalendarEvent.Reconstitute(metadata, null, "X", null, TimedTiming, CalendarEventStatus.Scheduled));
-    }
+        var e = CalendarEvent.Reconstitute(
+            metadata, ProjectId, "  Persisted event  ", "Notes", AllDayTiming, CalendarEventStatus.Cancelled,
+            userAttendees, contactAttendees);
 
-    [Fact]
-    public void Reconstitute_RejectsTrashedLifecycleMetadata()
-    {
-        var metadata = SyncableEntityMetadata.Reconstitute(
-            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, 3, EntityLifecycleState.Trashed,
-            EntityLifecycleState.Active, OccurredAt, ActorId, null);
-
-        Assert.Throws<InvalidOperationException>(
-            () => CalendarEvent.Reconstitute(metadata, null, "X", null, TimedTiming, CalendarEventStatus.Scheduled));
+        Assert.Equal(metadata, e.Metadata);
+        Assert.Equal(ProjectId, e.ProjectId);
+        Assert.Equal("Persisted event", e.Title);
+        Assert.Equal("Notes", e.Description);
+        Assert.Equal(AllDayTiming, e.Timing);
+        Assert.Equal(CalendarEventStatus.Cancelled, e.Status);
+        Assert.Equal(userAttendees, e.UserAttendees);
+        Assert.Equal(contactAttendees, e.ContactAttendees);
     }
 
     [Fact]
@@ -392,23 +427,258 @@ public sealed class CalendarEventTests
     }
 
     [Fact]
-    public void NonActiveEvent_IsRejectedAtTheReconstitutionBoundary()
+    public void Archive_FromActiveScheduled_ArchivesWithExactVersionAndMetadata()
     {
-        // This packet allows only an Active lifecycle ("lifecycle metadata допускает
-        // only Active"). A non-active event cannot be obtained through any public
-        // entry point, so Update/Cancel/Reschedule can never run on a non-active
-        // instance; the guarantee is enforced at the reconstitution boundary.
-        var archivedMetadata = SyncableEntityMetadata.Reconstitute(
-            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, 2, EntityLifecycleState.Archived,
-            null, null, null, OccurredAt);
-        var trashedMetadata = SyncableEntityMetadata.Reconstitute(
-            EventId, OrganizationId, CreatorId, CreatedAt, ActorId, OccurredAt, 3, EntityLifecycleState.Trashed,
-            EntityLifecycleState.Active, OccurredAt, ActorId, null);
+        var e = CreateScheduled();
+
+        var archived = e.Archive(ActorId, OccurredAt);
+
+        Assert.Equal(EntityLifecycleState.Archived, archived.Metadata.LifecycleState);
+        Assert.Equal(e.Metadata.Version + 1, archived.Metadata.Version);
+        Assert.Equal(2, archived.Metadata.Version);
+        Assert.Equal(ActorId, archived.Metadata.UpdatedBy);
+        Assert.Equal(OccurredAt, archived.Metadata.UpdatedAtUtc);
+        Assert.Equal(OccurredAt, archived.Metadata.ArchivedAtUtc);
+        Assert.Null(archived.Metadata.LifecycleStateBeforeTrash);
+        Assert.Null(archived.Metadata.DeletedAtUtc);
+        Assert.Null(archived.Metadata.DeletedBy);
+        Assert.Equal(CalendarEventStatus.Scheduled, archived.Status);
+        Assert.Equal(ProjectId, archived.ProjectId);
+        Assert.Equal("Status meeting", archived.Title);
+        Assert.Equal("Agenda", archived.Description);
+        Assert.Equal(TimedTiming, archived.Timing);
+    }
+
+    [Fact]
+    public void Archive_FromActiveCancelled_IsAllowed()
+    {
+        var cancelled = CreateScheduled().Cancel(ActorId, OccurredAt);
+
+        var archived = cancelled.Archive(ActorId, OccurredAt.AddMinutes(1));
+
+        Assert.Equal(EntityLifecycleState.Archived, archived.Metadata.LifecycleState);
+        Assert.Equal(CalendarEventStatus.Cancelled, archived.Status);
+        Assert.Equal(3, archived.Metadata.Version);
+        Assert.Equal(OccurredAt.AddMinutes(1), archived.Metadata.ArchivedAtUtc);
+        Assert.Equal(ProjectId, archived.ProjectId);
+        Assert.Equal("Status meeting", archived.Title);
+        Assert.Equal("Agenda", archived.Description);
+        Assert.Equal(TimedTiming, archived.Timing);
+    }
+
+    [Fact]
+    public void Archive_FromArchived_IsRejected()
+    {
+        var archived = CreateScheduled().Archive(ActorId, OccurredAt);
+
+        Assert.Throws<InvalidOperationException>(() => archived.Archive(ActorId, OccurredAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void Archive_FromTrashed_IsRejected()
+    {
+        var trashed = CreateScheduled().MoveToTrash(ActorId, OccurredAt);
+
+        Assert.Throws<InvalidOperationException>(() => trashed.Archive(ActorId, OccurredAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void RestoreFromArchive_FromArchived_RestoresToActiveAndPreservesFields()
+    {
+        var userAttendees = new[]
+        {
+            MakeUserAttendee(UserId1),
+            MakeUserAttendee(UserId2, CalendarAttendeeRole.Observer, CalendarAttendeeResponseStatus.Declined),
+        };
+        var contactAttendees = new[]
+        {
+            MakeContactAttendee(ContactId1),
+            MakeContactAttendee(ContactId2, CalendarAttendeeRole.Required, CalendarAttendeeResponseStatus.Tentative),
+        };
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, ProjectId, "Status meeting", "Agenda", TimedTiming, CreatedAt,
+            userAttendees, contactAttendees);
+        var archived = e.Archive(ActorId, OccurredAt);
+
+        var restored = archived.RestoreFromArchive(ActorId, OccurredAt.AddMinutes(1));
+
+        Assert.Equal(EntityLifecycleState.Active, restored.Metadata.LifecycleState);
+        Assert.Equal(3, restored.Metadata.Version);
+        Assert.Equal(ActorId, restored.Metadata.UpdatedBy);
+        Assert.Equal(OccurredAt.AddMinutes(1), restored.Metadata.UpdatedAtUtc);
+        Assert.Null(restored.Metadata.ArchivedAtUtc);
+        Assert.Null(restored.Metadata.LifecycleStateBeforeTrash);
+        Assert.Equal(ProjectId, restored.ProjectId);
+        Assert.Equal("Status meeting", restored.Title);
+        Assert.Equal("Agenda", restored.Description);
+        Assert.Equal(TimedTiming, restored.Timing);
+        Assert.Equal(CalendarEventStatus.Scheduled, restored.Status);
+        Assert.Equal(userAttendees, restored.UserAttendees);
+        Assert.Equal(contactAttendees, restored.ContactAttendees);
+    }
+
+    [Fact]
+    public void RestoreFromArchive_FromActive_IsRejected()
+    {
+        Assert.Throws<InvalidOperationException>(() => CreateScheduled().RestoreFromArchive(ActorId, OccurredAt));
+    }
+
+    [Fact]
+    public void RestoreFromArchive_FromTrashed_IsRejected()
+    {
+        var trashed = CreateScheduled().MoveToTrash(ActorId, OccurredAt);
+
+        Assert.Throws<InvalidOperationException>(() => trashed.RestoreFromArchive(ActorId, OccurredAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void MoveToTrash_FromActive_MovesToTrashWithRecordedPriorState()
+    {
+        var e = CreateScheduled();
+
+        var trashed = e.MoveToTrash(ActorId, OccurredAt);
+
+        Assert.Equal(EntityLifecycleState.Trashed, trashed.Metadata.LifecycleState);
+        Assert.Equal(EntityLifecycleState.Active, trashed.Metadata.LifecycleStateBeforeTrash);
+        Assert.Equal(OccurredAt, trashed.Metadata.DeletedAtUtc);
+        Assert.Equal(ActorId, trashed.Metadata.DeletedBy);
+        Assert.Null(trashed.Metadata.ArchivedAtUtc);
+        Assert.Equal(2, trashed.Metadata.Version);
+        Assert.Equal(ActorId, trashed.Metadata.UpdatedBy);
+        Assert.Equal(OccurredAt, trashed.Metadata.UpdatedAtUtc);
+        Assert.Equal(CalendarEventStatus.Scheduled, trashed.Status);
+        Assert.Equal(ProjectId, trashed.ProjectId);
+        Assert.Equal("Status meeting", trashed.Title);
+        Assert.Equal("Agenda", trashed.Description);
+        Assert.Equal(TimedTiming, trashed.Timing);
+    }
+
+    [Fact]
+    public void MoveToTrash_FromArchived_MovesToTrashWithRecordedPriorState()
+    {
+        var archived = CreateScheduled().Archive(ActorId, OccurredAt);
+
+        var trashed = archived.MoveToTrash(ActorId, OccurredAt.AddMinutes(1));
+
+        Assert.Equal(EntityLifecycleState.Trashed, trashed.Metadata.LifecycleState);
+        Assert.Equal(EntityLifecycleState.Archived, trashed.Metadata.LifecycleStateBeforeTrash);
+        Assert.Equal(OccurredAt, trashed.Metadata.ArchivedAtUtc);
+        Assert.Equal(OccurredAt.AddMinutes(1), trashed.Metadata.DeletedAtUtc);
+        Assert.Equal(ActorId, trashed.Metadata.DeletedBy);
+        Assert.Equal(3, trashed.Metadata.Version);
+        Assert.Equal(CalendarEventStatus.Scheduled, trashed.Status);
+        Assert.Equal(ProjectId, trashed.ProjectId);
+        Assert.Equal("Status meeting", trashed.Title);
+        Assert.Equal("Agenda", trashed.Description);
+        Assert.Equal(TimedTiming, trashed.Timing);
+    }
+
+    [Fact]
+    public void MoveToTrash_FromTrashed_IsRejected()
+    {
+        var trashed = CreateScheduled().MoveToTrash(ActorId, OccurredAt);
+
+        Assert.Throws<InvalidOperationException>(() => trashed.MoveToTrash(ActorId, OccurredAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void RestoreFromTrash_OfPreviouslyActiveEvent_RestoresActiveAndClearsTrash()
+    {
+        var userAttendees = new[]
+        {
+            MakeUserAttendee(UserId1),
+            MakeUserAttendee(UserId2, CalendarAttendeeRole.Observer, CalendarAttendeeResponseStatus.Tentative),
+        };
+        var contactAttendees = new[]
+        {
+            MakeContactAttendee(ContactId1),
+            MakeContactAttendee(ContactId2, CalendarAttendeeRole.Required, CalendarAttendeeResponseStatus.Declined),
+        };
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, ProjectId, "Status meeting", "Agenda", TimedTiming, CreatedAt,
+            userAttendees, contactAttendees);
+        var trashed = e.MoveToTrash(ActorId, OccurredAt);
+
+        var restored = trashed.RestoreFromTrash(ActorId, OccurredAt.AddMinutes(1));
+
+        Assert.Equal(EntityLifecycleState.Active, restored.Metadata.LifecycleState);
+        Assert.Equal(3, restored.Metadata.Version);
+        Assert.Null(restored.Metadata.LifecycleStateBeforeTrash);
+        Assert.Null(restored.Metadata.DeletedAtUtc);
+        Assert.Null(restored.Metadata.DeletedBy);
+        Assert.Null(restored.Metadata.ArchivedAtUtc);
+        Assert.Equal(ActorId, restored.Metadata.UpdatedBy);
+        Assert.Equal(OccurredAt.AddMinutes(1), restored.Metadata.UpdatedAtUtc);
+        Assert.Equal(ProjectId, restored.ProjectId);
+        Assert.Equal("Status meeting", restored.Title);
+        Assert.Equal("Agenda", restored.Description);
+        Assert.Equal(TimedTiming, restored.Timing);
+        Assert.Equal(CalendarEventStatus.Scheduled, restored.Status);
+        Assert.Equal(userAttendees, restored.UserAttendees);
+        Assert.Equal(contactAttendees, restored.ContactAttendees);
+    }
+
+    [Fact]
+    public void RestoreFromTrash_OfPreviouslyArchivedEvent_RestoresArchivedWithOriginalArchiveTimestamp()
+    {
+        var archived = CreateScheduled().Archive(ActorId, OccurredAt);
+        var trashed = archived.MoveToTrash(ActorId, OccurredAt.AddMinutes(1));
+
+        var restored = trashed.RestoreFromTrash(ActorId, OccurredAt.AddMinutes(2));
+
+        Assert.Equal(EntityLifecycleState.Archived, restored.Metadata.LifecycleState);
+        Assert.Equal(OccurredAt, restored.Metadata.ArchivedAtUtc);
+        Assert.Null(restored.Metadata.LifecycleStateBeforeTrash);
+        Assert.Null(restored.Metadata.DeletedAtUtc);
+        Assert.Null(restored.Metadata.DeletedBy);
+        Assert.Equal(4, restored.Metadata.Version);
+        Assert.Equal(CalendarEventStatus.Scheduled, restored.Status);
+        Assert.Equal(ProjectId, restored.ProjectId);
+        Assert.Equal("Status meeting", restored.Title);
+        Assert.Equal("Agenda", restored.Description);
+        Assert.Equal(TimedTiming, restored.Timing);
+    }
+
+    [Fact]
+    public void RestoreFromTrash_FromActiveOrArchived_IsRejected()
+    {
+        Assert.Throws<InvalidOperationException>(() => CreateScheduled().RestoreFromTrash(ActorId, OccurredAt));
+        var archived = CreateScheduled().Archive(ActorId, OccurredAt);
+        Assert.Throws<InvalidOperationException>(() => archived.RestoreFromTrash(ActorId, OccurredAt.AddMinutes(1)));
+    }
+
+    [Fact]
+    public void ReconstitutedArchivedEvent_RejectsMutatingMethods()
+    {
+        var archived = CalendarEvent.Reconstitute(
+            ArchivedMetadata(version: 4), ProjectId, "Status meeting", "Agenda", TimedTiming,
+            CalendarEventStatus.Scheduled,
+            new[] { MakeUserAttendee(UserId1) }, new[] { MakeContactAttendee(ContactId1) });
+        var occurred = OccurredAt.AddMinutes(1);
 
         Assert.Throws<InvalidOperationException>(
-            () => CalendarEvent.Reconstitute(archivedMetadata, null, "X", null, TimedTiming, CalendarEventStatus.Scheduled));
+            () => archived.UpdateDetails(ActorId, occurred, ProjectId, "X", null, TimedTiming));
+        Assert.Throws<InvalidOperationException>(() => archived.Cancel(ActorId, occurred));
+        Assert.Throws<InvalidOperationException>(() => archived.Reschedule(ActorId, occurred));
         Assert.Throws<InvalidOperationException>(
-            () => CalendarEvent.Reconstitute(trashedMetadata, null, "X", null, TimedTiming, CalendarEventStatus.Scheduled));
+            () => archived.ReplaceAttendees(ActorId, occurred, Array.Empty<EventAttendee>(), Array.Empty<ContactAttendee>()));
+    }
+
+    [Fact]
+    public void ReconstitutedTrashedEvent_RejectsMutatingMethods()
+    {
+        var trashed = CalendarEvent.Reconstitute(
+            TrashedMetadata(EntityLifecycleState.Archived, version: 4), ProjectId, "Status meeting", "Agenda", TimedTiming,
+            CalendarEventStatus.Scheduled,
+            new[] { MakeUserAttendee(UserId1) }, new[] { MakeContactAttendee(ContactId1) });
+        var occurred = OccurredAt.AddMinutes(1);
+
+        Assert.Throws<InvalidOperationException>(
+            () => trashed.UpdateDetails(ActorId, occurred, ProjectId, "X", null, TimedTiming));
+        Assert.Throws<InvalidOperationException>(() => trashed.Cancel(ActorId, occurred));
+        Assert.Throws<InvalidOperationException>(() => trashed.Reschedule(ActorId, occurred));
+        Assert.Throws<InvalidOperationException>(
+            () => trashed.ReplaceAttendees(ActorId, occurred, Array.Empty<EventAttendee>(), Array.Empty<ContactAttendee>()));
     }
 
     [Fact]

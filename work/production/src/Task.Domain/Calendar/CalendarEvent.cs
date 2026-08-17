@@ -4,12 +4,14 @@ namespace Task.Domain.Calendar;
 
 /// <summary>
 /// Root of the CalendarEvent aggregate (OpenAPI <c>CalendarEvent</c>):
-/// scalar core fields plus attendee collections — recurrence, lifecycle
-/// archive/trash, endpoints, persistence and UI are separate slices.
+/// scalar core fields, attendee collections and the archive/trash lifecycle —
+/// recurrence, endpoints, persistence and UI are separate slices.
 /// Immutable: every visible change returns a new instance whose
 /// <see cref="SyncableEntityMetadata"/> records the change and advances the
-/// version. In this slice the lifecycle is restricted to Active; archive and
-/// trash transitions are a separate lifecycle packet.
+/// version. Lifecycle transitions (archive, unarchive, trash, restore)
+/// delegate to the metadata and preserve every business field; mutating
+/// methods (UpdateDetails, Cancel, Reschedule, ReplaceAttendees) require an
+/// Active lifecycle.
 /// </summary>
 public sealed class CalendarEvent
 {
@@ -121,8 +123,8 @@ public sealed class CalendarEvent
 
     /// <summary>
     /// Reconstructs an event from persisted state. Accepts only fully valid
-    /// state: a defined status, valid scalar fields and an Active lifecycle
-    /// (archive/trash metadata belongs to a separate lifecycle packet).
+    /// state: a defined status, valid scalar fields and valid lifecycle
+    /// metadata (Active, Archived or Trashed).
     /// </summary>
     public static CalendarEvent Reconstitute(
         SyncableEntityMetadata metadata,
@@ -146,8 +148,8 @@ public sealed class CalendarEvent
     /// <summary>
     /// Reconstructs an event from persisted state, including both attendee
     /// collections. Accepts only fully valid state: a defined status, valid
-    /// scalar fields, valid attendee collections and an Active lifecycle
-    /// (archive/trash metadata belongs to a separate lifecycle packet).
+    /// scalar fields, valid attendee collections and valid lifecycle metadata
+    /// (Active, Archived or Trashed).
     /// </summary>
     public static CalendarEvent Reconstitute(
         SyncableEntityMetadata metadata,
@@ -165,12 +167,6 @@ public sealed class CalendarEvent
         if (!Enum.IsDefined(status))
         {
             throw new ArgumentOutOfRangeException(nameof(status), "Unknown calendar event status.");
-        }
-
-        if (metadata.LifecycleState != EntityLifecycleState.Active)
-        {
-            throw new InvalidOperationException(
-                "Only an active event can be reconstituted; archive and trash lifecycle are a separate packet.");
         }
 
         return new CalendarEvent(
@@ -305,6 +301,86 @@ public sealed class CalendarEvent
             Status,
             normalizedUserAttendees,
             normalizedContactAttendees);
+    }
+
+    /// <summary>
+    /// Archives the event (OpenAPI <c>POST /api/v1/calendar-events/{id}/archive</c>).
+    /// Only an active event can be archived; <see cref="SyncableEntityMetadata.Archive"/>
+    /// records the transition and advances the version exactly once. Business
+    /// fields are preserved.
+    /// </summary>
+    public CalendarEvent Archive(Guid actorId, DateTimeOffset occurredAtUtc)
+    {
+        return new CalendarEvent(
+            Metadata.Archive(actorId, occurredAtUtc),
+            ProjectId,
+            Title,
+            Description,
+            Timing,
+            Status,
+            UserAttendees,
+            ContactAttendees);
+    }
+
+    /// <summary>
+    /// Returns an archived event to the active state (OpenAPI
+    /// <c>POST /api/v1/calendar-events/{id}/unarchive</c>). Only an archived
+    /// event can be unarchived; <see cref="SyncableEntityMetadata.RestoreFromArchive"/>
+    /// records the transition and advances the version exactly once. Business
+    /// fields are preserved.
+    /// </summary>
+    public CalendarEvent RestoreFromArchive(Guid actorId, DateTimeOffset occurredAtUtc)
+    {
+        return new CalendarEvent(
+            Metadata.RestoreFromArchive(actorId, occurredAtUtc),
+            ProjectId,
+            Title,
+            Description,
+            Timing,
+            Status,
+            UserAttendees,
+            ContactAttendees);
+    }
+
+    /// <summary>
+    /// Moves the event to trash (OpenAPI <c>DELETE /api/v1/calendar-events/{id}</c>).
+    /// An active or archived event can be trashed; a trashed event cannot be
+    /// trashed again. <see cref="SyncableEntityMetadata.MoveToTrash"/> records
+    /// the prior lifecycle state and advances the version exactly once.
+    /// Business fields are preserved.
+    /// </summary>
+    public CalendarEvent MoveToTrash(Guid actorId, DateTimeOffset occurredAtUtc)
+    {
+        return new CalendarEvent(
+            Metadata.MoveToTrash(actorId, occurredAtUtc),
+            ProjectId,
+            Title,
+            Description,
+            Timing,
+            Status,
+            UserAttendees,
+            ContactAttendees);
+    }
+
+    /// <summary>
+    /// Restores an event from trash (OpenAPI
+    /// <c>POST /api/v1/calendar-events/{id}/restore</c>). The event returns to
+    /// the lifecycle state recorded before it was trashed (Active or Archived).
+    /// <see cref="SyncableEntityMetadata.RestoreFromTrash"/> clears the trash
+    /// metadata and advances the version exactly once. Business fields are
+    /// preserved.
+    /// </summary>
+    public CalendarEvent RestoreFromTrash(Guid actorId, DateTimeOffset occurredAtUtc)
+    {
+        return new CalendarEvent(
+            Metadata.RestoreFromTrash(actorId, occurredAtUtc),
+            ProjectId,
+            Title,
+            Description,
+            Timing,
+            Status,
+            UserAttendees,
+            ContactAttendees);
     }
 
     private void EnsureActive(string message)
