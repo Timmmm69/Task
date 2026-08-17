@@ -36,6 +36,16 @@ public sealed class TaskApiSecurityFoundationTests
     }
 
     [Fact]
+    public void IdentityOptions_AreValidWhenFullyConfigured()
+    {
+        var result = new TaskIdentityFoundationOptionsValidator().Validate(
+            Options.DefaultName,
+            FullyConfiguredOptions());
+
+        Assert.True(result.Succeeded);
+    }
+
+    [Fact]
     public void IdentityOptions_RejectIncompleteOrInlineSecretConfiguration()
     {
         var result = new TaskIdentityFoundationOptionsValidator().Validate(
@@ -50,6 +60,59 @@ public sealed class TaskApiSecurityFoundationTests
 
         Assert.True(result.Failed);
         Assert.Contains(result.Failures!, failure => failure.Contains("SigningKeyReference", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void IdentityOptions_RejectConfigurationWithoutVerificationKeysDirectory()
+    {
+        var result = new TaskIdentityFoundationOptionsValidator().Validate(
+            Options.DefaultName,
+            new TaskIdentityFoundationOptions
+            {
+                Issuer = "https://task.example.internal",
+                Audience = "task-desktop",
+                SigningKeyReference = "file:/run/secrets/task-signing",
+                PepperReference = "file:/run/secrets/task-pepper",
+            });
+
+        Assert.True(result.Failed);
+        Assert.Contains(result.Failures!, failure => failure.Contains("VerificationKeysDirectory", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void IdentityOptions_RejectInlineVerificationKeysDirectory()
+    {
+        var result = new TaskIdentityFoundationOptionsValidator().Validate(
+            Options.DefaultName,
+            FullyConfiguredOptions(
+                verificationKeysDirectory: "C:\\run\\keys"));
+
+        Assert.True(result.Failed);
+        Assert.Contains(result.Failures!, failure => failure.Contains("VerificationKeysDirectory", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void IdentityOptions_RejectEmptyVerificationKeysDirectory()
+    {
+        var result = new TaskIdentityFoundationOptionsValidator().Validate(
+            Options.DefaultName,
+            FullyConfiguredOptions(
+                verificationKeysDirectory: "file:"));
+
+        Assert.True(result.Failed);
+        Assert.Contains(result.Failures!, failure => failure.Contains("VerificationKeysDirectory", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void IdentityOptions_RejectEmptyStringVerificationKeysDirectory()
+    {
+        var result = new TaskIdentityFoundationOptionsValidator().Validate(
+            Options.DefaultName,
+            FullyConfiguredOptions(
+                verificationKeysDirectory: ""));
+
+        Assert.True(result.Failed);
+        Assert.Contains(result.Failures!, failure => failure.Contains("VerificationKeysDirectory", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -79,4 +142,15 @@ public sealed class TaskApiSecurityFoundationTests
         Assert.True(root.GetProperty("retryable").GetBoolean());
         Assert.DoesNotContain("exception", root.GetRawText(), StringComparison.OrdinalIgnoreCase);
     }
+
+    private static TaskIdentityFoundationOptions FullyConfiguredOptions(
+        string? verificationKeysDirectory = "file:/run/secrets/task-keys") =>
+        new()
+        {
+            Issuer = "https://task.example.internal",
+            Audience = "task-desktop",
+            SigningKeyReference = "file:/run/secrets/task-signing",
+            PepperReference = "file:/run/secrets/task-pepper",
+            VerificationKeysDirectory = verificationKeysDirectory,
+        };
 }

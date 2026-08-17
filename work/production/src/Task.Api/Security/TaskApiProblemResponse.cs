@@ -8,6 +8,8 @@ internal static class TaskApiProblemResponse
 {
     public const string CorrelationIdItemName = "Task.Api.CorrelationId";
 
+    public const string AuthenticationResponseWrittenItemName = "Task.Api.Authentication.ResponseWritten";
+
     public static global::System.Threading.Tasks.Task WriteAsync(
         HttpContext context,
         int statusCode,

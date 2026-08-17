@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Task.Application;
 using Task.Application.Calendar;
+using Task.Application.Security;
 using Task.Api.Security;
 using Task.Infrastructure.Persistence;
 
@@ -47,6 +48,8 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<IScheduleStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateScheduleStore());
     builder.Services.AddSingleton<ScheduleQueryService>();
+    builder.Services.AddSingleton<ISessionRepository>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateSessionRepository());
 }
 
 var app = builder.Build();

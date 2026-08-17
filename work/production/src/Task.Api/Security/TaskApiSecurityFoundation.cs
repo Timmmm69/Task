@@ -1,6 +1,9 @@
+using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Task.Application.Security;
 
 namespace Task.Api.Security;
 
@@ -13,9 +16,28 @@ internal static class TaskApiSecurityFoundation
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddAuthentication(FoundationAuthenticationScheme)
-            .AddScheme<AuthenticationSchemeOptions, TaskFoundationAuthenticationHandler>(
+            .AddScheme<AuthenticationSchemeOptions, TaskJwtAuthenticationHandler>(
                 FoundationAuthenticationScheme,
                 _ => { });
+
+        // The factory keeps ISessionRepository optional (null when no database is configured) so
+        // the handler fails closed instead of failing startup. The authentication handler provider
+        // resolves the concrete handler type, hence the concrete registration.
+        services.AddSingleton<TaskJwtAuthenticationHandler>(provider => new TaskJwtAuthenticationHandler(
+            provider.GetRequiredService<IOptionsMonitor<AuthenticationSchemeOptions>>(),
+            provider.GetRequiredService<ILoggerFactory>(),
+            provider.GetRequiredService<UrlEncoder>(),
+            provider.GetRequiredService<AccessTokenValidator>(),
+            provider.GetRequiredService<JwtVerificationKeys>(),
+            provider.GetService<ISessionRepository>()));
+
+        services.AddSingleton<JwtVerificationKeys>(provider =>
+            JwtVerificationKeys.Load(
+                provider.GetRequiredService<IOptions<TaskIdentityFoundationOptions>>().Value));
+        services.AddSingleton<AccessTokenValidator>(provider =>
+            new AccessTokenValidator(
+                provider.GetRequiredService<JwtVerificationKeys>(),
+                provider.GetRequiredService<IOptions<TaskIdentityFoundationOptions>>().Value));
 
         services.AddAuthorization(options =>
         {
@@ -43,11 +65,14 @@ internal sealed class TaskIdentityFoundationOptions
 
     public string? PepperReference { get; init; }
 
+    public string? VerificationKeysDirectory { get; init; }
+
     public bool IsUnconfigured =>
         string.IsNullOrWhiteSpace(Issuer) &&
         string.IsNullOrWhiteSpace(Audience) &&
         string.IsNullOrWhiteSpace(SigningKeyReference) &&
-        string.IsNullOrWhiteSpace(PepperReference);
+        string.IsNullOrWhiteSpace(PepperReference) &&
+        string.IsNullOrWhiteSpace(VerificationKeysDirectory);
 }
 
 internal sealed class TaskIdentityFoundationOptionsValidator : IValidateOptions<TaskIdentityFoundationOptions>
@@ -56,8 +81,8 @@ internal sealed class TaskIdentityFoundationOptionsValidator : IValidateOptions<
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        // Until the JWT/session adapter is introduced, an absent section is intentionally fail-closed
-        // by the foundation authentication handler. A partially supplied section is always invalid.
+        // An absent section is intentionally fail-closed by the JWT authentication handler
+        // (empty verification keys). A partially supplied section is always invalid.
         if (options.IsUnconfigured)
         {
             return ValidateOptionsResult.Success;
@@ -68,6 +93,7 @@ internal sealed class TaskIdentityFoundationOptionsValidator : IValidateOptions<
         RequireNonEmpty(options.Audience, "Task:Identity:Audience", failures);
         RequireExternalReference(options.SigningKeyReference, "Task:Identity:SigningKeyReference", failures);
         RequireExternalReference(options.PepperReference, "Task:Identity:PepperReference", failures);
+        RequireKeysDirectory(options.VerificationKeysDirectory, failures);
 
         return failures.Count == 0
             ? ValidateOptionsResult.Success
@@ -93,6 +119,26 @@ internal sealed class TaskIdentityFoundationOptionsValidator : IValidateOptions<
         if (!value.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
         {
             failures.Add($"{name} must be a file: reference, not a secret value.");
+        }
+    }
+
+    private static void RequireKeysDirectory(string? value, ICollection<string> failures)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            failures.Add("Task:Identity:VerificationKeysDirectory is required when Task:Identity is configured.");
+            return;
+        }
+
+        if (!value.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+        {
+            failures.Add("Task:Identity:VerificationKeysDirectory must be a file: reference, not a secret value.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(value.Substring("file:".Length)))
+        {
+            failures.Add("Task:Identity:VerificationKeysDirectory must reference a non-empty directory.");
         }
     }
 }
