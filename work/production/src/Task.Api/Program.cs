@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Task.Application;
+using Task.Application.Calendar;
 using Task.Api.Security;
 using Task.Infrastructure.Persistence;
 
@@ -36,6 +37,9 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
 {
     builder.Services.AddSingleton<ITaskAggregateStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateTaskStore());
+    builder.Services.AddSingleton<ICalendarEventStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateCalendarEventStore());
+    builder.Services.AddSingleton<CalendarEventLifecycleService>();
     builder.Services.AddSingleton(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateMigrator());
     builder.Services.AddSingleton<TaskLifecycleService>();
