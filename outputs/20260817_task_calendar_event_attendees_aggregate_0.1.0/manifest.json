@@ -1,0 +1,51 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-EVENT-ATTENDEES-AGGREGATE-0.1.0",
+  "product": "Task",
+  "packetType": "domain-aggregate-attendees",
+  "module": "Task.Domain.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "422e6d6bbcefc36ba7bdca867dedef287ea74926",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Domain/Calendar/CalendarEvent.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/Calendar/CalendarEventTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_event_attendees_aggregate_0.1.0/"
+  },
+  "requirements": {
+    "contract": "Organizer_Stage2_Technical_Specification_2.2/openapi/openapi.yaml, schemas CalendarEvent, CalendarEventCreate, CalendarEventPatch, EventAttendee, ContactAttendee and AttendeesReplace: userAttendees/contactAttendees arrays with maxItems 500, AttendeesReplace users/contacts required with maxItems 500; PUT /api/v1/calendar-events/{id}/attendees maps to ReplaceAttendees with CalendarEvent.Update and OBJECT_ARCHIVED/OBJECT_DELETED/INVALID_STATE_TRANSITION semantics.",
+    "rules": "collections required, copied and exposed read-only; null collection ArgumentNullException; null element ArgumentException; 0..500 inclusive, 501 ArgumentException; preserve order and values exactly, no deduplication, no cross-kind rules; Create/Reconstitute validate the collections; ReplaceAttendees requires Active lifecycle and operates on Scheduled and Cancelled; sequence-equal replacement returns the same instance without version bump; genuine replacement calls Metadata.RecordVisibleChange exactly once; UpdateDetails/Cancel/Reschedule preserve both collections; caller mutation must not leak into the aggregate."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj --no-restore",
+    "testResult": "PASS 422/422 (0 failed, 0 skipped), incl. 26 new CalendarEventTests attendee-aggregate tests (previously 396)",
+    "buildCommand": "dotnet build work/production/Task.sln --no-restore",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only the two allowed production/test files and the new output package are touched",
+    "rebaseCheck": "fetch + rebase origin/main before push: no conflicts; pushed HEAD == origin/main",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "API endpoints, permissions, If-Match/idempotency, attendee response workflow (/respond), notifications, audit/outbox",
+      "cross-kind duplicate rules (not defined by the contract)",
+      "recurrence, query/read model, persistence/repository, worker, sync",
+      "Desktop attendee UI, authorization and deployment",
+      "changes to CalendarAttendeeTypes.cs, CalendarAttendees.cs, CalendarEventTiming.cs, CalendarEventStatus.cs, CalendarTimelinePlacement.cs, SyncableEntityMetadata.cs, TaskAggregate.cs, solution/project files, dependencies"
+    ],
+    "unchangedExistingFiles": true,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Domain/Calendar/CalendarEvent.cs": "BEE7534914D7071DC20FAE92506FEE097BBF6C695151696E19757DE4D1C71DD6",
+    "work/production/tests/Task.Tests/Calendar/CalendarEventTests.cs": "DE439F83A538DB1DFA1403D3B70B7EDC6C62607BE1EA314D7853D32A9662B66B",
+    "outputs/20260817_task_calendar_event_attendees_aggregate_0.1.0/VERSION.txt": "6AD9613A455798D6D92E5F5F390AB4BAA70596BC869ED6B17F5CDD2B28635F06",
+    "outputs/20260817_task_calendar_event_attendees_aggregate_0.1.0/VALIDATION_REPORT.md": "EAF3BBD4E24391785929E49CD262133E779D44EA8B2972EDA581CD272C83EA21"
+  }
+}

@@ -10,6 +10,10 @@ public sealed class CalendarEventTests
     private static readonly Guid CreatorId = Guid.Parse("ad23960f-d96b-4780-aee2-822316e3c22b");
     private static readonly Guid ActorId = Guid.Parse("ad43fc14-8080-4a24-9be1-a86410d5ae88");
     private static readonly Guid ProjectId = Guid.Parse("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+    private static readonly Guid UserId1 = Guid.Parse("7e1f3b2a-4c5d-4e6f-8a90-1b2c3d4e5f61");
+    private static readonly Guid UserId2 = Guid.Parse("7e1f3b2a-4c5d-4e6f-8a90-1b2c3d4e5f62");
+    private static readonly Guid ContactId1 = Guid.Parse("7e1f3b2a-4c5d-4e6f-8a90-1b2c3d4e5f63");
+    private static readonly Guid ContactId2 = Guid.Parse("7e1f3b2a-4c5d-4e6f-8a90-1b2c3d4e5f64");
     private static readonly DateTimeOffset CreatedAt = new(2026, 8, 17, 9, 0, 0, TimeSpan.Zero);
     private static readonly DateTimeOffset OccurredAt = CreatedAt.AddHours(1);
 
@@ -33,6 +37,23 @@ public sealed class CalendarEventTests
                 EventId, OrganizationId, CreatorId, CreatedAt, CreatorId, CreatedAt, version, EntityLifecycleState.Active,
                 null, null, null, null),
             ProjectId, title, "Agenda", TimedTiming, CalendarEventStatus.Scheduled);
+
+    private static EventAttendee MakeUserAttendee(
+        Guid userId,
+        CalendarAttendeeRole role = CalendarAttendeeRole.Required,
+        CalendarAttendeeResponseStatus responseStatus = CalendarAttendeeResponseStatus.Pending) =>
+        EventAttendee.Create(userId, role, responseStatus, respondedAtUtc: null);
+
+    private static ContactAttendee MakeContactAttendee(
+        Guid contactId,
+        CalendarAttendeeRole role = CalendarAttendeeRole.Optional,
+        CalendarAttendeeResponseStatus responseStatus = CalendarAttendeeResponseStatus.Accepted) =>
+        ContactAttendee.Create(contactId, role, responseStatus, respondedAtUtc: null);
+
+    private static SyncableEntityMetadata ActiveMetadata(int version = 1) =>
+        SyncableEntityMetadata.Reconstitute(
+            EventId, OrganizationId, CreatorId, CreatedAt, CreatorId, CreatedAt, version, EntityLifecycleState.Active,
+            null, null, null, null);
 
     [Fact]
     public void Create_WithTimedTiming_CreatesScheduledActiveEvent()
@@ -424,5 +445,334 @@ public sealed class CalendarEventTests
         Assert.Equal(CalendarEventStatus.Cancelled, updated.Status);
         Assert.Equal("Moved notes", updated.Title);
         Assert.Equal(3, updated.Metadata.Version);
+    }
+
+    [Fact]
+    public void Create_WithoutAttendees_ExposesEmptyCollections()
+    {
+        var e = CreateScheduled();
+
+        Assert.Empty(e.UserAttendees);
+        Assert.Empty(e.ContactAttendees);
+    }
+
+    [Fact]
+    public void Reconstitute_WithoutAttendees_ExposesEmptyCollections()
+    {
+        var e = ReconstituteScheduled();
+
+        Assert.Empty(e.UserAttendees);
+        Assert.Empty(e.ContactAttendees);
+    }
+
+    [Fact]
+    public void Create_WithAttendees_PreservesValuesAndOrder()
+    {
+        var userAttendees = new[]
+        {
+            MakeUserAttendee(UserId2, CalendarAttendeeRole.Observer, CalendarAttendeeResponseStatus.Declined),
+            MakeUserAttendee(UserId1),
+        };
+        var contactAttendees = new[]
+        {
+            MakeContactAttendee(ContactId2, CalendarAttendeeRole.Required, CalendarAttendeeResponseStatus.Tentative),
+            MakeContactAttendee(ContactId1),
+        };
+
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, ProjectId, "Status meeting", "Agenda", TimedTiming, CreatedAt,
+            userAttendees, contactAttendees);
+
+        Assert.Equal(userAttendees, e.UserAttendees);
+        Assert.Equal(contactAttendees, e.ContactAttendees);
+    }
+
+    [Fact]
+    public void Reconstitute_WithAttendees_PreservesValuesAndOrder()
+    {
+        var userAttendees = new[]
+        {
+            MakeUserAttendee(UserId1),
+            MakeUserAttendee(UserId2, CalendarAttendeeRole.Observer, CalendarAttendeeResponseStatus.Tentative),
+        };
+        var contactAttendees = new[]
+        {
+            MakeContactAttendee(ContactId1),
+            MakeContactAttendee(ContactId2, CalendarAttendeeRole.Required, CalendarAttendeeResponseStatus.Declined),
+        };
+
+        var e = CalendarEvent.Reconstitute(
+            ActiveMetadata(version: 4), ProjectId, "Status meeting", "Agenda", TimedTiming, CalendarEventStatus.Cancelled,
+            userAttendees, contactAttendees);
+
+        Assert.Equal(userAttendees, e.UserAttendees);
+        Assert.Equal(contactAttendees, e.ContactAttendees);
+    }
+
+    [Fact]
+    public void Create_RejectsNullUserAttendees()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => CalendarEvent.Create(
+                EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt, null!, Array.Empty<ContactAttendee>()));
+    }
+
+    [Fact]
+    public void Create_RejectsNullContactAttendees()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => CalendarEvent.Create(
+                EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt, Array.Empty<EventAttendee>(), null!));
+    }
+
+    [Fact]
+    public void Create_RejectsNullUserAttendeeElement()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEvent.Create(
+                EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+                new EventAttendee[] { null! }, Array.Empty<ContactAttendee>()));
+    }
+
+    [Fact]
+    public void Create_RejectsNullContactAttendeeElement()
+    {
+        Assert.Throws<ArgumentException>(
+            () => CalendarEvent.Create(
+                EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+                Array.Empty<EventAttendee>(), new ContactAttendee[] { null! }));
+    }
+
+    [Fact]
+    public void Reconstitute_RejectsNullUserAttendees()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => CalendarEvent.Reconstitute(
+                ActiveMetadata(), null, "X", null, TimedTiming, CalendarEventStatus.Scheduled,
+                null!, Array.Empty<ContactAttendee>()));
+    }
+
+    [Fact]
+    public void Reconstitute_RejectsNullContactAttendees()
+    {
+        Assert.Throws<ArgumentNullException>(
+            () => CalendarEvent.Reconstitute(
+                ActiveMetadata(), null, "X", null, TimedTiming, CalendarEventStatus.Scheduled,
+                Array.Empty<EventAttendee>(), null!));
+    }
+
+    [Fact]
+    public void Create_AcceptsExactly500UserAttendees()
+    {
+        var userAttendees = Enumerable.Range(0, 500).Select(_ => MakeUserAttendee(Guid.NewGuid())).ToArray();
+
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+            userAttendees, Array.Empty<ContactAttendee>());
+
+        Assert.Equal(500, e.UserAttendees.Count);
+    }
+
+    [Fact]
+    public void Create_Rejects501UserAttendees()
+    {
+        var userAttendees = Enumerable.Range(0, 501).Select(_ => MakeUserAttendee(Guid.NewGuid())).ToArray();
+
+        Assert.Throws<ArgumentException>(
+            () => CalendarEvent.Create(
+                EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+                userAttendees, Array.Empty<ContactAttendee>()));
+    }
+
+    [Fact]
+    public void Create_AcceptsExactly500ContactAttendees()
+    {
+        var contactAttendees = Enumerable.Range(0, 500).Select(_ => MakeContactAttendee(Guid.NewGuid())).ToArray();
+
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+            Array.Empty<EventAttendee>(), contactAttendees);
+
+        Assert.Equal(500, e.ContactAttendees.Count);
+    }
+
+    [Fact]
+    public void Create_Rejects501ContactAttendees()
+    {
+        var contactAttendees = Enumerable.Range(0, 501).Select(_ => MakeContactAttendee(Guid.NewGuid())).ToArray();
+
+        Assert.Throws<ArgumentException>(
+            () => CalendarEvent.Create(
+                EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+                Array.Empty<EventAttendee>(), contactAttendees));
+    }
+
+    [Fact]
+    public void ReplaceAttendees_ChangesBothCollectionsAndBumpsVersionByExactlyOne()
+    {
+        var e = CreateScheduled();
+        var userAttendees = new[]
+        {
+            MakeUserAttendee(UserId2, CalendarAttendeeRole.Observer, CalendarAttendeeResponseStatus.Declined),
+            MakeUserAttendee(UserId1),
+        };
+        var contactAttendees = new[]
+        {
+            MakeContactAttendee(ContactId2, CalendarAttendeeRole.Required, CalendarAttendeeResponseStatus.Tentative),
+            MakeContactAttendee(ContactId1),
+        };
+
+        var replaced = e.ReplaceAttendees(ActorId, OccurredAt, userAttendees, contactAttendees);
+
+        Assert.Equal(userAttendees, replaced.UserAttendees);
+        Assert.Equal(contactAttendees, replaced.ContactAttendees);
+        Assert.Equal(e.Metadata.Version + 1, replaced.Metadata.Version);
+        Assert.Equal(ActorId, replaced.Metadata.UpdatedBy);
+        Assert.Equal(OccurredAt, replaced.Metadata.UpdatedAtUtc);
+    }
+
+    [Fact]
+    public void ReplaceAttendees_OnCancelledEvent_IsAllowed()
+    {
+        var cancelled = CreateScheduled().Cancel(ActorId, OccurredAt);
+
+        var replaced = cancelled.ReplaceAttendees(
+            ActorId, OccurredAt.AddMinutes(1), new[] { MakeUserAttendee(UserId1) }, Array.Empty<ContactAttendee>());
+
+        Assert.Equal(CalendarEventStatus.Cancelled, replaced.Status);
+        Assert.Equal(3, replaced.Metadata.Version);
+        Assert.Single(replaced.UserAttendees);
+    }
+
+    [Fact]
+    public void ReplaceAttendees_SequenceEqual_ReturnsSameInstanceWithoutBump()
+    {
+        var e = CreateScheduled();
+        var userAttendees = new[] { MakeUserAttendee(UserId1) };
+        var contactAttendees = new[] { MakeContactAttendee(ContactId1) };
+        e = e.ReplaceAttendees(ActorId, OccurredAt, userAttendees, contactAttendees);
+
+        var result = e.ReplaceAttendees(ActorId, OccurredAt.AddMinutes(1), userAttendees, contactAttendees);
+
+        Assert.Same(e, result);
+        Assert.Equal(2, result.Metadata.Version);
+    }
+
+    [Fact]
+    public void ReplaceAttendees_RejectsNullCollections()
+    {
+        var e = CreateScheduled();
+
+        Assert.Throws<ArgumentNullException>(() => e.ReplaceAttendees(ActorId, OccurredAt, null!, Array.Empty<ContactAttendee>()));
+        Assert.Throws<ArgumentNullException>(() => e.ReplaceAttendees(ActorId, OccurredAt, Array.Empty<EventAttendee>(), null!));
+    }
+
+    [Fact]
+    public void ReplaceAttendees_RejectsNullElements()
+    {
+        var e = CreateScheduled();
+
+        Assert.Throws<ArgumentException>(
+            () => e.ReplaceAttendees(ActorId, OccurredAt, new EventAttendee[] { null! }, Array.Empty<ContactAttendee>()));
+        Assert.Throws<ArgumentException>(
+            () => e.ReplaceAttendees(ActorId, OccurredAt, Array.Empty<EventAttendee>(), new ContactAttendee[] { null! }));
+    }
+
+    [Fact]
+    public void ReplaceAttendees_RejectsOver500UserAttendees()
+    {
+        var e = CreateScheduled();
+        var userAttendees = Enumerable.Range(0, 501).Select(_ => MakeUserAttendee(Guid.NewGuid())).ToArray();
+
+        Assert.Throws<ArgumentException>(() => e.ReplaceAttendees(ActorId, OccurredAt, userAttendees, Array.Empty<ContactAttendee>()));
+    }
+
+    [Fact]
+    public void CallerMutationOfSourceLists_DoesNotAffectAggregateAfterConstruction()
+    {
+        var user1 = MakeUserAttendee(UserId1);
+        var contact1 = MakeContactAttendee(ContactId1);
+        var users = new List<EventAttendee> { user1 };
+        var contacts = new List<ContactAttendee> { contact1 };
+
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt, users, contacts);
+
+        users.Add(MakeUserAttendee(UserId2));
+        contacts.RemoveAt(0);
+
+        Assert.Equal(new[] { user1 }, e.UserAttendees);
+        Assert.Equal(new[] { contact1 }, e.ContactAttendees);
+    }
+
+    [Fact]
+    public void CallerMutationOfSourceLists_DoesNotAffectAggregateAfterReplacement()
+    {
+        var e = CreateScheduled();
+        var user1 = MakeUserAttendee(UserId1);
+        var contact1 = MakeContactAttendee(ContactId1);
+        var users = new List<EventAttendee> { user1 };
+        var contacts = new List<ContactAttendee> { contact1 };
+
+        var replaced = e.ReplaceAttendees(ActorId, OccurredAt, users, contacts);
+
+        users.Clear();
+        contacts.Clear();
+
+        Assert.Equal(new[] { user1 }, replaced.UserAttendees);
+        Assert.Equal(new[] { contact1 }, replaced.ContactAttendees);
+    }
+
+    [Fact]
+    public void ExposedAttendeeCollections_CannotBeMutatedByCaller()
+    {
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, null, "X", null, TimedTiming, CreatedAt,
+            new[] { MakeUserAttendee(UserId1) }, new[] { MakeContactAttendee(ContactId1) });
+
+        Assert.Throws<NotSupportedException>(
+            () => ((IList<EventAttendee>)e.UserAttendees).Add(MakeUserAttendee(UserId2)));
+        Assert.Throws<NotSupportedException>(
+            () => ((IList<ContactAttendee>)e.ContactAttendees).Add(MakeContactAttendee(ContactId2)));
+    }
+
+    [Fact]
+    public void UpdateDetails_PreservesAttendeeCollections()
+    {
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, ProjectId, "Status meeting", "Agenda", TimedTiming, CreatedAt,
+            new[] { MakeUserAttendee(UserId1) }, new[] { MakeContactAttendee(ContactId1) });
+
+        var updated = e.UpdateDetails(ActorId, OccurredAt, ProjectId, "Sprint planning", "Agenda", TimedTiming);
+
+        Assert.Equal(e.UserAttendees, updated.UserAttendees);
+        Assert.Equal(e.ContactAttendees, updated.ContactAttendees);
+    }
+
+    [Fact]
+    public void Cancel_PreservesAttendeeCollections()
+    {
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, ProjectId, "Status meeting", "Agenda", TimedTiming, CreatedAt,
+            new[] { MakeUserAttendee(UserId1) }, new[] { MakeContactAttendee(ContactId1) });
+
+        var cancelled = e.Cancel(ActorId, OccurredAt);
+
+        Assert.Equal(e.UserAttendees, cancelled.UserAttendees);
+        Assert.Equal(e.ContactAttendees, cancelled.ContactAttendees);
+    }
+
+    [Fact]
+    public void Reschedule_PreservesAttendeeCollections()
+    {
+        var e = CalendarEvent.Create(
+            EventId, OrganizationId, CreatorId, ProjectId, "Status meeting", "Agenda", TimedTiming, CreatedAt,
+            new[] { MakeUserAttendee(UserId1) }, new[] { MakeContactAttendee(ContactId1) });
+        var cancelled = e.Cancel(ActorId, OccurredAt);
+
+        var rescheduled = cancelled.Reschedule(ActorId, OccurredAt.AddMinutes(5));
+
+        Assert.Equal(e.UserAttendees, rescheduled.UserAttendees);
+        Assert.Equal(e.ContactAttendees, rescheduled.ContactAttendees);
     }
 }
