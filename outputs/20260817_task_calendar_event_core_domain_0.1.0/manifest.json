@@ -1,0 +1,53 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-EVENT-CORE-DOMAIN-0.1.0",
+  "product": "Task",
+  "packetType": "domain-core-aggregate",
+  "module": "Task.Domain.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "7de0ea65ea06be1fe4c99879a55e09f456e36e9e",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Domain/Calendar/CalendarEvent.cs",
+      "work/production/src/Task.Domain/Calendar/CalendarEventStatus.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/Calendar/CalendarEventTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_event_core_domain_0.1.0/"
+  },
+  "requirements": {
+    "BR-047..BR-050": "Reused via CalendarEventTiming (timezone/UTC/all-day invariants) and existing CalendarOverlapPolicy; no behavior duplicated in CalendarEvent.",
+    "FR-073..FR-081": "API endpoints, permissions, attendees, lifecycle archive/trash stay out of scope for this packet (deferred to later MOD-009 slices)."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj",
+    "testResult": "PASS 366/366 (0 failed), incl. 38 new CalendarEvent tests (previously 328)",
+    "buildCommand": "dotnet build work/production/Task.sln",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only the three new Calendar files and the new output package are touched",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "EventAttendee / ContactAttendee, replace attendees, respond",
+      "DELETE/trash, archive, restore, unarchive",
+      "API endpoints FR-073..FR-081, permissions, If-Match/idempotency",
+      "audit/outbox, sync, persistence/repository, worker, calendar query/read model",
+      "Desktop editor, drag/resize, overlap UI",
+      "changes to CalendarEventTiming, CalendarTimelinePlacement, TaskSchedule or TaskAggregate"
+    ],
+    "unchangedExistingFiles": true,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Domain/Calendar/CalendarEventStatus.cs": "34842F5B64B4C94CE73AB0A1A939EE4B0F51AC73A4DD3955ADB4D624797591F3",
+    "work/production/src/Task.Domain/Calendar/CalendarEvent.cs": "478F20C4E626F40C37FBDA220C9197FADD94DA161C72BCCFDEE859556D2496A9",
+    "work/production/tests/Task.Tests/Calendar/CalendarEventTests.cs": "3F63E28CB07AB3AED1FDB40C27D0D2DDD23DDEDAAD28FE0AC00F69EE3E319F76",
+    "outputs/20260817_task_calendar_event_core_domain_0.1.0/VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67",
+    "outputs/20260817_task_calendar_event_core_domain_0.1.0/VALIDATION_REPORT.md": "37FBB4737C3399BF40987FD0BF47C47C46143EFA467760AD585453457ADA78E0"
+  }
+}
