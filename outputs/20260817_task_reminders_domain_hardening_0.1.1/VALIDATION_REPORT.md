@@ -22,6 +22,15 @@
 | 4 | `git status --short` | only the 4 scope files modified |
 | 5 | Manifest self-check (SHA-256 vs MANIFEST.sha256) | PASS |
 
+## Correction (checksum integrity, 2026-08-17)
+
+The canonical-LF SHA-256 recorded for `outputs/20260817_task_reminders_domain_hardening_0.1.1/VERSION.txt` was incorrect. Content is `0.1.1\n` (UTF-8 without BOM, CRLF normalized to LF).
+
+- Recorded: `5a8fffdaf58b4a8e10d4f9f58380ec5c3e0a35821f9af44c48264ac71f4d79b7`
+- Correct canonical-LF SHA-256: `11EE23B8FC2FC619D6EAB6277ADB5A527261067AC01CCFC3E11857F55BF18BCD`
+
+`MANIFEST.sha256` and `manifest.json.artifactHashes` were updated to the correct value. All seven `MANIFEST.sha256` entries were then independently recalculated (UTF-8 without BOM, CRLF -> LF) and confirmed to match their files; `manifest.json` parses via `ConvertFrom-Json`. No production code, tests, `VERSION.txt` or any file outside `MANIFEST.sha256`, `manifest.json`, `VALIDATION_REPORT.md` was touched.
+
 ## Changed files (4) — all within the 0.1.0 scope
 
 ### Production
