@@ -105,7 +105,7 @@ CREATE TABLE iam.permissions (
     code varchar(128) PRIMARY KEY,
     description text NOT NULL,
     is_active boolean NOT NULL DEFAULT true,
-    CONSTRAINT ck_permissions_code CHECK (code ~ '^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$')
+    CONSTRAINT ck_permissions_code CHECK (code ~ '^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$')
 );
 
 CREATE TABLE iam.roles (

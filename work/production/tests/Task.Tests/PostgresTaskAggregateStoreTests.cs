@@ -180,7 +180,7 @@ public sealed class PostgresTaskAggregateStoreTests
                 "SELECT count(*), min(length(sha256)) FROM infrastructure.schema_migrations;");
             using var checksumReader = checksumCommand.ExecuteReader();
             checksumReader.Read();
-            Assert.Equal(1, checksumReader.GetInt64(0));
+            Assert.Equal(3, checksumReader.GetInt64(0));
             Assert.Equal(64, checksumReader.GetInt32(1));
             checksumReader.Close();
 
@@ -388,7 +388,7 @@ public sealed class PostgresTaskAggregateStoreTests
             Assert.Equal(0, (await RunMigratorAsync("apply", databaseConnection)).ExitCode);
 
             using (var wrongName = dataSource.CreateCommand(
-                "UPDATE infrastructure.schema_migrations SET name = 'changed';"))
+                "UPDATE infrastructure.schema_migrations SET name = 'changed' WHERE version = 1;"))
             {
                 Assert.Equal(1, wrongName.ExecuteNonQuery());
             }
@@ -398,7 +398,7 @@ public sealed class PostgresTaskAggregateStoreTests
             Assert.Contains("code=HistoryMismatch", nameMismatch.Stderr, StringComparison.Ordinal);
 
             using (var restoreName = dataSource.CreateCommand(
-                "UPDATE infrastructure.schema_migrations SET name = 'task_persistence_foundation';"))
+                "UPDATE infrastructure.schema_migrations SET name = 'task_persistence_foundation' WHERE version = 1;"))
             {
                 Assert.Equal(1, restoreName.ExecuteNonQuery());
             }
@@ -406,7 +406,7 @@ public sealed class PostgresTaskAggregateStoreTests
             using (var future = dataSource.CreateCommand(
                 """
                 INSERT INTO infrastructure.schema_migrations (version, name, sha256)
-                VALUES (2, 'future', repeat('A', 64));
+                VALUES (4, 'future', repeat('A', 64));
                 """))
             {
                 Assert.Equal(1, future.ExecuteNonQuery());
@@ -414,7 +414,7 @@ public sealed class PostgresTaskAggregateStoreTests
 
             Assert.Equal(7, (await RunMigratorAsync("status", databaseConnection)).ExitCode);
             using (var removeFuture = dataSource.CreateCommand(
-                "DELETE FROM infrastructure.schema_migrations WHERE version = 2;"))
+                "DELETE FROM infrastructure.schema_migrations WHERE version = 4;"))
             {
                 Assert.Equal(1, removeFuture.ExecuteNonQuery());
             }

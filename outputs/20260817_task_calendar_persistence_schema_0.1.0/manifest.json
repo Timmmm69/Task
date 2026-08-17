@@ -1,0 +1,58 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-PERSISTENCE-SCHEMA-0.1.0",
+  "product": "Task",
+  "packetType": "persistence-schema-increment",
+  "module": "Task.Infrastructure.Persistence",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "59ff964",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Infrastructure/Persistence/Migrations/002_identity_audit_foundation.sql",
+      "work/production/src/Task.Infrastructure/Persistence/Migrations/003_calendar_event_persistence.sql",
+      "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "work/production/src/Task.Infrastructure/Identity/OfflineAdministratorBootstrapper.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/PostgresTaskAggregateStoreTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_persistence_schema_0.1.0/"
+  },
+  "requirements": {
+    "contract": "Organizer_Stage2_Technical_Specification_2.2/openapi/openapi.yaml schema CalendarEvent (id, organizationId, version, projectId, title, description, eventDate, isAllDay, startAtUtc, endAtUtc, timeZone, status, userAttendees, contactAttendees) must be persistable; the migrator catalog must stay executable so a fresh PostgreSQL 16 database becomes Ready after the three migrations are applied.",
+    "rules": "The 002 identity/audit migration must apply on a real PostgreSQL 16 instance, therefore its permission code regex must contain a real escape backslash (the pre-existing '\\' double escape made the whole migration fail inside its transaction and blocked every later migration). Calendar persistence follows the approved foundation conventions: organization-scoped surrogate PKs (id) with a UNIQUE (organization_id, id) pair used by composite FKs, soft-delete lifecycle columns, optimistic concurrency via version, feature tables keyed (event_id, position) in stored attendee order, CHECK constraints, no hard deletes. Bootstrap must keep the same checksum/row-count semantics and the same write set; only statement shape may change."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj --no-restore",
+    "testResult": "PASS 461/461 (0 failed, 0 skipped) with TASK_POSTGRES_TEST_ADMIN_CONNECTION pointing at the local real PostgreSQL 16.14 (127.0.0.1:5432): fresh-database apply of 001->002->003, readiness, offline bootstrap, task round-trip with tenant boundary and concurrency, fail-closed lock/history/missing-objects scenarios",
+    "buildCommand": "dotnet build work/production/Task.sln --no-restore",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only the four production files, the one integration test file and the new output package are touched; no other file modified",
+    "psqlApplyCheck": "001, 002 and 003 apply standalone on a fresh disposable database via psql -v ON_ERROR_STOP=1 (script-level validation independent of the migrator)",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "PostgresCalendarEventStore (ICalendarEventStore persistence) - next M slice",
+      "window/range calendar queries and the unified conflict read model",
+      "API endpoints, permissions, If-Match/idempotency, audit/outbox, sync and notifications",
+      "attendee response workflow (/respond) with expectedAttendeeVersion",
+      "recurrence, worker, Desktop UI, authorization and deployment",
+      "any change to Task.Domain, Task.Application, Task.Api, solution/project files, dependencies and sources/**"
+    ],
+    "unchangedExistingFiles": false,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Infrastructure/Persistence/Migrations/002_identity_audit_foundation.sql": "FF60790ABF73D1EE282BAF779C0845178915C473939EE81870652CAB54F88D4F",
+    "work/production/src/Task.Infrastructure/Persistence/Migrations/003_calendar_event_persistence.sql": "BADBC7C9D7DF7BF65E6E99B0B9B82B844944D9BE5BBE9C11942908789E4FA507",
+    "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs": "5A1D99C04EED1DDDACD41B4FA8878B7B02682D396D1BA203E09BFEB785CE4E03",
+    "work/production/src/Task.Infrastructure/Identity/OfflineAdministratorBootstrapper.cs": "9C8EF1EB02AF29FC45362BB01D80F350EC3A70B044D38C5D3161F155E68B4E9E",
+    "work/production/tests/Task.Tests/PostgresTaskAggregateStoreTests.cs": "9CAC1E0B921055E1CE8EDC945E88A340CDBA446986B5473EEA3DF4932BD6601E",
+    "outputs/20260817_task_calendar_persistence_schema_0.1.0/VERSION.txt": "FA958BD41BC77BA912AC20D60F3EF65ED70217DA13E924E5B3A14A4212B5E932",
+    "outputs/20260817_task_calendar_persistence_schema_0.1.0/VALIDATION_REPORT.md": "191F66379273DD62C2C708B3CB2644EB7058A4D5290C9D4B3D32B9497B9C8E16"
+  }
+}

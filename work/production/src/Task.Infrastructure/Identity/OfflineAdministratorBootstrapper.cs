@@ -80,14 +80,26 @@ public sealed class OfflineAdministratorBootstrapper
             """
             INSERT INTO iam.roles (id, organization_id, code, display_name, is_system)
             VALUES ($1, $2, 'system_administrator', 'System administrator', true);
+            """,
+            cancellationToken, roleId, organizationId);
+        await ExecuteAsync(connection, transaction,
+            """
             INSERT INTO iam.role_permissions (role_id, permission_code)
             SELECT $1, code FROM iam.permissions WHERE is_active;
-            INSERT INTO iam.user_roles (user_account_id, role_id, granted_by)
-            VALUES ($2, $1, $2);
-            INSERT INTO iam.authorization_scope_versions (user_account_id, version)
-            VALUES ($2, 1);
             """,
-            cancellationToken, roleId, userId);
+            cancellationToken, roleId);
+        await ExecuteAsync(connection, transaction,
+            """
+            INSERT INTO iam.user_roles (user_account_id, role_id, granted_by)
+            VALUES ($1, $2, $1);
+            """,
+            cancellationToken, userId, roleId);
+        await ExecuteAsync(connection, transaction,
+            """
+            INSERT INTO iam.authorization_scope_versions (user_account_id, version)
+            VALUES ($1, 1);
+            """,
+            cancellationToken, userId);
         await ExecuteAsync(connection, transaction,
             """
             INSERT INTO governance.audit_entries
@@ -113,7 +125,7 @@ public sealed class OfflineAdministratorBootstrapper
         var expected = TaskPersistenceMigrationCatalog.All[^1];
         await using var command = new NpgsqlCommand(
             """
-            SELECT count(*) = $1
+            SELECT (SELECT count(*) FROM infrastructure.schema_migrations) = $1
                AND EXISTS (
                    SELECT 1 FROM infrastructure.schema_migrations
                    WHERE version = $1 AND name = $2 AND btrim(sha256) = $3);
