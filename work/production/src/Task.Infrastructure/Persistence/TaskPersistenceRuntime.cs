@@ -1,6 +1,7 @@
 using Npgsql;
 using Task.Application;
 using Task.Application.Calendar;
+using Task.Application.Security;
 using Task.Infrastructure.Identity;
 
 namespace Task.Infrastructure.Persistence;
@@ -47,6 +48,9 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 
     public IScheduleStore CreateScheduleStore() =>
         new PostgresScheduleStore(GetConfiguredDataSource());
+
+    public ISessionRepository CreateSessionRepository() =>
+        new PostgresSessionRepository(GetConfiguredDataSource());
 
     public TaskPersistenceMigrator CreateMigrator() =>
         new(GetConfiguredDataSource());
