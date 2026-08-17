@@ -1,0 +1,56 @@
+{
+  "packetId": "TASK-PROD-MOD-009-CALENDAR-EVENT-APPLICATION-COMMANDS-0.1.0",
+  "product": "Task",
+  "packetType": "application-command-slice",
+  "module": "Task.Application.Calendar",
+  "version": "0.1.0",
+  "date": "2026-08-17",
+  "status": "verified",
+  "baseSha": "42ccd2caffef50b04a5168baf19efbf0b9dd0352",
+  "scope": {
+    "production": [
+      "work/production/src/Task.Application/Calendar/ICalendarEventStore.cs",
+      "work/production/src/Task.Application/Calendar/CalendarEventConcurrencyException.cs",
+      "work/production/src/Task.Application/Calendar/CalendarEventLifecycleService.cs"
+    ],
+    "tests": [
+      "work/production/tests/Task.Tests/Calendar/CalendarEventLifecycleServiceTests.cs"
+    ],
+    "outputPackage": "outputs/20260817_task_calendar_event_application_commands_0.1.0/"
+  },
+  "requirements": {
+    "contract": "Organizer_Stage2_Technical_Specification_2.2/openapi/openapi.yaml operations POST /api/v1/calendar-events (create), PATCH /api/v1/calendar-events/{id} (update), PUT /api/v1/calendar-events/{id}/attendees (replace attendees), cancel/reschedule status transitions and the archive/trash lifecycle endpoints; optimistic concurrency via If-Match strong ETag (409/412 semantics) carried into the application port as expectedVersion.",
+    "rules": "ICalendarEventStore mirrors the approved ITaskAggregateStore pattern: Get(eventId, organizationId) is organization-bound, Add stores a fresh version-1 aggregate, Save persists with an atomic expected-version guard; CalendarEventLifecycleService never duplicates domain rules, always loads through the store, rejects a missing or foreign-organization event with KeyNotFoundException, rejects a stale expectedVersion with CalendarEventConcurrencyException before any transition, delegates the transition to the aggregate and calls Save exactly once with the original expectedVersion; Create calls Add exactly once; no permissions, idempotency, If-Match headers or API endpoints in this slice."
+  },
+  "verification": {
+    "testCommand": "dotnet test work/production/tests/Task.Tests/Task.Tests.csproj --no-restore",
+    "testResult": "PASS 454/454 (0 failed, 0 skipped), incl. 17 new CalendarEventLifecycleServiceTests facts (previously 437)",
+    "buildCommand": "dotnet build work/production/Task.sln --no-restore",
+    "buildResult": "0 errors, 0 warnings",
+    "diffCheck": "git diff --check clean",
+    "scopeCheck": "only the three new Task.Application files, the new test file and the new output package are touched; no existing file modified",
+    "rebaseCheck": "git fetch origin --prune + git rebase origin/main before push: no conflicts; pushed HEAD == origin/main",
+    "manifestJsonParse": "manifest.json parsed via ConvertFrom-Json",
+    "hashVerification": "canonical-LF SHA-256 recalculated for every MANIFEST.sha256 entry and artifactHash: PASS (UTF-8 without BOM, CRLF -> LF canonicalization)"
+  },
+  "evidenceBoundaries": {
+    "notDelivered": [
+      "PostgreSQL persistence implementation of ICalendarEventStore (next slices)",
+      "calendar read/query projection and conflict projection",
+      "API endpoints, permissions, If-Match/idempotency, audit/outbox, sync and notifications",
+      "attendee response workflow (/respond) with expectedAttendeeVersion",
+      "recurrence, worker, Desktop UI, authorization and deployment",
+      "changes to Task.Domain, Task.Infrastructure, Task.Api, solution/project files, dependencies and sources/**"
+    ],
+    "unchangedExistingFiles": true,
+    "unchangedOutsideScope": true
+  },
+  "artifactHashes": {
+    "work/production/src/Task.Application/Calendar/ICalendarEventStore.cs": "6FDE8F3365D3B9D091372023243CF30639A66AA2B40EE08D2AEAA4748DBDFED5",
+    "work/production/src/Task.Application/Calendar/CalendarEventConcurrencyException.cs": "977191B1CC1135B9A946FCCC298EF10C37FAB772498B3A73A287E2DF3F4E443C",
+    "work/production/src/Task.Application/Calendar/CalendarEventLifecycleService.cs": "828E04FDA21DBDF5855FB7DCB89B73A4C6CD1F4011D7ADDA5A15AD4D5C667FAE",
+    "work/production/tests/Task.Tests/Calendar/CalendarEventLifecycleServiceTests.cs": "E91F7A1639FE9AAB7EFBE2AC839AB6FA158B635B7C25738990637E03C6F48B04",
+    "outputs/20260817_task_calendar_event_application_commands_0.1.0/VERSION.txt": "E9DD8507F4BF0C6F42458E41AEA833AD0BD3F6127272335EEE9BF4D58541ED67",
+    "outputs/20260817_task_calendar_event_application_commands_0.1.0/VALIDATION_REPORT.md": "497EE80828D780941523542D2768EE2A81C386C4E6603A1275C1EF005E15C3AE"
+  }
+}
