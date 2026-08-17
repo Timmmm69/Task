@@ -44,6 +44,9 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
         services.GetRequiredService<TaskPersistenceRuntime>().CreateMigrator());
     builder.Services.AddSingleton<TaskLifecycleService>();
     builder.Services.AddSingleton<TaskQueryService>();
+    builder.Services.AddSingleton<IScheduleStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateScheduleStore());
+    builder.Services.AddSingleton<ScheduleQueryService>();
 }
 
 var app = builder.Build();

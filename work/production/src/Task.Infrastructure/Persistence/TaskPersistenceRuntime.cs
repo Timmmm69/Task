@@ -45,6 +45,9 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     public ICalendarEventStore CreateCalendarEventStore() =>
         new PostgresCalendarEventStore(GetConfiguredDataSource());
 
+    public IScheduleStore CreateScheduleStore() =>
+        new PostgresScheduleStore(GetConfiguredDataSource());
+
     public TaskPersistenceMigrator CreateMigrator() =>
         new(GetConfiguredDataSource());
 
