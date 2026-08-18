@@ -12,6 +12,18 @@ public interface ISessionRepository
     SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId);
 
     /// <summary>
+    /// Evaluates the authoritative request state for an access token's session against the
+    /// current server state: session revocation and expiry, account status and the current
+    /// credential and authorization-scope versions. All time comparisons use the PostgreSQL
+    /// server clock (clock_timestamp()); absence by id or organization yields SessionExpired.
+    /// </summary>
+    SessionRequestState GetSessionRequestState(
+        Guid organizationId,
+        Guid sessionId,
+        long expectedCredentialVersion,
+        long expectedAuthorizationScopeVersion);
+
+    /// <summary>
     /// Persists a session and its initial refresh token atomically in a single transaction.
     /// </summary>
     void CreateSession(SessionSnapshot session, RefreshTokenRecord refreshToken);

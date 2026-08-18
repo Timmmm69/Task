@@ -232,6 +232,152 @@ public sealed class PostgresSessionRepositoryTests
         }
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task RealPostgres_SessionRequestStateEvaluation()
+    {
+        var adminConnectionString = Environment.GetEnvironmentVariable(ConnectionEnvironmentVariable);
+        if (string.IsNullOrWhiteSpace(adminConnectionString))
+        {
+            _output.WriteLine(
+                $"NOT RUN: set {ConnectionEnvironmentVariable} to execute the real PostgreSQL integration gate.");
+            return;
+        }
+
+        var databaseName = $"task_sessreq_{Guid.NewGuid():N}";
+        using var adminDataSource = NpgsqlDataSource.Create(adminConnectionString);
+        CreateDatabase(adminDataSource, databaseName);
+
+        try
+        {
+            var databaseConnection = new NpgsqlConnectionStringBuilder(adminConnectionString)
+            {
+                Database = databaseName,
+            }.ConnectionString;
+
+            using var dataSource = NpgsqlDataSource.Create(databaseConnection);
+            new TaskPersistenceMigrator(dataSource).ApplyPending();
+
+            var organizationId = Guid.NewGuid();
+            var otherOrganizationId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var otherUserId = Guid.NewGuid();
+            SeedOrganizationAndUser(dataSource, organizationId, userId, Guid.NewGuid());
+            SeedOrganizationAndUser(dataSource, otherOrganizationId, otherUserId, Guid.NewGuid());
+
+            await using var runtime = new TaskPersistenceRuntime(databaseConnection, TimeSpan.FromSeconds(10));
+            var repository = runtime.CreateSessionRepository();
+
+            var now = DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var sessionId = Guid.NewGuid();
+
+            Assert.Throws<ArgumentException>(() => repository.GetSessionRequestState(
+                Guid.Empty, sessionId, 1, 1));
+            Assert.Throws<ArgumentException>(() => repository.GetSessionRequestState(
+                organizationId, Guid.Empty, 1, 1));
+            Assert.Throws<ArgumentException>(() => repository.GetSessionRequestState(
+                organizationId, sessionId, 0, 1));
+            Assert.Throws<ArgumentException>(() => repository.GetSessionRequestState(
+                organizationId, sessionId, -1, 1));
+            Assert.Throws<ArgumentException>(() => repository.GetSessionRequestState(
+                organizationId, sessionId, 1, 0));
+            Assert.Throws<ArgumentException>(() => repository.GetSessionRequestState(
+                organizationId, sessionId, 1, -2));
+
+            var activeSession = Guid.NewGuid();
+            repository.CreateSession(
+                CreateSnapshot(activeSession, organizationId, userId, now),
+                CreateToken(Guid.NewGuid(), activeSession, HashOf('a'), now));
+            Assert.Equal(
+                SessionRequestState.Active,
+                repository.GetSessionRequestState(organizationId, activeSession, 1, 1));
+
+            Assert.Equal(
+                SessionRequestState.SessionExpired,
+                repository.GetSessionRequestState(organizationId, Guid.NewGuid(), 1, 1));
+            Assert.Equal(
+                SessionRequestState.SessionExpired,
+                repository.GetSessionRequestState(otherOrganizationId, activeSession, 1, 1));
+
+            var revokedSession = Guid.NewGuid();
+            repository.CreateSession(
+                CreateSnapshot(revokedSession, organizationId, userId, now),
+                CreateToken(Guid.NewGuid(), revokedSession, HashOf('b'), now));
+            repository.RevokeSession(organizationId, revokedSession, "test-revoke");
+            Assert.Equal(
+                SessionRequestState.SessionRevoked,
+                repository.GetSessionRequestState(organizationId, revokedSession, 1, 1));
+            ExpireSession(
+                dataSource,
+                revokedSession,
+                "clock_timestamp() - interval '1 hour'",
+                "clock_timestamp() - interval '1 hour'");
+            Assert.Equal(
+                SessionRequestState.SessionRevoked,
+                repository.GetSessionRequestState(organizationId, revokedSession, 1, 1));
+
+            var absoluteExpiredSession = Guid.NewGuid();
+            repository.CreateSession(
+                CreateSnapshot(absoluteExpiredSession, organizationId, userId, now),
+                CreateToken(Guid.NewGuid(), absoluteExpiredSession, HashOf('c'), now));
+            ExpireSession(
+                dataSource,
+                absoluteExpiredSession,
+                "clock_timestamp() + interval '1 hour'",
+                "clock_timestamp() - interval '1 minute'");
+            Assert.Equal(
+                SessionRequestState.SessionExpired,
+                repository.GetSessionRequestState(organizationId, absoluteExpiredSession, 1, 1));
+
+            var idleExpiredSession = Guid.NewGuid();
+            repository.CreateSession(
+                CreateSnapshot(idleExpiredSession, organizationId, userId, now),
+                CreateToken(Guid.NewGuid(), idleExpiredSession, HashOf('d'), now));
+            ExpireSession(
+                dataSource,
+                idleExpiredSession,
+                "clock_timestamp() - interval '1 minute'",
+                "clock_timestamp() + interval '8 hours'");
+            Assert.Equal(
+                SessionRequestState.SessionExpired,
+                repository.GetSessionRequestState(organizationId, idleExpiredSession, 1, 1));
+
+            var blockedSession = Guid.NewGuid();
+            repository.CreateSession(
+                CreateSnapshot(blockedSession, organizationId, userId, now),
+                CreateToken(Guid.NewGuid(), blockedSession, HashOf('e'), now));
+            SetAccountStatus(dataSource, userId, "blocked");
+            Assert.Equal(
+                SessionRequestState.AccountBlocked,
+                repository.GetSessionRequestState(organizationId, blockedSession, 1, 1));
+            SetCredentialVersion(dataSource, userId, 2);
+            Assert.Equal(
+                SessionRequestState.AccountBlocked,
+                repository.GetSessionRequestState(organizationId, blockedSession, 1, 1));
+
+            SetAccountStatus(dataSource, userId, "active");
+            Assert.Equal(
+                SessionRequestState.VersionMismatch,
+                repository.GetSessionRequestState(organizationId, blockedSession, 1, 1));
+            Assert.Equal(
+                SessionRequestState.Active,
+                repository.GetSessionRequestState(organizationId, blockedSession, 2, 1));
+
+            SetScopeVersion(dataSource, userId, 5);
+            Assert.Equal(
+                SessionRequestState.VersionMismatch,
+                repository.GetSessionRequestState(organizationId, blockedSession, 2, 1));
+            DeleteScopeVersionRow(dataSource, userId);
+            Assert.Equal(
+                SessionRequestState.VersionMismatch,
+                repository.GetSessionRequestState(organizationId, blockedSession, 2, 5));
+        }
+        finally
+        {
+            NpgsqlConnection.ClearAllPools();
+            DropDatabase(adminDataSource, databaseName);
+        }
+    }
+
     private static SessionSnapshot CreateSnapshot(
         Guid sessionId,
         Guid organizationId,
@@ -311,6 +457,41 @@ public sealed class PostgresSessionRepositoryTests
             WHERE id = $1;
             """);
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = sessionId });
+        command.ExecuteNonQuery();
+    }
+
+    private static void SetAccountStatus(NpgsqlDataSource dataSource, Guid userId, string status)
+    {
+        using var command = dataSource.CreateCommand(
+            "UPDATE iam.user_accounts SET account_status = $2 WHERE id = $1;");
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter<string> { TypedValue = status });
+        command.ExecuteNonQuery();
+    }
+
+    private static void SetCredentialVersion(NpgsqlDataSource dataSource, Guid userId, long version)
+    {
+        using var command = dataSource.CreateCommand(
+            "UPDATE iam.user_accounts SET credential_version = $2 WHERE id = $1;");
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter<long> { TypedValue = version });
+        command.ExecuteNonQuery();
+    }
+
+    private static void SetScopeVersion(NpgsqlDataSource dataSource, Guid userId, long version)
+    {
+        using var command = dataSource.CreateCommand(
+            "UPDATE iam.authorization_scope_versions SET version = $2 WHERE user_account_id = $1;");
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter<long> { TypedValue = version });
+        command.ExecuteNonQuery();
+    }
+
+    private static void DeleteScopeVersionRow(NpgsqlDataSource dataSource, Guid userId)
+    {
+        using var command = dataSource.CreateCommand(
+            "DELETE FROM iam.authorization_scope_versions WHERE user_account_id = $1;");
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
         command.ExecuteNonQuery();
     }
 

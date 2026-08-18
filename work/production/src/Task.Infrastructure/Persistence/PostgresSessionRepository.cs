@@ -68,6 +68,52 @@ public sealed class PostgresSessionRepository : ISessionRepository
         return snapshot;
     }
 
+    public SessionRequestState GetSessionRequestState(
+        Guid organizationId,
+        Guid sessionId,
+        long expectedCredentialVersion,
+        long expectedAuthorizationScopeVersion)
+    {
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(sessionId, nameof(sessionId));
+        EnsurePositiveVersion(expectedCredentialVersion, nameof(expectedCredentialVersion));
+        EnsurePositiveVersion(expectedAuthorizationScopeVersion, nameof(expectedAuthorizationScopeVersion));
+
+        using var command = _dataSource.CreateCommand(
+            """
+            SELECT
+                CASE
+                    WHEN s.id IS NULL THEN 'expired'
+                    WHEN s.revoked_at IS NOT NULL THEN 'revoked'
+                    WHEN s.absolute_expires_at <= clock_timestamp()
+                        OR s.idle_expires_at <= clock_timestamp() THEN 'expired'
+                    WHEN ua.account_status <> 'active' THEN 'blocked'
+                    WHEN ua.credential_version <> $3 THEN 'version_mismatch'
+                    WHEN av.version IS NULL OR av.version <> $4 THEN 'version_mismatch'
+                    ELSE 'active'
+                END
+            FROM iam.sessions s
+            LEFT JOIN iam.user_accounts ua
+                ON ua.id = s.user_account_id AND ua.organization_id = s.organization_id
+            LEFT JOIN iam.authorization_scope_versions av ON av.user_account_id = ua.id
+            WHERE s.organization_id = $1 AND s.id = $2;
+            """);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = sessionId });
+        command.Parameters.Add(new NpgsqlParameter<long> { TypedValue = expectedCredentialVersion });
+        command.Parameters.Add(new NpgsqlParameter<long> { TypedValue = expectedAuthorizationScopeVersion });
+
+        var state = command.ExecuteScalar();
+        return state switch
+        {
+            "active" => SessionRequestState.Active,
+            "revoked" => SessionRequestState.SessionRevoked,
+            "blocked" => SessionRequestState.AccountBlocked,
+            "version_mismatch" => SessionRequestState.VersionMismatch,
+            _ => SessionRequestState.SessionExpired,
+        };
+    }
+
     public void CreateSession(SessionSnapshot session, RefreshTokenRecord refreshToken)
     {
         ArgumentNullException.ThrowIfNull(session);
@@ -252,6 +298,14 @@ public sealed class PostgresSessionRepository : ISessionRepository
         if (value == Guid.Empty)
         {
             throw new ArgumentException("Identifier must not be empty.", parameterName);
+        }
+    }
+
+    private static void EnsurePositiveVersion(long value, string parameterName)
+    {
+        if (value <= 0)
+        {
+            throw new ArgumentException("Version must be positive.", parameterName);
         }
     }
 

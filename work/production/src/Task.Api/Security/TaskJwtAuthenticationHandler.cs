@@ -63,12 +63,21 @@ internal sealed class TaskJwtAuthenticationHandler : AuthenticationHandler<Authe
         }
 
         var claims = validationResult.Claims!;
-        var session = _sessionRepository.GetActiveSession(claims.Org, claims.Sid);
-        if (session is null
-            || session.CredentialVersion != claims.Cver
-            || session.AuthorizationScopeVersion != claims.Sver)
+        var sessionState = _sessionRepository.GetSessionRequestState(
+            claims.Org,
+            claims.Sid,
+            claims.Cver,
+            claims.Sver);
+        if (sessionState != SessionRequestState.Active)
         {
-            return await FailAsync("session", correlationId);
+            var category = sessionState switch
+            {
+                SessionRequestState.SessionRevoked => "revoked",
+                SessionRequestState.SessionExpired => "expired",
+                SessionRequestState.AccountBlocked => "blocked",
+                _ => "invalid",
+            };
+            return await FailAsync(category, correlationId, sessionState);
         }
 
         Context.Items[AuthenticatedRequestContextItemName] = new AuthenticatedRequestContext(
@@ -118,20 +127,51 @@ internal sealed class TaskJwtAuthenticationHandler : AuthenticationHandler<Authe
             title: "The requested operation is not permitted.",
             retryable: false);
 
-    private async global::System.Threading.Tasks.Task<AuthenticateResult> FailAsync(string category, string? correlationId = null)
+    private async global::System.Threading.Tasks.Task<AuthenticateResult> FailAsync(
+        string category,
+        string? correlationId = null,
+        SessionRequestState? sessionState = null)
     {
         Logger.LogWarning(
             "JWT authentication rejected. Category: {Category}; correlation ID: {CorrelationId}",
             category,
             correlationId ?? TaskApiProblemResponse.GetCorrelationId(Context));
 
-        var expired = category == "expired";
+        var (statusCode, code, title, retryable) = sessionState switch
+        {
+            SessionRequestState.SessionRevoked => (
+                StatusCodes.Status401Unauthorized,
+                "SESSION_REVOKED",
+                "The session was revoked.",
+                false),
+            SessionRequestState.AccountBlocked => (
+                StatusCodes.Status423Locked,
+                "ACCOUNT_BLOCKED",
+                "The account is blocked.",
+                false),
+            SessionRequestState.SessionExpired or SessionRequestState.VersionMismatch => (
+                StatusCodes.Status401Unauthorized,
+                "SESSION_EXPIRED",
+                "The session has expired.",
+                true),
+            _ when category == "expired" => (
+                StatusCodes.Status401Unauthorized,
+                "SESSION_EXPIRED",
+                "The session has expired.",
+                true),
+            _ => (
+                StatusCodes.Status401Unauthorized,
+                "AUTHENTICATION_REQUIRED",
+                "Authentication is required.",
+                true),
+        };
+
         await TaskApiProblemResponse.WriteAsync(
             Context,
-            StatusCodes.Status401Unauthorized,
-            code: expired ? "SESSION_EXPIRED" : "AUTHENTICATION_REQUIRED",
-            title: expired ? "The session has expired." : "Authentication is required.",
-            retryable: true);
+            statusCode,
+            code,
+            title,
+            retryable);
         Context.Items[TaskApiProblemResponse.AuthenticationResponseWrittenItemName] = true;
 
         return AuthenticateResult.Fail("Access token validation failed.");

@@ -258,33 +258,93 @@ public sealed class TaskJwtAuthenticationHandlerTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task Authenticate_WithMissingServerSession_RejectsOnce()
+    public async global::System.Threading.Tasks.Task Authenticate_WithMissingServerSession_RejectsOnceWithSessionExpired()
     {
         var token = CreateToken(SigningCredentialsKey, DefaultClaims());
         await AssertRejectedAsync(
             token,
-            new FakeSessionRepository(null),
-            "AUTHENTICATION_REQUIRED");
+            new FakeSessionRepository(null, SessionRequestState.SessionExpired),
+            "SESSION_EXPIRED",
+            "The session has expired.");
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task Authenticate_WithCredentialVersionMismatch_RejectsOnce()
+    public async global::System.Threading.Tasks.Task Authenticate_WithCredentialVersionMismatch_RejectsOnceWithSessionExpired()
     {
         var token = CreateToken(SigningCredentialsKey, DefaultClaims(cver: 5));
         await AssertRejectedAsync(
             token,
-            new FakeSessionRepository(ActiveSession(cver: 1)),
-            "AUTHENTICATION_REQUIRED");
+            new FakeSessionRepository(ActiveSession(cver: 1), SessionRequestState.VersionMismatch),
+            "SESSION_EXPIRED",
+            "The session has expired.");
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task Authenticate_WithScopeVersionMismatch_RejectsOnce()
+    public async global::System.Threading.Tasks.Task Authenticate_WithScopeVersionMismatch_RejectsOnceWithSessionExpired()
     {
         var token = CreateToken(SigningCredentialsKey, DefaultClaims(sver: 9));
         await AssertRejectedAsync(
             token,
-            new FakeSessionRepository(ActiveSession(sver: 2)),
-            "AUTHENTICATION_REQUIRED");
+            new FakeSessionRepository(ActiveSession(sver: 2), SessionRequestState.VersionMismatch),
+            "SESSION_EXPIRED",
+            "The session has expired.");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Authenticate_WithRevokedServerSession_RejectsOnceWithSessionRevoked()
+    {
+        var token = CreateToken(SigningCredentialsKey, DefaultClaims());
+        var correlationId = Guid.NewGuid().ToString("D");
+        var (context, handler) = await CreateHandlerAsync(
+            new FakeSessionRepository(ActiveSession(), SessionRequestState.SessionRevoked),
+            correlationId);
+        context.Request.Headers["Authorization"] = $"Bearer {token}";
+
+        await AssertRejectedOnceAsync(
+            context,
+            handler,
+            "SESSION_REVOKED",
+            correlationId,
+            expectedRetryable: false,
+            expectedTitle: "The session was revoked.");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Authenticate_WithExpiredServerSession_RejectsOnceWithSessionExpired()
+    {
+        var token = CreateToken(SigningCredentialsKey, DefaultClaims());
+        var correlationId = Guid.NewGuid().ToString("D");
+        var (context, handler) = await CreateHandlerAsync(
+            new FakeSessionRepository(ActiveSession(), SessionRequestState.SessionExpired),
+            correlationId);
+        context.Request.Headers["Authorization"] = $"Bearer {token}";
+
+        await AssertRejectedOnceAsync(
+            context,
+            handler,
+            "SESSION_EXPIRED",
+            correlationId,
+            expectedTitle: "The session has expired.");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Authenticate_WithBlockedAccount_RejectsOnceWithAccountBlocked()
+    {
+        var token = CreateToken(SigningCredentialsKey, DefaultClaims());
+        var correlationId = Guid.NewGuid().ToString("D");
+        var (context, handler) = await CreateHandlerAsync(
+            new FakeSessionRepository(ActiveSession(), SessionRequestState.AccountBlocked),
+            correlationId);
+        context.Request.Headers["Authorization"] = $"Bearer {token}";
+
+        await AssertRejectedOnceAsync(
+            context,
+            handler,
+            "ACCOUNT_BLOCKED",
+            correlationId,
+            expectedStatusCode: StatusCodes.Status423Locked,
+            expectedRetryable: false,
+            expectedTitle: "The account is blocked.");
     }
 
     [Fact]
@@ -355,26 +415,39 @@ public sealed class TaskJwtAuthenticationHandlerTests
     private static async global::System.Threading.Tasks.Task AssertRejectedWithMatchingSessionAsync(
         string token)
     {
-        await AssertRejectedAsync(token, new FakeSessionRepository(ActiveSession()), "AUTHENTICATION_REQUIRED");
+        await AssertRejectedAsync(
+            token,
+            new FakeSessionRepository(ActiveSession()),
+            "AUTHENTICATION_REQUIRED",
+            "Authentication is required.");
     }
 
     private static async global::System.Threading.Tasks.Task AssertRejectedAsync(
         string token,
         FakeSessionRepository sessionRepository,
-        string expectedCode)
+        string expectedCode,
+        string expectedTitle)
     {
         var correlationId = Guid.NewGuid().ToString("D");
         var (context, handler) = await CreateHandlerAsync(sessionRepository, correlationId);
         context.Request.Headers["Authorization"] = $"Bearer {token}";
 
-        await AssertRejectedOnceAsync(context, handler, expectedCode, correlationId);
+        await AssertRejectedOnceAsync(
+            context,
+            handler,
+            expectedCode,
+            correlationId,
+            expectedTitle: expectedTitle);
     }
 
     private static async global::System.Threading.Tasks.Task AssertRejectedOnceAsync(
         DefaultHttpContext context,
         IAuthenticationHandler handler,
         string expectedCode,
-        string expectedCorrelationId)
+        string expectedCorrelationId,
+        int expectedStatusCode = StatusCodes.Status401Unauthorized,
+        bool expectedRetryable = true,
+        string expectedTitle = "The session has expired.")
     {
         var result = await handler.AuthenticateAsync();
 
@@ -388,12 +461,13 @@ public sealed class TaskJwtAuthenticationHandlerTests
         using var document = await JsonDocument.ParseAsync(context.Response.Body);
         var root = document.RootElement;
 
-        Assert.Equal(StatusCodes.Status401Unauthorized, context.Response.StatusCode);
+        Assert.Equal(expectedStatusCode, context.Response.StatusCode);
         Assert.Equal("application/problem+json", context.Response.ContentType);
         Assert.Equal(expectedCode, root.GetProperty("code").GetString());
         Assert.Equal(expectedCorrelationId, root.GetProperty("correlationId").GetString());
         Assert.Equal(TraceId, root.GetProperty("traceId").GetString());
-        Assert.True(root.GetProperty("retryable").GetBoolean());
+        Assert.Equal(expectedTitle, root.GetProperty("title").GetString());
+        Assert.Equal(expectedRetryable, root.GetProperty("retryable").GetBoolean());
         Assert.DoesNotContain("exception", root.GetRawText(), StringComparison.OrdinalIgnoreCase);
 
         await handler.ChallengeAsync(new AuthenticationProperties());
@@ -507,13 +581,24 @@ public sealed class TaskJwtAuthenticationHandlerTests
     private sealed class FakeSessionRepository : ISessionRepository
     {
         private readonly SessionSnapshot? _session;
+        private readonly SessionRequestState _requestState;
 
-        public FakeSessionRepository(SessionSnapshot? session)
+        public FakeSessionRepository(
+            SessionSnapshot? session,
+            SessionRequestState requestState = SessionRequestState.Active)
         {
             _session = session;
+            _requestState = requestState;
         }
 
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) => _session;
+
+        public SessionRequestState GetSessionRequestState(
+            Guid organizationId,
+            Guid sessionId,
+            long expectedCredentialVersion,
+            long expectedAuthorizationScopeVersion) =>
+            _requestState;
 
         public void CreateSession(SessionSnapshot session, RefreshTokenRecord refreshToken) =>
             throw new NotSupportedException();
