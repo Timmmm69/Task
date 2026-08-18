@@ -54,4 +54,16 @@ public interface ISessionRepository
     /// Returns the number of revoked sessions.
     /// </summary>
     int RevokeAllUserSessions(Guid organizationId, Guid userId, Guid? exceptSessionId, string? reason);
+
+    /// <summary>
+    /// Hard-deletes all non-revoked sessions of a user together with their refresh tokens,
+    /// optionally keeping one session alive. Returns the number of deleted sessions; the kept
+    /// session remains untouched. Used by credential rotation so that a password change
+    /// invalidates the user's other sessions immediately.
+    /// </summary>
+    global::System.Threading.Tasks.Task<int> RevokeAllUserSessionsExceptAsync(
+        Guid organizationId,
+        Guid userId,
+        Guid? exceptSessionId,
+        CancellationToken cancellationToken = default);
 }

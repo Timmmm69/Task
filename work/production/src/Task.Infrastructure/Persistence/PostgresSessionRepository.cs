@@ -293,6 +293,48 @@ public sealed class PostgresSessionRepository : ISessionRepository
         return command.ExecuteNonQuery();
     }
 
+    /// <summary>
+    /// Hard-deletes all non-revoked sessions of the user except the optional kept session,
+    /// together with their refresh tokens, in a single statement. Returns the number of
+    /// deleted sessions. Deleted sessions are treated as expired by
+    /// GetActiveSession/GetSessionRequestState, so a password change clears the user's other
+    /// sessions immediately.
+    /// </summary>
+    public async global::System.Threading.Tasks.Task<int> RevokeAllUserSessionsExceptAsync(
+        Guid organizationId,
+        Guid userId,
+        Guid? exceptSessionId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(userId, nameof(userId));
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
+            """
+            WITH deleted_tokens AS (
+                DELETE FROM iam.refresh_tokens
+                WHERE session_id IN (
+                    SELECT id FROM iam.sessions
+                    WHERE organization_id = $1 AND user_account_id = $2 AND revoked_at IS NULL
+                        AND ($3::uuid IS NULL OR id <> $3))
+            )
+            DELETE FROM iam.sessions
+            WHERE organization_id = $1 AND user_account_id = $2 AND revoked_at IS NULL
+                AND ($3::uuid IS NULL OR id <> $3);
+            """,
+            connection);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter
+        {
+            NpgsqlDbType = NpgsqlDbType.Uuid,
+            Value = exceptSessionId is null || exceptSessionId == Guid.Empty ? DBNull.Value : exceptSessionId.Value,
+        });
+
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     private static void EnsureIdentifier(Guid value, string parameterName)
     {
         if (value == Guid.Empty)

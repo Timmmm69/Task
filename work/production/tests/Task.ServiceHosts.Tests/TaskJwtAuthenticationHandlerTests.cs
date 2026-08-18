@@ -618,5 +618,12 @@ public sealed class TaskJwtAuthenticationHandlerTests
 
         public int RevokeAllUserSessions(Guid organizationId, Guid userId, Guid? exceptSessionId, string? reason) =>
             throw new NotSupportedException();
+
+        public global::System.Threading.Tasks.Task<int> RevokeAllUserSessionsExceptAsync(
+            Guid organizationId,
+            Guid userId,
+            Guid? exceptSessionId,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 }
