@@ -322,7 +322,7 @@ public sealed class PostgresSessionRepositoryTests
             ExpireSession(
                 dataSource,
                 absoluteExpiredSession,
-                "clock_timestamp() + interval '1 hour'",
+                "clock_timestamp() - interval '2 hours'",
                 "clock_timestamp() - interval '1 minute'");
             Assert.Equal(
                 SessionRequestState.SessionExpired,
