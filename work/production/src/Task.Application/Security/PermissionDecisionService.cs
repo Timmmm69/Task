@@ -15,7 +15,7 @@ public enum AuthorizationDenyReason
 
 /// <summary>
 /// Result of one authorization evaluation. When <see cref="Allowed"/> is true the reason is
-/// <see cref="AuthorizationDenyReason.None"/>; otherwise it is one the deny reasons above.
+/// <see cref="AuthorizationDenyReason.None"/>; otherwise it is one of the deny reasons above.
 /// </summary>
 public sealed record AuthorizationDecision(
     bool Allowed,
