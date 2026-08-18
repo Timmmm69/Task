@@ -295,10 +295,11 @@ public sealed class PostgresSessionRepository : ISessionRepository
 
     /// <summary>
     /// Hard-deletes all non-revoked sessions of the user except the optional kept session,
-    /// together with their refresh tokens, in a single statement. Returns the number of
-    /// deleted sessions. Deleted sessions are treated as expired by
+    /// together with their refresh tokens, in one transaction. Returns the number of deleted
+    /// sessions. Deleted sessions are treated as expired by
     /// GetActiveSession/GetSessionRequestState, so a password change clears the user's other
-    /// sessions immediately.
+    /// sessions immediately. Refresh tokens are removed first because iam.refresh_tokens
+    /// references iam.sessions with ON DELETE RESTRICT.
     /// </summary>
     public async global::System.Threading.Tasks.Task<int> RevokeAllUserSessionsExceptAsync(
         Guid organizationId,
@@ -310,20 +311,47 @@ public sealed class PostgresSessionRepository : ISessionRepository
         EnsureIdentifier(userId, nameof(userId));
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        await using var command = new NpgsqlCommand(
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using (var tokenCommand = new NpgsqlCommand(
             """
-            WITH deleted_tokens AS (
-                DELETE FROM iam.refresh_tokens
-                WHERE session_id IN (
-                    SELECT id FROM iam.sessions
-                    WHERE organization_id = $1 AND user_account_id = $2 AND revoked_at IS NULL
-                        AND ($3::uuid IS NULL OR id <> $3))
-            )
+            DELETE FROM iam.refresh_tokens
+            WHERE session_id IN (
+                SELECT id FROM iam.sessions
+                WHERE organization_id = $1 AND user_account_id = $2 AND revoked_at IS NULL
+                    AND ($3::uuid IS NULL OR id <> $3));
+            """,
+            connection,
+            transaction))
+        {
+            AddRevocationParameters(tokenCommand, organizationId, userId, exceptSessionId);
+            await tokenCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        int deletedSessions;
+        await using (var sessionCommand = new NpgsqlCommand(
+            """
             DELETE FROM iam.sessions
             WHERE organization_id = $1 AND user_account_id = $2 AND revoked_at IS NULL
                 AND ($3::uuid IS NULL OR id <> $3);
             """,
-            connection);
+            connection,
+            transaction))
+        {
+            AddRevocationParameters(sessionCommand, organizationId, userId, exceptSessionId);
+            deletedSessions = await sessionCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+        return deletedSessions;
+    }
+
+    private static void AddRevocationParameters(
+        NpgsqlCommand command,
+        Guid organizationId,
+        Guid userId,
+        Guid? exceptSessionId)
+    {
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
         command.Parameters.Add(new NpgsqlParameter
@@ -331,8 +359,6 @@ public sealed class PostgresSessionRepository : ISessionRepository
             NpgsqlDbType = NpgsqlDbType.Uuid,
             Value = exceptSessionId is null || exceptSessionId == Guid.Empty ? DBNull.Value : exceptSessionId.Value,
         });
-
-        return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private static void EnsureIdentifier(Guid value, string parameterName)

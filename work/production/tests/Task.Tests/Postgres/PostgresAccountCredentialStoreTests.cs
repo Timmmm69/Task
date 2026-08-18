@@ -70,48 +70,48 @@ public sealed class PostgresAccountCredentialStoreTests
 
             Assert.False(await store.UpdateCredentialAsync(
                 organizationId, Guid.NewGuid(),
-                new PasswordHashRecord("hash:fresh", "{}"), 2));
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{}"), 2));
             Assert.False(await store.UpdateCredentialAsync(
                 otherOrganizationId, userId,
-                new PasswordHashRecord("hash:fresh", "{}"), 2));
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{}"), 2));
 
             Assert.True(await store.UpdateCredentialAsync(
                 organizationId, userId,
-                new PasswordHashRecord("hash:fresh", "{\"memoryKiB\":65536}"), 2));
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{\"memoryKiB\":65536}"), 2));
 
             var rotated = await store.GetCredentialAsync(organizationId, userId);
             Assert.NotNull(rotated);
-            Assert.Equal("hash:fresh", rotated.PasswordHash);
-            Assert.Equal("{\"memoryKiB\":65536}", rotated.PasswordParameters);
+            Assert.Equal(FakeHash("hash:fresh"), rotated.PasswordHash);
+            Assert.Equal("{\"memoryKiB\": 65536}", rotated.PasswordParameters);
             Assert.Equal(2, rotated.CredentialVersion);
             Assert.Equal("active", rotated.AccountStatus);
 
             var hashes = Enumerable.Range(1, 6)
-                .Select(index => new PasswordHashRecord($"history:{index}", "{}"))
+                .Select(index => new PasswordHashRecord(FakeHash($"history:{index}"), "{}"))
                 .ToArray();
             foreach (var hash in hashes)
             {
                 await store.AddPasswordToHistoryAsync(organizationId, userId, hash);
             }
 
-            await store.AddPasswordToHistoryAsync(otherOrganizationId, userId, new PasswordHashRecord("history:foreign-org", "{}"));
-            await store.AddPasswordToHistoryAsync(organizationId, Guid.NewGuid(), new PasswordHashRecord("history:unknown-user", "{}"));
-            await store.AddPasswordToHistoryAsync(otherOrganizationId, Guid.NewGuid(), new PasswordHashRecord("history:both-foreign", "{}"));
+            await store.AddPasswordToHistoryAsync(otherOrganizationId, userId, new PasswordHashRecord(FakeHash("history:foreign-org"), "{}"));
+            await store.AddPasswordToHistoryAsync(organizationId, Guid.NewGuid(), new PasswordHashRecord(FakeHash("history:unknown-user"), "{}"));
+            await store.AddPasswordToHistoryAsync(otherOrganizationId, Guid.NewGuid(), new PasswordHashRecord(FakeHash("history:both-foreign"), "{}"));
 
             var recentFive = await store.GetRecentPasswordHistoryAsync(organizationId, userId, 5);
             Assert.Equal(5, recentFive.Count);
-            Assert.Equal("history:6", recentFive[0].Hash);
-            Assert.Equal("history:5", recentFive[1].Hash);
-            Assert.Equal("history:4", recentFive[2].Hash);
-            Assert.Equal("history:3", recentFive[3].Hash);
-            Assert.Equal("history:2", recentFive[4].Hash);
+            Assert.Equal(FakeHash("history:6"), recentFive[0].Hash);
+            Assert.Equal(FakeHash("history:5"), recentFive[1].Hash);
+            Assert.Equal(FakeHash("history:4"), recentFive[2].Hash);
+            Assert.Equal(FakeHash("history:3"), recentFive[3].Hash);
+            Assert.Equal(FakeHash("history:2"), recentFive[4].Hash);
             Assert.All(recentFive, record => Assert.Equal("{}", record.Parameters));
 
             var recentThree = await store.GetRecentPasswordHistoryAsync(organizationId, userId, 3);
             Assert.Equal(3, recentThree.Count);
-            Assert.Equal("history:6", recentThree[0].Hash);
-            Assert.Equal("history:5", recentThree[1].Hash);
-            Assert.Equal("history:4", recentThree[2].Hash);
+            Assert.Equal(FakeHash("history:6"), recentThree[0].Hash);
+            Assert.Equal(FakeHash("history:5"), recentThree[1].Hash);
+            Assert.Equal(FakeHash("history:4"), recentThree[2].Hash);
 
             Assert.Empty(await store.GetRecentPasswordHistoryAsync(otherOrganizationId, userId, 5));
             Assert.Empty(await store.GetRecentPasswordHistoryAsync(organizationId, Guid.NewGuid(), 5));
@@ -122,6 +122,9 @@ public sealed class PostgresAccountCredentialStoreTests
             DropDatabase(adminDataSource, databaseName);
         }
     }
+
+    private static string FakeHash(string prefix) =>
+        prefix + new string('x', 64);
 
     private static void CreateDatabase(NpgsqlDataSource adminDataSource, string databaseName)
     {
