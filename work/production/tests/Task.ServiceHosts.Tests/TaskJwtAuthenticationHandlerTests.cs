@@ -625,5 +625,17 @@ public sealed class TaskJwtAuthenticationHandlerTests
             Guid? exceptSessionId,
             CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
+
+        public global::System.Threading.Tasks.Task<int> PurgeExpiredRefreshTokensAsync(
+            DateTimeOffset olderThanUtc,
+            int maxCount,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public global::System.Threading.Tasks.Task<int> PurgeExpiredSessionsAsync(
+            DateTimeOffset olderThanUtc,
+            int maxCount,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 }

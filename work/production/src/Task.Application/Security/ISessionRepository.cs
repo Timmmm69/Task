@@ -66,4 +66,27 @@ public interface ISessionRepository
         Guid userId,
         Guid? exceptSessionId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Hard-deletes up to maxCount expired refresh tokens whose expires_at is older than the
+    /// cutoff, oldest first. Consumed and revoked tokens are purged once expired. Returns the
+    /// actual number of deleted tokens.
+    /// </summary>
+    global::System.Threading.Tasks.Task<int> PurgeExpiredRefreshTokensAsync(
+        DateTimeOffset olderThanUtc,
+        int maxCount,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Hard-deletes up to maxCount expired sessions whose absolute_expires_at is older than the
+    /// cutoff, oldest first. Sessions still referenced by append-only audit entries
+    /// (governance.audit_entries.actor_session_id) are skipped; their removal is decided by the
+    /// separate audit retention policy. Callers must purge refresh tokens before sessions
+    /// because iam.refresh_tokens references iam.sessions with ON DELETE RESTRICT. Returns the
+    /// actual number of deleted sessions.
+    /// </summary>
+    global::System.Threading.Tasks.Task<int> PurgeExpiredSessionsAsync(
+        DateTimeOffset olderThanUtc,
+        int maxCount,
+        CancellationToken cancellationToken = default);
 }

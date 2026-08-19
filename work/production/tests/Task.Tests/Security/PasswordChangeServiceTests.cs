@@ -350,5 +350,17 @@ public sealed class PasswordChangeServiceTests
             RevokeCalls.Add((organizationId, userId, exceptSessionId));
             return global::System.Threading.Tasks.Task.FromResult(RevokedCount);
         }
+
+        public global::System.Threading.Tasks.Task<int> PurgeExpiredRefreshTokensAsync(
+            DateTimeOffset olderThanUtc,
+            int maxCount,
+            CancellationToken cancellationToken = default) =>
+            throw new global::System.NotImplementedException();
+
+        public global::System.Threading.Tasks.Task<int> PurgeExpiredSessionsAsync(
+            DateTimeOffset olderThanUtc,
+            int maxCount,
+            CancellationToken cancellationToken = default) =>
+            throw new global::System.NotImplementedException();
     }
 }

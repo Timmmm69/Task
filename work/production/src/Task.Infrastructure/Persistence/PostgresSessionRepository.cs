@@ -346,6 +346,64 @@ public sealed class PostgresSessionRepository : ISessionRepository
         return deletedSessions;
     }
 
+    /// <summary>
+    /// Hard-deletes up to maxCount expired refresh tokens (expires_at older than the cutoff) in
+    /// oldest-first order. Returns the actual number of deleted tokens.
+    /// </summary>
+    public async global::System.Threading.Tasks.Task<int> PurgeExpiredRefreshTokensAsync(
+        DateTimeOffset olderThanUtc,
+        int maxCount,
+        CancellationToken cancellationToken = default)
+    {
+        EnsurePositiveCount(maxCount, nameof(maxCount));
+
+        await using var command = _dataSource.CreateCommand(
+            """
+            DELETE FROM iam.refresh_tokens
+            WHERE id IN (
+                SELECT id
+                FROM iam.refresh_tokens
+                WHERE expires_at < $1
+                ORDER BY expires_at
+                LIMIT $2);
+            """);
+        command.Parameters.Add(new NpgsqlParameter<DateTimeOffset> { TypedValue = olderThanUtc });
+        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = maxCount });
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Hard-deletes up to maxCount expired sessions (absolute_expires_at older than the cutoff)
+    /// in oldest-first order. Sessions still referenced by append-only audit entries are
+    /// skipped: governance.audit_entries.actor_session_id references iam.sessions with
+    /// ON DELETE RESTRICT, and audit retention is handled by a separate policy. Returns the
+    /// actual number of deleted sessions.
+    /// </summary>
+    public async global::System.Threading.Tasks.Task<int> PurgeExpiredSessionsAsync(
+        DateTimeOffset olderThanUtc,
+        int maxCount,
+        CancellationToken cancellationToken = default)
+    {
+        EnsurePositiveCount(maxCount, nameof(maxCount));
+
+        await using var command = _dataSource.CreateCommand(
+            """
+            DELETE FROM iam.sessions
+            WHERE id IN (
+                SELECT target.id
+                FROM iam.sessions AS target
+                WHERE target.absolute_expires_at < $1
+                    AND NOT EXISTS (
+                        SELECT 1 FROM governance.audit_entries AS audit_entry
+                        WHERE audit_entry.actor_session_id = target.id)
+                ORDER BY target.absolute_expires_at
+                LIMIT $2);
+            """);
+        command.Parameters.Add(new NpgsqlParameter<DateTimeOffset> { TypedValue = olderThanUtc });
+        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = maxCount });
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     private static void AddRevocationParameters(
         NpgsqlCommand command,
         Guid organizationId,
@@ -374,6 +432,14 @@ public sealed class PostgresSessionRepository : ISessionRepository
         if (value <= 0)
         {
             throw new ArgumentException("Version must be positive.", parameterName);
+        }
+    }
+
+    private static void EnsurePositiveCount(int value, string parameterName)
+    {
+        if (value <= 0)
+        {
+            throw new ArgumentException("Batch size must be positive.", parameterName);
         }
     }
 
