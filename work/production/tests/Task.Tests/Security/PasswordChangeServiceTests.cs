@@ -313,6 +313,7 @@ public sealed class PasswordChangeServiceTests
 
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
             throw new global::System.NotImplementedException();
+
         public SessionRequestState GetSessionRequestState(
             Guid organizationId,
             Guid sessionId,

@@ -190,7 +190,8 @@ public sealed class RefreshTokenRotationServiceTests
             organizationId == OrganizationId && sessionId == SessionId ? ActiveSession : null;
 
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
-            throw new NotSupportedException();
+            throw new global::System.NotImplementedException();
+
         public SessionRequestState GetSessionRequestState(
             Guid organizationId,
             Guid sessionId,

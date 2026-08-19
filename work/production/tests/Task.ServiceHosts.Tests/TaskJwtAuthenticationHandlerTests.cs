@@ -595,6 +595,7 @@ public sealed class TaskJwtAuthenticationHandlerTests
 
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
             throw new NotSupportedException();
+
         public SessionRequestState GetSessionRequestState(
             Guid organizationId,
             Guid sessionId,

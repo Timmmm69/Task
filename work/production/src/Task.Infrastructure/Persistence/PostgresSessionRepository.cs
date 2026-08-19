@@ -68,7 +68,6 @@ public sealed class PostgresSessionRepository : ISessionRepository
         return snapshot;
     }
 
-
     public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash)
     {
         EnsureHash(tokenHash, nameof(tokenHash));
@@ -122,6 +121,7 @@ public sealed class PostgresSessionRepository : ISessionRepository
         reader.Close();
         return lookup;
     }
+
     public SessionRequestState GetSessionRequestState(
         Guid organizationId,
         Guid sessionId,
