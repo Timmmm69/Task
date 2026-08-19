@@ -35,7 +35,7 @@ public sealed class ExpiredSessionMaintenanceWorker(
         {
             _logger.LogWarning(
                 "ISessionRepository is not registered; expired session maintenance runs empty passes " +
-                "(register the TaskDatabase connection string to enable purging)");
+                "(set a valid TaskDatabase connection string to enable purging)");
         }
 
         while (!stoppingToken.IsCancellationRequested)

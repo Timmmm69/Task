@@ -11,9 +11,9 @@ builder.Services.AddWindowsService(options =>
 });
 
 var taskDatabaseConnectionString = builder.Configuration.GetConnectionString("TaskDatabase");
-builder.Services.AddSingleton<TaskPersistenceRuntime>(_ =>
-    new TaskPersistenceRuntime(taskDatabaseConnectionString));
-if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
+var persistenceRuntime = new TaskPersistenceRuntime(taskDatabaseConnectionString);
+builder.Services.AddSingleton(persistenceRuntime);
+if (persistenceRuntime.IsConfigured)
 {
     builder.Services.AddSingleton<ISessionRepository>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateSessionRepository());
