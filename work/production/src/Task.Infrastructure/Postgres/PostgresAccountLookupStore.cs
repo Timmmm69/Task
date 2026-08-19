@@ -7,7 +7,9 @@ namespace Task.Infrastructure.Postgres;
 /// PostgreSQL-backed login lookup over iam.user_accounts with LEFT JOIN to
 /// iam.authorization_scope_versions (migration 002). Single-org deploy: resolve by login
 /// only; zero or multiple matches both yield null (fail closed on org collision).
-/// Never logs login or password material.
+/// The parameter is explicitly cast to citext so matching follows the case-insensitive
+/// semantics of the uq_user_accounts_org_login constraint (an uncast text parameter would
+/// resolve to the case-sensitive text = text operator). Never logs login or password material.
 /// </summary>
 public sealed class PostgresAccountLookupStore : IAccountLookupStore
 {
@@ -43,7 +45,7 @@ public sealed class PostgresAccountLookupStore : IAccountLookupStore
             FROM iam.user_accounts ua
             LEFT JOIN iam.authorization_scope_versions asv
                 ON asv.user_account_id = ua.id
-            WHERE ua.login = $1
+            WHERE ua.login = $1::citext
             LIMIT 2;
             """,
             connection);

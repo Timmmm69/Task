@@ -24,10 +24,11 @@ public sealed record AccountLoginRecord(
 public interface IAccountLookupStore
 {
     /// <summary>
-    /// Finds the account matching login. Returns null when no row matches or when more than
-    /// one organization shares the same login (fail closed). DbNowUtc is the PostgreSQL
-    /// server clock (clock_timestamp()). AuthorizationScopeVersion comes from
-    /// iam.authorization_scope_versions.version, or 1 when no scope row exists.
+    /// Finds the account matching login. Matching is case-insensitive (citext), consistent
+    /// with the uq_user_accounts_org_login unique constraint. Returns null when no row
+    /// matches or when more than one organization shares the same login (fail closed).
+    /// DbNowUtc is the PostgreSQL server clock (clock_timestamp()). AuthorizationScopeVersion
+    /// comes from iam.authorization_scope_versions.version, or 1 when no scope row exists.
     /// </summary>
     global::System.Threading.Tasks.Task<AccountLoginRecord?> FindByLoginAsync(
         string login,

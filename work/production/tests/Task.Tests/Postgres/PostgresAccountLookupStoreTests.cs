@@ -135,7 +135,7 @@ public sealed class PostgresAccountLookupStoreTests
                 collisionOrgB,
                 Guid.NewGuid(),
                 Guid.NewGuid(),
-                sharedLogin,
+                "SHARED.LOGIN",
                 new string('c', 64),
                 "{}",
                 credentialVersion: 1,
@@ -145,6 +145,7 @@ public sealed class PostgresAccountLookupStoreTests
                 authorizationScopeVersion: 1);
 
             Assert.Null(await store.FindByLoginAsync(sharedLogin));
+            Assert.Null(await store.FindByLoginAsync("SHARED.LOGIN"));
         }
         finally
         {
