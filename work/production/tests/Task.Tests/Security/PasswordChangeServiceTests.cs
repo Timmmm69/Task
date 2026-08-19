@@ -311,6 +311,8 @@ public sealed class PasswordChangeServiceTests
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
             throw new global::System.NotImplementedException();
 
+        public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
+            throw new global::System.NotImplementedException();
         public SessionRequestState GetSessionRequestState(
             Guid organizationId,
             Guid sessionId,

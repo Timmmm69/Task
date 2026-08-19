@@ -189,6 +189,8 @@ public sealed class RefreshTokenRotationServiceTests
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
             organizationId == OrganizationId && sessionId == SessionId ? ActiveSession : null;
 
+        public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
+            throw new NotSupportedException();
         public SessionRequestState GetSessionRequestState(
             Guid organizationId,
             Guid sessionId,

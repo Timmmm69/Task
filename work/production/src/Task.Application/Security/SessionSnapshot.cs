@@ -31,3 +31,35 @@ public sealed record RefreshTokenRecord(
     DateTimeOffset? ConsumedAtUtc,
     Guid? ReplacedById,
     DateTimeOffset? RevokedAtUtc);
+
+/// <summary>
+/// Lifecycle status of a refresh token relative to its owning session, evaluated against the
+/// PostgreSQL server clock.
+/// </summary>
+public enum TokenStatus
+{
+    /// <summary>Token is unused, not revoked, not expired, and the session is still active.</summary>
+    Active = 0,
+
+    /// <summary>Token was already consumed by a prior rotation.</summary>
+    Consumed = 1,
+
+    /// <summary>Token was explicitly revoked.</summary>
+    Revoked = 2,
+
+    /// <summary>Token expiry has passed, or the owning session is no longer active.</summary>
+    Expired = 3,
+}
+
+/// <summary>
+/// Session identity resolved by refresh-token hash for refresh flows that carry no sessionId.
+/// Returned whenever the token row exists so callers can detect reuse of consumed tokens.
+/// </summary>
+public sealed record SessionRefreshLookup(
+    Guid OrganizationId,
+    Guid SessionId,
+    Guid UserAccountId,
+    Guid? DeviceId,
+    long CredentialVersion,
+    long AuthorizationScopeVersion,
+    TokenStatus TokenStatus);

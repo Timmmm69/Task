@@ -68,6 +68,60 @@ public sealed class PostgresSessionRepository : ISessionRepository
         return snapshot;
     }
 
+
+    public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash)
+    {
+        EnsureHash(tokenHash, nameof(tokenHash));
+
+        using var command = _dataSource.CreateCommand(
+            """
+            SELECT
+                s.organization_id,
+                s.id,
+                s.user_account_id,
+                s.device_id,
+                s.credential_version,
+                s.authorization_scope_version,
+                CASE
+                    WHEN rt.consumed_at IS NOT NULL THEN 'consumed'
+                    WHEN rt.revoked_at IS NOT NULL THEN 'revoked'
+                    WHEN rt.expires_at <= clock_timestamp() THEN 'expired'
+                    WHEN s.revoked_at IS NOT NULL
+                        OR s.absolute_expires_at <= clock_timestamp()
+                        OR s.idle_expires_at <= clock_timestamp() THEN 'expired'
+                    ELSE 'active'
+                END
+            FROM iam.refresh_tokens rt
+            INNER JOIN iam.sessions s ON s.id = rt.session_id
+            WHERE rt.token_hash = $1;
+            """);
+        command.Parameters.Add(new NpgsqlParameter<string> { TypedValue = tokenHash });
+
+        using var reader = command.ExecuteReader();
+        if (!reader.Read())
+        {
+            return null;
+        }
+
+        var status = reader.GetString(6) switch
+        {
+            "consumed" => TokenStatus.Consumed,
+            "revoked" => TokenStatus.Revoked,
+            "expired" => TokenStatus.Expired,
+            _ => TokenStatus.Active,
+        };
+
+        var lookup = new SessionRefreshLookup(
+            reader.GetGuid(0),
+            reader.GetGuid(1),
+            reader.GetGuid(2),
+            reader.IsDBNull(3) ? null : reader.GetGuid(3),
+            reader.GetInt64(4),
+            reader.GetInt64(5),
+            status);
+        reader.Close();
+        return lookup;
+    }
     public SessionRequestState GetSessionRequestState(
         Guid organizationId,
         Guid sessionId,

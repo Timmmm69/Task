@@ -12,6 +12,15 @@ public interface ISessionRepository
     SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId);
 
     /// <summary>
+    /// Resolves the session that owns the given refresh-token hash. Returns null when no token
+    /// row exists. When the row exists the session is always returned (including consumed,
+    /// revoked or expired tokens) so callers can perform reuse detection. TokenStatus is
+    /// Active only when the token is unused, not revoked, not past expires_at and the session
+    /// is still active (not revoked, idle and absolute expiry still in the future).
+    /// </summary>
+    SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash);
+
+    /// <summary>
     /// Evaluates the authoritative request state for an access token's session against the
     /// current server state: session revocation and expiry, account status and the current
     /// credential and authorization-scope versions. All time comparisons use the PostgreSQL
