@@ -123,6 +123,83 @@ public abstract record RefreshResult
 }
 
 /// <summary>
+/// Client platform reported to the server in the device registration of a login request.
+/// Values are serialized exactly as the <c>platform</c> enum of the <c>DeviceRegistration</c>
+/// schema of the technical specification (2.2).
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter<ClientPlatform>))]
+public enum ClientPlatform
+{
+    /// <summary>Microsoft Windows.</summary>
+    [JsonStringEnumMemberName("windows")]
+    Windows,
+
+    /// <summary>Linux.</summary>
+    [JsonStringEnumMemberName("linux")]
+    Linux,
+
+    /// <summary>Apple macOS.</summary>
+    [JsonStringEnumMemberName("macos")]
+    MacOs,
+}
+
+/// <summary>
+/// Device information sent in the <c>device</c> member of the login request and used as the
+/// single source for the <c>deviceKey</c> of refresh requests. Field names follow the
+/// <c>DeviceRegistration</c> schema of the technical specification (2.2).
+/// </summary>
+/// <param name="DeviceKey">Persistent secret key of the device (min 16 chars).</param>
+/// <param name="DeviceName">Human-readable device name, e.g. <c>Work PC</c>.</param>
+/// <param name="Platform">Platform of the client.</param>
+/// <param name="AppVersion">Version of the Task desktop application.</param>
+/// <param name="OsVersion">Operating system version; optional, sent as <c>null</c> when unknown.</param>
+public sealed record DeviceRegistrationInfo
+{
+    /// <summary>
+    /// Creates a device registration. The <c>deviceKey</c> is a persistent, write-only secret
+    /// that must be kept outside of code and UI, for example in the credential vault.
+    /// </summary>
+    /// <exception cref="ArgumentException">Any required member is null or whitespace.</exception>
+    public DeviceRegistrationInfo(
+        string deviceKey,
+        string deviceName,
+        ClientPlatform platform,
+        string appVersion,
+        string? osVersion = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceKey);
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(appVersion);
+
+        DeviceKey = deviceKey;
+        DeviceName = deviceName;
+        Platform = platform;
+        AppVersion = appVersion;
+        OsVersion = osVersion;
+    }
+
+    /// <summary>Persistent secret key of the device.</summary>
+    [JsonPropertyName("deviceKey")]
+    public string DeviceKey { get; }
+
+    /// <summary>Human-readable device name.</summary>
+    [JsonPropertyName("deviceName")]
+    public string DeviceName { get; }
+
+    /// <summary>Platform of the client.</summary>
+    [JsonPropertyName("platform")]
+    public ClientPlatform Platform { get; }
+
+    /// <summary>Version of the Task desktop application.</summary>
+    [JsonPropertyName("appVersion")]
+    public string AppVersion { get; }
+
+    /// <summary>Operating system version; <c>null</c> when unknown.</summary>
+    [JsonPropertyName("osVersion")]
+    public string? OsVersion { get; }
+}
+
+/// <summary>
 /// HTTP client for the desktop authentication endpoints <c>POST /api/v1/auth/login</c> and
 /// <c>POST /api/v1/auth/refresh</c> (technical specification 2.2).
 ///
@@ -134,8 +211,8 @@ public abstract record RefreshResult
 /// transport failures and client timeouts become <see cref="LoginResult.NetworkFailure"/>.</item>
 /// <item>Never retries a request and never stores tokens; retry policy and token persistence
 /// belong to the session service and the credential vault.</item>
-/// <item>Never logs or persists the password. The client has no logging at all; the password
-/// travels only inside the serialized JSON request body.</item>
+/// <item>Never logs or persists the password or the device key. The client has no logging at
+/// all; these secrets travel only inside the serialized JSON request bodies.</item>
 /// </list>
 ///
 /// Every request carries an <c>X-Correlation-ID</c> header (uuid format): the caller supplies
@@ -176,11 +253,13 @@ public sealed class DesktopAuthApiClient
     }
 
     /// <summary>
-    /// Signs the user in with login and password.
+    /// Signs the user in with login, password and device information.
     /// </summary>
     /// <param name="login">Account login.</param>
     /// <param name="password">Account password. Sent only inside the JSON body of the request
     /// and never written to logs, headers, URLs or any storage.</param>
+    /// <param name="device">Device registration of this client, including the persistent
+    /// device key (see <see cref="DeviceRegistrationInfo"/>).</param>
     /// <param name="correlationId">Correlation identifier sent in the <c>X-Correlation-ID</c>
     /// header, used to trace the request through server logs and audit.</param>
     /// <param name="cancellationToken">Cancellation token; cancellation is propagated to the
@@ -189,17 +268,19 @@ public sealed class DesktopAuthApiClient
     public async global::System.Threading.Tasks.Task<LoginResult> LoginAsync(
         string login,
         string password,
+        DeviceRegistrationInfo device,
         string correlationId,
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
+        ArgumentNullException.ThrowIfNull(device);
         ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
 
         using var request = CreatePostRequest(
             _loginUrl,
             correlationId,
-            new LoginRequestBody(login, password));
+            new LoginRequestBody(login, password, device));
 
         return await SendAsync<LoginResult>(
             request,
@@ -211,21 +292,29 @@ public sealed class DesktopAuthApiClient
     }
 
     /// <summary>
-    /// Rotates the session using the given refresh token. A correlation identifier is
-    /// generated by the client and sent in the <c>X-Correlation-ID</c> header.
+    /// Rotates the session using the given refresh token and the device key that was used to
+    /// establish the session. A correlation identifier is generated by the client and sent in
+    /// the <c>X-Correlation-ID</c> header.
     /// </summary>
     /// <param name="refreshToken">Single-use refresh token of the current session.</param>
+    /// <param name="deviceKey">Persistent secret key of the device (see
+    /// <see cref="DeviceRegistrationInfo.DeviceKey"/>). Sent only inside the JSON body of the
+    /// request and never written to logs, headers, URLs or any storage.</param>
     /// <param name="cancellationToken">Cancellation token; cancellation is propagated to the
     /// caller and is not reported as a network failure.</param>
     /// <returns>Typed outcome of the refresh attempt, never <c>null</c>.</returns>
-    public async global::System.Threading.Tasks.Task<RefreshResult> RefreshAsync(string refreshToken, CancellationToken cancellationToken)
+    public async global::System.Threading.Tasks.Task<RefreshResult> RefreshAsync(
+        string refreshToken,
+        string deviceKey,
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceKey);
 
         using var request = CreatePostRequest(
             _refreshUrl,
             Guid.NewGuid().ToString("D"),
-            new RefreshRequestBody(refreshToken));
+            new RefreshRequestBody(refreshToken, deviceKey));
 
         return await SendAsync<RefreshResult>(
             request,
@@ -369,19 +458,16 @@ public sealed class DesktopAuthApiClient
     };
 
     /// <summary>
-    /// JSON body of the login request: <c>{ "login": ..., "password": ... }</c>. The optional
-    /// <c>device</c> member of the LoginRequest schema is not sent by this client yet: the
-    /// public login contract of this increment is login + password only, and device
-    /// registration belongs to the session service.
+    /// JSON body of the login request: <c>{ "login": ..., "password": ..., "device": ... }</c>,
+    /// matching the <c>LoginRequest</c> schema of the technical specification (2.2).
     /// </summary>
-    private sealed record LoginRequestBody(string Login, string Password);
+    private sealed record LoginRequestBody(string Login, string Password, DeviceRegistrationInfo Device);
 
     /// <summary>
-    /// JSON body of the refresh request: <c>{ "refreshToken": ... }</c>. The optional
-    /// <c>deviceKey</c> member of the RefreshRequest schema is not sent by this client yet;
-    /// it belongs to the session service alongside device registration.
+    /// JSON body of the refresh request: <c>{ "refreshToken": ..., "deviceKey": ... }</c>,
+    /// matching the <c>RefreshRequest</c> schema of the technical specification (2.2).
     /// </summary>
-    private sealed record RefreshRequestBody(string RefreshToken);
+    private sealed record RefreshRequestBody(string RefreshToken, string DeviceKey);
 
     /// <summary>
     /// The subset of the RFC 7807 problem document that the client consumes: the stable

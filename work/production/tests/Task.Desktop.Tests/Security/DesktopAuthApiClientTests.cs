@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -17,6 +17,13 @@ public class DesktopAuthApiClientTests
     private const string BaseUrl = "https://task.local";
     private const string CorrelationId = "019fb732-ad08-7de1-b27d-c86bae8a2937";
     private const string SessionId = "019fa078-3f10-7ec1-99e2-7c1cba4ee3d4";
+    private const string DeviceKey = "dvc-019fb732-ad08-7de1-b27d";
+    private const string DeviceName = "Work PC";
+    private const string AppVersion = "1.0.0";
+    private const string OsVersion = "10.0.26100";
+
+    private static readonly DeviceRegistrationInfo DeviceInfo =
+        new(DeviceKey, DeviceName, ClientPlatform.Windows, AppVersion, OsVersion);
 
     private const string SessionTokensJson =
         """{"accessToken":"AT_header.payload.sig","accessExpiresAt":"2026-08-19T12:00:00Z","refreshToken":"RT_9f8e7d6c5b4a3e2d1c0b9a8f7e6d5c4b","refreshExpiresAt":"2026-09-19T12:00:00Z","sessionId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4"}""";
@@ -33,7 +40,7 @@ public class DesktopAuthApiClientTests
         });
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", password, CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", password, DeviceInfo, CorrelationId, CancellationToken.None);
 
         var succeeded = Assert.IsType<LoginResult.Succeeded>(result);
         Assert.Equal("AT_header.payload.sig", succeeded.Tokens.AccessToken);
@@ -50,12 +57,21 @@ public class DesktopAuthApiClientTests
         Assert.Contains("application/problem+json", captured.Headers["Accept"]);
         Assert.Equal("application/json", captured.ContentType);
 
-        using var json = JsonDocument.Parse(captured.Body);
+        using var json = JsonDocument.Parse(captured!.Body);
         Assert.Equal("ivan", json.RootElement.GetProperty("login").GetString());
         Assert.Equal(password, json.RootElement.GetProperty("password").GetString());
         Assert.DoesNotContain("password", captured.RequestUri.ToString());
 
+        var device = json.RootElement.GetProperty("device");
+        Assert.Equal(DeviceKey, device.GetProperty("deviceKey").GetString());
+        Assert.Equal(DeviceName, device.GetProperty("deviceName").GetString());
+        Assert.Equal("windows", device.GetProperty("platform").GetString());
+        Assert.Equal(AppVersion, device.GetProperty("appVersion").GetString());
+        Assert.Equal(OsVersion, device.GetProperty("osVersion").GetString());
+        Assert.DoesNotContain(DeviceKey, captured.RequestUri.ToString());
+
         AssertNoHeaderContainsSecret(captured, password);
+        AssertNoHeaderContainsSecret(captured, DeviceKey);
     }
 
     [Fact]
@@ -66,7 +82,7 @@ public class DesktopAuthApiClientTests
                 ProblemResponse(HttpStatusCode.Unauthorized, "INVALID_CREDENTIALS")));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "wrong", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
 
         var authError = Assert.IsType<LoginResult.AuthError>(result);
         Assert.Equal(AuthProblemCode.InvalidCredentials, authError.Error.ProblemCode);
@@ -81,7 +97,7 @@ public class DesktopAuthApiClientTests
                 ProblemResponse(HttpStatusCode.Locked, "ACCOUNT_LOCKED_TEMPORARILY", retryAfterSeconds: 90)));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "wrong", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
 
         var authError = Assert.IsType<LoginResult.AuthError>(result);
         Assert.Equal(AuthProblemCode.AccountLockedTemporarily, authError.Error.ProblemCode);
@@ -96,7 +112,7 @@ public class DesktopAuthApiClientTests
                 ProblemResponse(HttpStatusCode.TooManyRequests, "RATE_LIMITED", retryAfterSeconds: 30)));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "wrong", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
 
         var authError = Assert.IsType<LoginResult.AuthError>(result);
         Assert.Equal(AuthProblemCode.RateLimited, authError.Error.ProblemCode);
@@ -111,7 +127,7 @@ public class DesktopAuthApiClientTests
                 ProblemResponse(HttpStatusCode.Forbidden, "ACCOUNT_BLOCKED")));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "wrong", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
 
         var authError = Assert.IsType<LoginResult.AuthError>(result);
         Assert.Equal(AuthProblemCode.AccountBlocked, authError.Error.ProblemCode);
@@ -125,7 +141,7 @@ public class DesktopAuthApiClientTests
                 ProblemResponse(HttpStatusCode.Unauthorized, "AUTHENTICATION_REQUIRED")));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "wrong", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
 
         var authError = Assert.IsType<LoginResult.AuthError>(result);
         Assert.Equal(AuthProblemCode.Unknown, authError.Error.ProblemCode);
@@ -141,7 +157,7 @@ public class DesktopAuthApiClientTests
             }));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "wrong", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.MalformedResponse>(result);
     }
@@ -153,7 +169,7 @@ public class DesktopAuthApiClientTests
             global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, "{not json")));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "pw", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.MalformedResponse>(result);
     }
@@ -166,7 +182,7 @@ public class DesktopAuthApiClientTests
             global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, json)));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "pw", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.MalformedResponse>(result);
     }
@@ -181,9 +197,57 @@ public class DesktopAuthApiClientTests
             }));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "pw", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.MalformedResponse>(result);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Login_DeviceWithoutOsVersion_SerializesOsVersionAsNull()
+    {
+        var device = new DeviceRegistrationInfo(DeviceKey, DeviceName, ClientPlatform.Linux, AppVersion);
+        CapturedRequest? captured = null;
+        var handler = new FakeHttpMessageHandler(async request =>
+        {
+            captured = await CaptureAsync(request);
+            return JsonResponse(HttpStatusCode.OK, SessionTokensJson);
+        });
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        await client.LoginAsync("ivan", "pw", device, CorrelationId, CancellationToken.None);
+
+        using var json = JsonDocument.Parse(captured!.Body);
+        Assert.Equal(JsonValueKind.Null, json.RootElement.GetProperty("device").GetProperty("osVersion").ValueKind);
+    }
+
+    [Theory]
+    [InlineData(ClientPlatform.Windows, "windows")]
+    [InlineData(ClientPlatform.Linux, "linux")]
+    [InlineData(ClientPlatform.MacOs, "macos")]
+    public async global::System.Threading.Tasks.Task Login_DevicePlatform_SerializesToContractString(ClientPlatform platform, string expected)
+    {
+        var device = new DeviceRegistrationInfo(DeviceKey, DeviceName, platform, AppVersion);
+        CapturedRequest? captured = null;
+        var handler = new FakeHttpMessageHandler(async request =>
+        {
+            captured = await CaptureAsync(request);
+            return JsonResponse(HttpStatusCode.OK, SessionTokensJson);
+        });
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        await client.LoginAsync("ivan", "pw", device, CorrelationId, CancellationToken.None);
+
+        using var json = JsonDocument.Parse(captured!.Body);
+        Assert.Equal(expected, json.RootElement.GetProperty("device").GetProperty("platform").GetString());
+    }
+
+    [Fact]
+    public void DeviceRegistrationInfo_RejectsNullOrWhitespaceMembers()
+    {
+        Assert.Throws<ArgumentException>(() => new DeviceRegistrationInfo(" ", DeviceName, ClientPlatform.Windows, AppVersion));
+        Assert.Throws<ArgumentException>(() => new DeviceRegistrationInfo(DeviceKey, " ", ClientPlatform.Windows, AppVersion));
+        Assert.Throws<ArgumentException>(() => new DeviceRegistrationInfo(DeviceKey, DeviceName, ClientPlatform.Windows, " "));
+        Assert.NotNull(new DeviceRegistrationInfo(DeviceKey, DeviceName, ClientPlatform.Windows, AppVersion));
     }
 
     [Fact]
@@ -192,7 +256,7 @@ public class DesktopAuthApiClientTests
         var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("connection refused"));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "pw", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.NetworkFailure>(result);
     }
@@ -206,7 +270,7 @@ public class DesktopAuthApiClientTests
         var httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromMilliseconds(50) };
         var client = new DesktopAuthApiClient(httpClient, BaseUrl);
 
-        var result = await client.LoginAsync("ivan", "pw", CorrelationId, CancellationToken.None);
+        var result = await client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.NetworkFailure>(result);
     }
@@ -220,7 +284,7 @@ public class DesktopAuthApiClientTests
         cts.Cancel();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => client.LoginAsync("ivan", "pw", CorrelationId, cts.Token));
+            () => client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, cts.Token));
     }
 
     [Fact]
@@ -230,7 +294,7 @@ public class DesktopAuthApiClientTests
             global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, SessionTokensJson)));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.RefreshAsync("RT_9f8e7d6c5b4a3e2d1c0b9a8f7e6d5c4b", CancellationToken.None);
+        var result = await client.RefreshAsync("RT_9f8e7d6c5b4a3e2d1c0b9a8f7e6d5c4b", DeviceKey, CancellationToken.None);
 
         var succeeded = Assert.IsType<RefreshResult.Succeeded>(result);
         Assert.Equal("AT_header.payload.sig", succeeded.Tokens.AccessToken);
@@ -249,7 +313,7 @@ public class DesktopAuthApiClientTests
         });
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.RefreshAsync(refreshToken, CancellationToken.None);
+        var result = await client.RefreshAsync(refreshToken, DeviceKey, CancellationToken.None);
 
         var authError = Assert.IsType<RefreshResult.AuthError>(result);
         Assert.Equal(AuthProblemCode.RefreshTokenReuse, authError.Error.ProblemCode);
@@ -262,8 +326,10 @@ public class DesktopAuthApiClientTests
 
         using var json = JsonDocument.Parse(captured.Body);
         Assert.Equal(refreshToken, json.RootElement.GetProperty("refreshToken").GetString());
+        Assert.Equal(DeviceKey, json.RootElement.GetProperty("deviceKey").GetString());
 
         AssertNoHeaderContainsSecret(captured, refreshToken);
+        AssertNoHeaderContainsSecret(captured, DeviceKey);
     }
 
     [Fact]
@@ -272,7 +338,7 @@ public class DesktopAuthApiClientTests
         var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("connection refused"));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
-        var result = await client.RefreshAsync("RT_token", CancellationToken.None);
+        var result = await client.RefreshAsync("RT_token", DeviceKey, CancellationToken.None);
 
         Assert.IsType<RefreshResult.NetworkFailure>(result);
     }
@@ -288,7 +354,7 @@ public class DesktopAuthApiClientTests
         });
         var client = new DesktopAuthApiClient(new HttpClient(handler), $"{BaseUrl}/");
 
-        await client.LoginAsync("ivan", "pw", CorrelationId, CancellationToken.None);
+        await client.LoginAsync("ivan", "pw", DeviceInfo, CorrelationId, CancellationToken.None);
 
         Assert.Equal(new Uri($"{BaseUrl}/api/v1/auth/login"), captured!.RequestUri);
     }
@@ -309,9 +375,12 @@ public class DesktopAuthApiClientTests
             new HttpClient(new FakeHttpMessageHandler(_ =>
                 global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage()))), BaseUrl);
 
-        await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("", "pw", CorrelationId, CancellationToken.None));
-        await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("ivan", "", CorrelationId, CancellationToken.None));
-        await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("ivan", "pw", "", CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("", "pw", DeviceInfo, CorrelationId, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("ivan", "", DeviceInfo, CorrelationId, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.LoginAsync("ivan", "pw", null!, CorrelationId, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("ivan", "pw", DeviceInfo, "", CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.RefreshAsync("RT_token", "", CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.RefreshAsync("", DeviceKey, CancellationToken.None));
     }
 
     private static HttpResponseMessage JsonResponse(HttpStatusCode statusCode, string json) =>
