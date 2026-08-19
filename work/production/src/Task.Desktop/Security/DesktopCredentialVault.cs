@@ -26,6 +26,8 @@ public sealed class DesktopCredentialVault
 {
     private const int CurrentVersion = 1;
     private const string FileName = "credentials.bin";
+    private const int MaxMoveAttempts = 5;
+    private const int MoveRetryDelayMs = 25;
 
     private readonly object _sync = new();
     private readonly string _filePath;
@@ -59,6 +61,8 @@ public sealed class DesktopCredentialVault
     /// <summary>
     /// Persists the refresh token and its context. The whole payload is
     /// encrypted as a single DPAPI (CurrentUser) blob before it touches disk.
+    /// The write is atomic (unique temp file + rename), so a concurrent reader
+    /// in another process or window never observes a partial blob.
     /// </summary>
     public void SaveRefreshToken(string deviceId, string orgId, string login, string refreshToken)
     {
@@ -76,9 +80,29 @@ public sealed class DesktopCredentialVault
         lock (_sync)
         {
             Directory.CreateDirectory(StorageDirectory);
-            var tempPath = _filePath + ".tmp";
+            var tempPath = Path.Combine(StorageDirectory, $"{FileName}.{Guid.NewGuid():N}.tmp");
             File.WriteAllBytes(tempPath, protectedBytes);
-            File.Move(tempPath, _filePath, overwrite: true);
+
+            // Replace by rename can transiently hit a Windows sharing violation
+            // when another process or window clears the file at the same moment;
+            // bounded retries absorb the race, a persistent failure still
+            // surfaces to the caller instead of being swallowed.
+            for (var attempt = 0; ; attempt++)
+            {
+                try
+                {
+                    File.Move(tempPath, _filePath, overwrite: true);
+                    break;
+                }
+                catch (IOException) when (attempt < MaxMoveAttempts - 1)
+                {
+                    Thread.Sleep(MoveRetryDelayMs);
+                }
+                catch (UnauthorizedAccessException) when (attempt < MaxMoveAttempts - 1)
+                {
+                    Thread.Sleep(MoveRetryDelayMs);
+                }
+            }
         }
     }
 
@@ -99,7 +123,7 @@ public sealed class DesktopCredentialVault
             byte[] protectedBytes;
             try
             {
-                protectedBytes = File.ReadAllBytes(_filePath);
+                protectedBytes = ReadAllBytesShared(_filePath);
             }
             catch (IOException)
             {
@@ -187,6 +211,20 @@ public sealed class DesktopCredentialVault
             {
             }
         }
+    }
+
+    /// <summary>
+    /// Reads a file sharing read/write and delete access: the credential file is
+    /// replaced atomically by rename, never written in place, so concurrent
+    /// readers in other processes or windows always see a complete blob and a
+    /// save/clear in another process is never blocked by an open read handle.
+    /// </summary>
+    private static byte[] ReadAllBytesShared(string path)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        return buffer.ToArray();
     }
 
     private void IsolateCorruptFile()

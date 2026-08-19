@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Tasks = System.Threading.Tasks;
 using Task.Desktop.Security;
 
 namespace Task.Desktop.Tests;
@@ -196,6 +198,86 @@ public class DesktopCredentialVaultTests : IDisposable
         var vault = new DesktopCredentialVault(_directory);
 
         Assert.Null(vault.GetRefreshToken());
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("null")]
+    [InlineData("[1,2,3]")]
+    [InlineData("{\"Version\":\"1\"}")]
+    public void CorruptPayload_InvalidButDecryptable_ReturnsNull_AndIsolatesFile(string payload)
+    {
+        var vault = new DesktopCredentialVault(_directory);
+        Directory.CreateDirectory(_directory);
+        File.WriteAllBytes(
+            VaultFilePath,
+            ProtectedData.Protect(
+                Encoding.UTF8.GetBytes(payload),
+                optionalEntropy: null,
+                DataProtectionScope.CurrentUser));
+
+        Assert.Null(vault.GetRefreshToken());
+        Assert.False(File.Exists(VaultFilePath));
+        Assert.Single(Directory.GetFiles(_directory, "credentials.bin.corrupt-*"));
+    }
+
+    [Fact]
+    public void SaveThenGet_UnicodeAndLongValues_RoundTrip()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+        const string login = "Иван-Петров";
+        var token = new string('x', 4096) + "_refresh_йфя";
+
+        vault.SaveRefreshToken("device-1", "org-1", login, token);
+
+        var entry = vault.GetRefreshToken();
+
+        Assert.NotNull(entry);
+        Assert.Equal(login, entry.Login);
+        Assert.Equal(token, entry.RefreshToken);
+    }
+
+    [Fact]
+    public void ConcurrentMultiWindowAccess_NeverThrows_AndEndsInConsistentState()
+    {
+        var writer = new DesktopCredentialVault(_directory);
+        var reader = new DesktopCredentialVault(_directory);
+        var errors = new ConcurrentQueue<Exception>();
+
+        var tasks = Enumerable.Range(0, 8).Select(i => Tasks.Task.Run(() =>
+        {
+            try
+            {
+                if (i % 2 == 0)
+                {
+                    for (var n = 0; n < 100; n++)
+                    {
+                        writer.SaveRefreshToken($"device-{i}", "org-1", "user", $"TOKEN_{i}_{n}");
+                    }
+                }
+                else
+                {
+                    for (var n = 0; n < 100; n++)
+                    {
+                        _ = reader.GetRefreshToken();
+                        if (n % 25 == 0)
+                        {
+                            reader.Clear();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.Enqueue(ex);
+            }
+        })).ToArray();
+
+        Tasks.Task.WaitAll(tasks);
+
+        Assert.Empty(errors);
+        var entry = reader.GetRefreshToken();
+        Assert.True(entry is null || !string.IsNullOrEmpty(entry.RefreshToken));
     }
 
     private static byte[] EncodeUtf8(string text) => Encoding.UTF8.GetBytes(text);
