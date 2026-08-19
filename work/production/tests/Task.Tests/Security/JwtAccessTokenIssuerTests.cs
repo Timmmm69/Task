@@ -6,7 +6,7 @@ using Task.Application.Security;
 
 namespace Task.Tests.Security;
 
-public sealed class JwtAccessTokenIssuerTests
+public sealed class JwtAccessTokenIssuerTests : IDisposable
 {
     private const string Issuer = "https://task.example.internal";
     private const string Audience = "task-desktop";
@@ -17,6 +17,24 @@ public sealed class JwtAccessTokenIssuerTests
 
     private static readonly DateTime FixedIssuedAt =
         new(2026, 6, 1, 10, 0, 0, DateTimeKind.Utc);
+
+    private readonly string _tempRoot =
+        Path.Combine(Path.GetTempPath(), $"task-issuer-tests-{Guid.NewGuid():N}");
+
+    public void Dispose()
+    {
+        try
+        {
+            Directory.Delete(_tempRoot, recursive: true);
+        }
+        catch (IOException)
+        {
+            // Best-effort cleanup; a locked file must not fail the test run.
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+    }
 
     [Fact]
     public async global::System.Threading.Tasks.Task IssueAsync_DefaultLifetime_IssuesEs256TokenWithExpectedClaims()
@@ -55,6 +73,27 @@ public sealed class JwtAccessTokenIssuerTests
 
         Assert.Equal(FixedIssuedAt, jwt.IssuedAt);
         Assert.Equal(FixedIssuedAt.AddMinutes(2), jwt.ValidTo);
+    }
+
+    [Theory]
+    [InlineData(DateTimeKind.Unspecified)]
+    [InlineData(DateTimeKind.Utc)]
+    [InlineData(DateTimeKind.Local)]
+    public async global::System.Threading.Tasks.Task IssueAsync_IssuedAtKind_ProducesExpectedUtcTimestamp(DateTimeKind kind)
+    {
+        using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var issuer = CreateIssuer(ecdsa.ExportECPrivateKeyPem());
+        var issuedAt = new DateTime(2026, 6, 1, 10, 0, 0, kind);
+        var expectedUtc = kind == DateTimeKind.Unspecified
+            ? issuedAt
+            : issuedAt.ToUniversalTime();
+
+        var token = await issuer.IssueAsync(
+            DefaultRequest() with { IssuedAtUtc = issuedAt },
+            CancellationToken.None);
+        var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
+
+        Assert.Equal(expectedUtc, jwt.IssuedAt);
     }
 
     [Fact]
@@ -238,18 +277,19 @@ public sealed class JwtAccessTokenIssuerTests
             IssuedAtUtc = FixedIssuedAt,
         };
 
-    private static JwtAccessTokenIssuer CreateIssuer(string pem, string alias = "task-signing")
+    private JwtAccessTokenIssuer CreateIssuer(string pem, string alias = "task-signing")
     {
         var keyPath = WriteKey(pem, alias);
         return new JwtAccessTokenIssuer(Issuer, Audience, $"file:{keyPath}");
     }
 
-    private static string WriteKey(string pem, string alias = "task-signing")
+    private string WriteKey(string pem, string alias = "task-signing")
     {
-        var directory = Path.Combine(Path.GetTempPath(), $"task-issuer-tests-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(directory);
-        var path = Path.Combine(directory, alias);
+        Directory.CreateDirectory(TempRoot);
+        var path = Path.Combine(TempRoot, alias);
         File.WriteAllText(path, pem);
         return path;
     }
+
+    private string TempRoot => _tempRoot;
 }

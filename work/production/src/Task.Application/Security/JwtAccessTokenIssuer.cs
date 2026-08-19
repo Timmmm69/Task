@@ -9,8 +9,9 @@ namespace Task.Application.Security;
 /// <summary>
 /// Data needed to issue one ES256 access token. Claim names and types mirror the claims read by
 /// AccessTokenValidator (Task.Api.Security): sub, sid and org are "D"-formatted GUIDs, cver and
-/// sver are strictly positive integers. IssuedAtUtc defaults to the current UTC time and Lifetime
-/// to 5 minutes, which is the maximum lifetime the validator accepts.
+/// sver are strictly positive integers. IssuedAtUtc defaults to the current UTC time (a value
+/// with DateTimeKind.Unspecified is interpreted as UTC) and Lifetime defaults to 5 minutes, which
+/// is the maximum lifetime the validator accepts.
 /// </summary>
 public sealed record JwtIssuanceRequest(
     Guid SubjectId,
@@ -96,7 +97,10 @@ public sealed class JwtAccessTokenIssuer
             throw new ArgumentException("Token lifetime must be positive.", nameof(request));
         }
 
-        var issuedAt = (request.IssuedAtUtc ?? DateTime.UtcNow).ToUniversalTime();
+        var requestedIssuedAt = request.IssuedAtUtc ?? DateTime.UtcNow;
+        var issuedAt = requestedIssuedAt.Kind == DateTimeKind.Unspecified
+            ? DateTime.SpecifyKind(requestedIssuedAt, DateTimeKind.Utc)
+            : requestedIssuedAt.ToUniversalTime();
         var descriptor = new SecurityTokenDescriptor
         {
             Issuer = _issuer,

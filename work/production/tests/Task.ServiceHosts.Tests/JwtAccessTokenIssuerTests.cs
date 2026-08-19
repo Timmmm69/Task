@@ -5,7 +5,7 @@ using Task.Application.Security;
 
 namespace Task.ServiceHosts.Tests;
 
-public sealed class JwtAccessTokenIssuerTests
+public sealed class JwtAccessTokenIssuerTests : IDisposable
 {
     private const string Issuer = "https://task.example.internal";
     private const string Audience = "task-desktop";
@@ -16,6 +16,24 @@ public sealed class JwtAccessTokenIssuerTests
     private static readonly Guid SubjectId = Guid.Parse("11111111-1111-1111-1111-111111111111");
     private static readonly Guid SessionId = Guid.Parse("22222222-2222-2222-2222-222222222222");
     private static readonly Guid OrgId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+
+    private readonly string _tempRoot =
+        Path.Combine(Path.GetTempPath(), $"task-issuer-roundtrip-{Guid.NewGuid():N}");
+
+    public void Dispose()
+    {
+        try
+        {
+            Directory.Delete(_tempRoot, recursive: true);
+        }
+        catch (IOException)
+        {
+            // Best-effort cleanup; a locked file must not fail the test run.
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
+    }
 
     [Fact]
     public async global::System.Threading.Tasks.Task IssueAsync_TokenAcceptedByAccessTokenValidator_WithMatchingClaims()
@@ -97,12 +115,12 @@ public sealed class JwtAccessTokenIssuerTests
         Assert.False(result.IsExpired);
     }
 
-    private static (JwtAccessTokenIssuer Issuer, AccessTokenValidator Validator, JwtVerificationKeys VerificationKeys) CreateRoundTrip(
+    private (JwtAccessTokenIssuer Issuer, AccessTokenValidator Validator, JwtVerificationKeys VerificationKeys) CreateRoundTrip(
         string? issuer = null,
         string? audience = null)
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
-        var directory = Path.Combine(Path.GetTempPath(), $"task-issuer-roundtrip-{Guid.NewGuid():N}");
+        var directory = Path.Combine(_tempRoot, $"roundtrip-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         var keyFile = Path.Combine(directory, KeyId);
         File.WriteAllText(keyFile, ecdsa.ExportPkcs8PrivateKeyPem());
@@ -130,9 +148,9 @@ public sealed class JwtAccessTokenIssuerTests
     private static JwtIssuanceRequest DefaultRequest() =>
         new(SubjectId, SessionId, OrgId, CredentialVersion: 3, SessionVersion: 7);
 
-    private static string WriteKey(string pem)
+    private string WriteKey(string pem)
     {
-        var directory = Path.Combine(Path.GetTempPath(), $"task-issuer-foreign-{Guid.NewGuid():N}");
+        var directory = Path.Combine(_tempRoot, $"foreign-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         var path = Path.Combine(directory, "foreign-key");
         File.WriteAllText(path, pem);
