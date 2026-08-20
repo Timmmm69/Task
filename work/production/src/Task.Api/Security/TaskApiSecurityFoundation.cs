@@ -20,10 +20,10 @@ internal static class TaskApiSecurityFoundation
                 FoundationAuthenticationScheme,
                 _ => { });
 
-        // The factory keeps ISessionRepository optional (null when no database is configured) so
-        // the handler fails closed instead of failing startup. The authentication handler provider
-        // resolves the concrete handler type, hence the concrete registration.
-        services.AddSingleton<TaskJwtAuthenticationHandler>(provider => new TaskJwtAuthenticationHandler(
+        // Transient registration so each request gets a fresh handler instance; the base
+        // AuthenticationHandler<T> caches the AuthenticateResult internally, so a singleton
+        // would reuse the first request's identity for all subsequent requests.
+        services.AddTransient<TaskJwtAuthenticationHandler>(provider => new TaskJwtAuthenticationHandler(
             provider.GetRequiredService<IOptionsMonitor<AuthenticationSchemeOptions>>(),
             provider.GetRequiredService<ILoggerFactory>(),
             provider.GetRequiredService<UrlEncoder>(),

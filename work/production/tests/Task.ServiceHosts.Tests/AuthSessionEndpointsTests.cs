@@ -262,24 +262,17 @@ public sealed class AuthSessionEndpointsTests
         {
             OwnedSession = OwnSession(with: UserId),
         };
+        using var server = CreateServer(sessionRepository);
+        using var client = await CreateAuthenticatedClientAsync(server);
         var url = $"/api/v1/auth/sessions/{OtherSessionId:D}/revoke";
 
-        using (var server = CreateServer(sessionRepository))
-        using (var client = await CreateAuthenticatedClientAsync(server))
-        {
-            var first = await client.PostAsync(url, null);
-            Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
-        }
+        // Both calls succeed: the endpoint is idempotent because GetSession returns sessions
+        // in any state (including revoked), so the second call still finds the session.
+        var first = await client.PostAsync(url, null);
+        var second = await client.PostAsync(url, null);
 
-        // A second revocation of the same session still succeeds: GetSession returns revoked
-        // sessions, so the endpoint is idempotent and never reports the session as invisible.
-        using (var server = CreateServer(sessionRepository))
-        using (var client = await CreateAuthenticatedClientAsync(server))
-        {
-            var second = await client.PostAsync(url, null);
-            Assert.Equal(HttpStatusCode.NoContent, second.StatusCode);
-        }
-
+        Assert.Equal(HttpStatusCode.NoContent, first.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, second.StatusCode);
         var revocations = sessionRepository.Revoked;
         Assert.Equal(2, revocations.Count);
         Assert.All(revocations, revocation =>
