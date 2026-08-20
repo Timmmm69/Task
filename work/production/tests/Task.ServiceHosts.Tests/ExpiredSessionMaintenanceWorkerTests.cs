@@ -214,6 +214,12 @@ public sealed class ExpiredSessionMaintenanceWorkerTests
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
             throw new NotSupportedException();
 
+        public SessionSnapshot? GetSession(Guid organizationId, Guid sessionId) =>
+            throw new NotSupportedException();
+
+        public IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId) =>
+            throw new NotSupportedException();
+
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
             throw new NotSupportedException();
 

@@ -12,6 +12,20 @@ public interface ISessionRepository
     SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId);
 
     /// <summary>
+    /// Loads a session in any state (active, revoked or expired); returns null only when no
+    /// row exists for the organization and session id. Used to verify session ownership
+    /// before revocation.
+    /// </summary>
+    SessionSnapshot? GetSession(Guid organizationId, Guid sessionId);
+
+    /// <summary>
+    /// Lists up to 200 sessions of a user in any state (including revoked and expired),
+    /// ordered by last_seen_at descending, with the device display name when a device is
+    /// registered. Scoped to exactly one organization.
+    /// </summary>
+    IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId);
+
+    /// <summary>
     /// Resolves the session that owns the given refresh-token hash. Returns null when no token
     /// row exists. When the row exists the session is always returned (including consumed,
     /// revoked or expired tokens) so callers can perform reuse detection. TokenStatus is

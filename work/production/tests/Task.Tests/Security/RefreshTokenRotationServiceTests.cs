@@ -189,6 +189,12 @@ public sealed class RefreshTokenRotationServiceTests
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
             organizationId == OrganizationId && sessionId == SessionId ? ActiveSession : null;
 
+        public SessionSnapshot? GetSession(Guid organizationId, Guid sessionId) =>
+            throw new global::System.NotImplementedException();
+
+        public IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId) =>
+            throw new global::System.NotImplementedException();
+
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
             throw new global::System.NotImplementedException();
 

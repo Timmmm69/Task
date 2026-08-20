@@ -453,6 +453,12 @@ public sealed class LoginServiceTests
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
             throw new global::System.NotImplementedException();
 
+        public SessionSnapshot? GetSession(Guid organizationId, Guid sessionId) =>
+            throw new global::System.NotImplementedException();
+
+        public IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId) =>
+            throw new global::System.NotImplementedException();
+
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
             throw new global::System.NotImplementedException();
 

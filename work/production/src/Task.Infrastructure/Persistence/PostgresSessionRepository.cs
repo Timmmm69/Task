@@ -68,6 +68,102 @@ public sealed class PostgresSessionRepository : ISessionRepository
         return snapshot;
     }
 
+    public SessionSnapshot? GetSession(Guid organizationId, Guid sessionId)
+    {
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(sessionId, nameof(sessionId));
+
+        using var command = _dataSource.CreateCommand(
+            """
+            SELECT
+                id,
+                organization_id,
+                user_account_id,
+                device_id,
+                credential_version,
+                authorization_scope_version,
+                created_at,
+                last_seen_at,
+                idle_expires_at,
+                absolute_expires_at,
+                revoked_at,
+                revoke_reason
+            FROM iam.sessions
+            WHERE organization_id = $1 AND id = $2;
+            """);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = sessionId });
+
+        using var reader = command.ExecuteReader();
+        if (!reader.Read())
+        {
+            return null;
+        }
+
+        var snapshot = new SessionSnapshot(
+            reader.GetGuid(0),
+            reader.GetGuid(1),
+            reader.GetGuid(2),
+            reader.IsDBNull(3) ? null : reader.GetGuid(3),
+            reader.GetInt64(4),
+            reader.GetInt64(5),
+            reader.GetFieldValue<DateTimeOffset>(6),
+            reader.GetFieldValue<DateTimeOffset>(7),
+            reader.GetFieldValue<DateTimeOffset>(8),
+            reader.GetFieldValue<DateTimeOffset>(9),
+            ReadNullableTimestamp(reader, 10),
+            reader.IsDBNull(11) ? null : reader.GetString(11));
+        reader.Close();
+        return snapshot;
+    }
+
+    public IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId)
+    {
+        const int listLimit = 200;
+
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(userId, nameof(userId));
+
+        using var command = _dataSource.CreateCommand(
+            """
+            SELECT
+                s.id,
+                d.display_name,
+                s.created_at,
+                s.last_seen_at,
+                s.idle_expires_at,
+                s.absolute_expires_at,
+                s.revoked_at,
+                s.revoke_reason
+            FROM iam.sessions s
+            LEFT JOIN iam.devices d ON d.id = s.device_id
+            WHERE s.organization_id = $1 AND s.user_account_id = $2
+            ORDER BY s.last_seen_at DESC
+            LIMIT $3;
+            """);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = listLimit });
+
+        var items = new List<UserSessionListItem>(listLimit);
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            items.Add(new UserSessionListItem(
+                reader.GetGuid(0),
+                reader.IsDBNull(1) ? null : reader.GetString(1),
+                reader.GetFieldValue<DateTimeOffset>(2),
+                reader.GetFieldValue<DateTimeOffset>(3),
+                reader.GetFieldValue<DateTimeOffset>(4),
+                reader.GetFieldValue<DateTimeOffset>(5),
+                ReadNullableTimestamp(reader, 6),
+                reader.IsDBNull(7) ? null : reader.GetString(7)));
+        }
+
+        reader.Close();
+        return items;
+    }
+
     public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash)
     {
         EnsureHash(tokenHash, nameof(tokenHash));

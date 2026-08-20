@@ -63,3 +63,18 @@ public sealed record SessionRefreshLookup(
     long CredentialVersion,
     long AuthorizationScopeVersion,
     TokenStatus TokenStatus);
+
+/// <summary>
+/// One session as listed for the signed-in user. Covers every session state (active,
+/// revoked and expired); DeviceDisplayName is null when the session has no device or the
+/// device row is missing. Produced by ISessionRepository.GetUserSessions.
+/// </summary>
+public sealed record UserSessionListItem(
+    Guid SessionId,
+    string? DeviceDisplayName,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset LastSeenAtUtc,
+    DateTimeOffset IdleExpiresAtUtc,
+    DateTimeOffset AbsoluteExpiresAtUtc,
+    DateTimeOffset? RevokedAtUtc,
+    string? RevokeReason);

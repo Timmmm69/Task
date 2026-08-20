@@ -564,6 +564,11 @@ public sealed class AuthEndpointsTests
         public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
             ActiveSession;
 
+        public SessionSnapshot? GetSession(Guid organizationId, Guid sessionId) => null;
+
+        public IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId) =>
+            Array.Empty<UserSessionListItem>();
+
         public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
             _refreshLookups.TryGetValue(tokenHash, out var lookup) ? lookup : null;
 
