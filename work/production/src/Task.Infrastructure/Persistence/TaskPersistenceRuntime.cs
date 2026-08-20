@@ -1,8 +1,10 @@
 using Npgsql;
 using Task.Application;
+using Task.Application.Audit;
 using Task.Application.Calendar;
 using Task.Application.Security;
 using Task.Infrastructure.Identity;
+using Task.Infrastructure.Postgres;
 
 namespace Task.Infrastructure.Persistence;
 
@@ -51,6 +53,18 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 
     public ISessionRepository CreateSessionRepository() =>
         new PostgresSessionRepository(GetConfiguredDataSource());
+
+    public IAccountLookupStore CreateAccountLookupStore() =>
+        new PostgresAccountLookupStore(GetConfiguredDataSource());
+
+    public IDeviceRegistrationStore CreateDeviceRegistrationStore() =>
+        new PostgresDeviceRegistrationStore(GetConfiguredDataSource());
+
+    public IAccountLockoutStore CreateAccountLockoutStore() =>
+        new PostgresAccountLockoutStore(GetConfiguredDataSource());
+
+    public IAuditEntryStore CreateAuditEntryStore() =>
+        new PostgresAuditEntryStore(GetConfiguredDataSource());
 
     public TaskPersistenceMigrator CreateMigrator() =>
         new(GetConfiguredDataSource());

@@ -15,7 +15,8 @@ internal static class TaskApiProblemResponse
         int statusCode,
         string code,
         string title,
-        bool retryable)
+        bool retryable,
+        int? retryAfterSeconds = null)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentException.ThrowIfNullOrWhiteSpace(code);
@@ -32,6 +33,10 @@ internal static class TaskApiProblemResponse
         problem.Extensions["correlationId"] = GetCorrelationId(context);
         problem.Extensions["traceId"] = context.TraceIdentifier;
         problem.Extensions["retryable"] = retryable;
+        if (retryAfterSeconds.HasValue)
+        {
+            problem.Extensions["retryAfterSeconds"] = retryAfterSeconds.Value;
+        }
 
         context.Response.ContentType = "application/problem+json";
         return JsonSerializer.SerializeAsync(

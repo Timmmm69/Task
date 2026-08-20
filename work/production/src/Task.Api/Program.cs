@@ -1,9 +1,13 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Hosting.WindowsServices;
+using Microsoft.Extensions.Options;
 using Task.Application;
+using Task.Application.Audit;
 using Task.Application.Calendar;
 using Task.Application.Security;
+using Task.Api.Auth;
 using Task.Api.Security;
+using Task.Infrastructure.Identity;
 using Task.Infrastructure.Persistence;
 
 const string CorrelationIdHeader = "X-Correlation-ID";
@@ -50,6 +54,42 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<ScheduleQueryService>();
     builder.Services.AddSingleton<ISessionRepository>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateSessionRepository());
+    builder.Services.AddSingleton<IAccountLookupStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateAccountLookupStore());
+    builder.Services.AddSingleton<IDeviceRegistrationStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateDeviceRegistrationStore());
+    builder.Services.AddSingleton<IAccountLockoutStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateAccountLockoutStore());
+    builder.Services.AddSingleton<IAuditEntryStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateAuditEntryStore());
+
+    builder.Services.AddSingleton<AccountLockoutPolicy>();
+    builder.Services.AddSingleton<AccountLockoutService>();
+    builder.Services.AddSingleton<IPasswordHasher>(services =>
+    {
+        var options = services.GetRequiredService<IOptions<TaskIdentityFoundationOptions>>().Value;
+        var reference = options.PepperReference;
+        if (string.IsNullOrWhiteSpace(reference) || !reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Task:Identity:PepperReference must be a file: reference.");
+        }
+
+        var path = reference.Substring("file:".Length);
+        var pepper = File.ReadAllText(path).Trim();
+        return new Argon2idPasswordHasherAdapter(pepper);
+    });
+    builder.Services.AddSingleton<RefreshTokenRotationService>(services =>
+        new RefreshTokenRotationService(services.GetRequiredService<ISessionRepository>()));
+    builder.Services.AddSingleton<JwtAccessTokenIssuer>(services =>
+    {
+        var options = services.GetRequiredService<IOptions<TaskIdentityFoundationOptions>>().Value;
+        return new JwtAccessTokenIssuer(
+            options.Issuer!,
+            options.Audience!,
+            options.SigningKeyReference!);
+    });
+    builder.Services.AddSingleton<LoginService>();
+    builder.Services.AddSingleton<RefreshService>();
 }
 
 var app = builder.Build();
@@ -79,6 +119,8 @@ app.Use(async (context, next) =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapAuthEndpoints();
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 
