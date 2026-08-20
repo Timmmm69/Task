@@ -10,6 +10,7 @@ namespace Task.Infrastructure.Identity;
 public sealed class Argon2idPasswordHasherAdapter : IPasswordHasher
 {
     private const string Argon2idAlgorithm = "argon2id";
+    private const string DummyPassword = "task-login-timing-equivalent-password";
 
     private readonly Argon2idPasswordHasher _inner;
     private readonly string _pepper;
@@ -19,7 +20,10 @@ public sealed class Argon2idPasswordHasherAdapter : IPasswordHasher
         ArgumentException.ThrowIfNullOrWhiteSpace(pepper);
         _inner = inner ?? new Argon2idPasswordHasher();
         _pepper = pepper;
+        DummyPasswordHash = HashPassword(DummyPassword);
     }
+
+    public PasswordHashRecord DummyPasswordHash { get; }
 
     public PasswordHashRecord HashPassword(string password)
     {

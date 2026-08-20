@@ -135,6 +135,29 @@ public sealed class AccountLockoutService
             : LockoutStatus.NotLocked;
     }
 
+    /// <summary>
+    /// Remaining time of the current temporary lock (locked_until - db now), or null when the
+    /// account is not temporarily locked. Evaluated against the database clock
+    /// (LockoutState.DbNowUtc); permanently blocked accounts without a locked_until also
+    /// report null (their rejection is signalled by <see cref="GetStatusAsync"/>).
+    /// </summary>
+    public async global::System.Threading.Tasks.Task<TimeSpan?> GetLockoutRemainingAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(userId, nameof(userId));
+
+        var state = await _store.GetLockoutStateAsync(organizationId, userId, cancellationToken);
+        if (state is null || state.LockedUntilUtc is not { } lockedUntil || lockedUntil <= state.DbNowUtc)
+        {
+            return null;
+        }
+
+        return lockedUntil - state.DbNowUtc;
+    }
+
     private static void EnsureIdentifier(Guid value, string parameterName)
     {
         if (value == Guid.Empty)

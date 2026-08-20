@@ -17,6 +17,18 @@ public interface IPasswordHasher
     /// malformed record; never throws for invalid stored content.
     /// </summary>
     bool VerifyPassword(string password, PasswordHashRecord stored);
+
+    /// <summary>
+    /// Precomputed hash of a fixed constant password, used for timing-equivalent verification
+    /// when the account does not exist (see <see cref="LoginService"/>). The concrete adapter
+    /// computes it once at construction time; the default implementation throws because only a
+    /// concrete adapter knows how to hash. Hashers used in the login flow must override it.
+    /// </summary>
+    PasswordHashRecord DummyPasswordHash
+    {
+        get => throw new NotSupportedException(
+            "Password hasher adapters must provide DummyPasswordHash for unknown-account verification.");
+    }
 }
 
 /// <summary>
