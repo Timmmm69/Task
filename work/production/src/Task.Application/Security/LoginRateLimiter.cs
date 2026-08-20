@@ -24,7 +24,8 @@ public sealed record RateLimitDecision(bool IsAllowed, TimeSpan RetryAfter)
 /// (например, "ip|login" в нижнем регистре). Использует скользящее окно на основе
 /// монотонного времени <see cref="TimeProvider"/>; при превышении порога прогрессивно
 /// увеличивает задержку. Сервис не имеет внешних зависимостей и не использует фоновый
-/// таймер — устаревшие записи чистятся лениво при доступе.
+/// таймер — устаревшие записи чистятся лениво при доступе. Для потокобезопасности
+/// используется единый lock на всё состояние limiter.
 /// </summary>
 public sealed class LoginRateLimiter
 {
@@ -94,8 +95,7 @@ public sealed class LoginRateLimiter
 
         lock (_lock)
         {
-            var now = _timeProvider.GetTimestamp();
-            CleanupIfNeeded(now);
+            CleanupIfNeeded();
 
             if (!_states.TryGetValue(normalized, out var state))
             {
@@ -103,10 +103,11 @@ public sealed class LoginRateLimiter
                 _states[normalized] = state;
             }
 
+            var now = _timeProvider.GetTimestamp();
             state.Timestamps.Add(now);
             state.LastTimestamp = now;
 
-            PruneWindow(state, now);
+            PruneWindow(state);
 
             if (state.Timestamps.Count >= _maxAttempts)
             {
@@ -129,15 +130,14 @@ public sealed class LoginRateLimiter
 
         lock (_lock)
         {
-            var now = _timeProvider.GetTimestamp();
-            CleanupIfNeeded(now);
+            CleanupIfNeeded();
 
             if (!_states.TryGetValue(normalized, out var state))
             {
                 return RateLimitDecision.Allowed();
             }
 
-            PruneWindow(state, now);
+            PruneWindow(state);
 
             if (state.Timestamps.Count >= _maxAttempts)
             {
@@ -185,9 +185,10 @@ public sealed class LoginRateLimiter
         return normalized;
     }
 
-    private void CleanupIfNeeded(long now)
+    private void CleanupIfNeeded()
     {
-        if (_timeProvider.GetElapsedTime(_lastGlobalCleanup, now) <= _window)
+        var now = _timeProvider.GetTimestamp();
+        if (_timeProvider.GetElapsedTime(_lastGlobalCleanup) <= _window)
         {
             return;
         }
@@ -195,7 +196,7 @@ public sealed class LoginRateLimiter
         var staleThreshold = _window + _window;
         foreach (var pair in _states.ToArray())
         {
-            if (_timeProvider.GetElapsedTime(pair.Value.LastTimestamp, now) > staleThreshold)
+            if (_timeProvider.GetElapsedTime(pair.Value.LastTimestamp) > staleThreshold)
             {
                 _states.TryRemove(pair.Key, out _);
             }
@@ -204,7 +205,7 @@ public sealed class LoginRateLimiter
         _lastGlobalCleanup = now;
     }
 
-    private void PruneWindow(KeyState state, long now)
+    private void PruneWindow(KeyState state)
     {
         var count = state.Timestamps.Count;
         if (count == 0)
@@ -214,7 +215,7 @@ public sealed class LoginRateLimiter
 
         // Timestamps хранятся в хронологическом порядке.
         var index = 0;
-        while (index < count && _timeProvider.GetElapsedTime(state.Timestamps[index], now) >= _window)
+        while (index < count && _timeProvider.GetElapsedTime(state.Timestamps[index]) >= _window)
         {
             index++;
         }
