@@ -59,7 +59,11 @@ public sealed class RefreshService
 {
     private const string RefreshTokenReuseAuditAction = "RefreshTokenReuse";
     private const string SessionRefreshedAuditAction = "SessionRefreshed";
+    private const string RefreshTokenReuseReasonCode = "REFRESH_TOKEN_REUSE";
     private const string ReuseRevokeReason = "refresh-token-reuse";
+    private const string SuccessOutcome = "success";
+    private const string FailedOutcome = "failed";
+    private const string StandardRedactionLevel = "standard";
 
     private readonly ISessionRepository _sessionRepository;
     private readonly RefreshTokenRotationService _rotationService;
@@ -113,7 +117,7 @@ public sealed class RefreshService
             case TokenStatus.Consumed:
                 _sessionRepository.RevokeSession(organizationId, sessionId, ReuseRevokeReason);
                 await AppendAuditBestEffortAsync(
-                    lookup, command, RefreshTokenReuseAuditAction, "failure", ReuseRevokeReason);
+                    lookup, command, RefreshTokenReuseAuditAction, FailedOutcome, RefreshTokenReuseReasonCode, cancellationToken);
                 return new RefreshOutcome.ReuseDetected();
             case TokenStatus.Active:
                 break;
@@ -157,23 +161,24 @@ public sealed class RefreshService
         if (outcome is RefreshOutcome.Succeeded)
         {
             await AppendAuditBestEffortAsync(
-                lookup, command, SessionRefreshedAuditAction, "success", reasonCode: null);
+                lookup, command, SessionRefreshedAuditAction, SuccessOutcome, reasonCode: null, cancellationToken);
         }
 
         return outcome;
     }
 
     /// <summary>
-    /// Appends one audit entry, best-effort: a failing or unavailable journal must never break
-    /// the refresh flow, so any exception is swallowed. The write is not tied to the request
-    /// cancellation so a successful rotation is always recorded.
+    /// Appends one audit entry, best-effort like the login flow (#21): a failing or unavailable
+    /// journal must never break the refresh flow, so non-cancellation exceptions are swallowed.
+    /// Cancellation is still propagated, and the entry carries no tokens or secrets.
     /// </summary>
     private async global::System.Threading.Tasks.Task AppendAuditBestEffortAsync(
         SessionRefreshLookup lookup,
         RefreshCommand command,
         string actionCode,
         string outcome,
-        string? reasonCode)
+        string? reasonCode,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -181,7 +186,7 @@ public sealed class RefreshService
                 new AuditEntryRecord(
                     Guid.NewGuid(),
                     lookup.OrganizationId,
-                    default,
+                    DateTimeOffset.UtcNow,
                     lookup.UserAccountId,
                     lookup.SessionId,
                     actionCode,
@@ -192,12 +197,16 @@ public sealed class RefreshService
                     AuditEntryRecord.DefaultMetadata,
                     null,
                     null,
-                    "standard"),
-                CancellationToken.None);
+                    StandardRedactionLevel),
+                cancellationToken);
         }
-        catch (Exception)
+        catch (OperationCanceledException)
         {
-            // Best-effort audit: swallowed by design.
+            throw;
+        }
+        catch
+        {
+            // Audit is best-effort; the refresh must not fail because of the journal.
         }
     }
 

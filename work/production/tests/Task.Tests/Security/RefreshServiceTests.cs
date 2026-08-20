@@ -164,8 +164,8 @@ public sealed class RefreshServiceTests
 
         var audit = Assert.Single(auditStore.Entries);
         Assert.Equal("RefreshTokenReuse", audit.ActionCode);
-        Assert.Equal("failure", audit.Outcome);
-        Assert.Equal("refresh-token-reuse", audit.ReasonCode);
+        Assert.Equal("failed", audit.Outcome);
+        Assert.Equal("REFRESH_TOKEN_REUSE", audit.ReasonCode);
         Assert.Equal(OrganizationId, audit.OrganizationId);
         Assert.Equal(UserId, audit.ActorUserId);
         Assert.Equal(SessionId, audit.ActorSessionId);
@@ -277,6 +277,25 @@ public sealed class RefreshServiceTests
         var outcome = await service.RefreshAsync(CreateCommand());
 
         Assert.IsType<RefreshOutcome.Succeeded>(outcome);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task RefreshAsync_WhenAuditAppendCancelled_PropagatesCancellation()
+    {
+        var repository = new FakeSessionRepository
+        {
+            Lookup = CreateLookup(TokenStatus.Active),
+            ActiveSession = ActiveSession,
+            ShouldRotateSucceed = true,
+        };
+        var auditStore = new FakeAuditStore
+        {
+            ThrowOnAppend = new OperationCanceledException(),
+        };
+        var service = CreateService(repository, auditStore: auditStore);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => service.RefreshAsync(CreateCommand()));
     }
 
     [Fact]
