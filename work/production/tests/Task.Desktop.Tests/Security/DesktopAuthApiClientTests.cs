@@ -344,6 +344,74 @@ public class DesktopAuthApiClientTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Logout_204_ReturnsSucceeded_AndSendsContractRequest()
+    {
+        const string accessToken = "AT_header.payload.sig";
+        CapturedRequest? captured = null;
+        var handler = new FakeHttpMessageHandler(async request =>
+        {
+            captured = await CaptureAsync(request);
+            return new HttpResponseMessage(HttpStatusCode.NoContent);
+        });
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.LogoutAsync(accessToken, CancellationToken.None);
+
+        Assert.IsType<LogoutResult.Succeeded>(result);
+
+        Assert.NotNull(captured);
+        Assert.Equal(HttpMethod.Post, captured!.Method);
+        Assert.Equal(new Uri($"{BaseUrl}/api/v1/auth/logout"), captured.RequestUri);
+        var correlationId = Assert.Single(captured.Headers["X-Correlation-ID"]);
+        Assert.True(Guid.TryParseExact(correlationId, "D", out _), "client must send a uuid-format correlation id");
+        Assert.Equal($"Bearer {accessToken}", Assert.Single(captured.Headers["Authorization"]));
+        Assert.Contains("application/json", captured.Headers["Accept"]);
+        Assert.Contains("application/problem+json", captured.Headers["Accept"]);
+        Assert.Null(captured.ContentType);
+        Assert.DoesNotContain(accessToken, captured.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Logout_401_Problem_ReturnsAuthError()
+    {
+        var handler = new FakeHttpMessageHandler(_ =>
+            global::System.Threading.Tasks.Task.FromResult(
+                ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED")));
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.LogoutAsync("AT_token", CancellationToken.None);
+
+        var authError = Assert.IsType<LogoutResult.AuthError>(result);
+        Assert.Equal(AuthProblemCode.SessionExpired, authError.Error.ProblemCode);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Logout_NetworkError_ReturnsNetworkFailure()
+    {
+        var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("connection refused"));
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.LogoutAsync("AT_token", CancellationToken.None);
+
+        Assert.IsType<LogoutResult.NetworkFailure>(result);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Logout_NonProblemBody_ReturnsMalformedResponse()
+    {
+        var handler = new FakeHttpMessageHandler(_ =>
+            global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError)
+            {
+                Content = new StringContent("<html>boom</html>", Encoding.UTF8, "text/html"),
+            }));
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.LogoutAsync("AT_token", CancellationToken.None);
+
+        Assert.IsType<LogoutResult.MalformedResponse>(result);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Ctor_TrailingSlashBaseUrl_IsNormalized()
     {
         CapturedRequest? captured = null;
@@ -381,6 +449,8 @@ public class DesktopAuthApiClientTests
         await Assert.ThrowsAsync<ArgumentException>(() => client.LoginAsync("ivan", "pw", DeviceInfo, "", CancellationToken.None));
         await Assert.ThrowsAsync<ArgumentException>(() => client.RefreshAsync("RT_token", "", CancellationToken.None));
         await Assert.ThrowsAsync<ArgumentException>(() => client.RefreshAsync("", DeviceKey, CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.LogoutAsync("", CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.LogoutAsync("   ", CancellationToken.None));
     }
 
     private static HttpResponseMessage JsonResponse(HttpStatusCode statusCode, string json) =>

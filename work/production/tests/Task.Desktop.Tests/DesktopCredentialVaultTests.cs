@@ -47,7 +47,7 @@ public class DesktopCredentialVaultTests : IDisposable
         var vault = new DesktopCredentialVault(_directory);
         var before = DateTime.UtcNow.AddSeconds(-1);
 
-        vault.SaveRefreshToken("device-1", "org-42", "ivan", "RT_9f8e7d6c5b4a");
+        vault.SaveRefreshToken("device-1", "org-42", "ivan", "dvc-key-1", "RT_9f8e7d6c5b4a");
 
         var entry = vault.GetRefreshToken();
 
@@ -55,9 +55,33 @@ public class DesktopCredentialVaultTests : IDisposable
         Assert.Equal("device-1", entry.DeviceId);
         Assert.Equal("org-42", entry.OrgId);
         Assert.Equal("ivan", entry.Login);
+        Assert.Equal("dvc-key-1", entry.DeviceKey);
         Assert.Equal("RT_9f8e7d6c5b4a", entry.RefreshToken);
         Assert.True(entry.SavedAtUtc >= before && entry.SavedAtUtc <= DateTime.UtcNow.AddSeconds(1));
-        Assert.Equal(1, entry.Version);
+        Assert.Equal(2, entry.Version);
+    }
+
+    [Fact]
+    public void Save_WithEmptyOrgId_RoundTrips()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+
+        vault.SaveRefreshToken("device-1", string.Empty, "ivan", "dvc-key-1", "RT_token");
+
+        var entry = vault.GetRefreshToken();
+
+        Assert.NotNull(entry);
+        Assert.Equal(string.Empty, entry.OrgId);
+        Assert.Equal("dvc-key-1", entry.DeviceKey);
+    }
+
+    [Fact]
+    public void Save_RejectsNullOrWhitespaceDeviceKey()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+
+        Assert.Throws<ArgumentException>(() => vault.SaveRefreshToken("device-1", "org-1", "a", " ", "RT_token"));
+        Assert.Throws<ArgumentNullException>(() => vault.SaveRefreshToken("device-1", "org-1", "a", null!, "RT_token"));
     }
 
     [Fact]
@@ -74,11 +98,11 @@ public class DesktopCredentialVaultTests : IDisposable
         var first = new DesktopCredentialVault(_directory);
         var second = new DesktopCredentialVault(_directory);
 
-        first.SaveRefreshToken("device-1", "org-1", "a", "TOKEN_A");
+        first.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "TOKEN_A");
 
         Assert.Equal("TOKEN_A", second.GetRefreshToken()?.RefreshToken);
 
-        first.SaveRefreshToken("device-1", "org-1", "a", "TOKEN_B");
+        first.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "TOKEN_B");
 
         Assert.Equal("TOKEN_B", second.GetRefreshToken()?.RefreshToken);
     }
@@ -88,8 +112,8 @@ public class DesktopCredentialVaultTests : IDisposable
     {
         var vault = new DesktopCredentialVault(_directory);
 
-        vault.SaveRefreshToken("device-1", "org-1", "a", "OLD_TOKEN");
-        vault.SaveRefreshToken("device-2", "org-2", "b", "NEW_TOKEN");
+        vault.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "OLD_TOKEN");
+        vault.SaveRefreshToken("device-2", "org-2", "b", "dvc-2", "NEW_TOKEN");
 
         var entry = vault.GetRefreshToken();
 
@@ -97,6 +121,7 @@ public class DesktopCredentialVaultTests : IDisposable
         Assert.Equal("device-2", entry.DeviceId);
         Assert.Equal("org-2", entry.OrgId);
         Assert.Equal("b", entry.Login);
+        Assert.Equal("dvc-2", entry.DeviceKey);
         Assert.Equal("NEW_TOKEN", entry.RefreshToken);
     }
 
@@ -110,7 +135,7 @@ public class DesktopCredentialVaultTests : IDisposable
         Assert.Equal("AT_plaintext_must_not_land_on_disk", vault.GetAccessToken());
         Assert.False(File.Exists(VaultFilePath));
 
-        vault.SaveRefreshToken("device-1", "org-1", "a", "RT_token");
+        vault.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "RT_token");
         var bytes = File.ReadAllBytes(VaultFilePath);
         Assert.False(ContainsSequence(bytes, EncodeUtf8("AT_plaintext_must_not_land_on_disk")));
     }
@@ -119,7 +144,7 @@ public class DesktopCredentialVaultTests : IDisposable
     public void Clear_RemovesFileAndAccessToken()
     {
         var vault = new DesktopCredentialVault(_directory);
-        vault.SaveRefreshToken("device-1", "org-1", "a", "RT_token");
+        vault.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "RT_token");
         vault.SetAccessToken("AT_token");
 
         vault.Clear();
@@ -134,7 +159,7 @@ public class DesktopCredentialVaultTests : IDisposable
     public void CorruptFile_TamperedBytes_ReturnsNull_AndIsolatesFile()
     {
         var vault = new DesktopCredentialVault(_directory);
-        vault.SaveRefreshToken("device-1", "org-1", "a", "RT_token");
+        vault.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "RT_token");
         var tampered = File.ReadAllBytes(VaultFilePath);
         for (var i = 0; i < tampered.Length; i++)
         {
@@ -153,7 +178,7 @@ public class DesktopCredentialVaultTests : IDisposable
     public void CorruptFile_WrongVersion_ReturnsNull_AndIsolatesFile()
     {
         var vault = new DesktopCredentialVault(_directory);
-        vault.SaveRefreshToken("device-1", "org-1", "a", "RT_token");
+        vault.SaveRefreshToken("device-1", "org-1", "a", "dvc-1", "RT_token");
 
         var payload = ProtectedData.Unprotect(
             File.ReadAllBytes(VaultFilePath),
@@ -172,24 +197,67 @@ public class DesktopCredentialVaultTests : IDisposable
     }
 
     [Fact]
+    public void CorruptFile_VersionOneFileWithoutDeviceKey_ReturnsNull_AndIsolatesFile()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+
+        var v1Entry = new RefreshTokenEntry(
+            "device-1", "org-1", "a", "dvc-1", "RT_token", DateTime.UtcNow, Version: 1);
+        Directory.CreateDirectory(_directory);
+        File.WriteAllBytes(
+            VaultFilePath,
+            ProtectedData.Protect(
+                System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(v1Entry),
+                optionalEntropy: null,
+                DataProtectionScope.CurrentUser));
+
+        Assert.Null(vault.GetRefreshToken());
+        Assert.False(File.Exists(VaultFilePath));
+        Assert.Single(Directory.GetFiles(_directory, "credentials.bin.corrupt-*"));
+    }
+
+    [Fact]
+    public void CorruptFile_NullDeviceKey_ReturnsNull_AndIsolatesFile()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+
+        var entry = new RefreshTokenEntry(
+            "device-1", string.Empty, "a", null, "RT_token", DateTime.UtcNow, Version: 2);
+        Directory.CreateDirectory(_directory);
+        File.WriteAllBytes(
+            VaultFilePath,
+            ProtectedData.Protect(
+                System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(entry),
+                optionalEntropy: null,
+                DataProtectionScope.CurrentUser));
+
+        Assert.Null(vault.GetRefreshToken());
+        Assert.False(File.Exists(VaultFilePath));
+        Assert.Single(Directory.GetFiles(_directory, "credentials.bin.corrupt-*"));
+    }
+
+    [Fact]
     public void EncryptedFile_DoesNotContainPlaintextTokenOrIdentity()
     {
         var vault = new DesktopCredentialVault(_directory);
         const string token = "RT_0gHb3kL9wXq7ZnY5CuM2pR8sVdGfJ1tN4eK6oA0xBcDiElFhSmoPyUiDrTwZaQj";
         const string login = "ivan_petrov_42";
+        const string deviceKey = "dvc_9xY2wV4uT8sR6qP0oN2mL4kJ6hG8fD1sA3zX5cV7bN9mQwErTyUiOpAsDfGhJkL";
 
-        vault.SaveRefreshToken("device-abc-123", "org-xyz-789", login, token);
+        vault.SaveRefreshToken("device-abc-123", "org-xyz-789", login, deviceKey, token);
 
         var bytes = File.ReadAllBytes(VaultFilePath);
 
         Assert.False(ContainsSequence(bytes, EncodeUtf8(token)));
         Assert.False(ContainsSequence(bytes, EncodeUtf8(login)));
+        Assert.False(ContainsSequence(bytes, EncodeUtf8(deviceKey)));
         Assert.False(ContainsSequence(bytes, EncodeUtf8("device-abc-123")));
         Assert.False(ContainsSequence(bytes, EncodeUtf8("org-xyz-789")));
 
         var decoded = Encoding.Latin1.GetString(bytes);
         Assert.DoesNotContain(token, decoded);
         Assert.DoesNotContain(login, decoded);
+        Assert.DoesNotContain(deviceKey, decoded);
     }
 
     [Fact]
@@ -205,6 +273,7 @@ public class DesktopCredentialVaultTests : IDisposable
     [InlineData("null")]
     [InlineData("[1,2,3]")]
     [InlineData("{\"Version\":\"1\"}")]
+    [InlineData("{\"DeviceId\":\"d\",\"OrgId\":\"\",\"Login\":\"u\",\"DeviceKey\":\"\",\"RefreshToken\":\"rt\",\"Version\":2}")]
     public void CorruptPayload_InvalidButDecryptable_ReturnsNull_AndIsolatesFile(string payload)
     {
         var vault = new DesktopCredentialVault(_directory);
@@ -226,14 +295,16 @@ public class DesktopCredentialVaultTests : IDisposable
     {
         var vault = new DesktopCredentialVault(_directory);
         const string login = "Иван-Петров";
+        const string deviceKey = "dvc_ключ_Иван";
         var token = new string('x', 4096) + "_refresh_йфя";
 
-        vault.SaveRefreshToken("device-1", "org-1", login, token);
+        vault.SaveRefreshToken("device-1", "org-1", login, deviceKey, token);
 
         var entry = vault.GetRefreshToken();
 
         Assert.NotNull(entry);
         Assert.Equal(login, entry.Login);
+        Assert.Equal(deviceKey, entry.DeviceKey);
         Assert.Equal(token, entry.RefreshToken);
     }
 
@@ -252,7 +323,7 @@ public class DesktopCredentialVaultTests : IDisposable
                 {
                     for (var n = 0; n < 100; n++)
                     {
-                        writer.SaveRefreshToken($"device-{i}", "org-1", "user", $"TOKEN_{i}_{n}");
+                        writer.SaveRefreshToken($"device-{i}", "org-1", "user", $"dvc-{i}", $"TOKEN_{i}_{n}");
                     }
                 }
                 else

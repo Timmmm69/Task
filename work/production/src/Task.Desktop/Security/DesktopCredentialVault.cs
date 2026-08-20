@@ -6,17 +6,21 @@ namespace Task.Desktop.Security;
 
 /// <summary>
 /// Credential vault of the desktop client: stores the session refresh token
-/// in a single DPAPI-protected file and the access token in memory only.
+/// and the persistent device key in a single DPAPI-protected file and the
+/// access token in memory only.
 ///
 /// Storage layout: one <see cref="ProtectedData"/> (CurrentUser) blob in
 /// <c>%LOCALAPPDATA%\Task\credentials.bin</c> containing a serialized
-/// <see cref="RefreshTokenEntry"/> with <c>version = 1</c>.
+/// <see cref="RefreshTokenEntry"/> with <c>version = 2</c>.
 ///
 /// Fail-closed: if the file is missing, unreadable, does not decrypt or has an
 /// unsupported version, <see cref="GetRefreshToken"/> returns <c>null</c> and
-/// the application continues as "not signed in". A corrupt file is never
-/// deleted automatically: it is renamed to <c>credentials.bin.corrupt-&lt;timestamp&gt;</c>
-/// for diagnostics when the rename succeeds; a failed rename is ignored.
+/// the application continues as "not signed in". Version 1 files written by
+/// older builds do not carry the device key and are rejected the same way:
+/// the user is simply signed out and signs in again on the next start. A
+/// corrupt file is never deleted automatically: it is renamed to
+/// <c>credentials.bin.corrupt-&lt;timestamp&gt;</c> for diagnostics when the
+/// rename succeeds; a failed rename is ignored.
 ///
 /// Thread safety: all members are guarded by a private lock. There is no cache:
 /// every call re-reads the file from disk so that concurrent processes or
@@ -24,7 +28,7 @@ namespace Task.Desktop.Security;
 /// </summary>
 public sealed class DesktopCredentialVault
 {
-    private const int CurrentVersion = 1;
+    private const int CurrentVersion = 2;
     private const string FileName = "credentials.bin";
     private const int MaxMoveAttempts = 5;
     private const int MoveRetryDelayMs = 25;
@@ -59,19 +63,29 @@ public sealed class DesktopCredentialVault
     public string StorageDirectory { get; }
 
     /// <summary>
-    /// Persists the refresh token and its context. The whole payload is
-    /// encrypted as a single DPAPI (CurrentUser) blob before it touches disk.
-    /// The write is atomic (unique temp file + rename), so a concurrent reader
-    /// in another process or window never observes a partial blob.
+    /// Persists the refresh token, its context and the persistent device key.
+    /// The whole payload is encrypted as a single DPAPI (CurrentUser) blob
+    /// before it touches disk. The write is atomic (unique temp file + rename),
+    /// so a concurrent reader in another process or window never observes a
+    /// partial blob.
     /// </summary>
-    public void SaveRefreshToken(string deviceId, string orgId, string login, string refreshToken)
+    /// <param name="deviceId">Identifier of the client device that owns the session.</param>
+    /// <param name="orgId">Identifier of the organization the session belongs to. The desktop
+    /// client is single-org and always stores an empty string here; the field is kept for
+    /// contract compatibility and is not used by the client.</param>
+    /// <param name="login">User login the session was issued for.</param>
+    /// <param name="deviceKey">Persistent secret key of the device; required and stored
+    /// encrypted, never in plaintext.</param>
+    /// <param name="refreshToken">Refresh token issued by the server.</param>
+    public void SaveRefreshToken(string deviceId, string orgId, string login, string deviceKey, string refreshToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(deviceId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(orgId);
+        ArgumentNullException.ThrowIfNull(orgId);
         ArgumentException.ThrowIfNullOrWhiteSpace(login);
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceKey);
         ArgumentException.ThrowIfNullOrWhiteSpace(refreshToken);
 
-        var entry = new RefreshTokenEntry(deviceId, orgId, login, refreshToken, DateTime.UtcNow, CurrentVersion);
+        var entry = new RefreshTokenEntry(deviceId, orgId, login, deviceKey, refreshToken, DateTime.UtcNow, CurrentVersion);
         byte[] protectedBytes = ProtectedData.Protect(
             JsonSerializer.SerializeToUtf8Bytes(entry),
             optionalEntropy: null,
@@ -108,8 +122,10 @@ public sealed class DesktopCredentialVault
 
     /// <summary>
     /// Reads and decrypts the refresh token entry, or returns <c>null</c> when
-    /// no entry exists or the stored file is corrupt (fail-closed). A corrupt
-    /// file is isolated by renaming, never deleted.
+    /// no entry exists, the stored file is corrupt, the payload version is
+    /// unsupported (including version 1 files without a device key) or the
+    /// device key is missing (fail-closed). A corrupt file is isolated by
+    /// renaming, never deleted; the user signs in again on the next start.
     /// </summary>
     public RefreshTokenEntry? GetRefreshToken()
     {
@@ -159,8 +175,9 @@ public sealed class DesktopCredentialVault
             if (entry is null ||
                 entry.Version != CurrentVersion ||
                 string.IsNullOrWhiteSpace(entry.DeviceId) ||
-                string.IsNullOrWhiteSpace(entry.OrgId) ||
+                entry.OrgId is null ||
                 string.IsNullOrWhiteSpace(entry.Login) ||
+                string.IsNullOrWhiteSpace(entry.DeviceKey) ||
                 string.IsNullOrWhiteSpace(entry.RefreshToken))
             {
                 IsolateCorruptFile();
@@ -247,11 +264,16 @@ public sealed class DesktopCredentialVault
 
 /// <summary>
 /// Session credential entry persisted by <see cref="DesktopCredentialVault"/>.
-/// Contains session tokens only — never passwords or key material.
+/// Contains session tokens and the persistent device key only — never
+/// passwords or other key material.
 /// </summary>
 /// <param name="DeviceId">Identifier of the client device that owns the session.</param>
-/// <param name="OrgId">Identifier of the organization the session belongs to.</param>
+/// <param name="OrgId">Identifier of the organization the session belongs to. The desktop
+/// client is single-org and stores an empty string; the field is kept for contract
+/// compatibility and is not used by the client.</param>
 /// <param name="Login">User login the session was issued for.</param>
+/// <param name="DeviceKey">Persistent secret key of the device; the vault rejects entries
+/// without it.</param>
 /// <param name="RefreshToken">Refresh token issued by the server.</param>
 /// <param name="SavedAtUtc">UTC timestamp of the last save.</param>
 /// <param name="Version">Payload format version; the vault rejects unknown versions.</param>
@@ -259,6 +281,7 @@ public sealed record RefreshTokenEntry(
     string DeviceId,
     string OrgId,
     string Login,
+    string? DeviceKey,
     string RefreshToken,
     DateTime SavedAtUtc,
     int Version);
