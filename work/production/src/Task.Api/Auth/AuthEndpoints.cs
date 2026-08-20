@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
 using Task.Api.Security;
 using Task.Application.Security;
 
@@ -14,6 +13,12 @@ internal static class AuthEndpoints
 
     private static readonly TimeSpan AccessTokenLifetime = TimeSpan.FromMinutes(5);
 
+    /// <summary>
+    /// Maps the desktop auth endpoints. Fail-closed by design: when the auth services are not
+    /// registered (deployment not configured with Task:Identity secrets and a database), every
+    /// request is answered with 503 INTERNAL_ERROR "Auth endpoints are not configured" before
+    /// any request body is read, so no token can ever be issued without full configuration.
+    /// </summary>
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         ArgumentNullException.ThrowIfNull(app);
