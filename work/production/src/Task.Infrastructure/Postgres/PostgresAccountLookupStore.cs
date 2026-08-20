@@ -41,7 +41,8 @@ public sealed class PostgresAccountLookupStore : IAccountLookupStore
                 ua.account_status,
                 ua.failed_login_count,
                 ua.locked_until,
-                clock_timestamp()
+                clock_timestamp(),
+                ua.must_change_password
             FROM iam.user_accounts ua
             LEFT JOIN iam.authorization_scope_versions asv
                 ON asv.user_account_id = ua.id
@@ -79,5 +80,6 @@ public sealed class PostgresAccountLookupStore : IAccountLookupStore
             reader.GetString(7),
             reader.GetInt32(8),
             reader.IsDBNull(9) ? null : reader.GetFieldValue<DateTimeOffset>(9),
-            reader.GetFieldValue<DateTimeOffset>(10));
+            reader.GetFieldValue<DateTimeOffset>(10),
+            reader.GetBoolean(11));
 }

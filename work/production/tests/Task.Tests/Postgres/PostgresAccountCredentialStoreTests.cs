@@ -115,6 +115,24 @@ public sealed class PostgresAccountCredentialStoreTests
 
             Assert.Empty(await store.GetRecentPasswordHistoryAsync(otherOrganizationId, userId, 5));
             Assert.Empty(await store.GetRecentPasswordHistoryAsync(organizationId, Guid.NewGuid(), 5));
+
+            Assert.True(await store.ResetMustChangePasswordAsync(organizationId, userId));
+            Assert.False(await store.ResetMustChangePasswordAsync(organizationId, Guid.NewGuid()));
+            Assert.False(await store.ResetMustChangePasswordAsync(otherOrganizationId, userId));
+
+            await using (var flagCommand = dataSource.CreateCommand(
+                """
+                SELECT must_change_password
+                FROM iam.user_accounts
+                WHERE organization_id = $1 AND id = $2;
+                """))
+            {
+                flagCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+                flagCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+                var flag = await flagCommand.ExecuteScalarAsync();
+                Assert.NotNull(flag);
+                Assert.False((bool)flag);
+            }
         }
         finally
         {
@@ -209,7 +227,7 @@ public sealed class PostgresAccountCredentialStoreTests
             INSERT INTO iam.user_accounts (
                 id, organization_id, employee_profile_id, login, password_hash,
                 password_parameters, account_status, must_change_password)
-            VALUES ($1, $2, $3, $4, $5, '{}'::jsonb, 'active', false);
+            VALUES ($1, $2, $3, $4, $5, '{}'::jsonb, 'active', true);
             """))
         {
             userCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });

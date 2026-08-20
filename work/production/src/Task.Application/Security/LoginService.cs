@@ -37,7 +37,8 @@ public abstract record LoginOutcome
         long AuthorizationScopeVersion,
         string RawRefreshToken,
         DateTimeOffset RefreshExpiresAtUtc,
-        DateTimeOffset AbsoluteExpiresAtUtc) : LoginOutcome;
+        DateTimeOffset AbsoluteExpiresAtUtc,
+        bool MustChangePassword = false) : LoginOutcome;
 
     /// <summary>
     /// The login does not identify an account or the password does not verify. The same outcome
@@ -60,8 +61,9 @@ public abstract record LoginOutcome
 /// unknown logins, lockout enforcement, password verification, device registration, atomic
 /// session creation and audit journaling. Fail-closed: passwords and tokens are never logged,
 /// unknown-login and wrong-password paths are indistinguishable to callers, and a journal write
-/// failure never fails a login (audit is best-effort). must_change_password handling is out of
-/// scope and is not evaluated here.
+/// failure never fails a login (audit is best-effort). MustChangePassword is propagated from the
+/// account record on success; callers (API/desktop, wave B) enforce the change — this service
+/// does not block login when the flag is set.
 /// </summary>
 public sealed class LoginService
 {
@@ -261,7 +263,8 @@ public sealed class LoginService
             account.AuthorizationScopeVersion,
             refreshDescriptor.RawToken,
             now + RefreshTokenRotationService.DefaultRefreshTokenLifetime,
-            now + _absoluteTimeout);
+            now + _absoluteTimeout,
+            account.MustChangePassword);
     }
 
     /// <summary>

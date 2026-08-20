@@ -15,7 +15,8 @@ public sealed record AccountLoginRecord(
     string AccountStatus,
     int FailedLoginCount,
     DateTimeOffset? LockedUntilUtc,
-    DateTimeOffset DbNowUtc);
+    DateTimeOffset DbNowUtc,
+    bool MustChangePassword = false);
 
 /// <summary>
 /// Persistence port for resolving a user account by login for the login flow.

@@ -65,7 +65,8 @@ public sealed class PostgresAccountLookupStoreTests
                 accountStatus: "blocked",
                 failedLoginCount: 4,
                 lockedUntilUtc: DateTimeOffset.Parse("2030-01-15T12:00:00Z"),
-                authorizationScopeVersion: 7);
+                authorizationScopeVersion: 7,
+                mustChangePassword: true);
 
             var hit = await store.FindByLoginAsync(login);
             Assert.NotNull(hit);
@@ -82,6 +83,7 @@ public sealed class PostgresAccountLookupStoreTests
             Assert.Equal(
                 DateTimeOffset.Parse("2030-01-15T12:00:00Z"),
                 hit.LockedUntilUtc.Value);
+            Assert.True(hit.MustChangePassword);
             Assert.InRange(
                 hit.DbNowUtc,
                 new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero),
@@ -103,7 +105,8 @@ public sealed class PostgresAccountLookupStoreTests
                 accountStatus: "active",
                 failedLoginCount: 0,
                 lockedUntilUtc: null,
-                authorizationScopeVersion: null);
+                authorizationScopeVersion: null,
+                mustChangePassword: false);
 
             var defaultScope = await store.FindByLoginAsync("bob.noscope");
             Assert.NotNull(defaultScope);
@@ -113,6 +116,7 @@ public sealed class PostgresAccountLookupStoreTests
             Assert.Equal("active", defaultScope.AccountStatus);
             Assert.Equal(0, defaultScope.FailedLoginCount);
             Assert.Null(defaultScope.LockedUntilUtc);
+            Assert.False(defaultScope.MustChangePassword);
 
             var collisionOrgA = Guid.NewGuid();
             var collisionOrgB = Guid.NewGuid();
@@ -129,7 +133,8 @@ public sealed class PostgresAccountLookupStoreTests
                 accountStatus: "active",
                 failedLoginCount: 0,
                 lockedUntilUtc: null,
-                authorizationScopeVersion: 1);
+                authorizationScopeVersion: 1,
+                mustChangePassword: false);
             SeedOrganizationAndUser(
                 dataSource,
                 collisionOrgB,
@@ -142,7 +147,8 @@ public sealed class PostgresAccountLookupStoreTests
                 accountStatus: "active",
                 failedLoginCount: 0,
                 lockedUntilUtc: null,
-                authorizationScopeVersion: 1);
+                authorizationScopeVersion: 1,
+                mustChangePassword: false);
 
             Assert.Null(await store.FindByLoginAsync(sharedLogin));
             Assert.Null(await store.FindByLoginAsync("SHARED.LOGIN"));
@@ -178,7 +184,8 @@ public sealed class PostgresAccountLookupStoreTests
         string accountStatus,
         int failedLoginCount,
         DateTimeOffset? lockedUntilUtc,
-        long? authorizationScopeVersion)
+        long? authorizationScopeVersion,
+        bool mustChangePassword)
     {
         using (var organizationCommand = dataSource.CreateCommand(
             """
@@ -246,7 +253,7 @@ public sealed class PostgresAccountLookupStoreTests
                 id, organization_id, employee_profile_id, login, password_hash,
                 password_parameters, credential_version, account_status, must_change_password,
                 failed_login_count, locked_until)
-            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, false, $9, $10);
+            VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7, $8, $9, $10, $11);
             """))
         {
             userCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
@@ -257,6 +264,7 @@ public sealed class PostgresAccountLookupStoreTests
             userCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = passwordParameters });
             userCommand.Parameters.Add(new NpgsqlParameter<long> { TypedValue = credentialVersion });
             userCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = accountStatus });
+            userCommand.Parameters.Add(new NpgsqlParameter<bool> { TypedValue = mustChangePassword });
             userCommand.Parameters.Add(new NpgsqlParameter<int> { TypedValue = failedLoginCount });
             userCommand.Parameters.Add(new NpgsqlParameter
             {

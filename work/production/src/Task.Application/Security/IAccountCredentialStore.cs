@@ -56,4 +56,14 @@ public interface IAccountCredentialStore
         Guid userId,
         int limit,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Clears must_change_password on the account after a successful password rotation.
+    /// Returns true when a row was updated, false when the account does not exist.
+    /// </summary>
+    global::System.Threading.Tasks.Task<bool> ResetMustChangePasswordAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default) =>
+        global::System.Threading.Tasks.Task.FromResult(false);
 }

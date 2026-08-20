@@ -58,6 +58,7 @@ public sealed class LoginServiceTests
         Assert.Equal(UserId, succeeded.UserId);
         Assert.Equal(3, succeeded.CredentialVersion);
         Assert.Equal(5, succeeded.AuthorizationScopeVersion);
+        Assert.False(succeeded.MustChangePassword);
 
         var call = Assert.Single(sessions.CreateCalls);
         var session = call.Session;
@@ -126,6 +127,23 @@ public sealed class LoginServiceTests
         var session = Assert.Single(sessions.CreateCalls).Session;
         Assert.Equal(LoginService.DefaultIdleTimeout, session.IdleExpiresAtUtc - session.CreatedAtUtc);
         Assert.Equal(LoginService.DefaultAbsoluteTimeout, session.AbsoluteExpiresAtUtc - session.CreatedAtUtc);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task LoginAsync_Success_PropagatesMustChangePasswordFromAccount()
+    {
+        var lookup = new FakeLookupStore { Account = ActiveAccount(mustChangePassword: true) };
+        var hasher = new FakeHasher { VerifyResult = true };
+        var lockout = new FakeLockoutStore { State = LockoutState(0, "active", null) };
+        var device = new FakeDeviceStore { Device = ActiveDevice() };
+        var sessions = new FakeSessionRepository();
+        var service = CreateService(lookup, hasher, lockout, device, sessions, new FakeAuditStore());
+
+        var outcome = await service.LoginAsync(Command());
+
+        var succeeded = Assert.IsType<LoginOutcome.Succeeded>(outcome);
+        Assert.True(succeeded.MustChangePassword);
+        Assert.Single(sessions.CreateCalls);
     }
 
     [Fact]
@@ -307,7 +325,7 @@ public sealed class LoginServiceTests
         Assert.Null(await service.GetLockoutRemainingAsync(OrganizationId, UserId));
     }
 
-    private static AccountLoginRecord ActiveAccount() => new(
+    private static AccountLoginRecord ActiveAccount(bool mustChangePassword = false) => new(
         OrganizationId,
         UserId,
         Login,
@@ -318,7 +336,8 @@ public sealed class LoginServiceTests
         "active",
         0,
         null,
-        Now);
+        Now,
+        mustChangePassword);
 
     private static DeviceRegistrationRecord ActiveDevice() =>
         new(DeviceId, UserId, FingerprintHash, null);

@@ -123,6 +123,8 @@ public sealed class PasswordChangeService
         var newHash = _passwordHasher.HashPassword(newPassword);
         await _credentialStore.UpdateCredentialAsync(
             organizationId, userId, newHash, checked((int)credential.CredentialVersion + 1), cancellationToken);
+        // Race: account may be deleted between UpdateCredentialAsync and this call; false is ignored.
+        _ = await _credentialStore.ResetMustChangePasswordAsync(organizationId, userId, cancellationToken);
         await _credentialStore.AddPasswordToHistoryAsync(organizationId, userId, currentRecord, cancellationToken);
         var revokedSessions = await _sessionRepository.RevokeAllUserSessionsExceptAsync(
             organizationId, userId, currentSessionId, cancellationToken);

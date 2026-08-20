@@ -48,6 +48,10 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(OrganizationId, revoke.OrganizationId);
         Assert.Equal(UserId, revoke.UserId);
         Assert.Equal(CurrentSessionId, revoke.ExceptSessionId);
+
+        var reset = Assert.Single(store.MustChangePasswordResets);
+        Assert.Equal(OrganizationId, reset.OrganizationId);
+        Assert.Equal(UserId, reset.UserId);
     }
 
     [Fact]
@@ -63,6 +67,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.Success, result.Outcome);
         var revoke = Assert.Single(sessions.RevokeCalls);
         Assert.Null(revoke.ExceptSessionId);
+        Assert.Single(store.MustChangePasswordResets);
     }
 
     [Fact]
@@ -79,6 +84,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(0, result.RevokedSessionCount);
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
+        Assert.Empty(store.MustChangePasswordResets);
         Assert.Empty(sessions.RevokeCalls);
     }
 
@@ -95,6 +101,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.AccountBlocked, result.Outcome);
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
+        Assert.Empty(store.MustChangePasswordResets);
         Assert.Empty(sessions.RevokeCalls);
     }
 
@@ -111,6 +118,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.InvalidCurrentPassword, result.Outcome);
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
+        Assert.Empty(store.MustChangePasswordResets);
         Assert.Empty(sessions.RevokeCalls);
     }
 
@@ -126,6 +134,7 @@ public sealed class PasswordChangeServiceTests
 
         Assert.Equal(PasswordChangeOutcome.PasswordReuseDetected, result.Outcome);
         Assert.Empty(store.Updates);
+        Assert.Empty(store.MustChangePasswordResets);
         Assert.Empty(sessions.RevokeCalls);
     }
 
@@ -147,6 +156,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.PasswordReuseDetected, result.Outcome);
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
+        Assert.Empty(store.MustChangePasswordResets);
         Assert.Empty(sessions.RevokeCalls);
         Assert.Equal(PasswordChangeService.DefaultHistoryLimit, store.LastHistoryReadLimit);
     }
@@ -183,6 +193,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.WeakPassword, result.Outcome);
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
+        Assert.Empty(store.MustChangePasswordResets);
         Assert.Empty(sessions.RevokeCalls);
     }
 
@@ -261,6 +272,8 @@ public sealed class PasswordChangeServiceTests
 
         public List<(Guid OrganizationId, Guid UserId, PasswordHashRecord Hash)> HistoryWrites { get; } = [];
 
+        public List<(Guid OrganizationId, Guid UserId)> MustChangePasswordResets { get; } = [];
+
         public int? LastHistoryReadLimit { get; private set; }
 
         public global::System.Threading.Tasks.Task<AccountCredential?> GetCredentialAsync(
@@ -299,6 +312,15 @@ public sealed class PasswordChangeServiceTests
             LastHistoryReadLimit = limit;
             return global::System.Threading.Tasks.Task.FromResult<IReadOnlyList<PasswordHashRecord>>(
                 History.ToArray());
+        }
+
+        public global::System.Threading.Tasks.Task<bool> ResetMustChangePasswordAsync(
+            Guid organizationId,
+            Guid userId,
+            CancellationToken cancellationToken = default)
+        {
+            MustChangePasswordResets.Add((organizationId, userId));
+            return global::System.Threading.Tasks.Task.FromResult(true);
         }
     }
 

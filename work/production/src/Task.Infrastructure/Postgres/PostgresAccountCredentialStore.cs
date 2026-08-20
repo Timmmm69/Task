@@ -156,6 +156,28 @@ public sealed class PostgresAccountCredentialStore : IAccountCredentialStore
         return results;
     }
 
+    public async global::System.Threading.Tasks.Task<bool> ResetMustChangePasswordAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(userId, nameof(userId));
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
+            """
+            UPDATE iam.user_accounts
+            SET must_change_password = false
+            WHERE organization_id = $1 AND id = $2;
+            """,
+            connection);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+
+        return await command.ExecuteNonQueryAsync(cancellationToken) > 0;
+    }
+
     private static void EnsureIdentifier(Guid value, string parameterName)
     {
         if (value == Guid.Empty)
