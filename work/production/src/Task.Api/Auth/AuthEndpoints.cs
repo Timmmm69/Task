@@ -69,6 +69,37 @@ internal static class AuthEndpoints
                     cancellationToken: cancellationToken);
             }
 
+            var rateLimiter = context.RequestServices.GetService<LoginRateLimiter>();
+            if (rateLimiter is null)
+            {
+                return await WriteProblemAsync(
+                    context,
+                    StatusCodes.Status503ServiceUnavailable,
+                    "INTERNAL_ERROR",
+                    "Auth endpoints are not configured",
+                    retryable: true,
+                    cancellationToken: cancellationToken);
+            }
+
+            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var rateLimitKey = $"{ip}|{request.Login.ToLowerInvariant()}";
+            var rateLimitDecision = rateLimiter.TryRecord(rateLimitKey);
+            if (!rateLimitDecision.IsAllowed)
+            {
+                var retryAfterSeconds = Math.Max(1, (int)Math.Ceiling(rateLimitDecision.RetryAfter.TotalSeconds));
+                context.Response.Headers.RetryAfter = retryAfterSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                context.Items[TaskApiProblemResponse.AuthenticationResponseWrittenItemName] = true;
+
+                return await WriteProblemAsync(
+                    context,
+                    StatusCodes.Status429TooManyRequests,
+                    "RATE_LIMITED",
+                    "Too many login attempts.",
+                    retryable: true,
+                    retryAfterSeconds: retryAfterSeconds,
+                    cancellationToken: cancellationToken);
+            }
+
             var correlationId = ParseCorrelationId(context);
             var requestId = Guid.NewGuid();
             var fingerprintHash = ComputeSha256Hex(request.Device.DeviceKey);
@@ -83,6 +114,11 @@ internal static class AuthEndpoints
                 requestId);
 
             var outcome = await loginService.LoginAsync(command, cancellationToken);
+
+            if (outcome is LoginOutcome.Succeeded)
+            {
+                rateLimiter.Reset(rateLimitKey);
+            }
 
             return outcome switch
             {

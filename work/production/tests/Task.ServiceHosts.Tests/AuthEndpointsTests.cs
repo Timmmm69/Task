@@ -90,6 +90,74 @@ public sealed class AuthEndpointsTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Login_WhenRateLimited_Returns429_WithRetryAfter()
+    {
+        var sessionRepository = new FakeSessionRepository();
+        var deviceStore = new FakeDeviceRegistrationStore();
+        var refreshService = new RefreshTokenRotationService(sessionRepository);
+        using var server = CreateServer(services =>
+        {
+            RegisterCommonAuthServices(services, sessionRepository, deviceStore, refreshService);
+            services.AddSingleton(new LoginRateLimiter(maxAttempts: 1));
+            services.AddSingleton<IAccountLookupStore>(new FakeAccountLookupStore(ActiveAccount()));
+            services.AddSingleton<IPasswordHasher>(new FakePasswordHasher(matches: true));
+        });
+
+        var client = server.CreateClient();
+        var response = await client.PostAsJsonAsync(LoginUrl, ValidLoginBody());
+
+        var document = await AssertProblemAsync(response, (HttpStatusCode)429, "RATE_LIMITED");
+        Assert.True(document.RootElement.GetProperty("retryAfterSeconds").GetInt32() > 0);
+        Assert.True(response.Headers.TryGetValues("Retry-After", out var retryAfterValues));
+        Assert.True(int.TryParse(Assert.Single(retryAfterValues), out var retryAfterSeconds));
+        Assert.True(retryAfterSeconds > 0);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Login_WhenSucceeded_ResetsRateLimitState()
+    {
+        var sessionRepository = new FakeSessionRepository();
+        var deviceStore = new FakeDeviceRegistrationStore();
+        var refreshService = new RefreshTokenRotationService(sessionRepository);
+        var rateLimiter = new LoginRateLimiter(maxAttempts: 2);
+        using var server = CreateServer(services =>
+        {
+            RegisterCommonAuthServices(services, sessionRepository, deviceStore, refreshService);
+            services.AddSingleton(rateLimiter);
+            services.AddSingleton<IAccountLookupStore>(new FakeAccountLookupStore(ActiveAccount()));
+            services.AddSingleton<IPasswordHasher>(new FakePasswordHasher(matches: true));
+        });
+
+        var client = server.CreateClient();
+        var response = await client.PostAsJsonAsync(LoginUrl, ValidLoginBody());
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(rateLimiter.TryRecord("unknown|alice").IsAllowed);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Login_WhenFailed_DoesNotResetRateLimitState()
+    {
+        var sessionRepository = new FakeSessionRepository();
+        var deviceStore = new FakeDeviceRegistrationStore();
+        var refreshService = new RefreshTokenRotationService(sessionRepository);
+        var rateLimiter = new LoginRateLimiter(maxAttempts: 2);
+        using var server = CreateServer(services =>
+        {
+            RegisterCommonAuthServices(services, sessionRepository, deviceStore, refreshService);
+            services.AddSingleton(rateLimiter);
+            services.AddSingleton<IAccountLookupStore>(new FakeAccountLookupStore(null));
+            services.AddSingleton<IPasswordHasher>(new FakePasswordHasher(matches: false));
+        });
+
+        var client = server.CreateClient();
+        var response = await client.PostAsJsonAsync(LoginUrl, ValidLoginBody());
+
+        await AssertProblemAsync(response, HttpStatusCode.Unauthorized, "INVALID_CREDENTIALS");
+        Assert.False(rateLimiter.TryRecord("unknown|alice").IsAllowed);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Login_WithBlockedAccount_Returns423_AccountBlocked()
     {
         var sessionRepository = new FakeSessionRepository();
@@ -394,6 +462,7 @@ public sealed class AuthEndpointsTests
         services.AddSingleton(refreshService);
         services.AddSingleton<IAuditEntryStore>(new FakeAuditEntryStore());
         services.AddSingleton(new JwtAccessTokenIssuer(Issuer, Audience, $"file:{SigningKeyPath.Value}"));
+        services.AddSingleton<LoginRateLimiter>();
         services.AddSingleton<LoginService>();
         services.AddSingleton<RefreshService>();
     }
