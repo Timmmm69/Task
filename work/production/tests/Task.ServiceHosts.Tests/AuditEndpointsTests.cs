@@ -148,6 +148,22 @@ public sealed class AuditEndpointsTests
         await AssertProblemAsync(response, (HttpStatusCode)422, "VALIDATION_FAILED");
     }
 
+    [Theory]
+    [InlineData("?from=not-a-date")]
+    [InlineData("?to=2026-01-01")]
+    [InlineData("?pageSize=not-a-number")]
+    [InlineData("?pageSize=201")]
+    public async global::System.Threading.Tasks.Task GetAudit_WhenQueryIsInvalid_Returns422ValidationProblem(
+        string query)
+    {
+        using var server = CreateServer(new FakeAuditEntryStore(), GrantAuditRead());
+        using var client = await CreateAuthenticatedClientAsync(server);
+
+        var response = await client.GetAsync(AuditUrl + query);
+
+        await AssertProblemAsync(response, (HttpStatusCode)422, "VALIDATION_FAILED");
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task GetAudit_WithoutStore_Returns503()
     {

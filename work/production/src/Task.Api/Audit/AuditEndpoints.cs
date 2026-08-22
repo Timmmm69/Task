@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Task.Api.Security;
 using Task.Application.Audit;
 using Task.Application.Security;
@@ -14,6 +16,9 @@ internal static class AuditEndpoints
     private const string AuditRoute = "/api/v1/audit";
     private const int DefaultPageSize = 50;
     private const int MaxPageSize = 200;
+    private static readonly Regex Rfc3339TimestampPattern = new(
+        @"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$",
+        RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     public static IEndpointRouteBuilder MapAuditEndpoints(this IEndpointRouteBuilder app)
     {
@@ -23,10 +28,10 @@ internal static class AuditEndpoints
             HttpContext context,
             string? action,
             string? outcome,
-            DateTimeOffset? from,
-            DateTimeOffset? to,
+            string? from,
+            string? to,
             string? pageToken,
-            int? pageSize,
+            string? pageSize,
             CancellationToken cancellationToken) =>
         {
             var requestContext = ReadRequestContext(context);
@@ -53,7 +58,14 @@ internal static class AuditEndpoints
                     cancellationToken: cancellationToken);
             }
 
-            if (pageSize is < 1 or > MaxPageSize)
+            var resolvedPageSize = DefaultPageSize;
+            if (pageSize is not null
+                && (!int.TryParse(
+                        pageSize,
+                        NumberStyles.None,
+                        CultureInfo.InvariantCulture,
+                        out resolvedPageSize)
+                    || resolvedPageSize is < 1 or > MaxPageSize))
             {
                 return await WriteProblemAsync(
                     context,
@@ -64,7 +76,19 @@ internal static class AuditEndpoints
                     cancellationToken: cancellationToken);
             }
 
-            if (from.HasValue && to.HasValue && from > to)
+            if (!TryParseOptionalRfc3339(from, out var fromUtc)
+                || !TryParseOptionalRfc3339(to, out var toUtc))
+            {
+                return await WriteProblemAsync(
+                    context,
+                    StatusCodes.Status422UnprocessableEntity,
+                    "VALIDATION_FAILED",
+                    "from and to must be RFC 3339 timestamps.",
+                    retryable: false,
+                    cancellationToken: cancellationToken);
+            }
+
+            if (fromUtc.HasValue && toUtc.HasValue && fromUtc > toUtc)
             {
                 return await WriteProblemAsync(
                     context,
@@ -80,10 +104,10 @@ internal static class AuditEndpoints
                     requestContext.OrganizationId,
                     ActionFilter: string.IsNullOrWhiteSpace(action) ? null : action,
                     OutcomeFilter: string.IsNullOrWhiteSpace(outcome) ? null : outcome,
-                    FromUtc: from,
-                    ToUtc: to,
+                    FromUtc: fromUtc,
+                    ToUtc: toUtc,
                     PageToken: string.IsNullOrWhiteSpace(pageToken) ? null : pageToken,
-                    PageSize: pageSize ?? DefaultPageSize),
+                    PageSize: resolvedPageSize),
                 cancellationToken);
 
             var items = page.Entries
@@ -103,6 +127,28 @@ internal static class AuditEndpoints
         }).RequireAuthorization(TaskPermissionAuthorization.AuditReadPolicyName);
 
         return app;
+    }
+
+    private static bool TryParseOptionalRfc3339(string? value, out DateTimeOffset? result)
+    {
+        result = null;
+        if (value is null)
+        {
+            return true;
+        }
+
+        if (!Rfc3339TimestampPattern.IsMatch(value)
+            || !DateTimeOffset.TryParse(
+                value,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var parsed))
+        {
+            return false;
+        }
+
+        result = parsed;
+        return true;
     }
 
     private static AuthenticatedRequestContext? ReadRequestContext(HttpContext context) =>
