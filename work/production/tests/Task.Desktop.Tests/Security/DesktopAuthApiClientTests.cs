@@ -90,6 +90,55 @@ public class DesktopAuthApiClientTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task GetSession_200_ParsesResponse_AndSendsBearerRequest()
+    {
+        CapturedRequest? captured = null;
+        var handler = new FakeHttpMessageHandler(async request =>
+        {
+            captured = await CaptureAsync(request);
+            return JsonResponse(HttpStatusCode.OK,
+                """{"userId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4","sessionId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4","organizationId":"019fb732-ad08-7de1-b27d-c86bae8a2937","credentialVersion":4,"authorizationScopeVersion":9,"mustChangePassword":true}""");
+        });
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.GetSessionAsync("AT_header.payload.sig", CancellationToken.None);
+
+        var succeeded = Assert.IsType<GetSessionResult.Succeeded>(result);
+        Assert.True(succeeded.Session.MustChangePassword);
+        Assert.Equal(4, succeeded.Session.CredentialVersion);
+        Assert.Equal(9, succeeded.Session.AuthorizationScopeVersion);
+        Assert.NotNull(captured);
+        Assert.Equal(HttpMethod.Get, captured!.Method);
+        Assert.Equal(new Uri($"{BaseUrl}/api/v1/auth/session"), captured.RequestUri);
+        Assert.Equal("Bearer AT_header.payload.sig", Assert.Single(captured.Headers["Authorization"]));
+        Assert.True(Guid.TryParseExact(Assert.Single(captured.Headers["X-Correlation-ID"]), "D", out _));
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task GetSession_401Problem_ReturnsAuthError()
+    {
+        var handler = new FakeHttpMessageHandler(_ => global::System.Threading.Tasks.Task.FromResult(
+            ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED")));
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.GetSessionAsync("AT_header.payload.sig", CancellationToken.None);
+
+        var authError = Assert.IsType<GetSessionResult.AuthError>(result);
+        Assert.Equal(AuthProblemCode.SessionExpired, authError.Error.ProblemCode);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task GetSession_NetworkError_ReturnsNetworkFailure()
+    {
+        var client = new DesktopAuthApiClient(new HttpClient(new FakeHttpMessageHandler(
+            _ => throw new HttpRequestException("connection refused"))), BaseUrl);
+
+        var result = await client.GetSessionAsync("AT_header.payload.sig", CancellationToken.None);
+
+        Assert.IsType<GetSessionResult.NetworkFailure>(result);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Login_423_AccountLockedTemporarily_ReturnsAuthError_WithRetryHint()
     {
         var handler = new FakeHttpMessageHandler(_ =>

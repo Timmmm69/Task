@@ -76,6 +76,15 @@ public sealed record SessionTokensResponse(
     [property: JsonPropertyName("refreshExpiresAt")] DateTimeOffset RefreshExpiresAt,
     [property: JsonPropertyName("sessionId")] Guid SessionId);
 
+/// <summary>Authenticated session metadata returned by <c>GET /api/v1/auth/session</c>.</summary>
+public sealed record CurrentSessionResponse(
+    [property: JsonPropertyName("userId")] Guid UserId,
+    [property: JsonPropertyName("sessionId")] Guid SessionId,
+    [property: JsonPropertyName("organizationId")] Guid OrganizationId,
+    [property: JsonPropertyName("credentialVersion")] long CredentialVersion,
+    [property: JsonPropertyName("authorizationScopeVersion")] long AuthorizationScopeVersion,
+    [property: JsonPropertyName("mustChangePassword")] bool MustChangePassword);
+
 /// <summary>
 /// Outcome of <see cref="DesktopAuthApiClient.LoginAsync"/>: either the issued session tokens,
 /// a structured auth error, or a transport/response-level failure.
@@ -122,6 +131,15 @@ public abstract record RefreshResult
 
     /// <summary>The server responded, but the body was not the expected JSON payload.</summary>
     public sealed record MalformedResponse : RefreshResult;
+}
+
+/// <summary>Typed outcome of reading the authenticated session metadata.</summary>
+public abstract record GetSessionResult
+{
+    public sealed record Succeeded(CurrentSessionResponse Session) : GetSessionResult;
+    public sealed record AuthError(AuthErrorResult Error) : GetSessionResult;
+    public sealed record NetworkFailure : GetSessionResult;
+    public sealed record MalformedResponse : GetSessionResult;
 }
 
 /// <summary>
@@ -259,6 +277,7 @@ public sealed class DesktopAuthApiClient
     private readonly string _loginUrl;
     private readonly string _refreshUrl;
     private readonly string _logoutUrl;
+    private readonly string _sessionUrl;
 
     /// <summary>
     /// Creates a client for the given HTTP pipeline and API base URL.
@@ -281,6 +300,7 @@ public sealed class DesktopAuthApiClient
         _loginUrl = $"{normalizedBaseUrl}/api/v1/auth/login";
         _refreshUrl = $"{normalizedBaseUrl}/api/v1/auth/refresh";
         _logoutUrl = $"{normalizedBaseUrl}/api/v1/auth/logout";
+        _sessionUrl = $"{normalizedBaseUrl}/api/v1/auth/session";
     }
 
     /// <summary>
@@ -354,6 +374,86 @@ public sealed class DesktopAuthApiClient
             networkFailure: () => new RefreshResult.NetworkFailure(),
             malformedResponse: () => new RefreshResult.MalformedResponse(),
             cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Gets metadata for the session represented by <paramref name="accessToken"/>.</summary>
+    public async global::System.Threading.Tasks.Task<GetSessionResult> GetSessionAsync(
+        string accessToken,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, _sessionUrl);
+        request.Headers.TryAddWithoutValidation(CorrelationIdHeader, Guid.NewGuid().ToString("D"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Accept.ParseAdd(JsonMediaType);
+        request.Headers.Accept.ParseAdd(ProblemJsonMediaType);
+
+        HttpResponseMessage response;
+        try
+        {
+            response = await _httpClient
+                .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpRequestException)
+        {
+            return new GetSessionResult.NetworkFailure();
+        }
+        catch (TaskCanceledException)
+        {
+            return new GetSessionResult.NetworkFailure();
+        }
+
+        using (response)
+        {
+            string body;
+            try
+            {
+                body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (HttpRequestException)
+            {
+                return new GetSessionResult.NetworkFailure();
+            }
+            catch (TaskCanceledException)
+            {
+                return new GetSessionResult.NetworkFailure();
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return TryReadProblem<GetSessionResult>(
+                    body,
+                    error => new GetSessionResult.AuthError(error),
+                    () => new GetSessionResult.MalformedResponse());
+            }
+
+            CurrentSessionResponse? session;
+            try
+            {
+                session = JsonSerializer.Deserialize<CurrentSessionResponse>(body, JsonOptions);
+            }
+            catch (JsonException)
+            {
+                return new GetSessionResult.MalformedResponse();
+            }
+
+            return session is null
+                || session.UserId == Guid.Empty
+                || session.SessionId == Guid.Empty
+                || session.OrganizationId == Guid.Empty
+                ? new GetSessionResult.MalformedResponse()
+                : new GetSessionResult.Succeeded(session);
+        }
     }
 
     /// <summary>

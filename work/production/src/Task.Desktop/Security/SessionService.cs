@@ -96,6 +96,7 @@ public sealed class SessionService : IDisposable
 
     private SessionAuthState _state = SessionAuthState.SignedOut;
     private SessionTokensResponse? _currentSession;
+    private bool _currentMustChangePassword;
     private TimeSpan? _nextRefreshDelay;
     private Timer? _refreshTimer;
     private Task<RefreshResult>? _refreshInFlight;
@@ -193,6 +194,21 @@ public sealed class SessionService : IDisposable
     }
 
     /// <summary>
+    /// Whether the account must replace its password. The value is read after a successful login;
+    /// an unavailable or malformed session response fails closed to <c>false</c> and never blocks sign-in.
+    /// </summary>
+    public bool CurrentMustChangePassword
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _currentMustChangePassword;
+            }
+        }
+    }
+
+    /// <summary>
     /// Delay until the next background refresh attempt (exposed for tests); <c>null</c> when
     /// nothing is scheduled, i.e. after sign-out or logout or before the first successful
     /// login.
@@ -247,6 +263,12 @@ public sealed class SessionService : IDisposable
 
                 if (result is LoginResult.Succeeded { Tokens: var tokens })
                 {
+                    var sessionResult = await _client
+                        .GetSessionAsync(tokens.AccessToken, cancellationToken)
+                        .ConfigureAwait(false);
+                    var mustChangePassword =
+                        sessionResult is GetSessionResult.Succeeded { Session.MustChangePassword: true };
+
                     // The desktop client is single-org: orgId is stored empty and unused.
                     _vault.SaveRefreshToken(
                         tokens.SessionId.ToString("D"),
@@ -258,6 +280,7 @@ public sealed class SessionService : IDisposable
                     lock (_sync)
                     {
                         _currentSession = tokens;
+                        _currentMustChangePassword = mustChangePassword;
                     }
 
                     SetState(SessionAuthState.SignedIn);
@@ -497,6 +520,7 @@ public sealed class SessionService : IDisposable
         lock (_sync)
         {
             _currentSession = null;
+            _currentMustChangePassword = false;
             _refreshTimer?.Dispose();
             _refreshTimer = null;
             _nextRefreshDelay = null;

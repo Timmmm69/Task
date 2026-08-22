@@ -76,6 +76,41 @@ public class SessionServiceTests : IDisposable
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Login_SessionReportsPasswordChange_SetsCurrentMustChangePassword()
+    {
+        var handler = new FakeHttpMessageHandler(request =>
+            IsSessionRequest(request)
+                ? global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, SessionJson(true)))
+                : global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2))));
+        using var service = CreateService(handler);
+
+        var result = await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+
+        Assert.IsType<LoginResult.Succeeded>(result);
+        Assert.True(service.CurrentMustChangePassword);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Login_SessionNetworkFailure_DoesNotBlockLogin_AndFailsClosed()
+    {
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsSessionRequest(request))
+            {
+                throw new HttpRequestException("connection refused");
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+        });
+        using var service = CreateService(handler);
+
+        var result = await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+
+        Assert.IsType<LoginResult.Succeeded>(result);
+        Assert.False(service.CurrentMustChangePassword);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Login_AuthError_StateStaysSignedOut()
     {
         var handler = new FakeHttpMessageHandler(_ =>
@@ -113,6 +148,11 @@ public class SessionServiceTests : IDisposable
             if (IsLoginRequest(request))
             {
                 return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2, accessToken: "AT_first")));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, SessionJson(false)));
             }
 
             refreshCount++;
@@ -228,6 +268,11 @@ public class SessionServiceTests : IDisposable
                 return JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2));
             }
 
+            if (IsSessionRequest(request))
+            {
+                return JsonResponse(HttpStatusCode.OK, SessionJson(false));
+            }
+
             refreshCount++;
             await global::System.Threading.Tasks.Task.Delay(200);
             return JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2, accessToken: "AT_rotated"));
@@ -290,6 +335,11 @@ public class SessionServiceTests : IDisposable
         var capturedKeys = new System.Collections.Concurrent.ConcurrentQueue<string>();
         var handler = new FakeHttpMessageHandler(async request =>
         {
+            if (IsSessionRequest(request))
+            {
+                return JsonResponse(HttpStatusCode.OK, SessionJson(false));
+            }
+
             using var json = JsonDocument.Parse(await request.Content!.ReadAsStringAsync());
             capturedKeys.Enqueue(json.RootElement.GetProperty("device").GetProperty("deviceKey").GetString()!);
             return JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2));
@@ -316,12 +366,18 @@ public class SessionServiceTests : IDisposable
                 return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
             }
 
+            if (IsSessionRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, SessionJson(true)));
+            }
+
             logoutCount++;
             return global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
         });
         var vault = new DesktopCredentialVault(_directory);
         using var service = CreateService(handler, vault);
         await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+        Assert.True(service.CurrentMustChangePassword);
 
         var result = await service.LogoutAsync();
 
@@ -333,6 +389,7 @@ public class SessionServiceTests : IDisposable
         Assert.Null(vault.GetRefreshToken());
         Assert.Null(vault.GetAccessToken());
         Assert.Empty(Directory.GetFiles(_directory));
+        Assert.False(service.CurrentMustChangePassword);
     }
 
     [Fact]
@@ -386,6 +443,12 @@ private SessionService CreateService(
 
     private static bool IsLoginRequest(HttpRequestMessage request) =>
         request.RequestUri?.AbsolutePath.EndsWith("/api/v1/auth/login", StringComparison.Ordinal) == true;
+
+    private static bool IsSessionRequest(HttpRequestMessage request) =>
+        request.RequestUri?.AbsolutePath.EndsWith("/api/v1/auth/session", StringComparison.Ordinal) == true;
+
+    private static string SessionJson(bool mustChangePassword) =>
+        $$"""{"userId":"{{SessionId}}","sessionId":"{{SessionId}}","organizationId":"019fb732-ad08-7de1-b27d-c86bae8a2937","credentialVersion":1,"authorizationScopeVersion":1,"mustChangePassword":{{mustChangePassword.ToString().ToLowerInvariant()}}}""";
 
     private static string TokensJson(
         TimeSpan accessLifetime,
