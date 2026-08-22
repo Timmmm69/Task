@@ -61,6 +61,10 @@ public sealed class PostgresAccountCredentialStoreTests
             Assert.Null(await store.GetCredentialAsync(otherOrganizationId, userId));
             Assert.Null(await store.GetCredentialAsync(organizationId, Guid.NewGuid()));
 
+            Assert.True(await store.GetMustChangePasswordAsync(organizationId, userId));
+            Assert.False(await store.GetMustChangePasswordAsync(otherOrganizationId, userId));
+            Assert.False(await store.GetMustChangePasswordAsync(organizationId, Guid.NewGuid()));
+
             var initial = await store.GetCredentialAsync(organizationId, userId);
             Assert.NotNull(initial);
             Assert.Equal(new string('x', 64), initial.PasswordHash);
@@ -119,6 +123,7 @@ public sealed class PostgresAccountCredentialStoreTests
             Assert.True(await store.ResetMustChangePasswordAsync(organizationId, userId));
             Assert.False(await store.ResetMustChangePasswordAsync(organizationId, Guid.NewGuid()));
             Assert.False(await store.ResetMustChangePasswordAsync(otherOrganizationId, userId));
+            Assert.False(await store.GetMustChangePasswordAsync(organizationId, userId));
 
             await using (var flagCommand = dataSource.CreateCommand(
                 """

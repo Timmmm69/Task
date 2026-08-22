@@ -118,14 +118,29 @@ internal static class AuthSessionEndpoints
                     retryable: true);
             }
 
-            // mustChangePassword is intentionally absent from the v1 response; it is added
-            // by a later package once the account flag is surfaced through the API.
+            var credentialStore = context.RequestServices.GetService<IAccountCredentialStore>();
+            if (credentialStore is null)
+            {
+                return await WriteProblemAsync(
+                    context,
+                    StatusCodes.Status503ServiceUnavailable,
+                    "INTERNAL_ERROR",
+                    "Auth endpoints are not configured",
+                    retryable: true);
+            }
+
+            var mustChangePassword = await credentialStore.GetMustChangePasswordAsync(
+                requestContext.OrganizationId,
+                requestContext.UserAccountId,
+                context.RequestAborted);
+
             return Results.Json(new CurrentSessionResponse(
                 requestContext.UserAccountId,
                 requestContext.SessionId,
                 requestContext.OrganizationId,
                 requestContext.CredentialVersion,
-                requestContext.AuthorizationScopeVersion));
+                requestContext.AuthorizationScopeVersion,
+                mustChangePassword));
         }).RequireAuthorization();
 
         // v1 simplification: the session list is not paginated. The repository returns at
@@ -328,9 +343,6 @@ internal static class AuthSessionEndpoints
             };
         }).RequireAuthorization();
 
-        // v1 binding note: the endpoint is authenticated but not yet permission-bound.
-        // Authorization binding (audit.entry.read) is added by a later wave; every caller
-        // with a valid session can read the login-attempt journal of their organization.
         app.MapGet(LoginAttemptsRoute, async (
             HttpContext context,
             string? result,
@@ -412,7 +424,7 @@ internal static class AuthSessionEndpoints
                 .ToArray();
 
             return Results.Json(new LoginAttemptsResponse(items, page.NextPageToken));
-        }).RequireAuthorization();
+        }).RequireAuthorization(TaskPermissionAuthorization.LoginAttemptsReadPolicyName);
 
         return app;
     }
@@ -487,7 +499,8 @@ internal static class AuthSessionEndpoints
         [property: JsonPropertyName("sessionId")] Guid SessionId,
         [property: JsonPropertyName("organizationId")] Guid OrganizationId,
         [property: JsonPropertyName("credentialVersion")] long CredentialVersion,
-        [property: JsonPropertyName("authorizationScopeVersion")] long AuthorizationScopeVersion);
+        [property: JsonPropertyName("authorizationScopeVersion")] long AuthorizationScopeVersion,
+        [property: JsonPropertyName("mustChangePassword")] bool MustChangePassword);
 
     internal sealed record UserSessionItemResponse(
         [property: JsonPropertyName("sessionId")] Guid SessionId,

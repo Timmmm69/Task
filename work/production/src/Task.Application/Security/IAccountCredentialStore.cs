@@ -16,6 +16,16 @@ public sealed record AccountCredential(
 public interface IAccountCredentialStore
 {
     /// <summary>
+    /// Returns whether the account must change its password. Missing accounts return false so
+    /// callers cannot use this flag to discover account existence.
+    /// </summary>
+    global::System.Threading.Tasks.Task<bool> GetMustChangePasswordAsync(
+        Guid organizationId,
+        Guid userId,
+        CancellationToken cancellationToken = default) =>
+        global::System.Threading.Tasks.Task.FromResult(false);
+
+    /// <summary>
     /// Loads the current credential hash, parameters, credential version and account status.
     /// Returns null when the account does not exist in the organization (a distinct outcome
     /// for the caller).

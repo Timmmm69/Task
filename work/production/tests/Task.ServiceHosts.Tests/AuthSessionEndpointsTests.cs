@@ -86,10 +86,18 @@ public sealed class AuthSessionEndpointsTests
         Assert.Equal("user-logout-all", sessionRepository.LastRevokeAll!.Value.Reason);
     }
 
-    [Fact]
-    public async global::System.Threading.Tasks.Task CurrentSession_Returns200_WithClaimProjection()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async global::System.Threading.Tasks.Task CurrentSession_Returns200_WithClaimProjection(
+        bool mustChangePassword)
     {
-        using var server = CreateServer(new FakeSessionRepository());
+        using var server = CreateServer(new FakeSessionRepository(), services =>
+        {
+            services.AddSingleton<IAccountCredentialStore>(new FakeAccountCredentialStore(
+                new AccountCredential(CurrentPassword, "{}", 1, "active"),
+                mustChangePassword: mustChangePassword));
+        });
         using var client = await CreateAuthenticatedClientAsync(server);
 
         var response = await client.GetAsync("/api/v1/auth/session");
@@ -101,7 +109,7 @@ public sealed class AuthSessionEndpointsTests
         Assert.Equal(OrganizationId.ToString("D"), document.RootElement.GetProperty("organizationId").GetString());
         Assert.Equal(1, document.RootElement.GetProperty("credentialVersion").GetInt64());
         Assert.Equal(1, document.RootElement.GetProperty("authorizationScopeVersion").GetInt64());
-        Assert.False(document.RootElement.TryGetProperty("mustChangePassword", out _));
+        Assert.Equal(mustChangePassword, document.RootElement.GetProperty("mustChangePassword").GetBoolean());
     }
 
     [Fact]
@@ -175,6 +183,9 @@ public sealed class AuthSessionEndpointsTests
                     new AccountCredential(CurrentPassword, "{}", 1, "active")));
                 services.AddSingleton<IPasswordHasher>(new PasswordEqualsHashHasher());
                 services.AddSingleton<PasswordChangeService>();
+                services.AddSingleton<IAuthorizationPolicyStore>(new FakeAuthorizationPolicyStore());
+                services.AddSingleton<PermissionDecisionService>();
+                services.AddTaskPermissionAuthorization();
                 services.AddSingleton(
                     new JwtAccessTokenIssuer(Issuer, Audience, $"file:{keyMaterial.PrivateKeyPath}"));
                 configure?.Invoke(services);
@@ -451,6 +462,23 @@ public sealed class AuthSessionEndpointsTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task LoginAttempts_WithoutPermission_Returns403()
+    {
+        using var server = CreateServer(new FakeSessionRepository(), services =>
+        {
+            services.AddSingleton<IAuthorizationPolicyStore>(new FakeAuthorizationPolicyStore
+            {
+                Grants = [],
+            });
+        });
+        using var client = await CreateAuthenticatedClientAsync(server);
+
+        var response = await client.GetAsync("/api/v1/auth/login-attempts");
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task LoginAttempts_FromAfterTo_Returns422_ValidationFailed()
     {
         using var server = CreateServer(new FakeSessionRepository());
@@ -584,14 +612,23 @@ public sealed class AuthSessionEndpointsTests
     {
         private readonly AccountCredential? _credential;
         private readonly IReadOnlyList<PasswordHashRecord> _history;
+        private readonly bool _mustChangePassword;
 
         public FakeAccountCredentialStore(
             AccountCredential? credential,
-            IReadOnlyList<PasswordHashRecord>? history = null)
+            IReadOnlyList<PasswordHashRecord>? history = null,
+            bool mustChangePassword = false)
         {
             _credential = credential;
             _history = history ?? Array.Empty<PasswordHashRecord>();
+            _mustChangePassword = mustChangePassword;
         }
+
+        public global::System.Threading.Tasks.Task<bool> GetMustChangePasswordAsync(
+            Guid organizationId,
+            Guid userId,
+            CancellationToken cancellationToken = default) =>
+            global::System.Threading.Tasks.Task.FromResult(_mustChangePassword);
 
         public global::System.Threading.Tasks.Task<AccountCredential?> GetCredentialAsync(
             Guid organizationId,
@@ -620,6 +657,31 @@ public sealed class AuthSessionEndpointsTests
             int limit,
             CancellationToken cancellationToken = default) =>
             global::System.Threading.Tasks.Task.FromResult(_history);
+    }
+
+    private sealed class FakeAuthorizationPolicyStore : IAuthorizationPolicyStore
+    {
+        public IReadOnlyList<PolicyGrantRow> Grants { get; init; } =
+            [new PolicyGrantRow(HasDirectRoleMembership: true)];
+
+        public global::System.Threading.Tasks.Task<Guid?> GetUserOrgAsync(
+            Guid userId,
+            CancellationToken cancellationToken = default) =>
+            global::System.Threading.Tasks.Task.FromResult<Guid?>(OrganizationId);
+
+        public global::System.Threading.Tasks.Task<IReadOnlyList<PolicyGrantRow>> GetUserGrantsAsync(
+            Guid orgId,
+            Guid userId,
+            string permissionCode,
+            CancellationToken cancellationToken = default) =>
+            global::System.Threading.Tasks.Task.FromResult(Grants);
+
+        public global::System.Threading.Tasks.Task<IReadOnlyList<PolicyDenyRow>> GetUserDeniesAsync(
+            Guid orgId,
+            Guid userId,
+            string permissionCode,
+            CancellationToken cancellationToken = default) =>
+            global::System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyDenyRow>>([]);
     }
 
     private sealed class PasswordEqualsHashHasher : IPasswordHasher
