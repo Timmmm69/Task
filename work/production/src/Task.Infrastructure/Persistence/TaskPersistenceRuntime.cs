@@ -66,6 +66,12 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     public IAuditEntryStore CreateAuditEntryStore() =>
         new PostgresAuditEntryStore(GetConfiguredDataSource());
 
+    public IAccountCredentialStore CreateAccountCredentialStore() =>
+        new PostgresAccountCredentialStore(GetConfiguredDataSource());
+
+    public IAuthorizationPolicyStore CreateAuthorizationPolicyStore() =>
+        new PostgresAuthorizationPolicyStore(GetConfiguredDataSource());
+
     public TaskPersistenceMigrator CreateMigrator() =>
         new(GetConfiguredDataSource());
 

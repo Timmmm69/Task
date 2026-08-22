@@ -5,8 +5,11 @@ using Task.Application;
 using Task.Application.Audit;
 using Task.Application.Calendar;
 using Task.Application.Security;
+using Task.Api.Audit;
 using Task.Api.Auth;
+using Task.Api.Capabilities;
 using Task.Api.Security;
+using Task.Application.Server;
 using Task.Infrastructure.Identity;
 using Task.Infrastructure.Persistence;
 
@@ -62,6 +65,10 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
         services.GetRequiredService<TaskPersistenceRuntime>().CreateAccountLockoutStore());
     builder.Services.AddSingleton<IAuditEntryStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateAuditEntryStore());
+    builder.Services.AddSingleton<IAccountCredentialStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateAccountCredentialStore());
+    builder.Services.AddSingleton<IAuthorizationPolicyStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateAuthorizationPolicyStore());
 
     builder.Services.AddSingleton<AccountLockoutPolicy>();
     builder.Services.AddSingleton<AccountLockoutService>();
@@ -90,6 +97,11 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     });
     builder.Services.AddSingleton<LoginService>();
     builder.Services.AddSingleton<RefreshService>();
+    builder.Services.AddSingleton<PasswordChangeService>();
+    builder.Services.AddSingleton<LoginRateLimiter>();
+    builder.Services.AddSingleton<PermissionDecisionService>();
+    builder.Services.AddSingleton<ServerCapabilitiesService>();
+    builder.Services.AddTaskPermissionAuthorization();
 }
 
 var app = builder.Build();
@@ -121,6 +133,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
+app.MapAuthSessionEndpoints();
+app.MapCapabilitiesEndpoints();
+app.MapAuditEndpoints();
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 
