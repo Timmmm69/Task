@@ -51,8 +51,10 @@ public class SessionServiceTests : IDisposable
     [Fact]
     public async global::System.Threading.Tasks.Task Login_Success_FillsVault_StateSignedIn_AndSchedulesRefresh()
     {
-        var handler = new FakeHttpMessageHandler(_ =>
-            global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2))));
+        var handler = new FakeHttpMessageHandler(request =>
+            global::System.Threading.Tasks.Task.FromResult(IsSessionRequest(request)
+                ? JsonResponse(HttpStatusCode.OK, SessionJson(false))
+                : JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2))));
         var vault = new DesktopCredentialVault(_directory);
         using var service = CreateService(handler, vault);
         var result = await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
@@ -91,7 +93,7 @@ public class SessionServiceTests : IDisposable
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task Login_SessionNetworkFailure_DoesNotBlockLogin_AndFailsClosed()
+    public async global::System.Threading.Tasks.Task Login_SessionNetworkFailure_BlocksReadiness_AndKeepsVault()
     {
         var handler = new FakeHttpMessageHandler(request =>
         {
@@ -102,12 +104,16 @@ public class SessionServiceTests : IDisposable
 
             return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
         });
-        using var service = CreateService(handler);
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
 
         var result = await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
 
         Assert.IsType<LoginResult.Succeeded>(result);
+        Assert.Equal(SessionAuthState.SessionUnavailable, service.CurrentState);
+        Assert.Equal(SessionReadinessState.Unavailable, service.CurrentReadiness);
         Assert.False(service.CurrentMustChangePassword);
+        Assert.NotNull(vault.GetRefreshToken());
     }
 
     [Fact]
@@ -137,6 +143,34 @@ public class SessionServiceTests : IDisposable
         Assert.IsType<LoginResult.NetworkFailure>(result);
         Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
         Assert.Null(service.NextRefreshDelay);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Login_CanceledDuringSessionConfirmation_ClearsPartialSession()
+    {
+        using var cts = new CancellationTokenSource();
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsSessionRequest(request))
+            {
+                cts.Cancel();
+                return global::System.Threading.Tasks.Task.FromCanceled<HttpResponseMessage>(cts.Token);
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(
+                JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            service.LoginAsync(Login, Password, CorrelationId, cts.Token));
+
+        Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
+        Assert.Equal(SessionReadinessState.NotAuthenticated, service.CurrentReadiness);
+        Assert.Null(service.CurrentSession);
+        Assert.Null(vault.GetAccessToken());
+        Assert.Null(vault.GetRefreshToken());
     }
 
     [Fact]
@@ -222,9 +256,17 @@ public class SessionServiceTests : IDisposable
     {
         var retryDelay = TimeSpan.FromMinutes(1);
         var handler = new FakeHttpMessageHandler(request =>
-            IsLoginRequest(request)
-                ? global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2, accessToken: "AT_first")))
-                : global::System.Threading.Tasks.Task.FromResult(ProblemResponse(HttpStatusCode.TooManyRequests, "RATE_LIMITED", retryAfterSeconds: 30)));
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2, accessToken: "AT_first")));
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(IsSessionRequest(request)
+                ? JsonResponse(HttpStatusCode.OK, SessionJson(false))
+                : ProblemResponse(HttpStatusCode.TooManyRequests, "RATE_LIMITED", retryAfterSeconds: 30));
+        });
         var vault = new DesktopCredentialVault(_directory);
         using var service = CreateService(handler, vault, retryDelay);
         await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
@@ -243,9 +285,17 @@ public class SessionServiceTests : IDisposable
     {
         var retryDelay = TimeSpan.FromMinutes(1);
         var handler = new FakeHttpMessageHandler(request =>
-            IsLoginRequest(request)
-                ? global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)))
-                : throw new HttpRequestException("connection refused"));
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            return IsSessionRequest(request)
+                ? global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, SessionJson(false)))
+                : throw new HttpRequestException("connection refused");
+        });
         var vault = new DesktopCredentialVault(_directory);
         using var service = CreateService(handler, vault, retryDelay);
         await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
@@ -422,10 +472,267 @@ public class SessionServiceTests : IDisposable
         Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
     }
 
-private SessionService CreateService(
-        FakeHttpMessageHandler handler,
-        DesktopCredentialVault? vault = null,
-        TimeSpan? retryDelay = null)
+    [Fact]
+    public async global::System.Threading.Tasks.Task Restore_Success_ConfirmsReadySession()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+        vault.SaveRefreshToken("device", "", Login, "device-key-123456", "RT_saved");
+        var handler = new FakeHttpMessageHandler(request =>
+            global::System.Threading.Tasks.Task.FromResult(IsSessionRequest(request)
+                ? JsonResponse(HttpStatusCode.OK, SessionJson(false))
+                : JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2))));
+        using var service = CreateService(handler, vault);
+
+        var result = await service.RestoreAsync(CancellationToken.None);
+
+        Assert.IsType<RefreshResult.Succeeded>(result.Refresh);
+        Assert.IsType<SessionReadinessResult.Ready>(result.Readiness);
+        Assert.Equal(SessionReadinessState.Ready, service.CurrentReadiness);
+        Assert.Equal(SessionAuthState.SignedIn, service.CurrentState);
+        Assert.NotNull(service.CurrentSessionMetadata);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Restore_MustChangePassword_IsNotReadyForMainShell()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+        vault.SaveRefreshToken("device", "", Login, "device-key-123456", "RT_saved");
+        var handler = new FakeHttpMessageHandler(request =>
+            global::System.Threading.Tasks.Task.FromResult(IsSessionRequest(request)
+                ? JsonResponse(HttpStatusCode.OK, SessionJson(true))
+                : JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2))));
+        using var service = CreateService(handler, vault);
+
+        var result = await service.RestoreAsync(CancellationToken.None);
+
+        Assert.IsType<SessionReadinessResult.PasswordChangeRequired>(result.Readiness);
+        Assert.Equal(SessionReadinessState.PasswordChangeRequired, service.CurrentReadiness);
+        Assert.True(service.CurrentMustChangePassword);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Restore_WithoutVault_ReturnsTypedSignedOutReason()
+    {
+        using var service = CreateService(new FakeHttpMessageHandler(
+            _ => throw new InvalidOperationException("no request expected")));
+
+        var result = await service.RestoreAsync(CancellationToken.None);
+
+        Assert.Null(result.Refresh);
+        var signedOut = Assert.IsType<SessionReadinessResult.SignedOut>(result.Readiness);
+        Assert.Equal(SessionSignOutReason.NoStoredSession, signedOut.Reason);
+        Assert.Equal(SessionSignOutReason.NoStoredSession, service.LastSignOutReason);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Restore_NetworkFailure_KeepsVaultAndBlocksReadiness()
+    {
+        var vault = new DesktopCredentialVault(_directory);
+        vault.SaveRefreshToken("device", "", Login, "device-key-123456", "RT_saved");
+        using var service = CreateService(
+            new FakeHttpMessageHandler(_ => throw new HttpRequestException("offline")),
+            vault);
+
+        var result = await service.RestoreAsync(CancellationToken.None);
+
+        Assert.IsType<RefreshResult.NetworkFailure>(result.Refresh);
+        Assert.IsType<SessionReadinessResult.RetryableFailure>(result.Readiness);
+        Assert.Equal(SessionAuthState.SessionUnavailable, service.CurrentState);
+        Assert.NotNull(vault.GetRefreshToken());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Refresh_SessionRevoked_DeliversReasonOutsideLock()
+    {
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, SessionJson(false)));
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(
+                ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_REVOKED"));
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+        SessionSignOutReason? delivered = null;
+        service.SignedOut += reason =>
+        {
+            Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
+            delivered = reason;
+        };
+
+        await service.RefreshAsync();
+
+        Assert.Equal(SessionSignOutReason.SessionRevoked, delivered);
+        Assert.Equal(SessionSignOutReason.SessionRevoked, service.LastSignOutReason);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_Success_ClearsRequirementOnlyAfterConfirmation()
+    {
+        var sessionReads = 0;
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                sessionReads++;
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, SessionJson(sessionReads == 1)));
+            }
+
+            Assert.EndsWith("/api/v1/auth/change-password", request.RequestUri!.AbsolutePath);
+            return global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+        Assert.True(service.CurrentMustChangePassword);
+
+        var result = await service.ChangePasswordAsync("Current!234", "Replacement!234", CancellationToken.None);
+
+        Assert.IsType<ChangePasswordResult.Succeeded>(result.ChangePassword);
+        Assert.IsType<SessionReadinessResult.Ready>(result.Readiness);
+        Assert.False(service.CurrentMustChangePassword);
+        Assert.Equal(2, sessionReads);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_SessionConfirmationFailure_KeepsRequirement()
+    {
+        var sessionReads = 0;
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                sessionReads++;
+                if (sessionReads > 1)
+                {
+                    throw new HttpRequestException("offline");
+                }
+
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, SessionJson(true)));
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+        });
+        using var service = CreateService(handler);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+
+        var result = await service.ChangePasswordAsync("Current!234", "Replacement!234", CancellationToken.None);
+
+        Assert.IsType<SessionReadinessResult.RetryableFailure>(result.Readiness);
+        Assert.True(service.CurrentMustChangePassword);
+        Assert.Equal(SessionReadinessState.Unavailable, service.CurrentReadiness);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Logout_DuringRefresh_LateRotationCannotRepopulateVault()
+    {
+        var refreshStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseRefresh = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var refreshCalls = 0;
+        var handler = new FakeHttpMessageHandler(async request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                return JsonResponse(HttpStatusCode.OK, SessionJson(false));
+            }
+
+            if (request.RequestUri!.AbsolutePath.EndsWith("/api/v1/auth/refresh", StringComparison.Ordinal))
+            {
+                refreshCalls++;
+                refreshStarted.SetResult();
+                await releaseRefresh.Task;
+                return JsonResponse(
+                    HttpStatusCode.OK,
+                    TokensJson(RefreshMargin * 2, "AT_late", "RT_late"));
+            }
+
+            return new HttpResponseMessage(HttpStatusCode.NoContent);
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+
+        var refresh = service.RefreshAsync();
+        await refreshStarted.Task;
+        var logout = service.LogoutAsync();
+        releaseRefresh.SetResult();
+        await global::System.Threading.Tasks.Task.WhenAll(refresh, logout);
+
+        Assert.Equal(1, refreshCalls);
+        Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
+        Assert.Null(service.CurrentSession);
+        Assert.Null(vault.GetAccessToken());
+        Assert.Null(vault.GetRefreshToken());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ServerChange_ClearsCompleteLocalSessionAndDeliversReason()
+    {
+        var handler = new FakeHttpMessageHandler(request =>
+            global::System.Threading.Tasks.Task.FromResult(IsSessionRequest(request)
+                ? JsonResponse(HttpStatusCode.OK, SessionJson(false))
+                : JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2))));
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+        SessionSignOutReason? reason = null;
+        service.SignedOut += value => reason = value;
+
+        await service.ClearLocalSessionForServerChangeAsync(CancellationToken.None);
+
+        Assert.Equal(SessionSignOutReason.ServerChanged, reason);
+        Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
+        Assert.Equal(SessionReadinessState.NotAuthenticated, service.CurrentReadiness);
+        Assert.Null(service.CurrentSession);
+        Assert.Null(service.CurrentSessionMetadata);
+        Assert.Null(vault.GetAccessToken());
+        Assert.Null(vault.GetRefreshToken());
+    }
+
+    [Fact]
+    public void Dispose_IsIdempotent()
+    {
+        var service = CreateService(new FakeHttpMessageHandler(
+            _ => throw new InvalidOperationException("no request expected")));
+
+        service.Dispose();
+        service.Dispose();
+    }
+
+    private SessionService CreateService(
+            FakeHttpMessageHandler handler,
+            DesktopCredentialVault? vault = null,
+            TimeSpan? retryDelay = null)
     {
         vault ??= new DesktopCredentialVault(_directory);
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);

@@ -30,11 +30,20 @@ public enum AuthProblemCode
     /// <summary>The session has expired and the refresh token is no longer valid.</summary>
     SessionExpired,
 
+    /// <summary>The session was explicitly revoked.</summary>
+    SessionRevoked,
+
     /// <summary>The refresh token was used more than once; the token family is revoked.</summary>
     RefreshTokenReuse,
 
     /// <summary>The request body was not valid JSON.</summary>
     MalformedJson,
+
+    /// <summary>The request failed contract or password-policy validation.</summary>
+    ValidationFailed,
+
+    /// <summary>The access token is absent, invalid or no longer accepted.</summary>
+    AuthenticationRequired,
 
     /// <summary>The server returned a problem code this client does not recognize.</summary>
     Unknown,
@@ -140,6 +149,15 @@ public abstract record GetSessionResult
     public sealed record AuthError(AuthErrorResult Error) : GetSessionResult;
     public sealed record NetworkFailure : GetSessionResult;
     public sealed record MalformedResponse : GetSessionResult;
+}
+
+/// <summary>Typed outcome of changing the password for the authenticated account.</summary>
+public abstract record ChangePasswordResult
+{
+    public sealed record Succeeded : ChangePasswordResult;
+    public sealed record AuthError(AuthErrorResult Error) : ChangePasswordResult;
+    public sealed record NetworkFailure : ChangePasswordResult;
+    public sealed record MalformedResponse : ChangePasswordResult;
 }
 
 /// <summary>
@@ -278,6 +296,7 @@ public sealed class DesktopAuthApiClient
     private readonly string _refreshUrl;
     private readonly string _logoutUrl;
     private readonly string _sessionUrl;
+    private readonly string _changePasswordUrl;
 
     /// <summary>
     /// Creates a client for the given HTTP pipeline and API base URL.
@@ -301,6 +320,7 @@ public sealed class DesktopAuthApiClient
         _refreshUrl = $"{normalizedBaseUrl}/api/v1/auth/refresh";
         _logoutUrl = $"{normalizedBaseUrl}/api/v1/auth/logout";
         _sessionUrl = $"{normalizedBaseUrl}/api/v1/auth/session";
+        _changePasswordUrl = $"{normalizedBaseUrl}/api/v1/auth/change-password";
     }
 
     /// <summary>
@@ -453,6 +473,78 @@ public sealed class DesktopAuthApiClient
                 || session.OrganizationId == Guid.Empty
                 ? new GetSessionResult.MalformedResponse()
                 : new GetSessionResult.Succeeded(session);
+        }
+    }
+
+    /// <summary>
+    /// Changes the authenticated account password. Both passwords are sent only in the JSON
+    /// body; the bearer access token is the only credential placed in a header.
+    /// </summary>
+    public async global::System.Threading.Tasks.Task<ChangePasswordResult> ChangePasswordAsync(
+        string accessToken,
+        string currentPassword,
+        string newPassword,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
+        ArgumentException.ThrowIfNullOrWhiteSpace(currentPassword);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
+
+        using var request = CreatePostRequest(
+            _changePasswordUrl,
+            Guid.NewGuid().ToString("D"),
+            new ChangePasswordRequestBody(currentPassword, newPassword));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        HttpResponseMessage response;
+        try
+        {
+            response = await _httpClient
+                .SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpRequestException)
+        {
+            return new ChangePasswordResult.NetworkFailure();
+        }
+        catch (TaskCanceledException)
+        {
+            return new ChangePasswordResult.NetworkFailure();
+        }
+
+        using (response)
+        {
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return new ChangePasswordResult.Succeeded();
+            }
+
+            string body;
+            try
+            {
+                body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (HttpRequestException)
+            {
+                return new ChangePasswordResult.NetworkFailure();
+            }
+            catch (TaskCanceledException)
+            {
+                return new ChangePasswordResult.NetworkFailure();
+            }
+
+            return TryReadProblem<ChangePasswordResult>(
+                body,
+                error => new ChangePasswordResult.AuthError(error),
+                () => new ChangePasswordResult.MalformedResponse());
         }
     }
 
@@ -660,8 +752,11 @@ public sealed class DesktopAuthApiClient
         "ACCOUNT_LOCKED_TEMPORARILY" => AuthProblemCode.AccountLockedTemporarily,
         "RATE_LIMITED" => AuthProblemCode.RateLimited,
         "SESSION_EXPIRED" => AuthProblemCode.SessionExpired,
+        "SESSION_REVOKED" => AuthProblemCode.SessionRevoked,
         "REFRESH_TOKEN_REUSE" => AuthProblemCode.RefreshTokenReuse,
         "MALFORMED_JSON" => AuthProblemCode.MalformedJson,
+        "VALIDATION_FAILED" => AuthProblemCode.ValidationFailed,
+        "AUTHENTICATION_REQUIRED" => AuthProblemCode.AuthenticationRequired,
         _ => AuthProblemCode.Unknown,
     };
 
@@ -676,6 +771,8 @@ public sealed class DesktopAuthApiClient
     /// matching the <c>RefreshRequest</c> schema of the technical specification (2.2).
     /// </summary>
     private sealed record RefreshRequestBody(string RefreshToken, string DeviceKey);
+
+    private sealed record ChangePasswordRequestBody(string CurrentPassword, string NewPassword);
 
     /// <summary>
     /// The subset of the RFC 7807 problem document that the client consumes: the stable

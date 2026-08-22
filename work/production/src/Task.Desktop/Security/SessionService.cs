@@ -17,6 +17,22 @@ public enum SessionAuthState
 
     /// <summary>The session tokens are being rotated in the background.</summary>
     Refreshing,
+
+    /// <summary>A saved session is being restored during startup.</summary>
+    Restoring,
+
+    /// <summary>Tokens exist, but current session metadata is not confirmed.</summary>
+    SessionUnavailable,
+}
+
+/// <summary>Readiness of the authenticated session for entering the main shell.</summary>
+public enum SessionReadinessState
+{
+    NotAuthenticated,
+    Verifying,
+    Ready,
+    PasswordChangeRequired,
+    Unavailable,
 }
 
 /// <summary>Reason a session ended without an explicit user logout.</summary>
@@ -31,15 +47,41 @@ public enum SessionSignOutReason
     /// <summary>The server reported the session as expired.</summary>
     SessionExpired,
 
+    /// <summary>The server reported that the session was revoked.</summary>
+    SessionRevoked,
+
     /// <summary>The server detected refresh-token reuse and revoked the token family.</summary>
     RefreshTokenReuse,
 
     /// <summary>The account is blocked and the session cannot continue.</summary>
     AccountBlocked,
 
+    /// <summary>The server no longer accepts the current authentication.</summary>
+    AuthenticationRequired,
+
+    /// <summary>The user selected a different server endpoint.</summary>
+    ServerChanged,
+
     /// <summary>The server returned a terminal error this client does not recognize.</summary>
     Unknown,
 }
+
+/// <summary>Typed result of confirming current session metadata.</summary>
+public abstract record SessionReadinessResult
+{
+    public sealed record Ready(CurrentSessionResponse Session) : SessionReadinessResult;
+    public sealed record PasswordChangeRequired(CurrentSessionResponse Session) : SessionReadinessResult;
+    public sealed record RetryableFailure(GetSessionResult Failure) : SessionReadinessResult;
+    public sealed record SignedOut(SessionSignOutReason Reason) : SessionReadinessResult;
+}
+
+/// <summary>Typed startup restore result.</summary>
+public sealed record SessionRestoreResult(RefreshResult? Refresh, SessionReadinessResult Readiness);
+
+/// <summary>Typed password-change result plus post-change session confirmation.</summary>
+public sealed record SessionPasswordChangeResult(
+    ChangePasswordResult ChangePassword,
+    SessionReadinessResult? Readiness);
 
 /// <summary>
 /// Orchestrates the desktop session lifecycle: login, background token refresh with
@@ -96,7 +138,11 @@ public sealed class SessionService : IDisposable
 
     private SessionAuthState _state = SessionAuthState.SignedOut;
     private SessionTokensResponse? _currentSession;
+    private CurrentSessionResponse? _currentSessionMetadata;
     private bool _currentMustChangePassword;
+    private SessionReadinessState _readiness = SessionReadinessState.NotAuthenticated;
+    private SessionReadinessResult? _lastReadinessResult;
+    private SessionSignOutReason? _lastSignOutReason;
     private TimeSpan? _nextRefreshDelay;
     private Timer? _refreshTimer;
     private Task<RefreshResult>? _refreshInFlight;
@@ -167,6 +213,9 @@ public sealed class SessionService : IDisposable
     /// </summary>
     public event Action<SessionAuthState>? StateChanged;
 
+    /// <summary>Raised after a terminal/local sign-out, outside the internal state lock.</summary>
+    public event Action<SessionSignOutReason>? SignedOut;
+
     /// <summary>Current authentication state.</summary>
     public SessionAuthState CurrentState
     {
@@ -194,8 +243,9 @@ public sealed class SessionService : IDisposable
     }
 
     /// <summary>
-    /// Whether the account must replace its password. The value is read after a successful login;
-    /// an unavailable or malformed session response fails closed to <c>false</c> and never blocks sign-in.
+    /// Whether the account must replace its password. This value changes only after the server
+    /// confirms session metadata; an unavailable or malformed response moves readiness to
+    /// <see cref="SessionReadinessState.Unavailable"/> and cannot unlock the main shell.
     /// </summary>
     public bool CurrentMustChangePassword
     {
@@ -204,6 +254,42 @@ public sealed class SessionService : IDisposable
             lock (_sync)
             {
                 return _currentMustChangePassword;
+            }
+        }
+    }
+
+    /// <summary>Current session metadata; non-null only after server confirmation.</summary>
+    public CurrentSessionResponse? CurrentSessionMetadata
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _currentSessionMetadata;
+            }
+        }
+    }
+
+    /// <summary>Whether the session is safe to use for navigation.</summary>
+    public SessionReadinessState CurrentReadiness
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _readiness;
+            }
+        }
+    }
+
+    /// <summary>Last terminal/local sign-out reason, cleared when a session becomes ready.</summary>
+    public SessionSignOutReason? LastSignOutReason
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _lastSignOutReason;
             }
         }
     }
@@ -226,8 +312,9 @@ public sealed class SessionService : IDisposable
 
     /// <summary>
     /// Signs the user in. On success the session tokens and the persistent device key are
-    /// stored in the vault, the state becomes <see cref="SessionAuthState.SignedIn"/> and the
-    /// background refresh is scheduled. On any failure the previous state is left untouched.
+    /// stored in the vault and session metadata is confirmed before readiness is granted. When
+    /// metadata cannot be confirmed, tokens remain available for retry but the main shell stays
+    /// blocked. On a login-request failure the previous state is left untouched.
     /// </summary>
     /// <param name="login">Account login.</param>
     /// <param name="password">Account password; travels only inside the JSON request body.</param>
@@ -248,6 +335,7 @@ public sealed class SessionService : IDisposable
         // Serialize with any in-flight refresh so a late rotation cannot overwrite
         // the session this call establishes.
         await _refreshGate.WaitAsync().ConfigureAwait(false);
+        var storedNewSession = false;
         try
         {
             var previousState = CurrentState;
@@ -263,12 +351,6 @@ public sealed class SessionService : IDisposable
 
                 if (result is LoginResult.Succeeded { Tokens: var tokens })
                 {
-                    var sessionResult = await _client
-                        .GetSessionAsync(tokens.AccessToken, cancellationToken)
-                        .ConfigureAwait(false);
-                    var mustChangePassword =
-                        sessionResult is GetSessionResult.Succeeded { Session.MustChangePassword: true };
-
                     // The desktop client is single-org: orgId is stored empty and unused.
                     _vault.SaveRefreshToken(
                         tokens.SessionId.ToString("D"),
@@ -277,14 +359,17 @@ public sealed class SessionService : IDisposable
                         deviceKey,
                         tokens.RefreshToken);
                     _vault.SetAccessToken(tokens.AccessToken);
+                    storedNewSession = true;
                     lock (_sync)
                     {
                         _currentSession = tokens;
-                        _currentMustChangePassword = mustChangePassword;
                     }
 
-                    SetState(SessionAuthState.SignedIn);
-                    ScheduleRefresh(tokens);
+                    var readiness = await ConfirmSessionAsync(tokens, cancellationToken).ConfigureAwait(false);
+                    if (readiness is not SessionReadinessResult.SignedOut)
+                    {
+                        ScheduleRefresh(tokens);
+                    }
                 }
                 else
                 {
@@ -295,9 +380,111 @@ public sealed class SessionService : IDisposable
             }
             catch
             {
+                if (storedNewSession)
+                {
+                    _vault.Clear();
+                    ClearSessionState();
+                }
+
                 SetState(previousState);
                 throw;
             }
+        }
+        finally
+        {
+            _refreshGate.Release();
+        }
+    }
+
+    /// <summary>Restores a saved session by rotating its token and confirming metadata.</summary>
+    public async Task<SessionRestoreResult> RestoreAsync(CancellationToken cancellationToken)
+    {
+        if (_vault.GetRefreshToken() is null)
+        {
+            SignOut(SessionSignOutReason.NoStoredSession);
+            return new SessionRestoreResult(
+                null,
+                new SessionReadinessResult.SignedOut(SessionSignOutReason.NoStoredSession));
+        }
+
+        SetState(SessionAuthState.Restoring);
+        var refresh = await RefreshAsync(cancellationToken).ConfigureAwait(false);
+        SessionReadinessResult readiness;
+        lock (_sync)
+        {
+            readiness = _lastReadinessResult
+                ?? new SessionReadinessResult.RetryableFailure(new GetSessionResult.NetworkFailure());
+        }
+
+        return new SessionRestoreResult(refresh, readiness);
+    }
+
+    /// <summary>
+    /// Changes the password and re-reads session metadata. The password-change requirement is
+    /// cleared only after the server confirms <c>mustChangePassword=false</c>.
+    /// </summary>
+    public async Task<SessionPasswordChangeResult> ChangePasswordAsync(
+        string currentPassword,
+        string newPassword,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(currentPassword);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newPassword);
+
+        await _refreshGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var accessToken = _vault.GetAccessToken();
+            var tokens = CurrentSession;
+            if (string.IsNullOrWhiteSpace(accessToken) || tokens is null)
+            {
+                const SessionSignOutReason reason = SessionSignOutReason.AuthenticationRequired;
+                SignOut(reason);
+                return new SessionPasswordChangeResult(
+                    new ChangePasswordResult.AuthError(
+                        new AuthErrorResult(AuthProblemCode.AuthenticationRequired, null)),
+                    new SessionReadinessResult.SignedOut(reason));
+            }
+
+            var result = await _client
+                .ChangePasswordAsync(accessToken, currentPassword, newPassword, cancellationToken)
+                .ConfigureAwait(false);
+            if (result is ChangePasswordResult.Succeeded)
+            {
+                var readiness = await ConfirmSessionAsync(tokens, cancellationToken).ConfigureAwait(false);
+                return new SessionPasswordChangeResult(result, readiness);
+            }
+
+            if (result is ChangePasswordResult.AuthError { Error.ProblemCode: var code }
+                && IsTerminalAuthError(code))
+            {
+                var reason = MapSignOutReason(code);
+                SignOut(reason);
+                return new SessionPasswordChangeResult(
+                    result,
+                    new SessionReadinessResult.SignedOut(reason));
+            }
+
+            return new SessionPasswordChangeResult(result, null);
+        }
+        finally
+        {
+            _refreshGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// Clears all local session material without contacting the current server. This is used
+    /// before switching endpoints and is serialized with refresh/login/logout work so no late
+    /// request can repopulate the old server's credentials.
+    /// </summary>
+    public async global::System.Threading.Tasks.Task ClearLocalSessionForServerChangeAsync(
+        CancellationToken cancellationToken)
+    {
+        await _refreshGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            SignOut(SessionSignOutReason.ServerChanged);
         }
         finally
         {
@@ -316,7 +503,7 @@ public sealed class SessionService : IDisposable
     /// <see cref="SessionSignOutReason.NoDeviceKey"/>) an
     /// <see cref="RefreshResult.AuthError"/> with
     /// <see cref="AuthProblemCode.SessionExpired"/> is returned, since no request was sent.</returns>
-    public Task<RefreshResult> RefreshAsync()
+    public Task<RefreshResult> RefreshAsync(CancellationToken cancellationToken = default)
     {
         lock (_sync)
         {
@@ -325,7 +512,7 @@ public sealed class SessionService : IDisposable
                 return _refreshInFlight;
             }
 
-            _refreshInFlight = RefreshCoreAsync();
+            _refreshInFlight = RefreshCoreAsync(cancellationToken);
             return _refreshInFlight;
         }
     }
@@ -385,12 +572,15 @@ public sealed class SessionService : IDisposable
         _refreshGate.Dispose();
     }
 
-    private async Task<RefreshResult> RefreshCoreAsync()
+    private async Task<RefreshResult> RefreshCoreAsync(CancellationToken cancellationToken)
     {
-        await _refreshGate.WaitAsync().ConfigureAwait(false);
+        // RefreshAsync publishes the task while holding _sync. Yield before any state event so
+        // callbacks are never invoked under that lock, even when the semaphore is immediately free.
+        await global::System.Threading.Tasks.Task.Yield();
+        await _refreshGate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            return await RefreshNowAsync().ConfigureAwait(false);
+            return await RefreshNowAsync(cancellationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -402,7 +592,7 @@ public sealed class SessionService : IDisposable
         }
     }
 
-    private async Task<RefreshResult> RefreshNowAsync()
+    private async Task<RefreshResult> RefreshNowAsync(CancellationToken cancellationToken)
     {
         var entry = _vault.GetRefreshToken();
         if (entry is null)
@@ -420,7 +610,7 @@ public sealed class SessionService : IDisposable
         SetState(SessionAuthState.Refreshing);
 
         var result = await _client
-            .RefreshAsync(entry.RefreshToken, entry.DeviceKey, CancellationToken.None)
+            .RefreshAsync(entry.RefreshToken, entry.DeviceKey, cancellationToken)
             .ConfigureAwait(false);
 
         switch (result)
@@ -438,8 +628,11 @@ public sealed class SessionService : IDisposable
                     _currentSession = tokens;
                 }
 
-                SetState(SessionAuthState.SignedIn);
-                ScheduleRefresh(tokens);
+                var readiness = await ConfirmSessionAsync(tokens, cancellationToken).ConfigureAwait(false);
+                if (readiness is not SessionReadinessResult.SignedOut)
+                {
+                    ScheduleRefresh(tokens);
+                }
                 return result;
 
             case RefreshResult.AuthError { Error: var error }:
@@ -449,7 +642,7 @@ public sealed class SessionService : IDisposable
                 }
                 else
                 {
-                    SetState(SessionAuthState.SignedIn);
+                    SetStateAfterRetryableFailure();
                     ScheduleRetry();
                 }
 
@@ -458,13 +651,82 @@ public sealed class SessionService : IDisposable
             case RefreshResult.NetworkFailure:
             case RefreshResult.MalformedResponse:
                 // The previous tokens stay usable; retry on a fixed delay.
-                SetState(SessionAuthState.SignedIn);
+                SetStateAfterRetryableFailure();
                 ScheduleRetry();
                 return result;
 
             default:
                 return result;
         }
+    }
+
+    private async Task<SessionReadinessResult> ConfirmSessionAsync(
+        SessionTokensResponse tokens,
+        CancellationToken cancellationToken)
+    {
+        lock (_sync)
+        {
+            _readiness = SessionReadinessState.Verifying;
+            _currentSessionMetadata = null;
+        }
+
+        var result = await _client.GetSessionAsync(tokens.AccessToken, cancellationToken).ConfigureAwait(false);
+        switch (result)
+        {
+            case GetSessionResult.Succeeded { Session: var session }
+                when session.SessionId == tokens.SessionId:
+                var readiness = session.MustChangePassword
+                    ? (SessionReadinessResult)new SessionReadinessResult.PasswordChangeRequired(session)
+                    : new SessionReadinessResult.Ready(session);
+                lock (_sync)
+                {
+                    _currentSessionMetadata = session;
+                    _currentMustChangePassword = session.MustChangePassword;
+                    _readiness = session.MustChangePassword
+                        ? SessionReadinessState.PasswordChangeRequired
+                        : SessionReadinessState.Ready;
+                    _lastReadinessResult = readiness;
+                    _lastSignOutReason = null;
+                }
+
+                SetState(SessionAuthState.SignedIn);
+                return readiness;
+
+            case GetSessionResult.AuthError { Error.ProblemCode: var code }
+                when IsTerminalAuthError(code):
+                var reason = MapSignOutReason(code);
+                SignOut(reason);
+                return new SessionReadinessResult.SignedOut(reason);
+
+            default:
+                GetSessionResult failure = result is GetSessionResult.Succeeded
+                    ? new GetSessionResult.MalformedResponse()
+                    : result;
+                var retryable = new SessionReadinessResult.RetryableFailure(failure);
+                lock (_sync)
+                {
+                    _readiness = SessionReadinessState.Unavailable;
+                    _lastReadinessResult = retryable;
+                }
+
+                SetState(SessionAuthState.SessionUnavailable);
+                return retryable;
+        }
+    }
+
+    private void SetStateAfterRetryableFailure()
+    {
+        lock (_sync)
+        {
+            if (_readiness is SessionReadinessState.NotAuthenticated or SessionReadinessState.Verifying)
+            {
+                _readiness = SessionReadinessState.Unavailable;
+            }
+        }
+
+        SetState(CurrentReadiness == SessionReadinessState.Unavailable
+            ? SessionAuthState.SessionUnavailable
+            : SessionAuthState.SignedIn);
     }
 
     private string GetOrCreateDeviceKey()
@@ -520,7 +782,9 @@ public sealed class SessionService : IDisposable
         lock (_sync)
         {
             _currentSession = null;
+            _currentSessionMetadata = null;
             _currentMustChangePassword = false;
+            _readiness = SessionReadinessState.NotAuthenticated;
             _refreshTimer?.Dispose();
             _refreshTimer = null;
             _nextRefreshDelay = null;
@@ -531,7 +795,14 @@ public sealed class SessionService : IDisposable
     {
         _vault.Clear();
         ClearSessionState();
+        lock (_sync)
+        {
+            _lastSignOutReason = reason;
+            _lastReadinessResult = new SessionReadinessResult.SignedOut(reason);
+        }
+
         SetState(SessionAuthState.SignedOut);
+        SignedOut?.Invoke(reason);
     }
 
     private void SetState(SessionAuthState newState)
@@ -553,9 +824,14 @@ public sealed class SessionService : IDisposable
 
     private void OnRefreshDue(object? state)
     {
+        _ = ObserveBackgroundRefreshAsync();
+    }
+
+    private async global::System.Threading.Tasks.Task ObserveBackgroundRefreshAsync()
+    {
         try
         {
-            _ = RefreshAsync();
+            await RefreshAsync().ConfigureAwait(false);
         }
         catch
         {
@@ -566,8 +842,10 @@ public sealed class SessionService : IDisposable
     private static bool IsTerminalAuthError(AuthProblemCode code) => code switch
     {
         AuthProblemCode.SessionExpired => true,
+        AuthProblemCode.SessionRevoked => true,
         AuthProblemCode.RefreshTokenReuse => true,
         AuthProblemCode.AccountBlocked => true,
+        AuthProblemCode.AuthenticationRequired => true,
         // Unrecognized codes (including a future device-revoked code) are fail-closed.
         AuthProblemCode.Unknown => true,
         _ => false,
@@ -576,8 +854,10 @@ public sealed class SessionService : IDisposable
     private static SessionSignOutReason MapSignOutReason(AuthProblemCode code) => code switch
     {
         AuthProblemCode.SessionExpired => SessionSignOutReason.SessionExpired,
+        AuthProblemCode.SessionRevoked => SessionSignOutReason.SessionRevoked,
         AuthProblemCode.RefreshTokenReuse => SessionSignOutReason.RefreshTokenReuse,
         AuthProblemCode.AccountBlocked => SessionSignOutReason.AccountBlocked,
+        AuthProblemCode.AuthenticationRequired => SessionSignOutReason.AuthenticationRequired,
         _ => SessionSignOutReason.Unknown,
     };
 }

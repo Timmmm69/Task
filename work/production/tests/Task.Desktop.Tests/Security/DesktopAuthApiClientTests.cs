@@ -60,7 +60,7 @@ public class DesktopAuthApiClientTests
         using var json = JsonDocument.Parse(captured!.Body);
         Assert.Equal("ivan", json.RootElement.GetProperty("login").GetString());
         Assert.Equal(password, json.RootElement.GetProperty("password").GetString());
-        Assert.DoesNotContain("password", captured.RequestUri.ToString());
+        Assert.DoesNotContain("password", captured.RequestUri!.ToString());
 
         var device = json.RootElement.GetProperty("device");
         Assert.Equal(DeviceKey, device.GetProperty("deviceKey").GetString());
@@ -187,7 +187,7 @@ public class DesktopAuthApiClientTests
     {
         var handler = new FakeHttpMessageHandler(_ =>
             global::System.Threading.Tasks.Task.FromResult(
-                ProblemResponse(HttpStatusCode.Unauthorized, "AUTHENTICATION_REQUIRED")));
+                ProblemResponse(HttpStatusCode.Unauthorized, "FUTURE_SECURITY_CODE")));
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
         var result = await client.LoginAsync("ivan", "wrong", DeviceInfo, CorrelationId, CancellationToken.None);
@@ -502,6 +502,93 @@ public class DesktopAuthApiClientTests
         await Assert.ThrowsAsync<ArgumentException>(() => client.LogoutAsync("   ", CancellationToken.None));
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_204_SendsBearerAndContractBody()
+    {
+        CapturedRequest? captured = null;
+        var handler = new FakeHttpMessageHandler(async request =>
+        {
+            captured = await CaptureAsync(request);
+            return new HttpResponseMessage(HttpStatusCode.NoContent);
+        });
+        var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
+
+        var result = await client.ChangePasswordAsync(
+            "AT_secret",
+            "Current!234",
+            "Replacement!234",
+            CancellationToken.None);
+
+        Assert.IsType<ChangePasswordResult.Succeeded>(result);
+        Assert.NotNull(captured);
+        Assert.Equal(HttpMethod.Post, captured.Method);
+        Assert.Equal("/api/v1/auth/change-password", captured.RequestUri!.AbsolutePath);
+        Assert.Equal("Bearer", captured.AuthorizationScheme);
+        Assert.Equal("AT_secret", captured.AuthorizationParameter);
+        using var body = JsonDocument.Parse(captured.Body);
+        Assert.Equal("Current!234", body.RootElement.GetProperty("currentPassword").GetString());
+        Assert.Equal("Replacement!234", body.RootElement.GetProperty("newPassword").GetString());
+        Assert.DoesNotContain("Current!234", captured.RequestUri.AbsoluteUri);
+        Assert.DoesNotContain("Replacement!234", captured.RequestUri.AbsoluteUri);
+        AssertNoHeaderContainsSecret(captured, "Current!234");
+        AssertNoHeaderContainsSecret(captured, "Replacement!234");
+    }
+
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized, "INVALID_CREDENTIALS", AuthProblemCode.InvalidCredentials)]
+    [InlineData(HttpStatusCode.UnprocessableEntity, "VALIDATION_FAILED", AuthProblemCode.ValidationFailed)]
+    [InlineData(HttpStatusCode.Locked, "ACCOUNT_BLOCKED", AuthProblemCode.AccountBlocked)]
+    [InlineData(HttpStatusCode.Unauthorized, "SESSION_EXPIRED", AuthProblemCode.SessionExpired)]
+    [InlineData(HttpStatusCode.Unauthorized, "SESSION_REVOKED", AuthProblemCode.SessionRevoked)]
+    [InlineData(HttpStatusCode.Unauthorized, "AUTHENTICATION_REQUIRED", AuthProblemCode.AuthenticationRequired)]
+    [InlineData(HttpStatusCode.TooManyRequests, "RATE_LIMITED", AuthProblemCode.RateLimited)]
+    public async global::System.Threading.Tasks.Task ChangePassword_Problem_MapsStableCode(
+        HttpStatusCode status,
+        string code,
+        AuthProblemCode expected)
+    {
+        var client = new DesktopAuthApiClient(
+            new HttpClient(new FakeHttpMessageHandler(
+                _ => global::System.Threading.Tasks.Task.FromResult(ProblemResponse(status, code)))),
+            BaseUrl);
+
+        var result = await client.ChangePasswordAsync("AT", "old", "new", CancellationToken.None);
+
+        var authError = Assert.IsType<ChangePasswordResult.AuthError>(result);
+        Assert.Equal(expected, authError.Error.ProblemCode);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_NetworkAndMalformed_AreTyped()
+    {
+        var networkClient = new DesktopAuthApiClient(
+            new HttpClient(new FakeHttpMessageHandler(_ => throw new HttpRequestException("offline"))),
+            BaseUrl);
+        var malformedClient = new DesktopAuthApiClient(
+            new HttpClient(new FakeHttpMessageHandler(
+                _ => global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, "{}")))),
+            BaseUrl);
+
+        Assert.IsType<ChangePasswordResult.NetworkFailure>(
+            await networkClient.ChangePasswordAsync("AT", "old", "new", CancellationToken.None));
+        Assert.IsType<ChangePasswordResult.MalformedResponse>(
+            await malformedClient.ChangePasswordAsync("AT", "old", "new", CancellationToken.None));
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_CallerCancellation_IsPropagated()
+    {
+        var client = new DesktopAuthApiClient(
+            new HttpClient(new FakeHttpMessageHandler(
+                _ => global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent)),
+                TimeSpan.FromSeconds(5))),
+            BaseUrl);
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(20));
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            client.ChangePasswordAsync("AT", "old", "new", cts.Token));
+    }
+
     private static HttpResponseMessage JsonResponse(HttpStatusCode statusCode, string json) =>
         new(statusCode)
         {
@@ -538,7 +625,14 @@ public class DesktopAuthApiClientTests
             contentType = request.Content.Headers.ContentType?.MediaType;
         }
 
-        return new CapturedRequest(request.Method, request.RequestUri, headers, body, contentType);
+        return new CapturedRequest(
+            request.Method,
+            request.RequestUri,
+            headers,
+            body,
+            contentType,
+            request.Headers.Authorization?.Scheme,
+            request.Headers.Authorization?.Parameter);
     }
 
     private static void AssertNoHeaderContainsSecret(CapturedRequest request, string secret)
@@ -555,7 +649,9 @@ public class DesktopAuthApiClientTests
         Uri? RequestUri,
         IReadOnlyDictionary<string, IReadOnlyList<string>> Headers,
         string Body,
-        string? ContentType);
+        string? ContentType,
+        string? AuthorizationScheme,
+        string? AuthorizationParameter);
 
     /// <summary>Fake transport: answers from a responder function, optionally after a delay.</summary>
     private sealed class FakeHttpMessageHandler : HttpMessageHandler
