@@ -1,19 +1,26 @@
 # Task desktop authentication vertical slice 0.1.0
 
-Этот пакет фиксирует результат **Инкремента A — client/session foundation**.
+Пакет фиксирует проверенный результат **Инкрементов A и B**.
 
-В пакет вошли локальная HTTPS-конфигурация сервера, probe `/health/live` и
-`/health/ready`, типизированный desktop client для смены пароля, расширенное
-отображение auth problem codes, fail-closed session readiness, восстановление
-сохранённой сессии и причины terminal sign-out.
+Инкремент A содержит desktop auth foundation: локальную HTTPS-конфигурацию,
+health probe, типизированный auth client, DPAPI vault, restore/readiness,
+single-flight refresh и terminal sign-out.
 
-Полный desktop authentication vertical slice ещё не завершён: workflow/ViewModel
-(Инкремент B), WPF composition и ручной E2E (Инкремент C) не входят в этот результат.
+Инкремент B добавляет production workflow/ViewModels: первый запуск, настройку
+сервера, login, обязательную смену пароля, offline recovery, подтверждённое
+ready-состояние, logout, безопасную смену сервера, реакцию на terminal refresh,
+cancellable async-команды и безопасные русские сообщения.
 
-Исходный implementation commit: `4a5f72355f45b84f4df70496e3db092ba98bc9eb`.
-Обязательный полный solution gate подтверждён после уточнения тестового контракта
-periodic maintenance worker: тесты больше не считают дополнительный допустимый
-timer tick ошибкой. Подробности — в `validation-report.md`.
+Implementation commits:
+
+- Инкремент A: `4a5f72355f45b84f4df70496e3db092ba98bc9eb`
+- Инкремент B: `0502c79f231446a96e2424455435ed2ee2ca60ba`
+
+Gate B пройден. Полный desktop authentication vertical slice ещё не завершён:
+WPF composition, keyboard/UI Automation wiring, DPI/manual smoke и реальный
+API/PostgreSQL E2E относятся к Инкременту C.
+
+Подробные фактические результаты приведены в `validation-report.md`.
 
 Проверка целостности:
 
