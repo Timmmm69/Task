@@ -200,8 +200,9 @@ public sealed class PostgresSessionListTests
             var organizationId = Guid.NewGuid();
             var otherOrganizationId = Guid.NewGuid();
             var userId = Guid.NewGuid();
+            var otherUserId = Guid.NewGuid();
             SeedOrganizationAndUser(dataSource, organizationId, userId, Guid.NewGuid());
-            SeedOrganizationAndUser(dataSource, otherOrganizationId, userId, Guid.NewGuid());
+            SeedOrganizationAndUser(dataSource, otherOrganizationId, otherUserId, Guid.NewGuid());
 
             await using var runtime = new TaskPersistenceRuntime(databaseConnection, TimeSpan.FromSeconds(10));
             var repository = runtime.CreateSessionRepository();
@@ -320,7 +321,10 @@ public sealed class PostgresSessionListTests
             deviceCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = deviceId });
             deviceCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
             deviceCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
-            deviceCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = new string('f', 64) });
+            deviceCommand.Parameters.Add(new NpgsqlParameter<string>
+            {
+                TypedValue = deviceId.ToString("N") + deviceId.ToString("N"),
+            });
             deviceCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = displayName });
             deviceCommand.ExecuteNonQuery();
         }

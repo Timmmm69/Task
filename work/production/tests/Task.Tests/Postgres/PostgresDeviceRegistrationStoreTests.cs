@@ -135,7 +135,8 @@ public sealed class PostgresDeviceRegistrationStoreTests
         using var command = dataSource.CreateCommand(
             "SELECT last_seen_at FROM iam.devices WHERE id = $1;");
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = deviceId });
-        return (DateTimeOffset)command.ExecuteScalar()!;
+        var value = (DateTime)command.ExecuteScalar()!;
+        return new DateTimeOffset(value, TimeSpan.Zero);
     }
 
     private static string? ReadDisplayName(NpgsqlDataSource dataSource, Guid deviceId)

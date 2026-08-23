@@ -276,6 +276,11 @@ public sealed class AuthWorkflowViewModelTests
                 return Json(HttpStatusCode.OK, SessionJson(sessionReads == 1));
             }
 
+            if (IsRefresh(request))
+            {
+                return Json(HttpStatusCode.OK, TokensJson());
+            }
+
             return new HttpResponseMessage(HttpStatusCode.NoContent);
         };
         using var workflow = harness.CreateWorkflow();
@@ -290,7 +295,15 @@ public sealed class AuthWorkflowViewModelTests
         Assert.Equal(2, sessionReads);
         Assert.Equal(AuthWorkflowState.Ready, workflow.CurrentState);
         Assert.True(workflow.IsReady);
-        Assert.Contains("/api/v1/auth/change-password", harness.AuthRequests);
+        Assert.Equal(
+            [
+                "/api/v1/auth/login",
+                "/api/v1/auth/session",
+                "/api/v1/auth/change-password",
+                "/api/v1/auth/refresh",
+                "/api/v1/auth/session",
+            ],
+            harness.AuthRequests);
     }
 
     [Fact]
@@ -339,6 +352,11 @@ public sealed class AuthWorkflowViewModelTests
                 }
 
                 return Json(HttpStatusCode.OK, SessionJson(mustChangePassword: true));
+            }
+
+            if (IsRefresh(request))
+            {
+                return Json(HttpStatusCode.OK, TokensJson());
             }
 
             return new HttpResponseMessage(HttpStatusCode.NoContent);
@@ -646,6 +664,9 @@ public sealed class AuthWorkflowViewModelTests
 
     private static bool IsSession(HttpRequestMessage request) =>
         request.RequestUri!.AbsolutePath.EndsWith("/session", StringComparison.Ordinal);
+
+    private static bool IsRefresh(HttpRequestMessage request) =>
+        request.RequestUri!.AbsolutePath.EndsWith("/refresh", StringComparison.Ordinal);
 
     private static HttpResponseMessage Json(HttpStatusCode status, string json) =>
         new(status) { Content = new StringContent(json, Encoding.UTF8, "application/json") };

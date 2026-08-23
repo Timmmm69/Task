@@ -581,8 +581,11 @@ public class SessionServiceTests : IDisposable
     public async global::System.Threading.Tasks.Task ChangePassword_Success_ClearsRequirementOnlyAfterConfirmation()
     {
         var sessionReads = 0;
+        var refreshCalls = 0;
+        var requestOrder = new List<string>();
         var handler = new FakeHttpMessageHandler(request =>
         {
+            requestOrder.Add(request.RequestUri!.AbsolutePath);
             if (IsLoginRequest(request))
             {
                 return global::System.Threading.Tasks.Task.FromResult(
@@ -594,6 +597,13 @@ public class SessionServiceTests : IDisposable
                 sessionReads++;
                 return global::System.Threading.Tasks.Task.FromResult(
                     JsonResponse(HttpStatusCode.OK, SessionJson(sessionReads == 1)));
+            }
+
+            if (IsRefreshRequest(request))
+            {
+                refreshCalls++;
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2, "AT_rotated", "RT_rotated")));
             }
 
             Assert.EndsWith("/api/v1/auth/change-password", request.RequestUri!.AbsolutePath);
@@ -610,6 +620,18 @@ public class SessionServiceTests : IDisposable
         Assert.IsType<SessionReadinessResult.Ready>(result.Readiness);
         Assert.False(service.CurrentMustChangePassword);
         Assert.Equal(2, sessionReads);
+        Assert.Equal(1, refreshCalls);
+        Assert.Equal(
+            [
+                "/api/v1/auth/login",
+                "/api/v1/auth/session",
+                "/api/v1/auth/change-password",
+                "/api/v1/auth/refresh",
+                "/api/v1/auth/session",
+            ],
+            requestOrder);
+        Assert.Equal("AT_rotated", vault.GetAccessToken());
+        Assert.Equal("RT_rotated", vault.GetRefreshToken()!.RefreshToken);
     }
 
     [Fact]
@@ -636,6 +658,12 @@ public class SessionServiceTests : IDisposable
                     JsonResponse(HttpStatusCode.OK, SessionJson(true)));
             }
 
+            if (IsRefreshRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2, "AT_rotated", "RT_rotated")));
+            }
+
             return global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
         });
         using var service = CreateService(handler);
@@ -646,6 +674,86 @@ public class SessionServiceTests : IDisposable
         Assert.IsType<SessionReadinessResult.RetryableFailure>(result.Readiness);
         Assert.True(service.CurrentMustChangePassword);
         Assert.Equal(SessionReadinessState.Unavailable, service.CurrentReadiness);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_TerminalRefresh_ClearsVaultAndSignsOut()
+    {
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, SessionJson(true)));
+            }
+
+            if (IsRefreshRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED"));
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+
+        var result = await service.ChangePasswordAsync("Current!234", "Replacement!234", CancellationToken.None);
+
+        Assert.IsType<ChangePasswordResult.Succeeded>(result.ChangePassword);
+        var signedOut = Assert.IsType<SessionReadinessResult.SignedOut>(result.Readiness);
+        Assert.Equal(SessionSignOutReason.SessionExpired, signedOut.Reason);
+        Assert.Equal(SessionAuthState.SignedOut, service.CurrentState);
+        Assert.Null(vault.GetAccessToken());
+        Assert.Null(vault.GetRefreshToken());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_RetryableRefresh_KeepsVaultAndBlocksReadiness()
+    {
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, SessionJson(true)));
+            }
+
+            if (IsRefreshRequest(request))
+            {
+                throw new HttpRequestException("offline");
+            }
+
+            return global::System.Threading.Tasks.Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+        var storedBeforeChange = vault.GetRefreshToken();
+
+        var result = await service.ChangePasswordAsync("Current!234", "Replacement!234", CancellationToken.None);
+
+        Assert.IsType<ChangePasswordResult.Succeeded>(result.ChangePassword);
+        var retryable = Assert.IsType<SessionReadinessResult.RetryableFailure>(result.Readiness);
+        Assert.IsType<GetSessionResult.NetworkFailure>(retryable.Failure);
+        Assert.Equal(SessionAuthState.SessionUnavailable, service.CurrentState);
+        Assert.Equal(SessionReadinessState.Unavailable, service.CurrentReadiness);
+        Assert.True(service.CurrentMustChangePassword);
+        Assert.Equal(storedBeforeChange, vault.GetRefreshToken());
+        Assert.NotNull(vault.GetAccessToken());
     }
 
     [Fact]
@@ -753,6 +861,9 @@ public class SessionServiceTests : IDisposable
 
     private static bool IsSessionRequest(HttpRequestMessage request) =>
         request.RequestUri?.AbsolutePath.EndsWith("/api/v1/auth/session", StringComparison.Ordinal) == true;
+
+    private static bool IsRefreshRequest(HttpRequestMessage request) =>
+        request.RequestUri?.AbsolutePath.EndsWith("/api/v1/auth/refresh", StringComparison.Ordinal) == true;
 
     private static string SessionJson(bool mustChangePassword) =>
         $$"""{"userId":"{{SessionId}}","sessionId":"{{SessionId}}","organizationId":"019fb732-ad08-7de1-b27d-c86bae8a2937","credentialVersion":1,"authorizationScopeVersion":1,"mustChangePassword":{{mustChangePassword.ToString().ToLowerInvariant()}}}""";

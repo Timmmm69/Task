@@ -420,8 +420,9 @@ public sealed class SessionService : IDisposable
     }
 
     /// <summary>
-    /// Changes the password and re-reads session metadata. The password-change requirement is
-    /// cleared only after the server confirms <c>mustChangePassword=false</c>.
+    /// Changes the password, rotates the still-current refresh token and then re-reads session
+    /// metadata. The password-change requirement is cleared only after the server confirms
+    /// <c>mustChangePassword=false</c> with the new access token.
     /// </summary>
     public async Task<SessionPasswordChangeResult> ChangePasswordAsync(
         string currentPassword,
@@ -451,7 +452,15 @@ public sealed class SessionService : IDisposable
                 .ConfigureAwait(false);
             if (result is ChangePasswordResult.Succeeded)
             {
-                var readiness = await ConfirmSessionAsync(tokens, cancellationToken).ConfigureAwait(false);
+                lock (_sync)
+                {
+                    _readiness = SessionReadinessState.Verifying;
+                    _currentSessionMetadata = null;
+                    _lastReadinessResult = null;
+                }
+
+                var refresh = await RefreshNowAsync(cancellationToken).ConfigureAwait(false);
+                var readiness = GetPostPasswordChangeReadiness(refresh);
                 return new SessionPasswordChangeResult(result, readiness);
             }
 
@@ -471,6 +480,34 @@ public sealed class SessionService : IDisposable
         {
             _refreshGate.Release();
         }
+    }
+
+    private SessionReadinessResult GetPostPasswordChangeReadiness(RefreshResult refresh)
+    {
+        lock (_sync)
+        {
+            if (_lastReadinessResult is not null)
+            {
+                return _lastReadinessResult;
+            }
+        }
+
+        GetSessionResult failure = refresh switch
+        {
+            RefreshResult.NetworkFailure => new GetSessionResult.NetworkFailure(),
+            RefreshResult.MalformedResponse => new GetSessionResult.MalformedResponse(),
+            RefreshResult.AuthError { Error: var error } => new GetSessionResult.AuthError(error),
+            _ => new GetSessionResult.MalformedResponse(),
+        };
+        var readiness = new SessionReadinessResult.RetryableFailure(failure);
+        lock (_sync)
+        {
+            _readiness = SessionReadinessState.Unavailable;
+            _lastReadinessResult = readiness;
+        }
+
+        SetState(SessionAuthState.SessionUnavailable);
+        return readiness;
     }
 
     /// <summary>

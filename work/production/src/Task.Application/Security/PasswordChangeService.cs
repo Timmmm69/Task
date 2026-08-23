@@ -49,18 +49,15 @@ public sealed class PasswordChangeService
     public const int MinimumPasswordLength = 10;
 
     private readonly IAccountCredentialStore _credentialStore;
-    private readonly ISessionRepository _sessionRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly int _historyLimit;
 
     public PasswordChangeService(
         IAccountCredentialStore credentialStore,
-        ISessionRepository sessionRepository,
         IPasswordHasher passwordHasher,
         int historyLimit = DefaultHistoryLimit)
     {
         _credentialStore = credentialStore ?? throw new ArgumentNullException(nameof(credentialStore));
-        _sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
         _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         if (historyLimit < 1)
         {
@@ -121,15 +118,22 @@ public sealed class PasswordChangeService
         }
 
         var newHash = _passwordHasher.HashPassword(newPassword);
-        await _credentialStore.UpdateCredentialAsync(
-            organizationId, userId, newHash, checked((int)credential.CredentialVersion + 1), cancellationToken);
-        // Race: account may be deleted between UpdateCredentialAsync and this call; false is ignored.
-        _ = await _credentialStore.ResetMustChangePasswordAsync(organizationId, userId, cancellationToken);
-        await _credentialStore.AddPasswordToHistoryAsync(organizationId, userId, currentRecord, cancellationToken);
-        var revokedSessions = await _sessionRepository.RevokeAllUserSessionsExceptAsync(
-            organizationId, userId, currentSessionId, cancellationToken);
+        var commit = await _credentialStore.CommitPasswordChangeAsync(
+            organizationId,
+            userId,
+            currentRecord,
+            newHash,
+            credential.CredentialVersion,
+            currentSessionId,
+            cancellationToken);
+        if (!commit.Succeeded)
+        {
+            // The account credential or authenticated session changed after validation. Fail
+            // closed and expose the same caller-facing result as invalid current credentials.
+            return InvalidCurrentPasswordResult;
+        }
 
-        return new PasswordChangeResult(PasswordChangeOutcome.Success, revokedSessions);
+        return new PasswordChangeResult(PasswordChangeOutcome.Success, commit.RevokedSessionCount);
     }
 
     private async global::System.Threading.Tasks.Task<bool> IsReusedFromHistoryAsync(

@@ -138,6 +138,117 @@ public sealed class PostgresAccountCredentialStoreTests
                 Assert.NotNull(flag);
                 Assert.False((bool)flag);
             }
+
+            SetMustChangePassword(dataSource, userId, true);
+            var sessionRepository = new PostgresSessionRepository(dataSource);
+            var now = DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var currentSessionId = Guid.NewGuid();
+            var otherSessionId = Guid.NewGuid();
+            var currentTokenHash = new string('a', 64);
+            var otherTokenHash = new string('b', 64);
+            sessionRepository.CreateSession(
+                CreateSession(currentSessionId, organizationId, userId, credentialVersion: 2, now),
+                CreateRefreshToken(currentSessionId, currentTokenHash, now));
+            sessionRepository.CreateSession(
+                CreateSession(otherSessionId, organizationId, userId, credentialVersion: 2, now),
+                CreateRefreshToken(otherSessionId, otherTokenHash, now));
+
+            var inactiveSessionId = Guid.NewGuid();
+            var inactiveTokenHash = new string('c', 64);
+            sessionRepository.CreateSession(
+                CreateSession(inactiveSessionId, organizationId, userId, credentialVersion: 2, now),
+                CreateRefreshToken(inactiveSessionId, inactiveTokenHash, now));
+            sessionRepository.RevokeSession(organizationId, inactiveSessionId, "integration-test");
+
+            var rejectedInactiveCommit = await store.CommitPasswordChangeAsync(
+                organizationId,
+                userId,
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{\"memoryKiB\":65536}"),
+                new PasswordHashRecord(FakeHash("hash:rejected-inactive"), "{}"),
+                expectedCredentialVersion: 2,
+                inactiveSessionId);
+            Assert.False(rejectedInactiveCommit.Succeeded);
+            Assert.Equal(FakeHash("hash:fresh"),
+                (await store.GetCredentialAsync(organizationId, userId))!.PasswordHash);
+            Assert.True(await store.GetMustChangePasswordAsync(organizationId, userId));
+            Assert.Equal(FakeHash("history:6"),
+                (await store.GetRecentPasswordHistoryAsync(organizationId, userId, 1))[0].Hash);
+
+            var foreignOrganizationId = Guid.NewGuid();
+            var foreignUserId = Guid.NewGuid();
+            SeedOrganizationAndUser(dataSource, foreignOrganizationId, foreignUserId, Guid.NewGuid());
+            var foreignSessionId = Guid.NewGuid();
+            sessionRepository.CreateSession(
+                CreateSession(foreignSessionId, foreignOrganizationId, foreignUserId, credentialVersion: 1, now),
+                CreateRefreshToken(foreignSessionId, new string('d', 64), now));
+
+            var rejectedForeignCommit = await store.CommitPasswordChangeAsync(
+                organizationId,
+                userId,
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{\"memoryKiB\":65536}"),
+                new PasswordHashRecord(FakeHash("hash:rejected-foreign"), "{}"),
+                expectedCredentialVersion: 2,
+                foreignSessionId);
+            Assert.False(rejectedForeignCommit.Succeeded);
+            Assert.Equal(FakeHash("hash:fresh"),
+                (await store.GetCredentialAsync(organizationId, userId))!.PasswordHash);
+            Assert.True(await store.GetMustChangePasswordAsync(organizationId, userId));
+            Assert.Equal(FakeHash("history:6"),
+                (await store.GetRecentPasswordHistoryAsync(organizationId, userId, 1))[0].Hash);
+
+            var commit = await store.CommitPasswordChangeAsync(
+                organizationId,
+                userId,
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{\"memoryKiB\":65536}"),
+                new PasswordHashRecord(FakeHash("hash:after-change"), "{\"memoryKiB\":65536}"),
+                expectedCredentialVersion: 2,
+                currentSessionId);
+
+            Assert.True(commit.Succeeded);
+            Assert.Equal(1, commit.RevokedSessionCount);
+            var committedCredential = await store.GetCredentialAsync(organizationId, userId);
+            Assert.NotNull(committedCredential);
+            Assert.Equal(FakeHash("hash:after-change"), committedCredential.PasswordHash);
+            Assert.Equal(3, committedCredential.CredentialVersion);
+            Assert.False(await store.GetMustChangePasswordAsync(organizationId, userId));
+
+            var currentSession = sessionRepository.GetActiveSession(organizationId, currentSessionId);
+            Assert.NotNull(currentSession);
+            Assert.Equal(3, currentSession.CredentialVersion);
+            Assert.Null(sessionRepository.GetActiveSession(organizationId, otherSessionId));
+            Assert.Equal(
+                SessionRequestState.SessionRevoked,
+                sessionRepository.GetSessionRequestState(organizationId, otherSessionId, 3, 1));
+            Assert.Equal(
+                SessionRequestState.VersionMismatch,
+                sessionRepository.GetSessionRequestState(organizationId, currentSessionId, 2, 1));
+            Assert.Equal(
+                SessionRequestState.Active,
+                sessionRepository.GetSessionRequestState(organizationId, currentSessionId, 3, 1));
+
+            var currentRefresh = sessionRepository.FindSessionByRefreshTokenHash(currentTokenHash);
+            Assert.NotNull(currentRefresh);
+            Assert.Equal(TokenStatus.Active, currentRefresh.TokenStatus);
+            Assert.Equal(3, currentRefresh.CredentialVersion);
+            Assert.Equal(
+                TokenStatus.Revoked,
+                sessionRepository.FindSessionByRefreshTokenHash(otherTokenHash)!.TokenStatus);
+
+            var latestHistory = await store.GetRecentPasswordHistoryAsync(organizationId, userId, 1);
+            Assert.Single(latestHistory);
+            Assert.Equal(FakeHash("hash:fresh"), latestHistory[0].Hash);
+
+            var staleCommit = await store.CommitPasswordChangeAsync(
+                organizationId,
+                userId,
+                new PasswordHashRecord(FakeHash("hash:fresh"), "{\"memoryKiB\":65536}"),
+                new PasswordHashRecord(FakeHash("hash:stale"), "{}"),
+                expectedCredentialVersion: 2,
+                currentSessionId);
+            Assert.False(staleCommit.Succeeded);
+            Assert.Equal(FakeHash("hash:after-change"),
+                (await store.GetCredentialAsync(organizationId, userId))!.PasswordHash);
+            Assert.NotNull(sessionRepository.FindSessionByRefreshTokenHash(currentTokenHash));
         }
         finally
         {
@@ -148,6 +259,44 @@ public sealed class PostgresAccountCredentialStoreTests
 
     private static string FakeHash(string prefix) =>
         prefix + new string('x', 64);
+
+    private static SessionSnapshot CreateSession(
+        Guid sessionId,
+        Guid organizationId,
+        Guid userId,
+        long credentialVersion,
+        DateTimeOffset now) =>
+        new(
+            sessionId,
+            organizationId,
+            userId,
+            null,
+            credentialVersion,
+            1,
+            now,
+            now,
+            now.AddHours(1),
+            now.AddHours(8),
+            null,
+            null);
+
+    private static RefreshTokenRecord CreateRefreshToken(
+        Guid sessionId,
+        string tokenHash,
+        DateTimeOffset now) =>
+        new(Guid.NewGuid(), sessionId, tokenHash, now, now.AddHours(8), null, null, null);
+
+    private static void SetMustChangePassword(
+        NpgsqlDataSource dataSource,
+        Guid userId,
+        bool mustChangePassword)
+    {
+        using var command = dataSource.CreateCommand(
+            "UPDATE iam.user_accounts SET must_change_password = $2 WHERE id = $1;");
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter<bool> { TypedValue = mustChangePassword });
+        command.ExecuteNonQuery();
+    }
 
     private static void CreateDatabase(NpgsqlDataSource adminDataSource, string databaseName)
     {

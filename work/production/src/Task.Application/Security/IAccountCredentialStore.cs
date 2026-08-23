@@ -10,6 +10,11 @@ public sealed record AccountCredential(
     string AccountStatus);
 
 /// <summary>
+/// Result of atomically committing a password rotation and its session side effects.
+/// </summary>
+public sealed record PasswordChangeCommitResult(bool Succeeded, int RevokedSessionCount);
+
+/// <summary>
 /// Persistence port for credential rotation: the current hash and credential version in
 /// iam.user_accounts and the disabled-password audit trail in iam.password_history.
 /// </summary>
@@ -65,6 +70,22 @@ public interface IAccountCredentialStore
         Guid organizationId,
         Guid userId,
         int limit,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Atomically replaces the credential, clears must_change_password, archives the previous
+    /// hash, aligns the kept current session with the new credential version and removes all
+    /// other active sessions together with their refresh tokens. The commit is rejected without
+    /// changing anything when the expected credential no longer matches or the requested current
+    /// session is not active and owned by the account.
+    /// </summary>
+    global::System.Threading.Tasks.Task<PasswordChangeCommitResult> CommitPasswordChangeAsync(
+        Guid organizationId,
+        Guid userId,
+        PasswordHashRecord expectedCurrentHash,
+        PasswordHashRecord newHash,
+        long expectedCredentialVersion,
+        Guid? currentSessionId,
         CancellationToken cancellationToken = default);
 
     /// <summary>

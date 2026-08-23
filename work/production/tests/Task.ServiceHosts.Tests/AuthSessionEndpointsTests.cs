@@ -304,6 +304,13 @@ public sealed class AuthSessionEndpointsTests
             new { currentPassword = CurrentPassword, newPassword = NewPassword });
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Empty(await response.Content.ReadAsByteArrayAsync());
+        var credentialStore = Assert.IsType<FakeAccountCredentialStore>(
+            server.Host.Services.GetRequiredService<IAccountCredentialStore>());
+        var commit = Assert.Single(credentialStore.CommitCalls);
+        Assert.Equal(OrganizationId, commit.OrganizationId);
+        Assert.Equal(UserId, commit.UserId);
+        Assert.Equal(SessionId, commit.CurrentSessionId);
     }
 
     [Fact]
@@ -614,6 +621,8 @@ public sealed class AuthSessionEndpointsTests
         private readonly IReadOnlyList<PasswordHashRecord> _history;
         private readonly bool _mustChangePassword;
 
+        public List<(Guid OrganizationId, Guid UserId, Guid? CurrentSessionId)> CommitCalls { get; } = [];
+
         public FakeAccountCredentialStore(
             AccountCredential? credential,
             IReadOnlyList<PasswordHashRecord>? history = null,
@@ -657,6 +666,19 @@ public sealed class AuthSessionEndpointsTests
             int limit,
             CancellationToken cancellationToken = default) =>
             global::System.Threading.Tasks.Task.FromResult(_history);
+
+        public global::System.Threading.Tasks.Task<PasswordChangeCommitResult> CommitPasswordChangeAsync(
+            Guid organizationId,
+            Guid userId,
+            PasswordHashRecord expectedCurrentHash,
+            PasswordHashRecord newHash,
+            long expectedCredentialVersion,
+            Guid? currentSessionId,
+            CancellationToken cancellationToken = default)
+        {
+            CommitCalls.Add((organizationId, userId, currentSessionId));
+            return global::System.Threading.Tasks.Task.FromResult(new PasswordChangeCommitResult(true, 0));
+        }
     }
 
     private sealed class FakeAuthorizationPolicyStore : IAuthorizationPolicyStore

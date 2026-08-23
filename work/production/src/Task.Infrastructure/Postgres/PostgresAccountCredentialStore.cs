@@ -179,6 +179,149 @@ public sealed class PostgresAccountCredentialStore : IAccountCredentialStore
         return results;
     }
 
+    public async global::System.Threading.Tasks.Task<PasswordChangeCommitResult> CommitPasswordChangeAsync(
+        Guid organizationId,
+        Guid userId,
+        PasswordHashRecord expectedCurrentHash,
+        PasswordHashRecord newHash,
+        long expectedCredentialVersion,
+        Guid? currentSessionId,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureIdentifier(organizationId, nameof(organizationId));
+        EnsureIdentifier(userId, nameof(userId));
+        ArgumentNullException.ThrowIfNull(expectedCurrentHash);
+        ArgumentNullException.ThrowIfNull(newHash);
+        if (expectedCredentialVersion <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(expectedCredentialVersion),
+                "Credential version must be positive.");
+        }
+
+        var newCredentialVersion = checked(expectedCredentialVersion + 1);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using (var credentialCommand = new NpgsqlCommand(
+            """
+            UPDATE iam.user_accounts
+            SET password_hash = $3,
+                password_parameters = $4::jsonb,
+                credential_version = $5,
+                must_change_password = false
+            WHERE organization_id = $1
+                AND id = $2
+                AND credential_version = $6
+                AND password_hash = $7
+                AND password_parameters = $8::jsonb
+                AND account_status = 'active';
+            """,
+            connection,
+            transaction))
+        {
+            credentialCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = newHash.Hash });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = newHash.Parameters });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<long> { TypedValue = newCredentialVersion });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<long> { TypedValue = expectedCredentialVersion });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = expectedCurrentHash.Hash });
+            credentialCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = expectedCurrentHash.Parameters });
+            if (await credentialCommand.ExecuteNonQueryAsync(cancellationToken) != 1)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                return new PasswordChangeCommitResult(false, 0);
+            }
+        }
+
+        if (currentSessionId is Guid sessionId)
+        {
+            EnsureIdentifier(sessionId, nameof(currentSessionId));
+            await using var currentSessionCommand = new NpgsqlCommand(
+                """
+                UPDATE iam.sessions
+                SET credential_version = $4
+                WHERE organization_id = $1
+                    AND user_account_id = $2
+                    AND id = $3
+                    AND credential_version = $5
+                    AND revoked_at IS NULL
+                    AND absolute_expires_at > clock_timestamp()
+                    AND idle_expires_at > clock_timestamp();
+                """,
+                connection,
+                transaction);
+            currentSessionCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+            currentSessionCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+            currentSessionCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = sessionId });
+            currentSessionCommand.Parameters.Add(new NpgsqlParameter<long> { TypedValue = newCredentialVersion });
+            currentSessionCommand.Parameters.Add(new NpgsqlParameter<long> { TypedValue = expectedCredentialVersion });
+            if (await currentSessionCommand.ExecuteNonQueryAsync(cancellationToken) != 1)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                return new PasswordChangeCommitResult(false, 0);
+            }
+        }
+
+        await using (var historyCommand = new NpgsqlCommand(
+            """
+            INSERT INTO iam.password_history (
+                id, user_account_id, password_hash, password_algorithm, password_parameters)
+            VALUES ($1, $2, $3, $4, $5::jsonb);
+            """,
+            connection,
+            transaction))
+        {
+            historyCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = Guid.NewGuid() });
+            historyCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+            historyCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = expectedCurrentHash.Hash });
+            historyCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = Argon2idAlgorithm });
+            historyCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = expectedCurrentHash.Parameters });
+            await historyCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await using (var tokenCommand = new NpgsqlCommand(
+            """
+            UPDATE iam.refresh_tokens
+            SET revoked_at = COALESCE(revoked_at, clock_timestamp())
+            WHERE session_id IN (
+                SELECT id
+                FROM iam.sessions
+                WHERE organization_id = $1
+                    AND user_account_id = $2
+                    AND revoked_at IS NULL
+                    AND ($3::uuid IS NULL OR id <> $3));
+            """,
+            connection,
+            transaction))
+        {
+            AddCurrentSessionParameters(tokenCommand, organizationId, userId, currentSessionId);
+            await tokenCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        int revokedSessionCount;
+        await using (var sessionCommand = new NpgsqlCommand(
+            """
+            UPDATE iam.sessions
+            SET revoked_at = clock_timestamp(),
+                revoke_reason = 'password-change'
+            WHERE organization_id = $1
+                AND user_account_id = $2
+                AND revoked_at IS NULL
+                AND ($3::uuid IS NULL OR id <> $3);
+            """,
+            connection,
+            transaction))
+        {
+            AddCurrentSessionParameters(sessionCommand, organizationId, userId, currentSessionId);
+            revokedSessionCount = await sessionCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+        return new PasswordChangeCommitResult(true, revokedSessionCount);
+    }
+
     public async global::System.Threading.Tasks.Task<bool> ResetMustChangePasswordAsync(
         Guid organizationId,
         Guid userId,
@@ -207,5 +350,20 @@ public sealed class PostgresAccountCredentialStore : IAccountCredentialStore
         {
             throw new ArgumentException("Identifier must not be empty.", parameterName);
         }
+    }
+
+    private static void AddCurrentSessionParameters(
+        NpgsqlCommand command,
+        Guid organizationId,
+        Guid userId,
+        Guid? currentSessionId)
+    {
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter
+        {
+            NpgsqlDbType = global::NpgsqlTypes.NpgsqlDbType.Uuid,
+            Value = currentSessionId is null ? DBNull.Value : currentSessionId.Value,
+        });
     }
 }

@@ -13,20 +13,21 @@ public sealed class PasswordChangeServiceTests
 
     private static PasswordChangeService CreateService(
         FakeCredentialStore store,
-        FakeSessionRepository sessions,
         int? historyLimit = null) =>
         new(
             store,
-            sessions,
             new FakePasswordHasher(),
             historyLimit ?? PasswordChangeService.DefaultHistoryLimit);
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_Success_RotatesCredentialAndRevokesOtherSessions()
     {
-        var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository { RevokedCount = 2 };
-        var service = CreateService(store, sessions);
+        var store = new FakeCredentialStore
+        {
+            Credential = ActiveCredential(),
+            CommitResult = new PasswordChangeCommitResult(true, 2),
+        };
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, NewPassword, CurrentSessionId);
@@ -34,48 +35,55 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.Success, result.Outcome);
         Assert.Equal(2, result.RevokedSessionCount);
 
-        var update = Assert.Single(store.Updates);
-        Assert.Equal(OrganizationId, update.OrganizationId);
-        Assert.Equal(UserId, update.UserId);
-        Assert.Equal(2, update.NewVersion);
-        Assert.Equal($"hash:{NewPassword}", update.Hash.Hash);
-        Assert.Equal($"params:{NewPassword}", update.Hash.Parameters);
-
-        var archived = Assert.Single(store.HistoryWrites);
-        Assert.Equal($"hash:{CurrentPassword}", archived.Hash.Hash);
-
-        var revoke = Assert.Single(sessions.RevokeCalls);
-        Assert.Equal(OrganizationId, revoke.OrganizationId);
-        Assert.Equal(UserId, revoke.UserId);
-        Assert.Equal(CurrentSessionId, revoke.ExceptSessionId);
-
-        var reset = Assert.Single(store.MustChangePasswordResets);
-        Assert.Equal(OrganizationId, reset.OrganizationId);
-        Assert.Equal(UserId, reset.UserId);
+        var commit = Assert.Single(store.CommitCalls);
+        Assert.Equal(OrganizationId, commit.OrganizationId);
+        Assert.Equal(UserId, commit.UserId);
+        Assert.Equal(1, commit.ExpectedCredentialVersion);
+        Assert.Equal(CurrentSessionId, commit.CurrentSessionId);
+        Assert.Equal($"hash:{CurrentPassword}", commit.ExpectedCurrentHash.Hash);
+        Assert.Equal($"hash:{NewPassword}", commit.NewHash.Hash);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_Success_WithNullCurrentSession_RevokesAllSessions()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, NewPassword, null);
 
         Assert.Equal(PasswordChangeOutcome.Success, result.Outcome);
-        var revoke = Assert.Single(sessions.RevokeCalls);
-        Assert.Null(revoke.ExceptSessionId);
-        Assert.Single(store.MustChangePasswordResets);
+        var commit = Assert.Single(store.CommitCalls);
+        Assert.Null(commit.CurrentSessionId);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePasswordAsync_WhenAtomicCommitIsRejected_FailsClosed()
+    {
+        var store = new FakeCredentialStore
+        {
+            Credential = ActiveCredential(),
+            CommitResult = new PasswordChangeCommitResult(false, 0),
+        };
+        var service = CreateService(store);
+
+        var result = await service.ChangePasswordAsync(
+            OrganizationId, UserId, CurrentPassword, NewPassword, CurrentSessionId);
+
+        Assert.Equal(PasswordChangeOutcome.InvalidCurrentPassword, result.Outcome);
+        Assert.Equal(0, result.RevokedSessionCount);
+        Assert.Single(store.CommitCalls);
+        Assert.Empty(store.Updates);
+        Assert.Empty(store.HistoryWrites);
+        Assert.Empty(store.MustChangePasswordResets);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_ForUnknownAccount_ReturnsUnknownAccountAndWritesNothing()
     {
         var store = new FakeCredentialStore { Credential = null };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, NewPassword, CurrentSessionId);
@@ -85,15 +93,14 @@ public sealed class PasswordChangeServiceTests
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
         Assert.Empty(store.MustChangePasswordResets);
-        Assert.Empty(sessions.RevokeCalls);
+        Assert.Empty(store.CommitCalls);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_ForBlockedAccount_ReturnsAccountBlockedAndWritesNothing()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential("blocked") };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, NewPassword, CurrentSessionId);
@@ -102,15 +109,14 @@ public sealed class PasswordChangeServiceTests
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
         Assert.Empty(store.MustChangePasswordResets);
-        Assert.Empty(sessions.RevokeCalls);
+        Assert.Empty(store.CommitCalls);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithWrongCurrentPassword_ReturnsInvalidCurrentPasswordAndWritesNothing()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, "WrongPassword1!", NewPassword, CurrentSessionId);
@@ -119,15 +125,14 @@ public sealed class PasswordChangeServiceTests
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
         Assert.Empty(store.MustChangePasswordResets);
-        Assert.Empty(sessions.RevokeCalls);
+        Assert.Empty(store.CommitCalls);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithNewPasswordEqualToCurrent_ReturnsPasswordReuseDetected()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, CurrentPassword, CurrentSessionId);
@@ -135,7 +140,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Equal(PasswordChangeOutcome.PasswordReuseDetected, result.Outcome);
         Assert.Empty(store.Updates);
         Assert.Empty(store.MustChangePasswordResets);
-        Assert.Empty(sessions.RevokeCalls);
+        Assert.Empty(store.CommitCalls);
     }
 
     [Fact]
@@ -147,8 +152,7 @@ public sealed class PasswordChangeServiceTests
         };
         store.History.Add(new PasswordHashRecord($"hash:{NewPassword}", $"params:{NewPassword}"));
         store.History.Add(new PasswordHashRecord($"hash:EvenOlderPass1!", $"params:EvenOlderPass1!"));
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, NewPassword, CurrentSessionId);
@@ -157,7 +161,7 @@ public sealed class PasswordChangeServiceTests
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
         Assert.Empty(store.MustChangePasswordResets);
-        Assert.Empty(sessions.RevokeCalls);
+        Assert.Empty(store.CommitCalls);
         Assert.Equal(PasswordChangeService.DefaultHistoryLimit, store.LastHistoryReadLimit);
     }
 
@@ -165,8 +169,7 @@ public sealed class PasswordChangeServiceTests
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithCustomHistoryLimit_AsksForConfiguredLimit()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions, historyLimit: 3);
+        var service = CreateService(store, historyLimit: 3);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, NewPassword, CurrentSessionId);
@@ -184,8 +187,7 @@ public sealed class PasswordChangeServiceTests
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithWeakNewPassword_ReturnsWeakPassword(string weakPassword)
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         var result = await service.ChangePasswordAsync(
             OrganizationId, UserId, CurrentPassword, weakPassword, CurrentSessionId);
@@ -194,22 +196,21 @@ public sealed class PasswordChangeServiceTests
         Assert.Empty(store.Updates);
         Assert.Empty(store.HistoryWrites);
         Assert.Empty(store.MustChangePasswordResets);
-        Assert.Empty(sessions.RevokeCalls);
+        Assert.Empty(store.CommitCalls);
     }
 
     [Fact]
     public void ChangePasswordAsync_WithCustomHistoryLimitLessThanOne_ThrowsArgumentOutOfRangeException()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => CreateService(
-            new FakeCredentialStore(), new FakeSessionRepository(), historyLimit: 0));
+            new FakeCredentialStore(), historyLimit: 0));
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithEmptyOrganization_ThrowsArgumentException()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         await Assert.ThrowsAsync<ArgumentException>(
             () => service.ChangePasswordAsync(Guid.Empty, UserId, CurrentPassword, NewPassword, CurrentSessionId));
@@ -219,8 +220,7 @@ public sealed class PasswordChangeServiceTests
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithEmptyUser_ThrowsArgumentException()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         await Assert.ThrowsAsync<ArgumentException>(
             () => service.ChangePasswordAsync(OrganizationId, Guid.Empty, CurrentPassword, NewPassword, CurrentSessionId));
@@ -230,8 +230,7 @@ public sealed class PasswordChangeServiceTests
     public async global::System.Threading.Tasks.Task ChangePasswordAsync_WithEmptyPasswords_ThrowsArgumentException()
     {
         var store = new FakeCredentialStore { Credential = ActiveCredential() };
-        var sessions = new FakeSessionRepository();
-        var service = CreateService(store, sessions);
+        var service = CreateService(store);
 
         await Assert.ThrowsAsync<ArgumentException>(
             () => service.ChangePasswordAsync(OrganizationId, UserId, "", NewPassword, CurrentSessionId));
@@ -243,11 +242,9 @@ public sealed class PasswordChangeServiceTests
     public void ChangePasswordService_WithNullDependencies_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new PasswordChangeService(
-            null!, new FakeSessionRepository(), new FakePasswordHasher()));
+            null!, new FakePasswordHasher()));
         Assert.Throws<ArgumentNullException>(() => new PasswordChangeService(
-            new FakeCredentialStore(), null!, new FakePasswordHasher()));
-        Assert.Throws<ArgumentNullException>(() => new PasswordChangeService(
-            new FakeCredentialStore(), new FakeSessionRepository(), null!));
+            new FakeCredentialStore(), null!));
     }
 
     private static AccountCredential ActiveCredential(string accountStatus = "active") =>
@@ -275,6 +272,18 @@ public sealed class PasswordChangeServiceTests
         public List<(Guid OrganizationId, Guid UserId)> MustChangePasswordResets { get; } = [];
 
         public int? LastHistoryReadLimit { get; private set; }
+
+        public PasswordChangeCommitResult CommitResult { get; set; } =
+            new(true, 0);
+
+        public List<(
+            Guid OrganizationId,
+            Guid UserId,
+            PasswordHashRecord ExpectedCurrentHash,
+            PasswordHashRecord NewHash,
+            long ExpectedCredentialVersion,
+            Guid? CurrentSessionId)> CommitCalls
+        { get; } = [];
 
         public global::System.Threading.Tasks.Task<AccountCredential?> GetCredentialAsync(
             Guid organizationId,
@@ -322,76 +331,24 @@ public sealed class PasswordChangeServiceTests
             MustChangePasswordResets.Add((organizationId, userId));
             return global::System.Threading.Tasks.Task.FromResult(true);
         }
-    }
 
-    private sealed class FakeSessionRepository : ISessionRepository
-    {
-        public int RevokedCount { get; set; }
-
-        public List<(Guid OrganizationId, Guid UserId, Guid? ExceptSessionId)> RevokeCalls { get; } = [];
-
-        public SessionSnapshot? GetActiveSession(Guid organizationId, Guid sessionId) =>
-            throw new global::System.NotImplementedException();
-
-        public SessionSnapshot? GetSession(Guid organizationId, Guid sessionId) =>
-            throw new global::System.NotImplementedException();
-
-        public IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId) =>
-            throw new global::System.NotImplementedException();
-
-        public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash) =>
-            throw new global::System.NotImplementedException();
-
-        public SessionRequestState GetSessionRequestState(
+        public global::System.Threading.Tasks.Task<PasswordChangeCommitResult> CommitPasswordChangeAsync(
             Guid organizationId,
-            Guid sessionId,
+            Guid userId,
+            PasswordHashRecord expectedCurrentHash,
+            PasswordHashRecord newHash,
             long expectedCredentialVersion,
-            long expectedAuthorizationScopeVersion) =>
-            throw new global::System.NotImplementedException();
-
-        public void CreateSession(SessionSnapshot session, RefreshTokenRecord refreshToken) =>
-            throw new global::System.NotImplementedException();
-
-        public bool RotateRefreshToken(
-            Guid organizationId,
-            Guid sessionId,
-            string consumedTokenHash,
-            RefreshTokenRecord newRefreshToken) =>
-            throw new global::System.NotImplementedException();
-
-        public void TouchSession(Guid organizationId, Guid sessionId) =>
-            throw new global::System.NotImplementedException();
-
-        public void RevokeSession(Guid organizationId, Guid sessionId, string? reason) =>
-            throw new global::System.NotImplementedException();
-
-        public int RevokeAllUserSessions(
-            Guid organizationId,
-            Guid userId,
-            Guid? exceptSessionId,
-            string? reason) =>
-            throw new global::System.NotImplementedException();
-
-        public global::System.Threading.Tasks.Task<int> RevokeAllUserSessionsExceptAsync(
-            Guid organizationId,
-            Guid userId,
-            Guid? exceptSessionId,
+            Guid? currentSessionId,
             CancellationToken cancellationToken = default)
         {
-            RevokeCalls.Add((organizationId, userId, exceptSessionId));
-            return global::System.Threading.Tasks.Task.FromResult(RevokedCount);
+            CommitCalls.Add((
+                organizationId,
+                userId,
+                expectedCurrentHash,
+                newHash,
+                expectedCredentialVersion,
+                currentSessionId));
+            return global::System.Threading.Tasks.Task.FromResult(CommitResult);
         }
-
-        public global::System.Threading.Tasks.Task<int> PurgeExpiredRefreshTokensAsync(
-            DateTimeOffset olderThanUtc,
-            int maxCount,
-            CancellationToken cancellationToken = default) =>
-            throw new global::System.NotImplementedException();
-
-        public global::System.Threading.Tasks.Task<int> PurgeExpiredSessionsAsync(
-            DateTimeOffset olderThanUtc,
-            int maxCount,
-            CancellationToken cancellationToken = default) =>
-            throw new global::System.NotImplementedException();
     }
 }
