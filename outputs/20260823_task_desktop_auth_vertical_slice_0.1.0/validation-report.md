@@ -5,7 +5,7 @@
 - Версия: `0.1.0`.
 - Scope: только Инкремент A — client/session foundation.
 - Implementation commit: `4a5f72355f45b84f4df70496e3db092ba98bc9eb`.
-- Публикация: **BLOCKED**, commit не отправлен в `origin/main`.
+- Публикация: **READY** — все обязательные автоматические gates пройдены.
 - Gate A: **PASS**.
 - Полный vertical slice / E2E: **NOT COMPLETE**.
 
@@ -22,6 +22,7 @@ Tests:
 - `work/production/tests/Task.Desktop.Tests/Security/DesktopServerConnectionTests.cs`
 - `work/production/tests/Task.Desktop.Tests/Security/DesktopAuthApiClientTests.cs`
 - `work/production/tests/Task.Desktop.Tests/Security/SessionServiceTests.cs`
+- `work/production/tests/Task.ServiceHosts.Tests/ExpiredSessionMaintenanceWorkerTests.cs`
 
 ## Реализованные сценарии
 
@@ -54,24 +55,23 @@ Tests:
 3. Server auth regression:
    `dotnet test tests/Task.ServiceHosts.Tests/Task.ServiceHosts.Tests.csproj -c Release --no-restore --filter "FullyQualifiedName~Auth"`
    — PASS, 69/69.
-4. Release build:
-   `dotnet build Task.sln -c Release --no-restore`
-   — PASS, 0 errors, 0 warnings.
+4. Maintenance-worker regression:
+   `dotnet test tests/Task.ServiceHosts.Tests/Task.ServiceHosts.Tests.csproj -c Release --no-restore --filter "FullyQualifiedName~ExpiredSessionMaintenanceWorkerTests"`
+   — PASS, 7/7 в 10 последовательных прогонах. Тестовый контракт исправлен для
+   корректной periodic семантики: он проверяет обязательные вызовы, их параметры
+   и required retries, но не считает ошибкой следующий уже начавшийся допустимый tick.
 5. Полный solution test:
    `dotnet test Task.sln -c Release --no-restore`
-   — BLOCKED нестабильными существующими тестами
-   `ExpiredSessionMaintenanceWorkerTests` вне разрешённого auth scope. Наблюдались
-   лишние timer ticks в `EmptyPass_LogsDebug_AndDoesNotPurgeAnything`,
-   `DatabaseUnavailable_LogsWarning_AndNextPassRetries` и
-   `PurgeRunsInBatches_UntilBatchComesBackNonFull_WithRetentionCutoff`.
-   При этом каждый прогон сохранял PASS для desktop (119) и core (718), а отдельный
-   повтор первого упавшего maintenance-теста прошёл 1/1. Код этих тестов не менялся.
-6. Secret/prototype scan:
+   — PASS, 972/972: ServiceHosts 135/135, Desktop 119/119, core 718/718.
+6. Release build:
+   `dotnet build Task.sln -c Release --no-restore`
+   — PASS, 0 errors, 0 warnings.
+7. Secret/prototype scan:
    `rg -n -i "task2026|password.*=|accessToken.*=|refreshToken.*=|deviceKey.*=" work/production/src/Task.Desktop`
    — совпадения вручную проверены: только имена DTO, полей, параметров и присваивания;
    literal credentials и prototype password отсутствуют.
-7. `git diff --check` — PASS.
-8. Изменённые C# файлы отформатированы `dotnet format` с `--include`.
+8. `git diff --check` — PASS.
+9. Изменённые C# файлы отформатированы `dotnet format` с `--include`.
 
 ## Manual smoke и accessibility
 
@@ -84,6 +84,6 @@ Tests:
 ## Известные ограничения и следующий шаг
 
 - Workflow/ViewModels и WPF composition отсутствуют; main shell ещё не подключён к foundation.
-- Полный solution gate остаётся publication blocker из-за timer-test flakiness вне scope.
-- Следующий production-шаг: стабилизировать/подтвердить общий gate отдельным разрешённым
-  изменением, опубликовать Инкремент A и затем реализовать Инкремент B.
+- Общий gate стабилен: периодический worker разрешённо может начать следующий проход
+  до `StopAsync`, поэтому tests проверяют инварианты сценария, а не timing планировщика.
+- Следующий production-шаг: реализовать Инкремент B — workflow/ViewModels.

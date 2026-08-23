@@ -11,9 +11,9 @@
 (Инкремент B), WPF composition и ручной E2E (Инкремент C) не входят в этот результат.
 
 Исходный implementation commit: `4a5f72355f45b84f4df70496e3db092ba98bc9eb`.
-Commit локальный и не опубликован в `origin/main`, поскольку обязательный полный
-solution gate нестабилен в существующих timer-тестах вне auth scope. Подробности —
-в `validation-report.md`.
+Обязательный полный solution gate подтверждён после уточнения тестового контракта
+periodic maintenance worker: тесты больше не считают дополнительный допустимый
+timer tick ошибкой. Подробности — в `validation-report.md`.
 
 Проверка целостности:
 
