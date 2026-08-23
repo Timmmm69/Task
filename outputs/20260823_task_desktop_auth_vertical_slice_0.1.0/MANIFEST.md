@@ -4,7 +4,7 @@
 
 Версия: `0.1.0`
 
-Scope: validation package Инкрементов A и B.
+Scope: validation package Инкрементов A, B и C.
 
 Файлы, контролируемые `MANIFEST.sha256`:
 
