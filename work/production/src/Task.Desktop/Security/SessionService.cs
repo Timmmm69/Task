@@ -569,7 +569,10 @@ public sealed class SessionService : IDisposable
             _refreshTimer = null;
         }
 
-        _refreshGate.Dispose();
+        // Do not dispose the semaphore here: a window-close cancellation may race with an
+        // operation that already owns it and must still execute its finally/Release path.
+        // SemaphoreSlim owns no external resource; leaving it for GC avoids turning orderly
+        // cancellation into an ObjectDisposedException on the UI dispatcher.
     }
 
     private async Task<RefreshResult> RefreshCoreAsync(CancellationToken cancellationToken)
