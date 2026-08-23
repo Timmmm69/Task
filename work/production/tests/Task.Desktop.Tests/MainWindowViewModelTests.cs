@@ -148,4 +148,42 @@ public class MainWindowViewModelTests
         Assert.DoesNotContain('Ð', vm.ReadOnlyNotice);
         Assert.DoesNotContain('Ñ', vm.ReadOnlyNotice);
     }
+
+    [Fact]
+    public void AuthenticatedShell_ShowsConfirmedServerSession()
+    {
+        using var vm = new MainWindowViewModel(
+            new Uri("https://task.company.local/"),
+            _ => global::System.Threading.Tasks.Task.CompletedTask);
+
+        Assert.Equal("https://task.company.local", vm.ServerAddress);
+        Assert.Equal("Сессия подтверждена · https://task.company.local", vm.ConnectionStatus);
+        Assert.Contains("синхронизация пока не подключена", vm.ReadOnlyNotice);
+        Assert.True(vm.LogoutCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task LogoutCommand_BlocksSecondSubmission()
+    {
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var calls = 0;
+        using var vm = new MainWindowViewModel(
+            new Uri("https://task.company.local/"),
+            async cancellationToken =>
+            {
+                Interlocked.Increment(ref calls);
+                entered.SetResult();
+                await release.Task.WaitAsync(cancellationToken);
+            });
+
+        var first = vm.LogoutCommand.ExecuteAsync();
+        await entered.Task;
+        var second = await vm.LogoutCommand.ExecuteAsync();
+        release.SetResult();
+
+        Assert.True(await first);
+        Assert.False(second);
+        Assert.Equal(1, calls);
+    }
 }

@@ -11,10 +11,21 @@
         <!-- Visible connection status -->
         <Border DockPanel.Dock="Bottom" Background="#F5F5F5" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="12,6">
             <DockPanel>
-                <Ellipse DockPanel.Dock="Left" Width="10" Height="10" Fill="#C00000"
+                <Ellipse DockPanel.Dock="Left" Width="10" Height="10"
                          VerticalAlignment="Center" Margin="0,0,8,0"
                          AutomationProperties.Name="Индикатор статуса подключения"
-                         AutomationProperties.HelpText="Подключение к серверу отсутствует, доступен только просмотр" />
+                         AutomationProperties.HelpText="Зелёный цвет означает подтверждённую сессию; красный — отсутствие подтверждённой сессии">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="#2E7D32" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ServerAddress}" Value="{x:Null}">
+                                    <Setter Property="Fill" Value="#C00000" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
                 <TextBlock DockPanel.Dock="Right" Text="{Binding ReadOnlyNotice}"
                            AutomationProperties.AutomationId="ReadOnlyNoticeText"
                            AutomationProperties.LiveSetting="Polite"
@@ -24,6 +35,40 @@
                            AutomationProperties.AutomationId="ConnectionStatusText"
                            AutomationProperties.LiveSetting="Polite"
                            VerticalAlignment="Center" Foreground="#333333" FontSize="12" />
+            </DockPanel>
+        </Border>
+
+        <Border DockPanel.Dock="Top" Background="White" BorderBrush="#D0D0D0"
+                BorderThickness="0,0,0,1" Padding="16,10">
+            <DockPanel LastChildFill="True">
+                <Button DockPanel.Dock="Right" Content="Выйти" Command="{Binding LogoutCommand}"
+                        MinWidth="100" MinHeight="36" Padding="14,6" Margin="16,0,0,0"
+                        TabIndex="0"
+                        AutomationProperties.Name="Выйти из Task"
+                        AutomationProperties.AutomationId="LogoutButton"
+                        AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="BorderBrush" Value="#8B95A7" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter Property="BorderBrush" Value="#24569F" />
+                                    <Setter Property="BorderThickness" Value="3" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <TextBlock Text="{Binding SessionMessage}" VerticalAlignment="Center"
+                           Foreground="#596273" TextWrapping="Wrap"
+                           AutomationProperties.Name="Состояние сессии"
+                           AutomationProperties.AutomationId="SessionMessageText"
+                           AutomationProperties.LiveSetting="Polite" />
             </DockPanel>
         </Border>
 

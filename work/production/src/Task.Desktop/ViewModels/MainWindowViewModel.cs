@@ -6,10 +6,23 @@ namespace Task.Desktop.ViewModels;
 /// View model for the main window shell: navigation sections,
 /// the selected section and the connection status.
 /// </summary>
-public sealed class MainWindowViewModel : ViewModelBase
+public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 {
+    private readonly Func<CancellationToken, global::System.Threading.Tasks.Task>? _logout;
+    private NavigationSection? _selectedSection;
+    private string? _sessionMessage;
+
     public MainWindowViewModel()
+        : this(null, null)
     {
+    }
+
+    public MainWindowViewModel(
+        Uri? serverEndpoint,
+        Func<CancellationToken, global::System.Threading.Tasks.Task>? logout)
+    {
+        ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
+        _logout = logout;
         Sections = new ObservableCollection<NavigationSection>
         {
             new("today", "Сегодня", "Раздел «Сегодня»: сводка задач на текущий день появится после подключения к серверу."),
@@ -26,6 +39,13 @@ public sealed class MainWindowViewModel : ViewModelBase
         };
 
         SelectedSection = Sections[0];
+        LogoutCommand = new AsyncCommand(LogoutAsync, _ => _logout is not null);
+        LogoutCommand.ExecutionFailed += OnLogoutFailed;
+        LogoutCommand.CanExecuteChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(IsBusy));
+            OnPropertyChanged(nameof(SessionMessage));
+        };
     }
 
     /// <summary>Navigation sections shown in the left panel.</summary>
@@ -38,8 +58,13 @@ public sealed class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _selectedSection, value);
     }
 
-    /// <summary>Visible connection status. No network access is implemented yet.</summary>
-    public string ConnectionStatus => "Нет подключения — только просмотр";
+    /// <summary>Server whose authentication session was confirmed before opening the shell.</summary>
+    public string? ServerAddress { get; }
+
+    /// <summary>Visible authentication and connection status.</summary>
+    public string ConnectionStatus => ServerAddress is null
+        ? "Нет подключения — только просмотр"
+        : $"Сессия подтверждена · {ServerAddress}";
 
     /// <summary>
     /// True while the shell has no network client: the interface is view-only.
@@ -50,8 +75,39 @@ public sealed class MainWindowViewModel : ViewModelBase
     /// Notice shown in read-only mode: the server is not connected,
     /// no synchronization runs and data changes are unavailable.
     /// </summary>
-    public string ReadOnlyNotice =>
-        "Сервер не подключён: синхронизация не выполняется, изменение данных недоступно.";
+    public string ReadOnlyNotice => ServerAddress is null
+        ? "Сервер не подключён: синхронизация не выполняется, изменение данных недоступно."
+        : "Предметная синхронизация пока не подключена: изменение данных недоступно.";
 
-    private NavigationSection? _selectedSection;
+    public string? SessionMessage
+    {
+        get => _sessionMessage;
+        private set => SetProperty(ref _sessionMessage, value);
+    }
+
+    public bool IsBusy => LogoutCommand.IsExecuting;
+
+    public AsyncCommand LogoutCommand { get; }
+
+    public void Dispose() => LogoutCommand.Dispose();
+
+    private async global::System.Threading.Tasks.Task LogoutAsync(
+        object? parameter,
+        CancellationToken cancellationToken)
+    {
+        if (_logout is null)
+        {
+            return;
+        }
+
+        SessionMessage = "Завершаем сессию…";
+        OnPropertyChanged(nameof(IsBusy));
+        await _logout(cancellationToken).ConfigureAwait(true);
+    }
+
+    private void OnLogoutFailed(Exception exception)
+    {
+        SessionMessage = "Не удалось завершить сессию. Повторите попытку.";
+        OnPropertyChanged(nameof(IsBusy));
+    }
 }
