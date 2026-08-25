@@ -20,6 +20,11 @@ public sealed class TasksViewModelTests
         await WaitForAsync(() => viewModel.DetailsState == TaskDetailsState.Loaded);
 
         Assert.Equal(TasksScreenState.Loaded, viewModel.State);
+        Assert.False(viewModel.ShowBlockingState);
+        Assert.False(viewModel.ShowInlineMessage);
+        Assert.True(viewModel.HasSuccessfulRefresh);
+        Assert.StartsWith("Последнее обновление:", viewModel.LastSuccessfulRefreshText, StringComparison.Ordinal);
+        Assert.Equal("Показано задач: 1", viewModel.DisplayedCountText);
         Assert.Single(viewModel.Items);
         Assert.Equal("В работе", viewModel.Items[0].StatusText);
         Assert.Equal("Критический", viewModel.Items[0].PriorityText);
@@ -39,6 +44,10 @@ public sealed class TasksViewModelTests
         Assert.Equal(TasksScreenState.Empty, viewModel.State);
         Assert.Empty(viewModel.Items);
         Assert.Contains("нет", viewModel.ScreenMessage!, StringComparison.OrdinalIgnoreCase);
+        Assert.True(viewModel.IsEmptyState);
+        Assert.True(viewModel.ShowBlockingState);
+        Assert.Equal("Активных задач нет", viewModel.StateTitle);
+        Assert.Equal("Task.Icon.Tasks", viewModel.StateIconKey);
     }
 
     [Fact]
@@ -107,6 +116,8 @@ public sealed class TasksViewModelTests
         Assert.True(viewModel.HasNextPage);
         Assert.Equal(TasksScreenState.Error, viewModel.State);
         Assert.Contains("ранее загруженный", viewModel.ScreenMessage!);
+        Assert.False(viewModel.ShowBlockingState);
+        Assert.True(viewModel.ShowInlineMessage);
     }
 
     [Fact]
@@ -139,6 +150,9 @@ public sealed class TasksViewModelTests
 
         Assert.Empty(viewModel.Items);
         Assert.Equal(TasksScreenState.Forbidden, viewModel.State);
+        Assert.True(viewModel.IsFailureState);
+        Assert.True(viewModel.ShowBlockingState);
+        Assert.Equal("Нет доступа к задачам", viewModel.StateTitle);
     }
 
     [Fact]

@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    <FontFamily x:Key="Task.Font.Family">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <sys:Double x:Key="Task.Font.Size.Metadata">12</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.Label">13</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.Body">14</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.Navigation">15</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.Section">16</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.DetailTitle">21</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.PageTitle">29</sys:Double>
+    <FontWeight x:Key="Task.Font.Weight.Regular">Regular</FontWeight>
+    <FontWeight x:Key="Task.Font.Weight.Semibold">SemiBold</FontWeight>
+</ResourceDictionary>

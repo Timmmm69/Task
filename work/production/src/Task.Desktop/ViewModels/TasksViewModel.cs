@@ -27,6 +27,15 @@ public enum TaskDetailsState
     Error,
 }
 
+public enum TaskVisualTone
+{
+    Neutral,
+    Brand,
+    Success,
+    Warning,
+    Critical,
+}
+
 /// <summary>Localized, display-only projection of a validated Task API DTO.</summary>
 public sealed class TaskItemViewModel
 {
@@ -40,6 +49,10 @@ public sealed class TaskItemViewModel
         PriorityText = LocalizePriority(task.Priority);
         DeadlineText = FormatDate(task.DeadlineAtUtc, "Без срока");
         UpdatedText = FormatDate(task.UpdatedAtUtc, "Не указано");
+        StatusIconKey = StatusIcon(task.Status);
+        StatusTone = StatusVisualTone(task.Status);
+        PriorityIconKey = PriorityIcon(task.Priority);
+        PriorityTone = PriorityVisualTone(task.Priority);
         AutomationName = $"{task.Title}. Статус: {StatusText}. Приоритет: {PriorityText}. Срок: {DeadlineText}.";
     }
 
@@ -56,6 +69,14 @@ public sealed class TaskItemViewModel
     public string DeadlineText { get; }
 
     public string UpdatedText { get; }
+
+    public string StatusIconKey { get; }
+
+    public TaskVisualTone StatusTone { get; }
+
+    public string PriorityIconKey { get; }
+
+    public TaskVisualTone PriorityTone { get; }
 
     public string AutomationName { get; }
 
@@ -78,6 +99,41 @@ public sealed class TaskItemViewModel
         _ => "Неизвестно",
     };
 
+    internal static string StatusIcon(DesktopTaskStatus status) => status switch
+    {
+        DesktopTaskStatus.New => "Task.Icon.Status.New",
+        DesktopTaskStatus.InProgress => "Task.Icon.Status.InProgress",
+        DesktopTaskStatus.Review => "Task.Icon.Status.Review",
+        DesktopTaskStatus.Completed => "Task.Icon.Status.Completed",
+        DesktopTaskStatus.Cancelled => "Task.Icon.Status.Cancelled",
+        _ => "Task.Icon.Info",
+    };
+
+    internal static TaskVisualTone StatusVisualTone(DesktopTaskStatus status) => status switch
+    {
+        DesktopTaskStatus.InProgress => TaskVisualTone.Brand,
+        DesktopTaskStatus.Review => TaskVisualTone.Warning,
+        DesktopTaskStatus.Completed => TaskVisualTone.Success,
+        _ => TaskVisualTone.Neutral,
+    };
+
+    internal static string PriorityIcon(DesktopTaskPriority priority) => priority switch
+    {
+        DesktopTaskPriority.Low => "Task.Icon.Priority.Low",
+        DesktopTaskPriority.Normal => "Task.Icon.Priority.Normal",
+        DesktopTaskPriority.High => "Task.Icon.Priority.High",
+        DesktopTaskPriority.Critical => "Task.Icon.Priority.Critical",
+        _ => "Task.Icon.Info",
+    };
+
+    internal static TaskVisualTone PriorityVisualTone(DesktopTaskPriority priority) => priority switch
+    {
+        DesktopTaskPriority.Low => TaskVisualTone.Success,
+        DesktopTaskPriority.Normal => TaskVisualTone.Warning,
+        DesktopTaskPriority.High or DesktopTaskPriority.Critical => TaskVisualTone.Critical,
+        _ => TaskVisualTone.Neutral,
+    };
+
     internal static string FormatDate(DateTimeOffset? value, string emptyText) => value.HasValue
         ? value.Value.ToLocalTime().ToString("g", RussianCulture)
         : emptyText;
@@ -97,6 +153,11 @@ public sealed class TaskDetailsViewModel
         DeadlineText = TaskItemViewModel.FormatDate(task.DeadlineAtUtc, "Без срока");
         CreatedText = TaskItemViewModel.FormatDate(task.CreatedAtUtc, "Не указано");
         UpdatedText = TaskItemViewModel.FormatDate(task.UpdatedAtUtc, "Не указано");
+        StatusIconKey = TaskItemViewModel.StatusIcon(task.Status);
+        StatusTone = TaskItemViewModel.StatusVisualTone(task.Status);
+        PriorityIconKey = TaskItemViewModel.PriorityIcon(task.Priority);
+        PriorityTone = TaskItemViewModel.PriorityVisualTone(task.Priority);
+        AutomationName = $"{Title}. Статус: {StatusText}. Приоритет: {PriorityText}. Срок: {DeadlineText}.";
     }
 
     public Guid Id { get; }
@@ -114,6 +175,16 @@ public sealed class TaskDetailsViewModel
     public string CreatedText { get; }
 
     public string UpdatedText { get; }
+
+    public string StatusIconKey { get; }
+
+    public TaskVisualTone StatusTone { get; }
+
+    public string PriorityIconKey { get; }
+
+    public TaskVisualTone PriorityTone { get; }
+
+    public string AutomationName { get; }
 }
 
 /// <summary>
@@ -139,6 +210,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private bool _isActive;
     private bool _hasLoaded;
     private bool _disposed;
+    private DateTimeOffset? _lastSuccessfulRefreshAt;
 
     public TasksViewModel(IDesktopTasksApiClient client)
     {
@@ -159,6 +231,9 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             _items = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(HasItems));
+            OnPropertyChanged(nameof(DisplayedCountText));
+            OnPropertyChanged(nameof(ShowBlockingState));
+            OnPropertyChanged(nameof(ShowInlineMessage));
         }
     }
 
@@ -190,6 +265,14 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _state, value))
             {
                 OnPropertyChanged(nameof(IsBusy));
+                OnPropertyChanged(nameof(IsInitialLoading));
+                OnPropertyChanged(nameof(IsRefreshing));
+                OnPropertyChanged(nameof(IsEmptyState));
+                OnPropertyChanged(nameof(IsFailureState));
+                OnPropertyChanged(nameof(ShowBlockingState));
+                OnPropertyChanged(nameof(ShowInlineMessage));
+                OnPropertyChanged(nameof(StateTitle));
+                OnPropertyChanged(nameof(StateIconKey));
                 RaiseCommandStateChanged();
             }
         }
@@ -204,7 +287,13 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     public string? ScreenMessage
     {
         get => _screenMessage;
-        private set => SetProperty(ref _screenMessage, value);
+        private set
+        {
+            if (SetProperty(ref _screenMessage, value))
+            {
+                OnPropertyChanged(nameof(ShowInlineMessage));
+            }
+        }
     }
 
     public string DetailMessage
@@ -232,6 +321,44 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     public bool HasItems => Items.Count > 0;
 
     public bool HasNextPage => !string.IsNullOrWhiteSpace(_nextCursor);
+
+    public bool IsInitialLoading => State == TasksScreenState.InitialLoading;
+
+    public bool IsRefreshing => State is TasksScreenState.Refreshing or TasksScreenState.LoadingNextPage;
+
+    public bool IsEmptyState => State == TasksScreenState.Empty;
+
+    public bool IsFailureState => State is TasksScreenState.Error
+        or TasksScreenState.Forbidden
+        or TasksScreenState.InvalidCursor
+        or TasksScreenState.SessionEnded
+        or TasksScreenState.Cancelled;
+
+    public bool ShowBlockingState => !HasItems && (IsEmptyState || IsFailureState);
+
+    public bool ShowInlineMessage => HasItems && !string.IsNullOrWhiteSpace(ScreenMessage);
+
+    public string StateTitle => State switch
+    {
+        TasksScreenState.Empty => "Активных задач нет",
+        TasksScreenState.Forbidden => "Нет доступа к задачам",
+        TasksScreenState.SessionEnded => "Сессия завершена",
+        TasksScreenState.InvalidCursor => "Список задач изменился",
+        TasksScreenState.Cancelled => "Загрузка отменена",
+        _ => "Не удалось загрузить задачи",
+    };
+
+    public string StateIconKey => State == TasksScreenState.Empty
+        ? "Task.Icon.Tasks"
+        : "Task.Icon.Error";
+
+    public string DisplayedCountText => $"Показано задач: {Items.Count}";
+
+    public bool HasSuccessfulRefresh => _lastSuccessfulRefreshAt.HasValue;
+
+    public string LastSuccessfulRefreshText => _lastSuccessfulRefreshAt.HasValue
+        ? $"Последнее обновление: {_lastSuccessfulRefreshAt.Value.ToLocalTime():g}"
+        : "Данные ещё не обновлялись";
 
     public AsyncCommand RefreshCommand { get; }
 
@@ -315,6 +442,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
                 var additions = success.Value.Items.Select(item => new TaskItemViewModel(item));
                 Items = Items.Concat(additions).ToArray();
                 SetNextCursor(success.Value.NextCursor);
+                RecordSuccessfulRefresh();
                 SetLoadedState();
             }
             else
@@ -388,6 +516,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
                 Items = replacement;
                 SetNextCursor(success.Value.NextCursor);
                 _hasLoaded = true;
+                RecordSuccessfulRefresh();
                 SelectedItem = selectedId.HasValue
                     ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? replacement.FirstOrDefault()
                     : replacement.FirstOrDefault();
@@ -586,6 +715,13 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     {
         RefreshCommand?.RaiseCanExecuteChanged();
         LoadMoreCommand?.RaiseCanExecuteChanged();
+    }
+
+    private void RecordSuccessfulRefresh()
+    {
+        _lastSuccessfulRefreshAt = DateTimeOffset.Now;
+        OnPropertyChanged(nameof(HasSuccessfulRefresh));
+        OnPropertyChanged(nameof(LastSuccessfulRefreshText));
     }
 
     private void ThrowIfDisposed()

@@ -1,293 +1,550 @@
-﻿<Window x:Class="Task.Desktop.MainWindow"
+<Window x:Class="Task.Desktop.MainWindow"
+        x:Name="RootWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Task"
-        Width="1000" Height="640" MinWidth="800" MinHeight="480"
-        WindowStartupLocation="CenterScreen">
-    <DockPanel>
-        <!-- Visible connection status -->
-        <Border DockPanel.Dock="Bottom" Background="#F5F5F5" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="12,6">
-            <DockPanel>
-                <Ellipse DockPanel.Dock="Left" Width="10" Height="10"
-                         VerticalAlignment="Center" Margin="0,0,8,0"
-                         AutomationProperties.Name="Индикатор статуса подключения"
-                         AutomationProperties.HelpText="Зелёный цвет означает подтверждённую сессию; красный — отсутствие подтверждённой сессии">
-                    <Ellipse.Style>
-                        <Style TargetType="Ellipse">
-                            <Setter Property="Fill" Value="#2E7D32" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ServerAddress}" Value="{x:Null}">
-                                    <Setter Property="Fill" Value="#C00000" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Ellipse.Style>
-                </Ellipse>
-                <TextBlock DockPanel.Dock="Right" Text="{Binding ReadOnlyNotice}"
-                           AutomationProperties.AutomationId="ReadOnlyNoticeText"
-                           AutomationProperties.LiveSetting="Polite"
-                           VerticalAlignment="Center" Foreground="#B0392B" FontSize="12"
-                           Margin="12,0,0,0" TextWrapping="Wrap" />
-                <TextBlock Text="{Binding ConnectionStatus}"
-                           AutomationProperties.AutomationId="ConnectionStatusText"
-                           AutomationProperties.LiveSetting="Polite"
-                           VerticalAlignment="Center" Foreground="#333333" FontSize="12" />
-            </DockPanel>
+        Width="1200" Height="900" MinWidth="800" MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource Task.Window.Style}"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        AutomationProperties.Name="Task — рабочее пространство"
+        AutomationProperties.AutomationId="MainWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="{DynamicResource Task.Shell.FooterGridLength}" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ShellNavigationWidthConverter}}" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- CMP-024 NavigationRail -->
+        <Border Grid.RowSpan="3" Grid.Column="0"
+                Style="{StaticResource Task.Surface.Subtle}"
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" BorderBrush="{DynamicResource Task.Brush.Border.Default}"
+                        BorderThickness="0,0,0,1" Padding="16,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="32" Height="32" CornerRadius="6"
+                                Background="{DynamicResource Task.Brush.Brand.Primary}">
+                            <Path Data="{StaticResource Task.Icon.Tasks}" Fill="White"
+                                  Width="18" Height="18" Stretch="Uniform"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <TextBlock Text="Task" Margin="10,0,0,0"
+                                   FontSize="{DynamicResource Task.Font.Size.Section}"
+                                   FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Sections}"
+                         SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
+                         Style="{StaticResource Task.Navigation.List}"
+                         ItemContainerStyle="{StaticResource Task.Navigation.Item}"
+                         TabIndex="0"
+                         AutomationProperties.Name="Основная навигация"
+                         AutomationProperties.HelpText="Стрелки выбирают раздел, Enter открывает его"
+                         AutomationProperties.AutomationId="NavigationListBox">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="24" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Path Data="{Binding IconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                      Width="20" Height="20" Stretch="Uniform"
+                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                      IsHitTestVisible="False" />
+                                <TextBlock Grid.Column="1" Text="{Binding Title}"
+                                           Margin="10,0,0,0"
+                                           FontSize="{DynamicResource Task.Font.Size.Navigation}"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Border>
 
-        <Border DockPanel.Dock="Top" Background="White" BorderBrush="#D0D0D0"
-                BorderThickness="0,0,0,1" Padding="16,10">
-            <DockPanel LastChildFill="True">
-                <Button DockPanel.Dock="Right" Content="Выйти" Command="{Binding LogoutCommand}"
-                        MinWidth="100" MinHeight="36" Padding="14,6" Margin="16,0,0,0"
-                        TabIndex="5"
-                        AutomationProperties.Name="Выйти из Task"
-                        AutomationProperties.AutomationId="LogoutButton"
-                        AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="White" />
-                            <Setter Property="BorderBrush" Value="#8B95A7" />
-                            <Setter Property="BorderThickness" Value="1" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                                <Trigger Property="IsKeyboardFocused" Value="True">
-                                    <Setter Property="BorderBrush" Value="#24569F" />
-                                    <Setter Property="BorderThickness" Value="3" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <TextBlock Text="{Binding SessionMessage}" VerticalAlignment="Center"
-                           Foreground="#596273" TextWrapping="Wrap"
-                           AutomationProperties.Name="Состояние сессии"
-                           AutomationProperties.AutomationId="SessionMessageText"
-                           AutomationProperties.LiveSetting="Polite" />
-            </DockPanel>
-        </Border>
+        <!-- CMP-001 SurfaceTitle + CMP-022 CommandBar + CMP-023 ConnectionStatus -->
+        <Border Grid.Row="0" Grid.Column="1"
+                Style="{StaticResource Task.Surface.Base}"
+                BorderThickness="0,0,0,1"
+                Padding="20,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="224" />
+                    <ColumnDefinition Width="44" />
+                </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="230" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <!-- Navigation panel -->
-            <Border Grid.Column="0" Background="#F0F2F5" BorderBrush="#D0D0D0" BorderThickness="0,0,1,0">
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="Разделы" FontWeight="SemiBold" FontSize="14"
-                               Margin="16,16,16,8" Foreground="#555555" />
-                    <ListBox ItemsSource="{Binding Sections}"
-                             SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
-                             TabIndex="0"
-                             AutomationProperties.Name="Разделы"
-                             AutomationProperties.HelpText="Выбор раздела для отображения в области содержимого"
-                             AutomationProperties.AutomationId="NavigationListBox"
-                             Background="Transparent" BorderThickness="0" Padding="8"
-                             Margin="4,0,4,8"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Title}" FontSize="14" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="Margin" Value="0,2" />
-                                <Setter Property="Padding" Value="10,8" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListBoxItem">
-                                            <Border x:Name="ItemBorder" Background="Transparent"
-                                                    BorderBrush="Transparent" BorderThickness="1"
-                                                    Padding="{TemplateBinding Padding}" CornerRadius="4">
-                                                <ContentPresenter />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#E3E7EC" />
-                                                </Trigger>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter TargetName="ItemBorder" Property="Background" Value="#D5E4F5" />
-                                                </Trigger>
-                                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#2B6CB0" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                    <TextBlock Text="{Binding SelectedSection.Title}"
+                               FontSize="{DynamicResource Task.Font.Size.PageTitle}"
+                               FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                               Foreground="{DynamicResource Task.Brush.Text.Primary}"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding SelectedSection.Title}"
+                               AutomationProperties.LiveSetting="Polite" />
+                    <TextBlock Text="{Binding SelectedSectionSupportingText}"
+                               FontSize="{DynamicResource Task.Font.Size.Label}"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                               ToolTip="{Binding SelectedSectionSupportingText}"
+                               TextTrimming="CharacterEllipsis">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1050}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ListBox>
-                </DockPanel>
-            </Border>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="{Binding SessionMessage}"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                               AutomationProperties.Name="Состояние сессии"
+                               AutomationProperties.AutomationId="SessionMessageText"
+                               AutomationProperties.LiveSetting="Assertive">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
 
-            <Grid Grid.Column="1" Background="White"
-                  AutomationProperties.AutomationId="SelectedSectionArea">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                            MaxWidth="520" Margin="40">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <TextBlock Text="{Binding SelectedSection.Title}"
-                               AutomationProperties.LiveSetting="Polite"
-                               FontSize="26" FontWeight="SemiBold"
-                               HorizontalAlignment="Center" Margin="0,0,0,12" />
-                    <TextBlock Text="{Binding SelectedSection.PlaceholderText}"
-                               AutomationProperties.LiveSetting="Polite"
-                               FontSize="14" Foreground="#666666"
-                               TextWrapping="Wrap" TextAlignment="Center" />
+                    <Button Command="{Binding Tasks.RefreshCommand}"
+                            Style="{StaticResource Task.Button.Icon}"
+                            Margin="0,0,8,0"
+                            TabIndex="2"
+                            ToolTip="Обновить список задач"
+                            AutomationProperties.Name="Обновить список задач"
+                            AutomationProperties.AutomationId="TasksRefreshButton"
+                            AutomationProperties.HelpText="Загрузить первую страницу задач заново">
+                        <Path Data="{StaticResource Task.Icon.Refresh}"
+                              Width="20" Height="20" Stretch="Uniform"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </Button>
+                    <Button IsEnabled="False"
+                            Style="{StaticResource Task.Button.Secondary}"
+                            MinWidth="132"
+                            TabIndex="3"
+                            ToolTip="{Binding ReadOnlyActionReason}"
+                            AutomationProperties.Name="Новая задача — недоступно"
+                            AutomationProperties.AutomationId="NewTaskButton"
+                            AutomationProperties.HelpText="{Binding ReadOnlyActionReason}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource Task.Icon.Add}"
+                                  Width="18" Height="18" Stretch="Uniform"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                            <TextBlock Text="Новая задача" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
-                <Grid Margin="20,16" DataContext="{Binding Tasks}"
-                      AutomationProperties.Name="Экран задач"
-                      AutomationProperties.AutomationId="TasksScreen">
+                <Border Grid.Column="2" Padding="12,0" VerticalAlignment="Stretch"
+                        AutomationProperties.Name="{Binding ConnectionStatus}"
+                        AutomationProperties.HelpText="{Binding ConnectionContext}">
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Path Data="{Binding ConnectionIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                              Width="18" Height="18" Stretch="Uniform">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Success}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="False">
+                                            <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                            <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding ConnectionStatus}"
+                                       FontSize="{DynamicResource Task.Font.Size.Label}"
+                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                       TextTrimming="CharacterEllipsis"
+                                       AutomationProperties.AutomationId="ConnectionStatusText"
+                                       AutomationProperties.LiveSetting="Polite" />
+                            <TextBlock Text="{Binding ConnectionContext}"
+                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Button Grid.Column="3"
+                        Command="{Binding LogoutCommand}"
+                        Style="{StaticResource Task.Button.Icon}"
+                        VerticalAlignment="Center"
+                        TabIndex="4"
+                        ToolTip="Выйти из Task"
+                        AutomationProperties.Name="Выйти из Task"
+                        AutomationProperties.AutomationId="LogoutButton"
+                        AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
+                    <Path Data="{StaticResource Task.Icon.SignOut}"
+                          Width="20" Height="20" Stretch="Uniform"
+                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Grid.Column="1"
+              Style="{StaticResource Task.Grid.SurfaceBase}"
+              AutomationProperties.AutomationId="SelectedSectionArea">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                        MaxWidth="520" Margin="40">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Path Data="{Binding SelectedSection.IconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                      Width="36" Height="36" Stretch="Uniform"
+                      Fill="{DynamicResource Task.Brush.Text.Secondary}"
+                      Margin="0,0,0,16" />
+                <TextBlock Text="{Binding SelectedSection.Title}"
+                           FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
+                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                           HorizontalAlignment="Center" Margin="0,0,0,8" />
+                <TextBlock Text="{Binding SelectedSection.PlaceholderText}"
+                           FontSize="{DynamicResource Task.Font.Size.Body}"
+                           Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                           TextWrapping="Wrap" TextAlignment="Center" />
+            </StackPanel>
+
+            <!-- CMP-009 PageLayout and Task read vertical slice -->
+            <Grid Margin="{DynamicResource Task.Padding.Page}"
+                  DataContext="{Binding Tasks}"
+                  AutomationProperties.Name="Экран задач"
+                  AutomationProperties.AutomationId="TasksScreen">
+                <Grid.Style>
+                    <Style TargetType="Grid" BasedOn="{StaticResource Task.Grid.SurfaceBase}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsTasksSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Path Data="{StaticResource Task.Icon.Lock}" Width="18" Height="18"
+                              Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}"
+                              VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding DataContext.ReadOnlyNotice, RelativeSource={RelativeSource AncestorType=Window}}"
+                                   FontSize="{DynamicResource Task.Font.Size.Label}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Primary}"
+                                   TextWrapping="Wrap" VerticalAlignment="Center"
+                                   AutomationProperties.AutomationId="ReadOnlyNoticeText"
+                                   AutomationProperties.LiveSetting="Polite" />
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Margin="0,0,0,12"
+                        AutomationProperties.Name="Состояние списка задач"
+                        AutomationProperties.AutomationId="TasksStateMessage"
+                        AutomationProperties.LiveSetting="Assertive">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowInlineMessage}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel>
+                        <Path DockPanel.Dock="Left" Data="{StaticResource Task.Icon.Info}"
+                              Width="18" Height="18" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Brand.Primary}"
+                              Margin="0,0,10,0" />
+                        <TextBlock Text="{Binding ScreenMessage}" TextWrapping="Wrap"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+
+                <Border Grid.Row="2"
+                        AutomationProperties.Name="Загрузка списка задач"
+                        AutomationProperties.LiveSetting="Polite">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsInitialLoading}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" Width="220" Margin="0,0,0,16"
+                                     Style="{StaticResource Task.Progress.Indeterminate}"
+                                     AutomationProperties.Name="Выполняется загрузка задач" />
+                        <TextBlock Text="Загружаем задачи…" Style="{StaticResource Task.State.Title}"
+                                   TextAlignment="Center" />
+                        <TextBlock Text="Список появится после ответа сервера."
+                                   Style="{StaticResource Task.State.Body}"
+                                   Margin="0,6,0,0" TextAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2"
+                        AutomationProperties.Name="{Binding StateTitle}"
+                        AutomationProperties.LiveSetting="Assertive">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowBlockingState}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520">
+                        <Path Data="{Binding StateIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                              Width="28" Height="28" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Text.Secondary}"
+                              Margin="0,0,0,12" />
+                        <TextBlock Text="{Binding StateTitle}" Style="{StaticResource Task.State.Title}"
+                                   TextAlignment="Center" />
+                        <TextBlock Text="{Binding ScreenMessage}" Style="{StaticResource Task.State.Body}"
+                                   Margin="0,6,0,16" TextAlignment="Center" />
+                        <Button Content="Обновить" Command="{Binding RefreshCommand}"
+                                Style="{StaticResource Task.Button.Secondary}"
+                                MinWidth="108"
+                                AutomationProperties.Name="Повторить загрузку списка задач" />
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="2">
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding DataContext.IsTasksSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                <DataTrigger Binding="{Binding HasItems}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MinWidth="280" />
+                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1320:8}" />
+                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1320:340}" />
+                    </Grid.ColumnDefinitions>
 
-                    <DockPanel Grid.Row="0" Margin="0,0,0,12">
-                        <StackPanel DockPanel.Dock="Left">
-                            <TextBlock Text="Задачи" FontSize="26" FontWeight="SemiBold" />
-                            <TextBlock Text="Активные задачи компании · только просмотр"
-                                       Foreground="#596273" Margin="0,2,0,0" />
-                        </StackPanel>
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Обновить" Command="{Binding RefreshCommand}"
-                                    MinWidth="100" MinHeight="36" Padding="14,6" Margin="8,0,0,0"
-                                    TabIndex="1"
-                                    AutomationProperties.Name="Обновить список задач"
-                                    AutomationProperties.AutomationId="TasksRefreshButton"
-                                    AutomationProperties.HelpText="Загрузить первую страницу задач заново" />
-                            <Button Content="Новая задача" IsEnabled="False"
-                                    MinWidth="116" MinHeight="36" Padding="14,6" Margin="8,0,0,0"
-                                    AutomationProperties.Name="Новая задача — недоступно"
-                                    AutomationProperties.AutomationId="NewTaskButton"
-                                    AutomationProperties.HelpText="Будет доступно после реализации создания задач"
-                                    ToolTip="Будет доступно после реализации создания задач" />
-                        </StackPanel>
-                    </DockPanel>
+                    <Border Grid.Row="0" Grid.Column="0"
+                            Style="{StaticResource Task.Surface.Base}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource Task.Radius.Control}"
+                            ClipToBounds="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="42" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="{DynamicResource Task.Brush.Surface.Subtle}"
+                                    BorderBrush="{DynamicResource Task.Brush.Border.Default}"
+                                    BorderThickness="0,0,0,1" Padding="16,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="116" />
+                                        <ColumnDefinition Width="112" />
+                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1000:132}" />
+                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1180:126}" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="ЗАДАЧА" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="1" Text="СТАТУС" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="2" Text="ПРИОРИТЕТ" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="3" Text="СРОК" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="4" Text="ОБНОВЛЕНО" Style="{StaticResource Task.Table.HeaderText}" />
+                                </Grid>
+                            </Border>
 
-                    <Border Grid.Row="1" Background="#FFF8E1" BorderBrush="#E0B84F"
-                            BorderThickness="1" CornerRadius="4" Padding="10,7" Margin="0,0,0,10">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Visible" />
+                            <ListBox x:Name="TasksList"
+                                     Grid.Row="1"
+                                     ItemsSource="{Binding Items}"
+                                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                     Style="{StaticResource Task.DataList}"
+                                     BorderThickness="0"
+                                     TabIndex="5"
+                                     KeyDown="OnTasksListKeyDown"
+                                     AutomationProperties.Name="Список задач"
+                                     AutomationProperties.AutomationId="TasksList"
+                                     AutomationProperties.HelpText="Стрелки выбирают задачу, Enter открывает сведения">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ToolTip="{Binding Title}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="116" />
+                                                <ColumnDefinition Width="112" />
+                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1000:132}" />
+                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1180:126}" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="{DynamicResource Task.Font.Size.Body}"
+                                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <Border Grid.Column="1" Style="{StaticResource Task.Semantic.StatusPill}"
+                                                    AutomationProperties.Name="{Binding StatusText}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                                          Tag="{Binding StatusTone}"
+                                                          Style="{StaticResource Task.Semantic.Icon}" />
+                                                    <TextBlock Text="{Binding StatusText}" Margin="6,0,0,0"
+                                                               Style="{StaticResource Task.Table.CellText}" />
+                                                </StackPanel>
+                                            </Border>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                                                        AutomationProperties.Name="{Binding PriorityText}">
+                                                <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                                      Tag="{Binding PriorityTone}"
+                                                      Style="{StaticResource Task.Semantic.Icon}" />
+                                                <TextBlock Text="{Binding PriorityText}" Margin="6,0,0,0"
+                                                           Style="{StaticResource Task.Table.CellText}" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="3" Text="{Binding DeadlineText}"
+                                                       Style="{StaticResource Task.Table.CellText}"
+                                                       ToolTip="{Binding DeadlineText}" />
+                                            <TextBlock Grid.Column="4" Text="{Binding UpdatedText}"
+                                                       Style="{StaticResource Task.Table.CellText}"
+                                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                                       ToolTip="{Binding UpdatedText}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}" />
+                                        <Setter Property="AutomationProperties.AutomationId" Value="{Binding Id}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+
+                    <GridSplitter Grid.Row="0" Grid.Column="1" Width="8"
+                                  HorizontalAlignment="Stretch" Background="Transparent"
+                                  AutomationProperties.Name="Изменить ширину списка и сведений" />
+
+                    <Expander x:Name="TaskInspectorExpander"
+                              AutomationProperties.Name="Сведения о выбранной задаче">
+                        <Expander.Style>
+                            <Style TargetType="Expander">
+                                <Setter Property="Grid.Row" Value="0" />
+                                <Setter Property="Grid.Column" Value="2" />
+                                <Setter Property="Grid.ColumnSpan" Value="1" />
+                                <Setter Property="Header" Value="{x:Null}" />
+                                <Setter Property="IsExpanded" Value="True" />
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="MaxHeight" Value="10000" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ScreenMessage}" Value="{x:Null}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1320}" Value="False">
+                                        <Setter Property="Grid.Row" Value="1" />
+                                        <Setter Property="Grid.Column" Value="0" />
+                                        <Setter Property="Grid.ColumnSpan" Value="3" />
+                                        <Setter Property="Header" Value="Сведения о задаче" />
+                                        <Setter Property="IsExpanded" Value="False" />
+                                        <Setter Property="Margin" Value="0,12,0,0" />
+                                        <Setter Property="MaxHeight" Value="240" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Border.Style>
-                        <TextBlock Text="{Binding ScreenMessage}" TextWrapping="Wrap"
-                                   AutomationProperties.Name="Состояние списка задач"
-                                   AutomationProperties.AutomationId="TasksStateMessage"
-                                   AutomationProperties.LiveSetting="Assertive" />
-                    </Border>
-
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" MinWidth="260" />
-                            <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="2*" MinWidth="190" />
-                        </Grid.ColumnDefinitions>
-
-                        <ListBox x:Name="TasksList"
-                                 Grid.Column="0"
-                                 ItemsSource="{Binding Items}"
-                                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                                 BorderBrush="#C9CED7" BorderThickness="1"
-                                 HorizontalContentAlignment="Stretch"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 TabIndex="2"
-                                 KeyDown="OnTasksListKeyDown"
-                                 AutomationProperties.Name="Список задач"
-                                 AutomationProperties.AutomationId="TasksList"
-                                 AutomationProperties.HelpText="Стрелки выбирают задачу, Enter переводит фокус в карточку">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="8,7">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold"
-                                                   TextWrapping="Wrap" Foreground="#173A67" />
-                                        <WrapPanel Grid.Row="1" Margin="0,5,0,0">
-                                            <TextBlock Text="{Binding StatusText}" Margin="0,0,12,0" />
-                                            <TextBlock Text="{Binding PriorityText}" Margin="0,0,12,0" />
-                                            <TextBlock Text="{Binding DeadlineText, StringFormat=Срок: {0}}" Margin="0,0,12,0" />
-                                            <TextBlock Text="{Binding UpdatedText, StringFormat=Обновлено: {0}}" Foreground="#596273" />
-                                        </WrapPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem">
-                                    <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}" />
-                                    <Setter Property="AutomationProperties.AutomationId" Value="{Binding Id}" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="BorderThickness" Value="2" />
-                                    <Style.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="#EAF2FB" />
-                                        </Trigger>
-                                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                            <Setter Property="BorderBrush" Value="#24569F" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                        </ListBox>
-
-                        <GridSplitter Grid.Column="1" Width="8" HorizontalAlignment="Stretch"
-                                      Background="Transparent"
-                                      AutomationProperties.Name="Изменить ширину списка и карточки" />
-
-                        <Border x:Name="TaskDetailsArea" Grid.Column="2"
-                                BorderBrush="#C9CED7" BorderThickness="1" CornerRadius="4"
-                                Padding="16" Focusable="True" KeyboardNavigation.TabIndex="4"
-                                AutomationProperties.Name="Карточка выбранной задачи"
-                                AutomationProperties.AutomationId="TaskDetailsArea"
-                                AutomationProperties.HelpText="Основные данные выбранной задачи">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        </Expander.Style>
+                        <Border Style="{StaticResource Task.Inspector.Panel}">
+                            <ScrollViewer x:Name="TaskDetailsArea"
+                                          Focusable="True"
+                                          KeyboardNavigation.TabIndex="7"
+                                          FocusVisualStyle="{StaticResource Task.FocusVisualStyle}"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          AutomationProperties.Name="Карточка выбранной задачи"
+                                          AutomationProperties.AutomationId="TaskDetailsArea"
+                                          AutomationProperties.HelpText="Основные данные выбранной задачи">
                                 <Grid>
-                                    <TextBlock Text="{Binding DetailMessage}" TextWrapping="Wrap"
-                                               Foreground="#596273"
+                                    <TextBlock Text="{Binding DetailMessage}"
+                                               Style="{StaticResource Task.State.Body}"
                                                AutomationProperties.Name="Состояние карточки задачи"
                                                AutomationProperties.AutomationId="TaskDetailsState"
                                                AutomationProperties.LiveSetting="Polite" />
-                                    <StackPanel DataContext="{Binding SelectedDetails}">
+                                    <StackPanel DataContext="{Binding SelectedDetails}"
+                                                AutomationProperties.Name="{Binding AutomationName}">
                                         <StackPanel.Style>
                                             <Style TargetType="StackPanel">
                                                 <Setter Property="Visibility" Value="Visible" />
@@ -298,50 +555,132 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </StackPanel.Style>
-                                        <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold"
-                                                   TextWrapping="Wrap" Margin="0,0,0,16" />
-                                        <TextBlock Text="Статус" Foreground="#596273" />
-                                        <TextBlock Text="{Binding StatusText}" Margin="0,2,0,10" />
-                                        <TextBlock Text="Приоритет" Foreground="#596273" />
-                                        <TextBlock Text="{Binding PriorityText}" Margin="0,2,0,10" />
-                                        <TextBlock Text="Начало" Foreground="#596273" />
-                                        <TextBlock Text="{Binding StartText}" Margin="0,2,0,10" />
-                                        <TextBlock Text="Срок" Foreground="#596273" />
-                                        <TextBlock Text="{Binding DeadlineText}" Margin="0,2,0,10" />
-                                        <TextBlock Text="Создана" Foreground="#596273" />
-                                        <TextBlock Text="{Binding CreatedText}" Margin="0,2,0,10" />
-                                        <TextBlock Text="Обновлена" Foreground="#596273" />
-                                        <TextBlock Text="{Binding UpdatedText}" Margin="0,2,0,0" />
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
+                                                   FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                                   TextWrapping="Wrap" Margin="0,0,0,16"
+                                                   ToolTip="{Binding Title}" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                                            <Border Style="{StaticResource Task.Semantic.StatusPill}" Margin="0,0,14,0">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                                          Tag="{Binding StatusTone}"
+                                                          Style="{StaticResource Task.Semantic.Icon}" />
+                                                    <TextBlock Text="{Binding StatusText}" Margin="6,0,0,0"
+                                                               VerticalAlignment="Center" />
+                                                </StackPanel>
+                                            </Border>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                                      Tag="{Binding PriorityTone}"
+                                                      Style="{StaticResource Task.Semantic.Icon}" />
+                                                <TextBlock Text="{Binding PriorityText}" Margin="6,0,0,0"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <UniformGrid Columns="2">
+                                            <StackPanel Margin="0,0,12,14">
+                                                <TextBlock Text="Начало" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                <TextBlock Text="{Binding StartText}" Style="{StaticResource Task.Inspector.FactValue}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,0,0,14">
+                                                <TextBlock Text="Срок" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                <TextBlock Text="{Binding DeadlineText}" Style="{StaticResource Task.Inspector.FactValue}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,0,12,14">
+                                                <TextBlock Text="Создана" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                <TextBlock Text="{Binding CreatedText}" Style="{StaticResource Task.Inspector.FactValue}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,0,0,14">
+                                                <TextBlock Text="Обновлена" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                <TextBlock Text="{Binding UpdatedText}" Style="{StaticResource Task.Inspector.FactValue}" />
+                                            </StackPanel>
+                                        </UniformGrid>
                                     </StackPanel>
                                 </Grid>
                             </ScrollViewer>
                         </Border>
-                    </Grid>
+                    </Expander>
+                </Grid>
 
-                    <DockPanel Grid.Row="3" Margin="0,10,0,0" LastChildFill="False">
-                        <TextBlock Text="{Binding Items.Count, StringFormat=Показано задач: {0}}"
-                                   VerticalAlignment="Center" Foreground="#596273"
-                                   AutomationProperties.Name="Количество показанных задач" />
-                        <Button DockPanel.Dock="Right" Content="Загрузить ещё"
-                                Command="{Binding LoadMoreCommand}"
-                                MinWidth="130" MinHeight="36" Padding="14,6"
-                                TabIndex="3"
-                                AutomationProperties.Name="Загрузить следующую страницу задач"
-                                AutomationProperties.AutomationId="TasksLoadMoreButton">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Visibility" Value="Visible" />
+                <Grid Grid.Row="3" Margin="0,12,0,0" MinHeight="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding DisplayedCountText}"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               AutomationProperties.Name="Количество показанных задач" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" Width="72">
+                            <ProgressBar.Style>
+                                <Style TargetType="ProgressBar" BasedOn="{StaticResource Task.Progress.Indeterminate}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding HasNextPage}" Value="False">
-                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        <DataTrigger Binding="{Binding IsRefreshing}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Button.Style>
-                        </Button>
-                    </DockPanel>
+                            </ProgressBar.Style>
+                        </ProgressBar>
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="Загрузить ещё"
+                            Command="{Binding LoadMoreCommand}"
+                            MinWidth="124"
+                            TabIndex="6"
+                            AutomationProperties.Name="Загрузить следующую страницу задач"
+                            AutomationProperties.AutomationId="TasksLoadMoreButton">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasNextPage}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </Grid>
             </Grid>
         </Grid>
-    </DockPanel>
+
+        <Border Grid.Row="2" Grid.Column="1"
+                Style="{StaticResource Task.Surface.Subtle}"
+                BorderThickness="0,1,0,0"
+                Padding="18,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="40" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Path Data="{StaticResource Task.Icon.Lock}" Width="16" Height="16"
+                          Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                    <TextBlock Text="{Binding DataSourceStatus}" Margin="8,0,0,0"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="{Binding Tasks.LastSuccessfulRefreshText}"
+                           FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                           Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                           VerticalAlignment="Center" Margin="12,0,4,0"
+                           AutomationProperties.LiveSetting="Polite" />
+                <Button Grid.Column="2" Command="{Binding Tasks.RefreshCommand}"
+                        Style="{StaticResource Task.Button.FooterIcon}"
+                        ToolTip="Обновить состояние задач"
+                        AutomationProperties.Name="Обновить состояние задач">
+                    <Path Data="{StaticResource Task.Icon.Refresh}" Width="16" Height="16"
+                          Stretch="Uniform"
+                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

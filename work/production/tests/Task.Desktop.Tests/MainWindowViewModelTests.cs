@@ -96,7 +96,7 @@ public class MainWindowViewModelTests
     {
         var vm = new MainWindowViewModel();
 
-        Assert.Equal("Нет подключения — только просмотр", vm.ConnectionStatus);
+        Assert.Equal("Нет подтверждённого подключения · только просмотр", vm.ConnectionStatus);
         Assert.DoesNotContain('Ð', vm.ConnectionStatus);
         Assert.DoesNotContain('Ñ', vm.ConnectionStatus);
     }
@@ -157,7 +157,9 @@ public class MainWindowViewModelTests
             _ => global::System.Threading.Tasks.Task.CompletedTask);
 
         Assert.Equal("https://task.company.local", vm.ServerAddress);
-        Assert.Equal("Сессия подтверждена · https://task.company.local", vm.ConnectionStatus);
+        Assert.Equal(
+            "Подключено к серверу компании · https://task.company.local · только просмотр",
+            vm.ConnectionStatus);
         Assert.Contains("просмотр задач доступен", vm.ReadOnlyNotice);
         Assert.True(vm.LogoutCommand.CanExecute(null));
     }

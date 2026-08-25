@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Task.Desktop.ViewModels;
 
 namespace Task.Desktop;
@@ -23,12 +24,15 @@ public partial class MainWindow : Window
 
     private void OnTasksListKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key != Key.Enter || TaskDetailsArea.Visibility != Visibility.Visible)
+        if (e.Key != Key.Enter)
         {
             return;
         }
 
-        TaskDetailsArea.Focus();
+        TaskInspectorExpander.IsExpanded = true;
+        Dispatcher.BeginInvoke(
+            DispatcherPriority.Input,
+            () => TaskDetailsArea.Focus());
         e.Handled = true;
     }
 }
