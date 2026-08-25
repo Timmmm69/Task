@@ -13,16 +13,18 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     private string? _sessionMessage;
 
     public MainWindowViewModel()
-        : this(null, null)
+        : this(null, null, null)
     {
     }
 
     public MainWindowViewModel(
         Uri? serverEndpoint,
-        Func<CancellationToken, global::System.Threading.Tasks.Task>? logout)
+        Func<CancellationToken, global::System.Threading.Tasks.Task>? logout,
+        TasksViewModel? tasks = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
+        Tasks = tasks;
         Sections = new ObservableCollection<NavigationSection>
         {
             new("today", "Сегодня", "Раздел «Сегодня»: сводка задач на текущий день появится после подключения к серверу."),
@@ -55,8 +57,29 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     public NavigationSection? SelectedSection
     {
         get => _selectedSection;
-        set => SetProperty(ref _selectedSection, value);
+        set
+        {
+            if (!SetProperty(ref _selectedSection, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(IsTasksSectionSelected));
+            if (IsTasksSectionSelected)
+            {
+                Tasks?.Activate();
+            }
+            else
+            {
+                Tasks?.Deactivate();
+            }
+        }
     }
+
+    public TasksViewModel? Tasks { get; }
+
+    public bool IsTasksSectionSelected =>
+        string.Equals(SelectedSection?.Route, "tasks", StringComparison.Ordinal);
 
     /// <summary>Server whose authentication session was confirmed before opening the shell.</summary>
     public string? ServerAddress { get; }
@@ -77,7 +100,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     /// </summary>
     public string ReadOnlyNotice => ServerAddress is null
         ? "Сервер не подключён: синхронизация не выполняется, изменение данных недоступно."
-        : "Предметная синхронизация пока не подключена: изменение данных недоступно.";
+        : "Сервер подключён: просмотр задач доступен, изменение данных пока недоступно.";
 
     public string? SessionMessage
     {
@@ -89,7 +112,11 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public AsyncCommand LogoutCommand { get; }
 
-    public void Dispose() => LogoutCommand.Dispose();
+    public void Dispose()
+    {
+        LogoutCommand.Dispose();
+        Tasks?.Dispose();
+    }
 
     private async global::System.Threading.Tasks.Task LogoutAsync(
         object? parameter,

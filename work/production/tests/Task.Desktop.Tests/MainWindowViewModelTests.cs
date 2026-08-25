@@ -158,7 +158,7 @@ public class MainWindowViewModelTests
 
         Assert.Equal("https://task.company.local", vm.ServerAddress);
         Assert.Equal("Сессия подтверждена · https://task.company.local", vm.ConnectionStatus);
-        Assert.Contains("синхронизация пока не подключена", vm.ReadOnlyNotice);
+        Assert.Contains("просмотр задач доступен", vm.ReadOnlyNotice);
         Assert.True(vm.LogoutCommand.CanExecute(null));
     }
 

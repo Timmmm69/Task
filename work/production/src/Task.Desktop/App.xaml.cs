@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Windows;
 using Task.Desktop.Security;
+using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
 
 namespace Task.Desktop;
@@ -141,7 +142,20 @@ public partial class App : global::System.Windows.Application
             return;
         }
 
-        var viewModel = new MainWindowViewModel(workflow.ServerEndpoint, workflow.LogoutAsync);
+        var sessionService = workflow.ReadySessionService;
+        var serverEndpoint = workflow.ServerEndpoint;
+        if (sessionService is null || serverEndpoint is null)
+        {
+            ShowAuthenticationWindow();
+            return;
+        }
+
+        var tasksClient = new DesktopTasksApiClient(
+            CreateHttpClient(),
+            serverEndpoint,
+            sessionService);
+        var tasks = new TasksViewModel(tasksClient);
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks);
         var window = new MainWindow(viewModel);
         _mainWindow = window;
         MainWindow = window;

@@ -86,6 +86,15 @@ public sealed class AuthWorkflowViewModel : ViewModelBase, IDisposable
     /// <summary>The sole workflow condition that permits creation of the main shell.</summary>
     public bool IsReady => CurrentState == AuthWorkflowState.Ready;
 
+    /// <summary>
+    /// Ready session exposed only to the desktop composition root so feature API clients can
+    /// reuse the authenticated session without receiving the credential vault.
+    /// </summary>
+    internal SessionService? ReadySessionService =>
+        IsReady && _sessionService?.CurrentReadiness == SessionReadinessState.Ready
+            ? _sessionService
+            : null;
+
     public ServerSetupViewModel? ServerSetup => CurrentViewModel as ServerSetupViewModel;
 
     public LoginViewModel? Login => CurrentViewModel as LoginViewModel;

@@ -43,7 +43,7 @@
             <DockPanel LastChildFill="True">
                 <Button DockPanel.Dock="Right" Content="Выйти" Command="{Binding LogoutCommand}"
                         MinWidth="100" MinHeight="36" Padding="14,6" Margin="16,0,0,0"
-                        TabIndex="0"
+                        TabIndex="5"
                         AutomationProperties.Name="Выйти из Task"
                         AutomationProperties.AutomationId="LogoutButton"
                         AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
@@ -85,6 +85,7 @@
                                Margin="16,16,16,8" Foreground="#555555" />
                     <ListBox ItemsSource="{Binding Sections}"
                              SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
+                             TabIndex="0"
                              AutomationProperties.Name="Разделы"
                              AutomationProperties.HelpText="Выбор раздела для отображения в области содержимого"
                              AutomationProperties.AutomationId="NavigationListBox"
@@ -129,11 +130,20 @@
                 </DockPanel>
             </Border>
 
-            <!-- Safe placeholder for the selected section -->
             <Grid Grid.Column="1" Background="White"
-              AutomationProperties.AutomationId="SelectedSectionArea">
+                  AutomationProperties.AutomationId="SelectedSectionArea">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
                             MaxWidth="520" Margin="40">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
                     <TextBlock Text="{Binding SelectedSection.Title}"
                                AutomationProperties.LiveSetting="Polite"
                                FontSize="26" FontWeight="SemiBold"
@@ -143,6 +153,194 @@
                                FontSize="14" Foreground="#666666"
                                TextWrapping="Wrap" TextAlignment="Center" />
                 </StackPanel>
+
+                <Grid Margin="20,16" DataContext="{Binding Tasks}"
+                      AutomationProperties.Name="Экран задач"
+                      AutomationProperties.AutomationId="TasksScreen">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsTasksSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,12">
+                        <StackPanel DockPanel.Dock="Left">
+                            <TextBlock Text="Задачи" FontSize="26" FontWeight="SemiBold" />
+                            <TextBlock Text="Активные задачи компании · только просмотр"
+                                       Foreground="#596273" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Обновить" Command="{Binding RefreshCommand}"
+                                    MinWidth="100" MinHeight="36" Padding="14,6" Margin="8,0,0,0"
+                                    TabIndex="1"
+                                    AutomationProperties.Name="Обновить список задач"
+                                    AutomationProperties.AutomationId="TasksRefreshButton"
+                                    AutomationProperties.HelpText="Загрузить первую страницу задач заново" />
+                            <Button Content="Новая задача" IsEnabled="False"
+                                    MinWidth="116" MinHeight="36" Padding="14,6" Margin="8,0,0,0"
+                                    AutomationProperties.Name="Новая задача — недоступно"
+                                    AutomationProperties.AutomationId="NewTaskButton"
+                                    AutomationProperties.HelpText="Будет доступно после реализации создания задач"
+                                    ToolTip="Будет доступно после реализации создания задач" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Grid.Row="1" Background="#FFF8E1" BorderBrush="#E0B84F"
+                            BorderThickness="1" CornerRadius="4" Padding="10,7" Margin="0,0,0,10">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ScreenMessage}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding ScreenMessage}" TextWrapping="Wrap"
+                                   AutomationProperties.Name="Состояние списка задач"
+                                   AutomationProperties.AutomationId="TasksStateMessage"
+                                   AutomationProperties.LiveSetting="Assertive" />
+                    </Border>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" MinWidth="260" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="2*" MinWidth="190" />
+                        </Grid.ColumnDefinitions>
+
+                        <ListBox x:Name="TasksList"
+                                 Grid.Column="0"
+                                 ItemsSource="{Binding Items}"
+                                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                 BorderBrush="#C9CED7" BorderThickness="1"
+                                 HorizontalContentAlignment="Stretch"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 TabIndex="2"
+                                 KeyDown="OnTasksListKeyDown"
+                                 AutomationProperties.Name="Список задач"
+                                 AutomationProperties.AutomationId="TasksList"
+                                 AutomationProperties.HelpText="Стрелки выбирают задачу, Enter переводит фокус в карточку">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="8,7">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold"
+                                                   TextWrapping="Wrap" Foreground="#173A67" />
+                                        <WrapPanel Grid.Row="1" Margin="0,5,0,0">
+                                            <TextBlock Text="{Binding StatusText}" Margin="0,0,12,0" />
+                                            <TextBlock Text="{Binding PriorityText}" Margin="0,0,12,0" />
+                                            <TextBlock Text="{Binding DeadlineText, StringFormat=Срок: {0}}" Margin="0,0,12,0" />
+                                            <TextBlock Text="{Binding UpdatedText, StringFormat=Обновлено: {0}}" Foreground="#596273" />
+                                        </WrapPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}" />
+                                    <Setter Property="AutomationProperties.AutomationId" Value="{Binding Id}" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="2" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#EAF2FB" />
+                                        </Trigger>
+                                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                            <Setter Property="BorderBrush" Value="#24569F" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+
+                        <GridSplitter Grid.Column="1" Width="8" HorizontalAlignment="Stretch"
+                                      Background="Transparent"
+                                      AutomationProperties.Name="Изменить ширину списка и карточки" />
+
+                        <Border x:Name="TaskDetailsArea" Grid.Column="2"
+                                BorderBrush="#C9CED7" BorderThickness="1" CornerRadius="4"
+                                Padding="16" Focusable="True" KeyboardNavigation.TabIndex="4"
+                                AutomationProperties.Name="Карточка выбранной задачи"
+                                AutomationProperties.AutomationId="TaskDetailsArea"
+                                AutomationProperties.HelpText="Основные данные выбранной задачи">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <Grid>
+                                    <TextBlock Text="{Binding DetailMessage}" TextWrapping="Wrap"
+                                               Foreground="#596273"
+                                               AutomationProperties.Name="Состояние карточки задачи"
+                                               AutomationProperties.AutomationId="TaskDetailsState"
+                                               AutomationProperties.LiveSetting="Polite" />
+                                    <StackPanel DataContext="{Binding SelectedDetails}">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold"
+                                                   TextWrapping="Wrap" Margin="0,0,0,16" />
+                                        <TextBlock Text="Статус" Foreground="#596273" />
+                                        <TextBlock Text="{Binding StatusText}" Margin="0,2,0,10" />
+                                        <TextBlock Text="Приоритет" Foreground="#596273" />
+                                        <TextBlock Text="{Binding PriorityText}" Margin="0,2,0,10" />
+                                        <TextBlock Text="Начало" Foreground="#596273" />
+                                        <TextBlock Text="{Binding StartText}" Margin="0,2,0,10" />
+                                        <TextBlock Text="Срок" Foreground="#596273" />
+                                        <TextBlock Text="{Binding DeadlineText}" Margin="0,2,0,10" />
+                                        <TextBlock Text="Создана" Foreground="#596273" />
+                                        <TextBlock Text="{Binding CreatedText}" Margin="0,2,0,10" />
+                                        <TextBlock Text="Обновлена" Foreground="#596273" />
+                                        <TextBlock Text="{Binding UpdatedText}" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+
+                    <DockPanel Grid.Row="3" Margin="0,10,0,0" LastChildFill="False">
+                        <TextBlock Text="{Binding Items.Count, StringFormat=Показано задач: {0}}"
+                                   VerticalAlignment="Center" Foreground="#596273"
+                                   AutomationProperties.Name="Количество показанных задач" />
+                        <Button DockPanel.Dock="Right" Content="Загрузить ещё"
+                                Command="{Binding LoadMoreCommand}"
+                                MinWidth="130" MinHeight="36" Padding="14,6"
+                                TabIndex="3"
+                                AutomationProperties.Name="Загрузить следующую страницу задач"
+                                AutomationProperties.AutomationId="TasksLoadMoreButton">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasNextPage}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DockPanel>
+                </Grid>
             </Grid>
         </Grid>
     </DockPanel>
