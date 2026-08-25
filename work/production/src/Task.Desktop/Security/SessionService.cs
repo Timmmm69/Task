@@ -311,6 +311,25 @@ public sealed class SessionService : IDisposable
     }
 
     /// <summary>
+    /// Returns the current access token for one authenticated request. The token is read from
+    /// the existing in-memory vault at call time and is unavailable until server-side session
+    /// readiness has been confirmed. Callers must not retain the returned value beyond the
+    /// request they are about to send.
+    /// </summary>
+    public string? GetAccessTokenForRequest()
+    {
+        lock (_sync)
+        {
+            if (_disposed || _readiness != SessionReadinessState.Ready)
+            {
+                return null;
+            }
+        }
+
+        return _vault.GetAccessToken();
+    }
+
+    /// <summary>
     /// Signs the user in. On success the session tokens and the persistent device key are
     /// stored in the vault and session metadata is confirmed before readiness is granted. When
     /// metadata cannot be confirmed, tokens remain available for retry but the main shell stays
