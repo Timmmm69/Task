@@ -111,6 +111,12 @@ public sealed class TaskPermissionAuthorizationTests
             Assert.Single(loginAttemptsPolicy.Requirements));
         Assert.Equal(TaskPermissionAuthorization.AuditEntryReadPermissionCode, loginAttemptsRequirement.Code);
 
+        var taskReadPolicy = await policyProvider.GetPolicyAsync(TaskPermissionAuthorization.TaskReadPolicyName);
+        Assert.NotNull(taskReadPolicy);
+        var taskReadRequirement = Assert.IsType<TaskPermissionAuthorization.PermissionRequirement>(
+            Assert.Single(taskReadPolicy.Requirements));
+        Assert.Equal(TaskPermissionAuthorization.TaskReadBackingPermissionCode, taskReadRequirement.Code);
+
         Assert.Null(await policyProvider.GetPolicyAsync("permission.unknown"));
     }
 

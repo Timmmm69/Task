@@ -45,6 +45,9 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     public ITaskAggregateStore CreateTaskStore() =>
         new PostgresTaskAggregateStore(GetConfiguredDataSource());
 
+    public ITaskReadStore CreateTaskReadStore() =>
+        new PostgresTaskReadStore(GetConfiguredDataSource());
+
     public ICalendarEventStore CreateCalendarEventStore() =>
         new PostgresCalendarEventStore(GetConfiguredDataSource());
 
