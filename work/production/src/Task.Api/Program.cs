@@ -57,6 +57,7 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<ITaskWriteCommandExecutor>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateTaskWriteCommandExecutor());
     builder.Services.AddSingleton<TaskCreateCommandService>();
+    builder.Services.AddSingleton<TaskUpdateCommandService>();
     builder.Services.AddSingleton<TaskQueryService>();
     builder.Services.AddSingleton<IScheduleStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateScheduleStore());

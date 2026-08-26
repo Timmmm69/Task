@@ -310,6 +310,57 @@ public sealed class TaskAggregate
             schedule);
     }
 
+    /// <summary>
+    /// Atomically applies one presence-aware update to the stored editable fields.
+    /// A null <paramref name="title"/> or <paramref name="priority"/> leaves the value
+    /// unchanged; an unspecified <see cref="OptionalInstant"/> schedule bound leaves it
+    /// unchanged, while an explicitly specified bound replaces it (null clears it).
+    /// The resulting aggregate state is validated as a whole and, when it actually
+    /// differs, exactly one visible change advances the version. When the final values
+    /// equal the current ones, the same instance is returned without a domain event.
+    /// </summary>
+    public TaskAggregate UpdateEditableFields(
+        Guid actorId,
+        DateTimeOffset occurredAtUtc,
+        string? title,
+        TaskPriority? priority,
+        OptionalInstant startsAtUtc,
+        OptionalInstant deadlineAt)
+    {
+        EnsureActive("An archived or trashed task must be restored before its fields can be updated.");
+        EnsureNotTerminal("A completed or cancelled task cannot be updated.");
+
+        var effectiveTitle = title is null ? Title : EnsureValidTitle(title);
+        var effectivePriority = Priority;
+        if (priority is not null)
+        {
+            if (!Enum.IsDefined(priority.Value))
+            {
+                throw new ArgumentOutOfRangeException(nameof(priority), "Unknown task priority.");
+            }
+
+            effectivePriority = priority.Value;
+        }
+
+        var effectiveStart = startsAtUtc.Specified ? startsAtUtc.Value : Schedule.StartsAtUtc;
+        var effectiveDeadline = deadlineAt.Specified ? deadlineAt.Value : Schedule.DeadlineUtc;
+        var effectiveSchedule = TaskSchedule.Create(effectiveStart, effectiveDeadline);
+
+        if (effectiveTitle == Title && effectivePriority == Priority && effectiveSchedule == Schedule)
+        {
+            return this;
+        }
+
+        return new TaskAggregate(
+            Metadata.RecordVisibleChange(actorId, occurredAtUtc),
+            effectiveTitle,
+            WorkStatus,
+            CompletedAtUtc,
+            CompletedBy,
+            effectivePriority,
+            effectiveSchedule);
+    }
+
     public bool IsOverdue(DateTimeOffset nowUtc) =>
         TaskOverduePolicy.IsOverdue(WorkStatus, Schedule.DeadlineUtc, nowUtc);
 
@@ -347,4 +398,18 @@ public sealed class TaskAggregate
 
         return normalizedTitle;
     }
+}
+
+/// <summary>
+/// Presence-aware value for one optional schedule bound: when
+/// <see cref="Specified"/> is false the bound stays unchanged; when it is true the
+/// bound is replaced by <see cref="Value"/>, and a null value clears the bound.
+/// </summary>
+public readonly record struct OptionalInstant(bool Specified, DateTimeOffset? Value)
+{
+    public static OptionalInstant Unspecified => default;
+
+    public static OptionalInstant Set(DateTimeOffset value) => new(true, value);
+
+    public static OptionalInstant Clear() => new(true, null);
 }

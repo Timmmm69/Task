@@ -32,6 +32,9 @@ internal static class TaskEndpoints
         app.MapGet(TaskByIdRoute, GetTaskByIdAsync)
             .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
 
+        app.MapPatch(TaskByIdRoute, PatchTaskAsync)
+            .RequireAuthorization(TaskPermissionAuthorization.TaskUpdatePolicyName);
+
         return app;
     }
 
@@ -521,6 +524,347 @@ internal static class TaskEndpoints
         }
     }
 
+    private static async Task<IResult> PatchTaskAsync(
+        HttpContext context,
+        string id,
+        CancellationToken cancellationToken)
+    {
+        var requestContext = ReadRequestContext(context);
+        if (requestContext is null)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status500InternalServerError,
+                "INTERNAL_ERROR",
+                "The authenticated request context is unavailable.",
+                retryable: true);
+        }
+
+        var service = context.RequestServices.GetService<TaskUpdateCommandService>();
+        if (service is null)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status503ServiceUnavailable,
+                "INTERNAL_ERROR",
+                "Task write access is not configured.",
+                retryable: true);
+        }
+
+        if (!TryReadIdempotencyKey(context.Request.Headers["Idempotency-Key"].ToString(), out var idempotencyKey))
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status400BadRequest,
+                "VALIDATION_FAILED",
+                "Idempotency-Key is required and must contain 8-200 printable ASCII characters.",
+                retryable: false);
+        }
+
+        if (!TryReadIfMatch(context.Request.Headers.IfMatch, out var expectedVersion, out var ifMatchError))
+        {
+            return await WriteProblemAsync(
+                context,
+                ifMatchError.Status,
+                ifMatchError.Code,
+                ifMatchError.Title,
+                retryable: false);
+        }
+
+        if (!Guid.TryParseExact(id, "D", out var taskId) || taskId == Guid.Empty)
+        {
+            return await WriteObjectNotVisibleAsync(context);
+        }
+
+        string body;
+        try
+        {
+            using var reader = new StreamReader(context.Request.Body);
+            body = await reader.ReadToEndAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status400BadRequest,
+                "MALFORMED_JSON",
+                "The request body is not valid JSON.",
+                retryable: false);
+        }
+
+        if (!TryParsePatchRequest(body, out var model, out var parseError))
+        {
+            return await WriteProblemAsync(
+                context,
+                parseError.Status,
+                parseError.Code,
+                parseError.Title,
+                retryable: false);
+        }
+
+        try
+        {
+            var preparation = service.CreateCommand(
+                requestContext,
+                idempotencyKey,
+                body,
+                taskId,
+                expectedVersion,
+                model,
+                aggregate => new TaskWriteHttpResult(
+                    StatusCodes.Status200OK,
+                    new Dictionary<string, string>(StringComparer.Ordinal)
+                    {
+                        ["ETag"] = $"\"v{aggregate.Metadata.Version.ToString(CultureInfo.InvariantCulture)}\"",
+                    },
+                    JsonSerializer.Serialize(ToResponse(aggregate)),
+                    aggregate.Metadata.Id));
+
+            if (preparation.Command.ChangedFields.Count == 0)
+            {
+                context.Response.Headers.ETag =
+                    $"\"v{preparation.Current.Metadata.Version.ToString(CultureInfo.InvariantCulture)}\"";
+                context.Response.Headers["Idempotency-Replayed"] = "false";
+                return Results.Json(ToResponse(preparation.Current));
+            }
+
+            return await WriteCommandResultAsync(
+                context,
+                await service.ExecuteAsync(preparation.Command, cancellationToken));
+        }
+        catch (TaskUpdateConflictException conflict)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status409Conflict,
+                conflict.ProblemCode,
+                conflict.Message,
+                retryable: false);
+        }
+        catch (TaskLifecycleConcurrencyException)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status412PreconditionFailed,
+                "VERSION_CONFLICT",
+                "The task version does not match the provided If-Match value.",
+                retryable: false);
+        }
+        catch (KeyNotFoundException)
+        {
+            return await WriteObjectNotVisibleAsync(context);
+        }
+        catch (InvalidOperationException)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status409Conflict,
+                "INVALID_STATE_TRANSITION",
+                "The task is not in a state that allows this update.",
+                retryable: false);
+        }
+        catch (ArgumentException)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status422UnprocessableEntity,
+                "VALIDATION_FAILED",
+                "The requested values are not valid for this task.",
+                retryable: false);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status503ServiceUnavailable,
+                "INTERNAL_ERROR",
+                "Task write access is temporarily unavailable.",
+                retryable: true);
+        }
+    }
+
+    private static bool TryReadIfMatch(
+        Microsoft.Extensions.Primitives.StringValues ifMatch,
+        out int expectedVersion,
+        out PatchRequestError error)
+    {
+        expectedVersion = 0;
+        if (ifMatch.Count == 0)
+        {
+            error = new(
+                StatusCodes.Status428PreconditionRequired,
+                "PRECONDITION_REQUIRED",
+                "The If-Match header is required.");
+            return false;
+        }
+
+        var values = ifMatch.ToString().Split(',', StringSplitOptions.TrimEntries);
+        var digits = values.Length == 1 && values[0].Length >= 4
+            ? values[0].AsSpan(2, values[0].Length - 3)
+            : default;
+        if (values.Length != 1 ||
+            values[0].Length < 4 ||
+            values[0][0] != '"' ||
+            values[0][^1] != '"' ||
+            values[0][1] != 'v' ||
+            values[0][2] == '0' ||
+            digits.IndexOfAnyExceptInRange('0', '9') >= 0 ||
+            !long.TryParse(values[0].Substring(2, values[0].Length - 3), out var version) ||
+            version > int.MaxValue)
+        {
+            error = new(
+                StatusCodes.Status400BadRequest,
+                "VALIDATION_FAILED",
+                "If-Match must be a single strong entity tag of the form \"v<positive-integer>\".");
+            return false;
+        }
+
+        expectedVersion = (int)version;
+        error = null!;
+        return true;
+    }
+
+    private static bool TryParsePatchRequest(
+        string body,
+        out TaskUpdateModel model,
+        out PatchRequestError error)
+    {
+        model = null!;
+        error = null!;
+        JsonDocument document;
+        try
+        {
+            document = JsonDocument.Parse(body);
+        }
+        catch (JsonException)
+        {
+            error = new(StatusCodes.Status400BadRequest, "MALFORMED_JSON", "The request body is not valid JSON.");
+            return false;
+        }
+
+        using (document)
+        {
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
+            {
+                error = PatchValidationFailed(StatusCodes.Status400BadRequest, "The request body must be a JSON object.");
+                return false;
+            }
+
+            string? title = null;
+            TaskPriority? priority = null;
+            OptionalInstant startsAtUtc = OptionalInstant.Unspecified;
+            OptionalInstant deadlineAt = OptionalInstant.Unspecified;
+            var hasProperty = false;
+            foreach (var property in document.RootElement.EnumerateObject())
+            {
+                hasProperty = true;
+                if (!AllowedPatchProperties.Contains(property.Name))
+                {
+                    error = PatchValidationFailed(
+                        StatusCodes.Status400BadRequest,
+                        "The request contains an unsupported property.");
+                    return false;
+                }
+
+                switch (property.Name)
+                {
+                    case "title":
+                        if (property.Value.ValueKind != JsonValueKind.String)
+                        {
+                            error = PatchValidationFailed(StatusCodes.Status400BadRequest, "title must be a string.");
+                            return false;
+                        }
+
+                        title = property.Value.GetString();
+                        break;
+                    case "priority":
+                        if (property.Value.ValueKind != JsonValueKind.String ||
+                            !TryParsePriority(property.Value.GetString(), out var parsedPriority))
+                        {
+                            error = PatchValidationFailed(StatusCodes.Status400BadRequest, "priority is invalid.");
+                            return false;
+                        }
+
+                        priority = parsedPriority;
+                        break;
+                    case "startAtUtc":
+                        if (!TryReadOptionalInstant(property.Value, out startsAtUtc))
+                        {
+                            error = PatchValidationFailed(
+                                StatusCodes.Status400BadRequest,
+                                "startAtUtc must be null or an RFC 3339 UTC instant with an explicit Z.");
+                            return false;
+                        }
+
+                        break;
+                    case "deadlineAt":
+                        if (!TryReadOptionalInstant(property.Value, out deadlineAt))
+                        {
+                            error = PatchValidationFailed(
+                                StatusCodes.Status400BadRequest,
+                                "deadlineAt must be null or an RFC 3339 UTC instant with an explicit Z.");
+                            return false;
+                        }
+
+                        break;
+                }
+            }
+
+            if (!hasProperty)
+            {
+                error = PatchValidationFailed(StatusCodes.Status400BadRequest, "The request body must not be empty.");
+                return false;
+            }
+
+            var normalizedTitle = title?.Trim();
+            if (normalizedTitle is not null &&
+                (string.IsNullOrEmpty(normalizedTitle) || normalizedTitle.Length > 500))
+            {
+                error = PatchValidationFailed(
+                    StatusCodes.Status422UnprocessableEntity,
+                    "title must contain 1-500 characters.");
+                return false;
+            }
+
+            model = new TaskUpdateModel(normalizedTitle, priority, startsAtUtc, deadlineAt);
+            return true;
+        }
+    }
+
+    private static readonly HashSet<string> AllowedPatchProperties = new(StringComparer.Ordinal)
+    {
+        "title", "priority", "startAtUtc", "deadlineAt",
+    };
+
+    private static bool TryReadOptionalInstant(JsonElement element, out OptionalInstant instant)
+    {
+        if (element.ValueKind == JsonValueKind.Null)
+        {
+            instant = OptionalInstant.Clear();
+            return true;
+        }
+
+        if (TryReadUtcInstant(element, out var value))
+        {
+            instant = OptionalInstant.Set(value!.Value);
+            return true;
+        }
+
+        instant = default;
+        return false;
+    }
+
+    private static PatchRequestError PatchValidationFailed(int status, string title) =>
+        new(status, "VALIDATION_FAILED", title);
+
     private static CreateRequestError ValidationFailed(string title) =>
         new(StatusCodes.Status400BadRequest, "VALIDATION_FAILED", title);
 
@@ -604,6 +948,8 @@ internal static class TaskEndpoints
     }
 
     private sealed record CreateRequestError(int Status, string Code, string Title);
+
+    private sealed record PatchRequestError(int Status, string Code, string Title);
 
     internal sealed record TaskResponse(
         [property: JsonPropertyName("id")] Guid Id,

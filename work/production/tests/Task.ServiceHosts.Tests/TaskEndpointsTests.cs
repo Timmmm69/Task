@@ -242,7 +242,8 @@ public sealed partial class TaskEndpointsTests
         bool grantTaskRead = true,
         SessionRequestState sessionState = SessionRequestState.Active,
         Guid? tokenOrganizationId = null,
-        ITaskWriteCommandExecutor? writeExecutor = null)
+        ITaskWriteCommandExecutor? writeExecutor = null,
+        ITaskAggregateStore? aggregateStore = null)
     {
         var keyMaterial = KeyMaterial.Value;
         var organizationId = tokenOrganizationId ?? OrganizationId;
@@ -271,6 +272,11 @@ public sealed partial class TaskEndpointsTests
                 {
                     services.AddSingleton(writeExecutor);
                     services.AddSingleton<TaskCreateCommandService>();
+                    if (aggregateStore is not null)
+                    {
+                        services.AddSingleton(aggregateStore);
+                        services.AddSingleton<TaskUpdateCommandService>();
+                    }
                 }
 
                 services.AddSingleton<IAuthorizationPolicyStore>(new FakePolicyStore(
@@ -388,7 +394,11 @@ public sealed partial class TaskEndpointsTests
             Page = new TaskReadPage([task], null);
         }
 
-        public void Add(TaskReadProjection task) => _tasks.Add(task);
+        public void Add(TaskReadProjection task)
+        {
+            _tasks.RemoveAll(existing => existing.OrganizationId == task.OrganizationId && existing.Id == task.Id);
+            _tasks.Add(task);
+        }
 
         public TaskReadPage Page { get; set; }
 
