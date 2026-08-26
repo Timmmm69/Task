@@ -109,10 +109,17 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
 
             var mutation = command.Mutation(current)
                 ?? throw new InvalidOperationException("The Task mutation returned no result.");
-            ValidateMutation(command, mutation);
+            var changedFields = mutation.ChangedFields ?? command.ChangedFields;
+            ValidateMutation(command, mutation, current, changedFields);
+            var isNoOp = current is not null && changedFields.Count == 0;
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (command.ExpectedVersion is null)
+            if (isNoOp)
+            {
+                // Durable no-op: the response is completed under the idempotency lease below,
+                // while aggregate, audit, event and outbox state remains untouched.
+            }
+            else if (command.ExpectedVersion is null)
             {
                 PostgresTaskAggregateStore.Add(connection, transaction, mutation.Aggregate);
             }
@@ -122,28 +129,31 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                     connection,
                     transaction,
                     mutation.Aggregate,
-                    command.ExpectedVersion.Value);
+                    checked((int)command.ExpectedVersion.Value));
             }
 
-            cancellationToken.ThrowIfCancellationRequested();
-            var eventId = Guid.NewGuid();
-            var auditMetadata = BuildAuditMetadata(command);
-            var outboxPayload = BuildOutboxPayload(command, mutation.Aggregate, eventId);
-            await AppendAuditAsync(
-                connection,
-                transaction,
-                command,
-                acquire.RecordId,
-                auditMetadata,
-                cancellationToken);
-            await AppendEventAndOutboxAsync(
-                connection,
-                transaction,
-                command,
-                mutation.Aggregate.Metadata.Version,
-                eventId,
-                outboxPayload,
-                cancellationToken);
+            if (!isNoOp)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var eventId = Guid.NewGuid();
+                var auditMetadata = BuildAuditMetadata(command, changedFields);
+                var outboxPayload = BuildOutboxPayload(command, mutation.Aggregate, eventId, changedFields);
+                await AppendAuditAsync(
+                    connection,
+                    transaction,
+                    command,
+                    acquire.RecordId,
+                    auditMetadata,
+                    cancellationToken);
+                await AppendEventAndOutboxAsync(
+                    connection,
+                    transaction,
+                    command,
+                    mutation.Aggregate.Metadata.Version,
+                    eventId,
+                    outboxPayload,
+                    cancellationToken);
+            }
 
             var headersJson = JsonSerializer.Serialize(mutation.HttpResult.Headers);
             await CompleteAsync(
@@ -460,7 +470,11 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         }
     }
 
-    private static void ValidateMutation(TaskWriteCommand command, TaskWriteMutationResult mutation)
+    private static void ValidateMutation(
+        TaskWriteCommand command,
+        TaskWriteMutationResult mutation,
+        global::Task.Domain.TaskAggregate? current,
+        IReadOnlyList<string> changedFields)
     {
         ArgumentNullException.ThrowIfNull(mutation.Aggregate);
         ArgumentNullException.ThrowIfNull(mutation.HttpResult);
@@ -468,6 +482,29 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
             mutation.Aggregate.Metadata.Id != command.TaskId)
         {
             throw new InvalidOperationException("Task mutation changed the command tenant or aggregate identity.");
+        }
+
+        if (changedFields.Any(string.IsNullOrWhiteSpace))
+        {
+            throw new ArgumentException("Changed field names must not be empty.", nameof(mutation));
+        }
+
+        if (current is null && changedFields.Count == 0)
+        {
+            throw new InvalidOperationException("A Task create mutation cannot be a no-op.");
+        }
+
+        if (current is not null && changedFields.Count == 0 &&
+            (!ReferenceEquals(current, mutation.Aggregate) ||
+             mutation.Aggregate.Metadata.Version != current.Metadata.Version))
+        {
+            throw new InvalidOperationException("A no-op mutation must return the unchanged aggregate instance.");
+        }
+
+        if (current is not null && changedFields.Count > 0 &&
+            mutation.Aggregate.Metadata.Version != checked(current.Metadata.Version + 1))
+        {
+            throw new InvalidOperationException("A visible Task mutation must advance the version exactly once.");
         }
 
         if (mutation.HttpResult.StatusCode is < 100 or > 599)
@@ -490,13 +527,15 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         TaskWriteRequestHasher.ValidateSafePayload(mutation.HttpResult.BodyJson, nameof(mutation.HttpResult.BodyJson));
     }
 
-    private static string BuildAuditMetadata(TaskWriteCommand command)
+    private static string BuildAuditMetadata(
+        TaskWriteCommand command,
+        IReadOnlyList<string> changedFields)
     {
         using var payload = JsonDocument.Parse(command.SafePayloadJson);
         return JsonSerializer.Serialize(new
         {
             command.OperationId,
-            changedFields = command.ChangedFields,
+            changedFields,
             payload = payload.RootElement,
         });
     }
@@ -504,7 +543,8 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
     private static string BuildOutboxPayload(
         TaskWriteCommand command,
         global::Task.Domain.TaskAggregate aggregate,
-        Guid eventId)
+        Guid eventId,
+        IReadOnlyList<string> changedFields)
     {
         using var payload = JsonDocument.Parse(command.SafePayloadJson);
         return JsonSerializer.Serialize(new
@@ -516,7 +556,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
             aggregateVersion = aggregate.Metadata.Version,
             eventType = command.EventType,
             correlationId = command.CorrelationId,
-            changedFields = command.ChangedFields,
+            changedFields,
             payload = payload.RootElement,
         });
     }

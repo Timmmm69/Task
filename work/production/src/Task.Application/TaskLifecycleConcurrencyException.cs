@@ -7,7 +7,7 @@ namespace Task.Application;
 /// </summary>
 public sealed class TaskLifecycleConcurrencyException : InvalidOperationException
 {
-    public TaskLifecycleConcurrencyException(Guid taskId, int expectedVersion, int actualVersion)
+    public TaskLifecycleConcurrencyException(Guid taskId, long expectedVersion, int actualVersion)
         : base(
             $"Optimistic concurrency conflict for task '{taskId}': " +
             $"expected version {expectedVersion} but actual version is {actualVersion}.")
@@ -19,7 +19,7 @@ public sealed class TaskLifecycleConcurrencyException : InvalidOperationExceptio
 
     public Guid TaskId { get; }
 
-    public int ExpectedVersion { get; }
+    public long ExpectedVersion { get; }
 
     public int ActualVersion { get; }
 }

@@ -35,7 +35,7 @@ public sealed class TaskWriteCommand
         string idempotencyKey,
         byte[] requestHash,
         Guid taskId,
-        int? expectedVersion,
+        long? expectedVersion,
         string auditAction,
         string eventType,
         IReadOnlyList<string> changedFields,
@@ -76,7 +76,7 @@ public sealed class TaskWriteCommand
     /// <summary>Task aggregate identifier.</summary>
     public Guid TaskId { get; }
     /// <summary>Expected aggregate version, or null for create.</summary>
-    public int? ExpectedVersion { get; }
+    public long? ExpectedVersion { get; }
     /// <summary>Stable audit action code.</summary>
     public string AuditAction { get; }
     /// <summary>Stable Task domain-event type.</summary>
@@ -92,8 +92,15 @@ public sealed class TaskWriteCommand
 /// <summary>Changes a loaded Task and produces the HTTP result to persist before commit.</summary>
 public delegate TaskWriteMutationResult TaskWriteMutation(TaskAggregate? current);
 
-/// <summary>The aggregate state and serializable response produced by a Task mutation.</summary>
-public sealed record TaskWriteMutationResult(TaskAggregate Aggregate, TaskWriteHttpResult HttpResult);
+/// <summary>
+/// The aggregate state, serializable response and fields actually changed by a Task mutation.
+/// A null <see cref="ChangedFields"/> preserves the command-level field list; an empty list
+/// explicitly marks a durable no-op that must not create aggregate, audit, event or outbox effects.
+/// </summary>
+public sealed record TaskWriteMutationResult(
+    TaskAggregate Aggregate,
+    TaskWriteHttpResult HttpResult,
+    IReadOnlyList<string>? ChangedFields = null);
 
 /// <summary>A durable HTTP result. Headers and JSON body are stored and replayed as one unit.</summary>
 public sealed record TaskWriteHttpResult(

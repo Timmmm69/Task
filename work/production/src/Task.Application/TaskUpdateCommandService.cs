@@ -29,21 +29,15 @@ public sealed class TaskUpdateConflictException : Exception
     public string ProblemCode { get; }
 }
 
-/// <summary>
-/// Complete preparation of one Task update: the current aggregate loaded tenant-scoped
-/// outside the transaction and the durable command to execute inside it.
-/// </summary>
-public sealed record TaskUpdatePreparation(TaskAggregate Current, TaskWriteCommand Command);
+/// <summary>Deferred update command ready for idempotency-first transactional execution.</summary>
+public sealed record TaskUpdatePreparation(TaskWriteCommand Command);
 
 /// <summary>
-/// Application service for the concurrency-safe Task update command. It pre-loads the
-/// aggregate tenant-scoped to classify not-found, stale-version, archived/trashed and
-/// terminal states before the command is created, computes the fields that the patch
-/// will actually change and builds one <see cref="TaskWriteCommand"/> whose mutation
-/// performs the single atomic <see cref="TaskAggregate.UpdateEditableFields"/> call
-/// inside the executor transaction. When <see cref="TaskWriteCommand.ChangedFields"/>
-/// is empty the caller short-circuits the update as a no-op without invoking the
-/// executor, so no audit entry, domain event or outbox message is created.
+/// Application service for the concurrency-safe Task update command. The command defers
+/// tenant-scoped loading, version/state validation and actual changed-field calculation
+/// until after durable idempotency acquisition inside the executor transaction. This keeps
+/// exact replay and key-reuse classification ahead of stale-version checks. A no-op is
+/// completed durably by the executor without aggregate, audit, event or outbox effects.
 /// </summary>
 public sealed class TaskUpdateCommandService
 {
@@ -52,14 +46,11 @@ public sealed class TaskUpdateCommandService
     public const string EventType = "TaskUpdated";
 
     private readonly ITaskWriteCommandExecutor _executor;
-    private readonly ITaskAggregateStore _store;
 
-    public TaskUpdateCommandService(ITaskWriteCommandExecutor executor, ITaskAggregateStore store)
+    public TaskUpdateCommandService(ITaskWriteCommandExecutor executor)
     {
         ArgumentNullException.ThrowIfNull(executor);
-        ArgumentNullException.ThrowIfNull(store);
         _executor = executor;
-        _store = store;
     }
 
     public TaskUpdatePreparation CreateCommand(
@@ -67,7 +58,7 @@ public sealed class TaskUpdateCommandService
         string idempotencyKey,
         string requestJson,
         Guid taskId,
-        int expectedVersion,
+        long expectedVersion,
         TaskUpdateModel model,
         Func<TaskAggregate, TaskWriteHttpResult> createHttpResult,
         DateTimeOffset? nowUtc = null)
@@ -76,18 +67,6 @@ public sealed class TaskUpdateCommandService
         ArgumentNullException.ThrowIfNull(model);
         ArgumentNullException.ThrowIfNull(createHttpResult);
 
-        var current = _store.Get(taskId, context.OrganizationId)
-            ?? throw new KeyNotFoundException(
-                $"Task '{taskId}' was not found in organization '{context.OrganizationId}'.");
-
-        if (current.Metadata.Version != expectedVersion)
-        {
-            throw new TaskLifecycleConcurrencyException(taskId, expectedVersion, current.Metadata.Version);
-        }
-
-        EnsureUpdatable(current);
-
-        var changedFields = ComputeChangedFields(current, model);
         var now = NormalizeNow(nowUtc ?? DateTimeOffset.UtcNow);
         var correlationId = Guid.TryParseExact(context.CorrelationId, "D", out var parsed)
             ? parsed
@@ -100,17 +79,19 @@ public sealed class TaskUpdateCommandService
             OperationId,
             correlationId,
             idempotencyKey,
-            TaskWriteRequestHasher.ComputeSha256(requestJson),
+            ComputeRequestHash(taskId, expectedVersion, requestJson),
             taskId,
             expectedVersion,
             AuditAction,
             EventType,
-            changedFields,
+            ComputeRequestedFields(model),
             BuildSafePayload(taskId, model),
             existing =>
             {
                 var currentTask = existing
                     ?? throw new KeyNotFoundException("The task to update was not found.");
+                EnsureUpdatable(currentTask);
+                var changedFields = ComputeChangedFields(currentTask, model);
                 var updated = currentTask.UpdateEditableFields(
                     context.UserAccountId,
                     now,
@@ -118,10 +99,10 @@ public sealed class TaskUpdateCommandService
                     model.Priority,
                     model.StartsAtUtc,
                     model.DeadlineAt);
-                return new TaskWriteMutationResult(updated, createHttpResult(updated));
+                return new TaskWriteMutationResult(updated, createHttpResult(updated), changedFields);
             });
 
-        return new TaskUpdatePreparation(current, command);
+        return new TaskUpdatePreparation(command);
     }
 
     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(
@@ -188,6 +169,44 @@ public sealed class TaskUpdateCommandService
         }
 
         return changed;
+    }
+
+    private static IReadOnlyList<string> ComputeRequestedFields(TaskUpdateModel model)
+    {
+        var requested = new List<string>(4);
+        if (model.Title is not null)
+        {
+            requested.Add("title");
+        }
+
+        if (model.Priority is not null)
+        {
+            requested.Add("priority");
+        }
+
+        if (model.StartsAtUtc.Specified)
+        {
+            requested.Add("startAtUtc");
+        }
+
+        if (model.DeadlineAt.Specified)
+        {
+            requested.Add("deadlineAt");
+        }
+
+        return requested;
+    }
+
+    private static byte[] ComputeRequestHash(Guid taskId, long expectedVersion, string requestJson)
+    {
+        using var request = JsonDocument.Parse(requestJson);
+        var envelope = JsonSerializer.Serialize(new
+        {
+            taskId,
+            expectedVersion,
+            patch = request.RootElement,
+        });
+        return TaskWriteRequestHasher.ComputeSha256(envelope);
     }
 
     private static DateTimeOffset NormalizeNow(DateTimeOffset value) =>

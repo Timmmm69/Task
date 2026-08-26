@@ -118,7 +118,7 @@ public sealed partial class TaskEndpointsTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task PatchTask_WithNoOp_ReturnsCurrentRepresentationWithoutExecutorCall()
+    public async global::System.Threading.Tasks.Task PatchTask_WithNoOp_CompletesDurablyAndReplaysWithoutSideEffects()
     {
         var executor = new FakeUpdateExecutor { Current = CurrentTask() };
         using var server = CreateServer(
@@ -130,19 +130,48 @@ public sealed partial class TaskEndpointsTests
         var first = await PatchTaskAsync(client, TaskId.ToString("D"), """{"title":"Prepare quarterly review"}""");
         var second = await PatchTaskAsync(client, TaskId.ToString("D"), """{"title":"Prepare quarterly review"}""");
 
-        foreach (var response in new[] { first, second })
-        {
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("\"v7\"", response.Headers.ETag?.Tag);
-            Assert.Equal("false", response.Headers.GetValues("Idempotency-Replayed").Single());
-            using var document = await ReadJsonAsync(response);
-            Assert.Equal(7, document.RootElement.GetProperty("version").GetInt64());
-            Assert.Equal("Prepare quarterly review", document.RootElement.GetProperty("title").GetString());
-        }
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        Assert.Equal("\"v7\"", first.Headers.ETag?.Tag);
+        Assert.Equal("\"v7\"", second.Headers.ETag?.Tag);
+        Assert.Equal("false", first.Headers.GetValues("Idempotency-Replayed").Single());
+        Assert.Equal("true", second.Headers.GetValues("Idempotency-Replayed").Single());
+        Assert.Equal(await first.Content.ReadAsStringAsync(), await second.Content.ReadAsStringAsync());
+        Assert.Equal(1, executor.MutationCalls);
+        Assert.Equal(1, executor.CompletedCount);
+        Assert.Equal(7, executor.Current!.Metadata.Version);
+    }
 
-        Assert.Equal(0, executor.MutationCalls);
-        Assert.Equal(0, executor.CompletedCount);
-        Assert.Null(executor.LastCommand);
+    [Fact]
+    public async global::System.Threading.Tasks.Task PatchTask_NoOpKeyReuseWithDifferentIfMatch_Returns409BeforeVersionCheck()
+    {
+        var executor = new FakeUpdateExecutor { Current = CurrentTask() };
+        using var server = CreateServer(
+            new FakeTaskReadStore(Projection),
+            writeExecutor: executor,
+            aggregateStore: new FakeUpdateAggregateStore(CurrentTask()));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            (await PatchTaskAsync(client, TaskId.ToString("D"), """{"title":"Prepare quarterly review"}""", idempotencyKey: "noop-reuse-01")).StatusCode);
+        await AssertProblemAsync(
+            await PatchTaskAsync(
+                client,
+                TaskId.ToString("D"),
+                """{"title":"Prepare quarterly review"}""",
+                ifMatch: "\"v8\"",
+                idempotencyKey: "noop-reuse-01"),
+            HttpStatusCode.Conflict,
+            "IDEMPOTENCY_KEY_REUSED");
+        await AssertProblemAsync(
+            await PatchTaskAsync(
+                client,
+                "cccccccc-cccc-cccc-cccc-cccccccccccc",
+                """{"title":"Prepare quarterly review"}""",
+                idempotencyKey: "noop-reuse-01"),
+            HttpStatusCode.Conflict,
+            "IDEMPOTENCY_KEY_REUSED");
     }
 
     [Theory]
@@ -276,15 +305,17 @@ public sealed partial class TaskEndpointsTests
         await AssertProblemAsync(await client.SendAsync(request), HttpStatusCode.BadRequest, "VALIDATION_FAILED");
     }
 
-    [Fact]
-    public async global::System.Threading.Tasks.Task PatchTask_WithStaleIfMatch_Returns412WithoutOverwriting()
+    [Theory]
+    [InlineData("\"v6\"")]
+    [InlineData("\"v2147483648\"")]
+    public async global::System.Threading.Tasks.Task PatchTask_WithStaleIfMatch_Returns412WithoutOverwriting(string ifMatch)
     {
         var aggregateStore = new FakeUpdateAggregateStore(CurrentTask());
         var executor = new FakeUpdateExecutor { Current = CurrentTask() };
         using var server = CreateServer(new FakeTaskReadStore(Projection), writeExecutor: executor, aggregateStore: aggregateStore);
         using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
 
-        var response = await PatchTaskAsync(client, TaskId.ToString("D"), """{"title":"Overwrite"}""", ifMatch: "\"v6\"");
+        var response = await PatchTaskAsync(client, TaskId.ToString("D"), """{"title":"Overwrite"}""", ifMatch: ifMatch);
 
         await AssertProblemAsync(response, HttpStatusCode.PreconditionFailed, "VERSION_CONFLICT");
         Assert.Equal(7, aggregateStore.Task!.Metadata.Version);
@@ -660,8 +691,13 @@ public sealed partial class TaskEndpointsTests
                     new TaskWriteCommandExecutionResult(TaskWriteCommandDisposition.Replayed, stored.Result));
             }
 
-            var current = Current
-                ?? throw new KeyNotFoundException("The Task aggregate was not found in the command organization.");
+            var current = Current;
+            if (current is null ||
+                current.Metadata.Id != command.TaskId ||
+                current.Metadata.OrganizationId != command.OrganizationId)
+            {
+                throw new KeyNotFoundException("The Task aggregate was not found in the command organization.");
+            }
             if (command.ExpectedVersion is not null && current.Metadata.Version != command.ExpectedVersion.Value)
             {
                 throw new TaskLifecycleConcurrencyException(
@@ -672,8 +708,11 @@ public sealed partial class TaskEndpointsTests
 
             var mutation = command.Mutation(current);
             MutationCalls++;
-            Current = mutation.Aggregate;
-            OnUpdated?.Invoke(mutation.Aggregate);
+            if (mutation.ChangedFields is null || mutation.ChangedFields.Count > 0)
+            {
+                Current = mutation.Aggregate;
+                OnUpdated?.Invoke(mutation.Aggregate);
+            }
             _completed[scope] = (command.RequestHash, mutation.HttpResult);
             return global::System.Threading.Tasks.Task.FromResult(
                 new TaskWriteCommandExecutionResult(TaskWriteCommandDisposition.Executed, mutation.HttpResult));

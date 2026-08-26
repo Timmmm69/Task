@@ -624,14 +624,6 @@ internal static class TaskEndpoints
                     JsonSerializer.Serialize(ToResponse(aggregate)),
                     aggregate.Metadata.Id));
 
-            if (preparation.Command.ChangedFields.Count == 0)
-            {
-                context.Response.Headers.ETag =
-                    $"\"v{preparation.Current.Metadata.Version.ToString(CultureInfo.InvariantCulture)}\"";
-                context.Response.Headers["Idempotency-Replayed"] = "false";
-                return Results.Json(ToResponse(preparation.Current));
-            }
-
             return await WriteCommandResultAsync(
                 context,
                 await service.ExecuteAsync(preparation.Command, cancellationToken));
@@ -693,7 +685,7 @@ internal static class TaskEndpoints
 
     private static bool TryReadIfMatch(
         Microsoft.Extensions.Primitives.StringValues ifMatch,
-        out int expectedVersion,
+        out long expectedVersion,
         out PatchRequestError error)
     {
         expectedVersion = 0;
@@ -717,8 +709,7 @@ internal static class TaskEndpoints
             values[0][1] != 'v' ||
             values[0][2] == '0' ||
             digits.IndexOfAnyExceptInRange('0', '9') >= 0 ||
-            !long.TryParse(values[0].Substring(2, values[0].Length - 3), out var version) ||
-            version > int.MaxValue)
+            !long.TryParse(values[0].Substring(2, values[0].Length - 3), out var version))
         {
             error = new(
                 StatusCodes.Status400BadRequest,
@@ -727,7 +718,7 @@ internal static class TaskEndpoints
             return false;
         }
 
-        expectedVersion = (int)version;
+        expectedVersion = version;
         error = null!;
         return true;
     }

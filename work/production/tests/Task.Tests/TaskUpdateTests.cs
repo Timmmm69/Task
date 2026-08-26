@@ -149,8 +149,7 @@ public sealed class TaskUpdateTests
             CreatedAt,
             TaskPriority.High,
             TaskSchedule.Create(CreatedAt.AddDays(1), CreatedAt.AddDays(2)));
-        var store = new FakeAggregateStore(current);
-        var service = new TaskUpdateCommandService(new RecordingExecutor(), store);
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
         var model = new TaskUpdateModel(
             "  New title  ",
             TaskPriority.High,
@@ -167,18 +166,15 @@ public sealed class TaskUpdateTests
             CreateHttpResult,
             EditedAt);
 
-        Assert.Equal(["title", "deadlineAt"], preparation.Command.ChangedFields);
+        Assert.Equal(["title", "priority", "startAtUtc", "deadlineAt"], preparation.Command.ChangedFields);
         Assert.Equal(TaskUpdateCommandService.OperationId, preparation.Command.OperationId);
         Assert.Equal(TaskUpdateCommandService.AuditAction, preparation.Command.AuditAction);
         Assert.Equal(TaskUpdateCommandService.EventType, preparation.Command.EventType);
         Assert.Equal(1, preparation.Command.ExpectedVersion);
         Assert.DoesNotContain("New title", preparation.Command.SafePayloadJson, StringComparison.Ordinal);
         Assert.Contains("\"deadlineAt\":null", preparation.Command.SafePayloadJson, StringComparison.Ordinal);
-        Assert.Equal(
-            TaskWriteRequestHasher.ComputeSha256("""{"title":"  New title  ","priority":"high","startAtUtc":"2026-08-16T08:30:00Z","deadlineAt":null}"""),
-            preparation.Command.RequestHash);
-
         var mutated = preparation.Command.Mutation(current);
+        Assert.Equal(["title", "deadlineAt"], mutated.ChangedFields);
         Assert.Equal(2, mutated.Aggregate.Metadata.Version);
         Assert.Equal("New title", mutated.Aggregate.Title);
         Assert.Null(mutated.Aggregate.Schedule.DeadlineUtc);
@@ -195,7 +191,7 @@ public sealed class TaskUpdateTests
             CreatedAt,
             TaskPriority.Normal,
             TaskSchedule.Create(null, null));
-        var service = new TaskUpdateCommandService(new RecordingExecutor(), new FakeAggregateStore(current));
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
 
         var preparation = service.CreateCommand(
             Context(OrganizationId, EditorId),
@@ -207,8 +203,10 @@ public sealed class TaskUpdateTests
             CreateHttpResult,
             EditedAt);
 
-        Assert.Empty(preparation.Command.ChangedFields);
-        Assert.Same(current, preparation.Current);
+        Assert.Equal(["title"], preparation.Command.ChangedFields);
+        var mutation = preparation.Command.Mutation(current);
+        Assert.Empty(mutation.ChangedFields!);
+        Assert.Same(current, mutation.Aggregate);
     }
 
     [Fact]
@@ -222,9 +220,9 @@ public sealed class TaskUpdateTests
             CreatedAt,
             TaskPriority.Normal,
             TaskSchedule.Create(CreatedAt.AddDays(2), CreatedAt.AddDays(3)));
-        var service = new TaskUpdateCommandService(new RecordingExecutor(), new FakeAggregateStore(current));
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
 
-        Assert.Throws<ArgumentException>(() => service.CreateCommand(
+        var preparation = service.CreateCommand(
             Context(OrganizationId, EditorId),
             "update-key-03",
             """{"deadlineAt":"2026-08-16T08:30:00Z"}""",
@@ -232,15 +230,16 @@ public sealed class TaskUpdateTests
             1,
             new TaskUpdateModel(null, null, OptionalInstant.Unspecified, OptionalInstant.Set(CreatedAt.AddDays(1))),
             CreateHttpResult,
-            EditedAt));
+            EditedAt);
+        Assert.Throws<ArgumentException>(() => preparation.Command.Mutation(current));
     }
 
     [Fact]
     public void CreateCommand_MissingTask_ThrowsNotFound()
     {
-        var service = new TaskUpdateCommandService(new RecordingExecutor(), new FakeAggregateStore(null));
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
 
-        Assert.Throws<KeyNotFoundException>(() => service.CreateCommand(
+        var preparation = service.CreateCommand(
             Context(OrganizationId, EditorId),
             "update-key-04",
             """{"title":"New"}""",
@@ -248,7 +247,8 @@ public sealed class TaskUpdateTests
             1,
             new TaskUpdateModel("New", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
             CreateHttpResult,
-            EditedAt));
+            EditedAt);
+        Assert.Throws<KeyNotFoundException>(() => preparation.Command.Mutation(null));
     }
 
     [Fact]
@@ -256,11 +256,9 @@ public sealed class TaskUpdateTests
     {
         var current = TaskAggregate.Create(
             TaskId, OrganizationId, CreatorId, "Owned", CreatedAt, TaskPriority.Normal);
-        var service = new TaskUpdateCommandService(
-            new RecordingExecutor(),
-            new FakeAggregateStore(current));
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
 
-        Assert.Throws<KeyNotFoundException>(() => service.CreateCommand(
+        var preparation = service.CreateCommand(
             Context(Guid.Parse("77777777-7777-7777-7777-777777777777"), EditorId),
             "update-key-05",
             """{"title":"New"}""",
@@ -268,16 +266,17 @@ public sealed class TaskUpdateTests
             1,
             new TaskUpdateModel("New", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
             CreateHttpResult,
-            EditedAt));
+            EditedAt);
+        Assert.Throws<KeyNotFoundException>(() => preparation.Command.Mutation(null));
     }
 
     [Fact]
-    public void CreateCommand_StaleVersion_ThrowsConcurrencyConflict()
+    public void CreateCommand_DefersVersionCheckToIdempotencyFirstExecutor()
     {
         var current = TaskAggregate.Create(TaskId, OrganizationId, CreatorId, "Owned", CreatedAt, TaskPriority.Normal);
-        var service = new TaskUpdateCommandService(new RecordingExecutor(), new FakeAggregateStore(current));
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
 
-        var conflict = Assert.Throws<TaskLifecycleConcurrencyException>(() => service.CreateCommand(
+        var preparation = service.CreateCommand(
             Context(OrganizationId, EditorId),
             "update-key-06",
             """{"title":"New"}""",
@@ -285,10 +284,9 @@ public sealed class TaskUpdateTests
             2,
             new TaskUpdateModel("New", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
             CreateHttpResult,
-            EditedAt));
+            EditedAt);
 
-        Assert.Equal(2, conflict.ExpectedVersion);
-        Assert.Equal(1, conflict.ActualVersion);
+        Assert.Equal(2, preparation.Command.ExpectedVersion);
     }
 
     [Fact]
@@ -309,8 +307,8 @@ public sealed class TaskUpdateTests
 
     private static void AssertConflict(string problemCode, TaskAggregate current, int expectedVersion)
     {
-        var service = new TaskUpdateCommandService(new RecordingExecutor(), new FakeAggregateStore(current));
-        var conflict = Assert.Throws<TaskUpdateConflictException>(() => service.CreateCommand(
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
+        var preparation = service.CreateCommand(
             Context(OrganizationId, EditorId),
             "update-key-07",
             """{"title":"New"}""",
@@ -318,7 +316,8 @@ public sealed class TaskUpdateTests
             expectedVersion,
             new TaskUpdateModel("New", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
             CreateHttpResult,
-            EditedAt));
+            EditedAt);
+        var conflict = Assert.Throws<TaskUpdateConflictException>(() => preparation.Command.Mutation(current));
         Assert.Equal(problemCode, conflict.ProblemCode);
     }
 
@@ -348,13 +347,15 @@ public sealed class TaskUpdateTests
             var actorUserId = Guid.NewGuid();
             var otherUserId = Guid.NewGuid();
             var sessionId = Guid.NewGuid();
+            var otherSessionId = Guid.NewGuid();
             await SeedOrganizationAndUserAsync(dataSource, organizationId, actorUserId, "actor");
             await SeedOrganizationAndUserAsync(dataSource, otherOrganizationId, otherUserId, "other");
             await SeedSessionAsync(dataSource, sessionId, organizationId, actorUserId);
+            await SeedSessionAsync(dataSource, otherSessionId, otherOrganizationId, otherUserId);
 
             var executor = new PostgresTaskWriteCommandExecutor(dataSource);
             var createService = new TaskCreateCommandService(executor);
-            var updateService = new TaskUpdateCommandService(executor, new PostgresTaskAggregateStore(dataSource));
+            var updateService = new TaskUpdateCommandService(executor);
             var taskId = Guid.NewGuid();
             var context = Context(organizationId, actorUserId, sessionId);
             var createdAt = new DateTimeOffset(2026, 8, 26, 10, 0, 0, TimeSpan.Zero);
@@ -398,7 +399,16 @@ public sealed class TaskUpdateTests
             await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
             await AssertEventChangedFieldsAsync(dataSource, organizationId, taskId, 2, ["title", "priority", "startAtUtc", "deadlineAt"]);
 
-            var replayed = await updateService.ExecuteAsync(updateCommand.Command);
+            var replayCommand = updateService.CreateCommand(
+                context,
+                "patch-pg-key-01",
+                """{"deadlineAt":"2026-08-26T13:00:00Z","startAtUtc":"2026-08-26T11:00:00Z","priority":"critical","title":"Patched gate"}""",
+                taskId,
+                1,
+                updateModel,
+                CreateHttpResult,
+                createdAt.AddMinutes(2));
+            var replayed = await updateService.ExecuteAsync(replayCommand.Command);
             Assert.Equal(TaskWriteCommandDisposition.Replayed, replayed.Disposition);
             Assert.True(replayed.IsReplay);
             Assert.Equal(executed.HttpResult.BodyJson, replayed.HttpResult!.BodyJson);
@@ -415,22 +425,33 @@ public sealed class TaskUpdateTests
                 2,
                 new TaskUpdateModel("Patched gate", TaskPriority.Critical, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
                 CreateHttpResult,
-                createdAt.AddMinutes(2));
-            Assert.Empty(noOp.Command.ChangedFields);
+                createdAt.AddMinutes(3));
+            Assert.Equal(["title", "priority"], noOp.Command.ChangedFields);
+            var noOpExecuted = await updateService.ExecuteAsync(noOp.Command);
+            Assert.Equal(TaskWriteCommandDisposition.Executed, noOpExecuted.Disposition);
+            Assert.Equal(2L, await ScalarAsync<long>(dataSource, "SELECT o.version FROM core.objects AS o WHERE o.id = $1 AND o.object_type = 'task';", taskId));
+            Assert.Equal(1, await CountAsync(dataSource, "SELECT count(*) FROM iam.idempotency_records WHERE idempotency_key = $1 AND state = 'completed';", "patch-pg-key-02"));
             await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
 
-            var staleConflict = Assert.Throws<TaskLifecycleConcurrencyException>(() =>
-                updateService.CreateCommand(
-                    context,
-                    "patch-pg-key-03",
-                    """{"title":"Stale"}""",
-                    taskId,
-                    1,
-                    new TaskUpdateModel("Stale", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
-                    CreateHttpResult,
-                    createdAt.AddMinutes(3)));
+            var noOpReplay = await updateService.ExecuteAsync(noOp.Command);
+            Assert.Equal(TaskWriteCommandDisposition.Replayed, noOpReplay.Disposition);
+            Assert.Equal(noOpExecuted.HttpResult!.BodyJson, noOpReplay.HttpResult!.BodyJson);
+            await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
+
+            var stale = updateService.CreateCommand(
+                context,
+                "patch-pg-key-03",
+                """{"title":"Stale"}""",
+                taskId,
+                1,
+                new TaskUpdateModel("Stale", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
+                CreateHttpResult,
+                createdAt.AddMinutes(4));
+            var staleConflict = await Assert.ThrowsAsync<TaskLifecycleConcurrencyException>(
+                () => updateService.ExecuteAsync(stale.Command));
             Assert.Equal(1, staleConflict.ExpectedVersion);
             Assert.Equal(2, staleConflict.ActualVersion);
+            Assert.Equal(0, await CountAsync(dataSource, "SELECT count(*) FROM iam.idempotency_records WHERE idempotency_key = $1;", "patch-pg-key-03"));
             await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
 
             var reused = updateService.CreateCommand(
@@ -441,20 +462,20 @@ public sealed class TaskUpdateTests
                 2,
                 new TaskUpdateModel("Different", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
                 CreateHttpResult,
-                createdAt.AddMinutes(4));
+                createdAt.AddMinutes(5));
             Assert.Equal(TaskWriteCommandDisposition.IdempotencyKeyReused, (await updateService.ExecuteAsync(reused.Command)).Disposition);
             await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
 
-            var foreignConflict = Assert.Throws<KeyNotFoundException>(() =>
-                updateService.CreateCommand(
-                    Context(otherOrganizationId, otherUserId, sessionId),
-                    "patch-pg-key-04",
-                    """{"title":"Foreign"}""",
-                    taskId,
-                    2,
-                    new TaskUpdateModel("Foreign", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
-                    CreateHttpResult,
-                    createdAt.AddMinutes(5)));
+            var foreign = updateService.CreateCommand(
+                Context(otherOrganizationId, otherUserId, otherSessionId),
+                "patch-pg-key-04",
+                """{"title":"Foreign"}""",
+                taskId,
+                2,
+                new TaskUpdateModel("Foreign", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
+                CreateHttpResult,
+                createdAt.AddMinutes(6));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => updateService.ExecuteAsync(foreign.Command));
 
             var clearCommand = updateService.CreateCommand(
                 context,
@@ -464,7 +485,7 @@ public sealed class TaskUpdateTests
                 2,
                 new TaskUpdateModel(null, null, OptionalInstant.Clear(), OptionalInstant.Clear()),
                 CreateHttpResult,
-                createdAt.AddMinutes(6));
+                createdAt.AddMinutes(7));
             Assert.Equal(["startAtUtc", "deadlineAt"], clearCommand.Command.ChangedFields);
             Assert.Equal(TaskWriteCommandDisposition.Executed, (await updateService.ExecuteAsync(clearCommand.Command)).Disposition);
             Assert.Equal(3L, await ScalarAsync<long>(dataSource, "SELECT o.version FROM core.objects AS o WHERE o.id = $1 AND o.object_type = 'task';", taskId));
@@ -484,7 +505,7 @@ public sealed class TaskUpdateTests
                 3,
                 new TaskUpdateModel("Rollback", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified),
                 CreateHttpResult,
-                createdAt.AddMinutes(7));
+                createdAt.AddMinutes(8));
             await Assert.ThrowsAsync<PostgresException>(() => updateService.ExecuteAsync(rollback.Command));
             Assert.Equal(3L, await ScalarAsync<long>(dataSource, "SELECT o.version FROM core.objects AS o WHERE o.id = $1 AND o.object_type = 'task';", taskId));
             Assert.Equal("Patched gate", await ScalarAsync<string>(dataSource, "SELECT title FROM work.tasks WHERE id = $1;", taskId));
