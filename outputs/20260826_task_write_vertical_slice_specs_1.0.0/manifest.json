@@ -1,0 +1,60 @@
+{
+  "package": "Task write vertical slice specifications",
+  "packageVersion": "1.0.0",
+  "createdAt": "2026-08-26",
+  "baselineCommit": "2b6a7685788c29e36a8b0ecec3bafc569c42d949",
+  "validationStatus": "PASS",
+  "executionMode": "six sequential self-contained chats",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sizeBytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "01_SERVER_TRANSACTION_FOUNDATION.md",
+      "sizeBytes": 13668,
+      "sha256": "884325a13e6a9618e13237b0f19dc29b901050d68a6e098953725bcf2109b596"
+    },
+    {
+      "path": "02_SERVER_TASK_CREATE.md",
+      "sizeBytes": 10463,
+      "sha256": "0d3a35a4219f05c804a25c11e64f06a556934beb39076a19e446c24d1c386824"
+    },
+    {
+      "path": "03_SERVER_TASK_PATCH.md",
+      "sizeBytes": 7863,
+      "sha256": "1d268686ce09e306c555cee4cd007501af12f9717261e5103fb8731b10d5f93f"
+    },
+    {
+      "path": "04_SERVER_TASK_TRANSITION.md",
+      "sizeBytes": 6015,
+      "sha256": "3090c0797d214b388dec222ef18cd6f5735ab602bb790757b8287837608d364c"
+    },
+    {
+      "path": "05_DESKTOP_WRITE_API_CLIENT.md",
+      "sizeBytes": 6703,
+      "sha256": "81ebdce16f0fccac6e60ba577dfd89488d268e95d4d1eb9d442f77f32db98c8c"
+    },
+    {
+      "path": "06_DESKTOP_WRITE_UX_AND_E2E.md",
+      "sizeBytes": 12148,
+      "sha256": "7c1ee88fb862408e62ca2fefc95f73ff8252764d2363edca7c202a1a953e0575"
+    },
+    {
+      "path": "README.md",
+      "sizeBytes": 4614,
+      "sha256": "e8bd2180f04cb2944504ad44939aee7632ba8d5b567df4c7666267ccb3e1ef11"
+    },
+    {
+      "path": "validation-report.md",
+      "sizeBytes": 4630,
+      "sha256": "21d3fc79c0a23e8444875ba5ddefc16b0e7e050ae852e7e280c20b0334eeda9a"
+    },
+    {
+      "path": "VERSION",
+      "sizeBytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}
