@@ -44,19 +44,25 @@ public sealed class TaskAggregate
         Guid organizationId,
         Guid creatorId,
         string title,
-        DateTimeOffset createdAtUtc)
+        DateTimeOffset createdAtUtc,
+        TaskPriority priority = TaskPriority.Normal,
+        TaskSchedule? schedule = null)
     {
         var normalizedTitle = EnsureValidTitle(title);
-        var metadata = SyncableEntityMetadata.Create(id, organizationId, creatorId, createdAtUtc);
+        if (!Enum.IsDefined(priority))
+        {
+            throw new ArgumentOutOfRangeException(nameof(priority), "Unknown task priority.");
+        }
 
+        var metadata = SyncableEntityMetadata.Create(id, organizationId, creatorId, createdAtUtc);
         return new TaskAggregate(
             metadata,
             normalizedTitle,
             TaskWorkStatus.New,
             completedAtUtc: null,
             completedBy: null,
-            TaskPriority.Normal,
-            TaskSchedule.Create(null, null));
+            priority,
+            schedule ?? TaskSchedule.Create(null, null));
     }
 
     public static TaskAggregate Reconstitute(

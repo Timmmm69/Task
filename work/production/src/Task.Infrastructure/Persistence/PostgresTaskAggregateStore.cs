@@ -220,9 +220,6 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
             task.Metadata.CreatedAtUtc != task.Metadata.UpdatedAtUtc ||
             task.Metadata.CreatedBy != task.Metadata.UpdatedBy ||
             task.WorkStatus != TaskWorkStatus.New ||
-            task.Priority != TaskPriority.Normal ||
-            task.Schedule.StartsAtUtc is not null ||
-            task.Schedule.DeadlineUtc is not null ||
             task.CompletedAtUtc is not null ||
             task.CompletedBy is not null)
         {

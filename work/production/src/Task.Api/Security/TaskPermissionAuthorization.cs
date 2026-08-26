@@ -31,8 +31,17 @@ internal static class TaskPermissionAuthorization
     /// <summary>Permission code backing both named policies.</summary>
     public const string AuditEntryReadPermissionCode = "audit.entry.read";
 
+    /// <summary>
+    /// Named policy with the public Task.Create meaning. It is temporarily backed by
+    /// task.manage and therefore grants no new capabilities to any role.
+    /// </summary>
+    public const string TaskCreatePolicyName = "permission.task.create";
+
     /// <summary>Fail-closed backing permission for the temporary Task.Read bridge.</summary>
     public const string TaskReadBackingPermissionCode = "task.manage";
+
+    /// <summary>Fail-closed backing permission for the temporary Task.Create bridge.</summary>
+    public const string TaskCreateBackingPermissionCode = "task.manage";
 
     /// <summary>
     /// Requires the caller to hold the given permission code within the organization of the
@@ -136,6 +145,7 @@ internal static class TaskPermissionAuthorization
             options.AddPolicy(AuditReadPolicyName, policy => policy.RequirePermission(AuditEntryReadPermissionCode));
             options.AddPolicy(LoginAttemptsReadPolicyName, policy => policy.RequirePermission(AuditEntryReadPermissionCode));
             options.AddPolicy(TaskReadPolicyName, policy => policy.RequirePermission(TaskReadBackingPermissionCode));
+            options.AddPolicy(TaskCreatePolicyName, policy => policy.RequirePermission(TaskCreateBackingPermissionCode));
         });
 
         return services;

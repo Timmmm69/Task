@@ -16,7 +16,7 @@ using Task.Domain;
 namespace Task.ServiceHosts.Tests;
 
 #pragma warning disable ASPDEPR004 // TestServer currently requires the legacy IWebHostBuilder adapter.
-public sealed class TaskEndpointsTests
+public sealed partial class TaskEndpointsTests
 {
     private const string Issuer = "https://task.example.internal";
     private const string Audience = "task-desktop";
@@ -241,7 +241,8 @@ public sealed class TaskEndpointsTests
         FakeTaskReadStore? readStore,
         bool grantTaskRead = true,
         SessionRequestState sessionState = SessionRequestState.Active,
-        Guid? tokenOrganizationId = null)
+        Guid? tokenOrganizationId = null,
+        ITaskWriteCommandExecutor? writeExecutor = null)
     {
         var keyMaterial = KeyMaterial.Value;
         var organizationId = tokenOrganizationId ?? OrganizationId;
@@ -264,6 +265,12 @@ public sealed class TaskEndpointsTests
                 if (readStore is not null)
                 {
                     services.AddSingleton<ITaskReadStore>(readStore);
+                }
+
+                if (writeExecutor is not null)
+                {
+                    services.AddSingleton(writeExecutor);
+                    services.AddSingleton<TaskCreateCommandService>();
                 }
 
                 services.AddSingleton<IAuthorizationPolicyStore>(new FakePolicyStore(
@@ -373,13 +380,15 @@ public sealed class TaskEndpointsTests
 
     private sealed class FakeTaskReadStore : ITaskReadStore
     {
-        private readonly TaskReadProjection _task;
+        private readonly List<TaskReadProjection> _tasks;
 
         public FakeTaskReadStore(TaskReadProjection task)
         {
-            _task = task;
+            _tasks = [task];
             Page = new TaskReadPage([task], null);
         }
+
+        public void Add(TaskReadProjection task) => _tasks.Add(task);
 
         public TaskReadPage Page { get; set; }
 
@@ -395,7 +404,7 @@ public sealed class TaskEndpointsTests
             CancellationToken cancellationToken = default)
         {
             LastDetailRequest = (organizationId, taskId);
-            var visible = organizationId == _task.OrganizationId && taskId == _task.Id ? _task : null;
+            var visible = _tasks.Find(task => task.OrganizationId == organizationId && task.Id == taskId);
             return global::System.Threading.Tasks.Task.FromResult(visible);
         }
 
