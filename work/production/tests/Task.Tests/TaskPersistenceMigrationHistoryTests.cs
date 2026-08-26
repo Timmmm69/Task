@@ -5,6 +5,13 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
+    public void Catalog_ExpectsTaskWriteFoundationVersionFive()
+    {
+        Assert.Equal(5, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("task_write_transaction_foundation", TaskPersistenceMigrationCatalog.All[^1].Name);
+    }
+
+    [Fact]
     public void EmptyExistingHistory_IsPending()
     {
         var status = TaskPersistenceMigrator.EvaluateHistory([]);

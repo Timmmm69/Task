@@ -11,6 +11,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(2, "identity_audit_foundation", "002_identity_audit_foundation.sql"),
         Load(3, "calendar_event_persistence", "003_calendar_event_persistence.sql"),
         Load(4, "role_permissions_effect", "004_role_permissions_effect.sql"),
+        Load(5, "task_write_transaction_foundation", "005_task_write_transaction_foundation.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

@@ -44,6 +44,16 @@ public sealed class TaskPersistenceRuntimeTests
     }
 
     [Fact]
+    public void CreateTaskWriteExecutor_WithoutConfiguration_ThrowsSafeException()
+    {
+        using var runtime = new TaskPersistenceRuntime(connectionString: null);
+
+        var exception = Assert.Throws<InvalidOperationException>(runtime.CreateTaskWriteCommandExecutor);
+
+        Assert.DoesNotContain("Password", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void NonPositiveReadinessTimeout_IsRejected()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>

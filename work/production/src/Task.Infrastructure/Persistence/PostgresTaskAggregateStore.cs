@@ -20,7 +20,17 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
         EnsureIdentifier(taskId, nameof(taskId));
         EnsureIdentifier(organizationId, nameof(organizationId));
 
-        using var command = _dataSource.CreateCommand(
+        using var connection = _dataSource.OpenConnection();
+        return Get(connection, transaction: null, taskId, organizationId);
+    }
+
+    internal static TaskAggregate? Get(
+        NpgsqlConnection connection,
+        NpgsqlTransaction? transaction,
+        Guid taskId,
+        Guid organizationId)
+    {
+        using var command = new NpgsqlCommand(
             """
             SELECT
                 o.id,
@@ -46,7 +56,9 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
             INNER JOIN work.tasks AS t
                 ON t.organization_id = o.organization_id AND t.id = o.id
             WHERE o.organization_id = $1 AND o.id = $2 AND o.object_type = 'task';
-            """);
+            """,
+            connection,
+            transaction);
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = taskId });
 
@@ -56,23 +68,18 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
 
     public void Add(TaskAggregate task)
     {
-        ArgumentNullException.ThrowIfNull(task);
-        if (task.Metadata.Version != 1 ||
-            task.Metadata.LifecycleState != EntityLifecycleState.Active ||
-            task.Metadata.CreatedAtUtc != task.Metadata.UpdatedAtUtc ||
-            task.Metadata.CreatedBy != task.Metadata.UpdatedBy ||
-            task.WorkStatus != TaskWorkStatus.New ||
-            task.Priority != TaskPriority.Normal ||
-            task.Schedule.StartsAtUtc is not null ||
-            task.Schedule.DeadlineUtc is not null ||
-            task.CompletedAtUtc is not null ||
-            task.CompletedBy is not null)
-        {
-            throw new ArgumentException("A new task must be in its initial version-1 aggregate state.", nameof(task));
-        }
-
         using var connection = _dataSource.OpenConnection();
         using var transaction = connection.BeginTransaction();
+        Add(connection, transaction, task);
+        transaction.Commit();
+    }
+
+    internal static void Add(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        TaskAggregate task)
+    {
+        ValidateNewTask(task);
 
         using (var objectCommand = new NpgsqlCommand(
             """
@@ -104,26 +111,23 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
             taskCommand.ExecuteNonQuery();
         }
 
-        transaction.Commit();
     }
 
     public void Save(TaskAggregate task, int expectedVersion)
     {
-        ArgumentNullException.ThrowIfNull(task);
-        if (expectedVersion < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(expectedVersion), "Expected version must be positive.");
-        }
-
-        if (task.Metadata.Version != checked(expectedVersion + 1))
-        {
-            throw new ArgumentException(
-                "The saved aggregate version must be exactly one greater than the expected version.",
-                nameof(task));
-        }
-
         using var connection = _dataSource.OpenConnection();
         using var transaction = connection.BeginTransaction();
+        Save(connection, transaction, task, expectedVersion);
+        transaction.Commit();
+    }
+
+    internal static void Save(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        TaskAggregate task,
+        int expectedVersion)
+    {
+        ValidateSavedTask(task, expectedVersion);
         using var command = new NpgsqlCommand(
             """
             WITH updated_object AS (
@@ -166,28 +170,36 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
 
         if (!objectUpdated)
         {
-            transaction.Rollback();
-            ThrowMissingOrConcurrency(task.Metadata.OrganizationId, task.Metadata.Id, expectedVersion);
+            ThrowMissingOrConcurrency(
+                connection,
+                transaction,
+                task.Metadata.OrganizationId,
+                task.Metadata.Id,
+                expectedVersion);
         }
 
         if (!taskUpdated)
         {
-            transaction.Rollback();
             throw new InvalidOperationException(
                 $"Persistence corruption: task row '{task.Metadata.Id}' is missing for its core object.");
         }
-
-        transaction.Commit();
     }
 
-    private void ThrowMissingOrConcurrency(Guid organizationId, Guid taskId, int expectedVersion)
+    private static void ThrowMissingOrConcurrency(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid organizationId,
+        Guid taskId,
+        int expectedVersion)
     {
-        using var command = _dataSource.CreateCommand(
+        using var command = new NpgsqlCommand(
             """
             SELECT version
             FROM core.objects
             WHERE organization_id = $1 AND id = $2 AND object_type = 'task';
-            """);
+            """,
+            connection,
+            transaction);
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = taskId });
         var actual = command.ExecuteScalar();
@@ -198,6 +210,40 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
         }
 
         throw new TaskLifecycleConcurrencyException(taskId, expectedVersion, checked((int)(long)actual));
+    }
+
+    private static void ValidateNewTask(TaskAggregate task)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+        if (task.Metadata.Version != 1 ||
+            task.Metadata.LifecycleState != EntityLifecycleState.Active ||
+            task.Metadata.CreatedAtUtc != task.Metadata.UpdatedAtUtc ||
+            task.Metadata.CreatedBy != task.Metadata.UpdatedBy ||
+            task.WorkStatus != TaskWorkStatus.New ||
+            task.Priority != TaskPriority.Normal ||
+            task.Schedule.StartsAtUtc is not null ||
+            task.Schedule.DeadlineUtc is not null ||
+            task.CompletedAtUtc is not null ||
+            task.CompletedBy is not null)
+        {
+            throw new ArgumentException("A new task must be in its initial version-1 aggregate state.", nameof(task));
+        }
+    }
+
+    private static void ValidateSavedTask(TaskAggregate task, int expectedVersion)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+        if (expectedVersion < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(expectedVersion), "Expected version must be positive.");
+        }
+
+        if (task.Metadata.Version != checked(expectedVersion + 1))
+        {
+            throw new ArgumentException(
+                "The saved aggregate version must be exactly one greater than the expected version.",
+                nameof(task));
+        }
     }
 
     private static TaskAggregate Hydrate(NpgsqlDataReader reader)

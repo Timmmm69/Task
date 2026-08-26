@@ -186,7 +186,10 @@ public sealed class TaskPersistenceMigrator
                AND to_regclass('work.tasks') IS NOT NULL
                AND to_regclass('org.employee_profiles') IS NOT NULL
                AND to_regclass('iam.user_accounts') IS NOT NULL
-               AND to_regclass('governance.audit_entries') IS NOT NULL;
+               AND to_regclass('governance.audit_entries') IS NOT NULL
+               AND to_regclass('iam.idempotency_records') IS NOT NULL
+               AND to_regclass('governance.domain_events') IS NOT NULL
+               AND to_regclass('governance.outbox_messages') IS NOT NULL;
             """,
             connection,
             transaction);
