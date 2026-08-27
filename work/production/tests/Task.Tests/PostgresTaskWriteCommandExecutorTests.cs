@@ -75,6 +75,122 @@ public sealed class PostgresTaskWriteCommandExecutorTests
             Assert.False(executed.IsReplay);
             await AssertCommandEffectsAsync(dataSource, organizationId, taskId, expectedCount: 1);
 
+            var startTransition = CreateTransitionCommand(
+                organizationId,
+                actorUserId,
+                taskId,
+                "transition-start-0001",
+                TaskWorkStatus.InProgress);
+            var completeTransition = CreateTransitionCommand(
+                organizationId,
+                actorUserId,
+                taskId,
+                "transition-complete-0001",
+                TaskWorkStatus.Completed);
+            var startTask = executor.ExecuteAsync(startTransition);
+            var completeTask = executor.ExecuteAsync(completeTransition);
+            TaskWriteCommandExecutionResult? startResult = null;
+            TaskWriteCommandExecutionResult? completeResult = null;
+            Exception? startError = null;
+            Exception? completeError = null;
+            try { startResult = await startTask; } catch (Exception exception) { startError = exception; }
+            try { completeResult = await completeTask; } catch (Exception exception) { completeError = exception; }
+
+            Assert.Equal(1, new[] { startResult, completeResult }.Count(result => result is not null));
+            Assert.Equal(1, new[] { startError, completeError }.Count(error => error is TaskLifecycleConcurrencyException));
+            var winningCommand = startResult is not null ? startTransition : completeTransition;
+            Assert.Equal(
+                TaskWriteCommandDisposition.Replayed,
+                (await executor.ExecuteAsync(winningCommand)).Disposition);
+            await AssertCommandEffectsAsync(dataSource, organizationId, taskId, expectedCount: 2, taskCount: 1);
+            Assert.Equal(2L, await ScalarAsync<long>(
+                dataSource,
+                "SELECT version FROM core.objects WHERE organization_id = $1 AND id = $2;",
+                organizationId,
+                taskId));
+            Assert.Equal(1, await CountAsync(
+                dataSource,
+                """
+                SELECT count(*) FROM governance.domain_events
+                WHERE organization_id = $1 AND aggregate_id = $2
+                  AND event_type = 'TaskStatusChanged'
+                  AND payload->>'fromStatus' = 'new'
+                  AND (payload->>'aggregateVersion')::integer = 2
+                  AND payload->>'actorId' = $3;
+                """,
+                organizationId,
+                taskId,
+                actorUserId.ToString("D")));
+
+            var sameTransitionTaskId = Guid.NewGuid();
+            Assert.Equal(
+                TaskWriteCommandDisposition.Executed,
+                (await executor.ExecuteAsync(CreateCommand(
+                    organizationId,
+                    actorUserId,
+                    "POST_api_v1_tasks_same_transition_seed",
+                    "same-transition-seed-01",
+                    sameTransitionTaskId,
+                    "Concurrent same transition"))).Disposition);
+            var sameMutationCalls = 0;
+            var sameTransition = CreateTransitionCommand(
+                organizationId,
+                actorUserId,
+                sameTransitionTaskId,
+                "same-transition-0001",
+                TaskWorkStatus.InProgress,
+                () => Interlocked.Increment(ref sameMutationCalls));
+            var sameResults = await global::System.Threading.Tasks.Task.WhenAll(
+                executor.ExecuteAsync(sameTransition),
+                executor.ExecuteAsync(sameTransition));
+            Assert.Contains(sameResults, result => result.Disposition == TaskWriteCommandDisposition.Executed);
+            Assert.Contains(sameResults, result => result.Disposition == TaskWriteCommandDisposition.Replayed);
+            Assert.Equal(1, sameMutationCalls);
+            await AssertCommandEffectsAsync(
+                dataSource,
+                organizationId,
+                sameTransitionTaskId,
+                expectedCount: 2,
+                taskCount: 1);
+
+            var rollbackTransitionTaskId = Guid.NewGuid();
+            Assert.Equal(
+                TaskWriteCommandDisposition.Executed,
+                (await executor.ExecuteAsync(CreateCommand(
+                    organizationId,
+                    actorUserId,
+                    "POST_api_v1_tasks_rollback_transition_seed",
+                    "rollback-transition-seed-01",
+                    rollbackTransitionTaskId,
+                    "Rollback transition"))).Disposition);
+            await SeedConflictingDomainEventAsync(
+                dataSource,
+                organizationId,
+                actorUserId,
+                rollbackTransitionTaskId,
+                aggregateVersion: 2,
+                eventType: TaskStatusTransitionCommandService.EventType);
+            var rollbackTransition = CreateTransitionCommand(
+                organizationId,
+                actorUserId,
+                rollbackTransitionTaskId,
+                "rollback-transition-0001",
+                TaskWorkStatus.InProgress);
+            Assert.Equal(
+                PostgresErrorCodes.UniqueViolation,
+                (await Assert.ThrowsAsync<PostgresException>(() => executor.ExecuteAsync(rollbackTransition))).SqlState);
+            Assert.Equal(1L, await ScalarAsync<long>(
+                dataSource,
+                "SELECT version FROM core.objects WHERE organization_id = $1 AND id = $2;",
+                organizationId,
+                rollbackTransitionTaskId));
+            Assert.Equal(0, await CountAsync(
+                dataSource,
+                "SELECT count(*) FROM iam.idempotency_records WHERE organization_id = $1 AND operation_id = $2 AND idempotency_key = $3;",
+                organizationId,
+                rollbackTransition.OperationId,
+                rollbackTransition.IdempotencyKey));
+
             var replayed = await executor.ExecuteAsync(initial);
             Assert.Equal(TaskWriteCommandDisposition.Replayed, replayed.Disposition);
             Assert.True(replayed.IsReplay);
@@ -85,7 +201,7 @@ public sealed class PostgresTaskWriteCommandExecutorTests
             Assert.Equal(
                 executed.HttpResult.Headers.OrderBy(header => header.Key, StringComparer.Ordinal),
                 replayed.HttpResult.Headers.OrderBy(header => header.Key, StringComparer.Ordinal));
-            await AssertCommandEffectsAsync(dataSource, organizationId, taskId, expectedCount: 1);
+            await AssertCommandEffectsAsync(dataSource, organizationId, taskId, expectedCount: 2, taskCount: 1);
 
             var reused = CreateCommand(
                 organizationId,
@@ -317,6 +433,57 @@ public sealed class PostgresTaskWriteCommandExecutorTests
                 taskId));
     }
 
+    private static TaskWriteCommand CreateTransitionCommand(
+        Guid organizationId,
+        Guid actorUserId,
+        Guid taskId,
+        string idempotencyKey,
+        TaskWorkStatus targetStatus,
+        Action? onMutation = null)
+    {
+        var correlationId = Guid.NewGuid();
+        var target = targetStatus == TaskWorkStatus.InProgress ? "in_progress" : "completed";
+        return new TaskWriteCommand(
+            organizationId,
+            actorUserId,
+            actorSessionId: null,
+            TaskStatusTransitionCommandService.OperationId,
+            correlationId,
+            idempotencyKey,
+            TaskWriteRequestHasher.ComputeSha256(JsonSerializer.Serialize(new { taskId, target })),
+            taskId,
+            expectedVersion: 1,
+            TaskStatusTransitionCommandService.AuditAction,
+            TaskStatusTransitionCommandService.EventType,
+            targetStatus == TaskWorkStatus.Completed ? ["status", "completedAt", "completedBy"] : ["status"],
+            JsonSerializer.Serialize(new { taskId, targetStatus = target }),
+            current =>
+            {
+                onMutation?.Invoke();
+                var existing = Assert.IsType<TaskAggregate>(current);
+                var updated = targetStatus == TaskWorkStatus.InProgress
+                    ? existing.Start(actorUserId, DateTimeOffset.Parse("2026-08-26T11:00:00Z"))
+                    : existing.Complete(actorUserId, DateTimeOffset.Parse("2026-08-26T11:00:00Z"));
+                var payload = JsonSerializer.Serialize(new
+                {
+                    taskId,
+                    fromStatus = "new",
+                    targetStatus = target,
+                    aggregateVersion = updated.Metadata.Version,
+                    correlationId,
+                    actorId = actorUserId,
+                });
+                return new TaskWriteMutationResult(
+                    updated,
+                    new TaskWriteHttpResult(
+                        200,
+                        new Dictionary<string, string> { ["ETag"] = "\"v2\"" },
+                        JsonSerializer.Serialize(new { id = taskId, status = target, version = 2 }),
+                        taskId),
+                    SafePayloadJson: payload);
+            });
+    }
+
     private static async global::System.Threading.Tasks.Task ApplySchemaThroughVersionFourAsync(
         NpgsqlDataSource dataSource)
     {
@@ -469,21 +636,26 @@ public sealed class PostgresTaskWriteCommandExecutorTests
         NpgsqlDataSource dataSource,
         Guid organizationId,
         Guid actorUserId,
-        Guid taskId)
+        Guid taskId,
+        int aggregateVersion = 1,
+        string eventType = "TaskCreated")
     {
         await using var command = dataSource.CreateCommand(
             """
             INSERT INTO governance.domain_events (
                 id, organization_id, aggregate_id, aggregate_type, aggregate_version,
                 event_type, actor_user_id, correlation_id, operation_id, idempotency_key, payload)
-            VALUES ($1, $2, $3, 'task', 1, 'TaskCreated', $4, $5,
-                    'seed.rollback.conflict', 'seed-key-0001', '{}'::jsonb);
+            VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, '{}'::jsonb);
             """);
         command.Parameters.AddWithValue(Guid.NewGuid());
         command.Parameters.AddWithValue(organizationId);
         command.Parameters.AddWithValue(taskId);
+        command.Parameters.AddWithValue(aggregateVersion);
+        command.Parameters.AddWithValue(eventType);
         command.Parameters.AddWithValue(actorUserId);
         command.Parameters.AddWithValue(Guid.NewGuid());
+        command.Parameters.AddWithValue($"seed.rollback.conflict.{taskId:N}");
+        command.Parameters.AddWithValue($"seed-{taskId:N}");
         await command.ExecuteNonQueryAsync();
     }
 
@@ -491,9 +663,10 @@ public sealed class PostgresTaskWriteCommandExecutorTests
         NpgsqlDataSource dataSource,
         Guid organizationId,
         Guid taskId,
-        int expectedCount)
+        int expectedCount,
+        int? taskCount = null)
     {
-        Assert.Equal(expectedCount, await CountAsync(
+        Assert.Equal(taskCount ?? expectedCount, await CountAsync(
             dataSource,
             "SELECT count(*) FROM work.tasks WHERE organization_id = $1 AND id = $2;",
             organizationId,
@@ -542,9 +715,15 @@ public sealed class PostgresTaskWriteCommandExecutorTests
 
     private static async global::System.Threading.Tasks.Task<T> ScalarAsync<T>(
         NpgsqlDataSource dataSource,
-        string sql)
+        string sql,
+        params object[] parameters)
     {
         await using var command = dataSource.CreateCommand(sql);
+        foreach (var value in parameters)
+        {
+            command.Parameters.AddWithValue(value);
+        }
+
         return (T)(await command.ExecuteScalarAsync()
             ?? throw new InvalidOperationException("Expected scalar value was null."));
     }

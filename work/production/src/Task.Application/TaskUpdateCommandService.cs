@@ -243,3 +243,142 @@ public sealed class TaskUpdateCommandService
         return JsonSerializer.Serialize(payload);
     }
 }
+
+public sealed class TaskStatusTransitionConflictException : Exception
+{
+    public TaskStatusTransitionConflictException(string problemCode, string message)
+        : base(message)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(problemCode);
+        ProblemCode = problemCode;
+    }
+
+    public string ProblemCode { get; }
+}
+
+/// <summary>Builds an idempotent, optimistic-concurrency-safe Task status transition.</summary>
+public sealed class TaskStatusTransitionCommandService
+{
+    public const string OperationId = "POST_api_v1_tasks_id_transition";
+    public const string AuditAction = "task.change_status";
+    public const string EventType = "TaskStatusChanged";
+
+    private readonly ITaskWriteCommandExecutor _executor;
+
+    public TaskStatusTransitionCommandService(ITaskWriteCommandExecutor executor)
+    {
+        ArgumentNullException.ThrowIfNull(executor);
+        _executor = executor;
+    }
+
+    public TaskWriteCommand CreateCommand(
+        AuthenticatedRequestContext context,
+        string idempotencyKey,
+        string requestJson,
+        Guid taskId,
+        long expectedVersion,
+        TaskWorkStatus targetStatus,
+        Func<TaskAggregate, TaskWriteHttpResult> createHttpResult,
+        DateTimeOffset? nowUtc = null)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(createHttpResult);
+        var now = (nowUtc ?? DateTimeOffset.UtcNow).ToUniversalTime();
+        var correlationId = Guid.TryParseExact(context.CorrelationId, "D", out var parsed)
+            ? parsed
+            : Guid.NewGuid();
+        var target = ToContractValue(targetStatus);
+        var requestHash = ComputeTransitionRequestHash(taskId, expectedVersion, requestJson);
+
+        return new TaskWriteCommand(
+            context.OrganizationId,
+            context.UserAccountId,
+            context.SessionId,
+            OperationId,
+            correlationId,
+            idempotencyKey,
+            requestHash,
+            taskId,
+            expectedVersion,
+            AuditAction,
+            EventType,
+            targetStatus == TaskWorkStatus.Completed ? ["status", "completedAt", "completedBy"] : ["status"],
+            JsonSerializer.Serialize(new { taskId, targetStatus = target }),
+            current =>
+            {
+                var existing = current ?? throw new KeyNotFoundException("The task to transition was not found.");
+                EnsureActive(existing);
+                var updated = ApplyTransition(existing, targetStatus, context.UserAccountId, now);
+                var payload = JsonSerializer.Serialize(new
+                {
+                    taskId,
+                    fromStatus = ToContractValue(existing.WorkStatus),
+                    targetStatus = target,
+                    aggregateVersion = updated.Metadata.Version,
+                    correlationId,
+                    actorId = context.UserAccountId,
+                });
+                return new TaskWriteMutationResult(updated, createHttpResult(updated), SafePayloadJson: payload);
+            });
+    }
+
+    public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(
+        TaskWriteCommand command,
+        CancellationToken cancellationToken = default) =>
+        _executor.ExecuteAsync(command, cancellationToken);
+
+    private static TaskAggregate ApplyTransition(
+        TaskAggregate task,
+        TaskWorkStatus target,
+        Guid actorId,
+        DateTimeOffset now) => (task.WorkStatus, target) switch
+        {
+            (TaskWorkStatus.New, TaskWorkStatus.InProgress) => task.Start(actorId, now),
+            (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => task.SubmitForReview(actorId, now),
+            (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review, TaskWorkStatus.Completed) =>
+                task.Complete(actorId, now),
+            (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review, TaskWorkStatus.Cancelled) =>
+                task.Cancel(actorId, now),
+            _ => throw new TaskStatusTransitionConflictException(
+                "INVALID_STATE_TRANSITION",
+                "The requested task status transition is not allowed."),
+        };
+
+    private static void EnsureActive(TaskAggregate task)
+    {
+        if (task.Metadata.LifecycleState == EntityLifecycleState.Archived)
+        {
+            throw new TaskStatusTransitionConflictException(
+                "OBJECT_ARCHIVED",
+                "An archived task must be restored before its status can change.");
+        }
+
+        if (task.Metadata.LifecycleState == EntityLifecycleState.Trashed)
+        {
+            throw new TaskStatusTransitionConflictException(
+                "OBJECT_DELETED",
+                "A trashed task must be restored before its status can change.");
+        }
+    }
+
+    private static string ToContractValue(TaskWorkStatus status) => status switch
+    {
+        TaskWorkStatus.New => "new",
+        TaskWorkStatus.InProgress => "in_progress",
+        TaskWorkStatus.Review => "review",
+        TaskWorkStatus.Completed => "completed",
+        TaskWorkStatus.Cancelled => "cancelled",
+        _ => throw new ArgumentOutOfRangeException(nameof(status)),
+    };
+
+    private static byte[] ComputeTransitionRequestHash(Guid taskId, long expectedVersion, string requestJson)
+    {
+        using var request = JsonDocument.Parse(requestJson);
+        return TaskWriteRequestHasher.ComputeSha256(JsonSerializer.Serialize(new
+        {
+            taskId,
+            expectedVersion,
+            transition = request.RootElement,
+        }));
+    }
+}

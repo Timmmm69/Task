@@ -111,6 +111,8 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                 ?? throw new InvalidOperationException("The Task mutation returned no result.");
             var changedFields = mutation.ChangedFields ?? command.ChangedFields;
             ValidateMutation(command, mutation, current, changedFields);
+            var safePayloadJson = mutation.SafePayloadJson ?? command.SafePayloadJson;
+            ValidateSafePayload(safePayloadJson, nameof(mutation.SafePayloadJson));
             var isNoOp = current is not null && changedFields.Count == 0;
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -136,14 +138,15 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var eventId = Guid.NewGuid();
-                var auditMetadata = BuildAuditMetadata(command, changedFields);
-                var outboxPayload = BuildOutboxPayload(command, mutation.Aggregate, eventId, changedFields);
+                var auditMetadata = BuildAuditMetadata(command, changedFields, safePayloadJson);
+                var outboxPayload = BuildOutboxPayload(command, mutation.Aggregate, eventId, changedFields, safePayloadJson);
                 await AppendAuditAsync(
                     connection,
                     transaction,
                     command,
                     acquire.RecordId,
                     auditMetadata,
+                    safePayloadJson,
                     cancellationToken);
                 await AppendEventAndOutboxAsync(
                     connection,
@@ -152,6 +155,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                     mutation.Aggregate.Metadata.Version,
                     eventId,
                     outboxPayload,
+                    safePayloadJson,
                     cancellationToken);
             }
 
@@ -275,6 +279,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         TaskWriteCommand command,
         Guid requestId,
         string metadataJson,
+        string safePayloadJson,
         CancellationToken cancellationToken)
     {
         await using var audit = new NpgsqlCommand(
@@ -296,7 +301,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         audit.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.CorrelationId });
         audit.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = requestId });
         AddJson(audit, metadataJson);
-        AddJson(audit, command.SafePayloadJson);
+        AddJson(audit, safePayloadJson);
         await audit.ExecuteNonQueryAsync(cancellationToken);
     }
 
@@ -307,6 +312,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         int aggregateVersion,
         Guid eventId,
         string outboxPayload,
+        string safePayloadJson,
         CancellationToken cancellationToken)
     {
         await using (var domainEvent = new NpgsqlCommand(
@@ -330,7 +336,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
             domainEvent.Parameters.Add(new NpgsqlParameter<string> { TypedValue = command.OperationId });
             domainEvent.Parameters.Add(new NpgsqlParameter<string> { TypedValue = command.IdempotencyKey });
             domainEvent.Parameters.Add(new NpgsqlParameter<string[]> { TypedValue = command.ChangedFields.ToArray() });
-            AddJson(domainEvent, command.SafePayloadJson);
+            AddJson(domainEvent, safePayloadJson);
             await domainEvent.ExecuteNonQueryAsync(cancellationToken);
         }
 
@@ -462,12 +468,7 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
             throw new ArgumentException("Changed field names must not be empty.", nameof(command.ChangedFields));
         }
 
-        TaskWriteRequestHasher.ValidateSafePayload(command.SafePayloadJson, nameof(command.SafePayloadJson));
-        using var payload = JsonDocument.Parse(command.SafePayloadJson);
-        if (payload.RootElement.ValueKind != JsonValueKind.Object)
-        {
-            throw new ArgumentException("Safe payload must be a JSON object.", nameof(command.SafePayloadJson));
-        }
+        ValidateSafePayload(command.SafePayloadJson, nameof(command.SafePayloadJson));
     }
 
     private static void ValidateMutation(
@@ -529,9 +530,10 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
 
     private static string BuildAuditMetadata(
         TaskWriteCommand command,
-        IReadOnlyList<string> changedFields)
+        IReadOnlyList<string> changedFields,
+        string safePayloadJson)
     {
-        using var payload = JsonDocument.Parse(command.SafePayloadJson);
+        using var payload = JsonDocument.Parse(safePayloadJson);
         return JsonSerializer.Serialize(new
         {
             command.OperationId,
@@ -544,9 +546,10 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         TaskWriteCommand command,
         global::Task.Domain.TaskAggregate aggregate,
         Guid eventId,
-        IReadOnlyList<string> changedFields)
+        IReadOnlyList<string> changedFields,
+        string safePayloadJson)
     {
-        using var payload = JsonDocument.Parse(command.SafePayloadJson);
+        using var payload = JsonDocument.Parse(safePayloadJson);
         return JsonSerializer.Serialize(new
         {
             eventId,
@@ -559,6 +562,16 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
             changedFields,
             payload = payload.RootElement,
         });
+    }
+
+    private static void ValidateSafePayload(string safePayloadJson, string parameterName)
+    {
+        TaskWriteRequestHasher.ValidateSafePayload(safePayloadJson, parameterName);
+        using var payload = JsonDocument.Parse(safePayloadJson);
+        if (payload.RootElement.ValueKind != JsonValueKind.Object)
+        {
+            throw new ArgumentException("Safe payload must be a JSON object.", parameterName);
+        }
     }
 
     private static void AddJson(NpgsqlCommand command, string json) =>

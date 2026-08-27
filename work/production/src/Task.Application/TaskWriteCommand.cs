@@ -96,11 +96,14 @@ public delegate TaskWriteMutationResult TaskWriteMutation(TaskAggregate? current
 /// The aggregate state, serializable response and fields actually changed by a Task mutation.
 /// A null <see cref="ChangedFields"/> preserves the command-level field list; an empty list
 /// explicitly marks a durable no-op that must not create aggregate, audit, event or outbox effects.
+/// A non-null <see cref="SafePayloadJson"/> replaces the command-level payload after the aggregate
+/// has been loaded, allowing transaction-derived event metadata without an external pre-read.
 /// </summary>
 public sealed record TaskWriteMutationResult(
     TaskAggregate Aggregate,
     TaskWriteHttpResult HttpResult,
-    IReadOnlyList<string>? ChangedFields = null);
+    IReadOnlyList<string>? ChangedFields = null,
+    string? SafePayloadJson = null);
 
 /// <summary>A durable HTTP result. Headers and JSON body are stored and replayed as one unit.</summary>
 public sealed record TaskWriteHttpResult(

@@ -43,6 +43,9 @@ internal static class TaskPermissionAuthorization
     /// </summary>
     public const string TaskUpdatePolicyName = "permission.task.update";
 
+    /// <summary>Named Task.ChangeStatus policy, temporarily backed by task.manage.</summary>
+    public const string TaskChangeStatusPolicyName = "permission.task.change-status";
+
     /// <summary>Fail-closed backing permission for the temporary Task.Read bridge.</summary>
     public const string TaskReadBackingPermissionCode = "task.manage";
 
@@ -51,6 +54,9 @@ internal static class TaskPermissionAuthorization
 
     /// <summary>Fail-closed backing permission for the temporary Task.Update bridge.</summary>
     public const string TaskUpdateBackingPermissionCode = "task.manage";
+
+    /// <summary>Fail-closed backing permission for the temporary Task.ChangeStatus bridge.</summary>
+    public const string TaskChangeStatusBackingPermissionCode = "task.manage";
 
     /// <summary>
     /// Requires the caller to hold the given permission code within the organization of the
@@ -156,6 +162,7 @@ internal static class TaskPermissionAuthorization
             options.AddPolicy(TaskReadPolicyName, policy => policy.RequirePermission(TaskReadBackingPermissionCode));
             options.AddPolicy(TaskCreatePolicyName, policy => policy.RequirePermission(TaskCreateBackingPermissionCode));
             options.AddPolicy(TaskUpdatePolicyName, policy => policy.RequirePermission(TaskUpdateBackingPermissionCode));
+            options.AddPolicy(TaskChangeStatusPolicyName, policy => policy.RequirePermission(TaskChangeStatusBackingPermissionCode));
         });
 
         return services;
