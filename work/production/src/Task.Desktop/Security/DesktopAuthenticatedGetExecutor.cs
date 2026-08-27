@@ -4,14 +4,18 @@ using System.Net.Http.Headers;
 
 namespace Task.Desktop.Security;
 
-/// <summary>Transport-level outcome of one logical authenticated GET operation.</summary>
+/// <summary>Transport-level outcome of one logical authenticated request.</summary>
 public abstract record AuthenticatedGetResult
 {
     private AuthenticatedGetResult()
     {
     }
 
-    public sealed record Response(HttpStatusCode StatusCode, string Body) : AuthenticatedGetResult;
+    public sealed record Response(
+        HttpStatusCode StatusCode,
+        string Body,
+        string? EntityTag = null,
+        string? IdempotencyReplayed = null) : AuthenticatedGetResult;
 
     public sealed record AuthenticationFailure : AuthenticatedGetResult;
 
@@ -21,8 +25,8 @@ public abstract record AuthenticatedGetResult
 }
 
 /// <summary>
-/// Executes safe authenticated GET requests with the current desktop session. A 401 response
-/// triggers at most one refresh and, only after a successful refresh, one replay of the GET.
+/// Executes authenticated requests with the current desktop session. A 401 response triggers at
+/// most one refresh and, only after a successful refresh, one byte-equivalent request replay.
 /// </summary>
 public sealed class DesktopAuthenticatedGetExecutor
 {
@@ -40,8 +44,26 @@ public sealed class DesktopAuthenticatedGetExecutor
     public async global::System.Threading.Tasks.Task<AuthenticatedGetResult> GetAsync(
         Uri requestUri,
         string correlationId,
+        CancellationToken cancellationToken) =>
+        await SendAsync(
+            HttpMethod.Get,
+            requestUri,
+            body: null,
+            correlationId,
+            ifMatch: null,
+            idempotencyKey: null,
+            cancellationToken).ConfigureAwait(false);
+
+    internal async global::System.Threading.Tasks.Task<AuthenticatedGetResult> SendAsync(
+        HttpMethod method,
+        Uri requestUri,
+        byte[]? body,
+        string correlationId,
+        string? ifMatch,
+        string? idempotencyKey,
         CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(method);
         ArgumentNullException.ThrowIfNull(requestUri);
         if (!requestUri.IsAbsoluteUri)
         {
@@ -50,12 +72,32 @@ public sealed class DesktopAuthenticatedGetExecutor
 
         ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
 
-        var firstAttempt = await SendOnceAsync(requestUri, correlationId, cancellationToken)
+        var accessToken = _sessionService.GetAccessTokenForRequest();
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            return new AuthenticatedGetResult.AuthenticationFailure();
+        }
+
+        var firstAttempt = await SendOnceAsync(
+                method, requestUri, body, correlationId, ifMatch, idempotencyKey, accessToken, cancellationToken)
             .ConfigureAwait(false);
         if (firstAttempt is not AuthenticatedGetResult.Response
             { StatusCode: HttpStatusCode.Unauthorized })
         {
             return firstAttempt;
+        }
+
+        var currentToken = _sessionService.GetAccessTokenForRequest();
+        if (!string.IsNullOrWhiteSpace(currentToken)
+            && !string.Equals(currentToken, accessToken, StringComparison.Ordinal))
+        {
+            var concurrentRefreshRetry = await SendOnceAsync(
+                    method, requestUri, body, correlationId, ifMatch, idempotencyKey, currentToken, cancellationToken)
+                .ConfigureAwait(false);
+            return concurrentRefreshRetry is AuthenticatedGetResult.Response
+            { StatusCode: HttpStatusCode.Unauthorized }
+                    ? new AuthenticatedGetResult.AuthenticationFailure()
+                    : concurrentRefreshRetry;
         }
 
         var refresh = await _sessionService
@@ -73,10 +115,17 @@ public sealed class DesktopAuthenticatedGetExecutor
                         : new AuthenticatedGetResult.AuthenticationFailure();
                 }
 
-                var retry = await SendOnceAsync(requestUri, correlationId, cancellationToken)
+                currentToken = _sessionService.GetAccessTokenForRequest();
+                if (string.IsNullOrWhiteSpace(currentToken))
+                {
+                    return new AuthenticatedGetResult.AuthenticationFailure();
+                }
+
+                var retry = await SendOnceAsync(
+                        method, requestUri, body, correlationId, ifMatch, idempotencyKey, currentToken, cancellationToken)
                     .ConfigureAwait(false);
                 return retry is AuthenticatedGetResult.Response
-                    { StatusCode: HttpStatusCode.Unauthorized }
+                { StatusCode: HttpStatusCode.Unauthorized }
                         ? new AuthenticatedGetResult.AuthenticationFailure()
                         : retry;
 
@@ -95,21 +144,38 @@ public sealed class DesktopAuthenticatedGetExecutor
     }
 
     private async global::System.Threading.Tasks.Task<AuthenticatedGetResult> SendOnceAsync(
+        HttpMethod method,
         Uri requestUri,
+        byte[]? body,
         string correlationId,
+        string? ifMatch,
+        string? idempotencyKey,
+        string accessToken,
         CancellationToken cancellationToken)
     {
-        var accessToken = _sessionService.GetAccessTokenForRequest();
-        if (string.IsNullOrWhiteSpace(accessToken))
-        {
-            return new AuthenticatedGetResult.AuthenticationFailure();
-        }
-
-        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        using var request = new HttpRequestMessage(method, requestUri);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         request.Headers.TryAddWithoutValidation(CorrelationIdHeader, correlationId);
+        if (ifMatch is not null)
+        {
+            request.Headers.TryAddWithoutValidation("If-Match", ifMatch);
+        }
+
+        if (idempotencyKey is not null)
+        {
+            request.Headers.TryAddWithoutValidation("Idempotency-Key", idempotencyKey);
+        }
+
         request.Headers.Accept.ParseAdd("application/json");
         request.Headers.Accept.ParseAdd("application/problem+json");
+        if (body is not null)
+        {
+            request.Content = new ByteArrayContent(body);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json")
+            {
+                CharSet = "utf-8",
+            };
+        }
 
         HttpResponseMessage response;
         try
@@ -135,10 +201,20 @@ public sealed class DesktopAuthenticatedGetExecutor
         {
             try
             {
-                var body = await response.Content
+                var responseBody = await response.Content
                     .ReadAsStringAsync(cancellationToken)
                     .ConfigureAwait(false);
-                return new AuthenticatedGetResult.Response(response.StatusCode, body);
+                var replayed = response.Headers.TryGetValues("Idempotency-Replayed", out var values)
+                    ? string.Join(",", values)
+                    : null;
+                var entityTag = response.Headers.TryGetValues("ETag", out var entityTags)
+                    ? string.Join(",", entityTags)
+                    : null;
+                return new AuthenticatedGetResult.Response(
+                    response.StatusCode,
+                    responseBody,
+                    entityTag,
+                    replayed);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {

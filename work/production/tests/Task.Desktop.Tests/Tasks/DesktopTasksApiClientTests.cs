@@ -222,6 +222,227 @@ public sealed class DesktopTasksApiClientTests
         Assert.Equal(1, fixture.RefreshRequests);
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata()
+    {
+        var responses = new Queue<HttpResponseMessage>(
+        [
+            WriteSuccess(HttpStatusCode.Created, replayed: false),
+            WriteSuccess(HttpStatusCode.OK, replayed: true),
+            WriteSuccess(HttpStatusCode.OK, replayed: false),
+        ]);
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(responses.Dequeue()));
+        var create = new DesktopCreateTaskCommand(
+            "  New task  ", DesktopTaskPriority.High,
+            DateTimeOffset.Parse("2026-08-27T08:00:00Z"), DateTimeOffset.Parse("2026-08-28T10:00:00Z"));
+        var patch = new DesktopPatchTaskCommand(
+            TaskId, 6, DesktopTaskField<string>.From("Updated"),
+            DesktopTaskField<DesktopTaskPriority>.From(DesktopTaskPriority.Critical),
+            DesktopTaskField<DateTimeOffset?>.From(null),
+            DesktopTaskField<DateTimeOffset?>.From(DateTimeOffset.Parse("2026-08-28T10:00:00Z")));
+        var transition = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.Completed, "  done  ");
+
+        var created = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
+            await fixture.Client.CreateTaskAsync(create));
+        var patched = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
+            await fixture.Client.PatchTaskAsync(patch));
+        _ = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
+            await fixture.Client.TransitionTaskAsync(transition));
+        Assert.Equal(7, created.Version);
+        Assert.False(created.WasReplayed);
+        Assert.True(patched.WasReplayed);
+
+        var requests = fixture.TaskRequests.ToArray();
+        Assert.Equal(HttpMethod.Post, requests[0].Method);
+        Assert.Equal("/api/v1/tasks", requests[0].Uri.AbsolutePath);
+        Assert.Equal("{\"title\":\"New task\",\"priority\":\"high\",\"startAtUtc\":\"2026-08-27T08:00:00Z\",\"deadlineAt\":\"2026-08-28T10:00:00Z\"}", requests[0].Body);
+        Assert.Null(requests[0].IfMatch);
+        Assert.Equal(HttpMethod.Patch, requests[1].Method);
+        Assert.Equal($"/api/v1/tasks/{TaskId:D}", requests[1].Uri.AbsolutePath);
+        Assert.Equal("\"v6\"", requests[1].IfMatch);
+        Assert.Equal("{\"title\":\"Updated\",\"priority\":\"critical\",\"startAtUtc\":null,\"deadlineAt\":\"2026-08-28T10:00:00Z\"}", requests[1].Body);
+        Assert.Equal($"/api/v1/tasks/{TaskId:D}/transition", requests[2].Uri.AbsolutePath);
+        Assert.Equal("{\"targetStatus\":\"completed\",\"reason\":\"done\"}", requests[2].Body);
+        Assert.All(requests, request => Assert.True(Guid.TryParseExact(request.IdempotencyKey, "D", out _)));
+        Assert.All(requests, request => Assert.Equal("application/json", request.ContentType));
+        Assert.All(requests, request => Assert.Equal("utf-8", request.CharSet));
+        Assert.All(requests, request => Assert.Equal(
+            ["application/json", "application/problem+json"], request.Accept));
+        Assert.Equal(3, requests.Select(request => request.IdempotencyKey).Distinct().Count());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Write401_ReusesBodyHeadersAndKey_ForExactlyOneRetry()
+    {
+        var attempt = 0;
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(++attempt == 1
+                ? ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED")
+                : WriteSuccess(HttpStatusCode.Created, replayed: false)));
+        var command = new DesktopCreateTaskCommand("Retry", DesktopTaskPriority.Normal);
+
+        _ = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
+            await fixture.Client.CreateTaskAsync(command));
+
+        var requests = fixture.TaskRequests.ToArray();
+        Assert.Equal(2, requests.Length);
+        Assert.Equal(requests[0].Body, requests[1].Body);
+        Assert.Equal(requests[0].BodyBytes, requests[1].BodyBytes);
+        Assert.Equal(requests[0].CorrelationId, requests[1].CorrelationId);
+        Assert.Equal(requests[0].IdempotencyKey, requests[1].IdempotencyKey);
+        Assert.Equal(command.IdempotencyKey, requests[0].IdempotencyKey);
+        Assert.Equal("AT_initial", requests[0].AuthorizationParameter);
+        Assert.Equal("AT_refreshed", requests[1].AuthorizationParameter);
+        Assert.Equal(1, fixture.RefreshRequests);
+        Assert.NotEqual(command.IdempotencyKey, new DesktopCreateTaskCommand("Retry", DesktopTaskPriority.Normal).IdempotencyKey);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ConcurrentWrite401s_UseSingleFlightRefresh_AndStableCommands()
+    {
+        var initialRequests = 0;
+        var bothInitialRequests = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var fixture = await Fixture.CreateAsync(async (request, cancellationToken) =>
+        {
+            if (request.Headers.Authorization?.Parameter == "AT_initial")
+            {
+                if (Interlocked.Increment(ref initialRequests) == 2)
+                    bothInitialRequests.TrySetResult(true);
+
+                await bothInitialRequests.Task.WaitAsync(cancellationToken);
+                return ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED");
+            }
+
+            return WriteSuccess(HttpStatusCode.Created, replayed: false);
+        });
+        var first = new DesktopCreateTaskCommand("First", DesktopTaskPriority.Normal);
+        var second = new DesktopCreateTaskCommand("Second", DesktopTaskPriority.Normal);
+
+        var results = await global::System.Threading.Tasks.Task.WhenAll(
+            fixture.Client.CreateTaskAsync(first), fixture.Client.CreateTaskAsync(second));
+
+        Assert.All(results, result => Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(result));
+        Assert.Equal(1, fixture.RefreshRequests);
+        Assert.Equal(4, fixture.TaskRequests.Count);
+        Assert.All(
+            fixture.TaskRequests.GroupBy(request => request.IdempotencyKey),
+            requests =>
+            {
+                Assert.Equal(2, requests.Count());
+                Assert.Single(requests.Select(request => request.CorrelationId).Distinct());
+                Assert.Single(requests.Select(request => Convert.ToHexString(request.BodyBytes!)).Distinct());
+            });
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Write401Failures_AreTyped_AndNeverSendMoreThanOneRetry()
+    {
+        await using (var rejected = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(
+                ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED"))))
+        {
+            Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure>(
+                await rejected.Client.CreateTaskAsync(
+                    new DesktopCreateTaskCommand("Rejected", DesktopTaskPriority.Normal)));
+            Assert.Equal(2, rejected.TaskRequests.Count);
+            Assert.Equal(1, rejected.RefreshRequests);
+        }
+
+        await using var unavailable = await Fixture.CreateAsync(
+            (_, _) => global::System.Threading.Tasks.Task.FromResult(
+                ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED")),
+            (_, _) => global::System.Threading.Tasks.Task.FromException<HttpResponseMessage>(
+                new HttpRequestException("synthetic refresh transport failure")));
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable>(
+            await unavailable.Client.CreateTaskAsync(
+                new DesktopCreateTaskCommand("Unavailable", DesktopTaskPriority.Normal)));
+        Assert.Single(unavailable.TaskRequests);
+        Assert.Equal(1, unavailable.RefreshRequests);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task WriteProblems_MapToExhaustiveSafeOutcomes()
+    {
+        var responses = new Queue<HttpResponseMessage>(
+        [
+            ProblemResponse(HttpStatusCode.Forbidden, "FORBIDDEN"),
+            ProblemResponse(HttpStatusCode.NotFound, "OBJECT_NOT_VISIBLE"),
+            ProblemResponse(HttpStatusCode.UnprocessableEntity, "VALIDATION_FAILED"),
+            ProblemResponse(HttpStatusCode.PreconditionFailed, "VERSION_CONFLICT"),
+            ProblemResponse((HttpStatusCode)428, "PRECONDITION_REQUIRED"),
+            ProblemResponse(HttpStatusCode.Conflict, "IDEMPOTENCY_KEY_REUSED"),
+            ProblemResponse(HttpStatusCode.Conflict, "IDEMPOTENCY_REQUEST_IN_PROGRESS"),
+            ProblemResponse(HttpStatusCode.Conflict, "INVALID_STATE_TRANSITION"),
+            ProblemResponse(HttpStatusCode.ServiceUnavailable, "INTERNAL_ERROR"),
+            WriteResponse(HttpStatusCode.Created, "{", "\"v7\"", "false"),
+            WriteSuccess(HttpStatusCode.Created, replayed: false, entityTag: "\"v8\""),
+            WriteResponse(HttpStatusCode.Created, TaskJson(), "\"v+7\"", "false"),
+            WriteResponse(HttpStatusCode.Created, TaskJson(), "\"v7\"", "True"),
+            ProblemResponse(HttpStatusCode.Conflict, "UNKNOWN_CONFLICT"),
+        ]);
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(responses.Dequeue()));
+        global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> Send() =>
+            fixture.Client.CreateTaskAsync(new DesktopCreateTaskCommand("Safe", DesktopTaskPriority.Normal));
+
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Forbidden>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.NotFound>(await Send());
+        var validation = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure>(await Send());
+        Assert.Equal("Проверьте введённые данные.", validation.Message);
+        Assert.Equal("Required", Assert.Single(validation.FieldErrors["title"]));
+        Assert.DoesNotContain("AT_initial", validation.Message, StringComparison.Ordinal);
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.PreconditionRequired>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.IdempotencyConflict>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse>(await Send());
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse>(await Send());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task WriteBoundary_RejectsInvalidDto_AndPropagatesCancellation()
+    {
+        await using var fixture = await Fixture.CreateAsync(async (_, cancellationToken) =>
+        {
+            await global::System.Threading.Tasks.Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+            throw new InvalidOperationException("Unreachable.");
+        });
+        Assert.Throws<ArgumentException>(() =>
+            new DesktopCreateTaskCommand(" ", DesktopTaskPriority.Normal));
+        Assert.Throws<ArgumentException>(() =>
+            new DesktopCreateTaskCommand("Task", (DesktopTaskPriority)999));
+        Assert.Throws<ArgumentException>(() => new DesktopCreateTaskCommand(
+            "Task",
+            DesktopTaskPriority.Normal,
+            DateTimeOffset.Parse("2026-08-27T10:00:00+03:00")));
+        Assert.Throws<ArgumentException>(() => new DesktopCreateTaskCommand(
+            "Task",
+            DesktopTaskPriority.Normal,
+            DateTimeOffset.Parse("2026-08-27T10:00:00Z"),
+            DateTimeOffset.Parse("2026-08-27T09:00:00Z")));
+        Assert.Throws<ArgumentException>(() =>
+            new DesktopPatchTaskCommand(TaskId, 1));
+        Assert.Throws<ArgumentException>(() => new DesktopPatchTaskCommand(
+            TaskId, 1, title: DesktopTaskField<string>.From(null)));
+        Assert.Throws<ArgumentException>(() =>
+            new DesktopTransitionTaskCommand(TaskId, 0, DesktopTaskStatus.Completed));
+        Assert.Throws<ArgumentException>(() => new DesktopTransitionTaskCommand(
+            TaskId, 1, DesktopTaskStatus.Completed, new string('x', 2001)));
+        using var client = new HttpClient();
+        Assert.Throws<ArgumentException>(() => new DesktopTasksApiClient(
+            client, new Uri("/relative", UriKind.Relative), fixture.SessionService));
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fixture.Client.CreateTaskAsync(
+            new DesktopCreateTaskCommand("Cancelled", DesktopTaskPriority.Normal), cancellation.Token));
+    }
+
     private static string TaskJson() =>
         $$"""{"id":"{{TaskId:D}}","organizationId":"{{OrganizationId:D}}","version":7,"createdAt":"2026-08-20T08:00:00Z","updatedAt":"2026-08-25T09:30:00Z","projectId":null,"parentTaskId":null,"title":"Подготовить отчёт","description":null,"authorUserId":"{{AuthorId:D}}","requesterUserId":null,"primaryCounterpartyObjectId":null,"status":"in_progress","priority":"high","scheduledDate":null,"startTimeLocal":null,"scheduleTimeZone":null,"startAtUtc":"2026-08-24T12:00:00Z","plannedDurationMinutes":null,"deadlineAt":"2026-08-27T17:00:00Z","assigneeIds":[],"watcherIds":[],"recurrenceSeriesId":null}""";
 
@@ -241,10 +462,30 @@ public sealed class DesktopTasksApiClientTests
         new(statusCode)
         {
             Content = new StringContent(
-                $$"""{"title":"Error","status":{{(int)statusCode}},"code":"{{code}}","correlationId":"test-correlation"}""",
+                $$$"""{"title":"Error AT_initial","status":{{{(int)statusCode}}},"code":"{{{code}}}","correlationId":"test-correlation","errors":{"title":["Required"]}}""",
                 Encoding.UTF8,
                 "application/problem+json"),
         };
+
+    private static HttpResponseMessage WriteSuccess(
+        HttpStatusCode statusCode,
+        bool replayed,
+        string entityTag = "\"v7\"") =>
+        WriteResponse(statusCode, TaskJson(), entityTag, replayed ? "true" : "false");
+
+    private static HttpResponseMessage WriteResponse(
+        HttpStatusCode statusCode,
+        string body,
+        string? entityTag,
+        string? replayed)
+    {
+        var response = JsonResponse(statusCode, body);
+        if (entityTag is not null)
+            response.Headers.TryAddWithoutValidation("ETag", entityTag);
+        if (replayed is not null)
+            response.Headers.TryAddWithoutValidation("Idempotency-Replayed", replayed);
+        return response;
+    }
 
     private sealed class Fixture : IAsyncDisposable
     {
@@ -372,18 +613,29 @@ public sealed class DesktopTasksApiClientTests
 
         public ConcurrentQueue<CapturedRequest> Requests { get; } = new();
 
-        protected override global::System.Threading.Tasks.Task<HttpResponseMessage> SendAsync(
+        protected override async global::System.Threading.Tasks.Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
             request.Headers.TryGetValues("X-Correlation-ID", out var correlationValues);
+            request.Headers.TryGetValues("Idempotency-Key", out var idempotencyValues);
+            var bodyBytes = request.Content is null
+                ? null
+                : await request.Content.ReadAsByteArrayAsync(cancellationToken);
             Requests.Enqueue(new CapturedRequest(
                 request.Method,
                 request.RequestUri!,
                 request.Headers.Authorization?.Scheme,
                 request.Headers.Authorization?.Parameter,
-                correlationValues?.SingleOrDefault()));
-            return _responder(request, cancellationToken);
+                correlationValues?.SingleOrDefault(),
+                request.Headers.IfMatch.SingleOrDefault()?.ToString(),
+                idempotencyValues?.SingleOrDefault(),
+                bodyBytes is null ? null : Encoding.UTF8.GetString(bodyBytes),
+                bodyBytes,
+                request.Content?.Headers.ContentType?.MediaType,
+                request.Content?.Headers.ContentType?.CharSet,
+                request.Headers.Accept.Select(value => value.MediaType).ToArray()));
+            return await _responder(request, cancellationToken);
         }
     }
 
@@ -392,5 +644,12 @@ public sealed class DesktopTasksApiClientTests
         Uri Uri,
         string? AuthorizationScheme,
         string? AuthorizationParameter,
-        string? CorrelationId);
+        string? CorrelationId,
+        string? IfMatch,
+        string? IdempotencyKey,
+        string? Body,
+        byte[]? BodyBytes,
+        string? ContentType,
+        string? CharSet,
+        IReadOnlyList<string?> Accept);
 }
