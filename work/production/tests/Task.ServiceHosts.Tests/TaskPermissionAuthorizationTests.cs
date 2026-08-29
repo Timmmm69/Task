@@ -117,6 +117,16 @@ public sealed class TaskPermissionAuthorizationTests
             Assert.Single(taskReadPolicy.Requirements));
         Assert.Equal(TaskPermissionAuthorization.TaskReadBackingPermissionCode, taskReadRequirement.Code);
 
+        var taskCreatePolicy = await policyProvider.GetPolicyAsync(TaskPermissionAuthorization.TaskCreatePolicyName);
+        Assert.Equal(TaskPermissionAuthorization.TaskCreateBackingPermissionCode,
+            Assert.IsType<TaskPermissionAuthorization.PermissionRequirement>(Assert.Single(taskCreatePolicy!.Requirements)).Code);
+        var taskUpdatePolicy = await policyProvider.GetPolicyAsync(TaskPermissionAuthorization.TaskUpdatePolicyName);
+        Assert.Equal(TaskPermissionAuthorization.TaskUpdateBackingPermissionCode,
+            Assert.IsType<TaskPermissionAuthorization.PermissionRequirement>(Assert.Single(taskUpdatePolicy!.Requirements)).Code);
+        var taskStatusPolicy = await policyProvider.GetPolicyAsync(TaskPermissionAuthorization.TaskChangeStatusPolicyName);
+        Assert.Equal(TaskPermissionAuthorization.TaskChangeStatusBackingPermissionCode,
+            Assert.IsType<TaskPermissionAuthorization.PermissionRequirement>(Assert.Single(taskStatusPolicy!.Requirements)).Code);
+
         Assert.Null(await policyProvider.GetPolicyAsync("permission.unknown"));
     }
 

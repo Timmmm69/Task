@@ -6,6 +6,9 @@ namespace Task.Desktop.Tests.TaskScreen;
 
 public sealed class TasksViewModelTests
 {
+    private static readonly string[] WriteCapabilities =
+        ["Task.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"];
+
     [Fact]
     public async global::System.Threading.Tasks.Task InitialLoad_ShowsLocalizedItemsAndDetails()
     {
@@ -263,6 +266,235 @@ public sealed class TasksViewModelTests
         Assert.False(tasks.IsActive);
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task Create_Success_ReconcilesListSelectionAndDetails()
+    {
+        var created = CreateTask(title: "Новая с сервера");
+        var client = new FakeTasksApiClient
+        {
+            CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, created.Version, false),
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(created),
+        };
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+
+        await viewModel.NewTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Новая с сервера";
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.Single(viewModel.Items);
+        Assert.Equal(created.Id, viewModel.SelectedItem?.Id);
+        Assert.Equal(created.Id, viewModel.SelectedDetails?.Id);
+        Assert.Null(viewModel.Editor);
+        Assert.Equal(1, client.CreateCallCount);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Edit_NoChanges_DoesNotSendRequest()
+    {
+        var task = CreateTask();
+        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task) };
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await WaitForAsync(() => viewModel.SelectedDetails is not null);
+
+        await viewModel.EditTaskCommand.ExecuteAsync();
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.Equal(0, client.PatchCallCount);
+        Assert.Contains("Нет изменений", viewModel.Editor!.StatusMessage);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Edit_SendsOnlyChangedFieldsAndUsesFreshVersion()
+    {
+        var task = CreateTask(title: "До") with { Version = 7 };
+        var updated = task with { Title = "После", Version = 8 };
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
+            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(updated, 8, false),
+        };
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.EditTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "После";
+
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.Equal(7, client.LastPatch!.ExpectedVersion);
+        Assert.True(client.LastPatch.Title.IsSpecified);
+        Assert.False(client.LastPatch.Priority.IsSpecified);
+        Assert.False(client.LastPatch.StartAtUtc.IsSpecified);
+        Assert.Equal("После", viewModel.SelectedItem!.Title);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task VersionConflict_PreservesDraftAndReloadsLatest()
+    {
+        var task = CreateTask(title: "Старая") with { Version = 2 };
+        var latest = task with { Title = "Актуальная", Version = 3 };
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(latest),
+            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict(),
+        };
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.EditTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Моя правка";
+
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+        Assert.True(viewModel.Editor.HasConflict);
+        Assert.Equal("Моя правка", viewModel.Editor.Title);
+
+        await viewModel.ReloadConflictCommand.ExecuteAsync();
+        Assert.Equal("Актуальная", viewModel.Editor!.Title);
+        Assert.False(viewModel.Editor.HasConflict);
+        Assert.Equal(3, viewModel.SelectedItem!.Source.Version);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task RequestInProgress_RetryReusesSameIdempotencyKey()
+    {
+        var created = CreateTask();
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([]));
+        client.CreateResults.Enqueue(new DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress());
+        client.CreateResults.Enqueue(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, true));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.NewTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Повтор";
+
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+        await WaitForAsync(() => viewModel.Editor!.RetryAvailable, 4000);
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.Equal(2, client.CreateCommands.Count);
+        Assert.Equal(client.CreateCommands[0].IdempotencyKey, client.CreateCommands[1].IdempotencyKey);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Transition_Success_UsesSelectedVersionAndServerResponse()
+    {
+        var task = CreateTask() with { Version = 4 };
+        var started = task with { Status = DesktopTaskStatus.InProgress, Version = 5 };
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
+            TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(started, 5, false),
+        };
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+
+        await viewModel.TransitionCommand.ExecuteAsync("InProgress");
+        await viewModel.ConfirmTransitionCommand.ExecuteAsync();
+
+        Assert.Equal(4, client.LastTransition!.ExpectedVersion);
+        Assert.Equal(DesktopTaskStatus.InProgress, viewModel.SelectedItem!.Source.Status);
+        Assert.Equal(5, viewModel.SelectedDetails is null ? 0 : viewModel.SelectedItem.Source.Version);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task MissingWriteCapabilities_DisablesAllWriteCommands()
+    {
+        var task = CreateTask();
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, ["Task.Read"]);
+        await viewModel.ActivateAsync();
+
+        Assert.False(viewModel.NewTaskCommand.CanExecute(null));
+        Assert.False(viewModel.EditTaskCommand.CanExecute(null));
+        Assert.False(viewModel.TransitionCommand.CanExecute("InProgress"));
+        Assert.True(viewModel.IsReadOnly);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Create_DoubleSubmit_IsSingleFlight()
+    {
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>(
+            TaskCreationOptions.RunContinuationsAsynchronously);
+        var client = new FakeTasksApiClient
+        {
+            CreateHandler = async (_, token) =>
+            {
+                entered.TrySetResult();
+                return await release.Task.WaitAsync(token);
+            },
+        };
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.NewTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Одна команда";
+
+        var first = viewModel.SaveEditorCommand.ExecuteAsync();
+        await entered.Task;
+        var second = await viewModel.SaveEditorCommand.ExecuteAsync();
+        release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(CreateTask(), 1, false));
+        await first;
+
+        Assert.False(second);
+        Assert.Equal(1, client.CreateCallCount);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Disposal_CancelsMutationAndSuppressesStaleResponse()
+    {
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var client = new FakeTasksApiClient
+        {
+            CreateHandler = async (_, token) =>
+            {
+                entered.TrySetResult();
+                await global::System.Threading.Tasks.Task.Delay(Timeout.InfiniteTimeSpan, token);
+                return new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(CreateTask(), 1, false);
+            },
+        };
+        client.EnqueuePage(SucceededPage([]));
+        var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.NewTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Не применять";
+
+        var save = viewModel.SaveEditorCommand.ExecuteAsync();
+        await entered.Task;
+        viewModel.Dispose();
+        await save;
+
+        Assert.Empty(viewModel.Items);
+        Assert.False(viewModel.IsActive);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ForbiddenWrite_PreservesDraftAndDisablesFurtherWrites()
+    {
+        var client = new FakeTasksApiClient
+        {
+            CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Forbidden(),
+        };
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.NewTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Сохранённый черновик";
+
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.Equal("Сохранённый черновик", viewModel.Editor.Title);
+        Assert.True(viewModel.IsReadOnly);
+        Assert.False(viewModel.NewTaskCommand.CanExecute(null));
+        Assert.Contains("Права", viewModel.ScreenMessage);
+    }
+
     private static DesktopTasksApiResult<DesktopTaskPage> SucceededPage(
         IReadOnlyList<DesktopTaskDto> items,
         string? nextCursor = null) =>
@@ -306,6 +538,21 @@ public sealed class TasksViewModelTests
             global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>> _pages = new();
 
         public int PageCallCount { get; private set; }
+        public int CreateCallCount { get; private set; }
+        public int PatchCallCount { get; private set; }
+        public List<DesktopCreateTaskCommand> CreateCommands { get; } = [];
+        public ConcurrentQueue<DesktopTaskWriteResult<DesktopTaskDto>> CreateResults { get; } = new();
+        public DesktopPatchTaskCommand? LastPatch { get; private set; }
+        public DesktopTransitionTaskCommand? LastTransition { get; private set; }
+        public DesktopTaskWriteResult<DesktopTaskDto> CreateResult { get; set; } =
+            new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
+        public DesktopTaskWriteResult<DesktopTaskDto> PatchResult { get; set; } =
+            new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
+        public DesktopTaskWriteResult<DesktopTaskDto> TransitionResult { get; set; } =
+            new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
+        public Func<DesktopCreateTaskCommand, CancellationToken,
+            global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>>>? CreateHandler
+        { get; init; }
 
         public DesktopTasksApiResult<DesktopTaskDto> DetailResult { get; set; } =
             new DesktopTasksApiResult<DesktopTaskDto>.NotFound();
@@ -331,5 +578,34 @@ public sealed class TasksViewModelTests
             Guid id,
             CancellationToken cancellationToken = default) =>
             global::System.Threading.Tasks.Task.FromResult(DetailResult);
+
+        public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(
+            DesktopCreateTaskCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            CreateCallCount++;
+            CreateCommands.Add(command);
+            return CreateHandler is not null
+                ? CreateHandler(command, cancellationToken)
+                : global::System.Threading.Tasks.Task.FromResult(
+                    CreateResults.TryDequeue(out var result) ? result : CreateResult);
+        }
+
+        public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(
+            DesktopPatchTaskCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            PatchCallCount++;
+            LastPatch = command;
+            return global::System.Threading.Tasks.Task.FromResult(PatchResult);
+        }
+
+        public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync(
+            DesktopTransitionTaskCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            LastTransition = command;
+            return global::System.Threading.Tasks.Task.FromResult(TransitionResult);
+        }
     }
 }

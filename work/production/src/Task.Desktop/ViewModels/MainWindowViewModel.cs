@@ -30,7 +30,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             new("today", "Сегодня", "Раздел «Сегодня»: сводка задач на текущий день появится после подключения к серверу.", "Task.Icon.Today", "Сводка на текущий день"),
             new("inbox", "Входящие", "Раздел «Входящие»: новые и назначенные задачи появятся после подключения к серверу.", "Task.Icon.Inbox", "Новые и назначенные записи"),
             new("calendar", "Календарь", "Раздел «Календарь»: календарная сетка появится после подключения к серверу.", "Task.Icon.Calendar", "Расписание компании"),
-            new("tasks", "Задачи", "Раздел «Задачи»: список задач появится после подключения к серверу.", "Task.Icon.Tasks", "Активные задачи компании · только просмотр"),
+            new("tasks", "Задачи", "Раздел «Задачи»: список задач появится после подключения к серверу.", "Task.Icon.Tasks", "Активные задачи компании"),
             new("projects", "Проекты", "Раздел «Проекты»: список проектов появится после подключения к серверу.", "Task.Icon.Projects", "Рабочие проекты компании"),
             new("catalog", "Каталог", "Раздел «Каталог»: файлы и записи каталога появятся после подключения к серверу.", "Task.Icon.Catalog", "Файлы и записи каталога"),
             new("contacts", "Контакты", "Раздел «Контакты»: список контактов появится после подключения к серверу.", "Task.Icon.Contacts", "Контакты компании"),
@@ -89,16 +89,16 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     /// <summary>Visible authentication and connection status.</summary>
     public string ConnectionStatus => ServerAddress is null
-        ? "Нет подтверждённого подключения · только просмотр"
-        : $"Подключено к серверу компании · {ServerAddress} · только просмотр";
+        ? "Нет подтверждённого подключения"
+        : $"Подключено к серверу компании · {ServerAddress}";
 
     public string ConnectionTitle => ServerAddress is null
         ? "Нет подтверждённого подключения"
         : "Подключено к серверу компании";
 
     public string ConnectionContext => ServerAddress is null
-        ? "Только просмотр"
-        : "Онлайн · только просмотр";
+        ? "Нет рабочей сессии"
+        : Tasks?.IsReadOnly == true ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
 
     public string ConnectionIconKey => ServerAddress is null
         ? "Task.Icon.Warning"
@@ -109,7 +109,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// True while the shell has no network client: the interface is view-only.
     /// </summary>
-    public bool IsReadOnlyMode => true;
+    public bool IsReadOnlyMode => Tasks?.IsReadOnly ?? true;
 
     /// <summary>
     /// Notice shown in read-only mode: the server is not connected,
@@ -117,14 +117,18 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     /// </summary>
     public string ReadOnlyNotice => ServerAddress is null
         ? "Сервер не подключён: синхронизация не выполняется, изменение данных недоступно."
-        : "Сервер подключён: просмотр задач доступен, изменение данных пока недоступно.";
+        : Tasks?.WriteAccessText ?? "Доступен только просмотр задач.";
 
     public string DataSourceStatus => ServerAddress is null
-        ? "Источник данных недоступен · только просмотр"
-        : "Данные предоставляются сервером компании · только просмотр";
+        ? "Источник данных недоступен"
+        : Tasks?.IsReadOnly == true
+            ? "Данные предоставляются сервером компании · только просмотр"
+            : "Данные и изменения синхронизируются с сервером компании";
 
     public string ReadOnlyActionReason =>
-        "Создание задач появится в следующем write-инкременте.";
+        Tasks?.CanCreate == true
+            ? "Создать задачу"
+            : "Для создания задачи требуется право Task.Create и рабочая сессия.";
 
     public string? SessionMessage
     {

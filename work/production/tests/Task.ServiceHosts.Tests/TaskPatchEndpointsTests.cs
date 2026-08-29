@@ -377,9 +377,9 @@ public sealed partial class TaskEndpointsTests
     {
         using var server = CreateServer(
             new FakeTaskReadStore(Projection),
-            grantTaskRead: false,
             writeExecutor: new FakeUpdateExecutor { Current = CurrentTask() },
-            aggregateStore: new FakeUpdateAggregateStore(CurrentTask()));
+            aggregateStore: new FakeUpdateAggregateStore(CurrentTask()),
+            grantTaskWrite: false);
         using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
 
         await AssertProblemAsync(

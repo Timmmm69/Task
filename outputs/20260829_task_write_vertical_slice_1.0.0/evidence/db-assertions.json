@@ -1,0 +1,17 @@
+{
+  "postgresVersion": "16.14",
+  "migrationVersion": "6",
+  "uiTaskId": "dfe02337-a844-486b-8441-f55283fe6b5d",
+  "finalTitle": "E2E rerun completed 20260829",
+  "finalPriority": "high",
+  "finalStatus": "completed",
+  "finalVersion": 7,
+  "auditCount": 7,
+  "domainEventCount": 7,
+  "outboxCount": 7,
+  "completedIdempotencyCount": 7,
+  "replayProbeCounts": "task=1,audit=1,event=1,outbox=1,idempotency=1",
+  "readOnlyGetStatus": 200,
+  "readOnlyWriteStatus": 403,
+  "apiRestartPersistence": "PASS"
+}

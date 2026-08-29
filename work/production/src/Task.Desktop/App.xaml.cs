@@ -154,7 +154,9 @@ public partial class App : global::System.Windows.Application
             CreateHttpClient(),
             serverEndpoint,
             sessionService);
-        var tasks = new TasksViewModel(tasksClient);
+        var tasks = new TasksViewModel(
+            tasksClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks);
         var window = new MainWindow(viewModel);
         _mainWindow = window;

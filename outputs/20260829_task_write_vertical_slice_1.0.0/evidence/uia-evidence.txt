@@ -1,0 +1,15 @@
+UI Automation evidence (2026-08-29)
+
+Admin session:
+- ConnectionStatus: "Онлайн · запись доступна"
+- TaskTitleTextBox, TaskPriorityComboBox, TaskStartTextBox, TaskDeadlineTextBox exposed.
+- SaveTaskButton remains available after network failure while draft deadline remains 29.08.2026 17:00.
+- Conflict state exposes ReloadConflictButton and CloseConflictButton; SaveTaskButton is disabled until explicit reload.
+- TransitionReasonTextBox and ConfirmTransitionButton exposed for every status transition.
+- Final selected task: title "E2E rerun completed 20260829", status "Завершена", priority "Высокий".
+
+Read-only session:
+- ConnectionStatus: "Онлайн · только просмотр".
+- ReadOnlyNoticeText: "Доступен только просмотр задач. Для изменений нужны соответствующие права."
+- NewTaskButton is disabled.
+- Task list remains readable; editor and transition buttons are absent.

@@ -5,10 +5,10 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
-    public void Catalog_ExpectsTaskWriteFoundationVersionFive()
+    public void Catalog_ExpectsTaskCapabilityPermissionsVersionSix()
     {
-        Assert.Equal(5, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("task_write_transaction_foundation", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(6, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("task_capability_permissions", TaskPersistenceMigrationCatalog.All[^1].Name);
     }
 
     [Fact]

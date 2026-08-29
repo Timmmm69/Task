@@ -119,7 +119,8 @@ internal static class AuthSessionEndpoints
             }
 
             var credentialStore = context.RequestServices.GetService<IAccountCredentialStore>();
-            if (credentialStore is null)
+            var permissionDecisionService = context.RequestServices.GetService<PermissionDecisionService>();
+            if (credentialStore is null || permissionDecisionService is null)
             {
                 return await WriteProblemAsync(
                     context,
@@ -134,12 +135,35 @@ internal static class AuthSessionEndpoints
                 requestContext.UserAccountId,
                 context.RequestAborted);
 
+            IReadOnlyList<string> capabilities;
+            try
+            {
+                capabilities = await ResolveTaskCapabilitiesAsync(
+                    permissionDecisionService,
+                    requestContext,
+                    context.RequestAborted);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return await WriteProblemAsync(
+                    context,
+                    StatusCodes.Status503ServiceUnavailable,
+                    "INTERNAL_ERROR",
+                    "Session capabilities are temporarily unavailable",
+                    retryable: true);
+            }
+
             return Results.Json(new CurrentSessionResponse(
                 requestContext.UserAccountId,
                 requestContext.SessionId,
                 requestContext.OrganizationId,
                 requestContext.CredentialVersion,
                 requestContext.AuthorizationScopeVersion,
+                capabilities,
                 mustChangePassword));
         }).RequireAuthorization();
 
@@ -487,6 +511,28 @@ internal static class AuthSessionEndpoints
         return Results.Empty;
     }
 
+    private static async global::System.Threading.Tasks.Task<IReadOnlyList<string>> ResolveTaskCapabilitiesAsync(
+        PermissionDecisionService decisionService,
+        AuthenticatedRequestContext requestContext,
+        CancellationToken cancellationToken)
+    {
+        var capabilities = new List<string>(TaskPermissionAuthorization.TaskCapabilities.Count);
+        foreach (var (permissionCode, capability) in TaskPermissionAuthorization.TaskCapabilities)
+        {
+            var decision = await decisionService.EvaluateAsync(
+                requestContext.OrganizationId,
+                requestContext.UserAccountId,
+                permissionCode,
+                cancellationToken);
+            if (decision.Allowed)
+            {
+                capabilities.Add(capability);
+            }
+        }
+
+        return capabilities;
+    }
+
     internal sealed record ChangePasswordRequest(
         [property: JsonPropertyName("currentPassword")] string CurrentPassword,
         [property: JsonPropertyName("newPassword")] string NewPassword);
@@ -500,6 +546,7 @@ internal static class AuthSessionEndpoints
         [property: JsonPropertyName("organizationId")] Guid OrganizationId,
         [property: JsonPropertyName("credentialVersion")] long CredentialVersion,
         [property: JsonPropertyName("authorizationScopeVersion")] long AuthorizationScopeVersion,
+        [property: JsonPropertyName("capabilities")] IReadOnlyList<string> Capabilities,
         [property: JsonPropertyName("mustChangePassword")] bool MustChangePassword);
 
     internal sealed record UserSessionItemResponse(

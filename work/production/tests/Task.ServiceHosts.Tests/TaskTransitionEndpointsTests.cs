@@ -186,7 +186,7 @@ public sealed partial class TaskEndpointsTests
         await AssertTransitionConflictAsync(ArchivedTask(), "OBJECT_ARCHIVED");
         await AssertTransitionConflictAsync(TrashedTask(), "OBJECT_DELETED");
 
-        using var deniedServer = CreateTransitionServer(task, grantTaskRead: false);
+        using var deniedServer = CreateTransitionServer(task, grantTaskWrite: false);
         using var deniedClient = await CreateAuthenticatedClientAsync(deniedServer, OrganizationId);
         Assert.Equal(
             HttpStatusCode.Forbidden,
@@ -230,13 +230,15 @@ public sealed partial class TaskEndpointsTests
     private static TestServer CreateTransitionServer(
         TaskAggregate task,
         bool grantTaskRead = true,
+        bool grantTaskWrite = true,
         Guid? tokenOrganizationId = null) =>
         CreateServer(
             new FakeTaskReadStore(ToProjection(task)),
             grantTaskRead,
             tokenOrganizationId: tokenOrganizationId,
             writeExecutor: new FakeUpdateExecutor { Current = task },
-            aggregateStore: new FakeUpdateAggregateStore(task));
+            aggregateStore: new FakeUpdateAggregateStore(task),
+            grantTaskWrite: grantTaskWrite);
 
     private static async global::System.Threading.Tasks.Task AssertTransitionConflictAsync(
         TaskAggregate task,

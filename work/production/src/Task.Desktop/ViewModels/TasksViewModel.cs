@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.ComponentModel;
 using Task.Desktop.TaskApi;
 
 namespace Task.Desktop.ViewModels;
@@ -195,6 +196,8 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
 {
     private readonly IDesktopTasksApiClient _client;
     private readonly SemaphoreSlim _requestGate = new(1, 1);
+    private readonly SemaphoreSlim _mutationGate = new(1, 1);
+    private readonly HashSet<string> _capabilities;
 
     private IReadOnlyList<TaskItemViewModel> _items = Array.Empty<TaskItemViewModel>();
     private TaskItemViewModel? _selectedItem;
@@ -211,16 +214,62 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private bool _hasLoaded;
     private bool _disposed;
     private DateTimeOffset? _lastSuccessfulRefreshAt;
+    private TaskEditorViewModel? _editor;
+    private object? _pendingEditorCommand;
+    private long _pendingEditorRevision = -1;
+    private CancellationTokenSource? _mutationCancellation;
+    private long _mutationGeneration;
+    private bool _isMutationBusy;
+    private bool _writePermissionChanged;
+    private DesktopTaskStatus? _pendingTransition;
+    private DesktopTransitionTaskCommand? _pendingTransitionCommand;
+    private bool _transitionRetryAvailable = true;
+    private string _transitionReason = string.Empty;
+    private string? _announcement;
 
-    public TasksViewModel(IDesktopTasksApiClient client)
+    public TasksViewModel(
+        IDesktopTasksApiClient client,
+        IEnumerable<string>? capabilities = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
+        _capabilities = new HashSet<string>(capabilities ?? [], StringComparer.Ordinal);
         RefreshCommand = new AsyncCommand(
             async (_, token) => await RefreshAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy);
         LoadMoreCommand = new AsyncCommand(
             async (_, token) => await LoadNextPageAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy && HasNextPage);
+        NewTaskCommand = new AsyncCommand(
+            (_, _) => { OpenCreateEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            _ => CanCreate);
+        EditTaskCommand = new AsyncCommand(
+            (_, _) => { OpenEditEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            _ => CanEdit);
+        SaveEditorCommand = new AsyncCommand(
+            async (_, token) => await SaveEditorAsync(token).ConfigureAwait(true),
+            _ => Editor?.CanSubmit == true && !IsMutationBusy);
+        CancelEditorCommand = new AsyncCommand(
+            (_, _) => { RequestCloseEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            _ => Editor is not null && !IsMutationBusy);
+        DiscardEditorCommand = new AsyncCommand(
+            (_, _) => { CloseEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            _ => Editor is not null && !IsMutationBusy);
+        ContinueEditingCommand = new AsyncCommand(
+            (_, _) => { Editor?.ShowDiscardConfirmation(false); return global::System.Threading.Tasks.Task.CompletedTask; },
+            _ => Editor is not null && !IsMutationBusy);
+        ReloadConflictCommand = new AsyncCommand(
+            async (_, token) => await ReloadConflictAsync(token).ConfigureAwait(true),
+            _ => Editor?.HasConflict == true && !IsMutationBusy);
+        TransitionCommand = new AsyncCommand(
+            (parameter, _) => { BeginTransition(parameter); return global::System.Threading.Tasks.Task.CompletedTask; },
+            CanBeginTransition);
+        ConfirmTransitionCommand = new AsyncCommand(
+            async (_, token) => await ConfirmTransitionAsync(token).ConfigureAwait(true),
+            _ => PendingTransition.HasValue && _transitionRetryAvailable
+                && !IsMutationBusy && TransitionReason.Length <= 2000);
+        CancelTransitionCommand = new AsyncCommand(
+            (_, _) => { ClearTransition(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            _ => PendingTransition.HasValue && !IsMutationBusy);
     }
 
     public IReadOnlyList<TaskItemViewModel> Items
@@ -247,8 +296,110 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
                 return;
             }
 
+            ClearTransition();
             BeginLoadDetails(value);
+            NotifyMutationState();
         }
+    }
+
+    public TaskEditorViewModel? Editor
+    {
+        get => _editor;
+        private set
+        {
+            if (_editor is not null)
+            {
+                _editor.PropertyChanged -= OnEditorPropertyChanged;
+            }
+
+            if (SetProperty(ref _editor, value) && _editor is not null)
+            {
+                _editor.PropertyChanged += OnEditorPropertyChanged;
+            }
+
+            OnPropertyChanged(nameof(HasEditor));
+            NotifyMutationState();
+        }
+    }
+
+    public bool HasEditor => Editor is not null;
+
+    public bool IsMutationBusy
+    {
+        get => _isMutationBusy;
+        private set
+        {
+            if (SetProperty(ref _isMutationBusy, value))
+            {
+                if (Editor is not null) Editor.IsBusy = value;
+                NotifyMutationState();
+            }
+        }
+    }
+
+    public bool CanCreate => IsActive && !_writePermissionChanged && _capabilities.Contains("Task.Create")
+        && State is not TasksScreenState.SessionEnded and not TasksScreenState.Forbidden;
+    public bool CanUpdate => !_writePermissionChanged && _capabilities.Contains("Task.Update");
+    public bool CanChangeStatus => !_writePermissionChanged && _capabilities.Contains("Task.ChangeStatus");
+    public bool IsReadOnly => !CanCreate && !CanUpdate && !CanChangeStatus;
+    public string WriteAccessText => IsReadOnly
+        ? "Доступен только просмотр задач. Для изменений нужны соответствующие права."
+        : "Изменения сохраняются на сервере компании.";
+    public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled } && !IsMutationBusy;
+    public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
+    public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
+    public bool CanComplete => CanTransitionTo(DesktopTaskStatus.Completed);
+    public bool CanCancel => CanTransitionTo(DesktopTaskStatus.Cancelled);
+
+    public DesktopTaskStatus? PendingTransition
+    {
+        get => _pendingTransition;
+        private set
+        {
+            if (SetProperty(ref _pendingTransition, value))
+            {
+                OnPropertyChanged(nameof(IsTransitionConfirmationVisible));
+                OnPropertyChanged(nameof(PendingTransitionText));
+                NotifyMutationState();
+            }
+        }
+    }
+
+    public bool IsTransitionConfirmationVisible => PendingTransition.HasValue;
+    public string PendingTransitionText => PendingTransition switch
+    {
+        DesktopTaskStatus.InProgress => "Начать задачу?",
+        DesktopTaskStatus.Review => "Отправить задачу на проверку?",
+        DesktopTaskStatus.Completed => "Завершить задачу? Это терминальное действие.",
+        DesktopTaskStatus.Cancelled => "Отменить задачу? Это терминальное действие.",
+        _ => string.Empty,
+    };
+
+    public string TransitionReason
+    {
+        get => _transitionReason;
+        set
+        {
+            if (_pendingTransitionCommand is not null)
+            {
+                return;
+            }
+            if (SetProperty(ref _transitionReason, value ?? string.Empty))
+            {
+                OnPropertyChanged(nameof(TransitionReasonError));
+                ConfirmTransitionCommand.RaiseCanExecuteChanged();
+            }
+        }
+    }
+
+    public string? TransitionReasonError => TransitionReason.Length > 2000
+        ? "Причина не должна превышать 2000 символов."
+        : null;
+
+    public string? Announcement
+    {
+        get => _announcement;
+        private set => SetProperty(ref _announcement, value);
     }
 
     public TaskDetailsViewModel? SelectedDetails
@@ -363,6 +514,16 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand RefreshCommand { get; }
 
     public AsyncCommand LoadMoreCommand { get; }
+    public AsyncCommand NewTaskCommand { get; }
+    public AsyncCommand EditTaskCommand { get; }
+    public AsyncCommand SaveEditorCommand { get; }
+    public AsyncCommand CancelEditorCommand { get; }
+    public AsyncCommand DiscardEditorCommand { get; }
+    public AsyncCommand ContinueEditingCommand { get; }
+    public AsyncCommand ReloadConflictCommand { get; }
+    public AsyncCommand TransitionCommand { get; }
+    public AsyncCommand ConfirmTransitionCommand { get; }
+    public AsyncCommand CancelTransitionCommand { get; }
 
     public async global::System.Threading.Tasks.Task ActivateAsync(
         CancellationToken cancellationToken = default)
@@ -401,8 +562,11 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         _activationCancellation?.Dispose();
         _activationCancellation = null;
         CancelDetailsLoad();
+        Interlocked.Increment(ref _mutationGeneration);
+        _mutationCancellation?.Cancel();
         State = TasksScreenState.Inactive;
         ScreenMessage = null;
+        NotifyMutationState();
     }
 
     public async global::System.Threading.Tasks.Task<bool> RefreshAsync(
@@ -487,6 +651,17 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         Deactivate();
         RefreshCommand.Dispose();
         LoadMoreCommand.Dispose();
+        NewTaskCommand.Dispose();
+        EditTaskCommand.Dispose();
+        SaveEditorCommand.Dispose();
+        CancelEditorCommand.Dispose();
+        DiscardEditorCommand.Dispose();
+        ContinueEditingCommand.Dispose();
+        ReloadConflictCommand.Dispose();
+        TransitionCommand.Dispose();
+        ConfirmTransitionCommand.Dispose();
+        CancelTransitionCommand.Dispose();
+        _mutationCancellation?.Dispose();
     }
 
     private async global::System.Threading.Tasks.Task<bool> FetchFirstPageAsync(
@@ -664,6 +839,422 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
                 DetailMessage = "Не удалось загрузить карточку задачи.";
             }
         }
+    }
+
+    private void OpenCreateEditor()
+    {
+        if (!CanCreate) return;
+        CloseEditor();
+        Editor = new TaskEditorViewModel(TaskEditorMode.Create);
+        Announcement = "Открыта форма создания задачи.";
+    }
+
+    private void OpenEditEditor()
+    {
+        if (!CanEdit || SelectedItem is null) return;
+        CloseEditor();
+        Editor = new TaskEditorViewModel(TaskEditorMode.Edit, SelectedItem.Source);
+        Announcement = "Открыта форма изменения задачи.";
+    }
+
+    private void RequestCloseEditor()
+    {
+        if (Editor is null || IsMutationBusy) return;
+        if (Editor.HasUnsavedChanges)
+        {
+            Editor.ShowDiscardConfirmation(true);
+            Announcement = "Есть несохранённые изменения. Подтвердите закрытие формы.";
+            return;
+        }
+
+        CloseEditor();
+    }
+
+    private void CloseEditor()
+    {
+        Interlocked.Increment(ref _mutationGeneration);
+        _mutationCancellation?.Cancel();
+        _mutationCancellation?.Dispose();
+        _mutationCancellation = null;
+        _pendingEditorCommand = null;
+        _pendingEditorRevision = -1;
+        Editor = null;
+    }
+
+    private async global::System.Threading.Tasks.Task SaveEditorAsync(CancellationToken cancellationToken)
+    {
+        var editor = Editor;
+        if (editor is null || !editor.CanSubmit
+            || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+        {
+            return;
+        }
+
+        object? command;
+        try
+        {
+            command = GetOrCreateEditorCommand(editor);
+        }
+        catch (ArgumentException)
+        {
+            editor.SetStatus("Проверьте заполненные поля.");
+            _mutationGate.Release();
+            return;
+        }
+
+        if (command is null)
+        {
+            _mutationGate.Release();
+            return;
+        }
+
+        var generation = Interlocked.Increment(ref _mutationGeneration);
+        _mutationCancellation?.Dispose();
+        _mutationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            _activationCancellation?.Token ?? CancellationToken.None);
+        IsMutationBusy = true;
+        try
+        {
+            DesktopTaskWriteResult<DesktopTaskDto> result = command switch
+            {
+                DesktopCreateTaskCommand create => await _client.CreateTaskAsync(
+                    create, _mutationCancellation.Token).ConfigureAwait(true),
+                DesktopPatchTaskCommand patch => await _client.PatchTaskAsync(
+                    patch, _mutationCancellation.Token).ConfigureAwait(true),
+                _ => throw new InvalidOperationException("Unsupported editor command."),
+            };
+
+            if (!IsCurrentMutation(generation, editor)) return;
+            HandleEditorResult(editor, result, generation);
+        }
+        catch (OperationCanceledException) when (_mutationCancellation.IsCancellationRequested)
+        {
+            if (IsCurrentMutation(generation, editor))
+            {
+                editor.SetStatus("Сохранение отменено. Данные формы сохранены.");
+            }
+        }
+        catch (Exception)
+        {
+            if (IsCurrentMutation(generation, editor))
+            {
+                editor.SetStatus("Сервер недоступен. Данные формы сохранены; повторите попытку.");
+            }
+        }
+        finally
+        {
+            IsMutationBusy = false;
+            _mutationGate.Release();
+        }
+    }
+
+    private object? GetOrCreateEditorCommand(TaskEditorViewModel editor)
+    {
+        if (_pendingEditorCommand is not null && _pendingEditorRevision == editor.Revision)
+        {
+            return _pendingEditorCommand;
+        }
+
+        _pendingEditorCommand = editor.Mode == TaskEditorMode.Create
+            ? editor.BuildCreateCommand()
+            : editor.BuildPatchCommand();
+        _pendingEditorRevision = editor.Revision;
+        return _pendingEditorCommand;
+    }
+
+    private void HandleEditorResult(
+        TaskEditorViewModel editor,
+        DesktopTaskWriteResult<DesktopTaskDto> result,
+        long generation)
+    {
+        switch (result)
+        {
+            case DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success:
+                ApplyServerTask(success.Value);
+                _pendingEditorCommand = null;
+                Announcement = editor.Mode == TaskEditorMode.Create
+                    ? "Задача создана и выбрана."
+                    : "Изменения задачи сохранены.";
+                Editor = null;
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
+                editor.ApplyServerValidation(validation.Message, validation.FieldErrors);
+                _pendingEditorCommand = null;
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict:
+                editor.SetConflict();
+                _pendingEditorCommand = null;
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress:
+                editor.SetStatus("Сервер ещё обрабатывает эту команду. Повтор станет доступен через несколько секунд.");
+                editor.SetRetryAvailable(false);
+                _ = EnableEditorRetryAsync(editor, generation);
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.IdempotencyConflict:
+                editor.SetStatus("Ключ предыдущей команды уже использован. Нажмите «Сохранить» ещё раз для новой попытки.");
+                _pendingEditorCommand = null;
+                _pendingEditorRevision = -1;
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.Forbidden:
+                _writePermissionChanged = true;
+                editor.SetStatus("Права изменились. Данные формы сохранены, но запись сейчас недоступна.");
+                ScreenMessage = "Права на изменение задач были отозваны. Доступен только просмотр.";
+                NotifyMutationState();
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
+                State = TasksScreenState.SessionEnded;
+                ScreenMessage = "Сессия завершена. Выполните вход снова.";
+                editor.SetStatus("Сессия завершена. Данные формы не отправлены повторно.");
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
+                editor.SetStatus("Сервер недоступен. Данные формы сохранены; повторите попытку.");
+                break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.NotFound:
+                editor.SetStatus("Задача больше не существует или недоступна.");
+                _pendingEditorCommand = null;
+                break;
+            default:
+                editor.SetStatus("Сервер отклонил команду. Данные формы сохранены.");
+                _pendingEditorCommand = null;
+                break;
+        }
+    }
+
+    private async global::System.Threading.Tasks.Task EnableEditorRetryAsync(
+        TaskEditorViewModel editor,
+        long generation)
+    {
+        try
+        {
+            await global::System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(true);
+            if (IsCurrentMutation(generation, editor))
+            {
+                editor.SetRetryAvailable(true);
+                editor.SetStatus("Команду можно безопасно повторить с тем же ключом.");
+            }
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    private async global::System.Threading.Tasks.Task ReloadConflictAsync(CancellationToken cancellationToken)
+    {
+        var editor = Editor;
+        if (editor?.SourceId is not Guid id || !editor.HasConflict) return;
+        var result = await _client.GetTaskByIdAsync(id, cancellationToken).ConfigureAwait(true);
+        if (!ReferenceEquals(Editor, editor)) return;
+        if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded success)
+        {
+            ApplyServerTask(success.Value);
+            Editor = new TaskEditorViewModel(TaskEditorMode.Edit, success.Value);
+            Editor.SetStatus("Загружена актуальная версия. Повторите изменение вручную.");
+            Announcement = "Актуальная версия задачи загружена.";
+        }
+        else
+        {
+            editor.SetStatus("Не удалось загрузить актуальную версию. Повторите позже или закройте форму.");
+        }
+    }
+
+    private void BeginTransition(object? parameter)
+    {
+        if (!TryReadStatus(parameter, out var status) || !CanTransitionTo(status)) return;
+        PendingTransition = status;
+        _pendingTransitionCommand = null;
+        _transitionRetryAvailable = true;
+        TransitionReason = string.Empty;
+        Announcement = PendingTransitionText;
+    }
+
+    private async global::System.Threading.Tasks.Task ConfirmTransitionAsync(CancellationToken cancellationToken)
+    {
+        var selected = SelectedItem;
+        var target = PendingTransition;
+        if (selected is null || !target.HasValue || !CanChangeStatus
+            || !IsAllowedTransition(selected.Source.Status, target.Value)
+            || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+        {
+            return;
+        }
+
+        var command = _pendingTransitionCommand ??= new DesktopTransitionTaskCommand(
+            selected.Id,
+            selected.Source.Version,
+            target.Value,
+            string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
+        var generation = Interlocked.Increment(ref _mutationGeneration);
+        _mutationCancellation?.Dispose();
+        _mutationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            _activationCancellation?.Token ?? CancellationToken.None);
+        IsMutationBusy = true;
+        try
+        {
+            var result = await _client.TransitionTaskAsync(command, _mutationCancellation.Token).ConfigureAwait(true);
+            if (generation != Volatile.Read(ref _mutationGeneration) || SelectedItem?.Id != selected.Id) return;
+            switch (result)
+            {
+                case DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success:
+                    ApplyServerTask(success.Value);
+                    Announcement = $"Статус задачи изменён: {TaskItemViewModel.LocalizeStatus(success.Value.Status)}.";
+                    ClearTransition();
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict:
+                    ClearTransition();
+                    Editor = new TaskEditorViewModel(TaskEditorMode.Edit, selected.Source);
+                    Editor.SetConflict();
+                    ScreenMessage = "Задача уже изменена другим пользователем. Загрузите актуальную версию или закройте форму.";
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress:
+                    ScreenMessage = "Сервер ещё обрабатывает смену статуса. Повторите подтверждение позже.";
+                    _transitionRetryAvailable = false;
+                    ConfirmTransitionCommand.RaiseCanExecuteChanged();
+                    _ = EnableTransitionRetryAsync(generation, selected.Id);
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.IdempotencyConflict:
+                    ScreenMessage = "Ключ смены статуса уже использован. Подтвердите действие ещё раз для новой команды.";
+                    _pendingTransitionCommand = null;
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.Forbidden:
+                    _writePermissionChanged = true;
+                    ScreenMessage = "Права на изменение статуса были отозваны. Доступен только просмотр.";
+                    ClearTransition();
+                    NotifyMutationState();
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
+                    State = TasksScreenState.SessionEnded;
+                    ScreenMessage = "Сессия завершена. Выполните вход снова.";
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
+                    ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите позже.";
+                    break;
+                default:
+                    ScreenMessage = "Не удалось изменить статус задачи.";
+                    ClearTransition();
+                    break;
+            }
+        }
+        catch (OperationCanceledException) when (_mutationCancellation.IsCancellationRequested)
+        {
+        }
+        finally
+        {
+            IsMutationBusy = false;
+            _mutationGate.Release();
+        }
+    }
+
+    private bool CanBeginTransition(object? parameter) =>
+        TryReadStatus(parameter, out var status) && CanTransitionTo(status);
+
+    private bool CanTransitionTo(DesktopTaskStatus target)
+    {
+        if (!IsActive || !CanChangeStatus || IsMutationBusy || PendingTransition.HasValue || SelectedItem is null)
+        {
+            return false;
+        }
+
+        var current = SelectedItem.Source.Status;
+        if (current is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) return false;
+        return IsAllowedTransition(current, target);
+    }
+
+    private static bool IsAllowedTransition(DesktopTaskStatus current, DesktopTaskStatus target)
+    {
+        if (current is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) return false;
+        return target switch
+        {
+            DesktopTaskStatus.InProgress => current == DesktopTaskStatus.New,
+            DesktopTaskStatus.Review => current == DesktopTaskStatus.InProgress,
+            DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled => true,
+            _ => false,
+        };
+    }
+
+    private static bool TryReadStatus(object? parameter, out DesktopTaskStatus status)
+    {
+        if (parameter is DesktopTaskStatus typed)
+        {
+            status = typed;
+            return true;
+        }
+
+        return Enum.TryParse(parameter?.ToString(), ignoreCase: true, out status);
+    }
+
+    private void ClearTransition()
+    {
+        _pendingTransitionCommand = null;
+        PendingTransition = null;
+        TransitionReason = string.Empty;
+        _transitionRetryAvailable = true;
+    }
+
+    private async global::System.Threading.Tasks.Task EnableTransitionRetryAsync(long generation, Guid taskId)
+    {
+        await global::System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(true);
+        if (generation == Volatile.Read(ref _mutationGeneration) && SelectedItem?.Id == taskId
+            && PendingTransition.HasValue)
+        {
+            _transitionRetryAvailable = true;
+            ScreenMessage = "Смену статуса можно безопасно повторить с тем же ключом.";
+            ConfirmTransitionCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    private void ApplyServerTask(DesktopTaskDto task)
+    {
+        CancelDetailsLoad();
+        var item = new TaskItemViewModel(task);
+        var replacement = Items.Select(existing => existing.Id == task.Id ? item : existing).ToList();
+        if (replacement.All(existing => existing.Id != task.Id)) replacement.Insert(0, item);
+        Items = replacement;
+        _selectedItem = item;
+        OnPropertyChanged(nameof(SelectedItem));
+        SelectedDetails = new TaskDetailsViewModel(task);
+        DetailsState = TaskDetailsState.Loaded;
+        DetailMessage = string.Empty;
+        SetLoadedState();
+        NotifyMutationState();
+    }
+
+    private bool IsCurrentMutation(long generation, TaskEditorViewModel editor) =>
+        generation == Volatile.Read(ref _mutationGeneration) && ReferenceEquals(Editor, editor) && IsActive;
+
+    private void OnEditorPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(TaskEditorViewModel.CanSubmit)
+            or nameof(TaskEditorViewModel.HasConflict)
+            or nameof(TaskEditorViewModel.IsDiscardConfirmationVisible))
+        {
+            NotifyMutationState();
+        }
+    }
+
+    private void NotifyMutationState()
+    {
+        OnPropertyChanged(nameof(CanCreate));
+        OnPropertyChanged(nameof(CanUpdate));
+        OnPropertyChanged(nameof(CanChangeStatus));
+        OnPropertyChanged(nameof(IsReadOnly));
+        OnPropertyChanged(nameof(WriteAccessText));
+        OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(CanStart));
+        OnPropertyChanged(nameof(CanSubmitForReview));
+        OnPropertyChanged(nameof(CanComplete));
+        OnPropertyChanged(nameof(CanCancel));
+        NewTaskCommand?.RaiseCanExecuteChanged();
+        EditTaskCommand?.RaiseCanExecuteChanged();
+        SaveEditorCommand?.RaiseCanExecuteChanged();
+        CancelEditorCommand?.RaiseCanExecuteChanged();
+        DiscardEditorCommand?.RaiseCanExecuteChanged();
+        ContinueEditingCommand?.RaiseCanExecuteChanged();
+        ReloadConflictCommand?.RaiseCanExecuteChanged();
+        TransitionCommand?.RaiseCanExecuteChanged();
+        ConfirmTransitionCommand?.RaiseCanExecuteChanged();
+        CancelTransitionCommand?.RaiseCanExecuteChanged();
     }
 
     private void SetLoadedState()

@@ -194,8 +194,8 @@ public sealed partial class TaskEndpointsTests
     {
         using var server = CreateServer(
             new FakeTaskReadStore(Projection),
-            grantTaskRead: false,
-            writeExecutor: new FakeTaskWriteCommandExecutor());
+            writeExecutor: new FakeTaskWriteCommandExecutor(),
+            grantTaskWrite: false);
         using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
 
         await AssertProblemAsync(await PostTaskAsync(client, """{"title":"Denied"}"""), HttpStatusCode.Forbidden, "FORBIDDEN");

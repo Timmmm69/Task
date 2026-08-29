@@ -109,7 +109,34 @@ public sealed class AuthSessionEndpointsTests
         Assert.Equal(OrganizationId.ToString("D"), document.RootElement.GetProperty("organizationId").GetString());
         Assert.Equal(1, document.RootElement.GetProperty("credentialVersion").GetInt64());
         Assert.Equal(1, document.RootElement.GetProperty("authorizationScopeVersion").GetInt64());
+        Assert.Equal(
+            ["Task.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"],
+            document.RootElement.GetProperty("capabilities").EnumerateArray().Select(item => item.GetString()));
         Assert.Equal(mustChangePassword, document.RootElement.GetProperty("mustChangePassword").GetBoolean());
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task CurrentSession_ReturnsOnlyServerGrantedTaskCapabilities()
+    {
+        using var server = CreateServer(new FakeSessionRepository(), services =>
+        {
+            services.AddSingleton<IAuthorizationPolicyStore>(new FakeAuthorizationPolicyStore
+            {
+                GrantedPermissionCodes = new HashSet<string>
+                {
+                    TaskPermissionAuthorization.TaskReadBackingPermissionCode,
+                },
+            });
+        });
+        using var client = await CreateAuthenticatedClientAsync(server);
+
+        var response = await client.GetAsync("/api/v1/auth/session");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var document = await ReadJsonAsync(response);
+        Assert.Equal(
+            ["Task.Read"],
+            document.RootElement.GetProperty("capabilities").EnumerateArray().Select(item => item.GetString()));
     }
 
     [Fact]
@@ -685,6 +712,7 @@ public sealed class AuthSessionEndpointsTests
     {
         public IReadOnlyList<PolicyGrantRow> Grants { get; init; } =
             [new PolicyGrantRow(HasDirectRoleMembership: true)];
+        public IReadOnlySet<string>? GrantedPermissionCodes { get; init; }
 
         public global::System.Threading.Tasks.Task<Guid?> GetUserOrgAsync(
             Guid userId,
@@ -696,7 +724,10 @@ public sealed class AuthSessionEndpointsTests
             Guid userId,
             string permissionCode,
             CancellationToken cancellationToken = default) =>
-            global::System.Threading.Tasks.Task.FromResult(Grants);
+            global::System.Threading.Tasks.Task.FromResult(
+                GrantedPermissionCodes is null || GrantedPermissionCodes.Contains(permissionCode)
+                    ? Grants
+                    : (IReadOnlyList<PolicyGrantRow>)[]);
 
         public global::System.Threading.Tasks.Task<IReadOnlyList<PolicyDenyRow>> GetUserDeniesAsync(
             Guid orgId,

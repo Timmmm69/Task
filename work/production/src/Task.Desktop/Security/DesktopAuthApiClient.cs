@@ -92,6 +92,7 @@ public sealed record CurrentSessionResponse(
     [property: JsonPropertyName("organizationId")] Guid OrganizationId,
     [property: JsonPropertyName("credentialVersion")] long CredentialVersion,
     [property: JsonPropertyName("authorizationScopeVersion")] long AuthorizationScopeVersion,
+    [property: JsonPropertyName("capabilities")] IReadOnlyList<string>? Capabilities,
     [property: JsonPropertyName("mustChangePassword")] bool MustChangePassword);
 
 /// <summary>
@@ -471,6 +472,9 @@ public sealed class DesktopAuthApiClient
                 || session.UserId == Guid.Empty
                 || session.SessionId == Guid.Empty
                 || session.OrganizationId == Guid.Empty
+                || session.Capabilities is { } capabilities
+                    && (capabilities.Any(string.IsNullOrWhiteSpace)
+                        || capabilities.Distinct(StringComparer.Ordinal).Count() != capabilities.Count)
                 ? new GetSessionResult.MalformedResponse()
                 : new GetSessionResult.Succeeded(session);
         }

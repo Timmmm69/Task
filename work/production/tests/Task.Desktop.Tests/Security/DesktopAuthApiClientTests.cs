@@ -97,7 +97,7 @@ public class DesktopAuthApiClientTests
         {
             captured = await CaptureAsync(request);
             return JsonResponse(HttpStatusCode.OK,
-                """{"userId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4","sessionId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4","organizationId":"019fb732-ad08-7de1-b27d-c86bae8a2937","credentialVersion":4,"authorizationScopeVersion":9,"mustChangePassword":true}""");
+                """{"userId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4","sessionId":"019fa078-3f10-7ec1-99e2-7c1cba4ee3d4","organizationId":"019fb732-ad08-7de1-b27d-c86bae8a2937","credentialVersion":4,"authorizationScopeVersion":9,"capabilities":["Task.Read","Task.Create"],"mustChangePassword":true}""");
         });
         var client = new DesktopAuthApiClient(new HttpClient(handler), BaseUrl);
 
@@ -107,6 +107,7 @@ public class DesktopAuthApiClientTests
         Assert.True(succeeded.Session.MustChangePassword);
         Assert.Equal(4, succeeded.Session.CredentialVersion);
         Assert.Equal(9, succeeded.Session.AuthorizationScopeVersion);
+        Assert.Equal(["Task.Read", "Task.Create"], succeeded.Session.Capabilities);
         Assert.NotNull(captured);
         Assert.Equal(HttpMethod.Get, captured!.Method);
         Assert.Equal(new Uri($"{BaseUrl}/api/v1/auth/session"), captured.RequestUri);

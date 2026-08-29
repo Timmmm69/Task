@@ -124,7 +124,7 @@ public sealed record DesktopTransitionTaskCommand
 }
 
 /// <summary>Typed Task API boundary used by the desktop presentation layer.</summary>
-public interface IDesktopTasksApiClient
+public interface IDesktopTasksApiClient : IDesktopTaskWriteApiClient
 {
     global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(
         string? cursor = null,
@@ -198,7 +198,7 @@ public abstract record DesktopTaskWriteResult<T>
 }
 
 /// <summary>Desktop client for the typed Task read/write API boundary.</summary>
-public sealed class DesktopTasksApiClient : IDesktopTasksApiClient, IDesktopTaskWriteApiClient
+public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 

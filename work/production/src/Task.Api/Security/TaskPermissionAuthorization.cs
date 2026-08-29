@@ -23,8 +23,7 @@ internal static class TaskPermissionAuthorization
     public const string LoginAttemptsReadPolicyName = "permission.login-attempts.read";
 
     /// <summary>
-    /// Named policy with the public Task.Read meaning. It is temporarily backed by
-    /// task.manage and therefore grants no new capabilities to any role.
+    /// Named policy with the public Task.Read meaning.
     /// </summary>
     public const string TaskReadPolicyName = "permission.task.read";
 
@@ -32,31 +31,33 @@ internal static class TaskPermissionAuthorization
     public const string AuditEntryReadPermissionCode = "audit.entry.read";
 
     /// <summary>
-    /// Named policy with the public Task.Create meaning. It is temporarily backed by
-    /// task.manage and therefore grants no new capabilities to any role.
+    /// Named policy with the public Task.Create meaning.
     /// </summary>
     public const string TaskCreatePolicyName = "permission.task.create";
 
     /// <summary>
-    /// Named policy with the public Task.Update meaning. It is temporarily backed by
-    /// task.manage and therefore grants no new capabilities to any role.
+    /// Named policy with the public Task.Update meaning.
     /// </summary>
     public const string TaskUpdatePolicyName = "permission.task.update";
 
-    /// <summary>Named Task.ChangeStatus policy, temporarily backed by task.manage.</summary>
+    /// <summary>Named Task.ChangeStatus policy.</summary>
     public const string TaskChangeStatusPolicyName = "permission.task.change-status";
 
-    /// <summary>Fail-closed backing permission for the temporary Task.Read bridge.</summary>
-    public const string TaskReadBackingPermissionCode = "task.manage";
+    public const string TaskReadBackingPermissionCode = "task.read";
 
-    /// <summary>Fail-closed backing permission for the temporary Task.Create bridge.</summary>
-    public const string TaskCreateBackingPermissionCode = "task.manage";
+    public const string TaskCreateBackingPermissionCode = "task.create";
 
-    /// <summary>Fail-closed backing permission for the temporary Task.Update bridge.</summary>
-    public const string TaskUpdateBackingPermissionCode = "task.manage";
+    public const string TaskUpdateBackingPermissionCode = "task.update";
 
-    /// <summary>Fail-closed backing permission for the temporary Task.ChangeStatus bridge.</summary>
-    public const string TaskChangeStatusBackingPermissionCode = "task.manage";
+    public const string TaskChangeStatusBackingPermissionCode = "task.changestatus";
+
+    public static IReadOnlyList<(string PermissionCode, string Capability)> TaskCapabilities { get; } =
+    [
+        (TaskReadBackingPermissionCode, "Task.Read"),
+        (TaskCreateBackingPermissionCode, "Task.Create"),
+        (TaskUpdateBackingPermissionCode, "Task.Update"),
+        (TaskChangeStatusBackingPermissionCode, "Task.ChangeStatus"),
+    ];
 
     /// <summary>
     /// Requires the caller to hold the given permission code within the organization of the

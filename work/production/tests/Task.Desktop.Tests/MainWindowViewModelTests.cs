@@ -96,7 +96,7 @@ public class MainWindowViewModelTests
     {
         var vm = new MainWindowViewModel();
 
-        Assert.Equal("Нет подтверждённого подключения · только просмотр", vm.ConnectionStatus);
+        Assert.Equal("Нет подтверждённого подключения", vm.ConnectionStatus);
         Assert.DoesNotContain('Ð', vm.ConnectionStatus);
         Assert.DoesNotContain('Ñ', vm.ConnectionStatus);
     }
@@ -158,9 +158,9 @@ public class MainWindowViewModelTests
 
         Assert.Equal("https://task.company.local", vm.ServerAddress);
         Assert.Equal(
-            "Подключено к серверу компании · https://task.company.local · только просмотр",
+            "Подключено к серверу компании · https://task.company.local",
             vm.ConnectionStatus);
-        Assert.Contains("просмотр задач доступен", vm.ReadOnlyNotice);
+        Assert.Contains("просмотр задач", vm.ReadOnlyNotice);
         Assert.True(vm.LogoutCommand.CanExecute(null));
     }
 

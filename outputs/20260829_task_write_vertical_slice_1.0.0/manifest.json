@@ -1,0 +1,88 @@
+{
+  "package": "task-write-vertical-slice",
+  "version": "1.0.0",
+  "generatedAtUtc": "2026-08-29T16:11:49Z",
+  "algorithm": "SHA-256",
+  "files": [
+    {
+      "path": "e2e-report.md",
+      "size": 1713,
+      "sha256": "551dcc7d08cc18a56df39e5439a9ad97acfd038ae43cac4eefc74e4b9517707e"
+    },
+    {
+      "path": "evidence/01-loaded.png",
+      "size": 153506,
+      "sha256": "2c7b26d72e48ab6fc5bfcefcf18865ed547f3252817d69186c66f99df42744fd"
+    },
+    {
+      "path": "evidence/02-create-form.png",
+      "size": 164546,
+      "sha256": "dc8d486208680c547fcded69022fd8f859fb689322430ab39241a39ddfff84c0"
+    },
+    {
+      "path": "evidence/03-validation-error.png",
+      "size": 175387,
+      "sha256": "a9c1e6cf53c74996185967c002c68ece03543d62c7b8d3c2c1cbdedcb69dd7d2"
+    },
+    {
+      "path": "evidence/04-edit-form.png",
+      "size": 189747,
+      "sha256": "5b057fcd86672233ba841a7ad72fbc60ee599f12131d42023473e87c787b1043"
+    },
+    {
+      "path": "evidence/05-concurrency-conflict.png",
+      "size": 205243,
+      "sha256": "67b1d5bff8ca9253ff66ad13f65eb468804c1e8acec7a82ccfc546271e4044fd"
+    },
+    {
+      "path": "evidence/06-network-error.png",
+      "size": 199773,
+      "sha256": "92eb95d6eb0b7fcdf95cf253041249a07d8402d335e4c9f82b356601d7bef4ee"
+    },
+    {
+      "path": "evidence/07-transition-confirmation.png",
+      "size": 172495,
+      "sha256": "847e1b372e7df2d0e9643877e8b86e4555b715bdcf1c61060e70452c6c98d6fe"
+    },
+    {
+      "path": "evidence/08-final-completed.png",
+      "size": 184312,
+      "sha256": "05697b22a9ab466ae8fa188cbcc8e8aed5bf2096e37e9260a94bccec1e6a7bd7"
+    },
+    {
+      "path": "evidence/09-read-only.png",
+      "size": 171477,
+      "sha256": "0ce5ddd76db5c74aefcb4db979c26b8d46f8db9a828352dc1ee4bb82a28c29ab"
+    },
+    {
+      "path": "evidence/db-assertions.json",
+      "size": 518,
+      "sha256": "8805e9d41af23752192ae7ea40cdac87b37996ba389310145e547bac114ce302"
+    },
+    {
+      "path": "evidence/uia-evidence.txt",
+      "size": 995,
+      "sha256": "ea6a43dc1b9d883f1915d9abd1289804926a6243c1f88df04aa28bb0aa00f9f9"
+    },
+    {
+      "path": "README.md",
+      "size": 875,
+      "sha256": "92d7ec450b5d7c8c76d98128ed2ea90d327b342a9bcabfde2c85fad1aee650d8"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1300,
+      "sha256": "8a0ee251df5da8a6f10c546795150015af9136ba78dd8d65b28ff78ae0aa29f8"
+    },
+    {
+      "path": "Verify-Manifest.ps1",
+      "size": 2224,
+      "sha256": "49cfd88c0d45b0d5b8c6800c42da6bd4e91da04162a1852d32e81e6d7a67d029"
+    },
+    {
+      "path": "VERSION",
+      "size": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}

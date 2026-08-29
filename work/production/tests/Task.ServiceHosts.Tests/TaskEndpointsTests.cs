@@ -243,7 +243,8 @@ public sealed partial class TaskEndpointsTests
         SessionRequestState sessionState = SessionRequestState.Active,
         Guid? tokenOrganizationId = null,
         ITaskWriteCommandExecutor? writeExecutor = null,
-        ITaskAggregateStore? aggregateStore = null)
+        ITaskAggregateStore? aggregateStore = null,
+        bool grantTaskWrite = true)
     {
         var keyMaterial = KeyMaterial.Value;
         var organizationId = tokenOrganizationId ?? OrganizationId;
@@ -281,7 +282,8 @@ public sealed partial class TaskEndpointsTests
 
                 services.AddSingleton<IAuthorizationPolicyStore>(new FakePolicyStore(
                     organizationId,
-                    grantTaskRead));
+                    grantTaskRead,
+                    grantTaskWrite));
                 services.AddSingleton<PermissionDecisionService>();
                 services.AddTaskPermissionAuthorization();
                 services.AddSingleton(
@@ -435,11 +437,13 @@ public sealed partial class TaskEndpointsTests
     private sealed class FakePolicyStore : IAuthorizationPolicyStore
     {
         private readonly bool _grantTaskRead;
+        private readonly bool _grantTaskWrite;
 
-        public FakePolicyStore(Guid userOrganizationId, bool grantTaskRead)
+        public FakePolicyStore(Guid userOrganizationId, bool grantTaskRead, bool grantTaskWrite)
         {
             UserOrganizationId = userOrganizationId;
             _grantTaskRead = grantTaskRead;
+            _grantTaskWrite = grantTaskWrite;
         }
 
         private Guid UserOrganizationId { get; }
@@ -455,8 +459,14 @@ public sealed partial class TaskEndpointsTests
             string permissionCode,
             CancellationToken cancellationToken = default)
         {
-            IReadOnlyList<PolicyGrantRow> grants =
-                _grantTaskRead && permissionCode == TaskPermissionAuthorization.TaskReadBackingPermissionCode
+            var allowed = permissionCode == TaskPermissionAuthorization.TaskReadBackingPermissionCode
+                ? _grantTaskRead
+                : permissionCode is TaskPermissionAuthorization.TaskCreateBackingPermissionCode
+                    or TaskPermissionAuthorization.TaskUpdateBackingPermissionCode
+                    or TaskPermissionAuthorization.TaskChangeStatusBackingPermissionCode
+                    ? _grantTaskWrite
+                    : false;
+            IReadOnlyList<PolicyGrantRow> grants = allowed
                     ? [new PolicyGrantRow(HasDirectRoleMembership: true)]
                     : [];
             return global::System.Threading.Tasks.Task.FromResult(grants);
