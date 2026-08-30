@@ -1,0 +1,18 @@
+{
+  "package": "calendar-persistence-contract-verification",
+  "version": "1.0.0",
+  "date": "2026-08-30",
+  "baseCommit": "bb37ad9",
+  "scope": "Real PostgreSQL verification of the existing calendar persistence contract and correction of stale migration-gate expectations.",
+  "productionContractChanged": false,
+  "artifacts": [
+    "README.md",
+    "VERSION",
+    "validation-report.md"
+  ],
+  "validation": {
+    "criticalCalendarTests": "2 passed, 0 failed, 0 skipped",
+    "taskTests": "755 passed, 0 failed, 0 skipped",
+    "solutionBuild": "0 errors"
+  }
+}

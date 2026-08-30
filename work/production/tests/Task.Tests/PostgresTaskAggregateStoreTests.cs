@@ -180,7 +180,7 @@ public sealed class PostgresTaskAggregateStoreTests
                 "SELECT count(*), min(length(sha256)) FROM infrastructure.schema_migrations;");
             using var checksumReader = checksumCommand.ExecuteReader();
             checksumReader.Read();
-            Assert.Equal(5, checksumReader.GetInt64(0));
+            Assert.Equal((long)TaskPersistenceRuntime.ExpectedMigrationVersion, checksumReader.GetInt64(0));
             Assert.Equal(64, checksumReader.GetInt32(1));
             checksumReader.Close();
 
@@ -403,19 +403,22 @@ public sealed class PostgresTaskAggregateStoreTests
                 Assert.Equal(1, restoreName.ExecuteNonQuery());
             }
 
+            var futureVersion = TaskPersistenceRuntime.ExpectedMigrationVersion + 1;
             using (var future = dataSource.CreateCommand(
                 """
                 INSERT INTO infrastructure.schema_migrations (version, name, sha256)
-                VALUES (6, 'future', repeat('A', 64));
+                VALUES ($1, 'future', repeat('A', 64));
                 """))
             {
+                future.Parameters.AddWithValue(futureVersion);
                 Assert.Equal(1, future.ExecuteNonQuery());
             }
 
             Assert.Equal(7, (await RunMigratorAsync("status", databaseConnection)).ExitCode);
             using (var removeFuture = dataSource.CreateCommand(
-                "DELETE FROM infrastructure.schema_migrations WHERE version = 6;"))
+                "DELETE FROM infrastructure.schema_migrations WHERE version = $1;"))
             {
+                removeFuture.Parameters.AddWithValue(futureVersion);
                 Assert.Equal(1, removeFuture.ExecuteNonQuery());
             }
 
