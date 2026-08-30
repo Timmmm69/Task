@@ -97,10 +97,16 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - name: Restore production solution
-        run: dotnet restore Task.sln
-      - name: Build production solution required by integration tests
-        run: dotnet build Task.sln --configuration Debug --no-restore
+      - name: Restore PostgreSQL gate projects
+        run: |
+          dotnet restore src/Task.Api/Task.Api.csproj
+          dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj
+          dotnet restore tests/Task.Tests/Task.Tests.csproj
+      - name: Build runtime required by integration tests
+        run: |
+          dotnet build src/Task.Api/Task.Api.csproj --configuration Debug --no-restore
+          dotnet build src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --configuration Debug --no-restore
+          dotnet build tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-restore
       - name: Run tests against real PostgreSQL
         run: dotnet test tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-build --no-restore
 
