@@ -2,10 +2,13 @@
 using System.ComponentModel;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using Task.Desktop.Security;
 using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
+
+[assembly: InternalsVisibleTo("Task.Desktop.Tests")]
 
 namespace Task.Desktop;
 
@@ -18,6 +21,7 @@ public partial class App : global::System.Windows.Application
     private AuthWorkflowViewModel? _workflow;
     private AuthWindow? _authWindow;
     private MainWindow? _mainWindow;
+    private SessionService? _mainSessionService;
     private bool _isShuttingDown;
 
     protected override async void OnStartup(StartupEventArgs e)
@@ -62,6 +66,8 @@ public partial class App : global::System.Windows.Application
             _workflow.PropertyChanged -= OnWorkflowPropertyChanged;
             _workflow.Dispose();
         }
+
+        DetachMainSession();
 
         foreach (var httpClient in _ownedHttpClients)
         {
@@ -124,11 +130,14 @@ public partial class App : global::System.Windows.Application
             _authWindow.Show();
         }
 
+        MainWindow = _authWindow;
+
         if (_mainWindow is not null)
         {
             var window = _mainWindow;
             _mainWindow = null;
-            window.Close();
+            DetachMainSession();
+            window.CloseForAuthenticationTransition();
         }
 
         _authWindow.Activate();
@@ -160,9 +169,12 @@ public partial class App : global::System.Windows.Application
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks);
         var window = new MainWindow(viewModel);
         _mainWindow = window;
+        _mainSessionService = sessionService;
+        sessionService.StateChanged += OnMainSessionStateChanged;
         MainWindow = window;
         window.Closed += OnMainWindowClosed;
         window.Show();
+        ApplyMainSessionState(sessionService);
 
         if (_authWindow is not null)
         {
@@ -189,9 +201,14 @@ public partial class App : global::System.Windows.Application
 
     private void OnMainWindowClosed(object? sender, EventArgs e)
     {
-        if (sender is MainWindow window && window.DataContext is IDisposable disposable)
+        if (sender is MainWindow window)
         {
-            disposable.Dispose();
+            if (window.DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
+            window.DataContext = null;
         }
 
         if (!ReferenceEquals(sender, _mainWindow))
@@ -199,11 +216,52 @@ public partial class App : global::System.Windows.Application
             return;
         }
 
+        DetachMainSession();
         _mainWindow = null;
         if (_workflow?.IsReady == true)
         {
             BeginShutdown();
         }
+    }
+
+    private void OnMainSessionStateChanged(SessionAuthState _)
+    {
+        var sessionService = _mainSessionService;
+        if (sessionService is null || _isShuttingDown)
+        {
+            return;
+        }
+
+        Dispatcher.BeginInvoke(() => ApplyMainSessionState(sessionService));
+    }
+
+    private void ApplyMainSessionState(SessionService sessionService)
+    {
+        if (!ReferenceEquals(sessionService, _mainSessionService)
+            || _mainWindow?.DataContext is not MainWindowViewModel { Tasks: not null } viewModel)
+        {
+            return;
+        }
+
+        var signedIn = sessionService.CurrentState == SessionAuthState.SignedIn;
+        if (signedIn)
+        {
+            viewModel.Tasks.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+        }
+
+        viewModel.Tasks.UpdateSessionState(signedIn);
+    }
+
+    private void DetachMainSession()
+    {
+        if (_mainSessionService is null)
+        {
+            return;
+        }
+
+        _mainSessionService.StateChanged -= OnMainSessionStateChanged;
+        _mainSessionService = null;
     }
 
     private void BeginShutdown()

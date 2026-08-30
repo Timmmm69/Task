@@ -11,6 +11,8 @@ namespace Task.Desktop;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private bool _authenticationTransitionClose;
+
     public MainWindow()
         : this(new MainWindowViewModel())
     {
@@ -29,21 +31,37 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        if (DataContext is MainWindowViewModel { Tasks.Editor: { HasUnsavedChanges: true } editor })
+        var editor = (DataContext as MainWindowViewModel)?.Tasks?.Editor;
+        if (ShouldCancelClose(
+            _authenticationTransitionClose,
+            editor?.HasUnsavedChanges == true,
+            () =>
         {
-            var message = editor.IsBusy
+            var message = editor!.IsBusy
                 ? "Сохранение ещё выполняется. Закрытие отменит ожидание ответа. Закрыть Task?"
                 : "В форме задачи есть несохранённые изменения. Закрыть Task без сохранения?";
-            if (MessageBox.Show(message, "Несохранённая задача", MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes)
-            {
-                e.Cancel = true;
-                return;
-            }
+            return MessageBox.Show(message, "Несохранённая задача", MessageBoxButton.YesNo,
+                MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
+        }))
+        {
+            e.Cancel = true;
+            return;
         }
 
         base.OnClosing(e);
     }
+
+    internal void CloseForAuthenticationTransition()
+    {
+        _authenticationTransitionClose = true;
+        Close();
+    }
+
+    internal static bool ShouldCancelClose(
+        bool authenticationTransition,
+        bool hasUnsavedChanges,
+        Func<bool> confirmClose) =>
+        !authenticationTransition && hasUnsavedChanges && !confirmClose();
 
     protected override void OnClosed(EventArgs e)
     {

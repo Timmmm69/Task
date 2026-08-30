@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Task.Desktop.ViewModels;
 
@@ -11,6 +12,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly Func<CancellationToken, global::System.Threading.Tasks.Task>? _logout;
     private NavigationSection? _selectedSection;
     private string? _sessionMessage;
+    private bool _disposed;
 
     public MainWindowViewModel()
         : this(null, null, null)
@@ -25,6 +27,10 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
         Tasks = tasks;
+        if (Tasks is not null)
+        {
+            Tasks.PropertyChanged += OnTasksPropertyChanged;
+        }
         Sections = new ObservableCollection<NavigationSection>
         {
             new("today", "Сегодня", "Раздел «Сегодня»: сводка задач на текущий день появится после подключения к серверу.", "Task.Icon.Today", "Сводка на текущий день"),
@@ -142,8 +148,33 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        if (Tasks is not null)
+        {
+            Tasks.PropertyChanged -= OnTasksPropertyChanged;
+        }
+
         LogoutCommand.Dispose();
         Tasks?.Dispose();
+    }
+
+    private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(TasksViewModel.IsReadOnly)
+            or nameof(TasksViewModel.WriteAccessText)
+            or nameof(TasksViewModel.CanCreate))
+        {
+            OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(IsReadOnlyMode));
+            OnPropertyChanged(nameof(ReadOnlyNotice));
+            OnPropertyChanged(nameof(DataSourceStatus));
+            OnPropertyChanged(nameof(ReadOnlyActionReason));
+        }
     }
 
     private async global::System.Threading.Tasks.Task LogoutAsync(

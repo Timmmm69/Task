@@ -1,4 +1,6 @@
+using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
+using Task.Desktop.Tests.TaskScreen;
 
 namespace Task.Desktop.Tests;
 
@@ -187,5 +189,39 @@ public class MainWindowViewModelTests
         Assert.True(await first);
         Assert.False(second);
         Assert.Equal(1, calls);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task TaskWriteState_IsReactiveAndDisposeUnsubscribes()
+    {
+        var client = new TasksViewModelTests.FakeTasksApiClient();
+        client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(
+            new DesktopTaskPage([], null, null)));
+        var tasks = new TasksViewModel(client, ["Task.Read"]);
+        await tasks.ActivateAsync();
+        using var vm = new MainWindowViewModel(new Uri("https://task.company.local/"), null, tasks);
+        vm.SelectedSection = vm.Sections.Single(section => section.Route == "tasks");
+        var raised = new List<string?>();
+        vm.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+
+        tasks.UpdateCapabilities(["Task.Read", "Task.Create"]);
+
+        Assert.Equal("Онлайн · запись доступна", vm.ConnectionContext);
+        Assert.Contains("синхронизируются", vm.DataSourceStatus);
+        Assert.False(vm.IsReadOnlyMode);
+        Assert.Contains(nameof(MainWindowViewModel.ConnectionContext), raised);
+        Assert.Contains(nameof(MainWindowViewModel.ReadOnlyNotice), raised);
+
+        tasks.UpdateCapabilities(["Task.Read"]);
+
+        Assert.Equal("Онлайн · только просмотр", vm.ConnectionContext);
+        Assert.Contains("только просмотр", vm.DataSourceStatus);
+        Assert.True(vm.IsReadOnlyMode);
+
+        raised.Clear();
+        vm.Dispose();
+
+        Assert.False(tasks.IsActive);
+        Assert.DoesNotContain(nameof(MainWindowViewModel.ConnectionContext), raised);
     }
 }

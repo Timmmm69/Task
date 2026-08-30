@@ -495,6 +495,136 @@ public sealed class TasksViewModelTests
         Assert.Contains("Права", viewModel.ScreenMessage);
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task EmptyPage_CreateCommandTracksActivationAndRaisesCanExecuteChanged()
+    {
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, ["Task.Create"]);
+        var changes = 0;
+        viewModel.NewTaskCommand.CanExecuteChanged += (_, _) => changes++;
+
+        Assert.False(viewModel.NewTaskCommand.CanExecute(null));
+        await viewModel.ActivateAsync();
+        Assert.True(viewModel.NewTaskCommand.CanExecute(null));
+
+        viewModel.Deactivate();
+        Assert.False(viewModel.NewTaskCommand.CanExecute(null));
+        await viewModel.ActivateAsync();
+
+        Assert.True(viewModel.NewTaskCommand.CanExecute(null));
+        Assert.True(changes >= 3);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task CapabilityGrant_UpdatesWriteStateWithoutRecreatingViewModel()
+    {
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, ["Task.Read"]);
+        await viewModel.ActivateAsync();
+        var previousText = viewModel.WriteAccessText;
+
+        viewModel.UpdateCapabilities(["Task.Read", "Task.Create"]);
+
+        Assert.False(viewModel.IsReadOnly);
+        Assert.True(viewModel.NewTaskCommand.CanExecute(null));
+        Assert.NotEqual(previousText, viewModel.WriteAccessText);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task CapabilityRevoke_PreservesCreateDraftAndBlocksSubmission()
+    {
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.NewTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Черновик после отзыва";
+
+        viewModel.UpdateCapabilities(["Task.Read"]);
+        var submitted = await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.Equal("Черновик после отзыва", viewModel.Editor.Title);
+        Assert.False(viewModel.SaveEditorCommand.CanExecute(null));
+        Assert.False(submitted);
+        Assert.Equal(0, client.CreateCallCount);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task EditSave_RequiresCurrentUpdateCapability()
+    {
+        var task = CreateTask();
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
+        };
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.EditTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Изменённый черновик";
+
+        viewModel.UpdateCapabilities(["Task.Read", "Task.Create"]);
+        await viewModel.SaveEditorCommand.ExecuteAsync();
+
+        Assert.False(viewModel.SaveEditorCommand.CanExecute(null));
+        Assert.Equal(0, client.PatchCallCount);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task TransitionRevoke_CancelsPendingConfirmationAndBlocksApiCall()
+    {
+        var task = CreateTask();
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([task]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.TransitionCommand.ExecuteAsync("InProgress");
+        Assert.True(viewModel.PendingTransition.HasValue);
+
+        viewModel.UpdateCapabilities(["Task.Read", "Task.Create", "Task.Update"]);
+        await viewModel.ConfirmTransitionCommand.ExecuteAsync();
+
+        Assert.Null(viewModel.PendingTransition);
+        Assert.False(viewModel.ConfirmTransitionCommand.CanExecute(null));
+        Assert.Equal(0, client.TransitionCallCount);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async global::System.Threading.Tasks.Task TerminalReadFailure_DisablesAllMutationCommands(
+        bool sessionEnded)
+    {
+        var task = CreateTask();
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
+        };
+        client.EnqueuePage(SucceededPage([task]));
+        client.EnqueuePage(sessionEnded
+            ? new DesktopTasksApiResult<DesktopTaskPage>.AuthenticationFailure()
+            : new DesktopTasksApiResult<DesktopTaskPage>.Forbidden());
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.EditTaskCommand.ExecuteAsync();
+        viewModel.Editor!.Title = "Сохранённый черновик";
+        await viewModel.TransitionCommand.ExecuteAsync("InProgress");
+        var saveChanges = 0;
+        var confirmChanges = 0;
+        viewModel.SaveEditorCommand.CanExecuteChanged += (_, _) => saveChanges++;
+        viewModel.ConfirmTransitionCommand.CanExecuteChanged += (_, _) => confirmChanges++;
+
+        await viewModel.RefreshAsync();
+
+        Assert.Equal(sessionEnded ? TasksScreenState.SessionEnded : TasksScreenState.Forbidden, viewModel.State);
+        Assert.False(viewModel.SaveEditorCommand.CanExecute(null));
+        Assert.False(viewModel.ConfirmTransitionCommand.CanExecute(null));
+        Assert.True(saveChanges > 0);
+        Assert.True(confirmChanges > 0);
+    }
+
     private static DesktopTasksApiResult<DesktopTaskPage> SucceededPage(
         IReadOnlyList<DesktopTaskDto> items,
         string? nextCursor = null) =>
@@ -532,7 +662,7 @@ public sealed class TasksViewModelTests
         }
     }
 
-    private sealed class FakeTasksApiClient : IDesktopTasksApiClient
+    internal sealed class FakeTasksApiClient : IDesktopTasksApiClient
     {
         private readonly ConcurrentQueue<Func<string?, CancellationToken,
             global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>> _pages = new();
@@ -540,6 +670,7 @@ public sealed class TasksViewModelTests
         public int PageCallCount { get; private set; }
         public int CreateCallCount { get; private set; }
         public int PatchCallCount { get; private set; }
+        public int TransitionCallCount { get; private set; }
         public List<DesktopCreateTaskCommand> CreateCommands { get; } = [];
         public ConcurrentQueue<DesktopTaskWriteResult<DesktopTaskDto>> CreateResults { get; } = new();
         public DesktopPatchTaskCommand? LastPatch { get; private set; }
@@ -604,6 +735,7 @@ public sealed class TasksViewModelTests
             DesktopTransitionTaskCommand command,
             CancellationToken cancellationToken = default)
         {
+            TransitionCallCount++;
             LastTransition = command;
             return global::System.Threading.Tasks.Task.FromResult(TransitionResult);
         }

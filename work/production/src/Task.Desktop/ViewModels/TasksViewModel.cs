@@ -221,6 +221,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private long _mutationGeneration;
     private bool _isMutationBusy;
     private bool _writePermissionChanged;
+    private bool _sessionAllowsWrites = true;
     private DesktopTaskStatus? _pendingTransition;
     private DesktopTransitionTaskCommand? _pendingTransitionCommand;
     private bool _transitionRetryAvailable = true;
@@ -247,7 +248,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             _ => CanEdit);
         SaveEditorCommand = new AsyncCommand(
             async (_, token) => await SaveEditorAsync(token).ConfigureAwait(true),
-            _ => Editor?.CanSubmit == true && !IsMutationBusy);
+            _ => CanSaveEditor);
         CancelEditorCommand = new AsyncCommand(
             (_, _) => { RequestCloseEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
             _ => Editor is not null && !IsMutationBusy);
@@ -265,7 +266,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             CanBeginTransition);
         ConfirmTransitionCommand = new AsyncCommand(
             async (_, token) => await ConfirmTransitionAsync(token).ConfigureAwait(true),
-            _ => PendingTransition.HasValue && _transitionRetryAvailable
+            _ => CanChangeStatus && PendingTransition.HasValue && _transitionRetryAvailable
                 && !IsMutationBusy && TransitionReason.Length <= 2000);
         CancelTransitionCommand = new AsyncCommand(
             (_, _) => { ClearTransition(); return global::System.Threading.Tasks.Task.CompletedTask; },
@@ -337,10 +338,9 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         }
     }
 
-    public bool CanCreate => IsActive && !_writePermissionChanged && _capabilities.Contains("Task.Create")
-        && State is not TasksScreenState.SessionEnded and not TasksScreenState.Forbidden;
-    public bool CanUpdate => !_writePermissionChanged && _capabilities.Contains("Task.Update");
-    public bool CanChangeStatus => !_writePermissionChanged && _capabilities.Contains("Task.ChangeStatus");
+    public bool CanCreate => CanWrite("Task.Create");
+    public bool CanUpdate => CanWrite("Task.Update");
+    public bool CanChangeStatus => CanWrite("Task.ChangeStatus");
     public bool IsReadOnly => !CanCreate && !CanUpdate && !CanChangeStatus;
     public string WriteAccessText => IsReadOnly
         ? "Доступен только просмотр задач. Для изменений нужны соответствующие права."
@@ -425,6 +425,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(StateTitle));
                 OnPropertyChanged(nameof(StateIconKey));
                 RaiseCommandStateChanged();
+                NotifyMutationState();
             }
         }
     }
@@ -461,6 +462,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _isActive, value))
             {
                 RaiseCommandStateChanged();
+                NotifyMutationState();
             }
         }
     }
@@ -524,6 +526,58 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand TransitionCommand { get; }
     public AsyncCommand ConfirmTransitionCommand { get; }
     public AsyncCommand CancelTransitionCommand { get; }
+
+    internal void UpdateCapabilities(IEnumerable<string>? capabilities)
+    {
+        ThrowIfDisposed();
+        _capabilities.Clear();
+        foreach (var capability in capabilities ?? [])
+        {
+            _capabilities.Add(capability);
+        }
+
+        _writePermissionChanged = false;
+        if (Editor is not null && !HasCapabilityForEditor(Editor))
+        {
+            Editor.SetStatus("Права изменились. Данные формы сохранены, но запись сейчас недоступна.");
+        }
+
+        if (PendingTransition.HasValue && !_capabilities.Contains("Task.ChangeStatus"))
+        {
+            ClearTransition();
+            ScreenMessage = "Право на изменение статуса было отозвано. Подтверждение отменено.";
+        }
+
+        NotifyMutationState();
+    }
+
+    internal void UpdateSessionState(bool allowsWrites)
+    {
+        ThrowIfDisposed();
+        if (_sessionAllowsWrites == allowsWrites)
+        {
+            return;
+        }
+
+        _sessionAllowsWrites = allowsWrites;
+        if (!allowsWrites)
+        {
+            Interlocked.Increment(ref _mutationGeneration);
+            _mutationCancellation?.Cancel();
+            if (Editor is not null)
+            {
+                Editor.SetStatus("Сессия не допускает запись. Данные формы сохранены.");
+            }
+
+            if (PendingTransition.HasValue)
+            {
+                ClearTransition();
+                ScreenMessage = "Сессия завершена. Подтверждение изменения статуса отменено.";
+            }
+        }
+
+        NotifyMutationState();
+    }
 
     public async global::System.Threading.Tasks.Task ActivateAsync(
         CancellationToken cancellationToken = default)
@@ -884,9 +938,13 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private async global::System.Threading.Tasks.Task SaveEditorAsync(CancellationToken cancellationToken)
     {
         var editor = Editor;
-        if (editor is null || !editor.CanSubmit
+        if (!CanSaveEditor || editor is null
             || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
         {
+            if (editor is not null && !HasCapabilityForEditor(editor))
+            {
+                editor.SetStatus("Недостаточно прав для сохранения. Данные формы сохранены.");
+            }
             return;
         }
 
@@ -1222,6 +1280,22 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
 
     private bool IsCurrentMutation(long generation, TaskEditorViewModel editor) =>
         generation == Volatile.Read(ref _mutationGeneration) && ReferenceEquals(Editor, editor) && IsActive;
+
+    private bool CanSaveEditor => Editor is { CanSubmit: true } editor
+        && !IsMutationBusy && HasCapabilityForEditor(editor);
+
+    private bool HasCapabilityForEditor(TaskEditorViewModel editor) => editor.Mode switch
+    {
+        TaskEditorMode.Create => CanCreate,
+        TaskEditorMode.Edit => CanUpdate,
+        _ => false,
+    };
+
+    private bool CanWrite(string capability) => IsActive
+        && _sessionAllowsWrites
+        && !_writePermissionChanged
+        && _capabilities.Contains(capability)
+        && State is not TasksScreenState.SessionEnded and not TasksScreenState.Forbidden;
 
     private void OnEditorPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
