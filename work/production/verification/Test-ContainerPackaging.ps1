@@ -351,9 +351,15 @@ finally {
 
     try {
         if (Test-Path -LiteralPath $tempDirectory) {
-            $tmpRootFull = [IO.Path]::GetFullPath($tmpRoot).TrimEnd('\') + '\'
+            $tmpRootFull = [IO.Path]::GetFullPath($tmpRoot)
             $tempFull = [IO.Path]::GetFullPath($tempDirectory)
-            if (-not $tempFull.StartsWith($tmpRootFull, [StringComparison]::OrdinalIgnoreCase)) {
+            $relativeTemp = [IO.Path]::GetRelativePath($tmpRootFull, $tempFull)
+            $parentPrefix = "..$([IO.Path]::DirectorySeparatorChar)"
+            if (
+                $relativeTemp -in '.', '..' -or
+                [IO.Path]::IsPathRooted($relativeTemp) -or
+                $relativeTemp.StartsWith($parentPrefix, [StringComparison]::Ordinal)
+            ) {
                 throw "Refusing to remove temp directory outside work/tmp: $tempFull"
             }
             Remove-Item -LiteralPath $tempFull -Recurse -Force
