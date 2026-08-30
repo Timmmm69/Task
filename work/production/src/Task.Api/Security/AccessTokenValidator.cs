@@ -190,6 +190,8 @@ internal sealed class AccessTokenValidator
 /// </summary>
 internal sealed class JwtVerificationKeys
 {
+    private const int MaximumVerificationKeyCount = 2;
+
     private readonly IReadOnlyDictionary<string, ECDsaSecurityKey> _keys;
 
     private JwtVerificationKeys(IReadOnlyDictionary<string, ECDsaSecurityKey> keys)
@@ -201,28 +203,57 @@ internal sealed class JwtVerificationKeys
 
     public static JwtVerificationKeys Load(TaskIdentityFoundationOptions identityOptions)
     {
+        ArgumentNullException.ThrowIfNull(identityOptions);
+
         var keys = new Dictionary<string, ECDsaSecurityKey>(StringComparer.Ordinal);
+
+        if (identityOptions.IsUnconfigured)
+        {
+            return new JwtVerificationKeys(keys);
+        }
 
         try
         {
             var reference = identityOptions.VerificationKeysDirectory;
-            if (!string.IsNullOrWhiteSpace(reference)
-                && reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(reference)
+                || !reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
             {
-                var directory = reference.Substring("file:".Length);
-                if (!string.IsNullOrWhiteSpace(directory) && Directory.Exists(directory))
-                {
-                    foreach (var path in Directory.EnumerateFiles(directory, "*.pem"))
-                    {
-                        TryLoadKey(path, keys);
-                    }
-                }
+                throw new InvalidOperationException(
+                    "Task:Identity:VerificationKeysDirectory must be a file: reference.");
             }
+
+            var directory = reference.Substring("file:".Length);
+            if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+            {
+                throw new InvalidOperationException(
+                    "The configured verification key directory does not exist or is not readable.");
+            }
+
+            var paths = Directory.EnumerateFiles(directory, "*.pem")
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+            if (paths.Length is < 1 or > MaximumVerificationKeyCount)
+            {
+                throw new InvalidOperationException(
+                    "The verification key directory must contain the active public key and at most one previous public key.");
+            }
+
+            foreach (var path in paths)
+            {
+                LoadKey(path, keys);
+            }
+
+        }
+        catch (InvalidOperationException)
+        {
+            DisposeKeys(keys.Values);
+            throw;
         }
         catch (Exception)
         {
-            // Fail closed: an unreadable directory yields an empty key set.
-            keys.Clear();
+            DisposeKeys(keys.Values);
+            throw new InvalidOperationException(
+                "The verification key directory is not readable or contains invalid key material.");
         }
 
         return new JwtVerificationKeys(keys);
@@ -231,35 +262,99 @@ internal sealed class JwtVerificationKeys
     public ECDsaSecurityKey? Find(string? keyId) =>
         keyId is not null && _keys.TryGetValue(keyId, out var key) ? key : null;
 
-    private static void TryLoadKey(string path, IDictionary<string, ECDsaSecurityKey> keys)
+    private static void LoadKey(string path, IDictionary<string, ECDsaSecurityKey> keys)
     {
         var keyId = Path.GetFileNameWithoutExtension(path);
         if (string.IsNullOrWhiteSpace(keyId) || keys.ContainsKey(keyId))
         {
-            return;
+            throw new InvalidOperationException("Verification key identifiers must be non-empty and unique.");
+        }
+
+        ECDsa? ecdsa = null;
+        try
+        {
+            var pem = File.ReadAllText(path);
+            if (!pem.Contains("PUBLIC KEY", StringComparison.Ordinal)
+                || pem.Contains("PRIVATE KEY", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "A verification key file must contain a public key only.");
+            }
+
+            ecdsa = ECDsa.Create();
+            ecdsa.ImportFromPem(pem);
+            if (ecdsa.KeySize != 256)
+            {
+                throw new InvalidOperationException(
+                    "A verification key file is not an ECDSA P-256 public key.");
+            }
+
+            keys[keyId] = new ECDsaSecurityKey(ecdsa) { KeyId = keyId };
+            ecdsa = null;
+        }
+        catch (InvalidOperationException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException(
+                "A verification key file is not readable or contains invalid key material.");
+        }
+        finally
+        {
+            ecdsa?.Dispose();
+        }
+    }
+
+    internal static void ValidateActiveKeyPair(
+        string? signingKeyReference,
+        JwtVerificationKeys verificationKeys)
+    {
+        if (string.IsNullOrWhiteSpace(signingKeyReference)
+            || !signingKeyReference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                "Task:Identity:SigningKeyReference must be a file: reference.");
+        }
+
+        var signingKeyPath = signingKeyReference.Substring("file:".Length);
+        var activeKeyId = Path.GetFileNameWithoutExtension(signingKeyPath);
+        if (string.IsNullOrWhiteSpace(activeKeyId)
+            || verificationKeys.Find(activeKeyId) is not { } verificationKey)
+        {
+            throw new InvalidOperationException(
+                "The verification key directory does not contain the public key for the active signing key id.");
         }
 
         try
         {
-            var pem = File.ReadAllText(path);
-            if (!pem.Contains("PUBLIC KEY", StringComparison.Ordinal))
+            using var signingKey = ECDsa.Create();
+            signingKey.ImportFromPem(File.ReadAllText(signingKeyPath));
+            var expected = signingKey.ExportSubjectPublicKeyInfo();
+            var actual = verificationKey.ECDsa.ExportSubjectPublicKeyInfo();
+            if (!CryptographicOperations.FixedTimeEquals(expected, actual))
             {
-                return;
+                throw new InvalidOperationException(
+                    "The active signing key does not match its verification public key.");
             }
-
-            var ecdsa = ECDsa.Create();
-            ecdsa.ImportFromPem(pem);
-            if (ecdsa.KeySize != 256)
-            {
-                ecdsa.Dispose();
-                return;
-            }
-
-            keys[keyId] = new ECDsaSecurityKey(ecdsa) { KeyId = keyId };
+        }
+        catch (InvalidOperationException)
+        {
+            throw;
         }
         catch (Exception)
         {
-            // Fail closed: unreadable or malformed key material is skipped.
+            throw new InvalidOperationException(
+                "The active signing key file is not readable or contains invalid key material.");
+        }
+    }
+
+    private static void DisposeKeys(IEnumerable<ECDsaSecurityKey> keys)
+    {
+        foreach (var key in keys)
+        {
+            key.ECDsa.Dispose();
         }
     }
 }

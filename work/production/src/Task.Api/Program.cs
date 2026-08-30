@@ -35,9 +35,11 @@ if (WindowsServiceHelpers.IsWindowsService())
 }
 
 builder.Services.AddProblemDetails();
-builder.Services.Configure<TaskIdentityFoundationOptions>(
-    builder.Configuration.GetSection(TaskIdentityFoundationOptions.SectionName));
+builder.Services.AddOptions<TaskIdentityFoundationOptions>()
+    .Bind(builder.Configuration.GetSection(TaskIdentityFoundationOptions.SectionName))
+    .ValidateOnStart();
 builder.Services.AddTaskApiSecurityFoundation();
+builder.Services.AddHostedService<TaskIdentityKeyMaterialStartupValidator>();
 
 var taskDatabaseConnectionString = builder.Configuration.GetConnectionString("TaskDatabase");
 builder.Services.AddSingleton<TaskPersistenceRuntime>(_ =>

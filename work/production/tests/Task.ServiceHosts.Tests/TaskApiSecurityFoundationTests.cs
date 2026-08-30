@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
@@ -116,6 +117,44 @@ public sealed class TaskApiSecurityFoundationTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task KeyMaterialStartupValidator_WithValidRingAndPepper_Succeeds()
+    {
+        var material = CreateKeyMaterial(new string('p', 32));
+        try
+        {
+            var keys = JwtVerificationKeys.Load(material.Options);
+            var validator = new TaskIdentityKeyMaterialStartupValidator(Options.Create(material.Options), keys);
+
+            await validator.StartAsync(CancellationToken.None);
+        }
+        finally
+        {
+            Directory.Delete(material.Root, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task KeyMaterialStartupValidator_WithShortPepper_FailsClosed()
+    {
+        var material = CreateKeyMaterial("too-short");
+        try
+        {
+            var keys = JwtVerificationKeys.Load(material.Options);
+            var validator = new TaskIdentityKeyMaterialStartupValidator(Options.Create(material.Options), keys);
+
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => validator.StartAsync(CancellationToken.None));
+
+            Assert.Contains("at least 32", exception.Message, StringComparison.Ordinal);
+            Assert.DoesNotContain("too-short", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Directory.Delete(material.Root, recursive: true);
+        }
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task ProblemResponse_IsSanitizedAndCorrelated()
     {
         var correlationId = Guid.NewGuid().ToString("D");
@@ -153,4 +192,26 @@ public sealed class TaskApiSecurityFoundationTests
             PepperReference = "file:/run/secrets/task-pepper",
             VerificationKeysDirectory = verificationKeysDirectory,
         };
+
+    private static (string Root, TaskIdentityFoundationOptions Options) CreateKeyMaterial(string pepper)
+    {
+        var root = Path.Combine(Path.GetTempPath(), $"task-identity-startup-{Guid.NewGuid():N}");
+        var verificationDirectory = Path.Combine(root, "verification");
+        Directory.CreateDirectory(verificationDirectory);
+        using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var privateKeyPath = Path.Combine(root, "active");
+        var pepperPath = Path.Combine(root, "pepper");
+        File.WriteAllText(privateKeyPath, key.ExportPkcs8PrivateKeyPem());
+        File.WriteAllText(Path.Combine(verificationDirectory, "active.pem"), key.ExportSubjectPublicKeyInfoPem());
+        File.WriteAllText(pepperPath, pepper);
+
+        return (root, new TaskIdentityFoundationOptions
+        {
+            Issuer = "https://task.example.internal",
+            Audience = "task-desktop",
+            SigningKeyReference = $"file:{privateKeyPath}",
+            PepperReference = $"file:{pepperPath}",
+            VerificationKeysDirectory = $"file:{verificationDirectory}",
+        });
+    }
 }

@@ -155,7 +155,9 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
         var ex = Assert.Throws<InvalidOperationException>(
             () => new JwtAccessTokenIssuer(Issuer, Audience, $"file:{missing}"));
 
-        Assert.Contains(missing, ex.Message, StringComparison.Ordinal);
+        Assert.Contains("does not exist", ex.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain(missing, ex.Message, StringComparison.Ordinal);
+        Assert.Null(ex.InnerException);
     }
 
     [Fact]
@@ -225,6 +227,7 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
         {
             Assert.DoesNotContain("BEGIN", ex.Message, StringComparison.Ordinal);
             Assert.DoesNotContain(pem, ex.Message, StringComparison.Ordinal);
+            Assert.Null(ex.InnerException);
         }
     }
 

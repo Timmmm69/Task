@@ -29,7 +29,7 @@ public sealed record JwtIssuanceRequest(
 /// "BEGIN PRIVATE KEY" or SEC1 "BEGIN EC PRIVATE KEY"); otherwise the constructor throws and no
 /// token can ever be issued. Key material is never exposed in exception messages or logs.
 /// </summary>
-public sealed class JwtAccessTokenIssuer
+public sealed class JwtAccessTokenIssuer : IDisposable
 {
     private static readonly TimeSpan DefaultLifetime = TimeSpan.FromMinutes(5);
     private static readonly byte[] SigningProbe = [0x01, 0x02, 0x03];
@@ -61,7 +61,7 @@ public sealed class JwtAccessTokenIssuer
         if (!File.Exists(keyPath))
         {
             throw new InvalidOperationException(
-                $"The signing key file '{keyPath}' does not exist or is not readable.");
+                "The configured signing key file does not exist or is not readable.");
         }
 
         _issuer = issuer;
@@ -122,6 +122,8 @@ public sealed class JwtAccessTokenIssuer
         return System.Threading.Tasks.Task.FromResult(new JsonWebTokenHandler().CreateToken(descriptor));
     }
 
+    public void Dispose() => _signingKey.ECDsa.Dispose();
+
     private static ECDsaSecurityKey LoadSigningKey(string keyPath, string keyId)
     {
         string pem;
@@ -131,7 +133,7 @@ public sealed class JwtAccessTokenIssuer
         }
         catch (Exception)
         {
-            throw new InvalidOperationException($"The signing key file '{keyPath}' is not readable.");
+            throw new InvalidOperationException("The configured signing key file is not readable.");
         }
 
         ECDsa? ecdsa = null;
@@ -142,7 +144,7 @@ public sealed class JwtAccessTokenIssuer
             if (ecdsa.KeySize != 256)
             {
                 throw new InvalidOperationException(
-                    $"The signing key file '{keyPath}' is not an ECDSA P-256 private key (256-bit key expected).");
+                    "The configured signing key file is not an ECDSA P-256 private key (256-bit key expected).");
             }
 
             // ImportFromPem also accepts public-only keys; a real signature proves the key can
@@ -159,12 +161,11 @@ public sealed class JwtAccessTokenIssuer
             ecdsa?.Dispose();
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             ecdsa?.Dispose();
             throw new InvalidOperationException(
-                $"The signing key file '{keyPath}' does not contain a readable ECDSA private key in PEM format.",
-                ex);
+                "The configured signing key file does not contain a readable ECDSA private key in PEM format.");
         }
     }
 }

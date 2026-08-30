@@ -1,0 +1,19 @@
+{
+  "package": "20260830_sec_01_security_completion_1.0.0",
+  "version": "1.0.0",
+  "task": "SEC-01",
+  "result": "PASS",
+  "generated_at": "2026-08-30T21:17:07+03:00",
+  "sha256": {
+    ".project-dashboard/roadmap.json": "58944f21b297e2549f481e6d962e33724bc4da29fa66cd1122620e827549f8c2",
+    "work/production/src/Task.Api/Program.cs": "5b640a28ccaf0d1fb583ccfe6203e4d1a0a6b0eff51b27634995dca73d2bf1e7",
+    "work/production/src/Task.Api/Security/AccessTokenValidator.cs": "9068784738c48e38ec1a524619264548c1754037e5fdab96d5d347e0c23317e9",
+    "work/production/src/Task.Api/Security/TaskApiSecurityFoundation.cs": "16857663879486997479c1ad0cd425dea25998f9cb25853ec066666bb40b0116",
+    "work/production/src/Task.Application/Security/JwtAccessTokenIssuer.cs": "ddca60bf0b3a5f89e4ebdde68b0aa1fd43091976e929106af0bc70c12ffb8162",
+    "work/production/tests/Task.ServiceHosts.Tests/JwtAccessTokenIssuerTests.cs": "8b12877cd73974dd615cb233bf7247528bc8bee93649e017f4e1f4a32207db21",
+    "work/production/tests/Task.ServiceHosts.Tests/TaskApiSecurityFoundationTests.cs": "e16da9a183a352af81d0e2fe57d287657702ee258f249c1539a28cb5cd7c1083",
+    "work/production/tests/Task.Tests/Security/JwtAccessTokenIssuerTests.cs": "a216ff194bba639eedb7b36195ea7c2446695bc6ad5388412645f4c1c6beba61",
+    "work/production/docs/jwt-key-management.md": "feb35acfa3c20f29ac3e143e1574aa16e586c5f1e1edadeff74063fe8d70c661",
+    "work/production/verification/Test-SecurityGate.ps1": "6526e9cfff32d227ed2b7a22ff893ef1d3b6e04f4466b2561e09ca3b6f744d8a"
+  }
+}

@@ -115,6 +115,75 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
         Assert.False(result.IsExpired);
     }
 
+    [Fact]
+    public void VerificationKeys_CurrentAndPrevious_AreAcceptedAndActivePairIsVerified()
+    {
+        using var active = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var previous = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var directory = CreateKeyRing(
+            ("active", active.ExportSubjectPublicKeyInfoPem()),
+            ("previous", previous.ExportSubjectPublicKeyInfoPem()));
+        var privateKeyPath = Path.Combine(directory, "active");
+        File.WriteAllText(privateKeyPath, active.ExportPkcs8PrivateKeyPem());
+
+        var keys = JwtVerificationKeys.Load(KeyRingOptions(privateKeyPath, directory));
+
+        Assert.NotNull(keys.Find("active"));
+        Assert.NotNull(keys.Find("previous"));
+        JwtVerificationKeys.ValidateActiveKeyPair($"file:{privateKeyPath}", keys);
+    }
+
+    [Fact]
+    public void VerificationKeys_MismatchedActivePair_IsRejectedWithoutExposingMaterial()
+    {
+        using var active = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var foreign = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var directory = CreateKeyRing(("active", foreign.ExportSubjectPublicKeyInfoPem()));
+        var privateKeyPath = Path.Combine(directory, "active");
+        File.WriteAllText(privateKeyPath, active.ExportPkcs8PrivateKeyPem());
+        var keys = JwtVerificationKeys.Load(KeyRingOptions(privateKeyPath, directory));
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => JwtVerificationKeys.ValidateActiveKeyPair($"file:{privateKeyPath}", keys));
+
+        Assert.Contains("does not match", exception.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("PRIVATE KEY", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void VerificationKeys_PrivateMaterialInPublicDirectory_IsRejected()
+    {
+        using var active = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var directory = CreateKeyRing(("active", active.ExportPkcs8PrivateKeyPem()));
+        var privateKeyPath = Path.Combine(_tempRoot, "signing", "active");
+        Directory.CreateDirectory(Path.GetDirectoryName(privateKeyPath)!);
+        File.WriteAllText(privateKeyPath, active.ExportPkcs8PrivateKeyPem());
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => JwtVerificationKeys.Load(KeyRingOptions(privateKeyPath, directory)));
+
+        Assert.Contains("public key only", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void VerificationKeys_MoreThanCurrentAndPrevious_IsRejected()
+    {
+        using var first = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var second = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var third = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var directory = CreateKeyRing(
+            ("active", first.ExportSubjectPublicKeyInfoPem()),
+            ("previous", second.ExportSubjectPublicKeyInfoPem()),
+            ("stale", third.ExportSubjectPublicKeyInfoPem()));
+        var privateKeyPath = Path.Combine(directory, "active");
+        File.WriteAllText(privateKeyPath, first.ExportPkcs8PrivateKeyPem());
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => JwtVerificationKeys.Load(KeyRingOptions(privateKeyPath, directory)));
+
+        Assert.Contains("at most one previous", exception.Message, StringComparison.Ordinal);
+    }
+
     private (JwtAccessTokenIssuer Issuer, AccessTokenValidator Validator, JwtVerificationKeys VerificationKeys) CreateRoundTrip(
         string? issuer = null,
         string? audience = null)
@@ -156,4 +225,26 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
         File.WriteAllText(path, pem);
         return path;
     }
+
+    private string CreateKeyRing(params (string KeyId, string Pem)[] entries)
+    {
+        var directory = Path.Combine(_tempRoot, $"key-ring-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        foreach (var entry in entries)
+        {
+            File.WriteAllText(Path.Combine(directory, $"{entry.KeyId}.pem"), entry.Pem);
+        }
+
+        return directory;
+    }
+
+    private static TaskIdentityFoundationOptions KeyRingOptions(string privateKeyPath, string directory) =>
+        new()
+        {
+            Issuer = Issuer,
+            Audience = Audience,
+            SigningKeyReference = $"file:{privateKeyPath}",
+            PepperReference = "file:/run/secrets/task-pepper",
+            VerificationKeysDirectory = $"file:{directory}",
+        };
 }

@@ -142,3 +142,72 @@ internal sealed class TaskIdentityFoundationOptionsValidator : IValidateOptions<
         }
     }
 }
+
+internal sealed class TaskIdentityKeyMaterialStartupValidator : IHostedService
+{
+    private const int MinimumPepperLength = 32;
+
+    private readonly TaskIdentityFoundationOptions _options;
+    private readonly JwtVerificationKeys _verificationKeys;
+
+    public TaskIdentityKeyMaterialStartupValidator(
+        IOptions<TaskIdentityFoundationOptions> options,
+        JwtVerificationKeys verificationKeys)
+    {
+        _options = options.Value;
+        _verificationKeys = verificationKeys;
+    }
+
+    public global::System.Threading.Tasks.Task StartAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (_options.IsUnconfigured)
+        {
+            return global::System.Threading.Tasks.Task.CompletedTask;
+        }
+
+        if (!_verificationKeys.HasKeys)
+        {
+            throw new InvalidOperationException("No JWT verification keys are configured.");
+        }
+
+        JwtVerificationKeys.ValidateActiveKeyPair(_options.SigningKeyReference, _verificationKeys);
+        ValidatePepper(_options.PepperReference);
+        using var issuer = new JwtAccessTokenIssuer(
+            _options.Issuer!,
+            _options.Audience!,
+            _options.SigningKeyReference!);
+
+        return global::System.Threading.Tasks.Task.CompletedTask;
+    }
+
+    public global::System.Threading.Tasks.Task StopAsync(CancellationToken cancellationToken) =>
+        global::System.Threading.Tasks.Task.CompletedTask;
+
+    private static void ValidatePepper(string? reference)
+    {
+        if (string.IsNullOrWhiteSpace(reference)
+            || !reference.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Task:Identity:PepperReference must be a file: reference.");
+        }
+
+        var path = reference.Substring("file:".Length);
+        string pepper;
+        try
+        {
+            pepper = File.ReadAllText(path).Trim();
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException(
+                "The configured password pepper file does not exist or is not readable.");
+        }
+
+        if (pepper.Length < MinimumPepperLength)
+        {
+            throw new InvalidOperationException(
+                $"The configured password pepper file must contain at least {MinimumPepperLength} characters.");
+        }
+    }
+}
