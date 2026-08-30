@@ -35,6 +35,69 @@ jobs:
       - run: npm run build
       - run: npm test
 
+  production:
+    name: Production solution (cheap gates)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: true
+    defaults:
+      run:
+        working-directory: work/production
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore production solution
+        run: dotnet restore Task.sln
+      - name: Build production solution
+        run: dotnet build Task.sln --configuration Release --no-restore
+      - name: Test production solution
+        run: dotnet test Task.sln --configuration Release --no-build --no-restore
+
+  production-postgres:
+    name: Production tests (real PostgreSQL 16)
+    needs: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: true
+      TASK_POSTGRES_TEST_ADMIN_CONNECTION: >-
+        Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=task_ci;SSL Mode=Disable
+    defaults:
+      run:
+        working-directory: work/production
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: task_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore PostgreSQL test projects
+        run: |
+          dotnet restore tests/Task.Tests/Task.Tests.csproj
+          dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj
+      - name: Build database migrator required by integration tests
+        run: dotnet build src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --configuration Debug --no-restore
+      - name: Run tests against real PostgreSQL
+        run: dotnet test tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-restore
+
   delegation-policy:
     name: Delegation policy
     if: startsWith(github.head_ref, 'agent/deepseek/')
