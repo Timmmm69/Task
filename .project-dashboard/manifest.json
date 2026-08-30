@@ -1,7 +1,7 @@
 {
   "package": "Task Development / Handoff Readiness Dashboard",
   "version": "1.0.0",
-  "generated_at": "2026-08-30T18:19:57.514Z",
+  "generated_at": "2026-08-30T19:11:51.982Z",
   "algorithm": "SHA-256",
   "files": [
     {
@@ -71,8 +71,8 @@
     },
     {
       "path": "roadmap.json",
-      "sha256": "58944f21b297e2549f481e6d962e33724bc4da29fa66cd1122620e827549f8c2",
-      "bytes": 49005
+      "sha256": "39fbfce4f51d04a153798605a15260572eeb688b98c89cc53f30dc0f598d479c",
+      "bytes": 49102
     },
     {
       "path": "server.mjs",
@@ -81,8 +81,8 @@
     },
     {
       "path": "test-results.json",
-      "sha256": "c4f9f2519ed375109106688bd6a3cd8b373dae8dfa6732321740b9d279aaa339",
-      "bytes": 591
+      "sha256": "4b20a2b68429cca7aa28966c2e2e71921e741afc8de90c0398739c7d807216bd",
+      "bytes": 572
     },
     {
       "path": "validate.mjs",
@@ -91,8 +91,8 @@
     },
     {
       "path": "VALIDATION_REPORT.md",
-      "sha256": "755ea09542d2df20023cb01944e7688e44c23b4d8beeb99f88997702c567fd88",
-      "bytes": 2261
+      "sha256": "3f5adcc1e988daa4428af77c35f95ca4c385e697fcd1865b8264c12d7822b45c",
+      "bytes": 2227
     },
     {
       "path": "verify-manifest.mjs",

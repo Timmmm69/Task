@@ -87,7 +87,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 8,
+      "recommended_order": 7,
       "next_action": "Сверить полный task contract с готовым vertical slice и закрыть недостающие связи, поля и evidence."
     },
     {
@@ -111,7 +111,7 @@
         "PROD-01"
       ],
       "blocked_by": [],
-      "recommended_order": 9,
+      "recommended_order": 8,
       "next_action": "Собрать production-экран «Сегодня» поверх готовых task и calendar API, затем пройти реальный E2E."
     },
     {
@@ -136,7 +136,7 @@
         "API-03"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Завершить calendar read/write vertical slice в WPF и подтвердить его на PostgreSQL + HTTPS API."
     },
     {
@@ -161,7 +161,7 @@
         "SEC-02"
       ],
       "blocked_by": [],
-      "recommended_order": 21,
+      "recommended_order": 19,
       "next_action": "Реализовать project lifecycle с участниками, ролями и связанными задачами одним vertical slice."
     },
     {
@@ -187,7 +187,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 22,
+      "recommended_order": 20,
       "next_action": "Последовательно довести файлы, контакты, поиск и уведомления до связанных production-сценариев."
     },
     {
@@ -211,7 +211,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 13,
+      "recommended_order": 11,
       "next_action": "Закрыть оставшиеся эксплуатационные сценарии учётных записей и повторить auth E2E."
     },
     {
@@ -234,7 +234,7 @@
         "PROD-01"
       ],
       "blocked_by": [],
-      "recommended_order": 14,
+      "recommended_order": 12,
       "next_action": "Завершить представление расширенных полей задачи и повторить desktop task gate."
     },
     {
@@ -261,7 +261,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 23,
+      "recommended_order": 21,
       "next_action": "Заменять placeholders только готовыми вертикальными срезами и убрать последний placeholder после общего smoke."
     },
     {
@@ -285,7 +285,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 26,
+      "recommended_order": 24,
       "next_action": "Проверить offline, retry, session expiry и conflict recovery во всех готовых разделах."
     },
     {
@@ -308,7 +308,7 @@
         "DESK-03"
       ],
       "blocked_by": [],
-      "recommended_order": 24,
+      "recommended_order": 22,
       "next_action": "Выполнить нативную Windows-матрицу UIA, Narrator и DPI 125/150/200% с сохранением evidence."
     },
     {
@@ -333,7 +333,7 @@
         "DATA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 12,
+      "recommended_order": 10,
       "next_action": "Закрыть административный lifecycle учётных записей и подтвердить стабильность auth contracts."
     },
     {
@@ -380,7 +380,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Реализовать calendar range/details/conflicts endpoints по утверждённой спецификации и покрыть contract tests."
     },
     {
@@ -403,7 +403,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 7,
+      "recommended_order": 6,
       "next_action": "Создавать API оставшихся модулей по одному законченному vertical slice, начиная с проектов."
     },
     {
@@ -428,7 +428,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 34,
+      "recommended_order": 32,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -521,7 +521,7 @@
         "DATA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Спроектировать и реализовать production stores для проектов, контактов, каталога, уведомлений и lifecycle."
     },
     {
@@ -545,7 +545,7 @@
         "OPS-01"
       ],
       "blocked_by": [],
-      "recommended_order": 19,
+      "recommended_order": 17,
       "next_action": "Довести outbox, reminders и фоновые повторы до исполняемых worker-сценариев с idempotency."
     },
     {
@@ -597,7 +597,7 @@
         "API-04"
       ],
       "blocked_by": [],
-      "recommended_order": 11,
+      "recommended_order": 9,
       "next_action": "Применить полную role/capability matrix ко всем API и подтвердить tenant isolation негативными тестами."
     },
     {
@@ -621,7 +621,7 @@
       "blocked_by": [
         "SEC-05"
       ],
-      "recommended_order": 17,
+      "recommended_order": 15,
       "next_action": "По результатам threat model зафиксировать secrets manager, CA/TLS issuance и rotation runbook."
     },
     {
@@ -645,7 +645,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 28,
+      "recommended_order": 26,
       "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
     },
     {
@@ -667,7 +667,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 16,
+      "recommended_order": 14,
       "next_action": "Сначала выполнить threat-model review; финальный penetration pass повторить после стабилизации deployment."
     },
     {
@@ -677,21 +677,22 @@
       "category": "quality",
       "weight": 13,
       "criticality": "critical",
-      "status": "in_progress",
-      "progress": 75,
+      "status": "done",
+      "progress": 100,
       "evidence": [
         "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: 1227 passed, 2 expected skips",
-        ".github/workflows/ci.yml: production solution and real PostgreSQL jobs added in 4fd15b3; first GitHub run pending"
+        "outputs/20260830_qa_05_production_ci_gate_1.0.0/VALIDATION_REPORT.md: 1245 unique tests passed across solution and real PostgreSQL gates",
+        "GitHub Actions run 33329767707: production solution and real PostgreSQL 16 jobs PASS"
       ],
-      "note": "Последний известный полный локальный gate PASS; production CI настроен, но его первый GitHub-прогон ещё не подтверждён.",
-      "updated_at": "2026-08-30T20:48:16+03:00",
+      "note": "Полный production suite воспроизводимо проходит локально и в GitHub Actions; PostgreSQL-only tests подтверждены на реальном PostgreSQL 16.",
+      "updated_at": "2026-08-30T22:08:49+03:00",
       "priority": 3,
       "dependencies": [
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 10,
-      "next_action": "Проверить первый GitHub-прогон production solution и real PostgreSQL jobs; обновить test-results.json только по фактическому результату."
+      "recommended_order": 0,
+      "next_action": "Поддерживать production и real PostgreSQL gates зелёными при следующих изменениях."
     },
     {
       "id": "QA-02",
@@ -715,7 +716,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 15,
+      "recommended_order": 13,
       "next_action": "Повторить task/auth E2E на чистом окружении после закрытия текущих vertical slices."
     },
     {
@@ -742,7 +743,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 27,
+      "recommended_order": 25,
       "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
     },
     {
@@ -765,7 +766,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 32,
+      "recommended_order": 30,
       "next_action": "Провести модерируемые сессии, оформить findings disposition и получить product acceptance."
     },
     {
@@ -775,14 +776,15 @@
       "category": "quality",
       "weight": 9,
       "criticality": "high",
-      "status": "in_progress",
-      "progress": 25,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        ".github/workflows/ci.yml: production job restores, builds and tests Task.sln; production-postgres job runs tests against PostgreSQL 16 (4fd15b3)",
-        "Первый GitHub-прогон новых jobs ещё не подтверждён evidence"
+        ".github/workflows/ci.yml: production restore/format/boundaries/build/test/security, real PostgreSQL 16 and container package jobs",
+        "GitHub Actions run 33329767707: all CI jobs PASS on commit 7723be9",
+        "outputs/20260830_qa_05_production_ci_gate_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Production CI configuration добавлена; readiness не повышена до успешного выполнения jobs на GitHub.",
-      "updated_at": "2026-08-30T20:48:16+03:00",
+      "note": "Каждый pull request и push в main запускает production solution, real PostgreSQL и container package gates; первый полный прогон подтверждён.",
+      "updated_at": "2026-08-30T22:08:49+03:00",
       "priority": 1,
       "dependencies": [
         "API-02",
@@ -790,8 +792,8 @@
         "DATA-02"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Подтвердить успешный GitHub-прогон production и production-postgres jobs; при сбое исправить workflow и сохранить evidence."
+      "recommended_order": 0,
+      "next_action": "Сохранять CI обязательным и устранять регрессии до принятия следующих изменений."
     },
     {
       "id": "OPS-01",
@@ -813,7 +815,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Довести container foundation до воспроизводимого release build и сохранить provenance образов."
     },
     {
@@ -836,7 +838,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 18,
+      "recommended_order": 16,
       "next_action": "Развернуть и проверить production-like network, reverse proxy, TLS и firewall по утверждённому runbook."
     },
     {
@@ -860,7 +862,7 @@
         "DATA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Заменить BackupAgent placeholder на backup/WAL/retention/restore workflow и доказать восстановление."
     },
     {
@@ -885,7 +887,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 20,
+      "recommended_order": 18,
       "next_action": "Подключить logs, metrics и alerts для API, DB, disk, workers и backup failures с назначенными владельцами."
     },
     {
@@ -910,7 +912,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 25,
+      "recommended_order": 23,
       "next_action": "Создать подписанный Windows installer, совместимый update channel и проверенный rollback."
     },
     {
@@ -959,7 +961,7 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 29,
+      "recommended_order": 27,
       "next_action": "Собрать и проверить единый operations runbook на чистом стенде другим инженером."
     },
     {
@@ -984,7 +986,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 30,
+      "recommended_order": 28,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1007,7 +1009,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 31,
+      "recommended_order": 29,
       "next_action": "Подготовить короткие user/admin guides и проверить их на человеке, не участвовавшем в разработке."
     },
     {
@@ -1032,7 +1034,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 33,
+      "recommended_order": 31,
       "next_action": "Закрыть findings, назначить ownership и собрать Product, Design, Tech и QA sign-off."
     }
   ],

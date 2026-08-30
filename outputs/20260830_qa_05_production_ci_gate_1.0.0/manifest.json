@@ -1,0 +1,18 @@
+{
+  "package": "20260830_qa_05_production_ci_gate_1.0.0",
+  "version": "1.0.0",
+  "task": "QA-05",
+  "result": "PASS",
+  "generated_at": "2026-08-30T22:08:49+03:00",
+  "github_actions_run": "33329767707",
+  "validated_commit": "7723be99637e598f296e46c970a1485bf2fd2b00",
+  "sha256": {
+    ".github/workflows/ci.yml": "e036497f989fbef62e8fe1aa0de5d079b5d6136fb18144468bdf00b97d2e34fe",
+    "work/production/verification/Test-SecurityGate.ps1": "6a5d6d63980dfb5c3ceda1f85b94268d395a18af2b4551b0d2d038dc8669b823",
+    "work/production/verification/Test-ContainerPackaging.ps1": "9055b7c5fa64685e9be2fbab6eb956a358b5109d83c204bc214c7ba2cd71e319",
+    "work/production/src/Task.Desktop/AssemblyInfo.cs": "9242d8815ea210279f3f4c8931004c7e6754673102f43d3233820da027e5238e",
+    "work/production/tests/Task.Tests/Postgres/PostgresAuditEntryStoreTests.cs": "0f57e1bf9a6b0dce49d0922a609a1710f13b43af9dce21fa844e21e0cf8f1740",
+    ".project-dashboard/roadmap.json": "39fbfce4f51d04a153798605a15260572eeb688b98c89cc53f30dc0f598d479c",
+    ".project-dashboard/test-results.json": "4b20a2b68429cca7aa28966c2e2e71921e741afc8de90c0398739c7d807216bd"
+  }
+}

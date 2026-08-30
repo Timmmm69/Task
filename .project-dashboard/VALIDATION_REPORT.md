@@ -10,13 +10,13 @@
 - `roadmap.json` parses and contains 40 meaningful delivery units in 8 categories.
 - Every item has id, title, description, category, weight, criticality, status, progress, evidence, note and updated_at.
 - Progress values are restricted to 0, 25, 50, 75 and 100.
-- Deterministic weighted readiness: 44.07%, displayed as 44%.
+- Deterministic weighted readiness: 46.93%, displayed as 47%.
 - Six hard handoff gates are derived from required roadmap items.
 - Current handoff result: NOT READY.
 - Every delivery unit stores priority, dependencies, blocked_by, recommended_order and next_action.
 - The dependency graph is acyclic; stored recommended_order matches deterministic recalculation.
 - The recommended current task has no unresolved dependencies or blockers.
-- Current deterministic recommendation: `QA-05` — verify the first GitHub run of the new production and real PostgreSQL CI jobs.
+- Current deterministic recommendation: `API-03` — implement calendar and schedule API access.
 
 ## Runtime and UI
 

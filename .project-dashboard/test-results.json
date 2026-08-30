@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-08-29T00:00:00+03:00",
-  "source": "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md",
-  "summary": "Последний полный gate production solution прошёл",
-  "passed": 1227,
+  "checked_at": "2026-08-30T22:08:49+03:00",
+  "source": "outputs/20260830_qa_05_production_ci_gate_1.0.0/VALIDATION_REPORT.md",
+  "summary": "Production solution и real PostgreSQL 16 gates прошли в GitHub Actions",
+  "passed": 1245,
   "failed": 0,
-  "skipped": 2,
-  "total": 1229,
+  "skipped": 0,
+  "total": 1245,
   "build": "passed",
   "lint": "passed",
   "typecheck": "not_applicable",
-  "note": "Два пропуска ожидаемы и требуют реального PostgreSQL. Результат не запускается заново при обновлении страницы."
+  "note": "Уникальное покрытие: 1243 non-PostgreSQL tests из полного solution gate и 2 PostgreSQL-only tests из real PostgreSQL job; run 33329767707."
 }
