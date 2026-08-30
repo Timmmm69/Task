@@ -144,6 +144,24 @@ function Stop-And-CheckService {
     Invoke-Compose -Profiles @('background') -Tail @('up', '-d', '--no-deps', $Service) | Out-Null
     $containerId = ((Invoke-Compose -Profiles @('background') -Tail @('ps', '-q', $Service)).Output -join '').Trim()
     if ([string]::IsNullOrWhiteSpace($containerId)) { throw "$Service container did not start." }
+
+    $started = $false
+    for ($attempt = 0; $attempt -lt 40; $attempt++) {
+        $state = ((Invoke-Docker -Arguments @('inspect', '--format', '{{.State.Status}}', $containerId)).Output -join '').Trim()
+        if ($state -in 'exited', 'dead') {
+            throw "$Service exited before it became ready for the SIGTERM check."
+        }
+
+        $logs = (Invoke-Docker -Arguments @('logs', $containerId) -AllowFailure).Output -join "`n"
+        if ($state -eq 'running' -and $logs -match 'Application started') {
+            $started = $true
+            break
+        }
+
+        Start-Sleep -Milliseconds 250
+    }
+    if (-not $started) { throw "$Service did not finish host startup within 10 seconds." }
+
     $timer = [Diagnostics.Stopwatch]::StartNew()
     Invoke-Docker -Arguments @('stop', '--time', '10', $containerId) | Out-Null
     $timer.Stop()
