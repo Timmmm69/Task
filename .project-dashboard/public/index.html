@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#090b0d">
+  <title>Task - готовность к передаче</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">К основному содержанию</a>
+  <main id="main" class="shell" aria-live="polite">
+    <section id="loading" class="loading" aria-label="Загрузка dashboard">
+      <div class="skeleton wide"></div><div class="skeleton"></div><div class="skeleton grid"></div>
+    </section>
+    <section id="error" class="error-state" hidden>
+      <p class="eyebrow">Данные недоступны</p>
+      <h1>Dashboard не удалось обновить</h1>
+      <p id="error-message">Проверьте, что локальный сервер запущен.</p>
+      <button id="retry" type="button">Повторить</button>
+    </section>
+    <div id="dashboard" hidden>
+      <header class="topbar">
+        <div>
+          <div class="brandline"><span class="brandmark">T</span><span>Task</span><span class="slash">/</span><span>Development &amp; Handoff Readiness</span></div>
+          <p id="project-subtitle" class="subtitle"></p>
+        </div>
+        <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>LIVE</span><span id="last-refresh">обновление</span></div>
+      </header>
+
+      <section class="hero" aria-labelledby="readiness-title">
+        <div class="hero-main">
+          <p class="eyebrow">Текущий этап</p>
+          <div class="stage-line"><span id="stage-number" class="stage-number">1</span><div><h1 id="readiness-title">Готовность к передаче</h1><p id="current-stage" class="stage-name"></p></div></div>
+          <div id="handoff-status" class="handoff-status"></div>
+        </div>
+        <div class="readiness-score">
+          <span id="overall" class="overall">0%</span>
+          <span class="score-label">ОБЩАЯ ГОТОВНОСТЬ</span>
+          <span id="remaining" class="remaining"></span>
+        </div>
+        <div id="counts" class="counts"></div>
+      </section>
+
+      <section class="overall-track" aria-label="Общий прогресс">
+        <div class="track-head"><span>Взвешенный прогресс</span><strong id="progress-label">0%</strong></div>
+        <div class="track"><div id="progress-bar" class="track-fill"></div></div>
+        <p>Процент считается только из весов и подтверждённого progress в roadmap.json.</p>
+      </section>
+
+      <section aria-labelledby="stages-title" class="stages-section">
+        <div class="section-heading"><h2 id="stages-title">Направления готовности</h2><span>8 направлений / 40 результатов</span></div>
+        <div id="stage-rail" class="stage-rail"></div>
+        <div id="category-cards" class="category-grid"></div>
+      </section>
+
+      <section class="panel execution-panel" aria-labelledby="execution-title">
+        <div class="execution-heading">
+          <div><p class="eyebrow active">План до релиза</p><h2 id="execution-title">Что делать дальше</h2></div>
+          <span id="queue-total" class="queue-total"></span>
+        </div>
+        <div class="execution-layout">
+          <article class="now-column">
+            <p class="plan-label">Сейчас</p>
+            <div id="plan-now"></div>
+          </article>
+          <article class="after-column">
+            <p class="plan-label">После неё</p>
+            <ol id="plan-after" class="plan-after"></ol>
+          </article>
+        </div>
+        <details class="later-queue">
+          <summary><span>Позже</span><span id="later-count"></span></summary>
+          <ol id="plan-later" class="plan-later"></ol>
+        </details>
+      </section>
+
+      <section class="decision-grid">
+        <article class="panel blockers-panel">
+          <div class="panel-head"><div><p class="eyebrow danger">Hard gates</p><h2>Почему пока нельзя передавать</h2></div><span id="blocker-count" class="panel-count"></span></div>
+          <div id="gate-list" class="gate-list"></div>
+        </article>
+      </section>
+
+      <section class="telemetry-grid">
+        <article class="panel quality-panel">
+          <div class="panel-head"><div><p class="eyebrow">Последняя проверка</p><h2>Качество</h2></div><span id="test-date" class="muted"></span></div>
+          <div id="test-stats" class="test-stats"></div>
+          <p id="test-note" class="panel-note"></p>
+          <div id="build-states" class="build-states"></div>
+        </article>
+        <article class="panel git-panel">
+          <div class="panel-head"><div><p class="eyebrow">Техническая телеметрия</p><h2>Git status</h2></div><span id="git-clean" class="state-tag"></span></div>
+          <dl id="git-facts" class="git-facts"></dl>
+        </article>
+        <article class="panel changes-panel">
+          <div class="panel-head"><div><p class="eyebrow">История</p><h2>Последние изменения</h2></div></div>
+          <ol id="changes" class="changes"></ol>
+        </article>
+      </section>
+
+      <section class="panel roadmap-panel">
+        <details>
+          <summary><span><span class="eyebrow">Полная карта</span><strong>Все delivery units и evidence</strong></span><span>Открыть 40 пунктов</span></summary>
+          <div id="roadmap-table" class="roadmap-table"></div>
+        </details>
+      </section>
+
+      <footer><span>Источник истины: .project-dashboard/roadmap.json</span><span id="generated-at"></span></footer>
+    </div>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

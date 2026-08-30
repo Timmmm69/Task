@@ -1,0 +1,11 @@
+{
+  "name": "task-project-tools",
+  "private": true,
+  "scripts": {
+    "dashboard": "node .project-dashboard/server.mjs --open",
+    "dashboard:serve": "node .project-dashboard/server.mjs",
+    "dashboard:validate": "node .project-dashboard/validate.mjs",
+    "dashboard:order": "node .project-dashboard/recalculate-order.mjs",
+    "dashboard:package": "node .project-dashboard/package-manifest.mjs && node .project-dashboard/verify-manifest.mjs"
+  }
+}

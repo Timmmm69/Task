@@ -1,0 +1,12 @@
+{
+  "name": "task-handoff-dashboard",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.mjs --open",
+    "test": "node validate.mjs",
+    "order": "node recalculate-order.mjs",
+    "package": "node package-manifest.mjs && node verify-manifest.mjs"
+  }
+}

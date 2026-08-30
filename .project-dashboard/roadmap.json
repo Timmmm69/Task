@@ -1,0 +1,1110 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": "Task",
+    "subtitle": "Windows desktop-органайзер для локальной сети компании",
+    "current_stage_number": 6,
+    "current_stage": "Production vertical slices",
+    "readiness_target": "Технически и функционально готов к передаче заказчику"
+  },
+  "progress_scale": [
+    0,
+    25,
+    50,
+    75,
+    100
+  ],
+  "categories": [
+    {
+      "id": "product",
+      "name": "Основной продукт",
+      "short": "PRODUCT",
+      "order": 1
+    },
+    {
+      "id": "desktop",
+      "name": "Windows-клиент",
+      "short": "DESKTOP",
+      "order": 2
+    },
+    {
+      "id": "api",
+      "name": "API и логика",
+      "short": "API",
+      "order": 3
+    },
+    {
+      "id": "data",
+      "name": "Данные и синхронизация",
+      "short": "DATA",
+      "order": 4
+    },
+    {
+      "id": "security",
+      "name": "Доступ и безопасность",
+      "short": "SECURITY",
+      "order": 5
+    },
+    {
+      "id": "quality",
+      "name": "Качество",
+      "short": "QUALITY",
+      "order": 6
+    },
+    {
+      "id": "operations",
+      "name": "Развёртывание",
+      "short": "OPS",
+      "order": 7
+    },
+    {
+      "id": "handoff",
+      "name": "Передача",
+      "short": "HANDOFF",
+      "order": 8
+    }
+  ],
+  "items": [
+    {
+      "id": "PROD-01",
+      "title": "Пользователь ведёт задачу от создания до завершения",
+      "description": "Список, карточка, создание, изменение и смена статуса работают сквозным сценарием.",
+      "category": "product",
+      "weight": 14,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: real PostgreSQL + HTTPS API + WPF E2E PASS"
+      ],
+      "note": "Базовый vertical slice готов; полный контракт задачи, вложения и участники ещё шире текущего UI.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "API-02",
+        "DATA-02"
+      ],
+      "blocked_by": [
+        "API-04"
+      ],
+      "recommended_order": 9,
+      "next_action": "Сверить полный task contract с готовым vertical slice и закрыть недостающие связи, поля и evidence."
+    },
+    {
+      "id": "PROD-02",
+      "title": "Рабочий день собран на экране «Сегодня»",
+      "description": "Пользователь видит расписание, просроченные и ожидающие задачи и управляет ими.",
+      "category": "product",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "sources/concept/Task_Concept_Final.txt: раздел 9",
+        "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs: today placeholder"
+      ],
+      "note": "Есть доменные модели расписания и UX baseline, production-экран не подключён.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 2,
+      "dependencies": [
+        "PROD-03",
+        "PROD-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 10,
+      "next_action": "Собрать production-экран «Сегодня» поверх готовых task и calendar API, затем пройти реальный E2E."
+    },
+    {
+      "id": "PROD-03",
+      "title": "Календарь показывает и изменяет расписание",
+      "description": "Доступны день, неделя, месяц, события, повторения и предупреждения о пересечениях.",
+      "category": "product",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 50,
+      "evidence": [
+        "work/production/src/Task.Domain/Calendar",
+        "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+        "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0"
+      ],
+      "note": "Домен и хранение реализованы; production API и WPF read vertical slice пока специфицированы.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 2,
+      "dependencies": [
+        "DATA-03",
+        "API-03"
+      ],
+      "blocked_by": [],
+      "recommended_order": 4,
+      "next_action": "Завершить calendar read/write vertical slice в WPF и подтвердить его на PostgreSQL + HTTPS API."
+    },
+    {
+      "id": "PROD-04",
+      "title": "Команда управляет проектами и участниками",
+      "description": "Проекты, роли участников, связанные задачи и статусы доступны в рабочем клиенте.",
+      "category": "product",
+      "weight": 11,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "sources/concept/Task_Concept_Final.txt: раздел 13",
+        "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs: projects placeholder"
+      ],
+      "note": "Контракт и UX существуют, production vertical slice отсутствует.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DATA-04",
+        "API-04",
+        "SEC-02"
+      ],
+      "blocked_by": [],
+      "recommended_order": 22,
+      "next_action": "Реализовать project lifecycle с участниками, ролями и связанными задачами одним vertical slice."
+    },
+    {
+      "id": "PROD-05",
+      "title": "Файлы, контакты, поиск и уведомления связаны с работой",
+      "description": "Пользователь находит сущности, открывает рабочие файлы и получает полезные уведомления.",
+      "category": "product",
+      "weight": 11,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "work/production/src/Task.Application/Files/FileLocationPolicy.cs",
+        "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs: catalog, contacts and notifications placeholders"
+      ],
+      "note": "Есть отдельные модели и UX-спецификации, но нет готовых production-сценариев.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DATA-04",
+        "API-04",
+        "SEC-02",
+        "DATA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 23,
+      "next_action": "Последовательно довести файлы, контакты, поиск и уведомления до связанных production-сценариев."
+    },
+    {
+      "id": "DESK-01",
+      "title": "Сотрудник безопасно подключается и входит",
+      "description": "Выбор сервера, вход, восстановление сессии, смена пароля и выход работают в Windows.",
+      "category": "desktop",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "work/production/src/Task.Desktop/AuthWindow.xaml",
+        "outputs/20260823_task_desktop_auth_e2e_hardening_0.1.0"
+      ],
+      "note": "Сквозной auth slice проверен; эксплуатационная выдача учётных записей остаётся частью handoff.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "API-01",
+        "SEC-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 14,
+      "next_action": "Закрыть оставшиеся эксплуатационные сценарии учётных записей и повторить auth E2E."
+    },
+    {
+      "id": "DESK-02",
+      "title": "Экран задач пригоден для ежедневной работы",
+      "description": "Загрузка, пагинация, детали, редактирование, конфликты и статусы понятны пользователю.",
+      "category": "desktop",
+      "weight": 14,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md"
+      ],
+      "note": "Основной read/write сценарий работает; расширенные поля и связи ещё не полностью представлены.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "PROD-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 15,
+      "next_action": "Завершить представление расширенных полей задачи и повторить desktop task gate."
+    },
+    {
+      "id": "DESK-03",
+      "title": "Все основные разделы заменили placeholders",
+      "description": "Сегодня, календарь, проекты, каталог, контакты, уведомления, архив и настройки имеют рабочее содержимое.",
+      "category": "desktop",
+      "weight": 10,
+      "criticality": "critical",
+      "status": "blocked",
+      "progress": 25,
+      "evidence": [
+        "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs: 10 sections use placeholder text; only tasks is activated"
+      ],
+      "note": "Ключевой функциональный blocker передачи.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "PROD-02",
+        "PROD-03",
+        "PROD-04",
+        "PROD-05"
+      ],
+      "blocked_by": [
+        "API-04"
+      ],
+      "recommended_order": 24,
+      "next_action": "Заменять placeholders только готовыми вертикальными срезами и убрать последний placeholder после общего smoke."
+    },
+    {
+      "id": "DESK-04",
+      "title": "Клиент корректно переживает сеть и конфликт данных",
+      "description": "Потеря сервера, повтор, истёкшая сессия и конкурентное изменение не приводят к потере работы.",
+      "category": "desktop",
+      "weight": 10,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 50,
+      "evidence": [
+        "work/production/src/Task.Desktop/Security/SessionService.cs",
+        "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs: draft and conflict states"
+      ],
+      "note": "Task/auth состояния реализованы, общепродуктовый offline UX не доказан.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DESK-03",
+        "DATA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 27,
+      "next_action": "Проверить offline, retry, session expiry и conflict recovery во всех готовых разделах."
+    },
+    {
+      "id": "DESK-05",
+      "title": "Windows UX доступен на целевых рабочих местах",
+      "description": "Клавиатура, UI Automation, Narrator, high-DPI и минимальные размеры подтверждены на Windows.",
+      "category": "desktop",
+      "weight": 8,
+      "criticality": "high",
+      "status": "unverified",
+      "progress": 50,
+      "evidence": [
+        "work/stage_5_completion_audit/completion-audit.json: prototype coverage achieved; native UIA/Narrator/DPI evidence pending",
+        "outputs/20260823_task_read_vertical_slice_0.1.0/validation-report.md: task UIA PASS"
+      ],
+      "note": "Нужна внешняя проверка Narrator и DPI 125/150/200%.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DESK-03"
+      ],
+      "blocked_by": [],
+      "recommended_order": 25,
+      "next_action": "Выполнить нативную Windows-матрицу UIA, Narrator и DPI 125/150/200% с сохранением evidence."
+    },
+    {
+      "id": "API-01",
+      "title": "Сессии и учётные записи обслуживаются API",
+      "description": "Вход, refresh, выход, устройства, смена пароля и блокировки имеют устойчивые контракты.",
+      "category": "api",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "work/production/src/Task.Api/Auth/AuthEndpoints.cs",
+        "work/production/src/Task.Api/Auth/AuthSessionEndpoints.cs",
+        "work/production/tests/Task.ServiceHosts.Tests/AuthEndpointsTests.cs"
+      ],
+      "note": "Основной foundation реализован; административное управление пользователями не завершено.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "SEC-01",
+        "DATA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 13,
+      "next_action": "Закрыть административный lifecycle учётных записей и подтвердить стабильность auth contracts."
+    },
+    {
+      "id": "API-02",
+      "title": "API задач поддерживает полный базовый lifecycle",
+      "description": "Чтение, создание, изменение и переход статуса защищены правами, idempotency и concurrency.",
+      "category": "api",
+      "weight": 14,
+      "criticality": "critical",
+      "status": "done",
+      "progress": 100,
+      "evidence": [
+        "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128"
+      ],
+      "note": "Базовый task API vertical slice подтверждён.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "DATA-02"
+      ],
+      "blocked_by": [],
+      "recommended_order": 0,
+      "next_action": "Поддерживать готовый task API регрессионными тестами; расширять только по подтверждённому contract gap."
+    },
+    {
+      "id": "API-03",
+      "title": "Календарь и расписание доступны через API",
+      "description": "Клиент получает диапазоны календаря, детали, конфликты и безопасно изменяет события.",
+      "category": "api",
+      "weight": 11,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "work/production/src/Task.Application/Calendar",
+        "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0/02_SERVER_EVENT_DETAILS_AND_CONFLICTS_API.md"
+      ],
+      "note": "Application/store готовы частично; HTTP endpoints ещё не обнаружены.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 2,
+      "dependencies": [
+        "DATA-03",
+        "SEC-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 3,
+      "next_action": "Реализовать calendar range/details/conflicts endpoints по утверждённой спецификации и покрыть contract tests."
+    },
+    {
+      "id": "API-04",
+      "title": "Остальные модули продукта имеют рабочие API",
+      "description": "Проекты, контакты, файлы, поиск, уведомления, архив и настройки доступны клиенту.",
+      "category": "api",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "not_started",
+      "progress": 0,
+      "evidence": [
+        "work/production/src/Task.Api: endpoints найдены только для auth, audit, capabilities и tasks"
+      ],
+      "note": "Критический scope gap относительно концепции.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DATA-04",
+        "SEC-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 8,
+      "next_action": "Создавать API оставшихся модулей по одному законченному vertical slice, начиная с проектов."
+    },
+    {
+      "id": "API-05",
+      "title": "Audit и capabilities дают безопасную эксплуатационную картину",
+      "description": "Действия отслеживаются, а клиент получает версию и возможности сервера без утечки данных.",
+      "category": "api",
+      "weight": 8,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "work/production/src/Task.Api/Audit/AuditEndpoints.cs",
+        "work/production/src/Task.Api/Capabilities/CapabilitiesEndpoints.cs",
+        "work/production/tests/Task.ServiceHosts.Tests/AuditEndpointsTests.cs"
+      ],
+      "note": "Foundation подтверждён, полный продуктовый audit trail расширяется вместе с модулями.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "API-04",
+        "DATA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 35,
+      "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
+    },
+    {
+      "id": "DATA-01",
+      "title": "PostgreSQL и миграции воспроизводимо поднимаются",
+      "description": "Схема разворачивается явным migrator, версии проверяются, runtime-роль не меняет структуру БД.",
+      "category": "data",
+      "weight": 13,
+      "criticality": "critical",
+      "status": "done",
+      "progress": 100,
+      "evidence": [
+        "work/production/src/Task.DatabaseMigrator",
+        "work/production/src/Task.Infrastructure/Persistence/Migrations: 6 migrations",
+        "outputs/20260815_task_container_deployment_foundation_0.4.0/validation-report.md"
+      ],
+      "note": "Migration foundation подтверждён disposable PostgreSQL gate.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [],
+      "blocked_by": [],
+      "recommended_order": 0,
+      "next_action": "Поддерживать миграционный gate и добавлять только проверенные forward migrations."
+    },
+    {
+      "id": "DATA-02",
+      "title": "Данные задач сохраняются надёжно и изолированно",
+      "description": "CRUD задач, границы организации, optimistic concurrency, audit и outbox работают транзакционно.",
+      "category": "data",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "done",
+      "progress": 100,
+      "evidence": [
+        "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+        "work/production/tests/Task.Tests/PostgresTaskWriteCommandExecutorTests.cs"
+      ],
+      "note": "Task persistence vertical slice завершён и проверен.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "DATA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 0,
+      "next_action": "Сохранять task persistence contract стабильным и подтверждать regression gate при изменениях."
+    },
+    {
+      "id": "DATA-03",
+      "title": "Календарные данные сохраняются и читаются",
+      "description": "События, участники, расписание и версии восстанавливаются из PostgreSQL.",
+      "category": "data",
+      "weight": 10,
+      "criticality": "high",
+      "status": "done",
+      "progress": 100,
+      "evidence": [
+        "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+        "work/production/tests/Task.Tests/PostgresCalendarEventStoreTests.cs",
+        "work/production/tests/Task.Tests/PostgresScheduleStoreTests.cs",
+        "outputs/20260830_calendar_persistence_contract_verification_1.0.0/validation-report.md"
+      ],
+      "note": "Calendar persistence contract подтверждён на свежем PostgreSQL 16: round-trip, tenant boundary, optimistic concurrency, attendees, schedule filters и migrations gate. HTTP/UI остаются отдельным слоем.",
+      "updated_at": "2026-08-30T17:00:00+03:00",
+      "priority": 1,
+      "dependencies": [
+        "DATA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 0,
+      "next_action": "Реализовать server schedule read HTTP API по утверждённой спецификации, не меняя persistence contract."
+    },
+    {
+      "id": "DATA-04",
+      "title": "Все продуктовые сущности имеют production-хранилища",
+      "description": "Проекты, контакты, каталог, уведомления, архив и настройки сохраняются в общей модели.",
+      "category": "data",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "work/production/src/Task.Infrastructure: production stores cover identity, tasks and calendar; remaining product modules not found"
+      ],
+      "note": "Большая часть ширины продукта ещё не доведена до persistence vertical slices.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DATA-01",
+        "DATA-03"
+      ],
+      "blocked_by": [],
+      "recommended_order": 7,
+      "next_action": "Спроектировать и реализовать production stores для проектов, контактов, каталога, уведомлений и lifecycle."
+    },
+    {
+      "id": "DATA-05",
+      "title": "Фоновые процессы доставляют изменения и уведомления",
+      "description": "Outbox, обслуживание сессий, напоминания и безопасные повторы реально исполняются worker-ами.",
+      "category": "data",
+      "weight": 13,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 50,
+      "evidence": [
+        "work/production/src/Task.Worker/ExpiredSessionMaintenanceWorker.cs",
+        "work/production/src/Task.Worker/TaskBackgroundWorker.cs"
+      ],
+      "note": "Expired-session worker реализован; полный outbox/reminder processing не подтверждён.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DATA-01",
+        "OPS-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 20,
+      "next_action": "Довести outbox, reminders и фоновые повторы до исполняемых worker-сценариев с idempotency."
+    },
+    {
+      "id": "SEC-01",
+      "title": "Пароли, JWT и refresh-сессии защищены",
+      "description": "Argon2id, token rotation, DPAPI vault, lockout и device binding проверены тестами.",
+      "category": "security",
+      "weight": 13,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "work/production/src/Task.Infrastructure/Identity/Argon2idPasswordHasher.cs",
+        "work/production/src/Task.Desktop/Security/DesktopCredentialVault.cs",
+        "work/production/tests/Task.Tests/Security"
+      ],
+      "note": "Security foundation сильный, но production key management и полный аудит ещё впереди.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 2,
+      "dependencies": [
+        "DATA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 2,
+      "next_action": "Закрыть production key-management gaps и повторить auth/session security gate."
+    },
+    {
+      "id": "SEC-02",
+      "title": "Роли и права ограничивают каждый сценарий",
+      "description": "Администратор, руководитель, сотрудник и наблюдатель получают только разрешённые действия и данные.",
+      "category": "security",
+      "weight": 13,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 50,
+      "evidence": [
+        "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+        "work/production/src/Task.Infrastructure/Persistence/Migrations/004_role_permissions_effect.sql",
+        "work/PROJECT_CONTINUATION.md: authorization completion remains"
+      ],
+      "note": "Task/auth permissions есть; полная матрица ролей по всем модулям не реализована.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "SEC-01",
+        "API-04"
+      ],
+      "blocked_by": [],
+      "recommended_order": 12,
+      "next_action": "Применить полную role/capability matrix ко всем API и подтвердить tenant isolation негативными тестами."
+    },
+    {
+      "id": "SEC-03",
+      "title": "Production secrets и TLS управляются безопасно",
+      "description": "Секреты не лежат в репозитории, сертификаты выдаются и ротируются, весь трафик защищён.",
+      "category": "security",
+      "weight": 14,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 0,
+      "evidence": [
+        "work/PROJECT_CONTINUATION.md: production secrets management and TLS termination remain outside scope"
+      ],
+      "note": "Hard release blocker.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "OPS-01"
+      ],
+      "blocked_by": [
+        "SEC-05"
+      ],
+      "recommended_order": 18,
+      "next_action": "По результатам threat model зафиксировать secrets manager, CA/TLS issuance и rotation runbook."
+    },
+    {
+      "id": "SEC-04",
+      "title": "Конфигурация и образы проходят security hardening",
+      "description": "Non-root, least privilege, secret scan, dependency review и безопасные defaults проверяются регулярно.",
+      "category": "security",
+      "weight": 10,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 50,
+      "evidence": [
+        "work/production/docs/task-container-deployment-foundation.md: non-root/read-only/capability-drop gate",
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: scoped secret scan PASS"
+      ],
+      "note": "Container hardening проверен; регулярный полный dependency/security gate не найден в CI.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "OPS-01",
+        "QA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 29,
+      "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
+    },
+    {
+      "id": "SEC-05",
+      "title": "Независимая проверка безопасности закрыта",
+      "description": "Threat model, уязвимости, сетевые границы и сценарии злоупотреблений проверены перед передачей.",
+      "category": "security",
+      "weight": 10,
+      "criticality": "high",
+      "status": "unverified",
+      "progress": 0,
+      "evidence": [
+        "Независимый security review или penetration report в актуальных production packages не обнаружен"
+      ],
+      "note": "Не проверено.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "SEC-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 17,
+      "next_action": "Сначала выполнить threat-model review; финальный penetration pass повторить после стабилизации deployment."
+    },
+    {
+      "id": "QA-01",
+      "title": "Автоматические тесты стабильно подтверждают solution",
+      "description": "Domain, persistence, API, desktop и service-host tests проходят воспроизводимо.",
+      "category": "quality",
+      "weight": 13,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: 1227 passed, 2 expected skips",
+        ".github/workflows/ci.yml: production solution and real PostgreSQL jobs added in 4fd15b3; first GitHub run pending"
+      ],
+      "note": "Последний известный полный локальный gate PASS; production CI настроен, но его первый GitHub-прогон ещё не подтверждён.",
+      "updated_at": "2026-08-30T20:48:16+03:00",
+      "priority": 3,
+      "dependencies": [
+        "QA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 11,
+      "next_action": "Проверить первый GitHub-прогон production solution и real PostgreSQL jobs; обновить test-results.json только по фактическому результату."
+    },
+    {
+      "id": "QA-02",
+      "title": "Критический task/auth E2E проходит на реальном окружении",
+      "description": "PostgreSQL, HTTPS API и Windows-клиент проверены вместе без тестовых подмен основного пути.",
+      "category": "quality",
+      "weight": 13,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md",
+        "outputs/20260823_task_desktop_auth_e2e_hardening_0.1.0"
+      ],
+      "note": "Два главных vertical slice проверены; они ещё не покрывают весь продукт.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "PROD-01",
+        "DESK-01",
+        "QA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 16,
+      "next_action": "Повторить task/auth E2E на чистом окружении после закрытия текущих vertical slices."
+    },
+    {
+      "id": "QA-03",
+      "title": "Все критические пользовательские сценарии имеют E2E",
+      "description": "Сегодня, задачи, календарь, проекты, файлы, поиск и восстановление после ошибок проверены сквозным образом.",
+      "category": "quality",
+      "weight": 15,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 25,
+      "evidence": [
+        "Production E2E evidence найден для auth и tasks; остальные основные модули ещё placeholders"
+      ],
+      "note": "Hard release blocker до реализации остальных vertical slices.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "PROD-02",
+        "PROD-03",
+        "PROD-04",
+        "PROD-05",
+        "DESK-04",
+        "QA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 28,
+      "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
+    },
+    {
+      "id": "QA-04",
+      "title": "Нативная доступность и usability подтверждены людьми",
+      "description": "Narrator, DPI и модерируемые сценарии пройдены на целевых устройствах и приняты владельцем.",
+      "category": "quality",
+      "weight": 10,
+      "criticality": "high",
+      "status": "blocked",
+      "progress": 0,
+      "evidence": [
+        "work/stage_5_completion_audit/completion-audit.json: external gate NOT_READY 0/9"
+      ],
+      "note": "Требуются внешние evidence и approvals.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "DESK-05",
+        "QA-03"
+      ],
+      "blocked_by": [],
+      "recommended_order": 33,
+      "next_action": "Провести модерируемые сессии, оформить findings disposition и получить product acceptance."
+    },
+    {
+      "id": "QA-05",
+      "title": "CI проверяет production build при каждом изменении",
+      "description": "Основная .NET solution, тесты, формат, security и package checks блокируют регрессии в main.",
+      "category": "quality",
+      "weight": 9,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        ".github/workflows/ci.yml: production job restores, builds and tests Task.sln; production-postgres job runs tests against PostgreSQL 16 (4fd15b3)",
+        "Первый GitHub-прогон новых jobs ещё не подтверждён evidence"
+      ],
+      "note": "Production CI configuration добавлена; readiness не повышена до успешного выполнения jobs на GitHub.",
+      "updated_at": "2026-08-30T20:48:16+03:00",
+      "priority": 1,
+      "dependencies": [
+        "API-02",
+        "DATA-01",
+        "DATA-02"
+      ],
+      "blocked_by": [],
+      "recommended_order": 1,
+      "next_action": "Подтвердить успешный GitHub-прогон production и production-postgres jobs; при сбое исправить workflow и сохранить evidence."
+    },
+    {
+      "id": "OPS-01",
+      "title": "Серверные компоненты собираются и запускаются контейнерами",
+      "description": "API, Worker, BackupAgent и Migrator имеют воспроизводимые hardened Linux images и порядок запуска.",
+      "category": "operations",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "outputs/20260815_task_container_deployment_foundation_0.4.0/validation-report.md: four linux/amd64 images PASS"
+      ],
+      "note": "Foundation проверен в disposable environment, не в production topology.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "DATA-01",
+        "QA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 5,
+      "next_action": "Довести container foundation до воспроизводимого release build и сохранить provenance образов."
+    },
+    {
+      "id": "OPS-02",
+      "title": "Production сеть и TLS развёрнуты по runbook",
+      "description": "Внутренняя сеть, DNS, reverse proxy, сертификаты и firewall реально настроены и проверены.",
+      "category": "operations",
+      "weight": 13,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 0,
+      "evidence": [
+        "work/PROJECT_CONTINUATION.md: TLS termination and production network provisioning remain outside scope"
+      ],
+      "note": "Hard release blocker.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "OPS-01",
+        "SEC-03"
+      ],
+      "blocked_by": [],
+      "recommended_order": 19,
+      "next_action": "Развернуть и проверить production-like network, reverse proxy, TLS и firewall по утверждённому runbook."
+    },
+    {
+      "id": "OPS-03",
+      "title": "Backup и restore защищают данные компании",
+      "description": "Автоматические копии, WAL/PITR, шифрование, retention и регулярный restore test работают.",
+      "category": "operations",
+      "weight": 14,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 0,
+      "evidence": [
+        "work/production/src/Task.BackupAgent/BackupRestoreAgent.cs",
+        "work/production/docs/task-container-deployment-foundation.md: BackupAgent placeholder"
+      ],
+      "note": "Hard release blocker: агент является placeholder.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "OPS-01",
+        "DATA-01"
+      ],
+      "blocked_by": [],
+      "recommended_order": 6,
+      "next_action": "Заменить BackupAgent placeholder на backup/WAL/retention/restore workflow и доказать восстановление."
+    },
+    {
+      "id": "OPS-04",
+      "title": "Мониторинг и оповещения обнаруживают сбои",
+      "description": "Health, logs, metrics, disk/DB capacity и backup failures имеют владельца и alerting.",
+      "category": "operations",
+      "weight": 12,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 0,
+      "evidence": [
+        "work/production/src/Task.Api/Program.cs: live/ready endpoints",
+        "work/PROJECT_CONTINUATION.md: monitoring remains outside scope"
+      ],
+      "note": "Есть health endpoints, но нет production monitoring/alerting.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "OPS-02",
+        "OPS-03",
+        "DATA-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 21,
+      "next_action": "Подключить logs, metrics и alerts для API, DB, disk, workers и backup failures с назначенными владельцами."
+    },
+    {
+      "id": "OPS-05",
+      "title": "Windows-клиент устанавливается и безопасно обновляется",
+      "description": "Подписанный installer, version compatibility, rollout и rollback проверены на целевых ПК.",
+      "category": "operations",
+      "weight": 12,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "work/stage_5_6_windows_client: development gate client package",
+        "work/PROJECT_CONTINUATION.md: updates remain outside scope"
+      ],
+      "note": "Есть gate executable, production signing/update delivery не завершены.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 3,
+      "dependencies": [
+        "OPS-01",
+        "DESK-05",
+        "SEC-03"
+      ],
+      "blocked_by": [],
+      "recommended_order": 26,
+      "next_action": "Создать подписанный Windows installer, совместимый update channel и проверенный rollback."
+    },
+    {
+      "id": "HAND-01",
+      "title": "Требования, архитектура и контракты имеют каноническую базу",
+      "description": "Получатель понимает scope, роли, данные, API и UX без восстановления решений по чатам.",
+      "category": "handoff",
+      "weight": 8,
+      "criticality": "high",
+      "status": "done",
+      "progress": 100,
+      "evidence": [
+        "AGENTS.md: five canonical sources",
+        "sources/stage_2_2",
+        "sources/stage_3_4",
+        "sources/stage_4_1_1"
+      ],
+      "note": "Каноническая документационная база присутствует и защищена правилами проекта.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [],
+      "blocked_by": [],
+      "recommended_order": 0,
+      "next_action": "Поддерживать каноническую базу и фиксировать только утверждённые изменения scope/contract."
+    },
+    {
+      "id": "HAND-02",
+      "title": "Другой инженер может развернуть и обслуживать систему",
+      "description": "Есть проверенный runbook окружения, конфигурации, миграций, backup, monitoring и recovery.",
+      "category": "handoff",
+      "weight": 12,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 25,
+      "evidence": [
+        "work/production/docs/task-container-deployment-foundation.md",
+        "work/production/docs/task-database-migrator.md"
+      ],
+      "note": "Migration/container инструкции есть; полный operational runbook зависит от незавершённых OPS gates.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "OPS-02",
+        "OPS-03",
+        "OPS-04",
+        "OPS-05"
+      ],
+      "blocked_by": [],
+      "recommended_order": 30,
+      "next_action": "Собрать и проверить единый operations runbook на чистом стенде другим инженером."
+    },
+    {
+      "id": "HAND-03",
+      "title": "Финальный пакет воспроизводим, подписан и проверяем",
+      "description": "Версии, manifest, SHA-256, SBOM/лицензии и validation report соответствуют одному release candidate.",
+      "category": "handoff",
+      "weight": 10,
+      "criticality": "critical",
+      "status": "in_progress",
+      "progress": 25,
+      "evidence": [
+        "Исторические outputs содержат version/manifest/SHA/validation packages",
+        "Единого production release candidate для полной передачи пока нет"
+      ],
+      "note": "Package discipline есть, финальный продуктовый release ещё не сформирован.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "QA-03",
+        "SEC-05",
+        "HAND-02"
+      ],
+      "blocked_by": [],
+      "recommended_order": 31,
+      "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
+    },
+    {
+      "id": "HAND-04",
+      "title": "Администратор и пользователи получили инструкции",
+      "description": "Есть короткие руководства по установке, учётным записям, ежедневной работе и поддержке.",
+      "category": "handoff",
+      "weight": 8,
+      "criticality": "high",
+      "status": "not_started",
+      "progress": 0,
+      "evidence": [
+        "Готовые актуальные user/admin manuals для production продукта не обнаружены"
+      ],
+      "note": "Нужно создать после стабилизации функций и deployment.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "DESK-03",
+        "HAND-02"
+      ],
+      "blocked_by": [],
+      "recommended_order": 32,
+      "next_action": "Подготовить короткие user/admin guides и проверить их на человеке, не участвовавшем в разработке."
+    },
+    {
+      "id": "HAND-05",
+      "title": "Заказчик и ответственные лица приняли передачу",
+      "description": "Product, Design, Tech и QA approvals, findings disposition и ownership оформлены.",
+      "category": "handoff",
+      "weight": 12,
+      "criticality": "blocker",
+      "status": "blocked",
+      "progress": 0,
+      "evidence": [
+        "work/stage_5_completion_audit/completion-audit.json: EVD-FIND, EVD-PO, EVD-DESIGN, EVD-TECH, EVD-QA missing"
+      ],
+      "note": "Hard handoff blocker.",
+      "updated_at": "2026-08-30T16:20:00+03:00",
+      "priority": 4,
+      "dependencies": [
+        "HAND-02",
+        "HAND-03",
+        "HAND-04",
+        "QA-04"
+      ],
+      "blocked_by": [],
+      "recommended_order": 34,
+      "next_action": "Закрыть findings, назначить ownership и собрать Product, Design, Tech и QA sign-off."
+    }
+  ],
+  "release_gates": [
+    {
+      "id": "GATE-FUNCTIONAL",
+      "title": "Критические пользовательские сценарии",
+      "description": "Основные рабочие сценарии реализованы и проверены.",
+      "required_items": [
+        "PROD-01",
+        "PROD-02",
+        "PROD-03",
+        "PROD-04",
+        "PROD-05",
+        "DESK-03",
+        "API-04",
+        "QA-03"
+      ]
+    },
+    {
+      "id": "GATE-DATA",
+      "title": "Данные и миграции",
+      "description": "Схема, хранение, целостность и восстановление готовы.",
+      "required_items": [
+        "DATA-01",
+        "DATA-02",
+        "DATA-04",
+        "OPS-03"
+      ]
+    },
+    {
+      "id": "GATE-SECURITY",
+      "title": "Безопасность и секреты",
+      "description": "Права, TLS, secrets и security review закрыты.",
+      "required_items": [
+        "SEC-01",
+        "SEC-02",
+        "SEC-03",
+        "SEC-05"
+      ]
+    },
+    {
+      "id": "GATE-DEPLOY",
+      "title": "Рабочее развёртывание",
+      "description": "Production topology, monitoring и обновления проверены.",
+      "required_items": [
+        "OPS-01",
+        "OPS-02",
+        "OPS-04",
+        "OPS-05"
+      ]
+    },
+    {
+      "id": "GATE-QUALITY",
+      "title": "Качество критических сценариев",
+      "description": "Автотесты, E2E, Windows UX и usability подтверждены.",
+      "required_items": [
+        "QA-01",
+        "QA-02",
+        "QA-03",
+        "QA-04",
+        "DESK-05"
+      ]
+    },
+    {
+      "id": "GATE-HANDOFF",
+      "title": "Документация и формальная передача",
+      "description": "Runbook, release package, manuals и approvals готовы.",
+      "required_items": [
+        "HAND-01",
+        "HAND-02",
+        "HAND-03",
+        "HAND-04",
+        "HAND-05"
+      ]
+    }
+  ]
+}

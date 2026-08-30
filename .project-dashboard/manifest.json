@@ -1,0 +1,108 @@
+{
+  "package": "Task Development / Handoff Readiness Dashboard",
+  "version": "1.0.0",
+  "generated_at": "2026-08-30T17:57:05.665Z",
+  "algorithm": "SHA-256",
+  "files": [
+    {
+      "path": "DESIGN_QA.md",
+      "sha256": "a6e7ffeb136cda5a450021df1b52dc61a6034648a62a8b9c52a5034c6083a542",
+      "bytes": 4052
+    },
+    {
+      "path": "execution-plan.mjs",
+      "sha256": "51fa71e63604e49050292830ac21f43537d5e42b4c822f18379aab20f0e08f32",
+      "bytes": 2652
+    },
+    {
+      "path": "lib.mjs",
+      "sha256": "f8b4e5906e95fe62a655ef209abca0e3f7a0d7ce955e6590af28ee8abf21a9dd",
+      "bytes": 5265
+    },
+    {
+      "path": "package-manifest.mjs",
+      "sha256": "858d861287e88efeb6f630ca2b0d091288be0f32417a4dc5bd0e975b2ba5a33a",
+      "bytes": 1354
+    },
+    {
+      "path": "package.json",
+      "sha256": "e2780ef6ea7812f51f92ba942bb784f27a98c77ceb39c69b914ebf7149248063",
+      "bytes": 306
+    },
+    {
+      "path": "public/app.js",
+      "sha256": "7ee03e5d7011c2bfeb4e4e232b8cf6fb8fefe30d2bba31060334c8b8950f69b1",
+      "bytes": 9434
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "585356452cb0a6c1244a5260927b146a4e15fa12523d49ece292ffa66e509d77",
+      "bytes": 6013
+    },
+    {
+      "path": "public/styles.css",
+      "sha256": "fdf301459ac69b508cdb128b29dbd2b6f6781b8770ccc9611edac7fbba055253",
+      "bytes": 15573
+    },
+    {
+      "path": "qa/execution-plan-1440x1000.png",
+      "sha256": "8f3c870bd80c5f8c4c449519075ee8b3c49b3fc4a29dc7b211cbb45c46dcaebf",
+      "bytes": 103717
+    },
+    {
+      "path": "qa/implementation-1280x691.png",
+      "sha256": "038339feda81e619c3c8b8a5667ef70398a772e3ac4fa5d1bc08410a6f26779d",
+      "bytes": 52624
+    },
+    {
+      "path": "qa/implementation-1440x1000.png",
+      "sha256": "1661cf6b13167a1422e5ac6a149d24715644276a180ac1564d9563a3e3c90ed1",
+      "bytes": 102583
+    },
+    {
+      "path": "README.md",
+      "sha256": "5867b823fec625631ffd0eda894950143057618b85557957c3ab10f35fa9c7c9",
+      "bytes": 3399
+    },
+    {
+      "path": "recalculate-order.mjs",
+      "sha256": "98536a22bc024a9cb7b7f52337c29fc0e5ee93b19a45e438b92f36b950a0992a",
+      "bytes": 539
+    },
+    {
+      "path": "roadmap.json",
+      "sha256": "8364d3cc37baf1edc4e140124dcd472461b5dde464896ca08e5c504a8b845e8f",
+      "bytes": 48649
+    },
+    {
+      "path": "server.mjs",
+      "sha256": "17b4f160a5a01857e433da3bee43d232415e76001777b91f6ea65ec208e669e2",
+      "bytes": 2466
+    },
+    {
+      "path": "test-results.json",
+      "sha256": "c4f9f2519ed375109106688bd6a3cd8b373dae8dfa6732321740b9d279aaa339",
+      "bytes": 591
+    },
+    {
+      "path": "validate.mjs",
+      "sha256": "cb82334f025abb9a38da689cc45ff6198decafd2d5340c35828fa2a3f9b364de",
+      "bytes": 4494
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "755ea09542d2df20023cb01944e7688e44c23b4d8beeb99f88997702c567fd88",
+      "bytes": 2261
+    },
+    {
+      "path": "verify-manifest.mjs",
+      "sha256": "0ea986e554018ef4a1edf41bfc4bc64de8c11996e1a9c159ab998951089f8e37",
+      "bytes": 1081
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "bytes": 6
+    }
+  ]
+}
