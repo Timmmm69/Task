@@ -156,7 +156,7 @@ public sealed class PostgresAuditEntryStoreTests
             Assert.Equal(2, page.Entries.Count);
             Assert.Null(page.NextPageToken);
 
-                        // OccurredAt is server-assigned: not the forged value and sits on the
+            // OccurredAt is server-assigned: not the forged value and sits on the
             // database clock (within a minute of it), not on the host clock.
             var dbClock = GetDatabaseClock(dataSource);
             Assert.All(page.Entries, entry => Assert.NotEqual(forgedOccurredAt, entry.OccurredAt));

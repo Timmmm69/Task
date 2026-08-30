@@ -1,5 +1,9 @@
 [CmdletBinding()]
-param()
+param(
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Debug',
+    [switch]$NoBuild
+)
 
 $ErrorActionPreference = 'Stop'
 $productionRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
@@ -27,7 +31,18 @@ foreach ($file in $configurationFiles) {
     }
 }
 
-& dotnet test $solutionPath --no-restore --verbosity minimal
+$testArguments = @(
+    'test',
+    $solutionPath,
+    '--configuration', $Configuration,
+    '--no-restore',
+    '--verbosity', 'minimal'
+)
+if ($NoBuild) {
+    $testArguments += '--no-build'
+}
+
+& dotnet @testArguments
 if ($LASTEXITCODE -ne 0) {
     throw "SEC-01 test gate failed with exit code $LASTEXITCODE."
 }

@@ -52,10 +52,18 @@ jobs:
           dotnet-version: 10.0.x
       - name: Restore production solution
         run: dotnet restore Task.sln
+      - name: Verify production formatting
+        run: dotnet format Task.sln --verify-no-changes --no-restore
+      - name: Verify production project boundaries
+        shell: powershell
+        run: ./verification/Test-ProjectBoundaries.ps1
       - name: Build production solution
         run: dotnet build Task.sln --configuration Release --no-restore
       - name: Test production solution
         run: dotnet test Task.sln --configuration Release --no-build --no-restore
+      - name: Run production security gate
+        shell: powershell
+        run: ./verification/Test-SecurityGate.ps1 -Configuration Release -NoBuild
 
   production-postgres:
     name: Production tests (real PostgreSQL 16)
@@ -89,14 +97,23 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - name: Restore PostgreSQL test projects
-        run: |
-          dotnet restore tests/Task.Tests/Task.Tests.csproj
-          dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj
-      - name: Build database migrator required by integration tests
-        run: dotnet build src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --configuration Debug --no-restore
+      - name: Restore production solution
+        run: dotnet restore Task.sln
+      - name: Build production solution required by integration tests
+        run: dotnet build Task.sln --configuration Debug --no-restore
       - name: Run tests against real PostgreSQL
-        run: dotnet test tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-restore
+        run: dotnet test tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-build --no-restore
+
+  production-package:
+    name: Production container package
+    needs: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify production container package
+        shell: pwsh
+        run: ./work/production/verification/Test-ContainerPackaging.ps1 -GitSha ${{ github.sha }}
 
   delegation-policy:
     name: Delegation policy
