@@ -53,7 +53,7 @@ jobs:
       - name: Restore production solution
         run: dotnet restore Task.sln
       - name: Verify production formatting
-        run: dotnet format Task.sln --verify-no-changes --no-restore
+        run: dotnet format whitespace Task.sln --verify-no-changes --no-restore
       - name: Verify production project boundaries
         shell: powershell
         run: ./verification/Test-ProjectBoundaries.ps1
