@@ -1,0 +1,55 @@
+{
+  "package": "Calendar read vertical slice specifications",
+  "packageVersion": "1.0.0",
+  "createdAt": "2026-08-30",
+  "baselineCommit": "896cfc583c64a5e53c38b1dd1c960193c4fc0fc2",
+  "validationStatus": "PASS",
+  "executionMode": "five sequential self-contained chats",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sizeBytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "01_SERVER_SCHEDULE_READ_API.md",
+      "sizeBytes": 10141,
+      "sha256": "929690715c4baccfd212242c20073271f55c66d02084a804774d128122fb2e58"
+    },
+    {
+      "path": "02_SERVER_EVENT_DETAILS_AND_CONFLICTS_API.md",
+      "sizeBytes": 8156,
+      "sha256": "a503362e76166455f0868800c2899ab064d832baad8b0b26aed23cab118c1d23"
+    },
+    {
+      "path": "03_DESKTOP_CALENDAR_READ_CLIENT.md",
+      "sizeBytes": 6610,
+      "sha256": "9a42c75f353ec01b10789cd9d3b725f4420c23ec9f5fa45db98ed24a66b613c3"
+    },
+    {
+      "path": "04_WPF_CALENDAR_WEEK_SCREEN.md",
+      "sizeBytes": 10546,
+      "sha256": "f72806da989b857f1332576f21e59d9fa6d92e32e6e65ca1030ca816157998dc"
+    },
+    {
+      "path": "05_CALENDAR_READ_HARDENING_AND_E2E.md",
+      "sizeBytes": 10365,
+      "sha256": "fd1fbb8a7684d72d7a2faf52b8ddce647cbecf65df719d850eef61c063e5db8e"
+    },
+    {
+      "path": "README.md",
+      "sizeBytes": 5901,
+      "sha256": "9b98d041bc40b3bb544bd2b4c194fe57a293b0b7c2679e7a2e6933475e5ce2cc"
+    },
+    {
+      "path": "validation-report.md",
+      "sizeBytes": 5621,
+      "sha256": "f9ec5808779a45f2d18be18fab9751a34ddd4ee3eec7954950723467a15373dc"
+    },
+    {
+      "path": "VERSION",
+      "sizeBytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}
