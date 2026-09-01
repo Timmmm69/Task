@@ -1,0 +1,20 @@
+{
+  "package": "calendar-read-api",
+  "version": "1.0.0",
+  "createdAt": "2026-09-01T16:20:24+03:00",
+  "status": "validated",
+  "artifacts": [
+    {
+      "path": "CALENDAR_READ_API_RELEASE.md",
+      "sha256": "90ee12f6f6ee406b4753fb516a3fed165291f2389de2a937a49332dbf5b2b536"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "b1c03df77c318d4baf956ee0106024453727eb8ebf1935d69b9a023a46a7d644"
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}

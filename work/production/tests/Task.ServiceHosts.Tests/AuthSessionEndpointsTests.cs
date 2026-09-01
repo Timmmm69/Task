@@ -110,7 +110,7 @@ public sealed class AuthSessionEndpointsTests
         Assert.Equal(1, document.RootElement.GetProperty("credentialVersion").GetInt64());
         Assert.Equal(1, document.RootElement.GetProperty("authorizationScopeVersion").GetInt64());
         Assert.Equal(
-            ["Task.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"],
+            ["Task.Read", "Calendar.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"],
             document.RootElement.GetProperty("capabilities").EnumerateArray().Select(item => item.GetString()));
         Assert.Equal(mustChangePassword, document.RootElement.GetProperty("mustChangePassword").GetBoolean());
     }
@@ -135,7 +135,7 @@ public sealed class AuthSessionEndpointsTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var document = await ReadJsonAsync(response);
         Assert.Equal(
-            ["Task.Read"],
+            ["Task.Read", "Calendar.Read"],
             document.RootElement.GetProperty("capabilities").EnumerateArray().Select(item => item.GetString()));
     }
 

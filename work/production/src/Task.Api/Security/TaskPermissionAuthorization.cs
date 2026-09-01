@@ -27,6 +27,9 @@ internal static class TaskPermissionAuthorization
     /// </summary>
     public const string TaskReadPolicyName = "permission.task.read";
 
+    /// <summary>Named policy with the public Calendar.Read meaning.</summary>
+    public const string CalendarReadPolicyName = "permission.calendar.read";
+
     /// <summary>Permission code backing both named policies.</summary>
     public const string AuditEntryReadPermissionCode = "audit.entry.read";
 
@@ -54,6 +57,7 @@ internal static class TaskPermissionAuthorization
     public static IReadOnlyList<(string PermissionCode, string Capability)> TaskCapabilities { get; } =
     [
         (TaskReadBackingPermissionCode, "Task.Read"),
+        (TaskReadBackingPermissionCode, "Calendar.Read"),
         (TaskCreateBackingPermissionCode, "Task.Create"),
         (TaskUpdateBackingPermissionCode, "Task.Update"),
         (TaskChangeStatusBackingPermissionCode, "Task.ChangeStatus"),
@@ -161,6 +165,7 @@ internal static class TaskPermissionAuthorization
             options.AddPolicy(AuditReadPolicyName, policy => policy.RequirePermission(AuditEntryReadPermissionCode));
             options.AddPolicy(LoginAttemptsReadPolicyName, policy => policy.RequirePermission(AuditEntryReadPermissionCode));
             options.AddPolicy(TaskReadPolicyName, policy => policy.RequirePermission(TaskReadBackingPermissionCode));
+            options.AddPolicy(CalendarReadPolicyName, policy => policy.RequirePermission(TaskReadBackingPermissionCode));
             options.AddPolicy(TaskCreatePolicyName, policy => policy.RequirePermission(TaskCreateBackingPermissionCode));
             options.AddPolicy(TaskUpdatePolicyName, policy => policy.RequirePermission(TaskUpdateBackingPermissionCode));
             options.AddPolicy(TaskChangeStatusPolicyName, policy => policy.RequirePermission(TaskChangeStatusBackingPermissionCode));

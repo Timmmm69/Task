@@ -8,6 +8,7 @@ using Task.Application.Security;
 using Task.Api.Audit;
 using Task.Api.Auth;
 using Task.Api.Capabilities;
+using Task.Api.Calendar;
 using Task.Api.Security;
 using Task.Api.Tasks;
 using Task.Application.Server;
@@ -53,6 +54,7 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<ICalendarEventStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateCalendarEventStore());
     builder.Services.AddSingleton<CalendarEventLifecycleService>();
+    builder.Services.AddSingleton<CalendarEventQueryService>();
     builder.Services.AddSingleton(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateMigrator());
     builder.Services.AddSingleton<TaskLifecycleService>();
@@ -146,6 +148,7 @@ app.MapAuthSessionEndpoints();
 app.MapCapabilitiesEndpoints();
 app.MapAuditEndpoints();
 app.MapTaskEndpoints();
+app.MapCalendarEndpoints();
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 

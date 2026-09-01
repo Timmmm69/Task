@@ -367,13 +367,16 @@
       "weight": 11,
       "criticality": "critical",
       "status": "in_progress",
-      "progress": 25,
+      "progress": 50,
       "evidence": [
         "work/production/src/Task.Application/Calendar",
-        "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0/02_SERVER_EVENT_DETAILS_AND_CONFLICTS_API.md"
+        "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0/02_SERVER_EVENT_DETAILS_AND_CONFLICTS_API.md",
+        "work/production/src/Task.Api/Calendar/CalendarEndpoints.cs",
+        "work/production/tests/Task.ServiceHosts.Tests/CalendarReadEndpointsTests.cs",
+        "outputs/20260901_calendar_read_api_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Application/store готовы частично; HTTP endpoints ещё не обнаружены.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Calendar range, event details и conflicts HTTP endpoints реализованы и защищены Calendar.Read; event write API ещё не реализован.",
+      "updated_at": "2026-09-01T16:20:24+03:00",
       "priority": 2,
       "dependencies": [
         "DATA-03",
@@ -381,7 +384,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 1,
-      "next_action": "Реализовать calendar range/details/conflicts endpoints по утверждённой спецификации и покрыть contract tests."
+      "next_action": "Реализовать безопасные create/update/lifecycle endpoints CalendarEvent и покрыть optimistic-concurrency contract tests."
     },
     {
       "id": "API-04",
