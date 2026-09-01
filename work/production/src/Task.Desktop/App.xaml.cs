@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Task.Desktop.Security;
+using Task.Desktop.Calendar;
 using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
 
@@ -166,7 +167,11 @@ public partial class App : global::System.Windows.Application
         var tasks = new TasksViewModel(
             tasksClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
-        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks);
+        var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService);
+        var calendar = new CalendarViewModel(
+            calendarClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar);
         var window = new MainWindow(viewModel);
         _mainWindow = window;
         _mainSessionService = sessionService;
@@ -248,9 +253,12 @@ public partial class App : global::System.Windows.Application
         {
             viewModel.Tasks.UpdateCapabilities(
                 sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Calendar?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
         }
 
         viewModel.Tasks.UpdateSessionState(signedIn);
+        viewModel.Calendar?.UpdateSessionState(signedIn);
     }
 
     private void DetachMainSession()

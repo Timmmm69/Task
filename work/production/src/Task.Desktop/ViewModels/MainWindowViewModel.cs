@@ -15,21 +15,27 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public MainWindowViewModel()
-        : this(null, null, null)
+        : this(null, null, null, null)
     {
     }
 
     public MainWindowViewModel(
         Uri? serverEndpoint,
         Func<CancellationToken, global::System.Threading.Tasks.Task>? logout,
-        TasksViewModel? tasks = null)
+        TasksViewModel? tasks = null,
+        CalendarViewModel? calendar = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
         Tasks = tasks;
+        Calendar = calendar;
         if (Tasks is not null)
         {
             Tasks.PropertyChanged += OnTasksPropertyChanged;
+        }
+        if (Calendar is not null)
+        {
+            Calendar.PropertyChanged += OnCalendarPropertyChanged;
         }
         Sections = new ObservableCollection<NavigationSection>
         {
@@ -71,6 +77,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             }
 
             OnPropertyChanged(nameof(IsTasksSectionSelected));
+            OnPropertyChanged(nameof(IsCalendarSectionSelected));
             OnPropertyChanged(nameof(SelectedSectionSupportingText));
             if (IsTasksSectionSelected)
             {
@@ -80,13 +87,23 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             {
                 Tasks?.Deactivate();
             }
+            if (IsCalendarSectionSelected) Calendar?.Activate(); else Calendar?.Deactivate();
+            OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(DataSourceStatus));
+            OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+            OnPropertyChanged(nameof(FooterRefreshCommand));
         }
     }
 
     public TasksViewModel? Tasks { get; }
 
+    public CalendarViewModel? Calendar { get; }
+
     public bool IsTasksSectionSelected =>
         string.Equals(SelectedSection?.Route, "tasks", StringComparison.Ordinal);
+
+    public bool IsCalendarSectionSelected =>
+        string.Equals(SelectedSection?.Route, "calendar", StringComparison.Ordinal);
 
     public string? SelectedSectionSupportingText => SelectedSection?.SupportingText;
 
@@ -104,7 +121,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string ConnectionContext => ServerAddress is null
         ? "Нет рабочей сессии"
-        : Tasks?.IsReadOnly == true ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
+        : IsCalendarSectionSelected
+            ? Calendar?.CanCreate == true ? "Онлайн · запись календаря доступна" : "Онлайн · календарь только для просмотра"
+            : Tasks?.IsReadOnly == true ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
 
     public string ConnectionIconKey => ServerAddress is null
         ? "Task.Icon.Warning"
@@ -127,9 +146,19 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string DataSourceStatus => ServerAddress is null
         ? "Источник данных недоступен"
-        : Tasks?.IsReadOnly == true
+        : IsCalendarSectionSelected
+            ? Calendar?.WriteAccessText ?? "Календарь сервера компании"
+            : Tasks?.IsReadOnly == true
             ? "Данные предоставляются сервером компании · только просмотр"
             : "Данные и изменения синхронизируются с сервером компании";
+
+    public string LastSuccessfulRefreshText => IsCalendarSectionSelected
+        ? Calendar?.LastSuccessfulRefreshText ?? "Календарь ещё не обновлялся"
+        : Tasks?.LastSuccessfulRefreshText ?? "Данные ещё не обновлялись";
+
+    public AsyncCommand? FooterRefreshCommand => IsCalendarSectionSelected
+        ? Calendar?.RefreshCommand
+        : Tasks?.RefreshCommand;
 
     public string ReadOnlyActionReason =>
         Tasks?.CanCreate == true
@@ -158,9 +187,14 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         {
             Tasks.PropertyChanged -= OnTasksPropertyChanged;
         }
+        if (Calendar is not null)
+        {
+            Calendar.PropertyChanged -= OnCalendarPropertyChanged;
+        }
 
         LogoutCommand.Dispose();
         Tasks?.Dispose();
+        Calendar?.Dispose();
     }
 
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -174,6 +208,18 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(ReadOnlyNotice));
             OnPropertyChanged(nameof(DataSourceStatus));
             OnPropertyChanged(nameof(ReadOnlyActionReason));
+        }
+    }
+
+    private void OnCalendarPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(CalendarViewModel.CanCreate)
+            or nameof(CalendarViewModel.WriteAccessText)
+            or nameof(CalendarViewModel.LastSuccessfulRefreshText))
+        {
+            OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(DataSourceStatus));
+            OnPropertyChanged(nameof(LastSuccessfulRefreshText));
         }
     }
 

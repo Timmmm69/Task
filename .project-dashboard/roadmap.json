@@ -122,14 +122,19 @@
       "weight": 12,
       "criticality": "critical",
       "status": "in_progress",
-      "progress": 50,
+      "progress": 75,
       "evidence": [
         "work/production/src/Task.Domain/Calendar",
         "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
-        "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0"
+        "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0",
+        "work/production/src/Task.Api/Calendar",
+        "work/production/src/Task.Desktop/Calendar",
+        "work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+        "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+        "outputs/20260901_calendar_desktop_vertical_slice_1.0.0"
       ],
-      "note": "Домен и хранение реализованы; production API и WPF read vertical slice пока специфицированы.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Production week read/write vertical slice подтверждён на PostgreSQL 16 + HTTPS API + WPF: Task/CalendarEvent, детали, конфликты, create/update и session/capability lifecycle. До полного продуктового пункта остаются day/month modes, recurrence editor и attendee management.",
+      "updated_at": "2026-09-01T22:45:00+03:00",
       "priority": 2,
       "dependencies": [
         "DATA-03",
@@ -137,7 +142,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 1,
-      "next_action": "Завершить calendar read/write vertical slice в WPF и подтвердить его на PostgreSQL + HTTPS API."
+      "next_action": "Добавить day/month modes, recurrence editor и attendee management поверх подтверждённого week vertical slice."
     },
     {
       "id": "PROD-04",

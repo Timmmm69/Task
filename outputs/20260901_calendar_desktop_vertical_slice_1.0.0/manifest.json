@@ -1,0 +1,13 @@
+{
+  "package": "calendar-desktop-vertical-slice",
+  "version": "1.0.0",
+  "createdAt": "2026-09-01T22:45:00+03:00",
+  "status": "validated",
+  "artifacts": [
+    { "path": "E2E_REPORT.md", "size": 1620, "sha256": "7a7c35abb8c03fafc91570969249ecaac786228c3731d5c5ac197360edf19971" },
+    { "path": "README.md", "size": 1594, "sha256": "07df2e20dfae621a4355d130b916e9c485ca32f2e719e1366be9d5cfeaea643d" },
+    { "path": "VALIDATION_REPORT.md", "size": 2201, "sha256": "f8a3a988e593151dd1476b6cb2e837bbc5376e46fa8405b1d9624203c537d1c6" },
+    { "path": "VERSION", "size": 6, "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03" },
+    { "path": "VISUAL_ACCESSIBILITY_REPORT.md", "size": 2054, "sha256": "c5058053588b750fd6b53636c9bf595989370e00fed33e4813d1d9fe1c51939a" }
+  ]
+}

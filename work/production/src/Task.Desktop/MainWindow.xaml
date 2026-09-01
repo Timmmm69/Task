@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Task.Desktop.Views"
         mc:Ignorable="d"
         Title="Task"
         Width="1200" Height="900" MinWidth="800" MinHeight="480"
@@ -249,6 +250,9 @@
                         <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsCalendarSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -829,6 +833,19 @@
                     </ScrollViewer>
                 </Border>
             </Grid>
+
+            <views:CalendarView DataContext="{Binding Calendar}">
+                <views:CalendarView.Style>
+                    <Style TargetType="views:CalendarView">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsCalendarSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </views:CalendarView.Style>
+            </views:CalendarView>
         </Grid>
 
         <Border Grid.Row="2" Grid.Column="1"
@@ -849,12 +866,12 @@
                                Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                                TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                 </StackPanel>
-                <TextBlock Grid.Column="1" Text="{Binding Tasks.LastSuccessfulRefreshText}"
+                <TextBlock Grid.Column="1" Text="{Binding LastSuccessfulRefreshText}"
                            FontSize="{DynamicResource Task.Font.Size.Metadata}"
                            Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                            VerticalAlignment="Center" Margin="12,0,4,0"
                            AutomationProperties.LiveSetting="Polite" />
-                <Button Grid.Column="2" Command="{Binding Tasks.RefreshCommand}"
+                <Button Grid.Column="2" Command="{Binding FooterRefreshCommand}"
                         Style="{StaticResource Task.Button.FooterIcon}"
                         ToolTip="Обновить состояние задач"
                         AutomationProperties.Name="Обновить состояние задач">

@@ -31,16 +31,20 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        var editor = (DataContext as MainWindowViewModel)?.Tasks?.Editor;
+        var viewModel = DataContext as MainWindowViewModel;
+        var editor = viewModel?.Tasks?.Editor;
+        var hasCalendarEditor = viewModel?.Calendar?.Editor is not null;
         if (ShouldCancelClose(
             _authenticationTransitionClose,
-            editor?.HasUnsavedChanges == true,
+            editor?.HasUnsavedChanges == true || hasCalendarEditor,
             () =>
         {
-            var message = editor!.IsBusy
+            var message = editor?.IsBusy == true
                 ? "Сохранение ещё выполняется. Закрытие отменит ожидание ответа. Закрыть Task?"
-                : "В форме задачи есть несохранённые изменения. Закрыть Task без сохранения?";
-            return MessageBox.Show(message, "Несохранённая задача", MessageBoxButton.YesNo,
+                : hasCalendarEditor
+                    ? "Форма события календаря открыта. Закрыть Task без сохранения?"
+                    : "В форме задачи есть несохранённые изменения. Закрыть Task без сохранения?";
+            return MessageBox.Show(message, "Несохранённые изменения", MessageBoxButton.YesNo,
                 MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
         }))
         {

@@ -47,8 +47,9 @@ public sealed class PostgresTaskWriteCommandExecutorTests
             await migrator.ApplyPendingAsync();
             var inspection = await migrator.InspectAsync();
             Assert.Equal(TaskPersistenceMigrationStatus.Current, inspection.Status);
-            Assert.Equal(6, inspection.ActualMigrationVersion);
-            Assert.Equal(6, await ScalarAsync<int>(dataSource, "SELECT max(version) FROM infrastructure.schema_migrations;"));
+            Assert.Equal(TaskPersistenceMigrationCatalog.LatestVersion, inspection.ActualMigrationVersion);
+            Assert.Equal(TaskPersistenceMigrationCatalog.LatestVersion,
+                await ScalarAsync<int>(dataSource, "SELECT max(version) FROM infrastructure.schema_migrations;"));
 
             var organizationId = Guid.NewGuid();
             var otherOrganizationId = Guid.NewGuid();

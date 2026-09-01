@@ -15,7 +15,8 @@ public abstract record AuthenticatedGetResult
         HttpStatusCode StatusCode,
         string Body,
         string? EntityTag = null,
-        string? IdempotencyReplayed = null) : AuthenticatedGetResult;
+        string? IdempotencyReplayed = null,
+        string? CorrelationId = null) : AuthenticatedGetResult;
 
     public sealed record AuthenticationFailure : AuthenticatedGetResult;
 
@@ -210,11 +211,15 @@ public sealed class DesktopAuthenticatedGetExecutor
                 var entityTag = response.Headers.TryGetValues("ETag", out var entityTags)
                     ? string.Join(",", entityTags)
                     : null;
+                var responseCorrelationId = response.Headers.TryGetValues(CorrelationIdHeader, out var correlationIds)
+                    ? string.Join(",", correlationIds)
+                    : correlationId;
                 return new AuthenticatedGetResult.Response(
                     response.StatusCode,
                     responseBody,
                     entityTag,
-                    replayed);
+                    replayed,
+                    responseCorrelationId);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
