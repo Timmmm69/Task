@@ -96,6 +96,34 @@ public sealed class CalendarEventLifecycleService
                 description,
                 timing));
 
+    public CalendarEvent ApplyPatch(
+        Guid organizationId,
+        Guid eventId,
+        int expectedVersion,
+        Guid actorId,
+        DateTimeOffset occurredAtUtc,
+        Guid? projectId,
+        string title,
+        string? description,
+        CalendarEventTiming timing,
+        CalendarEventStatus status,
+        IEnumerable<EventAttendee> userAttendees,
+        IEnumerable<ContactAttendee> contactAttendees) =>
+        Execute(
+            organizationId,
+            eventId,
+            expectedVersion,
+            calendarEvent => calendarEvent.ApplyPatch(
+                actorId,
+                occurredAtUtc,
+                projectId,
+                title,
+                description,
+                timing,
+                status,
+                userAttendees,
+                contactAttendees));
+
     public CalendarEvent Cancel(
         Guid organizationId,
         Guid eventId,

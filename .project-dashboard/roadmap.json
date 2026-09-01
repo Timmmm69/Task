@@ -87,7 +87,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 7,
+      "recommended_order": 6,
       "next_action": "Сверить полный task contract с готовым vertical slice и закрыть недостающие связи, поля и evidence."
     },
     {
@@ -111,7 +111,7 @@
         "PROD-01"
       ],
       "blocked_by": [],
-      "recommended_order": 8,
+      "recommended_order": 7,
       "next_action": "Собрать production-экран «Сегодня» поверх готовых task и calendar API, затем пройти реальный E2E."
     },
     {
@@ -136,7 +136,7 @@
         "API-03"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Завершить calendar read/write vertical slice в WPF и подтвердить его на PostgreSQL + HTTPS API."
     },
     {
@@ -161,7 +161,7 @@
         "SEC-02"
       ],
       "blocked_by": [],
-      "recommended_order": 19,
+      "recommended_order": 18,
       "next_action": "Реализовать project lifecycle с участниками, ролями и связанными задачами одним vertical slice."
     },
     {
@@ -187,7 +187,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 20,
+      "recommended_order": 19,
       "next_action": "Последовательно довести файлы, контакты, поиск и уведомления до связанных production-сценариев."
     },
     {
@@ -211,7 +211,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 11,
+      "recommended_order": 10,
       "next_action": "Закрыть оставшиеся эксплуатационные сценарии учётных записей и повторить auth E2E."
     },
     {
@@ -234,7 +234,7 @@
         "PROD-01"
       ],
       "blocked_by": [],
-      "recommended_order": 12,
+      "recommended_order": 11,
       "next_action": "Завершить представление расширенных полей задачи и повторить desktop task gate."
     },
     {
@@ -261,7 +261,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 21,
+      "recommended_order": 20,
       "next_action": "Заменять placeholders только готовыми вертикальными срезами и убрать последний placeholder после общего smoke."
     },
     {
@@ -285,7 +285,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 24,
+      "recommended_order": 23,
       "next_action": "Проверить offline, retry, session expiry и conflict recovery во всех готовых разделах."
     },
     {
@@ -308,7 +308,7 @@
         "DESK-03"
       ],
       "blocked_by": [],
-      "recommended_order": 22,
+      "recommended_order": 21,
       "next_action": "Выполнить нативную Windows-матрицу UIA, Narrator и DPI 125/150/200% с сохранением evidence."
     },
     {
@@ -333,7 +333,7 @@
         "DATA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 10,
+      "recommended_order": 9,
       "next_action": "Закрыть административный lifecycle учётных записей и подтвердить стабильность auth contracts."
     },
     {
@@ -366,25 +366,28 @@
       "category": "api",
       "weight": 11,
       "criticality": "critical",
-      "status": "in_progress",
-      "progress": 50,
+      "status": "done",
+      "progress": 100,
       "evidence": [
         "work/production/src/Task.Application/Calendar",
         "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0/02_SERVER_EVENT_DETAILS_AND_CONFLICTS_API.md",
         "work/production/src/Task.Api/Calendar/CalendarEndpoints.cs",
         "work/production/tests/Task.ServiceHosts.Tests/CalendarReadEndpointsTests.cs",
-        "outputs/20260901_calendar_read_api_1.0.0/VALIDATION_REPORT.md"
+        "outputs/20260901_calendar_read_api_1.0.0/VALIDATION_REPORT.md",
+        "work/production/src/Task.Api/Calendar/CalendarWriteEndpoints.cs",
+        "work/production/tests/Task.ServiceHosts.Tests/CalendarWriteEndpointsTests.cs",
+        "outputs/20260901_calendar_write_api_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Calendar range, event details и conflicts HTTP endpoints реализованы и защищены Calendar.Read; event write API ещё не реализован.",
-      "updated_at": "2026-09-01T16:20:24+03:00",
+      "note": "Calendar range, event details, conflicts и защищённые CalendarEvent create/update/archive/unarchive/trash/restore endpoints реализованы; write-операции tenant-scoped и соблюдают строгий If-Match/ETag contract.",
+      "updated_at": "2026-09-01T16:53:34+03:00",
       "priority": 2,
       "dependencies": [
         "DATA-03",
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Реализовать безопасные create/update/lifecycle endpoints CalendarEvent и покрыть optimistic-concurrency contract tests."
+      "recommended_order": 0,
+      "next_action": "API-03 завершён; перейти к API-04 и реализовать API остальных продуктовых модулей."
     },
     {
       "id": "API-04",
@@ -406,7 +409,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Создавать API оставшихся модулей по одному законченному vertical slice, начиная с проектов."
     },
     {
@@ -431,7 +434,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 32,
+      "recommended_order": 31,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -524,7 +527,7 @@
         "DATA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Спроектировать и реализовать production stores для проектов, контактов, каталога, уведомлений и lifecycle."
     },
     {
@@ -548,7 +551,7 @@
         "OPS-01"
       ],
       "blocked_by": [],
-      "recommended_order": 17,
+      "recommended_order": 16,
       "next_action": "Довести outbox, reminders и фоновые повторы до исполняемых worker-сценариев с idempotency."
     },
     {
@@ -600,7 +603,7 @@
         "API-04"
       ],
       "blocked_by": [],
-      "recommended_order": 9,
+      "recommended_order": 8,
       "next_action": "Применить полную role/capability matrix ко всем API и подтвердить tenant isolation негативными тестами."
     },
     {
@@ -624,7 +627,7 @@
       "blocked_by": [
         "SEC-05"
       ],
-      "recommended_order": 15,
+      "recommended_order": 14,
       "next_action": "По результатам threat model зафиксировать secrets manager, CA/TLS issuance и rotation runbook."
     },
     {
@@ -648,7 +651,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 26,
+      "recommended_order": 25,
       "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
     },
     {
@@ -670,7 +673,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 14,
+      "recommended_order": 13,
       "next_action": "Сначала выполнить threat-model review; финальный penetration pass повторить после стабилизации deployment."
     },
     {
@@ -719,7 +722,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 13,
+      "recommended_order": 12,
       "next_action": "Повторить task/auth E2E на чистом окружении после закрытия текущих vertical slices."
     },
     {
@@ -746,7 +749,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 25,
+      "recommended_order": 24,
       "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
     },
     {
@@ -769,7 +772,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 30,
+      "recommended_order": 29,
       "next_action": "Провести модерируемые сессии, оформить findings disposition и получить product acceptance."
     },
     {
@@ -818,7 +821,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Довести container foundation до воспроизводимого release build и сохранить provenance образов."
     },
     {
@@ -841,7 +844,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 16,
+      "recommended_order": 15,
       "next_action": "Развернуть и проверить production-like network, reverse proxy, TLS и firewall по утверждённому runbook."
     },
     {
@@ -865,7 +868,7 @@
         "DATA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Заменить BackupAgent placeholder на backup/WAL/retention/restore workflow и доказать восстановление."
     },
     {
@@ -890,7 +893,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 18,
+      "recommended_order": 17,
       "next_action": "Подключить logs, metrics и alerts для API, DB, disk, workers и backup failures с назначенными владельцами."
     },
     {
@@ -915,7 +918,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 23,
+      "recommended_order": 22,
       "next_action": "Создать подписанный Windows installer, совместимый update channel и проверенный rollback."
     },
     {
@@ -964,7 +967,7 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 27,
+      "recommended_order": 26,
       "next_action": "Собрать и проверить единый operations runbook на чистом стенде другим инженером."
     },
     {
@@ -989,7 +992,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 28,
+      "recommended_order": 27,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1012,7 +1015,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 29,
+      "recommended_order": 28,
       "next_action": "Подготовить короткие user/admin guides и проверить их на человеке, не участвовавшем в разработке."
     },
     {
@@ -1037,7 +1040,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 31,
+      "recommended_order": 30,
       "next_action": "Закрыть findings, назначить ownership и собрать Product, Design, Tech и QA sign-off."
     }
   ],

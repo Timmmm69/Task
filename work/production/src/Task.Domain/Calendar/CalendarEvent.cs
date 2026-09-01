@@ -222,6 +222,57 @@ public sealed class CalendarEvent
     }
 
     /// <summary>
+    /// Applies the complete writable <c>CalendarEventPatch</c> projection in
+    /// one aggregate transition. This keeps a multi-field HTTP PATCH atomic
+    /// and advances the optimistic-concurrency version at most once.
+    /// </summary>
+    public CalendarEvent ApplyPatch(
+        Guid actorId,
+        DateTimeOffset occurredAtUtc,
+        Guid? projectId,
+        string title,
+        string? description,
+        CalendarEventTiming timing,
+        CalendarEventStatus status,
+        IEnumerable<EventAttendee> userAttendees,
+        IEnumerable<ContactAttendee> contactAttendees)
+    {
+        ArgumentNullException.ThrowIfNull(timing);
+        EnsureActive("An archived or trashed event must be restored before it can be updated.");
+        if (!Enum.IsDefined(status))
+        {
+            throw new ArgumentOutOfRangeException(nameof(status), "Unknown calendar event status.");
+        }
+
+        var normalizedProjectId = NormalizeProjectId(projectId);
+        var normalizedTitle = NormalizeTitle(title);
+        var normalizedDescription = NormalizeDescription(description);
+        var normalizedUserAttendees = NormalizeUserAttendees(userAttendees);
+        var normalizedContactAttendees = NormalizeContactAttendees(contactAttendees);
+
+        if (normalizedProjectId == ProjectId &&
+            normalizedTitle == Title &&
+            normalizedDescription == Description &&
+            timing == Timing &&
+            status == Status &&
+            UserAttendees.SequenceEqual(normalizedUserAttendees) &&
+            ContactAttendees.SequenceEqual(normalizedContactAttendees))
+        {
+            return this;
+        }
+
+        return new CalendarEvent(
+            Metadata.RecordVisibleChange(actorId, occurredAtUtc),
+            normalizedProjectId,
+            normalizedTitle,
+            normalizedDescription,
+            timing,
+            status,
+            normalizedUserAttendees,
+            normalizedContactAttendees);
+    }
+
+    /// <summary>
     /// Cancels a scheduled event (status transition only; it is not a
     /// deletion and never moves the event to trash).
     /// </summary>

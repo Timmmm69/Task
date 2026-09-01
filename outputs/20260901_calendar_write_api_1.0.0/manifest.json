@@ -1,0 +1,20 @@
+{
+  "package": "calendar-write-api",
+  "version": "1.0.0",
+  "createdAt": "2026-09-01T16:53:34+03:00",
+  "status": "validated",
+  "artifacts": [
+    {
+      "path": "CALENDAR_WRITE_API_RELEASE.md",
+      "sha256": "d9fb37a4e17a518e0d44867fa0fc98dd3509f641f66950a275fcab9fd5109619"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "fdc3a81ab9036d6f2bf3b4a1dda012a7a94a62a306200ae632262f166575975c"
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}

@@ -25,6 +25,7 @@ internal static class CalendarEndpoints
             .RequireAuthorization(TaskPermissionAuthorization.CalendarReadPolicyName);
         app.MapGet(ConflictsRoute, GetConflictsAsync)
             .RequireAuthorization(TaskPermissionAuthorization.CalendarReadPolicyName);
+        app.MapCalendarWriteEndpoints();
         return app;
     }
 
@@ -327,7 +328,7 @@ internal static class CalendarEndpoints
         conflict.OverlapEnd.UtcDateTime,
         conflict.Severity.ToString().ToLowerInvariant());
 
-    private static CalendarEventResponse ToResponse(CalendarEventDetails details) => new(
+    internal static CalendarEventResponse ToResponse(CalendarEventDetails details) => new(
         details.Id,
         details.OrganizationId,
         details.Version,
@@ -348,6 +349,32 @@ internal static class CalendarEndpoints
             ToContractValue(attendee.ResponseStatus),
             attendee.RespondedAtUtc?.UtcDateTime)).ToArray(),
         details.ContactAttendees.Select(attendee => new ContactAttendeeResponse(
+            attendee.ContactId,
+            ToContractValue(attendee.Role),
+            ToContractValue(attendee.ResponseStatus),
+            attendee.RespondedAtUtc?.UtcDateTime)).ToArray());
+
+    internal static CalendarEventResponse ToResponse(CalendarEvent calendarEvent) => new(
+        calendarEvent.Metadata.Id,
+        calendarEvent.Metadata.OrganizationId,
+        calendarEvent.Metadata.Version,
+        calendarEvent.Metadata.CreatedAtUtc.UtcDateTime,
+        calendarEvent.Metadata.UpdatedAtUtc.UtcDateTime,
+        calendarEvent.ProjectId,
+        calendarEvent.Title,
+        calendarEvent.Description,
+        calendarEvent.Timing.EventDate,
+        calendarEvent.Timing.IsAllDay,
+        calendarEvent.Timing.StartAtUtc?.UtcDateTime,
+        calendarEvent.Timing.EndAtUtc?.UtcDateTime,
+        calendarEvent.Timing.TimeZoneId,
+        calendarEvent.Status == CalendarEventStatus.Scheduled ? "scheduled" : "cancelled",
+        calendarEvent.UserAttendees.Select(attendee => new EventAttendeeResponse(
+            attendee.UserAccountId,
+            ToContractValue(attendee.Role),
+            ToContractValue(attendee.ResponseStatus),
+            attendee.RespondedAtUtc?.UtcDateTime)).ToArray(),
+        calendarEvent.ContactAttendees.Select(attendee => new ContactAttendeeResponse(
             attendee.ContactId,
             ToContractValue(attendee.Role),
             ToContractValue(attendee.ResponseStatus),

@@ -319,7 +319,8 @@ internal static class CalendarEndpointFixture
     public static TestServer CreateServer(
         FakeScheduleStore scheduleStore,
         CalendarEvent? calendarEvent = null,
-        bool grantCalendarRead = true)
+        bool grantCalendarRead = true,
+        bool grantCalendarWrites = true)
     {
         var keys = Keys.Value;
         return new TestServer(new WebHostBuilder()
@@ -338,13 +339,14 @@ internal static class CalendarEndpointFixture
                         VerificationKeysDirectory = $"file:{keys.VerificationDirectory}",
                     }));
                 services.AddSingleton<ISessionRepository>(new FakeSessionRepository());
-                services.AddSingleton<IAuthorizationPolicyStore>(new FakePolicyStore(grantCalendarRead));
+                services.AddSingleton<IAuthorizationPolicyStore>(new FakePolicyStore(grantCalendarRead, grantCalendarWrites));
                 services.AddSingleton<PermissionDecisionService>();
                 services.AddTaskPermissionAuthorization();
                 services.AddSingleton(new JwtAccessTokenIssuer(Issuer, Audience, $"file:{keys.PrivateKeyPath}"));
                 services.AddSingleton<IScheduleStore>(scheduleStore);
                 services.AddSingleton<ScheduleQueryService>();
                 services.AddSingleton<ICalendarEventStore>(new FakeCalendarEventStore(calendarEvent));
+                services.AddSingleton<CalendarEventLifecycleService>();
                 services.AddSingleton<CalendarEventQueryService>();
             })
             .Configure(app =>
@@ -426,7 +428,7 @@ internal static class CalendarEndpointFixture
 
     private sealed class FakeCalendarEventStore : ICalendarEventStore
     {
-        private readonly CalendarEvent? _event;
+        private CalendarEvent? _event;
 
         public FakeCalendarEventStore(CalendarEvent? calendarEvent) => _event = calendarEvent;
 
@@ -435,16 +437,33 @@ internal static class CalendarEndpointFixture
                 ? _event
                 : null;
 
-        public void Add(CalendarEvent calendarEvent) => throw new NotSupportedException();
+        public void Add(CalendarEvent calendarEvent)
+        {
+            if (_event is not null) throw new InvalidOperationException("Duplicate event.");
+            _event = calendarEvent;
+        }
 
-        public void Save(CalendarEvent calendarEvent, int expectedVersion) => throw new NotSupportedException();
+        public void Save(CalendarEvent calendarEvent, int expectedVersion)
+        {
+            if (_event is null) throw new KeyNotFoundException();
+            if (_event.Metadata.Version != expectedVersion)
+            {
+                throw new CalendarEventConcurrencyException(calendarEvent.Metadata.Id, expectedVersion, _event.Metadata.Version);
+            }
+            _event = calendarEvent;
+        }
     }
 
     private sealed class FakePolicyStore : IAuthorizationPolicyStore
     {
-        private readonly bool _grant;
+        private readonly bool _grantRead;
+        private readonly bool _grantWrites;
 
-        public FakePolicyStore(bool grant) => _grant = grant;
+        public FakePolicyStore(bool grantRead, bool grantWrites)
+        {
+            _grantRead = grantRead;
+            _grantWrites = grantWrites;
+        }
 
         public global::System.Threading.Tasks.Task<Guid?> GetUserOrgAsync(Guid userId, CancellationToken cancellationToken = default) =>
             global::System.Threading.Tasks.Task.FromResult<Guid?>(OrganizationId);
@@ -455,7 +474,11 @@ internal static class CalendarEndpointFixture
             string permissionCode,
             CancellationToken cancellationToken = default) =>
             global::System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyGrantRow>>(
-                _grant && permissionCode == TaskPermissionAuthorization.TaskReadBackingPermissionCode
+                (_grantRead && permissionCode == TaskPermissionAuthorization.TaskReadBackingPermissionCode) ||
+                (_grantWrites && permissionCode is
+                    TaskPermissionAuthorization.CalendarEventCreateBackingPermissionCode or
+                    TaskPermissionAuthorization.CalendarEventUpdateBackingPermissionCode or
+                    TaskPermissionAuthorization.CalendarEventDeleteBackingPermissionCode)
                     ? [new PolicyGrantRow(true)]
                     : []);
 

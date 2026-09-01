@@ -5,10 +5,10 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
-    public void Catalog_ExpectsTaskCapabilityPermissionsVersionSix()
+    public void Catalog_ExpectsCalendarEventCapabilityPermissionsVersionSeven()
     {
-        Assert.Equal(6, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("task_capability_permissions", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(7, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("calendar_event_capability_permissions", TaskPersistenceMigrationCatalog.All[^1].Name);
     }
 
     [Fact]

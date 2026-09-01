@@ -30,6 +30,12 @@ internal static class TaskPermissionAuthorization
     /// <summary>Named policy with the public Calendar.Read meaning.</summary>
     public const string CalendarReadPolicyName = "permission.calendar.read";
 
+    public const string CalendarEventCreatePolicyName = "permission.calendar-event.create";
+
+    public const string CalendarEventUpdatePolicyName = "permission.calendar-event.update";
+
+    public const string CalendarEventDeletePolicyName = "permission.calendar-event.delete";
+
     /// <summary>Permission code backing both named policies.</summary>
     public const string AuditEntryReadPermissionCode = "audit.entry.read";
 
@@ -54,6 +60,12 @@ internal static class TaskPermissionAuthorization
 
     public const string TaskChangeStatusBackingPermissionCode = "task.changestatus";
 
+    public const string CalendarEventCreateBackingPermissionCode = "calendarevent.create";
+
+    public const string CalendarEventUpdateBackingPermissionCode = "calendarevent.update";
+
+    public const string CalendarEventDeleteBackingPermissionCode = "calendarevent.delete";
+
     public static IReadOnlyList<(string PermissionCode, string Capability)> TaskCapabilities { get; } =
     [
         (TaskReadBackingPermissionCode, "Task.Read"),
@@ -61,6 +73,9 @@ internal static class TaskPermissionAuthorization
         (TaskCreateBackingPermissionCode, "Task.Create"),
         (TaskUpdateBackingPermissionCode, "Task.Update"),
         (TaskChangeStatusBackingPermissionCode, "Task.ChangeStatus"),
+        (CalendarEventCreateBackingPermissionCode, "CalendarEvent.Create"),
+        (CalendarEventUpdateBackingPermissionCode, "CalendarEvent.Update"),
+        (CalendarEventDeleteBackingPermissionCode, "CalendarEvent.Delete"),
     ];
 
     /// <summary>
@@ -166,6 +181,9 @@ internal static class TaskPermissionAuthorization
             options.AddPolicy(LoginAttemptsReadPolicyName, policy => policy.RequirePermission(AuditEntryReadPermissionCode));
             options.AddPolicy(TaskReadPolicyName, policy => policy.RequirePermission(TaskReadBackingPermissionCode));
             options.AddPolicy(CalendarReadPolicyName, policy => policy.RequirePermission(TaskReadBackingPermissionCode));
+            options.AddPolicy(CalendarEventCreatePolicyName, policy => policy.RequirePermission(CalendarEventCreateBackingPermissionCode));
+            options.AddPolicy(CalendarEventUpdatePolicyName, policy => policy.RequirePermission(CalendarEventUpdateBackingPermissionCode));
+            options.AddPolicy(CalendarEventDeletePolicyName, policy => policy.RequirePermission(CalendarEventDeleteBackingPermissionCode));
             options.AddPolicy(TaskCreatePolicyName, policy => policy.RequirePermission(TaskCreateBackingPermissionCode));
             options.AddPolicy(TaskUpdatePolicyName, policy => policy.RequirePermission(TaskUpdateBackingPermissionCode));
             options.AddPolicy(TaskChangeStatusPolicyName, policy => policy.RequirePermission(TaskChangeStatusBackingPermissionCode));
