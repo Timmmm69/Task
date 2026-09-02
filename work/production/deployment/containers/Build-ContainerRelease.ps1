@@ -24,6 +24,17 @@ function Write-Json {
     param([string]$Path, $Value)
     $Value | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $Path -Encoding utf8NoBOM
 }
+function Expand-ReleaseTar {
+    param([string]$Archive, [string]$Destination)
+    # Windows bsdtar cannot open Unicode archive arguments reliably. Use the
+    # Unicode-aware process working directory and ASCII relative paths instead.
+    $parent = Split-Path -Parent $Archive
+    Push-Location -LiteralPath $parent
+    try {
+        Invoke-Checked tar @('-xf', (Split-Path -Leaf $Archive), '-C', [IO.Path]::GetRelativePath($parent, $Destination)) | Out-Null
+    }
+    finally { Pop-Location }
+}
 function Remove-TemporaryDirectory {
     param([string]$Path)
     $allowed = [IO.Path]::GetFullPath((Join-Path $repoRoot 'work/tmp')) + [IO.Path]::DirectorySeparatorChar
@@ -58,7 +69,7 @@ try {
     '* -text' | Set-Content (Join-Path $output '.gitattributes') -Encoding utf8NoBOM
     $sourceArchive = Join-Path $output 'source.tar'
     Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--output=$sourceArchive", 'HEAD:work/production') | Out-Null
-    Invoke-Checked tar @('-xf', $sourceArchive, '-C', $context) | Out-Null
+    Expand-ReleaseTar $sourceArchive $context
     $source = [ordered]@{
         version = $Version; revision = $revision; productionTree = $tree; sourceDateEpoch = $epoch
         sourceArchiveSha256 = (Get-FileHash $sourceArchive -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -86,7 +97,7 @@ try {
             Invoke-Checked docker $arguments | Set-Content (Join-Path $output "evidence/$target-$pass.build.txt")
             $layout = Join-Path $temp "$target-$pass"
             New-Item -ItemType Directory -Path $layout | Out-Null
-            Invoke-Checked tar @('-xf', $archive, '-C', $layout) | Out-Null
+            Expand-ReleaseTar $archive $layout
             $expectedPath = Join-Path $temp 'expected.json'
             Write-Json $expectedPath @{ target = $target; version = $Version; revision = $revision; epoch = $epoch }
             $recordPath = Join-Path $output "evidence/$target-$pass.oci.json"
