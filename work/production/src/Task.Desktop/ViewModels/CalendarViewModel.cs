@@ -286,7 +286,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
     {
         CalendarViewMode.Day => _selectedDate.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")),
         CalendarViewMode.Month => _selectedDate.ToDateTime(TimeOnly.MinValue).ToString("MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")),
-        _ => $"{_weekStart.ToDateTime(TimeOnly.MinValue):d MMM} — {_weekStart.AddDays(6).ToDateTime(TimeOnly.MinValue):d MMM yyyy}",
+        _ => string.Create(CultureInfo.GetCultureInfo("ru-RU"), $"{_weekStart.ToDateTime(TimeOnly.MinValue):d MMM} — {_weekStart.AddDays(6).ToDateTime(TimeOnly.MinValue):d MMM yyyy}"),
     };
     public CalendarScreenState State { get => _state; private set { if (SetProperty(ref _state, value)) { OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(ShowMessage)); RaiseCommands(); } } }
     public bool IsActive => _active;

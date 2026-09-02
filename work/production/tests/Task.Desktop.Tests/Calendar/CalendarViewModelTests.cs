@@ -1,3 +1,4 @@
+using System.Globalization;
 using Task.Desktop.Calendar;
 using Task.Desktop.ViewModels;
 
@@ -6,6 +7,24 @@ namespace Task.Desktop.Tests.Calendar;
 public sealed class CalendarViewModelTests
 {
     private static readonly DateOnly Monday = new(2026, 8, 31);
+
+    [Theory]
+    [InlineData("ru-RU")]
+    [InlineData("en-US")]
+    public void WeekRange_KeepsRussianLabelsAcrossHostCultures(string cultureName)
+    {
+        var previousCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(cultureName);
+            using var vm = new CalendarViewModel(new FakeCalendarClient(), ["Calendar.Read"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue));
+            Assert.Equal("31 авг. — 6 сент. 2026", vm.WeekRangeText);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previousCulture;
+        }
+    }
 
     [Fact]
     public void WeekRange_UsesLocalMidnightsAcrossDst()
