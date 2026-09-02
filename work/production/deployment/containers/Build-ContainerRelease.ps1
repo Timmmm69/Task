@@ -88,8 +88,8 @@ try {
     if (-not $Resume) {
         New-Item -ItemType Directory -Path $output, (Join-Path $output 'images'), (Join-Path $output 'evidence') | Out-Null
         # Keep large, locally retained binary archives out of Git; hashes remain tracked.
-        "/images/`n/source.tar`n" | Set-Content (Join-Path $output '.gitignore') -Encoding utf8NoBOM
-        '* -text' | Set-Content (Join-Path $output '.gitattributes') -Encoding utf8NoBOM
+        "/images/`n/source.tar" | Set-Content (Join-Path $output '.gitignore') -Encoding utf8NoBOM
+        '* -text whitespace=cr-at-eol' | Set-Content (Join-Path $output '.gitattributes') -Encoding utf8NoBOM
         $sourceArchive = Join-Path $output 'source.tar'
         Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--mtime=@$epoch", "--output=$sourceArchive", "$($revision):work/production") | Out-Null
         Expand-ReleaseTar $sourceArchive $context
@@ -198,7 +198,7 @@ if (Test-Path -LiteralPath $output) {
         'Every OCI blob hash, runtime image label and provenance subject/build parameters is verified before comparison.',
         'Runtime gate consumes the exported images by immutable OCI index IDs. PASS requires the PostgreSQL/hardening gate and cleanup.',
         'Attestations are unsigned build evidence; no registry publication, signing or production deployment is claimed.',
-        '', "Failure: $failure"
+        '', "Failure: $(if ($failure) { $failure } else { 'none' })"
     ) | Set-Content (Join-Path $output 'validation-report.md') -Encoding utf8NoBOM
     $hashes = @(Get-ChildItem -LiteralPath $output -File -Recurse -Force | Where-Object { $_.Name -ne 'SHA256SUMS' } | Sort-Object FullName | ForEach-Object {
         $relative = [IO.Path]::GetRelativePath($output, $_.FullName).Replace('\', '/')

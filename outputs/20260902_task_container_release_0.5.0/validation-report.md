@@ -7,4 +7,4 @@ Every OCI blob hash, runtime image label and provenance subject/build parameters
 Runtime gate consumes the exported images by immutable OCI index IDs. PASS requires the PostgreSQL/hardening gate and cleanup.
 Attestations are unsigned build evidence; no registry publication, signing or production deployment is claimed.
 
-Failure: 
+Failure: none
