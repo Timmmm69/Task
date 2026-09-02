@@ -7,7 +7,7 @@ const directory = resolve(process.argv[2]);
 const buildsOnly = process.argv.includes('--builds-only');
 const readJson = name => JSON.parse(readFileSync(join(directory, name)));
 const release = readJson('release.json');
-if ((!buildsOnly && release.status !== 'PASS') || release.independentBuilds !== 2 || release.images.length !== 5) {
+if ((!buildsOnly && (release.status !== 'PASS' || release.images.length !== 5)) || release.independentBuilds !== 2) {
   throw new Error('Release did not pass all gates');
 }
 const covered = new Set();
@@ -34,7 +34,8 @@ function walk(path, prefix = '') {
   }
 }
 walk(directory);
-for (const image of release.images) {
+const images = buildsOnly ? ['task-api', 'task-worker', 'task-backup-agent', 'task-database-migrator', 'task-container-validation'].map(target => readJson(`evidence/${target}-1.oci.json`)) : release.images;
+for (const image of images) {
   const first = readJson(`evidence/${image.target}-1.oci.json`);
   const second = readJson(`evidence/${image.target}-2.oci.json`);
   compareBuilds(first, second);

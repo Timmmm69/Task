@@ -37,6 +37,12 @@ function Expand-ReleaseTar {
     }
     finally { Pop-Location }
 }
+function Get-SourceManifest {
+    param([string]$Directory)
+    return ((Get-ChildItem -LiteralPath $Directory -Recurse -Force -File | ForEach-Object {
+        [IO.Path]::GetRelativePath($Directory, $_.FullName).Replace('\', '/') + ' ' + (Get-FileHash $_.FullName).Hash
+    } | Sort-Object -CaseSensitive) -join "`n")
+}
 function Remove-TemporaryDirectory {
     param([string]$Path)
     $allowed = [IO.Path]::GetFullPath((Join-Path $repoRoot 'work/tmp')) + [IO.Path]::DirectorySeparatorChar
@@ -85,7 +91,7 @@ try {
     "/images/`n/source.tar`n" | Set-Content (Join-Path $output '.gitignore') -Encoding utf8NoBOM
     '* -text' | Set-Content (Join-Path $output '.gitattributes') -Encoding utf8NoBOM
     $sourceArchive = Join-Path $output 'source.tar'
-    Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--output=$sourceArchive", "$($revision):work/production") | Out-Null
+    Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--mtime=@$epoch", "--output=$sourceArchive", "$($revision):work/production") | Out-Null
     Expand-ReleaseTar $sourceArchive $context
     $source = [ordered]@{
         version = $Version; revision = $revision; productionTree = $tree; sourceDateEpoch = $epoch
@@ -100,9 +106,14 @@ try {
     else {
         Write-Json (Join-Path $output "evidence/$runId-prior-release.json") $previousRelease
         $referenceArchive = Join-Path $temp 'reference.tar'
-        Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--output=$referenceArchive", "$($revision):work/production") | Out-Null
-        if ((Get-FileHash $referenceArchive).Hash.ToLowerInvariant() -ne $source.sourceArchiveSha256) { throw 'Resume source archive differs from Git.' }
+        Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--mtime=@$epoch", "--output=$referenceArchive", "$($revision):work/production") | Out-Null
         Expand-ReleaseTar $referenceArchive $context
+        $originalSource = Join-Path $temp 'original-source'
+        New-Item -ItemType Directory -Path $originalSource | Out-Null
+        $sourceArchive = Join-Path $output 'source.tar'
+        if ((Get-FileHash $sourceArchive).Hash.ToLowerInvariant() -ne $source.sourceArchiveSha256) { throw 'Source archive checksum mismatch.' }
+        Expand-ReleaseTar $sourceArchive $originalSource
+        if ((Get-SourceManifest $context) -cne (Get-SourceManifest $originalSource)) { throw 'Resume source content differs from Git.' }
     }
     $env:BUILDX_METADATA_PROVENANCE = 'max'
     foreach ($pass in 1, 2) {
