@@ -12,8 +12,11 @@ public sealed class RecurrenceServiceTests
     {
         var definition = Definition(Guid.NewGuid()) with
         {
-            Frequency = "yearly", MonthOfYear = 2, MonthDays = [29],
-            OccurrenceStartDate = new DateOnly(2025, 1, 1), MaxOccurrences = 2,
+            Frequency = "yearly",
+            MonthOfYear = 2,
+            MonthDays = [29],
+            OccurrenceStartDate = new DateOnly(2025, 1, 1),
+            MaxOccurrences = 2,
         };
         var dates = RecurrenceService.Preview(definition, definition.OccurrenceStartDate, 10);
         Assert.Equal(new[] { new DateOnly(2028, 2, 29), new DateOnly(2032, 2, 29) }, dates.Select(d => d.LocalDate));
@@ -125,7 +128,12 @@ public sealed class RecurrenceServiceTests
     }
     private static RecurrenceDefinition Definition(Guid author) => new()
     {
-        Status = "active", Frequency = "daily", Interval = 1, OccurrenceStartDate = new DateOnly(2024, 1, 1), TimeZone = "UTC", Template = Template(author),
+        Status = "active",
+        Frequency = "daily",
+        Interval = 1,
+        OccurrenceStartDate = new DateOnly(2024, 1, 1),
+        TimeZone = "UTC",
+        Template = Template(author),
     };
     private static RecurrenceTemplateData Template(Guid author) => new() { Title = "A", AuthorUserId = author, Priority = "normal" };
     private static string PatchTemplate(Guid author, string title) => JsonSerializer.Serialize(new { template = Template(author) with { Title = title } }, RecurrenceService.JsonOptions);

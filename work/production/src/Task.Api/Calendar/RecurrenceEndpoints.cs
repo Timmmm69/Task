@@ -75,8 +75,12 @@ internal static class RecurrenceEndpoints
                     // completes the contract without reinterpreting scope or task version.
                     var target = DateOnly.ParseExact(context.Request.Query["occurrenceKey"].ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
                     var scope = root.GetProperty("scope").GetString() switch
-                    { "this_occurrence" => RecurrenceChangeScope.ThisOccurrence, "this_and_future" => RecurrenceChangeScope.ThisAndFuture,
-                        "entire_series" => RecurrenceChangeScope.EntireSeries, _ => throw new ArgumentException("Choose an explicit scope.") };
+                    {
+                        "this_occurrence" => RecurrenceChangeScope.ThisOccurrence,
+                        "this_and_future" => RecurrenceChangeScope.ThisAndFuture,
+                        "entire_series" => RecurrenceChangeScope.EntireSeries,
+                        _ => throw new ArgumentException("Choose an explicit scope.")
+                    };
                     var patch = root.GetProperty("patch"); EnsureFields(patch, "title", "priority", "plannedDurationMinutes");
                     var template = service.Get(org, id).Definition.Template;
                     var title = patch.TryGetProperty("title", out var t) ? t.GetString()! : template.Title;

@@ -18,11 +18,24 @@ public sealed class RecurrenceService(IRecurrenceStore store)
 
     public static object ToResponse(RecurrenceRecord r) => new
     {
-        r.Id, r.OrganizationId, r.Version, createdAt = r.CreatedAt.UtcDateTime, updatedAt = r.UpdatedAt.UtcDateTime,
-        r.Definition.Status, r.Definition.Frequency, r.Definition.Interval, r.Definition.Weekdays,
-        r.Definition.MonthDays, r.Definition.MonthOfYear, r.Definition.OccurrenceStartDate,
-        r.Definition.LocalStartTime, r.Definition.TimeZone, r.Definition.UntilDate,
-        r.Definition.MaxOccurrences, r.Definition.NextGenerationDate, r.Definition.Template,
+        r.Id,
+        r.OrganizationId,
+        r.Version,
+        createdAt = r.CreatedAt.UtcDateTime,
+        updatedAt = r.UpdatedAt.UtcDateTime,
+        r.Definition.Status,
+        r.Definition.Frequency,
+        r.Definition.Interval,
+        r.Definition.Weekdays,
+        r.Definition.MonthDays,
+        r.Definition.MonthOfYear,
+        r.Definition.OccurrenceStartDate,
+        r.Definition.LocalStartTime,
+        r.Definition.TimeZone,
+        r.Definition.UntilDate,
+        r.Definition.MaxOccurrences,
+        r.Definition.NextGenerationDate,
+        r.Definition.Template,
     };
 
     public RecurrenceReply Create(Guid org, Guid actor, string key, string body)
@@ -93,8 +106,12 @@ public sealed class RecurrenceService(IRecurrenceStore store)
                     tx.SaveOccurrence(occurrence with { GeneratedTaskVersion = updated.Metadata.Version, Template = definition.Template });
                 }
             }
-            record = record with { Version = checked(record.Version + 1), UpdatedAt = now,
-                Definition = definition with { NextGenerationDate = start } };
+            record = record with
+            {
+                Version = checked(record.Version + 1),
+                UpdatedAt = now,
+                Definition = definition with { NextGenerationDate = start }
+            };
             record = Materialize(record, actor, through < start ? AddDaysClamped(start, 62) : through, tx, out _);
             tx.SaveSeries(record);
             return Reply(record);
@@ -114,8 +131,13 @@ public sealed class RecurrenceService(IRecurrenceStore store)
         Execute(org, actor, id, status, key, version.ToString(), (current, tx) =>
         {
             var record = RequireVersion(current, version);
-            var allowed = status switch { "paused" => record.Definition.Status == "active",
-                "active" => record.Definition.Status == "paused", "cancelled" => record.Definition.Status is "active" or "paused", _ => false };
+            var allowed = status switch
+            {
+                "paused" => record.Definition.Status == "active",
+                "active" => record.Definition.Status == "paused",
+                "cancelled" => record.Definition.Status is "active" or "paused",
+                _ => false
+            };
             if (!allowed) throw Invalid("Invalid recurrence status transition.");
             if (status == "cancelled")
                 foreach (var occurrence in tx.Occurrences)
@@ -124,8 +146,12 @@ public sealed class RecurrenceService(IRecurrenceStore store)
                     if (!CanRegenerate(occurrence, task)) continue;
                     tx.SaveTask(task!.Cancel(actor, DateTimeOffset.UtcNow), task.Metadata.Version);
                 }
-            record = record with { Version = checked(record.Version + 1), UpdatedAt = DateTimeOffset.UtcNow,
-                Definition = record.Definition with { Status = status } };
+            record = record with
+            {
+                Version = checked(record.Version + 1),
+                UpdatedAt = DateTimeOffset.UtcNow,
+                Definition = record.Definition with { Status = status }
+            };
             tx.SaveSeries(record);
             return Reply(record);
         });
@@ -141,8 +167,13 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             var target = tx.Occurrences.SingleOrDefault(o => o.LocalDate == targetDate) ?? throw Missing();
             var targetTask = tx.GetTask(target.TaskId) ?? throw Missing();
             if (targetTask.Metadata.Version != expectedTaskVersion) throw Conflict();
-            var template = record.Definition.Template with { Title = title, Priority = priority,
-                PlannedDurationMinutes = duration, TemplateVersion = record.Definition.Template.TemplateVersion + 1 };
+            var template = record.Definition.Template with
+            {
+                Title = title,
+                Priority = priority,
+                PlannedDurationMinutes = duration,
+                TemplateVersion = record.Definition.Template.TemplateVersion + 1
+            };
             _ = template.ToDomain();
             var selected = tx.Occurrences.Where(o => scope == RecurrenceChangeScope.EntireSeries
                 || (scope == RecurrenceChangeScope.ThisOccurrence ? o.LocalDate == targetDate : o.LocalDate >= targetDate)).ToArray();
@@ -170,11 +201,19 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             }
             // Future template changes start at the selected occurrence. Already generated
             // earlier tasks are untouched. New dates always lie after the generation cursor.
-            record = record with { Version = checked(record.Version + 1), UpdatedAt = DateTimeOffset.UtcNow,
-                Definition = scope == RecurrenceChangeScope.ThisOccurrence ? record.Definition : record.Definition with { Template = template } };
+            record = record with
+            {
+                Version = checked(record.Version + 1),
+                UpdatedAt = DateTimeOffset.UtcNow,
+                Definition = scope == RecurrenceChangeScope.ThisOccurrence ? record.Definition : record.Definition with { Template = template }
+            };
             tx.SaveSeries(record);
-            return new(200, record.Version, JsonSerializer.Serialize(new { series = ToResponse(record), changedTaskIds = changed,
-                regeneratedOccurrenceCount = 0 }, JsonOptions));
+            return new(200, record.Version, JsonSerializer.Serialize(new
+            {
+                series = ToResponse(record),
+                changedTaskIds = changed,
+                regeneratedOccurrenceCount = 0
+            }, JsonOptions));
         });
 
     public static IReadOnlyList<RecurrencePreviewItem> Preview(RecurrenceDefinition definition, DateOnly from, int limit)

@@ -152,7 +152,7 @@ public sealed class PostgresRecurrenceStore(NpgsqlDataSource dataSource) : IRecu
             command.Parameters.AddWithValue(org); command.Parameters.AddWithValue(id); command.Parameters.AddWithValue(occurrence.LocalDate);
             command.Parameters.AddWithValue(occurrence.TaskId); command.Parameters.AddWithValue(occurrence.Skipped);
             command.Parameters.AddWithValue(occurrence.GeneratedTaskVersion);
-            command.Parameters.AddWithValue(NpgsqlDbType.Jsonb, (object?) (occurrence.Template is null ? null : JsonSerializer.Serialize(occurrence.Template, RecurrenceService.JsonOptions)) ?? DBNull.Value);
+            command.Parameters.AddWithValue(NpgsqlDbType.Jsonb, (object?)(occurrence.Template is null ? null : JsonSerializer.Serialize(occurrence.Template, RecurrenceService.JsonOptions)) ?? DBNull.Value);
             command.Parameters.AddWithValue(occurrence.IsException); command.ExecuteNonQuery(); Changed = true;
         }
         public void SaveSeries(RecurrenceRecord series)

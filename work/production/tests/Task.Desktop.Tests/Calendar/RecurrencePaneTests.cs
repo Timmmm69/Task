@@ -87,8 +87,13 @@ public sealed class RecurrencePaneTests
     private static RecurrencePaneViewModel CreatePane(FakeClient client) => new(client, Guid.NewGuid());
     private static RecurrenceDefinition Definition(Guid author) => new()
     {
-        Status = "active", Frequency = "weekly", Interval = 1, Weekdays = [1], OccurrenceStartDate = new DateOnly(2026, 1, 5),
-        TimeZone = "UTC", Template = new RecurrenceTemplateData { Title = "Серия", AuthorUserId = author, Priority = "normal" },
+        Status = "active",
+        Frequency = "weekly",
+        Interval = 1,
+        Weekdays = [1],
+        OccurrenceStartDate = new DateOnly(2026, 1, 5),
+        TimeZone = "UTC",
+        Template = new RecurrenceTemplateData { Title = "Серия", AuthorUserId = author, Priority = "normal" },
     };
     private static DesktopCalendarResult<JsonElement>.Succeeded Succeeded(JsonElement element) => new(element);
     private static JsonElement ListJson(RecurrenceDefinition? definition = null)

@@ -51,7 +51,8 @@ public sealed class RecurrenceEditorViewModel : ViewModelBase
         if (!StartDate.HasValue) throw new ArgumentException("Укажите дату начала.");
         var definition = new RecurrenceDefinition
         {
-            Status = Source?.Status ?? "active", Frequency = Frequency == "workdays" ? "daily" : Frequency,
+            Status = Source?.Status ?? "active",
+            Frequency = Frequency == "workdays" ? "daily" : Frequency,
             Interval = int.Parse(Interval, CultureInfo.InvariantCulture),
             Weekdays = Frequency == "workdays" ? [1, 2, 3, 4, 5] : Frequency is "weekly" or "daily" ? ParseDays(Weekdays) : [],
             MonthDays = Frequency is "monthly" or "yearly" ? ParseDays(MonthDays) : [],
@@ -63,7 +64,9 @@ public sealed class RecurrenceEditorViewModel : ViewModelBase
             MaxOccurrences = Termination == "count" ? int.Parse(Count, CultureInfo.InvariantCulture) : null,
             Template = (Source?.Template ?? new RecurrenceTemplateData { Title = "", AuthorUserId = actor }) with
             {
-                Title = Title.Trim(), Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(), Priority = Priority,
+                Title = Title.Trim(),
+                Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
+                Priority = Priority,
                 PlannedDurationMinutes = IsAllDay || string.IsNullOrWhiteSpace(Duration) ? null : int.Parse(Duration, CultureInfo.InvariantCulture),
             },
         };

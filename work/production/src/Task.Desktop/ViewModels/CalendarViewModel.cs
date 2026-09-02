@@ -473,9 +473,12 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
         var generation = _generation;
         DesktopCalendarResult<DesktopCalendarEvent> result;
         _saving = true; OnPropertyChanged(nameof(IsBusy)); RaiseCommands();
-        try { result = editor.Source is null
+        try
+        {
+            result = editor.Source is null
             ? await _client.CreateEventAsync(command, token)
-            : await _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token); }
+            : await _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token);
+        }
         catch (OperationCanceledException) { return; }
         finally { _saving = false; OnPropertyChanged(nameof(IsBusy)); RaiseCommands(); }
         if (!_active || !_sessionAllowsWrites || generation != _generation || !ReferenceEquals(editor, Editor)) return;

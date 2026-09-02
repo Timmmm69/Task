@@ -36,8 +36,10 @@ public sealed record RecurrenceTemplateData
 
     public static TaskPriority ParsePriority(string value) => value switch
     {
-        "low" => TaskPriority.Low, "normal" => TaskPriority.Normal,
-        "high" => TaskPriority.High, "critical" => TaskPriority.Critical,
+        "low" => TaskPriority.Low,
+        "normal" => TaskPriority.Normal,
+        "high" => TaskPriority.High,
+        "critical" => TaskPriority.Critical,
         _ => throw new ArgumentException("Unknown task priority."),
     };
 }
@@ -61,8 +63,10 @@ public sealed record RecurrenceDefinition
 
     public RecurrenceRule ToRule() => RecurrenceRule.Create(Frequency switch
     {
-        "daily" => RecurrenceFrequency.Daily, "weekly" => RecurrenceFrequency.Weekly,
-        "monthly" => RecurrenceFrequency.Monthly, "yearly" => RecurrenceFrequency.Yearly,
+        "daily" => RecurrenceFrequency.Daily,
+        "weekly" => RecurrenceFrequency.Weekly,
+        "monthly" => RecurrenceFrequency.Monthly,
+        "yearly" => RecurrenceFrequency.Yearly,
         _ => throw new ArgumentException("Unknown recurrence frequency."),
     }, Interval, Weekdays, MonthDays, MonthOfYear, OccurrenceStartDate, LocalStartTime, UntilDate, MaxOccurrences);
 

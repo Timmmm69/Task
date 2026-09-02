@@ -229,11 +229,17 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
         {
             payload["userAttendees"] = c.Attendees.Where(a => a.IsUser).Select(a => new
             {
-                userAccountId = a.Id, role = a.Role, responseStatus = a.ResponseStatus, respondedAt = a.RespondedAtUtc?.UtcDateTime,
+                userAccountId = a.Id,
+                role = a.Role,
+                responseStatus = a.ResponseStatus,
+                respondedAt = a.RespondedAtUtc?.UtcDateTime,
             }).ToArray();
             payload["contactAttendees"] = c.Attendees.Where(a => !a.IsUser).Select(a => new
             {
-                contactId = a.Id, role = a.Role, responseStatus = a.ResponseStatus, respondedAt = a.RespondedAtUtc?.UtcDateTime,
+                contactId = a.Id,
+                role = a.Role,
+                responseStatus = a.ResponseStatus,
+                respondedAt = a.RespondedAtUtc?.UtcDateTime,
             }).ToArray();
         }
         return payload;
