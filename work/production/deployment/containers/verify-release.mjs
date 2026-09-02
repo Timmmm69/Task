@@ -4,9 +4,10 @@ import { createHash } from 'node:crypto';
 import { compareBuilds } from './verify-oci.mjs';
 
 const directory = resolve(process.argv[2]);
+const buildsOnly = process.argv.includes('--builds-only');
 const readJson = name => JSON.parse(readFileSync(join(directory, name)));
 const release = readJson('release.json');
-if (release.status !== 'PASS' || release.independentBuilds !== 2 || release.images.length !== 5) {
+if ((!buildsOnly && release.status !== 'PASS') || release.independentBuilds !== 2 || release.images.length !== 5) {
   throw new Error('Release did not pass all gates');
 }
 const covered = new Set();
@@ -39,4 +40,4 @@ for (const image of release.images) {
   compareBuilds(first, second);
   if (image.imageDigest !== first.imageDigest || image.configDigest !== first.configDigest) throw new Error('Release image mapping differs');
 }
-console.log(`PASS: ${release.version}, ${release.revision}; ${covered.size} file hashes and five independent image pairs verified.`);
+console.log(`${buildsOnly ? 'BUILDS VERIFIED (runtime approval not implied)' : 'PASS'}: ${release.version}, ${release.revision}; ${covered.size} file hashes and five independent image pairs verified.`);

@@ -15,7 +15,8 @@ export function inspectOci(directory, expected) {
   const json = descriptor => JSON.parse(read(descriptor));
   const layout = JSON.parse(readFileSync(join(directory, 'oci-layout')));
   if (layout.imageLayoutVersion !== '1.0.0') throw new Error('Unsupported OCI layout');
-  const root = JSON.parse(readFileSync(join(directory, 'index.json')));
+  const rootBytes = readFileSync(join(directory, 'index.json'));
+  const root = JSON.parse(rootBytes);
   // OCI exporter wraps the image/attestation index in a named layout index.
   const index = root.manifests.length === 1 && root.manifests[0].mediaType.endsWith('index.v1+json')
     ? json(root.manifests[0]) : root;
@@ -54,7 +55,8 @@ export function inspectOci(directory, expected) {
   if (!provenance.predicate.buildConfig || !provenance.predicate.materials?.length) {
     throw new Error('Expected mode=max provenance with build configuration and materials');
   }
-  return { target: expected.target, imageDigest: descriptor.digest, configDigest: manifest.config.digest,
+  const indexDigest = index === root ? `sha256:${createHash('sha256').update(rootBytes).digest('hex')}` : root.manifests[0].digest;
+  return { target: expected.target, indexDigest, imageDigest: descriptor.digest, configDigest: manifest.config.digest,
     layerDigests: manifest.layers.map(l => l.digest), manifest, config, index, provenance };
 }
 
