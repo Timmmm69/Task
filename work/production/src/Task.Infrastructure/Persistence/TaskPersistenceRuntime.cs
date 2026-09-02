@@ -57,6 +57,9 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     public IScheduleStore CreateScheduleStore() =>
         new PostgresScheduleStore(GetConfiguredDataSource());
 
+    public IRecurrenceStore CreateRecurrenceStore() =>
+        new PostgresRecurrenceStore(GetConfiguredDataSource());
+
     public ISessionRepository CreateSessionRepository() =>
         new PostgresSessionRepository(GetConfiguredDataSource());
 

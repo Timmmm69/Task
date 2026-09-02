@@ -14,7 +14,9 @@ public sealed record DesktopScheduleItem(
     bool IsAllDay,
     Guid? ProjectId,
     string Status,
-    DesktopCalendarPriority? Priority);
+    DesktopCalendarPriority? Priority,
+    Guid? RecurrenceSeriesId = null,
+    string? Description = null);
 
 public sealed record DesktopSchedulePage(
     IReadOnlyList<DesktopScheduleItem> Items,
@@ -62,7 +64,9 @@ public sealed record DesktopCalendarEventCommand(
     DateTimeOffset? StartAtUtc,
     DateTimeOffset? EndAtUtc,
     string TimeZoneId,
-    string Status = "scheduled");
+    string Status = "scheduled",
+    IReadOnlyList<DesktopCalendarAttendee>? Attendees = null,
+    DateOnly? EndDate = null);
 
 public abstract record DesktopCalendarResult<T>(string? CorrelationId)
 {

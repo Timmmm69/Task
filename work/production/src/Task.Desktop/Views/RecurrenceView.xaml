@@ -1,0 +1,70 @@
+<UserControl x:Class="Task.Desktop.Views.RecurrenceView" x:Name="Root"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ AutomationProperties.Name="Повторяющиеся задачи">
+ <Border Background="{DynamicResource Task.Brush.Surface.Base}" CornerRadius="8" Padding="18" MaxWidth="1000">
+  <Grid>
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+   <DockPanel Margin="0,0,0,10">
+    <Button DockPanel.Dock="Right" Content="Закрыть" Command="{Binding CloseCommand}" Style="{StaticResource Task.Button.Secondary}"/>
+    <TextBlock Text="Повторяющиеся задачи" FontSize="20" FontWeight="SemiBold"/>
+   </DockPanel>
+   <TextBlock Grid.Row="1" Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,10" AutomationProperties.LiveSetting="Assertive"/>
+   <Grid Grid.Row="2" IsEnabled="{Binding CanInteract}">
+    <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="18"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+    <DockPanel>
+     <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+      <Button Content="Новая серия" Command="{Binding NewCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,6,6"/>
+      <Button Content="Обновить" Command="{Binding ReloadCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6"/>
+     </WrapPanel>
+     <ListBox ItemsSource="{Binding Series}" SelectedItem="{Binding Selected}" AutomationProperties.Name="Серии задач">
+      <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="4,6"><TextBlock Text="{Binding Title}" TextWrapping="Wrap" FontWeight="SemiBold"/><TextBlock Text="{Binding StatusText}" FontSize="12"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+     </ListBox>
+    </DockPanel>
+    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+     <StackPanel>
+      <StackPanel DataContext="{Binding Editor}" IsEnabled="{Binding DataContext.CanManage, ElementName=Root}">
+       <TextBlock Text="Название задачи"/><TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Название повторяющейся задачи"/>
+       <TextBlock Text="Описание"/><TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinHeight="48" MaxHeight="100" Margin="0,4,0,10"/>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="Повторять"/><ComboBox ItemsSource="{Binding Frequencies}" SelectedValuePath="Code" DisplayMemberPath="Label" SelectedValue="{Binding Frequency}" Margin="0,4,0,10"/></StackPanel>
+        <StackPanel Grid.Column="2"><TextBlock Text="Каждые N"/><TextBox Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+       </Grid>
+<StackPanel><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Frequency}" Value="daily"><Setter Property="Visibility" Value="Visible"/></DataTrigger><DataTrigger Binding="{Binding Frequency}" Value="weekly"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>       <TextBlock Text="Дни недели через запятую: 1 — пн, 7 — вс" TextWrapping="Wrap"/><TextBox Text="{Binding Weekdays, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+<StackPanel><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Frequency}" Value="monthly"><Setter Property="Visibility" Value="Visible"/></DataTrigger><DataTrigger Binding="{Binding Frequency}" Value="yearly"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>       <TextBlock Text="Дни месяца: 1–31; −1 — последний день" TextWrapping="Wrap"/><TextBox Text="{Binding MonthDays, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+<StackPanel><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Frequency}" Value="yearly"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>       <TextBlock Text="Месяц года (1–12, для ежегодного повтора)"/><TextBox Text="{Binding Month, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+       <TextBlock Text="Начало серии"/><DatePicker SelectedDate="{Binding StartDate}" Margin="0,4,0,10"/>
+       <CheckBox Content="Весь день" IsChecked="{Binding IsAllDay}" Margin="0,0,0,10"/>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="14"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="Начало (ЧЧ:ММ)"/><TextBox Text="{Binding StartTime, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+        <StackPanel Grid.Column="2"><TextBlock Text="Длительность, минут"/><TextBox Text="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+       </Grid>
+       <TextBlock Text="{Binding TimeZoneText, StringFormat=Часовой пояс: {0}}" Margin="0,0,0,10"/>
+       <ComboBox ItemsSource="{Binding Terminations}" SelectedValuePath="Code" DisplayMemberPath="Label" SelectedValue="{Binding Termination}" Margin="0,0,0,10"/>
+<StackPanel><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Termination}" Value="until"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>       <TextBlock Text="Последняя дата (если выбрано окончание по дате)" TextWrapping="Wrap"/><DatePicker SelectedDate="{Binding UntilDate}" Margin="0,4,0,10"/></StackPanel>
+<StackPanel><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Termination}" Value="count"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>       <TextBlock Text="Число повторений (если выбрано количество)" TextWrapping="Wrap"/><TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10"/></StackPanel>
+       <TextBlock Text="Приоритет"/><ComboBox ItemsSource="{Binding Priorities}" SelectedValuePath="Code" DisplayMemberPath="Label" SelectedValue="{Binding Priority}" Margin="0,4,0,12"/>
+      </StackPanel>
+      <WrapPanel><Button Content="Предпросмотр" Command="{Binding PreviewCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,8"/><Button Content="Сохранить правило серии" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,0,8"/></WrapPanel>
+      <TextBlock Text="Правило применяется ко всей серии. Завершённые и отдельно изменённые задачи сохраняются." TextWrapping="Wrap" Margin="0,0,0,12"/>
+      <TextBlock Text="{Binding PreviewText}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+      <Separator/>
+      <TextBlock Text="Изменить созданные задачи" FontSize="16" FontWeight="SemiBold" Margin="0,12,0,8"/>
+      <TextBlock Text="Выберите задачу и область. Будут применены название, приоритет и длительность из формы." TextWrapping="Wrap" Margin="0,0,0,8"/>
+      <ComboBox ItemsSource="{Binding Occurrences}" SelectedItem="{Binding SelectedOccurrence}" Margin="0,0,0,8" AutomationProperties.Name="Экземпляр серии">
+       <ComboBox.ItemTemplate><DataTemplate><TextBlock><Run Text="{Binding LocalDate, StringFormat=dd.MM.yyyy}"/><Run Text=" — "/><Run Text="{Binding Title}"/></TextBlock></DataTemplate></ComboBox.ItemTemplate>
+      </ComboBox>
+      <ComboBox ItemsSource="{Binding Scopes}" SelectedValuePath="Code" DisplayMemberPath="Label" SelectedValue="{Binding Scope}" Margin="0,0,0,8"/>
+      <Button Content="Применить к выбранной области" Command="{Binding ApplyCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,0,0,12"/>
+      <Separator/>
+      <TextBlock Text="Создать задачи до даты" Margin="0,12,0,4"/>
+      <DatePicker SelectedDate="{Binding ThroughDate}" Margin="0,0,0,8"/>
+      <TextBlock Text="Расширяйте горизонт шагами до одного года. Повторный запрос не создаёт дубликаты." TextWrapping="Wrap" Margin="0,0,0,8"/>
+      <Button Content="Расширить расписание" Command="{Binding GenerateCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,0,0,12"/>
+      <WrapPanel><Button Content="Приостановить" Command="{Binding PauseCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"/><Button Content="Возобновить" Command="{Binding ResumeCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"/><Button Content="Отменить серию" Command="{Binding CancelSeriesCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6"/></WrapPanel>
+     </StackPanel>
+    </ScrollViewer>
+   </Grid>
+  </Grid>
+ </Border>
+</UserControl>

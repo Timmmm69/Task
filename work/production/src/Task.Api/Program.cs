@@ -66,6 +66,9 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<IScheduleStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateScheduleStore());
     builder.Services.AddSingleton<ScheduleQueryService>();
+    builder.Services.AddSingleton<IRecurrenceStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateRecurrenceStore());
+    builder.Services.AddSingleton<RecurrenceService>();
     builder.Services.AddSingleton<ISessionRepository>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateSessionRepository());
     builder.Services.AddSingleton<IAccountLookupStore>(services =>
@@ -149,6 +152,7 @@ app.MapCapabilitiesEndpoints();
 app.MapAuditEndpoints();
 app.MapTaskEndpoints();
 app.MapCalendarEndpoints();
+app.MapRecurrenceEndpoints();
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 

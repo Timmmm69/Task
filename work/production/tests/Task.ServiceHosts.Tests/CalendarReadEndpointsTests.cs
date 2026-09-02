@@ -58,7 +58,7 @@ public sealed class CalendarScheduleEndpointsTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task GetSchedule_LimitsResponseToContractMaximum()
+    public async global::System.Threading.Tasks.Task GetSchedule_RejectsOversizedRangeInsteadOfSilentlyTruncating()
     {
         var rows = Enumerable.Range(1, 501).Select(index => new ScheduleItemRow(
             Guid.Parse($"00000000-0000-0000-0000-{index:000000000000}"),
@@ -77,8 +77,8 @@ public sealed class CalendarScheduleEndpointsTests
 
         var response = await client.GetAsync(CalendarEndpointFixture.ValidScheduleUrl);
 
-        using var json = await CalendarEndpointFixture.ReadJsonAsync(response);
-        Assert.Equal(500, json.RootElement.GetProperty("items").GetArrayLength());
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+        await CalendarEndpointFixture.AssertProblemAsync(response, "VALIDATION_FAILED");
     }
 
     [Theory]

@@ -218,7 +218,7 @@ public static class RecurrenceGenerator
             return false;
         }
 
-        if (occurrenceCount >= MaxOccurrencesPerWindow)
+        if (day >= windowStart && result.Count >= MaxOccurrencesPerWindow)
         {
             throw new InvalidOperationException(
                 $"Recurrence complexity limit exceeded: the window produces more than {MaxOccurrencesPerWindow} occurrences.");

@@ -111,7 +111,7 @@ public sealed class AuthSessionEndpointsTests
         Assert.Equal(1, document.RootElement.GetProperty("authorizationScopeVersion").GetInt64());
         Assert.Equal(
             ["Task.Read", "Calendar.Read", "Task.Create", "Task.Update", "Task.ChangeStatus",
-                "CalendarEvent.Create", "CalendarEvent.Update", "CalendarEvent.Delete"],
+                "CalendarEvent.Create", "CalendarEvent.Update", "CalendarEvent.Delete", "Recurrence.Read", "Recurrence.Manage"],
             document.RootElement.GetProperty("capabilities").EnumerateArray().Select(item => item.GetString()));
         Assert.Equal(mustChangePassword, document.RootElement.GetProperty("mustChangePassword").GetBoolean());
     }

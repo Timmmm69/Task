@@ -54,6 +54,8 @@ internal static class CalendarEndpoints
                 query.Users,
                 query.Projects,
                 query.Status);
+            if (page.Items.Count > MaximumItems)
+                return await DomainValidationProblemAsync(context, "В периоде больше 500 записей. Выберите меньший диапазон календаря.");
             return Results.Json(new SchedulePageResponse(
                 page.Items.Take(MaximumItems).Select(ToResponse).ToArray(),
                 NextCursor: null,
@@ -129,7 +131,9 @@ internal static class CalendarEndpoints
                 timezoneId: "UTC",
                 query.UserIds,
                 query.ExcludeObjectId);
-            return Results.Json(conflicts.Take(MaximumItems).Select(ToResponse).ToArray());
+            if (conflicts.Count > MaximumItems)
+                return await DomainValidationProblemAsync(context, "В периоде слишком много пересечений. Выберите меньший диапазон календаря.");
+            return Results.Json(conflicts.Select(ToResponse).ToArray());
         }
         catch (ArgumentException exception)
         {
@@ -319,7 +323,7 @@ internal static class CalendarEndpoints
         item.IsAllDay,
         item.ProjectId,
         item.Status,
-        item.Priority is null ? null : item.Priority.Value.ToString().ToLowerInvariant());
+        item.Priority is null ? null : item.Priority.Value.ToString().ToLowerInvariant(), item.RecurrenceSeriesId, item.Description);
 
     private static ScheduleConflictResponse ToResponse(ScheduleConflict conflict) => new(
         conflict.LeftObjectId,
@@ -433,7 +437,9 @@ internal static class CalendarEndpoints
         [property: JsonPropertyName("isAllDay")] bool IsAllDay,
         [property: JsonPropertyName("projectId")] Guid? ProjectId,
         [property: JsonPropertyName("status")] string Status,
-        [property: JsonPropertyName("priority")] string? Priority);
+        [property: JsonPropertyName("priority")] string? Priority,
+        [property: JsonPropertyName("recurrenceSeriesId")] Guid? RecurrenceSeriesId = null,
+        [property: JsonPropertyName("description")] string? Description = null);
 
     internal sealed record SchedulePageResponse(
         [property: JsonPropertyName("items")] IReadOnlyList<ScheduleItemResponse> Items,

@@ -422,7 +422,7 @@ public sealed class PostgresTaskAggregateStoreTests
                 Assert.Equal(1, removeFuture.ExecuteNonQuery());
             }
 
-            using (var removeRequiredObject = dataSource.CreateCommand("DROP TABLE work.tasks;"))
+            using (var removeRequiredObject = dataSource.CreateCommand("DROP TABLE work.tasks CASCADE;"))
             {
                 removeRequiredObject.ExecuteNonQuery();
             }

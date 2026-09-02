@@ -130,10 +130,15 @@ public sealed class PostgresScheduleStore : IScheduleStore
     {
         var sql =
             """
-            SELECT o.id, t.title, t.status, t.priority, t.start_at_utc, t.deadline_at
+            SELECT o.id, t.title, t.status, t.priority, t.start_at_utc, t.deadline_at,
+                   r.series_id, r.local_date, r.template->>'description',
+                   (r.template->>'projectId')::uuid, s.definition->>'timeZone',
+                   (s.definition->>'localStartTime' IS NULL AND r.generated_task_version=o.version AND r.is_exception=false)
             FROM core.objects AS o
             INNER JOIN work.tasks AS t
                 ON t.organization_id = o.organization_id AND t.id = o.id
+            LEFT JOIN calendar.recurrence_occurrences r ON r.organization_id=o.organization_id AND r.task_id=o.id
+            LEFT JOIN calendar.recurrence_series s ON s.organization_id=r.organization_id AND s.id=r.series_id
             WHERE o.organization_id = $1 AND o.object_type = 'task' AND o.lifecycle_state = 'active'
               AND (
                   (t.start_at_utc IS NOT NULL AND t.deadline_at IS NOT NULL AND
@@ -167,14 +172,16 @@ public sealed class PostgresScheduleStore : IScheduleStore
                 reader.GetGuid(0),
                 ScheduleItemType.Task,
                 reader.GetString(1),
-                null,
-                false,
+                reader.IsDBNull(7) ? null : reader.GetFieldValue<DateOnly>(7),
+                !reader.IsDBNull(6) && !reader.IsDBNull(11) && reader.GetBoolean(11),
                 ReadNullableTimestamp(reader, 4),
                 ReadNullableTimestamp(reader, 5),
-                null,
-                null,
+                reader.IsDBNull(10) ? null : reader.GetString(10),
+                reader.IsDBNull(9) ? null : reader.GetGuid(9),
                 reader.GetString(2),
-                ParsePriority(reader.GetString(3))));
+                ParsePriority(reader.GetString(3)),
+                reader.IsDBNull(6) ? null : reader.GetGuid(6),
+                reader.IsDBNull(8) ? null : reader.GetString(8)));
         }
     }
 

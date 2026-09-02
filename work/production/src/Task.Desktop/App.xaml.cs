@@ -170,7 +170,9 @@ public partial class App : global::System.Windows.Application
         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService);
         var calendar = new CalendarViewModel(
             calendarClient,
-            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
+                sessionService.CurrentSessionMetadata!.UserId));
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar);
         var window = new MainWindow(viewModel);
         _mainWindow = window;
@@ -258,7 +260,9 @@ public partial class App : global::System.Windows.Application
         }
 
         viewModel.Tasks.UpdateSessionState(signedIn);
-        viewModel.Calendar?.UpdateSessionState(signedIn);
+        // A token refresh keeps the authenticated session; clearing it here would
+        // discard an open calendar/recurrence editor every refresh interval.
+        viewModel.Calendar?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
     }
 
     private void DetachMainSession()

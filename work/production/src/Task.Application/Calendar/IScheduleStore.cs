@@ -31,7 +31,9 @@ public sealed record ScheduleItemRow(
     string? TimeZoneId,
     Guid? ProjectId,
     string Status,
-    ScheduleItemPriority? Priority);
+    ScheduleItemPriority? Priority,
+    Guid? RecurrenceSeriesId = null,
+    string? Description = null);
 
 /// <summary>
 /// Read-only persistence port for the unified calendar schedule. Returns the

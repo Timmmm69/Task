@@ -14,6 +14,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(5, "task_write_transaction_foundation", "005_task_write_transaction_foundation.sql"),
         Load(6, "task_capability_permissions", "006_task_capability_permissions.sql"),
         Load(7, "calendar_event_capability_permissions", "007_calendar_event_capability_permissions.sql"),
+        Load(8, "calendar_recurrence", "008_calendar_recurrence.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

@@ -66,7 +66,9 @@ public sealed record ScheduleItem(
     bool IsAllDay,
     Guid? ProjectId,
     string Status,
-    ScheduleItemPriority? Priority);
+    ScheduleItemPriority? Priority,
+    Guid? RecurrenceSeriesId = null,
+    string? Description = null);
 
 /// <summary>
 /// Page of unified calendar schedule items (OpenAPI <c>SchedulePage</c>).

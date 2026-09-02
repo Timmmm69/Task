@@ -35,6 +35,8 @@ internal static class TaskPermissionAuthorization
     public const string CalendarEventUpdatePolicyName = "permission.calendar-event.update";
 
     public const string CalendarEventDeletePolicyName = "permission.calendar-event.delete";
+    public const string RecurrenceReadPolicyName = "permission.recurrence.read";
+    public const string RecurrenceManagePolicyName = "permission.recurrence.manage";
 
     /// <summary>Permission code backing both named policies.</summary>
     public const string AuditEntryReadPermissionCode = "audit.entry.read";
@@ -76,6 +78,8 @@ internal static class TaskPermissionAuthorization
         (CalendarEventCreateBackingPermissionCode, "CalendarEvent.Create"),
         (CalendarEventUpdateBackingPermissionCode, "CalendarEvent.Update"),
         (CalendarEventDeleteBackingPermissionCode, "CalendarEvent.Delete"),
+        ("recurrence.read", "Recurrence.Read"),
+        ("recurrence.manage", "Recurrence.Manage"),
     ];
 
     /// <summary>
@@ -184,6 +188,8 @@ internal static class TaskPermissionAuthorization
             options.AddPolicy(CalendarEventCreatePolicyName, policy => policy.RequirePermission(CalendarEventCreateBackingPermissionCode));
             options.AddPolicy(CalendarEventUpdatePolicyName, policy => policy.RequirePermission(CalendarEventUpdateBackingPermissionCode));
             options.AddPolicy(CalendarEventDeletePolicyName, policy => policy.RequirePermission(CalendarEventDeleteBackingPermissionCode));
+            options.AddPolicy(RecurrenceReadPolicyName, policy => policy.RequirePermission("recurrence.read"));
+            options.AddPolicy(RecurrenceManagePolicyName, policy => policy.RequirePermission("recurrence.manage"));
             options.AddPolicy(TaskCreatePolicyName, policy => policy.RequirePermission(TaskCreateBackingPermissionCode));
             options.AddPolicy(TaskUpdatePolicyName, policy => policy.RequirePermission(TaskUpdateBackingPermissionCode));
             options.AddPolicy(TaskChangeStatusPolicyName, policy => policy.RequirePermission(TaskChangeStatusBackingPermissionCode));

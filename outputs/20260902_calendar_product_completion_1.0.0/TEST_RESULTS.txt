@@ -1,0 +1,13 @@
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+
+Пройден!   : не пройдено     0, пройдено   243, пропущено     0, всего   243, длительность 3 s. - Task.Desktop.Tests.dll (net10.0)
+
+Пройден!   : не пройдено     0, пройдено   303, пропущено     0, всего   303, длительность 6 s. - Task.ServiceHosts.Tests.dll (net10.0)
+
+Пройден!   : не пройдено     0, пройдено   764, пропущено     0, всего   764, длительность 9 s. - Task.Tests.dll (net10.0)
+SEC-01 security gate passed: tracked runtime configuration contains no embedded key/credential patterns and the complete solution test suite is green.

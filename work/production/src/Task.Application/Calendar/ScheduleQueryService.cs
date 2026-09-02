@@ -70,12 +70,12 @@ public sealed class ScheduleQueryService
                     row.ItemType,
                     row.Title,
                     localDate,
-                    row.StartAtUtc,
-                    row.EndAtUtc,
+                    row.IsAllDay ? null : row.StartAtUtc,
+                    row.IsAllDay ? null : row.EndAtUtc,
                     row.IsAllDay,
                     row.ProjectId,
                     row.Status,
-                    row.Priority)));
+                    row.Priority, row.RecurrenceSeriesId, row.Description)));
         }
 
         projections.Sort(static (a, b) =>
@@ -193,7 +193,7 @@ public sealed class ScheduleQueryService
 
     private static Timeline? BuildTimeline(ScheduleItemRow row, TimeZoneInfo timeZone)
     {
-        if (row.ItemType == ScheduleItemType.CalendarEvent)
+        if (row.ItemType == ScheduleItemType.CalendarEvent || row.IsAllDay)
         {
             if (row.IsAllDay)
             {
@@ -207,7 +207,8 @@ public sealed class ScheduleQueryService
                         0,
                         DateTimeKind.Unspecified),
                     TimeZoneInfo.FindSystemTimeZoneById(row.TimeZoneId!));
-                return new Timeline(dayStart, dayStart.AddDays(1), dayStart, row.EventDate, IsPoint: false);
+                var dayEnd = TimeZoneInfo.ConvertTimeToUtc(row.EventDate.Value.AddDays(1).ToDateTime(TimeOnly.MinValue), TimeZoneInfo.FindSystemTimeZoneById(row.TimeZoneId!));
+                return new Timeline(dayStart, dayEnd, dayStart, row.EventDate, IsPoint: false);
             }
 
             if (row.StartAtUtc is null || row.EndAtUtc is null)

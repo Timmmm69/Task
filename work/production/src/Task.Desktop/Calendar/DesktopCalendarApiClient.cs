@@ -148,9 +148,9 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
             || (type == DesktopScheduleItemType.CalendarEvent && priority is not null)
             || !IsUtc(p.StartAtUtc) || !IsUtc(p.EndAtUtc)
             || (p.IsAllDay && (p.StartAtUtc.HasValue || p.EndAtUtc.HasValue))
-            || (!p.IsAllDay && p.StartAtUtc.HasValue != p.EndAtUtc.HasValue)
+            || (type == DesktopScheduleItemType.CalendarEvent && !p.IsAllDay && p.StartAtUtc.HasValue != p.EndAtUtc.HasValue)
             || (p.StartAtUtc.HasValue && p.EndAtUtc < p.StartAtUtc)) return false;
-        item = new(p.ObjectId, type, p.Title, p.LocalDate, p.StartAtUtc, p.EndAtUtc, p.IsAllDay, p.ProjectId, p.Status!, priority);
+        item = new(p.ObjectId, type, p.Title, p.LocalDate, p.StartAtUtc, p.EndAtUtc, p.IsAllDay, p.ProjectId, p.Status!, priority, p.RecurrenceSeriesId, p.Description);
         return true;
     }
 
@@ -211,20 +211,33 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
         catch (JsonException) { return false; }
     }
 
-    private static object ToPayload(DesktopCalendarEventCommand c) => new
+    private static object ToPayload(DesktopCalendarEventCommand c)
     {
-        projectId = c.ProjectId,
-        title = c.Title.Trim(),
-        description = string.IsNullOrWhiteSpace(c.Description) ? null : c.Description.Trim(),
-        eventDate = c.EventDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-        isAllDay = c.IsAllDay,
-        startAtUtc = c.StartAtUtc?.UtcDateTime,
-        endAtUtc = c.EndAtUtc?.UtcDateTime,
-        timeZone = c.TimeZoneId,
-        status = c.Status,
-        userAttendees = Array.Empty<object>(),
-        contactAttendees = Array.Empty<object>(),
-    };
+        var payload = new Dictionary<string, object?>
+        {
+            ["projectId"] = c.ProjectId,
+            ["title"] = c.Title.Trim(),
+            ["description"] = string.IsNullOrWhiteSpace(c.Description) ? null : c.Description.Trim(),
+            ["eventDate"] = c.EventDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            ["isAllDay"] = c.IsAllDay,
+            ["startAtUtc"] = c.StartAtUtc?.UtcDateTime,
+            ["endAtUtc"] = c.EndAtUtc?.UtcDateTime,
+            ["timeZone"] = c.TimeZoneId,
+            ["status"] = c.Status,
+        };
+        if (c.Attendees is not null)
+        {
+            payload["userAttendees"] = c.Attendees.Where(a => a.IsUser).Select(a => new
+            {
+                userAccountId = a.Id, role = a.Role, responseStatus = a.ResponseStatus, respondedAt = a.RespondedAtUtc?.UtcDateTime,
+            }).ToArray();
+            payload["contactAttendees"] = c.Attendees.Where(a => !a.IsUser).Select(a => new
+            {
+                contactId = a.Id, role = a.Role, responseStatus = a.ResponseStatus, respondedAt = a.RespondedAtUtc?.UtcDateTime,
+            }).ToArray();
+        }
+        return payload;
+    }
 
     private static void ValidateCommand(DesktopCalendarEventCommand c)
     {
@@ -233,7 +246,14 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
             || string.IsNullOrWhiteSpace(c.TimeZoneId) || c.Status is not ("scheduled" or "cancelled")
             || (c.IsAllDay && (c.StartAtUtc.HasValue || c.EndAtUtc.HasValue))
             || (!c.IsAllDay && (!c.StartAtUtc.HasValue || !c.EndAtUtc.HasValue || c.EndAtUtc <= c.StartAtUtc))
+            || (c.EndDate.HasValue && c.EndDate < c.EventDate)
             || !IsUtc(c.StartAtUtc) || !IsUtc(c.EndAtUtc)) throw new ArgumentException("Calendar event command is invalid.", nameof(c));
+        if (c.Attendees is null) return;
+        if (c.Attendees.Count(a => a.IsUser) > 500 || c.Attendees.Count(a => !a.IsUser) > 500
+            || c.Attendees.Any(a => a.Id == Guid.Empty || a.Role is not ("required" or "optional" or "observer")
+                || a.ResponseStatus is not ("pending" or "accepted" or "declined" or "tentative") || !IsUtc(a.RespondedAtUtc))
+            || c.Attendees.GroupBy(a => (a.IsUser, a.Id)).Any(g => g.Count() != 1))
+            throw new ArgumentException("Calendar event attendees are invalid.", nameof(c));
     }
 
     private static void ValidateRange(DateTimeOffset fromUtc, DateTimeOffset toUtc)
@@ -254,7 +274,7 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
     }
 
     private sealed class SchedulePagePayload { public List<ScheduleItemPayload?>? Items { get; init; } public string? NextCursor { get; init; } public DateTimeOffset? RangeStart { get; init; } public DateTimeOffset? RangeEnd { get; init; } }
-    private sealed class ScheduleItemPayload { public Guid ObjectId { get; init; } public string? ItemType { get; init; } public string? Title { get; init; } public DateOnly LocalDate { get; init; } public DateTimeOffset? StartAtUtc { get; init; } public DateTimeOffset? EndAtUtc { get; init; } public bool IsAllDay { get; init; } public Guid? ProjectId { get; init; } public string? Status { get; init; } public string? Priority { get; init; } }
+    private sealed class ScheduleItemPayload { public Guid? RecurrenceSeriesId { get; init; } public string? Description { get; init; } public Guid ObjectId { get; init; } public string? ItemType { get; init; } public string? Title { get; init; } public DateOnly LocalDate { get; init; } public DateTimeOffset? StartAtUtc { get; init; } public DateTimeOffset? EndAtUtc { get; init; } public bool IsAllDay { get; init; } public Guid? ProjectId { get; init; } public string? Status { get; init; } public string? Priority { get; init; } }
     private sealed class EventPayload { public Guid Id { get; init; } public Guid OrganizationId { get; init; } public long Version { get; init; } public DateTimeOffset? CreatedAt { get; init; } public DateTimeOffset? UpdatedAt { get; init; } public Guid? ProjectId { get; init; } public string? Title { get; init; } public string? Description { get; init; } public DateOnly EventDate { get; init; } public bool IsAllDay { get; init; } public DateTimeOffset? StartAtUtc { get; init; } public DateTimeOffset? EndAtUtc { get; init; } public string? TimeZone { get; init; } public string? Status { get; init; } public List<AttendeePayload>? UserAttendees { get; init; } public List<AttendeePayload>? ContactAttendees { get; init; } }
     private sealed class AttendeePayload { public Guid? UserAccountId { get; init; } public Guid? ContactId { get; init; } public string? Role { get; init; } public string? ResponseStatus { get; init; } public DateTimeOffset? RespondedAt { get; init; } }
     private sealed class ConflictPayload { public Guid LeftObjectId { get; init; } public Guid RightObjectId { get; init; } public DateTimeOffset? OverlapStart { get; init; } public DateTimeOffset? OverlapEnd { get; init; } public string? Severity { get; init; } }

@@ -1,0 +1,43 @@
+{
+  "package": "calendar-product-completion",
+  "version": "1.0.0",
+  "createdAt": "2026-09-02T22:47:58.8420854+03:00",
+  "status": "validated-with-documented-ui-check-limit",
+  "artifacts": [
+    {
+      "path": ".gitattributes",
+      "size": 14,
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": "CONTRACT_NOTES.md",
+      "size": 4475,
+      "sha256": "9dbaa13e180bd732fca80fe611ff433f9c9f3c0ae79e55cbb8f4981c7ecaef4e"
+    },
+    {
+      "path": "E2E_REPORT.md",
+      "size": 1372,
+      "sha256": "8db70d44a06a23162cbf602cb9b32dd8809316ca2143526949217729b9c849d7"
+    },
+    {
+      "path": "README.md",
+      "size": 2108,
+      "sha256": "7cbdb23dfb20647d383a9a0cba49b60e1e378a0483a48f96e47d465cda3f82f5"
+    },
+    {
+      "path": "TEST_RESULTS.txt",
+      "size": 1623,
+      "sha256": "af9d96b5c3bafa8143ef3be98b3efe494a15932fc70935e3e018ec64c9ae1fbe"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "size": 4449,
+      "sha256": "41a69f4f5a4401a35fbfa02fa7ea1ba2192dd9747656e687a8e7173017a33317"
+    },
+    {
+      "path": "VERSION",
+      "size": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}
