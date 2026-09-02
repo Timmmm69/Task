@@ -1,0 +1,1514 @@
+{
+  "target": "task-backup-agent",
+  "indexDigest": "sha256:c08e1674bc15d974f41f60c74b4bb3f6f712deab83202deb2f11c40cdcfdc647",
+  "imageDigest": "sha256:eb292e2d6ec92e81d2eb2fb49ff15bdfc2fb1f2e359e761a2dfaef9c72c1efa7",
+  "configDigest": "sha256:31fa37041849bca3223e929c1687fd57a101d9d7ad723b9a807adf3c30a8c2a5",
+  "layerDigests": [
+    "sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924",
+    "sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3",
+    "sha256:6f51f4d8c488469bbc7d297812604fc03b24e30647eb98e7620de299965dbf93",
+    "sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860",
+    "sha256:444a182edc5217273948ccab4eadd84b6dee4f6a997a1e0b982803b17947eda8",
+    "sha256:19dd6724f4cfaa6b44af45c7c9354c8ec7c690946a1f04cbbf94359e8024d64e",
+    "sha256:a27e1ae13b088d2cacfa4e3236648104ccef20fa4637a37dccb38f7a7abcb077"
+  ],
+  "manifest": {
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "config": {
+      "mediaType": "application/vnd.oci.image.config.v1+json",
+      "digest": "sha256:31fa37041849bca3223e929c1687fd57a101d9d7ad723b9a807adf3c30a8c2a5",
+      "size": 4102
+    },
+    "layers": [
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924",
+        "size": 29751109
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3",
+        "size": 19182933
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:6f51f4d8c488469bbc7d297812604fc03b24e30647eb98e7620de299965dbf93",
+        "size": 3565
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860",
+        "size": 36601752
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:444a182edc5217273948ccab4eadd84b6dee4f6a997a1e0b982803b17947eda8",
+        "size": 154
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:19dd6724f4cfaa6b44af45c7c9354c8ec7c690946a1f04cbbf94359e8024d64e",
+        "size": 93,
+        "annotations": {
+          "buildkit/rewritten-timestamp": "1788380965"
+        }
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:a27e1ae13b088d2cacfa4e3236648104ccef20fa4637a37dccb38f7a7abcb077",
+        "size": 4288276,
+        "annotations": {
+          "buildkit/rewritten-timestamp": "1788380965"
+        }
+      }
+    ]
+  },
+  "config": {
+    "architecture": "amd64",
+    "config": {
+      "User": "app",
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "APP_UID=1654",
+        "ASPNETCORE_HTTP_PORTS=8080",
+        "DOTNET_RUNNING_IN_CONTAINER=true",
+        "DOTNET_VERSION=10.0.11"
+      ],
+      "Entrypoint": [
+        "dotnet",
+        "Task.BackupAgent.dll"
+      ],
+      "WorkingDir": "/app",
+      "Labels": {
+        "org.opencontainers.image.revision": "2a50126b089a533fb78e9b80981a008f3795f0b4",
+        "org.opencontainers.image.title": "Task.BackupAgent",
+        "org.opencontainers.image.version": "0.5.0"
+      }
+    },
+    "created": "2026-09-02T20:29:25Z",
+    "history": [
+      {
+        "created": "2026-07-31T20:37:20.566091566Z",
+        "created_by": "/bin/sh -c #(nop)  ARG RELEASE",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-07-31T20:37:20.607780961Z",
+        "created_by": "/bin/sh -c #(nop)  ARG LAUNCHPAD_BUILD_ARCH",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-07-31T20:37:20.637763076Z",
+        "created_by": "/bin/sh -c #(nop)  LABEL org.opencontainers.image.version=24.04",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-07-31T20:37:22.831844788Z",
+        "created_by": "/bin/sh -c #(nop) ADD file:d938ff3d4eee15d8600de84bf85eac6ecd0f20bc92dfe305dafbff0bdc974c0f in / "
+      },
+      {
+        "created": "2026-07-31T20:37:23.365889685Z",
+        "created_by": "/bin/sh -c #(nop)  CMD [\"/bin/bash\"]",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-08-10T16:59:33.629175784Z",
+        "created_by": "ENV APP_UID=1654 ASPNETCORE_HTTP_PORTS=8080 DOTNET_RUNNING_IN_CONTAINER=true",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-08-10T16:59:33.629175784Z",
+        "created_by": "RUN /bin/sh -c apt-get update     && apt-get install -y --no-install-recommends         ca-certificates                 libc6         libgcc-s1         libicu74         libssl3t64         libstdc++6         tzdata         tzdata-legacy     && rm -rf /var/lib/apt/lists/* # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2026-08-10T16:59:35.175625839Z",
+        "created_by": "RUN /bin/sh -c groupadd         --gid=$APP_UID         app     && useradd --no-log-init         --uid=$APP_UID         --gid=$APP_UID         --create-home         app # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2026-08-10T17:00:54.782259438Z",
+        "created_by": "ENV DOTNET_VERSION=10.0.11",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-08-10T17:00:54.782259438Z",
+        "created_by": "COPY /dotnet /usr/share/dotnet # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2026-08-10T17:00:55.931859884Z",
+        "created_by": "RUN /bin/sh -c ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "ARG VERSION=0.0.0-local",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "ARG GIT_SHA=unknown",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "LABEL org.opencontainers.image.title=Task.BackupAgent org.opencontainers.image.version=0.5.0 org.opencontainers.image.revision=2a50126b089a533fb78e9b80981a008f3795f0b4",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "WORKDIR /app",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "COPY --chown=app:app /publish/task-backup-agent/ ./ # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "USER app",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2026-09-02T20:29:25Z",
+        "created_by": "ENTRYPOINT [\"dotnet\" \"Task.BackupAgent.dll\"]",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      }
+    ],
+    "os": "linux",
+    "rootfs": {
+      "type": "layers",
+      "diff_ids": [
+        "sha256:42724e448bf499ec7d4b3c21d6cc68fe665ef677ed393c3dbb5357394e89ff91",
+        "sha256:73ba6d3f4de7e8b9304be6a52ea4399b6f44e6b2affbe9c355c75451051d614b",
+        "sha256:e9c940c8a4e9d921e3d22c845b5d2142c6c5006b1a817289c77b25c98daa36f9",
+        "sha256:296c0858796d1c1968d546989f664f7ed768ff1cb88294044bdc0e98a25e5b40",
+        "sha256:7549a21f8d5cc9f81124bfd91e6d49873b2ce50af70bafd8b633f4430191c68f",
+        "sha256:17b13e8ea3c24569eb9f69d650bd601243c8bc156bff767b3e21a391bf6c6278",
+        "sha256:48acc27a607b6d6ee76939e12fc0534aaeb774b408872b4fb253203de267b83e"
+      ]
+    }
+  },
+  "index": {
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "manifests": [
+      {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "digest": "sha256:eb292e2d6ec92e81d2eb2fb49ff15bdfc2fb1f2e359e761a2dfaef9c72c1efa7",
+        "size": 1794,
+        "platform": {
+          "architecture": "amd64",
+          "os": "linux"
+        }
+      },
+      {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "digest": "sha256:14d6c84036bece77288bc64149cec00bbb5c457100a08d8a29fca1ea2ca5ef61",
+        "size": 567,
+        "annotations": {
+          "vnd.docker.reference.digest": "sha256:eb292e2d6ec92e81d2eb2fb49ff15bdfc2fb1f2e359e761a2dfaef9c72c1efa7",
+          "vnd.docker.reference.type": "attestation-manifest"
+        },
+        "platform": {
+          "architecture": "unknown",
+          "os": "unknown"
+        }
+      }
+    ]
+  },
+  "provenance": {
+    "_type": "https://in-toto.io/Statement/v0.1",
+    "predicateType": "https://slsa.dev/provenance/v0.2",
+    "subject": [
+      {
+        "name": "pkg:docker/task-release/task-backup-agent@0.5.0?platform=linux%2Famd64",
+        "digest": {
+          "sha256": "eb292e2d6ec92e81d2eb2fb49ff15bdfc2fb1f2e359e761a2dfaef9c72c1efa7"
+        }
+      }
+    ],
+    "predicate": {
+      "builder": {
+        "id": ""
+      },
+      "buildType": "https://mobyproject.org/buildkit@v1",
+      "materials": [
+        {
+          "uri": "pkg:docker/docker/dockerfile@1.7?digest=sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720&platform=linux%2Famd64",
+          "digest": {
+            "sha256": "b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720"
+          }
+        },
+        {
+          "uri": "pkg:docker/docker/dockerfile@1.7?digest=sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720",
+          "digest": {
+            "sha256": "b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720"
+          }
+        },
+        {
+          "uri": "pkg:docker/mcr.microsoft.com/dotnet/runtime@10.0.11-noble-amd64?digest=sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21&platform=linux%2Famd64",
+          "digest": {
+            "sha256": "3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21"
+          }
+        },
+        {
+          "uri": "pkg:docker/mcr.microsoft.com/dotnet/sdk@10.0.400-noble-amd64?digest=sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef&platform=linux%2Famd64",
+          "digest": {
+            "sha256": "5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef"
+          }
+        }
+      ],
+      "invocation": {
+        "configSource": {
+          "entryPoint": "Dockerfile"
+        },
+        "parameters": {
+          "frontend": "gateway.v0",
+          "args": {
+            "build-arg:GIT_SHA": "2a50126b089a533fb78e9b80981a008f3795f0b4",
+            "build-arg:SOURCE_DATE_EPOCH": "1788380965",
+            "build-arg:VERSION": "0.5.0",
+            "cmdline": "docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720",
+            "source": "docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720",
+            "target": "task-backup-agent"
+          },
+          "locals": [
+            {
+              "name": "context"
+            },
+            {
+              "name": "dockerfile"
+            }
+          ]
+        },
+        "environment": {
+          "platform": "linux/amd64"
+        }
+      },
+      "buildConfig": {
+        "llbDefinition": [
+          {
+            "id": "step0",
+            "op": {
+              "Op": {
+                "source": {
+                  "identifier": "docker-image://mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21"
+                }
+              },
+              "platform": {
+                "Architecture": "amd64",
+                "OS": "linux"
+              },
+              "constraints": {}
+            }
+          },
+          {
+            "id": "step1",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": -1,
+                      "output": 0,
+                      "Action": {
+                        "mkdir": {
+                          "path": "/app",
+                          "mode": 493,
+                          "makeParents": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step0:0"
+            ]
+          },
+          {
+            "id": "step2",
+            "op": {
+              "Op": {
+                "source": {
+                  "identifier": "docker-image://mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef"
+                }
+              },
+              "platform": {
+                "Architecture": "amd64",
+                "OS": "linux"
+              },
+              "constraints": {}
+            }
+          },
+          {
+            "id": "step3",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": -1,
+                      "output": 0,
+                      "Action": {
+                        "mkdir": {
+                          "path": "/src",
+                          "mode": 493,
+                          "makeParents": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step2:0"
+            ]
+          },
+          {
+            "id": "step4",
+            "op": {
+              "Op": {
+                "source": {
+                  "identifier": "local://context",
+                  "attrs": {
+                    "local.excludepatterns": "[\"**/bin\",\"**/obj\",\"**/*.user\",\"**/*.suo\",\".vs\",\"docs\",\"tests\",\"verification/*.ps1\",\"deployment/containers/compose.validation.yaml\"]",
+                    "local.followpaths": "[\"deployment/containers/NuGet.Config\",\"src\",\"src/Task.Api/Task.Api.csproj\",\"src/Task.Api/packages.lock.json\",\"src/Task.Application/Task.Application.csproj\",\"src/Task.Application/packages.lock.json\",\"src/Task.BackupAgent/Task.BackupAgent.csproj\",\"src/Task.BackupAgent/packages.lock.json\",\"src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj\",\"src/Task.DatabaseMigrator/packages.lock.json\",\"src/Task.Domain/Task.Domain.csproj\",\"src/Task.Domain/packages.lock.json\",\"src/Task.Infrastructure/Task.Infrastructure.csproj\",\"src/Task.Infrastructure/packages.lock.json\",\"src/Task.Worker/Task.Worker.csproj\",\"src/Task.Worker/packages.lock.json\",\"verification/container-task-store\",\"verification/container-task-store/Task.ContainerValidation.csproj\",\"verification/container-task-store/packages.lock.json\"]",
+                    "local.sharedkeyhint": "context"
+                  }
+                }
+              },
+              "constraints": {}
+            }
+          },
+          {
+            "id": "step5",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/deployment/containers/NuGet.Config",
+                          "dest": "/src/NuGet.Config",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step3:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step6",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Domain/Task.Domain.csproj",
+                          "dest": "/src/src/Task.Domain/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Domain/packages.lock.json",
+                          "dest": "/src/src/Task.Domain/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step5:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step7",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Application/Task.Application.csproj",
+                          "dest": "/src/src/Task.Application/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Application/packages.lock.json",
+                          "dest": "/src/src/Task.Application/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step6:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step8",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Infrastructure/Task.Infrastructure.csproj",
+                          "dest": "/src/src/Task.Infrastructure/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Infrastructure/packages.lock.json",
+                          "dest": "/src/src/Task.Infrastructure/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step7:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step9",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Api/Task.Api.csproj",
+                          "dest": "/src/src/Task.Api/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Api/packages.lock.json",
+                          "dest": "/src/src/Task.Api/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step8:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step10",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Worker/Task.Worker.csproj",
+                          "dest": "/src/src/Task.Worker/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.Worker/packages.lock.json",
+                          "dest": "/src/src/Task.Worker/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step9:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step11",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.BackupAgent/Task.BackupAgent.csproj",
+                          "dest": "/src/src/Task.BackupAgent/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.BackupAgent/packages.lock.json",
+                          "dest": "/src/src/Task.BackupAgent/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step10:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step12",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj",
+                          "dest": "/src/src/Task.DatabaseMigrator/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src/Task.DatabaseMigrator/packages.lock.json",
+                          "dest": "/src/src/Task.DatabaseMigrator/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step11:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step13",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": -1,
+                      "Action": {
+                        "copy": {
+                          "src": "/verification/container-task-store/Task.ContainerValidation.csproj",
+                          "dest": "/src/verification/container-task-store/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    },
+                    {
+                      "input": 2,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/verification/container-task-store/packages.lock.json",
+                          "dest": "/src/verification/container-task-store/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step12:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step14",
+            "op": {
+              "Op": {
+                "exec": {
+                  "meta": {
+                    "args": [
+                      "/bin/sh",
+                      "-c",
+                      "dotnet restore src/Task.Api/Task.Api.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.Worker/Task.Worker.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.BackupAgent/Task.BackupAgent.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --runtime linux-x64 --locked-mode     && dotnet restore verification/container-task-store/Task.ContainerValidation.csproj --runtime linux-x64 --locked-mode"
+                    ],
+                    "env": [
+                      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                      "APP_UID=1654",
+                      "ASPNETCORE_HTTP_PORTS=8080",
+                      "DOTNET_RUNNING_IN_CONTAINER=true",
+                      "DOTNET_VERSION=10.0.11",
+                      "ASPNET_VERSION=10.0.11",
+                      "DOTNET_GENERATE_ASPNET_CERTIFICATE=false",
+                      "DOTNET_NOLOGO=true",
+                      "DOTNET_SDK_VERSION=10.0.400",
+                      "DOTNET_USE_POLLING_FILE_WATCHER=true",
+                      "NUGET_XMLDOC_MODE=skip",
+                      "POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetSDK-Ubuntu-24.04",
+                      "VERSION=0.5.0",
+                      "GIT_SHA=2a50126b089a533fb78e9b80981a008f3795f0b4"
+                    ],
+                    "cwd": "/src",
+                    "removeMountStubsRecursive": true
+                  },
+                  "mounts": [
+                    {
+                      "dest": "/"
+                    }
+                  ]
+                }
+              },
+              "platform": {
+                "Architecture": "amd64",
+                "OS": "linux"
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step13:0"
+            ]
+          },
+          {
+            "id": "step15",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/src",
+                          "dest": "/src/src/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step14:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step16",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/verification/container-task-store",
+                          "dest": "/src/verification/container-task-store/",
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step15:0",
+              "step4:0"
+            ]
+          },
+          {
+            "id": "step17",
+            "op": {
+              "Op": {
+                "exec": {
+                  "meta": {
+                    "args": [
+                      "/bin/sh",
+                      "-c",
+                      "dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-api -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.Worker/Task.Worker.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-worker -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.BackupAgent/Task.BackupAgent.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-backup-agent -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-database-migrator -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish verification/container-task-store/Task.ContainerValidation.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-container-validation -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true"
+                    ],
+                    "env": [
+                      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                      "APP_UID=1654",
+                      "ASPNETCORE_HTTP_PORTS=8080",
+                      "DOTNET_RUNNING_IN_CONTAINER=true",
+                      "DOTNET_VERSION=10.0.11",
+                      "ASPNET_VERSION=10.0.11",
+                      "DOTNET_GENERATE_ASPNET_CERTIFICATE=false",
+                      "DOTNET_NOLOGO=true",
+                      "DOTNET_SDK_VERSION=10.0.400",
+                      "DOTNET_USE_POLLING_FILE_WATCHER=true",
+                      "NUGET_XMLDOC_MODE=skip",
+                      "POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetSDK-Ubuntu-24.04",
+                      "VERSION=0.5.0",
+                      "GIT_SHA=2a50126b089a533fb78e9b80981a008f3795f0b4"
+                    ],
+                    "cwd": "/src",
+                    "removeMountStubsRecursive": true
+                  },
+                  "mounts": [
+                    {
+                      "dest": "/"
+                    }
+                  ]
+                }
+              },
+              "platform": {
+                "Architecture": "amd64",
+                "OS": "linux"
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step16:0"
+            ]
+          },
+          {
+            "id": "step18",
+            "op": {
+              "Op": {
+                "file": {
+                  "actions": [
+                    {
+                      "input": 0,
+                      "secondaryInput": 1,
+                      "output": 0,
+                      "Action": {
+                        "copy": {
+                          "src": "/publish/task-backup-agent",
+                          "dest": "/app/",
+                          "owner": {
+                            "user": {
+                              "User": {
+                                "byName": {
+                                  "name": "app"
+                                }
+                              }
+                            },
+                            "group": {
+                              "User": {
+                                "byName": {
+                                  "name": "app"
+                                }
+                              }
+                            }
+                          },
+                          "mode": -1,
+                          "followSymlink": true,
+                          "dirCopyContents": true,
+                          "createDestPath": true,
+                          "allowWildcard": true,
+                          "allowEmptyWildcard": true,
+                          "timestamp": -1
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "constraints": {}
+            },
+            "inputs": [
+              "step1:0",
+              "step17:0"
+            ]
+          },
+          {
+            "id": "step19",
+            "op": {
+              "Op": {}
+            },
+            "inputs": [
+              "step18:0"
+            ]
+          }
+        ],
+        "digestMapping": {
+          "sha256:1986ecf24cce444d72137cbb626039159e64b3d3bc12267569a06a2b0fb31b24": "step4",
+          "sha256:19ffab3dc36d78194cf42839de37f186d4996e46f4e7df73f83d1cc54335cb33": "step3",
+          "sha256:2d4b103a8ab16d62ac2882811c7ec6ec14560bb2ef80a81c91374d0fd9148a98": "step7",
+          "sha256:3d736b76b11102ee2cd879599b6d13713439935382de9356a106e49b081dc4e2": "step12",
+          "sha256:3edf70ad426e83edbf302410852ae8754c610cc3146643d05ab015c40899e075": "step13",
+          "sha256:5178aa8f4b907ded6426d85df3e23b74af9fcc7046810244922530c9cb4a551e": "step2",
+          "sha256:55bbbacb38bdb8072c79c77a9240443cf9e19e78f57c2aac9ce5830f0633bcaf": "step11",
+          "sha256:60a4d57521ebf10668fe4caddf079942e3e391edc1dd1665f54c458ea5950e22": "step0",
+          "sha256:6708fe3556b48992ca6ccbbea06a5ba0e8a739a6ccedee7456cff85287eb2bc6": "step9",
+          "sha256:8568b6b84bd1b37ebeaddcfe722599c1baaa558c802200c63dc1ad785a47fde8": "step14",
+          "sha256:8add75269e3d04c0854a9063ab2c3c840abd6320a10074ca72444967c7ef17ab": "step8",
+          "sha256:ac1dd0f296b7cd7153f213db401bd2bf6d569c72b31046fb8741d770c086feda": "step6",
+          "sha256:b846b697a006d1d03b6f93d326914b2c6092b1580e6fe1654361db4e276442bd": "step19",
+          "sha256:b9afb35402c3fb48958aefc52cc4883bc3aacb3de9e8525662a33b5592866038": "step17",
+          "sha256:cb0bdcc3dbbfab81884f177cedf5fde5dc60908241856002eed77fc11eafb05a": "step10",
+          "sha256:d1d7d34dc9483a22ec161c47253650ce1554470fc657e0b010a19ef8d99cebc7": "step18",
+          "sha256:e183f70c030fee8c83bf7d498c9c28b7b2227a5db5e4f5cc7909b94b6f1f0179": "step15",
+          "sha256:e2abd0175b8cdc28af3d6a2f345e9d3f16df9a9dab5abf4300c1a3dd41b65345": "step1",
+          "sha256:fc29958de1f70f2600d37d56681c9487fa937100f01080367759e79c4f2102b9": "step5",
+          "sha256:fc7f9ee92393bd3479161ef0f594415a1a96d947ac997ea376c3c9dc489a419a": "step16"
+        }
+      },
+      "metadata": {
+        "buildInvocationID": "nllwz9japz20ruj62fdh3qnrw",
+        "buildStartedOn": "2026-09-02T20:39:49.469494932Z",
+        "buildFinishedOn": "2026-09-02T20:39:50.132409723Z",
+        "completeness": {
+          "parameters": true,
+          "environment": true,
+          "materials": false
+        },
+        "reproducible": false,
+        "https://mobyproject.org/buildkit@v1#metadata": {
+          "vcs": {
+            "localdir:context": "work\\tmp\\taskreleasebf2fde908af0\\source",
+            "localdir:dockerfile": "work\\tmp\\taskreleasebf2fde908af0\\source\\deployment\\containers",
+            "revision": "2a50126b089a533fb78e9b80981a008f3795f0b4",
+            "source": "https://github.com/Timmmm69/Task.git"
+          },
+          "source": {
+            "locations": {
+              "step0": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 61
+                        },
+                        "end": {
+                          "line": 61
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step1": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 67
+                        },
+                        "end": {
+                          "line": 67
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step10": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 17
+                        },
+                        "end": {
+                          "line": 17
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step11": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 18
+                        },
+                        "end": {
+                          "line": 18
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step12": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 19
+                        },
+                        "end": {
+                          "line": 19
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step13": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 20
+                        },
+                        "end": {
+                          "line": 20
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step14": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 22
+                        },
+                        "end": {
+                          "line": 22
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 23
+                        },
+                        "end": {
+                          "line": 23
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 24
+                        },
+                        "end": {
+                          "line": 24
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 25
+                        },
+                        "end": {
+                          "line": 25
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 26
+                        },
+                        "end": {
+                          "line": 26
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step15": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 28
+                        },
+                        "end": {
+                          "line": 28
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step16": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 29
+                        },
+                        "end": {
+                          "line": 29
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step17": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 31
+                        },
+                        "end": {
+                          "line": 31
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 32
+                        },
+                        "end": {
+                          "line": 32
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 33
+                        },
+                        "end": {
+                          "line": 33
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 34
+                        },
+                        "end": {
+                          "line": 34
+                        }
+                      },
+                      {
+                        "start": {
+                          "line": 35
+                        },
+                        "end": {
+                          "line": 35
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step18": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 68
+                        },
+                        "end": {
+                          "line": 68
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step2": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 7
+                        },
+                        "end": {
+                          "line": 7
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step3": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 10
+                        },
+                        "end": {
+                          "line": 10
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step4": {},
+              "step5": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 11
+                        },
+                        "end": {
+                          "line": 11
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step6": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 13
+                        },
+                        "end": {
+                          "line": 13
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step7": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 14
+                        },
+                        "end": {
+                          "line": 14
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step8": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 15
+                        },
+                        "end": {
+                          "line": 15
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "step9": {
+                "locations": [
+                  {
+                    "ranges": [
+                      {
+                        "start": {
+                          "line": 16
+                        },
+                        "end": {
+                          "line": 16
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "infos": [
+              {
+                "filename": "Dockerfile",
+                "language": "Dockerfile",
+                "data": "IyBzeW50YXg9ZG9ja2VyL2RvY2tlcmZpbGU6MS43QHNoYTI1NjpiNWYzYjI2MGE5Njc4ZTFkODNkMmZjZTg2ZWVkZGY3OTQyMGI3OTE0N2VhYmEyYTI1OTg2ZjQ3MTMzZDczNzIwDQoNCkFSRyBTREtfSU1BR0U9bWNyLm1pY3Jvc29mdC5jb20vZG90bmV0L3NkazoxMC4wLjQwMC1ub2JsZS1hbWQ2NEBzaGEyNTY6NTY1N2M1ZjcyNWYyZTg5MjNmMzFiMmViOWQ3NDM2NjJmMmUwYmU1MGEyYmVlNDFkZTY4NWZjOWYxMmFlNjhlZg0KQVJHIEFTUE5FVF9JTUFHRT1tY3IubWljcm9zb2Z0LmNvbS9kb3RuZXQvYXNwbmV0OjEwLjAuMTEtbm9ibGUtYW1kNjRAc2hhMjU2OjI4MmMyZTkwZGQzNWM2YTcyMGI3NDRmNDg0OGQzZGNlOWRlNGJmYjQwNDAxMTI3MGNjOGVlNjNmMDdlNTZjMzYNCkFSRyBSVU5USU1FX0lNQUdFPW1jci5taWNyb3NvZnQuY29tL2RvdG5ldC9ydW50aW1lOjEwLjAuMTEtbm9ibGUtYW1kNjRAc2hhMjU2OjNlNDkwNmJhNDI1MzY2Yjg0OGZjMTg5OWM0NDE0Y2JjNGQxYzcwZjQyM2E0ZTVhMGQ1YzM5YzIyNmUxMzRmMjENCg0KRlJPTSAke1NES19JTUFHRX0gQVMgYnVpbGQNCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpXT1JLRElSIC9zcmMNCkNPUFkgZGVwbG95bWVudC9jb250YWluZXJzL051R2V0LkNvbmZpZyAuL051R2V0LkNvbmZpZw0KDQpDT1BZIHNyYy9UYXNrLkRvbWFpbi9UYXNrLkRvbWFpbi5jc3Byb2ogc3JjL1Rhc2suRG9tYWluL3BhY2thZ2VzLmxvY2suanNvbiBzcmMvVGFzay5Eb21haW4vDQpDT1BZIHNyYy9UYXNrLkFwcGxpY2F0aW9uL1Rhc2suQXBwbGljYXRpb24uY3Nwcm9qIHNyYy9UYXNrLkFwcGxpY2F0aW9uL3BhY2thZ2VzLmxvY2suanNvbiBzcmMvVGFzay5BcHBsaWNhdGlvbi8NCkNPUFkgc3JjL1Rhc2suSW5mcmFzdHJ1Y3R1cmUvVGFzay5JbmZyYXN0cnVjdHVyZS5jc3Byb2ogc3JjL1Rhc2suSW5mcmFzdHJ1Y3R1cmUvcGFja2FnZXMubG9jay5qc29uIHNyYy9UYXNrLkluZnJhc3RydWN0dXJlLw0KQ09QWSBzcmMvVGFzay5BcGkvVGFzay5BcGkuY3Nwcm9qIHNyYy9UYXNrLkFwaS9wYWNrYWdlcy5sb2NrLmpzb24gc3JjL1Rhc2suQXBpLw0KQ09QWSBzcmMvVGFzay5Xb3JrZXIvVGFzay5Xb3JrZXIuY3Nwcm9qIHNyYy9UYXNrLldvcmtlci9wYWNrYWdlcy5sb2NrLmpzb24gc3JjL1Rhc2suV29ya2VyLw0KQ09QWSBzcmMvVGFzay5CYWNrdXBBZ2VudC9UYXNrLkJhY2t1cEFnZW50LmNzcHJvaiBzcmMvVGFzay5CYWNrdXBBZ2VudC9wYWNrYWdlcy5sb2NrLmpzb24gc3JjL1Rhc2suQmFja3VwQWdlbnQvDQpDT1BZIHNyYy9UYXNrLkRhdGFiYXNlTWlncmF0b3IvVGFzay5EYXRhYmFzZU1pZ3JhdG9yLmNzcHJvaiBzcmMvVGFzay5EYXRhYmFzZU1pZ3JhdG9yL3BhY2thZ2VzLmxvY2suanNvbiBzcmMvVGFzay5EYXRhYmFzZU1pZ3JhdG9yLw0KQ09QWSB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvVGFzay5Db250YWluZXJWYWxpZGF0aW9uLmNzcHJvaiB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvcGFja2FnZXMubG9jay5qc29uIHZlcmlmaWNhdGlvbi9jb250YWluZXItdGFzay1zdG9yZS8NCg0KUlVOIGRvdG5ldCByZXN0b3JlIHNyYy9UYXNrLkFwaS9UYXNrLkFwaS5jc3Byb2ogLS1ydW50aW1lIGxpbnV4LXg2NCAtLWxvY2tlZC1tb2RlIFwNCiAgICAmJiBkb3RuZXQgcmVzdG9yZSBzcmMvVGFzay5Xb3JrZXIvVGFzay5Xb3JrZXIuY3Nwcm9qIC0tcnVudGltZSBsaW51eC14NjQgLS1sb2NrZWQtbW9kZSBcDQogICAgJiYgZG90bmV0IHJlc3RvcmUgc3JjL1Rhc2suQmFja3VwQWdlbnQvVGFzay5CYWNrdXBBZ2VudC5jc3Byb2ogLS1ydW50aW1lIGxpbnV4LXg2NCAtLWxvY2tlZC1tb2RlIFwNCiAgICAmJiBkb3RuZXQgcmVzdG9yZSBzcmMvVGFzay5EYXRhYmFzZU1pZ3JhdG9yL1Rhc2suRGF0YWJhc2VNaWdyYXRvci5jc3Byb2ogLS1ydW50aW1lIGxpbnV4LXg2NCAtLWxvY2tlZC1tb2RlIFwNCiAgICAmJiBkb3RuZXQgcmVzdG9yZSB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvVGFzay5Db250YWluZXJWYWxpZGF0aW9uLmNzcHJvaiAtLXJ1bnRpbWUgbGludXgteDY0IC0tbG9ja2VkLW1vZGUNCg0KQ09QWSBzcmMvIHNyYy8NCkNPUFkgdmVyaWZpY2F0aW9uL2NvbnRhaW5lci10YXNrLXN0b3JlLyB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvDQoNClJVTiBkb3RuZXQgcHVibGlzaCBzcmMvVGFzay5BcGkvVGFzay5BcGkuY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLWFwaSAtcDpWZXJzaW9uPSR7VkVSU0lPTn0gLXA6U291cmNlUmV2aXNpb25JZD0ke0dJVF9TSEF9IC1wOkNvbnRpbnVvdXNJbnRlZ3JhdGlvbkJ1aWxkPXRydWUgLXA6RGV0ZXJtaW5pc3RpYz10cnVlIFwNCiAgICAmJiBkb3RuZXQgcHVibGlzaCBzcmMvVGFzay5Xb3JrZXIvVGFzay5Xb3JrZXIuY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLXdvcmtlciAtcDpWZXJzaW9uPSR7VkVSU0lPTn0gLXA6U291cmNlUmV2aXNpb25JZD0ke0dJVF9TSEF9IC1wOkNvbnRpbnVvdXNJbnRlZ3JhdGlvbkJ1aWxkPXRydWUgLXA6RGV0ZXJtaW5pc3RpYz10cnVlIFwNCiAgICAmJiBkb3RuZXQgcHVibGlzaCBzcmMvVGFzay5CYWNrdXBBZ2VudC9UYXNrLkJhY2t1cEFnZW50LmNzcHJvaiAtYyBSZWxlYXNlIC0tbm8tcmVzdG9yZSAtLXJ1bnRpbWUgbGludXgteDY0IC0tc2VsZi1jb250YWluZWQgZmFsc2UgLW8gL3B1Ymxpc2gvdGFzay1iYWNrdXAtYWdlbnQgLXA6VmVyc2lvbj0ke1ZFUlNJT059IC1wOlNvdXJjZVJldmlzaW9uSWQ9JHtHSVRfU0hBfSAtcDpDb250aW51b3VzSW50ZWdyYXRpb25CdWlsZD10cnVlIC1wOkRldGVybWluaXN0aWM9dHJ1ZSBcDQogICAgJiYgZG90bmV0IHB1Ymxpc2ggc3JjL1Rhc2suRGF0YWJhc2VNaWdyYXRvci9UYXNrLkRhdGFiYXNlTWlncmF0b3IuY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLWRhdGFiYXNlLW1pZ3JhdG9yIC1wOlZlcnNpb249JHtWRVJTSU9OfSAtcDpTb3VyY2VSZXZpc2lvbklkPSR7R0lUX1NIQX0gLXA6Q29udGludW91c0ludGVncmF0aW9uQnVpbGQ9dHJ1ZSAtcDpEZXRlcm1pbmlzdGljPXRydWUgXA0KICAgICYmIGRvdG5ldCBwdWJsaXNoIHZlcmlmaWNhdGlvbi9jb250YWluZXItdGFzay1zdG9yZS9UYXNrLkNvbnRhaW5lclZhbGlkYXRpb24uY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLWNvbnRhaW5lci12YWxpZGF0aW9uIC1wOlZlcnNpb249JHtWRVJTSU9OfSAtcDpTb3VyY2VSZXZpc2lvbklkPSR7R0lUX1NIQX0gLXA6Q29udGludW91c0ludGVncmF0aW9uQnVpbGQ9dHJ1ZSAtcDpEZXRlcm1pbmlzdGljPXRydWUNCg0KRlJPTSAke0FTUE5FVF9JTUFHRX0gQVMgdGFzay1hcGkNCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suQXBpIiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudmVyc2lvbj0iJHtWRVJTSU9OfSIgXA0KICAgICAgb3JnLm9wZW5jb250YWluZXJzLmltYWdlLnJldmlzaW9uPSIke0dJVF9TSEF9Ig0KV09SS0RJUiAvYXBwDQpDT1BZIC0tZnJvbT1idWlsZCAtLWNob3duPWFwcDphcHAgL3B1Ymxpc2gvdGFzay1hcGkvIC4vDQpFTlYgQVNQTkVUQ09SRV9IVFRQX1BPUlRTPTgwODANCkVYUE9TRSA4MDgwDQpVU0VSIGFwcA0KRU5UUllQT0lOVCBbImRvdG5ldCIsICJUYXNrLkFwaS5kbGwiXQ0KDQpGUk9NICR7UlVOVElNRV9JTUFHRX0gQVMgdGFzay13b3JrZXINCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suV29ya2VyIiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudmVyc2lvbj0iJHtWRVJTSU9OfSIgXA0KICAgICAgb3JnLm9wZW5jb250YWluZXJzLmltYWdlLnJldmlzaW9uPSIke0dJVF9TSEF9Ig0KV09SS0RJUiAvYXBwDQpDT1BZIC0tZnJvbT1idWlsZCAtLWNob3duPWFwcDphcHAgL3B1Ymxpc2gvdGFzay13b3JrZXIvIC4vDQpVU0VSIGFwcA0KRU5UUllQT0lOVCBbImRvdG5ldCIsICJUYXNrLldvcmtlci5kbGwiXQ0KDQpGUk9NICR7UlVOVElNRV9JTUFHRX0gQVMgdGFzay1iYWNrdXAtYWdlbnQNCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suQmFja3VwQWdlbnQiIFwNCiAgICAgIG9yZy5vcGVuY29udGFpbmVycy5pbWFnZS52ZXJzaW9uPSIke1ZFUlNJT059IiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UucmV2aXNpb249IiR7R0lUX1NIQX0iDQpXT1JLRElSIC9hcHANCkNPUFkgLS1mcm9tPWJ1aWxkIC0tY2hvd249YXBwOmFwcCAvcHVibGlzaC90YXNrLWJhY2t1cC1hZ2VudC8gLi8NClVTRVIgYXBwDQpFTlRSWVBPSU5UIFsiZG90bmV0IiwgIlRhc2suQmFja3VwQWdlbnQuZGxsIl0NCg0KRlJPTSAke1JVTlRJTUVfSU1BR0V9IEFTIHRhc2stZGF0YWJhc2UtbWlncmF0b3INCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suRGF0YWJhc2VNaWdyYXRvciIgXA0KICAgICAgb3JnLm9wZW5jb250YWluZXJzLmltYWdlLnZlcnNpb249IiR7VkVSU0lPTn0iIFwNCiAgICAgIG9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5yZXZpc2lvbj0iJHtHSVRfU0hBfSINCldPUktESVIgL2FwcA0KQ09QWSAtLWZyb209YnVpbGQgLS1jaG93bj1hcHA6YXBwIC9wdWJsaXNoL3Rhc2stZGF0YWJhc2UtbWlncmF0b3IvIC4vDQpVU0VSIGFwcA0KRU5UUllQT0lOVCBbImRvdG5ldCIsICJUYXNrLkRhdGFiYXNlTWlncmF0b3IuZGxsIl0NCg0KIyBWYWxpZGF0aW9uLW9ubHkgdGFyZ2V0LiBJdCBpcyBub3QgYSBkZXBsb3lhYmxlIHNlcnZpY2UgaW1hZ2UuDQpGUk9NICR7UlVOVElNRV9JTUFHRX0gQVMgdGFzay1jb250YWluZXItdmFsaWRhdGlvbg0KV09SS0RJUiAvYXBwDQpDT1BZIC0tZnJvbT1idWlsZCAtLWNob3duPWFwcDphcHAgL3B1Ymxpc2gvdGFzay1jb250YWluZXItdmFsaWRhdGlvbi8gLi8NClVTRVIgYXBwDQpFTlRSWVBPSU5UIFsiZG90bmV0IiwgIlRhc2suQ29udGFpbmVyVmFsaWRhdGlvbi5kbGwiXQ0K",
+                "llbDefinition": [
+                  {
+                    "id": "step0",
+                    "op": {
+                      "Op": {
+                        "source": {
+                          "identifier": "local://dockerfile",
+                          "attrs": {
+                            "local.differ": "none",
+                            "local.followpaths": "[\"Dockerfile\",\"Dockerfile.dockerignore\",\"dockerfile\"]",
+                            "local.sharedkeyhint": "dockerfile"
+                          }
+                        }
+                      },
+                      "constraints": {}
+                    }
+                  },
+                  {
+                    "id": "step1",
+                    "op": {
+                      "Op": {}
+                    },
+                    "inputs": [
+                      "step0:0"
+                    ]
+                  }
+                ],
+                "digestMapping": {
+                  "sha256:7aa9bb74d92d8eb6d90b4b006d629b94382e7fa45e412e8ce32e6d5dd64edfd0": "step1",
+                  "sha256:8d8b5fcb9c9ba7d90b35cd82f2db15cd919da732bfe592520ad4dbf5282cadaa": "step0"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

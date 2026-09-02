@@ -1,0 +1,37 @@
+{
+  "independentBuilds": 2,
+  "version": "0.5.0",
+  "verificationRevision": "fcdeac78e9dafec0978a3339e3cf0889803b8ba9",
+  "failure": "pwsh failed (1): [ OK ] Docker linux/amd64 engine is available.\n[ OK ] Using verified release image task-api.\n[ OK ] Using verified release image task-worker.\n[ OK ] Using verified release image task-backup-agent.\n[ OK ] Using verified release image task-database-migrator.\n[ OK ] Using verified release image task-container-validation.\n[ OK ] Task.Api image is non-root, SDK-free, labelled, and contains no credential metadata.\n[ OK ] Task.Worker image is non-root, SDK-free, labelled, and contains no credential metadata.\n[ OK ] Task.BackupAgent image is non-root, SDK-free, labelled, and contains no credential metadata.\n[ OK ] Task.DatabaseMigrator image is non-root, SDK-free, labelled, and contains no credential metadata.\n[ OK ] PostgreSQL 16 is ready.\n[ OK ] Fixed migration/runtime roles were created without tracked credentials.\n[ OK ] Migration status returned 6 before apply.\n[ OK ] Migration role applied the catalog.\n[ OK ] Idempotent minimal runtime grants were applied by task_migration.\n[ OK ] Runtime grant script is idempotent.\n[ OK ] Migration status returned 0/Ready after apply.\n[ OK ] Runtime role has required DML/readiness rights and no database/schema CREATE or history write.\n[ OK ] Runtime role cannot CREATE TABLE.\n[ OK ] Runtime role cannot ALTER TABLE.\n[ OK ] Runtime role cannot DROP TABLE.\n[ OK ] Runtime role cannot UPDATE migration history.\n[FAIL] Task.Api container did not reach live=200 and ready=200/Ready.\nContainer packaging verification FAILED; the Docker/PostgreSQL gate is not satisfied.",
+  "status": "FAILED",
+  "images": [
+    {
+      "configDigest": "sha256:8cd644b2107f75c6e3e0f50af6d2a13af3adcf91ec74ea520cd2d9af0dad9223",
+      "target": "task-api",
+      "imageDigest": "sha256:b251305ddaba399d48bf0584b2ff8ecf64200b24d3555273e244d8333516ef73"
+    },
+    {
+      "configDigest": "sha256:91a7610a9bfd98e46536740af06881c6951d6d619896f6619568df412e6eeddb",
+      "target": "task-worker",
+      "imageDigest": "sha256:99ba74054cda24a3186fee550b3233e864bd78eb0205d8862822218823fdb901"
+    },
+    {
+      "configDigest": "sha256:31fa37041849bca3223e929c1687fd57a101d9d7ad723b9a807adf3c30a8c2a5",
+      "target": "task-backup-agent",
+      "imageDigest": "sha256:eb292e2d6ec92e81d2eb2fb49ff15bdfc2fb1f2e359e761a2dfaef9c72c1efa7"
+    },
+    {
+      "configDigest": "sha256:2b29dc5a849af58d4b267ad30b660135779193c7147e9b4bbbb2c32a1dbad4a7",
+      "target": "task-database-migrator",
+      "imageDigest": "sha256:6c539e7e17c04e425c1eaa373812141f02b3e7723b492f01a0532b8dfb91f90b"
+    },
+    {
+      "configDigest": "sha256:b5b2908376a56cb91b2453e549350ca43e9f35029dbb4159ef925b52412d876e",
+      "target": "task-container-validation",
+      "imageDigest": "sha256:44ff6a01839424d9852dd13b9c9881aa859fcfb49a155b65bb9ded3f555b3270"
+    }
+  ],
+  "reproducibility": "linux/amd64 image manifest, config and layers; attestation timestamps may differ",
+  "revision": "2a50126b089a533fb78e9b80981a008f3795f0b4",
+  "schemaVersion": 1
+}

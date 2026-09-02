@@ -1,0 +1,46 @@
+#1 [internal] booting buildkit
+#1 pulling image moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c
+#1 pulling image moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c 1.6s done
+#1 creating container buildx_buildkit_taskreleasebf2fde908af0-20
+#1 creating container buildx_buildkit_taskreleasebf2fde908af0-20 3.4s done
+#1 DONE 4.9s
+Name:          taskreleasebf2fde908af0-2
+Driver:        docker-container
+Last Activity: 2026-09-02 20:35:21 +0000 UTC
+
+Nodes:
+Name:                  taskreleasebf2fde908af0-20
+Endpoint:              desktop-linux
+Driver Options:        image="moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c"
+Status:                running
+BuildKit daemon flags: --allow-insecure-entitlement=network.host
+BuildKit version:      v0.23.2
+Platforms:             linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/386, linux/arm/v7, linux/arm/v6
+Labels:
+ org.mobyproject.buildkit.worker.executor:         oci
+ org.mobyproject.buildkit.worker.hostname:         1b4a7b8527d4
+ org.mobyproject.buildkit.worker.network:          host
+ org.mobyproject.buildkit.worker.oci.process-mode: sandbox
+ org.mobyproject.buildkit.worker.selinux.enabled:  false
+ org.mobyproject.buildkit.worker.snapshotter:      overlayfs
+GC Policy rule#0:
+ All:            false
+ Filters:        type==source.local,type==exec.cachemount,type==source.git.checkout
+ Keep Duration:  48h0m0s
+ Max Used Space: 488.3MiB
+GC Policy rule#1:
+ All:            false
+ Keep Duration:  1440h0m0s
+ Reserved Space: 9.313GiB
+ Max Used Space: 93.13GiB
+ Min Free Space: 188.1GiB
+GC Policy rule#2:
+ All:            false
+ Reserved Space: 9.313GiB
+ Max Used Space: 93.13GiB
+ Min Free Space: 188.1GiB
+GC Policy rule#3:
+ All:            true
+ Reserved Space: 9.313GiB
+ Max Used Space: 93.13GiB
+ Min Free Space: 188.1GiB

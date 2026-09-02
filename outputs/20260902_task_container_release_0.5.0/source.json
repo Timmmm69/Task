@@ -1,0 +1,78 @@
+{
+  "version": "0.5.0",
+  "revision": "2a50126b089a533fb78e9b80981a008f3795f0b4",
+  "productionTree": "161e1a6768157d126ba4d5e28744a2d3ff24fea5",
+  "sourceDateEpoch": 1788380965,
+  "sourceArchiveSha256": "5844aec495a900b0d2d0ecf22686a9b9dfc74595449fd44bbbc9aab724998b82",
+  "platform": "linux/amd64",
+  "buildkitImage": "moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c",
+  "dockerVersion": {
+    "Client": {
+      "Version": "29.6.1",
+      "ApiVersion": "1.55",
+      "DefaultAPIVersion": "1.55",
+      "GitCommit": "8900f1d",
+      "GoVersion": "go1.26.4",
+      "Os": "windows",
+      "Arch": "amd64",
+      "BuildTime": "Fri Jun 26 11:43:32 2026",
+      "Context": "desktop-linux"
+    },
+    "Server": {
+      "Platform": {
+        "Name": "Docker Desktop 4.80.0 (232116)"
+      },
+      "Version": "29.6.1",
+      "ApiVersion": "1.55",
+      "MinAPIVersion": "1.40",
+      "Os": "linux",
+      "Arch": "amd64",
+      "Components": [
+        {
+          "Name": "Engine",
+          "Version": "29.6.1",
+          "Details": {
+            "ApiVersion": "1.55",
+            "Arch": "amd64",
+            "BuildTime": "Fri Jun 26 11:41:04 2026",
+            "Experimental": "false",
+            "GitCommit": "8ec5ab3",
+            "GoVersion": "go1.26.4",
+            "KernelVersion": "6.18.33.2-microsoft-standard-WSL2",
+            "MinAPIVersion": "1.40",
+            "Module": "github.com/moby/moby/v2",
+            "ModuleVersion": "v2.0.0+unknown",
+            "Os": "linux"
+          }
+        },
+        {
+          "Name": "containerd",
+          "Version": "v2.2.5",
+          "Details": {
+            "GitCommit": "e53c7c1516c3b2bff98eb76f1f4117477e6f4e66"
+          }
+        },
+        {
+          "Name": "runc",
+          "Version": "1.3.6",
+          "Details": {
+            "GitCommit": "v1.3.6-0-g491b69ba"
+          }
+        },
+        {
+          "Name": "docker-init",
+          "Version": "0.19.0",
+          "Details": {
+            "GitCommit": "de40ad0"
+          }
+        }
+      ],
+      "GitCommit": "8ec5ab3",
+      "GoVersion": "go1.26.4",
+      "KernelVersion": "6.18.33.2-microsoft-standard-WSL2",
+      "BuildTime": "2026-06-26T11:41:04.000000000+00:00"
+    }
+  },
+  "buildxVersion": "github.com/docker/buildx v0.35.0-desktop.2 b554ce1decd8b509893b1e7c6227eabfb923d094",
+  "nodeVersion": "v24.18.0"
+}

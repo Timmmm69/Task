@@ -200,7 +200,7 @@ if (Test-Path -LiteralPath $output) {
         'Attestations are unsigned build evidence; no registry publication, signing or production deployment is claimed.',
         '', "Failure: $failure"
     ) | Set-Content (Join-Path $output 'validation-report.md') -Encoding utf8NoBOM
-    $hashes = @(Get-ChildItem -LiteralPath $output -File -Recurse | Where-Object { $_.Name -ne 'SHA256SUMS' } | Sort-Object FullName | ForEach-Object {
+    $hashes = @(Get-ChildItem -LiteralPath $output -File -Recurse -Force | Where-Object { $_.Name -ne 'SHA256SUMS' } | Sort-Object FullName | ForEach-Object {
         $relative = [IO.Path]::GetRelativePath($output, $_.FullName).Replace('\', '/')
         "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant())  $relative"
     })

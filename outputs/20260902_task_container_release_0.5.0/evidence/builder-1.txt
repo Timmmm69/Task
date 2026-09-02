@@ -1,0 +1,15 @@
+#1 [internal] booting buildkit
+#1 pulling image moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c
+#1 pulling image moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c 78.8s done
+#1 creating container buildx_buildkit_taskreleasebf2fde908af0-10
+#1 creating container buildx_buildkit_taskreleasebf2fde908af0-10 3.4s done
+#1 DONE 82.2s
+Name:          taskreleasebf2fde908af0-1
+Driver:        docker-container
+Last Activity: 2026-09-02 20:29:27 +0000 UTC
+
+Nodes:
+Name:           taskreleasebf2fde908af0-10
+Endpoint:       desktop-linux
+Driver Options: image="moby/buildkit:v0.23.2@sha256:e39f6119f134b4811af19fd5c20f495a6a264a85c1b6920daf569b23009dd42c"
+Error:          Get "http://%2F%2F.%2Fpipe%2FdockerDesktopLinuxEngine/v1.54/containers/buildx_buildkit_taskreleasebf2fde908af0-10/json": context deadline exceeded

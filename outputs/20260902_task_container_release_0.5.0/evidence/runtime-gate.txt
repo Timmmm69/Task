@@ -1,0 +1,33 @@
+[ OK ] Docker linux/amd64 engine is available.
+[ OK ] Using verified release image task-api.
+[ OK ] Using verified release image task-worker.
+[ OK ] Using verified release image task-backup-agent.
+[ OK ] Using verified release image task-database-migrator.
+[ OK ] Using verified release image task-container-validation.
+[ OK ] Task.Api image is non-root, SDK-free, labelled, and contains no credential metadata.
+[ OK ] Task.Worker image is non-root, SDK-free, labelled, and contains no credential metadata.
+[ OK ] Task.BackupAgent image is non-root, SDK-free, labelled, and contains no credential metadata.
+[ OK ] Task.DatabaseMigrator image is non-root, SDK-free, labelled, and contains no credential metadata.
+[ OK ] PostgreSQL 16 is ready.
+[ OK ] Fixed migration/runtime roles were created without tracked credentials.
+[ OK ] Migration status returned 6 before apply.
+[ OK ] Migration role applied the catalog.
+[ OK ] Idempotent minimal runtime grants were applied by task_migration.
+[ OK ] Runtime grant script is idempotent.
+[ OK ] Migration status returned 0/Ready after apply.
+[ OK ] Runtime role has required DML/readiness rights and no database/schema CREATE or history write.
+[ OK ] Runtime role cannot CREATE TABLE.
+[ OK ] Runtime role cannot ALTER TABLE.
+[ OK ] Runtime role cannot DROP TABLE.
+[ OK ] Runtime role cannot UPDATE migration history.
+[ OK ] Runtime role cannot CREATE in calendar schema.
+[ OK ] Runtime role cannot UPDATE domain event history.
+[ OK ] Runtime role cannot DELETE recurrence command history.
+[ OK ] Every required task-write/calendar runtime privilege is present; history mutations and calendar DDL remain denied.
+[ OK ] Task.Api uses the runtime role and reports live/ready.
+[ OK ] PostgreSQL has no host port; network is internal; API is loopback-only.
+[ OK ] Production PostgresTaskAggregateStore passed add/get boundary/save/concurrency under task_runtime.
+[ OK ] task-worker handled SIGTERM and exited 0 in 0.36 seconds.
+[ OK ] task-backup-agent handled SIGTERM and exited 0 in 0.33 seconds.
+Container packaging verification PASSED.
+[ OK ] All temporary containers, networks, volumes, and credential files were removed.

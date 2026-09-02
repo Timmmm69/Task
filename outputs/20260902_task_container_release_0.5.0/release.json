@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "schemaVersion": 1,
+  "revision": "2a50126b089a533fb78e9b80981a008f3795f0b4",
+  "failure": null,
+  "version": "0.5.0",
+  "independentBuilds": 2,
+  "verificationRevision": "a01ee0effbe46f6b18f025c05b9abc9d8bd5029a",
+  "images": [
+    {
+      "configDigest": "sha256:8cd644b2107f75c6e3e0f50af6d2a13af3adcf91ec74ea520cd2d9af0dad9223",
+      "imageDigest": "sha256:b251305ddaba399d48bf0584b2ff8ecf64200b24d3555273e244d8333516ef73",
+      "target": "task-api"
+    },
+    {
+      "configDigest": "sha256:91a7610a9bfd98e46536740af06881c6951d6d619896f6619568df412e6eeddb",
+      "imageDigest": "sha256:99ba74054cda24a3186fee550b3233e864bd78eb0205d8862822218823fdb901",
+      "target": "task-worker"
+    },
+    {
+      "configDigest": "sha256:31fa37041849bca3223e929c1687fd57a101d9d7ad723b9a807adf3c30a8c2a5",
+      "imageDigest": "sha256:eb292e2d6ec92e81d2eb2fb49ff15bdfc2fb1f2e359e761a2dfaef9c72c1efa7",
+      "target": "task-backup-agent"
+    },
+    {
+      "configDigest": "sha256:2b29dc5a849af58d4b267ad30b660135779193c7147e9b4bbbb2c32a1dbad4a7",
+      "imageDigest": "sha256:6c539e7e17c04e425c1eaa373812141f02b3e7723b492f01a0532b8dfb91f90b",
+      "target": "task-database-migrator"
+    },
+    {
+      "configDigest": "sha256:b5b2908376a56cb91b2453e549350ca43e9f35029dbb4159ef925b52412d876e",
+      "imageDigest": "sha256:44ff6a01839424d9852dd13b9c9881aa859fcfb49a155b65bb9ded3f555b3270",
+      "target": "task-container-validation"
+    }
+  ],
+  "reproducibility": "linux/amd64 image manifest, config and layers; attestation timestamps may differ"
+}

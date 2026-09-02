@@ -1,0 +1,300 @@
+#0 building with "taskreleasebf2fde908af0-2" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.50kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#2 ...
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#2 DONE 2.3s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720 done
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0B / 11.98MB 0.2s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 1.05MB / 11.98MB 1.2s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 2.10MB / 11.98MB 3.0s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 3.15MB / 11.98MB 3.9s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 4.19MB / 11.98MB 4.8s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 5.24MB / 11.98MB 5.7s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 6.29MB / 11.98MB 6.5s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 7.34MB / 11.98MB 7.4s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 8.39MB / 11.98MB 8.3s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 9.44MB / 11.98MB 9.0s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 10.49MB / 11.98MB 9.9s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.53MB / 11.98MB 10.7s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 11.0s done
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0.1s done
+#4 DONE 11.2s
+
+#5 [internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#5 ...
+
+#6 [internal] load metadata for mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36
+#6 DONE 1.1s
+
+#5 [internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#5 DONE 1.1s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 162B done
+#7 DONE 0.0s
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 resolve mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef 0.0s done
+#8 ...
+
+#9 [internal] load build context
+#9 transferring context: 1.49MB 0.1s done
+#9 DONE 0.2s
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 ...
+
+#10 [task-api 1/3] FROM mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36
+#10 resolve mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36 done
+#10 sha256:444a182edc5217273948ccab4eadd84b6dee4f6a997a1e0b982803b17947eda8 154B / 154B 0.1s done
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 5.24MB / 12.73MB 4.8s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 4.19MB / 36.60MB 4.8s
+#10 sha256:6f51f4d8c488469bbc7d297812604fc03b24e30647eb98e7620de299965dbf93 3.56kB / 3.56kB 0.5s done
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 5.24MB / 19.18MB 4.8s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 4.19MB / 29.75MB 4.4s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 6.29MB / 12.73MB 5.4s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 6.29MB / 19.18MB 5.7s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 6.29MB / 29.75MB 5.7s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 7.34MB / 12.73MB 6.3s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 6.29MB / 36.60MB 6.6s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 7.34MB / 19.18MB 6.6s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 8.39MB / 12.73MB 7.1s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 8.39MB / 19.18MB 7.5s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 9.44MB / 12.73MB 8.0s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 8.39MB / 29.75MB 7.5s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 8.39MB / 36.60MB 8.3s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 9.44MB / 19.18MB 8.3s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 10.49MB / 12.73MB 8.7s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 10.49MB / 19.18MB 9.2s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 11.53MB / 12.73MB 9.6s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 10.49MB / 36.60MB 9.9s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 11.53MB / 19.18MB 10.1s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 10.49MB / 29.75MB 9.6s
+#10 sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 12.73MB / 12.73MB 10.6s done
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 12.58MB / 19.18MB 11.0s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 12.58MB / 36.60MB 11.7s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 13.63MB / 19.18MB 11.7s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 12.58MB / 29.75MB 11.4s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 14.68MB / 19.18MB 12.6s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 14.68MB / 36.60MB 13.3s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 15.73MB / 19.18MB 13.5s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 14.68MB / 29.75MB 13.2s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 16.78MB / 19.18MB 14.2s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 16.78MB / 36.60MB 15.0s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 17.83MB / 19.18MB 15.1s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 16.78MB / 29.75MB 15.0s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 18.87MB / 19.18MB 16.0s
+#10 sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 19.18MB / 19.18MB 16.3s done
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 18.87MB / 36.60MB 16.8s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 18.87MB / 29.75MB 16.8s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 20.97MB / 36.60MB 18.4s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 20.97MB / 29.75MB 18.8s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 23.07MB / 36.60MB 20.2s
+#10 ...
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 sha256:8af490f821c290cd946ff1f8a8473d324e3d298a5ec8c1600499c94830da8e8d 11.53MB / 18.05MB 10.2s
+#8 sha256:75a0131574f14426fd4d90124c60c5e48f7daabec0e68459307ed81fc7715966 497B / 497B 0.1s done
+#8 sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 4.19MB / 23.82MB 4.2s
+#8 ...
+
+#10 [task-api 1/3] FROM mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 23.07MB / 29.75MB 20.7s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 25.17MB / 36.60MB 22.0s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 25.17MB / 29.75MB 22.5s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 27.26MB / 36.60MB 23.7s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 27.26MB / 29.75MB 24.4s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 29.36MB / 36.60MB 25.6s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 29.36MB / 29.75MB 26.2s
+#10 sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 29.75MB / 29.75MB 26.6s done
+#10 extracting sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 31.46MB / 36.60MB 27.3s
+#10 extracting sha256:966c395d29cb24a3faf7e04f32878fe5778819d4132daee4f47e2aaf7b9af924 0.4s done
+#10 extracting sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3
+#10 extracting sha256:0f33241ccad066b49bf271998eab59d2e90585fdfc5f0815b9a6122b84b77fc3 0.2s done
+#10 extracting sha256:6f51f4d8c488469bbc7d297812604fc03b24e30647eb98e7620de299965dbf93 done
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 33.55MB / 36.60MB 28.9s
+#10 ...
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 sha256:8af490f821c290cd946ff1f8a8473d324e3d298a5ec8c1600499c94830da8e8d 18.05MB / 18.05MB 15.0s done
+#8 sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 15.73MB / 23.82MB 13.8s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 5.24MB / 189.61MB 4.7s
+#8 ...
+
+#10 [task-api 1/3] FROM mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 35.65MB / 36.60MB 30.7s
+#10 sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 36.60MB / 36.60MB 31.4s done
+#10 extracting sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860
+#10 extracting sha256:7007c4fd1686a5b211d70b9544736ffa75d1975564af3a1266d2a74454fc5860 0.3s done
+#10 extracting sha256:444a182edc5217273948ccab4eadd84b6dee4f6a997a1e0b982803b17947eda8 done
+#10 extracting sha256:30ecff4bc4d1bd9378c57e4f31606853df6fcad30c09fe7cdaa461ca189d2af8 0.1s done
+#10 DONE 32.0s
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 17.83MB / 23.82MB 15.2s
+#8 ...
+
+#11 [task-api 2/3] WORKDIR /app
+#11 DONE 0.1s
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 19.92MB / 23.82MB 16.8s
+#8 sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 22.02MB / 23.82MB 18.6s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 11.53MB / 189.61MB 9.8s
+#8 sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 23.82MB / 23.82MB 20.1s done
+#8 extracting sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610
+#8 extracting sha256:8ea1e2f01bcfe828d3afcc4d671cdad7a4f7b911cac4bec20bea6261501f4610 0.4s done
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 16.78MB / 189.61MB 14.9s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 23.07MB / 189.61MB 19.9s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 29.36MB / 189.61MB 25.0s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 35.65MB / 189.61MB 30.1s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 41.94MB / 189.61MB 35.2s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 48.23MB / 189.61MB 40.3s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 54.53MB / 189.61MB 45.4s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 60.82MB / 189.61MB 50.5s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 67.11MB / 189.61MB 55.6s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 73.40MB / 189.61MB 60.7s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 79.69MB / 189.61MB 65.8s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 85.98MB / 189.61MB 70.9s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 92.27MB / 189.61MB 76.0s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 97.52MB / 189.61MB 81.1s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 103.81MB / 189.61MB 86.2s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 109.05MB / 189.61MB 91.3s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 116.39MB / 189.61MB 96.4s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 121.63MB / 189.61MB 101.5s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 127.93MB / 189.61MB 106.6s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 134.22MB / 189.61MB 111.7s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 139.46MB / 189.61MB 116.8s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 144.70MB / 189.61MB 121.9s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 150.99MB / 189.61MB 127.0s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 156.24MB / 189.61MB 132.1s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 162.53MB / 189.61MB 137.2s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 167.77MB / 189.61MB 142.3s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 174.06MB / 189.61MB 147.4s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 179.31MB / 189.61MB 152.5s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 186.65MB / 189.61MB 157.6s
+#8 sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 189.61MB / 189.61MB 160.3s done
+#8 extracting sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9
+#8 extracting sha256:6e85ff1c2ab33ee0143c4089f28c7ff21a2d161f6b576a749b5ef493261866f9 1.7s done
+#8 DONE 187.7s
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 extracting sha256:75a0131574f14426fd4d90124c60c5e48f7daabec0e68459307ed81fc7715966 0.0s done
+#8 extracting sha256:8af490f821c290cd946ff1f8a8473d324e3d298a5ec8c1600499c94830da8e8d
+#8 extracting sha256:8af490f821c290cd946ff1f8a8473d324e3d298a5ec8c1600499c94830da8e8d 0.2s done
+#8 DONE 187.9s
+
+#12 [build  2/15] WORKDIR /src
+#12 DONE 0.3s
+
+#13 [build  3/15] COPY deployment/containers/NuGet.Config ./NuGet.Config
+#13 DONE 0.0s
+
+#14 [build  4/15] COPY src/Task.Domain/Task.Domain.csproj src/Task.Domain/packages.lock.json src/Task.Domain/
+#14 DONE 0.0s
+
+#15 [build  5/15] COPY src/Task.Application/Task.Application.csproj src/Task.Application/packages.lock.json src/Task.Application/
+#15 DONE 0.0s
+
+#16 [build  6/15] COPY src/Task.Infrastructure/Task.Infrastructure.csproj src/Task.Infrastructure/packages.lock.json src/Task.Infrastructure/
+#16 DONE 0.0s
+
+#17 [build  7/15] COPY src/Task.Api/Task.Api.csproj src/Task.Api/packages.lock.json src/Task.Api/
+#17 DONE 0.0s
+
+#18 [build  8/15] COPY src/Task.Worker/Task.Worker.csproj src/Task.Worker/packages.lock.json src/Task.Worker/
+#18 DONE 0.0s
+
+#19 [build  9/15] COPY src/Task.BackupAgent/Task.BackupAgent.csproj src/Task.BackupAgent/packages.lock.json src/Task.BackupAgent/
+#19 DONE 0.0s
+
+#20 [build 10/15] COPY src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj src/Task.DatabaseMigrator/packages.lock.json src/Task.DatabaseMigrator/
+#20 DONE 0.0s
+
+#21 [build 11/15] COPY verification/container-task-store/Task.ContainerValidation.csproj verification/container-task-store/packages.lock.json verification/container-task-store/
+#21 DONE 0.0s
+
+#22 [build 12/15] RUN dotnet restore src/Task.Api/Task.Api.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.Worker/Task.Worker.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.BackupAgent/Task.BackupAgent.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --runtime linux-x64 --locked-mode     && dotnet restore verification/container-task-store/Task.ContainerValidation.csproj --runtime linux-x64 --locked-mode
+#22 0.571   Determining projects to restore...
+#22 37.62   Restored /src/src/Task.Domain/Task.Domain.csproj (in 36.49 sec).
+#22 37.65   Restored /src/src/Task.Application/Task.Application.csproj (in 36.53 sec).
+#22 37.65   Restored /src/src/Task.Infrastructure/Task.Infrastructure.csproj (in 36.53 sec).
+#22 37.65   Restored /src/src/Task.Api/Task.Api.csproj (in 36.53 sec).
+#22 38.13   Determining projects to restore...
+#22 41.64   Restored /src/src/Task.Worker/Task.Worker.csproj (in 3.19 sec).
+#22 41.65   3 of 4 projects are up-to-date for restore.
+#22 42.07   Determining projects to restore...
+#22 42.60   Restored /src/src/Task.BackupAgent/Task.BackupAgent.csproj (in 194 ms).
+#22 42.60   3 of 4 projects are up-to-date for restore.
+#22 43.02   Determining projects to restore...
+#22 43.50   Restored /src/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj (in 181 ms).
+#22 43.50   3 of 4 projects are up-to-date for restore.
+#22 43.93   Determining projects to restore...
+#22 44.68   Restored /src/verification/container-task-store/Task.ContainerValidation.csproj (in 179 ms).
+#22 44.68   3 of 4 projects are up-to-date for restore.
+#22 DONE 44.8s
+
+#23 [build 13/15] COPY src/ src/
+#23 DONE 0.1s
+
+#24 [build 14/15] COPY verification/container-task-store/ verification/container-task-store/
+#24 DONE 0.0s
+
+#25 [build 15/15] RUN dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-api -p:Version=0.5.0 -p:SourceRevisionId=2a50126b089a533fb78e9b80981a008f3795f0b4 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.Worker/Task.Worker.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-worker -p:Version=0.5.0 -p:SourceRevisionId=2a50126b089a533fb78e9b80981a008f3795f0b4 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.BackupAgent/Task.BackupAgent.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-backup-agent -p:Version=0.5.0 -p:SourceRevisionId=2a50126b089a533fb78e9b80981a008f3795f0b4 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-database-migrator -p:Version=0.5.0 -p:SourceRevisionId=2a50126b089a533fb78e9b80981a008f3795f0b4 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish verification/container-task-store/Task.ContainerValidation.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-container-validation -p:Version=0.5.0 -p:SourceRevisionId=2a50126b089a533fb78e9b80981a008f3795f0b4 -p:ContinuousIntegrationBuild=true -p:Deterministic=true
+#25 2.317   Task.Domain -> /src/src/Task.Domain/bin/Release/net10.0/Task.Domain.dll
+#25 2.800   Task.Application -> /src/src/Task.Application/bin/Release/net10.0/Task.Application.dll
+#25 3.360   Task.Infrastructure -> /src/src/Task.Infrastructure/bin/Release/net10.0/Task.Infrastructure.dll
+#25 4.343   Task.Api -> /src/src/Task.Api/bin/Release/net10.0/linux-x64/Task.Api.dll
+#25 4.377   Task.Api -> /publish/task-api/
+#25 5.038   Task.Domain -> /src/src/Task.Domain/bin/Release/net10.0/Task.Domain.dll
+#25 5.122   Task.Application -> /src/src/Task.Application/bin/Release/net10.0/Task.Application.dll
+#25 5.184   Task.Infrastructure -> /src/src/Task.Infrastructure/bin/Release/net10.0/Task.Infrastructure.dll
+#25 5.432   Task.Worker -> /src/src/Task.Worker/bin/Release/net10.0/linux-x64/Task.Worker.dll
+#25 5.474   Task.Worker -> /publish/task-worker/
+#25 6.098   Task.Domain -> /src/src/Task.Domain/bin/Release/net10.0/Task.Domain.dll
+#25 6.174   Task.Application -> /src/src/Task.Application/bin/Release/net10.0/Task.Application.dll
+#25 6.208   Task.Infrastructure -> /src/src/Task.Infrastructure/bin/Release/net10.0/Task.Infrastructure.dll
+#25 6.409   Task.BackupAgent -> /src/src/Task.BackupAgent/bin/Release/net10.0/linux-x64/Task.BackupAgent.dll
+#25 6.436   Task.BackupAgent -> /publish/task-backup-agent/
+#25 7.081   Task.Domain -> /src/src/Task.Domain/bin/Release/net10.0/Task.Domain.dll
+#25 7.102   Task.Application -> /src/src/Task.Application/bin/Release/net10.0/Task.Application.dll
+#25 7.177   Task.Infrastructure -> /src/src/Task.Infrastructure/bin/Release/net10.0/Task.Infrastructure.dll
+#25 7.401   Task.DatabaseMigrator -> /src/src/Task.DatabaseMigrator/bin/Release/net10.0/linux-x64/Task.DatabaseMigrator.dll
+#25 7.421   Task.DatabaseMigrator -> /publish/task-database-migrator/
+#25 8.066   Task.Domain -> /src/src/Task.Domain/bin/Release/net10.0/Task.Domain.dll
+#25 8.138   Task.Application -> /src/src/Task.Application/bin/Release/net10.0/Task.Application.dll
+#25 8.163   Task.Infrastructure -> /src/src/Task.Infrastructure/bin/Release/net10.0/Task.Infrastructure.dll
+#25 8.372   Task.ContainerValidation -> /src/verification/container-task-store/bin/Release/net10.0/linux-x64/Task.ContainerValidation.dll
+#25 8.393   Task.ContainerValidation -> /publish/task-container-validation/
+#25 DONE 8.4s
+
+#26 [task-api 3/3] COPY --from=build --chown=app:app /publish/task-api/ ./
+#26 DONE 0.1s
+
+#27 exporting to oci image format
+#27 exporting layers
+#27 exporting layers 0.2s done
+#27 rewriting layers with source-date-epoch 1788380965 (2026-09-02 20:29:25 +0000 UTC)
+#27 rewriting layers with source-date-epoch 1788380965 (2026-09-02 20:29:25 +0000 UTC) 0.2s done
+#27 exporting manifest sha256:b251305ddaba399d48bf0584b2ff8ecf64200b24d3555273e244d8333516ef73 done
+#27 exporting config sha256:8cd644b2107f75c6e3e0f50af6d2a13af3adcf91ec74ea520cd2d9af0dad9223 done
+#27 exporting attestation manifest sha256:43523b25a0a8c3a24c3dfedbaa6a7a07c6271a643ded1cd0be766f2a49d2b530 0.0s done
+#27 exporting manifest list sha256:5f7f3fc49b3bf16cad46b90f421215222dacaf49f4092ffbb99668f2271cf26a done
+#27 sending tarball
+#27 sending tarball 0.7s done
+#27 DONE 1.2s
+
+#28 resolving provenance for metadata file
+#28 DONE 0.0s

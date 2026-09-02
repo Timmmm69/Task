@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "images": [],
+  "version": "0.5.0",
+  "verificationRevision": "95803a695c283996091926bf7046c6989b4b4465",
+  "reproducibility": "linux/amd64 image manifest, config and layers; attestation timestamps may differ",
+  "status": "FAILED",
+  "failure": "Resume source archive differs from Git.",
+  "independentBuilds": 2,
+  "revision": "2a50126b089a533fb78e9b80981a008f3795f0b4"
+}
