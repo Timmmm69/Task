@@ -86,22 +86,22 @@ $previousMetadata = $env:BUILDX_METADATA_PROVENANCE
 try {
     New-Item -ItemType Directory -Path $context | Out-Null
     if (-not $Resume) {
-    New-Item -ItemType Directory -Path $output, (Join-Path $output 'images'), (Join-Path $output 'evidence') | Out-Null
-    # Keep large, locally retained binary archives out of Git; hashes remain tracked.
-    "/images/`n/source.tar`n" | Set-Content (Join-Path $output '.gitignore') -Encoding utf8NoBOM
-    '* -text' | Set-Content (Join-Path $output '.gitattributes') -Encoding utf8NoBOM
-    $sourceArchive = Join-Path $output 'source.tar'
-    Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--mtime=@$epoch", "--output=$sourceArchive", "$($revision):work/production") | Out-Null
-    Expand-ReleaseTar $sourceArchive $context
-    $source = [ordered]@{
-        version = $Version; revision = $revision; productionTree = $tree; sourceDateEpoch = $epoch
-        sourceArchiveSha256 = (Get-FileHash $sourceArchive -Algorithm SHA256).Hash.ToLowerInvariant()
-        platform = 'linux/amd64'; buildkitImage = $buildkit
-        dockerVersion = Invoke-Checked docker @('version', '--format', '{{json .}}') | ConvertFrom-Json
-        buildxVersion = Invoke-Checked docker @('buildx', 'version')
-        nodeVersion = Invoke-Checked node @('--version')
-    }
-    Write-Json (Join-Path $output 'source.json') $source
+        New-Item -ItemType Directory -Path $output, (Join-Path $output 'images'), (Join-Path $output 'evidence') | Out-Null
+        # Keep large, locally retained binary archives out of Git; hashes remain tracked.
+        "/images/`n/source.tar`n" | Set-Content (Join-Path $output '.gitignore') -Encoding utf8NoBOM
+        '* -text' | Set-Content (Join-Path $output '.gitattributes') -Encoding utf8NoBOM
+        $sourceArchive = Join-Path $output 'source.tar'
+        Invoke-Checked git @('-C', $repoRoot, 'archive', '--format=tar', "--mtime=@$epoch", "--output=$sourceArchive", "$($revision):work/production") | Out-Null
+        Expand-ReleaseTar $sourceArchive $context
+        $source = [ordered]@{
+            version = $Version; revision = $revision; productionTree = $tree; sourceDateEpoch = $epoch
+            sourceArchiveSha256 = (Get-FileHash $sourceArchive -Algorithm SHA256).Hash.ToLowerInvariant()
+            platform = 'linux/amd64'; buildkitImage = $buildkit
+            dockerVersion = Invoke-Checked docker @('version', '--format', '{{json .}}') | ConvertFrom-Json
+            buildxVersion = Invoke-Checked docker @('buildx', 'version')
+            nodeVersion = Invoke-Checked node @('--version')
+        }
+        Write-Json (Join-Path $output 'source.json') $source
     }
     else {
         Write-Json (Join-Path $output "evidence/$runId-prior-release.json") $previousRelease
@@ -118,22 +118,22 @@ try {
     $env:BUILDX_METADATA_PROVENANCE = 'max'
     foreach ($pass in 1, 2) {
         if (-not $Resume) {
-        $builder = "$runId-$pass"
-        $builders += $builder
-        Invoke-Checked docker @('buildx', 'create', '--name', $builder, '--driver', 'docker-container', '--driver-opt', "image=$buildkit") | Out-Null
-        Invoke-Checked docker @('buildx', 'inspect', $builder, '--bootstrap') | Set-Content (Join-Path $output "evidence/builder-$pass.txt")
+            $builder = "$runId-$pass"
+            $builders += $builder
+            Invoke-Checked docker @('buildx', 'create', '--name', $builder, '--driver', 'docker-container', '--driver-opt', "image=$buildkit") | Out-Null
+            Invoke-Checked docker @('buildx', 'inspect', $builder, '--bootstrap') | Set-Content (Join-Path $output "evidence/builder-$pass.txt")
         }
         foreach ($target in $targets) {
             Write-Host "Verifying $target, independent build $pass/2 (resume=$Resume)..."
             $archive = Join-Path $output "images/$target-$pass.oci.tar"
             $metadata = Join-Path $output "evidence/$target-$pass.buildx.json"
             if (-not $Resume) {
-            $arguments = @('buildx', 'build', '--builder', $builder, '--platform', 'linux/amd64',
-                '--target', $target, '--build-arg', "VERSION=$Version", '--build-arg', "GIT_SHA=$revision",
-                '--build-arg', "SOURCE_DATE_EPOCH=$epoch", '--provenance=mode=max', '--metadata-file', $metadata,
-                '--output', "type=oci,dest=$archive,rewrite-timestamp=true", '--tag', "task-release/$($target):$Version",
-                '--file', (Join-Path $context 'deployment/containers/Dockerfile'), $context)
-            Invoke-Checked docker $arguments | Set-Content (Join-Path $output "evidence/$target-$pass.build.txt")
+                $arguments = @('buildx', 'build', '--builder', $builder, '--platform', 'linux/amd64',
+                    '--target', $target, '--build-arg', "VERSION=$Version", '--build-arg', "GIT_SHA=$revision",
+                    '--build-arg', "SOURCE_DATE_EPOCH=$epoch", '--provenance=mode=max', '--metadata-file', $metadata,
+                    '--output', "type=oci,dest=$archive,rewrite-timestamp=true", '--tag', "task-release/$($target):$Version",
+                    '--file', (Join-Path $context 'deployment/containers/Dockerfile'), $context)
+                Invoke-Checked docker $arguments | Set-Content (Join-Path $output "evidence/$target-$pass.build.txt")
             }
             $layout = Join-Path $temp "$target-$pass"
             New-Item -ItemType Directory -Path $layout | Out-Null
@@ -151,8 +151,8 @@ try {
         }
         # Each pass uses its own empty BuildKit state and fresh NuGet cache.
         if (-not $Resume) {
-        Invoke-Checked docker @('buildx', 'rm', $builder) | Out-Null
-        $builders = @($builders | Where-Object { $_ -ne $builder })
+            Invoke-Checked docker @('buildx', 'rm', $builder) | Out-Null
+            $builders = @($builders | Where-Object { $_ -ne $builder })
         }
     }
     $imageMap = [ordered]@{}
@@ -164,6 +164,12 @@ try {
     }
     $mapPath = Join-Path $output 'image-map.json'
     Write-Json $mapPath $imageMap
+    $runtimeInputs = Join-Path $output 'runtime-inputs'
+    New-Item -ItemType Directory -Path $runtimeInputs -Force | Out-Null
+    foreach ($relative in @('verification/Test-ContainerPackaging.ps1', 'deployment/containers/compose.validation.yaml',
+        'deployment/containers/sql/grant-runtime.sql', 'deployment/containers/sql/initialize-validation-roles.sql')) {
+        Copy-Item -LiteralPath (Join-Path $repoRoot "work/production/$relative") -Destination $runtimeInputs -Force
+    }
     Invoke-Checked pwsh @('-NoProfile', '-File', (Join-Path $repoRoot 'work/production/verification/Test-ContainerPackaging.ps1'),
         '-Version', $Version, '-GitSha', $revision, '-ImageMapPath', $mapPath) |
         Set-Content (Join-Path $output 'evidence/runtime-gate.txt')

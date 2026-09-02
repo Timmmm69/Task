@@ -320,6 +320,28 @@ SELECT concat_ws('|',
     Assert-Denied -RuntimePassword $runtimePassword -Name 'ALTER TABLE' -Sql 'ALTER TABLE core.objects ADD COLUMN runtime_forbidden integer;'
     Assert-Denied -RuntimePassword $runtimePassword -Name 'DROP TABLE' -Sql 'DROP TABLE work.tasks;'
     Assert-Denied -RuntimePassword $runtimePassword -Name 'UPDATE migration history' -Sql 'UPDATE infrastructure.schema_migrations SET name = name;'
+    Assert-Denied -RuntimePassword $runtimePassword -Name 'CREATE in calendar schema' -Sql 'CREATE TABLE calendar.runtime_forbidden (id integer);'
+    Assert-Denied -RuntimePassword $runtimePassword -Name 'UPDATE domain event history' -Sql 'UPDATE governance.domain_events SET payload = payload WHERE false;'
+    Assert-Denied -RuntimePassword $runtimePassword -Name 'DELETE recurrence command history' -Sql 'DELETE FROM calendar.recurrence_commands WHERE false;'
+
+    $currentGrantsSql = @'
+SELECT bool_and(has_table_privilege(current_user, relation, privilege))
+FROM (VALUES
+    ('iam.idempotency_records', ARRAY['SELECT','INSERT','UPDATE']),
+    ('governance.domain_events', ARRAY['SELECT','INSERT']),
+    ('governance.outbox_messages', ARRAY['SELECT','INSERT']),
+    ('calendar.events', ARRAY['SELECT','INSERT','UPDATE']),
+    ('calendar.event_user_attendees', ARRAY['SELECT','INSERT','DELETE']),
+    ('calendar.event_contact_attendees', ARRAY['SELECT','INSERT','DELETE']),
+    ('calendar.recurrence_series', ARRAY['SELECT','INSERT','UPDATE']),
+    ('calendar.recurrence_occurrences', ARRAY['SELECT','INSERT','UPDATE']),
+    ('calendar.recurrence_commands', ARRAY['SELECT','INSERT'])
+) AS required(relation, privileges)
+CROSS JOIN LATERAL unnest(privileges) AS rights(privilege);
+'@
+    $currentGrants = Invoke-PsqlText -Sql $currentGrantsSql -User 'task_runtime' -Password $runtimePassword -ExtraArguments @('-A', '-t')
+    if (($currentGrants.Output -join '').Trim() -ne 't') { throw 'Current task-write/calendar runtime privileges are incomplete.' }
+    Write-Ok 'Every required task-write/calendar runtime privilege is present; history mutations and calendar DDL remain denied.'
 
     Invoke-Compose -Profiles @('runtime') -Tail @('up', '-d', '--no-deps', 'task-api') | Out-Null
     $baseUri = "http://127.0.0.1:$apiPort"
@@ -335,7 +357,13 @@ SELECT concat_ws('|',
         }
         catch { Start-Sleep -Seconds 1 }
     }
-    if (-not $apiReady) { throw 'Task.Api container did not reach live=200 and ready=200/Ready.' }
+    if (-not $apiReady) {
+        $diagnostic = (Invoke-Compose -Profiles @('runtime') -Tail @('logs', '--no-color', '--tail', '40', 'task-api') -AllowFailure).Output -join "`n"
+        foreach ($secret in @($adminPassword, $migrationPassword, $runtimePassword)) {
+            $diagnostic = $diagnostic.Replace($secret, '[REDACTED]')
+        }
+        throw "Task.Api container did not reach live=200 and ready=200/Ready. Sanitized container log:`n$diagnostic"
+    }
     Write-Ok 'Task.Api uses the runtime role and reports live/ready.'
 
     $postgresId = ((Invoke-Compose -Tail @('ps', '-q', 'postgres')).Output -join '').Trim()

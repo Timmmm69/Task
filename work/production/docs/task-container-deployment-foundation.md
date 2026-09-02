@@ -87,9 +87,11 @@ The fixed database roles are `task_migration` and `task_runtime`. Passwords rema
 `task_runtime` receives only:
 
 - database `CONNECT`;
-- schema `USAGE` on `infrastructure`, `core` and `work`;
+- schema `USAGE` on `infrastructure`, `core`, `work`, `org`, `iam`, `governance` and `calendar`;
 - `SELECT` on `infrastructure.schema_migrations` and `core.organizations`;
 - `SELECT`, `INSERT`, `UPDATE` on `core.objects` and `work.tasks`.
+
+The explicit grants also cover current identity, audit, task-write and calendar persistence. Task idempotency and calendar event/series/occurrence rows permit SELECT/INSERT/UPDATE; domain-event/outbox and recurrence-command history permit SELECT/INSERT. Attendee replacement requires SELECT/INSERT/DELETE only on the two attendee tables. The gate checks every new required privilege individually and rejects calendar DDL, domain-event UPDATE and recurrence-command DELETE. `runtime-inputs/` in a release preserves the exact validation topology, grants and gate used by `verificationRevision` (which can differ from the image source commit after a resumed verification).
 
 It receives no database/schema `CREATE`, ownership, DDL rights, migration-history write, superuser, createdb, createrole or bypassrls capability. Grants name every current table explicitly; future migrations must update this contract explicitly rather than inheriting blanket future-table permissions.
 
