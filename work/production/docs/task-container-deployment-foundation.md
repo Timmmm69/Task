@@ -1,6 +1,6 @@
 # Task container deployment foundation
 
-Status: production-compatible packaging foundation increment 0.4.0. This is not a production deployment readiness claim.
+Status: production-compatible packaging foundation with reproducible release tooling 0.5.0. This is not a production deployment readiness claim.
 
 ## Image inventory
 
@@ -18,6 +18,31 @@ The build stage uses SDK `10.0.400-noble-amd64`. Every base is pinned to its exa
 `task-container-validation` is an additional ephemeral test target. It calls the production `TaskPersistenceRuntime` and `PostgresTaskAggregateStore`; it is not a deployable service image.
 
 ## Build commands
+
+### Verified release (0.5.0)
+
+Prerequisites: PowerShell 7+, Git, Node.js, tar, Docker Buildx and a running Linux/amd64 Docker engine with the containerd image store (required to load OCI archives). Internet access to NuGet, Docker Hub and MCR is required. Allow space for two sets of OCI archives and two isolated build caches. Run from a clean committed checkout:
+
+```powershell
+pwsh -NoProfile -File work/production/deployment/containers/Build-ContainerRelease.ps1 -Version 0.5.0 -OutputDirectory outputs/20260902_task_container_release_0.5.0
+node work/production/deployment/containers/verify-release.mjs outputs/20260902_task_container_release_0.5.0
+```
+
+The release command refuses dirty trees, existing output directories and output paths outside `outputs/`. It archives `HEAD:work/production` directly from Git; untracked files and Windows checkout line endings cannot affect build inputs. The full commit, production tree, source archive hash, tool versions and epoch are recorded in `source.json`. Version and revision are embedded in each deployable image. Container restores use eight committed `packages.lock.json` files, including transitive versions/content hashes, with `--locked-mode` and an explicit NuGet source. When deliberately updating dependencies, regenerate the locks with SDK 10.0.400 and `dotnet restore <project> --runtime linux-x64 --use-lock-file --force-evaluate`, then review the diff before committing.
+
+Both builds use separate empty `docker-container` builders pinned to BuildKit 0.23.2 by its linux/amd64 digest. The Dockerfile frontend and SDK/runtime bases are also digest-pinned. BuildKit receives the source commit timestamp as `SOURCE_DATE_EPOCH`; the OCI exporter rewrites layer timestamps. .NET publishing enables deterministic compilation and continuous integration mode. Cached steps may be shared among targets within one pass; no build or NuGet cache is imported between passes.
+
+Every exported OCI blob is checked against its size and SHA-256. The verifier checks the platform, non-root user, creation timestamp, version/revision labels and mode=max SLSA provenance subject/build arguments. The two **image manifest digests** must match, which also binds the config and all compressed layer digests. Provenance includes actual build timestamps, so the enclosing attestation/index/archive hashes may differ; byte identity of those envelopes is not claimed.
+
+The first-pass OCI archives are loaded and the existing PostgreSQL, role isolation, image hardening, task-store, health and SIGTERM gate consumes those exact images by immutable config ID. The validation-only fifth image is included in evidence and repeatability checks but is not a deployment service. A failed build, comparison, runtime check or cleanup produces a failed report and a nonzero exit.
+
+The package retains both builds' `images/*.oci.tar`, `source.tar`, raw Buildx metadata/logs, extracted OCI manifest/config/provenance, `image-map.json`, `release.json` (manifest and version), `SHA256SUMS`, and `validation-report.md`. Binary archives are ignored by Git; transfer the **whole output directory** to retain the complete offline release. Compact evidence is tracked without line-ending transformations. `verify-release.mjs` requires all listed files, checks every checksum, rejects uncovered files and rechecks image pairs. It does not authenticate unsigned metadata; signatures and registry publication remain separate work.
+
+After a successful release, import an archive with `docker load --input <package>/images/task-api-1.oci.tar`; the saved image tag is `task-release/task-api:0.5.0`. For runtime selection use the immutable config ID in `image-map.json`; use `release.json` image manifest digests when publishing/selecting OCI images in a registry. Never substitute an unverified rebuilt image for the tested artifact.
+
+References: [Docker timestamp rewriting](https://docs.docker.com/build/exporters/image-registry/), [Build attestations and image-store support](https://docs.docker.com/build/metadata/attestations/), [NuGet locked restores](https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#locking-dependencies).
+
+### Development packaging
 
 Run from the repository root and replace the sample revision with the full Git SHA being packaged:
 

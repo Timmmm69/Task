@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$Version = '0.4.0',
-    [string]$GitSha
+    [string]$GitSha,
+    [string]$ImageMapPath
 )
 
 Set-StrictMode -Version Latest
@@ -209,6 +210,16 @@ try {
         'task-database-migrator' = "$imagePrefix-database-migrator`:$Version"
         'task-container-validation' = "$imagePrefix-store-gate`:$Version"
     }
+    if ($ImageMapPath) {
+        $releaseImages = Get-Content -Raw -LiteralPath $ImageMapPath | ConvertFrom-Json
+        foreach ($target in @($images.Keys)) {
+            $reference = [string]$releaseImages.$target
+            if ($reference -notmatch '^sha256:[0-9a-f]{64}$') {
+                throw "Release image map must bind $target to an immutable local image ID."
+            }
+            $images[$target] = $reference
+        }
+    }
 
     [IO.File]::WriteAllLines($envFile, @(
         'POSTGRES_IMAGE=postgres:16-alpine@sha256:075f7ba66bc9b3ce7d6b8b635208ff61cd7cf1a67d71ec530eec5d7ae0cbe571'
@@ -226,6 +237,11 @@ try {
     ), [Text.UTF8Encoding]::new($false))
 
     foreach ($target in $images.Keys) {
+        if ($ImageMapPath) {
+            Invoke-Docker -Arguments @('image', 'inspect', $images[$target]) | Out-Null
+            Write-Ok "Using verified release image $target."
+            continue
+        }
         Invoke-Docker -Arguments @(
             'build', '--platform', 'linux/amd64', '--target', $target,
             '--build-arg', "VERSION=$Version", '--build-arg', "GIT_SHA=$GitSha",
