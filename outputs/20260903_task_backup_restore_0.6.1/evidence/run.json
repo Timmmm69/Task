@@ -1,0 +1,95 @@
+{
+  "runId": "task-backup-3e2623f2e34b",
+  "status": "succeeded",
+  "completedAt": "2026-09-03T14:41:50.8795095+00:00",
+  "sources": [
+    {
+      "path": "work/production/deployment/backup/.gitattributes",
+      "sha256": "5d8206169c26d243f091e9fe1ed46dbd33640ea5b92691ef065a90fea037450c"
+    },
+    {
+      "path": "work/production/deployment/backup/acceptance.py",
+      "sha256": "88d5a24e4a1d45e7e3056884c63d36a4aa45f0df5a73ca8564b99cafa912a32c"
+    },
+    {
+      "path": "work/production/deployment/backup/compose.recovery.yaml",
+      "sha256": "878eb2cef6cb520de00aa165bb40cfa128cc293295bc19f37442ef739ee156d8"
+    },
+    {
+      "path": "work/production/deployment/backup/compose.yaml",
+      "sha256": "76a6b50cbb66f64f29cac2d13fe9cb86d8bececff3297da993769296a2cfa7a6"
+    },
+    {
+      "path": "work/production/deployment/backup/Dockerfile",
+      "sha256": "2d56c16055e98b4bc44888f0f672fc486eefb3223040b1ed1b32324f45779b9f"
+    },
+    {
+      "path": "work/production/deployment/backup/entrypoint.py",
+      "sha256": "294c23fed984a7ebdd1eb0200bc464a6eed96970b7ddb3d51470bc09d2c38738"
+    },
+    {
+      "path": "work/production/deployment/backup/initialize.sql",
+      "sha256": "4b9f0a453f37de8b81ddc24301b32ff8162dbbc474282059e7c86e62f385986a"
+    },
+    {
+      "path": "work/production/deployment/backup/Package-BackupEvidence.ps1",
+      "sha256": "8d2551b1e8a3f8ea9676da0f6e8b13cbaeb0ab6ecabdedbc7682aa7b39bf40c4"
+    },
+    {
+      "path": "work/production/deployment/backup/runner.py",
+      "sha256": "c697de2357bbc7ca0a9ce56b55d876e5dab2418d4d05603a374cb4fe596705d3"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/appsettings.Development.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/appsettings.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupCommandRunner.cs",
+      "sha256": "e27f7898150f48406a05a0c17ef7651d28e1cd80ae1fbd27ac1b186838ed5c57"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupOptions.cs",
+      "sha256": "a562976943b6c7c359a62d382e0aab133fbe8d3ef1c5b61520ebe8c317609afa"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupRestoreAgent.cs",
+      "sha256": "4ab333e5ba93600cd7cba0fef512c194b0f8ddc83e4ae0beb4c5e667e1e1fc6a"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupSchedule.cs",
+      "sha256": "42e3f7a7b58c8a6301c98891989002252e1cb5c7eb63eabc7705ee405a72a6fe"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/packages.lock.json",
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/Program.cs",
+      "sha256": "5868fc5e3601c1c834e9fe8318c89740f020a601470f3ddd0a9c1861c5997963"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/Task.BackupAgent.csproj",
+      "sha256": "3b6dffa8ca6cf8d6f2504a1f75c2a553ebc8ddbf7346c70dfa9709442c8352bb"
+    },
+    {
+      "path": "work/production/verification/backup-acceptance-tests.py",
+      "sha256": "5758e9777e5363d39c6e28f1e5568ec548497efa7cabed1570dfc99c1b1344c2"
+    },
+    {
+      "path": "work/production/verification/backup-integration.py",
+      "sha256": "6a2a063742841dd32501c77bef0a96221c8e3f1d0c9a83b9106938b15571bffd"
+    },
+    {
+      "path": "work/production/verification/Test-BackupRestore.ps1",
+      "sha256": "79d7be6c4b46f6ed021cca9ab40eb6b124c93b7038faa89b205376ee43502b9e"
+    },
+    {
+      "path": "work/production/verification/Test-ContainerPackaging.ps1",
+      "sha256": "e0377528d42e689d93197b734b7c5318d01d3fc011a5092b8d56ad7c8c8a5067"
+    }
+  ]
+}

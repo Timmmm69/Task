@@ -1,0 +1,23 @@
+PASS encrypted full backup and actual isolated restore from both repositories
+PASS dedicated backup identity has no superuser or DDL role attributes
+PASS PITR recovers post-backup commits before deletion; production and schema preserved
+PASS scheduled WAL restore point is replayed in both repositories
+PASS tampered encrypted assets rejected and failed restore plaintext cleaned
+PASS missing/wrong recovery key cannot produce plaintext
+PASS corrupt physical database copy rejected by restore checksum/decryption
+PASS off-host failure never expires the last verified recovery set
+PASS production configuration rejects local-only secondary storage
+PASS retention floors, duplicate key bytes and missing escrow keys are rejected
+PASS overlapping operator runs cannot execute a second backup
+{"status": "failed", "operation": "plan", "started": "2026-09-03T14:41:08.822245+00:00", "failureType": "ProtectionError", "reason": "Recovery target must be a past UTC time"}
+{"status": "succeeded", "operation": "plan", "started": "2026-09-03T14:41:08.840011+00:00", "completed": "2026-09-03T14:41:08.861567+00:00", "result": {"repo": 2, "label": "20260903-144026F", "target": "2026-09-03T14:40:35.215618Z", "productionOverwrite": false, "destinationRoot": "/restore"}}
+PASS restore plan requires a valid label and explicit past UTC target
+{"status": "healthy", "LastBackup": "2026-09-03T14:41:26.701451+00:00", "LastCheck": "2026-09-03T14:41:35.1599128+00:00", "LastRestoreTest": "2026-09-03T14:41:35.1599128+00:00", "LastAttempt": "2026-09-03T14:41:35.1599128+00:00", "FailedOperation": null}
+PASS real hosted agent schedules backup and PITR verification, reports health and stops cleanly
+{"status": "unhealthy", "code": "BackupProtectionAtRisk"}
+{"status": "unhealthy", "code": "BackupProtectionAtRisk"}
+{"status": "unhealthy", "code": "BackupProtectionAtRisk"}
+PASS health rejects failed, stale and future-dated protection status
+PASS time retention preserves every backup inside the minimum recovery window
+PASS accelerated retention removes old sets and leaves newest backup plus WAL restorable
+BACKUP_INTEGRATION_PASSED

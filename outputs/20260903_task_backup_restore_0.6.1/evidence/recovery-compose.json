@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "networkMode": "none",
+  "readOnly": true,
+  "mounts": [
+    "/backup/offhost",
+    "/run/secrets",
+    "/var/lib/task-backup",
+    "/restore"
+  ],
+  "primaryEnvironmentRequired": false
+}

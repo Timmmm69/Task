@@ -871,10 +871,14 @@
         "work/production/verification/Test-ContainerPackaging.ps1: backup/restore gate in production-package CI",
         "outputs/20260903_task_backup_restore_0.6.0/validation-report.md",
         "outputs/20260903_task_backup_restore_0.6.0/evidence/integration.json",
-        "outputs/20260903_task_backup_restore_0.6.0/evidence/offhost-only-restore.json"
+        "outputs/20260903_task_backup_restore_0.6.0/evidence/offhost-only-restore.json",
+        "work/production/deployment/backup/acceptance.py",
+        "work/production/deployment/backup/compose.recovery.yaml",
+        "work/production/docs/backup-deployment-acceptance.md",
+        "outputs/20260903_task_backup_restore_0.6.1/validation-report.md"
       ],
-      "note": "Реализован и проверен OPS-03 0.6.0: daily encrypted full copies в два repository, WAL/PITR, retention, authenticated recovery assets, health и weekly restore test. 1325 тестов без пропусков и 16 recovery checks прошли; восстановление из read-only secondary с выключенным primary и пустыми служебными томами доказано. Production off-host/immutable storage, escrow и нагрузочный RPO/RTO требуют проверки на инфраструктуре компании.",
-      "updated_at": "2026-09-03T17:13:00+03:00",
+      "note": "OPS-03 0.6.1: к backup/WAL/PITR добавлены автономный recovery operator без primary mounts, проверка read-only secondary, сверка схемы и SQL smoke, измерения RPO/восстановления и журнал приёмочных проверок. Устранён лимит replay в 120 секунд: restore использует общий бюджет до 4 часов. Локальные проверки не подтверждают физическую независимость/immutable storage, два escrow и полный RTO сервиса на данных компании; статус остаётся 75%.",
+      "updated_at": "2026-09-03T17:41:54.7752607+03:00",
       "priority": 3,
       "dependencies": [
         "OPS-01",
@@ -882,7 +886,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 1,
-      "next_action": "Развернуть проверенный operator image по runbook и зафиксировать off-host/immutable restore, доступность escrow, RPO ≤15 минут и RTO ≤4 часов на данных компании; проверить доставку alerts вместе с OPS-04."
+      "next_action": "Выполнить по backup-deployment-acceptance.md три восстановления на инфраструктуре компании: secondary, protected snapshot и независимый escrow B; подтвердить storage/retention/ACL, бизнес-проверки, RPO ≤15 минут, полный RTO ≤4 часов и доставку alerts OPS-04."
     },
     {
       "id": "OPS-04",

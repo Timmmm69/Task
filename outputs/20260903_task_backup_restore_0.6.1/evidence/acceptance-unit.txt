@@ -1,0 +1,15 @@
+test_budget_allows_long_replay_and_is_shared (__main__.AcceptanceTests.test_budget_allows_long_replay_and_is_shared) ... ok
+test_budget_rejects_unbounded_values (__main__.AcceptanceTests.test_budget_rejects_unbounded_values) ... ok
+test_expired_incident (__main__.AcceptanceTests.test_expired_incident) ... ok
+test_failed_backend_writes_only_failed_redacted_receipt (__main__.AcceptanceTests.test_failed_backend_writes_only_failed_redacted_receipt) ... ok
+test_invalid_acceptance_inputs (__main__.AcceptanceTests.test_invalid_acceptance_inputs) ... ok
+test_isolation_requires_readonly_and_no_primary (__main__.AcceptanceTests.test_isolation_requires_readonly_and_no_primary) ... ok
+test_restore_passes_remaining_budget_to_postgres_start (__main__.AcceptanceTests.test_restore_passes_remaining_budget_to_postgres_start) ... ok
+test_restore_policy_and_cleanup (__main__.AcceptanceTests.test_restore_policy_and_cleanup) ... ok
+test_storage_bypass_rejected (__main__.AcceptanceTests.test_storage_bypass_rejected) ... ok
+test_valid_rpo_boundary (__main__.AcceptanceTests.test_valid_rpo_boundary) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.010s
+
+OK
