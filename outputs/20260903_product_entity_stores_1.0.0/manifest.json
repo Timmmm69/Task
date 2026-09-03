@@ -1,0 +1,156 @@
+{
+  "package": "DATA-04 product entity production stores",
+  "version": "1.0.0",
+  "date": "2026-09-03",
+  "base_revision": "2167f6bd78dcf7b27fee34c59e97ea1bbd394c15",
+  "roadmap_id": "DATA-04",
+  "state": "implemented-and-validated-local-working-tree",
+  "runtime": {
+    "dotnet_sdk": "10.0.400",
+    "postgresql": "16.10",
+    "schema_version": 9
+  },
+  "validation": {
+    "total": 1329,
+    "passed": 1329,
+    "failed": 0,
+    "skipped": 0,
+    "postgres_tests": 768,
+    "service_host_tests": 316,
+    "desktop_tests": 245
+  },
+  "implementation_files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "64d7262a56d6c93fb94e2cb99d1b4a9051ecedacbeb5dd1d02cb5a6c4408b9e4",
+      "bytes": 53602
+    },
+    {
+      "path": "work/production/deployment/containers/sql/grant-runtime.sql",
+      "sha256": "975951b6a3b3ab6d85091294b687bf3926d12d151f73efd3b5c6fb48a77949d7",
+      "bytes": 2312
+    },
+    {
+      "path": "work/production/docs/task-product-persistence.md",
+      "sha256": "35bd4f5032e0cb14753d4e0bf664e78fdf8ad583bc02a72266163e5a1759e2d4",
+      "bytes": 4575
+    },
+    {
+      "path": "work/production/src/Task.Api/Program.cs",
+      "sha256": "870b39729778c24bbe010628b524b5202d561c23b617a492dbf29ae382db9da3",
+      "bytes": 9665
+    },
+    {
+      "path": "work/production/src/Task.Application/ProductData/ProductPersistenceContracts.cs",
+      "sha256": "f892a6765973546754fe9edb869d34fb1a94b508524ab26165351679c2be2d60",
+      "bytes": 6602
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/009_product_entity_stores.sql",
+      "sha256": "73f645c8a3b647d2c4c4cafd8f108958995cc138d3e4caec468ac011fc50e7b0",
+      "bytes": 17059
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresCatalogItemStore.cs",
+      "sha256": "d97c4623030718286d321d5f8ebb5581d86476aadbcf0bcdf6e2f37c1ed9c825",
+      "bytes": 6264
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresContactStore.cs",
+      "sha256": "864283ec8a0ccfb36605bb5c1ed908c5f9aabb5b88be3c9587ee085ec24bafa2",
+      "bytes": 2076
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresNotificationStore.cs",
+      "sha256": "5cf92ebeb1cfd658e00c7833f706c4abed640ede3a41edb5f60f7a1f8c0c139f",
+      "bytes": 7012
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductLifecycleStore.cs",
+      "sha256": "5557048545a31d24ccf7b358302b44fdbd8271e33cfea0b71202ff752c6b6079",
+      "bytes": 3063
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductObjectStore.cs",
+      "sha256": "1c781b20294c1f339fccef455247bc5e070fd986e8e6b693c567eb85558ece7d",
+      "bytes": 14594
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductSettingsStore.cs",
+      "sha256": "a464105823a356c92b101e22c64a29857f03be613dd0de3729eb4edb540169e5",
+      "bytes": 15506
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProjectStore.cs",
+      "sha256": "c8e49da54cd6eb25e941de6308358e433785ff513f305210a20feeefd105d4d9",
+      "bytes": 4317
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "sha256": "327feb5850aae3be043726075cf05f0168912e150861c35a9ae24b3d7a2778e1",
+      "bytes": 2011
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrator.cs",
+      "sha256": "24ea3a6988b0ca2bef7782d5289d5393dac0a6bd12c5d834b81d91085cfa3093",
+      "bytes": 11440
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs",
+      "sha256": "76918fe4101aa6a10f8869103ad2e03d4fc507910501213aaa3c6c3aedfcc737",
+      "bytes": 9181
+    },
+    {
+      "path": "work/production/tests/Task.Tests/PostgresProductStoresTests.cs",
+      "sha256": "ac81038692ef0b1d1ca2fb3d6f41cf260ea6f9bc6d6596d68a8951a4b2f8bc15",
+      "bytes": 29253
+    },
+    {
+      "path": "work/production/tests/Task.Tests/Task.Tests.csproj",
+      "sha256": "5a4d5625ffa866a9e6b4ca82e1bcd79a60c2d8360f61ee69ddfed2e12898a724",
+      "bytes": 1231
+    },
+    {
+      "path": "work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "sha256": "0a304abbcf0b3656a016f96e0a78b01bece6c85bd6e12368b984e9a8391f0931",
+      "bytes": 2932
+    },
+    {
+      "path": "work/production/tests/Task.Tests/TaskPersistenceRuntimeTests.cs",
+      "sha256": "b7305a5fc52227a67045697efccaa53db569a7512c099713022f58d304df82d7",
+      "bytes": 3111
+    }
+  ],
+  "package_files": [
+    {
+      "path": "evidence/Task.Desktop.Tests.trx",
+      "sha256": "ef8051fd2bcb9850e9663e9d0ed33ea345794a6552d83a30fdfc9fce888b161f",
+      "bytes": 349701
+    },
+    {
+      "path": "evidence/Task.ServiceHosts.Tests.trx",
+      "sha256": "905caee932fa448aa0e65b4d08725cde7336063cb70fb7fb3699717ff4691f64",
+      "bytes": 458226
+    },
+    {
+      "path": "evidence/Task.Tests.trx",
+      "sha256": "ac14c4f82f0ea56a732ccfdfd7df5a09728e8806936fbacb89861969f7ab0003",
+      "bytes": 1031344
+    },
+    {
+      "path": "README.md",
+      "sha256": "8e2d504cafb44f4fb98402ec9064cec95c63f1f8b05c16fd43ff3b4ef8ef7e1b",
+      "bytes": 919
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "9bd228bd40b611a250a342a258aeb5fe305b23589d372fe564f232a1e788f20d",
+      "bytes": 5397
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "bytes": 6
+    }
+  ]
+}

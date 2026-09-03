@@ -2,6 +2,7 @@ using Npgsql;
 using Task.Application;
 using Task.Application.Audit;
 using Task.Application.Calendar;
+using Task.Application.ProductData;
 using Task.Application.Security;
 using Task.Infrastructure.Identity;
 using Task.Infrastructure.Postgres;
@@ -59,6 +60,24 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 
     public IRecurrenceStore CreateRecurrenceStore() =>
         new PostgresRecurrenceStore(GetConfiguredDataSource());
+
+    public IProjectStore CreateProjectStore() =>
+        new PostgresProjectStore(GetConfiguredDataSource());
+
+    public IContactStore CreateContactStore() =>
+        new PostgresContactStore(GetConfiguredDataSource());
+
+    public ICatalogItemStore CreateCatalogItemStore() =>
+        new PostgresCatalogItemStore(GetConfiguredDataSource());
+
+    public INotificationStore CreateNotificationStore() =>
+        new PostgresNotificationStore(GetConfiguredDataSource());
+
+    public IProductSettingsStore CreateProductSettingsStore() =>
+        new PostgresProductSettingsStore(GetConfiguredDataSource());
+
+    public IProductLifecycleStore CreateProductLifecycleStore() =>
+        new PostgresProductLifecycleStore(GetConfiguredDataSource());
 
     public ISessionRepository CreateSessionRepository() =>
         new PostgresSessionRepository(GetConfiguredDataSource());

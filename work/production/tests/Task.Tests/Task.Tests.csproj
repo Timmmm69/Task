@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <EmbeddedResource Include="..\..\deployment\containers\sql\grant-runtime.sql" />
   </ItemGroup>
 
   <ItemGroup>

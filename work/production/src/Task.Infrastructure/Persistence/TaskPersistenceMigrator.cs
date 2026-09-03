@@ -192,7 +192,18 @@ public sealed class TaskPersistenceMigrator
                AND to_regclass('governance.outbox_messages') IS NOT NULL
                AND to_regclass('calendar.recurrence_series') IS NOT NULL
                AND to_regclass('calendar.recurrence_occurrences') IS NOT NULL
-               AND to_regclass('calendar.recurrence_commands') IS NOT NULL;
+               AND to_regclass('calendar.recurrence_commands') IS NOT NULL
+               AND to_regclass('projects.projects') IS NOT NULL
+               AND to_regclass('crm.contacts') IS NOT NULL
+               AND to_regclass('files.catalog_items') IS NOT NULL
+               AND to_regclass('notify.notifications') IS NOT NULL
+               AND to_regclass('core.organization_settings') IS NOT NULL
+               AND to_regclass('org.user_settings') IS NOT NULL
+               AND to_regclass('notify.notification_preferences') IS NOT NULL
+               AND to_regclass('governance.archive_entries') IS NOT NULL
+               AND to_regclass('governance.trash_entries') IS NOT NULL
+               AND EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trg_record_product_lifecycle'
+                    AND tgrelid = to_regclass('core.objects') AND NOT tgisinternal AND tgenabled IN ('O', 'A'));
             """,
             connection,
             transaction);

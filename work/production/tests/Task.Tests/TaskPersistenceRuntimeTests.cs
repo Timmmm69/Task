@@ -59,4 +59,16 @@ public sealed class TaskPersistenceRuntimeTests
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             new TaskPersistenceRuntime(connectionString: null, TimeSpan.Zero));
     }
+
+    [Fact]
+    public void ProductStoreFactoriesFailClosedWithoutConfiguration()
+    {
+        using var runtime = new TaskPersistenceRuntime(connectionString: null);
+        Assert.Throws<InvalidOperationException>(runtime.CreateProjectStore);
+        Assert.Throws<InvalidOperationException>(runtime.CreateContactStore);
+        Assert.Throws<InvalidOperationException>(runtime.CreateCatalogItemStore);
+        Assert.Throws<InvalidOperationException>(runtime.CreateNotificationStore);
+        Assert.Throws<InvalidOperationException>(runtime.CreateProductSettingsStore);
+        Assert.Throws<InvalidOperationException>(runtime.CreateProductLifecycleStore);
+    }
 }

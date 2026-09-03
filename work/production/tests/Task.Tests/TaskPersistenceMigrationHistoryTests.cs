@@ -5,10 +5,10 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
-    public void Catalog_ExpectsCalendarRecurrenceVersionEight()
+    public void Catalog_ExpectsProductEntityStoresVersionNine()
     {
-        Assert.Equal(8, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("calendar_recurrence", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(9, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("product_entity_stores", TaskPersistenceMigrationCatalog.All[^1].Name);
     }
 
     [Fact]

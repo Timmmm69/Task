@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Task.Application;
 using Task.Application.Audit;
 using Task.Application.Calendar;
+using Task.Application.ProductData;
 using Task.Application.Security;
 using Task.Api.Audit;
 using Task.Api.Auth;
@@ -68,6 +69,18 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<ScheduleQueryService>();
     builder.Services.AddSingleton<IRecurrenceStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateRecurrenceStore());
+    builder.Services.AddSingleton<IProjectStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateProjectStore());
+    builder.Services.AddSingleton<IContactStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateContactStore());
+    builder.Services.AddSingleton<ICatalogItemStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateCatalogItemStore());
+    builder.Services.AddSingleton<INotificationStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateNotificationStore());
+    builder.Services.AddSingleton<IProductSettingsStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateProductSettingsStore());
+    builder.Services.AddSingleton<IProductLifecycleStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateProductLifecycleStore());
     builder.Services.AddSingleton<RecurrenceService>();
     builder.Services.AddSingleton<ISessionRepository>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateSessionRepository());
