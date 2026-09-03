@@ -10,7 +10,7 @@ public sealed class BackupRestoreAgentLifecycleTests
     public async global::System.Threading.Tasks.Task Starts_ReceivesCancellation_AndStopsWithinTwoSeconds()
     {
         var logger = new RecordingLogger<BackupRestoreAgent>();
-        using var service = new BackupRestoreAgent(logger);
+        using var service = CreateService(logger);
 
         await service.StartAsync(CancellationToken.None);
 
@@ -29,7 +29,7 @@ public sealed class BackupRestoreAgentLifecycleTests
     public async global::System.Threading.Tasks.Task TwoConsecutiveStopCalls_CompleteWithinTwoSeconds_AndLogExactlyOnce()
     {
         var logger = new RecordingLogger<BackupRestoreAgent>();
-        using var service = new BackupRestoreAgent(logger);
+        using var service = CreateService(logger);
 
         await service.StartAsync(CancellationToken.None);
 
@@ -49,5 +49,12 @@ public sealed class BackupRestoreAgentLifecycleTests
     public void ServiceName_IsTaskBackupAgent()
     {
         Assert.Equal("Task.BackupAgent", BackupRestoreAgent.ServiceName);
+    }
+
+    private static BackupRestoreAgent CreateService(RecordingLogger<BackupRestoreAgent> logger)
+    {
+        var options = new BackupOptions();
+        return new BackupRestoreAgent(logger, options,
+            new BackupSchedule(options, new BackupCommandRunner(options), TimeProvider.System));
     }
 }

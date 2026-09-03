@@ -8,6 +8,11 @@ builder.Services.AddWindowsService(options =>
     options.ServiceName = BackupRestoreAgent.ServiceName;
 });
 
+var backupOptions = builder.Configuration.GetSection("Backup").Get<BackupOptions>() ?? new BackupOptions();
+builder.Services.AddSingleton(backupOptions);
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<IBackupCommandRunner, BackupCommandRunner>();
+builder.Services.AddSingleton<BackupSchedule>();
 builder.Services.AddHostedService<BackupRestoreAgent>();
 
 var host = builder.Build();

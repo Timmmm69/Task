@@ -862,14 +862,19 @@
       "category": "operations",
       "weight": 14,
       "criticality": "blocker",
-      "status": "blocked",
-      "progress": 0,
+      "status": "in_progress",
+      "progress": 75,
       "evidence": [
         "work/production/src/Task.BackupAgent/BackupRestoreAgent.cs",
-        "work/production/docs/task-container-deployment-foundation.md: BackupAgent placeholder"
+        "work/production/deployment/backup/runner.py",
+        "work/production/docs/backup-restore-runbook.md",
+        "work/production/verification/Test-ContainerPackaging.ps1: backup/restore gate in production-package CI",
+        "outputs/20260903_task_backup_restore_0.6.0/validation-report.md",
+        "outputs/20260903_task_backup_restore_0.6.0/evidence/integration.json",
+        "outputs/20260903_task_backup_restore_0.6.0/evidence/offhost-only-restore.json"
       ],
-      "note": "Hard release blocker: агент является placeholder.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Реализован и проверен OPS-03 0.6.0: daily encrypted full copies в два repository, WAL/PITR, retention, authenticated recovery assets, health и weekly restore test. 1325 тестов без пропусков и 16 recovery checks прошли; восстановление из read-only secondary с выключенным primary и пустыми служебными томами доказано. Production off-host/immutable storage, escrow и нагрузочный RPO/RTO требуют проверки на инфраструктуре компании.",
+      "updated_at": "2026-09-03T17:13:00+03:00",
       "priority": 3,
       "dependencies": [
         "OPS-01",
@@ -877,7 +882,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 1,
-      "next_action": "Заменить BackupAgent placeholder на backup/WAL/retention/restore workflow и доказать восстановление."
+      "next_action": "Развернуть проверенный operator image по runbook и зафиксировать off-host/immutable restore, доступность escrow, RPO ≤15 минут и RTO ≤4 часов на данных компании; проверить доставку alerts вместе с OPS-04."
     },
     {
       "id": "OPS-04",

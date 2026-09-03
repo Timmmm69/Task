@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2c4decb8-b584-448d-9bdd-98806f9727be" name="novik@TIM 2026-09-03 16:57:34" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-03T16:57:34.3328540+03:00" queuing="2026-09-03T16:57:34.3328545+03:00" start="2026-09-03T16:57:33.5986309+03:00" finish="2026-09-03T16:57:34.3690864+03:00" />
+  <TestSettings name="default" id="efe46265-c69c-4ff3-be02-68eac02f2a75">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-03_16_57_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9327ded7-866b-4501-838d-87c025d6de78" testId="14e6e3f3-9d4d-5e55-0c9a-f7d3abdfc368" testName="Task.ServiceHosts.Tests.BackupScheduleTests.FirstBackup_IsDurable_AndNextDayRunsOnce" computerName="TIM" duration="00:00:00.0037156" startTime="2026-09-03T16:57:34.3109493+03:00" endTime="2026-09-03T16:57:34.3109771+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9327ded7-866b-4501-838d-87c025d6de78" />
+    <UnitTestResult executionId="bab54622-1227-448c-946e-46df8c4a74fc" testId="44a1fe42-044e-49cc-d8c2-453b98b9a0d6" testName="Task.ServiceHosts.Tests.BackupScheduleTests.FutureSuccess_IsRejectedAndCannotSuppressProtection(field: &quot;LastRestoreTest&quot;)" computerName="TIM" duration="00:00:00.0111768" startTime="2026-09-03T16:57:34.2668527+03:00" endTime="2026-09-03T16:57:34.2778208+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bab54622-1227-448c-946e-46df8c4a74fc" />
+    <UnitTestResult executionId="4a553e8a-53e4-42ee-bd3a-075ba4b2eb48" testId="c1194ddf-ae5d-1488-0eec-15a66f50890a" testName="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests.Starts_ReceivesCancellation_AndStopsWithinTwoSeconds" computerName="TIM" duration="00:00:00.0087490" startTime="2026-09-03T16:57:34.2131513+03:00" endTime="2026-09-03T16:57:34.2281704+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a553e8a-53e4-42ee-bd3a-075ba4b2eb48" />
+    <UnitTestResult executionId="72ff2b29-e1ac-4614-905b-c8d580e08a7d" testId="da5a3165-6a35-dbbc-e6b1-df3cd71333cd" testName="Task.ServiceHosts.Tests.BackupScheduleTests.CorruptState_IsPreservedAndTriggersFreshBackup" computerName="TIM" duration="00:00:00.0108579" startTime="2026-09-03T16:57:34.3110226+03:00" endTime="2026-09-03T16:57:34.3127476+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72ff2b29-e1ac-4614-905b-c8d580e08a7d" />
+    <UnitTestResult executionId="e24a416a-29be-4e3f-acef-d5d8bf5492d9" testId="1363403e-7257-4619-fe3b-c29cdf8580b1" testName="Task.ServiceHosts.Tests.BackupScheduleTests.Cancellation_DoesNotPublishSuccess" computerName="TIM" duration="00:00:00.0021243" startTime="2026-09-03T16:57:34.2891378+03:00" endTime="2026-09-03T16:57:34.2911135+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e24a416a-29be-4e3f-acef-d5d8bf5492d9" />
+    <UnitTestResult executionId="4f129179-8cfc-45f1-82d0-86ee96307b45" testId="52d16158-56bb-d0e4-8f78-15b114e643e0" testName="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 24, check: 300, days: 7)" computerName="TIM" duration="00:00:00.0004276" startTime="2026-09-03T16:57:34.2911867+03:00" endTime="2026-09-03T16:57:34.2915833+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f129179-8cfc-45f1-82d0-86ee96307b45" />
+    <UnitTestResult executionId="ea2e35e0-d62c-4dd3-993b-311d5bed82ec" testId="0e7029e2-9673-a383-3002-2478dff106d6" testName="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 1, check: 300, days: 8)" computerName="TIM" duration="00:00:00.0002519" startTime="2026-09-03T16:57:34.2916166+03:00" endTime="2026-09-03T16:57:34.2919566+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea2e35e0-d62c-4dd3-993b-311d5bed82ec" />
+    <UnitTestResult executionId="4e8abdc0-866f-44f3-9aba-7461ae895b76" testId="f1d185c0-760e-fe77-1451-1ad13dc62c88" testName="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests.ServiceName_IsTaskBackupAgent" computerName="TIM" duration="00:00:00.0007919" startTime="2026-09-03T16:57:34.2355861+03:00" endTime="2026-09-03T16:57:34.2356321+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e8abdc0-866f-44f3-9aba-7461ae895b76" />
+    <UnitTestResult executionId="4b848691-ecb8-4a8f-bc16-466a535ba5c6" testId="63c42e9b-f1d4-8d50-6eb0-5167a160db11" testName="Task.ServiceHosts.Tests.BackupScheduleTests.Failure_PreservesLastSuccess_AndRetriesAfterDelay" computerName="TIM" duration="00:00:00.0059111" startTime="2026-09-03T16:57:34.3108508+03:00" endTime="2026-09-03T16:57:34.3108810+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b848691-ecb8-4a8f-bc16-466a535ba5c6" />
+    <UnitTestResult executionId="f9d87124-9cf7-4646-b4a6-94071b991f5a" testId="865a3cb8-0c88-5056-5f3c-0b0d3943752a" testName="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 0, check: 300, days: 7)" computerName="TIM" duration="00:00:00.0000215" startTime="2026-09-03T16:57:34.3107529+03:00" endTime="2026-09-03T16:57:34.3107849+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9d87124-9cf7-4646-b4a6-94071b991f5a" />
+    <UnitTestResult executionId="8f0bddfe-bb3d-4559-9a58-8da0a8732944" testId="fc64a323-8b1d-aac8-df85-5186eea8dc82" testName="Task.ServiceHosts.Tests.BackupScheduleTests.FutureSuccess_IsRejectedAndCannotSuppressProtection(field: &quot;LastBackup&quot;)" computerName="TIM" duration="00:00:00.0110604" startTime="2026-09-03T16:57:34.2779162+03:00" endTime="2026-09-03T16:57:34.2890245+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f0bddfe-bb3d-4559-9a58-8da0a8732944" />
+    <UnitTestResult executionId="a239f045-dbe9-4e01-ab50-ae18c41bafe0" testId="d987a01f-b141-be73-0f35-bb713e377c7f" testName="Task.ServiceHosts.Tests.BackupScheduleTests.WeeklyRestoreTest_RunsEvenWithDailyBackups" computerName="TIM" duration="00:00:00.0070015" startTime="2026-09-03T16:57:34.3163416+03:00" endTime="2026-09-03T16:57:34.3233599+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a239f045-dbe9-4e01-ab50-ae18c41bafe0" />
+    <UnitTestResult executionId="d32692ba-fb28-4262-9d3a-3dd3ec1eade6" testId="dfd083b2-026e-01d9-26a4-a21385977bfc" testName="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 1, check: 901, days: 7)" computerName="TIM" duration="00:00:00.0000393" startTime="2026-09-03T16:57:34.3104641+03:00" endTime="2026-09-03T16:57:34.3105336+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d32692ba-fb28-4262-9d3a-3dd3ec1eade6" />
+    <UnitTestResult executionId="5090c30f-9d9c-4cd4-8654-48e1dee84114" testId="82480c95-5bf3-3dc0-c018-5aada1b0c4b5" testName="Task.ServiceHosts.Tests.BackupScheduleTests.CheckRunsEveryFiveMinutes_WithoutExtraBackup" computerName="TIM" duration="00:00:00.0034126" startTime="2026-09-03T16:57:34.3128549+03:00" endTime="2026-09-03T16:57:34.3162515+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5090c30f-9d9c-4cd4-8654-48e1dee84114" />
+    <UnitTestResult executionId="0b21b0a8-e47f-4351-976d-2c669616992e" testId="e84503b3-7f92-fc0e-a149-43449c752dd9" testName="Task.ServiceHosts.Tests.BackupScheduleTests.FutureSuccess_IsRejectedAndCannotSuppressProtection(field: &quot;LastCheck&quot;)" computerName="TIM" duration="00:00:00.0506522" startTime="2026-09-03T16:57:34.2121048+03:00" endTime="2026-09-03T16:57:34.2667038+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b21b0a8-e47f-4351-976d-2c669616992e" />
+    <UnitTestResult executionId="70b3f0f9-086e-4d16-bdbe-c4afd3c15032" testId="15a5261d-0110-4f06-bfd9-5487809b0423" testName="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests.TwoConsecutiveStopCalls_CompleteWithinTwoSeconds_AndLogExactlyOnce" computerName="TIM" duration="00:00:00.0046887" startTime="2026-09-03T16:57:34.2361599+03:00" endTime="2026-09-03T16:57:34.2361831+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70b3f0f9-086e-4d16-bdbe-c4afd3c15032" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.CheckRunsEveryFiveMinutes_WithoutExtraBackup" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="82480c95-5bf3-3dc0-c018-5aada1b0c4b5">
+      <Execution id="5090c30f-9d9c-4cd4-8654-48e1dee84114" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="CheckRunsEveryFiveMinutes_WithoutExtraBackup" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.FutureSuccess_IsRejectedAndCannotSuppressProtection(field: &quot;LastBackup&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="fc64a323-8b1d-aac8-df85-5186eea8dc82">
+      <Execution id="8f0bddfe-bb3d-4559-9a58-8da0a8732944" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="FutureSuccess_IsRejectedAndCannotSuppressProtection" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.FutureSuccess_IsRejectedAndCannotSuppressProtection(field: &quot;LastRestoreTest&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="44a1fe42-044e-49cc-d8c2-453b98b9a0d6">
+      <Execution id="bab54622-1227-448c-946e-46df8c4a74fc" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="FutureSuccess_IsRejectedAndCannotSuppressProtection" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.WeeklyRestoreTest_RunsEvenWithDailyBackups" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="d987a01f-b141-be73-0f35-bb713e377c7f">
+      <Execution id="a239f045-dbe9-4e01-ab50-ae18c41bafe0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="WeeklyRestoreTest_RunsEvenWithDailyBackups" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests.Starts_ReceivesCancellation_AndStopsWithinTwoSeconds" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="c1194ddf-ae5d-1488-0eec-15a66f50890a">
+      <Execution id="4a553e8a-53e4-42ee-bd3a-075ba4b2eb48" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests" name="Starts_ReceivesCancellation_AndStopsWithinTwoSeconds" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests.ServiceName_IsTaskBackupAgent" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="f1d185c0-760e-fe77-1451-1ad13dc62c88">
+      <Execution id="4e8abdc0-866f-44f3-9aba-7461ae895b76" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests" name="ServiceName_IsTaskBackupAgent" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.FutureSuccess_IsRejectedAndCannotSuppressProtection(field: &quot;LastCheck&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="e84503b3-7f92-fc0e-a149-43449c752dd9">
+      <Execution id="0b21b0a8-e47f-4351-976d-2c669616992e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="FutureSuccess_IsRejectedAndCannotSuppressProtection" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.Failure_PreservesLastSuccess_AndRetriesAfterDelay" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="63c42e9b-f1d4-8d50-6eb0-5167a160db11">
+      <Execution id="4b848691-ecb8-4a8f-bc16-466a535ba5c6" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="Failure_PreservesLastSuccess_AndRetriesAfterDelay" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 24, check: 300, days: 7)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="52d16158-56bb-d0e4-8f78-15b114e643e0">
+      <Execution id="4f129179-8cfc-45f1-82d0-86ee96307b45" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="UnsafeConfiguration_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.Cancellation_DoesNotPublishSuccess" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="1363403e-7257-4619-fe3b-c29cdf8580b1">
+      <Execution id="e24a416a-29be-4e3f-acef-d5d8bf5492d9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="Cancellation_DoesNotPublishSuccess" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.CorruptState_IsPreservedAndTriggersFreshBackup" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="da5a3165-6a35-dbbc-e6b1-df3cd71333cd">
+      <Execution id="72ff2b29-e1ac-4614-905b-c8d580e08a7d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="CorruptState_IsPreservedAndTriggersFreshBackup" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 0, check: 300, days: 7)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="865a3cb8-0c88-5056-5f3c-0b0d3943752a">
+      <Execution id="f9d87124-9cf7-4646-b4a6-94071b991f5a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="UnsafeConfiguration_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 1, check: 901, days: 7)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="dfd083b2-026e-01d9-26a4-a21385977bfc">
+      <Execution id="d32692ba-fb28-4262-9d3a-3dd3ec1eade6" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="UnsafeConfiguration_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.FirstBackup_IsDurable_AndNextDayRunsOnce" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="14e6e3f3-9d4d-5e55-0c9a-f7d3abdfc368">
+      <Execution id="9327ded7-866b-4501-838d-87c025d6de78" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="FirstBackup_IsDurable_AndNextDayRunsOnce" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupScheduleTests.UnsafeConfiguration_IsRejected(hour: 1, check: 300, days: 8)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="0e7029e2-9673-a383-3002-2478dff106d6">
+      <Execution id="ea2e35e0-d62c-4dd3-993b-311d5bed82ec" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupScheduleTests" name="UnsafeConfiguration_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests.TwoConsecutiveStopCalls_CompleteWithinTwoSeconds_AndLogExactlyOnce" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="15a5261d-0110-4f06-bfd9-5487809b0423">
+      <Execution id="70b3f0f9-086e-4d16-bdbe-c4afd3c15032" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackupRestoreAgentLifecycleTests" name="TwoConsecutiveStopCalls_CompleteWithinTwoSeconds_AndLogExactlyOnce" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="14e6e3f3-9d4d-5e55-0c9a-f7d3abdfc368" executionId="9327ded7-866b-4501-838d-87c025d6de78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44a1fe42-044e-49cc-d8c2-453b98b9a0d6" executionId="bab54622-1227-448c-946e-46df8c4a74fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c1194ddf-ae5d-1488-0eec-15a66f50890a" executionId="4a553e8a-53e4-42ee-bd3a-075ba4b2eb48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da5a3165-6a35-dbbc-e6b1-df3cd71333cd" executionId="72ff2b29-e1ac-4614-905b-c8d580e08a7d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1363403e-7257-4619-fe3b-c29cdf8580b1" executionId="e24a416a-29be-4e3f-acef-d5d8bf5492d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52d16158-56bb-d0e4-8f78-15b114e643e0" executionId="4f129179-8cfc-45f1-82d0-86ee96307b45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0e7029e2-9673-a383-3002-2478dff106d6" executionId="ea2e35e0-d62c-4dd3-993b-311d5bed82ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f1d185c0-760e-fe77-1451-1ad13dc62c88" executionId="4e8abdc0-866f-44f3-9aba-7461ae895b76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63c42e9b-f1d4-8d50-6eb0-5167a160db11" executionId="4b848691-ecb8-4a8f-bc16-466a535ba5c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="865a3cb8-0c88-5056-5f3c-0b0d3943752a" executionId="f9d87124-9cf7-4646-b4a6-94071b991f5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc64a323-8b1d-aac8-df85-5186eea8dc82" executionId="8f0bddfe-bb3d-4559-9a58-8da0a8732944" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d987a01f-b141-be73-0f35-bb713e377c7f" executionId="a239f045-dbe9-4e01-ab50-ae18c41bafe0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dfd083b2-026e-01d9-26a4-a21385977bfc" executionId="d32692ba-fb28-4262-9d3a-3dd3ec1eade6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82480c95-5bf3-3dc0-c018-5aada1b0c4b5" executionId="5090c30f-9d9c-4cd4-8654-48e1dee84114" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e84503b3-7f92-fc0e-a149-43449c752dd9" executionId="0b21b0a8-e47f-4351-976d-2c669616992e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15a5261d-0110-4f06-bfd9-5487809b0423" executionId="70b3f0f9-086e-4d16-bdbe-c4afd3c15032" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="16" executed="16" passed="16" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.27]   Finished:    Task.ServiceHosts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
