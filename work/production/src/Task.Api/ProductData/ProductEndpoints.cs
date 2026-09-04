@@ -15,7 +15,7 @@ internal static class ProductEndpoints
     {
         foreach (var route in ProductApiRoutes.All)
             app.MapMethods(route.Path, [route.Method], (Delegate)((HttpContext context) => HandleAsync(context, route)))
-                .RequireAuthorization();
+                .RequireAuthorization(TaskPermissionAuthorization.GetProductRoutePolicyName(route.Permission));
         return app;
     }
 

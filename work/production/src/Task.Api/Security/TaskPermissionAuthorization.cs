@@ -85,6 +85,12 @@ internal static class TaskPermissionAuthorization
         (route.Permission.ToLowerInvariant(), route.Permission)).Distinct().Where(pair => pair.Item2 is not ("Task.Read" or "Task.Create" or "Task.Update" or "Task.ChangeStatus")),
     ];
 
+    public static string GetProductRoutePolicyName(string permissionCode) =>
+        "permission." + NormalizeProductRoutePermissionCode(permissionCode);
+
+    private static string NormalizeProductRoutePermissionCode(string permissionCode) =>
+        PermissionCode.Parse(permissionCode).Value.ToLowerInvariant();
+
     /// <summary>
     /// Requires the caller to hold the given permission code within the organization of the
     /// authenticated request. Denial is decided solely by the decision engine D3 (#8):
@@ -196,6 +202,22 @@ internal static class TaskPermissionAuthorization
             options.AddPolicy(TaskCreatePolicyName, policy => policy.RequirePermission(TaskCreateBackingPermissionCode));
             options.AddPolicy(TaskUpdatePolicyName, policy => policy.RequirePermission(TaskUpdateBackingPermissionCode));
             options.AddPolicy(TaskChangeStatusPolicyName, policy => policy.RequirePermission(TaskChangeStatusBackingPermissionCode));
+
+            foreach (var routePermission in Task.Application.ProductData.ProductApiRoutes.All
+                         .Select(static route => route.Permission)
+                         .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                var policyName = GetProductRoutePolicyName(routePermission);
+                if (options.GetPolicy(policyName) is not null)
+                {
+                    continue;
+                }
+
+                var permissionCode = NormalizeProductRoutePermissionCode(routePermission);
+                options.AddPolicy(
+                    policyName,
+                    policy => policy.RequirePermission(permissionCode));
+            }
         });
 
         return services;

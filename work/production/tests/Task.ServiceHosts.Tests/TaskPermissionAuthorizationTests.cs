@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Task.Api.Security;
+using Task.Application.ProductData;
 using Task.Application.Security;
 
 namespace Task.ServiceHosts.Tests;
@@ -126,6 +127,24 @@ public sealed class TaskPermissionAuthorizationTests
         var taskStatusPolicy = await policyProvider.GetPolicyAsync(TaskPermissionAuthorization.TaskChangeStatusPolicyName);
         Assert.Equal(TaskPermissionAuthorization.TaskChangeStatusBackingPermissionCode,
             Assert.IsType<TaskPermissionAuthorization.PermissionRequirement>(Assert.Single(taskStatusPolicy!.Requirements)).Code);
+
+        foreach (var routePermission in ProductApiRoutes.All
+                     .Select(static route => route.Permission)
+                     .Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            var policy = await policyProvider.GetPolicyAsync(
+                TaskPermissionAuthorization.GetProductRoutePolicyName(routePermission));
+
+            Assert.NotNull(policy);
+
+            var requirement = Assert.Single(
+                policy.Requirements
+                    .OfType<TaskPermissionAuthorization.PermissionRequirement>());
+
+            Assert.Equal(
+                PermissionCode.Parse(routePermission).Value.ToLowerInvariant(),
+                requirement.Code);
+        }
 
         Assert.Null(await policyProvider.GetPolicyAsync("permission.unknown"));
     }

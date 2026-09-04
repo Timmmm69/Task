@@ -3,9 +3,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Task.Api.ProductData;
@@ -22,6 +25,40 @@ public sealed class ProductEndpointsTests
     private static readonly Guid Session = Guid.NewGuid();
     private static readonly Guid ObjectId = Guid.NewGuid();
     public static IEnumerable<object[]> Routes => ProductApiRoutes.All.Select(route => new object[] { route.Method, route.Path });
+    public static IEnumerable<object[]> RoutePolicies =>
+        ProductApiRoutes.All.Select(route =>
+            new object[] { route.Method, route.Path, route.Permission });
+
+    [Theory]
+    [MemberData(nameof(RoutePolicies))]
+    public void EveryRouteDeclaresItsPermissionPolicy(
+        string method,
+        string path,
+        string permission)
+    {
+        using var server = Server(new RecordingStore());
+
+        var endpoint = Assert.Single(
+            server.Services
+                .GetRequiredService<EndpointDataSource>()
+                .Endpoints
+                .OfType<RouteEndpoint>(),
+            candidate =>
+                candidate.RoutePattern.RawText == path &&
+                candidate.Metadata
+                    .GetMetadata<HttpMethodMetadata>()?
+                    .HttpMethods
+                    .Contains(method, StringComparer.OrdinalIgnoreCase) == true);
+
+        var policies = endpoint.Metadata
+            .GetOrderedMetadata<IAuthorizeData>()
+            .Select(static metadata => metadata.Policy)
+            .OfType<string>();
+
+        Assert.Contains(
+            TaskPermissionAuthorization.GetProductRoutePolicyName(permission),
+            policies);
+    }
 
     [Theory]
     [MemberData(nameof(Routes))]
@@ -122,9 +159,13 @@ public sealed class ProductEndpointsTests
     private static TestServer Server(RecordingStore store, bool permitted = true) => new(new WebHostBuilder()
         .ConfigureServices(services =>
         {
-            services.AddRouting(); services.AddAuthorization(); services.AddLogging();
+            services.AddRouting();
+            services.AddLogging();
             services.AddSingleton<IProductApiStore>(store);
-            services.AddSingleton<IAuthorizationPolicyStore>(new Policy(permitted)); services.AddSingleton<PermissionDecisionService>();
+            services.AddSingleton<IAuthorizationPolicyStore>(new Policy(permitted));
+            services.AddSingleton<PermissionDecisionService>();
+            services.AddTaskPermissionAuthorization();
+            services.AddSingleton<IAuthorizationMiddlewareResultHandler, TestAuthorizationResultHandler>();
         })
         .Configure(app =>
         {
@@ -152,5 +193,26 @@ public sealed class ProductEndpointsTests
             System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyGrantRow>>(allowed ? [new(true)] : []);
         public Task<IReadOnlyList<PolicyDenyRow>> GetUserDeniesAsync(Guid orgId, Guid userId, string permissionCode, CancellationToken cancellationToken = default) =>
             System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyDenyRow>>([]);
+    }
+
+    private sealed class TestAuthorizationResultHandler
+        : IAuthorizationMiddlewareResultHandler
+    {
+        public async System.Threading.Tasks.Task HandleAsync(
+            RequestDelegate next,
+            HttpContext context,
+            AuthorizationPolicy policy,
+            PolicyAuthorizationResult authorizeResult)
+        {
+            if (authorizeResult.Succeeded)
+            {
+                await next(context);
+                return;
+            }
+
+            context.Response.StatusCode = authorizeResult.Challenged
+                ? StatusCodes.Status401Unauthorized
+                : StatusCodes.Status403Forbidden;
+        }
     }
 }

@@ -607,14 +607,16 @@
       "weight": 13,
       "criticality": "critical",
       "status": "in_progress",
-      "progress": 50,
+      "progress": 55,
       "evidence": [
         "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+        "work/production/src/Task.Api/ProductData/ProductEndpoints.cs: every ProductApiRoute requires its permission policy",
+        "work/production/tests/Task.ServiceHosts.Tests/ProductEndpointsTests.cs: route metadata and pre-handler deny coverage",
         "work/production/src/Task.Infrastructure/Persistence/Migrations/004_role_permissions_effect.sql",
         "work/PROJECT_CONTINUATION.md: authorization completion remains"
       ],
-      "note": "Task/auth permissions есть; полная матрица ролей по всем модулям не реализована.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Product API routes требуют capability policy до handler; object-level visibility и полная системная матрица ролей ещё не реализованы.",
+      "updated_at": "2026-09-04T00:00:00+03:00",
       "priority": 3,
       "dependencies": [
         "SEC-01",
@@ -622,7 +624,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 3,
-      "next_action": "Применить полную role/capability matrix ко всем API и подтвердить tenant isolation негативными тестами."
+      "next_action": "Закрыть object-level visibility для contacts/catalog/interactions/files, затем безопасно назначить системные роли."
     },
     {
       "id": "SEC-03",
