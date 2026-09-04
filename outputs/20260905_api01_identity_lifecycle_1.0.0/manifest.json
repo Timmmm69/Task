@@ -1,0 +1,269 @@
+{
+  "task": "API-01",
+  "version": "1.0.0",
+  "status": "validated",
+  "baseCommit": "e03bcf077afad450e9abec2421e2f4449a121f39",
+  "testsPassed": 1593,
+  "files": [
+    {
+      "path": "evidence/novik_TIM_2026-09-05_02_49_13_net10.0.trx",
+      "bytes": 368081,
+      "sha256": "fba57e9ca6602077c087fbd7d5545d07cdffe42725fbdad0238be0015977ef14"
+    },
+    {
+      "path": "evidence/novik_TIM_2026-09-05_02_49_14_net10.0.trx",
+      "bytes": 816716,
+      "sha256": "6d5e4674606428e21e2fcb86578df56a4a6d0682aaa0f3936b9e84c5755e6724"
+    },
+    {
+      "path": "evidence/novik_TIM_2026-09-05_02_49_14_net10.0[1].trx",
+      "bytes": 1049539,
+      "sha256": "8c0ff31bfde89e7a0546ccfcaac796ad6a14ff73d5cf604c8ce82fcf6ed8fea1"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 55898,
+      "sha256": "abaf053079cc93b1b56de4fd31032a11d77c34e981801278bb998f6da6dc234c"
+    },
+    {
+      "path": "source/work/production/docs/api01-identity-lifecycle.md",
+      "bytes": 6469,
+      "sha256": "8e1912c649037e13b630dfba946591b7bcd3b5cc220d27b5622eb510950d5e4d"
+    },
+    {
+      "path": "source/work/production/evidence/api01/.gitignore",
+      "bytes": 14,
+      "sha256": "240a3e0d37d2e86b614063f5347eb02d4f99ca6c254de6b82871ff8d95532a7d"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Auth/AuthEndpoints.cs",
+      "bytes": 16394,
+      "sha256": "3b152e21888aa4e63d8a212e1f9b049eeebf27c4f3fa6eaa1103cb66287e321d"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Auth/AuthSessionEndpoints.cs",
+      "bytes": 26455,
+      "sha256": "7b867e16d66f1d62909160c7baa03e9e13a56669f55bdfb1d344c9fcb161f5f3"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Auth/DeviceEndpoints.cs",
+      "bytes": 13944,
+      "sha256": "848426667688693ada54596411f55a55b7a8a7337b077e43c72bbb78c5efb775"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Program.cs",
+      "bytes": 10483,
+      "sha256": "361f129cc9d0febce12472094ae7022977e81e69e227c023cd2abf8db9a5420c"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Security/AccessTokenValidator.cs",
+      "bytes": 12900,
+      "sha256": "98a017cae13043b9a4e2504cd5fb36b82b729dac208c1e742e7d002b456e74f4"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Security/IdentityRequestHash.cs",
+      "bytes": 1340,
+      "sha256": "380f5dc5c971a85e11e051786460b2eb957bc239c778205890e41e52a201c0e9"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Security/IdentityScope.cs",
+      "bytes": 493,
+      "sha256": "223bdf0cf348196fe6e36f1ab0731b400eece82292811ad184bd2eed38dca930"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Security/TaskJwtAuthenticationHandler.cs",
+      "bytes": 7572,
+      "sha256": "c9b8c6d4e484137a76f61493c009c149ab71b5ac83e2c05bf5f8e80573d20da2"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "bytes": 14183,
+      "sha256": "37dd9e84d4a5d91697d7a36f5d5cb438ee473d06c6f681cef4947d9841b2b1f0"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Users/UserEndpoints.cs",
+      "bytes": 25083,
+      "sha256": "7c8a5463d27fe9324bb2fe9143ea2e73422d65b16973a23088d31a76eb86086f"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Audit/IAuditEntryStore.cs",
+      "bytes": 3958,
+      "sha256": "3668ae6e9a84a931026fee6cbe96d97f391e6d256b2590dc17a226131ccd2223"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/IAccountLookupStore.cs",
+      "bytes": 1605,
+      "sha256": "42fa57f464603bb5b4b2c702d98f4e11868151cab2a9b77adbb56aef2113791d"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/IDeviceRegistrationStore.cs",
+      "bytes": 4023,
+      "sha256": "3046aafe9453eeb6e55ff6c79b29386ed2ee7d1b7cd90b517860a7dfaae56383"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/ISessionRepository.cs",
+      "bytes": 5894,
+      "sha256": "b37f0350e804c0ae1116f982f4e9fcfa66dc6dcb83514810edccc86f74caa55e"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/IUserAccountCommandStore.cs",
+      "bytes": 2796,
+      "sha256": "b07372aacaa8101751303b8017b1fcad0814b6696dcd39f41d29a00fd257d103"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/IUserAccountReadStore.cs",
+      "bytes": 1472,
+      "sha256": "2755086470f903fa3c42e38f8c27f131337c89cfd74e3fae53006bf4c4e5fba0"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/LoginService.cs",
+      "bytes": 15454,
+      "sha256": "8e0744371bd835154a919b140ac63ea148f67ec03036e1876aa766e6fe8a2a15"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/RefreshService.cs",
+      "bytes": 9920,
+      "sha256": "d6f8b45e0b15f395fbc3e3875e05e0fe3e804e2bad815586e727e2b702b63e43"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/SessionSnapshot.cs",
+      "bytes": 2851,
+      "sha256": "a8365fa9fc25ae2553a85d50de9a21e7cb39de00cc29001b6d7a81b2974e11be"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/Migrations/012_user_read_permission.sql",
+      "bytes": 2594,
+      "sha256": "0a92b0e804c7d58beca74a1e9d56db166bba3cce90d533bd07ef495070faf902"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresSessionRepository.cs",
+      "bytes": 29636,
+      "sha256": "9c214b53d69d8af27cf9eb7c2c51f993a93eb3661004bb6540ef4b7572e958ed"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountCommandStore.cs",
+      "bytes": 31158,
+      "sha256": "390424227c71a4e2c90493067300ce5733119ad6119df2584a019ce2a4247d3b"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountReadStore.cs",
+      "bytes": 7294,
+      "sha256": "3c6687bf08991c7f4feb398489b309be4633ff39b8ffc1de980a429789df1c97"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "bytes": 2193,
+      "sha256": "17b49ac4fbc62555fd2c3153c39c0c83ba28019cbca93178ca6e89556c02ce61"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs",
+      "bytes": 9570,
+      "sha256": "c85538c5937855c93ffcd48e65025e670404a301faca51a7b850cbf53a85ed60"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresAccountCredentialStore.cs",
+      "bytes": 16767,
+      "sha256": "d6ecd2424b2e281b69bf4ee84eccb016f02d965b53cf94de2da09866af762a83"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresAccountLookupStore.cs",
+      "bytes": 3241,
+      "sha256": "fb588907ab9fb618ab0abd6e8dcb711f54eb908cb4fb12be200868afaa3e1c66"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresAuditEntryStore.cs",
+      "bytes": 12210,
+      "sha256": "c51517819f9da584cdbde257d99809e7b32a3a9c88b396a3da70bf48b792fb7c"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresDeviceManagementStore.cs",
+      "bytes": 19518,
+      "sha256": "6c5aeecc05cb4cc76cc5df50837a24ad0b0f9511e241467f61f69325a9b0cc2e"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresDeviceRegistrationStore.cs",
+      "bytes": 8110,
+      "sha256": "3030b9218bcb51121ca04f3522ade27445aa5c3d665457e5007ccd21b18f3048"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/AuthEndpointsTests.cs",
+      "bytes": 29690,
+      "sha256": "252748156c024abbbb0be5b3a8669b9a9eadcb9a8b2e57f315aa13992f42a90e"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/AuthSessionEndpointsTests.cs",
+      "bytes": 37151,
+      "sha256": "4bdaa0eec93dc02b19119bde8a65f0b212809290b82a2659d0b819f1c5ae3938"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/DeviceEndpointsTests.cs",
+      "bytes": 6254,
+      "sha256": "d317d7d711f04cc33a2df0da8f11e3e56e4414253a2d92c565a4464a004ab011"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/IdentityValidationTests.cs",
+      "bytes": 4835,
+      "sha256": "50a558b65cae2d8c90e0027bd67d9b7cc6ef29ce08aa944500d816ef45fff5c6"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/TaskEndpointsTests.cs",
+      "bytes": 25281,
+      "sha256": "6c84d69748c9df447662a600c4374c167828344b2da8134840969559a57c92d2"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/TaskPermissionAuthorizationTests.cs",
+      "bytes": 12211,
+      "sha256": "9e66bc51f158fc2fdccbdfcf114e6506460e1963d41691f44f78b04785d86d84"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/UserEndpointsTests.cs",
+      "bytes": 14296,
+      "sha256": "51eece45fbb9a70babc952a1bb09f861295b130aa6e23c5ee664e861ec018b43"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresIdentityLifecycleTests.cs",
+      "bytes": 12655,
+      "sha256": "78f3357b4f073b68710fa534ac3c85a0731d6af13e39a5a4b0e4bd1923d22bd6"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/Security/LoginServiceTests.cs",
+      "bytes": 25878,
+      "sha256": "63668df7ca413485bbd12619853d985f8f8b875eff55b1e48a74ff75426ad32c"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/Security/RefreshServiceTests.cs",
+      "bytes": 21512,
+      "sha256": "a3c3840d75a9cd1ee334d15b541a61cf4c0be56530355e39d199fad82598fdb4"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "bytes": 2933,
+      "sha256": "c2b87dc2f29b70bdb357244ba3c08b7a5fb9baebe1d9167c0231d593a57c12af"
+    },
+    {
+      "path": "source/work/production/verification/api01-package-files.json",
+      "bytes": 3437,
+      "sha256": "ece068a46685d96773b92c0cfeee5f258580466d0038d1ba1969733157e7788e"
+    },
+    {
+      "path": "source/work/production/verification/Build-IdentityApiPackage.py",
+      "bytes": 5974,
+      "sha256": "0e32cdcb3ebcdd8c546ab9940f53315e7d523e717264af92e1b89438e7a7709f"
+    },
+    {
+      "path": "source/work/production/verification/Test-IdentityApi.ps1",
+      "bytes": 2263,
+      "sha256": "cdceed517ecfcc9dbdba4ed1309f9f780ddbdb35d1dbaca55c675c3eb92b0910"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 2483,
+      "sha256": "66b2156a6d39270da2cd52026b99204d41bcafe9da93420c88f6ae2329a76b89"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
