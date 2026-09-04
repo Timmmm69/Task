@@ -14,7 +14,7 @@ public sealed record TaskUpdateModel(
     string? Title,
     TaskPriority? Priority,
     OptionalInstant StartsAtUtc,
-    OptionalInstant DeadlineAt);
+    OptionalInstant DeadlineAt, string? CardPatch = null);
 
 /// <summary>Conflict classification produced by the update pre-check.</summary>
 public sealed class TaskUpdateConflictException : Exception
@@ -98,7 +98,7 @@ public sealed class TaskUpdateCommandService
                     model.Title,
                     model.Priority,
                     model.StartsAtUtc,
-                    model.DeadlineAt);
+                    model.DeadlineAt, currentTask.Content.Apply(model.CardPatch));
                 return new TaskWriteMutationResult(updated, createHttpResult(updated), changedFields);
             });
 
@@ -168,6 +168,14 @@ public sealed class TaskUpdateCommandService
             changed.Add("deadlineAt");
         }
 
+        if (model.CardPatch is not null && current.Content.Apply(model.CardPatch).ToJson() != current.Content.ToJson())
+        {
+            using var patch = JsonDocument.Parse(model.CardPatch);
+            using var before = JsonDocument.Parse(current.Content.ToJson());
+            using var after = JsonDocument.Parse(current.Content.Apply(model.CardPatch).ToJson());
+            changed.AddRange(patch.RootElement.EnumerateObject().Where(p =>
+                before.RootElement.GetProperty(p.Name).GetRawText() != after.RootElement.GetProperty(p.Name).GetRawText()).Select(p => p.Name));
+        }
         return changed;
     }
 
@@ -194,6 +202,11 @@ public sealed class TaskUpdateCommandService
             requested.Add("deadlineAt");
         }
 
+        if (model.CardPatch is not null)
+        {
+            using var patch = JsonDocument.Parse(model.CardPatch);
+            requested.AddRange(patch.RootElement.EnumerateObject().Select(p => p.Name));
+        }
         return requested;
     }
 

@@ -34,6 +34,8 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         try
         {
+            using (var scopeLock = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtextextended('task-product-api:' || $1::text,0));", connection, transaction))
+            { scopeLock.Parameters.AddWithValue(command.OrganizationId); await scopeLock.ExecuteNonQueryAsync(cancellationToken); }
             AcquireResult acquire;
             try
             {
@@ -56,6 +58,8 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
 
             if (acquire.Disposition == "replay")
             {
+                var replayedTask = PostgresTaskAggregateStore.Get(connection, transaction, acquire.ResourceId ?? command.TaskId, command.OrganizationId);
+                if (replayedTask is not null) PostgresTaskCardValidation.EnsureVisible(connection, transaction, replayedTask, command.ActorUserId);
                 await transaction.CommitAsync(cancellationToken);
                 return new(
                     TaskWriteCommandDisposition.Replayed,
@@ -107,8 +111,11 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                 }
             }
 
+            if (current is not null) PostgresTaskCardValidation.EnsureVisible(connection, transaction, current, command.ActorUserId);
             var mutation = command.Mutation(current)
                 ?? throw new InvalidOperationException("The Task mutation returned no result.");
+            if (current is null || current.Content.ToJson() != mutation.Aggregate.Content.ToJson())
+                PostgresTaskCardValidation.Validate(connection, transaction, mutation.Aggregate, command.ActorUserId, current);
             var changedFields = mutation.ChangedFields ?? command.ChangedFields;
             ValidateMutation(command, mutation, current, changedFields);
             var safePayloadJson = mutation.SafePayloadJson ?? command.SafePayloadJson;

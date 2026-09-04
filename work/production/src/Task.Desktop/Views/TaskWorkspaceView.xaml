@@ -1,0 +1,51 @@
+<UserControl x:Class="Task.Desktop.Views.TaskWorkspaceView" x:Name="Workspace"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <UserControl.Resources>
+  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,5"/></Style>
+  <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Margin" Value="0,4,5,4"/></Style>
+  <Style TargetType="Expander"><Setter Property="Margin" Value="0,12,0,0"/><Setter Property="IsExpanded" Value="True"/></Style>
+ </UserControl.Resources>
+ <StackPanel>
+  <TextBlock Text="{Binding ContextText}"/>
+  <TextBlock Text="{Binding Message}" AutomationProperties.LiveSetting="Assertive"/>
+  <Button Content="Обновить связи" Command="{Binding RefreshCommand}"/>
+  <Expander Header="Чек-лист"><StackPanel>
+   <ItemsControl ItemsSource="{Binding Checklist}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,3">
+    <TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><WrapPanel>
+     <Button Command="{Binding DataContext.ToggleCheckCommand,ElementName=Workspace}" CommandParameter="{Binding}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Content" Value="Отметить готовым"/><Style.Triggers><DataTrigger Binding="{Binding Completed}" Value="True"><Setter Property="Content" Value="Готово · вернуть"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
+     <Button Content="Удалить пункт" Command="{Binding DataContext.RemoveCheckCommand,ElementName=Workspace}" CommandParameter="{Binding}"/>
+    </WrapPanel></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   <TextBox Text="{Binding CheckText,UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Новый пункт чек-листа"/>
+   <Button Content="Добавить пункт" Command="{Binding AddCheckCommand}"/>
+  </StackPanel></Expander>
+  <Expander Header="Подзадачи"><StackPanel>
+   <TextBlock Text="Чтобы добавить подзадачу, создайте задачу и выберите эту задачу как родительскую."/>
+   <ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  </StackPanel></Expander>
+  <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,14,0,5"/>
+  <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск файлов и зависимостей"/>
+  <Button Content="Найти связи" Command="{Binding SearchCommand}"/>
+  <Expander Header="Связанные файлы"><StackPanel>
+   <TextBlock Text="{Binding FilesNotice}"/>
+   <ItemsControl ItemsSource="{Binding Files}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать связь" Command="{Binding DataContext.RemoveFileCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   <ComboBox ItemsSource="{Binding FileOptions}" SelectedItem="{Binding File}" DisplayMemberPath="Name" AutomationProperties.Name="Файл для задачи"/>
+   <Button Content="Связать с файлом" Command="{Binding AddFileCommand}"/>
+  </StackPanel></Expander>
+  <Expander Header="Предшествующие задачи"><StackPanel>
+   <TextBlock Text="Зависимость «окончание — начало». Перед завершением проверьте состояния предшествующих задач."/>
+   <ItemsControl ItemsSource="{Binding Dependencies}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать зависимость" Command="{Binding DataContext.RemoveDependencyCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   <ComboBox ItemsSource="{Binding TaskOptions}" SelectedItem="{Binding Dependency}" DisplayMemberPath="Name" AutomationProperties.Name="Предшествующая задача"/>
+   <Button Content="Добавить зависимость" Command="{Binding AddDependencyCommand}"/>
+  </StackPanel></Expander>
+  <Expander Header="Комментарии"><StackPanel>
+   <TextBlock Text="Последние 200 комментариев"/>
+   <ItemsControl ItemsSource="{Binding Comments}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}" Margin="0,6"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   <TextBox Text="{Binding Comment,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="70" MaxHeight="150" VerticalScrollBarVisibility="Auto" MaxLength="50000" AutomationProperties.Name="Новый комментарий задачи"/>
+   <Button Content="Добавить комментарий" Command="{Binding AddCommentCommand}"/>
+  </StackPanel></Expander>
+  <Expander Header="История изменений" IsExpanded="False"><StackPanel>
+   <TextBlock Text="{Binding HistoryNotice}"/>
+   <ItemsControl ItemsSource="{Binding History}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  </StackPanel></Expander>
+ </StackPanel>
+</UserControl>

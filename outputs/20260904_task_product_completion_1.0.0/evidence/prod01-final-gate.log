@@ -1,0 +1,15 @@
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\tmp\prod01-final-gate\prod01_net10.0_20260904170742.trx
+
+Пройден!   : не пройдено     0, пройдено   247, пропущено     0, всего   247, длительность 2 s. - Task.Desktop.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\tmp\prod01-final-gate\prod01_net10.0_20260904170758.trx
+
+Пройден!   : не пройдено     0, пройдено   432, пропущено     0, всего   432, длительность 16 s. - Task.ServiceHosts.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\tmp\prod01-final-gate\prod01_net10.0_20260904170805.trx
+
+Пройден!   : не пройдено     0, пройдено   779, пропущено     0, всего   779, длительность 24 s. - Task.Tests.dll (net10.0)

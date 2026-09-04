@@ -12,6 +12,10 @@ public interface ITaskReadStore
         Guid taskId,
         CancellationToken cancellationToken = default);
 
+    global::System.Threading.Tasks.Task<TaskReadProjection?> GetVisibleByIdAsync(
+        Guid organizationId, Guid taskId, Guid actorUserId, CancellationToken cancellationToken = default) =>
+        GetByIdAsync(organizationId, taskId, cancellationToken);
+
     global::System.Threading.Tasks.Task<TaskReadPage> GetPageAsync(
         TaskReadPageRequest request,
         CancellationToken cancellationToken = default);

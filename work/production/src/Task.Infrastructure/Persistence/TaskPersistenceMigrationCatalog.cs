@@ -17,6 +17,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(8, "calendar_recurrence", "008_calendar_recurrence.sql"),
         Load(9, "product_entity_stores", "009_product_entity_stores.sql"),
         Load(10, "product_api", "010_product_api.sql"),
+        Load(11, "task_card", "011_task_card.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

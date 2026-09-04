@@ -1,0 +1,23 @@
+[PASS] UI-created task row exists.
+[PASS] Production API process is stopped.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:64818.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Final GET succeeds after API restart.
+[PASS] Final server title matches the UI edit.
+[PASS] Final server priority matches the UI edit.
+[PASS] Final server status is completed.
+[PASS] Final list contains the UI-created task after restart.
+[PASS] UI lifecycle emitted durable audit evidence.
+[PASS] UI lifecycle emitted durable domain events.
+[PASS] Every UI domain event has one outbox message.
+[PASS] Every successful UI mutation has one completed idempotency record.
+[PASS] Task description survived edit, transitions and API restart.
+[PASS] Date-only planning and duration survived API restart.
+[PASS] Assigned participant survived the entire lifecycle.
+[PASS] Completion timestamp was persisted.
+[PASS] Task workspace is readable after restart.
+[PASS] UI checklist completion survived restart.
+[PASS] UI comment survived restart.
+[PASS] Workspace displays the durable task history.
+[PASS] REAL TASK WRITE E2E PASSED.

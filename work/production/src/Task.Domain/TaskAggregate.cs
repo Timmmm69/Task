@@ -14,7 +14,7 @@ public sealed class TaskAggregate
         DateTimeOffset? completedAtUtc,
         Guid? completedBy,
         TaskPriority priority,
-        TaskSchedule schedule)
+        TaskSchedule schedule, TaskCardContent? content = null)
     {
         Metadata = metadata;
         Title = title;
@@ -23,6 +23,8 @@ public sealed class TaskAggregate
         CompletedBy = completedBy;
         Priority = priority;
         Schedule = schedule;
+        Content = content ?? new TaskCardContent();
+        Content.Validate(schedule.StartsAtUtc);
     }
 
     public SyncableEntityMetadata Metadata { get; }
@@ -35,6 +37,8 @@ public sealed class TaskAggregate
 
     public TaskSchedule Schedule { get; }
 
+    public TaskCardContent Content { get; }
+
     public DateTimeOffset? CompletedAtUtc { get; }
 
     public Guid? CompletedBy { get; }
@@ -46,7 +50,7 @@ public sealed class TaskAggregate
         string title,
         DateTimeOffset createdAtUtc,
         TaskPriority priority = TaskPriority.Normal,
-        TaskSchedule? schedule = null)
+        TaskSchedule? schedule = null, TaskCardContent? content = null)
     {
         var normalizedTitle = EnsureValidTitle(title);
         if (!Enum.IsDefined(priority))
@@ -62,7 +66,7 @@ public sealed class TaskAggregate
             completedAtUtc: null,
             completedBy: null,
             priority,
-            schedule ?? TaskSchedule.Create(null, null));
+            schedule ?? TaskSchedule.Create(null, null), content);
     }
 
     public static TaskAggregate Reconstitute(
@@ -72,7 +76,7 @@ public sealed class TaskAggregate
         DateTimeOffset? completedAtUtc,
         Guid? completedBy,
         TaskPriority priority,
-        TaskSchedule schedule)
+        TaskSchedule schedule, TaskCardContent? content = null)
     {
         ArgumentNullException.ThrowIfNull(metadata);
         ArgumentNullException.ThrowIfNull(schedule);
@@ -117,7 +121,7 @@ public sealed class TaskAggregate
             completedAtUtc,
             completedBy,
             priority,
-            schedule);
+            schedule, content);
     }
 
     public TaskAggregate Rename(Guid actorId, string title, DateTimeOffset occurredAtUtc)
@@ -127,7 +131,7 @@ public sealed class TaskAggregate
         var normalizedTitle = EnsureValidTitle(title);
         var metadata = Metadata.RecordVisibleChange(actorId, occurredAtUtc);
 
-        return new TaskAggregate(metadata, normalizedTitle, WorkStatus, CompletedAtUtc, CompletedBy, Priority, Schedule);
+        return new TaskAggregate(metadata, normalizedTitle, WorkStatus, CompletedAtUtc, CompletedBy, Priority, Schedule, Content);
     }
 
     public TaskAggregate Start(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -145,7 +149,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate SubmitForReview(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -163,7 +167,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate Complete(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -181,7 +185,7 @@ public sealed class TaskAggregate
             occurredAtUtc,
             actorId,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate Cancel(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -199,7 +203,7 @@ public sealed class TaskAggregate
             completedAtUtc: null,
             completedBy: null,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate Archive(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -217,7 +221,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate RestoreFromArchive(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -229,7 +233,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate MoveToTrash(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -247,7 +251,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate RestoreFromTrash(Guid actorId, DateTimeOffset occurredAtUtc)
@@ -259,7 +263,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate ChangePriority(Guid actorId, TaskPriority priority, DateTimeOffset occurredAtUtc)
@@ -283,7 +287,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             priority,
-            Schedule);
+            Schedule, Content);
     }
 
     public TaskAggregate Reschedule(Guid actorId, TaskSchedule schedule, DateTimeOffset occurredAtUtc)
@@ -307,7 +311,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             Priority,
-            schedule);
+            schedule, Content);
     }
 
     /// <summary>
@@ -325,7 +329,7 @@ public sealed class TaskAggregate
         string? title,
         TaskPriority? priority,
         OptionalInstant startsAtUtc,
-        OptionalInstant deadlineAt)
+        OptionalInstant deadlineAt, TaskCardContent? content = null)
     {
         EnsureActive("An archived or trashed task must be restored before its fields can be updated.");
         EnsureNotTerminal("A completed or cancelled task cannot be updated.");
@@ -346,7 +350,10 @@ public sealed class TaskAggregate
         var effectiveDeadline = deadlineAt.Specified ? deadlineAt.Value : Schedule.DeadlineUtc;
         var effectiveSchedule = TaskSchedule.Create(effectiveStart, effectiveDeadline);
 
-        if (effectiveTitle == Title && effectivePriority == Priority && effectiveSchedule == Schedule)
+        var effectiveContent = content ?? Content;
+        effectiveContent.Validate(effectiveStart);
+        if (effectiveTitle == Title && effectivePriority == Priority && effectiveSchedule == Schedule
+            && effectiveContent.ToJson() == Content.ToJson())
         {
             return this;
         }
@@ -358,7 +365,7 @@ public sealed class TaskAggregate
             CompletedAtUtc,
             CompletedBy,
             effectivePriority,
-            effectiveSchedule);
+            effectiveSchedule, effectiveContent);
     }
 
     public bool IsOverdue(DateTimeOffset nowUtc) =>

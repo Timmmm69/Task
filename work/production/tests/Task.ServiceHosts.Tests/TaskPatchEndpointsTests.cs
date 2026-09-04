@@ -176,8 +176,8 @@ public sealed partial class TaskEndpointsTests
 
     [Theory]
     [InlineData("""{"status":"in_progress"}""")]
-    [InlineData("""{"description":"not yet"}""")]
-    [InlineData("""{"projectId":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}""")]
+    [InlineData("""{"unsupportedDescription":"not yet"}""")]
+    [InlineData("""{"unsupportedProjectId":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}""")]
     [InlineData("""{"unknown":true}""")]
     [InlineData("""{}""")]
     public async global::System.Threading.Tasks.Task PatchTask_WithUnsupportedOrEmptyBody_Returns400(string body)

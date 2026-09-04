@@ -74,6 +74,7 @@ internal static class TaskPermissionAuthorization
         (TaskReadBackingPermissionCode, "Calendar.Read"),
         (TaskCreateBackingPermissionCode, "Task.Create"),
         (TaskUpdateBackingPermissionCode, "Task.Update"),
+        ("task.assign", "Task.Assign"), ("task.watch", "Task.Watch"),
         (TaskChangeStatusBackingPermissionCode, "Task.ChangeStatus"),
         (CalendarEventCreateBackingPermissionCode, "CalendarEvent.Create"),
         (CalendarEventUpdateBackingPermissionCode, "CalendarEvent.Update"),
@@ -81,7 +82,7 @@ internal static class TaskPermissionAuthorization
         ("recurrence.read", "Recurrence.Read"),
         ("recurrence.manage", "Recurrence.Manage"),
     .. Task.Application.ProductData.ProductApiRoutes.All.Select(route =>
-        (route.Permission.ToLowerInvariant(), route.Permission)).Distinct(),
+        (route.Permission.ToLowerInvariant(), route.Permission)).Distinct().Where(pair => pair.Item2 is not ("Task.Read" or "Task.Create" or "Task.Update" or "Task.ChangeStatus")),
     ];
 
     /// <summary>

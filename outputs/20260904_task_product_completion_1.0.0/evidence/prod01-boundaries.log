@@ -1,0 +1,12 @@
+[ OK ] Task.Api (TargetFramework: net10.0, ProjectReferences: Task.Application Task.Infrastructure )
+[ OK ] Task.Application (TargetFramework: net10.0, ProjectReferences: Task.Domain )
+[ OK ] Task.BackupAgent (TargetFramework: net10.0, ProjectReferences: Task.Application Task.Infrastructure )
+[ OK ] Task.DatabaseMigrator (TargetFramework: net10.0, ProjectReferences: Task.Infrastructure )
+[ OK ] Task.Desktop (TargetFramework: net10.0-windows, ProjectReferences: Task.Application )
+[ OK ] Task.Domain (TargetFramework: net10.0, ProjectReferences:  )
+[ OK ] Task.Infrastructure (TargetFramework: net10.0, ProjectReferences: Task.Application Task.Domain )
+[ OK ] Task.Worker (TargetFramework: net10.0, ProjectReferences: Task.Application Task.Infrastructure )
+[ OK ] Task.Tests (IsTestProject: true)
+[ OK ] Task.ServiceHosts.Tests (IsTestProject: true)
+[ OK ] Task.Desktop.Tests (IsTestProject: true)
+[ OK ] All production and test project boundaries are valid.

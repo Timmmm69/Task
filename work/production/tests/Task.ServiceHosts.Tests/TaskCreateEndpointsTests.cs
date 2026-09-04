@@ -106,9 +106,9 @@ public sealed partial class TaskEndpointsTests
     }
 
     [Theory]
-    [InlineData("""{"title":"A","description":"no"}""")]
+    [InlineData("""{"title":"A","unsupportedDescription":"no"}""")]
     [InlineData("""{"title":"A","status":"new"}""")]
-    [InlineData("""{"title":"A","projectId":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}""")]
+    [InlineData("""{"title":"A","unsupportedProjectId":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}""")]
     [InlineData("""{"title":"A","unknown":true}""")]
     public async global::System.Threading.Tasks.Task PostTask_UnknownProperty_Returns400(string body)
     {
@@ -310,7 +310,7 @@ public sealed partial class TaskEndpointsTests
             task.WorkStatus,
             task.Priority,
             task.Schedule.StartsAtUtc,
-            task.Schedule.DeadlineUtc);
+            task.Schedule.DeadlineUtc, task.Content, task.CompletedAtUtc);
 
     private sealed class FakeTaskWriteCommandExecutor : ITaskWriteCommandExecutor
     {

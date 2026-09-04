@@ -51,6 +51,15 @@ public static class ProductApiRoutes
             void Add(string method, string path, string operation, string code, bool version = false, bool key = false) =>
                 routes.Add(new(method, "/api/v1/" + path, resource, operation, code, version, key));
         }
+        Extra("GET", "tasks/options", "tasks", "task-options", "Task.Read");
+        Extra("GET", "tasks/{id}/workspace", "tasks", "task-workspace", "Task.Read");
+        Extra("GET", "tasks/{id}/history", "tasks", "history", "History.Read");
+        Extra("POST", "tasks/{id}/checklist", "tasks", "task-check-add", "Task.Update", true, true);
+        Extra("PATCH", "tasks/{id}/checklist/{childId}", "tasks", "task-check-patch", "Task.Update", true, true);
+        Extra("DELETE", "tasks/{id}/checklist/{childId}", "tasks", "task-check-remove", "Task.Update", true, true);
+        Extra("POST", "tasks/{id}/comments", "tasks", "task-comment-add", "Comment.Create", true, true);
+        Extra("POST", "tasks/{id}/dependencies", "tasks", "task-dependency-add", "Task.Update", true, true);
+        Extra("DELETE", "tasks/{id}/dependencies/{childId}", "tasks", "task-dependency-remove", "Task.Update", true, true);
         Extra("GET", "projects/{id}/members", "projects", "members", "Project.ManageMembers");
         Extra("POST", "projects/{id}/members", "projects", "member-add", "Project.ManageMembers", true, true);
         Extra("PATCH", "projects/{id}/members/{childId}", "projects", "member-patch", "Project.ManageMembers", true, true);

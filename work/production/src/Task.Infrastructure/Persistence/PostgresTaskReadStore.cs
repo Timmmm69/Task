@@ -22,9 +22,15 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
         _dataSource = dataSource;
     }
 
-    public async global::System.Threading.Tasks.Task<TaskReadProjection?> GetByIdAsync(
+    public global::System.Threading.Tasks.Task<TaskReadProjection?> GetByIdAsync(Guid organizationId, Guid taskId, CancellationToken cancellationToken = default) =>
+        ReadByIdAsync(organizationId, taskId, null, cancellationToken);
+
+    public global::System.Threading.Tasks.Task<TaskReadProjection?> GetVisibleByIdAsync(Guid organizationId, Guid taskId, Guid actorUserId, CancellationToken cancellationToken = default) =>
+        ReadByIdAsync(organizationId, taskId, actorUserId, cancellationToken);
+
+    private async global::System.Threading.Tasks.Task<TaskReadProjection?> ReadByIdAsync(
         Guid organizationId,
-        Guid taskId,
+        Guid taskId, Guid? actorUserId,
         CancellationToken cancellationToken = default)
     {
         EnsureIdentifier(organizationId, nameof(organizationId));
@@ -44,18 +50,20 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 t.status,
                 t.priority,
                 t.start_at_utc,
-                t.deadline_at
+                t.deadline_at, t.card_content, t.completed_at,
+                (SELECT series_id FROM calendar.recurrence_occurrences ro WHERE ro.organization_id=o.organization_id AND ro.task_id=o.id LIMIT 1)
             FROM core.objects AS o
             INNER JOIN work.tasks AS t
                 ON t.organization_id = o.organization_id AND t.id = o.id
             WHERE o.organization_id = $1
               AND o.id = $2
               AND o.object_type = 'task'
-              AND o.lifecycle_state = 'active';
+              AND o.lifecycle_state = 'active' AND ($3::uuid IS NULL OR work.task_visible(o.organization_id,t.id,$3));
             """,
             connection);
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = taskId });
+        AddNullableGuid(command, actorUserId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         return await reader.ReadAsync(cancellationToken) ? ReadProjection(reader) : null;
@@ -100,7 +108,8 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 t.status,
                 t.priority,
                 t.start_at_utc,
-                t.deadline_at,
+                t.deadline_at, t.card_content, t.completed_at,
+                (SELECT series_id FROM calendar.recurrence_occurrences ro WHERE ro.organization_id=o.organization_id AND ro.task_id=o.id LIMIT 1),
                 snapshot.boundary
             FROM snapshot
             CROSS JOIN core.objects AS o
@@ -108,7 +117,7 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 ON t.organization_id = o.organization_id AND t.id = o.id
             WHERE o.organization_id = $1
               AND o.object_type = 'task'
-              AND o.lifecycle_state = 'active'
+              AND o.lifecycle_state = 'active' AND work.task_visible(o.organization_id,t.id,$6)
               AND o.updated_at <= snapshot.boundary
               AND ($3::timestamptz IS NULL
                    OR o.updated_at < $3
@@ -125,11 +134,12 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
 
         var items = new List<TaskReadProjection>(PageSize + 1);
         DateTimeOffset? snapshotBoundaryUtc = null;
+        command.Parameters.AddWithValue(request.UserAccountId);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
             items.Add(ReadProjection(reader));
-            snapshotBoundaryUtc ??= ReadUtcTimestamp(reader, 11);
+            snapshotBoundaryUtc ??= ReadUtcTimestamp(reader, 14);
         }
 
         string? nextCursor = null;
@@ -160,7 +170,8 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
         ParseWorkStatus(reader.GetString(7)),
         ParsePriority(reader.GetString(8)),
         ReadNullableUtcTimestamp(reader, 9),
-        ReadNullableUtcTimestamp(reader, 10));
+        ReadNullableUtcTimestamp(reader, 10), TaskCardContent.FromJson(reader.GetString(11)),
+        ReadNullableUtcTimestamp(reader, 12), reader.IsDBNull(13) ? null : reader.GetGuid(13));
 
     private static DateTimeOffset ReadUtcTimestamp(NpgsqlDataReader reader, int ordinal) =>
         reader.GetFieldValue<DateTimeOffset>(ordinal).ToUniversalTime();

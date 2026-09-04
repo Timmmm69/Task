@@ -85,6 +85,8 @@ internal sealed partial class PostgresProductApiStore
 
     private static void CheckLinkWrite(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, (Resource Resource, JsonObject Object) parent)
     {
+        if (parent.Resource.Type == "task" && Text(parent.Object, "status") is "completed" or "cancelled")
+            throw Error(409, "INVALID_STATE_TRANSITION", "Task is closed.");
         var permission = parent.Resource.Type switch
         {
             "project" => "Project.Update",

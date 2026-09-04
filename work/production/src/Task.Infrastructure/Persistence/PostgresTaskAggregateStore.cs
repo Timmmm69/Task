@@ -51,7 +51,8 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
                 t.start_at_utc,
                 t.deadline_at,
                 t.completed_at,
-                t.completed_by
+                t.completed_by,
+                t.card_content
             FROM core.objects AS o
             INNER JOIN work.tasks AS t
                 ON t.organization_id = o.organization_id AND t.id = o.id
@@ -101,8 +102,8 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
             """
             INSERT INTO work.tasks (
                 id, organization_id, title, status, priority, start_at_utc,
-                deadline_at, completed_at, completed_by)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+                deadline_at, completed_at, completed_by, card_content)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
             """,
             connection,
             transaction))
@@ -151,7 +152,8 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
                     start_at_utc = $15,
                     deadline_at = $16,
                     completed_at = $17,
-                    completed_by = $18
+                    completed_by = $18,
+                    card_content = $19
                 FROM updated_object AS o
                 WHERE t.organization_id = o.organization_id AND t.id = o.id
                 RETURNING t.id
@@ -272,7 +274,8 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
             ReadNullableTimestamp(reader, 17),
             reader.IsDBNull(18) ? null : reader.GetGuid(18),
             ParsePriority(reader.GetString(14)),
-            TaskSchedule.Create(ReadNullableTimestamp(reader, 15), ReadNullableTimestamp(reader, 16)));
+            TaskSchedule.Create(ReadNullableTimestamp(reader, 15), ReadNullableTimestamp(reader, 16)),
+            TaskCardContent.FromJson(reader.GetString(19)));
     }
 
     private static void AddMetadataParameters(
@@ -315,6 +318,7 @@ public sealed class PostgresTaskAggregateStore : ITaskAggregateStore
         AddNullableTimestamp(command, task.Schedule.DeadlineUtc);
         AddNullableTimestamp(command, task.CompletedAtUtc);
         AddNullableGuid(command, task.CompletedBy);
+        command.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Jsonb, Value = task.Content.ToJson() });
     }
 
     private static void AddSaveParameters(NpgsqlCommand command, TaskAggregate task, int expectedVersion)

@@ -143,9 +143,15 @@ public sealed class TaskItemViewModel
 /// <summary>Localized fields shown in the selected-task detail area.</summary>
 public sealed class TaskDetailsViewModel
 {
+    public DesktopTaskDto Source { get; }
+    public string Description => Source.Card?.Description ?? "Описание не добавлено";
+    public string PlanningText => $"Дата: {Source.Card?.ScheduledDate?.ToString("dd.MM.yyyy") ?? "не указана"} · Длительность: {Source.Card?.PlannedDurationMinutes?.ToString() ?? "—"} мин";
+    public string CompletedText => TaskItemViewModel.FormatDate(Source.CompletedAtUtc, "Не завершена");
+    public string RecurrenceText => Source.RecurrenceSeriesId is null ? "Не повторяется" : "Задача повторяющейся серии";
     public TaskDetailsViewModel(DesktopTaskDto task)
     {
         ArgumentNullException.ThrowIfNull(task);
+        Source = task;
         Id = task.Id;
         Title = task.Title;
         StatusText = TaskItemViewModel.LocalizeStatus(task.Status);
@@ -241,11 +247,12 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             async (_, token) => await LoadNextPageAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy && HasNextPage);
         NewTaskCommand = new AsyncCommand(
-            (_, _) => { OpenCreateEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            async (_, token) => { OpenCreateEditor(); await LoadEditorOptionsAsync(token); },
             _ => CanCreate);
         EditTaskCommand = new AsyncCommand(
-            (_, _) => { OpenEditEditor(); return global::System.Threading.Tasks.Task.CompletedTask; },
+            async (_, token) => { OpenEditEditor(); await LoadEditorOptionsAsync(token); },
             _ => CanEdit);
+        LoadOptionsCommand = new AsyncCommand(async (_, token) => await LoadEditorOptionsAsync(token), _ => Editor is not null && !IsMutationBusy);
         SaveEditorCommand = new AsyncCommand(
             async (_, token) => await SaveEditorAsync(token).ConfigureAwait(true),
             _ => CanSaveEditor);
@@ -402,10 +409,37 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         private set => SetProperty(ref _announcement, value);
     }
 
+    public AsyncCommand LoadOptionsCommand { get; }
+
+    private async System.Threading.Tasks.Task LoadEditorOptionsAsync(CancellationToken token)
+    {
+        var editor = Editor;
+        if (editor is null || _client is not IDesktopTaskWorkspaceClient client) return;
+        editor.Card.CanAssign = _capabilities.Contains("Task.Assign");
+        editor.Card.CanWatch = _capabilities.Contains("Task.Watch");
+        var options = await client.GetOptionsAsync(editor.Card.Search, token);
+        if (Editor != editor) return;
+        if (options.Succeeded) editor.Card.SetOptions(options.Body!); else editor.Card.Message = options.Error;
+    }
+
+    public TaskWorkspaceViewModel? Workspace { get; private set; }
+
     public TaskDetailsViewModel? SelectedDetails
     {
         get => _selectedDetails;
-        private set => SetProperty(ref _selectedDetails, value);
+        private set
+        {
+            var previousWorkspace = SelectedDetails?.Id == value?.Id ? Workspace : null;
+            SetProperty(ref _selectedDetails, value);
+            Workspace = value is not null && _client is IDesktopTaskWorkspaceClient client
+                ? new TaskWorkspaceViewModel(_client, client, value.Source, _capabilities,
+                    task => { if (IsActive && SelectedDetails?.Id == task.Id) ApplyServerTask(task); },
+                    _activationCancellation?.Token ?? CancellationToken.None) : null;
+            if (previousWorkspace is not null) Workspace?.CopyDrafts(previousWorkspace);
+            Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites);
+            OnPropertyChanged(nameof(Workspace));
+            if (Workspace is not null) _ = Workspace.LoadAsync();
+        }
     }
 
     public TasksScreenState State
@@ -548,6 +582,8 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             ScreenMessage = "Право на изменение статуса было отозвано. Подтверждение отменено.";
         }
 
+        Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites);
+        if (Editor is not null) { Editor.Card.CanAssign = _capabilities.Contains("Task.Assign"); Editor.Card.CanWatch = _capabilities.Contains("Task.Watch"); }
         NotifyMutationState();
     }
 
@@ -560,6 +596,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         }
 
         _sessionAllowsWrites = allowsWrites;
+        Workspace?.UpdateAccess(_capabilities, allowsWrites);
         if (!allowsWrites)
         {
             Interlocked.Increment(ref _mutationGeneration);
@@ -1321,6 +1358,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanCancel));
         NewTaskCommand?.RaiseCanExecuteChanged();
         EditTaskCommand?.RaiseCanExecuteChanged();
+        LoadOptionsCommand?.RaiseCanExecuteChanged();
         SaveEditorCommand?.RaiseCanExecuteChanged();
         CancelEditorCommand?.RaiseCanExecuteChanged();
         DiscardEditorCommand?.RaiseCanExecuteChanged();

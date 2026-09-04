@@ -82,6 +82,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
     private ProductApiResponse Dispatch(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
         if (r.Route.Resource is "user-settings" or "organization-settings" or "preferences") return Settings(c, t, r);
+        if (r.Route.Operation.StartsWith("task-", StringComparison.Ordinal)) return TaskWorkspace(c, t, r);
         if (r.Route.Resource == "search") return Search(c, t, r);
         if (r.Route.Resource == "objects") return Links(c, t, r);
         if (r.Route.Resource == "file-locations") return FileCheck(c, t, r);
@@ -204,7 +205,8 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
             "(SELECT 1 FROM projects.members m WHERE m.organization_id=@org AND m.project_id=p.id AND m.user_account_id=@user AND m.status='active'))",
         "notification" => "p.recipient_user_id=@user",
         // Existing task/calendar personal rows and project membership are enforced for discovery too.
-        "task" or "calendar_event" => "(to_jsonb(p)->>'project_id' IS NULL OR @admin OR EXISTS (SELECT 1 FROM projects.projects pr " +
+        "task" => "work.task_visible(@org,p.id,@user)",
+        "calendar_event" => "(to_jsonb(p)->>'project_id' IS NULL OR @admin OR EXISTS (SELECT 1 FROM projects.projects pr " +
             "WHERE pr.organization_id=@org AND pr.id::text=to_jsonb(p)->>'project_id' AND (pr.owner_user_id=@user OR pr.manager_user_id=@user OR EXISTS " +
             "(SELECT 1 FROM projects.members m WHERE m.organization_id=@org AND m.project_id=pr.id AND m.user_account_id=@user AND m.status='active'))))",
         _ => "TRUE",
@@ -345,7 +347,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         var allowed = fields.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToHashSet(StringComparer.Ordinal);
         if (body.Any(p => !allowed.Contains(p.Key))) throw Invalid("Unknown or read-only field.");
         var nullable = "description lastName middleName notes legalName industry website taxIdentifier managerUserId startDate plannedEndDate actualEndAt defaultTimeZone colorCode parentItemId noteContent webUrl mimeType fileExtension observedSizeBytes observedModifiedAt joinedAt removedAt label countryCode region city street postalCode jobTitle departmentName validFrom validTo deviceId networkResourceId quietHoursStart quietHoursEnd quietHoursTimeZone reason details nextStep nextStepDueAt latencyMs osErrorCode".Split(' ').ToHashSet();
-        var booleans = "isPrimary isEnabled isVerified enabled desktopEnabled soundEnabled autostartEnabled allowLocalPaths confirmCatalogDelete".Split(' ').ToHashSet();
+        var booleans = "isCompleted isPrimary isEnabled isVerified enabled desktopEnabled soundEnabled autostartEnabled allowLocalPaths confirmCatalogDelete".Split(' ').ToHashSet();
         var numbers = "sortOrder observedSizeBytes priority expectedVersion expectedCatalogItemVersion expectedNewOwnerMembershipVersion trashRetentionDays historyRetentionDays changeFeedRetentionDays recurrenceHorizonDays recurrenceMinInstances firstDayOfWeek maxRequestBytes defaultTaskDurationMinutes defaultReminderOffsetMinutes defaultSnoozeMinutes latencyMs expectedLocationVersion expectedMemberVersion".Split(' ').ToHashSet();
         foreach (var (name, value) in body)
         {

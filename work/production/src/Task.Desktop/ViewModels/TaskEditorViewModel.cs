@@ -49,6 +49,8 @@ public sealed class TaskEditorViewModel : ViewModelBase
     }
 
     public TaskEditorMode Mode { get; }
+    public TaskCardEditor Card { get; private set; } = null!;
+    public string? CardError { get; private set; }
     public Guid? SourceId => _source?.Id;
     public IReadOnlyList<TaskPriorityOption> Priorities { get; }
     public string Heading => Mode == TaskEditorMode.Create ? "Новая задача" : "Изменить задачу";
@@ -59,7 +61,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
     public bool IsDiscardConfirmationVisible => _isDiscardConfirmationVisible;
     public bool RetryAvailable => _retryAvailable;
     public bool HasErrors => TitleError is not null || PriorityError is not null
-        || StartError is not null || DeadlineError is not null;
+        || StartError is not null || DeadlineError is not null || CardError is not null;
     public bool CanSubmit => !_isBusy && !_hasConflict && _retryAvailable && !HasErrors;
 
     public string Title
@@ -135,7 +137,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
             return null;
         }
 
-        return new DesktopCreateTaskCommand(Title.Trim(), Priority.Value, start, deadline);
+        return new DesktopCreateTaskCommand(Title.Trim(), Priority.Value, start, deadline, Card.Build(start));
     }
 
     public DesktopPatchTaskCommand? BuildPatchCommand()
@@ -156,7 +158,8 @@ public sealed class TaskEditorViewModel : ViewModelBase
         var deadlineField = !string.Equals(DeadlineText.Trim(), FormatLocal(_source.DeadlineAtUtc), StringComparison.Ordinal)
             ? DesktopTaskField<DateTimeOffset?>.From(deadline)
             : default;
-        if (!titleField.IsSpecified && !priorityField.IsSpecified
+        var cardPatch = Card.Patch(Card.Build(start));
+        if (cardPatch is null && !titleField.IsSpecified && !priorityField.IsSpecified
             && !startField.IsSpecified && !deadlineField.IsSpecified)
         {
             StatusMessage = "Нет изменений для сохранения.";
@@ -169,7 +172,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
             titleField,
             priorityField,
             startField,
-            deadlineField);
+            deadlineField, cardPatch);
     }
 
     public void LoadLatest(DesktopTaskDto task)
@@ -229,6 +232,9 @@ public sealed class TaskEditorViewModel : ViewModelBase
         Priority = PriorityValues.Single(option => option.Value == (source?.Priority ?? DesktopTaskPriority.Normal));
         StartText = FormatLocal(source?.StartAtUtc);
         DeadlineText = FormatLocal(source?.DeadlineAtUtc);
+        Card = new TaskCardEditor(source?.Card, source?.StartAtUtc);
+        Card.Changed += Changed;
+        OnPropertyChanged(nameof(Card));
         _suppressChanges = false;
         _isDirty = false;
         _hasConflict = false;
@@ -272,6 +278,11 @@ public sealed class TaskEditorViewModel : ViewModelBase
             DeadlineError = "Срок не может быть раньше начала.";
         }
 
+        CardError = null;
+        if (_source is not null && StartText.Trim() == FormatLocal(_source.StartAtUtc)) startUtc = _source.StartAtUtc;
+        Card.UpdateStart(startUtc);
+        try { _ = Card.Build(startUtc); } catch (ArgumentException e) { CardError = e.Message; }
+        OnPropertyChanged(nameof(CardError));
         NotifyState();
         return !HasErrors;
     }

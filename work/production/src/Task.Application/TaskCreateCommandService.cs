@@ -9,7 +9,7 @@ public sealed record TaskCreateModel(
     TaskPriority Priority,
     bool PrioritySpecified,
     DateTimeOffset? StartAtUtc,
-    DateTimeOffset? DeadlineAtUtc);
+    DateTimeOffset? DeadlineAtUtc, TaskCardContent? Content = null);
 
 public sealed class TaskCreateCommandService
 {
@@ -61,6 +61,8 @@ public sealed class TaskCreateCommandService
             changedFields.Add("deadlineAt");
         }
 
+        if (model.Content is not null) changedFields.AddRange(TaskCardContent.Fields);
+
         var correlationId = Guid.TryParseExact(context.CorrelationId, "D", out var parsed)
             ? parsed
             : Guid.NewGuid();
@@ -87,7 +89,7 @@ public sealed class TaskCreateCommandService
                     model.Title,
                     now,
                     model.Priority,
-                    TaskSchedule.Create(model.StartAtUtc, model.DeadlineAtUtc));
+                    TaskSchedule.Create(model.StartAtUtc, model.DeadlineAtUtc), model.Content);
                 return new TaskWriteMutationResult(aggregate, createHttpResult(aggregate));
             });
     }

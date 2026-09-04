@@ -14,7 +14,7 @@ namespace Task.Api.Tasks;
 /// permissions are introduced. Organization and lifecycle visibility remain enforced
 /// by <see cref="ITaskReadStore"/>.
 /// </summary>
-internal static class TaskEndpoints
+internal static partial class TaskEndpoints
 {
     private const string TasksRoute = "/api/v1/tasks";
     private const string TaskByIdRoute = "/api/v1/tasks/{id}";
@@ -177,6 +177,8 @@ internal static class TaskEndpoints
 
         try
         {
+            if (!await CanWriteCard(context, requestContext, body))
+                return await WriteProblemAsync(context, 403, "FORBIDDEN", "Task card permission denied.", false);
             var command = service.CreateCommand(
                 requestContext,
                 idempotencyKey,
@@ -192,6 +194,14 @@ internal static class TaskEndpoints
         catch (OperationCanceledException)
         {
             throw;
+        }
+        catch (ArgumentException)
+        {
+            return await WriteProblemAsync(context, 422, "VALIDATION_FAILED", "Invalid task card or related object.", false);
+        }
+        catch (KeyNotFoundException)
+        {
+            return await WriteObjectNotVisibleAsync(context);
         }
         catch (Exception)
         {
@@ -236,9 +246,9 @@ internal static class TaskEndpoints
             return await WriteObjectNotVisibleAsync(context);
         }
 
-        var task = await readStore.GetByIdAsync(
+        var task = await readStore.GetVisibleByIdAsync(
             requestContext.OrganizationId,
-            taskId,
+            taskId, requestContext.UserAccountId,
             cancellationToken);
         if (task is null)
         {
@@ -316,9 +326,10 @@ internal static class TaskEndpoints
             DateTimeOffset? startAtUtc = null;
             DateTimeOffset? deadlineAt = null;
             Guid? authorUserId = null;
+            var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var property in document.RootElement.EnumerateObject())
             {
-                if (!AllowedCreateProperties.Contains(property.Name))
+                if (!AllowedCreateProperties.Contains(property.Name) && !TaskCardContent.Fields.Contains(property.Name))
                 {
                     error = ValidationFailed("The request contains an unsupported property.");
                     return false;
@@ -414,7 +425,12 @@ internal static class TaskEndpoints
                 return false;
             }
 
-            model = new TaskCreateModel(normalizedTitle, priority, prioritySpecified, startAtUtc, deadlineAt);
+            TaskCardContent content;
+            try { content = new TaskCardContent().Apply(ReadCardPatch(document.RootElement)); content.Validate(startAtUtc); }
+            catch (ArgumentException) { error = ValidationFailed("Invalid task card or schedule."); return false; }
+            if (document.RootElement.EnumerateObject().Any(p => !names.Add(p.Name)))
+            { error = ValidationFailed("Duplicate property."); return false; }
+            model = new TaskCreateModel(normalizedTitle, priority, prioritySpecified, startAtUtc, deadlineAt, ReadCardPatch(document.RootElement) is null ? null : content);
             return true;
         }
     }
@@ -612,6 +628,8 @@ internal static class TaskEndpoints
 
         try
         {
+            if (!await CanWriteCard(context, requestContext, body))
+                return await WriteProblemAsync(context, 403, "FORBIDDEN", "Task card permission denied.", false);
             var preparation = service.CreateCommand(
                 requestContext,
                 idempotencyKey,
@@ -803,6 +821,8 @@ internal static class TaskEndpoints
 
         try
         {
+            if (!await CanWriteCard(context, requestContext, body))
+                return await WriteProblemAsync(context, 403, "FORBIDDEN", "Task card permission denied.", false);
             var command = service.CreateCommand(
                 requestContext,
                 idempotencyKey,
@@ -890,6 +910,7 @@ internal static class TaskEndpoints
 
             var seen = new HashSet<string>(StringComparer.Ordinal);
             var hasTarget = false;
+            var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var property in document.RootElement.EnumerateObject())
             {
                 if (!AllowedTransitionProperties.Contains(property.Name) || !seen.Add(property.Name))
@@ -979,10 +1000,11 @@ internal static class TaskEndpoints
             OptionalInstant startsAtUtc = OptionalInstant.Unspecified;
             OptionalInstant deadlineAt = OptionalInstant.Unspecified;
             var hasProperty = false;
+            var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var property in document.RootElement.EnumerateObject())
             {
                 hasProperty = true;
-                if (!AllowedPatchProperties.Contains(property.Name))
+                if (!AllowedPatchProperties.Contains(property.Name) && !TaskCardContent.Fields.Contains(property.Name))
                 {
                     error = PatchValidationFailed(
                         StatusCodes.Status400BadRequest,
@@ -1050,7 +1072,12 @@ internal static class TaskEndpoints
                 return false;
             }
 
-            model = new TaskUpdateModel(normalizedTitle, priority, startsAtUtc, deadlineAt);
+            var cardPatch = ReadCardPatch(document.RootElement);
+            try { _ = new TaskCardContent().Apply(cardPatch); }
+            catch (ArgumentException) { error = PatchValidationFailed(422, "Invalid task card."); return false; }
+            if (document.RootElement.EnumerateObject().Any(p => !names.Add(p.Name)))
+            { error = PatchValidationFailed(400, "Duplicate property."); return false; }
+            model = new TaskUpdateModel(normalizedTitle, priority, startsAtUtc, deadlineAt, cardPatch);
             return true;
         }
     }
@@ -1096,7 +1123,7 @@ internal static class TaskEndpoints
             task.WorkStatus,
             task.Priority,
             task.Schedule.StartsAtUtc,
-            task.Schedule.DeadlineUtc));
+            task.Schedule.DeadlineUtc, task.Content, task.CompletedAtUtc));
 
     private static TaskResponse ToResponse(TaskReadProjection task) =>
         new(
@@ -1105,24 +1132,24 @@ internal static class TaskEndpoints
             task.Version,
             task.CreatedAtUtc.UtcDateTime,
             task.UpdatedAtUtc.UtcDateTime,
-            ProjectId: null,
-            ParentTaskId: null,
+            ProjectId: task.Content?.ProjectId,
+            ParentTaskId: task.Content?.ParentTaskId,
             task.Title,
-            Description: null,
+            Description: task.Content?.Description,
             task.AuthorUserId,
-            RequesterUserId: null,
-            PrimaryCounterpartyObjectId: null,
+            RequesterUserId: task.Content?.RequesterUserId,
+            PrimaryCounterpartyObjectId: task.Content?.PrimaryCounterpartyObjectId,
             ToContractValue(task.Status),
             ToContractValue(task.Priority),
-            ScheduledDate: null,
-            StartTimeLocal: null,
-            ScheduleTimeZone: null,
+            ScheduledDate: task.Content?.ScheduledDate,
+            StartTimeLocal: task.Content?.StartTimeLocal,
+            ScheduleTimeZone: task.Content?.ScheduleTimeZone,
             task.StartAtUtc?.UtcDateTime,
-            PlannedDurationMinutes: null,
+            PlannedDurationMinutes: task.Content?.PlannedDurationMinutes,
             task.DeadlineAtUtc?.UtcDateTime,
-            AssigneeIds: [],
-            WatcherIds: [],
-            RecurrenceSeriesId: null);
+            AssigneeIds: task.Content?.AssigneeIds ?? [],
+            WatcherIds: task.Content?.WatcherIds ?? [],
+            RecurrenceSeriesId: task.RecurrenceSeriesId, CompletedAt: task.CompletedAtUtc?.UtcDateTime);
 
     private static string ToContractValue(TaskWorkStatus status) => status switch
     {
@@ -1190,7 +1217,8 @@ internal static class TaskEndpoints
         [property: JsonPropertyName("deadlineAt")] DateTime? DeadlineAt,
         [property: JsonPropertyName("assigneeIds")] IReadOnlyList<Guid> AssigneeIds,
         [property: JsonPropertyName("watcherIds")] IReadOnlyList<Guid> WatcherIds,
-        [property: JsonPropertyName("recurrenceSeriesId")] Guid? RecurrenceSeriesId);
+        [property: JsonPropertyName("recurrenceSeriesId")] Guid? RecurrenceSeriesId,
+        [property: JsonPropertyName("completedAt")] DateTime? CompletedAt = null);
 
     internal sealed record TaskPageResponse(
         [property: JsonPropertyName("items")] IReadOnlyList<TaskResponse> Items,

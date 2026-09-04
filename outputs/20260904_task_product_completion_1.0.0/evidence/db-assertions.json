@@ -1,0 +1,19 @@
+{
+  "postgresVersion": "16.14",
+  "migrationVersion": "11",
+  "uiTaskId": "4e86696e-d753-41ec-86cf-fd667eed5b33",
+  "finalTitle": "WPF E2E completed 20260904-134957",
+  "finalPriority": "high",
+  "finalStatus": "completed",
+  "finalVersion": 8,
+  "auditCount": 8,
+  "domainEventCount": 8,
+  "outboxCount": 8,
+  "completedIdempotencyCount": 8,
+  "replayProbeCounts": "task=1,audit=1,event=1,outbox=1,idempotency=1",
+  "readOnlyGetStatus": 200,
+  "readOnlyWriteStatus": 403,
+  "apiRestartPersistence": "PASS",
+  "extendedCardVerified": true,
+  "workspaceCommandCount": 3
+}

@@ -39,9 +39,10 @@ internal static class ProductEndpoints
             await Check(route.Permission);
             if (!granted.Contains(route.Permission)) throw new ProductApiException(403, "FORBIDDEN", "Permission denied.");
             await Check("organization.manage");
-            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions")
+            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks")
                 foreach (var code in new[] { "Project.Read", "Contact.Read", "FileCatalog.Read", "Task.Read", "Calendar.Read", "Employee.Read" })
                     await Check(code);
+            if (route.Resource == "tasks") { await Check("History.Read"); if (route.Permission != "Task.Read" && !granted.Contains("Task.Read")) throw new ProductApiException(403, "FORBIDDEN", "Task read access is required."); }
             if (route.Operation is "locations" or "resolve" || route.Resource is "network-resources" or "search") await Check("FileLocation.ReadSensitivePath");
             if (route.Resource == "search") await Check("FileReference.Open");
             if (route.Resource == "objects" && route.Method != "GET")

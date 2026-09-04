@@ -9,7 +9,7 @@ using Task.Infrastructure.Persistence;
 
 namespace Task.Tests;
 
-public sealed class PostgresProductApiTests
+public sealed partial class PostgresProductApiTests
 {
     [Fact]
     public void ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency()

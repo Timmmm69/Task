@@ -4,7 +4,9 @@ param(
         'Verify', 'SeedReadOnlyDesktop', 'Capture', 'Cleanup')]
     [string]$Phase = 'Setup',
     [string]$EvidencePath = '',
-    [string]$CaptureName = ''
+    [string]$CaptureName = '',
+    [string]$RuntimePath = '',
+    [switch]$VerifyCard
 )
 
 if ($PSVersionTable.PSEdition -ne 'Core') {
@@ -12,6 +14,8 @@ if ($PSVersionTable.PSEdition -ne 'Core') {
     $forward = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath, '-Phase', $Phase)
     if ($EvidencePath) { $forward += @('-EvidencePath', $EvidencePath) }
     if ($CaptureName) { $forward += @('-CaptureName', $CaptureName) }
+    if ($RuntimePath) { $forward += @('-RuntimePath', $RuntimePath) }
+    if ($VerifyCard) { $forward += '-VerifyCard' }
     & $pwsh.Source @forward
     exit $LASTEXITCODE
 }
@@ -25,6 +29,11 @@ $productionRoot = Join-Path $repoRoot 'work\production'
 # path intentionally contains Cyrillic characters. Runtime data is therefore isolated in
 # the current user's local app-data and is removed/restored by the Cleanup phase.
 $runtimeRoot = Join-Path $env:LOCALAPPDATA 'TaskE2ERuntime\task-write-e2e'
+if ($RuntimePath) {
+    if (-not [IO.Path]::IsPathFullyQualified($RuntimePath)) { throw 'RuntimePath must be absolute.' }
+    # Preserve an explicitly supplied ASCII 8.3 path: GetFullPath expands it to Cyrillic.
+    $runtimeRoot = $RuntimePath
+}
 $statePath = Join-Path $runtimeRoot 'state.json'
 $pgBin = 'C:\Program Files\PostgreSQL\16\bin'
 
@@ -280,7 +289,7 @@ function Setup-E2E {
         UiTaskId = ''; DirectProbeId = ''
     }
     Save-State $state
-    Write-Pass 'Ephemeral E2E state was saved outside the repository.'
+    Write-Pass 'Ephemeral E2E state was saved in the isolated runtime directory.'
 
     $migratorDll = Join-Path $productionRoot 'src\Task.DatabaseMigrator\bin\Release\net10.0\Task.DatabaseMigrator.dll'
     $oldConnection = $env:ConnectionStrings__TaskDatabase
@@ -386,7 +395,7 @@ function Mutate-ForConflict($state) {
 function Verify-E2E($state) {
     if (-not $state.UiTaskId) {
         $escaped = $state.UiFinalTitle.Replace("'", "''")
-        $state.UiTaskId = Invoke-Psql $state "SELECT id FROM work.tasks WHERE title='$escaped' ORDER BY updated_at DESC LIMIT 1;"
+        $state.UiTaskId = Invoke-Psql $state "SELECT t.id FROM work.tasks t JOIN core.objects o ON o.id=t.id AND o.organization_id=t.organization_id WHERE t.title='$escaped' ORDER BY o.updated_at DESC LIMIT 1;"
         Save-State $state
     }
     Assert-E2E (-not [string]::IsNullOrWhiteSpace($state.UiTaskId)) 'UI-created task row exists.'
@@ -404,10 +413,24 @@ function Verify-E2E($state) {
     Assert-E2E ($page.items.id -contains $state.UiTaskId) 'Final list contains the UI-created task after restart.'
     $counts = Invoke-Psql $state "SELECT (SELECT count(*) FROM governance.audit_entries WHERE object_id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM governance.domain_events WHERE aggregate_id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM governance.outbox_messages o JOIN governance.domain_events e ON e.id=o.domain_event_id WHERE e.aggregate_id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM iam.idempotency_records WHERE resource_id='$($state.UiTaskId)' AND state='completed');"
     $parts = $counts.Split(',') | ForEach-Object { [int]$_ }
+    $workspaceCommands = [int](Invoke-Psql $state "SELECT count(*) FROM iam.product_api_commands WHERE organization_id='$($task.organizationId)' AND operation LIKE '%$($state.UiTaskId)%';")
+    $parts[3] += $workspaceCommands
     Assert-E2E ($parts[0] -ge 6) 'UI lifecycle emitted durable audit evidence.'
     Assert-E2E ($parts[1] -ge 6) 'UI lifecycle emitted durable domain events.'
     Assert-E2E ($parts[2] -eq $parts[1]) 'Every UI domain event has one outbox message.'
     Assert-E2E ($parts[3] -eq $parts[1]) 'Every successful UI mutation has one completed idempotency record.'
+    if ($VerifyCard) {
+        Assert-E2E ($task.description -eq 'Согласовать договор с заказчиком и проверить комплект документов.') 'Task description survived edit, transitions and API restart.'
+        Assert-E2E ($task.scheduledDate -eq '2026-09-05' -and $task.plannedDurationMinutes -eq 45) 'Date-only planning and duration survived API restart.'
+        Assert-E2E ($task.assigneeIds.Count -eq 1) 'Assigned participant survived the entire lifecycle.'
+        Assert-E2E ($null -ne $task.completedAt) 'Completion timestamp was persisted.'
+        $workspaceResponse = Invoke-Authorized $state Get "/api/v1/tasks/$($state.UiTaskId)/workspace" $session.Tokens.accessToken
+        Assert-E2E ($workspaceResponse.StatusCode -eq 200) 'Task workspace is readable after restart.'
+        $workspace = $workspaceResponse.Content | ConvertFrom-Json
+        Assert-E2E ($workspace.checklist.Count -eq 1 -and $workspace.checklist[0].isCompleted) 'UI checklist completion survived restart.'
+        Assert-E2E ($workspace.comments.Count -eq 1 -and $workspace.comments[0].body -eq 'Условия договора согласованы.') 'UI comment survived restart.'
+        Assert-E2E ($workspace.history.Count -ge 8) 'Workspace displays the durable task history.'
+    }
     $safe = [ordered]@{
         postgresVersion = Invoke-Psql $state 'SHOW server_version;'
         migrationVersion = Invoke-Psql $state 'SELECT max(version) FROM infrastructure.schema_migrations;'
@@ -417,6 +440,7 @@ function Verify-E2E($state) {
         outboxCount = $parts[2]; completedIdempotencyCount = $parts[3]
         replayProbeCounts = 'task=1,audit=1,event=1,outbox=1,idempotency=1'
         readOnlyGetStatus = 200; readOnlyWriteStatus = 403; apiRestartPersistence = 'PASS'
+        extendedCardVerified = [bool]$VerifyCard; workspaceCommandCount = $workspaceCommands
     }
     if ($EvidencePath) {
         [IO.Directory]::CreateDirectory($EvidencePath) | Out-Null
@@ -472,6 +496,17 @@ public static class TaskE2EWindowCapture {
 }
 
 function Cleanup-E2E($state) {
+    $resolvedRuntime = [IO.Path]::GetFullPath($runtimeRoot)
+    $allowedRuntimeParent = if ($RuntimePath) { Join-Path $repoRoot 'work\tmp' } else { Join-Path $env:LOCALAPPDATA 'TaskE2ERuntime' }
+    $runtimePrefix = [IO.Path]::GetFullPath($allowedRuntimeParent).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedRuntime.StartsWith($runtimePrefix, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Refusing to clean an unexpected E2E runtime path.'
+    }
+    $expectedDesktop = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'Task'))
+    if ([IO.Path]::GetFullPath($state.DesktopAppData) -ne $expectedDesktop -or
+        -not [IO.Path]::GetFullPath($state.DesktopBackup).StartsWith($runtimePrefix, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Refusing to restore unexpected desktop paths.'
+    }
     $state = Stop-E2EApi $state
     $desktopParent = [IO.Path]::GetFullPath((Split-Path $state.DesktopAppData -Parent))
     $expectedDesktop = [IO.Path]::Combine($desktopParent, 'Task')
@@ -482,15 +517,9 @@ function Cleanup-E2E($state) {
         Remove-Item -LiteralPath $state.DesktopAppData -Recurse -Force
     }
     if (Test-Path -LiteralPath $state.DesktopBackup) {
-        Move-Item -LiteralPath $state.DesktopBackup -Destination $state.DesktopAppData
+        Move-Item -LiteralPath ([IO.Path]::GetFullPath($state.DesktopBackup)) -Destination $expectedDesktop
     }
     & (Join-Path $pgBin 'pg_ctl.exe') -D $state.PostgresData -m fast -w stop | Out-Null
-    $runtimeParent = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'TaskE2ERuntime'))
-    $resolvedRuntime = [IO.Path]::GetFullPath($runtimeRoot)
-    $runtimePrefix = $runtimeParent.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
-    if (-not $resolvedRuntime.StartsWith($runtimePrefix, [StringComparison]::OrdinalIgnoreCase)) {
-        throw 'Refusing to clean an unexpected E2E runtime path.'
-    }
     if (Test-Path -LiteralPath $resolvedRuntime) {
         Remove-Item -LiteralPath $resolvedRuntime -Recurse -Force
     }

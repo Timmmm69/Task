@@ -1,0 +1,362 @@
+{
+  "package": "Task PROD-01 task lifecycle completion",
+  "version": "1.0.0",
+  "date": "2026-09-04",
+  "base_revision": "f07310e82c775264c8b188fb1962d523d835e35a",
+  "roadmap_ids": [
+    "PROD-01",
+    "DESK-02"
+  ],
+  "state": "validated-for-main",
+  "runtime": {
+    "dotnet_sdk": "10.0.400",
+    "postgresql": "16.14",
+    "schema_version": 11
+  },
+  "implementation_hash_format": "utf8-crlf-normalized-to-lf",
+  "artifact_hash_format": "exact-bytes",
+  "validation": {
+    "total": 1458,
+    "passed": 1458,
+    "failed": 0,
+    "skipped": 0,
+    "runs": [
+      {
+        "file": "evidence/prod01_net10.0_20260904170742.trx",
+        "total": 247,
+        "passed": 247,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "evidence/prod01_net10.0_20260904170758.trx",
+        "total": 432,
+        "passed": 432,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "evidence/prod01_net10.0_20260904170805.trx",
+        "total": 779,
+        "passed": 779,
+        "failed": 0,
+        "skipped": 0
+      }
+    ],
+    "real_wpf_https_postgresql": "PASS"
+  },
+  "implementation_files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 54885,
+      "sha256": "57aa8a7f0c2bf525161e2ff30cce55b8a2b0e4f53e46c604e7c140d89c606e40"
+    },
+    {
+      "path": "work/production/deployment/containers/sql/grant-runtime.sql",
+      "bytes": 3126,
+      "sha256": "da9eb95fa667f636e15c7652a141692226d19dac3f7d14779bede1cbf0fdbbdb"
+    },
+    {
+      "path": "work/production/docs/task-card-workflow.md",
+      "bytes": 6100,
+      "sha256": "fadf18b0bd9f47dac33c9b3474b50508c259f9f9ccb1b27257e75eb4e92d7ebe"
+    },
+    {
+      "path": "work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+      "bytes": 8598,
+      "sha256": "31396253e5743b60d5cac4e90bcc7bd02ba2af05f339c72f81b039a292dfda54"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "bytes": 9643,
+      "sha256": "d32f44a7224ebceba79b9a45309214df6da2948a670989dbbcb5c87910ce42e0"
+    },
+    {
+      "path": "work/production/src/Task.Api/Tasks/TaskCardFields.cs",
+      "bytes": 1581,
+      "sha256": "18fe2dc94efc04ee6277ca848b0ef66ce0d766defbf034bec851d7d8b1554e3b"
+    },
+    {
+      "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+      "bytes": 46548,
+      "sha256": "77e028df712fb981db643f7b49717190afe18fd4dfc5e254fdb8cf5be093fdb0"
+    },
+    {
+      "path": "work/production/src/Task.Application/ITaskReadStore.cs",
+      "bytes": 881,
+      "sha256": "4831812b43ead8c7e4456f3afdcee84c41258a416f130ae7b88bf2ebe10878b7"
+    },
+    {
+      "path": "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "bytes": 9079,
+      "sha256": "612c4a25d0b278eb1c7607a438bc1036a4eb174b6505762c1ca1a8fff2cea128"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskCreateCommandService.cs",
+      "bytes": 4391,
+      "sha256": "dd01beb708de39a2c3220416281488ab83c1350a0df895ba6ffd3dd78035fdbb"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskReadContracts.cs",
+      "bytes": 1626,
+      "sha256": "b03655167cecb10aba5a2dca00e86ad67b66525f1c789bd0a0d6e3aa65db91e4"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "bytes": 15284,
+      "sha256": "9c5d45997e016e63f928139c1f5e3bbf7bc0ffe5564ac7e897d3d9c7c6b62b74"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 69690,
+      "sha256": "1f3195aa41c3e65e88271f224afebdb30b3b9357d44bd27aed4dc8949a0e1192"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Tasks/DesktopTaskWorkspaceClient.cs",
+      "bytes": 3941,
+      "sha256": "a84fd267c73e9ea19dbaa49e596e5cac71f4e91acf1db9d84e686866ce0b30bd"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+      "bytes": 31121,
+      "sha256": "154826d5a99e849a4ccab800d0c6c4ec6e0f2ddb9eb3541647a1737323b8142b"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs",
+      "bytes": 8311,
+      "sha256": "875d7b0445fa6bd1c90021a04745aa723902830382b91f4ab9f5f45f5c60b14c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+      "bytes": 11544,
+      "sha256": "4bbc7bd7760624811cf1d4da4a3c9f42aab746e146d1eec0397ab4681279133a"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskWorkspaceViewModel.cs",
+      "bytes": 12602,
+      "sha256": "3d65aec3274204d465a536fa70c0136ee7b024a3257faa1ce9365412d5fdb780"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "bytes": 57231,
+      "sha256": "628d2b8c5f9e0fff81114a379df4cf3869f6c1973732c4f8da8f60240dd07183"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml",
+      "bytes": 3514,
+      "sha256": "73f52a530445f4c36fdae7da56ca508bc47e5374319481da0571969a5c287401"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml.cs",
+      "bytes": 178,
+      "sha256": "5d4f0a720aad4bb14d10bdb1af3cc1fa44bb7c048cf6300f7fe12c8816f4c411"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml",
+      "bytes": 5776,
+      "sha256": "4ffb66d38ac3c7556f4984f5958b82111bb8edb2c4621d0d5342345a1bc6265f"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml.cs",
+      "bytes": 176,
+      "sha256": "2c6358092816800156dab79e0201ab89f94dbf991ca6698af675e8e36b9eaf32"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskAggregate.cs",
+      "bytes": 14519,
+      "sha256": "40db3d45430512c58f813c106389178bd5f8c58141285817361661d7bb16e237"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskCardContent.cs",
+      "bytes": 3995,
+      "sha256": "0208cd939132d49fd93d2b7963fb77d321fdb211a54dd96f4f9692e0a0b1d7bf"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/011_task_card.sql",
+      "bytes": 5870,
+      "sha256": "a3c8b4c97d10b64614c841b7e24b42b98a4c97b5af4f1e02aeef628f00fe39b0"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiLinks.cs",
+      "bytes": 8429,
+      "sha256": "c71c7bacdd46ea1efdddc94115ad51538506f1cc26016265b1fe92c2487e5c94"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "bytes": 29689,
+      "sha256": "bcf6b88c2f03eecad7f96178a1c33684a2e702f9edb18a570125b155409f93a9"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "bytes": 9627,
+      "sha256": "9fb68114ad4be24d986e63d191327872f3018b8ee40e7c8d25e5777746af96ce"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskAggregateStore.cs",
+      "bytes": 16939,
+      "sha256": "a036cdfa77b49c833e4a4e75dacb61486dcc95d6443bcf7e8353231b50a8c2da"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+      "bytes": 4734,
+      "sha256": "27e476401ab43bb64f41acdb92d0f46e31f3aad66870b62a7f78cb2f085a8075"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+      "bytes": 9343,
+      "sha256": "aa165bb07284dcc36ce7d876771cdfeaa9ed0219f74d7790994eb27f28641c76"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "bytes": 27202,
+      "sha256": "7d974240c601890f1bd478749517d27e72ede6a5ac58b5fce93d256aca423c3f"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "bytes": 2088,
+      "sha256": "b23e57113beff9f4f52fb651ced83c2b2cce0a0e2fc3eb51f39d0f20e465b6c9"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskCardEditorTests.cs",
+      "bytes": 1266,
+      "sha256": "c29135de30f7f6b2a195416a8fa37c9955204c84eba598ca74f15f62de0a0c62"
+    },
+    {
+      "path": "work/production/tests/Task.ServiceHosts.Tests/AuthSessionEndpointsTests.cs",
+      "bytes": 34784,
+      "sha256": "004218f45846aa7627ac5440217a437f56dd201d9d527e19a76d4d01aca5d6a0"
+    },
+    {
+      "path": "work/production/tests/Task.ServiceHosts.Tests/TaskCardEndpointsTests.cs",
+      "bytes": 3224,
+      "sha256": "9e2561abf5bc01efc5431e287c48bf4c80c3fc9f7fbab55db0f831569b872ab9"
+    },
+    {
+      "path": "work/production/tests/Task.ServiceHosts.Tests/TaskCreateEndpointsTests.cs",
+      "bytes": 17851,
+      "sha256": "db7611727f885f7899f4b88c9b033b8aea9790fdab61a118f01e30a0c075a3e7"
+    },
+    {
+      "path": "work/production/tests/Task.ServiceHosts.Tests/TaskPatchEndpointsTests.cs",
+      "bytes": 33178,
+      "sha256": "c7f2ba8c3bd4e8c625b6269dabaf3eb50e7e67ee68839cbc70ddcbf3c7b97918"
+    },
+    {
+      "path": "work/production/tests/Task.Tests/PostgresProductApiTests.cs",
+      "bytes": 24054,
+      "sha256": "9ff2904072772b10262106d6dc9b63ced6b918f551d7f808dbfc66035e450d6a"
+    },
+    {
+      "path": "work/production/tests/Task.Tests/PostgresTaskCardWorkflowTests.cs",
+      "bytes": 8637,
+      "sha256": "c906385bbd209e83d1a8fecc512772a76504e6de7425d1feed4962aabf8cfd60"
+    },
+    {
+      "path": "work/production/tests/Task.Tests/TaskCardContentTests.cs",
+      "bytes": 2425,
+      "sha256": "ff524f22e08464ba4de3a4f8a84122647b3f28e2ff324bf1fa0ab8bb68034196"
+    },
+    {
+      "path": "work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "bytes": 2912,
+      "sha256": "1e2671264cb0795126b3506f3bea7905dc0942525ae6751981521de5174d70ef"
+    },
+    {
+      "path": "work/production/verification/Build-TaskProductPackage.mjs",
+      "bytes": 4563,
+      "sha256": "fae1bdc41e50cb493fce51ceeb912078e338270e5729e888ef389fa47535d12a"
+    },
+    {
+      "path": "work/production/verification/Test-TaskWriteE2E.ps1",
+      "bytes": 32760,
+      "sha256": "9ce9a2b75874cfdad4e26206d943914e785f3078e4bc91705727023d057e600d"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/.gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/README.md",
+      "bytes": 1185,
+      "sha256": "ca1b8f83c343a7214fbdf8a856dc07b73fc947ad61234b91e59fc4a98ab4daf5"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/VALIDATION_REPORT.md",
+      "bytes": 4985,
+      "sha256": "ae61f4467df3d681a04655018ec517d1866c746bfbb0535ff97b2f8521a4e8dc"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/VERSION",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/db-assertions.json",
+      "bytes": 588,
+      "sha256": "faf3e0d6265fbab53bf7c6b09beabd3236e97c246d8d4b0aa22b33aff53c568f"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01-boundaries.log",
+      "bytes": 974,
+      "sha256": "29566c5a9d90d7892e720a5c843f09f169b907c273a2a8cb2d3f4abb76dcfedc"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01-cleanup.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01-e2e-verify.log",
+      "bytes": 1180,
+      "sha256": "810a0e5e750b7dfe2d34b3bd613f589014d746e0643bdf7e51ec56ad9e4081aa"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01-final-gate.log",
+      "bytes": 1843,
+      "sha256": "0df59820bbf2d8f446397e28cb1a8b5f7fd1e1ed2cab5412a70f77f430b868d4"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01-release-build.log",
+      "bytes": 7546,
+      "sha256": "3be48b23d1a8563256f2de520cbeb8db6035c8269c312de9aaf11bb988240b47"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01-security-gate.log",
+      "bytes": 1638,
+      "sha256": "0ae9bd7ba93459184a83d32d3513bb9289cdd5407e66434e1391aa406b2def5b"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01_net10.0_20260904170742.trx",
+      "bytes": 352466,
+      "sha256": "275ee3d19034851b2e569110b4b9f9619550468af6957dca19955c40b2eccea7"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01_net10.0_20260904170758.trx",
+      "bytes": 634167,
+      "sha256": "ad49b0211c35f82f479b6f11b48111e8f86319ad825287635132913c96133914"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/prod01_net10.0_20260904170805.trx",
+      "bytes": 1045929,
+      "sha256": "f06ea1da63dd2884c85d7ea945ba5506f96e1cf7e75cc65f055b85388d707f1a"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/wpf-completed-accessibility.txt",
+      "bytes": 12005,
+      "sha256": "680908ce004ef5a560f340d8c5150705ff631385eaad90c02fd4980c25ac45a7"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/wpf-completed.jpg",
+      "bytes": 147211,
+      "sha256": "065d33b6b7478fc59f4b06eb6b34414583a6edca4770408cd7000c357ed50166"
+    },
+    {
+      "path": "outputs/20260904_task_product_completion_1.0.0/evidence/wpf-reopened-accessibility.txt",
+      "bytes": 9848,
+      "sha256": "e758945e824403f14f67abedc4fdfc9e6fb0d5b8f39ba34cb6c8c8a1708c760c"
+    }
+  ]
+}

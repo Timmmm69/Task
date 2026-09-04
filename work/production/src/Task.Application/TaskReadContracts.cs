@@ -14,7 +14,7 @@ public sealed record TaskReadProjection(
     TaskWorkStatus Status,
     TaskPriority Priority,
     DateTimeOffset? StartAtUtc,
-    DateTimeOffset? DeadlineAtUtc);
+    DateTimeOffset? DeadlineAtUtc, TaskCardContent? Content = null, DateTimeOffset? CompletedAtUtc = null, Guid? RecurrenceSeriesId = null);
 
 /// <summary>
 /// Security binding and opaque continuation supplied to one task-list query.

@@ -33,3 +33,7 @@ GRANT SELECT, INSERT ON TABLE iam.product_api_commands TO task_runtime;
 GRANT SELECT, INSERT, DELETE ON TABLE core.product_search_snapshots TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE crm.interactions, files.location_checks TO task_runtime;
 GRANT SELECT, INSERT, DELETE ON TABLE core.object_links TO task_runtime;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE work.task_checklist TO task_runtime;
+GRANT SELECT, INSERT ON TABLE work.task_comments TO task_runtime;
+GRANT SELECT, INSERT, DELETE ON TABLE work.task_dependencies TO task_runtime;

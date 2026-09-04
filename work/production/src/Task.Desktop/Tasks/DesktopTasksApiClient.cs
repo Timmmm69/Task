@@ -1,3 +1,4 @@
+using Task.Domain;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -38,7 +39,7 @@ public sealed record DesktopTaskDto(
     DateTimeOffset? DeadlineAtUtc,
     IReadOnlyList<Guid> AssigneeIds,
     IReadOnlyList<Guid> WatcherIds,
-    Guid? RecurrenceSeriesId);
+    Guid? RecurrenceSeriesId, TaskCardContent? Card = null, DateTimeOffset? CompletedAtUtc = null);
 
 public sealed record DesktopTaskPage(
     IReadOnlyList<DesktopTaskDto> Items,
@@ -56,19 +57,21 @@ public sealed record DesktopCreateTaskCommand
         string title,
         DesktopTaskPriority priority,
         DateTimeOffset? startAtUtc = null,
-        DateTimeOffset? deadlineAtUtc = null)
+        DateTimeOffset? deadlineAtUtc = null, TaskCardContent? card = null)
     {
         DesktopTasksApiClient.ValidateCreateCommand(title, priority, startAtUtc, deadlineAtUtc);
         Title = title;
         Priority = priority;
         StartAtUtc = startAtUtc;
         DeadlineAtUtc = deadlineAtUtc;
+        Card = card;
     }
 
     public string Title { get; }
     public DesktopTaskPriority Priority { get; }
     public DateTimeOffset? StartAtUtc { get; }
     public DateTimeOffset? DeadlineAtUtc { get; }
+    public TaskCardContent? Card { get; }
     public string IdempotencyKey { get; } = Guid.NewGuid().ToString("D");
 }
 
@@ -80,16 +83,17 @@ public sealed record DesktopPatchTaskCommand
         DesktopTaskField<string> title = default,
         DesktopTaskField<DesktopTaskPriority> priority = default,
         DesktopTaskField<DateTimeOffset?> startAtUtc = default,
-        DesktopTaskField<DateTimeOffset?> deadlineAtUtc = default)
+        DesktopTaskField<DateTimeOffset?> deadlineAtUtc = default, string? cardPatch = null)
     {
         DesktopTasksApiClient.ValidatePatchCommand(
-            id, expectedVersion, title, priority, startAtUtc, deadlineAtUtc);
+            id, expectedVersion, title, priority, startAtUtc, deadlineAtUtc, cardPatch is not null);
         Id = id;
         ExpectedVersion = expectedVersion;
         Title = title;
         Priority = priority;
         StartAtUtc = startAtUtc;
         DeadlineAtUtc = deadlineAtUtc;
+        CardPatch = cardPatch;
     }
 
     public Guid Id { get; }
@@ -98,6 +102,7 @@ public sealed record DesktopPatchTaskCommand
     public DesktopTaskField<DesktopTaskPriority> Priority { get; }
     public DesktopTaskField<DateTimeOffset?> StartAtUtc { get; }
     public DesktopTaskField<DateTimeOffset?> DeadlineAtUtc { get; }
+    public string? CardPatch { get; }
     public string IdempotencyKey { get; } = Guid.NewGuid().ToString("D");
 }
 
@@ -198,7 +203,7 @@ public abstract record DesktopTaskWriteResult<T>
 }
 
 /// <summary>Desktop client for the typed Task read/write API boundary.</summary>
-public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
+public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -257,13 +262,16 @@ public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
     {
         ArgumentNullException.ThrowIfNull(command);
         var title = ValidateTitle(command.Title);
-        var body = JsonSerializer.SerializeToUtf8Bytes(new
+        var createBody = JsonSerializer.SerializeToNode(new
         {
             title,
             priority = ToContractValue(command.Priority),
             startAtUtc = command.StartAtUtc?.UtcDateTime,
             deadlineAt = command.DeadlineAtUtc?.UtcDateTime,
         }, JsonOptions);
+        if (command.Card is not null)
+            foreach (var field in System.Text.Json.Nodes.JsonNode.Parse(command.Card.ToJson())!.AsObject()) createBody![field.Key] = field.Value?.DeepClone();
+        var body = JsonSerializer.SerializeToUtf8Bytes(createBody, JsonOptions);
         var response = await SendWriteAsync(
             HttpMethod.Post, _tasksUri, body, null, command.IdempotencyKey, cancellationToken);
         return MapWriteResult(response, HttpStatusCode.Created);
@@ -276,6 +284,11 @@ public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
         ArgumentNullException.ThrowIfNull(command);
 
         var body = new Dictionary<string, object?>(4);
+        if (command.CardPatch is not null)
+        {
+            using var patch = JsonDocument.Parse(command.CardPatch);
+            foreach (var field in patch.RootElement.EnumerateObject()) body[field.Name] = field.Value.Clone();
+        }
         if (command.Title.IsSpecified)
         {
             body["title"] = ValidateTitle(command.Title.Value);
@@ -453,11 +466,11 @@ public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
         DesktopTaskField<string> title,
         DesktopTaskField<DesktopTaskPriority> priority,
         DesktopTaskField<DateTimeOffset?> startAtUtc,
-        DesktopTaskField<DateTimeOffset?> deadlineAtUtc)
+        DesktopTaskField<DateTimeOffset?> deadlineAtUtc, bool hasCardPatch = false)
     {
         ValidateIdentity(id, expectedVersion);
         Require(title.IsSpecified || priority.IsSpecified
-            || startAtUtc.IsSpecified || deadlineAtUtc.IsSpecified,
+            || startAtUtc.IsSpecified || deadlineAtUtc.IsSpecified || hasCardPatch,
             "At least one patch field must be specified.");
         if (title.IsSpecified)
         {
@@ -697,7 +710,7 @@ public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
             payload.DeadlineAt,
             payload.AssigneeIds!.ToArray(),
             payload.WatcherIds!.ToArray(),
-            payload.RecurrenceSeriesId);
+            payload.RecurrenceSeriesId, payload.Card, payload.CompletedAt);
         return true;
     }
 
@@ -776,6 +789,30 @@ public sealed class DesktopTasksApiClient : IDesktopTasksApiClient
         public List<Guid>? WatcherIds { get; init; }
 
         public Guid? RecurrenceSeriesId { get; init; }
+        public DateTimeOffset? CompletedAt { get; init; }
+        public string? Description { get; init; }
+        public Guid? ProjectId { get; init; }
+        public Guid? ParentTaskId { get; init; }
+        public Guid? RequesterUserId { get; init; }
+        public Guid? PrimaryCounterpartyObjectId { get; init; }
+        public DateOnly? ScheduledDate { get; init; }
+        public TimeOnly? StartTimeLocal { get; init; }
+        public string? ScheduleTimeZone { get; init; }
+        public int? PlannedDurationMinutes { get; init; }
+        public TaskCardContent Card => new()
+        {
+            Description = Description,
+            ProjectId = ProjectId,
+            ParentTaskId = ParentTaskId,
+            RequesterUserId = RequesterUserId,
+            PrimaryCounterpartyObjectId = PrimaryCounterpartyObjectId,
+            ScheduledDate = ScheduledDate,
+            StartTimeLocal = StartTimeLocal,
+            ScheduleTimeZone = ScheduleTimeZone,
+            PlannedDurationMinutes = PlannedDurationMinutes,
+            AssigneeIds = AssigneeIds ?? [],
+            WatcherIds = WatcherIds ?? []
+        };
     }
 
     private sealed class ProblemPayload
