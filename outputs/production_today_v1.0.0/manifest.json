@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "name": "production-today",
+  "status": "complete",
+  "base_commit": "775d663e57ee89f3f4d4d4bc578489855d1ec23e",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TodayViewModel.cs",
+      "sha256": "efde8f6b0d50778cbdac639ee1e544e7902cccf320911f28e7c34a0ebb0cd745"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TodayView.xaml",
+      "sha256": "9511f88f1a9ddcc42b24dcac181a12ff0fb23043ba2a9a72de8e6ca8d8a41662"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TodayView.xaml.cs",
+      "sha256": "3b293832a3cbe6a17bd81add7daaa8b07d2471e7776861559fd99799fb8377a1"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Today/TodayViewModelTests.cs",
+      "sha256": "fac60cdcf3bde36b53f97aba1a8cb776de4e5de4756a840c62ae5f14b67805cb"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "sha256": "ae76ab55a1c39e1a2d5a9906ef510baef9779cfeb8e98bea511240e2d260ac92"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "sha256": "638665d254a15074498a3747087998c4af7c58c28da2632e5d16dca970afc9ea"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/App.xaml.cs",
+      "sha256": "f7d032bf6ab9f4b8f2659ed3b3bfabb2f555a96ab2c018d280d0fcccd9c11fba"
+    },
+    {
+      "path": "work/production/verification/Test-TodayE2E.ps1",
+      "sha256": "e5578a9870293fc76af7ddbf0787b772f1c8f26a6120ab6b9730b55864bc1a12"
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "f350ecda48b9b229bfee15f1e07f9cdfe04f32e93d096d33e5c8083cf0c2386a"
+    },
+    {
+      "path": "outputs/production_today_v1.0.0/validation-report.md",
+      "sha256": "5db524e228bd007fdf1a13d7d0403ec2421afe323d7a769a40cdda9cfc067bdc"
+    },
+    {
+      "path": "outputs/production_today_v1.0.0/e2e-report.md",
+      "sha256": "e3475ac6552ee607e145995d2dbb2b8c62c266bb74aa31fa07cb8d9a8d9d196f"
+    }
+  ]
+}

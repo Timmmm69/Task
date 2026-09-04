@@ -97,13 +97,15 @@
       "weight": 12,
       "criticality": "critical",
       "status": "in_progress",
-      "progress": 25,
+      "progress": 50,
       "evidence": [
         "sources/concept/Task_Concept_Final.txt: раздел 9",
-        "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs: today placeholder"
+        "work/production/src/Task.Desktop/ViewModels/TodayViewModel.cs: daily schedule, Calendar.Read and session guards",
+        "work/production/tests/Task.Desktop.Tests/Today/TodayViewModelTests.cs: DST, refresh, navigation and late responses",
+        "outputs/production_today_v1.0.0/e2e-report.md: real HTTPS API and PostgreSQL verification"
       ],
-      "note": "Есть доменные модели расписания и UX baseline, production-экран не подключён.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Подключён первый production-срез: расписание текущих локальных суток, timed/untimed, refresh, DST и очистка при потере доступа. Просроченные/ожидающие задачи и управление ими ещё не реализованы; ручной WPF smoke и реальный HTTPS/PostgreSQL E2E пройдены.",
+      "updated_at": "2026-09-04T12:00:00+03:00",
       "priority": 2,
       "dependencies": [
         "PROD-03",
@@ -111,7 +113,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 1,
-      "next_action": "Собрать production-экран «Сегодня» поверх готовых task и calendar API, затем пройти реальный E2E."
+      "next_action": "Дополнить экран просроченными/ожидающими задачами и управлением ими."
     },
     {
       "id": "PROD-03",

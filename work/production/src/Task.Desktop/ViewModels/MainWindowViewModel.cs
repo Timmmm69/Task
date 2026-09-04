@@ -15,7 +15,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public MainWindowViewModel()
-        : this(null, null, null, null)
+        : this(null, null, null, null, null)
     {
     }
 
@@ -23,12 +23,18 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         Uri? serverEndpoint,
         Func<CancellationToken, global::System.Threading.Tasks.Task>? logout,
         TasksViewModel? tasks = null,
-        CalendarViewModel? calendar = null)
+        CalendarViewModel? calendar = null,
+        TodayViewModel? today = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
         Tasks = tasks;
         Calendar = calendar;
+        Today = today;
+        if (Today is not null)
+        {
+            Today.PropertyChanged += OnTodayPropertyChanged;
+        }
         if (Tasks is not null)
         {
             Tasks.PropertyChanged += OnTasksPropertyChanged;
@@ -78,7 +84,16 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
             OnPropertyChanged(nameof(IsTasksSectionSelected));
             OnPropertyChanged(nameof(IsCalendarSectionSelected));
+            OnPropertyChanged(nameof(IsTodaySectionSelected));
             OnPropertyChanged(nameof(SelectedSectionSupportingText));
+            if (IsTodaySectionSelected)
+            {
+                Today?.Activate();
+            }
+            else
+            {
+                Today?.Deactivate();
+            }
             if (IsTasksSectionSelected)
             {
                 Tasks?.Activate();
@@ -98,6 +113,11 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
     public TasksViewModel? Tasks { get; }
 
     public CalendarViewModel? Calendar { get; }
+
+    public TodayViewModel? Today { get; }
+
+    public bool IsTodaySectionSelected =>
+        string.Equals(SelectedSection?.Route, "today", StringComparison.Ordinal);
 
     public bool IsTasksSectionSelected =>
         string.Equals(SelectedSection?.Route, "tasks", StringComparison.Ordinal);
@@ -121,6 +141,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string ConnectionContext => ServerAddress is null
         ? "Нет рабочей сессии"
+        : IsTodaySectionSelected
+            ? Today?.CanRead == true ? "Онлайн · сегодняшний план доступен" : "Онлайн · нет доступа к расписанию"
         : IsCalendarSectionSelected
             ? Calendar?.CanCreate == true ? "Онлайн · запись календаря доступна" : "Онлайн · календарь только для просмотра"
             : Tasks?.IsReadOnly == true ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
@@ -146,17 +168,23 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string DataSourceStatus => ServerAddress is null
         ? "Источник данных недоступен"
+        : IsTodaySectionSelected
+            ? "Сегодняшнее расписание предоставляется сервером компании"
         : IsCalendarSectionSelected
             ? Calendar?.WriteAccessText ?? "Календарь сервера компании"
             : Tasks?.IsReadOnly == true
             ? "Данные предоставляются сервером компании · только просмотр"
             : "Данные и изменения синхронизируются с сервером компании";
 
-    public string LastSuccessfulRefreshText => IsCalendarSectionSelected
+    public string LastSuccessfulRefreshText => IsTodaySectionSelected
+        ? Today?.LastSuccessfulRefreshText ?? "Сегодняшний план ещё не обновлялся"
+        : IsCalendarSectionSelected
         ? Calendar?.LastSuccessfulRefreshText ?? "Календарь ещё не обновлялся"
         : Tasks?.LastSuccessfulRefreshText ?? "Данные ещё не обновлялись";
 
-    public AsyncCommand? FooterRefreshCommand => IsCalendarSectionSelected
+    public AsyncCommand? FooterRefreshCommand => IsTodaySectionSelected
+        ? Today?.RefreshCommand
+        : IsCalendarSectionSelected
         ? Calendar?.RefreshCommand
         : Tasks?.RefreshCommand;
 
@@ -192,9 +220,15 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             Calendar.PropertyChanged -= OnCalendarPropertyChanged;
         }
 
+        if (Today is not null)
+        {
+            Today.PropertyChanged -= OnTodayPropertyChanged;
+        }
+
         LogoutCommand.Dispose();
         Tasks?.Dispose();
         Calendar?.Dispose();
+        Today?.Dispose();
     }
 
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -208,6 +242,17 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(ReadOnlyNotice));
             OnPropertyChanged(nameof(DataSourceStatus));
             OnPropertyChanged(nameof(ReadOnlyActionReason));
+        }
+    }
+
+    private void OnTodayPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(TodayViewModel.CanRead)
+            or nameof(TodayViewModel.LastSuccessfulRefreshText))
+        {
+            OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(DataSourceStatus));
+            OnPropertyChanged(nameof(LastSuccessfulRefreshText));
         }
     }
 

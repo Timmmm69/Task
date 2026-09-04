@@ -255,6 +255,9 @@
                             <DataTrigger Binding="{Binding IsCalendarSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding IsTodaySectionSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Style>
@@ -841,6 +844,18 @@
                 </Border>
             </Grid>
 
+            <views:TodayView DataContext="{Binding Today}">
+                <views:TodayView.Style>
+                    <Style TargetType="views:TodayView">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsTodaySectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </views:TodayView.Style>
+            </views:TodayView>
             <views:CalendarView DataContext="{Binding Calendar}">
                 <views:CalendarView.Style>
                     <Style TargetType="views:CalendarView">

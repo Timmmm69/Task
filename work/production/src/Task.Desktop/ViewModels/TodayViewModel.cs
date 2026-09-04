@@ -1,0 +1,460 @@
+using System.Globalization;
+using Task.Desktop.Calendar;
+
+namespace Task.Desktop.ViewModels;
+
+public enum TodayScreenState
+{
+    Inactive,
+    Loading,
+    Loaded,
+    Empty,
+    Refreshing,
+    Error,
+    Forbidden,
+    SessionEnded,
+}
+
+public sealed class TodayViewModel : ViewModelBase, IDisposable
+{
+    private static readonly CultureInfo RussianCulture =
+        CultureInfo.GetCultureInfo("ru-RU");
+
+    private readonly IDesktopCalendarApiClient _client;
+    private readonly TimeZoneInfo _timeZone;
+    private readonly Func<DateTimeOffset> _clock;
+    private readonly HashSet<string> _capabilities;
+
+    private CancellationTokenSource? _requestCancellation;
+    private long _generation;
+    private bool _active;
+    private bool _sessionAvailable = true;
+    private bool _disposed;
+
+    private TodayScreenState _state = TodayScreenState.Inactive;
+    private DateOnly _today;
+    private IReadOnlyList<CalendarItemViewModel> _timedItems =
+        Array.Empty<CalendarItemViewModel>();
+    private IReadOnlyList<CalendarItemViewModel> _untimedItems =
+        Array.Empty<CalendarItemViewModel>();
+    private string? _message;
+    private DateTimeOffset? _lastSuccessfulRefresh;
+
+    public TodayViewModel(
+        IDesktopCalendarApiClient client,
+        IEnumerable<string>? capabilities = null,
+        TimeZoneInfo? timeZone = null,
+        Func<DateTimeOffset>? clock = null)
+    {
+        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _timeZone = timeZone ?? TimeZoneInfo.Local;
+        _clock = clock ?? (() => DateTimeOffset.Now);
+        _capabilities = new HashSet<string>(
+            capabilities ?? [],
+            StringComparer.Ordinal);
+
+        _today = ResolveToday();
+
+        RefreshCommand = new AsyncCommand(
+            async (_, token) =>
+                await LoadAsync(refresh: true, token).ConfigureAwait(true),
+            _ => IsActive && _sessionAvailable && CanRead && !IsBusy);
+    }
+
+    public TodayScreenState State
+    {
+        get => _state;
+        private set
+        {
+            if (!SetProperty(ref _state, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(IsBusy));
+            OnPropertyChanged(nameof(ShowEmptyState));
+            OnPropertyChanged(nameof(ShowMessage));
+            RefreshCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    public DateOnly Today => _today;
+
+    public string DateText =>
+        _today.ToDateTime(TimeOnly.MinValue)
+            .ToString("dddd, d MMMM yyyy", RussianCulture);
+
+    public IReadOnlyList<CalendarItemViewModel> TimedItems
+    {
+        get => _timedItems;
+        private set
+        {
+            if (!SetProperty(ref _timedItems, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(HasTimedItems));
+            OnPropertyChanged(nameof(HasItems));
+        }
+    }
+
+    public IReadOnlyList<CalendarItemViewModel> UntimedItems
+    {
+        get => _untimedItems;
+        private set
+        {
+            if (!SetProperty(ref _untimedItems, value))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(HasUntimedItems));
+            OnPropertyChanged(nameof(HasItems));
+        }
+    }
+
+    public bool HasTimedItems => TimedItems.Count > 0;
+
+    public bool HasUntimedItems => UntimedItems.Count > 0;
+
+    public bool HasItems => HasTimedItems || HasUntimedItems;
+
+    public bool ShowEmptyState => State == TodayScreenState.Empty;
+
+    public bool IsBusy =>
+        State is TodayScreenState.Loading or TodayScreenState.Refreshing;
+
+    public bool IsActive => _active;
+
+    public bool CanRead => _capabilities.Contains("Calendar.Read");
+
+    public string? Message
+    {
+        get => _message;
+        private set
+        {
+            if (SetProperty(ref _message, value))
+            {
+                OnPropertyChanged(nameof(ShowMessage));
+            }
+        }
+    }
+
+    public bool ShowMessage => Message is not null;
+
+    public string LastSuccessfulRefreshText =>
+        _lastSuccessfulRefresh.HasValue
+            ? $"Обновлено {TimeZoneInfo.ConvertTime(_lastSuccessfulRefresh.Value, _timeZone):HH:mm}"
+            : "Ещё не обновлялось";
+
+    public AsyncCommand RefreshCommand { get; }
+
+    public void Activate() => _ = ActivateAsync();
+
+    public async global::System.Threading.Tasks.Task ActivateAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_disposed || _active)
+        {
+            return;
+        }
+
+        _active = true;
+        OnPropertyChanged(nameof(IsActive));
+        RefreshCommand.RaiseCanExecuteChanged();
+
+        if (!_sessionAvailable)
+        {
+            ClearProtectedData();
+            State = TodayScreenState.SessionEnded;
+            Message = "Сессия завершена. Войдите снова.";
+            return;
+        }
+
+        if (!CanRead)
+        {
+            ClearProtectedData();
+            State = TodayScreenState.Forbidden;
+            Message = "Нет права Calendar.Read для просмотра расписания.";
+            return;
+        }
+
+        await LoadAsync(refresh: false, cancellationToken).ConfigureAwait(true);
+    }
+
+    public void Deactivate()
+    {
+        if (!_active)
+        {
+            return;
+        }
+
+        _active = false;
+        Interlocked.Increment(ref _generation);
+        _requestCancellation?.Cancel();
+
+        State = TodayScreenState.Inactive;
+        OnPropertyChanged(nameof(IsActive));
+        RefreshCommand.RaiseCanExecuteChanged();
+    }
+
+    public void UpdateCapabilities(IEnumerable<string>? capabilities)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _capabilities.Clear();
+        foreach (var capability in capabilities ?? [])
+        {
+            _capabilities.Add(capability);
+        }
+
+        OnPropertyChanged(nameof(CanRead));
+        RefreshCommand.RaiseCanExecuteChanged();
+
+        if (!CanRead)
+        {
+            Interlocked.Increment(ref _generation);
+            _requestCancellation?.Cancel();
+            ClearProtectedData();
+
+            State = TodayScreenState.Forbidden;
+            Message = "Право Calendar.Read отозвано. Данные экрана «Сегодня» очищены.";
+            return;
+        }
+
+        if (_active
+            && _sessionAvailable
+            && State == TodayScreenState.Forbidden)
+        {
+            _ = LoadAsync(refresh: false, CancellationToken.None);
+        }
+    }
+
+    public void UpdateSessionState(bool sessionAvailable)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        var changed = _sessionAvailable != sessionAvailable;
+        _sessionAvailable = sessionAvailable;
+        RefreshCommand.RaiseCanExecuteChanged();
+
+        if (!sessionAvailable)
+        {
+            Interlocked.Increment(ref _generation);
+            _requestCancellation?.Cancel();
+            ClearProtectedData();
+
+            State = TodayScreenState.SessionEnded;
+            Message = "Сессия завершена. Войдите снова.";
+            return;
+        }
+
+        if (changed
+            && _active
+            && CanRead
+            && State == TodayScreenState.SessionEnded)
+        {
+            _ = LoadAsync(refresh: false, CancellationToken.None);
+        }
+    }
+
+    private async global::System.Threading.Tasks.Task LoadAsync(
+        bool refresh,
+        CancellationToken cancellationToken)
+    {
+        if (_disposed || !_active || !_sessionAvailable || !CanRead)
+        {
+            return;
+        }
+
+        _requestCancellation?.Cancel();
+        _requestCancellation?.Dispose();
+        _requestCancellation =
+            CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+        var token = _requestCancellation.Token;
+        var generation = Interlocked.Increment(ref _generation);
+
+        var requestedToday = ResolveToday();
+        var dateChanged = requestedToday != _today;
+
+        if (dateChanged)
+        {
+            _today = requestedToday;
+            OnPropertyChanged(nameof(Today));
+            OnPropertyChanged(nameof(DateText));
+        }
+
+        var hadConfirmedData = !dateChanged && HasItems;
+
+        if (!refresh || dateChanged)
+        {
+            ClearItems();
+        }
+
+        State = refresh && hadConfirmedData
+            ? TodayScreenState.Refreshing
+            : TodayScreenState.Loading;
+
+        Message = refresh && hadConfirmedData
+            ? "Обновляем сегодняшний план. Последние подтверждённые данные остаются видимыми."
+            : "Загрузка сегодняшнего расписания…";
+
+        try
+        {
+            var (fromUtc, toUtc) = CalendarViewModel.GetUtcRange(
+                _today,
+                _today.AddDays(1),
+                _timeZone);
+
+            var result = await _client
+                .GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, token)
+                .ConfigureAwait(true);
+
+            if (!_active
+                || token.IsCancellationRequested
+                || generation != _generation)
+            {
+                return;
+            }
+
+            if (result is DesktopCalendarResult<DesktopSchedulePage>.Succeeded succeeded)
+            {
+                ApplySchedule(succeeded.Value);
+
+                _lastSuccessfulRefresh = _clock();
+                OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+
+                if (!HasItems)
+                {
+                    State = TodayScreenState.Empty;
+                    Message = "На сегодня в расписании нет записей.";
+                }
+                else
+                {
+                    State = TodayScreenState.Loaded;
+                    Message = null;
+                }
+
+                return;
+            }
+
+            HandleFailure(result, hadConfirmedData);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+        }
+        catch (InvalidTimeZoneException)
+        {
+            if (generation == _generation && _active)
+            {
+                State = TodayScreenState.Error;
+                Message = "Не удалось определить корректные границы текущего дня.";
+            }
+        }
+        catch (ArgumentException)
+        {
+            if (generation == _generation && _active)
+            {
+                State = TodayScreenState.Error;
+                Message = "Не удалось определить корректные границы текущего дня.";
+            }
+        }
+    }
+
+    private void ApplySchedule(DesktopSchedulePage page)
+    {
+        var items = page.Items
+            .Select(item => new CalendarItemViewModel(item, null, _timeZone))
+            .Where(item => item.AppearsOn(_today, _timeZone))
+            .ToArray();
+
+        TimedItems = items
+            .Where(item => !item.Source.IsAllDay
+                && item.Source.StartAtUtc.HasValue)
+            .OrderBy(item => item.Source.StartAtUtc)
+            .ThenBy(item => item.Title, StringComparer.CurrentCulture)
+            .ToArray();
+
+        UntimedItems = items
+            .Where(item => item.Source.IsAllDay
+                || !item.Source.StartAtUtc.HasValue)
+            .OrderBy(item => item.Source.IsAllDay ? 0 : 1)
+            .ThenBy(item => item.Title, StringComparer.CurrentCulture)
+            .ToArray();
+    }
+
+    private void HandleFailure(
+        DesktopCalendarResult<DesktopSchedulePage> result,
+        bool hadConfirmedData)
+    {
+        switch (result)
+        {
+            case DesktopCalendarResult<DesktopSchedulePage>.Forbidden:
+                ClearProtectedData();
+                State = TodayScreenState.Forbidden;
+                Message = "Нет права Calendar.Read для просмотра расписания.";
+                break;
+
+            case DesktopCalendarResult<DesktopSchedulePage>.AuthenticationFailure:
+                ClearProtectedData();
+                State = TodayScreenState.SessionEnded;
+                Message = "Сессия завершена. Войдите снова.";
+                break;
+
+            case DesktopCalendarResult<DesktopSchedulePage>.ValidationFailure validation:
+                State = TodayScreenState.Error;
+                Message = validation.Message;
+                break;
+
+            case DesktopCalendarResult<DesktopSchedulePage>.MalformedResponse:
+                State = TodayScreenState.Error;
+                Message = hadConfirmedData
+                    ? "Не удалось обновить сегодняшний план. Показаны последние подтверждённые данные."
+                    : "Сервер вернул некорректное расписание.";
+                break;
+
+            default:
+                State = TodayScreenState.Error;
+                Message = hadConfirmedData
+                    ? "Не удалось обновить сегодняшний план. Показаны последние подтверждённые данные."
+                    : "Сервер расписания временно недоступен.";
+                break;
+        }
+    }
+
+    private DateOnly ResolveToday()
+    {
+        var localNow = TimeZoneInfo.ConvertTime(_clock(), _timeZone);
+        return DateOnly.FromDateTime(localNow.DateTime);
+    }
+
+    private void ClearProtectedData() => ClearItems();
+
+    private void ClearItems()
+    {
+        TimedItems = Array.Empty<CalendarItemViewModel>();
+        UntimedItems = Array.Empty<CalendarItemViewModel>();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        Deactivate();
+        _disposed = true;
+
+        _requestCancellation?.Dispose();
+        RefreshCommand.Dispose();
+    }
+}
