@@ -64,6 +64,8 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
     public IProjectStore CreateProjectStore() =>
         new PostgresProjectStore(GetConfiguredDataSource());
 
+    public IProductApiStore CreateProductApiStore() => new PostgresProductApiStore(GetConfiguredDataSource());
+
     public IContactStore CreateContactStore() =>
         new PostgresContactStore(GetConfiguredDataSource());
 

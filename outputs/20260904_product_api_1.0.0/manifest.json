@@ -1,0 +1,198 @@
+{
+  "package": "API-04 product module APIs",
+  "version": "1.0.0",
+  "date": "2026-09-04",
+  "base_revision": "43a15c33acc61c6d34037ebce9f2606901cb7b16",
+  "roadmap_id": "API-04",
+  "state": "validated-for-main",
+  "implementation_hash_format": "utf8-crlf-normalized-to-lf",
+  "artifact_hash_format": "exact-bytes",
+  "runtime": {
+    "dotnet_sdk": "10.0.400",
+    "postgresql": "16.14",
+    "schema_version": 10
+  },
+  "validation": {
+    "total": 1435,
+    "passed": 1435,
+    "failed": 0,
+    "skipped": 0,
+    "runs": [
+      {
+        "file": "outputs/20260904_product_api_1.0.0/evidence/novik_TIM_2026-09-04_10_18_18_net10.0.trx",
+        "total": 245,
+        "passed": 245,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "outputs/20260904_product_api_1.0.0/evidence/novik_TIM_2026-09-04_10_18_19_net10.0.trx",
+        "total": 773,
+        "passed": 773,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "outputs/20260904_product_api_1.0.0/evidence/novik_TIM_2026-09-04_10_18_20_net10.0.trx",
+        "total": 417,
+        "passed": 417,
+        "failed": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "implementation_files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "646d8fde8704c808c1b387d4373f4fe8345f3167a49de300ffd9ddd002af166f",
+      "bytes": 54653
+    },
+    {
+      "path": "work/production/deployment/containers/sql/grant-runtime.sql",
+      "sha256": "f2e24a1e48964e5155502a8bfccf485f92aee0d083423c151bc2894b9b1ffb0d",
+      "bytes": 2898
+    },
+    {
+      "path": "work/production/docs/task-product-api.md",
+      "sha256": "f43202d8ada3b4f47c8325e64069e0005226e002c344968c292ffb8f29f559ac",
+      "bytes": 8496
+    },
+    {
+      "path": "work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+      "sha256": "bec8a558539d5504430dabe4d0f4d0fc7947b76defdfeddb69de58e5fbeed6fc",
+      "bytes": 8358
+    },
+    {
+      "path": "work/production/src/Task.Api/Program.cs",
+      "sha256": "b6400e2d4d26999bece8caecdaf209f966d1e4662c1ef8fd2471bacec0060098",
+      "bytes": 9939
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "sha256": "8e8b34cbc01c0f52fa0930cdefde5dcaf98d39ea238a51670ebfdb117ec36d6c",
+      "bytes": 9469
+    },
+    {
+      "path": "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "sha256": "98e904157ae0640fbc29e1ee1d938ca41a6bda7c5379c691eea6f15c41e79838",
+      "bytes": 8167
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/010_product_api.sql",
+      "sha256": "3b39a9d0663b91de02f70fc876d13123cd5b0d60460c612d68ea5a60e967cad3",
+      "bytes": 10852
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiLinks.cs",
+      "sha256": "9fce8947a2d0e8d0f05996f7c17e5aa1093c97264d37f3b9edebc28bf377978b",
+      "bytes": 8245
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiQueries.cs",
+      "sha256": "aa3f76d193f6ba859bb40357392f20f8e3cc580ce45a575a0f57e9b26b84c8e2",
+      "bytes": 14203
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "sha256": "9303829dd0d0450f1c4f4dac45e7304e0d8832be43a6f0f4a092144040c38fab",
+      "bytes": 22438
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSearch.cs",
+      "sha256": "7640f09550aa0c3604145ad502bcf80b7e19debb4a684510eaa48cc59849ee04",
+      "bytes": 16775
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSettings.cs",
+      "sha256": "229d94437467cf9bf7b49d23c542f64172403a00d4097c5e1a18906f4de97efa",
+      "bytes": 11178
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "sha256": "4a2529f672f92d6f41ac5955bdcd20da3e6674c2ec1c973a65ec00d8e90a76b4",
+      "bytes": 29523
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "sha256": "698dc9962844ce33dacba4f08891cef016a5fda4bbaa7283a42eea5696f9cf04",
+      "bytes": 2036
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrator.cs",
+      "sha256": "df44f42699166f7d1321c333c1c2ad41d03c2ea97825ee9c8c4eb8f9801830aa",
+      "bytes": 12242
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs",
+      "sha256": "89152d65de9fb70e8f399e56e5c0b6a0634a4a773b4fc6326d92bc755062e731",
+      "bytes": 9126
+    },
+    {
+      "path": "work/production/tests/Task.ServiceHosts.Tests/AuthSessionEndpointsTests.cs",
+      "sha256": "adf4e46574d03b1cfa9e176c1846c97d08f59fed6038dc267cb6733c78f5dafe",
+      "bytes": 34755
+    },
+    {
+      "path": "work/production/tests/Task.ServiceHosts.Tests/ProductEndpointsTests.cs",
+      "sha256": "f37b100d4edb75adcbd98664c1dc2030874818d91a585bef9d30d2ec0b247b85",
+      "bytes": 8616
+    },
+    {
+      "path": "work/production/tests/Task.Tests/PostgresProductApiTests.cs",
+      "sha256": "4ce1fde1f198ead0e6894633ab8738a2af2ad8959cd6e865ecca3197f78b783b",
+      "bytes": 24046
+    },
+    {
+      "path": "work/production/tests/Task.Tests/PostgresTaskAggregateStoreTests.cs",
+      "sha256": "e8b5a1bcaf84a05c6cd2db4fa039dfeb31ba65e8e452b2a73ba7f606d25bcac0",
+      "bytes": 24014
+    },
+    {
+      "path": "work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "sha256": "e74d8627db466d6e088d3b9f7a2fe1ee857e5b02a0bd9cba1887cdfed27aa241",
+      "bytes": 2913
+    },
+    {
+      "path": "work/production/verification/Build-ProductApiPackage.mjs",
+      "sha256": "20953cdcd65048f63464e0f3fe7d2cb8e61d827b5c9a5a75f4468f8f47cfe906",
+      "bytes": 4938
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "outputs/20260904_product_api_1.0.0/.gitattributes",
+      "sha256": "6e8740dc0c51674791bb82b5a2c0892bb63ea6ecd1f9cbd31b1fa4f5d33798e0",
+      "bytes": 137
+    },
+    {
+      "path": "outputs/20260904_product_api_1.0.0/README.md",
+      "sha256": "d8781b5f169b31f995451cd7ed6b16dc4cb3861efab4a0cc76398b88064a0359",
+      "bytes": 2490
+    },
+    {
+      "path": "outputs/20260904_product_api_1.0.0/VALIDATION_REPORT.md",
+      "sha256": "b1bcac05b6dc5fb788a794e04782086cbdb37e6c726b4abe4760a006b1c78531",
+      "bytes": 6317
+    },
+    {
+      "path": "outputs/20260904_product_api_1.0.0/VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "bytes": 6
+    },
+    {
+      "path": "outputs/20260904_product_api_1.0.0/evidence/novik_TIM_2026-09-04_10_18_18_net10.0.trx",
+      "sha256": "5475f380a8d48f7f9370842ff5dcb486be4997d64171397946a3e3d6bfd9a9c5",
+      "bytes": 349701
+    },
+    {
+      "path": "outputs/20260904_product_api_1.0.0/evidence/novik_TIM_2026-09-04_10_18_19_net10.0.trx",
+      "sha256": "73f909a73c9abc20fcb41fbdcee95267e2781e5cf3b69bd07067e28fe0f34828",
+      "bytes": 1037877
+    },
+    {
+      "path": "outputs/20260904_product_api_1.0.0/evidence/novik_TIM_2026-09-04_10_18_20_net10.0.trx",
+      "sha256": "b8383ce417db67f8e79e565996665bc9c0f49de5c0ab9c7612dfcb87eaf1c583",
+      "bytes": 611565
+    }
+  ]
+}

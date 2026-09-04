@@ -12,6 +12,7 @@ using Task.Api.Capabilities;
 using Task.Api.Calendar;
 using Task.Api.Security;
 using Task.Api.Tasks;
+using Task.Api.ProductData;
 using Task.Application.Server;
 using Task.Infrastructure.Identity;
 using Task.Infrastructure.Persistence;
@@ -71,6 +72,8 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
         services.GetRequiredService<TaskPersistenceRuntime>().CreateRecurrenceStore());
     builder.Services.AddSingleton<IProjectStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateProjectStore());
+    builder.Services.AddSingleton<IProductApiStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateProductApiStore());
     builder.Services.AddSingleton<IContactStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateContactStore());
     builder.Services.AddSingleton<ICatalogItemStore>(services =>
@@ -127,7 +130,9 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
     builder.Services.AddSingleton<PasswordChangeService>();
     builder.Services.AddSingleton<LoginRateLimiter>();
     builder.Services.AddSingleton<PermissionDecisionService>();
-    builder.Services.AddSingleton<ServerCapabilitiesService>();
+    builder.Services.AddSingleton(new ServerCapabilitiesService(
+        schemaVersion: TaskPersistenceRuntime.ExpectedMigrationVersion,
+        featureFlags: ["product_api_v1", "projects", "contacts", "file_catalog", "search", "notifications", "archive_trash", "settings"]));
     builder.Services.AddTaskPermissionAuthorization();
 }
 
@@ -166,6 +171,7 @@ app.MapAuditEndpoints();
 app.MapTaskEndpoints();
 app.MapCalendarEndpoints();
 app.MapRecurrenceEndpoints();
+app.MapProductEndpoints();
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 

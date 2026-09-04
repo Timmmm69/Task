@@ -87,7 +87,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Сверить полный task contract с готовым vertical slice и закрыть недостающие связи, поля и evidence."
     },
     {
@@ -111,7 +111,7 @@
         "PROD-01"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Собрать production-экран «Сегодня» поверх готовых task и calendar API, затем пройти реальный E2E."
     },
     {
@@ -167,7 +167,7 @@
         "SEC-02"
       ],
       "blocked_by": [],
-      "recommended_order": 15,
+      "recommended_order": 14,
       "next_action": "Реализовать project lifecycle с участниками, ролями и связанными задачами одним vertical slice."
     },
     {
@@ -193,7 +193,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 16,
+      "recommended_order": 15,
       "next_action": "Последовательно довести файлы, контакты, поиск и уведомления до связанных production-сценариев."
     },
     {
@@ -217,7 +217,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 7,
+      "recommended_order": 6,
       "next_action": "Закрыть оставшиеся эксплуатационные сценарии учётных записей и повторить auth E2E."
     },
     {
@@ -240,7 +240,7 @@
         "PROD-01"
       ],
       "blocked_by": [],
-      "recommended_order": 8,
+      "recommended_order": 7,
       "next_action": "Завершить представление расширенных полей задачи и повторить desktop task gate."
     },
     {
@@ -267,7 +267,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 17,
+      "recommended_order": 16,
       "next_action": "Заменять placeholders только готовыми вертикальными срезами и убрать последний placeholder после общего smoke."
     },
     {
@@ -291,7 +291,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 20,
+      "recommended_order": 19,
       "next_action": "Проверить offline, retry, session expiry и conflict recovery во всех готовых разделах."
     },
     {
@@ -314,7 +314,7 @@
         "DESK-03"
       ],
       "blocked_by": [],
-      "recommended_order": 18,
+      "recommended_order": 17,
       "next_action": "Выполнить нативную Windows-матрицу UIA, Narrator и DPI 125/150/200% с сохранением evidence."
     },
     {
@@ -339,7 +339,7 @@
         "DATA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Закрыть административный lifecycle учётных записей и подтвердить стабильность auth contracts."
     },
     {
@@ -402,21 +402,23 @@
       "category": "api",
       "weight": 12,
       "criticality": "critical",
-      "status": "not_started",
-      "progress": 0,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "work/production/src/Task.Api: endpoints найдены только для auth, audit, capabilities и tasks"
+        "work/production/src/Task.Api/ProductData/ProductEndpoints.cs; ProductApiRoutes.All: authenticated API проектов, CRM, каталога, поиска, уведомлений, архива/корзины и настроек",
+        "work/production/src/Task.Infrastructure/Persistence/PostgresProductApi*.cs; Migrations/010_product_api.sql: реальные PostgreSQL-транзакции, ETag/idempotency, tenant/project/recipient scope, безопасные file locations",
+        "outputs/20260904_product_api_1.0.0/VALIDATION_REPORT.md: Release 1435/1435, PostgreSQL 16.14 с ограниченной runtime-ролью, security gate и независимая проверка"
       ],
-      "note": "Критический scope gap относительно концепции.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Семь модулей API-04 доступны клиенту; реализация проверена, пакет подготовлен к публикации в main. Это не готовность UI, delivery/purge workers или полное соответствие всему OpenAPI 2.2; границы перечислены в task-product-api.md. Развёртывание на сервере заказчика не выполнялось.",
+      "updated_at": "2026-09-04T10:20:00+03:00",
       "priority": 3,
       "dependencies": [
         "DATA-04",
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
-      "next_action": "Создавать API оставшихся модулей по одному законченному vertical slice, начиная с проектов."
+      "recommended_order": 0,
+      "next_action": "Подключать desktop-сценарии к проверенным API и закрывать отдельные UI/security/worker пункты; перед развёртыванием применить миграцию 10 и runtime grants."
     },
     {
       "id": "API-05",
@@ -440,7 +442,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 28,
+      "recommended_order": 27,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -565,7 +567,7 @@
         "OPS-01"
       ],
       "blocked_by": [],
-      "recommended_order": 13,
+      "recommended_order": 12,
       "next_action": "Довести outbox, reminders и фоновые повторы до исполняемых worker-сценариев с idempotency."
     },
     {
@@ -617,7 +619,7 @@
         "API-04"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Применить полную role/capability matrix ко всем API и подтвердить tenant isolation негативными тестами."
     },
     {
@@ -641,7 +643,7 @@
       "blocked_by": [
         "SEC-05"
       ],
-      "recommended_order": 11,
+      "recommended_order": 10,
       "next_action": "По результатам threat model зафиксировать secrets manager, CA/TLS issuance и rotation runbook."
     },
     {
@@ -665,7 +667,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 22,
+      "recommended_order": 21,
       "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
     },
     {
@@ -687,7 +689,7 @@
         "SEC-01"
       ],
       "blocked_by": [],
-      "recommended_order": 10,
+      "recommended_order": 9,
       "next_action": "Сначала выполнить threat-model review; финальный penetration pass повторить после стабилизации deployment."
     },
     {
@@ -736,7 +738,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 9,
+      "recommended_order": 8,
       "next_action": "Повторить task/auth E2E на чистом окружении после закрытия текущих vertical slices."
     },
     {
@@ -763,7 +765,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 21,
+      "recommended_order": 20,
       "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
     },
     {
@@ -786,7 +788,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 26,
+      "recommended_order": 25,
       "next_action": "Провести модерируемые сессии, оформить findings disposition и получить product acceptance."
     },
     {
@@ -860,7 +862,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 12,
+      "recommended_order": 11,
       "next_action": "Развернуть и проверить production-like network, reverse proxy, TLS и firewall по утверждённому runbook."
     },
     {
@@ -918,7 +920,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 14,
+      "recommended_order": 13,
       "next_action": "Подключить logs, metrics и alerts для API, DB, disk, workers и backup failures с назначенными владельцами."
     },
     {
@@ -943,7 +945,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 19,
+      "recommended_order": 18,
       "next_action": "Создать подписанный Windows installer, совместимый update channel и проверенный rollback."
     },
     {
@@ -992,7 +994,7 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 23,
+      "recommended_order": 22,
       "next_action": "Собрать и проверить единый operations runbook на чистом стенде другим инженером."
     },
     {
@@ -1017,7 +1019,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 24,
+      "recommended_order": 23,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1040,7 +1042,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 25,
+      "recommended_order": 24,
       "next_action": "Подготовить короткие user/admin guides и проверить их на человеке, не участвовавшем в разработке."
     },
     {
@@ -1065,7 +1067,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 27,
+      "recommended_order": 26,
       "next_action": "Закрыть findings, назначить ownership и собрать Product, Design, Tech и QA sign-off."
     }
   ],

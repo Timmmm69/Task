@@ -80,6 +80,8 @@ internal static class TaskPermissionAuthorization
         (CalendarEventDeleteBackingPermissionCode, "CalendarEvent.Delete"),
         ("recurrence.read", "Recurrence.Read"),
         ("recurrence.manage", "Recurrence.Manage"),
+    .. Task.Application.ProductData.ProductApiRoutes.All.Select(route =>
+        (route.Permission.ToLowerInvariant(), route.Permission)).Distinct(),
     ];
 
     /// <summary>

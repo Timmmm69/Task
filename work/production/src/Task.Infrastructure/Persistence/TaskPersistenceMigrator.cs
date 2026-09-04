@@ -197,6 +197,18 @@ public sealed class TaskPersistenceMigrator
                AND to_regclass('crm.contacts') IS NOT NULL
                AND to_regclass('files.catalog_items') IS NOT NULL
                AND to_regclass('notify.notifications') IS NOT NULL
+               AND to_regclass('crm.companies') IS NOT NULL
+               AND to_regclass('crm.interactions') IS NOT NULL
+               AND to_regclass('crm.communication_channels') IS NOT NULL
+               AND to_regclass('crm.addresses') IS NOT NULL
+               AND to_regclass('crm.company_contacts') IS NOT NULL
+               AND to_regclass('projects.members') IS NOT NULL
+               AND to_regclass('files.file_locations') IS NOT NULL
+               AND to_regclass('files.location_checks') IS NOT NULL
+               AND to_regclass('files.network_resources') IS NOT NULL
+               AND to_regclass('core.object_links') IS NOT NULL
+               AND to_regclass('core.product_search_snapshots') IS NOT NULL
+               AND to_regclass('iam.product_api_commands') IS NOT NULL
                AND to_regclass('core.organization_settings') IS NOT NULL
                AND to_regclass('org.user_settings') IS NOT NULL
                AND to_regclass('notify.notification_preferences') IS NOT NULL

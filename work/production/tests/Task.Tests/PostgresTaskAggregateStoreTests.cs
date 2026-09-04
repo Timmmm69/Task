@@ -232,10 +232,11 @@ public sealed class PostgresTaskAggregateStoreTests
 
     private static async global::System.Threading.Tasks.Task AssertApiReportsReady(string connectionString)
     {
+        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name;
         var apiDll = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory,
             "..", "..", "..", "..", "..",
-            "src", "Task.Api", "bin", "Debug", "net10.0", "Task.Api.dll"));
+            "src", "Task.Api", "bin", configuration, "net10.0", "Task.Api.dll"));
         Assert.True(File.Exists(apiDll), $"Build Task.Api before the real PostgreSQL gate. Missing: {apiDll}");
 
         var listener = new TcpListener(IPAddress.Loopback, 0);
