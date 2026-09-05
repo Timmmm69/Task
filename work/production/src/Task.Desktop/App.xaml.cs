@@ -175,7 +175,9 @@ public partial class App : global::System.Windows.Application
                 sessionService.CurrentSessionMetadata!.UserId));
         var today = new TodayViewModel(
             calendarClient,
-            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            tasksClient: tasksClient,
+            currentUserId: sessionService.CurrentSessionMetadata!.UserId);
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today);
         var window = new MainWindow(viewModel);
         _mainWindow = window;

@@ -5,6 +5,21 @@
              AutomationProperties.AutomationId="TodayScreen">
 
     <UserControl.Resources>
+        <DataTemplate x:Key="TodayTaskTemplate">
+            <Button Margin="0,0,0,8" Padding="12" HorizontalContentAlignment="Stretch"
+                    AutomationProperties.Name="{Binding AutomationName}"
+                    Command="{Binding DataContext.OpenItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}">
+                <StackPanel>
+                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <WrapPanel>
+                        <TextBlock Text="{Binding StatusText}" Margin="0,0,12,0" />
+                        <TextBlock Text="{Binding PriorityText}" Margin="0,0,12,0" />
+                        <TextBlock Text="{Binding DeadlineText}" />
+                    </WrapPanel>
+                </StackPanel>
+            </Button>
+        </DataTemplate>
         <DataTemplate x:Key="TodayScheduleItemTemplate">
             <Border Padding="12"
                     Margin="0,0,0,8"
@@ -42,6 +57,10 @@
                             <TextBlock Text="{Binding PriorityText}"
                                        Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                         </WrapPanel>
+
+                        <Button Content="Открыть карточку" HorizontalAlignment="Left" Margin="0,8,0,4"
+                                Command="{Binding DataContext.OpenItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}" />
 
                         <TextBlock Text="{Binding Description}"
                                    TextWrapping="Wrap"
@@ -198,6 +217,28 @@
                                   AutomationProperties.Name="Задачи без точного времени" />
                 </StackPanel>
 
+                <TextBlock Text="{Binding TasksMessage}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,10" />
+                <StackPanel Margin="0,0,0,18">
+                    <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers>
+                        <DataTrigger Binding="{Binding OverdueTasks.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                    </Style.Triggers></Style></StackPanel.Style>
+                    <TextBlock Text="Просроченные задачи" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding OverdueTasks}" ItemTemplate="{StaticResource TodayTaskTemplate}" AutomationProperties.Name="Просроченные задачи" />
+                </StackPanel>
+                <StackPanel Margin="0,0,0,18">
+                    <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers>
+                        <DataTrigger Binding="{Binding ReviewTasks.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                    </Style.Triggers></Style></StackPanel.Style>
+                    <TextBlock Text="На проверке" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding ReviewTasks}" ItemTemplate="{StaticResource TodayTaskTemplate}" AutomationProperties.Name="На проверке" />
+                </StackPanel>
+                <StackPanel Margin="0,0,0,18">
+                    <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers>
+                        <DataTrigger Binding="{Binding WaitingTasks.Count}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                    </Style.Triggers></Style></StackPanel.Style>
+                    <TextBlock Text="Ожидают других сотрудников" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding WaitingTasks}" ItemTemplate="{StaticResource TodayTaskTemplate}" AutomationProperties.Name="Ожидают других сотрудников" />
+                </StackPanel>
                 <Border Padding="24"
                         AutomationProperties.Name="На сегодня записей нет">
                     <Border.Style>

@@ -3,7 +3,7 @@ using Task.Desktop.ViewModels;
 
 namespace Task.Desktop.Tests.Today;
 
-public sealed class TodayViewModelTests
+public sealed partial class TodayViewModelTests
 {
     private static readonly DateOnly Today = new(2026, 8, 31);
 

@@ -34,6 +34,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         if (Today is not null)
         {
             Today.PropertyChanged += OnTodayPropertyChanged;
+            Today.OpenItemRequested += OpenTodayItem;
         }
         if (Tasks is not null)
         {
@@ -108,6 +109,22 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(LastSuccessfulRefreshText));
             OnPropertyChanged(nameof(FooterRefreshCommand));
         }
+    }
+
+    private async void OpenTodayItem(object? item)
+    {
+        if (item is CalendarItemViewModel { IsCalendarEvent: true } calendarItem && Calendar is not null)
+        {
+            SelectedSection = Sections.First(s => s.Route == "calendar");
+            Calendar.SelectedItem = calendarItem;
+            return;
+        }
+        if (Tasks is null) return;
+        var id = item switch { TaskItemViewModel task => task.Id, CalendarItemViewModel scheduled => scheduled.Id, _ => Guid.Empty };
+        if (id == Guid.Empty) return;
+        SelectedSection = Sections.First(s => s.Route == "tasks");
+        await Tasks.ActivateAsync();
+        await Tasks.OpenByIdAsync(id);
     }
 
     public TasksViewModel? Tasks { get; }
@@ -223,6 +240,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         if (Today is not null)
         {
             Today.PropertyChanged -= OnTodayPropertyChanged;
+            Today.OpenItemRequested -= OpenTodayItem;
         }
 
         LogoutCommand.Dispose();

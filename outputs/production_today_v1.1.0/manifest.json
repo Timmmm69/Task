@@ -1,0 +1,54 @@
+{
+  "version": "1.1.0",
+  "task": "PROD-02",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/App.xaml.cs",
+      "sha256": "8afb172d5d8f810065b066d6769f7e6f997ef983b527950a46537e12ecc6be4c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "sha256": "26156a3f32f3ed170ac49e7634bc417d5597f492f7110ad5e4f30d8f0c354f4b"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "sha256": "2cbce05bddbe80d77cc62cfb9c29832d46b7b5442e1df996a87425afcc9ad9e0"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TodayViewModel.cs",
+      "sha256": "041940c93de95ccd99b5f412ba1fe41fbc941f8f617d359e30b095443cdeb709"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TodayTasks.cs",
+      "sha256": "3a19b80f4af8d5196d3128858a12353650f63f1bc9970328c275c272611c0831"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TodayView.xaml",
+      "sha256": "4f5568b2e20a7514b222bb5d2c646658eb8d577b61e8345a4f40733b61c9e0c2"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs",
+      "sha256": "d0ba2509f97717900641b3a7f01499663703898e83495de872c8af6481b73c1f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Today/TodayViewModelTests.cs",
+      "sha256": "24f44d5a94e3dfd6c3c6406056a4fff127c136a31219858c327316310b51e5bc"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Today/TodayTaskSummaryTests.cs",
+      "sha256": "c127b919ce85bafe5ed7700de2ce310a0ec62589223010e0c93330406547e1a3"
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "4d635de68b32a4ea3081e0e5721d9f0e6bf025da05d4e794964a0e7a4ea030e5"
+    },
+    {
+      "path": "outputs/production_today_v1.1.0/validation-report.md",
+      "sha256": "57678e35e7ce0278f197e4c8e2d5d20e229129b21365358009913d709ab92add"
+    },
+    {
+      "path": "outputs/production_today_v1.1.0/version.txt",
+      "sha256": "6ca2e3356014241331fb2b399428fca23c558e3f3d428edcf4f56eb0fe907069"
+    }
+  ]
+}

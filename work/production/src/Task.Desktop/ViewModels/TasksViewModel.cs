@@ -639,6 +639,47 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         await FetchFirstPageAsync(true, linkedCancellation.Token).ConfigureAwait(true);
     }
 
+    public async global::System.Threading.Tasks.Task OpenByIdAsync(Guid id)
+    {
+        if (!IsActive || !_sessionAllowsWrites || !_capabilities.Contains("Task.Read")) return;
+        if (Editor is not null)
+        {
+            ScreenMessage = "Сначала сохраните или закройте открытую форму задачи.";
+            return;
+        }
+        using var cancellation = CreateActivationLink(CancellationToken.None);
+        var entered = false;
+        try
+        {
+            await _requestGate.WaitAsync(cancellation.Token).ConfigureAwait(true);
+            entered = true;
+            var result = await _client.GetTaskByIdAsync(id, cancellation.Token).ConfigureAwait(true);
+            if (!IsActive || cancellation.IsCancellationRequested || !_sessionAllowsWrites || !_capabilities.Contains("Task.Read")) return;
+            if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded success)
+            {
+                var selected = new TaskItemViewModel(success.Value);
+                Items = Items.Where(t => t.Id != id).Append(selected).ToArray();
+                SetLoadedState();
+                SelectedItem = selected;
+            }
+            else if (result is DesktopTasksApiResult<DesktopTaskDto>.AuthenticationFailure or DesktopTasksApiResult<DesktopTaskDto>.Forbidden)
+            {
+                ClearTaskData();
+                State = result is DesktopTasksApiResult<DesktopTaskDto>.AuthenticationFailure
+                    ? TasksScreenState.SessionEnded : TasksScreenState.Forbidden;
+                ScreenMessage = "Нет доступа к задаче. Проверьте права и рабочую сессию.";
+            }
+            else
+                ScreenMessage = "Не удалось открыть задачу. Обновите список и повторите попытку.";
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
+        catch (Exception)
+        {
+            if (IsActive) ScreenMessage = "Сервер задач недоступен. Повторите попытку.";
+        }
+        finally { if (entered) _requestGate.Release(); }
+    }
+
     public void Activate() => _ = ActivateAsync();
 
     public void Deactivate()
@@ -694,7 +735,9 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
 
             if (result is DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
             {
-                var additions = success.Value.Items.Select(item => new TaskItemViewModel(item));
+                var additions = success.Value.Items
+                    .Where(item => Items.All(existing => existing.Id != item.Id))
+                    .Select(item => new TaskItemViewModel(item));
                 Items = Items.Concat(additions).ToArray();
                 SetNextCursor(success.Value.NextCursor);
                 RecordSuccessfulRefresh();

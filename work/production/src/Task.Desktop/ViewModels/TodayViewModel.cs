@@ -15,7 +15,7 @@ public enum TodayScreenState
     SessionEnded,
 }
 
-public sealed class TodayViewModel : ViewModelBase, IDisposable
+public sealed partial class TodayViewModel : ViewModelBase, IDisposable
 {
     private static readonly CultureInfo RussianCulture =
         CultureInfo.GetCultureInfo("ru-RU");
@@ -44,7 +44,9 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         IDesktopCalendarApiClient client,
         IEnumerable<string>? capabilities = null,
         TimeZoneInfo? timeZone = null,
-        Func<DateTimeOffset>? clock = null)
+        Func<DateTimeOffset>? clock = null,
+        Task.Desktop.TaskApi.IDesktopTasksApiClient? tasksClient = null,
+        Guid? currentUserId = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _timeZone = timeZone ?? TimeZoneInfo.Local;
@@ -54,11 +56,18 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
             StringComparer.Ordinal);
 
         _today = ResolveToday();
+        _tasksClient = tasksClient;
+        _currentUserId = currentUserId;
+        OpenItemCommand = new AsyncCommand((item, _) =>
+        {
+            OpenItemRequested?.Invoke(item);
+            return global::System.Threading.Tasks.Task.CompletedTask;
+        }, item => IsActive && _sessionAvailable && (item is CalendarItemViewModel { IsCalendarEvent: true } ? CanRead : CanReadTasks));
 
         RefreshCommand = new AsyncCommand(
             async (_, token) =>
                 await LoadAsync(refresh: true, token).ConfigureAwait(true),
-            _ => IsActive && _sessionAvailable && CanRead && !IsBusy);
+            _ => IsActive && _sessionAvailable && CanAccess && !IsBusy);
     }
 
     public TodayScreenState State
@@ -75,6 +84,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(ShowEmptyState));
             OnPropertyChanged(nameof(ShowMessage));
             RefreshCommand.RaiseCanExecuteChanged();
+            OpenItemCommand.RaiseCanExecuteChanged();
         }
     }
 
@@ -118,7 +128,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
 
     public bool HasUntimedItems => UntimedItems.Count > 0;
 
-    public bool HasItems => HasTimedItems || HasUntimedItems;
+    public bool HasItems => HasTimedItems || HasUntimedItems || OverdueTasks.Count > 0 || ReviewTasks.Count > 0 || WaitingTasks.Count > 0;
 
     public bool ShowEmptyState => State == TodayScreenState.Empty;
 
@@ -126,6 +136,8 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         State is TodayScreenState.Loading or TodayScreenState.Refreshing;
 
     public bool IsActive => _active;
+
+    private bool CanAccess => CanRead || (_tasksClient is not null && CanReadTasks);
 
     public bool CanRead => _capabilities.Contains("Calendar.Read");
 
@@ -163,6 +175,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         _active = true;
         OnPropertyChanged(nameof(IsActive));
         RefreshCommand.RaiseCanExecuteChanged();
+        OpenItemCommand.RaiseCanExecuteChanged();
 
         if (!_sessionAvailable)
         {
@@ -172,7 +185,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        if (!CanRead)
+        if (!CanAccess)
         {
             ClearProtectedData();
             State = TodayScreenState.Forbidden;
@@ -197,6 +210,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         State = TodayScreenState.Inactive;
         OnPropertyChanged(nameof(IsActive));
         RefreshCommand.RaiseCanExecuteChanged();
+        OpenItemCommand.RaiseCanExecuteChanged();
     }
 
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
@@ -206,16 +220,23 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
             return;
         }
 
+        var updatedCapabilities = capabilities?.ToArray() ?? [];
+        var taskAccessChanged = CanReadTasks != updatedCapabilities.Contains("Task.Read");
+        var calendarAccessChanged = CanRead != updatedCapabilities.Contains("Calendar.Read");
         _capabilities.Clear();
-        foreach (var capability in capabilities ?? [])
+        foreach (var capability in updatedCapabilities)
         {
             _capabilities.Add(capability);
         }
 
         OnPropertyChanged(nameof(CanRead));
+        OnPropertyChanged(nameof(CanReadTasks));
+        if (!CanReadTasks) ClearTaskItems();
+        if (!CanRead) { TimedItems = []; UntimedItems = []; }
         RefreshCommand.RaiseCanExecuteChanged();
+        OpenItemCommand.RaiseCanExecuteChanged();
 
-        if (!CanRead)
+        if (!CanAccess)
         {
             Interlocked.Increment(ref _generation);
             _requestCancellation?.Cancel();
@@ -226,9 +247,15 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
             return;
         }
 
+        if (taskAccessChanged || calendarAccessChanged)
+        {
+            Interlocked.Increment(ref _generation);
+            _requestCancellation?.Cancel();
+        }
+
         if (_active
             && _sessionAvailable
-            && State == TodayScreenState.Forbidden)
+            && (taskAccessChanged || calendarAccessChanged || State == TodayScreenState.Forbidden))
         {
             _ = LoadAsync(refresh: false, CancellationToken.None);
         }
@@ -244,6 +271,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         var changed = _sessionAvailable != sessionAvailable;
         _sessionAvailable = sessionAvailable;
         RefreshCommand.RaiseCanExecuteChanged();
+        OpenItemCommand.RaiseCanExecuteChanged();
 
         if (!sessionAvailable)
         {
@@ -258,7 +286,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
 
         if (changed
             && _active
-            && CanRead
+            && CanAccess
             && State == TodayScreenState.SessionEnded)
         {
             _ = LoadAsync(refresh: false, CancellationToken.None);
@@ -269,7 +297,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         bool refresh,
         CancellationToken cancellationToken)
     {
-        if (_disposed || !_active || !_sessionAvailable || !CanRead)
+        if (_disposed || !_active || !_sessionAvailable || !CanAccess)
         {
             return;
         }
@@ -309,14 +337,17 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
 
         try
         {
+            await LoadTaskItemsAsync(generation, token).ConfigureAwait(true);
+            if (!_active || token.IsCancellationRequested || generation != _generation) return;
+
             var (fromUtc, toUtc) = CalendarViewModel.GetUtcRange(
                 _today,
                 _today.AddDays(1),
                 _timeZone);
 
-            var result = await _client
-                .GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, token)
-                .ConfigureAwait(true);
+            var result = CanRead
+                ? await _client.GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, token).ConfigureAwait(true)
+                : new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new DesktopSchedulePage([], fromUtc, toUtc));
 
             if (!_active
                 || token.IsCancellationRequested
@@ -329,10 +360,15 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
             {
                 ApplySchedule(succeeded.Value);
 
-                _lastSuccessfulRefresh = _clock();
+                if (TasksMessage is null) _lastSuccessfulRefresh = _clock();
                 OnPropertyChanged(nameof(LastSuccessfulRefreshText));
 
-                if (!HasItems)
+                if (TasksMessage is not null)
+                {
+                    State = TodayScreenState.Error;
+                    Message = null;
+                }
+                else if (!HasItems)
                 {
                     State = TodayScreenState.Empty;
                     Message = "На сегодня в расписании нет записей.";
@@ -398,13 +434,14 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
         switch (result)
         {
             case DesktopCalendarResult<DesktopSchedulePage>.Forbidden:
-                ClearProtectedData();
+                TimedItems = [];
+                UntimedItems = [];
                 State = TodayScreenState.Forbidden;
                 Message = "Нет права Calendar.Read для просмотра расписания.";
                 break;
 
             case DesktopCalendarResult<DesktopSchedulePage>.AuthenticationFailure:
-                ClearProtectedData();
+                UpdateSessionState(false);
                 State = TodayScreenState.SessionEnded;
                 Message = "Сессия завершена. Войдите снова.";
                 break;
@@ -442,6 +479,7 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
     {
         TimedItems = Array.Empty<CalendarItemViewModel>();
         UntimedItems = Array.Empty<CalendarItemViewModel>();
+        ClearTaskItems();
     }
 
     public void Dispose()
@@ -456,5 +494,6 @@ public sealed class TodayViewModel : ViewModelBase, IDisposable
 
         _requestCancellation?.Dispose();
         RefreshCommand.Dispose();
+        OpenItemCommand.Dispose();
     }
 }

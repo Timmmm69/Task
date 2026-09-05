@@ -625,6 +625,37 @@ public sealed class TasksViewModelTests
         Assert.True(confirmChanges > 0);
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task OpenById_OpensTaskOutsideFirstPageForReadOnlyUser()
+    {
+        var task = CreateTask("Из сводки Сегодня");
+        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task) };
+        client.EnqueuePage(SucceededPage([]));
+        using var vm = new TasksViewModel(client, ["Task.Read"]);
+        await vm.ActivateAsync();
+        await vm.OpenByIdAsync(task.Id);
+        Assert.Equal(task.Id, vm.SelectedItem?.Id);
+        Assert.Contains(vm.SelectedItem!, vm.Items);
+        Assert.Equal(task.Id, vm.SelectedDetails?.Id);
+        Assert.Equal(TasksScreenState.Loaded, vm.State);
+        Assert.True(vm.IsReadOnly);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task OpenById_PreservesExistingDraft()
+    {
+        var task = CreateTask();
+        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task) };
+        client.EnqueuePage(SucceededPage([task]));
+        using var vm = new TasksViewModel(client, WriteCapabilities);
+        await vm.ActivateAsync();
+        await vm.EditTaskCommand.ExecuteAsync();
+        vm.Editor!.Title = "Несохранённый черновик";
+        await vm.OpenByIdAsync(Guid.NewGuid());
+        Assert.Equal("Несохранённый черновик", vm.Editor.Title);
+        Assert.Equal(task.Id, vm.SelectedItem?.Id);
+    }
+
     private static DesktopTasksApiResult<DesktopTaskPage> SucceededPage(
         IReadOnlyList<DesktopTaskDto> items,
         string? nextCursor = null) =>
