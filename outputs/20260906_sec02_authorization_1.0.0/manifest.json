@@ -1,0 +1,355 @@
+{
+  "package": "20260906_sec02_authorization_1.0.0",
+  "version": "1.0.0",
+  "schema_version": 13,
+  "base_commit": "a6cd27aebbf011ce21350598f79ca274bc42b9a4",
+  "tests_passed": 1614,
+  "sources": [
+    ".project-dashboard/roadmap.json",
+    "work/production/deployment/containers/sql/grant-runtime.sql",
+    "work/production/docs/SEC-02-authorization.md",
+    "work/production/src/Task.Api/Calendar/CalendarEndpoints.cs",
+    "work/production/src/Task.Api/Calendar/CalendarWriteEndpoints.cs",
+    "work/production/src/Task.Api/Calendar/RecurrenceEndpoints.cs",
+    "work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+    "work/production/src/Task.Application/Calendar/CalendarEventLifecycleService.cs",
+    "work/production/src/Task.Application/Calendar/CalendarEventQueryService.cs",
+    "work/production/src/Task.Application/Calendar/ICalendarEventStore.cs",
+    "work/production/src/Task.Application/Calendar/IScheduleStore.cs",
+    "work/production/src/Task.Application/Calendar/RecurrenceContracts.cs",
+    "work/production/src/Task.Application/Calendar/RecurrenceService.cs",
+    "work/production/src/Task.Application/Calendar/ScheduleQueryService.cs",
+    "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+    "work/production/src/Task.Application/TaskCreateCommandService.cs",
+    "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+    "work/production/src/Task.Application/TaskWriteCommand.cs",
+    "work/production/src/Task.Infrastructure/Identity/OfflineAdministratorBootstrapper.cs",
+    "work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresAuthorizationAudit.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiLinks.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiQueries.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRoles.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSearch.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresRecurrenceStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresScheduleStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountCommandStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+    "work/production/src/Task.Infrastructure/Postgres/PostgresAuthorizationPolicyStore.cs",
+    "work/production/tests/Task.ServiceHosts.Tests/CalendarReadEndpointsTests.cs",
+    "work/production/tests/Task.Tests/PostgresAuthorizationScenarioTests.cs",
+    "work/production/tests/Task.Tests/PostgresProductApiTests.cs",
+    "work/production/tests/Task.Tests/PostgresTaskCardWorkflowTests.cs",
+    "work/production/tests/Task.Tests/PostgresTaskReadStoreTests.cs",
+    "work/production/tests/Task.Tests/Recurrence/RecurrenceServiceTests.cs",
+    "work/production/tests/Task.Tests/ScheduleQueryServiceTests.cs",
+    "work/production/tests/Task.Tests/TaskCreateCommandTests.cs",
+    "work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+    "work/production/tests/Task.Tests/TaskUpdateTests.cs",
+    "work/production/verification/Build-AuthorizationPackage.py",
+    "work/production/verification/Test-Authorization.ps1"
+  ],
+  "files": [
+    {
+      "path": "evidence/boundaries.log",
+      "size": 974,
+      "sha256": "29566c5a9d90d7892e720a5c843f09f169b907c273a2a8cb2d3f4abb76dcfedc"
+    },
+    {
+      "path": "evidence/checks.json",
+      "size": 184,
+      "sha256": "eb75c14400ca7d97bf7ecec9225ef051e15ef367784390adccec4a2d96afd448"
+    },
+    {
+      "path": "evidence/dashboard.log",
+      "size": 188,
+      "sha256": "3ee68078532fb18e5ea1da5036c3b24b1e322f88c912e5d90d323221d3f41ab8"
+    },
+    {
+      "path": "evidence/novik_TIM_2026-09-06_01_25_33_net10.0.trx",
+      "size": 381914,
+      "sha256": "a51a520dee1029239d1692bc527ce1022a6a70497dcc8cba12a362b782e2461d"
+    },
+    {
+      "path": "evidence/novik_TIM_2026-09-06_01_25_34_net10.0.trx",
+      "size": 822872,
+      "sha256": "f3c0e4a6c2fbcd68f8cef8ba37fc803b7195b309818b19f6976594df4cc36f37"
+    },
+    {
+      "path": "evidence/novik_TIM_2026-09-06_01_25_34_net10.0[1].trx",
+      "size": 1058998,
+      "sha256": "2f1cddfd75f28371197d3ccdd3279777ed1af2959ee80a87c4f788786889dd89"
+    },
+    {
+      "path": "evidence/security-gate-final.log",
+      "size": 2600,
+      "sha256": "cb022111a2993aadb000fff3a10b068b8496b845533c09c76c5011c5d1c624b7"
+    },
+    {
+      "path": "evidence/tests.log",
+      "size": 5438,
+      "sha256": "55379c6a28336b8d9a044d35b5c3df81a9b3742695753b0d1c0bb54c4433a8fd"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 56682,
+      "sha256": "9e5b53dd88d93f053b31a58bf53905ea50b5f3bcf18cedb4e7d76c0218ed6d31"
+    },
+    {
+      "path": "source/work/production/deployment/containers/sql/grant-runtime.sql",
+      "size": 3180,
+      "sha256": "c0c4e8954437adfeb9e76009c44386590bf354053445a54c3103db488a16de7f"
+    },
+    {
+      "path": "source/work/production/docs/SEC-02-authorization.md",
+      "size": 9828,
+      "sha256": "482e4a76fa5305e2a844572148f540adb995a256c67384506150498982ca61a0"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Calendar/CalendarEndpoints.cs",
+      "size": 20286,
+      "sha256": "92d9d086ffc52689a6a6ee2a5e5a9959f12098f854aa2adba1faa6616d4fe5ee"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Calendar/CalendarWriteEndpoints.cs",
+      "size": 31720,
+      "sha256": "002fbef51e49951d1c0af5924e82a27b51528856897fe664f3134c0cc160c239"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Calendar/RecurrenceEndpoints.cs",
+      "size": 10535,
+      "sha256": "2e976a6a609c44b7c2a9e75b3a8bb5d054f7a54a7ed5725265b8a7fa8f33cf62"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+      "size": 9598,
+      "sha256": "41a9ec471e4d7f734040b337bfd88bd06190f7d8c3bd1f7c0a101cd156335245"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/CalendarEventLifecycleService.cs",
+      "size": 7036,
+      "sha256": "b770f024b8dcf9cd1ccbd6c9e52e4fd39b837826de70ed1017e9c339ad2f4ddf"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/CalendarEventQueryService.cs",
+      "size": 1717,
+      "sha256": "0a13c7e4a2ca1fe82994bf7d7ae108ab6da532a4365a87d6c190c31bdfd83538"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/ICalendarEventStore.cs",
+      "size": 1016,
+      "sha256": "3d0cf7adfa2457200aca3829e9f61e27958104843fd935c9c34e7c34012233f3"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/IScheduleStore.cs",
+      "size": 3515,
+      "sha256": "8be06a118dd7b5d10f866fda1105cfa780dd86ce5df9eab6695fa1f825ee9c05"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/RecurrenceContracts.cs",
+      "size": 5949,
+      "sha256": "c93a98c836e90550d14069407af9774591c38f40acfe4487bd1b5d2dabf0b90f"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/RecurrenceService.cs",
+      "size": 20230,
+      "sha256": "87a4506546b9cb995115129dce905b6642f33bab2e0748e9445c6c1c22de01f0"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Calendar/ScheduleQueryService.cs",
+      "size": 13479,
+      "sha256": "0e08e861dd95b6f536f6994a4fcc68bb9225fa063bc21c2b3a56202bd7779db1"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "size": 9315,
+      "sha256": "be2c4d4f58c0b34dd82ee7f8b49889b499aaedcc1855f90b8702773cba4e4751"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/TaskCreateCommandService.cs",
+      "size": 4424,
+      "sha256": "7b5cebd2c2f78edf344bfbe7a461d6396558d624bf0ad7e274ff13fa57f71780"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "size": 15350,
+      "sha256": "b9768aa989db409df1c06004f3457b33a1a286d3bfac82d36c73e4e26d0edd54"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/TaskWriteCommand.cs",
+      "size": 9644,
+      "sha256": "a09b27c6f77a3c9828544005b93606ea0cd7f2b93737ad4867f81bfae7a3bea6"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Identity/OfflineAdministratorBootstrapper.cs",
+      "size": 10396,
+      "sha256": "eacfaddfdf1471e87b28daeacd1e6d6cc1dac88d5c83ed26d5395c441d4ae877"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+      "size": 17352,
+      "sha256": "c926aba25698b4f327bf42b798a0555061f68d163b729dd8f59cfbda4622116b"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresAuthorizationAudit.cs",
+      "size": 1079,
+      "sha256": "78a099a94ab69b13efc5889c4ad734fbcf50b7c4a01ab1bde3696a65bb294213"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+      "size": 27969,
+      "sha256": "2cffc7461238cb720f03ee26f047214055079efdef209691ddd5d8a2e967d835"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiLinks.cs",
+      "size": 8965,
+      "sha256": "64f8fd72ad8c856e038dd507e3503a5dc96fdbb5699188182adde88e30472c88"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiQueries.cs",
+      "size": 14852,
+      "sha256": "45898e7c14b17fe5f3ce24060716fe672ec86338487128d21d785310393a75dc"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "size": 22815,
+      "sha256": "d464e802bd18fae5b54edde3830793671627bf0862bfffaef1a26ec2fbdd1593"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRoles.cs",
+      "size": 5976,
+      "sha256": "9fd369fd325a03b323da0fea4c7460aabe7ed11af23896d8a8e1f67809b10dd9"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSearch.cs",
+      "size": 17121,
+      "sha256": "a99031a34a0cb46d15218d7dd10b2f70d00e21c4c6dd2e57527156b4f91f0133"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "size": 31811,
+      "sha256": "f15d13031f9de5c90acf1918f1f578cba07687c2bc0c90844a63172b35526d43"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "size": 10050,
+      "sha256": "1499a9513482b755e27f0ba16b6e0202d7c1657cfbbaba7f63889eb5a4c98fa2"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresRecurrenceStore.cs",
+      "size": 18516,
+      "sha256": "7ca058293508c1cd0d8d802cd96844c9d46105584136228422e6db77181cd995"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresScheduleStore.cs",
+      "size": 8944,
+      "sha256": "d0d01850f95f50535d8e669a743ff29a9877ca509386d200adbf97eebafc5911"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+      "size": 5149,
+      "sha256": "59f837c742bb3bd63dcf586d322636f5d86af5bdccde50365ae5ecc5eaa0805a"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+      "size": 9605,
+      "sha256": "d6e5cf24c0b722583e1dfa4881a378c68916a3abf1666842b873ae6a4b04e637"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "size": 30938,
+      "sha256": "32ad21aa93ee03321c231d0d003ad10cb71aa13e1a489ea910d0fb36e168cae0"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountCommandStore.cs",
+      "size": 32102,
+      "sha256": "f9d008d31ed3bb018429560dbd825986ac87ee27eb5bef779a9f4aa4474fa5e1"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "size": 2267,
+      "sha256": "b26676fadc99b3d1fcce686e4d34063d2f5fe34eeb10edb4a33c1f3eebb9897d"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresAuthorizationPolicyStore.cs",
+      "size": 5002,
+      "sha256": "a9f25a6cceeef921ec4a4d28381f552d9a598f30283149933262c29fd3574d0d"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/CalendarReadEndpointsTests.cs",
+      "size": 27375,
+      "sha256": "6e35222148baf4ab9652ec464690f8c5456fbd994aee2def6b70c14b69d1d58f"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresAuthorizationScenarioTests.cs",
+      "size": 15839,
+      "sha256": "32919551b833f365c437c8049d5d5b07cce16232aa5d4d8ee50875bf95e60f4f"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresProductApiTests.cs",
+      "size": 24932,
+      "sha256": "73be243c7214a13560da4c4fbbc03f1462a92fdee896adfaf0b1640548eb74c0"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresTaskCardWorkflowTests.cs",
+      "size": 8641,
+      "sha256": "fbc781b539085493747a423914ed33712fa9735ffde23800ccea4360e284f2d7"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresTaskReadStoreTests.cs",
+      "size": 12433,
+      "sha256": "5867b8fd2c62b34e1c005f033602627d864c8278b17b4ece16623037522fb75f"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/Recurrence/RecurrenceServiceTests.cs",
+      "size": 9564,
+      "sha256": "53a6e2d7912998327bdaa4fc31296b8b426c9f970cc8f269af6a6fec8fb4d7db"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/ScheduleQueryServiceTests.cs",
+      "size": 29215,
+      "sha256": "4dc8662c6b33b06af655b5ab9c56861d04867b2d1db45e4e985c11c9102c8c66"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/TaskCreateCommandTests.cs",
+      "size": 19831,
+      "sha256": "d2298ca5715702b6e9517645a0a783cca81f45cc037831a05769026cc7e19ecb"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "size": 3028,
+      "sha256": "4a7840c5861073235efc7c44bde653a64aff861e5b48f72e794a9efe868d1aaf"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/TaskUpdateTests.cs",
+      "size": 38108,
+      "sha256": "42f8e1805dcd8650595e02dca405d77e87d8537b22c60336f6faffb8731829ed"
+    },
+    {
+      "path": "source/work/production/verification/Build-AuthorizationPackage.py",
+      "size": 6309,
+      "sha256": "dded63c87a7bd9e851f139fe1e6f18f50ca091b03cbf4b3fe7f5007a27f3db5f"
+    },
+    {
+      "path": "source/work/production/verification/Test-Authorization.ps1",
+      "size": 2348,
+      "sha256": "7f9389fc10955a52cdb3aa5c238651f7a22cc4dff4880b94b141ae198e1a3c09"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1977,
+      "sha256": "b1343e8e2d7e802871cb078feb814b10f91d17377dc684d9b4685d360bbcce67"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
