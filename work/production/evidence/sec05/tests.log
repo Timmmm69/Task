@@ -1,0 +1,37 @@
+  Task.Domain -> C:\Users\novik\Таск\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Infrastructure -> C:\Users\novik\Таск\work\production\src\Task.Infrastructure\bin\Release\net10.0\Task.Infrastructure.dll
+  Task.Desktop -> C:\Users\novik\Таск\work\production\src\Task.Desktop\bin\Release\net10.0-windows\Task.Desktop.dll
+  Task.DatabaseMigrator -> C:\Users\novik\Таск\work\production\src\Task.DatabaseMigrator\bin\Release\net10.0\Task.DatabaseMigrator.dll
+  Task.BackupAgent -> C:\Users\novik\Таск\work\production\src\Task.BackupAgent\bin\Release\net10.0\Task.BackupAgent.dll
+  Task.Tests -> C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+  Task.Worker -> C:\Users\novik\Таск\work\production\src\Task.Worker\bin\Release\net10.0\Task.Worker.dll
+  Task.Desktop.Tests -> C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+  Task.Api -> C:\Users\novik\Таск\work\production\src\Task.Api\bin\Release\net10.0\Task.Api.dll
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+  Task.ServiceHosts.Tests -> C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:00.59]     Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [1 ms]
+[xUnit.net 00:00:00.60]     Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [1 ms]
+[xUnit.net 00:00:01.04]     Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [SKIP]
+  Пропущен Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [1 ms]
+[xUnit.net 00:00:01.40]     Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [SKIP]
+  Пропущен Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [1 ms]
+Сообщение сборщика данных "Blame": Все тесты завершены, файл последовательности не будет создан..
+Файл результатов: C:\Users\novik\Таск\work\production\evidence\sec05\sec05_net10.0_20260906195742.trx
+
+Пройден!   : не пройдено     0, пройдено   269, пропущено     0, всего   269, длительность 2 s. - Task.Desktop.Tests.dll (net10.0)
+Сообщение сборщика данных "Blame": Все тесты завершены, файл последовательности не будет создан..
+Файл результатов: C:\Users\novik\Таск\work\production\evidence\sec05\sec05_net10.0_20260906195743.trx
+
+Пройден!   : не пройдено     0, пройдено   790, пропущено     4, всего   794, длительность 2 s. - Task.Tests.dll (net10.0)
+Сообщение сборщика данных "Blame": Все тесты завершены, файл последовательности не будет создан..
+Файл результатов: C:\Users\novik\Таск\work\production\evidence\sec05\sec05_net10.0_20260906195751.trx
+
+Пройден!   : не пройдено     0, пройдено   558, пропущено     0, всего   558, длительность 10 s. - Task.ServiceHosts.Tests.dll (net10.0)

@@ -1,0 +1,182 @@
+{
+  "package": "20260906_sec05_independent_security_review_1.0.0",
+  "version": "1.0.0",
+  "base_commit": "32592b7070084cc1741c43bd7ccaa918c2be9f0f",
+  "review_result": "PASS",
+  "sec05_status": "done",
+  "release_security_cleared": false,
+  "open_release_blockers": [
+    "SEC-03"
+  ],
+  "tests_passed": 1617,
+  "tests_skipped": 4,
+  "dependency_projects_audited": 11,
+  "sources": [
+    ".project-dashboard/roadmap.json",
+    "work/production/docs/SEC-05-threat-model.md",
+    "work/production/docs/SEC-05-independent-security-review.md",
+    "work/production/src/Task.Api/Auth/AuthEndpoints.cs",
+    "work/production/src/Task.Api/Auth/LoginAbuseProtector.cs",
+    "work/production/src/Task.Api/Program.cs",
+    "work/production/src/Task.Api/Task.Api.csproj",
+    "work/production/src/Task.Application/Security/LoginRateLimiter.cs",
+    "work/production/src/Task.Application/Task.Application.csproj",
+    "work/production/src/Task.BackupAgent/Task.BackupAgent.csproj",
+    "work/production/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj",
+    "work/production/src/Task.Domain/Task.Domain.csproj",
+    "work/production/src/Task.Infrastructure/Task.Infrastructure.csproj",
+    "work/production/src/Task.Worker/Task.Worker.csproj",
+    "work/production/tests/Task.ServiceHosts.Tests/AuthEndpointsTests.cs",
+    "work/production/tests/Task.Tests/Security/LoginRateLimiterTests.cs",
+    "work/production/verification/Test-IndependentSecurityReview.ps1",
+    "work/production/verification/Build-IndependentSecurityReviewPackage.py",
+    "work/production/verification/container-task-store/Task.ContainerValidation.csproj"
+  ],
+  "files": [
+    {
+      "path": "evidence/checks.json",
+      "size": 303,
+      "sha256": "a60f352561c24c6df7668211ecbbda0802f2b4676c324f6e98fe1a0eba41f4b1"
+    },
+    {
+      "path": "evidence/dependency-vulnerabilities.json",
+      "size": 1434,
+      "sha256": "e8b3707af3161b877bbd00bf45ffbde49380b059060e95cb0c012dd7fb8c6a51"
+    },
+    {
+      "path": "evidence/linux-x64-locked-restore.log",
+      "size": 815,
+      "sha256": "26f91ec4cfae5d2211a6b0bd4065093ad3c2011a80ad855724e1ffb795590703"
+    },
+    {
+      "path": "evidence/locked-restore.log",
+      "size": 163,
+      "sha256": "661ade438b6fa49617bbfc7234920e24e01cc439051c292bc4c4f27e1e32d4d2"
+    },
+    {
+      "path": "evidence/sec05_net10.0_20260906195742.trx",
+      "size": 383336,
+      "sha256": "f5ab81a2eb4aa85378bb7933b83da0bc24362e9af1525d673a58a21ee7419afd"
+    },
+    {
+      "path": "evidence/sec05_net10.0_20260906195743.trx",
+      "size": 1074582,
+      "sha256": "f319d89ffbc5763d2625253dd3d7704c52f7ca3a6099e598baec0b33c15b56db"
+    },
+    {
+      "path": "evidence/sec05_net10.0_20260906195751.trx",
+      "size": 831175,
+      "sha256": "4409dc65696d2e0ea724e76f7ac1b167685ccf1d6fede0a74fee4a285414aa5d"
+    },
+    {
+      "path": "evidence/tests.log",
+      "size": 4707,
+      "sha256": "0d492c0b4d8cc72b73d903156ca214469627acff0dfb0561e32badca4d16436d"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 57382,
+      "sha256": "8aefebabd20766c20d56cf6b41aba3444d981d84c7a88675a997b75f90130604"
+    },
+    {
+      "path": "source/work/production/docs/SEC-05-independent-security-review.md",
+      "size": 4940,
+      "sha256": "c289d87373a8df34252ddef4f4ef3739238fd544cb00d013efcb6dca5eb5b406"
+    },
+    {
+      "path": "source/work/production/docs/SEC-05-threat-model.md",
+      "size": 9392,
+      "sha256": "dad88507e6d186ed72616b1e5b657c693eb19bf6ec05a5c53c052380654a91bf"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Auth/AuthEndpoints.cs",
+      "size": 19728,
+      "sha256": "a413ff6ffc7e952af69b693144795fb8d7935b5a532c31ca01facd1f234a4940"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Auth/LoginAbuseProtector.cs",
+      "size": 4428,
+      "sha256": "634665295f277bac3b6d4c707ae7423ba14679c6bfbe30b43593089b44850677"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Program.cs",
+      "size": 10485,
+      "sha256": "10d9c164a7cda0e0f41dd801f2c99a14d8f9152bc6faeef6592f4abd5b7dc96b"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Task.Api.csproj",
+      "size": 848,
+      "sha256": "101cdd9a1d1a5901128130b00ba44e63147616832b51d8b435a45b1fe06cc7f8"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Security/LoginRateLimiter.cs",
+      "size": 9202,
+      "sha256": "56bfbed3dbf8ac32117916a50a0347534be647c347431df0eaeb0434e29f30a0"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Task.Application.csproj",
+      "size": 803,
+      "sha256": "ca6146bebf7c328a5550ec091b9d4dca3b8005dbc33b42dc6da8d2a64642de54"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/Task.BackupAgent.csproj",
+      "size": 855,
+      "sha256": "aeff7fae1720239d5dc857a2dfd984d386cb7998a98121c5b117dcfcf1e6f7f1"
+    },
+    {
+      "path": "source/work/production/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj",
+      "size": 410,
+      "sha256": "491356822b59675dab47122bc1ef60ede19bae6ebdada3101a4e2e5eb470994e"
+    },
+    {
+      "path": "source/work/production/src/Task.Domain/Task.Domain.csproj",
+      "size": 273,
+      "sha256": "2cb9a7f71bc2a1bf743e87448cf3e609d1c0befdff7510c92cef194e37585ae7"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Task.Infrastructure.csproj",
+      "size": 725,
+      "sha256": "1b4422d8985a3401848012f568f142e884fe583552afc07c65b00899989d2ba6"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/Task.Worker.csproj",
+      "size": 850,
+      "sha256": "0ee3c9a345bc6f7f8d7b132dcf6ebfcd9517fe437d35c328de474d140008b48b"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/AuthEndpointsTests.cs",
+      "size": 34720,
+      "sha256": "c4d732cc65df0165a17d3b21fff44ebc1f31fb7a9165634b446e3297004cf159"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/Security/LoginRateLimiterTests.cs",
+      "size": 9112,
+      "sha256": "fa60f1a9943f76e3322d46802767de1305eef816865fc3625c843b7ef1096290"
+    },
+    {
+      "path": "source/work/production/verification/Build-IndependentSecurityReviewPackage.py",
+      "size": 11458,
+      "sha256": "361b886c0aa375d6350e001ba336193ca2b32574ed8bbe2f24701e3840df2091"
+    },
+    {
+      "path": "source/work/production/verification/container-task-store/Task.ContainerValidation.csproj",
+      "size": 576,
+      "sha256": "4bce7e12836fa0803acde33af9a35cf770dd890998d175a05a14f7ed141836d1"
+    },
+    {
+      "path": "source/work/production/verification/Test-IndependentSecurityReview.ps1",
+      "size": 9275,
+      "sha256": "49044bbd733ba3f500259d5a67f23b3ae600bf474219931ceb6ed6de968e4341"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 2620,
+      "sha256": "0acdac20d56ce4e764682fd5cf29367928b0b956c203c6a68c17b8756c099cc7"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
