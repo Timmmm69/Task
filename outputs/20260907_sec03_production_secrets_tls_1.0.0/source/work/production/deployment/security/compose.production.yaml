@@ -1,0 +1,152 @@
+name: task-production
+
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:?POSTGRES_IMAGE must be an immutable digest reference}
+    platform: linux/amd64
+    environment:
+      POSTGRES_DB: ${TASK_DB_NAME:?TASK_DB_NAME is required}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/task-secrets/postgres-admin-password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256 --auth-local=scram-sha-256
+    command:
+      - postgres
+      - -c
+      - ssl=on
+      - -c
+      - ssl_min_protocol_version=TLSv1.2
+      - -c
+      - ssl_cert_file=/run/task-secrets/postgres.crt
+      - -c
+      - ssl_key_file=/run/task-secrets/postgres.key
+      - -c
+      - ssl_ca_file=/run/task-secrets/postgres-ca.pem
+      - -c
+      - hba_file=/etc/postgresql/task-pg_hba.conf
+      - -c
+      - password_encryption=scram-sha-256
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgresql.pg_hba.conf:/etc/postgresql/task-pg_hba.conf:ro
+      - ${TASK_SECRET_ROOT:?TASK_SECRET_ROOT is required}/database/postgres-admin-password:/run/task-secrets/postgres-admin-password:ro
+      - ${TASK_SECRET_ROOT}/database/postgres.crt:/run/task-secrets/postgres.crt:ro
+      - ${TASK_SECRET_ROOT}/database/postgres.key:/run/task-secrets/postgres.key:ro
+      - ${TASK_SECRET_ROOT}/database/postgres-ca.pem:/run/task-secrets/postgres-ca.pem:ro
+    networks:
+      - database
+    restart: unless-stopped
+
+  task-database-migrator:
+    image: ${TASK_DATABASE_MIGRATOR_IMAGE:?TASK_DATABASE_MIGRATOR_IMAGE must be an immutable digest reference}
+    platform: linux/amd64
+    environment:
+      ConnectionStrings__TaskDatabase: Host=postgres;Port=5432;Database=${TASK_DB_NAME};Username=task_migration;Passfile=/run/task-secrets/task-migration.pgpass;SSL Mode=VerifyFull;Root Certificate=/run/task-secrets/postgres-ca.pem
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ${TASK_SECRET_ROOT}/database/task-migration.pgpass:/run/task-secrets/task-migration.pgpass:ro
+      - ${TASK_SECRET_ROOT}/database/postgres-ca.pem:/run/task-secrets/postgres-ca.pem:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+    restart: "no"
+    profiles: ["tools"]
+
+  task-api:
+    image: ${TASK_API_IMAGE:?TASK_API_IMAGE must be an immutable digest reference}
+    platform: linux/amd64
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__TaskDatabase: Host=postgres;Port=5432;Database=${TASK_DB_NAME};Username=task_runtime;Passfile=/run/task-secrets/task-runtime.pgpass;SSL Mode=VerifyFull;Root Certificate=/run/task-secrets/postgres-ca.pem
+      Task__Identity__Issuer: https://${TASK_SERVER_NAME:?TASK_SERVER_NAME is required}
+      Task__Identity__Audience: task-desktop
+      Task__Identity__SigningKeyReference: file:/run/task-secrets/identity/signing-current.pem
+      Task__Identity__PepperReference: file:/run/task-secrets/identity/password-pepper
+      Task__Identity__VerificationKeysDirectory: file:/run/task-secrets/identity/verification
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ${TASK_SECRET_ROOT}/database/task-runtime.pgpass:/run/task-secrets/task-runtime.pgpass:ro
+      - ${TASK_SECRET_ROOT}/database/postgres-ca.pem:/run/task-secrets/postgres-ca.pem:ro
+      - ${TASK_SECRET_ROOT}/identity/signing-current.pem:/run/task-secrets/identity/signing-current.pem:ro
+      - ${TASK_SECRET_ROOT}/identity/password-pepper:/run/task-secrets/identity/password-pepper:ro
+      - ${TASK_SECRET_ROOT}/identity/verification:/run/task-secrets/identity/verification:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+      - application-edge
+    restart: unless-stopped
+
+  task-worker:
+    image: ${TASK_WORKER_IMAGE:?TASK_WORKER_IMAGE must be an immutable digest reference}
+    platform: linux/amd64
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__TaskDatabase: Host=postgres;Port=5432;Database=${TASK_DB_NAME};Username=task_runtime;Passfile=/run/task-secrets/task-runtime.pgpass;SSL Mode=VerifyFull;Root Certificate=/run/task-secrets/postgres-ca.pem
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ${TASK_SECRET_ROOT}/database/task-runtime.pgpass:/run/task-secrets/task-runtime.pgpass:ro
+      - ${TASK_SECRET_ROOT}/database/postgres-ca.pem:/run/task-secrets/postgres-ca.pem:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - database
+    restart: unless-stopped
+
+  tls-proxy:
+    image: ${TASK_TLS_PROXY_IMAGE:?TASK_TLS_PROXY_IMAGE must be an immutable nginx-unprivileged digest reference}
+    platform: linux/amd64
+    user: "101:101"
+    entrypoint: ["nginx", "-g", "daemon off;"]
+    depends_on:
+      - task-api
+    ports:
+      - ${TASK_HTTPS_BIND_IP:?TASK_HTTPS_BIND_IP is required}:${TASK_HTTPS_PORT:-443}:8443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${TASK_SECRET_ROOT}/edge/tls.crt:/run/task-secrets/edge/tls.crt:ro
+      - ${TASK_SECRET_ROOT}/edge/tls.key:/run/task-secrets/edge/tls.key:ro
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    init: true
+    networks:
+      - application-edge
+      - frontend
+    restart: unless-stopped
+
+networks:
+  database:
+    internal: true
+  application-edge:
+    internal: true
+  frontend:
+
+volumes:
+  postgres-data:

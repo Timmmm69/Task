@@ -1,0 +1,114 @@
+{
+  "package": "20260907_sec03_production_secrets_tls_1.0.0",
+  "version": "1.0.0",
+  "base_commit": "65e7008241d854326aa334d3c605cb7b6a22bc08",
+  "release_status": "blocked_pending_real_deployment_evidence",
+  "tests_passed": 1617,
+  "tests_skipped": 4,
+  "sources": [
+    ".github/workflows/ci.yml",
+    ".gitignore",
+    ".project-dashboard/roadmap.json",
+    "work/production/deployment/security/New-TaskTlsCertificateRequest.ps1",
+    "work/production/deployment/security/compose.production.yaml",
+    "work/production/deployment/security/nginx.conf",
+    "work/production/deployment/security/postgresql.pg_hba.conf",
+    "work/production/deployment/security/production.env.example",
+    "work/production/docs/SEC-03-production-secrets-tls.md",
+    "work/production/verification/Build-Sec03Package.py",
+    "work/production/verification/Test-ProductionSecretsTls.Contract.ps1",
+    "work/production/verification/Test-ProductionSecretsTls.ps1"
+  ],
+  "files": [
+    {
+      "path": "evidence/checks.json",
+      "size": 1077,
+      "sha256": "3570dd7ff3494cb6698d076f96f389e2bf8b17e1f0cd6b985e416baa2a43c49d"
+    },
+    {
+      "path": "evidence/sec03-servicehosts.trx",
+      "size": 879084,
+      "sha256": "447d0c51c078608bdba407b66114fa4884ea253d92c904bfeef865c65f1d874e"
+    },
+    {
+      "path": "evidence/sec03_net10.0_20260907004044.trx",
+      "size": 406391,
+      "sha256": "851f968cf41ad038b676a340e7e16a4ec456aa368974136b3c0c02dd4673edb1"
+    },
+    {
+      "path": "evidence/sec03_net10.0_20260907004046.trx",
+      "size": 1142707,
+      "sha256": "6ae3c4c35e40925a018b1ffaeec8b9944783c9370daf4400ae7d5e5b87cf8bc6"
+    },
+    {
+      "path": "source/.github/workflows/ci.yml",
+      "size": 4987,
+      "sha256": "703646e045eea093b2f7d7378b1d49fbfa422256dd3ee44d4915c4e6e2a4bfc2"
+    },
+    {
+      "path": "source/.gitignore",
+      "size": 530,
+      "sha256": "db01aae0dbeed3889de865b70aecb961903018ba81358ce35f4fa2a4b1860e04"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 58054,
+      "sha256": "27abf24fe95f7bc5cd62e6c7552d403c5c58457d683e2e58cac3078811bf9021"
+    },
+    {
+      "path": "source/work/production/deployment/security/compose.production.yaml",
+      "size": 5905,
+      "sha256": "63c18c992987ba71697c456b02e716f758180cc2ab2071675d62f9bffa1232ef"
+    },
+    {
+      "path": "source/work/production/deployment/security/New-TaskTlsCertificateRequest.ps1",
+      "size": 3331,
+      "sha256": "ded9f5c5e3401d41417fc2363bf9ebf92e34f3aa0ac4c60cd6c835b11cf85f74"
+    },
+    {
+      "path": "source/work/production/deployment/security/nginx.conf",
+      "size": 1811,
+      "sha256": "8fc5a5c103cde3362fec8d7c1ddc65f6f011535c3315f79b1c6aaadcd4250acc"
+    },
+    {
+      "path": "source/work/production/deployment/security/postgresql.pg_hba.conf",
+      "size": 626,
+      "sha256": "403a1433b5ea68a9c9aa92d3b2e369bac3cfc13c18c66899cfcb7859e2f04d6a"
+    },
+    {
+      "path": "source/work/production/deployment/security/production.env.example",
+      "size": 651,
+      "sha256": "a3303abef79e81a1fc2cc647af73e15094f8a5804773eb149afd7914adc22c5e"
+    },
+    {
+      "path": "source/work/production/docs/SEC-03-production-secrets-tls.md",
+      "size": 9891,
+      "sha256": "8b7d2ce9e445ed98e71d154e68faca5f5f0d7139e651ffee58edbcd54552fdd2"
+    },
+    {
+      "path": "source/work/production/verification/Build-Sec03Package.py",
+      "size": 7825,
+      "sha256": "974ac6b42a42ba5181af86c101c2e92183895942c9e062c4240e269e5c2e4ce6"
+    },
+    {
+      "path": "source/work/production/verification/Test-ProductionSecretsTls.Contract.ps1",
+      "size": 7115,
+      "sha256": "0c24f0f2ff8c8c9dff839d1d1a365fdc2222b2365412ecae11bda87a87ef78e1"
+    },
+    {
+      "path": "source/work/production/verification/Test-ProductionSecretsTls.ps1",
+      "size": 18389,
+      "sha256": "5360c416f34cdf0c292af1c7ddd4cc08463da4a184cf38ae1ce53ceb59d92770"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1919,
+      "sha256": "24741645322126fd7074daab9d1d87ed4811c1e7bf6b588dda02f7db1cd318c4"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
