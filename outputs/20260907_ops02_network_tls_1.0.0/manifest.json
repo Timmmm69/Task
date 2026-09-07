@@ -1,0 +1,206 @@
+{
+  "package": "20260907_ops02_network_tls_1.0.0",
+  "version": "1.0.0",
+  "base_commit": "f9623e4d0e9191abf70d39982dab9c722dd8d82e",
+  "release_status": "ops02_complete",
+  "synthetic_only": true,
+  "completed_steps": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "clean_room_runs": 2,
+  "source_files": [
+    "work/production/deployment/ops02/Bootstrap-Ops02Database.sh",
+    "work/production/deployment/ops02/Grant-Ops02Runtime.sh",
+    "work/production/deployment/ops02/New-Ops02CleanRoomAssets.ps1",
+    "work/production/deployment/ops02/Ops02.Foundation.psm1",
+    "work/production/deployment/ops02/Set-Ops02Firewall.ps1",
+    "work/production/deployment/ops02/Test-Ops02DatabaseTls.sh",
+    "work/production/deployment/ops02/ops02.parameters.example.json",
+    "work/production/deployment/security/compose.production.yaml",
+    "work/production/deployment/security/production.env.example",
+    "work/production/docs/OPS-02-production-like-network-tls-foundation.md",
+    "work/production/docs/SEC-03-production-secrets-tls.md",
+    "work/production/verification/Build-Ops02Package.py",
+    "work/production/verification/Test-Ops02CleanRoom.ps1",
+    "work/production/verification/Test-Ops02Foundation.ps1",
+    "work/production/verification/Test-Ops02RuntimeFoundation.ps1",
+    "work/production/verification/Test-ProductionSecretsTls.Contract.ps1",
+    "work/production/verification/Test-ProductionSecretsTls.ps1"
+  ],
+  "evidence_files": [
+    "work/production/evidence/ops02-foundation/checks.json",
+    "work/production/evidence/ops02-foundation/dns-compose.resolved.yaml",
+    "work/production/evidence/ops02-foundation/firewall-plan.json",
+    "work/production/evidence/ops02-foundation/production-compose.resolved.yaml",
+    "work/production/evidence/ops02-foundation/runtime-foundation.json",
+    "work/production/evidence/ops02-linux-firewall/docker-user-chain.txt",
+    "work/production/evidence/ops02-linux-firewall/firewall-apply.json",
+    "work/production/evidence/ops02-linux-firewall/firewall-remove.json",
+    "work/production/evidence/ops02-linux-firewall/input-chain.txt",
+    "work/production/evidence/ops02-linux-firewall/iptables-after.rules",
+    "work/production/evidence/ops02-linux-firewall/iptables-before.rules",
+    "work/production/evidence/ops02-clean-room/clean-room-runs.json"
+  ],
+  "files": [
+    {
+      "path": "evidence/ops02-clean-room/clean-room-runs.json",
+      "size": 3444,
+      "sha256": "b7fb64de4d0584771b8ef27b534babb9a1dd7b89706b4f1489a217ae2f6d1530"
+    },
+    {
+      "path": "evidence/ops02-foundation/checks.json",
+      "size": 1859,
+      "sha256": "288221ece0f1e93911b419fcec0351bb2e2051b540ce7d098f9505b25c974153"
+    },
+    {
+      "path": "evidence/ops02-foundation/dns-compose.resolved.yaml",
+      "size": 945,
+      "sha256": "b3a36c85b4afcf643c14003dec631583e15057635ae007eee1e1e7edfd0dcce0"
+    },
+    {
+      "path": "evidence/ops02-foundation/firewall-plan.json",
+      "size": 1717,
+      "sha256": "316f4f9cf9a5b86602f5f7761d8a9bc8e7cf1ff9321d60313535abcf74ecfa5f"
+    },
+    {
+      "path": "evidence/ops02-foundation/production-compose.resolved.yaml",
+      "size": 7097,
+      "sha256": "72a99b16fe0480baf39a173bf77deba879c8de5af3d7d0e8e027cd4b0a4cd3a0"
+    },
+    {
+      "path": "evidence/ops02-foundation/runtime-foundation.json",
+      "size": 1263,
+      "sha256": "b62195597f65da458155a9d995dd44e60e069773ef395a6408b1f67757ca200d"
+    },
+    {
+      "path": "evidence/ops02-linux-firewall/docker-user-chain.txt",
+      "size": 832,
+      "sha256": "723ca6e24ea505380aa5872dcf28c52e675b032d81d46011dc445cf7d8f2b269"
+    },
+    {
+      "path": "evidence/ops02-linux-firewall/firewall-apply.json",
+      "size": 1680,
+      "sha256": "32bef058f3f57987caf19ff89dfe76a3e9d03d09516f357e986c22972c67d09d"
+    },
+    {
+      "path": "evidence/ops02-linux-firewall/firewall-remove.json",
+      "size": 1681,
+      "sha256": "881cd7bd22342a0074482bf0848f46500c3e45c45b18969469a31e5102f94dc3"
+    },
+    {
+      "path": "evidence/ops02-linux-firewall/input-chain.txt",
+      "size": 226,
+      "sha256": "1c126d7fb6ab95c9f2bc25fd1b56b63f012f17c8b7838dfb01860ececd49a113"
+    },
+    {
+      "path": "evidence/ops02-linux-firewall/iptables-after.rules",
+      "size": 1070,
+      "sha256": "c59dad04a77e5b678f5a4a3e77f5268b8be41c1624c5318f777859fca6eb9adc"
+    },
+    {
+      "path": "evidence/ops02-linux-firewall/iptables-before.rules",
+      "size": 2218,
+      "sha256": "aed0dfcfa1f421329b0d5a0151dc3ee0b1edb9d222c3649c03a7a25001fd031f"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/Bootstrap-Ops02Database.sh",
+      "size": 1059,
+      "sha256": "75762cac345e0752a4058f402ab6afdf35603d58b2016f0b5c92ef0f8ad0492e"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/Grant-Ops02Runtime.sh",
+      "size": 540,
+      "sha256": "d68a66ce965962a7532a61af1c868b9c82f0205ba93cb3288d65080f56f03bd2"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/New-Ops02CleanRoomAssets.ps1",
+      "size": 14582,
+      "sha256": "b7a4771a8b1ca84c9bb260d54247c22913e996645da298ff1d065248d58f8b1b"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/Ops02.Foundation.psm1",
+      "size": 9724,
+      "sha256": "093b027bc6c2a265372d7d8d56699e7a816756c25b54ef1e1881f556bd10871a"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/ops02.parameters.example.json",
+      "size": 1712,
+      "sha256": "beac9cdd1d157c23730c6c45336f2521dc23ffc2192d10458423df40d886e095"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/Set-Ops02Firewall.ps1",
+      "size": 6535,
+      "sha256": "9336ed53b901a424139faa034c11fad0b96aee9b5317b8d51cc8108e844f6f44"
+    },
+    {
+      "path": "source/work/production/deployment/ops02/Test-Ops02DatabaseTls.sh",
+      "size": 1516,
+      "sha256": "17df05879cc1587e3c4dd418cef1c6032f2517caeecd242301790db99a572d7d"
+    },
+    {
+      "path": "source/work/production/deployment/security/compose.production.yaml",
+      "size": 6281,
+      "sha256": "bbaee2c07acb9a5e0b2d5d9d2bc4a94f57c8cdcc423bd2219ee27a8e2964a408"
+    },
+    {
+      "path": "source/work/production/deployment/security/production.env.example",
+      "size": 767,
+      "sha256": "a675fcfe7d6b3bb440bbfd04040cc6113ec00ffefd2fae7bdcabe9e1dec189a6"
+    },
+    {
+      "path": "source/work/production/docs/OPS-02-production-like-network-tls-foundation.md",
+      "size": 13492,
+      "sha256": "972446534628a158ef61bb8ea7f45cb93466363b9eb182c7e368d61b667d9de7"
+    },
+    {
+      "path": "source/work/production/docs/SEC-03-production-secrets-tls.md",
+      "size": 9891,
+      "sha256": "8b7d2ce9e445ed98e71d154e68faca5f5f0d7139e651ffee58edbcd54552fdd2"
+    },
+    {
+      "path": "source/work/production/verification/Build-Ops02Package.py",
+      "size": 8273,
+      "sha256": "273fcf8cf0b458fbb2e103db775f49359f5f0d2bf8055e950155216f4fc68e47"
+    },
+    {
+      "path": "source/work/production/verification/Test-Ops02CleanRoom.ps1",
+      "size": 12824,
+      "sha256": "2d5fc212cf653d8e4542a52f937765cf3d00388f987301351f2314347e17eb30"
+    },
+    {
+      "path": "source/work/production/verification/Test-Ops02Foundation.ps1",
+      "size": 13339,
+      "sha256": "403a80cec4481ec1f5118d5900270b030415e7fa624040e0401bf206df420f33"
+    },
+    {
+      "path": "source/work/production/verification/Test-Ops02RuntimeFoundation.ps1",
+      "size": 8034,
+      "sha256": "73413340439981f263d261f6670087e2972a5cf3615960c07c2f4cd60b17444d"
+    },
+    {
+      "path": "source/work/production/verification/Test-ProductionSecretsTls.Contract.ps1",
+      "size": 7231,
+      "sha256": "616b245c6966fe1102cd7c8f941404464f71808412e25205d5093d6a13554978"
+    },
+    {
+      "path": "source/work/production/verification/Test-ProductionSecretsTls.ps1",
+      "size": 18969,
+      "sha256": "416e84b36bcb4a0e451abecbe24c78ba28b1744b6877d2b15a3cf9b128093102"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1150,
+      "sha256": "66bacd6d79e1b96b4b2affc3f0a510f7396e089a950c3b9522b84a5e5e491ecc"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

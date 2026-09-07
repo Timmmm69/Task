@@ -1,0 +1,5 @@
+-N TASK-OPS02-IN
+-A TASK-OPS02-IN -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN
+-A TASK-OPS02-IN -s 198.51.100.0/28 -i eth0 -p tcp -m tcp --dport 22 -j RETURN
+-A TASK-OPS02-IN -i eth0 -j DROP
+-A TASK-OPS02-IN -j RETURN

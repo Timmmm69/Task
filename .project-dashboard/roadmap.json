@@ -172,7 +172,7 @@
         "SEC-02"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Реализовать project lifecycle с участниками, ролями и связанными задачами одним vertical slice."
     },
     {
@@ -198,7 +198,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Последовательно довести файлы, контакты, поиск и уведомления до связанных production-сценариев."
     },
     {
@@ -274,7 +274,7 @@
       "blocked_by": [
         "API-04"
       ],
-      "recommended_order": 7,
+      "recommended_order": 6,
       "next_action": "Заменять placeholders только готовыми вертикальными срезами и убрать последний placeholder после общего smoke."
     },
     {
@@ -298,7 +298,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 10,
+      "recommended_order": 9,
       "next_action": "Проверить offline, retry, session expiry и conflict recovery во всех готовых разделах."
     },
     {
@@ -321,7 +321,7 @@
         "DESK-03"
       ],
       "blocked_by": [],
-      "recommended_order": 8,
+      "recommended_order": 7,
       "next_action": "Выполнить нативную Windows-матрицу UIA, Narrator и DPI 125/150/200% с сохранением evidence."
     },
     {
@@ -450,7 +450,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 18,
+      "recommended_order": 17,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -575,7 +575,7 @@
         "OPS-01"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Довести outbox, reminders и фоновые повторы до исполняемых worker-сценариев с idempotency."
     },
     {
@@ -679,7 +679,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 12,
+      "recommended_order": 11,
       "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
     },
     {
@@ -754,7 +754,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Повторить task/auth E2E на чистом стенде с детерминированными seed-данными после закрытия текущих vertical slices."
     },
     {
@@ -781,7 +781,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 11,
+      "recommended_order": 10,
       "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
     },
     {
@@ -804,7 +804,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 16,
+      "recommended_order": 15,
       "next_action": "Провести сценарную проверку на Windows-матрице с синтетическим demo-набором, оформить findings disposition и внутренний release sign-off."
     },
     {
@@ -865,21 +865,25 @@
       "category": "operations",
       "weight": 13,
       "criticality": "blocker",
-      "status": "not_started",
-      "progress": 0,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "work/PROJECT_CONTINUATION.md: TLS termination and production network provisioning remain outside scope"
+        "work/production/docs/OPS-02-production-like-network-tls-foundation.md: complete synthetic clean-room runbook",
+        "work/production/evidence/ops02-foundation/checks.json: 9 foundation checks PASS",
+        "work/production/evidence/ops02-linux-firewall/firewall-apply.json: live Linux namespace apply PASS",
+        "work/production/evidence/ops02-clean-room/clean-room-runs.json: two independent DinD runs PASS",
+        "outputs/20260907_ops02_network_tls_1.0.0/validation-report.md"
       ],
-      "note": "Release blocker до автономной проверки topology на чистом стенде; корпоративная сеть и CA заказчика не входят в критерий готовности приложения.",
-      "updated_at": "2026-09-07T12:00:00+03:00",
+      "note": "OPS-02 завершён полностью на синтетическом стенде без данных и инфраструктуры компании: 9 foundation checks, live apply/remove deny-by-default iptables в Linux namespace и два независимых DinD clean-room replay. Оба прогона подтвердили миграцию v13, HTTPS readiness и HSTS, PostgreSQL verify-full/TLS 1.3, отказ plaintext/untrusted CA/wrong SAN/TLS 1.1, ротацию и rollback сертификата, а также отсутствие опубликованных 5432/8080.",
+      "updated_at": "2026-09-07T18:04:37.2616342+03:00",
       "priority": 3,
       "dependencies": [
         "OPS-01",
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Развернуть clean-room стенд из пакета, выпустить локальную тестовую CA, проверить HTTPS, DB VerifyFull, закрытые порты и повторяемость runbook."
+      "recommended_order": 0,
+      "next_action": "Сохранять OPS-02 gates при изменениях Compose, proxy, PostgreSQL TLS, сертификатов или firewall; следующий приоритет определяется roadmap."
     },
     {
       "id": "OPS-03",
@@ -941,7 +945,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Встроить logs, metrics и alerts для API, DB, disk, workers и backup failures; проверить доставку в локальный test sink и описать настройку контактов заказчиком."
     },
     {
@@ -966,7 +970,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 9,
+      "recommended_order": 8,
       "next_action": "Создать подписанный Windows installer, совместимый update channel и проверенный rollback."
     },
     {
@@ -1015,7 +1019,7 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 13,
+      "recommended_order": 12,
       "next_action": "Собрать единый operations runbook и воспроизвести установку, backup, monitoring и recovery на чистой VM без доступа к инфраструктуре заказчика."
     },
     {
@@ -1040,7 +1044,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 14,
+      "recommended_order": 13,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1063,7 +1067,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 15,
+      "recommended_order": 14,
       "next_action": "Подготовить короткие user/admin guides и воспроизвести их шаги на чистой VM с demo-данными."
     },
     {
@@ -1088,7 +1092,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 17,
+      "recommended_order": 16,
       "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
     }
   ],

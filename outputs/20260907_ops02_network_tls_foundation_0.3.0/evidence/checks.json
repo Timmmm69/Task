@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-09-07T11:43:45.3730582+00:00",
+  "result": "PASS",
+  "scope": "OPS-02 steps 1-3 source and synthetic foundation; no live Linux firewall or application deployment claim",
+  "checks": {
+    "parameter_contract_and_external_secret_boundary": true,
+    "invalid_and_mutable_parameters_rejected": true,
+    "local_ca_chain_san_eku_key_and_lifetime": true,
+    "complete_synthetic_secret_bundle": true,
+    "incomplete_secret_bundle_rejected": true,
+    "authoritative_dns_assets": true,
+    "deny_by_default_firewall_plan": true,
+    "deterministic_internal_docker_topology": true,
+    "compose_configuration_parses": true
+  },
+  "certificateMetadata": {
+    "schemaVersion": 1,
+    "purpose": "OPS-02 synthetic clean-room assets; never customer production PKI",
+    "createdAtUtc": "2026-09-07T14:43:44.0682029+03:00",
+    "serverDnsName": "task.cleanroom.test",
+    "serverAddress": "192.0.2.10",
+    "databaseDnsName": "postgres",
+    "dnsZone": "cleanroom.test",
+    "ca": {
+      "thumbprintSha256": "92A2583511973F5D8747A4B5FD0A6225808722161602E7F81313A36C8D7C57AD",
+      "notAfterUtc": "2028-09-07T11:43:43Z"
+    },
+    "edge": {
+      "thumbprintSha256": "0781965A6B93C9640EA74A762C89B10A3719702C42407F8A40DADD441E8DCEF2",
+      "notAfterUtc": "2026-11-06T11:43:43Z"
+    },
+    "database": {
+      "thumbprintSha256": "CFA26111ED5C2AD274937500F17A220A9D4763BB243BB113BD28C8D35250E1EC",
+      "notAfterUtc": "2026-11-06T11:43:44Z"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+name: task-ops02-dns
+services:
+  authoritative-dns:
+    cap_add:
+      - NET_BIND_SERVICE
+    cap_drop:
+      - ALL
+    command:
+      - -conf
+      - /etc/coredns/Corefile
+    image: docker.io/coredns/coredns@sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 192.0.2.53
+        target: 53
+        published: "53"
+        protocol: udp
+      - mode: ingress
+        host_ip: 192.0.2.53
+        target: 53
+        published: "53"
+        protocol: tcp
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: bind
+        source: C:/Users/novik/AppData/Local/Temp/task-ops02-foundation-edcc8320ca544dccba4f3e379b54db1a/assets/dns
+        target: /etc/coredns
+        read_only: true
+networks:
+  default:
+    name: task-ops02-dns_default

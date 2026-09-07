@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "environment": "clean-room",
+  "deploymentName": "task-production",
+  "serverDnsName": "task.cleanroom.test",
+  "databaseDnsName": "postgres",
+  "serverAddress": "192.0.2.10",
+  "httpsBindAddress": "192.0.2.10",
+  "httpsPort": 443,
+  "externalInterface": "eth0",
+  "employeeCidrs": [
+    "192.0.2.0/28"
+  ],
+  "managementCidrs": [
+    "198.51.100.0/28"
+  ],
+  "managementTcpPorts": [
+    22
+  ],
+  "dns": {
+    "zoneName": "cleanroom.test",
+    "bindAddress": "192.0.2.53",
+    "ttlSeconds": 300,
+    "image": "docker.io/coredns/coredns@sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea"
+  },
+  "testPki": {
+    "caCommonName": "Task OPS-02 clean-room root CA",
+    "leafValidityDays": 60
+  },
+  "dockerNetworks": {
+    "databaseSubnet": "172.30.10.0/24",
+    "applicationEdgeSubnet": "172.30.20.0/24",
+    "frontendSubnet": "172.30.30.0/24"
+  },
+  "deployment": {
+    "secretRoot": "/var/lib/task/secrets",
+    "environmentFile": "/etc/task/production.env",
+    "databaseName": "task",
+    "images": {
+      "api": "registry.cleanroom.test/task-api@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "worker": "registry.cleanroom.test/task-worker@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "migrator": "registry.cleanroom.test/task-database-migrator@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "tlsProxy": "registry.cleanroom.test/nginx-unprivileged@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "postgres": "registry.cleanroom.test/postgres@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  }
+}

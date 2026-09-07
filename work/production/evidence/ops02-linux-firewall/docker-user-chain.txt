@@ -1,0 +1,11 @@
+-N TASK-OPS02-DOCKER
+-A TASK-OPS02-DOCKER -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN
+-A TASK-OPS02-DOCKER -s 192.0.2.0/28 -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 443 -j RETURN
+-A TASK-OPS02-DOCKER -s 198.51.100.0/28 -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 443 -j RETURN
+-A TASK-OPS02-DOCKER -d 172.30.10.0/24 -i eth0 -j DROP
+-A TASK-OPS02-DOCKER -d 172.30.20.0/24 -i eth0 -j DROP
+-A TASK-OPS02-DOCKER -d 172.30.30.0/24 -i eth0 -j DROP
+-A TASK-OPS02-DOCKER -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 5432 -j DROP
+-A TASK-OPS02-DOCKER -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 8080 -j DROP
+-A TASK-OPS02-DOCKER -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 443 -j DROP
+-A TASK-OPS02-DOCKER -j RETURN

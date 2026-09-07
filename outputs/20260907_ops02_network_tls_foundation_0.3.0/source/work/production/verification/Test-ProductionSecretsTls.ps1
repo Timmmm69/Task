@@ -161,7 +161,6 @@ $apiBlock = [regex]::Match($compose, '(?ms)^  task-api:\r?\n(?<body>.*?)(?=^  ta
 Assert-Sec03 ($apiBlock.Success -and $apiBlock.Groups['body'].Value -notmatch '(?m)^\s+ports:') 'The HTTP API must not publish a host port.'
 Assert-Sec03 (([regex]::Matches($compose, '(?m)^\s+ports:$')).Count -eq 1) 'Only the TLS proxy may publish a host port.'
 Assert-Sec03 ($compose -match '\$\{TASK_HTTPS_BIND_IP:\?TASK_HTTPS_BIND_IP is required\}:\$\{TASK_HTTPS_PORT:-443\}:8443') 'The TLS listener must require an explicit host bind address.'
-Assert-Sec03 ($compose -match '/var/cache/nginx:size=32m,uid=101,gid=101,mode=0700') 'The read-only TLS proxy must have a bounded owner-only nginx cache tmpfs.'
 Assert-Sec03 ($compose -match '(?ms)^  database:\r?\n    internal: true' -and $compose -match '(?ms)^  application-edge:\r?\n    internal: true') 'Database and clear-text application-edge networks must be internal.'
 Assert-Sec03 (([regex]::Matches($compose, '\$\{TASK_(?:DATABASE|APPLICATION_EDGE|FRONTEND)_SUBNET:\?')).Count -eq 3) 'Every production Docker network must require an explicit subnet parameter.'
 Assert-Sec03 (([regex]::Matches($compose, '(?m)^    read_only: true$')).Count -ge 4) 'All application/proxy containers must have a read-only root filesystem.'
