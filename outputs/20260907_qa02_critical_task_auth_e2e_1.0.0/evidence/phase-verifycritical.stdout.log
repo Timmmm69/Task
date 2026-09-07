@@ -1,0 +1,14 @@
+[PASS] Deterministic UI-created task row exists.
+[PASS] Production API process is stopped.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:58438.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Admin can read the UI-created task after API restart.
+[PASS] Deterministic task title survived API restart.
+[PASS] Task priority and initial status survived API restart.
+[PASS] Admin task list contains the UI-created task after restart.
+[PASS] UI create produced exactly one task, audit, event, outbox and completed idempotency record.
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Read-only account can authenticate and read tasks after restart.
+[PASS] Read-only account remains denied for task creation after restart.
+[PASS] QA-02 CRITICAL TASK/AUTH E2E BACKEND VERIFICATION PASSED.

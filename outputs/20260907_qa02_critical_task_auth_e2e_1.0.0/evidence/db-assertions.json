@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "scenario": "QA-02 critical task/auth clean-stand E2E",
+  "seedProfile": "qa02-deterministic-v1",
+  "result": "PASS",
+  "postgresVersion": "16.14",
+  "migrationVersion": "13",
+  "taskId": "4529dfbe-b7ba-4dc0-88fb-35e331edb18f",
+  "taskTitle": "QA-02 deterministic WPF task",
+  "taskPriority": "normal",
+  "taskStatus": "new",
+  "taskVersion": 1,
+  "taskCreateCounts": "task=1,audit=1,event=1,outbox=1,idempotency=1",
+  "replayProbeCounts": "task=1,audit=1,event=1,outbox=1,idempotency=1",
+  "adminLoginStatus": 200,
+  "readerLoginStatus": 200,
+  "readerGetStatus": 200,
+  "readerWriteStatus": 403,
+  "apiRestartPersistence": "PASS"
+}

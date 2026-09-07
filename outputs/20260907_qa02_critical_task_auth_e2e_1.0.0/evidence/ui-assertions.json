@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "scenario": "QA-02 critical task/auth clean-stand E2E",
+  "seedProfile": "qa02-deterministic-v1",
+  "result": "PASS",
+  "executable": "work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.exe",
+  "taskTitle": "QA-02 deterministic WPF task",
+  "adminCreateThroughWpf": "PASS",
+  "adminConnection": "Подключено к серверу компании · https://localhost:58438",
+  "apiRestartAndFreshWpfProcess": "PASS",
+  "readOnlyTaskScreen": "PASS",
+  "readOnlyAdminTaskVisibility": "FILTERED_AS_EXPECTED",
+  "readOnlyCreateDisabled": true,
+  "readOnlyNotice": "Доступен только просмотр задач. Для изменений нужны соответствующие права.",
+  "readOnlyConnection": "Подключено к серверу компании · https://localhost:58438",
+  "startedAtUtc": "2026-09-07T20:56:39.9779534+00:00",
+  "completedAtUtc": "2026-09-07T20:57:51.3924634+00:00"
+}

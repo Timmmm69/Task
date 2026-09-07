@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidateSet('Setup', 'SeedAdminDesktop', 'MutateForConflict', 'StopApi', 'StartApi',
-        'Verify', 'SeedReadOnlyDesktop', 'Capture', 'Cleanup')]
+        'Verify', 'VerifyCritical', 'SeedReadOnlyDesktop', 'Capture', 'Cleanup')]
     [string]$Phase = 'Setup',
     [string]$EvidencePath = '',
     [string]$CaptureName = '',
@@ -283,9 +283,9 @@ function Setup-E2E {
         CertificatePath = $certificatePath; CertificatePassword = $certificatePassword
         AccountPassword = $accountPassword; AdminLogin = 'task-e2e-admin'
         ReadOnlyLogin = 'task-e2e-reader'; DesktopAppData = $desktopAppData
-        DesktopBackup = $desktopBackup; ReplayProbeTitle = "E2E replay probe $([guid]::NewGuid().ToString('N'))"
-        UiInitialTitle = "WPF E2E create $([DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss'))"
-        UiFinalTitle = "WPF E2E completed $([DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss'))"
+        DesktopBackup = $desktopBackup; ReplayProbeTitle = 'QA-02 deterministic replay probe'
+        UiInitialTitle = 'QA-02 deterministic WPF task'
+        UiFinalTitle = 'QA-02 deterministic WPF task completed'
         UiTaskId = ''; DirectProbeId = ''
     }
     Save-State $state
@@ -327,7 +327,9 @@ function Setup-E2E {
     Invoke-Psql $state "UPDATE iam.user_accounts SET must_change_password = false WHERE login = '$($state.AdminLogin)';" | Out-Null
     $adminId = Invoke-Psql $state "SELECT id FROM iam.user_accounts WHERE login = '$($state.AdminLogin)';"
     $orgId = Invoke-Psql $state "SELECT organization_id FROM iam.user_accounts WHERE id = '$adminId';"
-    $employeeId = [guid]::NewGuid().ToString('D'); $readerId = [guid]::NewGuid().ToString('D'); $roleId = [guid]::NewGuid().ToString('D')
+    $employeeId = '02000000-0000-0000-0000-000000000001'
+    $readerId = '02000000-0000-0000-0000-000000000002'
+    $roleId = '02000000-0000-0000-0000-000000000003'
     $readerSql = @"
 INSERT INTO core.objects (id, organization_id, object_type, created_at, created_by, updated_at, updated_by)
 VALUES ('$employeeId', '$orgId', 'employee_profile', clock_timestamp(), '$adminId', clock_timestamp(), '$adminId');
@@ -349,7 +351,7 @@ INSERT INTO iam.user_roles (user_account_id, role_id, granted_by) VALUES ('$read
     $state = Start-E2EApi $state
 
     $adminSession = Invoke-Login $state $state.AdminLogin
-    $probeKey = "e2e-create-$([guid]::NewGuid().ToString('N'))"
+    $probeKey = 'qa02-deterministic-create-replay-v1'
     $probeBody = @{ title = $state.ReplayProbeTitle; priority = 'normal' } | ConvertTo-Json -Compress
     $created = Invoke-Authorized $state Post '/api/v1/tasks' $adminSession.Tokens.accessToken $probeBody `
         @{ 'Idempotency-Key' = $probeKey }
@@ -390,6 +392,66 @@ function Mutate-ForConflict($state) {
     $result = Invoke-Authorized $state Patch "/api/v1/tasks/$($state.UiTaskId)" $session.Tokens.accessToken $body `
         @{ 'Idempotency-Key' = "e2e-conflict-$([guid]::NewGuid().ToString('N'))"; 'If-Match' = $etag }
     Assert-E2E ($result.StatusCode -eq 200) 'Concurrent server PATCH advanced the version.'
+}
+
+function Verify-CriticalE2E($state) {
+    if (-not $state.UiTaskId) {
+        $escaped = $state.UiInitialTitle.Replace("'", "''")
+        $state.UiTaskId = Invoke-Psql $state "SELECT t.id FROM work.tasks t JOIN core.objects o ON o.id=t.id AND o.organization_id=t.organization_id WHERE t.title='$escaped' ORDER BY o.updated_at DESC LIMIT 1;"
+        Save-State $state
+    }
+    Assert-E2E (-not [string]::IsNullOrWhiteSpace($state.UiTaskId)) 'Deterministic UI-created task row exists.'
+
+    $state = Stop-E2EApi $state
+    $state = Start-E2EApi $state
+    $adminSession = Invoke-Login $state $state.AdminLogin
+    $get = Invoke-Authorized $state Get "/api/v1/tasks/$($state.UiTaskId)" $adminSession.Tokens.accessToken
+    Assert-E2E ($get.StatusCode -eq 200) 'Admin can read the UI-created task after API restart.'
+    $task = $get.Content | ConvertFrom-Json
+    Assert-E2E ($task.title -eq $state.UiInitialTitle) 'Deterministic task title survived API restart.'
+    Assert-E2E ($task.priority -eq 'normal' -and $task.status -eq 'new') 'Task priority and initial status survived API restart.'
+
+    $list = Invoke-Authorized $state Get '/api/v1/tasks' $adminSession.Tokens.accessToken
+    $page = $list.Content | ConvertFrom-Json
+    Assert-E2E ($list.StatusCode -eq 200 -and $page.items.id -contains $state.UiTaskId) 'Admin task list contains the UI-created task after restart.'
+
+    $counts = Invoke-Psql $state "SELECT (SELECT count(*) FROM work.tasks WHERE id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM governance.audit_entries WHERE object_id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM governance.domain_events WHERE aggregate_id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM governance.outbox_messages o JOIN governance.domain_events e ON e.id=o.domain_event_id WHERE e.aggregate_id='$($state.UiTaskId)') || ',' || (SELECT count(*) FROM iam.idempotency_records WHERE resource_id='$($state.UiTaskId)' AND state='completed');"
+    Assert-E2E ($counts -eq '1,1,1,1,1') 'UI create produced exactly one task, audit, event, outbox and completed idempotency record.'
+
+    $readerSession = Invoke-Login $state $state.ReadOnlyLogin
+    $readerList = Invoke-Authorized $state Get '/api/v1/tasks' $readerSession.Tokens.accessToken
+    Assert-E2E ($readerList.StatusCode -eq 200) 'Read-only account can authenticate and read tasks after restart.'
+    $denied = Invoke-Authorized $state Post '/api/v1/tasks' $readerSession.Tokens.accessToken `
+        (@{ title = 'QA-02 forbidden write probe' } | ConvertTo-Json -Compress) `
+        @{ 'Idempotency-Key' = 'qa02-readonly-denied-v1' }
+    Assert-E2E ($denied.StatusCode -eq 403) 'Read-only account remains denied for task creation after restart.'
+
+    $safe = [ordered]@{
+        schemaVersion = 1
+        scenario = 'QA-02 critical task/auth clean-stand E2E'
+        seedProfile = 'qa02-deterministic-v1'
+        result = 'PASS'
+        postgresVersion = Invoke-Psql $state 'SHOW server_version;'
+        migrationVersion = Invoke-Psql $state 'SELECT max(version) FROM infrastructure.schema_migrations;'
+        taskId = $state.UiTaskId
+        taskTitle = $task.title
+        taskPriority = $task.priority
+        taskStatus = $task.status
+        taskVersion = $task.version
+        taskCreateCounts = 'task=1,audit=1,event=1,outbox=1,idempotency=1'
+        replayProbeCounts = 'task=1,audit=1,event=1,outbox=1,idempotency=1'
+        adminLoginStatus = 200
+        readerLoginStatus = 200
+        readerGetStatus = 200
+        readerWriteStatus = 403
+        apiRestartPersistence = 'PASS'
+    }
+    if ($EvidencePath) {
+        [IO.Directory]::CreateDirectory($EvidencePath) | Out-Null
+        [IO.File]::WriteAllText((Join-Path $EvidencePath 'db-assertions.json'),
+            (($safe | ConvertTo-Json -Depth 4) + "`n"), [Text.UTF8Encoding]::new($false))
+    }
+    Write-Pass 'QA-02 CRITICAL TASK/AUTH E2E BACKEND VERIFICATION PASSED.'
 }
 
 function Verify-E2E($state) {
@@ -533,7 +595,13 @@ switch ($Phase) {
     'StopApi' { Stop-E2EApi (Get-State) | Out-Null }
     'StartApi' { Start-E2EApi (Get-State) | Out-Null }
     'Verify' { Verify-E2E (Get-State) }
+    'VerifyCritical' { Verify-CriticalE2E (Get-State) }
     'SeedReadOnlyDesktop' { $state = Get-State; Seed-Desktop $state $state.ReadOnlyLogin }
     'Capture' { Capture-TaskWindow (Get-State) }
     'Cleanup' { Cleanup-E2E (Get-State) }
 }
+
+# The Setup and StartApi phases intentionally leave PostgreSQL and Task.Api running for the
+# following phase. Explicitly terminate this phase host so non-interactive Windows runners do
+# not keep waiting for those background descendants; their PIDs remain tracked in state.json.
+exit 0

@@ -1,0 +1,2 @@
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Desktop session was seeded for 'task-e2e-reader' through the real login endpoint.

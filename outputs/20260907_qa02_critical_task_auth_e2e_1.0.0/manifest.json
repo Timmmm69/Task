@@ -1,0 +1,107 @@
+{
+  "package": "QA-02 critical task/auth clean-stand E2E",
+  "version": "1.0.0",
+  "date": "2026-09-07",
+  "base_revision": "9294480dfb303bc5b53ae46205239afe5d1200bc",
+  "roadmap_ids": [
+    "QA-02"
+  ],
+  "state": "validated-for-main",
+  "runtime": {
+    "postgresql": "16.14",
+    "schema_version": 13
+  },
+  "validation": {
+    "result": "PASS",
+    "seed_profile": "qa02-deterministic-v1",
+    "real_wpf_https_postgresql": "PASS",
+    "api_restart_persistence": "PASS",
+    "read_only_get_status": 200,
+    "read_only_write_status": 403,
+    "cleanup": "PASS"
+  },
+  "implementation_files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 62217,
+      "sha256": "083d87b2e34fb1d562b18fd29bb2f9b9a0806f194e433d70d9ad93353350e6e7"
+    },
+    {
+      "path": "work/production/verification/Test-TaskWriteE2E.ps1",
+      "bytes": 36970,
+      "sha256": "9808ad8dd78bd211f331b3903e005996e8e03f2d800e030a70bb777a71e92ad3"
+    },
+    {
+      "path": "work/production/verification/Test-Qa02CleanStand.ps1",
+      "bytes": 11813,
+      "sha256": "5e992e75d5515ee3282c60005a89057fafc31a6a2b28477642e4178254eed57a"
+    },
+    {
+      "path": "work/production/verification/Build-Qa02Package.py",
+      "bytes": 4301,
+      "sha256": "289ecafb0260d233423fa3cff8a927f390aa499988c377e540a6f241d66c8efa"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/db-assertions.json",
+      "bytes": 679,
+      "sha256": "8a6ed5cf83b7479ad59fa4c5eb9254cf9ad7b13d8e30269ac08d1a760a7edf00"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-seedreadonlydesktop.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-seedreadonlydesktop.stdout.log",
+      "bytes": 141,
+      "sha256": "12cc2f36f3b41713505b17fe8435a4538bd5ec477f6c6fe4a73d17feaa2c7109"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "f1ddf3c4dda5aff2dbbac4735d7ad51588140c023b0290c9f2025c9eb7591cce"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-verifycritical.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/phase-verifycritical.stdout.log",
+      "bytes": 861,
+      "sha256": "ae3d1601e0f3777531bac06f1a8c39f4dea54fcba54cb39d84a3d59deb7997a7"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/qa02-clean-stand.log",
+      "bytes": 2898,
+      "sha256": "8e2797fb88259bc5f967568354ab75164af544e63cec3024912a3c506aa940b5"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/qa02-release-build.log",
+      "bytes": 1516,
+      "sha256": "7d2da467d9781631b97cfe2de0869edefc2545d53d99a4140f92dde774ba59ee"
+    },
+    {
+      "path": "outputs/20260907_qa02_critical_task_auth_e2e_1.0.0/evidence/ui-assertions.json",
+      "bytes": 997,
+      "sha256": "93f8e78b01c5ab595c705ec83805bfb7b7983ee79b550723710045b91755ae74"
+    }
+  ]
+}
