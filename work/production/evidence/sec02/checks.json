@@ -1,0 +1,7 @@
+{
+  "full_postgresql_suite_1614_passed_zero_skipped": true,
+  "security_gate": true,
+  "project_boundaries": true,
+  "dashboard_order_and_validation": true,
+  "git_diff_check": true
+}

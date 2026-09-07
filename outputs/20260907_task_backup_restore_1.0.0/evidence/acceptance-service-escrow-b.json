@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "status": "succeeded",
+  "scope": "fixture",
+  "releaseReady": true,
+  "productionAccepted": false,
+  "datasetId": "ops03-clean-room-v1",
+  "storageCopyId": "protected-snapshot",
+  "escrowCopyId": "escrow-b",
+  "label": "20260907-093229F",
+  "target": "2026-09-07T09:32:38.320090Z",
+  "incidentAt": "2026-09-07T09:32:39.430881Z",
+  "requestedLossWindowSeconds": 1.110791,
+  "restoreStartedAt": "2026-09-07T09:33:55.9618281+00:00",
+  "serviceReadyAt": "2026-09-07T09:34:03.4171303+00:00",
+  "serviceReadyRtoSeconds": 83.986,
+  "rtoLimitSeconds": 14400,
+  "fixtureProbeSha256": "35a39866e567a7eb43b8109f23270a08ea777f40b212f9023a5b272ba0a65bce",
+  "schemaSha256": "9e6418824262bd869cd930316d0da3b11c11625804d50dd0a118b8cf8b214306",
+  "isolation": {
+    "originalServerStopped": true,
+    "primaryVolumesMounted": false,
+    "repositoryReadOnly": true,
+    "apiPublishedLoopbackOnly": true
+  },
+  "apiSmoke": {
+    "readiness": 200,
+    "login": 200,
+    "task": 200,
+    "audit": 200,
+    "catalog": 200,
+    "capabilities": 200,
+    "taskId": "0b76a123-c642-416b-9f5c-278f65d66bf0"
+  },
+  "customerDeploymentRequired": [
+    "map storage IDs to physical devices/hosts",
+    "configure immutable/offline retention and production ACLs",
+    "place escrow copies with named custodians",
+    "repeat drill with representative customer workload"
+  ]
+}

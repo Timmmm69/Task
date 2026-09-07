@@ -1,0 +1,32 @@
+# Standalone disaster operator: no interpolation or mounts of primary paths.
+services:
+  recovery-operator:
+    image: ${TASK_BACKUP_IMAGE:?Set the tested immutable image}
+    command: [operator]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    tmpfs:
+      - /tmp:mode=1777
+      - /run/task-backup:uid=1001,gid=1001,mode=0700
+    volumes:
+      - type: bind
+        source: ${TASK_RECOVERY_REPOSITORY:?Set the protected secondary snapshot path}
+        target: /backup/offhost
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${TASK_RECOVERY_KEYS:?Set an independently retrieved escrow directory}
+        target: /run/secrets
+        read_only: true
+        bind:
+          create_host_path: false
+      - recovery-state:/var/lib/task-backup
+      - recovery-work:/restore
+    restart: "no"
+volumes:
+  recovery-state:
+  recovery-work:

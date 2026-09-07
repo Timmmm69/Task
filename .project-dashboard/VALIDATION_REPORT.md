@@ -1,8 +1,8 @@
 # Validation report
 
 - Package: Task Development / Handoff Readiness Dashboard
-- Version: 1.0.0
-- Date: 2026-08-30
+- Version: 1.1.0
+- Date: 2026-09-07
 - Result: PASS
 
 ## Readiness model
@@ -10,13 +10,15 @@
 - `roadmap.json` parses and contains 40 meaningful delivery units in 8 categories.
 - Every item has id, title, description, category, weight, criticality, status, progress, evidence, note and updated_at.
 - Progress values are restricted to 0, 25, 50, 75 and 100.
-- Deterministic weighted readiness: 46.93%, displayed as 47%.
+- Deterministic weighted readiness: 69.5%, displayed as 70%.
 - Six hard handoff gates are derived from required roadmap items.
 - Current handoff result: NOT READY.
 - Every delivery unit stores priority, dependencies, blocked_by, recommended_order and next_action.
 - The dependency graph is acyclic; stored recommended_order matches deterministic recalculation.
 - The recommended current task has no unresolved dependencies or blockers.
-- Current deterministic recommendation: `API-03` — implement calendar and schedule API access.
+- Readiness is verified on a clean reproducible stand with synthetic data; company data, CA, secrets, network values and customer acceptance are post-handoff responsibilities.
+- Existing local TLS/secrets evidence closes `SEC-03`; the verified clean-room package closes `OPS-03`; no other progress was increased without evidence.
+- Current deterministic recommendation: `OPS-02` — reproduce production-like network and TLS on a clean stand.
 
 ## Runtime and UI
 

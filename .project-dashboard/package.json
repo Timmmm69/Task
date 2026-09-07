@@ -2,7 +2,7 @@
   "name": "task-handoff-dashboard",
   "private": true,
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "start": "node server.mjs --open",
     "test": "node validate.mjs",

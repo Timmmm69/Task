@@ -1,0 +1,88 @@
+services:
+  postgres:
+    image: ${TASK_BACKUP_IMAGE:?Set the tested backup image digest}
+    command: [database]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:mode=1777
+      - /run/task-backup:uid=1001,gid=1001,mode=0700
+    volumes:
+      - ${TASK_PGDATA:?Set PostgreSQL data directory}:/var/lib/postgresql/data
+      - ${TASK_LOCAL_BACKUP:?Set separate local backup disk}:/backup/local
+      - ${TASK_OFFHOST_BACKUP:?Set mounted off-host NFS or SMB directory}:/backup/offhost
+      - ${TASK_RECOVERY_KEYS:?Set recovery key directory}:/run/secrets:ro
+      - pg-socket:/run/postgresql
+    networks: [database]
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+  backup-agent:
+    image: ${TASK_BACKUP_IMAGE:?Set the tested backup image digest}
+    command: [agent]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    environment:
+      Backup__BackupHourUtc: ${TASK_BACKUP_HOUR_UTC:-1}
+    tmpfs:
+      - /tmp:mode=1777
+      - /run/task-backup:uid=1001,gid=1001,mode=0700
+    volumes:
+      - ${TASK_PGDATA}:/var/lib/postgresql/data:ro
+      - ${TASK_LOCAL_BACKUP}:/backup/local
+      - ${TASK_OFFHOST_BACKUP}:/backup/offhost
+      - ${TASK_RECOVERY_KEYS}:/run/secrets:ro
+      - ${TASK_RECOVERY_INPUT:?Set complete recovery input directory}:/recovery-input:ro
+      - pg-socket:/run/postgresql
+      - backup-state:/var/lib/task-backup
+      - restore-work:/restore
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, /opt/task-backup/runner.py, health]
+      interval: 60s
+      timeout: 10s
+      start_period: 5m
+      retries: 1
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+  recovery-operator:
+    image: ${TASK_BACKUP_IMAGE:?Set the tested backup image digest}
+    command: [operator]
+    profiles: [recovery]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    tmpfs:
+      - /tmp:mode=1777
+      - /run/task-backup:uid=1001,gid=1001,mode=0700
+    volumes:
+      - ${TASK_LOCAL_BACKUP}:/backup/local:ro
+      - ${TASK_OFFHOST_BACKUP}:/backup/offhost:ro
+      - ${TASK_RECOVERY_KEYS}:/run/secrets:ro
+      - recovery-state:/var/lib/task-backup
+      - recovery-work:/restore
+    restart: "no"
+
+networks:
+  database:
+    internal: true
+volumes:
+  pg-socket:
+  backup-state:
+  restore-work:
+  recovery-state:
+  recovery-work:

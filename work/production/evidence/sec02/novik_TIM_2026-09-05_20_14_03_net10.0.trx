@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a0d181c3-bc40-4bf5-8d96-11c6e29e139d" name="novik@TIM 2026-09-05 20:14:03" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-05T20:14:03.2984013+03:00" queuing="2026-09-05T20:14:03.2984018+03:00" start="2026-09-05T20:14:01.4220181+03:00" finish="2026-09-05T20:14:17.1138892+03:00" />
+  <TestSettings name="default" id="234be12e-4b1f-4b64-b1c0-c4bb9ef06d07">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-05_20_14_03" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8c164724-b65b-49e5-aedf-14e4dca0ff75" testId="2e43f9a4-f686-3684-aea3-8858d6094c8c" testName="Task.Tests.PostgresProductApiTests.ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe" computerName="TIM" duration="00:00:02.7803899" startTime="2026-09-05T20:14:04.8912983+03:00" endTime="2026-09-05T20:14:07.6716648+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c164724-b65b-49e5-aedf-14e4dca0ff75" />
+    <UnitTestResult executionId="3910dd1a-c7e2-4aca-88af-32b2385ee878" testId="1089bb5d-df7e-4ab8-56a0-1ef62f1ff6f3" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 2)" computerName="TIM" duration="00:00:00.0073571" startTime="2026-09-05T20:14:02.7180136+03:00" endTime="2026-09-05T20:14:02.7310619+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3910dd1a-c7e2-4aca-88af-32b2385ee878" />
+    <UnitTestResult executionId="a9b517b4-82f0-4286-a4e7-df9d2867089f" testId="e6b05a1e-408e-d7dc-0ec6-6ba3776d44a5" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.EmptyExistingHistory_IsPending" computerName="TIM" duration="00:00:00.0001267" startTime="2026-09-05T20:14:02.7413417+03:00" endTime="2026-09-05T20:14:02.7413826+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a9b517b4-82f0-4286-a4e7-df9d2867089f" />
+    <UnitTestResult executionId="ca6c06e9-b826-44ed-bef4-ee76a470ff8a" testId="76e41b2c-6b70-f6ea-530d-027c49bd97f7" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 100)" computerName="TIM" duration="00:00:00.0002526" startTime="2026-09-05T20:14:02.7397550+03:00" endTime="2026-09-05T20:14:02.7398294+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca6c06e9-b826-44ed-bef4-ee76a470ff8a" />
+    <UnitTestResult executionId="5f36b063-35d1-4a56-8be8-2b13849a4267" testId="f56ec44c-3bd2-5500-8382-da0516573118" testName="Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety" computerName="TIM" duration="00:00:01.3426939" startTime="2026-09-05T20:14:07.6728801+03:00" endTime="2026-09-05T20:14:09.0222839+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5f36b063-35d1-4a56-8be8-2b13849a4267">
+      <Output>
+        <ErrorInfo>
+          <Message>Task.Application.ProductData.ProductApiException : Object is not visible.</Message>
+          <StackTrace>   at Task.Infrastructure.Persistence.PostgresProductApiStore.RequireObject(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, Resource resource) in C:\Users\novik\Таск\work\production\src\Task.Infrastructure\Persistence\PostgresProductApiStore.cs:line 201&#xD;
+   at Task.Infrastructure.Persistence.PostgresProductApiStore.Dispatch(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r) in C:\Users\novik\Таск\work\production\src\Task.Infrastructure\Persistence\PostgresProductApiStore.cs:line 95&#xD;
+   at Task.Infrastructure.Persistence.PostgresProductApiStore.Execute(ProductApiRequest request) in C:\Users\novik\Таск\work\production\src\Task.Infrastructure\Persistence\PostgresProductApiStore.cs:line 64&#xD;
+   at Task.Tests.PostgresProductApiTests.Database.Call(String resource, String operation, String body, Nullable`1 id, Nullable`1 version, String key, Nullable`1 child, Nullable`1 user, Boolean admin, Dictionary`2 query, String[] permissions, Nullable`1 session) in C:\Users\novik\Таск\work\production\tests\Task.Tests\PostgresProductApiTests.cs:line 254&#xD;
+   at Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety() in C:\Users\novik\Таск\work\production\tests\Task.Tests\PostgresProductApiTests.cs:line 119&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e0eb4b9e-fb51-41f4-8979-37a2818c65d8" testId="20fc59eb-08a4-24f4-6e43-578a2dbc1632" testName="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound" computerName="TIM" duration="00:00:01.0738797" startTime="2026-09-05T20:14:10.5724675+03:00" endTime="2026-09-05T20:14:11.6464608+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0eb4b9e-fb51-41f4-8979-37a2818c65d8" />
+    <UnitTestResult executionId="8386c413-36fb-402d-b6a4-a94cb252587f" testId="d2316973-6168-481c-9463-5284560607a0" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongName_IsHistoryMismatch" computerName="TIM" duration="00:00:00.0001815" startTime="2026-09-05T20:14:02.7412072+03:00" endTime="2026-09-05T20:14:02.7412452+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8386c413-36fb-402d-b6a4-a94cb252587f" />
+    <UnitTestResult executionId="5aa90c27-0ea5-4862-a642-5a03122c101e" testId="9a92c938-9253-c1f9-6a4f-474fe01c26d6" testName="Task.Tests.PostgresProductApiTests.ProductApi_SettingsNotificationsAndDiscovery" computerName="TIM" duration="00:00:01.5503082" startTime="2026-09-05T20:14:09.0256030+03:00" endTime="2026-09-05T20:14:10.5722959+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5aa90c27-0ea5-4862-a642-5a03122c101e" />
+    <UnitTestResult executionId="bdf5afb8-b22e-46de-a8e7-c9ccee67fcf6" testId="0881d3ff-4d9b-71c6-0f90-5a52706880e9" testName="Task.Tests.PostgresProductApiTests.ProductApi_LinksInteractionsAndFileChecksRoundTrip" computerName="TIM" duration="00:00:02.0420338" startTime="2026-09-05T20:14:11.6466079+03:00" endTime="2026-09-05T20:14:13.6886127+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bdf5afb8-b22e-46de-a8e7-c9ccee67fcf6" />
+    <UnitTestResult executionId="875b6f2c-0ed4-4e96-8851-e82a0e4cb54b" testId="cb63fbc3-d4d3-7d66-4c1a-8b0723bc898c" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.ExtraHistoryRow_IsHistoryMismatch" computerName="TIM" duration="00:00:00.0002084" startTime="2026-09-05T20:14:02.7414739+03:00" endTime="2026-09-05T20:14:02.7415141+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="875b6f2c-0ed4-4e96-8851-e82a0e4cb54b" />
+    <UnitTestResult executionId="6d9c5132-570b-4de6-a483-8958be0b0755" testId="7832c79e-d81f-18ff-4a3f-ef0e44feea21" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.ExactCatalogPrefixAtLatestVersion_IsCurrent" computerName="TIM" duration="00:00:00.0005449" startTime="2026-09-05T20:14:02.7415961+03:00" endTime="2026-09-05T20:14:02.7416322+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d9c5132-570b-4de6-a483-8958be0b0755" />
+    <UnitTestResult executionId="ae208b98-0af7-4241-8da8-9dc51829fc01" testId="e9f9ff81-f93a-3501-9e3c-21cd3c30a0df" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.Catalog_ExpectsUserReadPermissionVersionTwelve" computerName="TIM" duration="00:00:00.0021027" startTime="2026-09-05T20:14:02.7410295+03:00" endTime="2026-09-05T20:14:02.7410764+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae208b98-0af7-4241-8da8-9dc51829fc01" />
+    <UnitTestResult executionId="25bfaaa5-8943-4f27-be53-147246a749ed" testId="95788f1a-8f53-17b8-503c-db39d7170404" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongChecksum_IsHistoryMismatch" computerName="TIM" duration="00:00:00.0001062" startTime="2026-09-05T20:14:02.7417158+03:00" endTime="2026-09-05T20:14:02.7417515+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25bfaaa5-8943-4f27-be53-147246a749ed" />
+    <UnitTestResult executionId="be5af6ad-0e5e-4ee0-9773-0bafb2b25345" testId="e60a9656-3862-178e-1e81-d646003610db" testName="Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" computerName="TIM" duration="00:00:02.2949343" startTime="2026-09-05T20:14:14.7741631+03:00" endTime="2026-09-05T20:14:17.0689704+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be5af6ad-0e5e-4ee0-9773-0bafb2b25345" />
+    <UnitTestResult executionId="0f68bc69-561d-4183-bdaf-d9d6f62345b3" testId="f133a7c8-4568-e12d-6782-9aedd08a91d1" testName="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_ReadWriteChildrenAndCompletion" computerName="TIM" duration="00:00:02.1668947" startTime="2026-09-05T20:14:02.7208453+03:00" endTime="2026-09-05T20:14:04.8898637+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f68bc69-561d-4183-bdaf-d9d6f62345b3" />
+    <UnitTestResult executionId="d622297d-ae20-482d-8904-7d3ac9976c07" testId="bdd47cbd-8a3d-8aef-cc0c-2c249404c57f" testName="Task.Tests.PostgresProductApiTests.TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach" computerName="TIM" duration="00:00:01.0849772" startTime="2026-09-05T20:14:13.6887519+03:00" endTime="2026-09-05T20:14:14.7739316+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d622297d-ae20-482d-8904-7d3ac9976c07" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 2)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="1089bb5d-df7e-4ab8-56a0-1ef62f1ff6f3">
+      <Execution id="3910dd1a-c7e2-4aca-88af-32b2385ee878" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="GapOrUnknownFutureVersion_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="f56ec44c-3bd2-5500-8382-da0516573118">
+      <Execution id="5f36b063-35d1-4a56-8be8-2b13849a4267" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_MembershipAndFilePathSafety" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 100)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="76e41b2c-6b70-f6ea-530d-027c49bd97f7">
+      <Execution id="ca6c06e9-b826-44ed-bef4-ee76a470ff8a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="GapOrUnknownFutureVersion_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.EmptyExistingHistory_IsPending" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="e6b05a1e-408e-d7dc-0ec6-6ba3776d44a5">
+      <Execution id="a9b517b4-82f0-4286-a4e7-df9d2867089f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="EmptyExistingHistory_IsPending" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="20fc59eb-08a4-24f4-6e43-578a2dbc1632">
+      <Execution id="e0eb4b9e-fb51-41f4-8979-37a2818c65d8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="bdd47cbd-8a3d-8aef-cc0c-2c249404c57f">
+      <Execution id="d622297d-ae20-482d-8904-7d3ac9976c07" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.ExactCatalogPrefixAtLatestVersion_IsCurrent" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="7832c79e-d81f-18ff-4a3f-ef0e44feea21">
+      <Execution id="6d9c5132-570b-4de6-a483-8958be0b0755" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="ExactCatalogPrefixAtLatestVersion_IsCurrent" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongName_IsHistoryMismatch" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="d2316973-6168-481c-9463-5284560607a0">
+      <Execution id="8386c413-36fb-402d-b6a4-a94cb252587f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="WrongName_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongChecksum_IsHistoryMismatch" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="95788f1a-8f53-17b8-503c-db39d7170404">
+      <Execution id="25bfaaa5-8943-4f27-be53-147246a749ed" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="WrongChecksum_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.ExtraHistoryRow_IsHistoryMismatch" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="cb63fbc3-d4d3-7d66-4c1a-8b0723bc898c">
+      <Execution id="875b6f2c-0ed4-4e96-8851-e82a0e4cb54b" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="ExtraHistoryRow_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.Catalog_ExpectsUserReadPermissionVersionTwelve" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="e9f9ff81-f93a-3501-9e3c-21cd3c30a0df">
+      <Execution id="ae208b98-0af7-4241-8da8-9dc51829fc01" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="Catalog_ExpectsUserReadPermissionVersionTwelve" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_SettingsNotificationsAndDiscovery" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="9a92c938-9253-c1f9-6a4f-474fe01c26d6">
+      <Execution id="5aa90c27-0ea5-4862-a642-5a03122c101e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_SettingsNotificationsAndDiscovery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_LinksInteractionsAndFileChecksRoundTrip" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="0881d3ff-4d9b-71c6-0f90-5a52706880e9">
+      <Execution id="bdf5afb8-b22e-46de-a8e7-c9ccee67fcf6" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_LinksInteractionsAndFileChecksRoundTrip" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="2e43f9a4-f686-3684-aea3-8858d6094c8c">
+      <Execution id="8c164724-b65b-49e5-aedf-14e4dca0ff75" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_ReadWriteChildrenAndCompletion" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="f133a7c8-4568-e12d-6782-9aedd08a91d1">
+      <Execution id="0f68bc69-561d-4183-bdaf-d9d6f62345b3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskCard_RealPostgres_ReadWriteChildrenAndCompletion" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\debug\net10.0\task.tests.dll" id="e60a9656-3862-178e-1e81-d646003610db">
+      <Execution id="be5af6ad-0e5e-4ee0-9773-0bafb2b25345" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Debug\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2e43f9a4-f686-3684-aea3-8858d6094c8c" executionId="8c164724-b65b-49e5-aedf-14e4dca0ff75" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1089bb5d-df7e-4ab8-56a0-1ef62f1ff6f3" executionId="3910dd1a-c7e2-4aca-88af-32b2385ee878" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6b05a1e-408e-d7dc-0ec6-6ba3776d44a5" executionId="a9b517b4-82f0-4286-a4e7-df9d2867089f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76e41b2c-6b70-f6ea-530d-027c49bd97f7" executionId="ca6c06e9-b826-44ed-bef4-ee76a470ff8a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f56ec44c-3bd2-5500-8382-da0516573118" executionId="5f36b063-35d1-4a56-8be8-2b13849a4267" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20fc59eb-08a4-24f4-6e43-578a2dbc1632" executionId="e0eb4b9e-fb51-41f4-8979-37a2818c65d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2316973-6168-481c-9463-5284560607a0" executionId="8386c413-36fb-402d-b6a4-a94cb252587f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a92c938-9253-c1f9-6a4f-474fe01c26d6" executionId="5aa90c27-0ea5-4862-a642-5a03122c101e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0881d3ff-4d9b-71c6-0f90-5a52706880e9" executionId="bdf5afb8-b22e-46de-a8e7-c9ccee67fcf6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb63fbc3-d4d3-7d66-4c1a-8b0723bc898c" executionId="875b6f2c-0ed4-4e96-8851-e82a0e4cb54b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7832c79e-d81f-18ff-4a3f-ef0e44feea21" executionId="6d9c5132-570b-4de6-a483-8958be0b0755" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e9f9ff81-f93a-3501-9e3c-21cd3c30a0df" executionId="ae208b98-0af7-4241-8da8-9dc51829fc01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95788f1a-8f53-17b8-503c-db39d7170404" executionId="25bfaaa5-8943-4f27-be53-147246a749ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e60a9656-3862-178e-1e81-d646003610db" executionId="be5af6ad-0e5e-4ee0-9773-0bafb2b25345" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f133a7c8-4568-e12d-6782-9aedd08a91d1" executionId="0f68bc69-561d-4183-bdaf-d9d6f62345b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bdd47cbd-8a3d-8aef-cc0c-2c249404c57f" executionId="d622297d-ae20-482d-8904-7d3ac9976c07" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="16" executed="16" passed="15" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.51]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.60]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.63]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:06.96]       Task.Application.ProductData.ProductApiException : Object is not visible.&#xD;
+[xUnit.net 00:00:06.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.96]         C:\Users\novik\Таск\work\production\src\Task.Infrastructure\Persistence\PostgresProductApiStore.cs(201,0): at Task.Infrastructure.Persistence.PostgresProductApiStore.RequireObject(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, Resource resource)&#xD;
+[xUnit.net 00:00:06.96]         C:\Users\novik\Таск\work\production\src\Task.Infrastructure\Persistence\PostgresProductApiStore.cs(95,0): at Task.Infrastructure.Persistence.PostgresProductApiStore.Dispatch(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)&#xD;
+[xUnit.net 00:00:06.96]         C:\Users\novik\Таск\work\production\src\Task.Infrastructure\Persistence\PostgresProductApiStore.cs(64,0): at Task.Infrastructure.Persistence.PostgresProductApiStore.Execute(ProductApiRequest request)&#xD;
+[xUnit.net 00:00:06.96]         C:\Users\novik\Таск\work\production\tests\Task.Tests\PostgresProductApiTests.cs(254,0): at Task.Tests.PostgresProductApiTests.Database.Call(String resource, String operation, String body, Nullable`1 id, Nullable`1 version, String key, Nullable`1 child, Nullable`1 user, Boolean admin, Dictionary`2 query, String[] permissions, Nullable`1 session)&#xD;
+[xUnit.net 00:00:06.96]         C:\Users\novik\Таск\work\production\tests\Task.Tests\PostgresProductApiTests.cs(119,0): at Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety()&#xD;
+[xUnit.net 00:00:06.96]            at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)&#xD;
+[xUnit.net 00:00:06.96]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:06.96]            at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:15.00]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-09-05T20:14:09.0241645+03:00">
+        <Text>[xUnit.net 00:00:06.96]     Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

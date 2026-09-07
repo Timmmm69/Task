@@ -1,7 +1,7 @@
 {
   "package": "Task Development / Handoff Readiness Dashboard",
-  "version": "1.0.0",
-  "generated_at": "2026-08-30T19:11:51.982Z",
+  "version": "1.1.0",
+  "generated_at": "2026-09-07T09:37:07.066Z",
   "algorithm": "SHA-256",
   "files": [
     {
@@ -26,7 +26,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "e2780ef6ea7812f51f92ba942bb784f27a98c77ceb39c69b914ebf7149248063",
+      "sha256": "4ca2f913ff0e0bee03216628ecfdbd531248f63a75ae437130232a7ce7eca549",
       "bytes": 306
     },
     {
@@ -61,8 +61,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "5867b823fec625631ffd0eda894950143057618b85557957c3ab10f35fa9c7c9",
-      "bytes": 3399
+      "sha256": "4b84a3dd5efb23a79a41f6afa1c32eb88e1bd898a9bff3750f150f3152d8a244",
+      "bytes": 3975
     },
     {
       "path": "recalculate-order.mjs",
@@ -71,8 +71,8 @@
     },
     {
       "path": "roadmap.json",
-      "sha256": "39fbfce4f51d04a153798605a15260572eeb688b98c89cc53f30dc0f598d479c",
-      "bytes": 49102
+      "sha256": "a4c2f36e769ec3b2e5b93d86f7efd895101764a26111cb818a10c9fdd6618a8b",
+      "bytes": 61218
     },
     {
       "path": "server.mjs",
@@ -91,8 +91,8 @@
     },
     {
       "path": "VALIDATION_REPORT.md",
-      "sha256": "3f5adcc1e988daa4428af77c35f95ca4c385e697fcd1865b8264c12d7822b45c",
-      "bytes": 2227
+      "sha256": "070945a02650cb408d5dbf5ce2ef7533881bb6fc343b56bc96213e973e75e4be",
+      "bytes": 2572
     },
     {
       "path": "verify-manifest.mjs",
@@ -101,7 +101,7 @@
     },
     {
       "path": "VERSION",
-      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "sha256": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8",
       "bytes": 6
     }
   ]

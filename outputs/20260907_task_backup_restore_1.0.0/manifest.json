@@ -1,0 +1,234 @@
+{
+  "version": "1.0.0",
+  "kind": "OPS-03 source overlay and verification package; requires the baseline repository",
+  "baselineCommit": "ed921c70939f71997624aac4df7a203b944c1061",
+  "workingTreeChangesIncluded": true,
+  "createdAt": "2026-09-07T09:34:49.2583684+00:00",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "evidence/acceptance-protected-snapshot.json",
+      "bytes": 1468,
+      "sha256": "f1f5f057a3ecdb809a453d3b3d1b3ff9ef2d268ae178fd646d32b706eebb9135"
+    },
+    {
+      "path": "evidence/acceptance-secondary.json",
+      "bytes": 1467,
+      "sha256": "24d188d1620ab44d4bb5631615e1f5db961f7e6842a2c51c5998fbfb623c8e54"
+    },
+    {
+      "path": "evidence/acceptance-service-escrow-b.json",
+      "bytes": 1413,
+      "sha256": "94aedbc851b29bd8dfe479088ab87fcebf531b907dbf5d03296e39a1df6b3f6d"
+    },
+    {
+      "path": "evidence/acceptance-suite.json",
+      "bytes": 511,
+      "sha256": "f3987e26d8ded512f115ad66aecc382108473b6ddb3aae24c824295d960f2221"
+    },
+    {
+      "path": "evidence/acceptance-unit.txt",
+      "bytes": 1326,
+      "sha256": "ad4353f019f82bde34a9f00f0e75156aa6c5a99a786751f60ef677acaf35c9b0"
+    },
+    {
+      "path": "evidence/api-image-id.txt",
+      "bytes": 73,
+      "sha256": "4be314fbe6ab6dbcc43df6e5ec1538c41499ab06f30c51ff2ddb68e12e6329c7"
+    },
+    {
+      "path": "evidence/backend-versions.txt",
+      "bytes": 99,
+      "sha256": "4e46d125294f8ecdf11aca4830d9f96d17215576daf3022a43aa38867dcb3242"
+    },
+    {
+      "path": "evidence/cleanup.json",
+      "bytes": 72,
+      "sha256": "eee0219a23888c75fe9776b556887d4b73ee4b5a2f41f92542af7b556817656e"
+    },
+    {
+      "path": "evidence/image-id.txt",
+      "bytes": 73,
+      "sha256": "6768b3c90ecca01ea35afc566853ffa1e8798f15b841fd173e2e5e67de184ab9"
+    },
+    {
+      "path": "evidence/integration.json",
+      "bytes": 3693,
+      "sha256": "2507efe2e8f522c31d275228ea6fe5960b95d636a9829e012fd91b1d2a5289cc"
+    },
+    {
+      "path": "evidence/integration.txt",
+      "bytes": 2138,
+      "sha256": "996516702cc44762a712f75115215b29f85241ab76efd6387bbc0b866c94febb"
+    },
+    {
+      "path": "evidence/offhost-only-restore.json",
+      "bytes": 531,
+      "sha256": "759f170cdd9f7a54ab9e96272aad1e1139e18403371ccf68eabf1696804808ff"
+    },
+    {
+      "path": "evidence/run.json",
+      "bytes": 37270,
+      "sha256": "6194c3befd960391c6801c1680be2140458ae3829f42d5f06d2cf6603220f0ba"
+    },
+    {
+      "path": "source/work/production/deployment/backup/.gitattributes",
+      "bytes": 40,
+      "sha256": "5d8206169c26d243f091e9fe1ed46dbd33640ea5b92691ef065a90fea037450c"
+    },
+    {
+      "path": "source/work/production/deployment/backup/acceptance.py",
+      "bytes": 10436,
+      "sha256": "1155e85e561ba2c0bee08ad736d5793064ec31272ed366c5553de4b80099392b"
+    },
+    {
+      "path": "source/work/production/deployment/backup/compose.recovery.yaml",
+      "bytes": 971,
+      "sha256": "878eb2cef6cb520de00aa165bb40cfa128cc293295bc19f37442ef739ee156d8"
+    },
+    {
+      "path": "source/work/production/deployment/backup/compose.yaml",
+      "bytes": 2625,
+      "sha256": "76a6b50cbb66f64f29cac2d13fe9cb86d8bececff3297da993769296a2cfa7a6"
+    },
+    {
+      "path": "source/work/production/deployment/backup/Dockerfile",
+      "bytes": 1768,
+      "sha256": "2d56c16055e98b4bc44888f0f672fc486eefb3223040b1ed1b32324f45779b9f"
+    },
+    {
+      "path": "source/work/production/deployment/backup/entrypoint.py",
+      "bytes": 2234,
+      "sha256": "74749b1e9e5ff6c439903680087f9918f9538bcae01bb5268608638b724c20c2"
+    },
+    {
+      "path": "source/work/production/deployment/backup/initialize.sql",
+      "bytes": 461,
+      "sha256": "4b9f0a453f37de8b81ddc24301b32ff8162dbbc474282059e7c86e62f385986a"
+    },
+    {
+      "path": "source/work/production/deployment/backup/Package-BackupEvidence.ps1",
+      "bytes": 6445,
+      "sha256": "3914f7182f1b8da2d39cc4883c2cc08849269dbcc48ef19c89798401c52eb45e"
+    },
+    {
+      "path": "source/work/production/deployment/backup/runner.py",
+      "bytes": 20468,
+      "sha256": "c697de2357bbc7ca0a9ce56b55d876e5dab2418d4d05603a374cb4fe596705d3"
+    },
+    {
+      "path": "source/work/production/deployment/containers/Dockerfile",
+      "bytes": 5841,
+      "sha256": "5af35c5936cee5d1d182d858c12aad672c1985aaa762d4bb5bc40b0e295fef4b"
+    },
+    {
+      "path": "source/work/production/docs/backup-deployment-acceptance.md",
+      "bytes": 12366,
+      "sha256": "13d6eb7be8f7442be7fd0c84b22422f89ed4a6c9c90c404cf25322fbc10f0e57"
+    },
+    {
+      "path": "source/work/production/docs/backup-restore-runbook.md",
+      "bytes": 14088,
+      "sha256": "1c381535ee33c12b424becb0fc48a8c060132abbf67181038faa9c60395f007d"
+    },
+    {
+      "path": "source/work/production/docs/task-container-deployment-foundation.md",
+      "bytes": 12896,
+      "sha256": "abf638830ce55e546f4c8028910d8402b2405dd2604daa9264d7f797880b6101"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/appsettings.Development.json",
+      "bytes": 137,
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/appsettings.json",
+      "bytes": 137,
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/BackupCommandRunner.cs",
+      "bytes": 2307,
+      "sha256": "e27f7898150f48406a05a0c17ef7651d28e1cd80ae1fbd27ac1b186838ed5c57"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/BackupOptions.cs",
+      "bytes": 989,
+      "sha256": "a562976943b6c7c359a62d382e0aab133fbe8d3ef1c5b61520ebe8c317609afa"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/BackupRestoreAgent.cs",
+      "bytes": 2445,
+      "sha256": "4ab333e5ba93600cd7cba0fef512c194b0f8ddc83e4ae0beb4c5e667e1e1fc6a"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/BackupSchedule.cs",
+      "bytes": 3399,
+      "sha256": "42e3f7a7b58c8a6301c98891989002252e1cb5c7eb63eabc7705ee405a72a6fe"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/packages.lock.json",
+      "bytes": 18450,
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/Program.cs",
+      "bytes": 1224,
+      "sha256": "5868fc5e3601c1c834e9fe8318c89740f020a601470f3ddd0a9c1861c5997963"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/Task.BackupAgent.csproj",
+      "bytes": 855,
+      "sha256": "aeff7fae1720239d5dc857a2dfd984d386cb7998a98121c5b117dcfcf1e6f7f1"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/BackupRestoreAgentLifecycleTests.cs",
+      "bytes": 2411,
+      "sha256": "b1e74fd2561d131c187151e47b01477fb75cd89c9d466609e36e27790b626595"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/BackupScheduleTests.cs",
+      "bytes": 6215,
+      "sha256": "75ee586950f523980835b06ba6b378ec1f42c5c5fb7e5c9818ad368908d61602"
+    },
+    {
+      "path": "source/work/production/verification/backup-acceptance-tests.py",
+      "bytes": 9696,
+      "sha256": "7a23a0faaae457bf33ed8163e6161c0f2588ea522bd976f1ca487a08c409f255"
+    },
+    {
+      "path": "source/work/production/verification/backup-integration.py",
+      "bytes": 10940,
+      "sha256": "a5ac60226fab43e1ac143ee7649800b6b899db3728be88e125d0ee24c84c60c4"
+    },
+    {
+      "path": "source/work/production/verification/Test-BackupRestore.ps1",
+      "bytes": 25516,
+      "sha256": "abdccdeb014b6f315eadff6f6b7982f415eea82a14be7f202c9c9d6df35aeba7"
+    },
+    {
+      "path": "source/work/production/verification/Test-ContainerPackaging.ps1",
+      "bytes": 24990,
+      "sha256": "e0377528d42e689d93197b734b7c5318d01d3fc011a5092b8d56ad7c8c8a5067"
+    },
+    {
+      "path": "task-backup-restore-1.0.0.zip",
+      "bytes": 69718,
+      "sha256": "83a128b716b086f29c66f24ce1d768a48156f243bbf0fd8b87599cdd4cbdf88a"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 3359,
+      "sha256": "05f39972b447fc3dfb96cde9b853015165f5bb06c1bd2c95334cd3bd7eb994b2"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}
