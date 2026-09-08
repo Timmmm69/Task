@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e6b3f80a-25ee-4544-b461-37135ed97e80" name="novik@TIM 2026-09-08 12:46:28" runUser="Tim\CodexSandboxOffline" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-08T12:46:28.5798333+03:00" queuing="2026-09-08T12:46:28.5798341+03:00" start="2026-09-08T12:46:28.0429792+03:00" finish="2026-09-08T12:46:28.5843083+03:00" />
+  <TestSettings name="default" id="d54ed0bf-ebcd-4ffa-b32c-07e37c09b790">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-08_12_46_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c21317da-3ca5-4ec1-9fbb-f36be1eadf7f" testId="1089bb5d-df7e-4ab8-56a0-1ef62f1ff6f3" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 2)" computerName="TIM" duration="00:00:00.0058778" startTime="2026-09-08T12:46:28.4883707+03:00" endTime="2026-09-08T12:46:28.4994696+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c21317da-3ca5-4ec1-9fbb-f36be1eadf7f" />
+    <UnitTestResult executionId="4f405a7d-fc4c-4b1b-8b69-7560ea06054c" testId="76e41b2c-6b70-f6ea-530d-027c49bd97f7" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 100)" computerName="TIM" duration="00:00:00.0001805" startTime="2026-09-08T12:46:28.5060285+03:00" endTime="2026-09-08T12:46:28.5060694+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f405a7d-fc4c-4b1b-8b69-7560ea06054c" />
+    <UnitTestResult executionId="243b2f5d-5036-4453-be20-d1223018409d" testId="d2316973-6168-481c-9463-5284560607a0" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongName_IsHistoryMismatch" computerName="TIM" duration="00:00:00.0001033" startTime="2026-09-08T12:46:28.5067413+03:00" endTime="2026-09-08T12:46:28.5067615+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="243b2f5d-5036-4453-be20-d1223018409d" />
+    <UnitTestResult executionId="28440d56-f248-4712-acfe-72ddf2b6693e" testId="7832c79e-d81f-18ff-4a3f-ef0e44feea21" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.ExactCatalogPrefixAtLatestVersion_IsCurrent" computerName="TIM" duration="00:00:00.0005069" startTime="2026-09-08T12:46:28.5069787+03:00" endTime="2026-09-08T12:46:28.5069922+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28440d56-f248-4712-acfe-72ddf2b6693e" />
+    <UnitTestResult executionId="2d8c91e6-d30b-4823-a525-fa67c2e1db9e" testId="95788f1a-8f53-17b8-503c-db39d7170404" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongChecksum_IsHistoryMismatch" computerName="TIM" duration="00:00:00.0000825" startTime="2026-09-08T12:46:28.5070237+03:00" endTime="2026-09-08T12:46:28.5070371+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d8c91e6-d30b-4823-a525-fa67c2e1db9e" />
+    <UnitTestResult executionId="465aea3e-8ea2-4045-b222-cea3967fa257" testId="7b119b88-49e5-97f4-1a47-b18db76ffcbb" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.BackgroundDeliveryMigration_UsesCanonicalIdempotentChangeProjector" computerName="TIM" duration="00:00:00.0001488" startTime="2026-09-08T12:46:28.5068775+03:00" endTime="2026-09-08T12:46:28.5068928+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="465aea3e-8ea2-4045-b222-cea3967fa257" />
+    <UnitTestResult executionId="d20fa9de-c4a0-4040-a7fe-4c2847b479f4" testId="cb63fbc3-d4d3-7d66-4c1a-8b0723bc898c" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.ExtraHistoryRow_IsHistoryMismatch" computerName="TIM" duration="00:00:00.0001354" startTime="2026-09-08T12:46:28.5069293+03:00" endTime="2026-09-08T12:46:28.5069436+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d20fa9de-c4a0-4040-a7fe-4c2847b479f4" />
+    <UnitTestResult executionId="18e8a324-190d-413e-8d72-254ba1541fbc" testId="fd91f7f2-fa44-13e2-0a18-d5ee78de1e05" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.Catalog_ExpectsBackgroundDeliveryVersionFourteen" computerName="TIM" duration="00:00:00.0018927" startTime="2026-09-08T12:46:28.5070698+03:00" endTime="2026-09-08T12:46:28.5070838+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18e8a324-190d-413e-8d72-254ba1541fbc" />
+    <UnitTestResult executionId="8638bdf7-7969-4745-a3a6-44d53d4429f2" testId="e6b05a1e-408e-d7dc-0ec6-6ba3776d44a5" testName="Task.Tests.TaskPersistenceMigrationHistoryTests.EmptyExistingHistory_IsPending" computerName="TIM" duration="00:00:00.0000678" startTime="2026-09-08T12:46:28.5068216+03:00" endTime="2026-09-08T12:46:28.5068375+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8638bdf7-7969-4745-a3a6-44d53d4429f2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 100)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="76e41b2c-6b70-f6ea-530d-027c49bd97f7">
+      <Execution id="4f405a7d-fc4c-4b1b-8b69-7560ea06054c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="GapOrUnknownFutureVersion_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.EmptyExistingHistory_IsPending" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="e6b05a1e-408e-d7dc-0ec6-6ba3776d44a5">
+      <Execution id="8638bdf7-7969-4745-a3a6-44d53d4429f2" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="EmptyExistingHistory_IsPending" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.GapOrUnknownFutureVersion_IsHistoryMismatch(version: 2)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="1089bb5d-df7e-4ab8-56a0-1ef62f1ff6f3">
+      <Execution id="c21317da-3ca5-4ec1-9fbb-f36be1eadf7f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="GapOrUnknownFutureVersion_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongChecksum_IsHistoryMismatch" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="95788f1a-8f53-17b8-503c-db39d7170404">
+      <Execution id="2d8c91e6-d30b-4823-a525-fa67c2e1db9e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="WrongChecksum_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.ExtraHistoryRow_IsHistoryMismatch" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="cb63fbc3-d4d3-7d66-4c1a-8b0723bc898c">
+      <Execution id="d20fa9de-c4a0-4040-a7fe-4c2847b479f4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="ExtraHistoryRow_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.WrongName_IsHistoryMismatch" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="d2316973-6168-481c-9463-5284560607a0">
+      <Execution id="243b2f5d-5036-4453-be20-d1223018409d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="WrongName_IsHistoryMismatch" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.BackgroundDeliveryMigration_UsesCanonicalIdempotentChangeProjector" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="7b119b88-49e5-97f4-1a47-b18db76ffcbb">
+      <Execution id="465aea3e-8ea2-4045-b222-cea3967fa257" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="BackgroundDeliveryMigration_UsesCanonicalIdempotentChangeProjector" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.ExactCatalogPrefixAtLatestVersion_IsCurrent" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="7832c79e-d81f-18ff-4a3f-ef0e44feea21">
+      <Execution id="28440d56-f248-4712-acfe-72ddf2b6693e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="ExactCatalogPrefixAtLatestVersion_IsCurrent" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskPersistenceMigrationHistoryTests.Catalog_ExpectsBackgroundDeliveryVersionFourteen" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="fd91f7f2-fa44-13e2-0a18-d5ee78de1e05">
+      <Execution id="18e8a324-190d-413e-8d72-254ba1541fbc" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskPersistenceMigrationHistoryTests" name="Catalog_ExpectsBackgroundDeliveryVersionFourteen" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1089bb5d-df7e-4ab8-56a0-1ef62f1ff6f3" executionId="c21317da-3ca5-4ec1-9fbb-f36be1eadf7f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76e41b2c-6b70-f6ea-530d-027c49bd97f7" executionId="4f405a7d-fc4c-4b1b-8b69-7560ea06054c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2316973-6168-481c-9463-5284560607a0" executionId="243b2f5d-5036-4453-be20-d1223018409d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7832c79e-d81f-18ff-4a3f-ef0e44feea21" executionId="28440d56-f248-4712-acfe-72ddf2b6693e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95788f1a-8f53-17b8-503c-db39d7170404" executionId="2d8c91e6-d30b-4823-a525-fa67c2e1db9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b119b88-49e5-97f4-1a47-b18db76ffcbb" executionId="465aea3e-8ea2-4045-b222-cea3967fa257" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb63fbc3-d4d3-7d66-4c1a-8b0723bc898c" executionId="d20fa9de-c4a0-4040-a7fe-4c2847b479f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd91f7f2-fa44-13e2-0a18-d5ee78de1e05" executionId="18e8a324-190d-413e-8d72-254ba1541fbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6b05a1e-408e-d7dc-0ec6-6ba3776d44a5" executionId="8638bdf7-7969-4745-a3a6-44d53d4429f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Ergebnisse nicht in einer Liste" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:00.18]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

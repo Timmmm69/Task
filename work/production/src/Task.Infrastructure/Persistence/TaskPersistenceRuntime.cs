@@ -3,6 +3,7 @@ using Task.Application;
 using Task.Application.Audit;
 using Task.Application.Calendar;
 using Task.Application.ProductData;
+using Task.Application.Background;
 using Task.Application.Security;
 using Task.Infrastructure.Identity;
 using Task.Infrastructure.Postgres;
@@ -74,6 +75,9 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 
     public INotificationStore CreateNotificationStore() =>
         new PostgresNotificationStore(GetConfiguredDataSource());
+
+    public IBackgroundDeliveryStore CreateBackgroundDeliveryStore() =>
+        new PostgresBackgroundDeliveryStore(GetConfiguredDataSource());
 
     public IProductSettingsStore CreateProductSettingsStore() =>
         new PostgresProductSettingsStore(GetConfiguredDataSource());

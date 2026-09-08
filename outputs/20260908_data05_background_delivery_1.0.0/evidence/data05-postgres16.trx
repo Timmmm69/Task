@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0708f52d-0e3d-4ed7-8685-e8f9fd8aa84b" name="novik@TIM 2026-09-08 01:29:43" runUser="Tim\CodexSandboxOffline" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-08T01:29:43.5831203+03:00" queuing="2026-09-08T01:29:43.5831205+03:00" start="2026-09-08T01:29:40.6739836+03:00" finish="2026-09-08T01:29:43.5871421+03:00" />
+  <TestSettings name="default" id="c06d5410-9308-459f-a367-c970bfc3e0cb">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-08_01_29_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b0ca9da0-3bb5-491b-b371-91effbdc134f" testId="87ab6bb6-9665-8440-65ea-899a3b7d7092" testName="Task.Tests.PostgresBackgroundDeliveryStoreTests.RealPostgres_BackgroundDeliveryIsLeasedIdempotentAndRetrySafe" computerName="TIM" duration="00:00:01.8973147" startTime="2026-09-08T01:29:41.6158830+03:00" endTime="2026-09-08T01:29:43.5193751+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0ca9da0-3bb5-491b-b371-91effbdc134f">
+      <Output>
+        <StdOut>PASS: v14 outbox projection, SKIP LOCKED claim, lease recovery, exponential retry/DLQ, and reminder notification delivery.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.PostgresBackgroundDeliveryStoreTests.RealPostgres_BackgroundDeliveryIsLeasedIdempotentAndRetrySafe" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="87ab6bb6-9665-8440-65ea-899a3b7d7092">
+      <Execution id="b0ca9da0-3bb5-491b-b371-91effbdc134f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresBackgroundDeliveryStoreTests" name="RealPostgres_BackgroundDeliveryIsLeasedIdempotentAndRetrySafe" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="87ab6bb6-9665-8440-65ea-899a3b7d7092" executionId="b0ca9da0-3bb5-491b-b371-91effbdc134f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Ergebnisse nicht in einer Liste" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.12]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.20]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.22]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:02.15]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

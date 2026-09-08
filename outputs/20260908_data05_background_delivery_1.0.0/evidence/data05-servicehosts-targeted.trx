@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b2343745-c813-4e3e-9d2d-4de4a4b81235" name="novik@TIM 2026-09-08 01:27:42" runUser="Tim\CodexSandboxOffline" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-08T01:27:42.9049542+03:00" queuing="2026-09-08T01:27:42.9049550+03:00" start="2026-09-08T01:27:42.0912521+03:00" finish="2026-09-08T01:27:42.9106344+03:00" />
+  <TestSettings name="default" id="aa36d1f5-353e-43cc-a472-014e4ad5fc3a">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-08_01_27_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b9548975-e75f-47c7-ab2a-372ac714e390" testId="b5838503-b267-8e75-b205-23eec1afd6b0" testName="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.WorkerCadenceLeaseAndBatch_AreContractValues" computerName="TIM" duration="00:00:00.0031277" startTime="2026-09-08T01:27:42.8018533+03:00" endTime="2026-09-08T01:27:42.8019023+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9548975-e75f-47c7-ab2a-372ac714e390" />
+    <UnitTestResult executionId="50fd887b-0aec-44fe-96bc-f7e6064ee2b7" testId="acc782aa-6905-0b79-53ba-2a326db214c6" testName="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.ReminderWorker_MaterializesAndDelivers_WhileIsolatingFailure" computerName="TIM" duration="00:00:00.0032085" startTime="2026-09-08T01:27:42.8149550+03:00" endTime="2026-09-08T01:27:42.8182722+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50fd887b-0aec-44fe-96bc-f7e6064ee2b7" />
+    <UnitTestResult executionId="a784fe93-afad-468e-b540-e8350fc27b71" testId="413ea59e-5a12-33f0-b654-dd20c13e4a1f" testName="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.UnconfiguredWorkers_LogWarning_AndStopCleanly" computerName="TIM" duration="00:00:00.0121444" startTime="2026-09-08T01:27:42.7736855+03:00" endTime="2026-09-08T01:27:42.7933605+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a784fe93-afad-468e-b540-e8350fc27b71" />
+    <UnitTestResult executionId="ac6ccbae-527d-4f7f-a64d-31c7a0638f00" testId="c6920e91-340e-b26c-efea-e3f7c905309d" testName="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.OutboxWorker_DeliversBatch_AndPersistsFailureForRetry" computerName="TIM" duration="00:00:00.0161671" startTime="2026-09-08T01:27:42.8023292+03:00" endTime="2026-09-08T01:27:42.8147989+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ac6ccbae-527d-4f7f-a64d-31c7a0638f00" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.ReminderWorker_MaterializesAndDelivers_WhileIsolatingFailure" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="acc782aa-6905-0b79-53ba-2a326db214c6">
+      <Execution id="50fd887b-0aec-44fe-96bc-f7e6064ee2b7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests" name="ReminderWorker_MaterializesAndDelivers_WhileIsolatingFailure" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.UnconfiguredWorkers_LogWarning_AndStopCleanly" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="413ea59e-5a12-33f0-b654-dd20c13e4a1f">
+      <Execution id="a784fe93-afad-468e-b540-e8350fc27b71" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests" name="UnconfiguredWorkers_LogWarning_AndStopCleanly" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.OutboxWorker_DeliversBatch_AndPersistsFailureForRetry" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="c6920e91-340e-b26c-efea-e3f7c905309d">
+      <Execution id="ac6ccbae-527d-4f7f-a64d-31c7a0638f00" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests" name="OutboxWorker_DeliversBatch_AndPersistsFailureForRetry" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests.WorkerCadenceLeaseAndBatch_AreContractValues" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="b5838503-b267-8e75-b205-23eec1afd6b0">
+      <Execution id="b9548975-e75f-47c7-ab2a-372ac714e390" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.BackgroundDeliveryWorkerTests" name="WorkerCadenceLeaseAndBatch_AreContractValues" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b5838503-b267-8e75-b205-23eec1afd6b0" executionId="b9548975-e75f-47c7-ab2a-372ac714e390" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="acc782aa-6905-0b79-53ba-2a326db214c6" executionId="50fd887b-0aec-44fe-96bc-f7e6064ee2b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="413ea59e-5a12-33f0-b654-dd20c13e4a1f" executionId="a784fe93-afad-468e-b540-e8350fc27b71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c6920e91-340e-b26c-efea-e3f7c905309d" executionId="ac6ccbae-527d-4f7f-a64d-31c7a0638f00" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Ergebnisse nicht in einer Liste" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.19]   Discovered:  Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.27]   Finished:    Task.ServiceHosts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

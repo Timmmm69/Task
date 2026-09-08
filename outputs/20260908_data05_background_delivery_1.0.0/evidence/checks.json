@@ -1,0 +1,65 @@
+{
+  "task": "DATA-05",
+  "version": "1.0.0",
+  "validated_at": "2026-09-08T12:35:44+03:00",
+  "result": "PASS",
+  "checks": {
+    "release_build": {
+      "result": "PASS",
+      "errors": 0,
+      "warnings": 8
+    },
+    "task_tests": {
+      "result": "PASS",
+      "total": 796,
+      "passed": 792,
+      "skipped": 4
+    },
+    "service_host_tests": {
+      "result": "PASS",
+      "total": 562,
+      "passed": 562,
+      "skipped": 0
+    },
+    "desktop_tests": {
+      "result": "PASS",
+      "total": 269,
+      "passed": 269,
+      "skipped": 0
+    },
+    "background_worker_targeted": {
+      "result": "PASS",
+      "total": 4,
+      "passed": 4,
+      "skipped": 0
+    },
+    "migration_contract_targeted": {
+      "result": "PASS",
+      "total": 9,
+      "passed": 9,
+      "skipped": 0
+    },
+    "postgresql_16_delivery_gate": {
+      "result": "PASS",
+      "total": 1,
+      "passed": 1,
+      "skipped": 0
+    },
+    "changed_file_format": {
+      "result": "PASS"
+    },
+    "dashboard_validation": {
+      "result": "PASS",
+      "items": 40,
+      "overall": 74.41
+    },
+    "git_diff_check": {
+      "result": "PASS"
+    },
+    "package_builder": {
+      "result": "PASS",
+      "artifacts": 25,
+      "hashes_verified": true
+    }
+  }
+}

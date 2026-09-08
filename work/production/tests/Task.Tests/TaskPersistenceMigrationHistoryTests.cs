@@ -5,10 +5,24 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
-    public void Catalog_ExpectsUserReadPermissionVersionTwelve()
+    public void Catalog_ExpectsBackgroundDeliveryVersionFourteen()
     {
-        Assert.Equal(13, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("object_authorization", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(14, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("background_delivery", TaskPersistenceMigrationCatalog.All[^1].Name);
+    }
+
+    [Fact]
+    public void BackgroundDeliveryMigration_UsesCanonicalIdempotentChangeProjector()
+    {
+        var sql = TaskPersistenceMigrationCatalog.All[^1].Sql;
+
+        Assert.Contains("CREATE SEQUENCE sync.change_sequence", sql, StringComparison.Ordinal);
+        Assert.Contains("source_event_id uuid NOT NULL", sql, StringComparison.Ordinal);
+        Assert.Contains("CREATE OR REPLACE FUNCTION sync.project_domain_event_change", sql, StringComparison.Ordinal);
+        Assert.Contains(
+            "ON sync.change_feed (organization_id, source_event_id, object_id, operation)",
+            sql,
+            StringComparison.Ordinal);
     }
 
     [Fact]

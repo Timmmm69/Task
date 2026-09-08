@@ -1,0 +1,134 @@
+{
+  "task": "DATA-05",
+  "version": "1.0.0",
+  "generated_at": "2026-09-08T12:02:52.137Z",
+  "base_revision": "7e2fddf303ccb0e2bfcea07ab71e4e26123eff2c",
+  "artifact_count": 25,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 137,
+      "sha256": "6e8740dc0c51674791bb82b5a2c0892bb63ea6ecd1f9cbd31b1fa4f5d33798e0"
+    },
+    {
+      "path": "evidence/checks.json",
+      "bytes": 1264,
+      "sha256": "7c9abde4c63fdbdbc9a2c4510d7dcf3cbba09781c84c0abbc7f3bc24e92a0a87"
+    },
+    {
+      "path": "evidence/data05-desktop.trx",
+      "bytes": 382975,
+      "sha256": "1b870a11c96232e86896336d7b1ec640a0657171c1fed09455c4f0aec9a92a07"
+    },
+    {
+      "path": "evidence/data05-migration-targeted.trx",
+      "bytes": 13621,
+      "sha256": "60619d5a9b1bca8e04f2049a21f534d4ae8cc02545b34c91125f47c78170af88"
+    },
+    {
+      "path": "evidence/data05-postgres16.trx",
+      "bytes": 3183,
+      "sha256": "a4092b5f6576657759048f37c020c6de36de2c7ba99fbb887e0d3f8c8b787865"
+    },
+    {
+      "path": "evidence/data05-servicehosts-targeted.trx",
+      "bytes": 7365,
+      "sha256": "321cacf0f3276b49af96e1faac6939d6314b81013bfdafe5c0a6889f66aebd37"
+    },
+    {
+      "path": "evidence/data05-servicehosts.trx",
+      "bytes": 836540,
+      "sha256": "874bff5fe0ef3e1738f8b680d73ae02a07445220ca90df86130476e1b7f3baa2"
+    },
+    {
+      "path": "evidence/data05-task-tests.trx",
+      "bytes": 1077152,
+      "sha256": "1b4bb1b7f77f826c7cbb30e3c223163ad31d72edb973ec60dabc6abb9d4df65a"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 62986,
+      "sha256": "0894924e7cca551ff5ed712e0e1dc0379a692a8a5cf61cb6e70cd38d67c9a92b"
+    },
+    {
+      "path": "source/work/production/deployment/containers/sql/grant-runtime.sql",
+      "bytes": 3566,
+      "sha256": "de307cc807433c31f58bcb79f648c91b813623fe824fed53f0059cdf73be2dbc"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Background/BackgroundDeliveryContracts.cs",
+      "bytes": 2445,
+      "sha256": "7c6283fac7e46f72c6bd826f6667910e06af82d3c21ec8e1907c2f9a3d49c320"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/Migrations/014_background_delivery.sql",
+      "bytes": 7702,
+      "sha256": "89890f0362fd9e1e7647bdca72b08c4318463483b6a63adc53e3474f4ed4c867"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresBackgroundDeliveryStore.cs",
+      "bytes": 23924,
+      "sha256": "2cc9825a5118f97600a3a0d875eeeacb0459cba2116f2076a9235341b3431d81"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "bytes": 2339,
+      "sha256": "3d722b5d545c53c0c6acc65c49cfac2f348c47d1d6cb9e0b821d4d3f6dad9f88"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrator.cs",
+      "bytes": 12670,
+      "sha256": "61ada2d8244be4c0703510a698e6e6e34ba8af233858ee40200751e1703ce37c"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs",
+      "bytes": 9749,
+      "sha256": "a84dda08a98322513cfe4b9253e97507dab49706fe9fd0dd412ff190a4919b05"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/OutboxPublisherWorker.cs",
+      "bytes": 3949,
+      "sha256": "30938ff9dbbf46baf77a8dad56a7f1a587059746556cc856fa4393c01ac1f116"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/Program.cs",
+      "bytes": 2095,
+      "sha256": "57915441cb512cc72a17139329b2dfde33b8e55233a0fc4416785362b520a0fe"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/ReminderDeliveryWorker.cs",
+      "bytes": 4677,
+      "sha256": "0e40d7dd6d3775234f999e6af41c73be5665c7a4bfeb9a0b455c8c9459417204"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/BackgroundDeliveryWorkerTests.cs",
+      "bytes": 10338,
+      "sha256": "ce917d985742df16da339ac449779af50180aea41c91cddb0d836d76a2d0fef6"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresBackgroundDeliveryStoreTests.cs",
+      "bytes": 15365,
+      "sha256": "596bb5f40b85f25dc6155ba6aa15baf0b6b35718f76dd49bd6a4c9d0cbcf7ea2"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "bytes": 3674,
+      "sha256": "567c8e3c02b945f1690292205d0406d2b6e385c1590d7fff181920239afc5324"
+    },
+    {
+      "path": "source/work/production/verification/Build-Data05Package.mjs",
+      "bytes": 6566,
+      "sha256": "ed73452a3ef9bec4b523da92331f4fe2169ec289bdd58e94480a1bfe89f322c2"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 4590,
+      "sha256": "b44f6216129c50b8af61743c158a66669159e0ad58f179b730f7f7c37a46ba9e"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}

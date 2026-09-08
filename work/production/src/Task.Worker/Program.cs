@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Task.Application.Calendar;
+using Task.Application.Background;
 using Task.Application.Security;
 using Task.Infrastructure.Persistence;
 using Task.Worker;
@@ -21,11 +22,15 @@ if (persistenceRuntime.IsConfigured)
     builder.Services.AddSingleton<IRecurrenceStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateRecurrenceStore());
     builder.Services.AddSingleton<RecurrenceService>();
+    builder.Services.AddSingleton<IBackgroundDeliveryStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateBackgroundDeliveryStore());
 }
 
 builder.Services.AddHostedService<TaskBackgroundWorker>();
 builder.Services.AddHostedService<ExpiredSessionMaintenanceWorker>();
 builder.Services.AddHostedService<RecurrenceHorizonWorker>();
+builder.Services.AddHostedService<OutboxPublisherWorker>();
+builder.Services.AddHostedService<ReminderDeliveryWorker>();
 
 var host = builder.Build();
 
