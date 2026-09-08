@@ -1,0 +1,15 @@
+{
+  "task": "OPS-04",
+  "result": "PASS",
+  "configuration": {
+    "yaml_files": 7,
+    "alerts": 19,
+    "scrape_jobs": 10
+  },
+  "delivery": {
+    "forwarded": 1,
+    "receipts": 1,
+    "secrets_redacted": true,
+    "resolved_enabled": true
+  }
+}

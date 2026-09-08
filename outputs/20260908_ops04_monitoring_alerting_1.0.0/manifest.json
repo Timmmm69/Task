@@ -1,0 +1,225 @@
+{
+  "package": "20260908_ops04_monitoring_alerting_1.0.0",
+  "version": "1.0.0",
+  "base_commit": "b4b77634c9a1bb2a100b085054d4564edaca2b31",
+  "release_status": "source_validated_customer_configuration_required",
+  "tests_passed": 1627,
+  "tests_skipped": 4,
+  "targeted_tests_passed": 4,
+  "acceptance": {
+    "task": "OPS-04",
+    "result": "PASS",
+    "configuration": {
+      "yaml_files": 7,
+      "alerts": 19,
+      "scrape_jobs": 10
+    },
+    "delivery": {
+      "forwarded": 1,
+      "receipts": 1,
+      "secrets_redacted": true,
+      "resolved_enabled": true
+    }
+  },
+  "sources": [
+    ".project-dashboard/roadmap.json",
+    "work/production/deployment/monitoring/Bootstrap-Ops04Monitoring.sh",
+    "work/production/deployment/monitoring/alert-router.Dockerfile",
+    "work/production/deployment/monitoring/alert_router.py",
+    "work/production/deployment/monitoring/alertmanager.yml",
+    "work/production/deployment/monitoring/alerts.yml",
+    "work/production/deployment/monitoring/blackbox.yml",
+    "work/production/deployment/monitoring/compose.backup.yaml",
+    "work/production/deployment/monitoring/compose.production.yaml",
+    "work/production/deployment/monitoring/compose.yaml",
+    "work/production/deployment/monitoring/ops04.parameters.example.env",
+    "work/production/deployment/monitoring/prometheus.yml",
+    "work/production/docs/OPS-04-monitoring-alerting.md",
+    "work/production/src/Task.Api/Program.cs",
+    "work/production/src/Task.Api/TaskApiMetrics.cs",
+    "work/production/src/Task.BackupAgent/AssemblyInfo.cs",
+    "work/production/src/Task.BackupAgent/BackupMetricsPublisher.cs",
+    "work/production/src/Task.BackupAgent/Program.cs",
+    "work/production/src/Task.Worker/ExpiredSessionMaintenanceWorker.cs",
+    "work/production/src/Task.Worker/OutboxPublisherWorker.cs",
+    "work/production/src/Task.Worker/Program.cs",
+    "work/production/src/Task.Worker/RecurrenceHorizonWorker.cs",
+    "work/production/src/Task.Worker/ReminderDeliveryWorker.cs",
+    "work/production/src/Task.Worker/WorkerOperationalState.cs",
+    "work/production/tests/Task.ServiceHosts.Tests/OperationsMonitoringTests.cs",
+    "work/production/verification/Build-Ops04Package.py",
+    "work/production/verification/ops04-acceptance.py"
+  ],
+  "files": [
+    {
+      "path": "evidence/acceptance.json",
+      "size": 264,
+      "sha256": "7aa38f6072dde2cdd8462d136a332d2068d219ea9a0e0e3266b5e0f060e26be3"
+    },
+    {
+      "path": "evidence/ops04-full-release_net10.0_20260908161456.trx",
+      "size": 383257,
+      "sha256": "1c9eac691f5e3035b8bdd4e74d65d35206ee6e62aebb965460f98b8533d20045"
+    },
+    {
+      "path": "evidence/ops04-full-release_net10.0_20260908161457.trx",
+      "size": 1077401,
+      "sha256": "1f6a7b72814e880f8d89fc14a893f129ca8b4304dadbcf1745f2098e1411cf0a"
+    },
+    {
+      "path": "evidence/ops04-full-release_net10.0_20260908162054.trx",
+      "size": 842575,
+      "sha256": "13eaf7e247821072b52a6dc7484de44cdfb83f087848f3fc0d6f94df20d6fde2"
+    },
+    {
+      "path": "evidence/ops04-targeted-release.trx",
+      "size": 7392,
+      "sha256": "8a98e5a56d8cf544b35d33de71ebf53556fc9aba2c78145e01ed9edb37fe2948"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 64289,
+      "sha256": "fe7abd3759b5b909920d72e8523ad7c2878db20499436aeba64211acafd52b8a"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/alert-router.Dockerfile",
+      "size": 264,
+      "sha256": "c202863b13c85e9e8a01530a64529d31e0cadf953a95dad7f11d4aa1e5c83051"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/alert_router.py",
+      "size": 8698,
+      "sha256": "0cac870cf2c1846018ad709f363d40f0f3a843daf8a1298861bc43d839b1f0c4"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/alertmanager.yml",
+      "size": 300,
+      "sha256": "4d354108618d212825dabcb1c46dfab4ccd8d1d977f37a4160cacfb2719b7a19"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/alerts.yml",
+      "size": 8448,
+      "sha256": "9123cbdcd5280f5c585aa68dd730872c4c58886c4ecc3170b7418d0d7419b2a7"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/blackbox.yml",
+      "size": 147,
+      "sha256": "129690cf288ceb83aed561d0823ba916fafd1951507231f2d16eb542f2cb43cf"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/Bootstrap-Ops04Monitoring.sh",
+      "size": 2356,
+      "sha256": "b01f3571b8de37bbc00344004d8256062a5ac224ab049627605c149dedcfa75e"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/compose.backup.yaml",
+      "size": 479,
+      "sha256": "54de08661ab8f5b9f892c0d747afd3e566205112d3a632f2445dfa8abb4c08d9"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/compose.production.yaml",
+      "size": 1005,
+      "sha256": "8a79c0091ad6f4bdd00188b56e7240791c2912fec6864afa1d94d7a4f65683dc"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/compose.yaml",
+      "size": 5281,
+      "sha256": "20659e9c70236e448e759aa7a685cc747bfe7ff0fd763712415167cf76e0b7b6"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/ops04.parameters.example.env",
+      "size": 678,
+      "sha256": "b2c0fa55b09fa1fb858cdedb82b5ef39c9a7645a1c16a4ab78d0514ebefe97b0"
+    },
+    {
+      "path": "source/work/production/deployment/monitoring/prometheus.yml",
+      "size": 1561,
+      "sha256": "41bccbbee8338feed030e2c1f1c7d8f55b771dde528187567e86619884f845c9"
+    },
+    {
+      "path": "source/work/production/docs/OPS-04-monitoring-alerting.md",
+      "size": 6723,
+      "sha256": "aa759addefe34a74f61ed47bd8ff7dd2d45bb92a74e393cbb52944e9104da107"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Program.cs",
+      "size": 11346,
+      "sha256": "7cd814c6ad1c34b8450d37cc396bb61f581be000be4ea6ec04406b31ffcb80d0"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/TaskApiMetrics.cs",
+      "size": 3554,
+      "sha256": "0f3dddd1b6f3dbf9cca59882480ce85481f8120cdaa34b195740d18fd8cec5f4"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/AssemblyInfo.cs",
+      "size": 98,
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/BackupMetricsPublisher.cs",
+      "size": 4749,
+      "sha256": "4551a3e0103026243f13f45c969b051cfbd800b6b9538ec419aa0459f5be0dbd"
+    },
+    {
+      "path": "source/work/production/src/Task.BackupAgent/Program.cs",
+      "size": 1285,
+      "sha256": "684d91ec4bc6e167004eb4721dc9a85b6c180b3cf0631be0974be547910f051e"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/ExpiredSessionMaintenanceWorker.cs",
+      "size": 6260,
+      "sha256": "4fedfab16755eff09ab3f21a5ebd3ef47793f4af6b39b6e1c9e27149c7a87142"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/OutboxPublisherWorker.cs",
+      "size": 4652,
+      "sha256": "78ec56cdaf74eb2250a8cebe66952c20b27061d837af8d8de6470483d2955928"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/Program.cs",
+      "size": 2262,
+      "sha256": "f43326c073f2402f435219bdd7dd0eb93c1ecfa2fd348f68e5f065e89098ef04"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/RecurrenceHorizonWorker.cs",
+      "size": 4235,
+      "sha256": "2f172d3fc6a86444dd98d504ac381261bb10025058168800e2ab8e8d25c10aaa"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/ReminderDeliveryWorker.cs",
+      "size": 5380,
+      "sha256": "8413232e8f33125d19264a6a3f8b9fd735fcb45cf9ec6fe52719941865af4719"
+    },
+    {
+      "path": "source/work/production/src/Task.Worker/WorkerOperationalState.cs",
+      "size": 6897,
+      "sha256": "57a84b6eb6480482d4cfc6e53e83bcf3b1f86cfdbd0b79c32d9f2c2be83d0fec"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/OperationsMonitoringTests.cs",
+      "size": 3027,
+      "sha256": "e500826d6ca4f2be6c0c9260508831655a3bbee7441e2eb48bcdbacc94f0dcfc"
+    },
+    {
+      "path": "source/work/production/verification/Build-Ops04Package.py",
+      "size": 9722,
+      "sha256": "39c07bf8f6f1253680cfb50050de8b9fa8cfd2d9f5ca31f14cdf82b7fbacad5e"
+    },
+    {
+      "path": "source/work/production/verification/ops04-acceptance.py",
+      "size": 9012,
+      "sha256": "5f2fc126799142be7c0aa50dbe9d7d744023491bff1c7d0fb47fd6f6baff2250"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 2050,
+      "sha256": "ba3f80527829187492535476fb82de1fd11106e08679039e58df9773464ea79a"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

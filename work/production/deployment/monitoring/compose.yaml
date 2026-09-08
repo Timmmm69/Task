@@ -1,0 +1,135 @@
+name: task-monitoring
+
+x-monitoring-hardening: &monitoring-hardening
+  read_only: true
+  cap_drop: ["ALL"]
+  security_opt: ["no-new-privileges:true"]
+  restart: unless-stopped
+
+x-monitoring-logging: &monitoring-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  prometheus:
+    image: ${PROMETHEUS_IMAGE:?PROMETHEUS_IMAGE must be an immutable digest reference}
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=${TASK_METRICS_RETENTION:-30d}
+    ports:
+      - ${TASK_MONITORING_BIND_IP:-127.0.0.1}:${TASK_PROMETHEUS_PORT:-9090}:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alerts.yml:/etc/prometheus/alerts.yml:ro
+      - ${TASK_SECRET_ROOT:?TASK_SECRET_ROOT is required}/monitoring/metrics-token:/run/task-secrets/monitoring/metrics-token:ro
+      - prometheus-data:/prometheus
+    group_add: ["${TASK_MONITORING_GID:?TASK_MONITORING_GID is required}"]
+    tmpfs: [/tmp:size=16m,mode=1777]
+    networks: [monitoring]
+    depends_on: [alertmanager, alert-router, blackbox-exporter, postgres-exporter, host-node-exporter, worker-metrics-exporter, backup-metrics-exporter]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  alertmanager:
+    image: ${ALERTMANAGER_IMAGE:?ALERTMANAGER_IMAGE must be an immutable digest reference}
+    command: [--config.file=/etc/alertmanager/alertmanager.yml, --storage.path=/alertmanager]
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    tmpfs: [/tmp:size=16m,mode=1777]
+    networks: [monitoring]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  alert-router:
+    image: task-alert-router:${TASK_MONITORING_VERSION:-1.0.0}
+    build:
+      context: .
+      dockerfile: alert-router.Dockerfile
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:?PYTHON_IMAGE must be an immutable digest reference}
+    environment:
+      TASK_ALERT_DELIVERY_MODE: ${TASK_ALERT_DELIVERY_MODE:-test}
+      TASK_ALERT_OWNER: ${TASK_ALERT_OWNER:?TASK_ALERT_OWNER is required}
+      TASK_ALERT_WEBHOOK_URL_FILE: /run/task-secrets/monitoring/alert-webhook-url
+      TASK_ALERT_WEBHOOK_TOKEN_FILE: /run/task-secrets/monitoring/alert-webhook-token
+      TASK_ALERT_RECEIPTS_PATH: /var/lib/task-alert-router/receipts.jsonl
+    volumes:
+      - ${TASK_SECRET_ROOT}/monitoring:/run/task-secrets/monitoring:ro
+      - alert-router-data:/var/lib/task-alert-router
+    group_add: ["${TASK_MONITORING_GID}"]
+    tmpfs: [/tmp:size=16m,mode=1777]
+    networks: [monitoring, alert-egress]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  blackbox-exporter:
+    image: ${BLACKBOX_EXPORTER_IMAGE:?BLACKBOX_EXPORTER_IMAGE must be an immutable digest reference}
+    command: [--config.file=/etc/blackbox/blackbox.yml]
+    volumes:
+      - ./blackbox.yml:/etc/blackbox/blackbox.yml:ro
+    networks: [monitoring]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  postgres-exporter:
+    image: ${POSTGRES_EXPORTER_IMAGE:?POSTGRES_EXPORTER_IMAGE must be an immutable digest reference}
+    environment:
+      DATA_SOURCE_URI: postgres:5432/${TASK_DB_NAME:?TASK_DB_NAME is required}?sslmode=verify-full&sslrootcert=/run/task-secrets/database/postgres-ca.pem
+      DATA_SOURCE_USER_FILE: /run/task-secrets/monitoring/postgres-user
+      DATA_SOURCE_PASS_FILE: /run/task-secrets/monitoring/postgres-password
+    volumes:
+      - ${TASK_SECRET_ROOT}/database/postgres-ca.pem:/run/task-secrets/database/postgres-ca.pem:ro
+      - ${TASK_SECRET_ROOT}/monitoring/postgres-user:/run/task-secrets/monitoring/postgres-user:ro
+      - ${TASK_SECRET_ROOT}/monitoring/postgres-password:/run/task-secrets/monitoring/postgres-password:ro
+    group_add: ["${TASK_MONITORING_GID}"]
+    tmpfs: [/tmp:size=16m,mode=1777]
+    networks: [monitoring]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  host-node-exporter:
+    image: ${NODE_EXPORTER_IMAGE:?NODE_EXPORTER_IMAGE must be an immutable digest reference}
+    command:
+      - --path.rootfs=/host
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+    pid: host
+    volumes: [/:/host:ro,rslave]
+    networks: [monitoring]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  worker-metrics-exporter:
+    image: ${NODE_EXPORTER_IMAGE}
+    command: [--collector.disable-defaults, --collector.textfile, --collector.textfile.directory=/textfiles]
+    volumes: [task-worker-metrics:/textfiles:ro]
+    networks: [monitoring]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+  backup-metrics-exporter:
+    image: ${NODE_EXPORTER_IMAGE}
+    command: [--collector.disable-defaults, --collector.textfile, --collector.textfile.directory=/textfiles]
+    volumes: [task-backup-metrics:/textfiles:ro]
+    networks: [monitoring]
+    logging: *monitoring-logging
+    <<: *monitoring-hardening
+
+networks:
+  monitoring:
+    name: task-monitoring
+    internal: true
+  alert-egress:
+    internal: false
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+  alert-router-data:
+  task-worker-metrics:
+    name: task-worker-metrics
+  task-backup-metrics:
+    name: task-backup-metrics

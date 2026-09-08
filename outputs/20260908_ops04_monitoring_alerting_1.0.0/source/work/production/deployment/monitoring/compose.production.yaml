@@ -1,0 +1,36 @@
+x-task-logging: &task-logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "5"}
+
+services:
+  postgres:
+    networks: [monitoring]
+    logging: *task-logging
+  task-database-migrator:
+    logging: *task-logging
+  task-api:
+    environment:
+      Task__Monitoring__MetricsTokenFile: /run/task-secrets/monitoring/metrics-token
+    volumes:
+      - ${TASK_SECRET_ROOT:?TASK_SECRET_ROOT is required}/monitoring/metrics-token:/run/task-secrets/monitoring/metrics-token:ro
+    group_add: ["${TASK_MONITORING_GID:?TASK_MONITORING_GID is required}"]
+    networks: [monitoring]
+    logging: *task-logging
+  task-worker:
+    environment:
+      Task__Monitoring__MetricsPath: /var/lib/task-monitoring/task-worker.prom
+    volumes:
+      - task-worker-metrics:/var/lib/task-monitoring
+    logging: *task-logging
+  tls-proxy:
+    logging: *task-logging
+
+networks:
+  monitoring:
+    external: true
+    name: task-monitoring
+
+volumes:
+  task-worker-metrics:
+    external: true
+    name: task-worker-metrics

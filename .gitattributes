@@ -1,0 +1,10 @@
+# OPS-04 Linux runtime assets must keep executable-compatible line endings.
+/work/production/deployment/monitoring/* text eol=lf
+/work/production/verification/Build-Ops04Package.py text eol=lf
+/work/production/verification/ops04-acceptance.py text eol=lf
+
+# OPS-04 evidence and packaged source snapshots are byte-addressed by SHA-256.
+/work/production/evidence/ops04/** binary
+/outputs/20260908_ops04_monitoring_alerting_1.0.0/** binary
+/outputs/20260908_ops04_monitoring_alerting_1.0.0.zip binary
+/outputs/20260908_ops04_monitoring_alerting_1.0.0.zip.sha256 text eol=lf

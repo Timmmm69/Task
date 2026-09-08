@@ -1,0 +1,20 @@
+x-task-logging: &task-logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "5"}
+
+services:
+  postgres:
+    logging: *task-logging
+  backup-agent:
+    environment:
+      Task__Monitoring__MetricsPath: /var/lib/task-monitoring/task-backup.prom
+    volumes:
+      - task-backup-metrics:/var/lib/task-monitoring
+    logging: *task-logging
+  recovery-operator:
+    logging: *task-logging
+
+volumes:
+  task-backup-metrics:
+    external: true
+    name: task-backup-metrics
