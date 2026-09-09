@@ -1,0 +1,161 @@
+{
+  "package": "20260909_prod04_projects_members_1.0.0",
+  "version": "1.0.0",
+  "base_commit": "c4fedeb8ab44adb37f7790e0547f4ba47406416a",
+  "task": "PROD-04",
+  "release_status": "source_validated_deployment_acceptance_required",
+  "focused_tests_passed": 231,
+  "focused_tests_failed": 0,
+  "postgresql_runtime_executed": false,
+  "sources": [
+    ".project-dashboard/roadmap.json",
+    "work/production/docs/PROD-04-projects-and-members.md",
+    "work/production/docs/task-product-api.md",
+    "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRoles.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+    "work/production/src/Task.Desktop/App.xaml.cs",
+    "work/production/src/Task.Desktop/MainWindow.xaml",
+    "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+    "work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+    "work/production/verification/Build-Prod04Package.py"
+  ],
+  "files": [
+    {
+      "path": "evidence/application-product-api.trx",
+      "size": 21678,
+      "sha256": "e434add0ef8cca61cc8dd5e54ea7ebc8f87d1d7af7e24e01bb55776e6082dedd"
+    },
+    {
+      "path": "evidence/application-product-api.trx.log",
+      "size": 436,
+      "sha256": "43b453f3517b03df4960c9c772349ea60d464a441631bc4cd36afe49267904ad"
+    },
+    {
+      "path": "evidence/build.log",
+      "size": 1459,
+      "sha256": "0a670e3f8800d8e75cd5cb6cf20e901dc4e1de2f88a126a4d301681528348abf"
+    },
+    {
+      "path": "evidence/desktop-projects.trx",
+      "size": 12938,
+      "sha256": "5a67617e651d5c3e68c69a2af393327a477896406ca8f17d0efd5ac44f8c8986"
+    },
+    {
+      "path": "evidence/desktop-projects.trx.log",
+      "size": 461,
+      "sha256": "d07876c00c4602c536074cfa977064b9fb81445e7324b3eddf464bcbd1d45f8d"
+    },
+    {
+      "path": "evidence/service-project-routes.trx",
+      "size": 324411,
+      "sha256": "7651440c1ed5be5d399443e5b332e1db109dc715b3be59ed854fdc329e867fd5"
+    },
+    {
+      "path": "evidence/service-project-routes.trx.log",
+      "size": 472,
+      "sha256": "db713c65b17755c41e1072bee283ff8c1ec48f658ae99a3ecb55ef361a1b11a2"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 65173,
+      "sha256": "179d4a29d2c3157e2e7bb089535567f9dccaad668432ee71a792af409a8e82d4"
+    },
+    {
+      "path": "source/work/production/docs/PROD-04-projects-and-members.md",
+      "size": 4651,
+      "sha256": "6d7da8f880e713bcad9efc2aeede0ec38440ab4234def67d040cf750c244148a"
+    },
+    {
+      "path": "source/work/production/docs/task-product-api.md",
+      "size": 8857,
+      "sha256": "6f168dcb5bf96e75fb8af9d413c07f875cb21c51c8ee3e0f8f2e32aec445dd50"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "size": 9413,
+      "sha256": "16ec0429db2c28095a7eb51df37b112e595f3c934067f67b29f9c7a87e2cb28b"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/App.xaml.cs",
+      "size": 10020,
+      "sha256": "873b80d5a5f9b4203c93d7d8edacd8010dc087f04913d3acdcb87bd0df106dc5"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/MainWindow.xaml",
+      "size": 71568,
+      "sha256": "8b5329636050e4b2e6ed259729e7962dde1b49eb061103f68d7abef45aca5425"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "size": 3565,
+      "sha256": "55fc5d98afecf5045b06964d9a8e4e82aad9e4d1bd7bc15e0c87139ac4b6814a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs",
+      "size": 24170,
+      "sha256": "aec7a84cb246ad7c10808951ffe35278c4853a7f5d729cb9dfc47eb76093d1ea"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "size": 16168,
+      "sha256": "7c2c2c272ab28754ccc84e14824fbb13e38d2e1deecd873f5f62ba7930935223"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "size": 25534,
+      "sha256": "f8f56fa74d38bdabf3b46b42f2e444d2e68af921e15f2fc041b8d095c6a672e1"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "size": 14240,
+      "sha256": "6a7933b446a13bca0b393a4a4efbad4c7b201a041424e6b3dc6647163ffefffb"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+      "size": 167,
+      "sha256": "8e09715b437bcbf40627cb275285aeb21172751af2eb66f396e0bf3acf527c8a"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRoles.cs",
+      "size": 7342,
+      "sha256": "aac169487d99f04a986d63fd5f19141af85859d7d99317e4d5bce823e302a3b9"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "size": 31829,
+      "sha256": "e4851096d40948f115b33d0577226cca162a6036e15ef3a18e1e7d95835d05b1"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs",
+      "size": 8868,
+      "sha256": "dffe17824fdeb4b2456b4f8e3f12e4a89f4e9637178ec19086fc7d4f9c750d88"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "size": 11331,
+      "sha256": "200bb5a560dec13a49b1dc2f208398c93897f322fc83fdb1dddfe74398606c6a"
+    },
+    {
+      "path": "source/work/production/verification/Build-Prod04Package.py",
+      "size": 7864,
+      "sha256": "40a729471621846a814c3a8c97c863897853414a1c589d1bc8f18c51f67a490f"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1426,
+      "sha256": "884b6e39a952f46614c3e87bac9b091d331aa013cf380d66a2d5a1eedb3a41b4"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

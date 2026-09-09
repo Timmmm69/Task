@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0480d2df-37f4-4545-a3f4-0b49e88f3a6d" name="novik@TIM 2026-09-09 22:27:43" runUser="Tim\CodexSandboxOffline" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-09T22:27:43.8280424+03:00" queuing="2026-09-09T22:27:43.8280427+03:00" start="2026-09-09T22:27:43.1627338+03:00" finish="2026-09-09T22:27:43.8344141+03:00" />
+  <TestSettings name="default" id="e4e78e2a-3bdd-4f0b-9302-4c0c0c321524">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-09_22_27_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="eaacd8a8-82bc-4385-9e92-325a899c51cb" testId="f54c4e4c-2ce2-fc87-79bf-61ab3fa5e1b0" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.MemberMutationAdvancesProjectVersionAndReloadsMembership" computerName="TIM" duration="00:00:00.0209986" startTime="2026-09-09T22:27:43.6395822+03:00" endTime="2026-09-09T22:27:43.6659948+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eaacd8a8-82bc-4385-9e92-325a899c51cb" />
+    <UnitTestResult executionId="9b0339a4-3f78-41af-ae5f-26b33d095182" testId="a3f41f03-9734-f9d6-7df9-48faa203c8b7" testName="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.ReadsUseCanonicalRoutesAndStrictPayloads" computerName="TIM" duration="00:00:00.0077926" startTime="2026-09-09T22:27:43.7282584+03:00" endTime="2026-09-09T22:27:43.7360687+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b0339a4-3f78-41af-ae5f-26b33d095182" />
+    <UnitTestResult executionId="2f4427ee-c897-474e-aa0a-97c99020eda4" testId="35f3efe0-fbc2-a0af-1bd5-1c5b01d65e29" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.CreateUsesCurrentUserAndAppliesAuthoritativeResponse" computerName="TIM" duration="00:00:00.0055633" startTime="2026-09-09T22:27:43.6770023+03:00" endTime="2026-09-09T22:27:43.6825288+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f4427ee-c897-474e-aa0a-97c99020eda4" />
+    <UnitTestResult executionId="ad3331ef-a3e9-4a09-b497-cf37391ad09b" testId="1b4e2990-2544-fd11-1cac-5dae82a10f0e" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.EditorRejectsInvalidDatesAndCompletesWithServerTimestamp" computerName="TIM" duration="00:00:00.0066852" startTime="2026-09-09T22:27:43.6826545+03:00" endTime="2026-09-09T22:27:43.6893103+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad3331ef-a3e9-4a09-b497-cf37391ad09b" />
+    <UnitTestResult executionId="e14d5228-77f7-4c9a-897d-473b15eeb6e9" testId="eda42a7c-aa0f-4bf3-bfd2-fc8e0c84a8b2" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.ActivationLoadsRolesMembersAndOnlyTasksFromSelectedProject" computerName="TIM" duration="00:00:00.0058022" startTime="2026-09-09T22:27:43.6744204+03:00" endTime="2026-09-09T22:27:43.6768944+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e14d5228-77f7-4c9a-897d-473b15eeb6e9" />
+    <UnitTestResult executionId="34eed646-da3a-47ed-a27c-b78924dbd3ae" testId="a9a89079-e51c-b2e7-1642-58bc7042736b" testName="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.MalformedAndConflictResponsesAreControlled" computerName="TIM" duration="00:00:00.0774816" startTime="2026-09-09T22:27:43.6406315+03:00" endTime="2026-09-09T22:27:43.7208163+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34eed646-da3a-47ed-a27c-b78924dbd3ae" />
+    <UnitTestResult executionId="742ea7c4-2a0f-4cf4-93cc-c4c154b69a3c" testId="dc2b5ab3-3347-c850-1207-3b3e267923b7" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.MissingReadPermissionKeepsProjectDataClosed" computerName="TIM" duration="00:00:00.0048976" startTime="2026-09-09T22:27:43.6733774+03:00" endTime="2026-09-09T22:27:43.6739854+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="742ea7c4-2a0f-4cf4-93cc-c4c154b69a3c" />
+    <UnitTestResult executionId="e6c08df5-2b2e-4c3c-9b61-411001d636ed" testId="9af471cf-0209-2503-bac7-95cf4792d111" testName="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.WritesSendStrongEtagAndIdempotencyKey" computerName="TIM" duration="00:00:00.0072701" startTime="2026-09-09T22:27:43.7210316+03:00" endTime="2026-09-09T22:27:43.7281421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6c08df5-2b2e-4c3c-9b61-411001d636ed" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.EditorRejectsInvalidDatesAndCompletesWithServerTimestamp" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="1b4e2990-2544-fd11-1cac-5dae82a10f0e">
+      <Execution id="ad3331ef-a3e9-4a09-b497-cf37391ad09b" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="EditorRejectsInvalidDatesAndCompletesWithServerTimestamp" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.MalformedAndConflictResponsesAreControlled" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="a9a89079-e51c-b2e7-1642-58bc7042736b">
+      <Execution id="34eed646-da3a-47ed-a27c-b78924dbd3ae" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests" name="MalformedAndConflictResponsesAreControlled" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.ActivationLoadsRolesMembersAndOnlyTasksFromSelectedProject" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="eda42a7c-aa0f-4bf3-bfd2-fc8e0c84a8b2">
+      <Execution id="e14d5228-77f7-4c9a-897d-473b15eeb6e9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="ActivationLoadsRolesMembersAndOnlyTasksFromSelectedProject" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.WritesSendStrongEtagAndIdempotencyKey" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="9af471cf-0209-2503-bac7-95cf4792d111">
+      <Execution id="e6c08df5-2b2e-4c3c-9b61-411001d636ed" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests" name="WritesSendStrongEtagAndIdempotencyKey" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.CreateUsesCurrentUserAndAppliesAuthoritativeResponse" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="35f3efe0-fbc2-a0af-1bd5-1c5b01d65e29">
+      <Execution id="2f4427ee-c897-474e-aa0a-97c99020eda4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="CreateUsesCurrentUserAndAppliesAuthoritativeResponse" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.ReadsUseCanonicalRoutesAndStrictPayloads" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="a3f41f03-9734-f9d6-7df9-48faa203c8b7">
+      <Execution id="9b0339a4-3f78-41af-ae5f-26b33d095182" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests" name="ReadsUseCanonicalRoutesAndStrictPayloads" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.MemberMutationAdvancesProjectVersionAndReloadsMembership" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="f54c4e4c-2ce2-fc87-79bf-61ab3fa5e1b0">
+      <Execution id="eaacd8a8-82bc-4385-9e92-325a899c51cb" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="MemberMutationAdvancesProjectVersionAndReloadsMembership" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.MissingReadPermissionKeepsProjectDataClosed" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="dc2b5ab3-3347-c850-1207-3b3e267923b7">
+      <Execution id="742ea7c4-2a0f-4cf4-93cc-c4c154b69a3c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="MissingReadPermissionKeepsProjectDataClosed" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f54c4e4c-2ce2-fc87-79bf-61ab3fa5e1b0" executionId="eaacd8a8-82bc-4385-9e92-325a899c51cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a3f41f03-9734-f9d6-7df9-48faa203c8b7" executionId="9b0339a4-3f78-41af-ae5f-26b33d095182" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35f3efe0-fbc2-a0af-1bd5-1c5b01d65e29" executionId="2f4427ee-c897-474e-aa0a-97c99020eda4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b4e2990-2544-fd11-1cac-5dae82a10f0e" executionId="ad3331ef-a3e9-4a09-b497-cf37391ad09b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eda42a7c-aa0f-4bf3-bfd2-fc8e0c84a8b2" executionId="e14d5228-77f7-4c9a-897d-473b15eeb6e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9a89079-e51c-b2e7-1642-58bc7042736b" executionId="34eed646-da3a-47ed-a27c-b78924dbd3ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc2b5ab3-3347-c850-1207-3b3e267923b7" executionId="742ea7c4-2a0f-4cf4-93cc-c4c154b69a3c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9af471cf-0209-2503-bac7-95cf4792d111" executionId="e6c08df5-2b2e-4c3c-9b61-411001d636ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Ergebnisse nicht in einer Liste" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.14]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.26]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
