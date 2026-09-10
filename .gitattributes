@@ -8,3 +8,10 @@
 /outputs/20260908_ops04_monitoring_alerting_1.0.0/** binary
 /outputs/20260908_ops04_monitoring_alerting_1.0.0.zip binary
 /outputs/20260908_ops04_monitoring_alerting_1.0.0.zip.sha256 text eol=lf
+
+# PROD-05 evidence and packaged source snapshots are byte-addressed by SHA-256.
+/work/production/evidence/prod05/** binary
+/outputs/20260909_prod05_work_links_search_notifications_1.0.0/** binary
+/outputs/20260909_prod05_work_links_search_notifications_1.0.0.zip binary
+/outputs/20260909_prod05_work_links_search_notifications_1.0.0.zip.sha256 text eol=lf
+/work/production/verification/Build-Prod05Package.py text eol=lf

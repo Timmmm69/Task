@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="dd2e11a8-d6a1-4ff9-9eee-d241fc083c85" name="novik@TIM 2026-09-09 23:03:10" runUser="Tim\CodexSandboxOffline" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-09T23:03:10.7247686+03:00" queuing="2026-09-09T23:03:10.7247687+03:00" start="2026-09-09T23:03:10.1079847+03:00" finish="2026-09-09T23:03:10.7571696+03:00" />
+  <TestSettings name="default" id="d602aa3b-c408-433a-8eab-8bb7eb04214e">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-09_23_03_10" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c63f4907-c177-4709-b155-7929b745a5fe" testId="f5885494-2892-2897-7cde-7514f1ce9632" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.SearchResultRaisesTypedNavigationRequest" computerName="TIM" duration="00:00:00.0050882" startTime="2026-09-09T23:03:10.6211908+03:00" endTime="2026-09-09T23:03:10.6215106+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c63f4907-c177-4709-b155-7929b745a5fe" />
+    <UnitTestResult executionId="1fa27666-a6a8-4ed6-9182-905f6b6b88a5" testId="b1c7be66-8127-f942-7177-b031f197e7df" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.FileAdapterRejectsExecutableAndNonFileLocations(path: &quot;C:\\Temp\\setup.exe&quot;)" computerName="TIM" duration="00:00:00.0000829" startTime="2026-09-09T23:03:10.6211206+03:00" endTime="2026-09-09T23:03:10.6211384+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1fa27666-a6a8-4ed6-9182-905f6b6b88a5" />
+    <UnitTestResult executionId="074198fd-2ee8-4b11-a4b7-561e5f08a497" testId="5fc30a4e-0890-bf1f-39b4-2c270be6471f" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.NotificationCommandsMaintainUnreadCount" computerName="TIM" duration="00:00:00.0060850" startTime="2026-09-09T23:03:10.6215548+03:00" endTime="2026-09-09T23:03:10.6276754+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="074198fd-2ee8-4b11-a4b7-561e5f08a497" />
+    <UnitTestResult executionId="75bf1e72-9002-4e38-9b95-274d3c51f0cb" testId="cc31b5c3-0c0b-d2cb-ff3b-94667a374dca" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.FileAdapterRejectsExecutableAndNonFileLocations(path: &quot;relative.docx&quot;)" computerName="TIM" duration="00:00:00.0001441" startTime="2026-09-09T23:03:10.6210605+03:00" endTime="2026-09-09T23:03:10.6210806+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75bf1e72-9002-4e38-9b95-274d3c51f0cb" />
+    <UnitTestResult executionId="e268f216-1ecd-490d-8bea-a0cb42b46350" testId="7a4b96c4-0be1-c4d1-9b2d-c9f67d0fdc0c" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.WritesSendEtagKeysAndBoundedNotificationIds" computerName="TIM" duration="00:00:00.0160475" startTime="2026-09-09T23:03:10.6991713+03:00" endTime="2026-09-09T23:03:10.6992182+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e268f216-1ecd-490d-8bea-a0cb42b46350" />
+    <UnitTestResult executionId="69dbbe24-be02-444c-87ed-ac22f646e868" testId="27bd8e90-ebee-6148-8171-b677b28a89c0" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ReadScenariosUseCanonicalRoutesAndStrictlyMapPayloads" computerName="TIM" duration="00:00:00.0737156" startTime="2026-09-09T23:03:10.5954332+03:00" endTime="2026-09-09T23:03:10.6715278+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69dbbe24-be02-444c-87ed-ac22f646e868" />
+    <UnitTestResult executionId="ad221c4c-41d4-4961-9c58-be521a530a9e" testId="15b525bc-1cc7-1216-4696-54f3dedb1477" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.MalformedAndForbiddenResponsesAreControlled" computerName="TIM" duration="00:00:00.0036957" startTime="2026-09-09T23:03:10.6717740+03:00" endTime="2026-09-09T23:03:10.6753045+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad221c4c-41d4-4961-9c58-be521a530a9e" />
+    <UnitTestResult executionId="c5a0045f-81f5-4c72-9637-1591344da98a" testId="8e80d861-41ca-533e-87c0-15bab75af09d" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.CapabilityRefreshRevokesPresentationActionsImmediately" computerName="TIM" duration="00:00:00.0003660" startTime="2026-09-09T23:03:10.6277522+03:00" endTime="2026-09-09T23:03:10.6280605+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5a0045f-81f5-4c72-9637-1591344da98a" />
+    <UnitTestResult executionId="01f3b6da-39f1-4f8d-9f3f-9d7fae4d8e1c" testId="f4a937ab-d8da-7f8f-c56b-78ea9df5dcbe" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.FileAdapterRejectsExecutableAndNonFileLocations(path: &quot;https://example.test/document&quot;)" computerName="TIM" duration="00:00:00.0026960" startTime="2026-09-09T23:03:10.6207033+03:00" endTime="2026-09-09T23:03:10.6207460+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01f3b6da-39f1-4f8d-9f3f-9d7fae4d8e1c" />
+    <UnitTestResult executionId="e6b21698-98ea-41a8-b330-f81aa8b33dfb" testId="b81ec398-2a5a-9d7e-70db-31fb84830773" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.CatalogScenarioCreatesLocationAndOpensOnlyResolvedPath" computerName="TIM" duration="00:00:00.0135790" startTime="2026-09-09T23:03:10.5944974+03:00" endTime="2026-09-09T23:03:10.6133601+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6b21698-98ea-41a8-b330-f81aa8b33dfb" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.FileAdapterRejectsExecutableAndNonFileLocations(path: &quot;relative.docx&quot;)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="cc31b5c3-0c0b-d2cb-ff3b-94667a374dca">
+      <Execution id="75bf1e72-9002-4e38-9b95-274d3c51f0cb" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="FileAdapterRejectsExecutableAndNonFileLocations" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.FileAdapterRejectsExecutableAndNonFileLocations(path: &quot;C:\\Temp\\setup.exe&quot;)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="b1c7be66-8127-f942-7177-b031f197e7df">
+      <Execution id="1fa27666-a6a8-4ed6-9182-905f6b6b88a5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="FileAdapterRejectsExecutableAndNonFileLocations" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.SearchResultRaisesTypedNavigationRequest" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="f5885494-2892-2897-7cde-7514f1ce9632">
+      <Execution id="c63f4907-c177-4709-b155-7929b745a5fe" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="SearchResultRaisesTypedNavigationRequest" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.MalformedAndForbiddenResponsesAreControlled" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="15b525bc-1cc7-1216-4696-54f3dedb1477">
+      <Execution id="ad221c4c-41d4-4961-9c58-be521a530a9e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="MalformedAndForbiddenResponsesAreControlled" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ReadScenariosUseCanonicalRoutesAndStrictlyMapPayloads" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="27bd8e90-ebee-6148-8171-b677b28a89c0">
+      <Execution id="69dbbe24-be02-444c-87ed-ac22f646e868" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="ReadScenariosUseCanonicalRoutesAndStrictlyMapPayloads" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.CapabilityRefreshRevokesPresentationActionsImmediately" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="8e80d861-41ca-533e-87c0-15bab75af09d">
+      <Execution id="c5a0045f-81f5-4c72-9637-1591344da98a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="CapabilityRefreshRevokesPresentationActionsImmediately" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.NotificationCommandsMaintainUnreadCount" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="5fc30a4e-0890-bf1f-39b4-2c270be6471f">
+      <Execution id="074198fd-2ee8-4b11-a4b7-561e5f08a497" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="NotificationCommandsMaintainUnreadCount" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.CatalogScenarioCreatesLocationAndOpensOnlyResolvedPath" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="b81ec398-2a5a-9d7e-70db-31fb84830773">
+      <Execution id="e6b21698-98ea-41a8-b330-f81aa8b33dfb" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="CatalogScenarioCreatesLocationAndOpensOnlyResolvedPath" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.FileAdapterRejectsExecutableAndNonFileLocations(path: &quot;https://example.test/document&quot;)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="f4a937ab-d8da-7f8f-c56b-78ea9df5dcbe">
+      <Execution id="01f3b6da-39f1-4f8d-9f3f-9d7fae4d8e1c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="FileAdapterRejectsExecutableAndNonFileLocations" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.WritesSendEtagKeysAndBoundedNotificationIds" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="7a4b96c4-0be1-c4d1-9b2d-c9f67d0fdc0c">
+      <Execution id="e268f216-1ecd-490d-8bea-a0cb42b46350" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="WritesSendEtagKeysAndBoundedNotificationIds" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f5885494-2892-2897-7cde-7514f1ce9632" executionId="c63f4907-c177-4709-b155-7929b745a5fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b1c7be66-8127-f942-7177-b031f197e7df" executionId="1fa27666-a6a8-4ed6-9182-905f6b6b88a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5fc30a4e-0890-bf1f-39b4-2c270be6471f" executionId="074198fd-2ee8-4b11-a4b7-561e5f08a497" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc31b5c3-0c0b-d2cb-ff3b-94667a374dca" executionId="75bf1e72-9002-4e38-9b95-274d3c51f0cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a4b96c4-0be1-c4d1-9b2d-c9f67d0fdc0c" executionId="e268f216-1ecd-490d-8bea-a0cb42b46350" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27bd8e90-ebee-6148-8171-b677b28a89c0" executionId="69dbbe24-be02-444c-87ed-ac22f646e868" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15b525bc-1cc7-1216-4696-54f3dedb1477" executionId="ad221c4c-41d4-4961-9c58-be521a530a9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e80d861-41ca-533e-87c0-15bab75af09d" executionId="c5a0045f-81f5-4c72-9637-1591344da98a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f4a937ab-d8da-7f8f-c56b-78ea9df5dcbe" executionId="01f3b6da-39f1-4f8d-9f3f-9d7fae4d8e1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b81ec398-2a5a-9d7e-70db-31fb84830773" executionId="e6b21698-98ea-41a8-b330-f81aa8b33dfb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Ergebnisse nicht in einer Liste" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Alle geladenen Ergebnisse" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.08]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.28]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

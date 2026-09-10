@@ -1,0 +1,69 @@
+<UserControl x:Class="Task.Desktop.Views.WorkHubView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        AutomationProperties.Name="Рабочие данные" AutomationProperties.AutomationId="WorkHubView">
+    <Grid Margin="20">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Связанные рабочие данные" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding AccessText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
+                <TextBlock Text="{Binding Message}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}" Margin="0,4,0,0" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubRefreshButton"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Visibility="{Binding IsCatalog, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8">
+                <ListBox ItemsSource="{Binding Catalog}" SelectedItem="{Binding SelectedCatalogItem}" BorderThickness="0" AutomationProperties.Name="Каталог файлов" AutomationProperties.AutomationId="CatalogList">
+                    <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="8"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding ItemType}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
+                <TextBlock Text="Новая ссылка на файл" FontWeight="SemiBold"/>
+                <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Название файла"/>
+                <Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
+                <Separator Margin="0,18"/>
+                <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                <TextBlock Text="Локальный путь или разрешённый UNC-путь" Margin="0,14,0,0"/>
+                <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
+                <WrapPanel>
+                    <Button Content="Сохранить путь" Command="{Binding AddLocationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"/>
+                    <Button Content="Открыть" Command="{Binding OpenFileCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="OpenCatalogFileButton"/>
+                </WrapPanel>
+                <TextBlock Text="Файл не загружается на сервер. Task получает разрешённый путь, проверяет его на этом компьютере и передаёт Windows только после нажатия «Открыть»." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
+            </StackPanel></ScrollViewer>
+        </Grid>
+
+        <Grid Grid.Row="1" Visibility="{Binding IsContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8"><ListBox ItemsSource="{Binding Contacts}" BorderThickness="0" AutomationProperties.Name="Контакты компании" AutomationProperties.AutomationId="ContactsList"><ListBox.ItemTemplate><DataTemplate><StackPanel Margin="8"><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/><TextBlock Text="{Binding Notes}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox></Border>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Новый контакт" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                <TextBlock Text="Имя" Margin="0,12,0,4"/><TextBox Text="{Binding NewContactFirstName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactFirstNameTextBox"/>
+                <TextBlock Text="Фамилия" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactLastName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/>
+                <TextBlock Text="Отображаемое имя" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactDisplayName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactDisplayNameTextBox"/>
+                <Button Content="Создать контакт" Command="{Binding CreateContactCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,12,0,0" AutomationProperties.AutomationId="CreateContactButton"/>
+                <TextBlock Text="Созданный контакт сразу доступен в выборе участников календаря, связях объектов и глобальном поиске." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,0,8,12" AutomationProperties.Name="Поисковый запрос" AutomationProperties.AutomationId="GlobalSearchTextBox"/><Button Grid.Column="1" Content="Найти" Command="{Binding SearchCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,0,12" AutomationProperties.AutomationId="GlobalSearchButton"/></Grid>
+            <ListBox Grid.Row="1" ItemsSource="{Binding SearchResults}" BorderThickness="0" AutomationProperties.Name="Результаты поиска" AutomationProperties.AutomationId="GlobalSearchResults">
+                <ListBox.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,8"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="{Binding Title}" FontWeight="SemiBold"/><TextBlock Text="{Binding ObjectType}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel><Button Grid.Column="1" Content="Открыть" Command="{Binding DataContext.OpenSearchResultCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/></Grid></Border></DataTemplate></ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <Grid Grid.Row="1" Visibility="{Binding IsNotifications, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal"><TextBlock Text="Непрочитано: " VerticalAlignment="Center"/><TextBlock Text="{Binding UnreadCount}" FontWeight="SemiBold" VerticalAlignment="Center"/><Button Content="Прочитать все" Command="{Binding MarkAllReadCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="14,0,0,10" AutomationProperties.AutomationId="MarkAllNotificationsReadButton"/></StackPanel>
+            <ListBox Grid.Row="1" ItemsSource="{Binding Notifications}" SelectedItem="{Binding SelectedNotification}" BorderThickness="0" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationsList">
+                <ListBox.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,8"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="{Binding Title}" FontWeight="SemiBold"/><TextBlock Text="{Binding Body}" TextWrapping="Wrap" Margin="0,4,0,0"/><TextBlock Text="{Binding Status}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/></StackPanel><StackPanel Grid.Column="1" Orientation="Horizontal"><Button Content="К работе" Command="{Binding DataContext.OpenNotificationSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="12,0,8,0"/><Button Content="Прочитано" Command="{Binding DataContext.MarkReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/></StackPanel></Grid></Border></DataTemplate></ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>
