@@ -6,6 +6,7 @@ param(
     [string]$EvidencePath = '',
     [string]$CaptureName = '',
     [string]$RuntimePath = '',
+    [string]$DesktopAppDataPath = '',
     [switch]$VerifyCard
 )
 
@@ -15,6 +16,7 @@ if ($PSVersionTable.PSEdition -ne 'Core') {
     if ($EvidencePath) { $forward += @('-EvidencePath', $EvidencePath) }
     if ($CaptureName) { $forward += @('-CaptureName', $CaptureName) }
     if ($RuntimePath) { $forward += @('-RuntimePath', $RuntimePath) }
+    if ($DesktopAppDataPath) { $forward += @('-DesktopAppDataPath', $DesktopAppDataPath) }
     if ($VerifyCard) { $forward += '-VerifyCard' }
     & $pwsh.Source @forward
     exit $LASTEXITCODE
@@ -264,7 +266,20 @@ function Setup-E2E {
     if ($LASTEXITCODE -ne 0) { throw 'Unable to create the E2E database.' }
     Write-Pass 'Isolated E2E database was created.'
 
-    $desktopAppData = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)) 'Task'
+    $desktopAppData = if ($DesktopAppDataPath) {
+        if (-not [IO.Path]::IsPathFullyQualified($DesktopAppDataPath)) {
+            throw 'DesktopAppDataPath must be absolute.'
+        }
+        $candidate = [IO.Path]::GetFullPath($DesktopAppDataPath)
+        $runtimePrefix = [IO.Path]::GetFullPath($runtimeRoot).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+        if (-not $candidate.StartsWith($runtimePrefix, [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'DesktopAppDataPath must be inside the isolated E2E runtime.'
+        }
+        $candidate
+    }
+    else {
+        Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)) 'Task'
+    }
     $desktopBackup = Join-Path $runtimeRoot 'preserved-desktop-appdata'
     if (Test-Path -LiteralPath $desktopAppData) {
         Move-Item -LiteralPath $desktopAppData -Destination $desktopBackup
@@ -564,14 +579,17 @@ function Cleanup-E2E($state) {
     if (-not $resolvedRuntime.StartsWith($runtimePrefix, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Refusing to clean an unexpected E2E runtime path.'
     }
-    $expectedDesktop = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'Task'))
+    $expectedDesktop = if ($DesktopAppDataPath) {
+        [IO.Path]::GetFullPath($DesktopAppDataPath)
+    }
+    else {
+        [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'Task'))
+    }
     if ([IO.Path]::GetFullPath($state.DesktopAppData) -ne $expectedDesktop -or
         -not [IO.Path]::GetFullPath($state.DesktopBackup).StartsWith($runtimePrefix, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Refusing to restore unexpected desktop paths.'
     }
     $state = Stop-E2EApi $state
-    $desktopParent = [IO.Path]::GetFullPath((Split-Path $state.DesktopAppData -Parent))
-    $expectedDesktop = [IO.Path]::Combine($desktopParent, 'Task')
     if ([IO.Path]::GetFullPath($state.DesktopAppData) -ne $expectedDesktop) {
         throw 'Refusing to clean an unexpected desktop app-data path.'
     }

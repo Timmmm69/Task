@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.ComponentModel;
 using System.Net.Http;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -33,9 +34,10 @@ public partial class App : global::System.Windows.Application
 
         try
         {
-            var vault = new DesktopCredentialVault();
+            var desktopDataDirectory = GetDesktopDataDirectory();
+            var vault = new DesktopCredentialVault(desktopDataDirectory);
             var workflow = new AuthWorkflowViewModel(
-                new DesktopServerSettingsStore(),
+                new DesktopServerSettingsStore(desktopDataDirectory),
                 new DesktopServerProbeClient(CreateHttpClient()),
                 vault,
                 endpoint => CreateSessionService(endpoint, vault),
@@ -86,6 +88,25 @@ public partial class App : global::System.Windows.Application
         var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
         _ownedHttpClients.Add(httpClient);
         return httpClient;
+    }
+
+    private static string GetDesktopDataDirectory()
+    {
+        const string variable = "TASK_DESKTOP_DATA_DIRECTORY";
+        var configured = Environment.GetEnvironmentVariable(variable);
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Task");
+        }
+
+        if (!Path.IsPathFullyQualified(configured))
+        {
+            throw new ConfigurationErrorsException($"{variable} must be an absolute path.");
+        }
+
+        return Path.GetFullPath(configured);
     }
 
     private SessionService CreateSessionService(Uri endpoint, DesktopCredentialVault vault)

@@ -6,9 +6,11 @@
         xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
         mc:Ignorable="d"
         Title="Task — вход"
-        Width="1120" Height="700" MinWidth="900" MinHeight="620"
+        Width="1120" Height="700" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Background="#F4F7FB"
+        KeyboardNavigation.TabNavigation="Cycle"
+        AutomationProperties.HelpText="Используйте Tab и Shift+Tab для перехода между элементами формы"
         AutomationProperties.Name="Авторизация Task"
         AutomationProperties.AutomationId="AuthWindow">
     <Window.Resources>
@@ -114,7 +116,8 @@
         <DataTemplate DataType="{x:Type vm:ServerSetupViewModel}">
             <StackPanel AutomationProperties.Name="Первое подключение">
                 <TextBlock Text="Шаг 1 из 3" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
-                <TextBlock Text="Первое подключение" Style="{StaticResource HeadingStyle}" />
+                <TextBlock Text="Первое подключение" Style="{StaticResource HeadingStyle}"
+                           AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Укажите адрес сервера, выданный ИТ-администратором. Task принимает только защищённый HTTPS-адрес."
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,22" />
                 <Label Content="Адрес сервера компании" Target="{Binding ElementName=ServerAddressTextBox}" Padding="0" />
@@ -147,7 +150,8 @@
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <StackPanel AutomationProperties.Name="Вход в Task">
                 <TextBlock Text="Шаг 2 из 3" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
-                <TextBlock Text="Вход в Task" Style="{StaticResource HeadingStyle}" />
+                <TextBlock Text="Вход в Task" Style="{StaticResource HeadingStyle}"
+                           AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Используйте корпоративную учётную запись. Пароль не сохраняется на компьютере."
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,22" />
                 <Label Content="Логин" Target="{Binding ElementName=LoginTextBox}" Padding="0" />
@@ -181,7 +185,8 @@
         <DataTemplate DataType="{x:Type vm:PasswordChangeViewModel}">
             <StackPanel AutomationProperties.Name="Обязательная смена пароля">
                 <TextBlock Text="Шаг 3 из 3" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
-                <TextBlock Text="Измените временный пароль" Style="{StaticResource HeadingStyle}" />
+                <TextBlock Text="Измените временный пароль" Style="{StaticResource HeadingStyle}"
+                           AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Без смены пароля открыть Task нельзя. После подтверждения текущая сессия продолжит работу."
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,18" />
                 <TextBlock Text="{Binding PasswordPolicy}" Style="{StaticResource BodyStyle}"
@@ -222,7 +227,8 @@
         <DataTemplate DataType="{x:Type vm:SessionRecoveryViewModel}">
             <StackPanel AutomationProperties.Name="Восстановление сессии">
                 <TextBlock Text="Проверка сессии" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
-                <TextBlock Text="Не удалось подтвердить сессию" Style="{StaticResource HeadingStyle}" />
+                <TextBlock Text="Не удалось подтвердить сессию" Style="{StaticResource HeadingStyle}"
+                           AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="{Binding Message}" Style="{StaticResource BodyStyle}" Margin="0,0,0,18"
                            AutomationProperties.Name="Причина блокировки"
                            AutomationProperties.AutomationId="RecoveryMessageText"

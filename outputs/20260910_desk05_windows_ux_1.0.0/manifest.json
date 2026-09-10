@@ -1,0 +1,194 @@
+{
+  "package": "DESK-05 Windows UX",
+  "version": "1.0.0",
+  "generated_at_utc": "2026-09-10T10:57:15.993105+00:00",
+  "base_revision": "2a59aae98528849586b1da2ffc4723bb447c83fc",
+  "roadmap_ids": [
+    "DESK-05"
+  ],
+  "state": "validated",
+  "validation": {
+    "result": "PASS",
+    "release_build": "PASS",
+    "focused_tests": {
+      "total": 7,
+      "executed": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "native_checks": 91,
+    "native_window_dpi": 144,
+    "dpi_matrix": [
+      100,
+      125,
+      150,
+      200
+    ],
+    "narrator_compatibility": "PASS",
+    "visual_review": "PASS"
+  },
+  "implementation_files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 67301,
+      "sha256": "eb3e2fcca14bed1886acbc4b85d4873d50086aa50cef009e649c30a33eac85d2"
+    },
+    {
+      "path": "work/production/docs/DESK-05-windows-ux.md",
+      "bytes": 4786,
+      "sha256": "22678a359f3b19a62741a0020da106875af7b8ffae736a9aae77d38966f6c5d7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/App.xaml.cs",
+      "bytes": 11262,
+      "sha256": "a90cde44acc4dcb78aa98e5b3e4c38bfec4907027ca5747740ebcea9604544e6"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/AuthWindow.xaml",
+      "bytes": 22340,
+      "sha256": "10d43f8d8ec3cb4eeddce5a191d9be28a360730890acdf58364d4fa491ad51a9"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/AuthWindow.xaml.cs",
+      "bytes": 4346,
+      "sha256": "c16ea017de53f8fca22f03fb8927f1e084f8602e75f065a13c87af43ca1f59cb"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 72881,
+      "sha256": "1ef728ab33d774c9af824a59ffadffdeb5ac738bf2bcd76d867256a6db9ed641"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 6268,
+      "sha256": "7dd91e1e874b8ca71779c734116210a4ead2f6f3c6e728ceab0cac661484be9c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Task.Desktop.csproj",
+      "bytes": 461,
+      "sha256": "c0a5595ef28664fc79c4995b12c78daf78de5ad76064be7647f99842f8b07425"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/WindowsUxLayout.cs",
+      "bytes": 1693,
+      "sha256": "ebfe9c2a78793ee9e1dedcb5fbca9285784290a5f303f21b686a95c10f925f02"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/app.manifest",
+      "bytes": 944,
+      "sha256": "c9e974b0b92fc5c828f473fda98b6cd793da6efe4194c787bfe3c4a9d7fc4c16"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "bytes": 6730,
+      "sha256": "f268969661ba1b111d59c83d889c453b5f25a3bc91bab9b77b981139ae9f7d98"
+    },
+    {
+      "path": "work/production/verification/Test-TaskWriteE2E.ps1",
+      "bytes": 37665,
+      "sha256": "331de9e2355c3d94f1304147572d19384511f2a420450aa8b331af1963dea00e"
+    },
+    {
+      "path": "work/production/verification/Test-Desk05WindowsUx.ps1",
+      "bytes": 22666,
+      "sha256": "223a102e732ddb0befea18cacbbf46cea80eb14cd0671e516903b44f14725f16"
+    },
+    {
+      "path": "work/production/verification/Build-Desk05Package.py",
+      "bytes": 9879,
+      "sha256": "afbc25ce118bd506dcfc10dac35abe93563f0367fcf0669068415204e588c33f"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "evidence/auth-100.png",
+      "bytes": 171725,
+      "sha256": "39cdc4355d08389d0ae576a3846c6e2ccdea11751223bb8f0a91b2abc24d2338"
+    },
+    {
+      "path": "evidence/auth-125.png",
+      "bytes": 174728,
+      "sha256": "d1c17131179e3e4756b037170a3aadfdafe0da94aa29d261a5e4a40b67ef95af"
+    },
+    {
+      "path": "evidence/auth-150.png",
+      "bytes": 159516,
+      "sha256": "8bf93b12a7e928ee97f47d6827d72c35243c2d65c07dd1b15060b6c6e5f2fe66"
+    },
+    {
+      "path": "evidence/auth-200.png",
+      "bytes": 132670,
+      "sha256": "1e083c342edbe8af7a35f07f09bfed899a449f28babd5925e640ed74a124050e"
+    },
+    {
+      "path": "evidence/main-100.png",
+      "bytes": 198160,
+      "sha256": "4017297e460a074c4eea30b76599bca0d9e6c36f850b092e37e2135cfdca3c73"
+    },
+    {
+      "path": "evidence/main-125.png",
+      "bytes": 223166,
+      "sha256": "714329b23eff2a49260b4c727d45972da4bd544701dd05d2ff171813fe55e15b"
+    },
+    {
+      "path": "evidence/main-150.png",
+      "bytes": 157604,
+      "sha256": "2f8f4b24ab2e7345c156f20b4fe2a66102f32f9be5bcc85d1c0aa2bab08c2597"
+    },
+    {
+      "path": "evidence/main-200.png",
+      "bytes": 116910,
+      "sha256": "9f2ced14b7d3c1d517c89f521eaec855a65e546b3f5f4b1f7279771c21f8792a"
+    },
+    {
+      "path": "evidence/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "4e78a7fae8c41e0aea295b48c66f530384f32c632eba3a66f5bb10006e6f76cc"
+    },
+    {
+      "path": "evidence/release-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/release-build.stdout.log",
+      "bytes": 1516,
+      "sha256": "ce02b1b1f37aeb3967fd0ad19ff061f19493b4768a6ef8d7252e153ae289594e"
+    },
+    {
+      "path": "evidence/windows-ux-tests.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/windows-ux-tests.stdout.log",
+      "bytes": 761,
+      "sha256": "bd4bed6a4706fa9859713468081bf30fa7a6775739de00466bd1b7567d0219f9"
+    },
+    {
+      "path": "evidence/windows-ux.json",
+      "bytes": 17038,
+      "sha256": "8fbf4c8d8db8c782ffad3e0a584c513fe8769b106a49d4e5ada50e5443193552"
+    },
+    {
+      "path": "evidence/windows-ux.trx",
+      "bytes": 11686,
+      "sha256": "924ef9fecfcd513495a17826a1f3545508eb3198f447e23e98f33d2f04ec92ec"
+    }
+  ]
+}

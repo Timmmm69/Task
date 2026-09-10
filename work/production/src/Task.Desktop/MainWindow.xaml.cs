@@ -23,6 +23,7 @@ public partial class MainWindow : Window
         ArgumentNullException.ThrowIfNull(viewModel);
         InitializeComponent();
         DataContext = viewModel;
+        SourceInitialized += (_, _) => WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
         if (viewModel.Tasks is not null)
         {
             viewModel.Tasks.PropertyChanged += OnTasksPropertyChanged;
@@ -103,5 +104,86 @@ public partial class MainWindow : Window
             DispatcherPriority.Input,
             () => TaskDetailsArea.Focus());
         e.Handled = true;
+    }
+
+    private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.F6 || Keyboard.Modifiers != ModifierKeys.None)
+        {
+            return;
+        }
+
+        var focused = Keyboard.FocusedElement as DependencyObject;
+        FrameworkElement[] regions = [NavigationListBox, HeaderRegion, ContentRegion];
+        var current = Array.FindIndex(regions, region => IsWithin(focused, region));
+
+        for (var offset = 1; offset <= regions.Length; offset++)
+        {
+            var next = regions[(current + offset + regions.Length) % regions.Length];
+            var focusedNext = ReferenceEquals(next, ContentRegion)
+                ? FocusContentRegion()
+                : ReferenceEquals(next, NavigationListBox)
+                    ? NavigationListBox.Focus() || FocusFirstKeyboardTarget(NavigationListBox)
+                    : FocusFirstKeyboardTarget(next);
+            if (focusedNext)
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+    }
+
+    private bool FocusContentRegion()
+    {
+        if (TasksList.IsVisible && TasksList.IsEnabled && TasksList.Focus())
+        {
+            return true;
+        }
+
+        return FocusFirstKeyboardTarget(ContentRegion);
+    }
+
+    private static bool IsWithin(DependencyObject? element, DependencyObject region)
+    {
+        for (var current = element; current is not null; current = GetParent(current))
+        {
+            if (ReferenceEquals(current, region))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static DependencyObject? GetParent(DependencyObject element) =>
+        element is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D
+            ? System.Windows.Media.VisualTreeHelper.GetParent(element)
+            : LogicalTreeHelper.GetParent(element);
+
+    private static bool FocusFirstKeyboardTarget(DependencyObject root)
+    {
+        if (root is UIElement
+            {
+                Focusable: true,
+                IsEnabled: true,
+                IsVisible: true
+            } target
+            && KeyboardNavigation.GetIsTabStop(target)
+            && target.Focus())
+        {
+            return true;
+        }
+
+        var count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+        for (var index = 0; index < count; index++)
+        {
+            if (FocusFirstKeyboardTarget(System.Windows.Media.VisualTreeHelper.GetChild(root, index)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

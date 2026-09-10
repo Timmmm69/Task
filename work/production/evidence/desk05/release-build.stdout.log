@@ -1,0 +1,17 @@
+  Task.Domain -> C:\Users\novik\Таск\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Infrastructure -> C:\Users\novik\Таск\work\production\src\Task.Infrastructure\bin\Release\net10.0\Task.Infrastructure.dll
+  Task.Desktop -> C:\Users\novik\Таск\work\production\src\Task.Desktop\bin\Release\net10.0-windows\Task.Desktop.dll
+  Task.DatabaseMigrator -> C:\Users\novik\Таск\work\production\src\Task.DatabaseMigrator\bin\Release\net10.0\Task.DatabaseMigrator.dll
+  Task.BackupAgent -> C:\Users\novik\Таск\work\production\src\Task.BackupAgent\bin\Release\net10.0\Task.BackupAgent.dll
+  Task.Worker -> C:\Users\novik\Таск\work\production\src\Task.Worker\bin\Release\net10.0\Task.Worker.dll
+  Task.Tests -> C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll
+  Task.Desktop.Tests -> C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll
+  Task.Api -> C:\Users\novik\Таск\work\production\src\Task.Api\bin\Release\net10.0\Task.Api.dll
+  Task.ServiceHosts.Tests -> C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll
+
+Сборка успешно завершена.
+    Предупреждений: 0
+    Ошибок: 0
+
+Прошло времени 00:00:01.68

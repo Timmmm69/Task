@@ -15,6 +15,7 @@ public partial class AuthWindow : Window
         ArgumentNullException.ThrowIfNull(viewModel);
         InitializeComponent();
         DataContext = viewModel;
+        SourceInitialized += (_, _) => WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
     }
 
     private void InitialFocus_Loaded(object sender, RoutedEventArgs e)

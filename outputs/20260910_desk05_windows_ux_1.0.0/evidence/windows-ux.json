@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 1,
+  "task": "DESK-05",
+  "result": "PASS",
+  "dataProfile": "qa02-deterministic-v1; synthetic only",
+  "platform": {
+    "architecture": "X64",
+    "nativeMainWindowDpi": 144,
+    "perMonitorV2Manifest": true,
+    "osVersion": "Microsoft Windows NT 10.0.26200.0",
+    "screenPixels": {
+      "width": 2560,
+      "height": 1600
+    }
+  },
+  "nativeUia": {
+    "liveRegionContract": "PASS",
+    "patterns": [
+      "Value",
+      "Invoke",
+      "Selection"
+    ],
+    "hostEnumeratesLiveSettingProperty": false,
+    "authentication": "PASS",
+    "mainWindow": "PASS"
+  },
+  "keyboard": {
+    "authenticationFocusPath": [
+      "CheckServerConnectionButton",
+      "AuthWindow"
+    ],
+    "f6HeaderPath": [
+      "TasksRefreshButton",
+      "MainWindow"
+    ],
+    "f6NavigationPath": [
+      "NavigationListBox",
+      "MainWindow"
+    ],
+    "result": "PASS",
+    "f6ContentPath": [
+      "TasksList",
+      "MainWindow"
+    ]
+  },
+  "narrator": {
+    "scope": "Compatibility smoke: Narrator active while named UIA focus targets were traversed; auditory wording was not transcribed.",
+    "speechTranscriptCaptured": false,
+    "focusTargets": [
+      {
+        "automationId": "NavigationListBox",
+        "name": "Основная навигация"
+      },
+      {
+        "automationId": "TasksRefreshButton",
+        "name": "Обновить список задач"
+      },
+      {
+        "automationId": "TasksList",
+        "name": "Список задач"
+      }
+    ],
+    "activeDuringFocusTraversal": true,
+    "requested": true
+  },
+  "dpiMatrix": {
+    "result": "PASS",
+    "authentication": [
+      {
+        "scalePercent": 100,
+        "logicalViewport": {
+          "width": 1920.0,
+          "height": 1040.0
+        },
+        "actualWindowPixels": {
+          "width": 2560.0,
+          "height": 1528.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "ServerAddressTextBox": {
+            "left": 1527.0,
+            "width": 660.0,
+            "height": 63.0,
+            "top": 785.0
+          },
+          "CheckServerConnectionButton": {
+            "left": 1654.0,
+            "width": 300.0,
+            "height": 63.0,
+            "top": 946.0
+          },
+          "ContinueFromServerSetupButton": {
+            "left": 1969.0,
+            "width": 218.0,
+            "height": 63.0,
+            "top": 946.0
+          }
+        },
+        "screenshot": "auth-100.png",
+        "result": "PASS"
+      },
+      {
+        "scalePercent": 125,
+        "logicalViewport": {
+          "width": 1536.0,
+          "height": 832.0
+        },
+        "actualWindowPixels": {
+          "width": 2304.0,
+          "height": 1248.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "ServerAddressTextBox": {
+            "left": 1341.0,
+            "width": 660.0,
+            "height": 63.0,
+            "top": 645.0
+          },
+          "CheckServerConnectionButton": {
+            "left": 1467.0,
+            "width": 301.0,
+            "height": 63.0,
+            "top": 806.0
+          },
+          "ContinueFromServerSetupButton": {
+            "left": 1783.0,
+            "width": 218.0,
+            "height": 63.0,
+            "top": 806.0
+          }
+        },
+        "screenshot": "auth-125.png",
+        "result": "PASS"
+      },
+      {
+        "scalePercent": 150,
+        "logicalViewport": {
+          "width": 1280.0,
+          "height": 693.0
+        },
+        "actualWindowPixels": {
+          "width": 1920.0,
+          "height": 1040.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "ServerAddressTextBox": {
+            "left": 1061.0,
+            "width": 660.0,
+            "height": 63.0,
+            "top": 541.0
+          },
+          "CheckServerConnectionButton": {
+            "left": 1188.0,
+            "width": 301.0,
+            "height": 63.0,
+            "top": 702.0
+          },
+          "ContinueFromServerSetupButton": {
+            "left": 1504.0,
+            "width": 217.0,
+            "height": 63.0,
+            "top": 702.0
+          }
+        },
+        "screenshot": "auth-150.png",
+        "result": "PASS"
+      },
+      {
+        "scalePercent": 200,
+        "logicalViewport": {
+          "width": 960.0,
+          "height": 520.0
+        },
+        "actualWindowPixels": {
+          "width": 1440.0,
+          "height": 780.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "ServerAddressTextBox": {
+            "left": 751.0,
+            "width": 556.0,
+            "height": 63.0,
+            "top": 466.0
+          },
+          "CheckServerConnectionButton": {
+            "left": 774.0,
+            "width": 301.0,
+            "height": 63.0,
+            "top": 627.0
+          },
+          "ContinueFromServerSetupButton": {
+            "left": 1090.0,
+            "width": 217.0,
+            "height": 63.0,
+            "top": 627.0
+          }
+        },
+        "screenshot": "auth-200.png",
+        "result": "PASS"
+      }
+    ],
+    "method": "Native WPF/UIA windows at logical 1920x1040 viewports equivalent to 100/125/150/200%; screenshots and critical bounds captured on the current Windows host.",
+    "mainWindow": [
+      {
+        "scalePercent": 100,
+        "logicalViewport": {
+          "width": 1920.0,
+          "height": 1040.0
+        },
+        "actualWindowPixels": {
+          "width": 2560.0,
+          "height": 1528.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "NavigationListBox": {
+            "left": 11.0,
+            "width": 316.0,
+            "height": 1367.0,
+            "top": 150.0
+          },
+          "TasksRefreshButton": {
+            "left": 1809.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "NewTaskButton": {
+            "left": 1881.0,
+            "width": 215.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "ConnectionStatusText": {
+            "left": 2171.0,
+            "width": 264.0,
+            "height": 26.0,
+            "top": 71.0
+          },
+          "LogoutButton": {
+            "left": 2456.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "TasksList": {
+            "left": 367.0,
+            "width": 1622.0,
+            "height": 1008.0,
+            "top": 324.0
+          }
+        },
+        "screenshot": "main-100.png",
+        "result": "PASS"
+      },
+      {
+        "scalePercent": 125,
+        "logicalViewport": {
+          "width": 1536.0,
+          "height": 832.0
+        },
+        "actualWindowPixels": {
+          "width": 2304.0,
+          "height": 1248.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "NavigationListBox": {
+            "left": 11.0,
+            "width": 316.0,
+            "height": 1087.0,
+            "top": 150.0
+          },
+          "TasksRefreshButton": {
+            "left": 1553.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "NewTaskButton": {
+            "left": 1625.0,
+            "width": 215.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "ConnectionStatusText": {
+            "left": 1915.0,
+            "width": 264.0,
+            "height": 26.0,
+            "top": 71.0
+          },
+          "LogoutButton": {
+            "left": 2200.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "TasksList": {
+            "left": 367.0,
+            "width": 1366.0,
+            "height": 728.0,
+            "top": 324.0
+          }
+        },
+        "screenshot": "main-125.png",
+        "result": "PASS"
+      },
+      {
+        "scalePercent": 150,
+        "logicalViewport": {
+          "width": 1280.0,
+          "height": 693.0
+        },
+        "actualWindowPixels": {
+          "width": 1920.0,
+          "height": 1040.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "NavigationListBox": {
+            "left": 11.0,
+            "width": 316.0,
+            "height": 879.0,
+            "top": 150.0
+          },
+          "TasksRefreshButton": {
+            "left": 1169.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "NewTaskButton": {
+            "left": 1241.0,
+            "width": 215.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "ConnectionStatusText": {
+            "left": 1531.0,
+            "width": 264.0,
+            "height": 26.0,
+            "top": 71.0
+          },
+          "LogoutButton": {
+            "left": 1816.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "TasksList": {
+            "left": 367.0,
+            "width": 1504.0,
+            "height": 467.0,
+            "top": 324.0
+          }
+        },
+        "screenshot": "main-150.png",
+        "result": "PASS"
+      },
+      {
+        "scalePercent": 200,
+        "logicalViewport": {
+          "width": 960.0,
+          "height": 520.0
+        },
+        "actualWindowPixels": {
+          "width": 1440.0,
+          "height": 780.0
+        },
+        "hostDpi": 144,
+        "criticalBounds": {
+          "NavigationListBox": {
+            "left": 11.0,
+            "width": 265.0,
+            "height": 619.0,
+            "top": 150.0
+          },
+          "TasksRefreshButton": {
+            "left": 689.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "NewTaskButton": {
+            "left": 761.0,
+            "width": 215.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "ConnectionStatusText": {
+            "left": 1051.0,
+            "width": 264.0,
+            "height": 26.0,
+            "top": 71.0
+          },
+          "LogoutButton": {
+            "left": 1336.0,
+            "width": 60.0,
+            "height": 61.0,
+            "top": 66.0
+          },
+          "TasksList": {
+            "left": 316.0,
+            "width": 1075.0,
+            "height": 207.0,
+            "top": 324.0
+          }
+        },
+        "screenshot": "main-200.png",
+        "result": "PASS"
+      }
+    ]
+  },
+  "checks": [
+    "Focused DESK-05 source and layout tests passed.",
+    "Synthetic clean-stand profile is active.",
+    "Release WPF executable exists.",
+    "ServerAddressTextBox exposes a screen-reader name.",
+    "ServerAddressTextBox is visible in the UIA tree.",
+    "ServerAddressTextBox exposes the Value UIA pattern.",
+    "CheckServerConnectionButton exposes a screen-reader name.",
+    "CheckServerConnectionButton is visible in the UIA tree.",
+    "CheckServerConnectionButton exposes the Invoke UIA pattern.",
+    "ContinueFromServerSetupButton exposes a screen-reader name.",
+    "ContinueFromServerSetupButton is visible in the UIA tree.",
+    "auth window accepted the 100% viewport.",
+    "auth ServerAddressTextBox remains unclipped at the 100% logical viewport.",
+    "auth CheckServerConnectionButton remains unclipped at the 100% logical viewport.",
+    "auth ContinueFromServerSetupButton remains unclipped at the 100% logical viewport.",
+    "auth-100.png contains a rendered native window surface.",
+    "auth window accepted the 125% viewport.",
+    "auth ServerAddressTextBox remains unclipped at the 125% logical viewport.",
+    "auth CheckServerConnectionButton remains unclipped at the 125% logical viewport.",
+    "auth ContinueFromServerSetupButton remains unclipped at the 125% logical viewport.",
+    "auth-125.png contains a rendered native window surface.",
+    "auth window accepted the 150% viewport.",
+    "auth ServerAddressTextBox remains unclipped at the 150% logical viewport.",
+    "auth CheckServerConnectionButton remains unclipped at the 150% logical viewport.",
+    "auth ContinueFromServerSetupButton remains unclipped at the 150% logical viewport.",
+    "auth-150.png contains a rendered native window surface.",
+    "auth window accepted the 200% viewport.",
+    "auth ServerAddressTextBox remains unclipped at the 200% logical viewport.",
+    "auth CheckServerConnectionButton remains unclipped at the 200% logical viewport.",
+    "auth ContinueFromServerSetupButton remains unclipped at the 200% logical viewport.",
+    "auth-200.png contains a rendered native window surface.",
+    "Tab moves authentication focus to the next enabled action.",
+    "Release WPF executable exists.",
+    "NavigationListBox exposes a screen-reader name.",
+    "NavigationListBox is visible in the UIA tree.",
+    "NavigationListBox exposes the Selection UIA pattern.",
+    "TasksRefreshButton exposes a screen-reader name.",
+    "TasksRefreshButton is visible in the UIA tree.",
+    "TasksRefreshButton exposes the Invoke UIA pattern.",
+    "NewTaskButton exposes a screen-reader name.",
+    "NewTaskButton is visible in the UIA tree.",
+    "NewTaskButton exposes the Invoke UIA pattern.",
+    "TasksList exposes a screen-reader name.",
+    "TasksList is visible in the UIA tree.",
+    "TasksList exposes the Selection UIA pattern.",
+    "LogoutButton exposes a screen-reader name.",
+    "LogoutButton is visible in the UIA tree.",
+    "LogoutButton exposes the Invoke UIA pattern.",
+    "ConnectionStatusText exposes a screen-reader name.",
+    "ConnectionStatusText is visible in the UIA tree.",
+    "Connection live region is declared in XAML; this host UIA client does not enumerate LiveSetting on TextBlock peers.",
+    "main window accepted the 100% viewport.",
+    "main NavigationListBox remains unclipped at the 100% logical viewport.",
+    "main TasksRefreshButton remains unclipped at the 100% logical viewport.",
+    "main NewTaskButton remains unclipped at the 100% logical viewport.",
+    "main ConnectionStatusText remains unclipped at the 100% logical viewport.",
+    "main LogoutButton remains unclipped at the 100% logical viewport.",
+    "main TasksList remains unclipped at the 100% logical viewport.",
+    "main-100.png contains a rendered native window surface.",
+    "main window accepted the 125% viewport.",
+    "main NavigationListBox remains unclipped at the 125% logical viewport.",
+    "main TasksRefreshButton remains unclipped at the 125% logical viewport.",
+    "main NewTaskButton remains unclipped at the 125% logical viewport.",
+    "main ConnectionStatusText remains unclipped at the 125% logical viewport.",
+    "main LogoutButton remains unclipped at the 125% logical viewport.",
+    "main TasksList remains unclipped at the 125% logical viewport.",
+    "main-125.png contains a rendered native window surface.",
+    "main window accepted the 150% viewport.",
+    "main NavigationListBox remains unclipped at the 150% logical viewport.",
+    "main TasksRefreshButton remains unclipped at the 150% logical viewport.",
+    "main NewTaskButton remains unclipped at the 150% logical viewport.",
+    "main ConnectionStatusText remains unclipped at the 150% logical viewport.",
+    "main LogoutButton remains unclipped at the 150% logical viewport.",
+    "main TasksList remains unclipped at the 150% logical viewport.",
+    "main-150.png contains a rendered native window surface.",
+    "main window accepted the 200% viewport.",
+    "main NavigationListBox remains unclipped at the 200% logical viewport.",
+    "main TasksRefreshButton remains unclipped at the 200% logical viewport.",
+    "main NewTaskButton remains unclipped at the 200% logical viewport.",
+    "main ConnectionStatusText remains unclipped at the 200% logical viewport.",
+    "main LogoutButton remains unclipped at the 200% logical viewport.",
+    "main TasksList remains unclipped at the 200% logical viewport.",
+    "main-200.png contains a rendered native window surface.",
+    "F6 moves focus from navigation to the header command region.",
+    "F6 moves focus from header commands to the selected content region.",
+    "F6 returns focus from content to the primary navigation region.",
+    "Windows Narrator executable exists.",
+    "Windows Narrator is active during keyboard focus traversal.",
+    "Narrator traversal target NavigationListBox retains its accessible name.",
+    "Narrator traversal target TasksRefreshButton retains its accessible name.",
+    "Narrator traversal target TasksList retains its accessible name."
+  ],
+  "startedAtUtc": "2026-09-10T10:51:29.5305372+00:00",
+  "completedAtUtc": "2026-09-10T10:51:58.3183655+00:00"
+}

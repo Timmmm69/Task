@@ -309,7 +309,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Проверить offline, retry, session expiry и conflict recovery во всех готовых разделах."
     },
     {
@@ -319,21 +319,24 @@
       "category": "desktop",
       "weight": 8,
       "criticality": "high",
-      "status": "unverified",
-      "progress": 50,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "work/stage_5_completion_audit/completion-audit.json: prototype coverage achieved; native UIA/Narrator/DPI evidence pending",
-        "outputs/20260823_task_read_vertical_slice_0.1.0/validation-report.md: task UIA PASS"
+        "work/production/evidence/desk05/windows-ux.json: PASS, 91/91 native checks, UIA/keyboard/Narrator and DPI matrix 100/125/150/200%",
+        "work/production/evidence/desk05/auth-200.png: authentication viewport visual PASS at the 200% equivalent",
+        "work/production/evidence/desk05/main-200.png: main-window viewport visual PASS at the 200% equivalent",
+        "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs: 7/7 focused contract and sizing tests",
+        "outputs/20260910_desk05_windows_ux_1.0.0/VALIDATION_REPORT.md: packaged DESK-05 validation PASS"
       ],
-      "note": "Нужна проверка Narrator и DPI 125/150/200% на локальной Windows-матрице; рабочие места заказчика для этого не требуются.",
-      "updated_at": "2026-09-07T12:00:00+03:00",
+      "note": "Нативный WPF Release проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, UIA, Tab/F6 и активный Narrator — PASS. Аудиотранскрипт Narrator не снимался; физическая mixed-DPI топология относится к deployment smoke.",
+      "updated_at": "2026-09-10T13:53:24+03:00",
       "priority": 3,
       "dependencies": [
         "DESK-03"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Выполнить нативную Windows-матрицу UIA, Narrator и DPI 125/150/200% с сохранением evidence."
+      "recommended_order": 0,
+      "next_action": "Поддерживать Test-Desk05WindowsUx.ps1 в release gate; на развёртывании выполнить smoke конкретной mixed-DPI конфигурации рабочих мест."
     },
     {
       "id": "API-01",
@@ -461,7 +464,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 11,
+      "recommended_order": 10,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -695,7 +698,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
     },
     {
@@ -798,7 +801,7 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
     },
     {
@@ -821,7 +824,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 9,
+      "recommended_order": 8,
       "next_action": "Провести сценарную проверку на Windows-матрице с синтетическим demo-набором, оформить findings disposition и внутренний release sign-off."
     },
     {
@@ -992,7 +995,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Создать подписанный Windows installer, совместимый update channel и проверенный rollback."
     },
     {
@@ -1041,7 +1044,7 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Собрать единый operations runbook и воспроизвести установку, backup, monitoring и recovery на чистой VM без доступа к инфраструктуре заказчика."
     },
     {
@@ -1066,7 +1069,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 7,
+      "recommended_order": 6,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1089,7 +1092,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 8,
+      "recommended_order": 7,
       "next_action": "Подготовить короткие user/admin guides и воспроизвести их шаги на чистой VM с demo-данными."
     },
     {
@@ -1114,7 +1117,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 10,
+      "recommended_order": 9,
       "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
     }
   ],
