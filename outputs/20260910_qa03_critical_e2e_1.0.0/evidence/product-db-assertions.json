@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "scenario": "QA-03 critical product persistence after UI and API restart",
+  "seedProfile": "qa03-deterministic-v1",
+  "result": "PASS",
+  "database": {
+    "postgresVersion": "16.14",
+    "migrationVersion": "14",
+    "uiTaskId": "95112c52-62cc-4511-a25b-13d04da19819",
+    "uiTaskTitle": "QA-03 ui task final",
+    "uiTaskVersion": 3,
+    "uiTaskStatus": "new",
+    "uiProjectCount": 2,
+    "uiCatalogItemCount": 2,
+    "uiContactCount": 2,
+    "seededEventCount": 1,
+    "seededSeriesCount": 1,
+    "notificationState": "read",
+    "reminderState": "delivered"
+  },
+  "checks": [
+    "UI-created task exists after the conflict flow and API restart",
+    "Conflict reload advanced the persisted task version",
+    "UI task retains the new status",
+    "UI task lifecycle emitted durable domain events",
+    "UI-created project is persisted",
+    "Seeded project survived the whole gate",
+    "UI-created catalog item is persisted",
+    "UI-created contact is persisted",
+    "Seeded calendar event survived the whole gate",
+    "Seeded recurrence series survived the whole gate",
+    "Worker-delivered notification retained its read state",
+    "Reminder retained its delivered state"
+  ]
+}

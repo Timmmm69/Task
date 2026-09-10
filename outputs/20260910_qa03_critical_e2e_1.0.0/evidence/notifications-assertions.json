@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "scenario": "QA-03 notification read E2E",
+  "seedProfile": "qa03-deterministic-v1",
+  "result": "PASS",
+  "notificationId": "23b2cc61-d9bf-4591-85cc-aa402f9f121f",
+  "reminderId": "59be38fd-2fdc-4958-8efe-02ef50841f79",
+  "finalStatus": "read",
+  "notificationType": "reminder",
+  "sourceTaskId": "c4cf949b-9d4f-4f00-8884-99e140bee3ac",
+  "readThroughWpfUi": "PASS",
+  "checks": [
+    "Notifications list is readable after the UI read flow",
+    "Worker-delivered reminder notification remains visible",
+    "Notification keeps the reminder type",
+    "Notification links to the source task",
+    "Notification reached the read state through the real WPF UI",
+    "Read endpoint is idempotent for an already-read notification",
+    "Read-all accepts the delivered notification id",
+    "PostgreSQL retains the read notification state"
+  ]
+}

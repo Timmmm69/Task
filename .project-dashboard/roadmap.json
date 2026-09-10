@@ -471,7 +471,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 8,
+      "recommended_order": 7,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -705,7 +705,7 @@
         "QA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Добавить регулярные secret/dependency/image hardening checks в production CI."
     },
     {
@@ -791,13 +791,16 @@
       "category": "quality",
       "weight": 15,
       "criticality": "blocker",
-      "status": "blocked",
-      "progress": 25,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "Production E2E evidence найден для auth и tasks; остальные основные модули ещё placeholders"
+        "work/production/docs/QA-03-critical-e2e-matrix.md: матрица 13 критических сценариев",
+        "work/production/verification/Test-Qa03Gate.ps1: чистый стенд PostgreSQL 16 + HTTPS API + Release WPF UIA",
+        "work/production/verification/Test-Qa03CriticalE2E.ps1: product seed/verify, worker delivery, notifications",
+        "outputs/20260910_qa03_critical_e2e_1.0.0/VALIDATION_REPORT.md: 23 API + 12 persistence + 8 notification + 12 UI checks PASS"
       ],
-      "note": "Hard release blocker до реализации остальных vertical slices.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Каждый критический сценарий закрыт реальным evidence на чистом стенде: Today/tasks/calendar/projects/catalog/contacts/search через real Release WPF UIA, доставка напоминаний production worker-ом, конфликт версий с reload, потеря сервера с офлайн-оболочкой и восстановлением, restart API и права read-only (403). Cleanup восстанавливает Desktop AppData.",
+      "updated_at": "2026-09-10T21:30:00+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-02",
@@ -808,8 +811,8 @@
         "QA-01"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Собрать критическую E2E-матрицу всего продукта и закрыть каждый сценарий реальным evidence."
+      "recommended_order": 0,
+      "next_action": "Поддерживать Test-Qa03Gate.ps1 в общем production regression gate; на развёртывании выполнить live smoke и native UIA walkthrough на стенде заказчика."
     },
     {
       "id": "QA-04",
@@ -831,7 +834,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Провести сценарную проверку на Windows-матрице с синтетическим demo-набором, оформить findings disposition и внутренний release sign-off."
     },
     {
@@ -1057,7 +1060,7 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Собрать единый operations runbook и воспроизвести установку, backup, monitoring и recovery на чистой VM без доступа к инфраструктуре заказчика."
     },
     {
@@ -1082,7 +1085,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1105,7 +1108,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Подготовить короткие user/admin guides и воспроизвести их шаги на чистой VM с demo-данными."
     },
     {
@@ -1130,7 +1133,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 7,
+      "recommended_order": 6,
       "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
     }
   ],
