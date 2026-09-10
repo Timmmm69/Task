@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "channel": "stable",
+  "rolloutPercent": 10,
+  "minimumClientVersion": "1.0.0",
+  "minimumServerVersion": "1.0.0",
+  "releaseUri": "https://task.company.example/releases/Task.Desktop-1.0.0-win-x64.zip",
+  "timestampServerUri": "https://timestamp.company.example/"
+}

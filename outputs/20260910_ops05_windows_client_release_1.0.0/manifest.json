@@ -1,0 +1,210 @@
+{
+  "package": "20260910_ops05_windows_client_release_1.0.0",
+  "version": "1.0.0",
+  "base_commit": "bedc70434471933ab196460f5bc93cd12beb4941",
+  "release_status": "source_and_windows_acceptance_validated_production_certificate_external",
+  "tests_passed": 1668,
+  "tests_skipped": 4,
+  "acceptance": {
+    "task": "OPS-05",
+    "result": "PASS",
+    "testedAtUtc": "2026-09-10T15:39:43.7035511+00:00",
+    "host": {
+      "os": "Microsoft Windows NT 10.0.26200.0",
+      "architecture": "X64",
+      "powershell": "7.6.5"
+    },
+    "scenarios": {
+      "signedInitialInstall": true,
+      "mandatoryUpdateOverridesRolloutZero": true,
+      "localChannelFailClosed": true,
+      "tamperRejected": true,
+      "uncontrolledDowngradeRejected": true,
+      "validatedRollback": true,
+      "installedPublisherPinsValid": true
+    },
+    "versions": [
+      "1.0.0",
+      "1.1.0"
+    ],
+    "publisherThumbprint": "D98C2DFDF331BAE0F35FA8C177CF1979B3B289D1"
+  },
+  "sources": [
+    ".project-dashboard/roadmap.json",
+    "work/production/deployment/desktop/Build-TaskDesktopRelease.ps1",
+    "work/production/deployment/desktop/Install-TaskDesktop.ps1",
+    "work/production/deployment/desktop/Invoke-TaskDesktopUpdate.ps1",
+    "work/production/deployment/desktop/Rollback-TaskDesktop.ps1",
+    "work/production/deployment/desktop/TaskDesktop.Release.psm1",
+    "work/production/deployment/desktop/ops05.parameters.example.json",
+    "work/production/docs/OPS-05-windows-client-release.md",
+    "work/production/src/Task.Api/Capabilities/ClientVersionCompatibilityMiddleware.cs",
+    "work/production/src/Task.Api/Program.cs",
+    "work/production/src/Task.Api/appsettings.json",
+    "work/production/src/Task.Application/System/ServerCapabilitiesService.cs",
+    "work/production/src/Task.Application/packages.lock.json",
+    "work/production/src/Task.Desktop/App.xaml.cs",
+    "work/production/src/Task.Desktop/Security/DesktopAuthApiClient.cs",
+    "work/production/src/Task.Desktop/Security/SessionService.cs",
+    "work/production/src/Task.Desktop/Task.Desktop.csproj",
+    "work/production/src/Task.Desktop/ViewModels/AuthWorkflowViewModel.cs",
+    "work/production/src/Task.Domain/packages.lock.json",
+    "work/production/tests/Task.Desktop.Tests/Security/DesktopAuthApiClientTests.cs",
+    "work/production/tests/Task.ServiceHosts.Tests/ClientVersionCompatibilityMiddlewareTests.cs",
+    "work/production/tests/Task.Tests/System/ServerCapabilitiesServiceTests.cs",
+    "work/production/verification/Build-Ops05Package.py",
+    "work/production/verification/Test-Ops05WindowsRelease.ps1"
+  ],
+  "files": [
+    {
+      "path": "evidence/acceptance.json",
+      "size": 636,
+      "sha256": "ad5f6c02e92b8468a3ce5b31c3a3d9e6e0b455c70e0ea084a804da6e25377d9d"
+    },
+    {
+      "path": "evidence/ops05-full-release_net10.0_20260910184019.trx",
+      "size": 1085776,
+      "sha256": "79cdb3cb55550cfff4f67eaa59dbe45090823132034ba8e6481408a2fa4452a1"
+    },
+    {
+      "path": "evidence/ops05-full-release_net10.0_20260910184021.trx",
+      "size": 424272,
+      "sha256": "10feb6f0a24e925bc53d0cd008f437042b05ccfceebed0468fcc555f7579a8b8"
+    },
+    {
+      "path": "evidence/ops05-full-release_net10.0_20260910184607.trx",
+      "size": 851317,
+      "sha256": "6fc1053816077a2c03d5882be2a724d9757c5b42c13bea511259f38e80915114"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 69091,
+      "sha256": "a424f26ae1c4c6b9c5b085005e730f9bbf4a1ed89529e7c8200f5a983e619442"
+    },
+    {
+      "path": "source/work/production/deployment/desktop/Build-TaskDesktopRelease.ps1",
+      "size": 5606,
+      "sha256": "4fb0c8d96931207b984cec93eb03319f9c948459534599644f38e51b8e2c53dd"
+    },
+    {
+      "path": "source/work/production/deployment/desktop/Install-TaskDesktop.ps1",
+      "size": 3101,
+      "sha256": "3966651decbc2e75bbb81a82f6e113f05354c38224d48db7606765af6ea0227d"
+    },
+    {
+      "path": "source/work/production/deployment/desktop/Invoke-TaskDesktopUpdate.ps1",
+      "size": 4467,
+      "sha256": "f1aeeb548883c5aaeb7e7a2e5775b9de20e2d9ff9bb5ae6507e34deeae40474f"
+    },
+    {
+      "path": "source/work/production/deployment/desktop/ops05.parameters.example.json",
+      "size": 292,
+      "sha256": "4775a8dc5b68312b4cba5dfe537b652dd523e0565ccf110d0fcb260363fc6882"
+    },
+    {
+      "path": "source/work/production/deployment/desktop/Rollback-TaskDesktop.ps1",
+      "size": 1643,
+      "sha256": "58d48d9c9a6da118df7a68debbd44a88920a63a6b830d0c7a74567968c1a0b80"
+    },
+    {
+      "path": "source/work/production/deployment/desktop/TaskDesktop.Release.psm1",
+      "size": 7711,
+      "sha256": "f814221cda6302cc32398817129feba86f4d96db0c1f769a8fcc878149dac553"
+    },
+    {
+      "path": "source/work/production/docs/OPS-05-windows-client-release.md",
+      "size": 3908,
+      "sha256": "988a9234dfc75a96d626af6ef9a408f0f707c78128f2607501c9b7cddc13fea5"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/appsettings.json",
+      "size": 276,
+      "sha256": "0f520d04c60c82bcc3eeffe26b0424b6183fa333e125d23167eb183bc3f8ca83"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Capabilities/ClientVersionCompatibilityMiddleware.cs",
+      "size": 1601,
+      "sha256": "04f78cd0f2787250603abe16025b2d78c982d79fbeea1dab546e9ca20e1257f8"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Program.cs",
+      "size": 11603,
+      "sha256": "33d66e30d6f7ab245ffe70ee313952bc6192ffd93941d30feb3a0ff9bea89a58"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/packages.lock.json",
+      "size": 4130,
+      "sha256": "df0074aa5d275d8ea1b98cde6317d4f2be8535e398321d21f7357df2c2ffea1e"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/System/ServerCapabilitiesService.cs",
+      "size": 4130,
+      "sha256": "75659711025aa8e33912c96b0eabe6a45629e1d70c361d8b769c86a63dc0e615"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/App.xaml.cs",
+      "size": 11433,
+      "sha256": "f3e8821d40967ef7b9ea9b7907cb507fa74aa018a4fd10d8eec162bfe8ac6ad7"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Security/DesktopAuthApiClient.cs",
+      "size": 32861,
+      "sha256": "8bc229f61245cc43e4bdcf13324a1f5417eacfff89f32e56f6c40c2aec92ac8d"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Security/SessionService.cs",
+      "size": 34445,
+      "sha256": "fad09ac3c73267b8f991586eddb4c1179ba3341257e8be15c867335fcc97c49a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Task.Desktop.csproj",
+      "size": 490,
+      "sha256": "3f64facf64f5ed091ed9b67d7607a3c8198f1c89467bc06b437c708c07dfd92d"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/AuthWorkflowViewModel.cs",
+      "size": 23190,
+      "sha256": "7f957f341d4f6c9634bc6892504c1158ccadd606a9308ada7b3a64cd23828a83"
+    },
+    {
+      "path": "source/work/production/src/Task.Domain/packages.lock.json",
+      "size": 389,
+      "sha256": "44431607e6c32bcd6dd03a91631b0ed94d69798e204eefd2576e8bf644eb1d86"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Security/DesktopAuthApiClientTests.cs",
+      "size": 34016,
+      "sha256": "3275c3582144fe949f48dc8764e918ec1e693e3ebadc14077a20c59bb30862d6"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/ClientVersionCompatibilityMiddlewareTests.cs",
+      "size": 3030,
+      "sha256": "11777d3f4b8693f9a7e5c394c41f097ed12e676923b25885b2cefb5e72f3dfd8"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/System/ServerCapabilitiesServiceTests.cs",
+      "size": 2535,
+      "sha256": "d85b840c8d563f47b582853be755165b6eddb023596fb52a61398d33e8dbf411"
+    },
+    {
+      "path": "source/work/production/verification/Build-Ops05Package.py",
+      "size": 7349,
+      "sha256": "b543798c766846cdc0dea592e8298457ab54cc432c82112ab235f274f2e634c8"
+    },
+    {
+      "path": "source/work/production/verification/Test-Ops05WindowsRelease.ps1",
+      "size": 6568,
+      "sha256": "448c0738f2bad217eaae697a83f99d221fa7ba173f888f36b6f929590b33cb58"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1575,
+      "sha256": "83ac71f2009d8e6056092f17988cde5bb7b4cc2250be20572fc6150533489ce6"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
