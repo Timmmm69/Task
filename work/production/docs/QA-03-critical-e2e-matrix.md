@@ -16,17 +16,17 @@ Release WPF, управляемый через native UI Automation, и реал
 | ID | Критический сценарий | Слой проверки | Gate |
 |----|----------------------|---------------|------|
 | E2E-01 | Сотрудник выбирает сервер и входит; сессия восстанавливается | PostgreSQL + HTTPS API + Release WPF | QA-02 clean-stand (базовый), повторно в QA-03: вход admin и сессия desktop |
-| E2E-02 | Задача: создание, отображение, изменение, смена статуса | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: UI create + серверная проверка строки |
+| E2E-02 | Задача: создание, отображение и изменение с конфликтным восстановлением | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: UI create + серверная проверка строки + conflict reload |
 | E2E-03 | Сегодня: расписание, задачи без времени, просроченные | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: seeded today items видны в разделе «Сегодня» |
-| E2E-04 | Календарь: сетка диапазона, события, повторения, участники | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: range API, создание события/серии, видимость события в сетке |
-| E2E-05 | Проекты: список, создание, детали, участники, архив | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: seed через API, создание через UI, members через API |
-| E2E-06 | Файлы: запись каталога, путь, resolve, открытие только после явного действия | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: seed + locations + resolve через API; создание записи через UI |
+| E2E-04 | Календарь: сетка диапазона, события и повторения | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: range API, создание события/серии, видимость события в сетке |
+| E2E-05 | Проекты: список, создание, детали и участники | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: seed через API, создание через UI, members через API |
+| E2E-06 | Файлы: запись каталога, путь, resolve с device-scope и явной проверкой | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: seed + locations + resolve через API; создание записи через UI |
 | E2E-07 | Контакты: создание и отображение | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: seed + создание через UI |
 | E2E-08 | Глобальный поиск по задачам, проектам, контактам, файлам | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: API search по каждой сущности + поиск в UI |
 | E2E-09 | Уведомления: доставка worker-ом, список, чтение, прочитать все | PostgreSQL + production Worker + HTTPS API + WPF UIA | QA-03 Gate: due reminder → worker delivery → API + UI read |
 | E2E-10 | Сеть: потеря сервера → офлайн-оболочка → восстановление | Release WPF UIA + остановка/запуск production API | QA-03 Gate: offline shell, write lock, явный retry |
 | E2E-11 | Конфликт версий: конкурентное изменение задачи | PostgreSQL + HTTPS API + Release WPF UIA | QA-03 Gate: серверный PATCH → UI conflict → reload → сохранение |
-| E2E-12 | Перезапуск API не теряет подтверждённые данные | PostgreSQL + HTTPS API + Release WPF | QA-03 Gate: restart + повторная загрузка всех разделов |
+| E2E-12 | Перезапуск API не теряет подтверждённые данные | PostgreSQL + HTTPS API | QA-03 Gate: restart + API/SQL подтверждение всех сущностей |
 | E2E-13 | Права: read-only аккаунт не создаёт проекты/задачи | PostgreSQL + HTTPS API | QA-03 Gate: 403 на Project.Create и Task create |
 
 ## Правила стойкости к провалу

@@ -2,7 +2,7 @@
   "package": "QA-03 critical user scenario E2E matrix",
   "version": "1.0.0",
   "date": "2026-09-10",
-  "base_revision": "2440071ea957b2bbf82e4bb5045b77465a8ccf47",
+  "base_revision": "55fa5a6e56fc368864e53a1030c1a80a6246ffb0",
   "roadmap_ids": [
     "QA-03"
   ],
@@ -27,13 +27,13 @@
   "implementation_files": [
     {
       "path": ".project-dashboard/roadmap.json",
-      "bytes": 70278,
-      "sha256": "97b932634acd4f59d2a9d9626a20d48460aff21e63c136925995d3b7020e4de2"
+      "bytes": 71120,
+      "sha256": "2df1ac2e219b50eb67c254295fc30273df3b25643c5a4c953d915e98ddeb08a0"
     },
     {
       "path": "work/production/docs/QA-03-critical-e2e-matrix.md",
-      "bytes": 5389,
-      "sha256": "df64b121547b48fc80960efcd842c2ff23c76592602d21633724ecfa23a16d6c"
+      "bytes": 5375,
+      "sha256": "5839f1e33b2679be65ec6bbe2250075e97f528a875ce4e1ef3d30dfd3c013c67"
     },
     {
       "path": "work/production/verification/Test-Qa03CriticalE2E.ps1",
@@ -42,8 +42,8 @@
     },
     {
       "path": "work/production/verification/Test-Qa03Gate.ps1",
-      "bytes": 30192,
-      "sha256": "99f8e57c1a79abfb5c8bad2a56770998f8c74b324b8b265175ac944a22c041a2"
+      "bytes": 29929,
+      "sha256": "46769bdd3dff0e63a595e54ad2233942eee352f965334a9d876aebb8edeb54ed"
     },
     {
       "path": "work/production/verification/Build-Qa03Package.py",

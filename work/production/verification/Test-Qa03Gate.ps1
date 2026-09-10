@@ -195,11 +195,6 @@ function Invoke-Element([System.Windows.Automation.AutomationElement]$element) {
         [System.Windows.Automation.InvokePattern]::Pattern)
     $pattern.Invoke()
 }
-function Select-Element([System.Windows.Automation.AutomationElement]$element) {
-    $pattern = [System.Windows.Automation.SelectionItemPattern]$element.GetCurrentPattern(
-        [System.Windows.Automation.SelectionItemPattern]::Pattern)
-    $pattern.Select()
-}
 function Set-ElementValue([System.Windows.Automation.AutomationElement]$element, [string]$value) {
     $pattern = [System.Windows.Automation.ValuePattern]$element.GetCurrentPattern(
         [System.Windows.Automation.ValuePattern]::Pattern)

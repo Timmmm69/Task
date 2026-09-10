@@ -800,7 +800,7 @@
         "outputs/20260910_qa03_critical_e2e_1.0.0/VALIDATION_REPORT.md: 23 API + 12 persistence + 8 notification + 12 UI checks PASS"
       ],
       "note": "Каждый критический сценарий закрыт реальным evidence на чистом стенде: Today/tasks/calendar/projects/catalog/contacts/search через real Release WPF UIA, доставка напоминаний production worker-ом, конфликт версий с reload, потеря сервера с офлайн-оболочкой и восстановлением, restart API и права read-only (403). Cleanup восстанавливает Desktop AppData.",
-      "updated_at": "2026-09-10T21:30:00+03:00",
+      "updated_at": "2026-09-11T00:15:00+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-02",

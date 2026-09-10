@@ -38,7 +38,7 @@ Version: 1.0.0. Date: 2026-09-10. Result: **PASS**.
 - `evidence/worker-delivery.json` — reminder→notification, change feed 10 строк.
 - `evidence/notifications-assertions.json`, `evidence/product-db-assertions.json`.
 - `evidence/qa03-gate.log`, `evidence/qa03-release-build.log`, `evidence/phase-*.log`.
-- 13 скриншотов реального Release WPF.
+- 12 скриншотов реального Release WPF.
 
 ## Границы готовности
 
