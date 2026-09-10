@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "DESK-03-primary-sections",
+  "version": "1.0.0",
+  "createdAt": "2026-09-10T12:41:53+03:00",
+  "sourceCommit": "c9888de",
+  "files": [
+    { "path": "source/.project-dashboard/roadmap.json", "bytes": 66682, "sha256": "4c6cf295c8877a9ab0070ec8af4fd24d84838cff84d9b6d2c9430575ce77c806" },
+    { "path": "source/work/production/docs/DESK-03-primary-sections.md", "bytes": 3940, "sha256": "96d42a86c79698e013c861d774ac856b2c18ae3cabc106070cc4b7537ae51090" },
+    { "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs", "bytes": 19331, "sha256": "86765b02d52a13189b704e773976d830d39eb7d5ffc6a7fca616f13d8f735bd0" },
+    { "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs", "bytes": 28591, "sha256": "0466437a7efbc97c6d1f94faa3eb3931fb3aab34ce78b4862297ce70c945e607" },
+    { "path": "source/work/production/src/Task.Desktop/Views/WorkHubView.xaml", "bytes": 20810, "sha256": "8f4f043a013ef3a88d0cf5ecc9cfe1336a33891ceed4598ed34e07ba33636ad8" },
+    { "path": "source/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs", "bytes": 32868, "sha256": "1b80aaa0f45f91c460693354b406ea02ba55cae936b4d3f42954bb56a26b1d1b" },
+    { "path": "source/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs", "bytes": 13051, "sha256": "0df890730e1c80a6b9420eac1f1c9da2e82aad4fb04364a9e0d8c4e7ede2505e" },
+    { "path": "source/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs", "bytes": 12350, "sha256": "bdb16daf436efcd8c530136613e37374a05afa742aff864ab7810ad67c22262e" },
+    { "path": "validation-report.md", "bytes": 2092, "sha256": "cf8eec0bf83da739481fcddc5cf298366ad9c8f82ee95544fe68e5233bfa6369" },
+    { "path": "VERSION", "bytes": 6, "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03" }
+  ]
+}
