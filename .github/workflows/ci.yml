@@ -50,8 +50,9 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - name: Restore production solution
-        run: dotnet restore Task.sln
+      - name: Restore and audit production dependencies
+        shell: powershell
+        run: ./verification/Test-DependencyAudit.ps1
       - name: Verify production formatting
         run: dotnet format whitespace Task.sln --verify-no-changes --no-restore
       - name: Verify production project boundaries
