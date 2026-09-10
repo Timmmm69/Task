@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "DESK-04-network-conflict-resilience",
+  "version": "1.0.0",
+  "createdAt": "2026-09-10T22:55:26+03:00",
+  "sourceCommit": "f650718",
+  "files": [
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 70278,
+      "sha256": "97b932634acd4f59d2a9d9626a20d48460aff21e63c136925995d3b7020e4de2"
+    },
+    {
+      "path": "source/work/production/docs/DESK-04-network-conflict-resilience.md",
+      "bytes": 3203,
+      "sha256": "0d95c75a658bd0e15ca39b8f4935d666c0114cb3cffde4b6bd921af0384a3d9c"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/App.xaml.cs",
+      "bytes": 11890,
+      "sha256": "c678dd1479961d59aaf20f71299b2baa172e050abb8b959f92f27e7c8b006bd6"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs",
+      "bytes": 19249,
+      "sha256": "4d18520677d64bbd2feff9142becebe22c8f38555c03f99728d6b60a2a81f1d9"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs",
+      "bytes": 24241,
+      "sha256": "7126a2a8c0ea2d57f5217e580a46072b3bef84161776269a2fe392e30c5021c4"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Security/DesktopAuthenticatedGetExecutor.cs",
+      "bytes": 9738,
+      "sha256": "4b3b19d0c263e84eb89170e05ba88034754a4dcd4ca6ee17401dab5b39c59170"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Security/DesktopConnectivityService.cs",
+      "bytes": 2577,
+      "sha256": "7ccf405a61fa6e488b8fbd22a6c66ee987ace3270498fa14b7d71a931f56b573"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+      "bytes": 31202,
+      "sha256": "496871ccef47e4c1585c6bac61366539caf6c9a3c79dda97a6f02e161fd1c36e"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "bytes": 39483,
+      "sha256": "47c8a2fcf7919be79dedbdd7938f7c1a792ca0c13f3696e49255ce9a9723551f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 22474,
+      "sha256": "dfef81d5c1d52e5e0e6ed7440d19f3ca5bd43033e6f63997c37fda3646f40400"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "bytes": 28111,
+      "sha256": "601ab8330ba59fc62fdceebc913d0b590949d6b7db52d0b39588e334399ba7f4"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "bytes": 61948,
+      "sha256": "317bb2b8cfac3ed6534b34d015946f913d6d121240bd15e23f02e250292bdca6"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 29156,
+      "sha256": "eec97c29546d86de1fe16735eb9e36c1f5ff5c3ac4532169c6e179451400f455"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "bytes": 32939,
+      "sha256": "af5474d31e4dcc2a58decbebf6a0f1a9ebd0fb8d2e4340f9086dbb0e7b6f99c8"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarViewModelTests.cs",
+      "bytes": 16290,
+      "sha256": "dce9067920bb3da4954f2d33e357498fdfb6f8269572e4241fb30a5ca0545f8d"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/MainWindowViewModelTests.cs",
+      "bytes": 8927,
+      "sha256": "aef0ba977a745358c4c38c152c3dfb7352c7ef400e07d55e1855f4ec2ca11777"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "bytes": 14174,
+      "sha256": "d469ce42d6c1d6049d4c1b5488465ef6bbe6207ecbbb331e1acec00f70ba5a6c"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "bytes": 35483,
+      "sha256": "676d40993bbc36790522fe3fee76c5651a2ee08c2d5d9f1a82b1871297017c07"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs",
+      "bytes": 35621,
+      "sha256": "cdfe6238b033b0f918f821f3d37a5ac4a6a5217be287d7cca85bd69fd208ff66"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs",
+      "bytes": 13393,
+      "sha256": "d33e015381d1fed2be421d98b15553884972baba0cf0409b6ac7c0c6e29a7ae2"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 2665,
+      "sha256": "92db907e19464928e9d952ed19c4ecfb172fe9c68acb324c2db1677a575b539a"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}
