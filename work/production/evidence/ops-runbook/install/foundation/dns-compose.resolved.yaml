@@ -28,7 +28,7 @@ services:
       - no-new-privileges:true
     volumes:
       - type: bind
-        source: C:/Users/novik/AppData/Local/Temp/task-ops02-foundation-4c8168055eb34d91a1a65bac2377a959/assets/dns
+        source: C:/Users/novik/AppData/Local/Temp/task-ops02-foundation-7909e1ee97fa407c975db19f5c87b69c/assets/dns
         target: /etc/coredns
         read_only: true
 networks:

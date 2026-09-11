@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "action": "plan",
-  "generatedAtUtc": "2026-09-11T12:58:35.2083272+00:00",
+  "generatedAtUtc": "2026-09-11T15:04:04.6723264+00:00",
   "externalInterface": "eth0",
   "httpsEndpoint": "https://task.cleanroom.test:443",
   "employeeCidrs": [

@@ -117,7 +117,7 @@ try {
         syntheticOnly  = $true
         environment    = $environment
         gates          = $gateResults
-        phasesCovered  = @('A: synthetic parameters and assets', 'B: deterministic networks, DNS zone, firewall plan', 'C: PostgreSQL TLS bootstrap, migration v13, runtime grants', 'D: API/Worker/TLS proxy, HTTPS readiness, HSTS, negative TLS probes, certificate rotation, port inventory', 'SEC-03 source contract')
+         phasesCovered  = @('A: synthetic parameters and assets', 'B: deterministic networks, DNS zone, firewall plan', 'C: PostgreSQL TLS bootstrap, migration v14, runtime grants', 'D: API/Worker/TLS proxy, HTTPS readiness, HSTS, negative TLS probes, certificate rotation, port inventory', 'SEC-03 source contract')
         notCoveredHere = @('host firewall live apply (Linux-host step; verified in work/production/evidence/ops02-linux-firewall)', 'monitoring and alert delivery (step 5)', 'backup provisioning and drills (step 5)', 'desktop client release (step 5)', 'recovery incident drills (step 5)')
     }
     [IO.File]::WriteAllText((Join-Path $EvidenceDirectory 'install.json'), (($summary | ConvertTo-Json -Depth 12) + "`n"), [Text.UTF8Encoding]::new($false))

@@ -1,20 +1,17 @@
 {
   "schemaVersion": 1,
-  "checkedAtUtc": "2026-09-11T12:59:50.7602355+00:00",
+  "checkedAtUtc": "2026-09-11T15:05:20.8402898+00:00",
   "result": "PASS",
   "syntheticOnly": true,
   "environment": {
     "hostOs": "Майкрософт Windows 11 Домашняя",
     "dockerServer": "linux/amd64 29.6.1",
     "powershell": "7.6.6",
-    "gitCommit": "54278dd278f5fc83d565bf594750abcdbc3881a8",
+    "gitCommit": "f4e2c156c8f60fde026bf78d8a9ac485373bb1c6",
     "gitStatus": [
-      "?? outputs/20260911_task_container_release_0.6.0/",
+      " M work/production/deployment/ops-runbook/Invoke-OpsCleanRoomRepro.ps1",
       "?? outputs/flicker_teo_final/",
-      "?? work/flicker_teo_final/",
-      "?? work/production/deployment/ops-runbook/",
-      "?? work/production/docs/OPS-operations-gap-analysis.md",
-      "?? work/production/docs/OPS-operations-runbook.md"
+      "?? work/flicker_teo_final/"
     ],
     "images": [
       {
@@ -84,32 +81,32 @@
     {
       "name": "ops02-foundation",
       "result": "PASS",
-      "startedAtUtc": "2026-09-11T12:58:33.2259042+00:00",
-      "finishedAtUtc": "2026-09-11T12:58:35.6581648+00:00"
+      "startedAtUtc": "2026-09-11T15:03:55.5244644+00:00",
+      "finishedAtUtc": "2026-09-11T15:04:05.2007990+00:00"
     },
     {
       "name": "ops02-runtime-foundation",
       "result": "PASS",
-      "startedAtUtc": "2026-09-11T12:58:35.6589815+00:00",
-      "finishedAtUtc": "2026-09-11T12:58:40.2191305+00:00"
+      "startedAtUtc": "2026-09-11T15:04:05.2016936+00:00",
+      "finishedAtUtc": "2026-09-11T15:04:10.0430576+00:00"
     },
     {
       "name": "ops02-clean-room",
       "result": "PASS",
-      "startedAtUtc": "2026-09-11T12:58:40.2203622+00:00",
-      "finishedAtUtc": "2026-09-11T12:59:49.7121513+00:00"
+      "startedAtUtc": "2026-09-11T15:04:10.0439526+00:00",
+      "finishedAtUtc": "2026-09-11T15:05:19.8493452+00:00"
     },
     {
       "name": "sec03-contract",
       "result": "PASS",
-      "startedAtUtc": "2026-09-11T12:59:49.7123059+00:00",
-      "finishedAtUtc": "2026-09-11T12:59:50.7590417+00:00"
+      "startedAtUtc": "2026-09-11T15:05:19.8494824+00:00",
+      "finishedAtUtc": "2026-09-11T15:05:20.8393594+00:00"
     }
   ],
   "phasesCovered": [
     "A: synthetic parameters and assets",
     "B: deterministic networks, DNS zone, firewall plan",
-    "C: PostgreSQL TLS bootstrap, migration v13, runtime grants",
+    "C: PostgreSQL TLS bootstrap, migration v14, runtime grants",
     "D: API/Worker/TLS proxy, HTTPS readiness, HSTS, negative TLS probes, certificate rotation, port inventory",
     "SEC-03 source contract"
   ],

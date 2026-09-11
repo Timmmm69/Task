@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "checkedAtUtc": "2026-09-11T12:59:49.6111703+00:00",
+  "checkedAtUtc": "2026-09-11T15:05:19.7549330+00:00",
   "result": "PASS",
   "syntheticOnly": true,
   "runs": [
     {
       "run": 1,
       "result": "PASS",
-      "migrationInitialStatus": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-988f33c49a98 Creating \n Container ops02run1-task-database-migrator-run-988f33c49a98 Created \nTASK_DB_MIGRATOR code=MigrationsRequired expectedVersion=14 actualVersion=unknown",
-      "migrationApply": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-5d8482d9def1 Creating \n Container ops02run1-task-database-migrator-run-5d8482d9def1 Created \nTASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14",
-      "migrationStatus": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-9ca3e2c4f163 Creating \n Container ops02run1-task-database-migrator-run-9ca3e2c4f163 Created \nTASK_DB_MIGRATOR code=Ready expectedVersion=14 actualVersion=14",
+      "migrationInitialStatus": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-025ff1e5b8fc Creating \n Container ops02run1-task-database-migrator-run-025ff1e5b8fc Created \nTASK_DB_MIGRATOR code=MigrationsRequired expectedVersion=14 actualVersion=unknown",
+      "migrationApply": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-ee98efd94593 Creating \n Container ops02run1-task-database-migrator-run-ee98efd94593 Created \nTASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14",
+      "migrationStatus": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-9a64256efd85 Creating \n Container ops02run1-task-database-migrator-run-9a64256efd85 Created \nTASK_DB_MIGRATOR code=Ready expectedVersion=14 actualVersion=14",
       "httpsReady": true,
       "hsts": true,
       "databaseTls": "OPS02_DATABASE_TLS_OK verified=t|TLSv1.3 plaintextRejected=true",
@@ -23,9 +23,9 @@
     {
       "run": 2,
       "result": "PASS",
-      "migrationInitialStatus": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-c7031632e147 Creating \n Container ops02run2-task-database-migrator-run-c7031632e147 Created \nTASK_DB_MIGRATOR code=MigrationsRequired expectedVersion=14 actualVersion=unknown",
-      "migrationApply": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-28347ba172e9 Creating \n Container ops02run2-task-database-migrator-run-28347ba172e9 Created \nTASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14",
-      "migrationStatus": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-dc9987a9fc49 Creating \n Container ops02run2-task-database-migrator-run-dc9987a9fc49 Created \nTASK_DB_MIGRATOR code=Ready expectedVersion=14 actualVersion=14",
+      "migrationInitialStatus": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-ae1ae23955cb Creating \n Container ops02run2-task-database-migrator-run-ae1ae23955cb Created \nTASK_DB_MIGRATOR code=MigrationsRequired expectedVersion=14 actualVersion=unknown",
+      "migrationApply": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-61698ceb1c2f Creating \n Container ops02run2-task-database-migrator-run-61698ceb1c2f Created \nTASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14",
+      "migrationStatus": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-cf41e6ef8ae3 Creating \n Container ops02run2-task-database-migrator-run-cf41e6ef8ae3 Created \nTASK_DB_MIGRATOR code=Ready expectedVersion=14 actualVersion=14",
       "httpsReady": true,
       "hsts": true,
       "databaseTls": "OPS02_DATABASE_TLS_OK verified=t|TLSv1.3 plaintextRejected=true",
