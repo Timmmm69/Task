@@ -2,7 +2,8 @@
 param(
     [string]$Version = '0.4.0',
     [string]$GitSha,
-    [string]$ImageMapPath
+    [string]$ImageMapPath,
+    [string]$ImageScanMapPath
 )
 
 Set-StrictMode -Version Latest
@@ -438,6 +439,48 @@ if ($null -ne $failure) {
     Write-Host "[FAIL] $failure" -ForegroundColor Red
     Write-Host 'Container packaging verification FAILED; the Docker/PostgreSQL gate is not satisfied.' -ForegroundColor Red
     exit 1
+}
+
+if (-not [string]::IsNullOrWhiteSpace($ImageScanMapPath)) {
+    try {
+        $scanMap = [ordered]@{}
+
+        foreach ($target in $images.Keys) {
+            $imageId = (
+                (Invoke-Docker -Arguments @(
+                    'image',
+                    'inspect',
+                    $images[$target],
+                    '--format={{.Id}}'
+                )).Output -join ''
+            ).Trim()
+
+            if ($imageId -notmatch '^sha256:[0-9a-f]{64}$') {
+                throw "Could not resolve immutable local image ID for $target; actual value: '$imageId'."
+            }
+
+            $scanMap[$target] = $imageId
+        }
+
+        $scanMapFullPath = [IO.Path]::GetFullPath($ImageScanMapPath)
+        $scanMapDirectory = Split-Path -Parent $scanMapFullPath
+
+        if (-not [string]::IsNullOrWhiteSpace($scanMapDirectory)) {
+            New-Item -ItemType Directory -Path $scanMapDirectory -Force | Out-Null
+        }
+
+        [IO.File]::WriteAllText(
+            $scanMapFullPath,
+            (($scanMap | ConvertTo-Json -Depth 3) + [Environment]::NewLine),
+            [Text.UTF8Encoding]::new($false)
+        )
+
+        Write-Ok "Immutable local image scan map written to $scanMapFullPath."
+    }
+    catch {
+        Write-Host "[FAIL] Could not prepare container vulnerability scan input: $($_.Exception.Message)" -ForegroundColor Red
+        exit 1
+    }
 }
 
 Write-Ok 'All temporary containers, networks, volumes, and credential files were removed.'

@@ -62,9 +62,15 @@ jobs:
         run: dotnet build Task.sln --configuration Release --no-restore
       - name: Test production solution
         run: dotnet test Task.sln --configuration Release --no-build --no-restore
-      - name: Run production security gate
+      - name: Run production dependency and static security review
         shell: powershell
-        run: ./verification/Test-SecurityGate.ps1 -Configuration Release -NoBuild
+        run: >-
+          ./verification/Test-IndependentSecurityReview.ps1
+          -Configuration Release
+          -SkipRestore
+          -NoBuild
+          -SkipTests
+          -EvidenceDirectory "${{ runner.temp }}/sec04-review"
       - name: Verify production secrets and TLS contract
         shell: pwsh
         run: ./verification/Test-ProductionSecretsTls.Contract.ps1
@@ -118,12 +124,28 @@ jobs:
     name: Production container package
     needs: production
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
       - name: Verify production container package
         shell: pwsh
-        run: ./work/production/verification/Test-ContainerPackaging.ps1 -GitSha ${{ github.sha }}
+        run: >-
+          ./work/production/verification/Test-ContainerPackaging.ps1
+          -GitSha ${{ github.sha }}
+          -ImageScanMapPath "${{ runner.temp }}/task-image-map.json"
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
+        with:
+          version: v0.74.0
+          cache: true
+
+      - name: Scan production container vulnerabilities
+        shell: pwsh
+        run: >-
+          ./work/production/verification/Test-ContainerVulnerabilities.ps1
+          -ImageMapPath "${{ runner.temp }}/task-image-map.json"
+          -EvidenceDirectory "${{ runner.temp }}/task-image-vulnerabilities"
 
   delegation-policy:
     name: Delegation policy

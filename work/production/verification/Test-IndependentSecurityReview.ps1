@@ -4,6 +4,7 @@ param(
     [string]$Configuration = 'Release',
     [switch]$SkipRestore,
     [switch]$NoBuild,
+    [switch]$SkipTests,
     [string]$EvidenceDirectory
 )
 
@@ -128,8 +129,29 @@ Assert-ReviewCondition ($plaintextDesktopEndpoints.Count -eq 0) 'Desktop securit
 $corsEnablers = @(Select-String -LiteralPath $sourceFiles -Pattern '\.(?:AddCors|UseCors)\(')
 Assert-ReviewCondition ($corsEnablers.Count -eq 0) 'CORS was enabled without an approved browser-client decision.'
 
+$expectedAnonymousEndpointInventory = [ordered]@{
+    'src/Task.Api/Auth/AuthEndpoints.cs' = [ordered]@{
+        Count = 2
+        Routes = @('app.MapPost(LoginRoute', 'app.MapPost(RefreshRoute')
+    }
+    'src/Task.Api/Program.cs' = [ordered]@{
+        Count = 3
+        Routes = @('app.MapGet("/health/live"', 'app.MapGet("/metrics"', 'app.MapGet("/health/ready"')
+    }
+}
+$expectedAnonymousEndpointCount = 0
+foreach ($relativePath in $expectedAnonymousEndpointInventory.Keys) {
+    $contract = $expectedAnonymousEndpointInventory[$relativePath]
+    $content = Get-Content -LiteralPath (Join-Path $productionRoot $relativePath) -Raw
+    $anonymousCount = [regex]::Matches($content, '\.AllowAnonymous\(\)').Count
+    Assert-ReviewCondition ($anonymousCount -eq $contract['Count']) "Anonymous endpoint inventory changed in $relativePath."
+    foreach ($route in $contract['Routes']) {
+        Assert-ReviewCondition ($content.Contains($route)) "Expected anonymous endpoint route is missing in $relativePath."
+    }
+    $expectedAnonymousEndpointCount += $contract['Count']
+}
 $anonymousEndpoints = @(Select-String -LiteralPath $sourceFiles -Pattern '\.AllowAnonymous\(\)')
-Assert-ReviewCondition ($anonymousEndpoints.Count -eq 4) 'Anonymous endpoint inventory changed; expected login, refresh, live and ready only.'
+Assert-ReviewCondition ($anonymousEndpoints.Count -eq $expectedAnonymousEndpointCount) 'Anonymous endpoint inventory changed; expected login, refresh, live, metrics and ready only.'
 $checks.static_application_boundary = $true
 
 $authEndpoints = Get-Content -LiteralPath (Join-Path $productionRoot 'src/Task.Api/Auth/AuthEndpoints.cs') -Raw
@@ -151,22 +173,24 @@ Assert-ReviewCondition (([regex]::Matches($compose, '(?m)^\s+cap_drop:\s+\["ALL"
 Assert-ReviewCondition (([regex]::Matches($compose, 'no-new-privileges:true')).Count -ge 5) 'Runtime no-new-privileges is incomplete.'
 $checks.network_and_container_boundary = $true
 
-$testArguments = @(
-    'test', $solutionPath,
-    '--configuration', $Configuration,
-    '--no-restore',
-    '--verbosity', 'minimal',
-    '--logger', 'trx;LogFilePrefix=sec05',
-    '--results-directory', $EvidenceDirectory,
-    '--blame-hang',
-    '--blame-hang-timeout', '90s',
-    '--blame-hang-dump-type', 'none'
-)
-if ($NoBuild) {
-    $testArguments += '--no-build'
+if (-not $SkipTests) {
+    $testArguments = @(
+        'test', $solutionPath,
+        '--configuration', $Configuration,
+        '--no-restore',
+        '--verbosity', 'minimal',
+        '--logger', 'trx;LogFilePrefix=sec05',
+        '--results-directory', $EvidenceDirectory,
+        '--blame-hang',
+        '--blame-hang-timeout', '90s',
+        '--blame-hang-dump-type', 'none'
+    )
+    if ($NoBuild) {
+        $testArguments += '--no-build'
+    }
+    Invoke-LoggedDotNet $testArguments 'tests.log' | Out-Null
+    $checks.complete_solution_tests = $true
 }
-Invoke-LoggedDotNet $testArguments 'tests.log' | Out-Null
-$checks.complete_solution_tests = $true
 
 $checksPath = Join-Path $EvidenceDirectory 'checks.json'
 [IO.File]::WriteAllText(
