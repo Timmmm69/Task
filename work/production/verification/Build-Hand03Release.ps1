@@ -37,6 +37,7 @@ $revision = Invoke-Checked git @('-C',$repo,'rev-parse','HEAD')
 $productionTree = Invoke-Checked git @('-C',$repo,'rev-parse','HEAD:work/production')
 $epoch = [long](Invoke-Checked git @('-C',$repo,'show','-s','--format=%ct','HEAD'))
 $containerSource = Join-Path $repo 'outputs/20260911_task_container_release_0.6.0'
+$tempRoot = Join-Path $repo "work/tmp/hand03-$([Guid]::NewGuid().ToString('N'))"
 $containerRelease = Get-Content -LiteralPath (Join-Path $containerSource 'release.json') -Raw | ConvertFrom-Json
 if ($containerRelease.status -ne 'PASS') { throw 'Verified container release is not PASS.' }
 Invoke-Checked node @((Join-Path $repo 'work/production/deployment/containers/verify-release.mjs'),$containerSource) | Write-Host
@@ -63,12 +64,17 @@ try {
     $certificate = $request.CreateSelfSigned([DateTimeOffset]::FromUnixTimeSeconds($epoch).AddMinutes(-5), [DateTimeOffset]::FromUnixTimeSeconds($epoch).AddYears(2))
     [IO.File]::WriteAllBytes((Join-Path $output 'signature/signer.cer'), $certificate.Export([Security.Cryptography.X509Certificates.X509ContentType]::Cert))
 
-    & (Join-Path $repo 'work/production/deployment/desktop/Build-TaskDesktopRelease.ps1') -Version $Version -Certificate $certificate -OutputDirectory (Join-Path $output 'components/desktop') -MinimumClientVersion $Version
-    if ($LASTEXITCODE -ne 0) { throw 'Desktop release build failed.' }
-
     $sourceTar = Join-Path $output 'source/task-production.tar'
     Invoke-Checked git @('-C',$repo,'archive','--format=tar',"--mtime=@$epoch","--output=$sourceTar","$revision`:work/production") | Out-Null
     Write-Json (Join-Path $output 'source/source.json') ([ordered]@{ revision=$revision; productionTree=$productionTree; sourceDateEpoch=$epoch; archiveSha256=Get-Sha $sourceTar })
+    $buildSource = Join-Path $tempRoot 'production'
+    New-Item -ItemType Directory -Path $buildSource -Force | Out-Null
+    Push-Location -LiteralPath (Split-Path -Parent $sourceTar)
+    try { Invoke-Checked tar @('-xf',(Split-Path -Leaf $sourceTar),'-C',[IO.Path]::GetRelativePath((Split-Path -Parent $sourceTar),$buildSource)) | Out-Null }
+    finally { Pop-Location }
+    & (Join-Path $buildSource 'deployment/desktop/Build-TaskDesktopRelease.ps1') -Version $Version -Certificate $certificate -OutputDirectory (Join-Path $output 'components/desktop') -MinimumClientVersion $Version
+    if ($LASTEXITCODE -ne 0) { throw 'Desktop release build failed.' }
+    Remove-Item -LiteralPath $tempRoot -Recurse -Force
 
     $packages = [ordered]@{}
     foreach ($lockPath in Get-ChildItem -LiteralPath (Join-Path $repo 'work/production') -Filter packages.lock.json -Recurse -File) {
@@ -153,6 +159,8 @@ try {
     [ordered]@{ result='PASS'; package=$archive; sha256=Get-Sha $archive; manifestSha256=Get-Sha $manifestPath; signerThumbprint=$certificate.Thumbprint } | ConvertTo-Json
 }
 catch {
+    $allowedTemp = [IO.Path]::GetFullPath((Join-Path $repo 'work/tmp')) + [IO.Path]::DirectorySeparatorChar
+    if (([IO.Path]::GetFullPath($tempRoot)).StartsWith($allowedTemp,[StringComparison]::OrdinalIgnoreCase) -and (Test-Path -LiteralPath $tempRoot)) { Remove-Item -LiteralPath $tempRoot -Recurse -Force }
     if ($cleanupAllowed -and (Test-Path -LiteralPath $output)) { Remove-Item -LiteralPath $output -Recurse -Force }
     if ($cleanupAllowed -and (Test-Path -LiteralPath "$output.zip")) { Remove-Item -LiteralPath "$output.zip" -Force }
     throw
