@@ -471,7 +471,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -842,7 +842,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Провести сценарную проверку на Windows-матрице с синтетическим demo-набором, оформить findings disposition и внутренний release sign-off."
     },
     {
@@ -1082,14 +1082,19 @@
       "category": "handoff",
       "weight": 10,
       "criticality": "critical",
-      "status": "in_progress",
-      "progress": 25,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "Исторические outputs содержат version/manifest/SHA/validation packages",
-        "Единого production release candidate для полной передачи пока нет"
+        "outputs/20260911_hand03_release_candidate_1.0.0/manifest.json: единый RC 1.0.0, Git revision, 65 payload-файлов и версии компонентов",
+        "outputs/20260911_hand03_release_candidate_1.0.0/compliance/sbom.spdx.json: SPDX 2.3 для 46 NuGet-пакетов",
+        "outputs/20260911_hand03_release_candidate_1.0.0/compliance/third-party-licenses.csv: 46/46 строк лицензий",
+        "outputs/20260911_hand03_release_candidate_1.0.0/signature/signature.json: CMS SHA-256/RSA и pinned validation signer",
+        "outputs/20260911_hand03_release_candidate_1.0.0/validation-report.md: independent gate PASS",
+        "outputs/20260911_hand03_release_candidate_1.0.0.zip.sha256: SHA-256 полного 603584127-byte ZIP",
+        "work/production/verification/Verify-Hand03Release.ps1: 150 checks, полный read/reopen ZIP"
       ],
-      "note": "Package discipline есть, финальный продуктовый release ещё не сформирован.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "RC 1.0.0 связан с commit 6e158c8, включает 5 воспроизводимых OCI-образов server 0.6.0, подписанный self-contained desktop 1.0.0, source tar, SPDX/лицензии, manifest/SHA256SUMS и detached CMS. Независимый повторный gate: PASS 150/150. Внутренний self-signed validation signer доказывает целостность; корпоративная переподпись и timestamp остаются обязательным шагом production-публикации без изменения готовности handoff-пакета.",
+      "updated_at": "2026-09-11T18:51:00+03:00",
       "priority": 4,
       "dependencies": [
         "QA-03",
@@ -1097,8 +1102,8 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
+      "recommended_order": 0,
+      "next_action": "Поддерживать RC актуальным при изменении production tree; перед production-публикацией пересобрать desktop корпоративным code-signing сертификатом и RFC 3161 timestamp, затем повторить Verify-Release.ps1."
     },
     {
       "id": "HAND-04",
@@ -1120,7 +1125,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Подготовить короткие user/admin guides и воспроизвести их шаги на чистой VM с demo-данными."
     },
     {
@@ -1145,7 +1150,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
     }
   ],

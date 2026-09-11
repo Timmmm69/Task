@@ -1,0 +1,1029 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "Task-1.0.0",
+  "documentNamespace": "https://task.local/spdx/hand-03/1.0.0/2a2dcc6f2ff8d1bdb0411ddb514cec29baabd568",
+  "creationInfo": {
+    "created": "2026-09-11T15:49:19Z",
+    "creators": [
+      "Tool: Task-HAND-03-builder-1.0"
+    ]
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Hosting.WindowsServices-10.0.0",
+      "name": "Microsoft.Extensions.Hosting.WindowsServices",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Hosting.WindowsServices/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Hosting.WindowsServices@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.DependencyInjection-10.0.11",
+      "name": "Microsoft.Extensions.DependencyInjection",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.DependencyInjection@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.DependencyInjection.Abstractions-10.0.11",
+      "name": "Microsoft.Extensions.DependencyInjection.Abstractions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection.Abstractions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.DependencyInjection.Abstractions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Diagnostics-10.0.11",
+      "name": "Microsoft.Extensions.Diagnostics",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Diagnostics@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Diagnostics.Abstractions-10.0.11",
+      "name": "Microsoft.Extensions.Diagnostics.Abstractions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.Abstractions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Diagnostics.Abstractions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.FileProviders.Abstractions-10.0.11",
+      "name": "Microsoft.Extensions.FileProviders.Abstractions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Abstractions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.FileProviders.Abstractions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.FileProviders.Physical-10.0.11",
+      "name": "Microsoft.Extensions.FileProviders.Physical",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Physical/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.FileProviders.Physical@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.FileSystemGlobbing-10.0.11",
+      "name": "Microsoft.Extensions.FileSystemGlobbing",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.FileSystemGlobbing/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.FileSystemGlobbing@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Hosting.Abstractions-10.0.11",
+      "name": "Microsoft.Extensions.Hosting.Abstractions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Hosting.Abstractions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Hosting.Abstractions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging-10.0.11",
+      "name": "Microsoft.Extensions.Logging",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.Abstractions-10.0.11",
+      "name": "Microsoft.Extensions.Logging.Abstractions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.Abstractions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.Configuration-10.0.11",
+      "name": "Microsoft.Extensions.Logging.Configuration",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Configuration/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.Configuration@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.Console-10.0.11",
+      "name": "Microsoft.Extensions.Logging.Console",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Console/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.Console@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.Debug-10.0.11",
+      "name": "Microsoft.Extensions.Logging.Debug",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Debug/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.Debug@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.EventLog-10.0.11",
+      "name": "Microsoft.Extensions.Logging.EventLog",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.EventLog/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.EventLog@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.EventSource-10.0.11",
+      "name": "Microsoft.Extensions.Logging.EventSource",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.EventSource/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.EventSource@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Options-10.0.11",
+      "name": "Microsoft.Extensions.Options",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Options/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Options@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Options.ConfigurationExtensions-10.0.11",
+      "name": "Microsoft.Extensions.Options.ConfigurationExtensions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Options.ConfigurationExtensions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Options.ConfigurationExtensions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Primitives-10.0.11",
+      "name": "Microsoft.Extensions.Primitives",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Primitives/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Primitives@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-System.Diagnostics.EventLog-10.0.11",
+      "name": "System.Diagnostics.EventLog",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/System.Diagnostics.EventLog/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.Diagnostics.EventLog@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.UserSecrets-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.UserSecrets",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.UserSecrets/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.UserSecrets@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.Json-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.Json",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Json/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.Json@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.FileExtensions-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.FileExtensions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.FileExtensions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.FileExtensions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.EnvironmentVariables-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.EnvironmentVariables",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.EnvironmentVariables/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.EnvironmentVariables@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.IdentityModel.JsonWebTokens-8.22.0",
+      "name": "Microsoft.IdentityModel.JsonWebTokens",
+      "versionInfo": "8.22.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.IdentityModel.JsonWebTokens/8.22.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.JsonWebTokens@8.22.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.IdentityModel.Tokens-8.22.0",
+      "name": "Microsoft.IdentityModel.Tokens",
+      "versionInfo": "8.22.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.IdentityModel.Tokens/8.22.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Tokens@8.22.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-BouncyCastle.Cryptography-2.7.0",
+      "name": "BouncyCastle.Cryptography",
+      "versionInfo": "2.7.0",
+      "downloadLocation": "https://www.nuget.org/packages/BouncyCastle.Cryptography/2.7.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/BouncyCastle.Cryptography@2.7.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Bcl.Cryptography-10.0.2",
+      "name": "Microsoft.Bcl.Cryptography",
+      "versionInfo": "10.0.2",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Bcl.Cryptography/10.0.2",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Bcl.Cryptography@10.0.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.IdentityModel.Abstractions-8.22.0",
+      "name": "Microsoft.IdentityModel.Abstractions",
+      "versionInfo": "8.22.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.IdentityModel.Abstractions/8.22.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Abstractions@8.22.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.IdentityModel.Logging-8.22.0",
+      "name": "Microsoft.IdentityModel.Logging",
+      "versionInfo": "8.22.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.IdentityModel.Logging/8.22.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.IdentityModel.Logging@8.22.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Npgsql-10.0.3",
+      "name": "Npgsql",
+      "versionInfo": "10.0.3",
+      "downloadLocation": "https://www.nuget.org/packages/Npgsql/10.0.3",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "PostgreSQL",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Npgsql@10.0.3"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-System.ServiceProcess.ServiceController-10.0.0",
+      "name": "System.ServiceProcess.ServiceController",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/System.ServiceProcess.ServiceController/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.ServiceProcess.ServiceController@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.Abstractions-10.0.0",
+      "name": "Microsoft.Extensions.Configuration.Abstractions",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Abstractions/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.Abstractions@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-System.ServiceProcess.ServiceController-10.0.11",
+      "name": "System.ServiceProcess.ServiceController",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/System.ServiceProcess.ServiceController/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/System.ServiceProcess.ServiceController@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.Binder-10.0.0",
+      "name": "Microsoft.Extensions.Configuration.Binder",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Binder/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.Binder@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration-10.0.0",
+      "name": "Microsoft.Extensions.Configuration",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.Abstractions-8.0.0",
+      "name": "Microsoft.Extensions.Logging.Abstractions",
+      "versionInfo": "8.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/8.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.Abstractions@8.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Primitives-10.0.0",
+      "name": "Microsoft.Extensions.Primitives",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Primitives/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Primitives@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Hosting-10.0.11",
+      "name": "Microsoft.Extensions.Hosting",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Hosting/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Hosting@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Hosting.WindowsServices-10.0.11",
+      "name": "Microsoft.Extensions.Hosting.WindowsServices",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Hosting.WindowsServices/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Hosting.WindowsServices@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration-10.0.11",
+      "name": "Microsoft.Extensions.Configuration",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.Abstractions-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.Abstractions",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Abstractions/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.Abstractions@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.Binder-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.Binder",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Binder/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.Binder@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Configuration.CommandLine-10.0.11",
+      "name": "Microsoft.Extensions.Configuration.CommandLine",
+      "versionInfo": "10.0.11",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Configuration.CommandLine/10.0.11",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Configuration.CommandLine@10.0.11"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.DependencyInjection.Abstractions-10.0.0",
+      "name": "Microsoft.Extensions.DependencyInjection.Abstractions",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection.Abstractions/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Package-Microsoft.Extensions.Logging.Abstractions-10.0.0",
+      "name": "Microsoft.Extensions.Logging.Abstractions",
+      "versionInfo": "10.0.0",
+      "downloadLocation": "https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/10.0.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:nuget/Microsoft.Extensions.Logging.Abstractions@10.0.0"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Hosting.WindowsServices-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.DependencyInjection-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.DependencyInjection.Abstractions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Diagnostics-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Diagnostics.Abstractions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.FileProviders.Abstractions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.FileProviders.Physical-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.FileSystemGlobbing-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Hosting.Abstractions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.Abstractions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.Configuration-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.Console-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.Debug-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.EventLog-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.EventSource-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Options-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Options.ConfigurationExtensions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Primitives-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-System.Diagnostics.EventLog-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.UserSecrets-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.Json-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.FileExtensions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.EnvironmentVariables-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.IdentityModel.JsonWebTokens-8.22.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.IdentityModel.Tokens-8.22.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-BouncyCastle.Cryptography-2.7.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Bcl.Cryptography-10.0.2"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.IdentityModel.Abstractions-8.22.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.IdentityModel.Logging-8.22.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Npgsql-10.0.3"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-System.ServiceProcess.ServiceController-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.Abstractions-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-System.ServiceProcess.ServiceController-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.Binder-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.Abstractions-8.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Primitives-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Hosting-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Hosting.WindowsServices-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.Abstractions-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.Binder-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Configuration.CommandLine-10.0.11"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.DependencyInjection.Abstractions-10.0.0"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Microsoft.Extensions.Logging.Abstractions-10.0.0"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "algorithm": "CMS-SHA256-RSA",
+  "trust": "internal-self-signed-validation",
+  "manifestSha256": "1203d4fb1a40c810fad443ead8cc6152ce4d90910940e3cf1e1366abbcc57215",
+  "signerThumbprint": "0CA60C002A379AC5CF8FAD09FF9E5A02512457B8",
+  "certificateSha256": "3205d4a519bd0e5774efb9f3cace6709f5c95412e3f412d032ed178e41a92368"
+}

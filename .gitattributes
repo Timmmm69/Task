@@ -15,3 +15,7 @@
 /outputs/20260909_prod05_work_links_search_notifications_1.0.0.zip binary
 /outputs/20260909_prod05_work_links_search_notifications_1.0.0.zip.sha256 text eol=lf
 /work/production/verification/Build-Prod05Package.py text eol=lf
+
+# HAND-03 release metadata and evidence are themselves byte-addressed by the signed manifest.
+/outputs/20260911_hand03_release_candidate_1.0.0/** binary
+/outputs/20260911_hand03_release_candidate_1.0.0.zip.sha256 text eol=lf

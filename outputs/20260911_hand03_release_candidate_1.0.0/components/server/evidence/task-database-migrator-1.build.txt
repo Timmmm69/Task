@@ -1,0 +1,184 @@
+#0 building with "taskrelease9179e03f6904-1" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 7.19kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#2 DONE 0.0s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720 done
+#3 CACHED
+
+#4 [internal] load metadata for mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21
+#4 DONE 0.0s
+
+#5 [internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#5 DONE 0.0s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 162B done
+#6 DONE 0.0s
+
+#7 [task-database-migrator-runtime 1/2] FROM mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21
+#7 resolve mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21 0.0s done
+#7 CACHED
+
+#8 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#8 resolve mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 21.00kB 0.0s done
+#9 DONE 0.0s
+
+#10 [build  8/15] COPY src/Task.Worker/Task.Worker.csproj src/Task.Worker/packages.lock.json src/Task.Worker/
+#10 CACHED
+
+#11 [build  3/15] COPY deployment/containers/NuGet.Config ./NuGet.Config
+#11 CACHED
+
+#12 [build 12/15] RUN dotnet restore src/Task.Api/Task.Api.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.Worker/Task.Worker.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.BackupAgent/Task.BackupAgent.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --runtime linux-x64 --locked-mode     && dotnet restore verification/container-task-store/Task.ContainerValidation.csproj --runtime linux-x64 --locked-mode
+#12 CACHED
+
+#13 [build  2/15] WORKDIR /src
+#13 CACHED
+
+#14 [build  5/15] COPY src/Task.Application/Task.Application.csproj src/Task.Application/packages.lock.json src/Task.Application/
+#14 CACHED
+
+#15 [build 10/15] COPY src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj src/Task.DatabaseMigrator/packages.lock.json src/Task.DatabaseMigrator/
+#15 CACHED
+
+#16 [build 11/15] COPY verification/container-task-store/Task.ContainerValidation.csproj verification/container-task-store/packages.lock.json verification/container-task-store/
+#16 CACHED
+
+#17 [build 13/15] COPY src/ src/
+#17 CACHED
+
+#18 [build  4/15] COPY src/Task.Domain/Task.Domain.csproj src/Task.Domain/packages.lock.json src/Task.Domain/
+#18 CACHED
+
+#19 [build  6/15] COPY src/Task.Infrastructure/Task.Infrastructure.csproj src/Task.Infrastructure/packages.lock.json src/Task.Infrastructure/
+#19 CACHED
+
+#20 [build  9/15] COPY src/Task.BackupAgent/Task.BackupAgent.csproj src/Task.BackupAgent/packages.lock.json src/Task.BackupAgent/
+#20 CACHED
+
+#21 [build 14/15] COPY verification/container-task-store/ verification/container-task-store/
+#21 CACHED
+
+#22 [build  7/15] COPY src/Task.Api/Task.Api.csproj src/Task.Api/packages.lock.json src/Task.Api/
+#22 CACHED
+
+#23 [build 15/15] RUN dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-api -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.Worker/Task.Worker.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-worker -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.BackupAgent/Task.BackupAgent.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-backup-agent -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-database-migrator -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish verification/container-task-store/Task.ContainerValidation.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-container-validation -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true
+#23 CACHED
+
+#24 [task-database-migrator-runtime 2/2] RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources     && apt-get -o Acquire::Retries=3 update     && apt-get -o Acquire::Retries=3 install -y --no-install-recommends         libgssapi-krb5-2=1.20.1-6ubuntu2.8         libkrb5-3=1.20.1-6ubuntu2.8         libk5crypto3=1.20.1-6ubuntu2.8         libkrb5support0=1.20.1-6ubuntu2.8         libkeyutils1=1.6.3-3build1     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log         /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache         /var/lib/dpkg/status-old /var/lib/dpkg/lock /var/lib/dpkg/triggers/Lock
+#24 0.687 Get:1 https://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+#24 0.819 Get:2 https://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+#24 1.227 Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+#24 1.332 Get:4 https://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1242 kB]
+#24 1.415 Get:5 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+#24 1.607 Get:6 https://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+#24 1.644 Get:7 https://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+#24 1.865 Get:8 https://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [50.0 kB]
+#24 1.870 Get:9 https://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1530 kB]
+#24 2.090 Get:10 https://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+#24 2.167 Get:11 https://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1796 kB]
+#24 4.234 Get:12 https://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+#24 4.257 Get:13 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1564 kB]
+#24 4.390 Get:14 https://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.8 kB]
+#24 4.395 Get:15 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1908 kB]
+#24 4.545 Get:16 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2151 kB]
+#24 4.781 Get:17 https://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [671 B]
+#24 4.781 Get:18 https://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [35.9 kB]
+#24 4.788 Get:19 https://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [48.9 kB]
+#24 4.844 Fetched 32.6 MB in 5s (6862 kB/s)
+#24 4.844 Reading package lists...
+#24 5.611 Reading package lists...
+#24 6.410 Building dependency tree...
+#24 6.541 Reading state information...
+#24 6.713 Suggested packages:
+#24 6.713   krb5-doc krb5-user
+#24 6.713 Recommended packages:
+#24 6.713   krb5-locales
+#24 6.741 The following NEW packages will be installed:
+#24 6.741   libgssapi-krb5-2 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0
+#24 7.372 0 upgraded, 5 newly installed, 0 to remove and 33 not upgraded.
+#24 7.372 Need to get 616 kB of archives.
+#24 7.372 After this operation, 1918 kB of additional disk space will be used.
+#24 7.372 Get:1 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libkrb5support0 amd64 1.20.1-6ubuntu2.8 [34.7 kB]
+#24 7.664 Get:2 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libk5crypto3 amd64 1.20.1-6ubuntu2.8 [81.9 kB]
+#24 7.800 Get:3 https://archive.ubuntu.com/ubuntu noble/main amd64 libkeyutils1 amd64 1.6.3-3build1 [9490 B]
+#24 7.818 Get:4 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libkrb5-3 amd64 1.20.1-6ubuntu2.8 [348 kB]
+#24 8.012 Get:5 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgssapi-krb5-2 amd64 1.20.1-6ubuntu2.8 [143 kB]
+#24 8.161 debconf: delaying package configuration, since apt-utils is not installed
+#24 8.192 Fetched 616 kB in 1s (476 kB/s)
+#24 8.215 Selecting previously unselected package libkrb5support0:amd64.
+#24 8.215 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 6111 files and directories currently installed.)
+#24 8.220 Preparing to unpack .../libkrb5support0_1.20.1-6ubuntu2.8_amd64.deb ...
+#24 8.227 Unpacking libkrb5support0:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.257 Selecting previously unselected package libk5crypto3:amd64.
+#24 8.258 Preparing to unpack .../libk5crypto3_1.20.1-6ubuntu2.8_amd64.deb ...
+#24 8.263 Unpacking libk5crypto3:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.293 Selecting previously unselected package libkeyutils1:amd64.
+#24 8.294 Preparing to unpack .../libkeyutils1_1.6.3-3build1_amd64.deb ...
+#24 8.298 Unpacking libkeyutils1:amd64 (1.6.3-3build1) ...
+#24 8.328 Selecting previously unselected package libkrb5-3:amd64.
+#24 8.329 Preparing to unpack .../libkrb5-3_1.20.1-6ubuntu2.8_amd64.deb ...
+#24 8.333 Unpacking libkrb5-3:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.371 Selecting previously unselected package libgssapi-krb5-2:amd64.
+#24 8.372 Preparing to unpack .../libgssapi-krb5-2_1.20.1-6ubuntu2.8_amd64.deb ...
+#24 8.376 Unpacking libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.409 Setting up libkeyutils1:amd64 (1.6.3-3build1) ...
+#24 8.420 Setting up libkrb5support0:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.429 Setting up libk5crypto3:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.439 Setting up libkrb5-3:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.448 Setting up libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.8) ...
+#24 8.460 Processing triggers for libc-bin (2.39-0ubuntu8.8) ...
+#24 DONE 8.5s
+
+#25 [task-database-migrator 1/2] WORKDIR /app
+#25 DONE 0.0s
+
+#26 [task-database-migrator 2/2] COPY --from=build --chown=app:app /publish/task-database-migrator/ ./
+#26 DONE 0.1s
+
+#27 exporting to oci image format
+#27 exporting layers
+#27 exporting layers 0.3s done
+#27 rewriting layers with source-date-epoch 1789129194 (2026-09-11 12:19:54 +0000 UTC)
+#27 rewriting layers with source-date-epoch 1789129194 (2026-09-11 12:19:54 +0000 UTC) 0.2s done
+#27 exporting manifest sha256:7fd4b27316bfa4e8fa255399ed42a9dbe8dda79f07832b05057d9ce4fe842c4d done
+#27 exporting config sha256:e703d6740ffa42efa861d211238fe0da5b1ad31ba35e6fbe3125a1fa15201577 done
+#27 exporting attestation manifest sha256:ed53a72312a13c24120e85177f9ccdb98e337adc3e2bbb59ed52470e8813b64e 0.0s done
+#27 exporting manifest list sha256:b1a9429360f7bfde83ec27aaa82e1ca9a700ffa26c9066531096c123778e71ee done
+#27 sending tarball
+#27 sending tarball 0.6s done
+#27 DONE 1.1s
+
+#28 resolving provenance for metadata file
+#28 DONE 0.0s

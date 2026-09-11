@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "product": "Task.Desktop",
+  "channel": "stable",
+  "clientVersion": "1.0.0",
+  "minimumClientVersion": "1.0.0",
+  "minimumServerVersion": "1.0.0",
+  "rolloutPercent": 100,
+  "rolloutSalt": "65da8c04437a479c98af7a922dcc7904",
+  "packageFile": "Task.Desktop-1.0.0-win-x64.zip",
+  "releaseUri": null,
+  "packageSha256": "90e17e20223deebe0bae10f20b88490cc104bf7e068d8d125a3af3e6453534c6",
+  "publisherThumbprint": "0CA60C002A379AC5CF8FAD09FF9E5A02512457B8",
+  "publishedAtUtc": "2026-09-11T15:49:56.1877047+00:00"
+}

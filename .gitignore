@@ -32,3 +32,10 @@ __pycache__/
 *.pfx
 *.pgpass
 work/production/deployment/security/local/
+
+# HAND-03 retains large deliverable blobs locally; signed hashes and evidence are tracked.
+outputs/20260911_hand03_release_candidate_1.0.0.zip
+outputs/20260911_hand03_release_candidate_1.0.0/components/server/*.oci.tar
+outputs/20260911_hand03_release_candidate_1.0.0/components/desktop/*.zip
+outputs/20260911_hand03_release_candidate_1.0.0/components/desktop/Task.Desktop-*/app/
+outputs/20260911_hand03_release_candidate_1.0.0/source/*.tar

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "product": "Task.Desktop",
+  "clientVersion": "1.0.0",
+  "architecture": "win-x64",
+  "apiVersions": [
+    "v1"
+  ],
+  "minimumServerVersion": "1.0.0",
+  "publisherThumbprint": "0CA60C002A379AC5CF8FAD09FF9E5A02512457B8",
+  "createdAtUtc": "2026-09-11T15:49:53.8453969+00:00",
+  "files": [
+    {
+      "path": "app/D3DCompiler_47_cor3.dll",
+      "size": 4741488,
+      "sha256": "a05f99734f7c4822fefc12b367af21fd0976ed6608752fb1e1e80b6ece7ecbbb",
+      "authenticode": false
+    },
+    {
+      "path": "app/PenImc_cor3.dll",
+      "size": 157992,
+      "sha256": "8052e85cd5a3ae9a939872b32de5b90a827456a21d8ccfc4d0c76599f1fcc217",
+      "authenticode": false
+    },
+    {
+      "path": "app/PresentationNative_cor3.dll",
+      "size": 1235240,
+      "sha256": "42e2e543c17e1b37499baf00d956433b8afb655348ec0fae89c926fb7d149b6e",
+      "authenticode": false
+    },
+    {
+      "path": "app/Task.Desktop.exe",
+      "size": 133753800,
+      "sha256": "66f500d2d8ba33ca1f6cb760f55b67d5afc9417c8871efa6080504f2c8d4305b",
+      "authenticode": true
+    },
+    {
+      "path": "app/vcruntime140_cor3.dll",
+      "size": 124544,
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066",
+      "authenticode": false
+    },
+    {
+      "path": "app/wpfgfx_cor3.dll",
+      "size": 1956136,
+      "sha256": "0ba67759d290f5d75ff92979394077dcd533fe484511db3ea161d7e102246a73",
+      "authenticode": false
+    },
+    {
+      "path": "Install-TaskDesktop.ps1",
+      "size": 5799,
+      "sha256": "6ad1278c3dc7e6ef301dc6d68a8f1928c04201ce3891989409cdeacb889d310f",
+      "authenticode": true
+    },
+    {
+      "path": "tools/Invoke-TaskDesktopUpdate.ps1",
+      "size": 7185,
+      "sha256": "5885e444784ad0b0ac9da14cc9a3fe9c3474bee27e840f0a2b84fc785b541c89",
+      "authenticode": true
+    },
+    {
+      "path": "tools/Rollback-TaskDesktop.ps1",
+      "size": 4321,
+      "sha256": "9a9c6535f06a65e2c6f9a30820ba6de4d5a3f4005b6f15b6ca8d95d46a3eaecc",
+      "authenticode": true
+    },
+    {
+      "path": "tools/TaskDesktop.Release.psm1",
+      "size": 10501,
+      "sha256": "f0adcbd84f606a27eef4b3e014186c68222154427d5056323939cf39fd92fbf7",
+      "authenticode": true
+    }
+  ]
+}

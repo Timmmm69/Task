@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "task": "HAND-03",
+  "releaseVersion": "1.0.0",
+  "classification": "internal-release-candidate",
+  "sourceRevision": "6e158c8ce25c8b4040dfa8eaff7eacff6f1bbf39",
+  "productionTree": "2a2dcc6f2ff8d1bdb0411ddb514cec29baabd568",
+  "sourceDateEpoch": 1789141759,
+  "components": {
+    "server": {
+      "version": "0.6.0",
+      "sourceRevision": "63edf6f794c3c17c402d9c557978f9ab0a47d969",
+      "status": "PASS",
+      "images": [
+        "task-api",
+        "task-worker",
+        "task-backup-agent",
+        "task-database-migrator",
+        "task-container-validation"
+      ]
+    },
+    "desktop": {
+      "version": "1.0.0",
+      "architecture": "win-x64",
+      "publisherThumbprint": "0CA60C002A379AC5CF8FAD09FF9E5A02512457B8"
+    }
+  },
+  "compliance": {
+    "sbom": "SPDX-2.3",
+    "packages": 46,
+    "licenseRows": 46
+  },
+  "files": [
+    {
+      "path": "compliance/sbom.spdx.json",
+      "size": 40299,
+      "sha256": "93d94a563529d0c943654dca7338c985430c5665e6aba1a1114b9e888b9d54ba"
+    },
+    {
+      "path": "compliance/third-party-licenses.csv",
+      "size": 4996,
+      "sha256": "b71672bc5f7fb40a2beda8044766713ee37e8950e86794795fa62270a1af434e"
+    },
+    {
+      "path": "components/desktop/channel.json",
+      "size": 554,
+      "sha256": "5b2c2f568f2131172215f4f49d112cc56b4362ddceb04e9026a7bfc518aae7d9"
+    },
+    {
+      "path": "components/desktop/channel.json.signature.json",
+      "size": 2000,
+      "sha256": "3d885f07929ac33905035a18b57c08cff2aeb81cc8ae40db2c9d40e51e0336b9"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0-win-x64.zip",
+      "size": 76372517,
+      "sha256": "90e17e20223deebe0bae10f20b88490cc104bf7e068d8d125a3af3e6453534c6"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/app/D3DCompiler_47_cor3.dll",
+      "size": 4741488,
+      "sha256": "a05f99734f7c4822fefc12b367af21fd0976ed6608752fb1e1e80b6ece7ecbbb"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/app/PenImc_cor3.dll",
+      "size": 157992,
+      "sha256": "8052e85cd5a3ae9a939872b32de5b90a827456a21d8ccfc4d0c76599f1fcc217"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/app/PresentationNative_cor3.dll",
+      "size": 1235240,
+      "sha256": "42e2e543c17e1b37499baf00d956433b8afb655348ec0fae89c926fb7d149b6e"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/app/Task.Desktop.exe",
+      "size": 133753800,
+      "sha256": "66f500d2d8ba33ca1f6cb760f55b67d5afc9417c8871efa6080504f2c8d4305b"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/app/vcruntime140_cor3.dll",
+      "size": 124544,
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/app/wpfgfx_cor3.dll",
+      "size": 1956136,
+      "sha256": "0ba67759d290f5d75ff92979394077dcd533fe484511db3ea161d7e102246a73"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/Install-TaskDesktop.ps1",
+      "size": 5799,
+      "sha256": "6ad1278c3dc7e6ef301dc6d68a8f1928c04201ce3891989409cdeacb889d310f"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/release-manifest.json",
+      "size": 2296,
+      "sha256": "5fb3fb1f3081c1fa582be6f8fd9bdcbb0ca0d65f8c4db15f232b0c0a59532bb9"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/release-signature.json",
+      "size": 2000,
+      "sha256": "ae0367f7b093afbfcbd3a4a703adcb0ea2ca9559e2a156619f8f5d880f506f30"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/tools/Invoke-TaskDesktopUpdate.ps1",
+      "size": 7185,
+      "sha256": "5885e444784ad0b0ac9da14cc9a3fe9c3474bee27e840f0a2b84fc785b541c89"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/tools/Rollback-TaskDesktop.ps1",
+      "size": 4321,
+      "sha256": "9a9c6535f06a65e2c6f9a30820ba6de4d5a3f4005b6f15b6ca8d95d46a3eaecc"
+    },
+    {
+      "path": "components/desktop/Task.Desktop-1.0.0/tools/TaskDesktop.Release.psm1",
+      "size": 10501,
+      "sha256": "f0adcbd84f606a27eef4b3e014186c68222154427d5056323939cf39fd92fbf7"
+    },
+    {
+      "path": "components/server/evidence/builder-1.txt",
+      "size": 1963,
+      "sha256": "e65fa95130b6d9808fc241ebbb409101d1fb6f1a0611c85a3dd6bbf0de1f239c"
+    },
+    {
+      "path": "components/server/evidence/builder-2.txt",
+      "size": 1963,
+      "sha256": "2d31dbef6e4d3bf62574da54e7fb14d29af29f984e72bb0ee02677d8125d2214"
+    },
+    {
+      "path": "components/server/evidence/runtime-gate.txt",
+      "size": 4381,
+      "sha256": "f5bf388658b5343251c6804999f9714b642249812e33e65de548371af01bb5ab"
+    },
+    {
+      "path": "components/server/evidence/task-api-1.build.txt",
+      "size": 33954,
+      "sha256": "654677c349566bb328ea356eec96f0468deab1de763045f252b7d019b8f757ca"
+    },
+    {
+      "path": "components/server/evidence/task-api-1.buildx.json",
+      "size": 85811,
+      "sha256": "622ab85382fd97e96cbc26d2c981ee83c6e1d8bc52ad070adb08ec176b1ea016"
+    },
+    {
+      "path": "components/server/evidence/task-api-1.oci.json",
+      "size": 71691,
+      "sha256": "e0216ba60505e70d21de20f98f677dbb3de48e78c4d2e7d906bcf753e127f1cc"
+    },
+    {
+      "path": "components/server/evidence/task-api-2.build.txt",
+      "size": 32212,
+      "sha256": "eb61360c18f5934fdaeed484682565cb7598239994a2bc4fd902d54450f361ee"
+    },
+    {
+      "path": "components/server/evidence/task-api-2.buildx.json",
+      "size": 94181,
+      "sha256": "37837672c897b43c014b59b248cf7af47ca219a15ec7e63f5917d2f702aaf023"
+    },
+    {
+      "path": "components/server/evidence/task-api-2.oci.json",
+      "size": 71691,
+      "sha256": "967e9a67c02ef21fe33b0dd9c5b8fe60f10321f14df13cee9debd08f98b72c78"
+    },
+    {
+      "path": "components/server/evidence/task-backup-agent-1.build.txt",
+      "size": 6187,
+      "sha256": "e76c2348745f490e0ce7659b269e8e299688248471f08f11914b7b2aef3a8d21"
+    },
+    {
+      "path": "components/server/evidence/task-backup-agent-1.buildx.json",
+      "size": 56522,
+      "sha256": "729b6338b59035ecf2626323ab4ce72cfeeeb03b41e141c7031c4795424df7a3"
+    },
+    {
+      "path": "components/server/evidence/task-backup-agent-1.oci.json",
+      "size": 63958,
+      "sha256": "281ed6dd662ba62d7b5c690097d6d9c69094376f8971f266a5b4dee2b34ccf94"
+    },
+    {
+      "path": "components/server/evidence/task-backup-agent-2.build.txt",
+      "size": 6187,
+      "sha256": "f8171660ea7141988e40dccc50c222a01c0357840d4d74309aaeeea908783ba6"
+    },
+    {
+      "path": "components/server/evidence/task-backup-agent-2.buildx.json",
+      "size": 54480,
+      "sha256": "be1027ecb2eda5d0367171760fb450f398ce1e47d9f339d3c10c325cef83a81d"
+    },
+    {
+      "path": "components/server/evidence/task-backup-agent-2.oci.json",
+      "size": 63959,
+      "sha256": "2686a344e386b4870c99af995f5e16ec5eae1c29f5cae4e1b25c80f3e4aa5c8a"
+    },
+    {
+      "path": "components/server/evidence/task-container-validation-1.build.txt",
+      "size": 6224,
+      "sha256": "c55cc471b7f4c7d8a22a23942c83f50a7cede9b7d9b5f397d85b6f84dc1bc79b"
+    },
+    {
+      "path": "components/server/evidence/task-container-validation-1.buildx.json",
+      "size": 54498,
+      "sha256": "8586ac8f00e648c79c3765e83e8be1a46a4381e926875dd529c651a97af73348"
+    },
+    {
+      "path": "components/server/evidence/task-container-validation-1.oci.json",
+      "size": 63184,
+      "sha256": "90514e632f18e24fd033c91169ef29ebc3d7379862ed4fb8535e035fed5ce480"
+    },
+    {
+      "path": "components/server/evidence/task-container-validation-2.build.txt",
+      "size": 6219,
+      "sha256": "534c92488508c151f4fd5a2203e6f3ac71b6d1382fa318e4ddb2af735b69c741"
+    },
+    {
+      "path": "components/server/evidence/task-container-validation-2.buildx.json",
+      "size": 56574,
+      "sha256": "04e753cb84a6fdc7b64192e1e3365c20b036e6474b1411f266604824ac24f8a6"
+    },
+    {
+      "path": "components/server/evidence/task-container-validation-2.oci.json",
+      "size": 63184,
+      "sha256": "29ff3ccdfb4cdc2140428437fe8099885c1f9b81a765ad1dd85fb778c4b464e6"
+    },
+    {
+      "path": "components/server/evidence/task-database-migrator-1.build.txt",
+      "size": 12242,
+      "sha256": "f640fc81638a94464dbe08843b9ae3f0c3420e491300e526ef3e3807043b5c9d"
+    },
+    {
+      "path": "components/server/evidence/task-database-migrator-1.buildx.json",
+      "size": 69541,
+      "sha256": "a81bd1cb82079b067a47e1242045b78eb48767eb505cab3ba9311ed5a057ad46"
+    },
+    {
+      "path": "components/server/evidence/task-database-migrator-1.oci.json",
+      "size": 70569,
+      "sha256": "517b5efdbab94317b14983d836bb90709ef4c83c8f7dd5663f803689bcad2149"
+    },
+    {
+      "path": "components/server/evidence/task-database-migrator-2.build.txt",
+      "size": 12247,
+      "sha256": "0f3a5c8213dfb34a3e900be95cac4e45c64f6f88e55ec000c8d15e6c275802b3"
+    },
+    {
+      "path": "components/server/evidence/task-database-migrator-2.buildx.json",
+      "size": 69601,
+      "sha256": "f9d29280d5e61254d9a0fa718c74fb50540313b68e2602c634a7e947397dcd72"
+    },
+    {
+      "path": "components/server/evidence/task-database-migrator-2.oci.json",
+      "size": 70569,
+      "sha256": "4e8478e06017937dadf59ab2fa5c662426a247e0c2eb7a3bf06b1ad803ad7c74"
+    },
+    {
+      "path": "components/server/evidence/task-worker-1.build.txt",
+      "size": 6335,
+      "sha256": "79ea0db7ce2ddc97702097822c5427b5ef35cafd1d761ad17923770ebe728262"
+    },
+    {
+      "path": "components/server/evidence/task-worker-1.buildx.json",
+      "size": 58556,
+      "sha256": "5d5cb9a4be9f04adb9bddd9f3f7336a10db21c3e89896d383acdb566f1f5d6a4"
+    },
+    {
+      "path": "components/server/evidence/task-worker-1.oci.json",
+      "size": 63909,
+      "sha256": "74663d65682d5a412d610f34fbaed96c1a73032920e959ba3eb5b45358746c06"
+    },
+    {
+      "path": "components/server/evidence/task-worker-2.build.txt",
+      "size": 6170,
+      "sha256": "c5ccc9bab2506769ae79b3c14e1bafc80b474d62c92dde32f970f88134c269aa"
+    },
+    {
+      "path": "components/server/evidence/task-worker-2.buildx.json",
+      "size": 56520,
+      "sha256": "c9271ac349a32ee629e9a4a5b84acdf03f024a5d4a73a85de981a86f5e65e00d"
+    },
+    {
+      "path": "components/server/evidence/task-worker-2.oci.json",
+      "size": 63909,
+      "sha256": "ad04883c06ff80c20dc4d84c5d081b1f82e6440ccd20494939d36fd24e7c983c"
+    },
+    {
+      "path": "components/server/image-map.json",
+      "size": 498,
+      "sha256": "91a9911f904e0334a0bf930748047f468df13724fb60ed676b6d46149a0f30cb"
+    },
+    {
+      "path": "components/server/release.json",
+      "size": 1608,
+      "sha256": "8eddf74bf38cc5892c142c6119bc4f8e61723ec12774df86a32db54986a0e8b7"
+    },
+    {
+      "path": "components/server/source.json",
+      "size": 2461,
+      "sha256": "ca91ce67674d37203ddeea279d4ecda7b7970627022aff771b67484b0751260f"
+    },
+    {
+      "path": "components/server/task-api.oci.tar",
+      "size": 103139840,
+      "sha256": "7ecb4dea0d517d7b61d82bb11474bf68ab0a94e1c707454e3549431202de7f8f"
+    },
+    {
+      "path": "components/server/task-backup-agent.oci.tar",
+      "size": 90054144,
+      "sha256": "81316cc53061bcf3452cd69a9b6cdfb2bdda2687b449c1bb3509d86a31fc2c9a"
+    },
+    {
+      "path": "components/server/task-container-validation.oci.tar",
+      "size": 89610752,
+      "sha256": "9cb3224229a9c43082335789186e17e80a2fdc5e97d58a26555645183dd569bc"
+    },
+    {
+      "path": "components/server/task-database-migrator.oci.tar",
+      "size": 90362880,
+      "sha256": "0bc2ef846b7bd68850770ef8c023f160754f366fc4183aa66b8591afb740908a"
+    },
+    {
+      "path": "components/server/task-worker.oci.tar",
+      "size": 90056704,
+      "sha256": "31e94201af7c9e90d9d2d5b071d10d2dc4f9d0596add4ea3745000eed5e18e5c"
+    },
+    {
+      "path": "components/server/validation-report.md",
+      "size": 580,
+      "sha256": "bf571ea5aa4e47784df60fd1ac2181921db8fc0c8bfa137c6813641592cb943a"
+    },
+    {
+      "path": "README.md",
+      "size": 3470,
+      "sha256": "e515a76fb4b89e4b26254ceef60e1584e0753ddcbbd20cb3413cbf570dd11b57"
+    },
+    {
+      "path": "signature/signer.cer",
+      "size": 1040,
+      "sha256": "3205d4a519bd0e5774efb9f3cace6709f5c95412e3f412d032ed178e41a92368"
+    },
+    {
+      "path": "source/source.json",
+      "size": 251,
+      "sha256": "01ef60b1c5dc5ac7e97c0445f441069743f1161fec1a3fab5f43b768195522d2"
+    },
+    {
+      "path": "source/task-production.tar",
+      "size": 32962560,
+      "sha256": "3e9267f73ecde8975dc7265b2da4ce321ad828d5cf35a6fdfed8835ba22bb857"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 1033,
+      "sha256": "4898a34f63866a1ad62a9192f8467b2561488c1e48206607fab7f7c56f0aab49"
+    },
+    {
+      "path": "Verify-Release.ps1",
+      "size": 8654,
+      "sha256": "dc69866cb009e20b5bbc0022837ba524edfbca1b6372d9c94734b9b8ff7cbc15"
+    }
+  ]
+}
