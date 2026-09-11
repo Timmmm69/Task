@@ -9,9 +9,9 @@ $dindImage = 'docker@sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f
 $powerShellImage = 'mcr.microsoft.com/powershell@sha256:810c4f1e0c9d23022c3ec18c50a6205ee4b60766f1739d329b2948df1fd7d5b0'
 $postgresImage = 'postgres@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777'
 $images = [ordered]@{
-    api = 'task-api@sha256:90986d76833f9395a30f7ff22e537d485cd8d9d7beb51eec7fe2b727add69951'
-    migrator = 'task-database-migrator@sha256:7fd4b27316bfa4e8fa255399ed42a9dbe8dda79f07832b05057d9ce4fe842c4d'
-    worker = 'task-release/task-worker@sha256:b317197ea5d22fe8bc9cefc20c140b7e755333b10241d32298fdbdb5696f3b22'
+    api = 'task-api@sha256:7f336af765f39495e846819683d3383351b7622cbc2e4b0f1cdd765428d5285f'
+    migrator = 'task-database-migrator@sha256:b1a9429360f7bfde83ec27aaa82e1ca9a700ffa26c9066531096c123778e71ee'
+    worker = 'task-release/task-worker@sha256:baa794ae133f9d911bb8a881d9c7567c57cc8d5ccfc22d9c23b4898339378a6d'
     postgres = $postgresImage
     tlsProxy = 'nginxinc/nginx-unprivileged@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6'
 }
