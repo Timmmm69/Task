@@ -162,7 +162,9 @@ Assert-ReviewCondition ($abuseProtector -match 'DefaultMaxConcurrentPasswordChec
 Assert-ReviewCondition ($abuseProtector -match '_accounts' -and $abuseProtector -match '_addresses' -and $abuseProtector -match '_global') 'Layered login throttling is incomplete.'
 $checks.login_abuse_controls = $true
 
-$compose = Get-Content -LiteralPath (Join-Path $productionRoot 'deployment/containers/compose.validation.yaml') -Raw
+$compose = (Get-Content -LiteralPath (Join-Path $productionRoot 'deployment/containers/compose.validation.yaml') -Raw).
+    Replace("`r`n", "`n").
+    Replace("`r", "`n")
 $postgresMatch = [regex]::Match($compose, '(?ms)^  postgres:\r?\n(?<body>.*?)(?=^  [a-zA-Z0-9_-]+:)')
 Assert-ReviewCondition $postgresMatch.Success 'PostgreSQL service block was not found.'
 Assert-ReviewCondition ($postgresMatch.Groups['body'].Value -notmatch '(?m)^\s+ports:') 'PostgreSQL is published to the host.'
