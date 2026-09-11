@@ -1,0 +1,90 @@
+{
+  "package": "SEC-04 dependency and recurring security hardening",
+  "version": "1.0.0",
+  "date": "2026-09-11",
+  "roadmap_id": "SEC-04",
+  "base_revision": "8652264b187efcdece91f8ba6e184e44516a16a2",
+  "validated_revision": "c4b88dfd904cf46a28595710f303b748dddae3be",
+  "dashboard_revision": "b814f07336fe6b8ee07e8d5879fda080d60b09df",
+  "state": "implemented-validated-and-pushed-to-main",
+  "revisions": [
+    "646d90a8b1f664e304d4690a225fc0b4432b51de",
+    "c023738aca86c33d0942fad1d344bc8189f70216",
+    "8225ecddefb80eea71270c70ace64c0568df37a1",
+    "becd1f3b8622f9c6be0e361b6f22c66be4a4faa5",
+    "771ee9e80c35ff41eed251fe954d33dc2621e4d9",
+    "c4b88dfd904cf46a28595710f303b748dddae3be",
+    "b814f07336fe6b8ee07e8d5879fda080d60b09df"
+  ],
+  "scope_diff": "git diff --name-status 8652264b187efcdece91f8ba6e184e44516a16a2..b814f07336fe6b8ee07e8d5879fda080d60b09df",
+  "hosted_runs": [
+    {
+      "workflow": "Security hardening",
+      "run_id": 34577240447,
+      "revision": "771ee9e80c35ff41eed251fe954d33dc2621e4d9",
+      "result": "success",
+      "url": "https://github.com/Timmmm69/Task/actions/runs/34577240447"
+    },
+    {
+      "workflow": "CI",
+      "run_id": 34578360556,
+      "revision": "c4b88dfd904cf46a28595710f303b748dddae3be",
+      "result": "success",
+      "url": "https://github.com/Timmmm69/Task/actions/runs/34578360556"
+    }
+  ],
+  "implementation_files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "6869b7829471e061c9f229eebd6885534c90735cace34188e6983da377c56af0",
+      "bytes": 5035
+    },
+    {
+      "path": ".github/workflows/security-hardening.yml",
+      "sha256": "145d9c23456033197e2ab35b64e9420b28a96495f8eb069c6c65470a349205f3",
+      "bytes": 1382
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "886ecd90ee10052c4c5b1206de5d38e5e32dc4cab6eee4f3c03c6c3c2b48428f",
+      "bytes": 71837
+    },
+    {
+      "path": "work/production/verification/Test-DependencyAudit.ps1",
+      "sha256": "54310a57522fc7116f98445b59b88ff081a3fe9ea3f8ba85bc1659c37bd4d513",
+      "bytes": 1694
+    },
+    {
+      "path": "work/production/verification/Test-ProductionSecretsTls.ps1",
+      "sha256": "baee29b27be643f825bb46e99689748fcea1e1df1e96f51b6ff8f4e4ecb25776",
+      "bytes": 19171
+    },
+    {
+      "path": "work/production/src/Task.Application/packages.lock.json",
+      "sha256": "801424025e42d92dbafccd328f60f0298f50261ae1a72372dc83a44eb5b475bb",
+      "bytes": 3842
+    },
+    {
+      "path": "work/production/src/Task.Domain/packages.lock.json",
+      "sha256": "89e9f9e0b38331225238916b4128e71ea195fb47cee24b64ec0997539c2ad71a",
+      "bytes": 96
+    }
+  ],
+  "package_files": [
+    {
+      "path": "README.md",
+      "sha256": "42f2667227dd8ff978987944a85e480e2f24bf1f46ffa2ec9771bb0c559a85d9",
+      "bytes": 647
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "5bf4d855af79386fa09a8df716acdf032084e47138e952c7a5732755b89ee286",
+      "bytes": 2996
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "bytes": 6
+    }
+  ]
+}
