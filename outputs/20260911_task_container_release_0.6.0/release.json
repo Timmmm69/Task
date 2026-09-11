@@ -1,0 +1,37 @@
+{
+  "revision": "63edf6f794c3c17c402d9c557978f9ab0a47d969",
+  "failure": null,
+  "images": [
+    {
+      "configDigest": "sha256:96a70ac04c2b8ce93630b23755a76dceb4286a9226c230583aa3a170562593a9",
+      "target": "task-api",
+      "imageDigest": "sha256:90986d76833f9395a30f7ff22e537d485cd8d9d7beb51eec7fe2b727add69951"
+    },
+    {
+      "configDigest": "sha256:696be6b24eb0b9e481c4e750e16b6e98f97c6cc791257394fe983532e8db61b3",
+      "target": "task-worker",
+      "imageDigest": "sha256:b317197ea5d22fe8bc9cefc20c140b7e755333b10241d32298fdbdb5696f3b22"
+    },
+    {
+      "configDigest": "sha256:1aa12523dcbedb4e9e1a0a07a1a804ad0754214df378065f7c50e911597dd683",
+      "target": "task-backup-agent",
+      "imageDigest": "sha256:008263892c11fea7a2d090e81ad864b69d80e72bf9d0d2dfd0b89ef13c26e326"
+    },
+    {
+      "configDigest": "sha256:e703d6740ffa42efa861d211238fe0da5b1ad31ba35e6fbe3125a1fa15201577",
+      "target": "task-database-migrator",
+      "imageDigest": "sha256:7fd4b27316bfa4e8fa255399ed42a9dbe8dda79f07832b05057d9ce4fe842c4d"
+    },
+    {
+      "configDigest": "sha256:e43cc90e223fbed41d77cac6d92f508cc8e6b2f372c7da3b8c02ff22c5720c83",
+      "target": "task-container-validation",
+      "imageDigest": "sha256:d8ba953dc49dc2e58defd18d3db77bdf9c12101bfd322922549d320c4131efb8"
+    }
+  ],
+  "independentBuilds": 2,
+  "reproducibility": "linux/amd64 image manifest, config and layers; attestation timestamps may differ",
+  "version": "0.6.0",
+  "verificationRevision": "63edf6f794c3c17c402d9c557978f9ab0a47d969",
+  "schemaVersion": 1,
+  "status": "PASS"
+}

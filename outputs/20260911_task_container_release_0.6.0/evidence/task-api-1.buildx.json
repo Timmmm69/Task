@@ -1,0 +1,2471 @@
+{
+  "buildx.build.provenance": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/docker/dockerfile@1.7?digest=sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720"
+        }
+      },
+      {
+        "uri": "pkg:docker/docker/dockerfile@1.7?digest=sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720",
+        "digest": {
+          "sha256": "b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720"
+        }
+      },
+      {
+        "uri": "pkg:docker/mcr.microsoft.com/dotnet/aspnet@10.0.11-noble-amd64?digest=sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36"
+        }
+      },
+      {
+        "uri": "pkg:docker/mcr.microsoft.com/dotnet/sdk@10.0.400-noble-amd64?digest=sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {},
+      "parameters": {
+        "frontend": "gateway.v0",
+        "args": {
+          "build-arg:GIT_SHA": "63edf6f794c3c17c402d9c557978f9ab0a47d969",
+          "build-arg:SOURCE_DATE_EPOCH": "1789129194",
+          "build-arg:VERSION": "0.6.0",
+          "cmdline": "docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720",
+          "source": "docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720",
+          "target": "task-api"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ]
+      },
+      "environment": {
+        "platform": "linux/amd64"
+      }
+    },
+    "buildConfig": {
+      "llbDefinition": [
+        {
+          "id": "step0",
+          "op": {
+            "Op": {
+              "source": {
+                "identifier": "docker-image://mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36"
+              }
+            },
+            "platform": {
+              "Architecture": "amd64",
+              "OS": "linux"
+            },
+            "constraints": {}
+          }
+        },
+        {
+          "id": "step1",
+          "op": {
+            "Op": {
+              "exec": {
+                "meta": {
+                  "args": [
+                    "/bin/sh",
+                    "-c",
+                    "sed -i 's|http://archive\\.ubuntu\\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\\.ubuntu\\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources     \u0026\u0026 apt-get -o Acquire::Retries=3 update     \u0026\u0026 apt-get -o Acquire::Retries=3 install -y --no-install-recommends         libgssapi-krb5-2=1.20.1-6ubuntu2.8         libkrb5-3=1.20.1-6ubuntu2.8         libk5crypto3=1.20.1-6ubuntu2.8         libkrb5support0=1.20.1-6ubuntu2.8         libkeyutils1=1.6.3-3build1     \u0026\u0026 rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log         /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache         /var/lib/dpkg/status-old /var/lib/dpkg/lock /var/lib/dpkg/triggers/Lock"
+                  ],
+                  "env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                    "APP_UID=1654",
+                    "ASPNETCORE_HTTP_PORTS=8080",
+                    "DOTNET_RUNNING_IN_CONTAINER=true",
+                    "DOTNET_VERSION=10.0.11",
+                    "ASPNET_VERSION=10.0.11"
+                  ],
+                  "cwd": "/",
+                  "user": "root",
+                  "removeMountStubsRecursive": true
+                },
+                "mounts": [
+                  {
+                    "dest": "/"
+                  }
+                ]
+              }
+            },
+            "platform": {
+              "Architecture": "amd64",
+              "OS": "linux"
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step0:0"
+          ]
+        },
+        {
+          "id": "step2",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": -1,
+                    "output": 0,
+                    "Action": {
+                      "mkdir": {
+                        "path": "/app",
+                        "mode": 493,
+                        "makeParents": true,
+                        "owner": {
+                          "user": {
+                            "User": {}
+                          }
+                        },
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step1:0"
+          ]
+        },
+        {
+          "id": "step3",
+          "op": {
+            "Op": {
+              "source": {
+                "identifier": "docker-image://mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef"
+              }
+            },
+            "platform": {
+              "Architecture": "amd64",
+              "OS": "linux"
+            },
+            "constraints": {}
+          }
+        },
+        {
+          "id": "step4",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": -1,
+                    "output": 0,
+                    "Action": {
+                      "mkdir": {
+                        "path": "/src",
+                        "mode": 493,
+                        "makeParents": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step3:0"
+          ]
+        },
+        {
+          "id": "step5",
+          "op": {
+            "Op": {
+              "source": {
+                "identifier": "local://context",
+                "attrs": {
+                  "local.excludepatterns": "[\"**/bin\",\"**/obj\",\"**/*.user\",\"**/*.suo\",\".vs\",\"docs\",\"tests\",\"verification/*.ps1\",\"deployment/containers/compose.validation.yaml\"]",
+                  "local.followpaths": "[\"deployment/containers/NuGet.Config\",\"src\",\"src/Task.Api/Task.Api.csproj\",\"src/Task.Api/packages.lock.json\",\"src/Task.Application/Task.Application.csproj\",\"src/Task.Application/packages.lock.json\",\"src/Task.BackupAgent/Task.BackupAgent.csproj\",\"src/Task.BackupAgent/packages.lock.json\",\"src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj\",\"src/Task.DatabaseMigrator/packages.lock.json\",\"src/Task.Domain/Task.Domain.csproj\",\"src/Task.Domain/packages.lock.json\",\"src/Task.Infrastructure/Task.Infrastructure.csproj\",\"src/Task.Infrastructure/packages.lock.json\",\"src/Task.Worker/Task.Worker.csproj\",\"src/Task.Worker/packages.lock.json\",\"verification/container-task-store\",\"verification/container-task-store/Task.ContainerValidation.csproj\",\"verification/container-task-store/packages.lock.json\"]",
+                  "local.sharedkeyhint": "context"
+                }
+              }
+            },
+            "constraints": {}
+          }
+        },
+        {
+          "id": "step6",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/deployment/containers/NuGet.Config",
+                        "dest": "/src/NuGet.Config",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step4:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step7",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Domain/Task.Domain.csproj",
+                        "dest": "/src/src/Task.Domain/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Domain/packages.lock.json",
+                        "dest": "/src/src/Task.Domain/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step6:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step8",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Application/Task.Application.csproj",
+                        "dest": "/src/src/Task.Application/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Application/packages.lock.json",
+                        "dest": "/src/src/Task.Application/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step7:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step9",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Infrastructure/Task.Infrastructure.csproj",
+                        "dest": "/src/src/Task.Infrastructure/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Infrastructure/packages.lock.json",
+                        "dest": "/src/src/Task.Infrastructure/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step8:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step10",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Api/Task.Api.csproj",
+                        "dest": "/src/src/Task.Api/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Api/packages.lock.json",
+                        "dest": "/src/src/Task.Api/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step9:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step11",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Worker/Task.Worker.csproj",
+                        "dest": "/src/src/Task.Worker/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.Worker/packages.lock.json",
+                        "dest": "/src/src/Task.Worker/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step10:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step12",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.BackupAgent/Task.BackupAgent.csproj",
+                        "dest": "/src/src/Task.BackupAgent/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.BackupAgent/packages.lock.json",
+                        "dest": "/src/src/Task.BackupAgent/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step11:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step13",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj",
+                        "dest": "/src/src/Task.DatabaseMigrator/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src/Task.DatabaseMigrator/packages.lock.json",
+                        "dest": "/src/src/Task.DatabaseMigrator/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step12:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step14",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": -1,
+                    "Action": {
+                      "copy": {
+                        "src": "/verification/container-task-store/Task.ContainerValidation.csproj",
+                        "dest": "/src/verification/container-task-store/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  },
+                  {
+                    "input": 2,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/verification/container-task-store/packages.lock.json",
+                        "dest": "/src/verification/container-task-store/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step13:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step15",
+          "op": {
+            "Op": {
+              "exec": {
+                "meta": {
+                  "args": [
+                    "/bin/sh",
+                    "-c",
+                    "dotnet restore src/Task.Api/Task.Api.csproj --runtime linux-x64 --locked-mode     \u0026\u0026 dotnet restore src/Task.Worker/Task.Worker.csproj --runtime linux-x64 --locked-mode     \u0026\u0026 dotnet restore src/Task.BackupAgent/Task.BackupAgent.csproj --runtime linux-x64 --locked-mode     \u0026\u0026 dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --runtime linux-x64 --locked-mode     \u0026\u0026 dotnet restore verification/container-task-store/Task.ContainerValidation.csproj --runtime linux-x64 --locked-mode"
+                  ],
+                  "env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                    "APP_UID=1654",
+                    "ASPNETCORE_HTTP_PORTS=8080",
+                    "DOTNET_RUNNING_IN_CONTAINER=true",
+                    "DOTNET_VERSION=10.0.11",
+                    "ASPNET_VERSION=10.0.11",
+                    "DOTNET_GENERATE_ASPNET_CERTIFICATE=false",
+                    "DOTNET_NOLOGO=true",
+                    "DOTNET_SDK_VERSION=10.0.400",
+                    "DOTNET_USE_POLLING_FILE_WATCHER=true",
+                    "NUGET_XMLDOC_MODE=skip",
+                    "POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetSDK-Ubuntu-24.04",
+                    "VERSION=0.6.0",
+                    "GIT_SHA=63edf6f794c3c17c402d9c557978f9ab0a47d969"
+                  ],
+                  "cwd": "/src",
+                  "removeMountStubsRecursive": true
+                },
+                "mounts": [
+                  {
+                    "dest": "/"
+                  }
+                ]
+              }
+            },
+            "platform": {
+              "Architecture": "amd64",
+              "OS": "linux"
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step14:0"
+          ]
+        },
+        {
+          "id": "step16",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/src",
+                        "dest": "/src/src/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step15:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step17",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/verification/container-task-store",
+                        "dest": "/src/verification/container-task-store/",
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step16:0",
+            "step5:0"
+          ]
+        },
+        {
+          "id": "step18",
+          "op": {
+            "Op": {
+              "exec": {
+                "meta": {
+                  "args": [
+                    "/bin/sh",
+                    "-c",
+                    "dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-api -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     \u0026\u0026 dotnet publish src/Task.Worker/Task.Worker.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-worker -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     \u0026\u0026 dotnet publish src/Task.BackupAgent/Task.BackupAgent.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-backup-agent -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     \u0026\u0026 dotnet publish src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-database-migrator -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true     \u0026\u0026 dotnet publish verification/container-task-store/Task.ContainerValidation.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-container-validation -p:Version=${VERSION} -p:SourceRevisionId=${GIT_SHA} -p:ContinuousIntegrationBuild=true -p:Deterministic=true"
+                  ],
+                  "env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                    "APP_UID=1654",
+                    "ASPNETCORE_HTTP_PORTS=8080",
+                    "DOTNET_RUNNING_IN_CONTAINER=true",
+                    "DOTNET_VERSION=10.0.11",
+                    "ASPNET_VERSION=10.0.11",
+                    "DOTNET_GENERATE_ASPNET_CERTIFICATE=false",
+                    "DOTNET_NOLOGO=true",
+                    "DOTNET_SDK_VERSION=10.0.400",
+                    "DOTNET_USE_POLLING_FILE_WATCHER=true",
+                    "NUGET_XMLDOC_MODE=skip",
+                    "POWERSHELL_DISTRIBUTION_CHANNEL=PSDocker-DotnetSDK-Ubuntu-24.04",
+                    "VERSION=0.6.0",
+                    "GIT_SHA=63edf6f794c3c17c402d9c557978f9ab0a47d969"
+                  ],
+                  "cwd": "/src",
+                  "removeMountStubsRecursive": true
+                },
+                "mounts": [
+                  {
+                    "dest": "/"
+                  }
+                ]
+              }
+            },
+            "platform": {
+              "Architecture": "amd64",
+              "OS": "linux"
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step17:0"
+          ]
+        },
+        {
+          "id": "step19",
+          "op": {
+            "Op": {
+              "file": {
+                "actions": [
+                  {
+                    "input": 0,
+                    "secondaryInput": 1,
+                    "output": 0,
+                    "Action": {
+                      "copy": {
+                        "src": "/publish/task-api",
+                        "dest": "/app/",
+                        "owner": {
+                          "user": {
+                            "User": {
+                              "byName": {
+                                "name": "app"
+                              }
+                            }
+                          },
+                          "group": {
+                            "User": {
+                              "byName": {
+                                "name": "app"
+                              }
+                            }
+                          }
+                        },
+                        "mode": -1,
+                        "followSymlink": true,
+                        "dirCopyContents": true,
+                        "createDestPath": true,
+                        "allowWildcard": true,
+                        "allowEmptyWildcard": true,
+                        "timestamp": -1
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "constraints": {}
+          },
+          "inputs": [
+            "step2:0",
+            "step18:0"
+          ]
+        },
+        {
+          "id": "step20",
+          "op": {
+            "Op": {}
+          },
+          "inputs": [
+            "step19:0"
+          ]
+        }
+      ],
+      "digestMapping": {
+        "sha256:15ac165b443b22121a8c7e184634962286d9b7ba4e5ebb814352fa54545775b9": "step9",
+        "sha256:181114216fefd4101db3b9a9dbdc27bc3df4d858dd2e5b47fed28f152c7615d4": "step15",
+        "sha256:19ffab3dc36d78194cf42839de37f186d4996e46f4e7df73f83d1cc54335cb33": "step4",
+        "sha256:1dcdce0100d71a548e3f6cca50031cfae5d70ca9751e558c4ab9f67fb5957fd3": "step1",
+        "sha256:2fdac830e66789400bf3beab66de9dd75c121772e77f944b4f6e6bdbabdcb217": "step14",
+        "sha256:3095dacd329ddfb305c60292f4647d06ebbfacd6f684327713dfbf870eb18e15": "step2",
+        "sha256:4d83672c1214e382e475c11ad3520bb78645eee47230e5829120af049d28fc14": "step17",
+        "sha256:5178aa8f4b907ded6426d85df3e23b74af9fcc7046810244922530c9cb4a551e": "step3",
+        "sha256:54c2712ff3a4ccae6026bd46fc2952b0539f7ce13883a0e42fd3ae68172a1c32": "step7",
+        "sha256:5bdfdf7f7ec7bb556f73958ca6eaa68750dc316803d421102d5fe56849c27de1": "step0",
+        "sha256:636d9037692fbaf01135551e3e254cda69293a7b13f187f3f91a6176c78819a8": "step11",
+        "sha256:762b5c82a4f208625192b4c679e7651e81d8526b2d4537b7f8edccc2de434f00": "step12",
+        "sha256:776389e873020ff9a0bd2015478bcbb0d650044b92c0ffe7e03b042251c62a06": "step8",
+        "sha256:b88f7de2b0b8df60aee97f9ec055d0f74b949f443834cd8d07b84971563421ad": "step19",
+        "sha256:ba14a7d4c50f707ed73b9c23b6cc0db38adcab04d1fcb2e9bd17f4597f38686a": "step16",
+        "sha256:ba9647a9485b59580eb4e95d5af622b0be978f47f43ba00184180ef827c926d1": "step13",
+        "sha256:bae2c4cf4488c48e699e276cdb44704e5f14b033d2e36a24553dd7d7f17a92b5": "step10",
+        "sha256:bfbfadf0d904157467c41ba47e2228bc93140625975933137028c251465b4950": "step20",
+        "sha256:d8dad173c189e4985134124430d32da706b293cb07c2c298ce53032b044c5212": "step6",
+        "sha256:f411961cec6f8f80f09c22883c90989df0b5126579c8a71d114ccef91bc3a900": "step18",
+        "sha256:f970154546218b5993a2269804bb240853cebc6c8e6e5609b073528a8cbc34d5": "step5"
+      }
+    },
+    "metadata": {
+      "buildInvocationID": "3yi2kadg4gfsm2nxjbxqzn1iq",
+      "buildStartedOn": "2026-09-11T12:20:13.450871994Z",
+      "buildFinishedOn": "2026-09-11T12:26:48.725878378Z",
+      "completeness": {
+        "parameters": true,
+        "environment": true,
+        "materials": false
+      },
+      "reproducible": false,
+      "https://mobyproject.org/buildkit@v1#metadata": {
+        "source": {
+          "locations": {
+            "step0": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 37
+                      },
+                      "end": {
+                        "line": 37
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step1": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 39
+                      },
+                      "end": {
+                        "line": 39
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 40
+                      },
+                      "end": {
+                        "line": 40
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 41
+                      },
+                      "end": {
+                        "line": 41
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 42
+                      },
+                      "end": {
+                        "line": 42
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 43
+                      },
+                      "end": {
+                        "line": 43
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 44
+                      },
+                      "end": {
+                        "line": 44
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 45
+                      },
+                      "end": {
+                        "line": 45
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 46
+                      },
+                      "end": {
+                        "line": 46
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 47
+                      },
+                      "end": {
+                        "line": 47
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 48
+                      },
+                      "end": {
+                        "line": 48
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 49
+                      },
+                      "end": {
+                        "line": 49
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step10": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 16
+                      },
+                      "end": {
+                        "line": 16
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step11": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 17
+                      },
+                      "end": {
+                        "line": 17
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step12": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 18
+                      },
+                      "end": {
+                        "line": 18
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step13": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 19
+                      },
+                      "end": {
+                        "line": 19
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step14": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 20
+                      },
+                      "end": {
+                        "line": 20
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step15": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 22
+                      },
+                      "end": {
+                        "line": 22
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 23
+                      },
+                      "end": {
+                        "line": 23
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 24
+                      },
+                      "end": {
+                        "line": 24
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 25
+                      },
+                      "end": {
+                        "line": 25
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 26
+                      },
+                      "end": {
+                        "line": 26
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step16": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 28
+                      },
+                      "end": {
+                        "line": 28
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step17": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 29
+                      },
+                      "end": {
+                        "line": 29
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step18": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 31
+                      },
+                      "end": {
+                        "line": 31
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 32
+                      },
+                      "end": {
+                        "line": 32
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 33
+                      },
+                      "end": {
+                        "line": 33
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 34
+                      },
+                      "end": {
+                        "line": 34
+                      }
+                    },
+                    {
+                      "start": {
+                        "line": 35
+                      },
+                      "end": {
+                        "line": 35
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step19": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 58
+                      },
+                      "end": {
+                        "line": 58
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step2": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 57
+                      },
+                      "end": {
+                        "line": 57
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step3": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 7
+                      },
+                      "end": {
+                        "line": 7
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step4": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 10
+                      },
+                      "end": {
+                        "line": 10
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step5": {},
+            "step6": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 11
+                      },
+                      "end": {
+                        "line": 11
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step7": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 13
+                      },
+                      "end": {
+                        "line": 13
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step8": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 14
+                      },
+                      "end": {
+                        "line": 14
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "step9": {
+              "locations": [
+                {
+                  "ranges": [
+                    {
+                      "start": {
+                        "line": 15
+                      },
+                      "end": {
+                        "line": 15
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "infos": [
+            {
+              "filename": "Dockerfile",
+              "language": "Dockerfile",
+              "data": "IyBzeW50YXg9ZG9ja2VyL2RvY2tlcmZpbGU6MS43QHNoYTI1NjpiNWYzYjI2MGE5Njc4ZTFkODNkMmZjZTg2ZWVkZGY3OTQyMGI3OTE0N2VhYmEyYTI1OTg2ZjQ3MTMzZDczNzIwDQoNCkFSRyBTREtfSU1BR0U9bWNyLm1pY3Jvc29mdC5jb20vZG90bmV0L3NkazoxMC4wLjQwMC1ub2JsZS1hbWQ2NEBzaGEyNTY6NTY1N2M1ZjcyNWYyZTg5MjNmMzFiMmViOWQ3NDM2NjJmMmUwYmU1MGEyYmVlNDFkZTY4NWZjOWYxMmFlNjhlZg0KQVJHIEFTUE5FVF9JTUFHRT1tY3IubWljcm9zb2Z0LmNvbS9kb3RuZXQvYXNwbmV0OjEwLjAuMTEtbm9ibGUtYW1kNjRAc2hhMjU2OjI4MmMyZTkwZGQzNWM2YTcyMGI3NDRmNDg0OGQzZGNlOWRlNGJmYjQwNDAxMTI3MGNjOGVlNjNmMDdlNTZjMzYNCkFSRyBSVU5USU1FX0lNQUdFPW1jci5taWNyb3NvZnQuY29tL2RvdG5ldC9ydW50aW1lOjEwLjAuMTEtbm9ibGUtYW1kNjRAc2hhMjU2OjNlNDkwNmJhNDI1MzY2Yjg0OGZjMTg5OWM0NDE0Y2JjNGQxYzcwZjQyM2E0ZTVhMGQ1YzM5YzIyNmUxMzRmMjENCg0KRlJPTSAke1NES19JTUFHRX0gQVMgYnVpbGQNCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpXT1JLRElSIC9zcmMNCkNPUFkgZGVwbG95bWVudC9jb250YWluZXJzL051R2V0LkNvbmZpZyAuL051R2V0LkNvbmZpZw0KDQpDT1BZIHNyYy9UYXNrLkRvbWFpbi9UYXNrLkRvbWFpbi5jc3Byb2ogc3JjL1Rhc2suRG9tYWluL3BhY2thZ2VzLmxvY2suanNvbiBzcmMvVGFzay5Eb21haW4vDQpDT1BZIHNyYy9UYXNrLkFwcGxpY2F0aW9uL1Rhc2suQXBwbGljYXRpb24uY3Nwcm9qIHNyYy9UYXNrLkFwcGxpY2F0aW9uL3BhY2thZ2VzLmxvY2suanNvbiBzcmMvVGFzay5BcHBsaWNhdGlvbi8NCkNPUFkgc3JjL1Rhc2suSW5mcmFzdHJ1Y3R1cmUvVGFzay5JbmZyYXN0cnVjdHVyZS5jc3Byb2ogc3JjL1Rhc2suSW5mcmFzdHJ1Y3R1cmUvcGFja2FnZXMubG9jay5qc29uIHNyYy9UYXNrLkluZnJhc3RydWN0dXJlLw0KQ09QWSBzcmMvVGFzay5BcGkvVGFzay5BcGkuY3Nwcm9qIHNyYy9UYXNrLkFwaS9wYWNrYWdlcy5sb2NrLmpzb24gc3JjL1Rhc2suQXBpLw0KQ09QWSBzcmMvVGFzay5Xb3JrZXIvVGFzay5Xb3JrZXIuY3Nwcm9qIHNyYy9UYXNrLldvcmtlci9wYWNrYWdlcy5sb2NrLmpzb24gc3JjL1Rhc2suV29ya2VyLw0KQ09QWSBzcmMvVGFzay5CYWNrdXBBZ2VudC9UYXNrLkJhY2t1cEFnZW50LmNzcHJvaiBzcmMvVGFzay5CYWNrdXBBZ2VudC9wYWNrYWdlcy5sb2NrLmpzb24gc3JjL1Rhc2suQmFja3VwQWdlbnQvDQpDT1BZIHNyYy9UYXNrLkRhdGFiYXNlTWlncmF0b3IvVGFzay5EYXRhYmFzZU1pZ3JhdG9yLmNzcHJvaiBzcmMvVGFzay5EYXRhYmFzZU1pZ3JhdG9yL3BhY2thZ2VzLmxvY2suanNvbiBzcmMvVGFzay5EYXRhYmFzZU1pZ3JhdG9yLw0KQ09QWSB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvVGFzay5Db250YWluZXJWYWxpZGF0aW9uLmNzcHJvaiB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvcGFja2FnZXMubG9jay5qc29uIHZlcmlmaWNhdGlvbi9jb250YWluZXItdGFzay1zdG9yZS8NCg0KUlVOIGRvdG5ldCByZXN0b3JlIHNyYy9UYXNrLkFwaS9UYXNrLkFwaS5jc3Byb2ogLS1ydW50aW1lIGxpbnV4LXg2NCAtLWxvY2tlZC1tb2RlIFwNCiAgICAmJiBkb3RuZXQgcmVzdG9yZSBzcmMvVGFzay5Xb3JrZXIvVGFzay5Xb3JrZXIuY3Nwcm9qIC0tcnVudGltZSBsaW51eC14NjQgLS1sb2NrZWQtbW9kZSBcDQogICAgJiYgZG90bmV0IHJlc3RvcmUgc3JjL1Rhc2suQmFja3VwQWdlbnQvVGFzay5CYWNrdXBBZ2VudC5jc3Byb2ogLS1ydW50aW1lIGxpbnV4LXg2NCAtLWxvY2tlZC1tb2RlIFwNCiAgICAmJiBkb3RuZXQgcmVzdG9yZSBzcmMvVGFzay5EYXRhYmFzZU1pZ3JhdG9yL1Rhc2suRGF0YWJhc2VNaWdyYXRvci5jc3Byb2ogLS1ydW50aW1lIGxpbnV4LXg2NCAtLWxvY2tlZC1tb2RlIFwNCiAgICAmJiBkb3RuZXQgcmVzdG9yZSB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvVGFzay5Db250YWluZXJWYWxpZGF0aW9uLmNzcHJvaiAtLXJ1bnRpbWUgbGludXgteDY0IC0tbG9ja2VkLW1vZGUNCg0KQ09QWSBzcmMvIHNyYy8NCkNPUFkgdmVyaWZpY2F0aW9uL2NvbnRhaW5lci10YXNrLXN0b3JlLyB2ZXJpZmljYXRpb24vY29udGFpbmVyLXRhc2stc3RvcmUvDQoNClJVTiBkb3RuZXQgcHVibGlzaCBzcmMvVGFzay5BcGkvVGFzay5BcGkuY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLWFwaSAtcDpWZXJzaW9uPSR7VkVSU0lPTn0gLXA6U291cmNlUmV2aXNpb25JZD0ke0dJVF9TSEF9IC1wOkNvbnRpbnVvdXNJbnRlZ3JhdGlvbkJ1aWxkPXRydWUgLXA6RGV0ZXJtaW5pc3RpYz10cnVlIFwNCiAgICAmJiBkb3RuZXQgcHVibGlzaCBzcmMvVGFzay5Xb3JrZXIvVGFzay5Xb3JrZXIuY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLXdvcmtlciAtcDpWZXJzaW9uPSR7VkVSU0lPTn0gLXA6U291cmNlUmV2aXNpb25JZD0ke0dJVF9TSEF9IC1wOkNvbnRpbnVvdXNJbnRlZ3JhdGlvbkJ1aWxkPXRydWUgLXA6RGV0ZXJtaW5pc3RpYz10cnVlIFwNCiAgICAmJiBkb3RuZXQgcHVibGlzaCBzcmMvVGFzay5CYWNrdXBBZ2VudC9UYXNrLkJhY2t1cEFnZW50LmNzcHJvaiAtYyBSZWxlYXNlIC0tbm8tcmVzdG9yZSAtLXJ1bnRpbWUgbGludXgteDY0IC0tc2VsZi1jb250YWluZWQgZmFsc2UgLW8gL3B1Ymxpc2gvdGFzay1iYWNrdXAtYWdlbnQgLXA6VmVyc2lvbj0ke1ZFUlNJT059IC1wOlNvdXJjZVJldmlzaW9uSWQ9JHtHSVRfU0hBfSAtcDpDb250aW51b3VzSW50ZWdyYXRpb25CdWlsZD10cnVlIC1wOkRldGVybWluaXN0aWM9dHJ1ZSBcDQogICAgJiYgZG90bmV0IHB1Ymxpc2ggc3JjL1Rhc2suRGF0YWJhc2VNaWdyYXRvci9UYXNrLkRhdGFiYXNlTWlncmF0b3IuY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLWRhdGFiYXNlLW1pZ3JhdG9yIC1wOlZlcnNpb249JHtWRVJTSU9OfSAtcDpTb3VyY2VSZXZpc2lvbklkPSR7R0lUX1NIQX0gLXA6Q29udGludW91c0ludGVncmF0aW9uQnVpbGQ9dHJ1ZSAtcDpEZXRlcm1pbmlzdGljPXRydWUgXA0KICAgICYmIGRvdG5ldCBwdWJsaXNoIHZlcmlmaWNhdGlvbi9jb250YWluZXItdGFzay1zdG9yZS9UYXNrLkNvbnRhaW5lclZhbGlkYXRpb24uY3Nwcm9qIC1jIFJlbGVhc2UgLS1uby1yZXN0b3JlIC0tcnVudGltZSBsaW51eC14NjQgLS1zZWxmLWNvbnRhaW5lZCBmYWxzZSAtbyAvcHVibGlzaC90YXNrLWNvbnRhaW5lci12YWxpZGF0aW9uIC1wOlZlcnNpb249JHtWRVJTSU9OfSAtcDpTb3VyY2VSZXZpc2lvbklkPSR7R0lUX1NIQX0gLXA6Q29udGludW91c0ludGVncmF0aW9uQnVpbGQ9dHJ1ZSAtcDpEZXRlcm1pbmlzdGljPXRydWUNCg0KRlJPTSAke0FTUE5FVF9JTUFHRX0gQVMgdGFzay1hcGktcnVudGltZQ0KVVNFUiByb290DQpSVU4gc2VkIC1pICdzfGh0dHA6Ly9hcmNoaXZlXC51YnVudHVcLmNvbS91YnVudHV8aHR0cHM6Ly9hcmNoaXZlLnVidW50dS5jb20vdWJ1bnR1fGc7IHN8aHR0cDovL3NlY3VyaXR5XC51YnVudHVcLmNvbS91YnVudHV8aHR0cHM6Ly9zZWN1cml0eS51YnVudHUuY29tL3VidW50dXxnJyAvZXRjL2FwdC9zb3VyY2VzLmxpc3QuZC91YnVudHUuc291cmNlcyBcDQogICAgJiYgYXB0LWdldCAtbyBBY3F1aXJlOjpSZXRyaWVzPTMgdXBkYXRlIFwNCiAgICAmJiBhcHQtZ2V0IC1vIEFjcXVpcmU6OlJldHJpZXM9MyBpbnN0YWxsIC15IC0tbm8taW5zdGFsbC1yZWNvbW1lbmRzIFwNCiAgICAgICAgbGliZ3NzYXBpLWtyYjUtMj0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYmtyYjUtMz0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYms1Y3J5cHRvMz0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYmtyYjVzdXBwb3J0MD0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYmtleXV0aWxzMT0xLjYuMy0zYnVpbGQxIFwNCiAgICAmJiBybSAtcmYgL3Zhci9saWIvYXB0L2xpc3RzLyogL3Zhci9jYWNoZS9hcHQvKiAvdmFyL2xvZy9hcHQvKiAvdmFyL2xvZy9kcGtnLmxvZyBcDQogICAgICAgIC92YXIvbGliL2FwdC9leHRlbmRlZF9zdGF0ZXMgL3Zhci9jYWNoZS9sZGNvbmZpZy9hdXgtY2FjaGUgXA0KICAgICAgICAvdmFyL2xpYi9kcGtnL3N0YXR1cy1vbGQgL3Zhci9saWIvZHBrZy9sb2NrIC92YXIvbGliL2Rwa2cvdHJpZ2dlcnMvTG9jaw0KDQpGUk9NIHRhc2stYXBpLXJ1bnRpbWUgQVMgdGFzay1hcGkNCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suQXBpIiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudmVyc2lvbj0iJHtWRVJTSU9OfSIgXA0KICAgICAgb3JnLm9wZW5jb250YWluZXJzLmltYWdlLnJldmlzaW9uPSIke0dJVF9TSEF9Ig0KV09SS0RJUiAvYXBwDQpDT1BZIC0tZnJvbT1idWlsZCAtLWNob3duPWFwcDphcHAgL3B1Ymxpc2gvdGFzay1hcGkvIC4vDQpFTlYgQVNQTkVUQ09SRV9IVFRQX1BPUlRTPTgwODANCkVYUE9TRSA4MDgwDQpVU0VSIGFwcA0KRU5UUllQT0lOVCBbImRvdG5ldCIsICJUYXNrLkFwaS5kbGwiXQ0KDQpGUk9NICR7UlVOVElNRV9JTUFHRX0gQVMgdGFzay13b3JrZXINCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suV29ya2VyIiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudmVyc2lvbj0iJHtWRVJTSU9OfSIgXA0KICAgICAgb3JnLm9wZW5jb250YWluZXJzLmltYWdlLnJldmlzaW9uPSIke0dJVF9TSEF9Ig0KV09SS0RJUiAvYXBwDQpDT1BZIC0tZnJvbT1idWlsZCAtLWNob3duPWFwcDphcHAgL3B1Ymxpc2gvdGFzay13b3JrZXIvIC4vDQpVU0VSIGFwcA0KRU5UUllQT0lOVCBbImRvdG5ldCIsICJUYXNrLldvcmtlci5kbGwiXQ0KDQpGUk9NICR7UlVOVElNRV9JTUFHRX0gQVMgdGFzay1iYWNrdXAtYWdlbnQNCkFSRyBWRVJTSU9OPTAuMC4wLWxvY2FsDQpBUkcgR0lUX1NIQT11bmtub3duDQpMQUJFTCBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UudGl0bGU9IlRhc2suQmFja3VwQWdlbnQiIFwNCiAgICAgIG9yZy5vcGVuY29udGFpbmVycy5pbWFnZS52ZXJzaW9uPSIke1ZFUlNJT059IiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UucmV2aXNpb249IiR7R0lUX1NIQX0iDQpXT1JLRElSIC9hcHANCkNPUFkgLS1mcm9tPWJ1aWxkIC0tY2hvd249YXBwOmFwcCAvcHVibGlzaC90YXNrLWJhY2t1cC1hZ2VudC8gLi8NClVTRVIgYXBwDQpFTlRSWVBPSU5UIFsiZG90bmV0IiwgIlRhc2suQmFja3VwQWdlbnQuZGxsIl0NCg0KRlJPTSAke1JVTlRJTUVfSU1BR0V9IEFTIHRhc2stZGF0YWJhc2UtbWlncmF0b3ItcnVudGltZQ0KVVNFUiByb290DQpSVU4gc2VkIC1pICdzfGh0dHA6Ly9hcmNoaXZlXC51YnVudHVcLmNvbS91YnVudHV8aHR0cHM6Ly9hcmNoaXZlLnVidW50dS5jb20vdWJ1bnR1fGc7IHN8aHR0cDovL3NlY3VyaXR5XC51YnVudHVcLmNvbS91YnVudHV8aHR0cHM6Ly9zZWN1cml0eS51YnVudHUuY29tL3VidW50dXxnJyAvZXRjL2FwdC9zb3VyY2VzLmxpc3QuZC91YnVudHUuc291cmNlcyBcDQogICAgJiYgYXB0LWdldCAtbyBBY3F1aXJlOjpSZXRyaWVzPTMgdXBkYXRlIFwNCiAgICAmJiBhcHQtZ2V0IC1vIEFjcXVpcmU6OlJldHJpZXM9MyBpbnN0YWxsIC15IC0tbm8taW5zdGFsbC1yZWNvbW1lbmRzIFwNCiAgICAgICAgbGliZ3NzYXBpLWtyYjUtMj0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYmtyYjUtMz0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYms1Y3J5cHRvMz0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYmtyYjVzdXBwb3J0MD0xLjIwLjEtNnVidW50dTIuOCBcDQogICAgICAgIGxpYmtleXV0aWxzMT0xLjYuMy0zYnVpbGQxIFwNCiAgICAmJiBybSAtcmYgL3Zhci9saWIvYXB0L2xpc3RzLyogL3Zhci9jYWNoZS9hcHQvKiAvdmFyL2xvZy9hcHQvKiAvdmFyL2xvZy9kcGtnLmxvZyBcDQogICAgICAgIC92YXIvbGliL2FwdC9leHRlbmRlZF9zdGF0ZXMgL3Zhci9jYWNoZS9sZGNvbmZpZy9hdXgtY2FjaGUgXA0KICAgICAgICAvdmFyL2xpYi9kcGtnL3N0YXR1cy1vbGQgL3Zhci9saWIvZHBrZy9sb2NrIC92YXIvbGliL2Rwa2cvdHJpZ2dlcnMvTG9jaw0KDQpGUk9NIHRhc2stZGF0YWJhc2UtbWlncmF0b3ItcnVudGltZSBBUyB0YXNrLWRhdGFiYXNlLW1pZ3JhdG9yDQpBUkcgVkVSU0lPTj0wLjAuMC1sb2NhbA0KQVJHIEdJVF9TSEE9dW5rbm93bg0KTEFCRUwgb3JnLm9wZW5jb250YWluZXJzLmltYWdlLnRpdGxlPSJUYXNrLkRhdGFiYXNlTWlncmF0b3IiIFwNCiAgICAgIG9yZy5vcGVuY29udGFpbmVycy5pbWFnZS52ZXJzaW9uPSIke1ZFUlNJT059IiBcDQogICAgICBvcmcub3BlbmNvbnRhaW5lcnMuaW1hZ2UucmV2aXNpb249IiR7R0lUX1NIQX0iDQpXT1JLRElSIC9hcHANCkNPUFkgLS1mcm9tPWJ1aWxkIC0tY2hvd249YXBwOmFwcCAvcHVibGlzaC90YXNrLWRhdGFiYXNlLW1pZ3JhdG9yLyAuLw0KVVNFUiBhcHANCkVOVFJZUE9JTlQgWyJkb3RuZXQiLCAiVGFzay5EYXRhYmFzZU1pZ3JhdG9yLmRsbCJdDQoNCiMgVmFsaWRhdGlvbi1vbmx5IHRhcmdldC4gSXQgaXMgbm90IGEgZGVwbG95YWJsZSBzZXJ2aWNlIGltYWdlLg0KRlJPTSAke1JVTlRJTUVfSU1BR0V9IEFTIHRhc2stY29udGFpbmVyLXZhbGlkYXRpb24NCldPUktESVIgL2FwcA0KQ09QWSAtLWZyb209YnVpbGQgLS1jaG93bj1hcHA6YXBwIC9wdWJsaXNoL3Rhc2stY29udGFpbmVyLXZhbGlkYXRpb24vIC4vDQpVU0VSIGFwcA0KRU5UUllQT0lOVCBbImRvdG5ldCIsICJUYXNrLkNvbnRhaW5lclZhbGlkYXRpb24uZGxsIl0NCg==",
+              "llbDefinition": [
+                {
+                  "id": "step0",
+                  "op": {
+                    "Op": {
+                      "source": {
+                        "identifier": "local://dockerfile",
+                        "attrs": {
+                          "local.differ": "none",
+                          "local.followpaths": "[\"Dockerfile\",\"Dockerfile.dockerignore\",\"dockerfile\"]",
+                          "local.sharedkeyhint": "dockerfile"
+                        }
+                      }
+                    },
+                    "constraints": {}
+                  }
+                },
+                {
+                  "id": "step1",
+                  "op": {
+                    "Op": {}
+                  },
+                  "inputs": [
+                    "step0:0"
+                  ]
+                }
+              ],
+              "digestMapping": {
+                "sha256:10516c06ec6aa5df2ce7b993d534e224c87a9f15b229196a3f82f0a87ef2464b": "step1",
+                "sha256:ad4cfde124bb6a845532eb6a339264c0c777b57fbe59d011faae8261649af398": "step0"
+              }
+            }
+          ]
+        },
+        "sysUsage": [
+          {
+            "timestamp": "2026-09-11T12:20:15.294118869Z",
+            "cpuStat": {
+              "user": 738.01,
+              "nice": 0,
+              "system": 435.23,
+              "idle": 141055.91,
+              "iowait": 32.81,
+              "irq": 0,
+              "softirq": 234.11,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 54699783,
+              "processCreated": 107362,
+              "processesRunning": 2
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 14083268,
+              "available": 14805172,
+              "buffers": 73504,
+              "cached": 682904,
+              "active": 288388,
+              "inactive": 829816,
+              "swap": 4194304,
+              "dirty": 224,
+              "writeback": 0,
+              "slab": 374068
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5559972
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0.37,
+                "avg60": 0.22,
+                "avg300": 0.05,
+                "total": 3027382
+              },
+              "full": {
+                "avg10": 0.37,
+                "avg60": 0.22,
+                "avg300": 0.05,
+                "total": 2920353
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:20:47.298395846Z",
+            "cpuStat": {
+              "user": 751.25,
+              "nice": 0,
+              "system": 447.48,
+              "idle": 141660.39,
+              "iowait": 33.4,
+              "irq": 0,
+              "softirq": 245.5,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 56984128,
+              "processCreated": 107965,
+              "processesRunning": 4
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 13219216,
+              "available": 14632168,
+              "buffers": 75436,
+              "cached": 1347184,
+              "active": 302664,
+              "inactive": 1510468,
+              "swap": 4194304,
+              "dirty": 473620,
+              "writeback": 0,
+              "slab": 399840
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5680916
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0.02,
+                "avg60": 0.14,
+                "avg300": 0.05,
+                "total": 3072577
+              },
+              "full": {
+                "avg10": 0.02,
+                "avg60": 0.14,
+                "avg300": 0.05,
+                "total": 2963732
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:21:19.304523857Z",
+            "cpuStat": {
+              "user": 798.73,
+              "nice": 0,
+              "system": 459.39,
+              "idle": 142234.69,
+              "iowait": 34.05,
+              "irq": 0,
+              "softirq": 252.47,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 58560204,
+              "processCreated": 108887,
+              "processesRunning": 4
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11361668,
+              "available": 13834784,
+              "buffers": 83184,
+              "cached": 2491412,
+              "active": 513572,
+              "inactive": 2822812,
+              "swap": 4194304,
+              "dirty": 228,
+              "writeback": 12,
+              "slab": 449496
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0.36,
+                "avg60": 0.06,
+                "avg300": 0.01,
+                "total": 5828695
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0.08,
+                "avg300": 0.04,
+                "total": 3110247
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0.08,
+                "avg300": 0.04,
+                "total": 3000938
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:21:51.313422432Z",
+            "cpuStat": {
+              "user": 812.76,
+              "nice": 0,
+              "system": 462.57,
+              "idle": 142856.22,
+              "iowait": 34.07,
+              "irq": 0,
+              "softirq": 253.94,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 58828415,
+              "processCreated": 109555,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11741888,
+              "available": 14311168,
+              "buffers": 83552,
+              "cached": 2448844,
+              "active": 515012,
+              "inactive": 2416596,
+              "swap": 4194304,
+              "dirty": 144,
+              "writeback": 0,
+              "slab": 449324
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0.02,
+                "avg60": 0.05,
+                "avg300": 0.01,
+                "total": 5850906
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0.04,
+                "avg300": 0.04,
+                "total": 3111453
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0.04,
+                "avg300": 0.04,
+                "total": 3002123
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:22:23.319706283Z",
+            "cpuStat": {
+              "user": 814.37,
+              "nice": 0,
+              "system": 463.63,
+              "idle": 143492.85,
+              "iowait": 34.07,
+              "irq": 0,
+              "softirq": 254.58,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 58954920,
+              "processCreated": 110008,
+              "processesRunning": 2
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11747232,
+              "available": 14316672,
+              "buffers": 83552,
+              "cached": 2449048,
+              "active": 515232,
+              "inactive": 2420140,
+              "swap": 4194304,
+              "dirty": 80,
+              "writeback": 0,
+              "slab": 449044
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0.02,
+                "avg300": 0,
+                "total": 5865829
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0.02,
+                "avg300": 0.03,
+                "total": 3111453
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0.02,
+                "avg300": 0.03,
+                "total": 3002123
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:22:55.326971713Z",
+            "cpuStat": {
+              "user": 816.24,
+              "nice": 0,
+              "system": 464.86,
+              "idle": 144128.86,
+              "iowait": 34.1,
+              "irq": 0,
+              "softirq": 255.61,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 59153001,
+              "processCreated": 110410,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11793060,
+              "available": 14366080,
+              "buffers": 83604,
+              "cached": 2452724,
+              "active": 515288,
+              "inactive": 2426460,
+              "swap": 4194304,
+              "dirty": 2488,
+              "writeback": 0,
+              "slab": 449032
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0.01,
+                "avg300": 0,
+                "total": 5897025
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0.01,
+                "avg300": 0.02,
+                "total": 3114897
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0.01,
+                "avg300": 0.02,
+                "total": 3005540
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:23:27.335067113Z",
+            "cpuStat": {
+              "user": 818.02,
+              "nice": 0,
+              "system": 466.13,
+              "idle": 144764.98,
+              "iowait": 34.13,
+              "irq": 0,
+              "softirq": 256.22,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 59319942,
+              "processCreated": 110852,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11842688,
+              "available": 14416596,
+              "buffers": 83652,
+              "cached": 2453480,
+              "active": 515340,
+              "inactive": 2419916,
+              "swap": 4194304,
+              "dirty": 144,
+              "writeback": 0,
+              "slab": 449008
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5918632
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0.01,
+                "total": 3118332
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0.01,
+                "total": 3008943
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:23:59.34205953Z",
+            "cpuStat": {
+              "user": 819.72,
+              "nice": 0,
+              "system": 467.31,
+              "idle": 145401.32,
+              "iowait": 34.14,
+              "irq": 0,
+              "softirq": 256.9,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 59468007,
+              "processCreated": 111253,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11940488,
+              "available": 14514844,
+              "buffers": 83700,
+              "cached": 2453992,
+              "active": 515384,
+              "inactive": 2420704,
+              "swap": 4194304,
+              "dirty": 152,
+              "writeback": 0,
+              "slab": 448604
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5938043
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0.01,
+                "total": 3118969
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0.01,
+                "total": 3009549
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:24:31.350863908Z",
+            "cpuStat": {
+              "user": 821.58,
+              "nice": 0,
+              "system": 468.58,
+              "idle": 146037.46,
+              "iowait": 34.16,
+              "irq": 0,
+              "softirq": 257.49,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 59625389,
+              "processCreated": 111654,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11960656,
+              "available": 14538336,
+              "buffers": 83740,
+              "cached": 2457440,
+              "active": 515432,
+              "inactive": 2422144,
+              "swap": 4194304,
+              "dirty": 3368,
+              "writeback": 0,
+              "slab": 448508
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5956073
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3120886
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3011441
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:25:03.357751515Z",
+            "cpuStat": {
+              "user": 823.01,
+              "nice": 0,
+              "system": 469.75,
+              "idle": 146674,
+              "iowait": 34.17,
+              "irq": 0,
+              "softirq": 258.01,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 59773052,
+              "processCreated": 112096,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 12013988,
+              "available": 14592124,
+              "buffers": 83788,
+              "cached": 2457904,
+              "active": 515480,
+              "inactive": 2421980,
+              "swap": 4194304,
+              "dirty": 200,
+              "writeback": 0,
+              "slab": 448164
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5973284
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3122680
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3013200
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:25:35.366684541Z",
+            "cpuStat": {
+              "user": 824.79,
+              "nice": 0,
+              "system": 471.06,
+              "idle": 147310.12,
+              "iowait": 34.18,
+              "irq": 0,
+              "softirq": 258.68,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 59929503,
+              "processCreated": 112570,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 12036312,
+              "available": 14614992,
+              "buffers": 83836,
+              "cached": 2458408,
+              "active": 515580,
+              "inactive": 2424072,
+              "swap": 4194304,
+              "dirty": 264,
+              "writeback": 0,
+              "slab": 448424
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 5991144
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3123575
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3014075
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:26:07.37452489Z",
+            "cpuStat": {
+              "user": 828.06,
+              "nice": 0,
+              "system": 472.62,
+              "idle": 147944.84,
+              "iowait": 34.19,
+              "irq": 0,
+              "softirq": 259.29,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 60066240,
+              "processCreated": 113071,
+              "processesRunning": 1
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 11979596,
+              "available": 14529192,
+              "buffers": 83880,
+              "cached": 2429828,
+              "active": 570668,
+              "inactive": 2403188,
+              "swap": 4194304,
+              "dirty": 2612,
+              "writeback": 0,
+              "slab": 447740
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 6006376
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3124205
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3014699
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:26:39.380839784Z",
+            "cpuStat": {
+              "user": 829.56,
+              "nice": 0,
+              "system": 473.67,
+              "idle": 148581.84,
+              "iowait": 34.19,
+              "irq": 0,
+              "softirq": 259.71,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 60178699,
+              "processCreated": 113494,
+              "processesRunning": 2
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 12032840,
+              "available": 14582444,
+              "buffers": 83888,
+              "cached": 2429828,
+              "active": 570676,
+              "inactive": 2398768,
+              "swap": 4194304,
+              "dirty": 12,
+              "writeback": 0,
+              "slab": 447536
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 6018690
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3124265
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3014758
+              }
+            }
+          },
+          {
+            "timestamp": "2026-09-11T12:26:49.439801912Z",
+            "cpuStat": {
+              "user": 832.11,
+              "nice": 0,
+              "system": 475.58,
+              "idle": 148777,
+              "iowait": 34.63,
+              "irq": 0,
+              "softirq": 260.92,
+              "steal": 0,
+              "guest": 0,
+              "guestNice": 0
+            },
+            "procStat": {
+              "contextSwitches": 60404786,
+              "processCreated": 113710,
+              "processesRunning": 3
+            },
+            "memoryStat": {
+              "total": 16081572,
+              "free": 12022312,
+              "available": 14542284,
+              "buffers": 85636,
+              "cached": 2399556,
+              "active": 628624,
+              "inactive": 2258020,
+              "swap": 4194304,
+              "dirty": 292,
+              "writeback": 0,
+              "slab": 446480
+            },
+            "cpuPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 6034261
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "memoryPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 0
+              }
+            },
+            "ioPressure": {
+              "some": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3151828
+              },
+              "full": {
+                "avg10": 0,
+                "avg60": 0,
+                "avg300": 0,
+                "total": 3041616
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "buildx.build.ref": "taskrelease9179e03f6904-1/taskrelease9179e03f6904-10/2lvcs393sklcll0rvvkn86x2d",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:7f336af765f39495e846819683d3383351b7622cbc2e4b0f1cdd765428d5285f",
+    "size": 856,
+    "annotations": {
+      "org.opencontainers.image.created": "2026-09-11T12:19:54Z"
+    }
+  },
+  "containerimage.digest": "sha256:7f336af765f39495e846819683d3383351b7622cbc2e4b0f1cdd765428d5285f",
+  "image.name": "docker.io/task-release/task-api:0.6.0"
+}

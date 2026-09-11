@@ -1,0 +1,7 @@
+{
+  "task-api": "sha256:7f336af765f39495e846819683d3383351b7622cbc2e4b0f1cdd765428d5285f",
+  "task-worker": "sha256:baa794ae133f9d911bb8a881d9c7567c57cc8d5ccfc22d9c23b4898339378a6d",
+  "task-backup-agent": "sha256:cffc7a008ee7d9a3dcae727fcd9c687fe1ee0c22aba9f53124afcb0f4539d627",
+  "task-database-migrator": "sha256:b1a9429360f7bfde83ec27aaa82e1ca9a700ffa26c9066531096c123778e71ee",
+  "task-container-validation": "sha256:399c3152a856389db993810e67796b26b27b9a1b6c53fe5149ec3a654e4cddfb"
+}

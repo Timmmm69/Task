@@ -1,0 +1,98 @@
+#0 building with "taskrelease9179e03f6904-2" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 7.19kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#2 DONE 0.0s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720 done
+#3 CACHED
+
+#4 [internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#4 DONE 0.0s
+
+#5 [internal] load metadata for mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21
+#5 DONE 0.4s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 162B done
+#6 DONE 0.0s
+
+#7 [build  1/15] FROM mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
+#7 resolve mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef 0.0s done
+#7 DONE 0.0s
+
+#8 [task-worker 1/3] FROM mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21
+#8 resolve mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21 done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 21.00kB 0.0s done
+#9 DONE 0.0s
+
+#10 [task-worker 2/3] WORKDIR /app
+#10 DONE 0.0s
+
+#11 [build  4/15] COPY src/Task.Domain/Task.Domain.csproj src/Task.Domain/packages.lock.json src/Task.Domain/
+#11 CACHED
+
+#12 [build 14/15] COPY verification/container-task-store/ verification/container-task-store/
+#12 CACHED
+
+#13 [build 11/15] COPY verification/container-task-store/Task.ContainerValidation.csproj verification/container-task-store/packages.lock.json verification/container-task-store/
+#13 CACHED
+
+#14 [build  6/15] COPY src/Task.Infrastructure/Task.Infrastructure.csproj src/Task.Infrastructure/packages.lock.json src/Task.Infrastructure/
+#14 CACHED
+
+#15 [build  5/15] COPY src/Task.Application/Task.Application.csproj src/Task.Application/packages.lock.json src/Task.Application/
+#15 CACHED
+
+#16 [build  7/15] COPY src/Task.Api/Task.Api.csproj src/Task.Api/packages.lock.json src/Task.Api/
+#16 CACHED
+
+#17 [build 13/15] COPY src/ src/
+#17 CACHED
+
+#18 [build 10/15] COPY src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj src/Task.DatabaseMigrator/packages.lock.json src/Task.DatabaseMigrator/
+#18 CACHED
+
+#19 [build  2/15] WORKDIR /src
+#19 CACHED
+
+#20 [build 12/15] RUN dotnet restore src/Task.Api/Task.Api.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.Worker/Task.Worker.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.BackupAgent/Task.BackupAgent.csproj --runtime linux-x64 --locked-mode     && dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --runtime linux-x64 --locked-mode     && dotnet restore verification/container-task-store/Task.ContainerValidation.csproj --runtime linux-x64 --locked-mode
+#20 CACHED
+
+#21 [build  3/15] COPY deployment/containers/NuGet.Config ./NuGet.Config
+#21 CACHED
+
+#22 [build  8/15] COPY src/Task.Worker/Task.Worker.csproj src/Task.Worker/packages.lock.json src/Task.Worker/
+#22 CACHED
+
+#23 [build  9/15] COPY src/Task.BackupAgent/Task.BackupAgent.csproj src/Task.BackupAgent/packages.lock.json src/Task.BackupAgent/
+#23 CACHED
+
+#24 [build 15/15] RUN dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-api -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.Worker/Task.Worker.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-worker -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.BackupAgent/Task.BackupAgent.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-backup-agent -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-database-migrator -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true     && dotnet publish verification/container-task-store/Task.ContainerValidation.csproj -c Release --no-restore --runtime linux-x64 --self-contained false -o /publish/task-container-validation -p:Version=0.6.0 -p:SourceRevisionId=63edf6f794c3c17c402d9c557978f9ab0a47d969 -p:ContinuousIntegrationBuild=true -p:Deterministic=true
+#24 CACHED
+
+#25 [task-worker 3/3] COPY --from=build --chown=app:app /publish/task-worker/ ./
+#25 DONE 0.1s
+
+#26 exporting to oci image format
+#26 exporting layers
+#26 exporting layers 0.3s done
+#26 rewriting layers with source-date-epoch 1789129194 (2026-09-11 12:19:54 +0000 UTC)
+#26 rewriting layers with source-date-epoch 1789129194 (2026-09-11 12:19:54 +0000 UTC) 0.2s done
+#26 exporting manifest sha256:b317197ea5d22fe8bc9cefc20c140b7e755333b10241d32298fdbdb5696f3b22 done
+#26 exporting config sha256:696be6b24eb0b9e481c4e750e16b6e98f97c6cc791257394fe983532e8db61b3 0.0s done
+#26 exporting attestation manifest sha256:7624516c58e1568ac9067d511fae411fd3ad3e3c639a31a0e12d3cf5949fb0e1 0.0s done
+#26 exporting manifest list sha256:395db2575c16364323ea8ec21d9d015d433253b7ce3b7d1360d4735dd1e6e1f3 done
+#26 sending tarball
+#26 sending tarball 0.6s done
+#26 DONE 1.2s
+
+#27 resolving provenance for metadata file
+#27 DONE 0.0s
