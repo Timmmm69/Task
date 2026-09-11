@@ -48,3 +48,14 @@ HAND-02 в `.project-dashboard/roadmap.json`: status `done`, progress 100, evide
 двух прогонов. `validate.mjs` — valid (items 40, overall 91.49); `recalculate-order.mjs`
 выполнен (npm run dashboard:order). Пакет соответствует правилам AGENTS.md: VERSION,
 manifest.json, SHA256SUMS, validation report.
+
+## 4. Исправления после первой ревизии
+
+- В подписи фазы C чисто-стендового прогона значилось «migration v13»; оба прогона фактически
+  применяют каталог v14 (`code=Applied expectedVersion=14 actualVersion=14`). Подпись исправлена
+  в `Invoke-OpsCleanRoomRepro.ps1`, install-прогон перевыполнен (PASS, 2026-09-11T15:05Z),
+  evidence перегенерировано машинно. Ревизии в manifest обновлены.
+- Первая попытка gate `ops02-maintenance-rerun-certificate-rotation` завершилась ошибкой
+  `apk add` внутри DinD (транзиентный сетевой сбой); gate перевыполнен начисто и прошёл —
+  в итоговой сводке зафиксирован только PASS-прогон.
+

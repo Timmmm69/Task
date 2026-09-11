@@ -4,10 +4,10 @@
   "date": "2026-09-11",
   "roadmap_id": "HAND-02",
   "base_revision": "9dcb53c3769e8b270350dd6cff1e48da98d640c9",
-  "validated_revision": "03270ae",
-  "dashboard_revision": "03270ae",
+  "validated_revision": "861a308840776bf579718fea2c958426e2bbdbdb",
+  "dashboard_revision": "861a308840776bf579718fea2c958426e2bbdbdb",
   "state": "implemented-validated-and-pushed-to-main",
-  "scope_diff": "git diff --name-status 9dcb53c3769e8b270350dd6cff1e48da98d640c9..03270ae",
+  "scope_diff": "git diff --name-status 9dcb53c3769e8b270350dd6cff1e48da98d640c9..861a308840776bf579718fea2c958426e2bbdbdb",
   "implementation_files": [
     {
       "path": "work/production/docs/OPS-operations-gap-analysis.md",
@@ -21,7 +21,7 @@
     },
     {
       "path": "work/production/deployment/ops-runbook/Invoke-OpsCleanRoomRepro.ps1",
-      "sha256": "c7dea9855edc5fdbd97cf79e81723a86e8898f5f65a6324742aac6be1a05e05a",
+      "sha256": "fd5e43542681a6f4cb302ad31e639ca7fcbd53b256116032e4219b5978639da9",
       "bytes": 7924
     },
     {
@@ -31,22 +31,22 @@
     },
     {
       "path": "work/production/evidence/ops-runbook/install/install.json",
-      "sha256": "c00bdb73852ed3364fba121357657b879b730cd96c431ac5f5fbd780183d2c68",
-      "bytes": 5441
+      "sha256": "56631033fef76c91ae375b45a1fb9efdba85c2b1beb9754c61fd929205493235",
+      "bytes": 5283
     },
     {
       "path": "work/production/evidence/ops-runbook/install/foundation/checks.json",
-      "sha256": "aa2b2a367104d3f0a62e8112529d220e63948c33d17a22748c455d04122fdf0e",
-      "bytes": 1860
+      "sha256": "006ea3de47750792bf193b0e4da7d41b49f46fdf0d6b6028976f8bbb79efa69f",
+      "bytes": 1859
     },
     {
       "path": "work/production/evidence/ops-runbook/install/foundation/dns-compose.resolved.yaml",
-      "sha256": "5c2e825b5f06381456d6b3938102b754b9b280ca2df151235b1a3d54e5425392",
+      "sha256": "fc222cdcd566ebc2901aa8557797b2bdc78a5ab3d64066ea822866b336b25576",
       "bytes": 945
     },
     {
       "path": "work/production/evidence/ops-runbook/install/foundation/firewall-plan.json",
-      "sha256": "f7d5885ddd015fcac16437d325871202bae6056e0487de83a819854767312f43",
+      "sha256": "d038caacda48887a9e389a917ef929b3642de1dfad151c1b531f13c2b6a9442a",
       "bytes": 1717
     },
     {
@@ -56,18 +56,18 @@
     },
     {
       "path": "work/production/evidence/ops-runbook/install/runtime-foundation/runtime-foundation.json",
-      "sha256": "480fae40d819cb0ec64b5034aff9e80ef0ef14f76dd4f0bb6ac02a9f0e75009f",
-      "bytes": 1264
+      "sha256": "7804ef977ec791c86c6d4a57af0c43ffcb8ac6aa64ceb5e951fd2bb0d17d5274",
+      "bytes": 1263
     },
     {
       "path": "work/production/evidence/ops-runbook/install/sec03-contract/checks.json",
-      "sha256": "a53aee1d62e248097c174fdc1c98c7793521203aa7bbbed0af215633e10c0c09",
+      "sha256": "6b3b30648ae5c547910400fbf8d88c4ebd6b5ed536b561418789f823b82bc32f",
       "bytes": 1077
     },
     {
       "path": "work/production/evidence/ops-runbook/install/clean-room/clean-room-runs.json",
-      "sha256": "6c517633283c77947e8a5e3998b7d01393a41115f3670fec43c8e60bb96cc794",
-      "bytes": 3445
+      "sha256": "b07f98f28b7137e789b8246e2081c2dff57de44fd8b176cbd924fe259907193e",
+      "bytes": 3444
     },
     {
       "path": "work/production/evidence/ops-runbook/operate/checks.json",
@@ -168,8 +168,8 @@
     },
     {
       "path": "validation-report.md",
-      "sha256": "b04555ec6c3608956d1c684f232bdcc15db3b3c409428d6b7817fdd11386c693",
-      "bytes": 4457
+      "sha256": "c44ef64d3b84f4f761f78bba87f158155dbe8b57048e870d493e0fbef4eac6eb",
+      "bytes": 5393
     },
     {
       "path": "VERSION",
