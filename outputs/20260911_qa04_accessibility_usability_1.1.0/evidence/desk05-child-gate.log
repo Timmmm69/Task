@@ -1,0 +1,119 @@
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\outputs\20260911_qa04_accessibility_usability_1.1.0\evidence\desk05\windows-ux.trx
+
+Пройден!   : не пройдено     0, пройдено     7, пропущено     0, всего     7, длительность 19 ms. - Task.Desktop.Tests.dll (net10.0)
+[PASS] Focused DESK-05 source and layout tests passed.
+[PASS] PostgreSQL 16 binaries are installed.
+[PASS] Isolated PostgreSQL 16 cluster was initialized.
+[PASS] PostgreSQL 16 is accepting connections on 127.0.0.1:58703.
+[PASS] Isolated E2E database was created.
+[PASS] Existing Desktop app-data was preserved for later restoration.
+[PASS] Ephemeral E2E state was saved in the isolated runtime directory.
+TASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14
+[PASS] Production migrator applied all migrations.
+TASK_DB_MIGRATOR code=BootstrapCompleted organizationId=2d95d7b1-e8a4-42d4-ac76-b1a694aba1b8 userId=a3122403-4de5-4d7d-9e74-7c89392bb09a roleId=265ac237-d505-4180-b512-6424845b95e2
+[PASS] Real administrator account was bootstrapped.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:58704.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Direct create probe returned HTTP 201.
+[PASS] Same-key create replay returned the stored HTTP 201 response.
+[PASS] Replay is explicitly marked Idempotency-Replayed=true.
+[PASS] Same-key replay produced exactly one row, audit, event, outbox and completed idempotency record.
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Read-only user retains Task.Read access.
+[PASS] Read-only direct write is denied with HTTP 403.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Desktop session was seeded for 'task-e2e-admin' through the real login endpoint.
+[PASS] SETUP COMPLETE. UI create title: QA-02 deterministic WPF task
+[PASS] UI final title: QA-02 deterministic WPF task completed
+[PASS] Synthetic clean-stand profile is active.
+[PASS] Release WPF executable exists.
+[PASS] ServerAddressTextBox exposes a screen-reader name.
+[PASS] ServerAddressTextBox is visible in the UIA tree.
+[PASS] ServerAddressTextBox exposes the Value UIA pattern.
+[PASS] CheckServerConnectionButton exposes a screen-reader name.
+[PASS] CheckServerConnectionButton is visible in the UIA tree.
+[PASS] CheckServerConnectionButton exposes the Invoke UIA pattern.
+[PASS] ContinueFromServerSetupButton exposes a screen-reader name.
+[PASS] ContinueFromServerSetupButton is visible in the UIA tree.
+[PASS] auth window accepted the 100% viewport.
+[PASS] auth ServerAddressTextBox remains unclipped at the 100% logical viewport.
+[PASS] auth CheckServerConnectionButton remains unclipped at the 100% logical viewport.
+[PASS] auth ContinueFromServerSetupButton remains unclipped at the 100% logical viewport.
+[PASS] auth-100.png contains a rendered native window surface.
+[PASS] auth window accepted the 125% viewport.
+[PASS] auth ServerAddressTextBox remains unclipped at the 125% logical viewport.
+[PASS] auth CheckServerConnectionButton remains unclipped at the 125% logical viewport.
+[PASS] auth ContinueFromServerSetupButton remains unclipped at the 125% logical viewport.
+[PASS] auth-125.png contains a rendered native window surface.
+[PASS] auth window accepted the 150% viewport.
+[PASS] auth ServerAddressTextBox remains unclipped at the 150% logical viewport.
+[PASS] auth CheckServerConnectionButton remains unclipped at the 150% logical viewport.
+[PASS] auth ContinueFromServerSetupButton remains unclipped at the 150% logical viewport.
+[PASS] auth-150.png contains a rendered native window surface.
+[PASS] auth window accepted the 200% viewport.
+[PASS] auth ServerAddressTextBox remains unclipped at the 200% logical viewport.
+[PASS] auth CheckServerConnectionButton remains unclipped at the 200% logical viewport.
+[PASS] auth ContinueFromServerSetupButton remains unclipped at the 200% logical viewport.
+[PASS] auth-200.png contains a rendered native window surface.
+[PASS] Tab moves authentication focus to the next enabled action.
+[PASS] Release WPF executable exists.
+[PASS] NavigationListBox exposes a screen-reader name.
+[PASS] NavigationListBox is visible in the UIA tree.
+[PASS] NavigationListBox exposes the Selection UIA pattern.
+[PASS] TasksRefreshButton exposes a screen-reader name.
+[PASS] TasksRefreshButton is visible in the UIA tree.
+[PASS] TasksRefreshButton exposes the Invoke UIA pattern.
+[PASS] NewTaskButton exposes a screen-reader name.
+[PASS] NewTaskButton is visible in the UIA tree.
+[PASS] NewTaskButton exposes the Invoke UIA pattern.
+[PASS] TasksList exposes a screen-reader name.
+[PASS] TasksList is visible in the UIA tree.
+[PASS] TasksList exposes the Selection UIA pattern.
+[PASS] LogoutButton exposes a screen-reader name.
+[PASS] LogoutButton is visible in the UIA tree.
+[PASS] LogoutButton exposes the Invoke UIA pattern.
+[PASS] ConnectionStatusText exposes a screen-reader name.
+[PASS] ConnectionStatusText is visible in the UIA tree.
+[PASS] Connection live region is declared in XAML; this host UIA client does not enumerate LiveSetting on TextBlock peers.
+[PASS] main window accepted the 100% viewport.
+[PASS] main NavigationListBox remains unclipped at the 100% logical viewport.
+[PASS] main TasksRefreshButton remains unclipped at the 100% logical viewport.
+[PASS] main NewTaskButton remains unclipped at the 100% logical viewport.
+[PASS] main ConnectionStatusText remains unclipped at the 100% logical viewport.
+[PASS] main LogoutButton remains unclipped at the 100% logical viewport.
+[PASS] main TasksList remains unclipped at the 100% logical viewport.
+[PASS] main-100.png contains a rendered native window surface.
+[PASS] main window accepted the 125% viewport.
+[PASS] main NavigationListBox remains unclipped at the 125% logical viewport.
+[PASS] main TasksRefreshButton remains unclipped at the 125% logical viewport.
+[PASS] main NewTaskButton remains unclipped at the 125% logical viewport.
+[PASS] main ConnectionStatusText remains unclipped at the 125% logical viewport.
+[PASS] main LogoutButton remains unclipped at the 125% logical viewport.
+[PASS] main TasksList remains unclipped at the 125% logical viewport.
+[PASS] main-125.png contains a rendered native window surface.
+[PASS] main window accepted the 150% viewport.
+[PASS] main NavigationListBox remains unclipped at the 150% logical viewport.
+[PASS] main TasksRefreshButton remains unclipped at the 150% logical viewport.
+[PASS] main NewTaskButton remains unclipped at the 150% logical viewport.
+[PASS] main ConnectionStatusText remains unclipped at the 150% logical viewport.
+[PASS] main LogoutButton remains unclipped at the 150% logical viewport.
+[PASS] main TasksList remains unclipped at the 150% logical viewport.
+[PASS] main-150.png contains a rendered native window surface.
+[PASS] main window accepted the 200% viewport.
+[PASS] main NavigationListBox remains unclipped at the 200% logical viewport.
+[PASS] main TasksRefreshButton remains unclipped at the 200% logical viewport.
+[PASS] main NewTaskButton remains unclipped at the 200% logical viewport.
+[PASS] main ConnectionStatusText remains unclipped at the 200% logical viewport.
+[PASS] main LogoutButton remains unclipped at the 200% logical viewport.
+[PASS] main TasksList remains unclipped at the 200% logical viewport.
+[PASS] main-200.png contains a rendered native window surface.
+[PASS] F6 moves focus from navigation to the header command region.
+F6 content focus path: TasksList > MainWindow
+[PASS] F6 moves focus from header commands to the selected content region.
+[PASS] F6 returns focus from content to the primary navigation region.
+[PASS] DESK-05 native Windows UX matrix passed.
+[PASS] Production API process is stopped.
+[PASS] PostgreSQL stopped, original Desktop app-data restored, and E2E runtime removed.

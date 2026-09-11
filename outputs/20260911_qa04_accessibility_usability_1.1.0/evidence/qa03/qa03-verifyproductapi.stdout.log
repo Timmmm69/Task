@@ -1,0 +1,26 @@
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Projects list contains seeded project
+[PASS] Seeded project is present in the list
+[PASS] Seeded project details round-trip
+[PASS] Project membership includes the seeded member
+[PASS] Calendar range reads through the product API
+[PASS] Seeded event is visible in the calendar range
+[PASS] Seeded series materialized exactly three occurrences
+[PASS] Seeded timed task is visible in the calendar range
+[PASS] Catalog list contains the seeded item
+[PASS] Catalog tree is readable
+[PASS] Seeded file location round-trips
+[PASS] Resolve-location answers for a fresh device session
+[PASS] Local paths stay device-scoped for other sessions
+[PASS] Contacts list contains the seeded contact
+[PASS] Search finds the seeded task
+[PASS] Search finds the seeded project
+[PASS] Search finds the seeded contact
+[PASS] Search finds the seeded catalog item
+[PASS] Notifications are empty before worker delivery
+[PASS] Personal settings are readable
+[PASS] Organization settings are readable
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Read-only account cannot list projects
+[PASS] Read-only account cannot create projects
+[PASS] QA-03 PRODUCT API VERIFICATION PASSED: 23 checks.

@@ -39,4 +39,4 @@ conflict и transport failure переходят в контролируемые
 forbidden ответы, capability gating, file resolve-before-open, search navigation и unread state.
 Существующие service-host и PostgreSQL contract suites подтверждают route policies и API semantics.
 Новая миграция не требуется. Live PostgreSQL smoke, реальное SMB/ACL окружение и native Windows
-UIA/Narrator walkthrough остаются deployment acceptance на стенде заказчика.
+Native UIA walkthrough остаётся deployment acceptance на стенде заказчика.

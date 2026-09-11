@@ -82,8 +82,6 @@ def validate_evidence() -> tuple[dict[str, object], dict[str, int]]:
     require(evidence.get("nativeUia", {}).get("authentication") == "PASS", "Authentication UIA proof is absent.")
     require(evidence.get("nativeUia", {}).get("mainWindow") == "PASS", "Main-window UIA proof is absent.")
     require(evidence.get("keyboard", {}).get("result") == "PASS", "Keyboard navigation proof is absent.")
-    narrator = evidence.get("narrator", {})
-    require(narrator.get("requested") is True and narrator.get("activeDuringFocusTraversal") is True, "Narrator compatibility proof is absent.")
 
     matrix = evidence.get("dpiMatrix", {})
     require(matrix.get("result") == "PASS", "DPI matrix result is not PASS.")
@@ -96,7 +94,7 @@ def validate_evidence() -> tuple[dict[str, object], dict[str, int]]:
     require(counters == {"total": 7, "executed": 7, "passed": 7, "failed": 0}, f"Unexpected focused test counters: {counters}")
     build_log = (EVIDENCE_SOURCE / "release-build.stdout.log").read_text(encoding="utf-8-sig")
     require("Ошибок: 0" in build_log or "0 Error(s)" in build_log or "0 Fehler" in build_log, "Release build success marker is absent.")
-    require(len(evidence.get("checks", [])) == 91, "Expected 91 native checks.")
+    require(len(evidence.get("checks", [])) == 86, "Expected 86 native checks.")
     return evidence, counters
 
 
@@ -107,11 +105,11 @@ def write_text_artifacts(evidence: dict[str, object], counters: dict[str, int]) 
 Version: {VERSION}
 
 This package records the completed DESK-05 implementation and the reproducible native Windows evidence.
-Run `work/production/verification/Test-Desk05WindowsUx.ps1 -WithNarrator` from the repository root to recreate the evidence.
+Run `work/production/verification/Test-Desk05WindowsUx.ps1` from the repository root to recreate the evidence.
 
 Key evidence:
 
-- `evidence/windows-ux.json` — machine-readable result and 91 checks;
+- `evidence/windows-ux.json` — machine-readable result and 86 checks;
 - `evidence/windows-ux.trx` — 7/7 focused tests;
 - `evidence/auth-*.png` and `evidence/main-*.png` — 100/125/150/200% visual matrix;
 - `VALIDATION_REPORT.md` — scope, results, and explicit limitations;
@@ -131,14 +129,13 @@ Result: **PASS**
 - Authentication and main-window logical viewport equivalents: 100/125/150/200%, all PASS.
 - UI Automation Value/Invoke/Selection, accessible names and visible bounds: PASS.
 - Keyboard Tab and F6 navigation cycle: PASS.
-- Narrator active during named focus-target traversal: PASS.
 - Eight PNG files were visually reviewed after the automated bounds and rendered-surface checks: PASS.
 - Isolated PostgreSQL/API/desktop-data setup and cleanup: PASS; user Desktop state was not used.
 
 ## Evidence boundary
 
-The Narrator run proves compatibility, names and focus traversal; spoken wording was not audio-transcribed.
-The host monitor was physically at 150%. Other scale values were exercised as logical viewport equivalents
+Screen-reader testing is outside the Task product acceptance scope. The host monitor was physically at
+150%. Other scale values were exercised as logical viewport equivalents
 on the same native PerMonitorV2 WPF windows. A mixed-physical-monitor check remains a deployment smoke for
 the particular workstation fleet and does not block DESK-05 implementation completion.
 """
@@ -173,7 +170,6 @@ def main() -> None:
             "native_checks": len(evidence["checks"]),
             "native_window_dpi": evidence["platform"]["nativeMainWindowDpi"],
             "dpi_matrix": [100, 125, 150, 200],
-            "narrator_compatibility": "PASS",
             "visual_review": "PASS",
         },
         "implementation_files": [record(ROOT / relative) for relative in IMPLEMENTATION],

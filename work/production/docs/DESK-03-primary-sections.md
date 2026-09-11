@@ -45,4 +45,4 @@ Desktop suite: 290/290. Тесты проверяют canonical URI, строг�
 capability gates, восстановление и сохранение трёх групп настроек.
 
 Новая миграция не требуется. Live PostgreSQL/API smoke на стенде заказчика и native Windows
-UIA/Narrator walkthrough остаются deployment acceptance и не заявлены как выполненные локально.
+Native UIA walkthrough остаётся deployment acceptance и не заявлен как выполненный локально.

@@ -1,0 +1,184 @@
+[PASS] PostgreSQL 16 binaries are installed.
+[PASS] Isolated PostgreSQL 16 cluster was initialized.
+[PASS] PostgreSQL 16 is accepting connections on 127.0.0.1:61067.
+[PASS] Isolated E2E database was created.
+[PASS] Existing Desktop app-data was preserved for later restoration.
+[PASS] Ephemeral E2E state was saved in the isolated runtime directory.
+TASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14
+[PASS] Production migrator applied all migrations.
+TASK_DB_MIGRATOR code=BootstrapCompleted organizationId=cde2312d-74ee-431d-a8f0-2868886467e0 userId=165e44d3-03da-43ed-9114-4420c47c1ccc roleId=3ce22f5e-0f28-4c99-b7db-a2cfcdab2053
+[PASS] Real administrator account was bootstrapped.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:61068.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Direct create probe returned HTTP 201.
+[PASS] Same-key create replay returned the stored HTTP 201 response.
+[PASS] Replay is explicitly marked Idempotency-Replayed=true.
+[PASS] Same-key replay produced exactly one row, audit, event, outbox and completed idempotency record.
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Read-only user retains Task.Read access.
+[PASS] Read-only direct write is denied with HTTP 403.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Desktop session was seeded for 'task-e2e-admin' through the real login endpoint.
+[PASS] SETUP COMPLETE. UI create title: QA-02 deterministic WPF task
+[PASS] UI final title: QA-02 deterministic WPF task completed
+[PASS] QA-03 deterministic seed profile is active.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Admin session exposes the canonical user id.
+[PASS] Seeded project was created through the product API.
+[PASS] Project roles are readable through the product API.
+[PASS] At least one project role is available for membership.
+[PASS] Read-only account id is resolvable.
+[PASS] Read-only user was added as a project member.
+[PASS] Seeded calendar event was created.
+[PASS] Seeded recurrence series was created transactionally.
+[PASS] Seeded catalog item was created.
+[PASS] Seeded file location was attached to the catalog item.
+[PASS] Location resolve succeeds for the owning device session.
+[PASS] Resolve returns the explicit client-check status.
+[PASS] Resolved location is openable on this device.
+[PASS] Seeded contact was created.
+[PASS] Seeded timed today task was created.
+[PASS] Seeded untimed today task was created.
+[PASS] Seeded overdue task was created.
+[PASS] Due reminder is scheduled for worker delivery.
+[PASS] QA-03 PRODUCT SEED COMPLETE.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Projects list contains seeded project
+[PASS] Seeded project is present in the list
+[PASS] Seeded project details round-trip
+[PASS] Project membership includes the seeded member
+[PASS] Calendar range reads through the product API
+[PASS] Seeded event is visible in the calendar range
+[PASS] Seeded series materialized exactly three occurrences
+[PASS] Seeded timed task is visible in the calendar range
+[PASS] Catalog list contains the seeded item
+[PASS] Catalog tree is readable
+[PASS] Seeded file location round-trips
+[PASS] Resolve-location answers for a fresh device session
+[PASS] Local paths stay device-scoped for other sessions
+[PASS] Contacts list contains the seeded contact
+[PASS] Search finds the seeded task
+[PASS] Search finds the seeded project
+[PASS] Search finds the seeded contact
+[PASS] Search finds the seeded catalog item
+[PASS] Notifications are empty before worker delivery
+[PASS] Personal settings are readable
+[PASS] Organization settings are readable
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Read-only account cannot list projects
+[PASS] Read-only account cannot create projects
+[PASS] QA-03 PRODUCT API VERIFICATION PASSED: 23 checks.
+[PASS] Release Task.Worker binary exists.
+[PASS] Production worker delivered the due reminder as a user notification.
+[PASS] Reminder occurrence reached the delivered state.
+[PASS] Reminder aggregate is marked delivered.
+[PASS] Outbox publisher materialized the durable change feed.
+[PASS] Delivered notification has the canonical reminder title.
+[PASS] QA-03 WORKER DELIVERY PASSED.
+[PASS] Release WPF executable exists.
+[PASS] Admin WPF is connected to the production HTTPS API.
+[PASS] Today shows the seeded timed task.
+[PASS] Today shows the seeded untimed task.
+[PASS] Today shows the seeded overdue task.
+[PASS] Today shows the seeded all-day event.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured today.png.
+[PASS] Admin created a deterministic task through the real WPF UI.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured tasks-created.png.
+[PASS] UI-created task row exists in PostgreSQL.
+[PASS] Concurrent server edit surfaces the safe conflict UI.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured tasks-conflict.png.
+[PASS] Conflict reload and explicit re-save completed the task edit.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured tasks-recovered.png.
+[PASS] Calendar shows the current week range.
+[PASS] Calendar grid renders the seeded event.
+[PASS] Calendar grid renders the seeded recurrence occurrence.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured calendar.png.
+[PASS] Projects list renders the seeded project.
+[PASS] Project was created through the real WPF UI.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured projects.png.
+[PASS] Catalog list renders the seeded file reference.
+[PASS] Catalog entry was created through the real WPF UI.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured catalog.png.
+[PASS] Contact was created through the real WPF UI.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured contacts.png.
+[PASS] Global search finds the seeded project in the real WPF UI.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured search.png.
+[PASS] Notification center renders the worker-delivered reminder.
+[PASS] Notification center shows the unread delivered state.
+[PASS] Mark-all-read transitioned the reminder to the read state.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured notifications.png.
+[PASS] Production API process is stopped.
+[PASS] Server loss disables task creation in the shell.
+[PASS] Shell truthfully reports the offline state.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured offline.png.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:61068.
+[PASS] Explicit refresh restores task creation after reconnect.
+[PASS] Foreground window bounds are available.
+[PASS] Foreground window is positioned for complete capture.
+[PASS] Capture window bounds are refreshed.
+[PASS] Captured reconnected.png.
+[PASS] Production API process is stopped.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:61068.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] UI-created task exists after the conflict flow and API restart
+[PASS] Conflict reload advanced the persisted task version
+[PASS] UI task retains the new status
+[PASS] UI task lifecycle emitted durable domain events
+[PASS] UI-created project is persisted
+[PASS] Seeded project survived the whole gate
+[PASS] UI-created catalog item is persisted
+[PASS] UI-created contact is persisted
+[PASS] Seeded calendar event survived the whole gate
+[PASS] Seeded recurrence series survived the whole gate
+[PASS] Worker-delivered notification retained its read state
+[PASS] Reminder retained its delivered state
+[PASS] QA-03 CRITICAL PRODUCT VERIFICATION PASSED: 12 checks.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Notifications list is readable after the UI read flow
+[PASS] Worker-delivered reminder notification remains visible
+[PASS] Notification keeps the reminder type
+[PASS] Notification links to the source task
+[PASS] Notification reached the read state through the real WPF UI
+[PASS] Read endpoint is idempotent for an already-read notification
+[PASS] Read-all accepts the delivered notification id
+[PASS] PostgreSQL retains the read notification state
+[PASS] QA-03 NOTIFICATIONS VERIFICATION PASSED: 8 checks.
+[PASS] QA-03 CRITICAL E2E GATE PASSED.
+[PASS] Production API process is stopped.
+[PASS] PostgreSQL stopped, original Desktop app-data restored, and E2E runtime removed.

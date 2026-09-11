@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="744b23c5-b555-4243-97f4-2c02de42b732" name="novik@TIM 2026-09-11 19:45:55" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-11T19:45:55.0935227+03:00" queuing="2026-09-11T19:45:55.0935229+03:00" start="2026-09-11T19:45:54.5240670+03:00" finish="2026-09-11T19:45:55.0984733+03:00" />
+  <TestSettings name="default" id="ff1d6a9c-355a-4fe6-ac96-fa8b1a8b7c9a">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-11_19_45_55" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="13d6a2d9-c524-48c0-8203-fe78a41921c7" testId="7bc2afde-2ef0-be63-4390-7fb1bec9ea39" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.StartupSizing_FitsSupportedWindowsScaleMatrix(desiredWidth: 1120, desiredHeight: 700)" computerName="TIM" duration="00:00:00.0001752" startTime="2026-09-11T19:45:55.0187678+03:00" endTime="2026-09-11T19:45:55.0189135+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13d6a2d9-c524-48c0-8203-fe78a41921c7" />
+    <UnitTestResult executionId="db131a86-ac50-4ca0-a5c0-10158a2de34f" testId="90839013-3998-69b9-a796-6eaa0f46dee8" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.StartupSizing_FitsSupportedWindowsScaleMatrix(desiredWidth: 1200, desiredHeight: 900)" computerName="TIM" duration="00:00:00.0014605" startTime="2026-09-11T19:45:55.0174653+03:00" endTime="2026-09-11T19:45:55.0187096+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db131a86-ac50-4ca0-a5c0-10158a2de34f" />
+    <UnitTestResult executionId="dd4faa4b-365c-4139-ac5d-6cb22e0fac96" testId="02a54b5f-9a75-ae01-c8c4-b990a21353ba" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.DesktopManifest_DeclaresPerMonitorV2AndAsInvoker" computerName="TIM" duration="00:00:00.0037920" startTime="2026-09-11T19:45:55.0020022+03:00" endTime="2026-09-11T19:45:55.0098605+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd4faa4b-365c-4139-ac5d-6cb22e0fac96" />
+    <UnitTestResult executionId="eaeea08e-cbe6-498e-9645-7bcb4798b824" testId="e686392e-e3b8-638d-11a6-2ee832a269f7" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.WindowsUxRunner_UsesAnIsolatedDesktopDataDirectory" computerName="TIM" duration="00:00:00.0008017" startTime="2026-09-11T19:45:55.0189907+03:00" endTime="2026-09-11T19:45:55.0197532+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eaeea08e-cbe6-498e-9645-7bcb4798b824" />
+    <UnitTestResult executionId="473d3520-b6ad-483c-96b8-a9c7b765a69a" testId="53057d28-aa08-de26-679c-1e0c8ad95916" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.WindowContracts_FitAtTwoHundredPercentAndExposeKeyboardHelp" computerName="TIM" duration="00:00:00.0061504" startTime="2026-09-11T19:45:55.0173847+03:00" endTime="2026-09-11T19:45:55.0174111+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="473d3520-b6ad-483c-96b8-a9c7b765a69a" />
+    <UnitTestResult executionId="ae22ab53-3d8f-456a-9ac3-bf1c7096cc51" testId="b55c8710-68f2-4bf2-ca8f-2e6bb8557864" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.CriticalWindowsHeadingsAndLiveRegions_AreDeclaredForScreenReaders" computerName="TIM" duration="00:00:00.0010839" startTime="2026-09-11T19:45:55.0168165+03:00" endTime="2026-09-11T19:45:55.0169647+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae22ab53-3d8f-456a-9ac3-bf1c7096cc51" />
+    <UnitTestResult executionId="58d784f3-4ef9-4aac-b5ce-b63adf5a5c81" testId="489b83bd-97e4-6e53-1fed-9beb667b544e" testName="Task.Desktop.Tests.WindowsUxAccessibilityTests.PrimaryDesktopSurfaces_ExposeStableWindowsAutomationRoots" computerName="TIM" duration="00:00:00.0018004" startTime="2026-09-11T19:45:55.0198255+03:00" endTime="2026-09-11T19:45:55.0215848+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58d784f3-4ef9-4aac-b5ce-b63adf5a5c81" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.WindowsUxRunner_UsesAnIsolatedDesktopDataDirectory" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="e686392e-e3b8-638d-11a6-2ee832a269f7">
+      <Execution id="eaeea08e-cbe6-498e-9645-7bcb4798b824" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="WindowsUxRunner_UsesAnIsolatedDesktopDataDirectory" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.CriticalWindowsHeadingsAndLiveRegions_AreDeclaredForScreenReaders" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="b55c8710-68f2-4bf2-ca8f-2e6bb8557864">
+      <Execution id="ae22ab53-3d8f-456a-9ac3-bf1c7096cc51" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="CriticalWindowsHeadingsAndLiveRegions_AreDeclaredForScreenReaders" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.StartupSizing_FitsSupportedWindowsScaleMatrix(desiredWidth: 1200, desiredHeight: 900)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="90839013-3998-69b9-a796-6eaa0f46dee8">
+      <Execution id="db131a86-ac50-4ca0-a5c0-10158a2de34f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="StartupSizing_FitsSupportedWindowsScaleMatrix" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.PrimaryDesktopSurfaces_ExposeStableWindowsAutomationRoots" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="489b83bd-97e4-6e53-1fed-9beb667b544e">
+      <Execution id="58d784f3-4ef9-4aac-b5ce-b63adf5a5c81" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="PrimaryDesktopSurfaces_ExposeStableWindowsAutomationRoots" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.DesktopManifest_DeclaresPerMonitorV2AndAsInvoker" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="02a54b5f-9a75-ae01-c8c4-b990a21353ba">
+      <Execution id="dd4faa4b-365c-4139-ac5d-6cb22e0fac96" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="DesktopManifest_DeclaresPerMonitorV2AndAsInvoker" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.StartupSizing_FitsSupportedWindowsScaleMatrix(desiredWidth: 1120, desiredHeight: 700)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="7bc2afde-2ef0-be63-4390-7fb1bec9ea39">
+      <Execution id="13d6a2d9-c524-48c0-8203-fe78a41921c7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="StartupSizing_FitsSupportedWindowsScaleMatrix" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.WindowsUxAccessibilityTests.WindowContracts_FitAtTwoHundredPercentAndExposeKeyboardHelp" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="53057d28-aa08-de26-679c-1e0c8ad95916">
+      <Execution id="473d3520-b6ad-483c-96b8-a9c7b765a69a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.WindowsUxAccessibilityTests" name="WindowContracts_FitAtTwoHundredPercentAndExposeKeyboardHelp" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7bc2afde-2ef0-be63-4390-7fb1bec9ea39" executionId="13d6a2d9-c524-48c0-8203-fe78a41921c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90839013-3998-69b9-a796-6eaa0f46dee8" executionId="db131a86-ac50-4ca0-a5c0-10158a2de34f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02a54b5f-9a75-ae01-c8c4-b990a21353ba" executionId="dd4faa4b-365c-4139-ac5d-6cb22e0fac96" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e686392e-e3b8-638d-11a6-2ee832a269f7" executionId="eaeea08e-cbe6-498e-9645-7bcb4798b824" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53057d28-aa08-de26-679c-1e0c8ad95916" executionId="473d3520-b6ad-483c-96b8-a9c7b765a69a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b55c8710-68f2-4bf2-ca8f-2e6bb8557864" executionId="ae22ab53-3d8f-456a-9ac3-bf1c7096cc51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="489b83bd-97e4-6e53-1fed-9beb667b544e" executionId="58d784f3-4ef9-4aac-b5ce-b63adf5a5c81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.11]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.13]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.16]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

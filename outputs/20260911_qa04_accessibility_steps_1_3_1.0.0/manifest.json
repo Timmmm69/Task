@@ -1,0 +1,363 @@
+{
+  "package": "QA-04 native accessibility steps 1-3",
+  "version": "1.0.0",
+  "generated_at_utc": "2026-09-11T16:33:52.865060+00:00",
+  "base_revision": "310a7d046965cf7bb9f936efa87588f014344949",
+  "roadmap_ids": [
+    "QA-04"
+  ],
+  "state": "validated-partial",
+  "completed_steps": [
+    1,
+    2,
+    3
+  ],
+  "remaining_steps": [
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "validation": {
+    "result": "PASS",
+    "matrix": "PASS",
+    "reproducible_synthetic_stand": "PASS",
+    "keyboard_and_native_uia": "PASS",
+    "overall_qa04": "IN_PROGRESS"
+  },
+  "implementation_files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 75248,
+      "sha256": "1145a8017f9ae670a93d51111ede18fd4954157afde3d98ce3e395c9e315a517"
+    },
+    {
+      "path": "work/production/docs/QA-04-accessibility-usability-matrix.md",
+      "bytes": 5283,
+      "sha256": "22c61ca3269b3e98bf4bde107da0fcb17667fa93ff9f1cc7a9e9030d01b2089b"
+    },
+    {
+      "path": "work/production/docs/DESK-03-primary-sections.md",
+      "bytes": 3936,
+      "sha256": "08e280290263b3b75394a289a6f7f0a6dae1cbc9d6a123b0aef264c233f1a2fd"
+    },
+    {
+      "path": "work/production/docs/DESK-05-windows-ux.md",
+      "bytes": 4528,
+      "sha256": "a2707f27382d789c952276610c2b712318c46b37813db6b8694aadb533f60a4c"
+    },
+    {
+      "path": "work/production/docs/PROD-05-work-links-search-notifications.md",
+      "bytes": 3952,
+      "sha256": "da725b0d055b0ece3e8c7c93775a3a3c4195eb055c2e450f0529dd2d0e3063ac"
+    },
+    {
+      "path": "work/production/verification/Test-Qa04AccessibilityGate.ps1",
+      "bytes": 6690,
+      "sha256": "6522bb4b3d178fcb616a3fb7101c2440215e9e386b7eb8f4df6485777938ada3"
+    },
+    {
+      "path": "work/production/verification/Test-Desk05WindowsUx.ps1",
+      "bytes": 20382,
+      "sha256": "72bc59e123c361230d56fc2fbe5ac1bf6ccddab09b5303a98acdf3a90928cfc6"
+    },
+    {
+      "path": "work/production/verification/Build-Qa04AccessibilityStepsPackage.py",
+      "bytes": 7531,
+      "sha256": "c6212ff2c38c995f8f3df8dc51ebb29a439d816c930004b0e99d298c5b7602a2"
+    },
+    {
+      "path": "work/production/verification/Build-Desk05Package.py",
+      "bytes": 9529,
+      "sha256": "dd75cef3f88406f36f16f6d08a98da54b4178248015d8e4c066a7057b764540f"
+    },
+    {
+      "path": "work/production/verification/Build-Prod04Package.py",
+      "bytes": 7855,
+      "sha256": "c43e0479e60dae3e7883740236ac212b32c5b88dd6a8027aaa147c2b670d63bc"
+    },
+    {
+      "path": "work/production/verification/Build-Prod05Package.py",
+      "bytes": 6384,
+      "sha256": "249b9b057a78e15368081d2a54bd35ffbad18b4256a5248607c4ecea465fd8bf"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "evidence/desk05/auth-100.png",
+      "bytes": 115004,
+      "sha256": "bb1a97760631e006029761aed560e61751355e84b4638cdb774f09e1d823984c"
+    },
+    {
+      "path": "evidence/desk05/auth-125.png",
+      "bytes": 117686,
+      "sha256": "739acbebed8605166f50bf13f4ddef8a8fdbc01052c6756b115909e522580f2f"
+    },
+    {
+      "path": "evidence/desk05/auth-150.png",
+      "bytes": 112726,
+      "sha256": "d161f6aff5782f615390be7846b8e60c8fcd6187d834a64d2168770436d8e9c8"
+    },
+    {
+      "path": "evidence/desk05/auth-200.png",
+      "bytes": 96332,
+      "sha256": "c342c7b6d30b349d2c76dd1ce98bb0f37ee3a37bb28b3b36461f2e7ab7c6dd93"
+    },
+    {
+      "path": "evidence/desk05/main-100.png",
+      "bytes": 198727,
+      "sha256": "59e0fd114442ce38b4e332c819d6299d2acd3ca84268de86282b11239b41423a"
+    },
+    {
+      "path": "evidence/desk05/main-125.png",
+      "bytes": 172978,
+      "sha256": "f8cb877717bbc5c340e65d0b9c8256c901b7170cecb0475bf5a2f0dd50c4bda9"
+    },
+    {
+      "path": "evidence/desk05/main-150.png",
+      "bytes": 119718,
+      "sha256": "b4656aa41d39151113d46e498343f4ad3b2919182d67ea8d7ab4ef07b492bb7d"
+    },
+    {
+      "path": "evidence/desk05/main-200.png",
+      "bytes": 88069,
+      "sha256": "c188bc5341a1ec75d54f4ec1b34afe5a7edf7af60c0c6f53503befec3a3545b4"
+    },
+    {
+      "path": "evidence/desk05/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/desk05/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/desk05/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/desk05/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "4a1f50f839ef5f9546cec002bc281b1fd83b166bb85ed245ca9c3e1499b3b868"
+    },
+    {
+      "path": "evidence/desk05/windows-ux-tests.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/desk05/windows-ux-tests.stdout.log",
+      "bytes": 647,
+      "sha256": "b66eb42ea730153d39a8a10ef2494114f5de2bafe485166c25a94e3ef8fde404"
+    },
+    {
+      "path": "evidence/desk05/windows-ux.json",
+      "bytes": 16049,
+      "sha256": "7dbfe3a190dabf50cd5e0388199878b40baa81008a60a351d628e38712342a5b"
+    },
+    {
+      "path": "evidence/desk05/windows-ux.trx",
+      "bytes": 11686,
+      "sha256": "b9ea0c67e783d28d09a4e13bd1a2e81b1bbca1e39d11cf2b7ea32ee28118ab6f"
+    },
+    {
+      "path": "evidence/desk05-child-gate.log",
+      "bytes": 8255,
+      "sha256": "55f82c865323337028e8ff942a3d8e47c4230ae77cfaab5a9148635fcc525b40"
+    },
+    {
+      "path": "evidence/qa03/api-assertions.json",
+      "bytes": 2037,
+      "sha256": "eb036a7231448690e52b9a087f08730b753c6187474ff2f0182c33e41b7b0e0c"
+    },
+    {
+      "path": "evidence/qa03/calendar.png",
+      "bytes": 544669,
+      "sha256": "5b9abf1291ba96f07bdf0cb7f6911e2e16475defd7fdc6e84630ee5734cd2df6"
+    },
+    {
+      "path": "evidence/qa03/catalog.png",
+      "bytes": 516312,
+      "sha256": "9ee6291dee5d8b6da0a1cb7368816207dd85391fdcc720d65711623bf0f6bac5"
+    },
+    {
+      "path": "evidence/qa03/contacts.png",
+      "bytes": 487347,
+      "sha256": "621e05a9c26ff68b9f4aea24b547474ab8dd9539e27c799b70276be509400d95"
+    },
+    {
+      "path": "evidence/qa03/notifications-assertions.json",
+      "bytes": 889,
+      "sha256": "45e7df34573015b0124429776de5084a88213b6e421bf9782ee576cb72e79ba0"
+    },
+    {
+      "path": "evidence/qa03/notifications.png",
+      "bytes": 470785,
+      "sha256": "200c4c2a2fa11af892d077b8c3eee31b0232f31cd40a35e9022ba2a8adf0ebf7"
+    },
+    {
+      "path": "evidence/qa03/offline.png",
+      "bytes": 546836,
+      "sha256": "d6746a6fa9dc213492d110276e54f9fe261750b8080a7dcb2d7c280ae1b0e66e"
+    },
+    {
+      "path": "evidence/qa03/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/qa03/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "c951a228612bf25a02a9a0218abcb93e28dd4f6df39e0ea447594d65e413c931"
+    },
+    {
+      "path": "evidence/qa03/phase-startapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/phase-startapi.stdout.log",
+      "bytes": 106,
+      "sha256": "2e8735a93e033b1bfd4530d55c416f346e15de6ecaca0b0558059344daf87810"
+    },
+    {
+      "path": "evidence/qa03/phase-stopapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/phase-stopapi.stdout.log",
+      "bytes": 43,
+      "sha256": "aec83b230e832fd58ed530063f236ead49b74d9946387ce5d0b8f12d10c95c9b"
+    },
+    {
+      "path": "evidence/qa03/product-db-assertions.json",
+      "bytes": 1253,
+      "sha256": "97753d8823441027df962833eca167b41e6f2538b0345532d0f32a5bdd89e59b"
+    },
+    {
+      "path": "evidence/qa03/projects.png",
+      "bytes": 519526,
+      "sha256": "8fed015d4ce9325f69d18962a0b7b8c9a205acf050b2e60d88650bf2406edb98"
+    },
+    {
+      "path": "evidence/qa03/qa03-gate.log",
+      "bytes": 6556,
+      "sha256": "325f4baa8a463b1a1e06d5b2c0eaa21b29fca59b4e5f2ab92933edac7b8dd829"
+    },
+    {
+      "path": "evidence/qa03/qa03-runworkerdelivery.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/qa03-runworkerdelivery.stdout.log",
+      "bytes": 391,
+      "sha256": "d567f0eb6e2c3c3b8d7883f62142af5046119f6a529efa77704a600f0faf06b7"
+    },
+    {
+      "path": "evidence/qa03/qa03-seedproductdata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/qa03-seedproductdata.stdout.log",
+      "bytes": 1031,
+      "sha256": "0e40fa527ef2516be7c9ca7d3465327ce9e04fba2ceeb96edaf3db9bf0ffa647"
+    },
+    {
+      "path": "evidence/qa03/qa03-verifycriticalproduct.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/qa03-verifycriticalproduct.stdout.log",
+      "bytes": 730,
+      "sha256": "0257ad2fc1bc2bca1dc5dfacdbe2d43fba33e7833b22ced373d7dfb60abe859c"
+    },
+    {
+      "path": "evidence/qa03/qa03-verifynotificationsapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/qa03-verifynotificationsapi.stdout.log",
+      "bytes": 572,
+      "sha256": "9b1f3e935a81d6b1dffebe65c6850fcadc1c0bc918377dd843e74cff50fe359c"
+    },
+    {
+      "path": "evidence/qa03/qa03-verifyproductapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03/qa03-verifyproductapi.stdout.log",
+      "bytes": 1257,
+      "sha256": "77bda355b220f1ab757b01dbe4ace4169b6cc0738922fa90c038e72eb1144807"
+    },
+    {
+      "path": "evidence/qa03/reconnected.png",
+      "bytes": 546027,
+      "sha256": "15bdcc0fadeca2e2be182d58c209990b221a2cf06f45e5cca4300f63d045f73d"
+    },
+    {
+      "path": "evidence/qa03/search.png",
+      "bytes": 468236,
+      "sha256": "b035ed4de2c6380fb33ab876bd9adf208a48ea8c943977958391cdbbb44c2a79"
+    },
+    {
+      "path": "evidence/qa03/tasks-conflict.png",
+      "bytes": 556828,
+      "sha256": "eed008c72ff65dbc35f53c561345c1d57c6c924d0b922bfefeaae100e9c958c2"
+    },
+    {
+      "path": "evidence/qa03/tasks-created.png",
+      "bytes": 563666,
+      "sha256": "c975f7cbe0d43d928a43f1cf3a93991cb1b65077718842c5ce2e4506df862ba2"
+    },
+    {
+      "path": "evidence/qa03/tasks-recovered.png",
+      "bytes": 544035,
+      "sha256": "a0e5eeb629450e07aae191f73923a3d35f415abdf10375f28106568bde6c69fe"
+    },
+    {
+      "path": "evidence/qa03/today.png",
+      "bytes": 514934,
+      "sha256": "13f1a7412debef41a8065276c950f297dc585a8c444f987564c72ebf6eb2f8d4"
+    },
+    {
+      "path": "evidence/qa03/ui-assertions.json",
+      "bytes": 978,
+      "sha256": "daca0862413af0788a05d2daa7e6f596995c7ac2c4dbe17eece31447270cc4c1"
+    },
+    {
+      "path": "evidence/qa03/worker-delivery.json",
+      "bytes": 608,
+      "sha256": "e0c36f1ffa5e1af83d04414d3697cdd6b41303b2c5e390e7b5c8ce802329809d"
+    },
+    {
+      "path": "evidence/qa03-child-gate.log",
+      "bytes": 9728,
+      "sha256": "6d365b56cce4195573453ceef4a4cdb0c976afe413122dbce2e93fad337c0d0e"
+    },
+    {
+      "path": "evidence/qa04-accessibility.json",
+      "bytes": 2123,
+      "sha256": "ad368e7708ed4e8397f71133d5abdfe73443652895b964ba2a25c5430b31f86f"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "package": "HAND-04 user and administrator handoff guides",
+  "version": "1.0.0",
+  "date": "2026-09-11",
+  "roadmap_id": "HAND-04",
+  "state": "implemented-and-validated-for-handoff",
+  "source_evidence": {
+    "qa03_package": "outputs/20260910_qa03_critical_e2e_1.0.0",
+    "seed_profile": "qa03-deterministic-v1",
+    "clean_room": "real Release WPF, HTTPS API, PostgreSQL and worker"
+  },
+  "source_files": [
+    {
+      "path": "work/production/docs/HAND-04-user-guide.md",
+      "bytes": 8955,
+      "sha256": "854a5912f85c66256318ebbd90a8bb5be34991bf653e7ee0d6f6c0321e5608f4"
+    },
+    {
+      "path": "work/production/docs/HAND-04-administrator-guide.md",
+      "bytes": 9049,
+      "sha256": "7126defff08569ce6bccd4a2d5213f63d61273f356db9d38e048f6643e255dbd"
+    },
+    {
+      "path": "work/production/docs/HAND-04-demo-walkthrough.md",
+      "bytes": 6504,
+      "sha256": "77d032e6c380b0b44d9a410132de7b25be8da3d55c86017d6e10eb9610d40ddb"
+    },
+    {
+      "path": "work/production/verification/Test-Hand04Documentation.ps1",
+      "bytes": 3774,
+      "sha256": "6c13c691e68f7f20a9b55c7ba068c5e29d847d390e9590028b0dc16ac2582078"
+    },
+    {
+      "path": "work/production/verification/Build-Hand04Package.ps1",
+      "bytes": 5207,
+      "sha256": "5eaf6607490770f13e551c383f1aa85048dcf9c539d706e517cb1c3df63b20f4"
+    },
+    {
+      "path": "outputs/20260910_qa03_critical_e2e_1.0.0/manifest.json",
+      "bytes": 9621,
+      "sha256": "fcda4db60f533c53e61776225687cfa812d7690818b81e9f14d09f45bf6ee842"
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 74899,
+      "sha256": "654f74ef21c4d82f2c0b8319309fbaf9128f85a6986b8037ff960deae63e509d"
+    }
+  ],
+  "package_files": [
+    "README.md",
+    "VERSION",
+    "HAND-04-user-guide.md",
+    "HAND-04-administrator-guide.md",
+    "HAND-04-demo-walkthrough.md",
+    "validation-report.md"
+  ]
+}

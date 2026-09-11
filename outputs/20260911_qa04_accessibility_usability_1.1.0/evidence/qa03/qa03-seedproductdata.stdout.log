@@ -1,0 +1,20 @@
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Admin session exposes the canonical user id.
+[PASS] Seeded project was created through the product API.
+[PASS] Project roles are readable through the product API.
+[PASS] At least one project role is available for membership.
+[PASS] Read-only account id is resolvable.
+[PASS] Read-only user was added as a project member.
+[PASS] Seeded calendar event was created.
+[PASS] Seeded recurrence series was created transactionally.
+[PASS] Seeded catalog item was created.
+[PASS] Seeded file location was attached to the catalog item.
+[PASS] Location resolve succeeds for the owning device session.
+[PASS] Resolve returns the explicit client-check status.
+[PASS] Resolved location is openable on this device.
+[PASS] Seeded contact was created.
+[PASS] Seeded timed today task was created.
+[PASS] Seeded untimed today task was created.
+[PASS] Seeded overdue task was created.
+[PASS] Due reminder is scheduled for worker delivery.
+[PASS] QA-03 PRODUCT SEED COMPLETE.

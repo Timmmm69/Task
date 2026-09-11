@@ -19,3 +19,14 @@
 # HAND-03 release metadata and evidence are themselves byte-addressed by the signed manifest.
 /outputs/20260911_hand03_release_candidate_1.0.0/** binary
 /outputs/20260911_hand03_release_candidate_1.0.0.zip.sha256 text eol=lf
+
+# QA-04, HAND-04 and Flicker deliverables are byte-addressed by package manifests.
+/work/production/evidence/desk05/** binary
+/outputs/20260911_hand04_user_admin_guides_1.0.0/** binary
+/outputs/20260911_qa04_accessibility_steps_1_3_1.0.0/** binary
+/outputs/20260911_qa04_accessibility_steps_1_3_1.0.0.zip binary
+/outputs/20260911_qa04_accessibility_steps_1_3_1.0.0.zip.sha256 text eol=lf
+/outputs/20260911_qa04_accessibility_usability_1.1.0/** binary
+/outputs/20260911_qa04_accessibility_usability_1.1.0.zip binary
+/outputs/20260911_qa04_accessibility_usability_1.1.0.zip.sha256 text eol=lf
+/outputs/flicker_teo_final/** binary

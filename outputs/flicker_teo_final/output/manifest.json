@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "created_at": "2026-09-09T17:32:08.382742+00:00",
+  "files": [
+    {
+      "name": "Flicker_TEO_FINAL.xlsx",
+      "bytes": 4189627,
+      "sha256": "4aed7353027a3c699efba517d9ccaf04a1e12a9ce1f83f5643cb81de6657924c"
+    },
+    {
+      "name": "Flicker_TEO_FINAL.docx",
+      "bytes": 502374,
+      "sha256": "dec506e6d8e4db25dafb2211e3a241fb59ed404bb0a31080fff0e3ea621b6fc9"
+    },
+    {
+      "name": "Flicker_TEO_FINAL.pdf",
+      "bytes": 889212,
+      "sha256": "e1ec4a786bca0d51a5828f14a030c8cb17b627b22f19c6176bd964e16319318e"
+    },
+    {
+      "name": "Flicker_TEO_AUDIT.md",
+      "bytes": 19528,
+      "sha256": "4dbaf48c5f5ff1c1f585f305913d0fa49449d7ffd16910a6ac059cb23393a2ac"
+    }
+  ],
+  "source_files": [
+    {
+      "name": "00_Flicker_Master_Context (1).md",
+      "sha256": "53f0fc16cb5e1751d561d61cba2e3c53ae767102fe9cc1c9da211c505bb8337b"
+    },
+    {
+      "name": "Flicker_TEO_financial_model (4).xlsx",
+      "sha256": "2e2ece6cd15b3a930db6a1384305a6ef21716c9678d7e3fc1014cfdaf65eef70"
+    }
+  ],
+  "validation": {
+    "independent_checks": 824,
+    "input_checks": 22,
+    "formula_errors": 0,
+    "sheets": 22,
+    "document_pages": 22,
+    "status": "passed"
+  }
+}

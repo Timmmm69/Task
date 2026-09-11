@@ -125,7 +125,7 @@ Docker Desktop and `TASK_POSTGRES_TEST_ADMIN_CONNECTION` were unavailable on thi
 live PostgreSQL execution was not claimed. No schema migration was introduced: project-role reads
 use the already deployed `iam.roles` and `iam.role_permissions` tables. Existing API-04 project and
 member writes retain their previously packaged PostgreSQL evidence. Customer deployment, native
-Windows UIA/Narrator walkthrough and an end-to-end server session remain deployment acceptance,
+Windows UIA walkthrough and an end-to-end server session remain deployment acceptance,
 not claims of this source package.
 """
     (OUTPUT / "validation-report.md").write_text(report, encoding="utf-8")

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "task": "QA-04",
+  "scope": "steps-1-3",
+  "result": "PASS",
+  "completion": {
+    "reproducibleSyntheticStand": "PASS",
+    "keyboardAndNativeUia": "PASS",
+    "overallQa04": "IN_PROGRESS",
+    "matrixDefined": "PASS"
+  },
+  "platform": {
+    "osVersion": "Microsoft Windows NT 10.0.26200.0",
+    "screenPixels": {
+      "height": 1600,
+      "width": 2560
+    },
+    "nativeMainWindowDpi": 144,
+    "perMonitorV2Manifest": true,
+    "architecture": "X64"
+  },
+  "seedProfile": "qa03-deterministic-v1",
+  "releaseArtifact": {
+    "bytes": 162816,
+    "sha256": "37f0d066e652fd091d9935bd267c5f2011725fa6515bd45083bee72efee5ac0a",
+    "lastWriteTimeUtc": "2026-09-11T10:11:17.6934152Z",
+    "path": "work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.exe"
+  },
+  "criticalUiScenarios": {
+    "today": "PASS",
+    "taskCreate": "PASS",
+    "taskConflict": "PASS",
+    "taskConflictRecovery": "PASS",
+    "calendar": "PASS",
+    "projectCreate": "PASS",
+    "catalogCreate": "PASS",
+    "contactCreate": "PASS",
+    "search": "PASS",
+    "notifications": "PASS",
+    "offlineShell": "PASS",
+    "reconnect": "PASS"
+  },
+  "nativeUia": {
+    "liveRegionContract": "PASS",
+    "mainWindow": "PASS",
+    "patterns": [
+      "Value",
+      "Invoke",
+      "Selection"
+    ],
+    "hostEnumeratesLiveSettingProperty": false,
+    "authentication": "PASS"
+  },
+  "keyboard": {
+    "authenticationFocusPath": [
+      "CheckServerConnectionButton",
+      "AuthWindow"
+    ],
+    "f6ContentPath": [
+      "TasksList",
+      "MainWindow"
+    ],
+    "result": "PASS",
+    "f6NavigationPath": [
+      "NavigationListBox",
+      "MainWindow"
+    ],
+    "f6HeaderPath": [
+      "TasksRefreshButton",
+      "MainWindow"
+    ]
+  },
+  "matrixDocument": "work/production/docs/QA-04-accessibility-usability-matrix.md",
+  "childEvidence": {
+    "desk05": "evidence/desk05",
+    "qa03": "evidence/qa03"
+  },
+  "startedAtUtc": "2026-09-11T16:44:57.7882288+00:00",
+  "completedAtUtc": "2026-09-11T16:46:22.9002100+00:00"
+}

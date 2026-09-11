@@ -95,7 +95,7 @@ Result: SOURCE/BUILD/TARGETED TESTS PASS.
 
 No migration was added. A new live PostgreSQL execution was not claimed when the isolated connection
 variable is absent; the store suite then validates its non-runtime contract tests only. Customer live
-PostgreSQL/API smoke, real SMB/ACL paths and native Windows UIA/Narrator walkthrough remain deployment acceptance.
+PostgreSQL/API smoke, real SMB/ACL paths and native Windows UIA walkthrough remain deployment acceptance.
 """
     (OUTPUT / "validation-report.md").write_text(report, encoding="utf-8")
     (OUTPUT / "VERSION").write_text(VERSION + "\n", encoding="utf-8")

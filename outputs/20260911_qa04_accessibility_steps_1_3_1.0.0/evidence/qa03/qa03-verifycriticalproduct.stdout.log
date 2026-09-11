@@ -1,0 +1,14 @@
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] UI-created task exists after the conflict flow and API restart
+[PASS] Conflict reload advanced the persisted task version
+[PASS] UI task retains the new status
+[PASS] UI task lifecycle emitted durable domain events
+[PASS] UI-created project is persisted
+[PASS] Seeded project survived the whole gate
+[PASS] UI-created catalog item is persisted
+[PASS] UI-created contact is persisted
+[PASS] Seeded calendar event survived the whole gate
+[PASS] Seeded recurrence series survived the whole gate
+[PASS] Worker-delivered notification retained its read state
+[PASS] Reminder retained its delivered state
+[PASS] QA-03 CRITICAL PRODUCT VERIFICATION PASSED: 12 checks.

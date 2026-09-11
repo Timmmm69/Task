@@ -178,7 +178,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 0,
-      "next_action": "На стенде заказчика применить существующие миграции, выполнить live PostgreSQL/API smoke и native Windows UIA/Narrator walkthrough раздела «Проекты»."
+      "next_action": "На стенде заказчика применить существующие миграции, выполнить live PostgreSQL/API smoke и native Windows UIA walkthrough раздела «Проекты»."
     },
     {
       "id": "PROD-05",
@@ -208,7 +208,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 0,
-      "next_action": "На стенде заказчика выполнить live PostgreSQL/API smoke, проверить реальные SMB/ACL пути и пройти native Windows UIA/Narrator walkthrough четырёх разделов."
+      "next_action": "На стенде заказчика выполнить live PostgreSQL/API smoke, проверить реальные SMB/ACL пути и пройти native Windows UIA walkthrough четырёх разделов."
     },
     {
       "id": "DESK-01",
@@ -275,7 +275,7 @@
         "work/production/tests/Task.Desktop.Tests/Work: lifecycle/settings contract and view-model coverage",
         "outputs/20260910_desk03_primary_sections_1.0.0/validation-report.md"
       ],
-      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Release build прошёл, полный gate 1650 passed / 0 failed / 4 live-PostgreSQL skipped. Native UIA/Narrator и customer-stand smoke остаются deployment acceptance.",
+      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Release build прошёл, полный gate 1650 passed / 0 failed / 4 live-PostgreSQL skipped. Native UIA и customer-stand smoke остаются deployment acceptance.",
       "updated_at": "2026-09-10T12:41:53+03:00",
       "priority": 3,
       "dependencies": [
@@ -286,7 +286,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 0,
-      "next_action": "На стенде заказчика выполнить live PostgreSQL/API smoke и native Windows UIA/Narrator walkthrough основных разделов."
+      "next_action": "На стенде заказчика выполнить live PostgreSQL/API smoke и native Windows UIA walkthrough основных разделов."
     },
     {
       "id": "DESK-04",
@@ -322,20 +322,20 @@
     {
       "id": "DESK-05",
       "title": "Windows UX доступен на целевых рабочих местах",
-      "description": "Клавиатура, UI Automation, Narrator, high-DPI и минимальные размеры подтверждены на Windows.",
+      "description": "Клавиатура, UI Automation, high-DPI и минимальные размеры подтверждены на Windows.",
       "category": "desktop",
       "weight": 8,
       "criticality": "high",
       "status": "done",
       "progress": 100,
       "evidence": [
-        "work/production/evidence/desk05/windows-ux.json: PASS, 91/91 native checks, UIA/keyboard/Narrator and DPI matrix 100/125/150/200%",
+        "work/production/evidence/desk05/windows-ux.json: PASS, 86/86 native checks, UIA/keyboard and DPI matrix 100/125/150/200%",
         "work/production/evidence/desk05/auth-200.png: authentication viewport visual PASS at the 200% equivalent",
         "work/production/evidence/desk05/main-200.png: main-window viewport visual PASS at the 200% equivalent",
         "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs: 7/7 focused contract and sizing tests",
         "outputs/20260910_desk05_windows_ux_1.0.0/VALIDATION_REPORT.md: packaged DESK-05 validation PASS"
       ],
-      "note": "Нативный WPF Release проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, UIA, Tab/F6 и активный Narrator — PASS. Аудиотранскрипт Narrator не снимался; физическая mixed-DPI топология относится к deployment smoke.",
+      "note": "Нативный WPF Release проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, UIA и Tab/F6 — PASS. Экранные дикторы не входят в acceptance scope; физическая mixed-DPI топология относится к deployment smoke.",
       "updated_at": "2026-09-10T13:53:24+03:00",
       "priority": 3,
       "dependencies": [
@@ -471,7 +471,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 2,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -825,25 +825,27 @@
     {
       "id": "QA-04",
       "title": "Нативная доступность и usability подтверждены по матрице",
-      "description": "Narrator, DPI и сценарии использования пройдены на контролируемой Windows-матрице с синтетическими данными; участие заказчика не требуется.",
+      "description": "Клавиатура, UI Automation, DPI и сценарии использования пройдены на контролируемой Windows-матрице с синтетическими данными; участие заказчика не требуется.",
       "category": "quality",
       "weight": 10,
       "criticality": "high",
-      "status": "blocked",
-      "progress": 0,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "work/stage_5_completion_audit/completion-audit.json: external gate NOT_READY 0/9"
+        "work/production/docs/QA-04-accessibility-usability-matrix.md: полная матрица шагов 1–8 и границы evidence",
+        "work/production/verification/Test-Qa04CompletionGate.ps1: DPI, usability, findings, retest и sign-off gate",
+        "outputs/20260911_qa04_accessibility_usability_1.1.0/VALIDATION_REPORT.md: 12/12 critical UI, 8/8 DPI, release sign-off APPROVED"
       ],
-      "note": "Нужны воспроизводимые UIA/Narrator/DPI evidence и зафиксированный внутренний usability review; customer acceptance выполняется после передачи.",
-      "updated_at": "2026-09-07T12:00:00+03:00",
+      "note": "Шаги 1–8 закрыты на свежем controlled Windows run: 0 блокирующих findings, 4 неблокирующих с disposition. Narrator исключён из acceptance scope и не заявлен как проверенный; mixed-monitor остаётся deployment smoke.",
+      "updated_at": "2026-09-11T22:05:00+03:00",
       "priority": 4,
       "dependencies": [
         "DESK-05",
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
-      "next_action": "Провести сценарную проверку на Windows-матрице с синтетическим demo-набором, оформить findings disposition и внутренний release sign-off."
+      "recommended_order": 0,
+      "next_action": "Поддерживать QA-04 completion gate в regression; при развёртывании выполнить physical mixed-monitor smoke на парке заказчика."
     },
     {
       "id": "QA-05",
@@ -1112,21 +1114,22 @@
       "category": "handoff",
       "weight": 8,
       "criticality": "high",
-      "status": "not_started",
-      "progress": 0,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "Готовые актуальные user/admin manuals для production продукта не обнаружены"
+        "Пакет outputs/20260911_hand04_user_admin_guides_1.0.0: user guide, administrator guide, synthetic QA-03 demo walkthrough, manifest, SHA-256 и validation report",
+        "Test-Hand04Documentation.ps1: PASS; reference QA-03 records real Release WPF + HTTPS API + PostgreSQL, conflict recovery, offline/reconnect and cleanup as PASS"
       ],
-      "note": "Нужно создать после стабилизации функций и deployment.",
-      "updated_at": "2026-09-07T12:00:00+03:00",
+      "note": "Инструкции готовы к передаче. Customer-specific PKI, SMB ACL, реальные учётные записи и формальная приёмка остаются post-handoff действиями заказчика.",
+      "updated_at": "2026-09-11T19:00:00+03:00",
       "priority": 4,
       "dependencies": [
         "DESK-03",
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Подготовить короткие user/admin guides и воспроизвести их шаги на чистой VM с demo-данными."
+      "recommended_order": 0,
+      "next_action": "Передать пакет заказчику и провести его локальный QA-03 demo-маршрут на изолированном стенде; production rollout выполнять по HAND-02 и OPS-05."
     },
     {
       "id": "HAND-05",
@@ -1150,7 +1153,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 1,
       "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
     }
   ],

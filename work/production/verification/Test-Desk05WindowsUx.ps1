@@ -1,8 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$EvidenceDirectory = '',
-    [switch]$SkipBuild,
-    [switch]$WithNarrator
+    [switch]$SkipBuild
 )
 
 if ($PSVersionTable.PSEdition -ne 'Core') {
@@ -10,7 +9,6 @@ if ($PSVersionTable.PSEdition -ne 'Core') {
     $arguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath)
     if ($EvidenceDirectory) { $arguments += @('-EvidenceDirectory', $EvidenceDirectory) }
     if ($SkipBuild) { $arguments += '-SkipBuild' }
-    if ($WithNarrator) { $arguments += '-WithNarrator' }
     & $pwsh.Source @arguments
     exit $LASTEXITCODE
 }
@@ -37,8 +35,6 @@ $desktopExe = Join-Path $productionRoot 'src\Task.Desktop\bin\Release\net10.0-wi
 $desktopProcess = $null
 $setupStarted = $false
 $sessionStash = $null
-$narratorWasRunning = $false
-$narratorStartedIds = @()
 $checks = [Collections.Generic.List[string]]::new()
 $startedAt = [DateTimeOffset]::UtcNow
 
@@ -296,24 +292,6 @@ function Send-F6([System.Windows.Automation.AutomationElement]$window) { return 
 
 function Send-Tab([System.Windows.Automation.AutomationElement]$window) { return @(Send-VirtualKey $window 0x09) }
 
-function Start-NarratorForSmoke {
-    $before = @(Get-Process -Name Narrator -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id)
-    $script:narratorWasRunning = $before.Count -gt 0
-    if (-not $script:narratorWasRunning) {
-        $narratorPath = Join-Path $env:WINDIR 'System32\Narrator.exe'
-        Assert-Desk05 (Test-Path -LiteralPath $narratorPath -PathType Leaf) 'Windows Narrator executable exists.'
-        Start-Process -FilePath $narratorPath | Out-Null
-    }
-    $deadline = [DateTime]::UtcNow.AddSeconds(15)
-    do {
-        $active = @(Get-Process -Name Narrator -ErrorAction SilentlyContinue)
-        if ($active.Count -gt 0) { break }
-        Start-Sleep -Milliseconds 300
-    } while ([DateTime]::UtcNow -lt $deadline)
-    Assert-Desk05 ($active.Count -gt 0) 'Windows Narrator is active during keyboard focus traversal.'
-    $script:narratorStartedIds = @($active | Where-Object { $_.Id -notin $before } | Select-Object -ExpandProperty Id)
-}
-
 try {
     if (-not $SkipBuild) {
         Invoke-Captured 'release-build' (Get-Command dotnet.exe).Source `
@@ -389,20 +367,6 @@ try {
     Assert-Desk05 ($navigationFocus -contains 'NavigationListBox') `
         'F6 returns focus from content to the primary navigation region.'
 
-    $narratorFocusTargets = @()
-    if ($WithNarrator) {
-        Start-NarratorForSmoke
-        [Desk05Native]::SetForegroundWindow([IntPtr]$mainWindow.Current.NativeWindowHandle) | Out-Null
-        $narratorFocusTargets = foreach ($id in @('NavigationListBox', 'TasksRefreshButton', 'TasksList')) {
-            $element = Wait-ElementById $mainWindow $id
-            $element.SetFocus()
-            Start-Sleep -Milliseconds 350
-            Assert-Desk05 (-not [string]::IsNullOrWhiteSpace($element.Current.Name)) `
-                "Narrator traversal target $id retains its accessible name."
-            @{ automationId = $id; name = $element.Current.Name }
-        }
-    }
-
     $result = [ordered]@{
         schemaVersion = 1
         task = 'DESK-05'
@@ -429,13 +393,6 @@ try {
             f6NavigationPath = $navigationFocus
             result = 'PASS'
         }
-        narrator = @{
-            requested = [bool]$WithNarrator
-            activeDuringFocusTraversal = [bool]$WithNarrator
-            focusTargets = @($narratorFocusTargets)
-            speechTranscriptCaptured = $false
-            scope = 'Compatibility smoke: Narrator active while named UIA focus targets were traversed; auditory wording was not transcribed.'
-        }
         dpiMatrix = @{
             method = 'Native WPF/UIA windows at logical 1920x1040 viewports equivalent to 100/125/150/200%; screenshots and critical bounds captured on the current Windows host.'
             authentication = $authMatrix
@@ -454,9 +411,6 @@ try {
 }
 finally {
     Stop-Desktop
-    foreach ($id in $narratorStartedIds) {
-        Stop-Process -Id $id -Force -ErrorAction SilentlyContinue
-    }
     if ($null -ne $sessionStash -and (Test-Path -LiteralPath $sessionStash)) {
         $state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
         if (Test-Path -LiteralPath $state.DesktopAppData) {

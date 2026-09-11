@@ -1,0 +1,10 @@
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Notifications list is readable after the UI read flow
+[PASS] Worker-delivered reminder notification remains visible
+[PASS] Notification keeps the reminder type
+[PASS] Notification links to the source task
+[PASS] Notification reached the read state through the real WPF UI
+[PASS] Read endpoint is idempotent for an already-read notification
+[PASS] Read-all accepts the delivered notification id
+[PASS] PostgreSQL retains the read notification state
+[PASS] QA-03 NOTIFICATIONS VERIFICATION PASSED: 8 checks.

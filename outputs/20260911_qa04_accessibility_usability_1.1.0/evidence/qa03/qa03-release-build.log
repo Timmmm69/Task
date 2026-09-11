@@ -1,0 +1,55 @@
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : warning NU1900: Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : warning NU1900: Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : warning NU1900: Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+
+Fehler beim Buildvorgang.
+
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : warning NU1900: Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : warning NU1900: Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : warning NU1900: Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Domain\Task.Domain.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Application\Task.Application.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : error NU1301: Der Dienstindex für die Quelle "https://api.nuget.org/v3/index.json" konnte nicht geladen werden.
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig. (api.nuget.org:443)
+C:\Users\novik\Таск\work\production\src\Task.Desktop\Task.Desktop.csproj : error NU1301:   Der Zugriff auf einen Socket war aufgrund der Zugriffsrechte des Sockets unzulässig.
+    3 Warnung(en)
+    7 Fehler
+
+Verstrichene Zeit 00:00:00.94
