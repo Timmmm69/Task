@@ -105,7 +105,7 @@ if ($ReportPath) {
     $lines = @(
         "# HAND-03 independent validation report — $($manifest.releaseVersion)", '',
         '**Result: PASS**', '',
-        "- Source revision: ``$($manifest.sourceRevision)``", "- Manifest SHA-256: ``$($result.manifestSha256)``",
+        "- Source revision: ``$($manifest.sourceRevision)``", '- Final manifest SHA-256: recorded in `signature/signature.json` and verified by this gate.',
         "- Signer thumbprint: ``$($certificate.Thumbprint)``", "- Checks passed: $($checks.Count)", '',
         'The verifier recalculated every manifest and SHA256SUMS entry, verified the detached CMS signature and signer pin,',
         'validated the SPDX/license inventory, server reproducibility evidence and OCI digest map, reopened and completely read',
