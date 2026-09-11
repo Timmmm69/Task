@@ -1,0 +1,180 @@
+{
+  "package": "HAND-02 unified operations runbook with clean-room repro",
+  "version": "1.0.0",
+  "date": "2026-09-11",
+  "roadmap_id": "HAND-02",
+  "base_revision": "9dcb53c3769e8b270350dd6cff1e48da98d640c9",
+  "validated_revision": "03270ae",
+  "dashboard_revision": "03270ae",
+  "state": "implemented-validated-and-pushed-to-main",
+  "scope_diff": "git diff --name-status 9dcb53c3769e8b270350dd6cff1e48da98d640c9..03270ae",
+  "implementation_files": [
+    {
+      "path": "work/production/docs/OPS-operations-gap-analysis.md",
+      "sha256": "985ee6def498f44df8c97786064559a39e78510505a64632b8930475d65b0770",
+      "bytes": 11174
+    },
+    {
+      "path": "work/production/docs/OPS-operations-runbook.md",
+      "sha256": "d675c0e4340cb7060d6063ceb1dad54de55fddab277784f18cae04c5fbc89fad",
+      "bytes": 22014
+    },
+    {
+      "path": "work/production/deployment/ops-runbook/Invoke-OpsCleanRoomRepro.ps1",
+      "sha256": "c7dea9855edc5fdbd97cf79e81723a86e8898f5f65a6324742aac6be1a05e05a",
+      "bytes": 7924
+    },
+    {
+      "path": "work/production/deployment/ops-runbook/Invoke-OpsOperateRecoverRepro.ps1",
+      "sha256": "eb9a9238771e573a90fe9d2575b73dffbb3d3c81d4d090fa442f9c7316a7dd0e",
+      "bytes": 8002
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/install.json",
+      "sha256": "c00bdb73852ed3364fba121357657b879b730cd96c431ac5f5fbd780183d2c68",
+      "bytes": 5441
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/foundation/checks.json",
+      "sha256": "aa2b2a367104d3f0a62e8112529d220e63948c33d17a22748c455d04122fdf0e",
+      "bytes": 1860
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/foundation/dns-compose.resolved.yaml",
+      "sha256": "5c2e825b5f06381456d6b3938102b754b9b280ca2df151235b1a3d54e5425392",
+      "bytes": 945
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/foundation/firewall-plan.json",
+      "sha256": "f7d5885ddd015fcac16437d325871202bae6056e0487de83a819854767312f43",
+      "bytes": 1717
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/foundation/production-compose.resolved.yaml",
+      "sha256": "72a99b16fe0480baf39a173bf77deba879c8de5af3d7d0e8e027cd4b0a4cd3a0",
+      "bytes": 7097
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/runtime-foundation/runtime-foundation.json",
+      "sha256": "480fae40d819cb0ec64b5034aff9e80ef0ef14f76dd4f0bb6ac02a9f0e75009f",
+      "bytes": 1264
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/sec03-contract/checks.json",
+      "sha256": "a53aee1d62e248097c174fdc1c98c7793521203aa7bbbed0af215633e10c0c09",
+      "bytes": 1077
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/install/clean-room/clean-room-runs.json",
+      "sha256": "6c517633283c77947e8a5e3998b7d01393a41115f3670fec43c8e60bb96cc794",
+      "bytes": 3445
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/checks.json",
+      "sha256": "812aff7f943d9a4aa9644718723a17a5cf6413a70b6b26e3280a9d3c4da87cb0",
+      "bytes": 4596
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/monitoring/ops04-acceptance.json",
+      "sha256": "7aa38f6072dde2cdd8462d136a332d2068d219ea9a0e0e3266b5e0f060e26be3",
+      "bytes": 264
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/acceptance-unit.txt",
+      "sha256": "ba3e198bfa34c47cc0b48950c871c75990e1b28edd4adebd085c96322e713490",
+      "bytes": 1341
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/acceptance-secondary.json",
+      "sha256": "d9a51099099fde21e815930c01d12590b8f74d0087fd7a97f74dc1d1b8044102",
+      "bytes": 1467
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/acceptance-protected-snapshot.json",
+      "sha256": "3fe8f1632c269781b03c8e89cb232a0d316ac44577fdda72b397cf5c7aba1eca",
+      "bytes": 1468
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/acceptance-service-escrow-b.json",
+      "sha256": "f87c117a2aa388c0050b289a2629203d1daabc0c9e56938ebdff6e71c698a662",
+      "bytes": 1413
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/acceptance-suite.json",
+      "sha256": "d64ac9f48fcc8c45ad7ff77b63dca3e468cc256f0b01abbc9367502bb89218c2",
+      "bytes": 511
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/integration.json",
+      "sha256": "2d7191458fba94c39268be02e1ed6f369bed20fa3a46515cf82df570ae9f0731",
+      "bytes": 3796
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/integration.txt",
+      "sha256": "128a647d547eb1ba922b1c765d62f8fb9819a12574c3353a23358f876f08ad05",
+      "bytes": 2161
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/offhost-only-restore.json",
+      "sha256": "5724ed12411f5865938adb4009e9f35bea522f42021a39fdddc7b774185e24f2",
+      "bytes": 531
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/run.json",
+      "sha256": "6e4731a7b2cee5c4279c3d6a3c6f4cfb50c9b495bbac46a81e26a84f5a9a8593",
+      "bytes": 38591
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/image-id.txt",
+      "sha256": "d2bbc1c2fb0fd417126e2cf932209f5e84e5f57e779e29d2d237947dfe4649de",
+      "bytes": 73
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/api-image-id.txt",
+      "sha256": "c3bcc470d7e0b253f98863d08632d899e8c96298c9824cfc0fad4b086a5c2426",
+      "bytes": 73
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/backend-versions.txt",
+      "sha256": "6801bd470423a38c5413e04d0f6246b08ae4b4f14f8b24ded4bf99e47457a4e9",
+      "bytes": 101
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/backup-restore/cleanup.json",
+      "sha256": "eee0219a23888c75fe9776b556887d4b73ee4b5a2f41f92542af7b556817656e",
+      "bytes": 72
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/rotation/clean-room-runs.json",
+      "sha256": "a46a8af117dbdb45e6014b287a619a2e729172b19a5c48ea2a24546c8d7b0410",
+      "bytes": 3445
+    },
+    {
+      "path": "work/production/evidence/ops-runbook/operate/client/acceptance.json",
+      "sha256": "0b7a3c65db43c539486fbb61f0a689ef9b9cb87c4f9f8acd6a5b51b7d224b71a",
+      "bytes": 636
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "afa146001514e76eb256e34bc2e9c8a8e41c276d59242d8a99e5b7b000489c85",
+      "bytes": 74331
+    }
+  ],
+  "package_files": [
+    {
+      "path": "README.md",
+      "sha256": "ec4a123d36c5f58d39132f8a18b05ee13bea62b334131b64303619f636310626",
+      "bytes": 2096
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "b04555ec6c3608956d1c684f232bdcc15db3b3c409428d6b7817fdd11386c693",
+      "bytes": 4457
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "bytes": 6
+    }
+  ]
+}
