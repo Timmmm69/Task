@@ -700,10 +700,13 @@
         ".github/workflows/ci.yml: audited production restore on push and pull request",
         ".github/workflows/security-hardening.yml: independent weekly/manual dependency, secrets/TLS and container hardening gates",
         "https://github.com/Timmmm69/Task/actions/runs/34577240447: Security hardening PASS",
-        "https://github.com/Timmmm69/Task/actions/runs/34578360556: full CI PASS"
+        "https://github.com/Timmmm69/Task/actions/runs/34578360556: full CI PASS",
+        "work/production/verification/Test-ContainerVulnerabilities.ps1: fail-closed Trivy gate for immutable local production image IDs; CRITICAL, fixable HIGH and EOL block release",
+        "https://github.com/Timmmm69/Task/actions/runs/34588448020: weekly Security hardening PASS; Trivy 0.74.0 found 0 CRITICAL, 0 fixable HIGH, 0 unfixed HIGH and no EOL images",
+        "https://github.com/Timmmm69/Task/actions/runs/34588430981: full CI PASS including PostgreSQL 16, production container package and Trivy image gate"
       ],
-      "note": "Container hardening, fail-closed direct/transitive dependency audit и регулярные независимые security/image gates реализованы и подтверждены на GitHub-hosted runners.",
-      "updated_at": "2026-09-11T11:26:24+03:00",
+      "note": "Container hardening, fail-closed dependency audit и Trivy-проверка четырёх deployable-образов по immutable local image IDs работают в CI и еженедельном workflow. Подтверждены нулевые CRITICAL/HIGH findings и отсутствие EOL-образов без suppressions.",
+      "updated_at": "2026-09-11T15:58:51+03:00",
       "priority": 3,
       "dependencies": [
         "OPS-01",
@@ -711,7 +714,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 0,
-      "next_action": "Поддерживать weekly security-hardening workflow и production CI зелёными; обновлять уязвимые зависимости без suppressions."
+      "next_action": "Поддерживать weekly security-hardening workflow и production CI зелёными; своевременно обновлять Trivy, base-image digests и уязвимые зависимости без suppressions."
     },
     {
       "id": "SEC-05",

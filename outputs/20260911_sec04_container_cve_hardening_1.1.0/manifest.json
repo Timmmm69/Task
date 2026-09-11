@@ -1,0 +1,79 @@
+{
+  "package": "SEC-04 production container CVE hardening",
+  "version": "1.1.0",
+  "date": "2026-09-11",
+  "roadmap_id": "SEC-04",
+  "base_revision": "40b48ad9d344052232e25c55e9b46ad0ec0e6cd8",
+  "validated_revision": "5be20916b343a2570cfbe332a0a3b63698a26b41",
+  "state": "implemented-validated-and-pushed-to-main",
+  "revisions": [
+    "b994f6f5b0c922d2851caebe09e19656c89a04cc",
+    "5be20916b343a2570cfbe332a0a3b63698a26b41"
+  ],
+  "scope_diff": "git diff --name-status 40b48ad9d344052232e25c55e9b46ad0ec0e6cd8..5be20916b343a2570cfbe332a0a3b63698a26b41",
+  "hosted_runs": [
+    {
+      "workflow": "Security hardening",
+      "run_id": 34588448020,
+      "revision": "5be20916b343a2570cfbe332a0a3b63698a26b41",
+      "result": "success",
+      "url": "https://github.com/Timmmm69/Task/actions/runs/34588448020"
+    },
+    {
+      "workflow": "CI",
+      "run_id": 34588430981,
+      "revision": "5be20916b343a2570cfbe332a0a3b63698a26b41",
+      "result": "success",
+      "url": "https://github.com/Timmmm69/Task/actions/runs/34588430981"
+    }
+  ],
+  "implementation_files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "f11afa5a677438da63e397310b65f87d75d868c971a9a4eaddcf203479e22d63",
+      "bytes": 5826
+    },
+    {
+      "path": ".github/workflows/security-hardening.yml",
+      "sha256": "7a3e1286eab56227acb4070baa18239e609863c416868e99d025a1f7f6585aaf",
+      "bytes": 2005
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "f8c6f81c34a6281b1b9fc495b6e8e5c40f177b9fc04d820d13ab338c07c51f4d",
+      "bytes": 72537
+    },
+    {
+      "path": "work/production/verification/Test-ContainerPackaging.ps1",
+      "sha256": "03dcacce69e2130cf0033dc333744d6325644b084cf2e272f6d6f8d1c5a62afc",
+      "bytes": 26897
+    },
+    {
+      "path": "work/production/verification/Test-ContainerVulnerabilities.ps1",
+      "sha256": "7a55deed6a1ba7454ff3f37e3d795c0480bf300fd3ae0f86f1fc9c7a4eb15b1c",
+      "bytes": 10352
+    },
+    {
+      "path": "work/production/verification/Test-IndependentSecurityReview.ps1",
+      "sha256": "50eb38a2e03d3690b302a4fc86bcc55b02380368cbf2486d875beca7a8ea7184",
+      "bytes": 10759
+    }
+  ],
+  "package_files": [
+    {
+      "path": "README.md",
+      "sha256": "63ebac0057b1a6757fad44d0b925b83f957f854cc55a32acdbee4ea6ac178bfb",
+      "bytes": 993
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "57f6fb4ee3ddd31b035440f07bad687a29ec92ab441bfe1e9cd791d468956694",
+      "bytes": 4047
+    },
+    {
+      "path": "VERSION",
+      "sha256": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8",
+      "bytes": 6
+    }
+  ]
+}
