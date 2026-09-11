@@ -36,7 +36,8 @@ RUN dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtim
 
 FROM ${ASPNET_IMAGE} AS task-api-runtime
 USER root
-RUN apt-get -o Acquire::Retries=3 update \
+RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get -o Acquire::Retries=3 update \
     && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
         libgssapi-krb5-2=1.20.1-6ubuntu2.8 \
         libkrb5-3=1.20.1-6ubuntu2.8 \
@@ -84,7 +85,8 @@ ENTRYPOINT ["dotnet", "Task.BackupAgent.dll"]
 
 FROM ${RUNTIME_IMAGE} AS task-database-migrator-runtime
 USER root
-RUN apt-get -o Acquire::Retries=3 update \
+RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get -o Acquire::Retries=3 update \
     && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
         libgssapi-krb5-2=1.20.1-6ubuntu2.8 \
         libkrb5-3=1.20.1-6ubuntu2.8 \
