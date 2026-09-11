@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-09-11T12:59:50.7602355+00:00",
+  "result": "PASS",
+  "syntheticOnly": true,
+  "environment": {
+    "hostOs": "Майкрософт Windows 11 Домашняя",
+    "dockerServer": "linux/amd64 29.6.1",
+    "powershell": "7.6.6",
+    "gitCommit": "54278dd278f5fc83d565bf594750abcdbc3881a8",
+    "gitStatus": [
+      "?? outputs/20260911_task_container_release_0.6.0/",
+      "?? outputs/flicker_teo_final/",
+      "?? work/flicker_teo_final/",
+      "?? work/production/deployment/ops-runbook/",
+      "?? work/production/docs/OPS-operations-gap-analysis.md",
+      "?? work/production/docs/OPS-operations-runbook.md"
+    ],
+    "images": [
+      {
+        "image": "task-api",
+        "releaseVersion": "0.6.0",
+        "manifestDigest": "sha256:90986d76833f9395a30f7ff22e537d485cd8d9d7beb51eec7fe2b727add69951",
+        "indexDigest": "sha256:7f336af765f39495e846819683d3383351b7622cbc2e4b0f1cdd765428d5285f",
+        "localId": "sha256:7f336af765f39495e846819683d3383351b7622cbc2e4b0f1cdd765428d5285f",
+        "verifiedBy": "release-image-map"
+      },
+      {
+        "image": "task-database-migrator",
+        "releaseVersion": "0.6.0",
+        "manifestDigest": "sha256:7fd4b27316bfa4e8fa255399ed42a9dbe8dda79f07832b05057d9ce4fe842c4d",
+        "indexDigest": "sha256:b1a9429360f7bfde83ec27aaa82e1ca9a700ffa26c9066531096c123778e71ee",
+        "localId": "sha256:b1a9429360f7bfde83ec27aaa82e1ca9a700ffa26c9066531096c123778e71ee",
+        "verifiedBy": "release-image-map"
+      },
+      {
+        "image": "task-worker",
+        "releaseVersion": "0.6.0",
+        "manifestDigest": "sha256:b317197ea5d22fe8bc9cefc20c140b7e755333b10241d32298fdbdb5696f3b22",
+        "indexDigest": "sha256:baa794ae133f9d911bb8a881d9c7567c57cc8d5ccfc22d9c23b4898339378a6d",
+        "localId": "sha256:baa794ae133f9d911bb8a881d9c7567c57cc8d5ccfc22d9c23b4898339378a6d",
+        "verifiedBy": "release-image-map"
+      },
+      {
+        "image": "postgres:16-alpine",
+        "expectedDigest": "sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777",
+        "id": "sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777",
+        "verifiedBy": "RepoDigest"
+      },
+      {
+        "image": "nginxinc/nginx-unprivileged:1.29-alpine",
+        "expectedDigest": "sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6",
+        "id": "sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6",
+        "verifiedBy": "RepoDigest"
+      },
+      {
+        "image": "docker:29-dind",
+        "expectedDigest": "sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e",
+        "id": "sha256:5efed980cba3fc126cf54e21a5a6ff8849d05b6e0623d6e7612f48e9cd6cd17e",
+        "verifiedBy": "RepoDigest"
+      },
+      {
+        "image": "mcr.microsoft.com/powershell:latest",
+        "expectedDigest": "sha256:810c4f1e0c9d23022c3ec18c50a6205ee4b60766f1739d329b2948df1fd7d5b0",
+        "id": "sha256:810c4f1e0c9d23022c3ec18c50a6205ee4b60766f1739d329b2948df1fd7d5b0",
+        "verifiedBy": "RepoDigest"
+      },
+      {
+        "image": "coredns/coredns:1.14.6",
+        "expectedDigest": "sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea",
+        "id": "sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea",
+        "verifiedBy": "RepoDigest"
+      },
+      {
+        "image": "node:22-alpine",
+        "expectedDigest": "sha256:16e22a550f3863206a3f701448c45f7912c6896a62de43add43bb9c86130c3e2",
+        "id": "sha256:16e22a550f3863206a3f701448c45f7912c6896a62de43add43bb9c86130c3e2",
+        "verifiedBy": "RepoDigest"
+      }
+    ],
+    "scopeNote": "Synthetic clean-room install reproduction (runbook phases A-D). Customer CA, secrets manager, corporate DNS, alert webhook and real storage are not exercised and remain customer-owned inputs."
+  },
+  "gates": [
+    {
+      "name": "ops02-foundation",
+      "result": "PASS",
+      "startedAtUtc": "2026-09-11T12:58:33.2259042+00:00",
+      "finishedAtUtc": "2026-09-11T12:58:35.6581648+00:00"
+    },
+    {
+      "name": "ops02-runtime-foundation",
+      "result": "PASS",
+      "startedAtUtc": "2026-09-11T12:58:35.6589815+00:00",
+      "finishedAtUtc": "2026-09-11T12:58:40.2191305+00:00"
+    },
+    {
+      "name": "ops02-clean-room",
+      "result": "PASS",
+      "startedAtUtc": "2026-09-11T12:58:40.2203622+00:00",
+      "finishedAtUtc": "2026-09-11T12:59:49.7121513+00:00"
+    },
+    {
+      "name": "sec03-contract",
+      "result": "PASS",
+      "startedAtUtc": "2026-09-11T12:59:49.7123059+00:00",
+      "finishedAtUtc": "2026-09-11T12:59:50.7590417+00:00"
+    }
+  ],
+  "phasesCovered": [
+    "A: synthetic parameters and assets",
+    "B: deterministic networks, DNS zone, firewall plan",
+    "C: PostgreSQL TLS bootstrap, migration v13, runtime grants",
+    "D: API/Worker/TLS proxy, HTTPS readiness, HSTS, negative TLS probes, certificate rotation, port inventory",
+    "SEC-03 source contract"
+  ],
+  "notCoveredHere": [
+    "host firewall live apply (Linux-host step; verified in work/production/evidence/ops02-linux-firewall)",
+    "monitoring and alert delivery (step 5)",
+    "backup provisioning and drills (step 5)",
+    "desktop client release (step 5)",
+    "recovery incident drills (step 5)"
+  ]
+}

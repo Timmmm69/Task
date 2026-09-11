@@ -471,7 +471,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 6,
+      "recommended_order": 5,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -842,7 +842,7 @@
         "QA-03"
       ],
       "blocked_by": [],
-      "recommended_order": 4,
+      "recommended_order": 3,
       "next_action": "Провести сценарную проверку на Windows-матрице с синтетическим demo-набором, оформить findings disposition и внутренний release sign-off."
     },
     {
@@ -1052,14 +1052,18 @@
       "category": "handoff",
       "weight": 12,
       "criticality": "blocker",
-      "status": "blocked",
-      "progress": 25,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "work/production/docs/task-container-deployment-foundation.md",
-        "work/production/docs/task-database-migrator.md"
+        "work/production/docs/OPS-operations-gap-analysis.md",
+        "work/production/docs/OPS-operations-runbook.md",
+        "work/production/deployment/ops-runbook/Invoke-OpsCleanRoomRepro.ps1",
+        "work/production/deployment/ops-runbook/Invoke-OpsOperateRecoverRepro.ps1",
+        "work/production/evidence/ops-runbook/install/install.json: PASS (фазы A-D, SEC-03 contract)",
+        "work/production/evidence/ops-runbook/operate/checks.json: PASS (alert delivery, backup/PITR/3 restore, rotation, client update/rollback, RTO 84.7 s)"
       ],
-      "note": "Migration/container инструкции есть; полный operational runbook зависит от незавершённых OPS gates.",
-      "updated_at": "2026-09-07T12:00:00+03:00",
+      "note": "Единый operations runbook собран; установка и обслуживание/recovery воспроизведены на чистом стенде с evidence; customer-owned входные данные явно вынесены в notCoveredHere.",
+      "updated_at": "2026-09-11T13:45:00+03:00",
       "priority": 4,
       "dependencies": [
         "OPS-02",
@@ -1068,8 +1072,8 @@
         "OPS-05"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Собрать единый operations runbook и воспроизвести установку, backup, monitoring и recovery на чистой VM без доступа к инфраструктуре заказчика."
+      "recommended_order": 0,
+      "next_action": "Поддерживать runbook актуальным при изменениях образов/контрактов; при передаче выполнить production-варианты фаз на инфраструктуре заказчика."
     },
     {
       "id": "HAND-03",
@@ -1093,7 +1097,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Сформировать один release candidate с version, SBOM, manifest, SHA-256 и независимым validation report."
     },
     {
@@ -1116,7 +1120,7 @@
         "HAND-02"
       ],
       "blocked_by": [],
-      "recommended_order": 3,
+      "recommended_order": 2,
       "next_action": "Подготовить короткие user/admin guides и воспроизвести их шаги на чистой VM с demo-данными."
     },
     {
@@ -1141,7 +1145,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 5,
+      "recommended_order": 4,
       "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
     }
   ],

@@ -1,0 +1,24 @@
+{
+  "task": "OPS-05",
+  "result": "PASS",
+  "testedAtUtc": "2026-09-11T13:38:00.9156045+00:00",
+  "host": {
+    "os": "Microsoft Windows NT 10.0.26200.0",
+    "architecture": "X64",
+    "powershell": "7.6.6"
+  },
+  "scenarios": {
+    "signedInitialInstall": true,
+    "mandatoryUpdateOverridesRolloutZero": true,
+    "localChannelFailClosed": true,
+    "tamperRejected": true,
+    "uncontrolledDowngradeRejected": true,
+    "validatedRollback": true,
+    "installedPublisherPinsValid": true
+  },
+  "versions": [
+    "1.0.0",
+    "1.1.0"
+  ],
+  "publisherThumbprint": "9A05FEC286A5049B240CC5651718475A8474BC01"
+}

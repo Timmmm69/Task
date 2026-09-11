@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-09-11T12:58:38.6326699+00:00",
+  "result": "PASS",
+  "dockerServerVersion": "29.6.1",
+  "dns": {
+    "name": "task.cleanroom.test",
+    "address": "127.0.0.1",
+    "probeImage": "docker.io/library/node@sha256:16e22a550f3863206a3f701448c45f7912c6896a62de43add43bb9c86130c3e2",
+    "image": "docker.io/coredns/coredns@sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": true,
+    "publishedPorts": [
+      "53/tcp",
+      "53/udp"
+    ]
+  },
+  "networks": [
+    {
+      "name": "task-ops02-68cd147be3-database",
+      "driver": "bridge",
+      "internal": true,
+      "subnets": [
+        "10.253.210.0/24"
+      ]
+    },
+    {
+      "name": "task-ops02-68cd147be3-application-edge",
+      "driver": "bridge",
+      "internal": true,
+      "subnets": [
+        "10.253.211.0/24"
+      ]
+    },
+    {
+      "name": "task-ops02-68cd147be3-frontend",
+      "driver": "bridge",
+      "internal": false,
+      "subnets": [
+        "10.253.212.0/24"
+      ]
+    }
+  ],
+  "limitation": "Windows Docker Desktop runtime proof; Linux host iptables apply remains a deployment-host acceptance action."
+}

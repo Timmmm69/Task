@@ -1,0 +1,839 @@
+{
+  "runId": "task-backup-a53e8bfdb60b",
+  "status": "succeeded",
+  "completedAt": "2026-09-11T13:36:00.9605762+00:00",
+  "sources": [
+    {
+      "path": "work/production/deployment/backup/.gitattributes",
+      "sha256": "5d8206169c26d243f091e9fe1ed46dbd33640ea5b92691ef065a90fea037450c"
+    },
+    {
+      "path": "work/production/deployment/backup/acceptance.py",
+      "sha256": "1155e85e561ba2c0bee08ad736d5793064ec31272ed366c5553de4b80099392b"
+    },
+    {
+      "path": "work/production/deployment/backup/compose.recovery.yaml",
+      "sha256": "878eb2cef6cb520de00aa165bb40cfa128cc293295bc19f37442ef739ee156d8"
+    },
+    {
+      "path": "work/production/deployment/backup/compose.yaml",
+      "sha256": "76a6b50cbb66f64f29cac2d13fe9cb86d8bececff3297da993769296a2cfa7a6"
+    },
+    {
+      "path": "work/production/deployment/backup/Dockerfile",
+      "sha256": "2d56c16055e98b4bc44888f0f672fc486eefb3223040b1ed1b32324f45779b9f"
+    },
+    {
+      "path": "work/production/deployment/backup/entrypoint.py",
+      "sha256": "74749b1e9e5ff6c439903680087f9918f9538bcae01bb5268608638b724c20c2"
+    },
+    {
+      "path": "work/production/deployment/backup/initialize.sql",
+      "sha256": "4b9f0a453f37de8b81ddc24301b32ff8162dbbc474282059e7c86e62f385986a"
+    },
+    {
+      "path": "work/production/deployment/backup/Package-BackupEvidence.ps1",
+      "sha256": "3914f7182f1b8da2d39cc4883c2cc08849269dbcc48ef19c89798401c52eb45e"
+    },
+    {
+      "path": "work/production/deployment/backup/runner.py",
+      "sha256": "c697de2357bbc7ca0a9ce56b55d876e5dab2418d4d05603a374cb4fe596705d3"
+    },
+    {
+      "path": "work/production/deployment/containers/Dockerfile",
+      "sha256": "181e3a8c1940da88a6d1cd30264bdccbf128e1514a435987cf3fdf39bc11494d"
+    },
+    {
+      "path": "work/production/deployment/containers/NuGet.Config",
+      "sha256": "aec93b5637ab6d62470979a008990a4a336a287ab83a3f2541849ae735674055"
+    },
+    {
+      "path": "work/production/deployment/containers/sql/grant-runtime.sql",
+      "sha256": "de307cc807433c31f58bcb79f648c91b813623fe824fed53f0059cdf73be2dbc"
+    },
+    {
+      "path": "work/production/src/Task.Api/appsettings.Development.json",
+      "sha256": "73f95f9e0ceb205fc1c4dc50c07697fcfa29d7087868c2aef1d504cb38c771ec"
+    },
+    {
+      "path": "work/production/src/Task.Api/appsettings.json",
+      "sha256": "0f520d04c60c82bcc3eeffe26b0424b6183fa333e125d23167eb183bc3f8ca83"
+    },
+    {
+      "path": "work/production/src/Task.Api/AssemblyInfo.cs",
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "path": "work/production/src/Task.Api/Audit/AuditEndpoints.cs",
+      "sha256": "3e8c500f7d592f3ab3091d7787ca6d6665ba613395ad5528ad0f373215cb320d"
+    },
+    {
+      "path": "work/production/src/Task.Api/Auth/AuthEndpoints.cs",
+      "sha256": "a413ff6ffc7e952af69b693144795fb8d7935b5a532c31ca01facd1f234a4940"
+    },
+    {
+      "path": "work/production/src/Task.Api/Auth/AuthSessionEndpoints.cs",
+      "sha256": "2566499e0f9d0232074fa8eec217b45b8ab64501ef4ae2d87425bd9fc14429ff"
+    },
+    {
+      "path": "work/production/src/Task.Api/Auth/DeviceEndpoints.cs",
+      "sha256": "d8fdea5934446068df93167ea98c79f07bf3f4bdfe20f9aed8e21d6ddfd78249"
+    },
+    {
+      "path": "work/production/src/Task.Api/Auth/LoginAbuseProtector.cs",
+      "sha256": "634665295f277bac3b6d4c707ae7423ba14679c6bfbe30b43593089b44850677"
+    },
+    {
+      "path": "work/production/src/Task.Api/Calendar/CalendarEndpoints.cs",
+      "sha256": "92d9d086ffc52689a6a6ee2a5e5a9959f12098f854aa2adba1faa6616d4fe5ee"
+    },
+    {
+      "path": "work/production/src/Task.Api/Calendar/CalendarWriteEndpoints.cs",
+      "sha256": "002fbef51e49951d1c0af5924e82a27b51528856897fe664f3134c0cc160c239"
+    },
+    {
+      "path": "work/production/src/Task.Api/Calendar/RecurrenceEndpoints.cs",
+      "sha256": "2e976a6a609c44b7c2a9e75b3a8bb5d054f7a54a7ed5725265b8a7fa8f33cf62"
+    },
+    {
+      "path": "work/production/src/Task.Api/Capabilities/CapabilitiesEndpoints.cs",
+      "sha256": "721c0f3f76cdd82747a394d4c705c44cb1604f7becec4b691df0f5049995c019"
+    },
+    {
+      "path": "work/production/src/Task.Api/Capabilities/ClientVersionCompatibilityMiddleware.cs",
+      "sha256": "04f78cd0f2787250603abe16025b2d78c982d79fbeea1dab546e9ca20e1257f8"
+    },
+    {
+      "path": "work/production/src/Task.Api/packages.lock.json",
+      "sha256": "271647ba364333ff251f929cc2cfaf34b2d2abdd0d911845bdf1bc1587f99ced"
+    },
+    {
+      "path": "work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+      "sha256": "41a9ec471e4d7f734040b337bfd88bd06190f7d8c3bd1f7c0a101cd156335245"
+    },
+    {
+      "path": "work/production/src/Task.Api/Program.cs",
+      "sha256": "33d66e30d6f7ab245ffe70ee313952bc6192ffd93941d30feb3a0ff9bea89a58"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/AccessTokenValidator.cs",
+      "sha256": "98a017cae13043b9a4e2504cd5fb36b82b729dac208c1e742e7d002b456e74f4"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/IdentityRequestHash.cs",
+      "sha256": "c052ef5db0517ff45c0a8dcd797d39cc5d4e54000ca4e5c3a452e7fc883d926f"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/IdentityScope.cs",
+      "sha256": "223bdf0cf348196fe6e36f1ab0731b400eece82292811ad184bd2eed38dca930"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskApiProblemResponse.cs",
+      "sha256": "416a583c556b4b147934656b42e39da922f0ed0ee61e52e911d62452648b7992"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskApiSecurityFoundation.cs",
+      "sha256": "16857663879486997479c1ad0cd425dea25998f9cb25853ec066666bb40b0116"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskFoundationAuthenticationHandler.cs",
+      "sha256": "e46136131a02584a589fc32625a3b7507ed591d6b388150c8c5b4bd4c0e6540f"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskJwtAuthenticationHandler.cs",
+      "sha256": "c9b8c6d4e484137a76f61493c009c149ab71b5ac83e2c05bf5f8e80573d20da2"
+    },
+    {
+      "path": "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "sha256": "37dd9e84d4a5d91697d7a36f5d5cb438ee473d06c6f681cef4947d9841b2b1f0"
+    },
+    {
+      "path": "work/production/src/Task.Api/Task.Api.csproj",
+      "sha256": "101cdd9a1d1a5901128130b00ba44e63147616832b51d8b435a45b1fe06cc7f8"
+    },
+    {
+      "path": "work/production/src/Task.Api/TaskApiMetrics.cs",
+      "sha256": "0f3dddd1b6f3dbf9cca59882480ce85481f8120cdaa34b195740d18fd8cec5f4"
+    },
+    {
+      "path": "work/production/src/Task.Api/Tasks/TaskCardFields.cs",
+      "sha256": "18fe2dc94efc04ee6277ca848b0ef66ce0d766defbf034bec851d7d8b1554e3b"
+    },
+    {
+      "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+      "sha256": "77e028df712fb981db643f7b49717190afe18fd4dfc5e254fdb8cf5be093fdb0"
+    },
+    {
+      "path": "work/production/src/Task.Api/Users/UserEndpoints.cs",
+      "sha256": "2ca79137f60af9601362b388044b10933fc9eb96859c2838287d0aaa550933ee"
+    },
+    {
+      "path": "work/production/src/Task.Application/Audit/IAuditEntryStore.cs",
+      "sha256": "3668ae6e9a84a931026fee6cbe96d97f391e6d256b2590dc17a226131ccd2223"
+    },
+    {
+      "path": "work/production/src/Task.Application/Background/BackgroundDeliveryContracts.cs",
+      "sha256": "7c6283fac7e46f72c6bd826f6667910e06af82d3c21ec8e1907c2f9a3d49c320"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventConcurrencyException.cs",
+      "sha256": "977191b1cc1135b9a946fccc298ef10c37fab772498b3a73a287e2df3f4e443c"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventDetails.cs",
+      "sha256": "4ce7f3b7fadbb49726f935e8d9b93ef43f5eb5b4c217e07401296c03c473f178"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventLifecycleService.cs",
+      "sha256": "b770f024b8dcf9cd1ccbd6c9e52e4fd39b837826de70ed1017e9c339ad2f4ddf"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventQueryService.cs",
+      "sha256": "0a13c7e4a2ca1fe82994bf7d7ae108ab6da532a4365a87d6c190c31bdfd83538"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/ICalendarEventStore.cs",
+      "sha256": "3d0cf7adfa2457200aca3829e9f61e27958104843fd935c9c34e7c34012233f3"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/IScheduleStore.cs",
+      "sha256": "8be06a118dd7b5d10f866fda1105cfa780dd86ce5df9eab6695fa1f825ee9c05"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/RecurrenceContracts.cs",
+      "sha256": "c93a98c836e90550d14069407af9774591c38f40acfe4487bd1b5d2dabf0b90f"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/RecurrenceService.cs",
+      "sha256": "444918670e02b009ee953d660110888d04a844a03f64b805803f03e389b943c7"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/ScheduleContracts.cs",
+      "sha256": "e1a7278ee84fec84141ea70f33e378161f4a17b52ca6189722df4936469cc90e"
+    },
+    {
+      "path": "work/production/src/Task.Application/Calendar/ScheduleQueryService.cs",
+      "sha256": "0e08e861dd95b6f536f6994a4fcc68bb9225fa063bc21c2b3a56202bd7779db1"
+    },
+    {
+      "path": "work/production/src/Task.Application/Class1.cs",
+      "sha256": "963d12d15d4703bcc385c32f9a8073f2399e881d0f1d449579fc9f01a27d692c"
+    },
+    {
+      "path": "work/production/src/Task.Application/Files/FileLocationPolicy.cs",
+      "sha256": "36c3abcbea976eb24defd90de0edd7b4183c33167429a597992c0ef1255e6e10"
+    },
+    {
+      "path": "work/production/src/Task.Application/ITaskAggregateStore.cs",
+      "sha256": "0a8ec74eaef20355c8605cfb21fcaf4486e9a8faf1922b6ac6c6c10b2e0ca508"
+    },
+    {
+      "path": "work/production/src/Task.Application/ITaskReadStore.cs",
+      "sha256": "4831812b43ead8c7e4456f3afdcee84c41258a416f130ae7b88bf2ebe10878b7"
+    },
+    {
+      "path": "work/production/src/Task.Application/packages.lock.json",
+      "sha256": "df0074aa5d275d8ea1b98cde6317d4f2be8535e398321d21f7357df2c2ffea1e"
+    },
+    {
+      "path": "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "sha256": "16ec0429db2c28095a7eb51df37b112e595f3c934067f67b29f9c7a87e2cb28b"
+    },
+    {
+      "path": "work/production/src/Task.Application/ProductData/ProductPersistenceContracts.cs",
+      "sha256": "f892a6765973546754fe9edb869d34fb1a94b508524ab26165351679c2be2d60"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/AccountLockoutPolicy.cs",
+      "sha256": "3e4b4176032bd3495b0042bd0c2fddace81b3427bfdf0b339611db3fc86068d7"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/AccountLockoutService.cs",
+      "sha256": "0cd5703575eb8e9e50bae06f52442856c4412b8febdbf419325b4649ea8a3bde"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/AuthenticatedRequestContext.cs",
+      "sha256": "c2101c29c58c4afb8ec9127c1730f8ea179d377c63c57dfa1af3cbd8bf26e89a"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IAccountCredentialStore.cs",
+      "sha256": "98aa9b25bac61aa3dcec23aea221e819dd4ddb57756155c671e9a8fd7ae8e7ba"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IAccountLockoutStore.cs",
+      "sha256": "cc80fbe99d41d72a3c20d5059ce32dde02d19e4a74b6f53611c02137471f6cbc"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IAccountLookupStore.cs",
+      "sha256": "42fa57f464603bb5b4b2c702d98f4e11868151cab2a9b77adbb56aef2113791d"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IAuthorizationPolicyStore.cs",
+      "sha256": "b566a203b9e530e966b4b5275836dc8b22241f430e51369c5b0e2c74f9b065c6"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IDeviceRegistrationStore.cs",
+      "sha256": "3046aafe9453eeb6e55ff6c79b29386ed2ee7d1b7cd90b517860a7dfaae56383"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IPasswordHasher.cs",
+      "sha256": "81f20fa6ad2f430da574eb9338739a14f10a004b118ad266026f9e756126b4d6"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/ISessionRepository.cs",
+      "sha256": "434030066ef12daf7d7247f10f72ca9233e3baf2e0af79dd7f80e0a53a658ee9"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IUserAccountCommandStore.cs",
+      "sha256": "b07372aacaa8101751303b8017b1fcad0814b6696dcd39f41d29a00fd257d103"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/IUserAccountReadStore.cs",
+      "sha256": "2755086470f903fa3c42e38f8c27f131337c89cfd74e3fae53006bf4c4e5fba0"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/JwtAccessTokenIssuer.cs",
+      "sha256": "ddca60bf0b3a5f89e4ebdde68b0aa1fd43091976e929106af0bc70c12ffb8162"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/LoginRateLimiter.cs",
+      "sha256": "56bfbed3dbf8ac32117916a50a0347534be647c347431df0eaeb0434e29f30a0"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/LoginService.cs",
+      "sha256": "8e0744371bd835154a919b140ac63ea148f67ec03036e1876aa766e6fe8a2a15"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/PasswordChangeService.cs",
+      "sha256": "613cb4e0b195846590eeea76e19d999c1a5ed40d5f5e5ff2e9b6ae15ff62f911"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/PermissionCode.cs",
+      "sha256": "1134d74e828d1194bcdd793a0b93030a6959723c1167ddf007819680920abc14"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/PermissionDecisionService.cs",
+      "sha256": "5ba9fc1c38aa8a343efc5bb7c790149a60d051df3e1093d388a11a86904c2f68"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/RefreshService.cs",
+      "sha256": "d6f8b45e0b15f395fbc3e3875e05e0fe3e804e2bad815586e727e2b702b63e43"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/RefreshTokenRotationService.cs",
+      "sha256": "ab82fbbf75b49d036754aa7d63ef9f24657f068237975c6958629a92a9d149bb"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/SessionRequestState.cs",
+      "sha256": "b30a7cd9bc6c8aa74243c895ab4c1c772ad8963aad28f786952503f5f06ab6f3"
+    },
+    {
+      "path": "work/production/src/Task.Application/Security/SessionSnapshot.cs",
+      "sha256": "a8365fa9fc25ae2553a85d50de9a21e7cb39de00cc29001b6d7a81b2974e11be"
+    },
+    {
+      "path": "work/production/src/Task.Application/System/ServerCapabilitiesService.cs",
+      "sha256": "75659711025aa8e33912c96b0eabe6a45629e1d70c361d8b769c86a63dc0e615"
+    },
+    {
+      "path": "work/production/src/Task.Application/Task.Application.csproj",
+      "sha256": "ca6146bebf7c328a5550ec091b9d4dca3b8005dbc33b42dc6da8d2a64642de54"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskCreateCommandService.cs",
+      "sha256": "d7a4f0b0cf3eb576b0f286e2b48d7f51bf1e130fec88a535fa4ef8ce8529724c"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskDetails.cs",
+      "sha256": "bc4e7cb2e2f1caaa01f06091e66eab61ee3afcc2f30a51119b350d4600a5c4b2"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskLifecycleConcurrencyException.cs",
+      "sha256": "fde4152f4cbeff3a214ca120133d691af923034c7d9dc4e96bff4de71d3bcb6c"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskLifecycleService.cs",
+      "sha256": "0eebb15810af95b0f74fa53692ebc8dcabf8b1df6409b95cec5906efea9aeb7a"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskQueryService.cs",
+      "sha256": "f70a16a0d032e0498db1dc24c89b97c85bc03d3d0b6c4b3b2c9be84d5dfc12f5"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskReadContracts.cs",
+      "sha256": "b03655167cecb10aba5a2dca00e86ad67b66525f1c789bd0a0d6e3aa65db91e4"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskReadCursorCodec.cs",
+      "sha256": "da15ddbf3c7539c360418e9801f9a9675e99662ff2afbd73a879027d70fbd877"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "sha256": "a9e73f1e3abc8f205fbedf07b00047ed1f4f079a1375193da18eb60c5bb9670b"
+    },
+    {
+      "path": "work/production/src/Task.Application/TaskWriteCommand.cs",
+      "sha256": "a09b27c6f77a3c9828544005b93606ea0cd7f2b93737ad4867f81bfae7a3bea6"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/appsettings.Development.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/appsettings.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/AssemblyInfo.cs",
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupCommandRunner.cs",
+      "sha256": "e27f7898150f48406a05a0c17ef7651d28e1cd80ae1fbd27ac1b186838ed5c57"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupMetricsPublisher.cs",
+      "sha256": "4551a3e0103026243f13f45c969b051cfbd800b6b9538ec419aa0459f5be0dbd"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupOptions.cs",
+      "sha256": "a562976943b6c7c359a62d382e0aab133fbe8d3ef1c5b61520ebe8c317609afa"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupRestoreAgent.cs",
+      "sha256": "4ab333e5ba93600cd7cba0fef512c194b0f8ddc83e4ae0beb4c5e667e1e1fc6a"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/BackupSchedule.cs",
+      "sha256": "42e3f7a7b58c8a6301c98891989002252e1cb5c7eb63eabc7705ee405a72a6fe"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/packages.lock.json",
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/Program.cs",
+      "sha256": "684d91ec4bc6e167004eb4721dc9a85b6c180b3cf0631be0974be547910f051e"
+    },
+    {
+      "path": "work/production/src/Task.BackupAgent/Task.BackupAgent.csproj",
+      "sha256": "aeff7fae1720239d5dc857a2dfd984d386cb7998a98121c5b117dcfcf1e6f7f1"
+    },
+    {
+      "path": "work/production/src/Task.DatabaseMigrator/AssemblyInfo.cs",
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "path": "work/production/src/Task.DatabaseMigrator/packages.lock.json",
+      "sha256": "4b3e8b64dc628eb18e05cfca4210ad6db9c8838d0f45820533c0f6d6f4be42f3"
+    },
+    {
+      "path": "work/production/src/Task.DatabaseMigrator/Program.cs",
+      "sha256": "07ba02c79d71a37279e96450d2b6db1234c6e18f006b8196164ab13477b8cfc3"
+    },
+    {
+      "path": "work/production/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj",
+      "sha256": "491356822b59675dab47122bc1ef60ede19bae6ebdada3101a4e2e5eb470994e"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarAttendees.cs",
+      "sha256": "b59038f1bf048e3d6efd1ab53bb7caff2f3ac88b8875d3937e3467d6f3139274"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarAttendeeTypes.cs",
+      "sha256": "86008b28d5bd3d694b31e16215a76a7ba2c865f84730fb31204b49ffb33abc2e"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarEvent.cs",
+      "sha256": "2f10acc896fb459bf55101158e84ad4a14414f120482649f9270ba61beeb27b2"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarEventStatus.cs",
+      "sha256": "34842f5b64b4c94ce73ab0a1a939ee4b0f51ac73a4dd3955adb4d624797591f3"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs",
+      "sha256": "1dfa124b4c022f997b926abddba709cdb8391e6864457092e39242bd85e299c8"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs",
+      "sha256": "a1192e7c9ef510040bc5b3d83e383cbe411ba1ed2b4aabcb0e90df6efa47dad7"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs",
+      "sha256": "721f67633e8d05525779721e1da08b5321ac027638efd749a28d4ac064f5b7f3"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs",
+      "sha256": "cddfe78b7bc7ef4ce66c8eeca13006654b1089c2b66a113022a500dee241884f"
+    },
+    {
+      "path": "work/production/src/Task.Domain/packages.lock.json",
+      "sha256": "44431607e6c32bcd6dd03a91631b0ed94d69798e204eefd2576e8bf644eb1d86"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/OccurrenceKey.cs",
+      "sha256": "64dcace6e47fbbc7dec3d8a3a9a2fe5feabf64db6591f9a25cd6479e7b1dc6ce"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceChangeScope.cs",
+      "sha256": "fdb8969c619646f8f38a5dce282a22e16d3a5e4ca05eb58b6ef40084afaacfe0"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceFrequency.cs",
+      "sha256": "f6c9955fba5e24174c2e2abc9f12667a377a969ae12cde5a4f8e674751c2fd57"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceGenerator.cs",
+      "sha256": "712baeac685827c21bca3197e208ab62e022915b287b8597ebe2d4022e1aa914"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceOccurrence.cs",
+      "sha256": "05186cca18ff43154bc6ae4e7f53bf926090aa04b775f31a11b75b5594af6dab"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceOccurrenceStatus.cs",
+      "sha256": "4f8f0b66e4e4c55dd69f5b5c8383d343d1e469b611f22308972f4d3d05f33fed"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceReminderTriggerType.cs",
+      "sha256": "3c957c6ab640c7d0a0d51f2dbbbc004226ff4b0cd5ef3c5b3f5a51fa42ed2c6e"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceRule.cs",
+      "sha256": "e55fb0bee6835e125d074aeb4ddac37c38117c250f07a70cddd4dca3c3420d1e"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceScopeFilter.cs",
+      "sha256": "f280e67c97cad97525177efd5e4d127bcdee75c4b32c7caf71f181cc02f6f04e"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceSeries.cs",
+      "sha256": "efc98dcb5962d580a6db6bcf900aa52335d661c3138286d9261482e42ddf120c"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceSeriesStatus.cs",
+      "sha256": "be2d864eddb71e76e313c4f3ab9b8437302fd2888970d442c275d104fa9b1824"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTaskTemplate.cs",
+      "sha256": "b025fe6321a63f1ba53e768cdef12a63430d9b662a619032e633dbc92ffef57a"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTemplateChecklist.cs",
+      "sha256": "32b6fc8a17efafc5811bfe981d422b046d22816475b65fe1d1fa1f707f413503"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTemplateChecklistItem.cs",
+      "sha256": "da3ead3b88235454b3f2de3ba9f841671bfcdeb5381ed59a318e3961a4eb7395"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTemplateReminderRule.cs",
+      "sha256": "e65f477300bd6a51602a50044581b47ec202148458be4eb3679372896490faf6"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/Reminder.cs",
+      "sha256": "c3649e3a8f898c3d6c8f5e274784d12088119b88d052bd8b722344d395f496d0"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/ReminderOccurrence.cs",
+      "sha256": "b73c06da334b0f17097cec08e49b028dc8d5457decf511774fecd7b58a9c4484"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/ReminderOccurrenceKey.cs",
+      "sha256": "e487d0465c70667b0a66788a45866ac7f5d73f011b524cfbccca8fe284c3de3f"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/ReminderOccurrenceStatus.cs",
+      "sha256": "290c3588549a356057cbeceba64825a4b8ad407f44864b57a2afe6b79493e368"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/ReminderStatus.cs",
+      "sha256": "6ea17ad2dde37734e5bc5bc809c9028026faf519df1793ada46d9fe20971d480"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/ReminderTrigger.cs",
+      "sha256": "1f306741ad79185503a274c5cdd873f29496f5526cfbe8abbe26222b9cff2e4f"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Reminders/ReminderTriggerType.cs",
+      "sha256": "cce2aa336cd961328caf33b63b0399dc787b0332bcafed40137cb7eef38a4f2e"
+    },
+    {
+      "path": "work/production/src/Task.Domain/SyncableEntityMetadata.cs",
+      "sha256": "c92657f97c25b06dd98cbc49cc4ff649592a9720ad20ff45eae80fe2a2150e8c"
+    },
+    {
+      "path": "work/production/src/Task.Domain/Task.Domain.csproj",
+      "sha256": "2cb9a7f71bc2a1bf743e87448cf3e609d1c0befdff7510c92cef194e37585ae7"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskAggregate.cs",
+      "sha256": "d556f185a74cb1b4c759d993b494891db98a82e796d0fe6171d81bc0bfe10704"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskCardContent.cs",
+      "sha256": "0208cd939132d49fd93d2b7963fb77d321fdb211a54dd96f4f9692e0a0b1d7bf"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskOverduePolicy.cs",
+      "sha256": "673a1acbd90d83a166c2f82918fb87c8d559291f7d32adad9f767f446d11c112"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskPriority.cs",
+      "sha256": "d80245fb23f644dd2376527f3d4e5f2bbb0ceb76b3afe29a034111a9f1ab6dce"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskSchedule.cs",
+      "sha256": "c32019cb9c1aa74b4a766e2fcd6530a663e0a5b4ddf04a416b27546f43c8eeb0"
+    },
+    {
+      "path": "work/production/src/Task.Domain/TaskWorkStatus.cs",
+      "sha256": "11623becc47126ed049c785dede72cc712ec34da1e46d598ef9e0e3cf4ee6049"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/AssemblyInfo.cs",
+      "sha256": "76af5f7c9bd20b164aea2fe2a8dd8b9c05767131fb0dce84ab24099e6fb1b3ed"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Identity/Argon2idPasswordHasher.cs",
+      "sha256": "d0e3d65c28d305f626df133e086816a076eacb77b1223583f9a5dd803c7bc662"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Identity/Argon2idPasswordHasherAdapter.cs",
+      "sha256": "106b6366079678ce371f3fe47d0dcf89f9815d48e582b6afb0b5f2b5c169504e"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Identity/OfflineAdministratorBootstrapper.cs",
+      "sha256": "eacfaddfdf1471e87b28daeacd1e6d6cc1dac88d5c83ed26d5395c441d4ae877"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/packages.lock.json",
+      "sha256": "248442509483f4e89a088ca53255818d4e6380a9a9838301f487c5bede1a5b3d"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/001_task_persistence_foundation.sql",
+      "sha256": "ccbaad4ca7c8423421b14adf70b8b1c656620e67dc70a9b9c27e2c45c4c8b8b1"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/002_identity_audit_foundation.sql",
+      "sha256": "9392eb2d1504f705ae1a23f22df14028ed3440469995ea73c328bdc5a395251c"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/003_calendar_event_persistence.sql",
+      "sha256": "9c387a3be37bac5f327afab26b241f61c7639c93f9dafb0f96751dc7c175ab86"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/004_role_permissions_effect.sql",
+      "sha256": "682debe32dc53f20ad699450b85789c4a72b3fbd389ef4153ac1ac1e506e0474"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/005_task_write_transaction_foundation.sql",
+      "sha256": "298eb8cf093a1ec3eb8b18cd85df6ab799ba9e40e4f4007ada415d39a064020c"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/006_task_capability_permissions.sql",
+      "sha256": "317dfe08fd5d0ce7873aeec929fd2f9e6bd7b418ed6fcda8adb2d1ee95ac2bf3"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/007_calendar_event_capability_permissions.sql",
+      "sha256": "6a32181612c3a99504ae3884962fc0dea4ce215266ca4902bc2094473146fabb"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/008_calendar_recurrence.sql",
+      "sha256": "22e56e00adcf5a24eb7530056c958245f8acf525d718498b89f1f51675c202ac"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/009_product_entity_stores.sql",
+      "sha256": "73f645c8a3b647d2c4c4cafd8f108958995cc138d3e4caec468ac011fc50e7b0"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/010_product_api.sql",
+      "sha256": "3b39a9d0663b91de02f70fc876d13123cd5b0d60460c612d68ea5a60e967cad3"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/011_task_card.sql",
+      "sha256": "a3c8b4c97d10b64614c841b7e24b42b98a4c97b5af4f1e02aeef628f00fe39b0"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/012_user_read_permission.sql",
+      "sha256": "0a92b0e804c7d58beca74a1e9d56db166bba3cce90d533bd07ef495070faf902"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+      "sha256": "c926aba25698b4f327bf42b798a0555061f68d163b729dd8f59cfbda4622116b"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/014_background_delivery.sql",
+      "sha256": "89890f0362fd9e1e7647bdca72b08c4318463483b6a63adc53e3474f4ed4c867"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresAuthorizationAudit.cs",
+      "sha256": "78a099a94ab69b13efc5889c4ad734fbcf50b7c4a01ab1bde3696a65bb294213"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresBackgroundDeliveryStore.cs",
+      "sha256": "2cc9825a5118f97600a3a0d875eeeacb0459cba2116f2076a9235341b3431d81"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+      "sha256": "2cffc7461238cb720f03ee26f047214055079efdef209691ddd5d8a2e967d835"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresCatalogItemStore.cs",
+      "sha256": "d97c4623030718286d321d5f8ebb5581d86476aadbcf0bcdf6e2f37c1ed9c825"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresContactStore.cs",
+      "sha256": "864283ec8a0ccfb36605bb5c1ed908c5f9aabb5b88be3c9587ee085ec24bafa2"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresNotificationStore.cs",
+      "sha256": "5cf92ebeb1cfd658e00c7833f706c4abed640ede3a41edb5f60f7a1f8c0c139f"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiLinks.cs",
+      "sha256": "64f8fd72ad8c856e038dd507e3503a5dc96fdbb5699188182adde88e30472c88"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiQueries.cs",
+      "sha256": "45898e7c14b17fe5f3ce24060716fe672ec86338487128d21d785310393a75dc"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "sha256": "d464e802bd18fae5b54edde3830793671627bf0862bfffaef1a26ec2fbdd1593"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRoles.cs",
+      "sha256": "aac169487d99f04a986d63fd5f19141af85859d7d99317e4d5bce823e302a3b9"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSearch.cs",
+      "sha256": "a99031a34a0cb46d15218d7dd10b2f70d00e21c4c6dd2e57527156b4f91f0133"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSettings.cs",
+      "sha256": "65da23af220294a68e3694c8ccb06642aed23e2612c8a9a6e2d8233d5a4b4edf"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "sha256": "e4851096d40948f115b33d0577226cca162a6036e15ef3a18e1e7d95835d05b1"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "sha256": "1499a9513482b755e27f0ba16b6e0202d7c1657cfbbaba7f63889eb5a4c98fa2"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductLifecycleStore.cs",
+      "sha256": "5557048545a31d24ccf7b358302b44fdbd8271e33cfea0b71202ff752c6b6079"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductObjectStore.cs",
+      "sha256": "1c781b20294c1f339fccef455247bc5e070fd986e8e6b693c567eb85558ece7d"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductSettingsStore.cs",
+      "sha256": "a464105823a356c92b101e22c64a29857f03be613dd0de3729eb4edb540169e5"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProjectStore.cs",
+      "sha256": "c8e49da54cd6eb25e941de6308358e433785ff513f305210a20feeefd105d4d9"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresRecurrenceStore.cs",
+      "sha256": "7ca058293508c1cd0d8d802cd96844c9d46105584136228422e6db77181cd995"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresScheduleStore.cs",
+      "sha256": "d0d01850f95f50535d8e669a743ff29a9877ca509386d200adbf97eebafc5911"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresSessionRepository.cs",
+      "sha256": "19cae465ccd96e12eb77776c3c67e652c28fefe16f008805565fbded9f22327c"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskAggregateStore.cs",
+      "sha256": "a036cdfa77b49c833e4a4e75dacb61486dcc95d6443bcf7e8353231b50a8c2da"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+      "sha256": "59f837c742bb3bd63dcf586d322636f5d86af5bdccde50365ae5ecc5eaa0805a"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+      "sha256": "d6e5cf24c0b722583e1dfa4881a378c68916a3abf1666842b873ae6a4b04e637"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "sha256": "32ad21aa93ee03321c231d0d003ad10cb71aa13e1a489ea910d0fb36e168cae0"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountCommandStore.cs",
+      "sha256": "924176cdcd81e49843427eb188d4cc57d33a5ddae4c8a4d881fa34678851680a"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountReadStore.cs",
+      "sha256": "3c6687bf08991c7f4feb398489b309be4633ff39b8ffc1de980a429789df1c97"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "sha256": "3d722b5d545c53c0c6acc65c49cfac2f348c47d1d6cb9e0b821d4d3f6dad9f88"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrator.cs",
+      "sha256": "61ada2d8244be4c0703510a698e6e6e34ba8af233858ee40200751e1703ce37c"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs",
+      "sha256": "a84dda08a98322513cfe4b9253e97507dab49706fe9fd0dd412ff190a4919b05"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAccountCredentialStore.cs",
+      "sha256": "d6ecd2424b2e281b69bf4ee84eccb016f02d965b53cf94de2da09866af762a83"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAccountLockoutStore.cs",
+      "sha256": "e3522aa5911a787384d3780c61fdfb4ea32e044764e4d616d505b3e743407db7"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAccountLookupStore.cs",
+      "sha256": "fb588907ab9fb618ab0abd6e8dcb711f54eb908cb4fb12be200868afaa3e1c66"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAuditEntryStore.cs",
+      "sha256": "4fdc22525ec7f91f6b06df811cd8ca80ed09f4a5ae4195e334a35ef104d16f94"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAuthorizationPolicyStore.cs",
+      "sha256": "a9f25a6cceeef921ec4a4d28381f552d9a598f30283149933262c29fd3574d0d"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresDeviceManagementStore.cs",
+      "sha256": "6c6a9303546dcd136ce7490a9ca44872ec55eaea7a3fd237316e1fcc40d8f71e"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresDeviceRegistrationStore.cs",
+      "sha256": "3030b9218bcb51121ca04f3522ade27445aa5c3d665457e5007ccd21b18f3048"
+    },
+    {
+      "path": "work/production/src/Task.Infrastructure/Task.Infrastructure.csproj",
+      "sha256": "1b4422d8985a3401848012f568f142e884fe583552afc07c65b00899989d2ba6"
+    },
+    {
+      "path": "work/production/verification/backup-acceptance-tests.py",
+      "sha256": "7a23a0faaae457bf33ed8163e6161c0f2588ea522bd976f1ca487a08c409f255"
+    },
+    {
+      "path": "work/production/verification/backup-integration.py",
+      "sha256": "a5ac60226fab43e1ac143ee7649800b6b899db3728be88e125d0ee24c84c60c4"
+    },
+    {
+      "path": "work/production/verification/Test-BackupRestore.ps1",
+      "sha256": "abdccdeb014b6f315eadff6f6b7982f415eea82a14be7f202c9c9d6df35aeba7"
+    },
+    {
+      "path": "work/production/verification/Test-ContainerPackaging.ps1",
+      "sha256": "bbadfcbe42b7582baca5ca80ebb508349be3c12558fd291696efc5269417e95c"
+    }
+  ]
+}

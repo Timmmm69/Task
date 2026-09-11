@@ -1,0 +1,104 @@
+{
+  "checks": [
+    "encrypted full backup and actual isolated restore from both repositories",
+    "dedicated backup identity has no superuser or DDL role attributes",
+    "PITR recovers post-backup commits before deletion; production and schema preserved",
+    "scheduled WAL restore point is replayed in both repositories",
+    "tampered encrypted assets rejected and failed restore plaintext cleaned",
+    "missing/wrong recovery key cannot produce plaintext",
+    "corrupt physical database copy rejected by restore checksum/decryption",
+    "off-host failure never expires the last verified recovery set",
+    "production configuration rejects local-only secondary storage",
+    "retention floors, duplicate key bytes and missing escrow keys are rejected",
+    "overlapping operator runs cannot execute a second backup",
+    "restore plan requires a valid label and explicit past UTC target",
+    "real hosted agent schedules backup and PITR verification, reports health and stops cleanly",
+    "health rejects failed, stale and future-dated protection status",
+    "time retention preserves every backup inside the minimum recovery window",
+    "accelerated retention removes old sets and leaves newest backup plus WAL restorable"
+  ],
+  "offHostPhysicalDurability": "not-tested-local-docker-fixture",
+  "businessFixture": {
+    "login": "ops03-admin",
+    "taskId": "460f5dc6-cbe6-48c3-8841-da5945dd55bb",
+    "taskTitle": "OPS-03 recovered task"
+  },
+  "acceptanceBaseline": {
+    "schemaSha256": "4460ccb66146845e62edc4f48fec661dbba6596a3b672cadf3d76771bdc9d095",
+    "readSmoke": [
+      "iam.user_accounts",
+      "work.tasks",
+      "calendar.events",
+      "governance.audit_entries"
+    ]
+  },
+  "backup": {
+    "copies": [
+      {
+        "repo": 1,
+        "label": "20260911-133415F",
+        "target": null,
+        "assets": {
+          "files": 9,
+          "sha256": "c9b991639dd69578e5de9253a3783e916aafdc4ec906eab7ddba3c4caf98879f",
+          "archive": null
+        },
+        "databases": [
+          "postgres",
+          "task"
+        ],
+        "elapsedSeconds": 3.053,
+        "data": "/restore/drill-2254m6ln/data",
+        "socket": "/restore/drill-2254m6ln/socket",
+        "databaseBytes": 34439539,
+        "repositoryBytes": 4380864,
+        "backupCompleted": 1789133659
+      },
+      {
+        "repo": 2,
+        "label": "20260911-133423F",
+        "target": null,
+        "assets": {
+          "files": 9,
+          "sha256": "c9b991639dd69578e5de9253a3783e916aafdc4ec906eab7ddba3c4caf98879f",
+          "archive": null
+        },
+        "databases": [
+          "postgres",
+          "task"
+        ],
+        "elapsedSeconds": 3.021,
+        "data": "/restore/drill-bqs1yu9o/data",
+        "socket": "/restore/drill-bqs1yu9o/socket",
+        "databaseBytes": 34439538,
+        "repositoryBytes": 4380800,
+        "backupCompleted": 1789133667
+      }
+    ]
+  },
+  "pitr": {
+    "target": "2026-09-11T13:34:32.259165Z",
+    "incident": "2026-09-11T13:34:33.369753Z",
+    "restoredIds": [
+      1,
+      2
+    ],
+    "productionIds": [
+      3
+    ],
+    "schemaFingerprint": "930fc15252639dc352050dd5dd507571",
+    "fixtureProbeSha256": "35a39866e567a7eb43b8109f23270a08ea777f40b212f9023a5b272ba0a65bce",
+    "elapsedSeconds": 2.987
+  },
+  "versions": {
+    "postgres": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "pgbackrest": "pgBackRest 2.50"
+  },
+  "scheduler": {
+    "LastBackup": "2026-09-11T13:35:28.1897103+00:00",
+    "LastCheck": "2026-09-11T13:35:37.0124494+00:00",
+    "LastRestoreTest": "2026-09-11T13:35:37.0124494+00:00",
+    "LastAttempt": "2026-09-11T13:35:37.0124494+00:00",
+    "FailedOperation": null
+  }
+}

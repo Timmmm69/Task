@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "status": "succeeded",
+  "releaseReady": true,
+  "productionAccepted": false,
+  "restorations": 3,
+  "storageTargets": [
+    "readonly-secondary",
+    "protected-snapshot"
+  ],
+  "escrowCopies": [
+    "escrow-a",
+    "escrow-b"
+  ],
+  "rpoLimitSeconds": 900,
+  "rtoLimitSeconds": 14400,
+  "measuredServiceRtoSeconds": 84.685,
+  "receipts": [
+    "acceptance-secondary.json",
+    "acceptance-protected-snapshot.json",
+    "acceptance-service-escrow-b.json"
+  ]
+}

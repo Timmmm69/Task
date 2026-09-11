@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "action": "plan",
+  "generatedAtUtc": "2026-09-11T12:58:35.2083272+00:00",
+  "externalInterface": "eth0",
+  "httpsEndpoint": "https://task.cleanroom.test:443",
+  "employeeCidrs": [
+    "192.0.2.0/28"
+  ],
+  "managementCidrs": [
+    "198.51.100.0/28"
+  ],
+  "dockerSubnets": [
+    "172.30.10.0/24",
+    "172.30.20.0/24",
+    "172.30.30.0/24"
+  ],
+  "rules": [
+    [
+      "iptables -A TASK-OPS02-IN -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN",
+      "iptables -A TASK-OPS02-IN -i eth0 -s 198.51.100.0/28 -p tcp --dport 22 -j RETURN",
+      "iptables -A TASK-OPS02-IN -i eth0 -j DROP",
+      "iptables -A TASK-OPS02-IN -j RETURN"
+    ],
+    [
+      "iptables -A TASK-OPS02-DOCKER -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -s 192.0.2.0/28 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 443 -j RETURN",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -s 198.51.100.0/28 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 443 -j RETURN",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -d 172.30.10.0/24 -j DROP",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -d 172.30.20.0/24 -j DROP",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -d 172.30.30.0/24 -j DROP",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 5432 -j DROP",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 8080 -j DROP",
+      "iptables -A TASK-OPS02-DOCKER -i eth0 -p tcp -m conntrack --ctorigdst 192.0.2.10 --ctorigdstport 443 -j DROP",
+      "iptables -A TASK-OPS02-DOCKER -j RETURN"
+    ]
+  ]
+}

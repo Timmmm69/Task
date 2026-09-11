@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-09-11T12:59:49.6111703+00:00",
+  "result": "PASS",
+  "syntheticOnly": true,
+  "runs": [
+    {
+      "run": 1,
+      "result": "PASS",
+      "migrationInitialStatus": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-988f33c49a98 Creating \n Container ops02run1-task-database-migrator-run-988f33c49a98 Created \nTASK_DB_MIGRATOR code=MigrationsRequired expectedVersion=14 actualVersion=unknown",
+      "migrationApply": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-5d8482d9def1 Creating \n Container ops02run1-task-database-migrator-run-5d8482d9def1 Created \nTASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14",
+      "migrationStatus": "Container ops02run1-postgres-1 Running \n Container ops02run1-postgres-1 Waiting \n Container ops02run1-postgres-1 Healthy \n Container ops02run1-task-database-migrator-run-9ca3e2c4f163 Creating \n Container ops02run1-task-database-migrator-run-9ca3e2c4f163 Created \nTASK_DB_MIGRATOR code=Ready expectedVersion=14 actualVersion=14",
+      "httpsReady": true,
+      "hsts": true,
+      "databaseTls": "OPS02_DATABASE_TLS_OK verified=t|TLSv1.3 plaintextRejected=true",
+      "untrustedCaRejected": true,
+      "wrongSanRejected": true,
+      "tls11Rejected": true,
+      "rotationChangedThumbprint": true,
+      "wrongRotationRolledBack": true,
+      "ports": "ops02run1-tls-proxy-1|8080/tcp, 127.0.0.1:18443->8443/tcp\nops02run1-task-api-1|8080/tcp\nops02run1-task-worker-1|\nops02run1-postgres-1|5432/tcp"
+    },
+    {
+      "run": 2,
+      "result": "PASS",
+      "migrationInitialStatus": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-c7031632e147 Creating \n Container ops02run2-task-database-migrator-run-c7031632e147 Created \nTASK_DB_MIGRATOR code=MigrationsRequired expectedVersion=14 actualVersion=unknown",
+      "migrationApply": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-28347ba172e9 Creating \n Container ops02run2-task-database-migrator-run-28347ba172e9 Created \nTASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14",
+      "migrationStatus": "Container ops02run2-postgres-1 Running \n Container ops02run2-postgres-1 Waiting \n Container ops02run2-postgres-1 Healthy \n Container ops02run2-task-database-migrator-run-dc9987a9fc49 Creating \n Container ops02run2-task-database-migrator-run-dc9987a9fc49 Created \nTASK_DB_MIGRATOR code=Ready expectedVersion=14 actualVersion=14",
+      "httpsReady": true,
+      "hsts": true,
+      "databaseTls": "OPS02_DATABASE_TLS_OK verified=t|TLSv1.3 plaintextRejected=true",
+      "untrustedCaRejected": true,
+      "wrongSanRejected": true,
+      "tls11Rejected": true,
+      "rotationChangedThumbprint": true,
+      "wrongRotationRolledBack": true,
+      "ports": "ops02run2-tls-proxy-1|8080/tcp, 127.0.0.1:18443->8443/tcp\nops02run2-task-api-1|8080/tcp\nops02run2-task-worker-1|\nops02run2-postgres-1|5432/tcp"
+    }
+  ]
+}

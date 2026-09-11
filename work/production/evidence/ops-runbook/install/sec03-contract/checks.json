@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-09-11T12:59:50.3817374+00:00",
+  "checks": {
+    "compose_secret_and_network_contract": true,
+    "edge_tls_policy": true,
+    "database_tls_policy": true,
+    "repository_secret_boundary": true,
+    "immutable_deployment_environment": true,
+    "external_secret_bundle": true,
+    "certificate_chain_hostname_key_and_lifetime": true
+  },
+  "certificates": {
+    "edge": {
+      "dns_name": "task.company.internal",
+      "thumbprint_sha256": "fd9692da0098bc90aa84589832eda9a957af49683684d7abf598599a87fe5bd9",
+      "not_before_utc": "2026-09-11T12:54:49.0000000Z",
+      "not_after_utc": "2026-11-10T12:59:49.0000000Z",
+      "issuer": "CN=Task SEC-03 ephemeral test CA"
+    },
+    "database": {
+      "dns_name": "postgres",
+      "thumbprint_sha256": "4cae557ac0ab010cca9baef0ba51b784caa3e62dbf33b39ec417de598fb72d73",
+      "not_before_utc": "2026-09-11T12:54:49.0000000Z",
+      "not_after_utc": "2026-11-10T12:59:49.0000000Z",
+      "issuer": "CN=Task SEC-03 ephemeral test CA"
+    }
+  }
+}
