@@ -201,7 +201,7 @@ Assert-Sec03 ($trackedPrivateKeys.Count -eq 0) 'Tracked production source contai
 $checks.repository_secret_boundary = $true
 
 if (-not [string]::IsNullOrWhiteSpace($EnvironmentFile)) {
-    $environmentText = Read-RequiredText (Resolve-Path -LiteralPath $EnvironmentFile).Path
+    $environmentText = Read-RequiredNormalizedText (Resolve-Path -LiteralPath $EnvironmentFile).Path
     $sensitiveEnvironmentNames = @([regex]::Matches($environmentText, '(?im)^(?<name>[^#=]*(?:PASSWORD|PEPPER|PRIVATE|TOKEN|SECRET)[^=]*)=') |
         Where-Object { $_.Groups['name'].Value.Trim() -ne 'TASK_SECRET_ROOT' })
     Assert-Sec03 ($sensitiveEnvironmentNames.Count -eq 0) 'Deployment environment file contains a secret-like variable.'
