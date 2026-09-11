@@ -23,7 +23,7 @@ public sealed class PostgresUserAccountCommandStore : IUserAccountCommandStore
         CancellationToken cancellationToken = default) =>
         ExecuteUserAsync(context, 201, async (connection, transaction, ct) =>
         {
-            if (command.DepartmentId is Guid departmentId && !await DepartmentVisibleAsync(connection,transaction,context.OrganizationId,departmentId,ct))
+            if (command.DepartmentId is Guid departmentId && !await DepartmentVisibleAsync(connection, transaction, context.OrganizationId, departmentId, ct))
                 return Failure(IdentityCommandDisposition.NotFound);
             var userId = Guid.NewGuid();
             var profileId = Guid.NewGuid();
@@ -81,7 +81,7 @@ public sealed class PostgresUserAccountCommandStore : IUserAccountCommandStore
             if (current.Version != expectedVersion) return Failure(IdentityCommandDisposition.VersionConflict);
 
             if (command.DepartmentId.IsSpecified && command.DepartmentId.Value is Guid departmentId
-                && !await DepartmentVisibleAsync(connection,transaction,context.OrganizationId,departmentId,ct))
+                && !await DepartmentVisibleAsync(connection, transaction, context.OrganizationId, departmentId, ct))
                 return Failure(IdentityCommandDisposition.NotFound);
 
             await using var update = new NpgsqlCommand(
@@ -378,19 +378,19 @@ public sealed class PostgresUserAccountCommandStore : IUserAccountCommandStore
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) return null;
-        return new UserAccountReadProjection(reader.GetGuid(0),reader.GetGuid(1),reader.GetInt64(2),
-            reader.GetFieldValue<DateTimeOffset>(3).ToUniversalTime(),reader.GetFieldValue<DateTimeOffset>(4).ToUniversalTime(),
-            reader.GetString(5),reader.GetString(6),reader.GetString(7),reader.GetString(8),
-            reader.IsDBNull(9)?null:reader.GetString(9),reader.IsDBNull(10)?null:reader.GetGuid(10),
-            reader.IsDBNull(11)?null:reader.GetString(11),ParseStatus(reader.GetString(12)));
+        return new UserAccountReadProjection(reader.GetGuid(0), reader.GetGuid(1), reader.GetInt64(2),
+            reader.GetFieldValue<DateTimeOffset>(3).ToUniversalTime(), reader.GetFieldValue<DateTimeOffset>(4).ToUniversalTime(),
+            reader.GetString(5), reader.GetString(6), reader.GetString(7), reader.GetString(8),
+            reader.IsDBNull(9) ? null : reader.GetString(9), reader.IsDBNull(10) ? null : reader.GetGuid(10),
+            reader.IsDBNull(11) ? null : reader.GetString(11), ParseStatus(reader.GetString(12)));
     }
 
     private static async global::System.Threading.Tasks.Task<bool> DepartmentVisibleAsync(
-        NpgsqlConnection connection,NpgsqlTransaction transaction,Guid organizationId,Guid departmentId,CancellationToken ct)
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid organizationId, Guid departmentId, CancellationToken ct)
     {
-        await using var command=new NpgsqlCommand("SELECT EXISTS(SELECT 1 FROM core.objects WHERE organization_id=$1 AND id=$2 AND object_type='department' AND lifecycle_state='active');",connection,transaction);
-        command.Parameters.Add(new NpgsqlParameter<Guid>{TypedValue=organizationId});
-        command.Parameters.Add(new NpgsqlParameter<Guid>{TypedValue=departmentId});
+        await using var command = new NpgsqlCommand("SELECT EXISTS(SELECT 1 FROM core.objects WHERE organization_id=$1 AND id=$2 AND object_type='department' AND lifecycle_state='active');", connection, transaction);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = departmentId });
         return (bool)(await command.ExecuteScalarAsync(ct))!;
     }
 
@@ -406,15 +406,19 @@ public sealed class PostgresUserAccountCommandStore : IUserAccountCommandStore
 
     private static string ToStoredStatus(UserAccountStatus status) => status switch
     {
-        UserAccountStatus.PendingActivation => "pending", UserAccountStatus.Active => "active",
-        UserAccountStatus.Blocked => "blocked", UserAccountStatus.Deactivated => "deactivated",
+        UserAccountStatus.PendingActivation => "pending",
+        UserAccountStatus.Active => "active",
+        UserAccountStatus.Blocked => "blocked",
+        UserAccountStatus.Deactivated => "deactivated",
         _ => throw new ArgumentOutOfRangeException(nameof(status)),
     };
 
     private static UserAccountStatus ParseStatus(string status) => status switch
     {
-        "pending" => UserAccountStatus.PendingActivation, "active" => UserAccountStatus.Active,
-        "blocked" => UserAccountStatus.Blocked, "deactivated" => UserAccountStatus.Deactivated,
+        "pending" => UserAccountStatus.PendingActivation,
+        "active" => UserAccountStatus.Active,
+        "blocked" => UserAccountStatus.Blocked,
+        "deactivated" => UserAccountStatus.Deactivated,
         _ => throw new InvalidOperationException("Unknown account status."),
     };
 
@@ -427,13 +431,13 @@ public sealed class PostgresUserAccountCommandStore : IUserAccountCommandStore
         if (command.JobTitle.IsSpecified) fields.Add("jobTitle"); return fields;
     }
 
-    private static Mutation Success(UserAccountReadProjection user, string? eventType, IReadOnlyList<string> fields) => new(IdentityCommandDisposition.Executed,user,eventType,fields);
-    private static Mutation Failure(IdentityCommandDisposition disposition) => new(disposition,null,null,[]);
-    private static void AddNullableText(NpgsqlCommand command, string? value) => command.Parameters.Add(new NpgsqlParameter { NpgsqlDbType=NpgsqlDbType.Text,Value=value is null?DBNull.Value:value.Trim() });
-    private static void AddNullableGuid(NpgsqlCommand command, Guid? value) => command.Parameters.Add(new NpgsqlParameter { NpgsqlDbType=NpgsqlDbType.Uuid,Value=value is null?DBNull.Value:value.Value });
-    private static void AddOptionalText(NpgsqlCommand command, OptionalUserField<string> value) { command.Parameters.Add(new NpgsqlParameter<bool>{TypedValue=value.IsSpecified}); AddNullableText(command,value.Value); }
-    private static void AddOptionalNullableText(NpgsqlCommand command, OptionalUserField<string?> value) { command.Parameters.Add(new NpgsqlParameter<bool>{TypedValue=value.IsSpecified}); AddNullableText(command,value.Value); }
-    private static void AddOptionalNullableGuid(NpgsqlCommand command, OptionalUserField<Guid?> value) { command.Parameters.Add(new NpgsqlParameter<bool>{TypedValue=value.IsSpecified}); AddNullableGuid(command,value.Value); }
+    private static Mutation Success(UserAccountReadProjection user, string? eventType, IReadOnlyList<string> fields) => new(IdentityCommandDisposition.Executed, user, eventType, fields);
+    private static Mutation Failure(IdentityCommandDisposition disposition) => new(disposition, null, null, []);
+    private static void AddNullableText(NpgsqlCommand command, string? value) => command.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Text, Value = value is null ? DBNull.Value : value.Trim() });
+    private static void AddNullableGuid(NpgsqlCommand command, Guid? value) => command.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Uuid, Value = value is null ? DBNull.Value : value.Value });
+    private static void AddOptionalText(NpgsqlCommand command, OptionalUserField<string> value) { command.Parameters.Add(new NpgsqlParameter<bool> { TypedValue = value.IsSpecified }); AddNullableText(command, value.Value); }
+    private static void AddOptionalNullableText(NpgsqlCommand command, OptionalUserField<string?> value) { command.Parameters.Add(new NpgsqlParameter<bool> { TypedValue = value.IsSpecified }); AddNullableText(command, value.Value); }
+    private static void AddOptionalNullableGuid(NpgsqlCommand command, OptionalUserField<Guid?> value) { command.Parameters.Add(new NpgsqlParameter<bool> { TypedValue = value.IsSpecified }); AddNullableGuid(command, value.Value); }
 
     private sealed record Acquire(string Disposition, Guid RecordId, string? BodyJson, Guid? ResourceId, int? RetryAfterSeconds);
     private sealed record Mutation(IdentityCommandDisposition Disposition, UserAccountReadProjection? User, string? EventType, IReadOnlyList<string> ChangedFields, string? Reason = null);

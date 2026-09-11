@@ -26,7 +26,7 @@ public interface ISessionRepository
     IReadOnlyList<UserSessionListItem> GetUserSessions(Guid organizationId, Guid userId);
 
     SessionListPage GetSessionPage(Guid organizationId, Guid? userId, int page) =>
-        new(GetUserSessions(organizationId, userId ?? throw new NotSupportedException("Organization session paging is not configured.")).Skip((page-1)*100).Take(100).ToArray(), null, null);
+        new(GetUserSessions(organizationId, userId ?? throw new NotSupportedException("Organization session paging is not configured.")).Skip((page - 1) * 100).Take(100).ToArray(), null, null);
 
     /// <summary>
     /// Resolves the session that owns the given refresh-token hash. Returns null when no token

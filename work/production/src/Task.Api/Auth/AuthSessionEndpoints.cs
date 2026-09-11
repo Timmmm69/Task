@@ -164,15 +164,22 @@ internal static class AuthSessionEndpoints
             var session = sessions?.GetSession(requestContext.OrganizationId, requestContext.SessionId);
             var device = devices is null || session?.DeviceId is null ? null : await devices.GetReadModelAsync(requestContext.OrganizationId, session.DeviceId.Value, context.RequestAborted);
             if (user is null || device is null)
-                return await WriteProblemAsync(context,503,"INTERNAL_ERROR","Session profile is unavailable.",true);
+                return await WriteProblemAsync(context, 503, "INTERNAL_ERROR", "Session profile is unavailable.", true);
             context.Response.Headers.CacheControl = "no-store";
-            return Results.Json(new {
+            return Results.Json(new
+            {
                 // Retain the desktop foundation metadata as additive compatibility fields.
-                userId = requestContext.UserAccountId, sessionId = requestContext.SessionId,
-                organizationId = requestContext.OrganizationId, credentialVersion = requestContext.CredentialVersion,
-                authorizationScopeVersion = requestContext.AuthorizationScopeVersion, capabilities, mustChangePassword,
-                user = Task.Api.Users.UserEndpoints.ToResponse(user), device = DeviceEndpoints.ToResponse(device),
-                permissionCodes = capabilities, scopeVersion = requestContext.AuthorizationScopeVersion,
+                userId = requestContext.UserAccountId,
+                sessionId = requestContext.SessionId,
+                organizationId = requestContext.OrganizationId,
+                credentialVersion = requestContext.CredentialVersion,
+                authorizationScopeVersion = requestContext.AuthorizationScopeVersion,
+                capabilities,
+                mustChangePassword,
+                user = Task.Api.Users.UserEndpoints.ToResponse(user),
+                device = DeviceEndpoints.ToResponse(device),
+                permissionCodes = capabilities,
+                scopeVersion = requestContext.AuthorizationScopeVersion,
                 accessExpiresAt = (DateTime)context.Items["Task.AccessExpiresAtUtc"]!
             });
         }).RequireAuthorization();
@@ -202,17 +209,22 @@ internal static class AuthSessionEndpoints
             }
 
             if (page is < 1 or > 100000 || (cursor is not null && (!int.TryParse(cursor, out var parsed) || parsed < 1 || parsed > 100000)))
-                return await WriteProblemAsync(context,400,"VALIDATION_FAILED","Invalid session page.",false);
+                return await WriteProblemAsync(context, 400, "VALIDATION_FAILED", "Invalid session page.", false);
             var all = await IdentityScope.CanManageAllAsync(context, requestContext);
             if (!all && userId.HasValue && userId.Value != requestContext.UserAccountId)
-                return await WriteProblemAsync(context,404,"OBJECT_NOT_VISIBLE","The requested sessions are not visible.",false);
+                return await WriteProblemAsync(context, 404, "OBJECT_NOT_VISIBLE", "The requested sessions are not visible.", false);
             var result = sessionRepository.GetSessionPage(requestContext.OrganizationId,
                 all ? userId : requestContext.UserAccountId, cursor is null ? page ?? 1 : int.Parse(cursor));
-            var items = result.Items.Select(item => new {
-                id = item.SessionId, userAccountId = item.UserAccountId, deviceId = item.DeviceId,
+            var items = result.Items.Select(item => new
+            {
+                id = item.SessionId,
+                userAccountId = item.UserAccountId,
+                deviceId = item.DeviceId,
                 status = item.RevokedAtUtc is not null ? "revoked" : item.IdleExpiresAtUtc <= DateTimeOffset.UtcNow || item.AbsoluteExpiresAtUtc <= DateTimeOffset.UtcNow ? "expired" : "active",
-                createdAt = item.CreatedAtUtc.UtcDateTime, lastSeenAt = item.LastSeenAtUtc.UtcDateTime,
-                idleExpiresAt = item.IdleExpiresAtUtc.UtcDateTime, absoluteExpiresAt = item.AbsoluteExpiresAtUtc.UtcDateTime
+                createdAt = item.CreatedAtUtc.UtcDateTime,
+                lastSeenAt = item.LastSeenAtUtc.UtcDateTime,
+                idleExpiresAt = item.IdleExpiresAtUtc.UtcDateTime,
+                absoluteExpiresAt = item.AbsoluteExpiresAtUtc.UtcDateTime
             });
             return Results.Json(new { items, nextCursor = result.NextCursor, total = result.Total });
         }).RequireAuthorization(TaskPermissionAuthorization.SessionReadPolicyName);

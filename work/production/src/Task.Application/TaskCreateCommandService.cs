@@ -91,7 +91,8 @@ public sealed class TaskCreateCommandService
                     model.Priority,
                     TaskSchedule.Create(model.StartAtUtc, model.DeadlineAtUtc), model.Content);
                 return new TaskWriteMutationResult(aggregate, createHttpResult(aggregate));
-            }) { RevalidatePermissions = true };
+            })
+        { RevalidatePermissions = true };
     }
 
     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(

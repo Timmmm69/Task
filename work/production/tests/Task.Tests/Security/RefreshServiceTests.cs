@@ -49,10 +49,13 @@ public sealed class RefreshServiceTests
     [Fact]
     public async global::System.Threading.Tasks.Task RefreshAsync_WrongDeviceKey_DoesNotRotate()
     {
-        var repository = new FakeSessionRepository { Lookup=CreateLookup(TokenStatus.Active,DeviceId) };
-        var devices = new FakeDeviceStore { Device=new(DeviceId,UserId,
-            Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(DeviceKey))).ToLowerInvariant(),null) };
-        var result = await CreateService(repository,devices).RefreshAsync(CreateCommand() with { DeviceKey="another-device" });
+        var repository = new FakeSessionRepository { Lookup = CreateLookup(TokenStatus.Active, DeviceId) };
+        var devices = new FakeDeviceStore
+        {
+            Device = new(DeviceId, UserId,
+            Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(DeviceKey))).ToLowerInvariant(), null)
+        };
+        var result = await CreateService(repository, devices).RefreshAsync(CreateCommand() with { DeviceKey = "another-device" });
         Assert.IsType<RefreshOutcome.SessionExpired>(result);
         Assert.Empty(repository.RotateCalls);
     }
@@ -60,7 +63,7 @@ public sealed class RefreshServiceTests
     [Fact]
     public async global::System.Threading.Tasks.Task RefreshAsync_StaleCredentialVersion_DoesNotRotate()
     {
-        var repository = new FakeSessionRepository { Lookup=CreateLookup(TokenStatus.Active), RequestState=SessionRequestState.VersionMismatch };
+        var repository = new FakeSessionRepository { Lookup = CreateLookup(TokenStatus.Active), RequestState = SessionRequestState.VersionMismatch };
         var result = await CreateService(repository).RefreshAsync(CreateCommand());
         Assert.IsType<RefreshOutcome.SessionExpired>(result);
         Assert.Empty(repository.RotateCalls);

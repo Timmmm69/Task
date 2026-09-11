@@ -190,10 +190,10 @@ public sealed class PostgresSessionRepository : ISessionRepository
             LIMIT $3 OFFSET $4;
             """);
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
-        AddNullableGuid(command,userId);
+        AddNullableGuid(command, userId);
         command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = listLimit });
 
-        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = (page-1)*100 });
+        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = (page - 1) * 100 });
         long? total = null;
         var items = new List<UserSessionListItem>(listLimit);
         using var reader = command.ExecuteReader();
@@ -208,13 +208,13 @@ public sealed class PostgresSessionRepository : ISessionRepository
                 reader.GetFieldValue<DateTimeOffset>(4),
                 reader.GetFieldValue<DateTimeOffset>(5),
                 ReadNullableTimestamp(reader, 6),
-                reader.IsDBNull(7) ? null : reader.GetString(7),reader.GetGuid(8),reader.IsDBNull(9)?null:reader.GetGuid(9)));
+                reader.IsDBNull(7) ? null : reader.GetString(7), reader.GetGuid(8), reader.IsDBNull(9) ? null : reader.GetGuid(9)));
         }
 
         reader.Close();
         var more = items.Count > 100;
         if (more) items.RemoveAt(100);
-        return new(items, more ? (page+1).ToString(System.Globalization.CultureInfo.InvariantCulture) : null, total);
+        return new(items, more ? (page + 1).ToString(System.Globalization.CultureInfo.InvariantCulture) : null, total);
     }
 
     public SessionRefreshLookup? FindSessionByRefreshTokenHash(string tokenHash)

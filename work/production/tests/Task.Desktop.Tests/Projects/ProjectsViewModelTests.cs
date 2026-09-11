@@ -125,7 +125,8 @@ public sealed class ProjectsViewModelTests
     {
         var client = new FakeProjectsClient
         {
-            Projects = SuccessPage(Project()), Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project()),
+            Projects = SuccessPage(Project()),
+            Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project()),
             Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]),
             Members = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]),
             Add = new DesktopProjectResult<DesktopProjectMemberDto>.Succeeded(

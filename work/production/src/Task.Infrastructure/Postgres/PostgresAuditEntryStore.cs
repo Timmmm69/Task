@@ -144,7 +144,7 @@ public sealed class PostgresAuditEntryStore : IAuditEntryStore
         command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = pageSize + 1 });
 
         AddNullableGuidParameter(command, query.ActorUserId);
-        command.Parameters.Add(new NpgsqlParameter<bool> { TypedValue=query.LoginAttemptsOnly });
+        command.Parameters.Add(new NpgsqlParameter<bool> { TypedValue = query.LoginAttemptsOnly });
 
         var entries = new List<AuditEntryRecord>(pageSize + 1);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);

@@ -186,14 +186,18 @@ public sealed class DesktopWorkApiClient : IDesktopWorkApiClient
             return System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopUserSettings>>(new DesktopWorkResult<DesktopUserSettings>.ValidationFailure("Проверьте значения личных настроек."));
         var body = new JsonObject
         {
-            ["language"] = settings.Language, ["timeFormat"] = settings.TimeFormat,
-            ["firstDayOfWeek"] = settings.FirstDayOfWeek, ["workdayStart"] = settings.WorkdayStart,
+            ["language"] = settings.Language,
+            ["timeFormat"] = settings.TimeFormat,
+            ["firstDayOfWeek"] = settings.FirstDayOfWeek,
+            ["workdayStart"] = settings.WorkdayStart,
             ["workdayEnd"] = settings.WorkdayEnd,
             ["weekendDays"] = new JsonArray(settings.WeekendDays.Select(day => JsonValue.Create(day)).ToArray<JsonNode?>()),
             ["defaultTaskDurationMinutes"] = settings.DefaultTaskDurationMinutes,
             ["defaultReminderOffsetMinutes"] = settings.DefaultReminderOffsetMinutes,
-            ["autostartEnabled"] = settings.AutostartEnabled, ["allowLocalPaths"] = settings.AllowLocalPaths,
-            ["confirmCatalogDelete"] = settings.ConfirmCatalogDelete, ["missingFileBehavior"] = settings.MissingFileBehavior,
+            ["autostartEnabled"] = settings.AutostartEnabled,
+            ["allowLocalPaths"] = settings.AllowLocalPaths,
+            ["confirmCatalogDelete"] = settings.ConfirmCatalogDelete,
+            ["missingFileBehavior"] = settings.MissingFileBehavior,
         };
         return SendEntityAsync("settings/me", HttpMethod.Patch, body, MapUserSettings, settings.Version, Key(), cancellationToken);
     }
@@ -209,8 +213,10 @@ public sealed class DesktopWorkApiClient : IDesktopWorkApiClient
             return System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopNotificationPreferences>>(new DesktopWorkResult<DesktopNotificationPreferences>.ValidationFailure("Проверьте настройки уведомлений и тихих часов."));
         var body = new JsonObject
         {
-            ["enabled"] = preferences.Enabled, ["desktopEnabled"] = preferences.DesktopEnabled,
-            ["soundEnabled"] = preferences.SoundEnabled, ["defaultSnoozeMinutes"] = preferences.DefaultSnoozeMinutes,
+            ["enabled"] = preferences.Enabled,
+            ["desktopEnabled"] = preferences.DesktopEnabled,
+            ["soundEnabled"] = preferences.SoundEnabled,
+            ["defaultSnoozeMinutes"] = preferences.DefaultSnoozeMinutes,
             ["quietHoursStart"] = NullIfWhiteSpace(preferences.QuietHoursStart),
             ["quietHoursEnd"] = NullIfWhiteSpace(preferences.QuietHoursEnd),
             ["quietHoursTimeZone"] = NullIfWhiteSpace(preferences.QuietHoursTimeZone),

@@ -100,7 +100,8 @@ public sealed class TaskUpdateCommandService
                     model.StartsAtUtc,
                     model.DeadlineAt, currentTask.Content.Apply(model.CardPatch));
                 return new TaskWriteMutationResult(updated, createHttpResult(updated), changedFields);
-            }) { RevalidatePermissions = true };
+            })
+        { RevalidatePermissions = true };
 
         return new TaskUpdatePreparation(command);
     }
@@ -332,7 +333,8 @@ public sealed class TaskStatusTransitionCommandService
                     actorId = context.UserAccountId,
                 });
                 return new TaskWriteMutationResult(updated, createHttpResult(updated), SafePayloadJson: payload);
-            }) { RevalidatePermissions = true };
+            })
+        { RevalidatePermissions = true };
     }
 
     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(

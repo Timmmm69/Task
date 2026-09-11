@@ -744,13 +744,13 @@ public sealed class AuthSessionEndpointsTests
     {
         public static readonly Guid DeviceId = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
         public Task<UserAccountReadProjection?> GetByIdAsync(Guid organizationId, Guid userId, CancellationToken ct = default) =>
-            global::System.Threading.Tasks.Task.FromResult<UserAccountReadProjection?>(new(UserId,OrganizationId,1,DateTimeOffset.UtcNow,DateTimeOffset.UtcNow,"Test User","Test","User","test.user",null,null,null,UserAccountStatus.Active));
+            global::System.Threading.Tasks.Task.FromResult<UserAccountReadProjection?>(new(UserId, OrganizationId, 1, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "Test User", "Test", "User", "test.user", null, null, null, UserAccountStatus.Active));
         Task<DeviceRegistrationRecord?> IDeviceRegistrationStore.GetByIdAsync(Guid organizationId, Guid deviceId, CancellationToken ct) =>
-            global::System.Threading.Tasks.Task.FromResult<DeviceRegistrationRecord?>(new(DeviceId,UserId,new string('a',64),null));
+            global::System.Threading.Tasks.Task.FromResult<DeviceRegistrationRecord?>(new(DeviceId, UserId, new string('a', 64), null));
         public Task<Guid> UpsertAsync(Guid organizationId, Guid userId, string fingerprintHash, string? displayName, CancellationToken ct = default) =>
             global::System.Threading.Tasks.Task.FromResult(DeviceId);
         public Task<DeviceReadProjection?> GetReadModelAsync(Guid organizationId, Guid deviceId, CancellationToken ct = default) =>
-            global::System.Threading.Tasks.Task.FromResult<DeviceReadProjection?>(new(DeviceId,OrganizationId,UserId,1,DateTimeOffset.UtcNow,DateTimeOffset.UtcNow,"Test PC","windows","1.0",null,null,null));
+            global::System.Threading.Tasks.Task.FromResult<DeviceReadProjection?>(new(DeviceId, OrganizationId, UserId, 1, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "Test PC", "windows", "1.0", null, null, null));
     }
 
     private sealed class PasswordEqualsHashHasher : IPasswordHasher

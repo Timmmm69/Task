@@ -93,75 +93,75 @@ public sealed partial class TaskEndpointsTests
     [Fact]
     public async global::System.Threading.Tasks.Task GetUsers_ReturnsTenantPage()
     {
-        using var server=CreateServer(null,userReadStore:new FakeUserAccountReadStore(UserProjection));
-        using var client=await CreateAuthenticatedClientAsync(server,OrganizationId);
-        var response=await client.GetAsync(UsersUrl);
-        Assert.Equal(HttpStatusCode.OK,response.StatusCode);
-        using var json=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        using var server = CreateServer(null, userReadStore: new FakeUserAccountReadStore(UserProjection));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        var response = await client.GetAsync(UsersUrl);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         Assert.Single(json.RootElement.GetProperty("items").EnumerateArray());
-        Assert.Equal(1,json.RootElement.GetProperty("total").GetInt64());
+        Assert.Equal(1, json.RootElement.GetProperty("total").GetInt64());
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task CreateUser_RequiresIdempotencyKey_AndReturnsPendingUser()
     {
-        var commands=new FakeUserAccountCommandStore();
-        using var server=CreateServer(null,userReadStore:new FakeUserAccountReadStore(UserProjection),userCommandStore:commands,passwordHasher:new FakePasswordHasher(),grantedPermissions:Grant(TaskPermissionAuthorization.UserCreateBackingPermissionCode));
-        using var client=await CreateAuthenticatedClientAsync(server,OrganizationId);
-        var body=new{firstName="Ivan",lastName="Sidorov",login="i.sidorov"};
-        var missing=await client.PostAsJsonAsync(UsersUrl,body);
-        await AssertProblemAsync(missing,HttpStatusCode.BadRequest,"VALIDATION_FAILED");
-        using var request=new HttpRequestMessage(HttpMethod.Post,UsersUrl){Content=JsonContent.Create(body)};
-        request.Headers.Add("Idempotency-Key","create-user-1");
-        var response=await client.SendAsync(request);
-        Assert.Equal(HttpStatusCode.Created,response.StatusCode);
-        Assert.Equal("\"v1\"",response.Headers.ETag?.Tag);
-        Assert.Equal(UserAccountStatus.PendingActivation,commands.LastCreate!.AccountStatus);
+        var commands = new FakeUserAccountCommandStore();
+        using var server = CreateServer(null, userReadStore: new FakeUserAccountReadStore(UserProjection), userCommandStore: commands, passwordHasher: new FakePasswordHasher(), grantedPermissions: Grant(TaskPermissionAuthorization.UserCreateBackingPermissionCode));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        var body = new { firstName = "Ivan", lastName = "Sidorov", login = "i.sidorov" };
+        var missing = await client.PostAsJsonAsync(UsersUrl, body);
+        await AssertProblemAsync(missing, HttpStatusCode.BadRequest, "VALIDATION_FAILED");
+        using var request = new HttpRequestMessage(HttpMethod.Post, UsersUrl) { Content = JsonContent.Create(body) };
+        request.Headers.Add("Idempotency-Key", "create-user-1");
+        var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.Equal("\"v1\"", response.Headers.ETag?.Tag);
+        Assert.Equal(UserAccountStatus.PendingActivation, commands.LastCreate!.AccountStatus);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task PatchUser_RequiresIfMatch_AndMapsVersionConflict()
     {
-        var commands=new FakeUserAccountCommandStore{NextDisposition=IdentityCommandDisposition.VersionConflict};
-        using var server=CreateServer(null,userReadStore:new FakeUserAccountReadStore(UserProjection),userCommandStore:commands,grantedPermissions:Grant(TaskPermissionAuthorization.UserUpdateBackingPermissionCode));
-        using var client=await CreateAuthenticatedClientAsync(server,OrganizationId);
-        using var missing=new HttpRequestMessage(HttpMethod.Patch,$"{UsersUrl}/{TargetUserAccountId:D}"){Content=JsonContent.Create(new{displayName="New Name"})};
-        missing.Headers.Add("Idempotency-Key","patch-user-1");
-        await AssertProblemAsync(await client.SendAsync(missing),(HttpStatusCode)428,"PRECONDITION_REQUIRED");
-        using var request=new HttpRequestMessage(HttpMethod.Patch,$"{UsersUrl}/{TargetUserAccountId:D}"){Content=JsonContent.Create(new{displayName="New Name"})};
-        request.Headers.TryAddWithoutValidation("If-Match","\"v4\"");request.Headers.Add("Idempotency-Key","patch-user-2");
-        await AssertProblemAsync(await client.SendAsync(request),HttpStatusCode.PreconditionFailed,"VERSION_CONFLICT");
+        var commands = new FakeUserAccountCommandStore { NextDisposition = IdentityCommandDisposition.VersionConflict };
+        using var server = CreateServer(null, userReadStore: new FakeUserAccountReadStore(UserProjection), userCommandStore: commands, grantedPermissions: Grant(TaskPermissionAuthorization.UserUpdateBackingPermissionCode));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var missing = new HttpRequestMessage(HttpMethod.Patch, $"{UsersUrl}/{TargetUserAccountId:D}") { Content = JsonContent.Create(new { displayName = "New Name" }) };
+        missing.Headers.Add("Idempotency-Key", "patch-user-1");
+        await AssertProblemAsync(await client.SendAsync(missing), (HttpStatusCode)428, "PRECONDITION_REQUIRED");
+        using var request = new HttpRequestMessage(HttpMethod.Patch, $"{UsersUrl}/{TargetUserAccountId:D}") { Content = JsonContent.Create(new { displayName = "New Name" }) };
+        request.Headers.TryAddWithoutValidation("If-Match", "\"v4\""); request.Headers.Add("Idempotency-Key", "patch-user-2");
+        await AssertProblemAsync(await client.SendAsync(request), HttpStatusCode.PreconditionFailed, "VERSION_CONFLICT");
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task BlockUser_UsesProtectedTransition()
     {
-        var commands=new FakeUserAccountCommandStore();
-        using var server=CreateServer(null,userReadStore:new FakeUserAccountReadStore(UserProjection),userCommandStore:commands,grantedPermissions:Grant(TaskPermissionAuthorization.UserBlockBackingPermissionCode));
-        using var client=await CreateAuthenticatedClientAsync(server,OrganizationId);
-        using var request=new HttpRequestMessage(HttpMethod.Post,$"{UsersUrl}/{TargetUserAccountId:D}/block"){Content=JsonContent.Create(new{reason="Security incident",expectedVersion=4})};
-        request.Headers.TryAddWithoutValidation("If-Match","\"v4\"");request.Headers.Add("Idempotency-Key","block-user-1");
-        var response=await client.SendAsync(request);
-        Assert.Equal(HttpStatusCode.OK,response.StatusCode);
-        Assert.Equal(UserAccountTransition.Block,commands.LastTransition);
+        var commands = new FakeUserAccountCommandStore();
+        using var server = CreateServer(null, userReadStore: new FakeUserAccountReadStore(UserProjection), userCommandStore: commands, grantedPermissions: Grant(TaskPermissionAuthorization.UserBlockBackingPermissionCode));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"{UsersUrl}/{TargetUserAccountId:D}/block") { Content = JsonContent.Create(new { reason = "Security incident", expectedVersion = 4 }) };
+        request.Headers.TryAddWithoutValidation("If-Match", "\"v4\""); request.Headers.Add("Idempotency-Key", "block-user-1");
+        var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(UserAccountTransition.Block, commands.LastTransition);
     }
 
     [Fact]
     public async global::System.Threading.Tasks.Task AdminResetPassword_ReturnsOneTimeReceipt()
     {
-        var commands=new FakeUserAccountCommandStore();
-        using var server=CreateServer(null,userReadStore:new FakeUserAccountReadStore(UserProjection),userCommandStore:commands,passwordHasher:new FakePasswordHasher(),grantedPermissions:Grant(TaskPermissionAuthorization.UserResetPasswordBackingPermissionCode));
-        using var client=await CreateAuthenticatedClientAsync(server,OrganizationId);
-        using var request=new HttpRequestMessage(HttpMethod.Post,"/api/v1/auth/admin-reset-password"){Content=JsonContent.Create(new{targetUserId=TargetUserAccountId,temporaryPassword="Temporary-Password-123!",expectedVersion=4})};
-        request.Headers.Add("Idempotency-Key","reset-password-1");
-        var response=await client.SendAsync(request);
-        Assert.Equal(HttpStatusCode.OK,response.StatusCode);
-        using var json=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var commands = new FakeUserAccountCommandStore();
+        using var server = CreateServer(null, userReadStore: new FakeUserAccountReadStore(UserProjection), userCommandStore: commands, passwordHasher: new FakePasswordHasher(), grantedPermissions: Grant(TaskPermissionAuthorization.UserResetPasswordBackingPermissionCode));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/admin-reset-password") { Content = JsonContent.Create(new { targetUserId = TargetUserAccountId, temporaryPassword = "Temporary-Password-123!", expectedVersion = 4 }) };
+        request.Headers.Add("Idempotency-Key", "reset-password-1");
+        var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         Assert.True(json.RootElement.GetProperty("mustChangePassword").GetBoolean());
-        Assert.Equal("Temporary-Password-123!",json.RootElement.GetProperty("temporaryPassword").GetString());
+        Assert.Equal("Temporary-Password-123!", json.RootElement.GetProperty("temporaryPassword").GetString());
     }
 
-    private static IReadOnlySet<string> Grant(params string[] permissions)=>new HashSet<string>(permissions,StringComparer.Ordinal);
+    private static IReadOnlySet<string> Grant(params string[] permissions) => new HashSet<string>(permissions, StringComparer.Ordinal);
 
     private sealed class FakeUserAccountReadStore(UserAccountReadProjection? projection) : IUserAccountReadStore
     {
@@ -174,25 +174,25 @@ public sealed partial class TaskEndpointsTests
                 projection is not null && projection.OrganizationId == organizationId && projection.Id == userId ? projection : null);
         }
 
-        public global::System.Threading.Tasks.Task<UserAccountReadPage> GetPageAsync(UserAccountReadPageRequest request,CancellationToken cancellationToken=default)=>
-            global::System.Threading.Tasks.Task.FromResult(new UserAccountReadPage(projection is not null&&projection.OrganizationId==request.OrganizationId?[projection]:[],null,projection is null?0:1));
+        public global::System.Threading.Tasks.Task<UserAccountReadPage> GetPageAsync(UserAccountReadPageRequest request, CancellationToken cancellationToken = default) =>
+            global::System.Threading.Tasks.Task.FromResult(new UserAccountReadPage(projection is not null && projection.OrganizationId == request.OrganizationId ? [projection] : [], null, projection is null ? 0 : 1));
     }
 
-    private sealed class FakeUserAccountCommandStore:IUserAccountCommandStore
+    private sealed class FakeUserAccountCommandStore : IUserAccountCommandStore
     {
-        public IdentityCommandDisposition NextDisposition{get;set;}=IdentityCommandDisposition.Executed;
-        public UserAccountReadProjection? LastCreate{get;private set;}
-        public UserAccountTransition? LastTransition{get;private set;}
-        public global::System.Threading.Tasks.Task<UserAccountCommandResult> CreateAsync(IdentityCommandContext context,UserAccountCreateCommand command,CancellationToken cancellationToken=default){LastCreate=UserProjection with{Version=1,DisplayName=command.DisplayName,FirstName=command.FirstName,LastName=command.LastName,Login=command.Login,AccountStatus=UserAccountStatus.PendingActivation};return Result(LastCreate);}
-        public global::System.Threading.Tasks.Task<UserAccountCommandResult> UpdateAsync(IdentityCommandContext context,Guid userId,long expectedVersion,UserAccountPatchCommand command,CancellationToken cancellationToken=default)=>Result(UserProjection with{Version=5});
-        public global::System.Threading.Tasks.Task<UserAccountCommandResult> TransitionAsync(IdentityCommandContext context,Guid userId,long expectedVersion,UserAccountTransition transition,string? reason,CancellationToken cancellationToken=default){LastTransition=transition;return Result(UserProjection with{Version=5,AccountStatus=transition==UserAccountTransition.Block?UserAccountStatus.Blocked:UserAccountStatus.Active});}
-        public global::System.Threading.Tasks.Task<PasswordResetCommandResult> ResetPasswordAsync(IdentityCommandContext context,Guid userId,long expectedVersion,PasswordHashRecord credential,CancellationToken cancellationToken=default)=>global::System.Threading.Tasks.Task.FromResult(new PasswordResetCommandResult(NextDisposition,5,ExpiresAtUtc:DateTimeOffset.UtcNow.AddHours(24)));
-        private global::System.Threading.Tasks.Task<UserAccountCommandResult> Result(UserAccountReadProjection user)=>global::System.Threading.Tasks.Task.FromResult(new UserAccountCommandResult(NextDisposition,NextDisposition==IdentityCommandDisposition.Executed?user:null));
+        public IdentityCommandDisposition NextDisposition { get; set; } = IdentityCommandDisposition.Executed;
+        public UserAccountReadProjection? LastCreate { get; private set; }
+        public UserAccountTransition? LastTransition { get; private set; }
+        public global::System.Threading.Tasks.Task<UserAccountCommandResult> CreateAsync(IdentityCommandContext context, UserAccountCreateCommand command, CancellationToken cancellationToken = default) { LastCreate = UserProjection with { Version = 1, DisplayName = command.DisplayName, FirstName = command.FirstName, LastName = command.LastName, Login = command.Login, AccountStatus = UserAccountStatus.PendingActivation }; return Result(LastCreate); }
+        public global::System.Threading.Tasks.Task<UserAccountCommandResult> UpdateAsync(IdentityCommandContext context, Guid userId, long expectedVersion, UserAccountPatchCommand command, CancellationToken cancellationToken = default) => Result(UserProjection with { Version = 5 });
+        public global::System.Threading.Tasks.Task<UserAccountCommandResult> TransitionAsync(IdentityCommandContext context, Guid userId, long expectedVersion, UserAccountTransition transition, string? reason, CancellationToken cancellationToken = default) { LastTransition = transition; return Result(UserProjection with { Version = 5, AccountStatus = transition == UserAccountTransition.Block ? UserAccountStatus.Blocked : UserAccountStatus.Active }); }
+        public global::System.Threading.Tasks.Task<PasswordResetCommandResult> ResetPasswordAsync(IdentityCommandContext context, Guid userId, long expectedVersion, PasswordHashRecord credential, CancellationToken cancellationToken = default) => global::System.Threading.Tasks.Task.FromResult(new PasswordResetCommandResult(NextDisposition, 5, ExpiresAtUtc: DateTimeOffset.UtcNow.AddHours(24)));
+        private global::System.Threading.Tasks.Task<UserAccountCommandResult> Result(UserAccountReadProjection user) => global::System.Threading.Tasks.Task.FromResult(new UserAccountCommandResult(NextDisposition, NextDisposition == IdentityCommandDisposition.Executed ? user : null));
     }
 
-    private sealed class FakePasswordHasher:IPasswordHasher
+    private sealed class FakePasswordHasher : IPasswordHasher
     {
-        public PasswordHashRecord HashPassword(string password)=>new(new string('a',64),"{}");
-        public bool VerifyPassword(string password,PasswordHashRecord stored)=>true;
+        public PasswordHashRecord HashPassword(string password) => new(new string('a', 64), "{}");
+        public bool VerifyPassword(string password, PasswordHashRecord stored) => true;
     }
 }

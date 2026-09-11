@@ -10,10 +10,10 @@ public sealed class LoginServiceTests
     [Fact]
     public async global::System.Threading.Tasks.Task LoginAsync_ExpiredTemporaryPassword_DoesNotCreateSession()
     {
-        var account=ActiveAccount();
-        var lookup=new FakeLookupStore { Account=account with { MustChangePassword=true, TemporaryPasswordExpiresAtUtc=account.DbNowUtc.AddSeconds(-1) } };
-        var sessions=new FakeSessionRepository();
-        var service=CreateService(lookup,new FakeHasher { VerifyResult=true },new FakeLockoutStore { State=LockoutState(0,"active",null) },new FakeDeviceStore { Device=ActiveDevice() },sessions,new FakeAuditStore());
+        var account = ActiveAccount();
+        var lookup = new FakeLookupStore { Account = account with { MustChangePassword = true, TemporaryPasswordExpiresAtUtc = account.DbNowUtc.AddSeconds(-1) } };
+        var sessions = new FakeSessionRepository();
+        var service = CreateService(lookup, new FakeHasher { VerifyResult = true }, new FakeLockoutStore { State = LockoutState(0, "active", null) }, new FakeDeviceStore { Device = ActiveDevice() }, sessions, new FakeAuditStore());
         Assert.IsType<LoginOutcome.InvalidCredentials>(await service.LoginAsync(Command()));
     }
     private static readonly Guid OrganizationId = Guid.Parse("751fa8ce-5cc3-4d98-8574-1108080b2ff4");

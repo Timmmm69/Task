@@ -71,9 +71,15 @@ public sealed partial class PostgresProductApiTests
         Assert.Empty(schedule.QuerySchedule(db.Organization, now, now.AddDays(1), null, null, null, db.OtherUser));
         Assert.Equal(2, schedule.QuerySchedule(db.Organization, now, now.AddDays(1), null, null, null, db.User).Count);
         var recurrence = new RecurrenceService(db.Runtime.CreateRecurrenceStore());
-        var definition = new RecurrenceDefinition { Status = "active", Frequency = "daily", Interval = 1,
-            OccurrenceStartDate = DateOnly.FromDateTime(now.UtcDateTime), TimeZone = "UTC",
-            Template = new() { Title = "Private series", AuthorUserId = db.User, Priority = "normal", AssigneeIds = [db.OtherUser] } };
+        var definition = new RecurrenceDefinition
+        {
+            Status = "active",
+            Frequency = "daily",
+            Interval = 1,
+            OccurrenceStartDate = DateOnly.FromDateTime(now.UtcDateTime),
+            TimeZone = "UTC",
+            Template = new() { Title = "Private series", AuthorUserId = db.User, Priority = "normal", AssigneeIds = [db.OtherUser] }
+        };
         recurrence.Create(db.Organization, db.User, "private-series-1", JsonSerializer.Serialize(definition, RecurrenceService.JsonOptions));
         var series = Assert.Single(recurrence.List(db.Organization, db.User));
         recurrence.Generate(db.Organization, db.User, series.Id, series.Version, "generate-private", definition.OccurrenceStartDate);

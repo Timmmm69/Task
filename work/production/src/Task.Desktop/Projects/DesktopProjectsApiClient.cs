@@ -281,10 +281,15 @@ public sealed class DesktopProjectsApiClient : IDesktopProjectsApiClient
         if (draft.ColorCode is not null && !System.Text.RegularExpressions.Regex.IsMatch(draft.ColorCode, "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$")) throw new ArgumentException("Invalid project color.");
         var body = new JsonObject
         {
-            ["name"] = name, ["description"] = draft.Description?.Trim(), ["ownerUserId"] = draft.OwnerUserId,
-            ["managerUserId"] = draft.ManagerUserId, ["status"] = StatusValue(draft.Status),
-            ["startDate"] = draft.StartDate?.ToString("yyyy-MM-dd"), ["plannedEndDate"] = draft.PlannedEndDate?.ToString("yyyy-MM-dd"),
-            ["actualEndAt"] = draft.ActualEndAt?.ToUniversalTime().ToString("O"), ["defaultTimeZone"] = draft.DefaultTimeZone,
+            ["name"] = name,
+            ["description"] = draft.Description?.Trim(),
+            ["ownerUserId"] = draft.OwnerUserId,
+            ["managerUserId"] = draft.ManagerUserId,
+            ["status"] = StatusValue(draft.Status),
+            ["startDate"] = draft.StartDate?.ToString("yyyy-MM-dd"),
+            ["plannedEndDate"] = draft.PlannedEndDate?.ToString("yyyy-MM-dd"),
+            ["actualEndAt"] = draft.ActualEndAt?.ToUniversalTime().ToString("O"),
+            ["defaultTimeZone"] = draft.DefaultTimeZone,
             ["colorCode"] = draft.ColorCode
         };
         if (!create) body.Remove("ownerUserId");

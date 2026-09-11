@@ -274,9 +274,15 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             var preview = PreviewDate(definition, date);
             var task = TaskAggregate.Create(Guid.NewGuid(), record.OrganizationId, definition.Template.AuthorUserId, definition.Template.Title,
                 DateTimeOffset.UtcNow, RecurrenceTemplateData.ParsePriority(definition.Template.Priority), Schedule(definition, preview),
-                new TaskCardContent { ProjectId = definition.Template.ProjectId, RequesterUserId = definition.Template.RequesterUserId,
-                    PrimaryCounterpartyObjectId = definition.Template.PrimaryCounterpartyObjectId, AssigneeIds = definition.Template.AssigneeIds,
-                    WatcherIds = definition.Template.WatcherIds, Description = definition.Template.Description });
+                new TaskCardContent
+                {
+                    ProjectId = definition.Template.ProjectId,
+                    RequesterUserId = definition.Template.RequesterUserId,
+                    PrimaryCounterpartyObjectId = definition.Template.PrimaryCounterpartyObjectId,
+                    AssigneeIds = definition.Template.AssigneeIds,
+                    WatcherIds = definition.Template.WatcherIds,
+                    Description = definition.Template.Description
+                });
             tx.SaveTask(task, null);
             tx.SaveOccurrence(new(date, task.Metadata.Id, GeneratedTaskVersion: task.Metadata.Version, Template: definition.Template));
             count++;
