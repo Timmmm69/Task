@@ -33,6 +33,11 @@ function Read-RequiredText {
     return [IO.File]::ReadAllText($Path)
 }
 
+function Read-RequiredNormalizedText {
+    param([string]$Path)
+    return (Read-RequiredText $Path).Replace("`r`n", "`n").Replace("`r", "`n")
+}
+
 function Test-SecretPermissions {
     param([string[]]$Paths)
     if ($IsWindows) {
@@ -144,10 +149,10 @@ function Test-IdentityKeyRing {
     }
 }
 
-$compose = Read-RequiredText $composePath
-$nginx = Read-RequiredText $nginxPath
-$hba = Read-RequiredText $hbaPath
-$envExample = Read-RequiredText (Join-Path $deploymentRoot 'production.env.example')
+$compose = Read-RequiredNormalizedText $composePath
+$nginx = Read-RequiredNormalizedText $nginxPath
+$hba = Read-RequiredNormalizedText $hbaPath
+$envExample = Read-RequiredNormalizedText (Join-Path $deploymentRoot 'production.env.example')
 
 Assert-Sec03 ($compose -notmatch '(?i)(?:Password|Pepper|SigningKey)\s*=') 'Compose contains an inline credential assignment.'
 Assert-Sec03 ($compose -notmatch '(?i)Password=') 'A database password is embedded in a connection string.'
