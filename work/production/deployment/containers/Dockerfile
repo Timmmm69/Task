@@ -37,8 +37,15 @@ RUN dotnet publish src/Task.Api/Task.Api.csproj -c Release --no-restore --runtim
 FROM ${ASPNET_IMAGE} AS task-api-runtime
 USER root
 RUN apt-get -o Acquire::Retries=3 update \
-    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends libgssapi-krb5-2 \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
+        libgssapi-krb5-2=1.20.1-6ubuntu2.8 \
+        libkrb5-3=1.20.1-6ubuntu2.8 \
+        libk5crypto3=1.20.1-6ubuntu2.8 \
+        libkrb5support0=1.20.1-6ubuntu2.8 \
+        libkeyutils1=1.6.3-3build1 \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log \
+        /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache \
+        /var/lib/dpkg/status-old /var/lib/dpkg/lock /var/lib/dpkg/triggers/Lock
 
 FROM task-api-runtime AS task-api
 ARG VERSION=0.0.0-local
@@ -78,8 +85,15 @@ ENTRYPOINT ["dotnet", "Task.BackupAgent.dll"]
 FROM ${RUNTIME_IMAGE} AS task-database-migrator-runtime
 USER root
 RUN apt-get -o Acquire::Retries=3 update \
-    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends libgssapi-krb5-2 \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
+        libgssapi-krb5-2=1.20.1-6ubuntu2.8 \
+        libkrb5-3=1.20.1-6ubuntu2.8 \
+        libk5crypto3=1.20.1-6ubuntu2.8 \
+        libkrb5support0=1.20.1-6ubuntu2.8 \
+        libkeyutils1=1.6.3-3build1 \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log \
+        /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache \
+        /var/lib/dpkg/status-old /var/lib/dpkg/lock /var/lib/dpkg/triggers/Lock
 
 FROM task-database-migrator-runtime AS task-database-migrator
 ARG VERSION=0.0.0-local
