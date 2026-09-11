@@ -75,11 +75,11 @@ $findingsCsv = Join-Path $docs 'HAND-05-findings-disposition.csv'
 Assert-True (Test-Path -LiteralPath $findingsCsv -PathType Leaf) "Missing findings register: $findingsCsv"
 $findings = @(Import-Csv -LiteralPath $findingsCsv)
 Assert-True ($findings.Count -ge 5) "Findings register must contain at least 5 rows"
-$blockingFindings = 0
+$criticalHighReviewed = 0
 foreach ($row in $findings) {
     Assert-True ($row.disposition -ne 'open' -and $row.status -ne 'open') "Open finding in register: $($row.id)"
     if ($row.severity -in @('Critical', 'High')) {
-        $blockingFindings++
+        $criticalHighReviewed++
         Assert-True ($row.disposition -eq 'fixed' -and $row.status -eq 'closed') "Critical/High finding is not fixed: $($row.id)"
     }
 }
@@ -195,8 +195,9 @@ if ($PackageDirectory) {
     gate_items_verified = $gatePassed
     dependencies = @('HAND-02', 'HAND-03', 'HAND-04', 'QA-04')
     findings = $findings.Count
-    blocking_findings = $blockingFindings
+    critical_high_reviewed = $criticalHighReviewed
     open_findings = 0
+    blocking_open = 0
     post_handoff_actions = $actions.Count
     release_candidate = 'outputs/20260911_hand03_release_candidate_1.0.0'
     release_files = @($rcManifest.files).Count

@@ -18,8 +18,8 @@
     "source_files":  [
                          {
                              "path":  "work/production/docs/HAND-05-internal-readiness-sign-off.md",
-                             "bytes":  9638,
-                             "sha256":  "1c77b12a1e40b2cb41bf4eb73c61e6d8ce4f1265aa1e0a0b4016e0398b2284ec"
+                             "bytes":  9659,
+                             "sha256":  "6a23c469ffadde4c8d73ad8e328fd5d9f097b08ab73029f403ea9f517107b341"
                          },
                          {
                              "path":  "work/production/docs/HAND-05-findings-disposition.csv",
@@ -33,8 +33,8 @@
                          },
                          {
                              "path":  "work/production/verification/Test-Hand05Readiness.ps1",
-                             "bytes":  9729,
-                             "sha256":  "8de9a76410e9bbb2a964ee060843fc4e5e755044d2b58feeffdb01ba4b387a53"
+                             "bytes":  9768,
+                             "sha256":  "bc2d1fe518448f2acba891f7efa53dbcedc5cb0d2d3b8c39ec970e8fd7c44e0c"
                          },
                          {
                              "path":  "work/production/verification/Build-Hand05Package.ps1",

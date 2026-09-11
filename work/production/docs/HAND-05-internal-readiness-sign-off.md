@@ -64,7 +64,8 @@ DESK-05 (86/86 нативных проверок) и QA-03 без блокиру
 ## 4. Сверка состава release package
 
 Состав RC 1.0.0 подтверждён по `manifest.json` HAND-03 и пересчётом SHA-256 всех
-65 payload-файлов (`Test-Hand05Readiness.ps1`, раздел `release_checklist`):
+65 payload-файлов (`Test-Hand05Readiness.ps1`, поля `release_files` и
+`release_hashes_verified`):
 
 - `releaseVersion 1.0.0`, `classification internal-release-candidate`, Git binding
   `sourceRevision`/`productionTree`/`sourceDateEpoch`;
