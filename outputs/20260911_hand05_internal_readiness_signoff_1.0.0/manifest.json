@@ -1,0 +1,68 @@
+{
+    "package":  "HAND-05 internal readiness sign-off",
+    "version":  "1.0.0",
+    "date":  "2026-09-11",
+    "roadmap_id":  "HAND-05",
+    "state":  "implemented-and-validated-for-handoff",
+    "decision":  "INTERNAL READINESS APPROVED (PASS)",
+    "source_evidence":  {
+                            "release_candidate":  "outputs/20260911_hand03_release_candidate_1.0.0",
+                            "release_gates":  6,
+                            "gate_items":  30,
+                            "findings_open":  0,
+                            "findings_blocking":  0,
+                            "runbook_install":  "work/production/evidence/ops-runbook/install/install.json: PASS",
+                            "runbook_operate":  "work/production/evidence/ops-runbook/operate/checks.json: PASS",
+                            "qa04_sign_off":  "outputs/20260911_qa04_accessibility_usability_1.1.0/RELEASE_SIGN_OFF.md: APPROVED"
+                        },
+    "source_files":  [
+                         {
+                             "path":  "work/production/docs/HAND-05-internal-readiness-sign-off.md",
+                             "bytes":  9638,
+                             "sha256":  "1c77b12a1e40b2cb41bf4eb73c61e6d8ce4f1265aa1e0a0b4016e0398b2284ec"
+                         },
+                         {
+                             "path":  "work/production/docs/HAND-05-findings-disposition.csv",
+                             "bytes":  2358,
+                             "sha256":  "4f832797720129c7fb4926a03935f28c5ab4dd9e283953f9de59cc8225947647"
+                         },
+                         {
+                             "path":  "work/production/docs/HAND-05-post-handoff-actions.csv",
+                             "bytes":  3206,
+                             "sha256":  "7f7a8b617dcf74c0c5b027a05879a774bddf6c3edf3013e597b5cda62727b27b"
+                         },
+                         {
+                             "path":  "work/production/verification/Test-Hand05Readiness.ps1",
+                             "bytes":  9729,
+                             "sha256":  "8de9a76410e9bbb2a964ee060843fc4e5e755044d2b58feeffdb01ba4b387a53"
+                         },
+                         {
+                             "path":  "work/production/verification/Build-Hand05Package.ps1",
+                             "bytes":  6214,
+                             "sha256":  "481e9fe2ad024f930628abc5cc141118b7d0bbd038c01720a9bb9e203a3c3fbc"
+                         },
+                         {
+                             "path":  "outputs/20260911_hand03_release_candidate_1.0.0/manifest.json",
+                             "bytes":  13214,
+                             "sha256":  "1203d4fb1a40c810fad443ead8cc6152ce4d90910940e3cf1e1366abbcc57215"
+                         },
+                         {
+                             "path":  "outputs/20260911_qa04_accessibility_usability_1.1.0/RELEASE_SIGN_OFF.md",
+                             "bytes":  1563,
+                             "sha256":  "14f279aa5dc86a44ab4e12824f1832c4f74bd5712b10cda319fc52f083b52be9"
+                         },
+                         {
+                             "path":  ".project-dashboard/roadmap.json",
+                             "bytes":  76400,
+                             "sha256":  "3d2dafd36313c6b7b39fa1e35073f1bfafc1f812f8191fed261a3cf1f430d557"
+                         }
+                     ],
+    "package_files":  [
+                          "README.md",
+                          "VERSION",
+                          "HAND-05-internal-readiness-sign-off.md",
+                          "HAND-05-findings-disposition.csv",
+                          "HAND-05-post-handoff-actions.csv",
+                          "validation-report.md"
+                      ]
+}

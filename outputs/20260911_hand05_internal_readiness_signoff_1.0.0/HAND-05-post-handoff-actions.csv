@@ -1,0 +1,13 @@
+id,area,action,owner,source
+PH-01,Secrets/PKI,"Корпоративный secrets manager и host agent; production bundle по контракту SEC-03 (TASK_SECRET_ROOT, владельцы, режимы).",security/операции,work/production/docs/SEC-03-production-secrets-tls.md
+PH-02,Secrets/PKI,"Корпоративный CA: server-auth листовки edge и PostgreSQL, revocation, trust на клиентах.",PKI-администратор,work/production/docs/OPS-operations-runbook.md (раздел 2)
+PH-03,Сеть,"DNS-имена TASK_SERVER_NAME (edge) и PostgreSQL; корпоративный DNS.",DNS-администратор,work/production/docs/OPS-operations-runbook.md (раздел 2)
+PH-04,Сеть,"Три непересекающиеся Docker-подсети и firewall-параметры (employeeCidrs, managementCidrs, externalInterface, httpsBindAddress).",сетевой/security,work/production/deployment/ops02/ops02.parameters.example.json
+PH-05,Хранение,"Отдельные диски PGDATA и local backup, NFS/SMB off-host backup, immutable/offline snapshots, два escrow-хранилища ключей.",storage-администратор,work/production/docs/backup-restore-runbook.md
+PH-06,Мониторинг,"Alert webhook URL (+токен) и TASK_ALERT_OWNER; production-режим доставки и пара firing/resolved.",дежурная смена заказчика,work/production/docs/OPS-04-monitoring-alerting.md
+PH-07,Выпуск клиента,"Корпоративный code-signing сертификат + RFC 3161 timestamp; пересборка desktop на signing workstation, повторный gate HAND-03, публикация ZIP/channel на контролируемом HTTPS origin.",release/security,work/production/docs/OPS-05-windows-client-release.md
+PH-08,Данные,"Реальные учётные записи, SMB/UNC ACL и перенос данных заказчика после изолированного пилотного прогона.",администратор заказчика,work/production/docs/HAND-04-administrator-guide.md
+PH-09,Развёртывание,"Production-фазы A–H по OPS-operations-runbook на инфраструктуре заказчика; protected evidence без секретов.",инженер заказчика,work/production/docs/OPS-operations-runbook.md (раздел 3)
+PH-10,Развёртывание,"Pilot клиента на поддерживаемом корпоративном Windows image: launch/login, update, restart, rollback, relaunch.",release/security,work/production/docs/OPS-operations-runbook.md (фаза G)
+PH-11,Безопасность,"Penetration pass после стабилизации customer-like развёртывания (SEC-05, Explicit non-closure).",security,work/production/docs/SEC-05-independent-security-review.md
+PH-12,Приёмка,"QA-03 demo-маршрут на изолированном стенде заказчика и named approvals: Product owner, Design owner, Desktop tech lead, QA.",владельцы заказчика,work/production/docs/HAND-04-demo-walkthrough.md

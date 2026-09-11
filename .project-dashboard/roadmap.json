@@ -471,7 +471,7 @@
         "DATA-05"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 1,
       "next_action": "Расширить audit trail и capabilities на каждый новый production-модуль и проверить отсутствие утечек."
     },
     {
@@ -1138,13 +1138,18 @@
       "category": "handoff",
       "weight": 12,
       "criticality": "blocker",
-      "status": "blocked",
-      "progress": 0,
+      "status": "done",
+      "progress": 100,
       "evidence": [
-        "work/stage_5_completion_audit/completion-audit.json: EVD-FIND, EVD-PO, EVD-DESIGN, EVD-TECH, EVD-QA missing"
+        "work/production/docs/HAND-05-internal-readiness-sign-off.md: единый внутренний sign-off APPROVED (PASS)",
+        "work/production/docs/HAND-05-findings-disposition.csv: 5 findings, 0 открытых, High SEC05-F-001 fixed",
+        "work/production/docs/HAND-05-post-handoff-actions.csv: 12 post-handoff действий заказчика",
+        "work/production/verification/Test-Hand05Readiness.ps1: fail-closed сверка 6/6 gates, findings и состава RC",
+        "outputs/20260911_hand03_release_candidate_1.0.0/manifest.json: RC 1.0.0, 65 payload-файлов, server 0.6.0, desktop 1.0.0",
+        "outputs/20260911_hand05_internal_readiness_signoff_1.0.0/validation-report.md"
       ],
-      "note": "Hard handoff blocker контролирует только то, что может завершить разработчик без данных, инфраструктуры и approvals заказчика.",
-      "updated_at": "2026-09-07T12:00:00+03:00",
+      "note": "Внутренняя готовность подтверждена в объёме release gates и состава RC 1.0.0: 6/6 gates, 0 открытых findings, release checklist сверен с пересчётом 65/65 SHA-256; HAND-02 runbook и QA-04 sign-off PASS. Post-handoff действия заказчика (secrets manager, корпоративный CA, DNS, подсети, хранилища, alert webhook, code signing, учётные записи/SMB ACL, production-фазы A–H, pilot и формальная приёмка) перечислены в sign-off. API-05 вне release gates и состава RC — отдельный открытый пункт, передачу не блокирует.",
+      "updated_at": "2026-09-11T22:30:00+03:00",
       "priority": 4,
       "dependencies": [
         "HAND-02",
@@ -1153,8 +1158,8 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
-      "next_action": "Закрыть внутренние findings, сверить release checklist и оформить единый readiness sign-off с перечнем post-handoff действий заказчика."
+      "recommended_order": 0,
+      "next_action": "Передать пакет заказчику и выполнить post-handoff действия из HAND-05-internal-readiness-sign-off.md; при изменении production tree поддерживать RC актуальным по HAND-03."
     }
   ],
   "release_gates": [

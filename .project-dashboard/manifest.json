@@ -1,7 +1,7 @@
 {
   "package": "Task Development / Handoff Readiness Dashboard",
   "version": "1.1.0",
-  "generated_at": "2026-09-10T15:49:07.884Z",
+  "generated_at": "2026-09-11T18:59:14.453Z",
   "algorithm": "SHA-256",
   "files": [
     {
@@ -71,8 +71,8 @@
     },
     {
       "path": "roadmap.json",
-      "sha256": "a424f26ae1c4c6b9c5b085005e730f9bbf4a1ed89529e7c8200f5a983e619442",
-      "bytes": 69091
+      "sha256": "3d2dafd36313c6b7b39fa1e35073f1bfafc1f812f8191fed261a3cf1f430d557",
+      "bytes": 76400
     },
     {
       "path": "server.mjs",
