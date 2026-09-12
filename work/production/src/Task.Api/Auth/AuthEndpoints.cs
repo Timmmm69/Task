@@ -166,14 +166,10 @@ internal static class AuthEndpoints
                     retryable: false,
                     cancellationToken: cancellationToken),
 
-                LoginOutcome.LockedTemporarily locked => await WriteProblemAsync(
+                LoginOutcome.LockedTemporarily locked => await WriteLockedTemporarilyProblemAsync(
                     context,
-                    StatusCodes.Status423Locked,
-                    "ACCOUNT_LOCKED_TEMPORARILY",
-                    "The account is temporarily locked.",
-                    retryable: true,
-                    retryAfterSeconds: (int)locked.Remaining.TotalSeconds,
-                    cancellationToken: cancellationToken),
+                    locked.Remaining,
+                    cancellationToken),
 
                 LoginOutcome.DeviceRevoked => await WriteProblemAsync(
                     context,
@@ -368,6 +364,28 @@ internal static class AuthEndpoints
     {
         var value = TaskApiProblemResponse.GetCorrelationId(context);
         return Guid.TryParseExact(value, "D", out var parsed) ? parsed : Guid.NewGuid();
+    }
+
+    private static async Task<IResult> WriteLockedTemporarilyProblemAsync(
+        HttpContext context,
+        TimeSpan remaining,
+        CancellationToken cancellationToken)
+    {
+        var retryAfterSeconds = Math.Max(1, (int)Math.Ceiling(remaining.TotalSeconds));
+        if (!context.Response.Headers.ContainsKey("Retry-After"))
+        {
+            context.Response.Headers.RetryAfter = retryAfterSeconds.ToString(
+                System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        return await WriteProblemAsync(
+            context,
+            StatusCodes.Status423Locked,
+            "ACCOUNT_LOCKED_TEMPORARILY",
+            "The account is temporarily locked.",
+            retryable: true,
+            retryAfterSeconds: retryAfterSeconds,
+            cancellationToken: cancellationToken);
     }
 
     private static string ComputeSha256Hex(string value)

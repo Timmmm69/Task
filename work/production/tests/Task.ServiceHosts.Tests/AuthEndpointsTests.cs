@@ -198,6 +198,7 @@ public sealed class AuthEndpointsTests
         var sessionRepository = new FakeSessionRepository();
         var deviceStore = new FakeDeviceRegistrationStore();
         var refreshService = new RefreshTokenRotationService(sessionRepository);
+        var lockedUntil = DateTimeOffset.UtcNow.AddMilliseconds(999);
         using var server = CreateServer(services =>
         {
             RegisterCommonAuthServices(services, sessionRepository, deviceStore, refreshService);
@@ -212,11 +213,11 @@ public sealed class AuthEndpointsTests
                     1,
                     "active",
                     5,
-                    DateTimeOffset.UtcNow.AddMinutes(15),
+                    lockedUntil,
                     DateTimeOffset.UtcNow)));
             services.AddSingleton<IPasswordHasher>(new FakePasswordHasher(matches: true));
             services.AddSingleton<IAccountLockoutStore>(new FakeAccountLockoutStore(
-                new LockoutState(5, "active", DateTimeOffset.UtcNow.AddMinutes(15), DateTimeOffset.UtcNow)));
+                new LockoutState(5, "active", lockedUntil, DateTimeOffset.UtcNow)));
         });
 
         var client = server.CreateClient();
@@ -224,7 +225,10 @@ public sealed class AuthEndpointsTests
 
         var document = await AssertProblemAsync(response, (HttpStatusCode)423, "ACCOUNT_LOCKED_TEMPORARILY");
         Assert.True(document.RootElement.TryGetProperty("retryAfterSeconds", out var retryAfter));
-        Assert.True(retryAfter.GetInt32() > 0);
+        Assert.True(retryAfter.GetInt32() >= 1);
+        Assert.True(response.Headers.TryGetValues("Retry-After", out var retryAfterValues));
+        Assert.True(int.TryParse(Assert.Single(retryAfterValues), out var retryAfterHeader));
+        Assert.Equal(retryAfter.GetInt32(), retryAfterHeader);
     }
 
     [Fact]

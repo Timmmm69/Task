@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -430,6 +431,34 @@ public sealed class AuthSessionEndpointsTests
             new { currentPassword = "", newPassword = NewPassword });
 
         await AssertProblemAsync(response, (HttpStatusCode)422, "VALIDATION_FAILED");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_PasswordTooLong_Returns422_ValidationFailed()
+    {
+        using var server = CreateServer(new FakeSessionRepository());
+        using var client = await CreateAuthenticatedClientAsync(server);
+
+        var response = await client.PostAsJsonAsync(
+            "/api/v1/auth/change-password",
+            new { currentPassword = new string('x', 2000), newPassword = NewPassword });
+
+        await AssertProblemAsync(response, (HttpStatusCode)422, "VALIDATION_FAILED");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ChangePassword_RequestBodyTooLarge_Returns413()
+    {
+        using var server = CreateServer(new FakeSessionRepository());
+        using var client = await CreateAuthenticatedClientAsync(server);
+        using var content = new StringContent(
+            new string('x', (64 * 1024) + 1),
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await client.PostAsync("/api/v1/auth/change-password", content);
+
+        await AssertProblemAsync(response, (HttpStatusCode)413, "REQUEST_TOO_LARGE");
     }
 
     [Fact]

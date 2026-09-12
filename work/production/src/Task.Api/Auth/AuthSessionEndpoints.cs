@@ -22,6 +22,8 @@ internal static class AuthSessionEndpoints
     private const string RevokeSessionRoute = "/api/v1/auth/sessions/{sessionId:guid}/revoke";
     private const string ChangePasswordRoute = "/api/v1/auth/change-password";
     private const string LoginAttemptsRoute = "/api/v1/auth/login-attempts";
+    private const int MaxChangePasswordRequestBodyBytes = 64 * 1024;
+    private const int MaxPasswordLength = 1024;
 
     private const string UserLogoutRevokeReason = "user-logout";
     private const string UserLogoutAllRevokeReason = "user-logout-all";
@@ -33,6 +35,11 @@ internal static class AuthSessionEndpoints
     private const int MaxPageSize = 200;
 
     private const int AuditQueryDefaultPageSize = 50;
+
+    private static readonly JsonSerializerOptions AuthJsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
+    };
 
     public static IEndpointRouteBuilder MapAuthSessionEndpoints(this IEndpointRouteBuilder app)
     {
@@ -319,12 +326,19 @@ internal static class AuthSessionEndpoints
                     cancellationToken: cancellationToken);
             }
 
-            ChangePasswordRequest? request;
-            try
+            var body = await ReadBoundedJsonAsync<ChangePasswordRequest>(context, cancellationToken);
+            if (body.Status == JsonBodyStatus.TooLarge)
             {
-                request = await context.Request.ReadFromJsonAsync<ChangePasswordRequest>(cancellationToken);
+                return await WriteProblemAsync(
+                    context,
+                    StatusCodes.Status413PayloadTooLarge,
+                    "REQUEST_TOO_LARGE",
+                    "The request body exceeds the allowed size.",
+                    retryable: false,
+                    cancellationToken: cancellationToken);
             }
-            catch (JsonException)
+
+            if (body.Status == JsonBodyStatus.Malformed)
             {
                 return await WriteProblemAsync(
                     context,
@@ -334,6 +348,8 @@ internal static class AuthSessionEndpoints
                     retryable: false,
                     cancellationToken: cancellationToken);
             }
+
+            var request = body.Value;
 
             var validationMessage = (string?)null;
             if (request is null
@@ -496,13 +512,67 @@ internal static class AuthSessionEndpoints
             return false;
         }
 
+        if (request.CurrentPassword.Length > MaxPasswordLength)
+        {
+            message = $"Current password must not exceed {MaxPasswordLength} characters.";
+            return false;
+        }
+
         if (string.IsNullOrWhiteSpace(request.NewPassword))
         {
             message = "New password is required.";
             return false;
         }
 
+        if (request.NewPassword.Length > MaxPasswordLength)
+        {
+            message = $"New password must not exceed {MaxPasswordLength} characters.";
+            return false;
+        }
+
         return true;
+    }
+
+    private static async Task<JsonBodyReadResult<T>> ReadBoundedJsonAsync<T>(
+        HttpContext context,
+        CancellationToken cancellationToken)
+    {
+        if (context.Request.ContentLength > MaxChangePasswordRequestBodyBytes)
+        {
+            return JsonBodyReadResult<T>.TooLarge();
+        }
+
+        using var payload = new MemoryStream(MaxChangePasswordRequestBodyBytes);
+        var buffer = new byte[4096];
+        while (true)
+        {
+            var remaining = MaxChangePasswordRequestBodyBytes - (int)payload.Length;
+            var read = await context.Request.Body.ReadAsync(
+                buffer.AsMemory(0, Math.Min(buffer.Length, remaining + 1)),
+                cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            if (read > remaining)
+            {
+                return JsonBodyReadResult<T>.TooLarge();
+            }
+
+            await payload.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+        }
+
+        payload.Position = 0;
+        try
+        {
+            var value = await JsonSerializer.DeserializeAsync<T>(payload, AuthJsonOptions, cancellationToken);
+            return JsonBodyReadResult<T>.Success(value);
+        }
+        catch (JsonException)
+        {
+            return JsonBodyReadResult<T>.Malformed();
+        }
     }
 
     private static UserSessionItemResponse ToResponse(UserSessionListItem item) =>
@@ -593,4 +663,20 @@ internal static class AuthSessionEndpoints
     internal sealed record LoginAttemptsResponse(
         [property: JsonPropertyName("items")] IReadOnlyList<LoginAttempt> Items,
         [property: JsonPropertyName("nextPageToken")] string? NextPageToken);
+
+    private enum JsonBodyStatus
+    {
+        Success,
+        Malformed,
+        TooLarge,
+    }
+
+    private readonly record struct JsonBodyReadResult<T>(JsonBodyStatus Status, T? Value)
+    {
+        public static JsonBodyReadResult<T> Success(T? value) => new(JsonBodyStatus.Success, value);
+
+        public static JsonBodyReadResult<T> Malformed() => new(JsonBodyStatus.Malformed, default);
+
+        public static JsonBodyReadResult<T> TooLarge() => new(JsonBodyStatus.TooLarge, default);
+    }
 }

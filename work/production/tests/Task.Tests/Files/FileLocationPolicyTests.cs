@@ -152,6 +152,21 @@ public sealed class FileLocationPolicyTests
         Assert.Equal(FileLocationError.AdminShare, verdict.Error);
     }
 
+    [Theory]
+    [InlineData(@"\\srv\share..\C$\file", FileLocationError.AdminShare)]
+    [InlineData(@"\\srv\share.\file", FileLocationError.InvalidSegment)]
+    [InlineData(@"\\srv..\share\file", FileLocationError.InvalidSegment)]
+    [InlineData(@"\\srv\share\dir\other$\file", FileLocationError.AdminShare)]
+    public void ValidateUnc_UnsafeSegments_ReturnExpectedError(
+        string path,
+        FileLocationError expectedError)
+    {
+        var verdict = FileLocationPolicy.ValidateUnc(path, NoRoots);
+
+        Assert.False(verdict.IsValid);
+        Assert.Equal(expectedError, verdict.Error);
+    }
+
     [Fact]
     public void ValidateUnc_DollarMidShare_IsAllowed()
     {

@@ -107,9 +107,16 @@ public static class FileLocationPolicy
             return new FileLocationVerdict(false, FileLocationError.InvalidSegment, normalized);
         }
 
-        if (share.EndsWith('$'))
+        if (segments.Any(segment => segment.EndsWith('$')))
         {
             return new FileLocationVerdict(false, FileLocationError.AdminShare, normalized);
+        }
+
+        if (segments.Any(segment =>
+                segment is "." or ".."
+                || segment.EndsWith('.')))
+        {
+            return new FileLocationVerdict(false, FileLocationError.InvalidSegment, normalized);
         }
 
         if (normalized.Length > options.MaxLength)
