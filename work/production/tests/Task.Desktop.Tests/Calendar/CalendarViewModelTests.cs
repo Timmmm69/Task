@@ -239,6 +239,49 @@ public sealed class CalendarViewModelTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task SuccessfulCreate_AfterDeactivation_ClearsEditorAndAnnouncesWithoutReload()
+    {
+        var client = new FakeCalendarClient();
+        client.ScheduleResults.Enqueue(Schedule([])); client.ConflictResults.Enqueue(Conflicts());
+        client.PendingCreate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var vm = new CalendarViewModel(client, ["Calendar.Read", "CalendarEvent.Create"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue));
+        await vm.ActivateAsync();
+        await vm.NewEventCommand.ExecuteAsync();
+        vm.Editor!.Title = "Планёрка"; vm.Editor.Date = Monday.ToDateTime(TimeOnly.MinValue); vm.Editor.IsAllDay = true;
+
+        var save = vm.SaveEventCommand.ExecuteAsync();
+        vm.Deactivate();
+        client.PendingCreate.SetResult(Event(Guid.NewGuid(), title: "Планёрка"));
+        await save;
+
+        Assert.Equal(1, client.CreateCalls);
+        Assert.Equal(1, client.ScheduleCalls);
+        Assert.Null(vm.Editor);
+        Assert.Contains("сохранено", vm.Announcement);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task UnexpectedCreateCancellation_IsReportedAsCommandFailure()
+    {
+        var client = new FakeCalendarClient();
+        client.ScheduleResults.Enqueue(Schedule([])); client.ConflictResults.Enqueue(Conflicts());
+        client.PendingCreate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var vm = new CalendarViewModel(client, ["Calendar.Read", "CalendarEvent.Create"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue));
+        await vm.ActivateAsync();
+        await vm.NewEventCommand.ExecuteAsync();
+        vm.Editor!.Title = "Планёрка"; vm.Editor.Date = Monday.ToDateTime(TimeOnly.MinValue); vm.Editor.IsAllDay = true;
+        Exception? failure = null;
+        vm.SaveEventCommand.ExecutionFailed += exception => failure = exception;
+
+        var save = vm.SaveEventCommand.ExecuteAsync();
+        client.PendingCreate.SetException(new OperationCanceledException("Unexpected client cancellation."));
+        await save;
+
+        Assert.IsType<OperationCanceledException>(failure);
+        Assert.NotNull(vm.Editor);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task SessionEnd_ClearsDataAndDisablesCommands()
     {
         var client = new FakeCalendarClient();
@@ -285,6 +328,7 @@ public sealed class CalendarViewModelTests
         public Queue<DesktopCalendarResult<DesktopCalendarEvent>> EventResults { get; } = new();
         public Queue<DesktopCalendarResult<DesktopCalendarEvent>> CreateResults { get; } = new();
         public Queue<DesktopCalendarResult<DesktopCalendarEvent>> UpdateResults { get; } = new();
+        public TaskCompletionSource<DesktopCalendarResult<DesktopCalendarEvent>>? PendingCreate { get; set; }
         public int ScheduleCalls { get; private set; }
         public int EventCalls { get; private set; }
         public int CreateCalls { get; private set; }
@@ -297,7 +341,7 @@ public sealed class CalendarViewModelTests
         public global::System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> GetEventAsync(Guid eventId, CancellationToken cancellationToken)
         { EventCalls++; return global::System.Threading.Tasks.Task.FromResult(EventResults.Dequeue()); }
         public global::System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> CreateEventAsync(DesktopCalendarEventCommand command, CancellationToken cancellationToken)
-        { CreateCalls++; return global::System.Threading.Tasks.Task.FromResult(CreateResults.Dequeue()); }
+        { CreateCalls++; return PendingCreate?.Task ?? global::System.Threading.Tasks.Task.FromResult(CreateResults.Dequeue()); }
         public global::System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> UpdateEventAsync(Guid eventId, long expectedVersion, DesktopCalendarEventCommand command, CancellationToken cancellationToken)
         { UpdateVersions.Add(expectedVersion); return global::System.Threading.Tasks.Task.FromResult(UpdateResults.Dequeue()); }
     }

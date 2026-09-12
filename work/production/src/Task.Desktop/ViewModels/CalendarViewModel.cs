@@ -524,12 +524,17 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
             ? await _client.CreateEventAsync(command, token)
             : await _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token);
         }
-        catch (OperationCanceledException) { return; }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { return; }
         finally { _saving = false; OnPropertyChanged(nameof(IsBusy)); RaiseCommands(); }
-        if (!_active || !_sessionAllowsWrites || generation != _generation || !ReferenceEquals(editor, Editor)) return;
         if (result is DesktopCalendarResult<DesktopCalendarEvent>.Succeeded success)
-        { Editor = null; await LoadAsync(true, token); Announcement = $"Событие «{success.Value.Title}» сохранено."; }
-        else if (result is DesktopCalendarResult<DesktopCalendarEvent>.VersionConflict)
+        {
+            if (ReferenceEquals(editor, Editor)) Editor = null;
+            if (_active && _sessionAllowsWrites && generation == _generation) await LoadAsync(true, token);
+            Announcement = $"Событие «{success.Value.Title}» сохранено.";
+            return;
+        }
+        if (!_active || !_sessionAllowsWrites || generation != _generation || !ReferenceEquals(editor, Editor)) return;
+        if (result is DesktopCalendarResult<DesktopCalendarEvent>.VersionConflict)
         {
             var latest = await _client.GetEventAsync(editor.Source!.Id, token);
             if (_active && _sessionAllowsWrites && generation == _generation && ReferenceEquals(editor, Editor)
