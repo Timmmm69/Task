@@ -97,7 +97,9 @@ public static class RecurrenceGenerator
 
                 break;
             case RecurrenceFrequency.Monthly:
-                for (var month = rule.OccurrenceStartDate; month <= scanEnd; month = month.AddMonths(1))
+                var firstMonth = new DateOnly(rule.OccurrenceStartDate.Year, rule.OccurrenceStartDate.Month, 1);
+                var lastMonth = new DateOnly(scanEnd.Year, scanEnd.Month, 1);
+                for (var month = firstMonth; month <= lastMonth; month = month.AddMonths(1))
                 {
                     var monthIndex = (month.Year - rule.OccurrenceStartDate.Year) * 12
                         + month.Month - rule.OccurrenceStartDate.Month;

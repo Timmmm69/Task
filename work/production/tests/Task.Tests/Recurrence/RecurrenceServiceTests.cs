@@ -111,6 +111,22 @@ public sealed class RecurrenceServiceTests
     }
 
     [Fact]
+    public void Patch_SucceedsWhenGeneratedOccurrencesSpanMoreThanOneGenerationWindow()
+    {
+        var store = new MemoryStore(); var service = new RecurrenceService(store); var org = Guid.NewGuid(); var author = Guid.NewGuid();
+        service.Create(org, author, "create-weekly", JsonSerializer.Serialize(
+            Definition(author) with { Frequency = "weekly", Weekdays = [1] }, RecurrenceService.JsonOptions));
+        var current = store.Series!;
+        current = ReplySeries(service.Generate(org, author, current.Id, current.Version, "span-key-1", current.Definition.OccurrenceStartDate.AddDays(366)), store);
+        current = ReplySeries(service.Generate(org, author, current.Id, current.Version, "span-key-2", current.Definition.OccurrenceStartDate.AddDays(732)), store);
+
+        var patched = service.Patch(org, author, current.Id, current.Version, "span-patch", PatchTemplate(author, "Обновлено"));
+
+        Assert.Equal(current.Version + 1, patched.Version);
+        Assert.All(store.Tasks.Values, task => Assert.Equal("Обновлено", task.Title));
+    }
+
+    [Fact]
     public void Preview_HandlesLeapMonthDay()
     {
         var definition = Definition(Guid.NewGuid()) with { Frequency = "yearly", MonthDays = [29], MonthOfYear = 2, OccurrenceStartDate = new DateOnly(2024, 2, 29) };

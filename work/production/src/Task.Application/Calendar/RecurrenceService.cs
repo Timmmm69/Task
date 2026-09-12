@@ -84,8 +84,7 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             var through = occurrences.Count == 0 ? AddDaysClamped(definition.OccurrenceStartDate, 62)
                 : occurrences.Max(o => o.LocalDate);
             var start = definition.OccurrenceStartDate;
-            var dates = through < start ? new HashSet<DateOnly>()
-                : RecurrenceGenerator.GenerateDates(definition.ToRule(), start, through).ToHashSet();
+            var dates = through < start ? new HashSet<DateOnly>() : GenerateDatesInWindows(definition, start, through);
             foreach (var occurrence in occurrences)
             {
                 var task = tx.GetTask(occurrence.TaskId);
@@ -113,7 +112,7 @@ public sealed class RecurrenceService(IRecurrenceStore store)
                 UpdatedAt = now,
                 Definition = definition with { NextGenerationDate = start }
             };
-            record = Materialize(record, actor, through < start ? AddDaysClamped(start, 62) : through, tx, out _);
+            record = MaterializeHorizon(record, actor, through < start ? AddDaysClamped(start, 62) : through, tx);
             tx.SaveSeries(record);
             return Reply(record);
         });
@@ -255,6 +254,57 @@ public sealed class RecurrenceService(IRecurrenceStore store)
         else utc = TimeZoneInfo.ConvertTimeToUtc(local, zone);
         var minutes = definition.Template.DeadlineOffsetMinutes ?? definition.Template.PlannedDurationMinutes;
         return new(date.ToString("yyyy-MM-dd"), date, utc, minutes.HasValue ? utc.AddMinutes(minutes.Value) : null, adjustment);
+    }
+
+    /// <summary>
+    /// Materializes a rule patch horizon that may span more than one 366-day generation
+    /// window, advancing through the stored <c>NextGenerationDate</c> cursor. Windows are
+    /// processed one at a time so long-lived sparse series stay editable.
+    /// </summary>
+    private static RecurrenceRecord MaterializeHorizon(RecurrenceRecord record, Guid actor, DateOnly target,
+        IRecurrenceTransaction tx)
+    {
+        var cursor = record.Definition.NextGenerationDate ?? record.Definition.OccurrenceStartDate;
+        while (cursor <= target)
+        {
+            var windowEnd = target.DayNumber - cursor.DayNumber > 366 ? AddDaysClamped(cursor, 366) : target;
+            record = Materialize(record, actor, windowEnd, tx, out _);
+            var next = record.Definition.NextGenerationDate;
+            if (next is not { } nextDate || nextDate <= cursor || nextDate > target)
+            {
+                break;
+            }
+
+            cursor = nextDate;
+        }
+
+        return record;
+    }
+
+    /// <summary>
+    /// Computes the occurrence dates a patched rule keeps across the whole generated span,
+    /// splitting the span into 366-day windows to respect the generator's per-window limits.
+    /// </summary>
+    private static HashSet<DateOnly> GenerateDatesInWindows(RecurrenceDefinition definition, DateOnly start, DateOnly through)
+    {
+        var dates = new HashSet<DateOnly>();
+        for (var cursor = start; cursor <= through;)
+        {
+            var windowEnd = through.DayNumber - cursor.DayNumber > 366 ? AddDaysClamped(cursor, 366) : through;
+            foreach (var date in RecurrenceGenerator.GenerateDates(definition.ToRule(), cursor, windowEnd))
+            {
+                dates.Add(date);
+            }
+
+            if (windowEnd >= through || windowEnd == DateOnly.MaxValue)
+            {
+                break;
+            }
+
+            cursor = windowEnd.AddDays(1);
+        }
+
+        return dates;
     }
 
     private static RecurrenceRecord Materialize(RecurrenceRecord record, Guid actor, DateOnly through,

@@ -138,6 +138,8 @@ public sealed class RecurrenceRule
                 throw new ArgumentException("A monthly rule must not select weekdays.", nameof(weekdays));
             case RecurrenceFrequency.Monthly when normalizedMonthDays.Count == 0:
                 throw new ArgumentException("A monthly rule must select at least one month day.", nameof(monthDays));
+            case RecurrenceFrequency.Yearly when normalizedWeekdays.Count != 0:
+                throw new ArgumentException("A yearly rule must not select weekdays.", nameof(weekdays));
             case RecurrenceFrequency.Yearly when normalizedMonthDays.Count == 0:
                 throw new ArgumentException("A yearly rule must select at least one month day.", nameof(monthDays));
             case RecurrenceFrequency.Yearly when monthOfYear is null:

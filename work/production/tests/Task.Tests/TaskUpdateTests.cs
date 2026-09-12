@@ -181,6 +181,66 @@ public sealed class TaskUpdateTests
     }
 
     [Fact]
+    public void CreateCommand_ComputesChangedFieldsWhenCardFieldWasNull()
+    {
+        var current = TaskAggregate.Create(
+            TaskId,
+            OrganizationId,
+            CreatorId,
+            "Card null",
+            CreatedAt,
+            TaskPriority.Normal,
+            TaskSchedule.Create(null, null),
+            content: new TaskCardContent { ProjectId = Guid.NewGuid() });
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
+
+        var preparation = service.CreateCommand(
+            Context(OrganizationId, EditorId),
+            "update-key-08",
+            """{"card":{"description":"Теперь есть"},"title":"Card null"}""",
+            TaskId,
+            1,
+            new TaskUpdateModel("Card null", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified,
+                """{"description":"Теперь есть"}"""),
+            CreateHttpResult,
+            EditedAt);
+
+        var mutation = preparation.Command.Mutation(current);
+        Assert.Equal(["description"], mutation.ChangedFields);
+        Assert.Equal("Теперь есть", mutation.Aggregate.Content.Description);
+    }
+
+    [Fact]
+    public void CreateCommand_ComputesChangedFieldsWhenCardFieldIsCleared()
+    {
+        var current = TaskAggregate.Create(
+            TaskId,
+            OrganizationId,
+            CreatorId,
+            "Card set",
+            CreatedAt,
+            TaskPriority.Normal,
+            TaskSchedule.Create(null, null),
+            content: new TaskCardContent { Description = "Было" });
+        var service = new TaskUpdateCommandService(new RecordingExecutor());
+
+        var preparation = service.CreateCommand(
+            Context(OrganizationId, EditorId),
+            "update-key-09",
+            """{"card":{"description":null},"title":"Card set"}""",
+            TaskId,
+            1,
+            new TaskUpdateModel("Card set", null, OptionalInstant.Unspecified, OptionalInstant.Unspecified,
+                """{"description":null}"""),
+            CreateHttpResult,
+            EditedAt);
+
+        var mutation = preparation.Command.Mutation(current);
+        Assert.Equal(["description"], mutation.ChangedFields);
+        Assert.Null(mutation.Aggregate.Content.Description);
+    }
+
+    [Fact]
     public void CreateCommand_WhenPatchIsNoOp_ReturnsEmptyChangedFields()
     {
         var current = TaskAggregate.Create(

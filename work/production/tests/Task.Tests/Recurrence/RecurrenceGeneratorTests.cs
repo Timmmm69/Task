@@ -115,6 +115,19 @@ public sealed class RecurrenceGeneratorTests
     }
 
     [Fact]
+    public void GenerateDates_MonthlyProcessesFinalMonthWhenStartDayExceedsWindowEndDay()
+    {
+        var start = new DateOnly(2024, 1, 31);
+        var rule = RecurrenceRule.Create(RecurrenceFrequency.Monthly, 1, null, [15], null, start, null, null, null);
+
+        var dates = RecurrenceGenerator.GenerateDates(rule, start, new DateOnly(2024, 4, 20));
+
+        Assert.Equal(
+            new[] { new DateOnly(2024, 2, 15), new DateOnly(2024, 3, 15), new DateOnly(2024, 4, 15) },
+            dates);
+    }
+
+    [Fact]
     public void GenerateDates_YearlyRespectsMonthOfYearAndInterval()
     {
         var rule = Yearly(interval: 2);

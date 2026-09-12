@@ -175,10 +175,13 @@ public sealed class TaskUpdateCommandService
             using var before = JsonDocument.Parse(current.Content.ToJson());
             using var after = JsonDocument.Parse(current.Content.Apply(model.CardPatch).ToJson());
             changed.AddRange(patch.RootElement.EnumerateObject().Where(p =>
-                before.RootElement.GetProperty(p.Name).GetRawText() != after.RootElement.GetProperty(p.Name).GetRawText()).Select(p => p.Name));
+                CardFieldText(before.RootElement, p.Name) != CardFieldText(after.RootElement, p.Name)).Select(p => p.Name));
         }
         return changed;
     }
+
+    private static string CardFieldText(JsonElement root, string name) =>
+        root.TryGetProperty(name, out var property) ? property.GetRawText() : "null";
 
     private static IReadOnlyList<string> ComputeRequestedFields(TaskUpdateModel model)
     {

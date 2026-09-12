@@ -130,6 +130,8 @@ public sealed class RecurrenceRuleTests
             RecurrenceRule.Create(RecurrenceFrequency.Weekly, 1, [1], null, 3, Start, null, null, null));
         Assert.Throws<ArgumentException>(() =>
             RecurrenceRule.Create(RecurrenceFrequency.Monthly, 1, null, [15], 3, Start, null, null, null));
+        Assert.Throws<ArgumentException>(() =>
+            RecurrenceRule.Create(RecurrenceFrequency.Yearly, 1, [1], [15], 3, Start, null, null, null));
     }
 
     [Fact]
