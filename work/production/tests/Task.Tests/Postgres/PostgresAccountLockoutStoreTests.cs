@@ -76,12 +76,12 @@ public sealed class PostgresAccountLockoutStoreTests
 
             var nowUtc = afterFirst.DbNowUtc;
             Assert.Equal(
-                5,
+                2,
                 await store.RecordFailedLoginAsync(
                     organizationId, userId, 5, nowUtc + TimeSpan.FromMinutes(15)));
             var afterThreshold = await store.GetLockoutStateAsync(organizationId, userId);
             Assert.NotNull(afterThreshold);
-            Assert.Equal(5, afterThreshold.FailedLoginCount);
+            Assert.Equal(2, afterThreshold.FailedLoginCount);
             Assert.NotNull(afterThreshold.LockedUntilUtc);
             Assert.InRange(
                 afterThreshold.LockedUntilUtc.Value - nowUtc,
@@ -89,12 +89,12 @@ public sealed class PostgresAccountLockoutStoreTests
                 TimeSpan.FromMinutes(16));
 
             Assert.Equal(
-                6,
+                3,
                 await store.RecordFailedLoginAsync(
                     organizationId, userId, 6, nowUtc + TimeSpan.FromMinutes(60)));
             var afterEscalation = await store.GetLockoutStateAsync(organizationId, userId);
             Assert.NotNull(afterEscalation);
-            Assert.Equal(6, afterEscalation.FailedLoginCount);
+            Assert.Equal(3, afterEscalation.FailedLoginCount);
             Assert.InRange(
                 afterEscalation.LockedUntilUtc!.Value - nowUtc,
                 TimeSpan.FromMinutes(59),
@@ -110,7 +110,7 @@ public sealed class PostgresAccountLockoutStoreTests
                     organizationId, Guid.NewGuid(), 7, nowUtc + TimeSpan.FromMinutes(60)));
             var unaffected = await store.GetLockoutStateAsync(organizationId, userId);
             Assert.NotNull(unaffected);
-            Assert.Equal(6, unaffected.FailedLoginCount);
+            Assert.Equal(3, unaffected.FailedLoginCount);
         }
         finally
         {
@@ -169,7 +169,7 @@ public sealed class PostgresAccountLockoutStoreTests
             var blocked = await store.GetLockoutStateAsync(organizationId, userId);
             Assert.NotNull(blocked);
             Assert.Equal("blocked", blocked.AccountStatus);
-            Assert.Equal(4, blocked.FailedLoginCount);
+            Assert.Equal(1, blocked.FailedLoginCount);
             Assert.NotNull(blocked.LockedUntilUtc);
             Assert.InRange(
                 blocked.LockedUntilUtc.Value - lockUntil,
@@ -183,8 +183,119 @@ public sealed class PostgresAccountLockoutStoreTests
             var stillBlocked = await store.GetLockoutStateAsync(organizationId, userId);
             Assert.NotNull(stillBlocked);
             Assert.Equal("blocked", stillBlocked.AccountStatus);
-            Assert.Equal(4, stillBlocked.FailedLoginCount);
+            Assert.Equal(1, stillBlocked.FailedLoginCount);
             Assert.Equal(blocked.LockedUntilUtc, stillBlocked.LockedUntilUtc);
+        }
+        finally
+        {
+            NpgsqlConnection.ClearAllPools();
+            DropDatabase(adminDataSource, databaseName);
+        }
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task RealPostgres_ConcurrentFailedLoginsDoNotLoseIncrements()
+    {
+        var adminConnectionString = Environment.GetEnvironmentVariable(ConnectionEnvironmentVariable);
+        if (string.IsNullOrWhiteSpace(adminConnectionString))
+        {
+            _output.WriteLine(
+                $"NOT RUN: set {ConnectionEnvironmentVariable} to execute the real PostgreSQL integration gate.");
+            return;
+        }
+
+        var databaseName = $"task_lockout_{Guid.NewGuid():N}";
+        using var adminDataSource = NpgsqlDataSource.Create(adminConnectionString);
+        CreateDatabase(adminDataSource, databaseName);
+
+        try
+        {
+            var databaseConnection = new NpgsqlConnectionStringBuilder(adminConnectionString)
+            {
+                Database = databaseName,
+            }.ConnectionString;
+
+            using var dataSource = NpgsqlDataSource.Create(databaseConnection);
+            new TaskPersistenceMigrator(dataSource).ApplyPending();
+
+            var store = new PostgresAccountLockoutStore(dataSource);
+
+            var organizationId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            SeedOrganizationAndUser(dataSource, organizationId, userId, Guid.NewGuid());
+
+            var results = await global::System.Threading.Tasks.Task.WhenAll(
+                store.RecordFailedLoginAsync(organizationId, userId, 1, null),
+                store.RecordFailedLoginAsync(organizationId, userId, 1, null));
+
+            Assert.Equal(3, results.Sum());
+            var state = await store.GetLockoutStateAsync(organizationId, userId);
+            Assert.NotNull(state);
+            Assert.Equal(2, state.FailedLoginCount);
+        }
+        finally
+        {
+            NpgsqlConnection.ClearAllPools();
+            DropDatabase(adminDataSource, databaseName);
+        }
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task RealPostgres_LockDeadlineIsOnlyExtended()
+    {
+        var adminConnectionString = Environment.GetEnvironmentVariable(ConnectionEnvironmentVariable);
+        if (string.IsNullOrWhiteSpace(adminConnectionString))
+        {
+            _output.WriteLine(
+                $"NOT RUN: set {ConnectionEnvironmentVariable} to execute the real PostgreSQL integration gate.");
+            return;
+        }
+
+        var databaseName = $"task_lockout_{Guid.NewGuid():N}";
+        using var adminDataSource = NpgsqlDataSource.Create(adminConnectionString);
+        CreateDatabase(adminDataSource, databaseName);
+
+        try
+        {
+            var databaseConnection = new NpgsqlConnectionStringBuilder(adminConnectionString)
+            {
+                Database = databaseName,
+            }.ConnectionString;
+
+            using var dataSource = NpgsqlDataSource.Create(databaseConnection);
+            new TaskPersistenceMigrator(dataSource).ApplyPending();
+
+            var store = new PostgresAccountLockoutStore(dataSource);
+
+            var organizationId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            SeedOrganizationAndUser(dataSource, organizationId, userId, Guid.NewGuid());
+
+            var initial = await store.GetLockoutStateAsync(organizationId, userId);
+            Assert.NotNull(initial);
+            var nowUtc = initial.DbNowUtc;
+
+            Assert.Equal(
+                1,
+                await store.RecordFailedLoginAsync(
+                    organizationId, userId, 1, nowUtc + TimeSpan.FromMinutes(60)));
+            Assert.Equal(
+                2,
+                await store.RecordFailedLoginAsync(
+                    organizationId, userId, 1, nowUtc + TimeSpan.FromMinutes(15)));
+            Assert.Equal(
+                3,
+                await store.RecordFailedLoginAsync(
+                    organizationId, userId, 1, null));
+
+            var state = await store.GetLockoutStateAsync(organizationId, userId);
+            Assert.NotNull(state);
+            Assert.Equal(3, state.FailedLoginCount);
+            Assert.NotNull(state.LockedUntilUtc);
+            Assert.InRange(
+                state.LockedUntilUtc.Value - nowUtc,
+                TimeSpan.FromMinutes(59),
+                TimeSpan.FromMinutes(61));
         }
         finally
         {

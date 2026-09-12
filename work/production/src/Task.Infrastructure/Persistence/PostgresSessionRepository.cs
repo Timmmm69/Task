@@ -399,7 +399,8 @@ public sealed class PostgresSessionRepository : ISessionRepository
             """
             UPDATE iam.refresh_tokens
             SET consumed_at = clock_timestamp(), replaced_by_id = $3
-            WHERE session_id = $1 AND token_hash = $2 AND consumed_at IS NULL AND revoked_at IS NULL;
+            WHERE session_id = $1 AND token_hash = $2 AND consumed_at IS NULL AND revoked_at IS NULL
+                AND EXISTS (SELECT 1 FROM iam.sessions s WHERE s.id = $1 AND s.organization_id = $4);
             """,
             connection,
             transaction))
@@ -407,6 +408,7 @@ public sealed class PostgresSessionRepository : ISessionRepository
             consumeCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = sessionId });
             consumeCommand.Parameters.Add(new NpgsqlParameter<string> { TypedValue = consumedTokenHash });
             consumeCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = newRefreshToken.Id });
+            consumeCommand.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
             if (consumeCommand.ExecuteNonQuery() == 0)
             {
                 transaction.Rollback();

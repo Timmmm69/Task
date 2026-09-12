@@ -378,6 +378,68 @@ public sealed class PostgresSessionRepositoryTests
         }
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task RealPostgres_RotateRefreshTokenIsTenantScoped()
+    {
+        var adminConnectionString = Environment.GetEnvironmentVariable(ConnectionEnvironmentVariable);
+        if (string.IsNullOrWhiteSpace(adminConnectionString))
+        {
+            _output.WriteLine(
+                $"NOT RUN: set {ConnectionEnvironmentVariable} to execute the real PostgreSQL integration gate.");
+            return;
+        }
+
+        var databaseName = $"task_session_{Guid.NewGuid():N}";
+        using var adminDataSource = NpgsqlDataSource.Create(adminConnectionString);
+        CreateDatabase(adminDataSource, databaseName);
+
+        try
+        {
+            var databaseConnection = new NpgsqlConnectionStringBuilder(adminConnectionString)
+            {
+                Database = databaseName,
+            }.ConnectionString;
+
+            using var dataSource = NpgsqlDataSource.Create(databaseConnection);
+            new TaskPersistenceMigrator(dataSource).ApplyPending();
+
+            var organizationId = Guid.NewGuid();
+            var otherOrganizationId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var otherUserId = Guid.NewGuid();
+            SeedOrganizationAndUser(dataSource, organizationId, userId, Guid.NewGuid());
+            SeedOrganizationAndUser(dataSource, otherOrganizationId, otherUserId, Guid.NewGuid());
+
+            await using var runtime = new TaskPersistenceRuntime(databaseConnection, TimeSpan.FromSeconds(10));
+            var repository = runtime.CreateSessionRepository();
+
+            var now = DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            var sessionId = Guid.NewGuid();
+            var tokenHash = HashOf('a');
+            repository.CreateSession(
+                CreateSnapshot(sessionId, organizationId, userId, now),
+                CreateToken(Guid.NewGuid(), sessionId, tokenHash, now));
+
+            var foreignToken = CreateToken(Guid.NewGuid(), sessionId, HashOf('1'), now);
+            Assert.False(repository.RotateRefreshToken(otherOrganizationId, sessionId, tokenHash, foreignToken));
+            Assert.False(TokenExists(dataSource, foreignToken.TokenHash));
+            var untouched = ReadTokenRotation(dataSource, sessionId, tokenHash);
+            Assert.False(untouched.Consumed);
+
+            var replacementToken = CreateToken(Guid.NewGuid(), sessionId, HashOf('2'), now);
+            Assert.True(repository.RotateRefreshToken(organizationId, sessionId, tokenHash, replacementToken));
+            Assert.True(TokenExists(dataSource, replacementToken.TokenHash));
+            var rotated = ReadTokenRotation(dataSource, sessionId, tokenHash);
+            Assert.True(rotated.Consumed);
+            Assert.Equal(replacementToken.Id, rotated.ReplacedById);
+        }
+        finally
+        {
+            NpgsqlConnection.ClearAllPools();
+            DropDatabase(adminDataSource, databaseName);
+        }
+    }
+
     private static SessionSnapshot CreateSnapshot(
         Guid sessionId,
         Guid organizationId,
