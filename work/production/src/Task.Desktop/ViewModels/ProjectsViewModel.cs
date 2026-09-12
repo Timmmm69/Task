@@ -292,6 +292,16 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
             RelatedTasks = await LoadRelatedTasksAsync(item.Id, cancellationToken).ConfigureAwait(true);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
+        catch (Exception)
+        {
+            if (ReferenceEquals(SelectedItem, item) && IsActive)
+            {
+                State = ProjectsScreenState.Failed;
+                Message = "Не удалось загрузить сведения о проекте. Повторите обновление.";
+                Members = [];
+                RelatedTasks = [];
+            }
+        }
         finally { if (ReferenceEquals(SelectedItem, item)) IsDetailLoading = false; }
     }
 

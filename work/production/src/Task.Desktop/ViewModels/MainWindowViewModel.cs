@@ -138,20 +138,31 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private async void OpenTodayItem(object? item)
+    private void OpenTodayItem(object? item) => _ = OpenTodayItemAsync(item);
+
+    internal async global::System.Threading.Tasks.Task OpenTodayItemAsync(object? item)
     {
-        if (item is CalendarItemViewModel { IsCalendarEvent: true } calendarItem && Calendar is not null)
+        try
         {
-            SelectedSection = Sections.First(s => s.Route == "calendar");
-            Calendar.SelectedItem = calendarItem;
-            return;
+            if (_disposed) return;
+            if (item is CalendarItemViewModel { IsCalendarEvent: true } calendarItem && Calendar is not null)
+            {
+                SelectedSection = Sections.First(s => s.Route == "calendar");
+                Calendar.SelectedItem = calendarItem;
+                return;
+            }
+            if (Tasks is null) return;
+            var id = item switch { TaskItemViewModel task => task.Id, CalendarItemViewModel scheduled => scheduled.Id, _ => Guid.Empty };
+            if (id == Guid.Empty) return;
+            SelectedSection = Sections.First(s => s.Route == "tasks");
+            await Tasks.ActivateAsync();
+            await Tasks.OpenByIdAsync(id);
         }
-        if (Tasks is null) return;
-        var id = item switch { TaskItemViewModel task => task.Id, CalendarItemViewModel scheduled => scheduled.Id, _ => Guid.Empty };
-        if (id == Guid.Empty) return;
-        SelectedSection = Sections.First(s => s.Route == "tasks");
-        await Tasks.ActivateAsync();
-        await Tasks.OpenByIdAsync(id);
+        catch (Exception)
+        {
+            if (!_disposed)
+                SessionMessage = "Не удалось открыть выбранный объект. Повторите попытку.";
+        }
     }
 
     public TasksViewModel? Tasks { get; }
@@ -417,21 +428,32 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ReadOnlyActionReason));
     }
 
-    private async void OpenWorkObject(string objectType, Guid id)
+    private void OpenWorkObject(string objectType, Guid id) => _ = OpenWorkObjectAsync(objectType, id);
+
+    internal async global::System.Threading.Tasks.Task OpenWorkObjectAsync(string objectType, Guid id)
     {
-        var route = objectType switch
+        try
         {
-            "task" => "tasks",
-            "project" => "projects",
-            "contact" or "company" => "contacts",
-            "catalog_item" or "file_location" => "catalog",
-            "calendar_event" => "calendar",
-            "notification" => "notifications",
-            _ => null,
-        };
-        if (route is null) return;
-        SelectedSection = Sections.First(section => section.Route == route);
-        if (route == "tasks" && Tasks is not null) { await Tasks.ActivateAsync(); await Tasks.OpenByIdAsync(id); }
+            if (_disposed) return;
+            var route = objectType switch
+            {
+                "task" => "tasks",
+                "project" => "projects",
+                "contact" or "company" => "contacts",
+                "catalog_item" or "file_location" => "catalog",
+                "calendar_event" => "calendar",
+                "notification" => "notifications",
+                _ => null,
+            };
+            if (route is null) return;
+            SelectedSection = Sections.First(section => section.Route == route);
+            if (route == "tasks" && Tasks is not null) { await Tasks.ActivateAsync(); await Tasks.OpenByIdAsync(id); }
+        }
+        catch (Exception)
+        {
+            if (!_disposed)
+                SessionMessage = "Не удалось открыть выбранный объект. Повторите попытку.";
+        }
     }
 
     private static bool TryGetWorkArea(string? route, out WorkHubArea area)

@@ -77,14 +77,25 @@ public sealed partial class TodayViewModel
                 }
             } while (!string.IsNullOrEmpty(cursor));
 
+            if (!_currentUserId.HasValue)
+            {
+                _overdueTasks = [];
+                _reviewTasks = [];
+                _waitingTasks = [];
+                TasksMessage = null;
+                NotifyTaskItems();
+                return;
+            }
+
+            var currentUserId = _currentUserId.Value;
             var active = tasks.Values.Where(t => t.Status is not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled)
-                .Where(t => _currentUserId.HasValue && (t.AuthorUserId == _currentUserId || t.AssigneeIds.Contains(_currentUserId.Value) || t.WatcherIds.Contains(_currentUserId.Value)))
+                .Where(t => t.AuthorUserId == currentUserId || t.AssigneeIds.Contains(currentUserId) || t.WatcherIds.Contains(currentUserId))
                 .OrderBy(t => t.DeadlineAtUtc ?? DateTimeOffset.MaxValue).ThenBy(t => t.Title, StringComparer.CurrentCulture)
                 .Select(t => new TaskItemViewModel(t)).ToArray();
             _overdueTasks = active.Where(t => t.Source.DeadlineAtUtc < _clock()).ToArray();
             _reviewTasks = active.Where(t => t.Source.Status == DesktopTaskStatus.Review).ToArray();
             _waitingTasks = active.Where(t => t.Source.Status != DesktopTaskStatus.Review
-                && !t.Source.AssigneeIds.Contains(_currentUserId!.Value)
+                && !t.Source.AssigneeIds.Contains(currentUserId)
                 && t.Source.AssigneeIds.Count > 0).ToArray();
             TasksMessage = null;
             NotifyTaskItems();

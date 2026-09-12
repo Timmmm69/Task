@@ -40,6 +40,29 @@ public sealed partial class TodayViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task Summary_WithoutCurrentUserStillLoadsCalendar()
+    {
+        var tasks = new SummaryClient();
+        tasks.Pages.Enqueue(Page([SummaryTask("Unscoped", Other, [Other], Clock().AddDays(-1))], null));
+        var calendar = new FakeCalendarClient();
+        calendar.ScheduleResults.Enqueue(Schedule([TimedTask(Today, "Рабочая встреча")]));
+        using var vm = new TodayViewModel(
+            calendar,
+            ["Calendar.Read", "Task.Read"],
+            TimeZoneInfo.Utc,
+            Clock,
+            tasks);
+
+        await vm.ActivateAsync();
+
+        Assert.Single(vm.TimedItems);
+        Assert.Empty(vm.OverdueTasks);
+        Assert.Empty(vm.ReviewTasks);
+        Assert.Empty(vm.WaitingTasks);
+        Assert.Equal(TodayScreenState.Loaded, vm.State);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task Summary_RepeatedCursorDoesNotPublishPartialData()
     {
         var tasks = new SummaryClient();

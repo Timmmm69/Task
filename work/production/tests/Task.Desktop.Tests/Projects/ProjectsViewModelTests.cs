@@ -160,6 +160,25 @@ public sealed class ProjectsViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task DetailFailureIsHandledAndClearsLoadingState()
+    {
+        var client = new FakeProjectsClient
+        {
+            Projects = SuccessPage(Project()),
+            Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]),
+            ProjectException = new ObjectDisposedException(nameof(FakeProjectsClient))
+        };
+        using var vm = new ProjectsViewModel(client, User, Capabilities);
+
+        vm.Activate();
+        await WaitUntil(() => vm.State == ProjectsScreenState.Failed && !vm.IsDetailLoading);
+
+        Assert.Contains("сведения о проекте", vm.Message);
+        Assert.Empty(vm.Members);
+        Assert.Empty(vm.RelatedTasks);
+    }
+
+    [Fact]
     public void EditorRejectsInvalidDatesAndCompletesWithServerTimestamp()
     {
         var editor = new ProjectEditorViewModel(User) { Name = "Альфа", StartDate = "10.09.2026", PlannedEndDate = "09.09.2026" };
@@ -191,6 +210,7 @@ public sealed class ProjectsViewModelTests
     {
         public DesktopProjectResult<DesktopProjectPage> Projects { get; set; } = SuccessPage();
         public DesktopProjectResult<DesktopProjectDto> Project { get; set; } = new DesktopProjectResult<DesktopProjectDto>.NotFound();
+        public Exception? ProjectException { get; set; }
         public DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>> Roles { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([]);
         public DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>> Members { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]);
         public DesktopProjectResult<DesktopProjectDto> Create { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
@@ -209,7 +229,10 @@ public sealed class ProjectsViewModelTests
 
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(string? cursor = null, CancellationToken cancellationToken = default)
         { ProjectPageCalls++; return System.Threading.Tasks.Task.FromResult(Projects); }
-        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> GetProjectAsync(Guid id, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult(Project);
+        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> GetProjectAsync(Guid id, CancellationToken cancellationToken = default) =>
+            ProjectException is null
+                ? System.Threading.Tasks.Task.FromResult(Project)
+                : System.Threading.Tasks.Task.FromException<DesktopProjectResult<DesktopProjectDto>>(ProjectException);
         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>> GetRolesAsync(CancellationToken cancellationToken = default)
         { RoleCalls++; return System.Threading.Tasks.Task.FromResult(Roles); }
         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>> GetMembersAsync(Guid projectId, CancellationToken cancellationToken = default)

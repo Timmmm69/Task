@@ -245,4 +245,22 @@ public class MainWindowViewModelTests
         Assert.False(tasks.IsActive);
         Assert.DoesNotContain(nameof(MainWindowViewModel.ConnectionContext), raised);
     }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task NavigationHandlersCatchDisposedTasksViewModel()
+    {
+        var tasks = new TasksViewModel(new TasksViewModelTests.FakeTasksApiClient(), ["Task.Read"]);
+        using var vm = new MainWindowViewModel(null, null, tasks);
+        var item = new TaskItemViewModel(new DesktopTaskDto(
+            Guid.NewGuid(), Guid.NewGuid(), 1, null, null, "Закрытая задача", Guid.NewGuid(),
+            DesktopTaskStatus.New, DesktopTaskPriority.Normal, null, null, [], [], null));
+        vm.SelectedSection = vm.Sections.Single(section => section.Route == "tasks");
+        tasks.Dispose();
+
+        await vm.OpenTodayItemAsync(item);
+        await vm.OpenWorkObjectAsync("task", item.Id);
+
+        Assert.Equal("Не удалось открыть выбранный объект. Повторите попытку.", vm.SessionMessage);
+        Assert.True(vm.IsTasksSectionSelected);
+    }
 }
