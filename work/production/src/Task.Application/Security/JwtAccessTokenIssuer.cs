@@ -71,7 +71,8 @@ public sealed class JwtAccessTokenIssuer : IDisposable
 
     /// <summary>
     /// Issues a signed access token. Throws ArgumentException for requests the validator would
-    /// reject (empty identities, non-positive versions or lifetime) and OperationCanceledException
+    /// reject (empty identities, non-positive versions, a lifetime above the 5-minute maximum or
+    /// an IssuedAtUtc further than 5 minutes from the current time) and OperationCanceledException
     /// when cancellation is requested. Never writes key material anywhere.
     /// </summary>
     public Task<string> IssueAsync(JwtIssuanceRequest request, CancellationToken cancellationToken)
@@ -97,10 +98,20 @@ public sealed class JwtAccessTokenIssuer : IDisposable
             throw new ArgumentException("Token lifetime must be positive.", nameof(request));
         }
 
-        var requestedIssuedAt = request.IssuedAtUtc ?? DateTime.UtcNow;
+        if (lifetime > DefaultLifetime)
+        {
+            throw new ArgumentException("Token lifetime must not exceed the 5-minute maximum.", nameof(request));
+        }
+
+        var now = DateTime.UtcNow;
+        var requestedIssuedAt = request.IssuedAtUtc ?? now;
         var issuedAt = requestedIssuedAt.Kind == DateTimeKind.Unspecified
             ? DateTime.SpecifyKind(requestedIssuedAt, DateTimeKind.Utc)
             : requestedIssuedAt.ToUniversalTime();
+        if (Math.Abs((issuedAt - now).TotalMinutes) > DefaultLifetime.TotalMinutes)
+        {
+            throw new ArgumentException("IssuedAtUtc must not differ from the current time by more than 5 minutes.", nameof(request));
+        }
         var descriptor = new SecurityTokenDescriptor
         {
             Issuer = _issuer,

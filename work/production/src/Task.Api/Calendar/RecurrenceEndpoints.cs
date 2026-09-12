@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Task.Api.Security;
 using Task.Application.Calendar;
@@ -10,6 +11,7 @@ namespace Task.Api.Calendar;
 internal static class RecurrenceEndpoints
 {
     private const string Route = "/api/v1/recurrence-series";
+    private const int MaxRecurrenceRequestBodyBytes = 128 * 1024;
     public static IEndpointRouteBuilder MapRecurrenceEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet(Route, (Delegate)((HttpContext c) => Handle(c, "list"))).RequireAuthorization(TaskPermissionAuthorization.RecurrenceReadPolicyName);
@@ -41,8 +43,8 @@ internal static class RecurrenceEndpoints
                 return Results.Json(RecurrenceService.ToResponse(record));
             }
             if (operation == "occurrences") return Results.Json(service.GetOccurrences(org, id, actor));
-            using var reader = new StreamReader(context.Request.Body);
-            var body = await reader.ReadToEndAsync(context.RequestAborted);
+            var body = await ReadBoundedBodyAsync(context);
+            if (body is null) return await Problem(context, 413, "REQUEST_TOO_LARGE", "The recurrence request body exceeds the allowed size.");
             if (body.Length > 100_000) return await Problem(context, 413, "VALIDATION_FAILED", "Recurrence request is too large.");
             if (operation == "preview")
             {
@@ -53,8 +55,10 @@ internal static class RecurrenceEndpoints
                 return Results.Json(RecurrenceService.Preview(definition, ReadDate(root, "fromDate"), root.GetProperty("limit").GetInt32()));
             }
             var key = context.Request.Headers["Idempotency-Key"].ToString();
-            // PATCH has no required idempotency header in the canonical contract.
-            if (operation == "patch" && key.Length == 0) key = Guid.NewGuid().ToString("N");
+            // PATCH has no required idempotency header in the canonical contract. A deterministic
+            // key derived from the full request keeps a retried PATCH idempotent without requiring
+            // the client to generate one.
+            if (operation == "patch" && key.Length == 0) key = ComputeSha256Hex($"{id}|{context.Request.Headers.IfMatch}|{body}");
             RecurrenceReply reply;
             if (operation == "create") reply = service.Create(org, actor, key, body);
             else if (operation == "generate")
@@ -106,7 +110,8 @@ internal static class RecurrenceEndpoints
         }
         catch (RecurrenceRequestException exception) { return await Problem(context, exception.Status, exception.Code, exception.Message); }
         catch (JsonException) { return await Problem(context, 400, "MALFORMED_JSON", "The recurrence JSON is invalid."); }
-        catch (Exception exception) when (exception is ArgumentException or FormatException or KeyNotFoundException or InvalidOperationException or OverflowException)
+        catch (KeyNotFoundException) { return await Problem(context, 404, "OBJECT_NOT_VISIBLE", "Серия или вхождение отсутствуют или не видны."); }
+        catch (Exception exception) when (exception is ArgumentException or FormatException or InvalidOperationException or OverflowException)
         { return await Problem(context, 422, "VALIDATION_FAILED", "Проверьте правило повторения, даты, область изменения и версию."); }
         catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested) { throw; }
         catch (Exception) { return await Problem(context, 503, "INTERNAL_ERROR", "Recurrence access is temporarily unavailable."); }
@@ -127,6 +132,27 @@ internal static class RecurrenceEndpoints
             || !long.TryParse(tag.AsSpan(2, tag.Length - 3), NumberStyles.None, CultureInfo.InvariantCulture, out var version) || version < 1)
             throw new ArgumentException("Invalid strong ETag.");
         return version;
+    }
+    private static async global::System.Threading.Tasks.Task<string?> ReadBoundedBodyAsync(HttpContext context)
+    {
+        if (context.Request.ContentLength > MaxRecurrenceRequestBodyBytes) return null;
+        using var payload = new MemoryStream(MaxRecurrenceRequestBodyBytes);
+        var buffer = new byte[4096];
+        while (true)
+        {
+            var remaining = MaxRecurrenceRequestBodyBytes - (int)payload.Length;
+            var read = await context.Request.Body.ReadAsync(
+                buffer.AsMemory(0, Math.Min(buffer.Length, remaining + 1)), context.RequestAborted);
+            if (read == 0) break;
+            if (read > remaining) return null;
+            await payload.WriteAsync(buffer.AsMemory(0, read), context.RequestAborted);
+        }
+        return System.Text.Encoding.UTF8.GetString(payload.ToArray());
+    }
+    private static string ComputeSha256Hex(string value)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(value);
+        return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
     }
     private static async global::System.Threading.Tasks.Task<IResult> Problem(HttpContext context, int status, string code, string title)
     { await TaskApiProblemResponse.WriteAsync(context, status, code, title, status >= 500); return Results.Empty; }

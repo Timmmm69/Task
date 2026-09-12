@@ -19,6 +19,7 @@ internal static partial class TaskEndpoints
     private const string TasksRoute = "/api/v1/tasks";
     private const string TaskByIdRoute = "/api/v1/tasks/{id}";
     private const string TaskTransitionRoute = "/api/v1/tasks/{id}/transition";
+    private const int MaxTaskRequestBodyBytes = 1024 * 1024;
 
     public static IEndpointRouteBuilder MapTaskEndpoints(this IEndpointRouteBuilder app)
     {
@@ -145,11 +146,10 @@ internal static partial class TaskEndpoints
                 retryable: false);
         }
 
-        string body;
+        string? body;
         try
         {
-            using var reader = new StreamReader(context.Request.Body);
-            body = await reader.ReadToEndAsync(cancellationToken);
+            body = await ReadBoundedBodyAsync(context, cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -162,6 +162,16 @@ internal static partial class TaskEndpoints
                 StatusCodes.Status400BadRequest,
                 "MALFORMED_JSON",
                 "The request body is not valid JSON.",
+                retryable: false);
+        }
+
+        if (body is null)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status413PayloadTooLarge,
+                "REQUEST_TOO_LARGE",
+                "The request body exceeds the allowed size.",
                 retryable: false);
         }
 
@@ -291,6 +301,39 @@ internal static partial class TaskEndpoints
     {
         key = value ?? string.Empty;
         return key.Length is >= 8 and <= 200 && key.All(character => character is >= '!' and <= '~');
+    }
+
+    private static async Task<string?> ReadBoundedBodyAsync(
+        HttpContext context,
+        CancellationToken cancellationToken)
+    {
+        if (context.Request.ContentLength > MaxTaskRequestBodyBytes)
+        {
+            return null;
+        }
+
+        using var payload = new MemoryStream(MaxTaskRequestBodyBytes);
+        var buffer = new byte[4096];
+        while (true)
+        {
+            var remaining = MaxTaskRequestBodyBytes - (int)payload.Length;
+            var read = await context.Request.Body.ReadAsync(
+                buffer.AsMemory(0, Math.Min(buffer.Length, remaining + 1)),
+                cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            if (read > remaining)
+            {
+                return null;
+            }
+
+            await payload.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+        }
+
+        return System.Text.Encoding.UTF8.GetString(payload.ToArray());
     }
 
     private static bool TryParseCreateRequest(
@@ -596,11 +639,10 @@ internal static partial class TaskEndpoints
             return await WriteObjectNotVisibleAsync(context);
         }
 
-        string body;
+        string? body;
         try
         {
-            using var reader = new StreamReader(context.Request.Body);
-            body = await reader.ReadToEndAsync(cancellationToken);
+            body = await ReadBoundedBodyAsync(context, cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -613,6 +655,16 @@ internal static partial class TaskEndpoints
                 StatusCodes.Status400BadRequest,
                 "MALFORMED_JSON",
                 "The request body is not valid JSON.",
+                retryable: false);
+        }
+
+        if (body is null)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status413PayloadTooLarge,
+                "REQUEST_TOO_LARGE",
+                "The request body exceeds the allowed size.",
                 retryable: false);
         }
 
@@ -789,11 +841,10 @@ internal static partial class TaskEndpoints
             return await WriteObjectNotVisibleAsync(context);
         }
 
-        string body;
+        string? body;
         try
         {
-            using var reader = new StreamReader(context.Request.Body);
-            body = await reader.ReadToEndAsync(cancellationToken);
+            body = await ReadBoundedBodyAsync(context, cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -806,6 +857,16 @@ internal static partial class TaskEndpoints
                 StatusCodes.Status400BadRequest,
                 "MALFORMED_JSON",
                 "The request body is not valid JSON.",
+                retryable: false);
+        }
+
+        if (body is null)
+        {
+            return await WriteProblemAsync(
+                context,
+                StatusCodes.Status413PayloadTooLarge,
+                "REQUEST_TOO_LARGE",
+                "The request body exceeds the allowed size.",
                 retryable: false);
         }
 

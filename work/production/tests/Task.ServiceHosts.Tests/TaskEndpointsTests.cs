@@ -239,6 +239,50 @@ public sealed partial class TaskEndpointsTests
         Assert.Equal(correlationId.ToString("D"), response.Headers.GetValues("X-Correlation-ID").Single());
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task PostTask_WithOversizedBody_Returns413RequestTooLarge()
+    {
+        using var server = CreateServer(new FakeTaskReadStore(Projection), writeExecutor: new FakeTaskWriteCommandExecutor());
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+
+        var response = await PostTaskAsync(client, OversizedJsonBody(), "oversized-create-key");
+
+        await AssertProblemAsync(response, HttpStatusCode.RequestEntityTooLarge, "REQUEST_TOO_LARGE");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task PatchTask_WithOversizedBody_Returns413RequestTooLarge()
+    {
+        using var server = CreateServer(
+            new FakeTaskReadStore(Projection),
+            writeExecutor: new FakeUpdateExecutor { Current = CurrentTask() },
+            aggregateStore: new FakeUpdateAggregateStore(CurrentTask()));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+
+        var response = await PatchTaskAsync(client, TaskId.ToString("D"), OversizedJsonBody(), idempotencyKey: "oversized-patch-key");
+
+        await AssertProblemAsync(response, HttpStatusCode.RequestEntityTooLarge, "REQUEST_TOO_LARGE");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task TransitionTask_WithOversizedBody_Returns413RequestTooLarge()
+    {
+        using var server = CreateTransitionServer(TaskInStatus(TaskWorkStatus.InProgress));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+
+        var response = await TransitionTaskAsync(
+            client,
+            TaskWorkStatus.Completed,
+            version: 7,
+            idempotencyKey: "oversized-transition-key",
+            body: OversizedJsonBody());
+
+        await AssertProblemAsync(response, HttpStatusCode.RequestEntityTooLarge, "REQUEST_TOO_LARGE");
+    }
+
+    private static string OversizedJsonBody() =>
+        "{\"title\":\"" + new string('x', 1024 * 1024 + 1) + "\"}";
+
     private static TestServer CreateServer(
         FakeTaskReadStore? readStore,
         bool grantTaskRead = true,

@@ -15,9 +15,6 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
     private static readonly Guid SessionId = Guid.Parse("22222222-2222-2222-2222-222222222222");
     private static readonly Guid OrgId = Guid.Parse("33333333-3333-3333-3333-333333333333");
 
-    private static readonly DateTime FixedIssuedAt =
-        new(2026, 6, 1, 10, 0, 0, DateTimeKind.Utc);
-
     private readonly string _tempRoot =
         Path.Combine(Path.GetTempPath(), $"task-issuer-tests-{Guid.NewGuid():N}");
 
@@ -41,8 +38,9 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var issuer = CreateIssuer(ecdsa.ExportECPrivateKeyPem(), alias: "task-signing");
+        var issuedAt = FreshIssuedAtUtc();
 
-        var token = await issuer.IssueAsync(DefaultRequest(), CancellationToken.None);
+        var token = await issuer.IssueAsync(DefaultRequest(issuedAt), CancellationToken.None);
         var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
 
         Assert.Equal("ES256", jwt.Alg);
@@ -55,9 +53,9 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
         Assert.Equal(OrgId.ToString("D"), jwt.GetPayloadValue<string>("org"));
         Assert.Equal(3L, jwt.GetPayloadValue<long>("cver"));
         Assert.Equal(7L, jwt.GetPayloadValue<long>("sver"));
-        Assert.Equal(FixedIssuedAt, jwt.IssuedAt);
-        Assert.Equal(FixedIssuedAt, jwt.ValidFrom);
-        Assert.Equal(FixedIssuedAt.AddMinutes(5), jwt.ValidTo);
+        Assert.Equal(issuedAt, jwt.IssuedAt);
+        Assert.Equal(issuedAt, jwt.ValidFrom);
+        Assert.Equal(issuedAt.AddMinutes(5), jwt.ValidTo);
     }
 
     [Fact]
@@ -65,14 +63,15 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var issuer = CreateIssuer(ecdsa.ExportPkcs8PrivateKeyPem());
+        var issuedAt = FreshIssuedAtUtc();
 
         var token = await issuer.IssueAsync(
-            DefaultRequest() with { IssuedAtUtc = FixedIssuedAt, Lifetime = TimeSpan.FromMinutes(2) },
+            DefaultRequest(issuedAt) with { Lifetime = TimeSpan.FromMinutes(2) },
             CancellationToken.None);
         var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
 
-        Assert.Equal(FixedIssuedAt, jwt.IssuedAt);
-        Assert.Equal(FixedIssuedAt.AddMinutes(2), jwt.ValidTo);
+        Assert.Equal(issuedAt, jwt.IssuedAt);
+        Assert.Equal(issuedAt.AddMinutes(2), jwt.ValidTo);
     }
 
     [Theory]
@@ -83,13 +82,19 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
     {
         using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var issuer = CreateIssuer(ecdsa.ExportECPrivateKeyPem());
-        var issuedAt = new DateTime(2026, 6, 1, 10, 0, 0, kind);
+        var freshUtc = FreshIssuedAtUtc();
+        var issuedAt = kind switch
+        {
+            DateTimeKind.Unspecified => DateTime.SpecifyKind(freshUtc, DateTimeKind.Unspecified),
+            DateTimeKind.Utc => freshUtc,
+            _ => freshUtc.ToLocalTime(),
+        };
         var expectedUtc = kind == DateTimeKind.Unspecified
             ? issuedAt
             : issuedAt.ToUniversalTime();
 
         var token = await issuer.IssueAsync(
-            DefaultRequest() with { IssuedAtUtc = issuedAt },
+            DefaultRequest(issuedAt),
             CancellationToken.None);
         var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
 
@@ -145,6 +150,47 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
 
         await Assert.ThrowsAsync<ArgumentException>(
             () => issuer.IssueAsync(request, CancellationToken.None));
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task IssueAsync_LifetimeAboveFiveMinuteMaximum_Throws()
+    {
+        using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var issuer = CreateIssuer(ecdsa.ExportECPrivateKeyPem());
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => issuer.IssueAsync(
+                DefaultRequest() with { Lifetime = TimeSpan.FromMinutes(6) },
+                CancellationToken.None));
+    }
+
+    [Theory]
+    [InlineData(-10)]
+    [InlineData(10)]
+    public async global::System.Threading.Tasks.Task IssueAsync_IssuedAtOutsideFiveMinuteWindow_Throws(int offsetMinutes)
+    {
+        using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var issuer = CreateIssuer(ecdsa.ExportECPrivateKeyPem());
+        var issuedAt = DateTime.UtcNow.AddMinutes(offsetMinutes);
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => issuer.IssueAsync(DefaultRequest(issuedAt), CancellationToken.None));
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task IssueAsync_MaximumLifetimeWithFreshIssuedAt_Succeeds()
+    {
+        using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        var issuer = CreateIssuer(ecdsa.ExportECPrivateKeyPem());
+        var issuedAt = FreshIssuedAtUtc();
+
+        var token = await issuer.IssueAsync(
+            DefaultRequest(issuedAt) with { Lifetime = TimeSpan.FromMinutes(5) },
+            CancellationToken.None);
+        var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
+
+        Assert.Equal(issuedAt, jwt.IssuedAt);
+        Assert.Equal(issuedAt.AddMinutes(5), jwt.ValidTo);
     }
 
     [Fact]
@@ -274,10 +320,16 @@ public sealed class JwtAccessTokenIssuerTests : IDisposable
             () => services.AddTaskApiTokenIssuer(configuration));
     }
 
-    private static JwtIssuanceRequest DefaultRequest() =>
+    private static DateTime FreshIssuedAtUtc()
+    {
+        var now = DateTime.UtcNow;
+        return new DateTime(now.Ticks - now.Ticks % TimeSpan.TicksPerSecond, DateTimeKind.Utc);
+    }
+
+    private static JwtIssuanceRequest DefaultRequest(DateTime? issuedAtUtc = null) =>
         new(SubjectId, SessionId, OrgId, CredentialVersion: 3, SessionVersion: 7)
         {
-            IssuedAtUtc = FixedIssuedAt,
+            IssuedAtUtc = issuedAtUtc ?? FreshIssuedAtUtc(),
         };
 
     private JwtAccessTokenIssuer CreateIssuer(string pem, string alias = "task-signing")
