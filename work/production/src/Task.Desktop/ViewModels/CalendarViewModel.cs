@@ -418,10 +418,10 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
         if (!refresh) Days = [];
         var hadData = Days.Count > 0; State = refresh && hadData ? CalendarScreenState.Refreshing : CalendarScreenState.Loading;
         Message = refresh && hadData ? "Обновляем календарь; подтверждённые данные остаются видимыми." : "Загрузка расписания…";
-        var (firstDate, lastDateExclusive) = GetVisibleDateRange(_selectedDate, ViewMode);
-        var (fromUtc, toUtc) = GetUtcRange(firstDate, lastDateExclusive, _timeZone);
         try
         {
+            var (firstDate, lastDateExclusive) = GetVisibleDateRange(_selectedDate, ViewMode);
+            var (fromUtc, toUtc) = GetUtcRange(firstDate, lastDateExclusive, _timeZone);
             var scheduleTask = _client.GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, ct);
             var conflictsTask = _client.GetConflictsAsync(fromUtc, toUtc, ct);
             await global::System.Threading.Tasks.Task.WhenAll(scheduleTask, conflictsTask);
@@ -439,6 +439,22 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
             else HandleFailure(conflictsTask.Result, hadData);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+        catch (InvalidTimeZoneException)
+        {
+            if (generation == _generation && _active)
+            {
+                State = CalendarScreenState.Error;
+                Message = "Не удалось определить корректные границы выбранного периода.";
+            }
+        }
+        catch (ArgumentException)
+        {
+            if (generation == _generation && _active)
+            {
+                State = CalendarScreenState.Error;
+                Message = "Не удалось определить корректные границы выбранного периода.";
+            }
+        }
     }
 
     private void Apply(DesktopSchedulePage page, IReadOnlyList<DesktopScheduleConflict> conflicts, DateOnly firstDate, DateOnly lastDateExclusive)

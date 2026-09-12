@@ -44,6 +44,27 @@ public sealed class CalendarViewModelTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Activate_InvalidLocalMidnight_LeavesLoadingStateWithoutRequest()
+    {
+        var zone = TimeZoneInfo.CreateCustomTimeZone(
+            "Test/MidnightGap", TimeSpan.FromHours(2), "Test", "Test",
+            "Test DST", [TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule(
+                new DateTime(2026, 1, 1), new DateTime(2026, 12, 31), TimeSpan.FromHours(1),
+                TimeZoneInfo.TransitionTime.CreateFixedDateRule(new DateTime(1, 1, 1, 0, 0, 0), 8, 31),
+                TimeZoneInfo.TransitionTime.CreateFixedDateRule(new DateTime(1, 1, 1, 2, 0, 0), 10, 31))]);
+        var client = new FakeCalendarClient();
+        using var vm = new CalendarViewModel(client, ["Calendar.Read"], zone, Monday.ToDateTime(TimeOnly.MinValue));
+
+        vm.Activate();
+        await SpinUntilAsync(() => vm.State == CalendarScreenState.Error);
+
+        Assert.Equal(CalendarScreenState.Error, vm.State);
+        Assert.False(vm.IsBusy);
+        Assert.Equal("Не удалось определить корректные границы выбранного периода.", vm.Message);
+        Assert.Equal(0, client.ScheduleCalls);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Activate_MapsSevenDaysMixedItemsAndConflicts()
     {
         var client = new FakeCalendarClient();
