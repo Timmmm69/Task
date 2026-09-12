@@ -555,8 +555,10 @@ public sealed class SessionService : IDisposable
     /// Rotates the session with the stored refresh token and device key, or signs the user
     /// out when no usable stored session exists. Single-flight: concurrent callers share
     /// the in-flight request and its result, and the background timer re-uses a refresh
-    /// that is already running.
+    /// that is already running. A caller cancellation stops only that caller's wait; it
+    /// never cancels the shared token rotation or session confirmation.
     /// </summary>
+    /// <param name="cancellationToken">Cancels this caller's wait for the shared refresh.</param>
     /// <returns>The client outcome of the refresh attempt. On local sign-out
     /// (<see cref="SessionSignOutReason.NoStoredSession"/> /
     /// <see cref="SessionSignOutReason.NoDeviceKey"/>) an
@@ -564,16 +566,15 @@ public sealed class SessionService : IDisposable
     /// <see cref="AuthProblemCode.SessionExpired"/> is returned, since no request was sent.</returns>
     public Task<RefreshResult> RefreshAsync(CancellationToken cancellationToken = default)
     {
+        Task<RefreshResult> refreshTask;
         lock (_sync)
         {
-            if (_refreshInFlight is not null)
-            {
-                return _refreshInFlight;
-            }
-
-            _refreshInFlight = RefreshCoreAsync(cancellationToken);
-            return _refreshInFlight;
+            refreshTask = _refreshInFlight ??= RefreshCoreAsync();
         }
+
+        return cancellationToken.CanBeCanceled
+            ? refreshTask.WaitAsync(cancellationToken)
+            : refreshTask;
     }
 
     /// <summary>
@@ -634,15 +635,30 @@ public sealed class SessionService : IDisposable
         // cancellation into an ObjectDisposedException on the UI dispatcher.
     }
 
-    private async Task<RefreshResult> RefreshCoreAsync(CancellationToken cancellationToken)
+    private async Task<RefreshResult> RefreshCoreAsync()
     {
         // RefreshAsync publishes the task while holding _sync. Yield before any state event so
         // callbacks are never invoked under that lock, even when the semaphore is immediately free.
         await global::System.Threading.Tasks.Task.Yield();
-        await _refreshGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        await _refreshGate.WaitAsync(CancellationToken.None).ConfigureAwait(false);
         try
         {
-            return await RefreshNowAsync(cancellationToken).ConfigureAwait(false);
+            return await RefreshNowAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+        catch
+        {
+            // The shared rotation must never strand the session in Refreshing/Verifying or
+            // consume the one-shot timer when an unexpected transport/runtime failure escapes.
+            try
+            {
+                SetStateAfterRetryableFailure();
+            }
+            finally
+            {
+                ScheduleRetry();
+            }
+
+            throw;
         }
         finally
         {

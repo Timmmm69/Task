@@ -342,6 +342,91 @@ public class SessionServiceTests : IDisposable
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Refresh_FirstCallerCanceled_DoesNotCancelSharedRotation()
+    {
+        var sessionRequestCount = 0;
+        var refreshCount = 0;
+        var confirmationStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseConfirmation = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var handler = new FakeHttpMessageHandler(async (request, cancellationToken) =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2));
+            }
+
+            if (IsRefreshRequest(request))
+            {
+                refreshCount++;
+                return JsonResponse(
+                    HttpStatusCode.OK,
+                    TokensJson(RefreshMargin * 2, accessToken: "AT_rotated", refreshToken: "RT_rotated"));
+            }
+
+            sessionRequestCount++;
+            if (sessionRequestCount == 2)
+            {
+                confirmationStarted.SetResult();
+                await releaseConfirmation.Task.WaitAsync(cancellationToken);
+            }
+
+            return JsonResponse(HttpStatusCode.OK, SessionJson(false));
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+        using var firstCallerCancellation = new CancellationTokenSource();
+
+        var first = service.RefreshAsync(firstCallerCancellation.Token);
+        await confirmationStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        var second = service.RefreshAsync();
+        firstCallerCancellation.Cancel();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => first);
+        releaseConfirmation.SetResult();
+        var result = await second.WaitAsync(TimeSpan.FromSeconds(2));
+
+        Assert.IsType<RefreshResult.Succeeded>(result);
+        Assert.Equal(1, refreshCount);
+        Assert.Equal(SessionAuthState.SignedIn, service.CurrentState);
+        Assert.Equal(SessionReadinessState.Ready, service.CurrentReadiness);
+        Assert.Equal("AT_rotated", service.GetAccessTokenForRequest());
+        Assert.NotNull(service.NextRefreshDelay);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task Refresh_UnexpectedFailure_RestoresStateAndSchedulesRetry()
+    {
+        var retryDelay = TimeSpan.FromMinutes(1);
+        var handler = new FakeHttpMessageHandler(request =>
+        {
+            if (IsLoginRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, TokensJson(RefreshMargin * 2)));
+            }
+
+            if (IsSessionRequest(request))
+            {
+                return global::System.Threading.Tasks.Task.FromResult(
+                    JsonResponse(HttpStatusCode.OK, SessionJson(false)));
+            }
+
+            throw new InvalidOperationException("unexpected transport failure");
+        });
+        var vault = new DesktopCredentialVault(_directory);
+        using var service = CreateService(handler, vault, retryDelay);
+        await service.LoginAsync(Login, Password, CorrelationId, CancellationToken.None);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.RefreshAsync());
+
+        Assert.Equal(SessionAuthState.SignedIn, service.CurrentState);
+        Assert.Equal(SessionReadinessState.Ready, service.CurrentReadiness);
+        Assert.Equal(retryDelay, service.NextRefreshDelay);
+        Assert.NotNull(service.GetAccessTokenForRequest());
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Refresh_NoStoredSession_SignsOut()
     {
         using var service = CreateService(new FakeHttpMessageHandler(
@@ -901,15 +986,21 @@ public class SessionServiceTests : IDisposable
     /// <summary>Fake transport: answers from a responder function.</summary>
     private sealed class FakeHttpMessageHandler : HttpMessageHandler
     {
-        private readonly Func<HttpRequestMessage, global::System.Threading.Tasks.Task<HttpResponseMessage>> _respond;
+        private readonly Func<HttpRequestMessage, CancellationToken, global::System.Threading.Tasks.Task<HttpResponseMessage>> _respond;
 
         public FakeHttpMessageHandler(Func<HttpRequestMessage, global::System.Threading.Tasks.Task<HttpResponseMessage>> respond)
+            : this((request, _) => respond(request))
+        {
+        }
+
+        public FakeHttpMessageHandler(
+            Func<HttpRequestMessage, CancellationToken, global::System.Threading.Tasks.Task<HttpResponseMessage>> respond)
         {
             _respond = respond;
         }
 
         protected override global::System.Threading.Tasks.Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
-            CancellationToken cancellationToken) => _respond(request);
+            CancellationToken cancellationToken) => _respond(request, cancellationToken);
     }
 }

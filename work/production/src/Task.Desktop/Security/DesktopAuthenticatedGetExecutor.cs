@@ -107,7 +107,7 @@ public sealed class DesktopAuthenticatedGetExecutor
         }
 
         var refresh = await _sessionService
-            .RefreshAsync(cancellationToken)
+            .RefreshAsync()
             .WaitAsync(cancellationToken)
             .ConfigureAwait(false);
         switch (refresh)
