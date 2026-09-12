@@ -224,6 +224,39 @@ public sealed class TasksViewModelTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Reactivation_WaitsForCancelledGenerationAndLoadsFreshPage()
+    {
+        var firstEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseFirst = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var stale = CreateTask(title: "Устаревшая");
+        var fresh = CreateTask(title: "Актуальная");
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(async (_, cancellationToken) =>
+        {
+            firstEntered.SetResult();
+            await releaseFirst.Task;
+            cancellationToken.ThrowIfCancellationRequested();
+            return SucceededPage([stale]);
+        });
+        client.EnqueuePage(SucceededPage([fresh]));
+        using var viewModel = new TasksViewModel(client);
+
+        var firstActivation = viewModel.ActivateAsync();
+        await firstEntered.Task;
+        viewModel.Deactivate();
+        var secondActivation = viewModel.ActivateAsync();
+
+        releaseFirst.SetResult();
+        await firstActivation;
+        await secondActivation;
+
+        Assert.True(viewModel.IsActive);
+        Assert.Equal(2, client.PageCallCount);
+        Assert.Equal(TasksScreenState.Loaded, viewModel.State);
+        Assert.Equal("Актуальная", Assert.Single(viewModel.Items).Title);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task SelectingTask_NotFound_ShowsObjectDisappearedState()
     {
         var first = CreateTask(title: "Первая");

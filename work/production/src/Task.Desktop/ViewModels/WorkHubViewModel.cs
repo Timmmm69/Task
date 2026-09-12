@@ -51,6 +51,8 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     private bool _sessionAvailable = true;
     private bool _networkAvailable = true;
     private bool _active;
+    private bool _activationRefreshPending;
+    private long _activationGeneration;
     private bool _disposed;
 
     public WorkHubViewModel(IDesktopWorkApiClient client, IEnumerable<string>? capabilities, IFileAccessAdapter? files = null)
@@ -73,6 +75,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
         SaveNotificationPreferencesCommand = new(SaveNotificationPreferencesAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _notificationPreferences is not null);
         SaveOrganizationSettingsCommand = new(SaveOrganizationSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateOrganization && _organizationSettings is not null);
         foreach (var command in Commands) command.ExecutionFailed += OnUnexpectedFailure;
+        RefreshCommand.CanExecuteChanged += OnRefreshCanExecuteChanged;
     }
 
     public event Action<string, Guid>? OpenObjectRequested;
@@ -156,12 +159,16 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
 
     public void Activate(WorkHubArea area)
     {
-        Area = area; _active = true; NotifyCommands();
+        _activationRefreshPending = false;
         _activation?.Cancel(); _activation?.Dispose(); _activation = new();
-        _ = RefreshCommand.ExecuteAsync(null, _activation.Token);
+        Interlocked.Increment(ref _activationGeneration);
+        Area = area; _active = true;
+        _activationRefreshPending = true;
+        NotifyCommands();
+        TryStartActivationRefresh();
     }
 
-    public void Deactivate() { _active = false; _activation?.Cancel(); NotifyCommands(); }
+    public void Deactivate() { _active = false; _activationRefreshPending = false; Interlocked.Increment(ref _activationGeneration); _activation?.Cancel(); NotifyCommands(); }
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
         _capabilities.Clear();
@@ -336,7 +343,25 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
 
     private bool Has(string capability) => _capabilities.Contains(capability);
     private bool CanUseServerWrites => _active && _sessionAvailable && _networkAvailable;
+    private void OnRefreshCanExecuteChanged(object? sender, EventArgs e) => TryStartActivationRefresh();
+    private void TryStartActivationRefresh()
+    {
+        if (_disposed || !_activationRefreshPending || !_active || _activation is null || !RefreshCommand.CanExecute(null)) return;
+        var generation = Volatile.Read(ref _activationGeneration);
+        var cancellationToken = _activation.Token;
+        _activationRefreshPending = false;
+        _ = ExecuteActivationRefreshAsync(generation, cancellationToken);
+    }
+    private async System.Threading.Tasks.Task ExecuteActivationRefreshAsync(long generation, CancellationToken cancellationToken)
+    {
+        var started = await RefreshCommand.ExecuteAsync(null, cancellationToken);
+        if (!started && !_disposed && _active && generation == Volatile.Read(ref _activationGeneration))
+        {
+            _activationRefreshPending = true;
+            TryStartActivationRefresh();
+        }
+    }
     private void NotifyCommands() { OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => Message = "Не удалось завершить действие.";
-    public void Dispose() { if (_disposed) return; _disposed = true; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
+    public void Dispose() { if (_disposed) return; _disposed = true; _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

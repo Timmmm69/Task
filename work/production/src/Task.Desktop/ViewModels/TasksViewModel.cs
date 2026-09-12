@@ -214,6 +214,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private string _detailMessage = "Выберите задачу в списке.";
     private string? _nextCursor;
     private CancellationTokenSource? _activationCancellation;
+    private long _activationGeneration;
     private CancellationTokenSource? _detailCancellation;
     private long _detailGeneration;
     private bool _isActive;
@@ -646,6 +647,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             return;
         }
 
+        var generation = Interlocked.Increment(ref _activationGeneration);
         _activationCancellation = new CancellationTokenSource();
         IsActive = true;
         if (_hasLoaded)
@@ -657,7 +659,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
             _activationCancellation.Token);
-        await FetchFirstPageAsync(true, linkedCancellation.Token).ConfigureAwait(true);
+        await FetchFirstPageAsync(true, generation, linkedCancellation.Token).ConfigureAwait(true);
     }
 
     public async global::System.Threading.Tasks.Task OpenByIdAsync(Guid id)
@@ -711,6 +713,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         }
 
         IsActive = false;
+        Interlocked.Increment(ref _activationGeneration);
         _activationCancellation?.Cancel();
         _activationCancellation?.Dispose();
         _activationCancellation = null;
@@ -731,7 +734,10 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             return false;
         }
 
-        return await FetchFirstPageAsync(false, cancellationToken).ConfigureAwait(true);
+        return await FetchFirstPageAsync(
+            false,
+            Volatile.Read(ref _activationGeneration),
+            cancellationToken).ConfigureAwait(true);
     }
 
     public async global::System.Threading.Tasks.Task<bool> LoadNextPageAsync(
@@ -821,11 +827,23 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
 
     private async global::System.Threading.Tasks.Task<bool> FetchFirstPageAsync(
         bool initial,
+        long activationGeneration,
         CancellationToken cancellationToken)
     {
-        if (!await _requestGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+        try
         {
-            return false;
+            if (initial)
+            {
+                await _requestGate.WaitAsync(cancellationToken).ConfigureAwait(true);
+            }
+            else if (!await _requestGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+            {
+                return false;
+            }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return true;
         }
 
         using var linkedCancellation = CreateActivationLink(cancellationToken);
@@ -834,7 +852,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             State = initial ? TasksScreenState.InitialLoading : TasksScreenState.Refreshing;
             ScreenMessage = initial ? "Загружаем задачи…" : "Обновляем список задач…";
             var result = await _client.GetTasksAsync(null, linkedCancellation.Token).ConfigureAwait(true);
-            if (!IsActive)
+            if (!IsCurrentActivation(activationGeneration))
             {
                 return true;
             }
@@ -861,12 +879,16 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException) when (linkedCancellation.IsCancellationRequested)
         {
-            ApplyCancellationState();
+            if (IsCurrentActivation(activationGeneration))
+            {
+                ApplyCancellationState();
+            }
+
             return true;
         }
         catch (Exception)
         {
-            if (IsActive)
+            if (IsCurrentActivation(activationGeneration))
             {
                 State = TasksScreenState.Error;
                 ScreenMessage = HasItems
@@ -882,6 +904,9 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             RaiseCommandStateChanged();
         }
     }
+
+    private bool IsCurrentActivation(long generation) =>
+        IsActive && generation == Volatile.Read(ref _activationGeneration);
 
     private void ApplyPageFailure(DesktopTasksApiResult<DesktopTaskPage> result, bool preserveItems)
     {

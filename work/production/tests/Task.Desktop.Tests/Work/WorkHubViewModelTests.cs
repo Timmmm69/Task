@@ -131,6 +131,34 @@ public sealed class WorkHubViewModelTests
         Assert.False(vm.CreateCatalogItemCommand.CanExecute(null));
     }
 
+    [Fact]
+    public async System.Threading.Tasks.Task AreaChange_LoadsNewAreaAfterCancelledRefreshReleasesCommand()
+    {
+        var catalogEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseCatalog = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var client = new FakeClient
+        {
+            CatalogHandler = async cancellationToken =>
+            {
+                catalogEntered.SetResult();
+                await releaseCatalog.Task;
+                cancellationToken.ThrowIfCancellationRequested();
+                return new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded([]);
+            },
+            Contacts = [new(Guid.NewGuid(), 1, "Contact", "Test", null, null, "active", "active")],
+        };
+        using var vm = new WorkHubViewModel(client, ["FileCatalog.Read", "Contact.Read"]);
+
+        vm.Activate(WorkHubArea.Catalog);
+        await catalogEntered.Task;
+        vm.Activate(WorkHubArea.Contacts);
+        releaseCatalog.SetResult();
+
+        await Eventually(() => client.ContactCallCount == 1 && vm.Contacts.Count == 1);
+        Assert.Equal(WorkHubArea.Contacts, vm.Area);
+        Assert.Equal("Contact", Assert.Single(vm.Contacts).DisplayName);
+    }
+
     private static async System.Threading.Tasks.Task Eventually(Func<bool> condition)
     {
         for (var i = 0; i < 50 && !condition(); i++) await System.Threading.Tasks.Task.Delay(10);
@@ -155,8 +183,11 @@ public sealed class WorkHubViewModelTests
         public DesktopUserSettings? SavedUserSettings { get; private set; }
         public DesktopNotificationPreferences? SavedNotificationPreferences { get; private set; }
         public DesktopOrganizationSettings? SavedOrganizationSettings { get; private set; }
-        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopCatalogItem>>([new(ItemId, 1, "Plan", "file_reference", null, ".docx", "active")]);
-        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopContact>>([]);
+        public Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>>>? CatalogHandler { get; init; }
+        public IReadOnlyList<DesktopContact> Contacts { get; init; } = [];
+        public int ContactCallCount { get; private set; }
+        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) => CatalogHandler is null ? Ok<IReadOnlyList<DesktopCatalogItem>>([new(ItemId, 1, "Plan", "file_reference", null, ".docx", "active")]) : CatalogHandler(cancellationToken);
+        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) { ContactCallCount++; return Ok(Contacts); }
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopNotification>>([new(Guid.NewGuid(), 1, "task.assigned", "One", "Body", "info", "delivered", TaskId, DateTimeOffset.UtcNow), new(Guid.NewGuid(), 1, "system.info", "Two", "Body", "warning", "delivered", null, DateTimeOffset.UtcNow)]);
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopSearchResult>>([new(TaskId, "task", "Alpha", null, 1, DateTimeOffset.UtcNow)]);
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) => Ok(new DesktopCatalogItem(Guid.NewGuid(), 1, name, itemType, description, null, "active"));

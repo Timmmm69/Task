@@ -79,8 +79,8 @@
         "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: real PostgreSQL + HTTPS API + WPF E2E PASS",
         "outputs/20260904_task_product_completion_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458.",
-      "updated_at": "2026-09-04T14:11:31.166Z",
+      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF. Быстрая Deactivate→Activate защищена generation-проверкой и ожиданием request gate; desktop regression gate 312/312.",
+      "updated_at": "2026-09-12T23:05:03+03:00",
       "priority": 3,
       "dependencies": [
         "API-02",
@@ -275,8 +275,8 @@
         "work/production/tests/Task.Desktop.Tests/Work: lifecycle/settings contract and view-model coverage",
         "outputs/20260910_desk03_primary_sections_1.0.0/validation-report.md"
       ],
-      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Release build прошёл, полный gate 1650 passed / 0 failed / 4 live-PostgreSQL skipped. Native UIA и customer-stand smoke остаются deployment acceptance.",
-      "updated_at": "2026-09-10T12:41:53+03:00",
+      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Переключение WorkHub автоматически запускает pending-refresh новой секции после завершения отменённого; desktop regression gate 312/312. Native UIA и customer-stand smoke остаются deployment acceptance.",
+      "updated_at": "2026-09-12T23:05:03+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-02",
