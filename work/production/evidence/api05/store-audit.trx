@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="795fd756-17df-4a4e-849d-1b6c96d8b975" name="novik@TIM 2026-09-12 13:28:05" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-12T13:28:05.1173111+03:00" queuing="2026-09-12T13:28:05.1173116+03:00" start="2026-09-12T13:28:03.3046469+03:00" finish="2026-09-12T13:28:08.4812208+03:00" />
+  <TestSettings name="default" id="48634401-949a-496a-b799-3165b3ab7ca0">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-12_13_28_05" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d2e87710-9330-4e9e-aced-7d38d4b55a2a" testId="88549984-f094-8d3c-1a3a-6ffc7946d840" testName="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_Filters_AndEmptyFilterIsNoFilter" computerName="TIM" duration="00:00:00.7403938" startTime="2026-09-12T13:28:06.1369466+03:00" endTime="2026-09-12T13:28:06.8775613+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2e87710-9330-4e9e-aced-7d38d4b55a2a" />
+    <UnitTestResult executionId="30e731d5-6447-4b8c-83bd-98e5f790e0a7" testId="cbd71713-0ead-2f0b-86d0-525905f9bc31" testName="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_AppendReadRoundTrip_ClientTimestampIgnored" computerName="TIM" duration="00:00:00.8643166" startTime="2026-09-12T13:28:03.7759457+03:00" endTime="2026-09-12T13:28:04.6472367+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30e731d5-6447-4b8c-83bd-98e5f790e0a7" />
+    <UnitTestResult executionId="37a6f9a2-ca0a-4bdc-9469-b0eb80268350" testId="708321c3-d78d-cb14-1648-ad6b5825d6cc" testName="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ForeignOrganizationIsolation" computerName="TIM" duration="00:00:00.7864621" startTime="2026-09-12T13:28:06.8777445+03:00" endTime="2026-09-12T13:28:07.6646433+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37a6f9a2-ca0a-4bdc-9469-b0eb80268350" />
+    <UnitTestResult executionId="0d01de37-df40-4c80-be99-7b5328fc0702" testId="a4151d69-4cbf-917a-e512-b3a3637ce1b6" testName="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_KeysetPagination_PageSizeClamp_NoGapsOrDuplicates" computerName="TIM" duration="00:00:00.7816980" startTime="2026-09-12T13:28:04.6545831+03:00" endTime="2026-09-12T13:28:05.4300775+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d01de37-df40-4c80-be99-7b5328fc0702" />
+    <UnitTestResult executionId="7640ce20-76d8-4d1d-8658-2277ea6e6c72" testId="2c1475b3-8412-983d-6c11-cb999cad175b" testName="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ObjectReadbackAndObjectFilter" computerName="TIM" duration="00:00:00.7063308" startTime="2026-09-12T13:28:05.4310414+03:00" endTime="2026-09-12T13:28:06.1367207+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7640ce20-76d8-4d1d-8658-2277ea6e6c72" />
+    <UnitTestResult executionId="d2e83b9b-c92e-498d-b65b-679556db80f7" testId="702d993a-97e9-9dbb-233f-56293585ea57" testName="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_UpdateAndDeleteRejectedByAppendOnlyTrigger" computerName="TIM" duration="00:00:00.7488660" startTime="2026-09-12T13:28:07.6648476+03:00" endTime="2026-09-12T13:28:08.4142566+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2e83b9b-c92e-498d-b65b-679556db80f7" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ForeignOrganizationIsolation" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="708321c3-d78d-cb14-1648-ad6b5825d6cc">
+      <Execution id="37a6f9a2-ca0a-4bdc-9469-b0eb80268350" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Postgres.PostgresAuditEntryStoreTests" name="RealPostgres_ForeignOrganizationIsolation" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ObjectReadbackAndObjectFilter" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="2c1475b3-8412-983d-6c11-cb999cad175b">
+      <Execution id="7640ce20-76d8-4d1d-8658-2277ea6e6c72" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Postgres.PostgresAuditEntryStoreTests" name="RealPostgres_ObjectReadbackAndObjectFilter" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_KeysetPagination_PageSizeClamp_NoGapsOrDuplicates" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="a4151d69-4cbf-917a-e512-b3a3637ce1b6">
+      <Execution id="0d01de37-df40-4c80-be99-7b5328fc0702" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Postgres.PostgresAuditEntryStoreTests" name="RealPostgres_KeysetPagination_PageSizeClamp_NoGapsOrDuplicates" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_Filters_AndEmptyFilterIsNoFilter" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="88549984-f094-8d3c-1a3a-6ffc7946d840">
+      <Execution id="d2e87710-9330-4e9e-aced-7d38d4b55a2a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Postgres.PostgresAuditEntryStoreTests" name="RealPostgres_Filters_AndEmptyFilterIsNoFilter" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_UpdateAndDeleteRejectedByAppendOnlyTrigger" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="702d993a-97e9-9dbb-233f-56293585ea57">
+      <Execution id="d2e83b9b-c92e-498d-b65b-679556db80f7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Postgres.PostgresAuditEntryStoreTests" name="RealPostgres_UpdateAndDeleteRejectedByAppendOnlyTrigger" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_AppendReadRoundTrip_ClientTimestampIgnored" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="cbd71713-0ead-2f0b-86d0-525905f9bc31">
+      <Execution id="30e731d5-6447-4b8c-83bd-98e5f790e0a7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Postgres.PostgresAuditEntryStoreTests" name="RealPostgres_AppendReadRoundTrip_ClientTimestampIgnored" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="88549984-f094-8d3c-1a3a-6ffc7946d840" executionId="d2e87710-9330-4e9e-aced-7d38d4b55a2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cbd71713-0ead-2f0b-86d0-525905f9bc31" executionId="30e731d5-6447-4b8c-83bd-98e5f790e0a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="708321c3-d78d-cb14-1648-ad6b5825d6cc" executionId="37a6f9a2-ca0a-4bdc-9469-b0eb80268350" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4151d69-4cbf-917a-e512-b3a3637ce1b6" executionId="0d01de37-df40-4c80-be99-7b5328fc0702" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c1475b3-8412-983d-6c11-cb999cad175b" executionId="7640ce20-76d8-4d1d-8658-2277ea6e6c72" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="702d993a-97e9-9dbb-233f-56293585ea57" executionId="d2e83b9b-c92e-498d-b65b-679556db80f7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:04.81]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

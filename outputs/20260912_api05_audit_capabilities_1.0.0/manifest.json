@@ -1,0 +1,145 @@
+{
+  "package": "20260912_api05_audit_capabilities_1.0.0",
+  "version": "1.0.0",
+  "task": "API-05",
+  "release_status": "source_validated_deployment_acceptance_required",
+  "focused_tests_passed": 43,
+  "focused_tests_failed": 0,
+  "files": [
+    {
+      "path": "evidence/application-capabilities.trx",
+      "size": 15672,
+      "sha256": "6591c87dfd05b74a3dd5c40e9f86271d5eeaffc6757803dcb2e8b65db08ffb92"
+    },
+    {
+      "path": "evidence/application-capabilities.trx.log",
+      "size": 755,
+      "sha256": "95d188907b176e77ae7cdec21c9b2a97ec4e3d63fbe99e58be4c22b81cbffbf0"
+    },
+    {
+      "path": "evidence/build.log",
+      "size": 1516,
+      "sha256": "53430e5053286aea875e0a9efee8436cf482ab29b6ec62cafc622bc0de87b1f1"
+    },
+    {
+      "path": "evidence/service-audit-capabilities.trx",
+      "size": 40193,
+      "sha256": "daa5f80d1f54fe6b1cf6f7c4e57df3eb10d8da9380f44de6712ff9a3b0296dbf"
+    },
+    {
+      "path": "evidence/service-audit-capabilities.trx.log",
+      "size": 799,
+      "sha256": "709df06ba27a9e6b7d757832b7e0f76d63fb3ca527150acc5d3fc66b255f6330"
+    },
+    {
+      "path": "evidence/store-audit.trx",
+      "size": 9780,
+      "sha256": "ece4fc867976357e781e94e3bf7dde4e60545c6ea3e47a80933aa592bb903935"
+    },
+    {
+      "path": "evidence/store-audit.trx.log",
+      "size": 727,
+      "sha256": "d54f387f24235d500ab6584b5e6ecaf66d49a0aa5c39a95ffba6a36d16a4b85c"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 77860,
+      "sha256": "d76e0b67c1e321cc0a1826fa955a459635650865c87c67a1830eec7f16e3f03e"
+    },
+    {
+      "path": "source/work/production/docs/API-05-audit-capabilities.md",
+      "size": 6314,
+      "sha256": "db7c737cfd59d1f1268d6e21da5401ee64520bbb2e165303dba252e15a3640bf"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Audit/AuditEndpoints.cs",
+      "size": 8566,
+      "sha256": "c26e49b93944e3b1b61305ad8ef3c04647fd8d0d4c6a8420ba913f2ab42eb961"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Capabilities/CapabilitiesEndpoints.cs",
+      "size": 2730,
+      "sha256": "d14e844f2fbaa1bbc66e20638960ae98dcf96f4bcb471d7b44c76e78a98f9698"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Capabilities/ClientVersionCompatibilityMiddleware.cs",
+      "size": 1551,
+      "sha256": "a697338a99cbfbdf7205174701fbcfe3868cbd45ce80cb906b9e5dd94098181f"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Program.cs",
+      "size": 11708,
+      "sha256": "fcd6bb1746c56e2a7f3072695941345152999076fa67644d88cb72155e2698c3"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "size": 14590,
+      "sha256": "35e4335252926a7cf0875f530225ea9a7e272a8dc5e36ad507f46a2527ef431d"
+    },
+    {
+      "path": "source/work/production/src/Task.Api/Server/SystemVersionEndpoints.cs",
+      "size": 3953,
+      "sha256": "9fa91678042a2c38dc3615efd732b272b81735dcd796ae2ab1ba250f3d9276a8"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/Audit/IAuditEntryStore.cs",
+      "size": 4186,
+      "sha256": "7829108e26a7c29e717e7bf6443277f468a0deb9cf5ea686f70aaf3b0d149802"
+    },
+    {
+      "path": "source/work/production/src/Task.Application/System/ServerCapabilitiesService.cs",
+      "size": 4929,
+      "sha256": "2f5c6bbcca0639fbb4ceeb9f8381fa17a1977ff7a1e7e3b037b0af991142a4c0"
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Postgres/PostgresAuditEntryStore.cs",
+      "size": 12674,
+      "sha256": "00ddd9864a5171a2d1f032793d7e6f51ef0c1e4599fb97567e03675da5de6533"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/AuditEndpointsTests.cs",
+      "size": 20051,
+      "sha256": "13bbe9dd8d02996c848032adfda1ddffc78dc1acbacc6e6eeebdf7335dcbc80a"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/CapabilitiesEndpointsTests.cs",
+      "size": 13656,
+      "sha256": "9569565ec22d5ef3f4d4bb046aeadcc5d154ee2dab50aed791d8a1b421cc8e42"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/ClientVersionCompatibilityMiddlewareTests.cs",
+      "size": 3032,
+      "sha256": "e0814095fe752c7c8295a898fcdb212b6b663ebd22ae334c3f57ae5e4f3c254a"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/SystemVersionEndpointsTests.cs",
+      "size": 11967,
+      "sha256": "f6e5e679dd8cb9c6c497f1a17bf9c2d6d00b4403453a5a5f6e98d618ed9384ac"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/Postgres/PostgresAuditEntryStoreTests.cs",
+      "size": 36745,
+      "sha256": "ede76fcac5529e7a15c77e069a6e840517e978db67c6034f926cdfa72dab72dd"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/System/ServerCapabilitiesServiceTests.cs",
+      "size": 3066,
+      "sha256": "28e9db1bc4b87838eb755f87dba47abe4d5a74746cc15c497062665914aa15ec"
+    },
+    {
+      "path": "source/work/production/verification/Build-Api05Package.py",
+      "size": 7152,
+      "sha256": "e03e2d2a8ca1b3fe9afaf5511f29c8770331cca98b9683405157005c6362df0a"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 873,
+      "sha256": "406177f969cb58f48ec759143b38232ffa123677c5cd33c1d88fc6a3a54845db"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

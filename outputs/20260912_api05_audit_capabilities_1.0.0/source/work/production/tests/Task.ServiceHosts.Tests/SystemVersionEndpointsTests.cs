@@ -1,25 +1,25 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Task.Api.Capabilities;
 using Task.Api.Security;
+using Task.Api.Server;
 using Task.Application.Security;
 using Task.Application.Server;
 
 namespace Task.ServiceHosts.Tests;
 
-public sealed class CapabilitiesEndpointsTests
+public sealed class SystemVersionEndpointsTests
 {
     private const string Issuer = "https://task.example.internal";
     private const string Audience = "task-desktop";
-    private const string CapabilitiesUrl = "/api/v1/capabilities";
-    private const string AdminServerCapabilitiesUrl = "/api/v1/admin/server-capabilities";
+    private const string SystemVersionUrl = "/api/v1/system/version";
 
     private static readonly Guid OrganizationId = Guid.Parse("33333333-3333-3333-3333-333333333333");
     private static readonly Guid UserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
@@ -31,7 +31,7 @@ public sealed class CapabilitiesEndpointsTests
 
     private static TestKeyMaterial CreateKeyMaterial()
     {
-        var baseDirectory = Path.Combine(Path.GetTempPath(), $"task-capabilities-tests-{Guid.NewGuid():N}");
+        var baseDirectory = Path.Combine(Path.GetTempPath(), $"task-system-version-tests-{Guid.NewGuid():N}");
         var signingDirectory = Path.Combine(baseDirectory, "signing");
         var verificationDirectory = Path.Combine(baseDirectory, "verification");
         Directory.CreateDirectory(signingDirectory);
@@ -48,85 +48,69 @@ public sealed class CapabilitiesEndpointsTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task GetCapabilities_WithoutToken_Returns401()
+    public async global::System.Threading.Tasks.Task GetSystemVersion_WithoutToken_Returns401()
     {
-        using var server = CreateServer(GrantAdmin());
+        using var server = CreateServer();
         var client = server.CreateClient();
 
-        var response = await client.GetAsync(CapabilitiesUrl);
+        var response = await client.GetAsync(SystemVersionUrl);
 
         await AssertProblemAsync(response, HttpStatusCode.Unauthorized, "AUTHENTICATION_REQUIRED");
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task GetCapabilities_WithValidToken_Returns200_WithExpectedFields()
+    public async global::System.Threading.Tasks.Task GetSystemVersion_WithToken_ReturnsCanonicalFields()
     {
-        using var server = CreateServer(GrantAdmin());
+        using var server = CreateServer();
         using var client = await CreateAuthenticatedClientAsync(server);
 
-        var response = await client.GetAsync(CapabilitiesUrl);
+        var response = await client.GetAsync(SystemVersionUrl);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var document = await ReadJsonAsync(response);
-        var capabilities = document.RootElement.GetProperty("capabilities").EnumerateArray()
-            .Select(element => element.GetString()).ToArray();
-        Assert.Empty(capabilities);
-        Assert.Equal("v1", document.RootElement.GetProperty("minimumApiVersion").GetString());
-        Assert.Equal("1.0.0", document.RootElement.GetProperty("minimumDesktopVersion").GetString());
-        Assert.False(document.RootElement.TryGetProperty("schemaVersion", out _));
-        Assert.False(document.RootElement.TryGetProperty("recommendedDesktopVersion", out _));
+        Assert.Equal("2.3.1", document.RootElement.GetProperty("serverVersion").GetString());
+        Assert.Equal("v1", document.RootElement.GetProperty("apiVersion").GetString());
+        Assert.Equal(14, document.RootElement.GetProperty("databaseSchemaVersion").GetInt32());
+        Assert.Equal("1.2.0", document.RootElement.GetProperty("minimumDesktopVersion").GetString());
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task GetAdminServerCapabilities_WithAdminPermission_Returns200()
+    public async global::System.Threading.Tasks.Task GetSystemVersion_ExposesOnlyPublicFields()
     {
-        using var server = CreateServer(GrantAdmin());
+        using var server = CreateServer();
         using var client = await CreateAuthenticatedClientAsync(server);
 
-        var response = await client.GetAsync(AdminServerCapabilitiesUrl);
+        var response = await client.GetAsync(SystemVersionUrl);
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var document = await ReadJsonAsync(response);
-        Assert.Equal("v1", document.RootElement.GetProperty("minimumApiVersion").GetString());
-        Assert.Equal("1.0.0", document.RootElement.GetProperty("minimumDesktopVersion").GetString());
+        var body = await response.Content.ReadAsStringAsync();
+        var document = JsonDocument.Parse(body);
+        var names = document.RootElement.EnumerateObject().Select(property => property.Name).OrderBy(name => name).ToArray();
+        Assert.Equal(
+            new[] { "apiVersion", "databaseSchemaVersion", "minimumDesktopVersion", "serverVersion" },
+            names);
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task GetAdminServerCapabilities_WithoutAdminPermission_Returns403()
-    {
-        using var server = CreateServer(DenyAll());
-        using var client = await CreateAuthenticatedClientAsync(server);
-
-        var response = await client.GetAsync(AdminServerCapabilitiesUrl);
-
-        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-    }
-
-    [Fact]
-    public async global::System.Threading.Tasks.Task GetCapabilities_ServiceNotRegistered_Returns503()
+    public async global::System.Threading.Tasks.Task GetSystemVersion_ServiceNotRegistered_Returns503()
     {
         using var server = CreateServerWithoutCapabilitiesService();
         using var client = await CreateAuthenticatedClientAsync(server);
 
-        var response = await client.GetAsync(CapabilitiesUrl);
+        var response = await client.GetAsync(SystemVersionUrl);
 
         await AssertProblemAsync(response, HttpStatusCode.ServiceUnavailable, "INTERNAL_ERROR");
     }
 
-    private static FakePolicyStore GrantAdmin() => new()
-    {
-        UserOrg = OrganizationId,
-        Grants = [new PolicyGrantRow(HasDirectRoleMembership: true)],
-    };
-
-    private static FakePolicyStore DenyAll() => new()
-    {
-        UserOrg = OrganizationId,
-    };
-
-    private static TestServer CreateServer(FakePolicyStore policyStore)
+    private static TestServer CreateServer()
     {
         var keyMaterial = KeyMaterial.Value;
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Task:Server:Version"] = "2.3.1",
+            })
+            .Build();
+
         return new TestServer(new WebHostBuilder()
             .ConfigureServices(services =>
             {
@@ -145,10 +129,12 @@ public sealed class CapabilitiesEndpointsTests
                 services.AddSingleton<ISessionRepository>(new FakeSessionRepository());
                 services.AddSingleton(
                     new JwtAccessTokenIssuer(Issuer, Audience, $"file:{keyMaterial.PrivateKeyPath}"));
-                services.AddSingleton<IAuthorizationPolicyStore>(policyStore);
-                services.AddSingleton<PermissionDecisionService>();
-                services.AddTaskPermissionAuthorization();
-                services.AddSingleton<ServerCapabilitiesService>();
+                services.AddSingleton<IConfiguration>(configuration);
+                services.AddSingleton(new ServerCapabilitiesService(
+                    minimumApiVersion: "v1",
+                    minimumDesktopVersion: "1.2.0",
+                    recommendedDesktopVersion: "1.2.0",
+                    schemaVersion: 14));
             })
             .Configure(app =>
             {
@@ -160,7 +146,7 @@ public sealed class CapabilitiesEndpointsTests
                 app.UseRouting();
                 app.UseAuthentication();
                 app.UseAuthorization();
-                app.UseEndpoints(endpoints => endpoints.MapCapabilitiesEndpoints());
+                app.UseEndpoints(endpoints => endpoints.MapSystemVersionEndpoints());
             }));
     }
 
@@ -185,6 +171,8 @@ public sealed class CapabilitiesEndpointsTests
                 services.AddSingleton<ISessionRepository>(new FakeSessionRepository());
                 services.AddSingleton(
                     new JwtAccessTokenIssuer(Issuer, Audience, $"file:{keyMaterial.PrivateKeyPath}"));
+                services.AddSingleton<IConfiguration>(
+                    new ConfigurationBuilder().Build());
             })
             .Configure(app =>
             {
@@ -196,7 +184,7 @@ public sealed class CapabilitiesEndpointsTests
                 app.UseRouting();
                 app.UseAuthentication();
                 app.UseAuthorization();
-                app.UseEndpoints(endpoints => endpoints.MapCapabilitiesEndpoints());
+                app.UseEndpoints(endpoints => endpoints.MapSystemVersionEndpoints());
             }));
     }
 
@@ -227,34 +215,6 @@ public sealed class CapabilitiesEndpointsTests
         var document = await ReadJsonAsync(response);
         Assert.Equal(expectedCode, document.RootElement.GetProperty("code").GetString());
         return document;
-    }
-
-    private sealed class FakePolicyStore : IAuthorizationPolicyStore
-    {
-        public Guid? UserOrg { get; set; }
-
-        public IReadOnlyList<PolicyGrantRow> Grants { get; set; } = [];
-
-        public IReadOnlyList<PolicyDenyRow> Denies { get; set; } = [];
-
-        public global::System.Threading.Tasks.Task<Guid?> GetUserOrgAsync(
-            Guid userId,
-            CancellationToken cancellationToken = default) =>
-            global::System.Threading.Tasks.Task.FromResult(UserOrg);
-
-        public global::System.Threading.Tasks.Task<IReadOnlyList<PolicyGrantRow>> GetUserGrantsAsync(
-            Guid orgId,
-            Guid userId,
-            string permissionCode,
-            CancellationToken cancellationToken = default) =>
-            global::System.Threading.Tasks.Task.FromResult(Grants);
-
-        public global::System.Threading.Tasks.Task<IReadOnlyList<PolicyDenyRow>> GetUserDeniesAsync(
-            Guid orgId,
-            Guid userId,
-            string permissionCode,
-            CancellationToken cancellationToken = default) =>
-            global::System.Threading.Tasks.Task.FromResult(Denies);
     }
 
     private sealed class FakeSessionRepository : ISessionRepository

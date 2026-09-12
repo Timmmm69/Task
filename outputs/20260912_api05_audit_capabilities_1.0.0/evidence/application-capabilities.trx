@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="cb6a4aa4-ac52-4905-a148-349f7f7f03a7" name="novik@TIM 2026-09-12 13:28:02" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-09-12T13:28:02.6390979+03:00" queuing="2026-09-12T13:28:02.6390983+03:00" start="2026-09-12T13:28:02.1052684+03:00" finish="2026-09-12T13:28:02.6664439+03:00" />
+  <TestSettings name="default" id="72483be4-bb3e-47c1-b90a-380b420313c5">
+    <Deployment runDeploymentRoot="novik_TIM_2026-09-12_13_28_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="24826965-03b2-439b-b398-e1fe8f449f17" testId="2cfefd8a-3a06-e2ad-98e8-824d6e710bec" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_ReturnsNewInstanceEachTime" computerName="TIM" duration="00:00:00.0003652" startTime="2026-09-12T13:28:02.6023383+03:00" endTime="2026-09-12T13:28:02.6023547+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="24826965-03b2-439b-b398-e1fe8f449f17" />
+    <UnitTestResult executionId="56674d0a-bd68-4be5-b876-b021ea65f141" testId="abdde5cf-5b76-b2b3-2c43-67c63a215207" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.0&quot;, expected: False)" computerName="TIM" duration="00:00:00.0000033" startTime="2026-09-12T13:28:02.6017361+03:00" endTime="2026-09-12T13:28:02.6017518+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56674d0a-bd68-4be5-b876-b021ea65f141" />
+    <UnitTestResult executionId="e1fc72e4-37f4-45a2-a224-5347ec9b59cd" testId="74cf0b6d-bdd4-7bd2-68e7-5fd17085bbaf" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.1.0&quot;, expected: True)" computerName="TIM" duration="00:00:00.0000041" startTime="2026-09-12T13:28:02.6016909+03:00" endTime="2026-09-12T13:28:02.6017064+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1fc72e4-37f4-45a2-a224-5347ec9b59cd" />
+    <UnitTestResult executionId="e6d0294d-f7b7-4145-9081-04b5ed575595" testId="0cc6f685-4eb7-8d83-e0b0-37ad34cbc2db" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_PayloadExposesOnlyCanonicalFields" computerName="TIM" duration="00:00:00.0022805" startTime="2026-09-12T13:28:02.6195510+03:00" endTime="2026-09-12T13:28:02.6195879+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6d0294d-f7b7-4145-9081-04b5ed575595" />
+    <UnitTestResult executionId="ea43ca7a-34ee-4711-8264-3f9918962a45" testId="b0ea0862-ea7c-6326-fdc3-18a0974e5185" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.Constructor_RejectsInvertedCompatibilityWindow" computerName="TIM" duration="00:00:00.0003371" startTime="2026-09-12T13:28:02.6024480+03:00" endTime="2026-09-12T13:28:02.6024627+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea43ca7a-34ee-4711-8264-3f9918962a45" />
+    <UnitTestResult executionId="84a8701f-7f65-4c9d-8268-b8814ef9d5da" testId="9a3a4c76-62b3-ccd0-d035-afbb65417a65" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;1.9.9&quot;, expected: False)" computerName="TIM" duration="00:00:00.0000071" startTime="2026-09-12T13:28:02.6016306+03:00" endTime="2026-09-12T13:28:02.6016497+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84a8701f-7f65-4c9d-8268-b8814ef9d5da" />
+    <UnitTestResult executionId="beb8ecf4-9c28-48cc-a3e5-0cece741a5c0" testId="12782936-a0c2-53ed-4ebf-3ccbfcb12fe5" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.0.0&quot;, expected: True)" computerName="TIM" duration="00:00:00.0002129" startTime="2026-09-12T13:28:02.6012687+03:00" endTime="2026-09-12T13:28:02.6013161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="beb8ecf4-9c28-48cc-a3e5-0cece741a5c0" />
+    <UnitTestResult executionId="e8363b72-dbba-4c0a-97e4-82412d1a84c9" testId="49b9312c-1eb7-d1f0-d5fd-5efac4a2d51f" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_WithCustomValues_ReturnsConfiguredValues" computerName="TIM" duration="00:00:00.0051173" startTime="2026-09-12T13:28:02.6022563+03:00" endTime="2026-09-12T13:28:02.6022758+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8363b72-dbba-4c0a-97e4-82412d1a84c9" />
+    <UnitTestResult executionId="b7d471e2-a76f-4596-a2a8-b11b00ac337e" testId="c09d0a70-6695-0196-f299-37c5aa494950" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_WithDefaults_ReturnsExpectedValues" computerName="TIM" duration="00:00:00.0005548" startTime="2026-09-12T13:28:02.6023940+03:00" endTime="2026-09-12T13:28:02.6024112+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7d471e2-a76f-4596-a2a8-b11b00ac337e" />
+    <UnitTestResult executionId="ca324141-0f9a-4407-8857-98b845cc3b7c" testId="43ea8ceb-e0c3-037e-1204-1a0eda9f9da2" testName="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.0.0-preview&quot;, expected: False)" computerName="TIM" duration="00:00:00.0044393" startTime="2026-09-12T13:28:02.5857681+03:00" endTime="2026-09-12T13:28:02.5946439+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca324141-0f9a-4407-8857-98b845cc3b7c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_WithCustomValues_ReturnsConfiguredValues" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="49b9312c-1eb7-d1f0-d5fd-5efac4a2d51f">
+      <Execution id="e8363b72-dbba-4c0a-97e4-82412d1a84c9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="GetCapabilities_WithCustomValues_ReturnsConfiguredValues" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_ReturnsNewInstanceEachTime" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="2cfefd8a-3a06-e2ad-98e8-824d6e710bec">
+      <Execution id="24826965-03b2-439b-b398-e1fe8f449f17" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="GetCapabilities_ReturnsNewInstanceEachTime" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.0&quot;, expected: False)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="abdde5cf-5b76-b2b3-2c43-67c63a215207">
+      <Execution id="56674d0a-bd68-4be5-b876-b021ea65f141" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="IsClientVersionSupported_UsesThreePartReleaseFloor" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.1.0&quot;, expected: True)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="74cf0b6d-bdd4-7bd2-68e7-5fd17085bbaf">
+      <Execution id="e1fc72e4-37f4-45a2-a224-5347ec9b59cd" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="IsClientVersionSupported_UsesThreePartReleaseFloor" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.0.0&quot;, expected: True)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="12782936-a0c2-53ed-4ebf-3ccbfcb12fe5">
+      <Execution id="beb8ecf4-9c28-48cc-a3e5-0cece741a5c0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="IsClientVersionSupported_UsesThreePartReleaseFloor" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;2.0.0-preview&quot;, expected: False)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="43ea8ceb-e0c3-037e-1204-1a0eda9f9da2">
+      <Execution id="ca324141-0f9a-4407-8857-98b845cc3b7c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="IsClientVersionSupported_UsesThreePartReleaseFloor" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.Constructor_RejectsInvertedCompatibilityWindow" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="b0ea0862-ea7c-6326-fdc3-18a0974e5185">
+      <Execution id="ea43ca7a-34ee-4711-8264-3f9918962a45" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="Constructor_RejectsInvertedCompatibilityWindow" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_WithDefaults_ReturnsExpectedValues" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="c09d0a70-6695-0196-f299-37c5aa494950">
+      <Execution id="b7d471e2-a76f-4596-a2a8-b11b00ac337e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="GetCapabilities_WithDefaults_ReturnsExpectedValues" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.GetCapabilities_PayloadExposesOnlyCanonicalFields" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0cc6f685-4eb7-8d83-e0b0-37ad34cbc2db">
+      <Execution id="e6d0294d-f7b7-4145-9081-04b5ed575595" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="GetCapabilities_PayloadExposesOnlyCanonicalFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Server.ServerCapabilitiesServiceTests.IsClientVersionSupported_UsesThreePartReleaseFloor(version: &quot;1.9.9&quot;, expected: False)" storage="c:\users\novik\таск\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="9a3a4c76-62b3-ccd0-d035-afbb65417a65">
+      <Execution id="84a8701f-7f65-4c9d-8268-b8814ef9d5da" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Server.ServerCapabilitiesServiceTests" name="IsClientVersionSupported_UsesThreePartReleaseFloor" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2cfefd8a-3a06-e2ad-98e8-824d6e710bec" executionId="24826965-03b2-439b-b398-e1fe8f449f17" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="abdde5cf-5b76-b2b3-2c43-67c63a215207" executionId="56674d0a-bd68-4be5-b876-b021ea65f141" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74cf0b6d-bdd4-7bd2-68e7-5fd17085bbaf" executionId="e1fc72e4-37f4-45a2-a224-5347ec9b59cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0cc6f685-4eb7-8d83-e0b0-37ad34cbc2db" executionId="e6d0294d-f7b7-4145-9081-04b5ed575595" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0ea0862-ea7c-6326-fdc3-18a0974e5185" executionId="ea43ca7a-34ee-4711-8264-3f9918962a45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a3a4c76-62b3-ccd0-d035-afbb65417a65" executionId="84a8701f-7f65-4c9d-8268-b8814ef9d5da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12782936-a0c2-53ed-4ebf-3ccbfcb12fe5" executionId="beb8ecf4-9c28-48cc-a3e5-0cece741a5c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49b9312c-1eb7-d1f0-d5fd-5efac4a2d51f" executionId="e8363b72-dbba-4c0a-97e4-82412d1a84c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c09d0a70-6695-0196-f299-37c5aa494950" executionId="b7d471e2-a76f-4596-a2a8-b11b00ac337e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43ea8ceb-e0c3-037e-1204-1a0eda9f9da2" executionId="ca324141-0f9a-4407-8857-98b845cc3b7c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:00.19]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
