@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Task.Desktop.Converters;
 using Task.Desktop.TaskApi;
@@ -11,6 +12,50 @@ namespace Task.Desktop.Tests;
 
 public sealed class VisualFoundationTests
 {
+    [Fact]
+    public void MainWindow_LoadsAndMeasuresDirection2Shell()
+    {
+        var snapshot = RunOnSta(() =>
+        {
+            var application = global::System.Windows.Application.Current
+                ?? new global::System.Windows.Application();
+            if (!application.Resources.Contains("Task.Shell.NavigationSurface"))
+            {
+                application.Resources.MergedDictionaries.Add((ResourceDictionary)global::System.Windows.Application.LoadComponent(
+                    new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative)));
+                application.Resources["Task.IconKeyToGeometryConverter"] = new IconKeyToGeometryConverter();
+                application.Resources["Task.ShellNavigationWidthConverter"] = new ShellNavigationWidthConverter();
+                application.Resources["Task.WindowWidthAtLeastConverter"] = new WindowWidthAtLeastConverter();
+                application.Resources["Task.ResponsiveGridLengthConverter"] = new ResponsiveGridLengthConverter();
+                application.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
+            }
+
+            using var viewModel = new MainWindowViewModel();
+            var window = new MainWindow(viewModel);
+            try
+            {
+                window.Measure(new Size(1487, 1058));
+                window.Arrange(new Rect(0, 0, 1487, 1058));
+                window.UpdateLayout();
+                return new
+                {
+                    NavigationFound = window.FindName("NavigationListBox") is FrameworkElement,
+                    HeaderFound = window.FindName("HeaderRegion") is FrameworkElement,
+                    ContentFound = window.FindName("ContentRegion") is FrameworkElement,
+                };
+            }
+            finally
+            {
+                window.DataContext = null;
+                window.Close();
+            }
+        });
+
+        Assert.True(snapshot.NavigationFound);
+        Assert.True(snapshot.HeaderFound);
+        Assert.True(snapshot.ContentFound);
+    }
+
     [Fact]
     public void Theme_LoadsCanonicalResourcesAndIcons()
     {
@@ -23,17 +68,20 @@ public sealed class VisualFoundationTests
             {
                 Brand = (Color)theme["Task.Color.Brand.Primary"],
                 Strong = (Color)theme["Task.Color.Brand.Strong"],
+                Accent = (Color)theme["Task.Color.Brand.Accent"],
                 Soft = (Color)theme["Task.Color.Brand.Soft"],
                 Text = (Color)theme["Task.Color.Text.Primary"],
                 Secondary = (Color)theme["Task.Color.Text.Secondary"],
                 Surface = (Color)theme["Task.Color.Surface.Base"],
                 Subtle = (Color)theme["Task.Color.Surface.Subtle"],
+                Selected = (Color)theme["Task.Color.Surface.Selected"],
                 Border = (Color)theme["Task.Color.Border.Default"],
                 Critical = (Color)theme["Task.Color.Semantic.Critical"],
                 Success = (Color)theme["Task.Color.Semantic.Success"],
                 Warning = (Color)theme["Task.Color.Semantic.Warning"],
                 ControlHeight = (double)theme["Task.Control.Height.Compact"],
                 NavigationRow = (double)theme["Task.Navigation.RowHeight"],
+                NavigationMenu = (double)theme["Task.Navigation.MenuHeight"],
                 ExpandedNavigation = (double)theme["Task.Shell.Navigation.ExpandedWidth"],
                 CompactNavigation = (double)theme["Task.Shell.Navigation.CompactWidth"],
                 Header = (double)theme["Task.Shell.HeaderHeight"],
@@ -42,24 +90,30 @@ public sealed class VisualFoundationTests
                 Focus = (double)theme["Task.Stroke.Focus"],
                 Radius = (CornerRadius)theme["Task.Radius.Control"],
                 TasksIcon = theme["Task.Icon.Tasks"] as Geometry,
+                NavigationIcon = theme["Task.Icon.Navigation"] as Geometry,
                 ConnectedIcon = theme["Task.Icon.Connected"] as Geometry,
                 PriorityIcon = theme["Task.Icon.Priority.Critical"] as Geometry,
+                NavigationSurface = theme["Task.Shell.NavigationSurface"] as Style,
+                PageTitleStyle = theme["Task.Shell.PageTitle"] as Style,
             };
         });
 
         Assert.Equal("#FF0F6CBD", snapshot.Brand.ToString());
         Assert.Equal("#FF005A9E", snapshot.Strong.ToString());
+        Assert.Equal("#FF1473E6", snapshot.Accent.ToString());
         Assert.Equal("#FFEAF3FF", snapshot.Soft.ToString());
         Assert.Equal("#FF1B1A19", snapshot.Text.ToString());
         Assert.Equal("#FF605E5C", snapshot.Secondary.ToString());
         Assert.Equal("#FFFFFFFF", snapshot.Surface.ToString());
         Assert.Equal("#FFFAFAFA", snapshot.Subtle.ToString());
+        Assert.Equal("#FFF1F3F5", snapshot.Selected.ToString());
         Assert.Equal("#FFE1DFDD", snapshot.Border.ToString());
         Assert.Equal("#FFD13438", snapshot.Critical.ToString());
         Assert.Equal("#FF107C10", snapshot.Success.ToString());
         Assert.Equal("#FFF2A900", snapshot.Warning.ToString());
         Assert.Equal(40, snapshot.ControlHeight);
         Assert.Equal(52, snapshot.NavigationRow);
+        Assert.Equal(58, snapshot.NavigationMenu);
         Assert.Equal(212, snapshot.ExpandedNavigation);
         Assert.Equal(178, snapshot.CompactNavigation);
         Assert.Equal(70, snapshot.Header);
@@ -68,8 +122,11 @@ public sealed class VisualFoundationTests
         Assert.Equal(2, snapshot.Focus);
         Assert.Equal(new CornerRadius(5), snapshot.Radius);
         Assert.NotNull(snapshot.TasksIcon);
+        Assert.NotNull(snapshot.NavigationIcon);
         Assert.NotNull(snapshot.ConnectedIcon);
         Assert.NotNull(snapshot.PriorityIcon);
+        Assert.NotNull(snapshot.NavigationSurface);
+        Assert.NotNull(snapshot.PageTitleStyle);
     }
 
     [Theory]
@@ -168,6 +225,7 @@ public sealed class VisualFoundationTests
         var data = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.Data.xaml"));
         var states = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.States.xaml"));
         var buttons = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.Buttons.xaml"));
+        var shell = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.Shell.xaml"));
 
         var stableAutomationIds = new[]
         {
@@ -184,9 +242,18 @@ public sealed class VisualFoundationTests
         Assert.Contains("BorderBrush", navigation, StringComparison.Ordinal);
         Assert.Contains("x:Name=\"SelectedRail\"", data, StringComparison.Ordinal);
         Assert.Contains("Task.Thickness.Focus", buttons, StringComparison.Ordinal);
+        Assert.Contains("Task.Button.Primary", mainWindow, StringComparison.Ordinal);
+        Assert.Contains("Text=\"Alt+N\"", mainWindow, StringComparison.Ordinal);
+        Assert.Contains("Text=\"{Binding ConnectionTitle}\"", mainWindow, StringComparison.Ordinal);
+        Assert.Contains("Task.Icon.Navigation", mainWindow, StringComparison.Ordinal);
+        Assert.Contains("IsMouseCaptured", navigation, StringComparison.Ordinal);
+        Assert.Contains("Task.Brush.Surface.Selected", navigation, StringComparison.Ordinal);
+        Assert.Contains("Task.Brush.Brand.Strong", buttons, StringComparison.Ordinal);
+        Assert.Contains("Property=\"IsPressed\"", buttons, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", navigation, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", data, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", states, StringComparison.Ordinal);
+        Assert.Contains("SystemParameters.HighContrast", shell, StringComparison.Ordinal);
         Assert.DoesNotContain("Foreground\" Value=\"Transparent", navigation, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Foreground\" Value=\"Transparent", data, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Foreground\" Value=\"Transparent", states, StringComparison.OrdinalIgnoreCase);

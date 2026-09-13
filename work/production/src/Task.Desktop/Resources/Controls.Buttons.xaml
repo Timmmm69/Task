@@ -78,6 +78,41 @@
         <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Primary}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
         <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource Task.Radius.Control}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Brand.Strong}" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Strong}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Brand.Strong}" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Strong}" />
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.92" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Strong}" />
@@ -119,6 +154,22 @@
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Strong}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}" />
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+                <Setter Property="Opacity" Value="0.5" />
+            </Trigger>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="Task.Input.Combo" TargetType="ComboBox">
@@ -131,5 +182,21 @@
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Strong}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}" />
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Disabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+                <Setter Property="Opacity" Value="0.5" />
+            </Trigger>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

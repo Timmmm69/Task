@@ -1,0 +1,237 @@
+{
+  "package": "Direction 2 production WPF visual foundation",
+  "version": "1.0.0",
+  "generated_at_utc": "2026-09-13T22:27:48.852798+00:00",
+  "base_revision": "b3b98e7f325f94f63ae8bd3fff10645c14597b04",
+  "state": "validated",
+  "dashboard_changed": false,
+  "dashboard_reason": "DESK-05 was already done at 100%; no readiness progress changed.",
+  "validation": {
+    "result": "PASS",
+    "release_build": "PASS",
+    "desktop_tests": {
+      "total": 316,
+      "executed": 316,
+      "passed": 316,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "focused_windows_ux_tests": {
+      "total": 7,
+      "executed": 7,
+      "passed": 7,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "native_checks": 86,
+    "native_window_dpi": 144,
+    "dpi_matrix": [
+      100,
+      125,
+      150,
+      200
+    ],
+    "visual_review": "PASS"
+  },
+  "implementation_files": [
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 72494,
+      "sha256": "d2fd7a1b8c64d9562f08f043179970f1b689cb41aa5666ddb086f4bab1cb489f"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Buttons.xaml",
+      "bytes": 13567,
+      "sha256": "9f4ad952c487391b2cf449d91a8aa676b6130be889ab8ca4b047ef00803500ea"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Data.xaml",
+      "bytes": 9122,
+      "sha256": "9443ec4547a27a34a1edf02259c8be05655ba22b57bed6fda257362e80162c04"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Navigation.xaml",
+      "bytes": 5730,
+      "sha256": "7673c3b83ca9f45d60ad22e150eb5ea868772fe1493c1d93c565a2e78ff45055"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Shell.xaml",
+      "bytes": 3946,
+      "sha256": "16c3a013799843436eef8ac14ba26a8f7d8ea430311a695d19c0f760758b6787"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Icons.xaml",
+      "bytes": 11792,
+      "sha256": "c711a1313f5a908cf28d1aaa2e4b260f3df44fb6981cb50421376b314f9caa78"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Theme.xaml",
+      "bytes": 3004,
+      "sha256": "ed86ef4e02fe41f0ab5c1ea2653d5cf39fcda02a81ddcd476578bb605e9cd742"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Tokens.Colors.xaml",
+      "bytes": 4058,
+      "sha256": "3134ccdf7dd9413bbf2b4353647433270b85353e58988f260eee2f8d0b3bfc40"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Tokens.Spacing.xaml",
+      "bytes": 1882,
+      "sha256": "ad0406a1634572f8e2aa1937c05ee965940faa666c43b56fab5262d92ef47254"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/VisualFoundationTests.cs",
+      "bytes": 14961,
+      "sha256": "e4ffd72cb40bc9b614b69169874a9cdff0e518d7a1a89d7d17e76a5ffdbdb6a9"
+    },
+    {
+      "path": "work/production/design-qa.md",
+      "bytes": 2612,
+      "sha256": "66bb85870ad9cf77d6e680e7b6f85aef5ebe128a52cbd791114cc9e6d2bd133b"
+    },
+    {
+      "path": "work/production/verification/Build-Direction2VisualFoundationPackage.py",
+      "bytes": 12553,
+      "sha256": "d1684a20d2f54a14e667dbb4d07342a26593882c300bd26876490a88d5a8ba67"
+    }
+  ],
+  "reference_files": [
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/FINAL_VISUAL_BASELINE_1.0.md",
+      "bytes": 1469,
+      "sha256": "b8ee2a0d2170456d1cbcaa408c54f442257851bbcefb780da9e3c5616c415ad4"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/App.jsx",
+      "bytes": 322931,
+      "sha256": "71c37ffc7873b88a8b5fc685d53a7c19a2deb986546b98a914956b40f25ab941"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/styles.css",
+      "bytes": 116673,
+      "sha256": "517d13561b4cbe065ffd3fae09f6e332dce9ff6c6a4e5343d79ff051a68eca3f"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Design_System_1.0.md",
+      "bytes": 1113,
+      "sha256": "947e2f4f12cc182361db343845af27f99797c6aead7bd4699260f48e6a2a9396"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Component_Implementation_Specs_1.0.csv",
+      "bytes": 47730,
+      "sha256": "9aeddf82a12fa323af7a48e78c4f140ad4850a6f449bf09dcaf19416293a48a2"
+    },
+    {
+      "path": "work/stage_5_prototype/implementation-direction2-final.png",
+      "bytes": 141092,
+      "sha256": "c232f379a2828575e46caeeee09363eb9f6e8fe7c5a85526e719a8f077237a17"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "evidence/auth-100.png",
+      "bytes": 116676,
+      "sha256": "0f05e27130c16fff5421fa2547a1d6060a5c93d9deb65a91df33b6f903831718"
+    },
+    {
+      "path": "evidence/auth-125.png",
+      "bytes": 115691,
+      "sha256": "c8cc6199996652f0993771ae1883f9eb4a945b566d417db7054276c48db3bac3"
+    },
+    {
+      "path": "evidence/auth-150.png",
+      "bytes": 113189,
+      "sha256": "aa01657cf657fc0dd17528e0d68c5e6fc940a5b0a8c1171e5cf44319ed0ba5eb"
+    },
+    {
+      "path": "evidence/auth-200.png",
+      "bytes": 101580,
+      "sha256": "4f50075bcd14fd28041641b7204ecad014facac2aadbe8c431b42b49e4a5f2f7"
+    },
+    {
+      "path": "evidence/comparison-full.png",
+      "bytes": 632542,
+      "sha256": "c368c3ffb294cc6bd33ea190bf7609e193321afa6d4aa9daeadf0708580ac48b"
+    },
+    {
+      "path": "evidence/comparison-shell.png",
+      "bytes": 166556,
+      "sha256": "83424905204cbaafb02cc30f569a6206acb39417279908f720789558bcf4007d"
+    },
+    {
+      "path": "evidence/full-desktop.trx",
+      "bytes": 450006,
+      "sha256": "d9cb860483e044fae3437861ecf53f9df0f3a169632559d5f31cb47136ca4113"
+    },
+    {
+      "path": "evidence/main-100.png",
+      "bytes": 239330,
+      "sha256": "7c5ad70e80b227ef67569e4c0c0eb1459c100f7b97ac03c7fa27ae9e58cb936e"
+    },
+    {
+      "path": "evidence/main-125.png",
+      "bytes": 201520,
+      "sha256": "6b7a472df4c32ac7a9649229c7b8f9ce93cabc1c6c66d19bd48295bd69837899"
+    },
+    {
+      "path": "evidence/main-150.png",
+      "bytes": 138776,
+      "sha256": "55c13e448e9c9d136926233dc3c9548460b9910af4fec09a1925ac053aeebb0b"
+    },
+    {
+      "path": "evidence/main-200.png",
+      "bytes": 103082,
+      "sha256": "10e5b1ccae691c8b5dbe5a4b30c420eb05b1f9bc71c0f23fe168659bbc8794dd"
+    },
+    {
+      "path": "evidence/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "4edef574c73bdf8c7f2b92649c8d013862ca2268b652119e19aea72f1e094ac5"
+    },
+    {
+      "path": "evidence/release-build.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/release-build.stdout.log",
+      "bytes": 1516,
+      "sha256": "d67149cc2a4cf3942f8ac6e701758458ab471d08ae60192123ad40b13ed1a765"
+    },
+    {
+      "path": "evidence/windows-ux-tests.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/windows-ux-tests.stdout.log",
+      "bytes": 631,
+      "sha256": "391648c1479f85d927cd48880ee9d4f34de70b69ab10542d88f90aaf3114f28b"
+    },
+    {
+      "path": "evidence/windows-ux.json",
+      "bytes": 16048,
+      "sha256": "854bdbf3ea129938a9f7a64e29d4f2e40ced2c10cc06fd003d6f38ef06bf7be2"
+    },
+    {
+      "path": "evidence/windows-ux.trx",
+      "bytes": 11686,
+      "sha256": "ae04c20beab4b6262bd244b5f957baecdc100cbd889e44fc28b59858d319181c"
+    }
+  ]
+}

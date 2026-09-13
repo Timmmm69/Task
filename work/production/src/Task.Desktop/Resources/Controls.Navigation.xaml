@@ -3,7 +3,7 @@
     <Style x:Key="Task.Navigation.List" TargetType="ListBox">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Contained" />
@@ -11,8 +11,8 @@
 
     <Style x:Key="Task.Navigation.Item" TargetType="ListBoxItem">
         <Setter Property="Height" Value="{DynamicResource Task.Navigation.RowHeight}" />
-        <Setter Property="Margin" Value="0,1" />
-        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="Padding" Value="{DynamicResource Task.Padding.NavigationItem}" />
         <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
@@ -28,7 +28,7 @@
                 <ControlTemplate TargetType="ListBoxItem">
                     <Border x:Name="Chrome"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{DynamicResource Task.Radius.Control}">
+                            CornerRadius="0,4,4,0">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="4" />
@@ -50,11 +50,18 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}" />
                         </Trigger>
+                        <Trigger Property="IsMouseCaptured" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Surface.Selected}" />
+                        </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Brand.Strong}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Accent}" />
                             <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
-                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Surface.Selected}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}" />
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

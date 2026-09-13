@@ -59,11 +59,18 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}" />
                         </Trigger>
+                        <Trigger Property="IsMouseCaptured" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}" />
+                        </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}" />
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
                             <Setter TargetName="Chrome" Property="BorderThickness" Value="1" />
                             <Setter TargetName="SelectedRail" Property="Background" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}" />
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

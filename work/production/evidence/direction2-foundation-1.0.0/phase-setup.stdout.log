@@ -1,0 +1,24 @@
+[PASS] PostgreSQL 16 binaries are installed.
+[PASS] Isolated PostgreSQL 16 cluster was initialized.
+[PASS] PostgreSQL 16 is accepting connections on 127.0.0.1:53424.
+[PASS] Isolated E2E database was created.
+[PASS] Existing Desktop app-data was preserved for later restoration.
+[PASS] Ephemeral E2E state was saved in the isolated runtime directory.
+TASK_DB_MIGRATOR code=Applied expectedVersion=14 actualVersion=14
+[PASS] Production migrator applied all migrations.
+TASK_DB_MIGRATOR code=BootstrapCompleted organizationId=57dedd0f-282b-43e2-ba10-dbafb4c45e12 userId=b144231b-0b95-4b27-95b7-a80238487d63 roleId=3dab4cc8-38f9-443b-8056-fd33bf603bfa
+[PASS] Real administrator account was bootstrapped.
+[PASS] Release Task.Api binary exists.
+[PASS] Production HTTPS API is ready on https://localhost:53426.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Direct create probe returned HTTP 201.
+[PASS] Same-key create replay returned the stored HTTP 201 response.
+[PASS] Replay is explicitly marked Idempotency-Replayed=true.
+[PASS] Same-key replay produced exactly one row, audit, event, outbox and completed idempotency record.
+[PASS] Real account 'task-e2e-reader' can log in.
+[PASS] Read-only user retains Task.Read access.
+[PASS] Read-only direct write is denied with HTTP 403.
+[PASS] Real account 'task-e2e-admin' can log in.
+[PASS] Desktop session was seeded for 'task-e2e-admin' through the real login endpoint.
+[PASS] SETUP COMPLETE. UI create title: QA-02 deterministic WPF task
+[PASS] UI final title: QA-02 deterministic WPF task completed

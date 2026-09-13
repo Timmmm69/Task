@@ -32,28 +32,20 @@
 
         <!-- CMP-024 NavigationRail -->
         <Border Grid.RowSpan="3" Grid.Column="0"
-                Style="{StaticResource Task.Surface.Subtle}"
-                BorderThickness="0,0,1,0">
+                Style="{StaticResource Task.Shell.NavigationSurface}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}" />
+                    <RowDefinition Height="{DynamicResource Task.Navigation.MenuGridLength}" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" BorderBrush="{DynamicResource Task.Brush.Border.Default}"
-                        BorderThickness="0,0,0,1" Padding="16,0">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border Width="32" Height="32" CornerRadius="6"
-                                Background="{DynamicResource Task.Brush.Brand.Primary}">
-                            <Path Data="{StaticResource Task.Icon.Tasks}" Fill="White"
-                                  Width="18" Height="18" Stretch="Uniform"
-                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <TextBlock Text="Task" Margin="10,0,0,0"
-                                   FontSize="{DynamicResource Task.Font.Size.Section}"
-                                   FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
+                <Border Grid.Row="0" Width="48" Height="58" Margin="10,0,0,0"
+                        HorizontalAlignment="Left" Background="Transparent"
+                        ToolTip="Основная навигация">
+                    <Path Data="{StaticResource Task.Icon.Navigation}"
+                          Width="24" Height="24" Stretch="Uniform"
+                          Fill="{DynamicResource Task.Brush.Text.Primary}"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
 
                 <ListBox x:Name="NavigationListBox" Grid.Row="1"
@@ -90,42 +82,42 @@
 
         <!-- CMP-001 SurfaceTitle + CMP-022 CommandBar + CMP-023 ConnectionStatus -->
         <Border x:Name="HeaderRegion" Grid.Row="0" Grid.Column="1"
-                Style="{StaticResource Task.Surface.Base}"
-                BorderThickness="0,0,0,1"
-                Padding="20,0">
+                Style="{StaticResource Task.Shell.HeaderSurface}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="224" />
+                    <ColumnDefinition Width="260" />
                     <ColumnDefinition Width="44" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
-                    <TextBlock Text="{Binding SelectedSection.Title}"
-                               FontSize="{DynamicResource Task.Font.Size.PageTitle}"
-                               FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
-                               Foreground="{DynamicResource Task.Brush.Text.Primary}"
-                               TextTrimming="CharacterEllipsis"
-                               ToolTip="{Binding SelectedSection.Title}"
-                               AutomationProperties.LiveSetting="Polite"
-                               AutomationProperties.HeadingLevel="Level1" />
-                    <TextBlock Text="{Binding SelectedSectionSupportingText}"
-                               FontSize="{DynamicResource Task.Font.Size.Label}"
-                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                               ToolTip="{Binding SelectedSectionSupportingText}"
-                               TextTrimming="CharacterEllipsis">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Visibility" Value="Visible" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1050}" Value="False">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding SelectedSection.Title}"
+                                   Style="{StaticResource Task.Shell.PageTitle}"
+                                   ToolTip="{Binding SelectedSection.Title}"
+                                   AutomationProperties.LiveSetting="Polite"
+                                   AutomationProperties.HeadingLevel="Level1" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding SelectedSectionSupportingText}"
+                                   Margin="18,2,0,0"
+                                   ToolTip="{Binding SelectedSectionSupportingText}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Shell.PageContext}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1220}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
                     <TextBlock Text="{Binding SessionMessage}"
                                FontSize="{DynamicResource Task.Font.Size.Metadata}"
                                Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
@@ -172,8 +164,8 @@
                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                     <Button Command="{Binding Tasks.NewTaskCommand}"
-                            Style="{StaticResource Task.Button.Secondary}"
-                            MinWidth="132"
+                            Style="{StaticResource Task.Button.Primary}"
+                            MinWidth="208"
                             TabIndex="3"
                             ToolTip="{Binding ReadOnlyActionReason}"
                             AutomationProperties.Name="Новая задача"
@@ -184,6 +176,10 @@
                                   Width="18" Height="18" Stretch="Uniform"
                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                             <TextBlock Text="Новая задача" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Alt+N" Margin="9,0,0,0" VerticalAlignment="Center"
+                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                       FontWeight="{DynamicResource Task.Font.Weight.Regular}"
+                                       Foreground="#B7D4F5" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -196,10 +192,9 @@
                             <ColumnDefinition Width="24" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Path Data="{Binding ConnectionIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
-                              Width="18" Height="18" Stretch="Uniform">
-                            <Path.Style>
-                                <Style TargetType="Path">
+                        <Ellipse Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Success}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsConnected}" Value="False">
@@ -210,10 +205,10 @@
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Path.Style>
-                        </Path>
+                            </Ellipse.Style>
+                        </Ellipse>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding ConnectionStatus}"
+                            <TextBlock Text="{Binding ConnectionTitle}"
                                        FontSize="{DynamicResource Task.Font.Size.Label}"
                                        FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
                                        TextTrimming="CharacterEllipsis"
@@ -904,9 +899,7 @@
         </Grid>
 
         <Border Grid.Row="2" Grid.Column="1"
-                Style="{StaticResource Task.Surface.Subtle}"
-                BorderThickness="0,1,0,0"
-                Padding="18,0">
+                Style="{StaticResource Task.Shell.FooterSurface}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

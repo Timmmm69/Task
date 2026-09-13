@@ -30,3 +30,10 @@
 /outputs/20260911_qa04_accessibility_usability_1.1.0.zip binary
 /outputs/20260911_qa04_accessibility_usability_1.1.0.zip.sha256 text eol=lf
 /outputs/flicker_teo_final/** binary
+
+# Direction 2 visual evidence and package payload are byte-addressed by SHA-256.
+/work/production/evidence/direction2-foundation-1.0.0/** binary
+/outputs/20260914_direction2_visual_foundation_1.0.0/** binary
+/outputs/20260914_direction2_visual_foundation_1.0.0.zip binary
+/outputs/20260914_direction2_visual_foundation_1.0.0.zip.sha256 text eol=lf
+/work/production/verification/Build-Direction2VisualFoundationPackage.py text eol=lf

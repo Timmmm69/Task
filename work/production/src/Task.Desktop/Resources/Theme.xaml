@@ -9,6 +9,7 @@
         <ResourceDictionary Source="Controls.Navigation.xaml" />
         <ResourceDictionary Source="Controls.Data.xaml" />
         <ResourceDictionary Source="Controls.States.xaml" />
+        <ResourceDictionary Source="Controls.Shell.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="Task.Window.Style" TargetType="Window">
