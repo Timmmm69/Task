@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "scenario": "QA-03 production worker reminder delivery",
+  "seedProfile": "qa03-deterministic-v1",
+  "result": "PASS",
+  "workerExecutable": "work/production/src/Task.Worker/bin/Release/net10.0/Task.Worker.dll",
+  "reminderId": "77f5bacb-9b4c-4b35-a13b-cba8fc215f38",
+  "notificationId": "fdc295a0-fa2b-4aef-93e8-655c8ab84579",
+  "targetTaskId": "8e27da6a-35ef-4471-b781-04afa5758828",
+  "notificationTitle": "Напоминание",
+  "notificationType": "reminder",
+  "reminderOccurrenceState": "delivered",
+  "reminderState": "delivered",
+  "changeFeedRows": 10
+}

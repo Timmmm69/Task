@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "scenario": "QA-03 critical user scenario E2E",
+  "seedProfile": "qa03-deterministic-v1",
+  "result": "PASS",
+  "executable": "work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.exe",
+  "initialConnection": "Подключено к серверу компании",
+  "uiChecks": {
+    "today": "PASS",
+    "todayCompact": "PASS",
+    "taskCreate": "PASS",
+    "taskConflict": "PASS",
+    "taskConflictRecovery": "PASS",
+    "calendar": "PASS",
+    "projectCreate": "PASS",
+    "catalogCreate": "PASS",
+    "contactCreate": "PASS",
+    "search": "PASS",
+    "notifications": "PASS",
+    "offlineShell": "PASS",
+    "todayOfflineReadOnly": "PASS",
+    "reconnect": "PASS"
+  },
+  "uiTaskId": "6a0816d2-5423-4a4f-a7d6-681fd48be28b",
+  "conflictServerTitle": "QA-03 ui task concurrent edit",
+  "finalTitle": "QA-03 ui task final",
+  "startedAtUtc": "2026-09-14T22:01:31.2631565+00:00",
+  "completedAtUtc": "2026-09-14T22:02:21.8288251+00:00"
+}
