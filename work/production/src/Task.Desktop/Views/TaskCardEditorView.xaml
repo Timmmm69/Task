@@ -1,27 +1,115 @@
 <UserControl x:Class="Task.Desktop.Views.TaskCardEditorView"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
- <UserControl.Resources>
-  <Style TargetType="TextBlock"><Setter Property="Margin" Value="0,10,0,5"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
-  <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"><Setter Property="DisplayMemberPath" Value="Name"/></Style>
- </UserControl.Resources>
- <StackPanel>
-  <TextBlock Text="Описание"/>
-  <TextBox Text="{Binding Description,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="90" MaxHeight="220" VerticalScrollBarVisibility="Auto" MaxLength="50000" AutomationProperties.Name="Описание задачи" AutomationProperties.AutomationId="TaskDescriptionTextBox"/>
-  <TextBlock Text="Дата без времени (ДД.ММ.ГГГГ). Доступна, когда поле «Начало» пустое."/>
-  <TextBox Text="{Binding Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsDateOnly}" AutomationProperties.Name="Дата задачи без времени"/>
-  <TextBlock Text="Длительность, минут"/>
-  <TextBox Text="{Binding Duration,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Плановая длительность"/>
-  <TextBlock Text="Поиск сотрудников, проектов и контактов"/>
-  <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск связей задачи"/>
-  <Button Content="Найти" Command="{Binding DataContext.Tasks.LoadOptionsCommand,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Secondary}" Margin="0,6,0,0"/>
-  <TextBlock Text="{Binding Message}" AutomationProperties.LiveSetting="Polite"/>
-  <TextBlock Text="Проект"/><ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" AutomationProperties.Name="Проект задачи"/>
-  <TextBlock Text="Родительская задача (один уровень)"/><ComboBox ItemsSource="{Binding Tasks}" SelectedItem="{Binding Parent}" AutomationProperties.Name="Родительская задача"/>
-  <TextBlock Text="Постановщик"/><ComboBox ItemsSource="{Binding People}" SelectedItem="{Binding Requester}" AutomationProperties.Name="Постановщик задачи"/>
-  <TextBlock Text="Контакт или контрагент"/><ComboBox ItemsSource="{Binding Counterparties}" SelectedItem="{Binding Counterparty}" AutomationProperties.Name="Контрагент задачи"/>
-  <TextBlock Text="Исполнители"/>
-  <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto"><ItemsControl ItemsSource="{Binding Assignees}" IsEnabled="{Binding CanAssign}"><ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}" Margin="0,4"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
-  <TextBlock Text="Наблюдатели"/>
-  <ScrollViewer MaxHeight="140" VerticalScrollBarVisibility="Auto"><ItemsControl ItemsSource="{Binding Watchers}" IsEnabled="{Binding CanWatch}"><ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}" Margin="0,4"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
- </StackPanel>
+             x:Name="TaskCardEditorRoot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="Task.Editor.Label" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
+            <Setter Property="Margin" Value="0,0,0,5" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="Task.Editor.Hint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Metadata}" />
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+            <Setter Property="DisplayMemberPath" Value="Name" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <TextBlock Text="Описание" Style="{StaticResource Task.Editor.Label}" />
+        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="220"
+                 VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="24"
+                 Style="{StaticResource Task.Input.Text}"
+                 AutomationProperties.Name="Описание задачи"
+                 AutomationProperties.AutomationId="TaskDescriptionTextBox" />
+
+        <Grid Margin="0,14,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Проект" Style="{StaticResource Task.Editor.Label}" />
+                <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" TabIndex="25"
+                          AutomationProperties.Name="Проект задачи" AutomationProperties.AutomationId="TaskProjectComboBox" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Плановая длительность, минут" Style="{StaticResource Task.Editor.Label}" />
+                <TextBox Text="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" TabIndex="26"
+                         Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Плановая длительность"
+                         AutomationProperties.AutomationId="TaskDurationTextBox" />
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Text="Исполнители" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
+        <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Assignees}" IsEnabled="{Binding CanAssign}">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}" Margin="0,4,16,4"
+                                  MinHeight="32" VerticalContentAlignment="Center" AutomationProperties.Name="{Binding Name}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <TextBlock Text="Назначение недоступно без права Task.Assign; уже выбранные значения остаются видимыми."
+                   Style="{StaticResource Task.Editor.Hint}" />
+
+        <Expander Header="Дополнительные связи и планирование" IsExpanded="False" Margin="0,16,0,0"
+                  AutomationProperties.Name="Дополнительные поля задачи">
+            <StackPanel Margin="0,12,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Дата без времени" Style="{StaticResource Task.Editor.Label}" />
+                        <TextBox Text="{Binding Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsDateOnly}"
+                                 TabIndex="27" Style="{StaticResource Task.Input.Text}"
+                                 AutomationProperties.Name="Дата задачи без времени"
+                                 AutomationProperties.HelpText="Формат ДД.ММ.ГГГГ; доступно, когда начало не указано" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Родительская задача" Style="{StaticResource Task.Editor.Label}" />
+                        <ComboBox ItemsSource="{Binding Tasks}" SelectedItem="{Binding Parent}" TabIndex="28"
+                                  AutomationProperties.Name="Родительская задача" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Постановщик" Style="{StaticResource Task.Editor.Label}" />
+                        <ComboBox ItemsSource="{Binding People}" SelectedItem="{Binding Requester}" TabIndex="29"
+                                  AutomationProperties.Name="Постановщик задачи" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Контакт или контрагент" Style="{StaticResource Task.Editor.Label}" />
+                        <ComboBox ItemsSource="{Binding Counterparties}" SelectedItem="{Binding Counterparty}" TabIndex="30"
+                                  AutomationProperties.Name="Контрагент задачи" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Наблюдатели" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
+                <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Watchers}" IsEnabled="{Binding CanWatch}">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}" Margin="0,4,16,4" MinHeight="32" VerticalContentAlignment="Center" /></DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <TextBlock Text="Поиск сотрудников, проектов, задач и контактов" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" TabIndex="31"
+                             Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Поиск связей задачи" />
+                    <Button Grid.Column="2" Content="Найти" TabIndex="32" MinWidth="92"
+                            Command="{Binding DataContext.Tasks.LoadOptionsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            Style="{StaticResource Task.Button.Secondary}" />
+                </Grid>
+                <TextBlock Text="{Binding Message}" Style="{StaticResource Task.Editor.Hint}" AutomationProperties.LiveSetting="Polite" />
+            </StackPanel>
+        </Expander>
+    </StackPanel>
 </UserControl>

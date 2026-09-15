@@ -279,6 +279,38 @@ public sealed class VisualFoundationTests
         Assert.Contains("Несрочные и просроченные", xaml, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void TasksAndInboxXaml_ExposeDirection2DensityKeyboardUiaAndScalingContracts()
+    {
+        var main = File.ReadAllText(ProjectFile("src", "Task.Desktop", "MainWindow.xaml"));
+        var inbox = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Views", "InboxView.xaml"));
+        var editor = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Views", "TaskCardEditorView.xaml"));
+        var dataStyles = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.Data.xaml"));
+
+        Assert.Contains("TasksStatusFilter", main, StringComparison.Ordinal);
+        Assert.Contains("TasksProjectFilter", main, StringComparison.Ordinal);
+        Assert.Contains("ProjectText", main, StringComparison.Ordinal);
+        Assert.Contains("AssigneeText", main, StringComparison.Ordinal);
+        Assert.Contains("IsFilteredEmpty", main, StringComparison.Ordinal);
+        Assert.Contains("Task.ResponsiveGridLengthConverter", main, StringComparison.Ordinal);
+
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxScreen\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxCaptureTextBox\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxList\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxConvertButton\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxInspectorExpander\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxConversionPanel\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("AutomationProperties.AutomationId=\"InboxSaveConversionButton\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("KeyDown=\"OnInboxListKeyDown\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("ConverterParameter=640:320", inbox, StringComparison.Ordinal);
+        Assert.Contains("TextWrapping=\"Wrap\"", inbox, StringComparison.Ordinal);
+
+        Assert.Contains("TaskProjectComboBox", editor, StringComparison.Ordinal);
+        Assert.Contains("TaskDescriptionTextBox", editor, StringComparison.Ordinal);
+        Assert.Contains("Дополнительные связи и планирование", editor, StringComparison.Ordinal);
+        Assert.Contains("<Setter Property=\"BorderThickness\" Value=\"0\" />", dataStyles, StringComparison.Ordinal);
+    }
+
     private static DesktopTaskDto CreateTask(
         DesktopTaskStatus status = DesktopTaskStatus.New,
         DesktopTaskPriority priority = DesktopTaskPriority.Normal) =>

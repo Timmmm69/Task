@@ -197,6 +197,9 @@ public partial class App : global::System.Windows.Application
         var tasks = new TasksViewModel(
             tasksClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+        var inbox = new InboxViewModel(
+            tasksClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
         var calendar = new CalendarViewModel(
             calendarClient,
@@ -216,7 +219,7 @@ public partial class App : global::System.Windows.Application
         var workHub = new WorkHubViewModel(
             new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
-        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity);
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox);
         var window = new MainWindow(viewModel);
         _mainWindow = window;
         _mainSessionService = sessionService;
@@ -298,6 +301,8 @@ public partial class App : global::System.Windows.Application
         {
             viewModel.Tasks.UpdateCapabilities(
                 sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Inbox?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
             viewModel.Calendar?.UpdateCapabilities(
                 sessionService.CurrentSessionMetadata?.Capabilities);
             viewModel.Today?.UpdateCapabilities(
@@ -309,6 +314,7 @@ public partial class App : global::System.Windows.Application
         }
 
         viewModel.Tasks.UpdateSessionState(signedIn);
+        viewModel.Inbox?.UpdateSessionState(signedIn);
         // A token refresh keeps the authenticated session; clearing it here would
         // discard an open calendar/recurrence editor every refresh interval.
         viewModel.Calendar?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);

@@ -27,7 +27,7 @@ public sealed class TasksViewModelTests
         Assert.False(viewModel.ShowInlineMessage);
         Assert.True(viewModel.HasSuccessfulRefresh);
         Assert.StartsWith("Последнее обновление:", viewModel.LastSuccessfulRefreshText, StringComparison.Ordinal);
-        Assert.Equal("Показано задач: 1", viewModel.DisplayedCountText);
+        Assert.Equal("Показано 1 из 1", viewModel.DisplayedCountText);
         Assert.Single(viewModel.Items);
         Assert.Equal("В работе", viewModel.Items[0].StatusText);
         Assert.Equal("Критический", viewModel.Items[0].PriorityText);
@@ -707,6 +707,41 @@ public sealed class TasksViewModelTests
         await vm.OpenByIdAsync(Guid.NewGuid());
         Assert.Equal("Несохранённый черновик", vm.Editor.Title);
         Assert.Equal(task.Id, vm.SelectedItem?.Id);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task FiltersUseLocalizedStatusAndExposeRecoveryForEmptyResult()
+    {
+        var planned = CreateTask("Запланированная", DesktopTaskStatus.New);
+        var completed = CreateTask("Завершённая", DesktopTaskStatus.Completed);
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([planned, completed]));
+        using var viewModel = new TasksViewModel(client, ["Task.Read"]);
+        await viewModel.ActivateAsync();
+
+        viewModel.SelectedStatusFilter = "В работе";
+
+        Assert.Empty(viewModel.Items);
+        Assert.True(viewModel.IsFilteredEmpty);
+        Assert.True(viewModel.ResetFiltersCommand.CanExecute(null));
+        await viewModel.ResetFiltersCommand.ExecuteAsync();
+        Assert.Equal(2, viewModel.Items.Count);
+        Assert.False(viewModel.HasActiveFilters);
+    }
+
+    [Fact]
+    public void ItemProjectionKeepsLongRussianTitleAndTruthfulEmptyFields()
+    {
+        var title = string.Concat(Enumerable.Repeat("Очень длинное русское название задачи без потери данных ", 12));
+        var task = CreateTask(title) with { DeadlineAtUtc = null };
+
+        var item = new TaskItemViewModel(task);
+
+        Assert.Equal(title, item.Title);
+        Assert.Equal("Без проекта", item.ProjectText);
+        Assert.Equal("Не назначен", item.AssigneeText);
+        Assert.Equal("Без срока", item.DeadlineText);
+        Assert.Contains(title, item.AutomationName, StringComparison.Ordinal);
     }
 
     private static DesktopTasksApiResult<DesktopTaskPage> SucceededPage(

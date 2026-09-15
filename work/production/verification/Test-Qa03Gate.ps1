@@ -129,6 +129,16 @@ function Wait-ElementById([System.Windows.Automation.AutomationElement]$root, [s
     } while ([DateTime]::UtcNow -lt $deadline)
     throw "UI Automation element '$automationId' was not ready within $timeoutSeconds seconds."
 }
+function Wait-ElementGoneById([System.Windows.Automation.AutomationElement]$root, [string]$automationId,
+    [int]$timeoutSeconds = 45) {
+    $deadline = [DateTime]::UtcNow.AddSeconds($timeoutSeconds)
+    do {
+        $element = Find-ElementById $root $automationId
+        if ($null -eq $element -or $element.Current.IsOffscreen) { return }
+        Start-Sleep -Milliseconds 200
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw "UI Automation element '$automationId' remained visible for $timeoutSeconds seconds."
+}
 function Find-ElementsByNameContains([System.Windows.Automation.AutomationElement]$root,
     [string]$text, [string]$controlType = '') {
     $nameCondition = [System.Windows.Automation.PropertyCondition]::new(
@@ -437,13 +447,46 @@ try {
     }
     $ui['todayCompact'] = 'PASS'
 
+    Navigate-To $window 'inbox' 'InboxScreen'
+    $inboxTitle = 'QA-03 входящая запись с длинной русской строкой'
+    $captureBox = Wait-ElementById $window 'InboxCaptureTextBox' 30
+    Set-ElementValue $captureBox $inboxTitle
+    Invoke-Element (Wait-ElementById $window 'InboxCaptureButton' 30 -Enabled)
+    $capturedInbox = Assert-ListContains $window 'InboxList' $inboxTitle 60
+    Assert-Qa03 ($capturedInbox.Current.Name.Contains('Без классификации')) 'Quick capture created a real unclassified server task.'
+    $ui['inboxCapture'] = 'PASS'
+    Resize-Window $window 1280 900
+    $window = Find-MainWindow
+    Capture-Window 'inbox-direction2' $window
+
+    $inboxSelection = [System.Windows.Automation.SelectionItemPattern]$capturedInbox.GetCurrentPattern(
+        [System.Windows.Automation.SelectionItemPattern]::Pattern)
+    $inboxSelection.Select()
+    Invoke-Element (Wait-ElementById $window 'InboxConvertButton' 30 -Enabled)
+    Wait-ElementById $window 'InboxConversionTitleBox' 30 | Out-Null
+    Write-Pass 'Inbox conversion opens from the accessible split-layout inspector.'
+    Start-Sleep -Milliseconds 750
+    Capture-Window 'inbox-conversion-open' $window
+    Dump-UiaTree $window (Join-Path $evidenceRoot 'inbox-conversion-uia.txt')
+    $conversionDeadline = Wait-ElementById $window 'InboxConversionDeadline' 30
+    Set-ElementValue $conversionDeadline ([DateTime]::Today.AddDays(14).AddHours(17).ToString('dd.MM.yyyy HH:mm'))
+    Capture-Window 'inbox-conversion-direction2' $window
+    Invoke-Element (Wait-ElementById $window 'InboxSaveConversionButton' 30 -Enabled)
+    Wait-ElementGoneById $window 'InboxConversionTitleBox' 60
+    Navigate-To $window 'tasks' 'TasksList'
+    $convertedTask = Assert-TaskListItem $window $inboxTitle 60
+    Assert-Qa03 ($convertedTask.Current.Name.Contains($inboxTitle)) 'Inbox conversion kept the same server task identity and title.'
+    Assert-Qa03 (-not $convertedTask.Current.Name.Contains('Срок: Без срока')) 'Inbox conversion persisted the required deadline.'
+    $ui['inboxConversion'] = 'PASS'
+    Capture-Window 'tasks-direction2' $window
+
     Navigate-To $window 'tasks' 'NewTaskButton'
     Invoke-Element (Wait-ElementById $window 'NewTaskButton' 30 -Enabled)
     $title = Wait-ElementById $window 'TaskTitleTextBox'
     Set-ElementValue $title 'QA-03 ui created task'
     Invoke-Element (Wait-ElementById $window 'SaveTaskButton' 15 -Enabled)
     $createdItem = Assert-TaskListItem $window 'QA-03 ui created task'
-    Assert-Qa03 ($createdItem.Current.Name -match 'Статус: Новая') 'Admin created a deterministic task through the real WPF UI.'
+    Assert-Qa03 ($createdItem.Current.Name -match 'Статус: Запланирована') 'Admin created a deterministic task through the real WPF UI.'
     $ui['taskCreate'] = 'PASS'
     Capture-Window 'tasks-created' $window
 
@@ -471,7 +514,7 @@ try {
     Set-ElementValue $reloadedTitle 'QA-03 ui task final'
     Invoke-Element (Wait-ElementById $window 'SaveTaskButton' 30 -Enabled)
     $finalItem = Assert-TaskListItem $window 'QA-03 ui task final'
-    Assert-Qa03 ($finalItem.Current.Name -match 'Статус: Новая') 'Conflict reload and explicit re-save completed the task edit.'
+    Assert-Qa03 ($finalItem.Current.Name -match 'Статус: Запланирована') 'Conflict reload and explicit re-save completed the task edit.'
     $ui['taskConflictRecovery'] = 'PASS'
     Capture-Window 'tasks-recovered' $window
 

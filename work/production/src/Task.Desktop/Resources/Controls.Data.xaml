@@ -15,6 +15,17 @@
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
     </Style>
 
+    <Style x:Key="Task.Table.TitleText" TargetType="TextBlock" BasedOn="{StaticResource Task.Table.CellText}">
+        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Body}" />
+        <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
+        <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Brand.Strong}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="Task.DataList" TargetType="ListBox">
         <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
@@ -119,18 +130,19 @@
     </Style>
 
     <Style x:Key="Task.Semantic.StatusPill" TargetType="Border">
-        <Setter Property="MinHeight" Value="28" />
-        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="MinHeight" Value="24" />
+        <Setter Property="Padding" Value="8,2" />
         <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
                 <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                <Setter Property="BorderThickness" Value="1" />
             </DataTrigger>
         </Style.Triggers>
     </Style>

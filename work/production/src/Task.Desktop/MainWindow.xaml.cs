@@ -108,6 +108,15 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None
+            && DataContext is MainWindowViewModel { Inbox.HasConversion: true } viewModel
+            && viewModel.Inbox!.CancelConversionCommand.CanExecute(null))
+        {
+            viewModel.Inbox.CancelConversionCommand.Execute(null);
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key != Key.F6 || Keyboard.Modifiers != ModifierKeys.None)
         {
             return;

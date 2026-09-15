@@ -29,7 +29,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         TodayViewModel? today = null,
         ProjectsViewModel? projects = null,
         WorkHubViewModel? workHub = null,
-        DesktopConnectivityService? connectivity = null)
+        DesktopConnectivityService? connectivity = null,
+        InboxViewModel? inbox = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
@@ -38,6 +39,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         Today = today;
         Projects = projects;
         WorkHub = workHub;
+        Inbox = inbox;
         _connectivity = connectivity;
         NewTaskCommand = new AsyncCommand(OpenNewTaskAsync,
             _ => Tasks?.CanCreateFromShell == true && IsConnected);
@@ -62,6 +64,10 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         {
             WorkHub.PropertyChanged += OnWorkHubPropertyChanged;
             WorkHub.OpenObjectRequested += OpenWorkObject;
+        }
+        if (Inbox is not null)
+        {
+            Inbox.PropertyChanged += OnInboxPropertyChanged;
         }
         if (_connectivity is not null)
         {
@@ -111,6 +117,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(IsTasksSectionSelected));
             OnPropertyChanged(nameof(IsCalendarSectionSelected));
             OnPropertyChanged(nameof(IsTodaySectionSelected));
+            OnPropertyChanged(nameof(IsInboxSectionSelected));
             OnPropertyChanged(nameof(IsProjectsSectionSelected));
             OnPropertyChanged(nameof(IsWorkHubSectionSelected));
             OnPropertyChanged(nameof(SelectedSectionSupportingText));
@@ -130,6 +137,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             {
                 Tasks?.Deactivate();
             }
+            if (IsInboxSectionSelected) Inbox?.Activate(); else Inbox?.Deactivate();
             if (IsCalendarSectionSelected) Calendar?.Activate(); else Calendar?.Deactivate();
             if (IsProjectsSectionSelected) Projects?.Activate(); else Projects?.Deactivate();
             if (TryGetWorkArea(SelectedSection?.Route, out var workArea)) WorkHub?.Activate(workArea); else WorkHub?.Deactivate();
@@ -181,6 +189,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public TasksViewModel? Tasks { get; }
 
+    public InboxViewModel? Inbox { get; }
+
     public CalendarViewModel? Calendar { get; }
 
     public TodayViewModel? Today { get; }
@@ -194,6 +204,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public bool IsTasksSectionSelected =>
         string.Equals(SelectedSection?.Route, "tasks", StringComparison.Ordinal);
+
+    public bool IsInboxSectionSelected =>
+        string.Equals(SelectedSection?.Route, "inbox", StringComparison.Ordinal);
 
     public bool IsCalendarSectionSelected =>
         string.Equals(SelectedSection?.Route, "calendar", StringComparison.Ordinal);
@@ -237,6 +250,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             ? "Повторная проверка сервера · изменения временно заблокированы"
         : IsTodaySectionSelected
             ? Today?.CanRead == true ? "Онлайн · сегодняшний план доступен" : "Онлайн · нет доступа к расписанию"
+        : IsInboxSectionSelected
+            ? Inbox?.IsReadOnly == true ? "Онлайн · входящие только для просмотра" : "Онлайн · разбор входящих доступен"
         : IsCalendarSectionSelected
             ? Calendar?.CanCreate == true ? "Онлайн · запись календаря доступна" : "Онлайн · календарь только для просмотра"
         : IsProjectsSectionSelected
@@ -273,6 +288,10 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             ? $"Показаны последние подтверждённые данные · {LastSuccessfulRefreshText}"
         : IsTodaySectionSelected
             ? "Сегодняшнее расписание предоставляется сервером компании"
+        : IsInboxSectionSelected
+            ? Inbox?.IsReadOnly == true
+                ? "Входящие предоставляются сервером компании · только просмотр"
+                : "Входящие и преобразование синхронизируются с сервером компании"
         : IsCalendarSectionSelected
             ? Calendar?.WriteAccessText ?? "Календарь сервера компании"
         : IsProjectsSectionSelected
@@ -285,6 +304,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public string LastSuccessfulRefreshText => IsTodaySectionSelected
         ? Today?.LastSuccessfulRefreshText ?? "Сегодняшний план ещё не обновлялся"
+        : IsInboxSectionSelected
+        ? Inbox?.LastSuccessfulRefreshText ?? "Входящие ещё не обновлялись"
         : IsCalendarSectionSelected
         ? Calendar?.LastSuccessfulRefreshText ?? "Календарь ещё не обновлялся"
         : IsProjectsSectionSelected
@@ -295,6 +316,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public AsyncCommand? FooterRefreshCommand => IsTodaySectionSelected
         ? Today?.RefreshCommand
+        : IsInboxSectionSelected
+        ? Inbox?.RefreshCommand
         : IsCalendarSectionSelected
         ? Calendar?.RefreshCommand
         : IsProjectsSectionSelected
@@ -352,6 +375,10 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             WorkHub.PropertyChanged -= OnWorkHubPropertyChanged;
             WorkHub.OpenObjectRequested -= OpenWorkObject;
         }
+        if (Inbox is not null)
+        {
+            Inbox.PropertyChanged -= OnInboxPropertyChanged;
+        }
         if (_connectivity is not null)
         {
             _connectivity.StatusChanged -= OnConnectivityChanged;
@@ -360,6 +387,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         LogoutCommand.Dispose();
         NewTaskCommand.Dispose();
         Tasks?.Dispose();
+        Inbox?.Dispose();
         Calendar?.Dispose();
         Today?.Dispose();
         Projects?.Dispose();
@@ -429,6 +457,19 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private void OnInboxPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(InboxViewModel.IsReadOnly)
+            or nameof(InboxViewModel.WriteAccessText)
+            or nameof(InboxViewModel.LastSuccessfulRefreshText))
+        {
+            OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(DataSourceStatus));
+            OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+            OnPropertyChanged(nameof(FooterRefreshCommand));
+        }
+    }
+
     private void OnConnectivityChanged(object? sender, EventArgs e) => ApplyConnectivityState();
 
     private void ApplyConnectivityState()
@@ -436,6 +477,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         if (_disposed) return;
         var available = _connectivity?.Status == DesktopConnectivityStatus.Online;
         Tasks?.UpdateConnectivity(available);
+        Inbox?.UpdateConnectivity(available);
         Calendar?.UpdateConnectivity(available);
         Projects?.UpdateConnectivity(available);
         WorkHub?.UpdateConnectivity(available);

@@ -284,6 +284,9 @@
                             <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding IsInboxSectionSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
                             <DataTrigger Binding="{Binding IsCalendarSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
@@ -331,11 +334,40 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
+                <Grid Grid.Row="0" Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Статус" Style="{StaticResource Task.Inspector.FactLabel}" />
+                        <ComboBox ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatusFilter}"
+                                  MinWidth="180" Style="{StaticResource Task.Input.Combo}" TabIndex="3"
+                                  AutomationProperties.Name="Фильтр задач по статусу"
+                                  AutomationProperties.AutomationId="TasksStatusFilter" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Проект" Style="{StaticResource Task.Inspector.FactLabel}" />
+                        <ComboBox ItemsSource="{Binding ProjectFilters}" SelectedItem="{Binding SelectedProjectFilter}"
+                                  MinWidth="200" Style="{StaticResource Task.Input.Combo}" TabIndex="4"
+                                  AutomationProperties.Name="Фильтр задач по проекту"
+                                  AutomationProperties.AutomationId="TasksProjectFilter" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="4" Text="{Binding DisplayedCountText}" VerticalAlignment="Bottom" Margin="16,0,0,11"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                               AutomationProperties.Name="Количество задач после фильтрации" />
+                </Grid>
+
+                <Border Grid.Row="1" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="24" />
@@ -354,7 +386,7 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="1" Margin="0,0,0,12"
+                <Border Grid.Row="2" Margin="0,0,0,12"
                         AutomationProperties.Name="Состояние списка задач"
                         AutomationProperties.AutomationId="TasksStateMessage"
                         AutomationProperties.LiveSetting="Assertive">
@@ -378,7 +410,7 @@
                     </DockPanel>
                 </Border>
 
-                <Border Grid.Row="2"
+                <Border Grid.Row="3"
                         AutomationProperties.Name="Загрузка списка задач"
                         AutomationProperties.LiveSetting="Polite">
                     <Border.Style>
@@ -403,7 +435,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Row="2"
+                <Border Grid.Row="3"
                         AutomationProperties.Name="{Binding StateTitle}"
                         AutomationProperties.LiveSetting="Assertive">
                     <Border.Style>
@@ -432,7 +464,7 @@
                     </StackPanel>
                 </Border>
 
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="3">
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -469,16 +501,18 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="116" />
-                                        <ColumnDefinition Width="112" />
-                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1000:132}" />
-                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1180:126}" />
+                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=720:100}" />
+                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=800:105}" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=680:100}" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="ЗАДАЧА" Style="{StaticResource Task.Table.HeaderText}" />
-                                    <TextBlock Grid.Column="1" Text="СТАТУС" Style="{StaticResource Task.Table.HeaderText}" />
-                                    <TextBlock Grid.Column="2" Text="ПРИОРИТЕТ" Style="{StaticResource Task.Table.HeaderText}" />
-                                    <TextBlock Grid.Column="3" Text="СРОК" Style="{StaticResource Task.Table.HeaderText}" />
-                                    <TextBlock Grid.Column="4" Text="ОБНОВЛЕНО" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="1" Text="ПРОЕКТ" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="2" Text="ИСПОЛНИТЕЛЬ" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="3" Text="СТАТУС" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="4" Text="ПРИОРИТЕТ" Style="{StaticResource Task.Table.HeaderText}" />
+                                    <TextBlock Grid.Column="5" Text="СРОК" Style="{StaticResource Task.Table.HeaderText}" />
                                 </Grid>
                             </Border>
 
@@ -498,18 +532,27 @@
                                         <Grid ToolTip="{Binding Title}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="116" />
-                                                <ColumnDefinition Width="112" />
-                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1000:132}" />
-                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=1180:126}" />
+                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=720:100}" />
+                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=800:105}" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="90" />
+                                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=680:100}" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="{Binding Title}"
-                                                       FontSize="{DynamicResource Task.Font.Size.Body}"
-                                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
-                                                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                       Style="{StaticResource Task.Table.TitleText}"
                                                        VerticalAlignment="Center"
                                                        TextTrimming="CharacterEllipsis" />
-                                            <Border Grid.Column="1" Style="{StaticResource Task.Semantic.StatusPill}"
+                                            <TextBlock Grid.Column="1" Text="{Binding ProjectText}" Style="{StaticResource Task.Table.CellText}"
+                                                       ToolTip="{Binding ProjectText}" />
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                                                        ToolTip="{Binding AssigneeText}" AutomationProperties.Name="{Binding AssigneeText}">
+                                                <Border Width="24" Height="24" CornerRadius="12" Background="#476582" Margin="0,0,7,0">
+                                                    <TextBlock Text="{Binding AssigneeInitials}" Foreground="White" FontSize="9" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="{Binding AssigneeText}" Style="{StaticResource Task.Table.CellText}" />
+                                            </StackPanel>
+                                            <Border Grid.Column="3" Style="{StaticResource Task.Semantic.StatusPill}"
                                                     AutomationProperties.Name="{Binding StatusText}">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
@@ -519,7 +562,7 @@
                                                                Style="{StaticResource Task.Table.CellText}" />
                                                 </StackPanel>
                                             </Border>
-                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                                            <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center"
                                                         AutomationProperties.Name="{Binding PriorityText}">
                                                 <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
                                                       Tag="{Binding PriorityTone}"
@@ -527,13 +570,13 @@
                                                 <TextBlock Text="{Binding PriorityText}" Margin="6,0,0,0"
                                                            Style="{StaticResource Task.Table.CellText}" />
                                             </StackPanel>
-                                            <TextBlock Grid.Column="3" Text="{Binding DeadlineText}"
-                                                       Style="{StaticResource Task.Table.CellText}"
-                                                       ToolTip="{Binding DeadlineText}" />
-                                            <TextBlock Grid.Column="4" Text="{Binding UpdatedText}"
-                                                       Style="{StaticResource Task.Table.CellText}"
-                                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                                                       ToolTip="{Binding UpdatedText}" />
+                                            <TextBlock Grid.Column="5" Text="{Binding DeadlineText}" ToolTip="{Binding DeadlineText}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Table.CellText}">
+                                                        <Style.Triggers><DataTrigger Binding="{Binding IsOverdue}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" /><Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" /></DataTrigger></Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
                                         </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
@@ -647,6 +690,14 @@
                                                 <TextBlock Text="Обновлена" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                 <TextBlock Text="{Binding UpdatedText}" Style="{StaticResource Task.Inspector.FactValue}" />
                                             </StackPanel>
+                                            <StackPanel Margin="0,0,12,14">
+                                                <TextBlock Text="Проект" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                <TextBlock Text="{Binding ProjectText}" Style="{StaticResource Task.Inspector.FactValue}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="0,0,0,14">
+                                                <TextBlock Text="Исполнитель" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                <TextBlock Text="{Binding AssigneeText}" Style="{StaticResource Task.Inspector.FactValue}" />
+                                            </StackPanel>
                                         </UniformGrid>
                                         <Button Content="Изменить"
                                                 Command="{Binding DataContext.Tasks.EditTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -722,7 +773,25 @@
                     </Expander>
                 </Grid>
 
-                <Grid Grid.Row="3" Margin="0,12,0,0" MinHeight="40">
+                <Border Grid.Row="3"
+                        AutomationProperties.Name="По выбранным фильтрам задач нет">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers><DataTrigger Binding="{Binding IsFilteredEmpty}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="480">
+                        <Path Data="{StaticResource Task.Icon.Search}" Width="28" Height="28" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                        <TextBlock Text="По этим фильтрам задач нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0" TextAlignment="Center" />
+                        <TextBlock Text="Сбросьте фильтры, чтобы вернуть полный список." Style="{StaticResource Task.State.Body}" Margin="0,6,0,16" TextAlignment="Center" />
+                        <Button Content="Сбросить фильтры" Command="{Binding ResetFiltersCommand}"
+                                Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Сбросить фильтры задач" />
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="4" Margin="0,12,0,0" MinHeight="40">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="100" />
@@ -771,7 +840,7 @@
                            AutomationProperties.AutomationId="TasksAnnouncement"
                            AutomationProperties.LiveSetting="Assertive" />
 
-                <Border Grid.RowSpan="4" HorizontalAlignment="Right" Width="400" MaxWidth="400"
+                <Border Grid.RowSpan="5" HorizontalAlignment="Right" Width="510" MaxWidth="510"
                         Background="{DynamicResource Task.Brush.Surface.Base}"
                         BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0"
                         Padding="20" Panel.ZIndex="20" DataContext="{Binding Editor}"
@@ -869,11 +938,11 @@
 
                             <WrapPanel Margin="0,18,0,0">
                                 <Button Content="{Binding SubmitText}" Style="{StaticResource Task.Button.Primary}"
-                                        IsDefault="True" MinWidth="116" Margin="0,0,8,8" TabIndex="24"
+                                        IsDefault="True" MinWidth="116" Margin="0,0,8,8" TabIndex="40"
                                         Command="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         AutomationProperties.Name="Сохранить задачу" AutomationProperties.AutomationId="SaveTaskButton" />
                                 <Button Content="Отмена" Style="{StaticResource Task.Button.Secondary}"
-                                        Margin="0,0,0,8" TabIndex="25"
+                                        Margin="0,0,0,8" TabIndex="41"
                                         Command="{Binding DataContext.Tasks.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         AutomationProperties.Name="Отменить редактирование задачи" />
                             </WrapPanel>
@@ -881,6 +950,19 @@
                     </ScrollViewer>
                 </Border>
             </Grid>
+
+            <views:InboxView DataContext="{Binding Inbox}">
+                <views:InboxView.Style>
+                    <Style TargetType="views:InboxView">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsInboxSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </views:InboxView.Style>
+            </views:InboxView>
 
             <views:TodayView DataContext="{Binding Today}">
                 <views:TodayView.Style>
