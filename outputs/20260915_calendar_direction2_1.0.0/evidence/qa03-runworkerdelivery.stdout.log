@@ -1,0 +1,7 @@
+[PASS] Release Task.Worker binary exists.
+[PASS] Production worker delivered the due reminder as a user notification.
+[PASS] Reminder occurrence reached the delivered state.
+[PASS] Reminder aggregate is marked delivered.
+[PASS] Outbox publisher materialized the durable change feed.
+[PASS] Delivered notification has the canonical reminder title.
+[PASS] QA-03 WORKER DELIVERY PASSED.

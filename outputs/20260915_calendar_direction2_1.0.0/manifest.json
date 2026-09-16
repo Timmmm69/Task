@@ -1,0 +1,480 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "calendar-direction2-production-wpf",
+  "version": "1.0.0",
+  "createdAt": "2026-09-16T11:36:05.1677553+03:00",
+  "baseRevision": "f4c96f581c8cccd72e13d38ba2ab7331d2949772",
+  "roadmapIds": [
+    "PROD-03",
+    "QA-03"
+  ],
+  "state": "validated",
+  "validation": {
+    "result": "PASS",
+    "releaseBuild": "PASS",
+    "desktopTests": "333/333 PASS",
+    "domainCalendarScheduleTests": "232/232 PASS",
+    "serviceHostCalendarTests": "33/33 PASS",
+    "qa03": "PASS",
+    "windowsUxScaling": "PASS",
+    "visualQa": "PASS",
+    "dashboard": "PASS"
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "design-qa.md",
+      "bytes": 4208,
+      "sha256": "446aca9f00b2d35b5afe9d0c4bc31702618608d560309bbe1421c9520e2ef957"
+    },
+    {
+      "path": "evidence/api-assertions.json",
+      "bytes": 2037,
+      "sha256": "19f36387fbfff513374b943330302c3562e3553dd1a161fb956b274710a17d77"
+    },
+    {
+      "path": "evidence/calendar-editor.png",
+      "bytes": 154734,
+      "sha256": "7dfb68768951e092f1f8e2e9bcc14b07bbfb789f6e094a1539760888ef0d700b"
+    },
+    {
+      "path": "evidence/calendar-offline.png",
+      "bytes": 165384,
+      "sha256": "45038245145ccec83ae6f1f9600f7ab27103382742a6bb287a534184f9942160"
+    },
+    {
+      "path": "evidence/calendar-overlap.png",
+      "bytes": 169159,
+      "sha256": "ba506042f431112c40f91974f31b7f8c2bcb65fff3b29a93b774eb73cb0e8bd7"
+    },
+    {
+      "path": "evidence/calendar-selected-uia.txt",
+      "bytes": 13394,
+      "sha256": "050bd6131bb93e6ac29dc3f6b1ae091053e66dfe11024996a4bad31e27084f3c"
+    },
+    {
+      "path": "evidence/calendar-week-uia.txt",
+      "bytes": 12600,
+      "sha256": "3556ca2db1b2290de9a23c8b080d54a952c3c7311a16d46ac64433a46c56f4fe"
+    },
+    {
+      "path": "evidence/calendar-week.png",
+      "bytes": 165539,
+      "sha256": "d457c21cd61b64968fc6668553d01a3ab33797acb6876f96c1414ee5274ba766"
+    },
+    {
+      "path": "evidence/catalog.png",
+      "bytes": 163448,
+      "sha256": "df94c34e9bf9a2976e78fd19c7543db031b24ba34e69a47dc2ff7b1585525199"
+    },
+    {
+      "path": "evidence/comparison-calendar-editor.png",
+      "bytes": 140983,
+      "sha256": "ee48eda4782f2ef4c8baaf060311b3ba35dc1f04ce5cae6e1021474a3a1de4ea"
+    },
+    {
+      "path": "evidence/comparison-calendar-overlap.png",
+      "bytes": 328398,
+      "sha256": "fea15adfceb6b2726b22749747b9bca522114d42f8420d1d66b55db227808ea7"
+    },
+    {
+      "path": "evidence/comparison-calendar-week.png",
+      "bytes": 314025,
+      "sha256": "0d372c45dd90ab8999e8e4ad61b6a0fd912298f588a046758ad82efba9c22584"
+    },
+    {
+      "path": "evidence/contacts.png",
+      "bytes": 138302,
+      "sha256": "8eb21f41782001831327a603b5ee0db5bf4d6e9809e044e225d3c08f2e4a984f"
+    },
+    {
+      "path": "evidence/desktop.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/desktop.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/inbox-conversion-direction2.png",
+      "bytes": 125897,
+      "sha256": "37482636766840e6c03873d347277a8b172288e8351d328bf40816bcdb190653"
+    },
+    {
+      "path": "evidence/inbox-conversion-open.png",
+      "bytes": 123209,
+      "sha256": "9ea0ffb59ebb47d81dab540acd9ecaec9e6fd3745b3c4ff9909a4628c68f57fa"
+    },
+    {
+      "path": "evidence/inbox-conversion-uia.txt",
+      "bytes": 7076,
+      "sha256": "3b2e6ec5f2299bcc1a8b3c854f5c1f66bd1f4a9a9c46b033dae12089655751a3"
+    },
+    {
+      "path": "evidence/inbox-direction2.png",
+      "bytes": 147024,
+      "sha256": "c57d8d1f1d52fe41f5cfa50c331a70da5aacd4a63eb0c30f4c25996cb160a95c"
+    },
+    {
+      "path": "evidence/notifications-assertions.json",
+      "bytes": 889,
+      "sha256": "0f199216e65288cc967f4fba37bdf3af94bd5958a136ea3713b8b3f43ef92309"
+    },
+    {
+      "path": "evidence/notifications.png",
+      "bytes": 123214,
+      "sha256": "d10224a47f5f1ff7e01869269beb39c1a2f23eb6d2cd35f98c20b7003fc59e50"
+    },
+    {
+      "path": "evidence/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "e12deac057e36b0ae4bc5acdacbc99c283742c86b68e9de993d59adcb5ffe8db"
+    },
+    {
+      "path": "evidence/phase-startapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-startapi.stdout.log",
+      "bytes": 106,
+      "sha256": "befc48f2af68462b2eeb291e58e3bef8beffa92d1ecec3921fab211317b58d84"
+    },
+    {
+      "path": "evidence/phase-stopapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/phase-stopapi.stdout.log",
+      "bytes": 43,
+      "sha256": "aec83b230e832fd58ed530063f236ead49b74d9946387ce5d0b8f12d10c95c9b"
+    },
+    {
+      "path": "evidence/product-db-assertions.json",
+      "bytes": 1253,
+      "sha256": "ad2eb49a7e10a1f84fde7fc284385523e16901b6b74596f7935f356217b4e442"
+    },
+    {
+      "path": "evidence/projects.png",
+      "bytes": 167569,
+      "sha256": "a2a0f2cda94f8be94e8074d97c107787d9aa745629a7a8cffd53606966d4b10c"
+    },
+    {
+      "path": "evidence/qa03-gate.log",
+      "bytes": 6674,
+      "sha256": "57413b2ad8dde1737203b693acdeb273d0266bedf8535cef90a5c89a05bcfa93"
+    },
+    {
+      "path": "evidence/qa03-runworkerdelivery.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03-runworkerdelivery.stdout.log",
+      "bytes": 391,
+      "sha256": "d567f0eb6e2c3c3b8d7883f62142af5046119f6a529efa77704a600f0faf06b7"
+    },
+    {
+      "path": "evidence/qa03-seedproductdata.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03-seedproductdata.stdout.log",
+      "bytes": 1149,
+      "sha256": "f877d16e8a6fe97a64af67aac99087df2861a67c88237c4b8c0704666746f389"
+    },
+    {
+      "path": "evidence/qa03-verifycriticalproduct.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03-verifycriticalproduct.stdout.log",
+      "bytes": 730,
+      "sha256": "0257ad2fc1bc2bca1dc5dfacdbe2d43fba33e7833b22ced373d7dfb60abe859c"
+    },
+    {
+      "path": "evidence/qa03-verifynotificationsapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03-verifynotificationsapi.stdout.log",
+      "bytes": 572,
+      "sha256": "9b1f3e935a81d6b1dffebe65c6850fcadc1c0bc918377dd843e74cff50fe359c"
+    },
+    {
+      "path": "evidence/qa03-verifyproductapi.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/qa03-verifyproductapi.stdout.log",
+      "bytes": 1257,
+      "sha256": "77bda355b220f1ab757b01dbe4ace4169b6cc0738922fa90c038e72eb1144807"
+    },
+    {
+      "path": "evidence/reconnected.png",
+      "bytes": 146112,
+      "sha256": "f72c1eb979b6e3804ae95a016ec49526ff1e94c8fcf7464ab1c3416612b884f8"
+    },
+    {
+      "path": "evidence/scaling/auth-100.png",
+      "bytes": 140007,
+      "sha256": "c23e975c8f6fcc46b6530df20ec980bf231a193d37b3b9db9152c4c054fb32ee"
+    },
+    {
+      "path": "evidence/scaling/auth-125.png",
+      "bytes": 119971,
+      "sha256": "1ec74e8c17152b8ca5aa8165112500732bd1e5dd3136152f8cc873bf48121cf5"
+    },
+    {
+      "path": "evidence/scaling/auth-150.png",
+      "bytes": 112685,
+      "sha256": "91aa7045b48c812c85271e47ea48fa230fc6af2a7919577554564d502ba280ee"
+    },
+    {
+      "path": "evidence/scaling/auth-200.png",
+      "bytes": 95532,
+      "sha256": "f224799e2b1ea262e51eb839f9996ed2cafb680540ed9fd2d1075e044de2fc66"
+    },
+    {
+      "path": "evidence/scaling/calendar-100.png",
+      "bytes": 234046,
+      "sha256": "d15f823eb616e25a5ce8a896a0d66769ed83964bb18cff3edccf98c5fbb20e0e"
+    },
+    {
+      "path": "evidence/scaling/calendar-125.png",
+      "bytes": 191392,
+      "sha256": "3f4839205072c156447dfe505f494c323e87671d127c1822c43469f59567fea3"
+    },
+    {
+      "path": "evidence/scaling/calendar-150.png",
+      "bytes": 163680,
+      "sha256": "3902d3f63947fb78d32d888ac23ad9c8459bed978e8f1bc514059bada0668e6d"
+    },
+    {
+      "path": "evidence/scaling/calendar-200.png",
+      "bytes": 119349,
+      "sha256": "c152a7edfaa34770450f68257101dbbbeb5b027659f65f4363cdaec66388b37e"
+    },
+    {
+      "path": "evidence/scaling/main-100.png",
+      "bytes": 263496,
+      "sha256": "005b6886b5f47b9da6b24ce3888e587e5ce4e861d1e24c374d39d9eff14a4814"
+    },
+    {
+      "path": "evidence/scaling/main-125.png",
+      "bytes": 210210,
+      "sha256": "b0e8ef0e2f7114a0f6e7095fe0a39db78d5d602b6a056577eee48ac277eface8"
+    },
+    {
+      "path": "evidence/scaling/main-150.png",
+      "bytes": 144332,
+      "sha256": "0ad94ae9b2c40582e9237f3e390bc87a4586379fb77720435cab07ec3d450ef3"
+    },
+    {
+      "path": "evidence/scaling/main-200.png",
+      "bytes": 108767,
+      "sha256": "59e13c4c0011f7900c58cef768447c0a9e428ac65858e607346dcaf27952a728"
+    },
+    {
+      "path": "evidence/scaling/phase-cleanup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/scaling/phase-cleanup.stdout.log",
+      "bytes": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/scaling/phase-setup.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/scaling/phase-setup.stdout.log",
+      "bytes": 1579,
+      "sha256": "850f9bfdbefa81ba8840d2bc4d83d795bbe25d8d13a75a32d8ed8f95a058b9f5"
+    },
+    {
+      "path": "evidence/scaling/windows-ux-tests.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/scaling/windows-ux-tests.stdout.log",
+      "bytes": 817,
+      "sha256": "4f360ff714c79db18113f4c2d52e17152da3af437a1f3f621b89f0ca0040e85a"
+    },
+    {
+      "path": "evidence/scaling/windows-ux.json",
+      "bytes": 22390,
+      "sha256": "ac360b29602d7f79521546101f2bdd082b12d711ff953fe989061f29e8ace7c7"
+    },
+    {
+      "path": "evidence/scaling/windows-ux.trx",
+      "bytes": 11686,
+      "sha256": "e9a572c6bf733a565271a53f6b86c5d1aed745dbba4179425c3301fcf6a1a6bb"
+    },
+    {
+      "path": "evidence/search.png",
+      "bytes": 120954,
+      "sha256": "c8ca3347d125b652ae44fd9c41a43be41fb1e52a7e7ab401b4ca76b3e43cccfe"
+    },
+    {
+      "path": "evidence/tasks-conflict.png",
+      "bytes": 129742,
+      "sha256": "a8cfa29599e8ff6f682a4d2364a74467f15538d1fb0544222a0c8d9042c045f9"
+    },
+    {
+      "path": "evidence/tasks-created.png",
+      "bytes": 124137,
+      "sha256": "d6f8f3b90e74f19b556810558096c1a52d3512ae99a7d0e40afa55d2593a29c3"
+    },
+    {
+      "path": "evidence/tasks-direction2.png",
+      "bytes": 125496,
+      "sha256": "d172b0eaa575a62cadd9c170f7741965cbaf4d810af448f019f897e55dc6384a"
+    },
+    {
+      "path": "evidence/tasks-recovered.png",
+      "bytes": 113960,
+      "sha256": "0377cae7da78d3b70c022a8b368df232845f78fde26df93bf798265fb65bd188"
+    },
+    {
+      "path": "evidence/today-compact-1200x900.png",
+      "bytes": 145955,
+      "sha256": "dca806f6d4d596ef2d26285125084a5721bb7c0353f8f977bec182d9d2fcd2da"
+    },
+    {
+      "path": "evidence/today-compact-uia.txt",
+      "bytes": 12950,
+      "sha256": "f2e7e42c619d16195120a87b9b91e5b6faf1825b1ede6151942f06e11aa7ef87"
+    },
+    {
+      "path": "evidence/today-normal.png",
+      "bytes": 191476,
+      "sha256": "03d87f6bc3b99ef299285af945ea9712370bd3c806be68c1fa5918e5150b2de3"
+    },
+    {
+      "path": "evidence/today-offline-readonly.png",
+      "bytes": 196938,
+      "sha256": "58e1ced5ac1dcf33eb5d18c225fee56228ab2dca8715786ad19e63cd8b7bbfd1"
+    },
+    {
+      "path": "evidence/ui-assertions.json",
+      "bytes": 1153,
+      "sha256": "1b26bc06d34a2d96a43eb7cb73ca1632dcbb4b54ca7b9f4470a25721c7162845"
+    },
+    {
+      "path": "evidence/worker-delivery.json",
+      "bytes": 608,
+      "sha256": "d7a436baa2c415ef1d077e015fbce87bbda81f4bd90052d1b4cbfc8063ca4fb0"
+    },
+    {
+      "path": "README.md",
+      "bytes": 992,
+      "sha256": "e671b10cb96a6b75afc6255dde4bd5ce45526f7be96e54e75fc66528bf652c73"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 78684,
+      "sha256": "33983a1b096e72bdee283b334b44bb38a6f666883916a99272257550826b7c04"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/App.xaml",
+      "bytes": 1375,
+      "sha256": "091f647c996409ca10711751a2ddd00a498e774247b5a9d061c5f6f9093fdb57"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Converters/VisualFoundationConverters.cs",
+      "bytes": 6575,
+      "sha256": "5b2dbb1325259b9ccb2807c3c0c48d303378c595f79179929ea5dda8a87711dc"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "bytes": 53122,
+      "sha256": "8a981e3f6b86a13447ca3b1681a5d809718acbe65bdffdbe24f3b833b2af339a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "bytes": 66939,
+      "sha256": "4b69af53e568082565fda206a22bcda72e56ed79917df83ad06ae8aa6c47fa82"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/CalendarView.xaml.cs",
+      "bytes": 2542,
+      "sha256": "bc060a08eda23b6aa239f8c74a276704ceea4571779f4df0585c02a7a6c47e15"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarAttendeeEditorTests.cs",
+      "bytes": 3640,
+      "sha256": "2ec6fd4fb4dd186ed6861429892dcf267c2b403d6d67eae0d5753bd33e78e005"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarModesTests.cs",
+      "bytes": 6883,
+      "sha256": "778b58ba44e774486ce02b51a4b92392f0b1401451e11dd1cfc23e2379e30a7e"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarViewModelTests.cs",
+      "bytes": 22466,
+      "sha256": "3f263a45c8c30296b53cd61e95279225bd12ac39cffb1402388f44438072aa42"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/VisualFoundationTests.cs",
+      "bytes": 20462,
+      "sha256": "1701ba155ec61101fc76f5263bfc56c83c4bf96cdeaf6a0201d8a15588db7952"
+    },
+    {
+      "path": "source/work/production/verification/Test-Desk05WindowsUx.ps1",
+      "bytes": 21580,
+      "sha256": "49a79dc4f79b02100f8300901dd2503b54b3c41413bf758e58cf768b1edc8356"
+    },
+    {
+      "path": "source/work/production/verification/Test-Qa03CriticalE2E.ps1",
+      "bytes": 33225,
+      "sha256": "8c5d02337fc0e7f9a8c8b611ac8fd139340126133e674398c9774cefdda7c772"
+    },
+    {
+      "path": "source/work/production/verification/Test-Qa03Gate.ps1",
+      "bytes": 40196,
+      "sha256": "22461f01c47943ddabe96c97091c363a0d8ad286d500bbe379c7dfe62a8a84e4"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 2865,
+      "sha256": "f30d76288f6cd8a76517b533f5e777b2594edfe16c01e3ce49d1a58ba99c8f38"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ]
+}
