@@ -30,7 +30,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         ProjectsViewModel? projects = null,
         WorkHubViewModel? workHub = null,
         DesktopConnectivityService? connectivity = null,
-        InboxViewModel? inbox = null)
+        InboxViewModel? inbox = null,
+        AdministrationViewModel? administration = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
@@ -40,6 +41,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         Projects = projects;
         WorkHub = workHub;
         Inbox = inbox;
+        Administration = administration;
         _connectivity = connectivity;
         NewTaskCommand = new AsyncCommand(OpenNewTaskAsync,
             _ => Tasks?.CanCreateFromShell == true && IsConnected);
@@ -87,6 +89,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             new("notifications", "Уведомления", "Раздел «Уведомления»: уведомления появятся после подключения к серверу.", "Task.Icon.Notifications", "События и уведомления"),
             new("archive", "Архив", "Раздел «Архив»: архивные задачи появятся после подключения к серверу.", "Task.Icon.Archive", "Архивные записи"),
             new("trash", "Корзина", "Раздел «Корзина»: удалённые записи появятся после подключения к серверу.", "Task.Icon.Trash", "Удалённые записи"),
+            new("administration", "Администрирование", "Пользователи, роли и ресурсы доступны в пределах опубликованных прав.", "Task.Icon.Lock", "Пользователи, роли и сетевые ресурсы"),
             new("settings", "Настройки", "Раздел «Настройки»: параметры приложения появятся после подключения к серверу.", "Task.Icon.Settings", "Параметры приложения"),
         };
 
@@ -120,6 +123,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(IsInboxSectionSelected));
             OnPropertyChanged(nameof(IsProjectsSectionSelected));
             OnPropertyChanged(nameof(IsWorkHubSectionSelected));
+            OnPropertyChanged(nameof(IsAdministrationSectionSelected));
             OnPropertyChanged(nameof(SelectedSectionSupportingText));
             if (IsTodaySectionSelected)
             {
@@ -141,6 +145,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             if (IsCalendarSectionSelected) Calendar?.Activate(); else Calendar?.Deactivate();
             if (IsProjectsSectionSelected) Projects?.Activate(); else Projects?.Deactivate();
             if (TryGetWorkArea(SelectedSection?.Route, out var workArea)) WorkHub?.Activate(workArea); else WorkHub?.Deactivate();
+            if (IsAdministrationSectionSelected) Administration?.Activate(); else Administration?.Deactivate();
             OnPropertyChanged(nameof(ConnectionContext));
             OnPropertyChanged(nameof(DataSourceStatus));
             OnPropertyChanged(nameof(LastSuccessfulRefreshText));
@@ -199,6 +204,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 
     public WorkHubViewModel? WorkHub { get; }
 
+    public AdministrationViewModel? Administration { get; }
+
     public bool IsTodaySectionSelected =>
         string.Equals(SelectedSection?.Route, "today", StringComparison.Ordinal);
 
@@ -215,6 +222,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         string.Equals(SelectedSection?.Route, "projects", StringComparison.Ordinal);
 
     public bool IsWorkHubSectionSelected => TryGetWorkArea(SelectedSection?.Route, out _);
+
+    public bool IsAdministrationSectionSelected => string.Equals(SelectedSection?.Route, "administration", StringComparison.Ordinal);
 
     public string? SelectedSectionSupportingText => IsTodaySectionSelected
         ? Today?.DateText ?? SelectedSection?.SupportingText
@@ -258,6 +267,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             ? Projects?.CanUpdate == true ? "Онлайн · управление проектами доступно" : "Онлайн · проекты только для просмотра"
         : IsWorkHubSectionSelected
             ? WorkHub?.AccessText ?? "Онлайн · рабочие данные"
+        : IsAdministrationSectionSelected
+            ? Administration?.AccessText ?? "Онлайн · административные данные"
             : Tasks?.IsReadOnly == true ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
 
     public string ConnectionIconKey => ServerAddress is null || _connectivity?.Status != DesktopConnectivityStatus.Online
@@ -298,6 +309,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             ? Projects?.AccessText ?? "Проекты сервера компании"
         : IsWorkHubSectionSelected
             ? WorkHub?.AccessText ?? "Рабочие данные сервера компании"
+        : IsAdministrationSectionSelected
+            ? Administration?.AccessText ?? "Административные данные сервера компании"
             : Tasks?.IsReadOnly == true
             ? "Данные предоставляются сервером компании · только просмотр"
             : "Данные и изменения синхронизируются с сервером компании";
@@ -312,6 +325,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         ? Projects?.LastSuccessfulRefreshText ?? "Проекты ещё не обновлялись"
         : IsWorkHubSectionSelected
         ? WorkHub?.LastSuccessfulRefreshText ?? "Раздел ещё не обновлялся"
+        : IsAdministrationSectionSelected
+        ? Administration?.LastSuccessfulRefreshText ?? "Раздел ещё не обновлялся"
         : Tasks?.LastSuccessfulRefreshText ?? "Данные ещё не обновлялись";
 
     public AsyncCommand? FooterRefreshCommand => IsTodaySectionSelected
@@ -324,6 +339,8 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         ? Projects?.RefreshCommand
         : IsWorkHubSectionSelected
         ? WorkHub?.RefreshCommand
+        : IsAdministrationSectionSelected
+        ? Administration?.RefreshCommand
         : Tasks?.RefreshCommand;
 
     public string ReadOnlyActionReason =>
@@ -392,6 +409,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         Today?.Dispose();
         Projects?.Dispose();
         WorkHub?.Dispose();
+        Administration?.Dispose();
     }
 
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -481,6 +499,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         Calendar?.UpdateConnectivity(available);
         Projects?.UpdateConnectivity(available);
         WorkHub?.UpdateConnectivity(available);
+        Administration?.UpdateConnectivity(available);
         Today?.UpdateConnectivity(available);
         OnPropertyChanged(nameof(ConnectionStatus));
         OnPropertyChanged(nameof(ConnectionTitle));

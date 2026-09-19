@@ -10,6 +10,108 @@ public sealed record PasswordChangeInput(
 
 internal sealed record WorkflowOperationResult(bool Succeeded, string? Message = null);
 
+/// <summary>
+/// Performs one final server-side session/capability refresh before the shell is opened.
+/// The operation never broadens the authenticated scope and keeps the shell blocked on failure.
+/// </summary>
+public sealed class BootstrapViewModel : ViewModelBase, IDisposable
+{
+    private readonly SessionService _sessionService;
+    private readonly Func<CancellationToken, global::System.Threading.Tasks.Task> _logout;
+    private string _title = "Подготовка разрешённых данных";
+    private string _message = "Проверяем сессию, область доступа и курсор синхронизации.";
+    private string? _errorMessage;
+    private int _progress = 18;
+    private int _attempt;
+
+    internal BootstrapViewModel(
+        SessionService sessionService,
+        Func<CancellationToken, global::System.Threading.Tasks.Task> logout)
+    {
+        _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
+        _logout = logout ?? throw new ArgumentNullException(nameof(logout));
+        RetryCommand = new AsyncCommand(RunAsync);
+        LogoutCommand = new AsyncCommand(async (_, cancellationToken) =>
+            await _logout(cancellationToken).ConfigureAwait(true));
+        RetryCommand.ExecutionFailed += HandleUnexpectedFailure;
+        LogoutCommand.ExecutionFailed += HandleUnexpectedFailure;
+        RetryCommand.CanExecuteChanged += (_, _) => NotifyBusy();
+        LogoutCommand.CanExecuteChanged += (_, _) => NotifyBusy();
+    }
+
+    public event Action? Completed;
+    public string Title { get => _title; private set => SetProperty(ref _title, value); }
+    public string Message { get => _message; private set => SetProperty(ref _message, value); }
+    public string? ErrorMessage { get => _errorMessage; private set { if (SetProperty(ref _errorMessage, value)) OnPropertyChanged(nameof(HasError)); } }
+    public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
+    public int Progress { get => _progress; private set => SetProperty(ref _progress, value); }
+    public bool IsBusy => RetryCommand.IsExecuting || LogoutCommand.IsExecuting;
+    public AsyncCommand RetryCommand { get; }
+    public AsyncCommand LogoutCommand { get; }
+
+    internal global::System.Threading.Tasks.Task StartAsync(CancellationToken cancellationToken = default) =>
+        RetryCommand.ExecuteAsync(cancellationToken: cancellationToken);
+
+    private async global::System.Threading.Tasks.Task RunAsync(object? _, CancellationToken cancellationToken)
+    {
+        _attempt++;
+        ErrorMessage = null;
+        Title = "Подготовка разрешённых данных";
+        Message = _attempt == 1
+            ? "Проверяем сессию, область доступа и курсор синхронизации."
+            : "Повторно проверяем сервер и разрешённую область.";
+        Progress = 38;
+        NotifyBusy();
+
+        await global::System.Threading.Tasks.Task.Delay(BootstrapMinimumDuration(), cancellationToken).ConfigureAwait(true);
+        var refresh = await _sessionService.RefreshAsync(cancellationToken).ConfigureAwait(true);
+
+        if (refresh is RefreshResult.Succeeded && _sessionService.CurrentReadiness == SessionReadinessState.Ready)
+        {
+            Progress = 100;
+            Message = "Разрешения подтверждены. Открываем рабочее пространство.";
+            Completed?.Invoke();
+            return;
+        }
+
+        Progress = 38;
+        Title = refresh is RefreshResult.NetworkFailure
+            ? "Сервер временно недоступен"
+            : "Подготовку не удалось завершить";
+        ErrorMessage = refresh switch
+        {
+            RefreshResult.NetworkFailure => "Разрешённые данные не обновлены. Проверьте сеть и повторите попытку.",
+            RefreshResult.AuthError => "Сессия больше не подтверждена. Выйдите и выполните вход снова.",
+            _ => "Сервер вернул неподтверждённое состояние. Локальные данные не изменены.",
+        };
+        Message = "Task не откроет рабочее пространство, пока сервер не подтвердит сессию и область доступа.";
+    }
+
+    private void HandleUnexpectedFailure(Exception _)
+    {
+        Title = "Подготовку не удалось завершить";
+        ErrorMessage = "Не удалось проверить разрешённые данные. Повторите попытку.";
+        Message = "Локальная копия не изменена.";
+        NotifyBusy();
+    }
+
+    private void NotifyBusy() => OnPropertyChanged(nameof(IsBusy));
+
+    private static TimeSpan BootstrapMinimumDuration()
+    {
+        const string variable = "TASK_DESKTOP_BOOTSTRAP_MINIMUM_MS";
+        return int.TryParse(Environment.GetEnvironmentVariable(variable), out var configured)
+            ? TimeSpan.FromMilliseconds(Math.Clamp(configured, 0, 5000))
+            : TimeSpan.FromMilliseconds(650);
+    }
+
+    public void Dispose()
+    {
+        RetryCommand.Dispose();
+        LogoutCommand.Dispose();
+    }
+}
+
 /// <summary>View model for the first connection and server-change screen.</summary>
 public sealed class ServerSetupViewModel : ViewModelBase, IDisposable
 {

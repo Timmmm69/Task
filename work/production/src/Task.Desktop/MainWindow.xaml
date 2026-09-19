@@ -180,7 +180,7 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <Button Command="{Binding FooterRefreshCommand}"
+                    <Button x:Name="TasksRefreshButton" Command="{Binding FooterRefreshCommand}"
                             Style="{StaticResource Task.Button.Icon}"
                             Margin="0,0,8,0"
                             TabIndex="2"
@@ -319,6 +319,9 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsWorkHubSectionSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsAdministrationSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -1034,6 +1037,18 @@
                     </Style>
                 </views:WorkHubView.Style>
             </views:WorkHubView>
+            <views:AdministrationView DataContext="{Binding Administration}" Margin="{DynamicResource Task.Padding.Page}">
+                <views:AdministrationView.Style>
+                    <Style TargetType="views:AdministrationView">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsAdministrationSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </views:AdministrationView.Style>
+            </views:AdministrationView>
         </Grid>
 
         <Border Grid.Row="2" Grid.Column="1"

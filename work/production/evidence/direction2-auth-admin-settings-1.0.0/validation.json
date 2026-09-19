@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "result": "PASS",
+  "scenarios": [
+    "admin-limited-role.png",
+    "admin-resources.png",
+    "admin-roles.png",
+    "admin-users.png",
+    "bootstrap-failure.png",
+    "bootstrap-progress.png",
+    "first-connection.png",
+    "settings-notifications.png",
+    "settings-offline.png",
+    "settings-profile.png",
+    "settings-server.png"
+  ],
+  "screenshots": [
+    {
+      "file": "admin-limited-role.png",
+      "sha256": "C108CAF54B76D38E1460738B87A6429010083CFC44B19AB4F3C8709127558AC6",
+      "bytes": 134896
+    },
+    {
+      "file": "admin-resources.png",
+      "sha256": "633E6FB5D800362C3062064C5DE12D37FF428C33339A1BEB7BA5849736B9C601",
+      "bytes": 117521
+    },
+    {
+      "file": "admin-roles.png",
+      "sha256": "691CE99E75E57EF114C4D1236EE9BD36C9A423B455127DE3815667B9C93C2CC4",
+      "bytes": 131921
+    },
+    {
+      "file": "admin-users.png",
+      "sha256": "DF4D7716E34455241A9AABDDCB5B7090CC3FAD8C535509EC2BAA50406CE4A875",
+      "bytes": 134563
+    },
+    {
+      "file": "bootstrap-failure.png",
+      "sha256": "C6271176893530C44E6C1763251DE8E2960D8BD7439B28E9FF6A4C9C34FCD99E",
+      "bytes": 100916
+    },
+    {
+      "file": "bootstrap-progress.png",
+      "sha256": "271EC710D8D4E27536DFB222DF5A01AD349A4EF523D3A8FDB863B2FFF74DEC16",
+      "bytes": 90076
+    },
+    {
+      "file": "first-connection.png",
+      "sha256": "17813AC4B0E600A98233B6035B5829C68BA6B07906F91BDDF07E0C5B27B6A899",
+      "bytes": 96500
+    },
+    {
+      "file": "settings-notifications.png",
+      "sha256": "1D1BDBAB2BADED99013DDD93E2D8D30DE7339BCA6D864A08759CE7E5BEB8BA79",
+      "bytes": 113563
+    },
+    {
+      "file": "settings-offline.png",
+      "sha256": "BA46BA8AFE51B0524BFAC77D5FF454C733F6980BC71CC597CC873F14DBFE75BC",
+      "bytes": 116063
+    },
+    {
+      "file": "settings-profile.png",
+      "sha256": "3D306ECB45A7A44BFD9B1E4A0895D8C22B00E305F3810CEF5AEE5156C3A8B6AC",
+      "bytes": 116397
+    },
+    {
+      "file": "settings-server.png",
+      "sha256": "68B297B4CB26C92CD0CDE83EB2B4E6DE1E42F5289D01FB23DA9D66E396AA8671",
+      "bytes": 128713
+    }
+  ],
+  "checks": [
+    "Release WPF executable exists.",
+    "first-connection bounds are available.",
+    "first-connection contains a rendered WPF surface.",
+    "bootstrap-failure bounds are available.",
+    "bootstrap-failure contains a rendered WPF surface.",
+    "bootstrap-progress bounds are available.",
+    "bootstrap-progress contains a rendered WPF surface.",
+    "settings-profile bounds are available.",
+    "settings-profile contains a rendered WPF surface.",
+    "settings-notifications bounds are available.",
+    "settings-notifications contains a rendered WPF surface.",
+    "settings-server bounds are available.",
+    "settings-server contains a rendered WPF surface.",
+    "admin-users bounds are available.",
+    "admin-users contains a rendered WPF surface.",
+    "admin-roles bounds are available.",
+    "admin-roles contains a rendered WPF surface.",
+    "admin-resources bounds are available.",
+    "admin-resources contains a rendered WPF surface.",
+    "settings-offline bounds are available.",
+    "settings-offline contains a rendered WPF surface.",
+    "Capability-gated administration tab is selected for the read-only account.",
+    "admin-limited-role bounds are available.",
+    "admin-limited-role contains a rendered WPF surface."
+  ],
+  "completedAtUtc": "2026-09-19T21:46:29.2246881+00:00"
+}

@@ -12,6 +12,7 @@ using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
 using Task.Desktop.Projects;
 using Task.Desktop.Work;
+using Task.Desktop.Administration;
 
 [assembly: InternalsVisibleTo("Task.Desktop.Tests")]
 
@@ -25,6 +26,8 @@ public partial class App : global::System.Windows.Application
 
     private AuthWorkflowViewModel? _workflow;
     private AuthWindow? _authWindow;
+    private BootstrapWindow? _bootstrapWindow;
+    private BootstrapViewModel? _bootstrapViewModel;
     private MainWindow? _mainWindow;
     private SessionService? _mainSessionService;
     private bool _isShuttingDown;
@@ -68,6 +71,7 @@ public partial class App : global::System.Windows.Application
     {
         _isShuttingDown = true;
         _startupCancellation.Cancel();
+        CloseBootstrap();
         if (_workflow is not null)
         {
             _workflow.PropertyChanged -= OnWorkflowPropertyChanged;
@@ -135,7 +139,7 @@ public partial class App : global::System.Windows.Application
 
         if (_workflow.IsReady)
         {
-            ShowMainWindow();
+            BeginBootstrap();
         }
         else if (_mainWindow is not null)
         {
@@ -160,6 +164,8 @@ public partial class App : global::System.Windows.Application
 
         MainWindow = _authWindow;
 
+        CloseBootstrap();
+
         if (_mainWindow is not null)
         {
             var window = _mainWindow;
@@ -169,6 +175,69 @@ public partial class App : global::System.Windows.Application
         }
 
         _authWindow.Activate();
+    }
+
+    private void BeginBootstrap()
+    {
+        var workflow = _workflow;
+        var sessionService = workflow?.ReadySessionService;
+        if (workflow is null || sessionService is null || _isShuttingDown || _bootstrapWindow is not null || _mainWindow is not null)
+        {
+            return;
+        }
+
+        var viewModel = new BootstrapViewModel(sessionService, workflow.LogoutAsync);
+        var window = new BootstrapWindow(viewModel);
+        _bootstrapViewModel = viewModel;
+        _bootstrapWindow = window;
+        viewModel.Completed += OnBootstrapCompleted;
+        window.Closed += OnBootstrapWindowClosed;
+        MainWindow = window;
+        window.Show();
+
+        if (_authWindow is not null)
+        {
+            var authWindow = _authWindow;
+            _authWindow = null;
+            authWindow.Closed -= OnAuthWindowClosed;
+            authWindow.Close();
+        }
+
+        _ = viewModel.StartAsync(_startupCancellation.Token);
+    }
+
+    private void OnBootstrapCompleted()
+    {
+        if (_isShuttingDown) return;
+        Dispatcher.BeginInvoke(() =>
+        {
+            CloseBootstrap();
+            ShowMainWindow();
+        });
+    }
+
+    private void OnBootstrapWindowClosed(object? sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, _bootstrapWindow)) return;
+        CloseBootstrap();
+        if (_workflow?.IsReady == true && _mainWindow is null) BeginShutdown();
+    }
+
+    private void CloseBootstrap()
+    {
+        if (_bootstrapViewModel is not null)
+        {
+            _bootstrapViewModel.Completed -= OnBootstrapCompleted;
+            _bootstrapViewModel.Dispose();
+            _bootstrapViewModel = null;
+        }
+        if (_bootstrapWindow is not null)
+        {
+            var window = _bootstrapWindow;
+            _bootstrapWindow = null;
+            window.Closed -= OnBootstrapWindowClosed;
+            if (window.IsVisible) window.Close();
+        }
     }
 
     private void ShowMainWindow()
@@ -218,8 +287,12 @@ public partial class App : global::System.Windows.Application
             tasksClient);
         var workHub = new WorkHubViewModel(
             new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            serverAddress: serverEndpoint.GetLeftPart(UriPartial.Authority));
+        var administration = new AdministrationViewModel(
+            new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
-        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox);
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration);
         var window = new MainWindow(viewModel);
         _mainWindow = window;
         _mainSessionService = sessionService;
@@ -311,6 +384,8 @@ public partial class App : global::System.Windows.Application
                 sessionService.CurrentSessionMetadata?.Capabilities);
             viewModel.Projects?.UpdateCapabilities(
                 sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Administration?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
         }
 
         viewModel.Tasks.UpdateSessionState(signedIn);
@@ -321,6 +396,7 @@ public partial class App : global::System.Windows.Application
         viewModel.Today?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
         viewModel.WorkHub?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
         viewModel.Projects?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
+        viewModel.Administration?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
     }
 
     private void DetachMainSession()

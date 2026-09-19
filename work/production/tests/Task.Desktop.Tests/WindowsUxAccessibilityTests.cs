@@ -61,9 +61,11 @@ public sealed class WindowsUxAccessibilityTests
     public void WindowContracts_FitAtTwoHundredPercentAndExposeKeyboardHelp()
     {
         var auth = XDocument.Load(ProjectFile("src", "Task.Desktop", "AuthWindow.xaml")).Root!;
+        var bootstrap = XDocument.Load(ProjectFile("src", "Task.Desktop", "BootstrapWindow.xaml")).Root!;
         var main = XDocument.Load(ProjectFile("src", "Task.Desktop", "MainWindow.xaml")).Root!;
 
         AssertWindowMinimum(auth, 800, 480);
+        AssertWindowMinimum(bootstrap, 800, 480);
         AssertWindowMinimum(main, 800, 480);
         Assert.Equal("Cycle", Attribute(auth, "TabNavigation"));
         Assert.Contains("Tab", Attribute(auth, "HelpText"), StringComparison.Ordinal);
@@ -87,7 +89,10 @@ public sealed class WindowsUxAccessibilityTests
             [Path.Combine("Views", "CalendarView.xaml")] = ["CalendarScreen"],
             [Path.Combine("Views", "ProjectsView.xaml")] = ["ProjectsView"],
             [Path.Combine("Views", "WorkHubView.xaml")] =
-                ["WorkHubView", "CatalogList", "ContactsList", "GlobalSearchResults", "NotificationsList", "LifecycleItemsList", "LifecycleInspector", "WorkHubFeedbackText", "WorkHubLimitedRoleState", "WorkHubLimitedRoleText", "WorkHubLoadingState", "SettingsView"],
+                ["WorkHubView", "CatalogList", "ContactsList", "GlobalSearchResults", "NotificationsList", "LifecycleItemsList", "LifecycleInspector", "WorkHubFeedbackText", "WorkHubLimitedRoleState", "WorkHubLimitedRoleText", "WorkHubLoadingState", "SettingsView", "SettingsNavigation"],
+            [Path.Combine("Views", "AdministrationView.xaml")] =
+                ["AdministrationView", "AdministrationTabs", "AdministrationLimitedRoleState", "AdminUsersList", "AdminRolesList", "AdminResourcesList", "AdministrationFeedback"],
+            ["BootstrapWindow.xaml"] = ["BootstrapWindow", "BootstrapStatusText", "BootstrapProgress", "BootstrapError", "BootstrapRetryButton"],
         };
 
         foreach (var (relative, ids) in contracts)

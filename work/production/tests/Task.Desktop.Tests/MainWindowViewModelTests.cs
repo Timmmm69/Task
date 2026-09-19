@@ -70,7 +70,7 @@ public class MainWindowViewModelTests
         var expected = new[]
         {
             "today", "inbox", "calendar", "tasks", "projects", "catalog",
-            "contacts", "search", "notifications", "archive", "trash", "settings",
+            "contacts", "search", "notifications", "archive", "trash", "administration", "settings",
         };
 
         var actual = vm.Sections.Select(section => section.Route).ToArray();

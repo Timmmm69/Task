@@ -226,10 +226,11 @@
       "evidence": [
         "work/production/src/Task.Desktop/AuthWindow.xaml",
         "outputs/20260823_task_desktop_auth_e2e_hardening_0.1.0",
-        "outputs/20260906_desk01_safe_desktop_auth_1.0.0"
+        "outputs/20260906_desk01_safe_desktop_auth_1.0.0",
+        "outputs/20260920_direction2_auth_admin_settings_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Полный Windows auth-сценарий и эксплуатационная выдача учётных записей закрыты; текущий gate прошёл на PostgreSQL 16.",
-      "updated_at": "2026-09-06T11:00:00+03:00",
+      "note": "Полный Windows auth-сценарий и эксплуатационная выдача учётных записей закрыты. First connection, login и fail-closed bootstrap приведены к Direction 2; auth/security gate прошёл 1749 тестов на PostgreSQL 16 без failed/skipped.",
+      "updated_at": "2026-09-20T00:45:00+03:00",
       "priority": 3,
       "dependencies": [
         "API-01",
@@ -278,10 +279,11 @@
         "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs; Views/WorkHubView.xaml: capability-aware archive, trash and settings surfaces",
         "work/production/tests/Task.Desktop.Tests/Work: lifecycle/settings contract and view-model coverage",
         "outputs/20260910_desk03_primary_sections_1.0.0/validation-report.md",
-        "outputs/20260919_direction2_search_notifications_lifecycle_1.0.0/VALIDATION_REPORT.md"
+        "outputs/20260919_direction2_search_notifications_lifecycle_1.0.0/VALIDATION_REPORT.md",
+        "outputs/20260920_direction2_auth_admin_settings_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Поиск, уведомления, архив и корзина приведены к frozen Direction 2: единые карточки и инспекторы, retention и restore, loading/error/offline/limited-role состояния, keyboard focus и UIA. Release WPF normal/offline/limited-role evidence и desktop regression gate подтверждены.",
-      "updated_at": "2026-09-19T15:10:00+03:00",
+      "note": "Все основные разделы имеют server-backed production UI. Вход, bootstrap, настройки, пользователи, роли и ресурсы завершают перенос Direction 2; admin остаётся capability-gated, а offline/limited-role feedback подтверждён Release WPF evidence.",
+      "updated_at": "2026-09-20T00:45:00+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-02",
@@ -845,10 +847,11 @@
       "evidence": [
         "work/production/docs/QA-04-accessibility-usability-matrix.md: полная матрица шагов 1–8 и границы evidence",
         "work/production/verification/Test-Qa04CompletionGate.ps1: DPI, usability, findings, retest и sign-off gate",
-        "outputs/20260911_qa04_accessibility_usability_1.1.0/VALIDATION_REPORT.md: 12/12 critical UI, 8/8 DPI, release sign-off APPROVED"
+        "outputs/20260911_qa04_accessibility_usability_1.1.0/VALIDATION_REPORT.md: 12/12 critical UI, 8/8 DPI, release sign-off APPROVED",
+        "outputs/20260920_direction2_auth_admin_settings_1.0.0/evidence/accessibility/windows-ux.json"
       ],
-      "note": "Шаги 1–8 закрыты на свежем controlled Windows run: 0 блокирующих findings, 4 неблокирующих с disposition. Narrator исключён из acceptance scope и не заявлен как проверенный; mixed-monitor остаётся deployment smoke.",
-      "updated_at": "2026-09-11T22:05:00+03:00",
+      "note": "Шаги 1–8 закрыты; свежий Direction 2 regression подтвердил 100/125/150/200%, Tab/F6, UIA Value/Invoke/Selection и cleanup. Forced-colors сохранён через общие HighContrast/SystemColors resources. Narrator и mixed-monitor остаются в прежних границах acceptance/deployment smoke.",
+      "updated_at": "2026-09-20T00:45:00+03:00",
       "priority": 4,
       "dependencies": [
         "DESK-05",

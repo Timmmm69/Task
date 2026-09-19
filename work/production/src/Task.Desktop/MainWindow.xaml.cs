@@ -158,7 +158,7 @@ public partial class MainWindow : Window
                 ? FocusContentRegion()
                 : ReferenceEquals(next, NavigationListBox)
                     ? NavigationListBox.Focus() || FocusFirstKeyboardTarget(NavigationListBox)
-                    : FocusFirstKeyboardTarget(next);
+                    : FocusHeaderRegion();
             if (focusedNext)
             {
                 e.Handled = true;
@@ -293,6 +293,16 @@ public partial class MainWindow : Window
         }
 
         return FocusFirstKeyboardTarget(ContentRegion);
+    }
+
+    private bool FocusHeaderRegion()
+    {
+        if (TasksRefreshButton.IsVisible && TasksRefreshButton.IsEnabled && TasksRefreshButton.Focus())
+        {
+            return true;
+        }
+
+        return FocusFirstKeyboardTarget(HeaderRegion);
     }
 
     private static bool IsWithin(DependencyObject? element, DependencyObject region)

@@ -73,12 +73,14 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     private bool _activationRefreshPending;
     private long _activationGeneration;
     private bool _disposed;
+    private string _settingsSection = "Профиль";
 
-    public WorkHubViewModel(IDesktopWorkApiClient client, IEnumerable<string>? capabilities, IFileAccessAdapter? files = null)
+    public WorkHubViewModel(IDesktopWorkApiClient client, IEnumerable<string>? capabilities, IFileAccessAdapter? files = null, string? serverAddress = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _files = files ?? new WindowsFileAccessAdapter();
         _capabilities = new(capabilities ?? [], StringComparer.OrdinalIgnoreCase);
+        ServerAddress = serverAddress ?? "Сервер компании";
         RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea);
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanUseServerWrites && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
@@ -158,6 +160,13 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     public int HistoryRetentionDays { get => _historyRetentionDays; set => SetProperty(ref _historyRetentionDays, value); }
     public int ChangeFeedRetentionDays { get => _changeFeedRetentionDays; set => SetProperty(ref _changeFeedRetentionDays, value); }
     public int RecurrenceHorizonDays { get => _recurrenceHorizonDays; set => SetProperty(ref _recurrenceHorizonDays, value); }
+    public IReadOnlyList<string> SettingsSections { get; } = ["Профиль", "Уведомления", "Подключение и сервер"];
+    public string SettingsSection { get => _settingsSection; set { if (SetProperty(ref _settingsSection, value)) { OnPropertyChanged(nameof(IsProfileSettings)); OnPropertyChanged(nameof(IsNotificationSettings)); OnPropertyChanged(nameof(IsServerSettings)); } } }
+    public bool IsProfileSettings => SettingsSection == "Профиль";
+    public bool IsNotificationSettings => SettingsSection == "Уведомления";
+    public bool IsServerSettings => SettingsSection == "Подключение и сервер";
+    public string ServerAddress { get; }
+    public string SettingsConnectionStatus => !_networkAvailable ? "Сервер недоступен · только чтение" : "Подключено · TLS обязателен";
     public string? Message { get => _message; private set => SetProperty(ref _message, value); }
     public WorkHubFeedbackKind FeedbackKind { get => _feedbackKind; private set { if (SetProperty(ref _feedbackKind, value)) { OnPropertyChanged(nameof(HasFeedback)); OnPropertyChanged(nameof(IsFeedbackError)); OnPropertyChanged(nameof(ShowSearchEmpty)); } } }
     public bool HasFeedback => !string.IsNullOrWhiteSpace(Message);
@@ -236,6 +245,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
         if (!available) SetFeedback("Сервер недоступен. Показаны только последние подтверждённые данные; действия записи отключены.", WorkHubFeedbackKind.Warning);
         else if (FeedbackKind == WorkHubFeedbackKind.Warning) SetFeedback("Подключение восстановлено. Обновите раздел, чтобы получить актуальные данные.", WorkHubFeedbackKind.Info);
         OnPropertyChanged(nameof(IsOffline));
+        OnPropertyChanged(nameof(SettingsConnectionStatus));
         OnPropertyChanged(nameof(AccessText));
         OnPropertyChanged(nameof(SearchSummaryText));
         OnPropertyChanged(nameof(IsLimitedRole));

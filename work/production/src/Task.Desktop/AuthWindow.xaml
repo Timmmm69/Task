@@ -8,7 +8,7 @@
         Title="Task — вход"
         Width="1120" Height="700" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen"
-        Background="#F4F7FB"
+        Style="{StaticResource Task.Window.Style}"
         KeyboardNavigation.TabNavigation="Cycle"
         AutomationProperties.HelpText="Используйте Tab и Shift+Tab для перехода между элементами формы"
         AutomationProperties.Name="Авторизация Task"
@@ -17,14 +17,14 @@
         <Style x:Key="HeadingStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="26" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="#172033" />
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
 
         <Style x:Key="BodyStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="#596273" />
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
 
@@ -48,8 +48,8 @@
             <Setter Property="FontSize" Value="14" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="#316BC4" />
-            <Setter Property="BorderBrush" Value="#24569F" />
+            <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Strong}" />
             <Setter Property="BorderThickness" Value="1" />
             <Style.Triggers>
                 <Trigger Property="IsKeyboardFocused" Value="True">
@@ -67,8 +67,8 @@
             <Setter Property="MinWidth" Value="145" />
             <Setter Property="Padding" Value="18,8" />
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="BorderBrush" Value="#8B95A7" />
+            <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Strong}" />
             <Setter Property="BorderThickness" Value="1" />
             <Style.Triggers>
                 <Trigger Property="IsKeyboardFocused" Value="True">
@@ -82,8 +82,8 @@
         </Style>
 
         <Style x:Key="ErrorTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStyle}">
-            <Setter Property="Foreground" Value="#A12828" />
-            <Setter Property="Background" Value="#FDECEC" />
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+            <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.CriticalSoft}" />
             <Setter Property="Padding" Value="12" />
             <Setter Property="Margin" Value="0,2,0,14" />
             <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
@@ -99,7 +99,7 @@
         </Style>
 
         <Style x:Key="StatusTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStyle}">
-            <Setter Property="Foreground" Value="#285D37" />
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Success}" />
             <Setter Property="Margin" Value="0,2,0,14" />
             <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
             <Setter Property="AutomationProperties.Name" Value="Состояние операции" />
@@ -115,7 +115,7 @@
 
         <DataTemplate DataType="{x:Type vm:ServerSetupViewModel}">
             <StackPanel AutomationProperties.Name="Первое подключение">
-                <TextBlock Text="Шаг 1 из 3" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Шаг 1 из 3" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" Margin="0,0,0,14" />
                 <TextBlock Text="Первое подключение" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Укажите адрес сервера, выданный ИТ-администратором. Task принимает только защищённый HTTPS-адрес."
@@ -149,7 +149,7 @@
 
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <StackPanel AutomationProperties.Name="Вход в Task">
-                <TextBlock Text="Шаг 2 из 3" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Шаг 2 из 3" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" Margin="0,0,0,14" />
                 <TextBlock Text="Вход в Task" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Используйте корпоративную учётную запись. Пароль не сохраняется на компьютере."
@@ -184,7 +184,7 @@
 
         <DataTemplate DataType="{x:Type vm:PasswordChangeViewModel}">
             <StackPanel AutomationProperties.Name="Обязательная смена пароля">
-                <TextBlock Text="Шаг 3 из 3" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Шаг 3 из 3" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" Margin="0,0,0,14" />
                 <TextBlock Text="Измените временный пароль" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Без смены пароля открыть Task нельзя. После подтверждения текущая сессия продолжит работу."
@@ -260,28 +260,35 @@
             <ColumnDefinition Width="6*" MinWidth="0" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Padding="58" Background="#EEF4FC">
-            <StackPanel VerticalAlignment="Center" MaxWidth="390">
-                <Border Width="58" Height="58" CornerRadius="12" Background="#316BC4"
+        <Border Grid.Column="0" Background="{DynamicResource Task.Brush.Brand.Soft}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="48" Focusable="False">
+            <StackPanel VerticalAlignment="Center" MaxWidth="420">
+                <Border Width="56" Height="56" CornerRadius="10" Background="{DynamicResource Task.Brush.Brand.Primary}"
                         HorizontalAlignment="Left" Margin="0,0,0,20">
                     <TextBlock Text="✓" Foreground="White" FontSize="30" FontWeight="Bold"
                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
-                <TextBlock Text="ЛОКАЛЬНАЯ СЕТЬ КОМПАНИИ" Foreground="#316BC4"
+                <TextBlock Text="ЛОКАЛЬНАЯ СЕТЬ КОМПАНИИ" Foreground="{DynamicResource Task.Brush.Brand.Primary}"
                            FontSize="12" FontWeight="Bold" Margin="0,0,0,24" />
                 <TextBlock Text="Рабочие задачи — в одном спокойном пространстве."
-                           FontSize="40" FontWeight="SemiBold" Foreground="#172033"
-                           TextWrapping="Wrap" LineHeight="48" Margin="0,0,0,18" />
-                <TextBlock Text="Task подключается только к одобренному серверу компании. Доступ открывается после проверки сервера и сессии."
+                           FontSize="38" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Primary}"
+                           TextWrapping="Wrap" LineHeight="46" Margin="0,0,0,18" />
+                <TextBlock Text="Task подключается только к одобренному серверу компании и загружает данные, разрешённые вашей ролью."
                            Style="{StaticResource BodyStyle}" FontSize="16" LineHeight="24" />
+                <StackPanel Margin="0,22,0,0">
+                    <TextBlock Text="✓  Сервер — источник актуальных данных" Margin="0,0,0,12" />
+                    <TextBlock Text="✓  Локальный кэш учитывает права доступа" Margin="0,0,0,12" />
+                    <TextBlock Text="✓  Состояние подключения видно всегда" />
+                </StackPanel>
             </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       Focusable="False" Padding="28">
             <Grid MinHeight="500">
-                <Border Background="White" BorderBrush="#D7DCE5" BorderThickness="1" CornerRadius="10"
-                        Padding="34" MaxWidth="520" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Border Background="{DynamicResource Task.Brush.Surface.Base}" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1" CornerRadius="10"
+                        Padding="32" MaxWidth="520" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Grid>
                         <ContentControl Content="{Binding CurrentViewModel}"
                                         AutomationProperties.AutomationId="AuthenticationPane" />

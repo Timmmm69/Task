@@ -1,0 +1,59 @@
+<UserControl x:Class="Task.Desktop.Views.AdministrationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="Администрирование"
+             AutomationProperties.AutomationId="AdministrationView">
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+
+        <DockPanel Margin="0,0,0,12">
+            <Button DockPanel.Dock="Right" Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="AdminRefreshButton" />
+            <StackPanel>
+                <TextBlock Text="Администрирование" FontSize="{DynamicResource Task.Font.Size.PageTitle}" FontWeight="SemiBold" />
+                <TextBlock Text="Пользователи, роли и сетевые ресурсы в пределах опубликованных сервером прав." Style="{StaticResource Task.State.Body}" Margin="0,4,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab}" BorderThickness="1" BorderBrush="{DynamicResource Task.Brush.Border.Default}" Background="{DynamicResource Task.Brush.Surface.Base}" Padding="4" Margin="0,0,0,12" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Разделы администрирования" AutomationProperties.AutomationId="AdministrationTabs">
+            <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style></ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="12,8"><TextBlock Text="{Binding Title}" FontWeight="SemiBold"/><TextBlock Text="{Binding Capability}" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid Grid.Row="2">
+            <Border Style="{StaticResource Task.State.Panel}" Visibility="{Binding IsLimitedRole, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="AdministrationLimitedRoleState">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520">
+                    <Path Data="{StaticResource Task.Icon.Lock}" Width="30" Height="30" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                    <TextBlock Text="Ограниченная роль" Style="{StaticResource Task.State.Title}" TextAlignment="Center" Margin="0,12,0,6" />
+                    <TextBlock Text="Этот административный раздел не входит в текущую область доступа. Имена, пути и количество скрытых объектов не раскрываются." Style="{StaticResource Task.State.Body}" TextAlignment="Center" />
+                    <TextBlock Text="{Binding AccessText}" Margin="0,12,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" TextAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <Grid Visibility="{Binding CanReadCurrentArea, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                <Border Grid.Row="0" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,10" AutomationProperties.LiveSetting="Polite"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding LastSuccessfulRefreshText}"/><TextBlock Text="{Binding AccessText}" TextWrapping="Wrap"/></DockPanel></Border>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
+
+                    <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" BorderThickness="0" Background="Transparent" Visibility="{Binding IsUsers, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Пользователи" AutomationProperties.AutomationId="AdminUsersList">
+                        <ListBox.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,6"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource Task.Brush.Brand.Soft}"><TextBlock Text="{Binding Initials}" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><StackPanel Grid.Column="1"><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/><TextBlock Text="{Binding Login}" FontSize="12" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel><TextBlock Grid.Column="2" Text="{Binding StatusLabel}" FontSize="12" VerticalAlignment="Center"/></Grid></Border></DataTemplate></ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" BorderThickness="0" Background="Transparent" Visibility="{Binding IsRoles, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Роли" AutomationProperties.AutomationId="AdminRolesList">
+                        <ListBox.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,6"><StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/><TextBlock Text="{Binding KindLabel}" FontSize="12" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel></Border></DataTemplate></ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox ItemsSource="{Binding Resources}" SelectedItem="{Binding SelectedResource}" BorderThickness="0" Background="Transparent" Visibility="{Binding IsResources, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Сетевые ресурсы" AutomationProperties.AutomationId="AdminResourcesList">
+                        <ListBox.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,6"><StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/><TextBlock Text="{Binding PathLabel}" FontSize="12" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis"/></StackPanel></Border></DataTemplate></ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Border Grid.Column="2" Style="{StaticResource Task.Inspector.Panel}" Visibility="{Binding IsUsers, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="AdminUserInspector"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel DataContext="{Binding SelectedUser}"><TextBlock Text="USER.READ · сервер authoritative" FontSize="11" FontWeight="SemiBold"/><TextBlock Text="{Binding DisplayName, TargetNullValue=Выберите пользователя}" FontSize="24" FontWeight="SemiBold" Margin="0,8,0,2" TextWrapping="Wrap"/><TextBlock Text="{Binding Login}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><Separator Margin="0,16"/><TextBlock Text="Статус" Style="{StaticResource Task.Inspector.FactLabel}"/><TextBlock Text="{Binding StatusLabel}" Style="{StaticResource Task.Inspector.FactValue}"/><TextBlock Text="Должность" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,14,0,3"/><TextBlock Text="{Binding JobTitle, TargetNullValue=Не указана}" Style="{StaticResource Task.Inspector.FactValue}"/><TextBlock Text="Версия" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,14,0,3"/><TextBlock Text="{Binding Version, StringFormat=серверная v{0}}" Style="{StaticResource Task.Inspector.FactValue}"/><Border Style="{StaticResource Task.State.Inline}" Margin="0,18,0,0"><TextBlock Text="Изменения учётной записи доступны только через разрешённые сервером команды и повторную проверку версии." TextWrapping="Wrap"/></Border></StackPanel></ScrollViewer></Border>
+                    <Border Grid.Column="2" Style="{StaticResource Task.Inspector.Panel}" Visibility="{Binding IsRoles, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="AdminRoleInspector"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel DataContext="{Binding SelectedRole}"><TextBlock Text="{Binding KindLabel, TargetNullValue=Выберите роль}" FontSize="11" FontWeight="SemiBold"/><TextBlock Text="{Binding Name}" FontSize="24" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="{Binding Code}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><Separator Margin="0,16"/><TextBlock Text="Опубликованные разрешения" Style="{StaticResource Task.Inspector.FactLabel}"/><TextBlock Text="{Binding PermissionSummary}" Style="{StaticResource Task.Inspector.FactValue}"/><Border Style="{StaticResource Task.State.Inline}" Margin="0,18,0,0"><TextBlock Text="Системные роли и effective permissions отображаются без локального расширения object scope." TextWrapping="Wrap"/></Border></StackPanel></ScrollViewer></Border>
+                    <Border Grid.Column="2" Style="{StaticResource Task.Inspector.Panel}" Visibility="{Binding IsResources, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="AdminResourceInspector"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel DataContext="{Binding SelectedResource}"><TextBlock Text="NETWORKRESOURCE.MANAGE" FontSize="11" FontWeight="SemiBold"/><TextBlock Text="{Binding Name, TargetNullValue=Выберите ресурс}" FontSize="24" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="{Binding StatusLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><Separator Margin="0,16"/><TextBlock Text="Корневой путь" Style="{StaticResource Task.Inspector.FactLabel}"/><TextBlock Text="{Binding PathLabel}" Style="{StaticResource Task.Inspector.FactValue}"/><TextBlock Text="Описание" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,14,0,3"/><TextBlock Text="{Binding Description, TargetNullValue=Не указано}" Style="{StaticResource Task.Inspector.FactValue}"/><Border Style="{StaticResource Task.State.Inline}" Margin="0,18,0,0"><TextBlock Text="Чувствительный путь скрывается сервером, если FileLocation.ReadSensitivePath не разрешён." TextWrapping="Wrap"/></Border></StackPanel></ScrollViewer></Border>
+                </Grid>
+            </Grid>
+
+            <Border VerticalAlignment="Top" Background="{DynamicResource Task.Brush.Semantic.WarningSoft}" BorderBrush="{DynamicResource Task.Brush.Semantic.Warning}" BorderThickness="1" CornerRadius="4" Padding="10" Margin="12" Visibility="{Binding HasMessage, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.LiveSetting="Assertive" AutomationProperties.AutomationId="AdministrationFeedback"><TextBlock Text="{Binding Message}" TextWrapping="Wrap"/></Border>
+        </Grid>
+    </Grid>
+</UserControl>

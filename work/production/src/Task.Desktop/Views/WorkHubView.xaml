@@ -174,12 +174,18 @@
             </Grid>
         </Grid>
 
-        <ScrollViewer Grid.Row="2" Visibility="{Binding IsSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Настройки" AutomationProperties.AutomationId="SettingsView">
-            <StackPanel>
-                <Border Style="{StaticResource Task.Surface.Subtle}" Padding="16" Margin="0,0,0,12" Visibility="{Binding CanReadSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+        <ScrollViewer Grid.Row="2" Visibility="{Binding IsSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Настройки" AutomationProperties.AutomationId="SettingsView">
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <ListBox Grid.Column="0" ItemsSource="{Binding SettingsSections}" SelectedItem="{Binding SettingsSection}" BorderThickness="1" BorderBrush="{DynamicResource Task.Brush.Border.Default}" Background="{DynamicResource Task.Brush.Surface.Subtle}" Padding="6" VerticalAlignment="Top" AutomationProperties.Name="Разделы настроек" AutomationProperties.AutomationId="SettingsNavigation">
+                    <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="AutomationProperties.Name" Value="{Binding}"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="MinHeight" Value="44"/></Style></ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate><DataTemplate><Grid Margin="10,9"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="{Binding}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Grid.Column="1" Text="›" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="8,0,0,0"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+            <StackPanel Grid.Column="2">
+                <Border Padding="20" Margin="0,0,0,12">
+                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding CanReadSettings}" Value="True"/><Condition Binding="{Binding IsProfileSettings}" Value="True"/></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers></Style></Border.Style>
                     <StackPanel>
-                        <TextBlock Text="Личные настройки" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                        <TextBlock Text="Синхронизируются между устройствами через сервер компании." Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,12"/>
+                        <DockPanel><Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Brand.Soft}" CornerRadius="10" Padding="9,4"><TextBlock Text="Личные" FontSize="11" Foreground="{DynamicResource Task.Brush.Brand.Primary}"/></Border><StackPanel><TextBlock Text="Профиль и рабочий день" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/><TextBlock Text="Личные параметры синхронизируются между устройствами." Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,12"/></StackPanel></DockPanel>
                         <WrapPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Язык"/><TextBox Text="{Binding UserLanguage, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Язык интерфейса"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Формат времени"/><ComboBox SelectedValue="{Binding UserTimeFormat}" SelectedValuePath="Content"><ComboBoxItem Content="24h"/><ComboBoxItem Content="12h"/></ComboBox></StackPanel>
@@ -196,7 +202,8 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource Task.Surface.Subtle}" Padding="16" Margin="0,0,0,12" Visibility="{Binding CanReadSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <Border Padding="20" Margin="0,0,0,12">
+                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding CanReadSettings}" Value="True"/><Condition Binding="{Binding IsNotificationSettings}" Value="True"/></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers></Style></Border.Style>
                     <StackPanel>
                         <TextBlock Text="Уведомления" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
                         <CheckBox Content="Получать уведомления" IsChecked="{Binding NotificationsEnabled}" Margin="0,12,0,4"/>
@@ -207,20 +214,25 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource Task.Surface.Subtle}" Padding="16" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <Border Padding="20">
+                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsServerSettings}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style>
                     <StackPanel>
-                        <TextBlock Text="Настройки организации" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                        <TextBlock Text="Серверные сроки хранения и горизонт повторений. Изменение доступно только администратору." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12"/>
-                        <WrapPanel>
+                        <DockPanel><Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="10" Padding="9,4"><TextBlock Text="Управляется организацией" FontSize="11"/></Border><StackPanel><TextBlock Text="Подключение и сервер" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/><TextBlock Text="Проверенный HTTPS endpoint и server-managed параметры." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12"/></StackPanel></DockPanel>
+                        <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,14"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="{Binding ServerAddress}" FontWeight="SemiBold"/><TextBlock Text="{Binding SettingsConnectionStatus}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/></StackPanel><TextBlock Grid.Column="1" Text="TLS" Foreground="{DynamicResource Task.Brush.Semantic.Success}" FontWeight="SemiBold" VerticalAlignment="Center"/></Grid></Border>
+                        <Border Background="{DynamicResource Task.Brush.Semantic.WarningSoft}" BorderBrush="{DynamicResource Task.Brush.Semantic.Warning}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,14" Visibility="{Binding IsOffline, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Сервер недоступен. Параметры показаны из последнего подтверждённого состояния; сохранение заблокировано." TextWrapping="Wrap"/></Border>
+                        <TextBlock Text="Настройки организации" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                        <TextBlock Text="Серверные сроки хранения и горизонт повторений. Изменение доступно только администратору." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                        <WrapPanel Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Корзина, дней"/><TextBox Text="{Binding TrashRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="История, дней"/><TextBox Text="{Binding HistoryRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Change feed, дней"/><TextBox Text="{Binding ChangeFeedRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Горизонт повторений, дней"/><TextBox Text="{Binding RecurrenceHorizonDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                         </WrapPanel>
-                        <Button Content="Сохранить настройки организации" Command="{Binding SaveOrganizationSettingsCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="SaveOrganizationSettingsButton"/>
+                        <Button Content="Сохранить настройки организации" Command="{Binding SaveOrganizationSettingsCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="SaveOrganizationSettingsButton" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

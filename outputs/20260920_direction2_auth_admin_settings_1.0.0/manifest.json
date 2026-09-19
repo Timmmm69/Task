@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "package": "Task Direction 2 auth, bootstrap, settings and administration",
+  "version": "1.0.0",
+  "date": "2026-09-20",
+  "result": "PASS",
+  "source_files": [
+    {
+      "path": "work/production/src/Task.Desktop/App.xaml.cs",
+      "bytes": 14998,
+      "sha256": "5ff7250818259aa679fd4c79d4efc2b31e6e3b4e3de83b06be236c2127c3748f"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/AuthWindow.xaml",
+      "bytes": 23595,
+      "sha256": "d0d7552976f33640ed5a337a7cb678ac93054a3be6c5dee2d4dac98251a74d71"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/BootstrapWindow.xaml",
+      "bytes": 8003,
+      "sha256": "adf4740dba546c963c66bb34e88e3b69703632ad134a75f908710f41b863ce35"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/BootstrapWindow.xaml.cs",
+      "bytes": 412,
+      "sha256": "e21d9f9379b1120bb331ac4c994fcc7e7983ebc1faa9f1e45d7010be48ee85fc"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 102509,
+      "sha256": "dee8ab6e658bc31752affa8d6a07f01e369d10b265951160b7a60aa4664ef6fe"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 12304,
+      "sha256": "4f0b23d69c3f8607145dfbf609f5d1a4a769cd4944051df01dafe53d41c71e17"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "bytes": 7508,
+      "sha256": "b8ec6a4234cb8f04ff3209a964a65b867000f90c3ed17f2b2b1a71e85cb6e776"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/AdministrationViewModel.cs",
+      "bytes": 7965,
+      "sha256": "4416b95e3fa2e69663b21f79490696c7423e42d999bddd693743c7a94f0d0b75"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/AuthenticationViewModels.cs",
+      "bytes": 24545,
+      "sha256": "2a11a2ef9f74e518efdee33fdcdb8028303ed3ae6b90f049fcdcebf715ee7ba7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 27930,
+      "sha256": "240259980ddc0a6ba5a0bff89684b245ba9ee2d84f10cd39c4c6c96b1dac62fc"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 42277,
+      "sha256": "d0a92ebe752d129b11ccb4df6c2bc30cb57ff17b86f4acf4a7e8a9e061d5015d"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+      "bytes": 12090,
+      "sha256": "73959215aca3fb5aa6d73e6d5299f954e1f70d92339dea08321b59fe1c54edcf"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/AdministrationView.xaml.cs",
+      "bytes": 179,
+      "sha256": "c1e51763659d232cd334715153492443b74eb0777c1bce8758884cce00612e78"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "bytes": 40738,
+      "sha256": "a1af11ac52ab8c60ae07ffecd5c4e6f0802d43ad25f6d1987f99eb4a88445d7f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Administration/AdministrationViewModelTests.cs",
+      "bytes": 3866,
+      "sha256": "74822277d3474461c93e947b44dc3d3c8e2f6aedcdb819fe322fa264532995a1"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/MainWindowViewModelTests.cs",
+      "bytes": 10554,
+      "sha256": "b3cd02a79158ce734ba4e674ac5247b987206adb51f26dd78656cadbbc6b75d7"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "bytes": 8450,
+      "sha256": "cad07bd5f531efb129c14e9b34f5621bdd179162acf72f14674c7c9f9c855064"
+    },
+    {
+      "path": "work/production/verification/Test-Direction2AuthAdminSettings.ps1",
+      "bytes": 11791,
+      "sha256": "d264d3b3d84b2f63e17a8ab27a7a0b0118169e5b0fa8788ff7edd4f5cd6c922b"
+    },
+    {
+      "path": "work/production/verification/Build-Direction2AuthAdminSettingsPackage.ps1",
+      "bytes": 11022,
+      "sha256": "c9563c6b3dcee65de3fb349fe5ca043c7accf3908a3e353ed4c87eede44b2555"
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 79563,
+      "sha256": "4fad87ef07b6d0fc2ca2c71f623ed0427d925427e9c0425ff02e57f1bd67afdf"
+    }
+  ],
+  "frozen_references": [
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/App.jsx",
+      "bytes": 322931,
+      "sha256": "71c37ffc7873b88a8b5fc685d53a7c19a2deb986546b98a914956b40f25ab941"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/styles.css",
+      "bytes": 116673,
+      "sha256": "517d13561b4cbe065ffd3fae09f6e332dce9ff6c6a4e5343d79ff051a68eca3f"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/evidence/usability-screenshots/01-shell-start.png",
+      "bytes": 101872,
+      "sha256": "49ab14d9e0ee3a5e6c7dc9de6cb671b9c68447d7ec01ef910d25ab8433fb2866"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/evidence/usability-screenshots/02-first-connection.png",
+      "bytes": 68277,
+      "sha256": "9d2ec3446912c2ce9d57ad1fd1593739114cea0d5185d0466c2b93b1c995d009"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/evidence/usability-screenshots/03-bootstrap-progress.png",
+      "bytes": 70941,
+      "sha256": "4c3750aabe0313d637ca0d02a8d45ce735fc140358b6845613fc00146803364f"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-settings.png",
+      "bytes": 84668,
+      "sha256": "3d5dca2b937e452f4a960bd125e2f1ee725c0c862fb4fa63b46d2f45a9fa2079"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-settings-notifications.png",
+      "bytes": 85228,
+      "sha256": "985faa0b94057de026c5394bfa0e3bba1bed2e0adca55e96f171cadd1ec64d53"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-settings-offline.png",
+      "bytes": 92697,
+      "sha256": "50f57c76644d5c9a71cbc3b08108c02563f52c333356bc64bf7dd833ab9e1af2"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-admin-users.png",
+      "bytes": 98366,
+      "sha256": "868b35cca82b9c6bb813982e5d6293f7090454aa21d8f58380c192b3e91d1c24"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-admin-roles.png",
+      "bytes": 101413,
+      "sha256": "3a1eef0b29c2f1016332748d103b61efb890068029b2b46cfcd535e9c72975d7"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-admin-resources-offline.png",
+      "bytes": 101400,
+      "sha256": "7f3ef7dc17a253715bf57f8bf2b2682f2cedc35e19dd1c9943267b2a59225d09"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-admin-limited.png",
+      "bytes": 96029,
+      "sha256": "5a1b5d879ede8e2bb3e23c043b01bb7496c662e2f39904e0748e433705f359d2"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-reconnecting.png",
+      "bytes": 106192,
+      "sha256": "ff4faaa292324bea25fb98f3adf17d75a68b88906fc599b1b7544f7dee21a398"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-session-revoked.png",
+      "bytes": 64261,
+      "sha256": "d4635f51265f6820a82a10cb63444469210cfd72111cbd6904e920428523475f"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-maintenance-readonly.png",
+      "bytes": 104779,
+      "sha256": "6d3c0475fc4cebe57c7467175fd59726650fa1c64a622fc0a4334682defe374a"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-storage-readonly.png",
+      "bytes": 106846,
+      "sha256": "e3ef96217a2ec2a33151087f655de0a740b139b48ece8468225deffb21c07015"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-scope-recovery.png",
+      "bytes": 104829,
+      "sha256": "ff8fffd6362af86aa5f1f4ef8176a53ee9cebe3c86cbe87b7f4da605b3018462"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-scaling-200.png",
+      "bytes": 98858,
+      "sha256": "29c0578dbd041902d080d5b40fd11642e82ed2b6a3c54c178f48a816f8e588e5"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Design_System_1.0.md",
+      "bytes": 1113,
+      "sha256": "947e2f4f12cc182361db343845af27f99797c6aead7bd4699260f48e6a2a9396"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Component_Implementation_Specs_1.0.csv",
+      "bytes": 47730,
+      "sha256": "9aeddf82a12fa323af7a48e78c4f140ad4850a6f449bf09dcaf19416293a48a2"
+    }
+  ],
+  "verification": {
+    "release_build": "PASS: 0 warnings, 0 errors",
+    "desktop_tests": {
+      "passed": 340,
+      "skipped": 0,
+      "failed": 0
+    },
+    "auth_security_gate": {
+      "passed": 1749,
+      "mandatory_scenarios": 14,
+      "skipped": 0,
+      "failed": 0
+    },
+    "direction2_native": "PASS: first connection, bootstrap, settings, admin, offline and limited role",
+    "accessibility": "PASS: UIA, keyboard, 100/125/150/200%, forced-colors resources",
+    "security": "PASS: existing auth/capability contracts retained; read-only direct write denied HTTP 403"
+  },
+  "package_files": [
+    "README.md",
+    "VERSION.txt",
+    "VALIDATION_REPORT.md",
+    "evidence/accessibility/auth-100.png",
+    "evidence/accessibility/auth-125.png",
+    "evidence/accessibility/auth-150.png",
+    "evidence/accessibility/auth-200.png",
+    "evidence/accessibility/calendar-100.png",
+    "evidence/accessibility/calendar-125.png",
+    "evidence/accessibility/calendar-150.png",
+    "evidence/accessibility/calendar-200.png",
+    "evidence/accessibility/main-100.png",
+    "evidence/accessibility/main-125.png",
+    "evidence/accessibility/main-150.png",
+    "evidence/accessibility/main-200.png",
+    "evidence/accessibility/phase-cleanup.stderr.log",
+    "evidence/accessibility/phase-cleanup.stdout.log",
+    "evidence/accessibility/phase-setup.stderr.log",
+    "evidence/accessibility/phase-setup.stdout.log",
+    "evidence/accessibility/windows-ux-tests.stderr.log",
+    "evidence/accessibility/windows-ux-tests.stdout.log",
+    "evidence/accessibility/windows-ux.json",
+    "evidence/accessibility/windows-ux.trx",
+    "evidence/admin-limited-role.png",
+    "evidence/admin-resources.png",
+    "evidence/admin-roles.png",
+    "evidence/admin-users.png",
+    "evidence/bootstrap-failure.png",
+    "evidence/bootstrap-progress.png",
+    "evidence/first-connection.png",
+    "evidence/settings-notifications.png",
+    "evidence/settings-offline.png",
+    "evidence/settings-profile.png",
+    "evidence/settings-server.png",
+    "evidence/validation.json",
+    "manifest.json",
+    "SHA256SUMS"
+  ]
+}
