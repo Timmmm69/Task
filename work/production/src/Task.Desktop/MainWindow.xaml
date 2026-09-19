@@ -15,7 +15,7 @@
         PreviewKeyDown="OnWindowPreviewKeyDown"
         AutomationProperties.Name="Task — рабочее пространство"
         AutomationProperties.AutomationId="MainWindow"
-        AutomationProperties.HelpText="F6 переключает основную навигацию, команды заголовка и содержимое раздела">
+        AutomationProperties.HelpText="F6 переключает основные области; Ctrl+K открывает глобальный поиск; Escape закрывает overlay и возвращает фокус">
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding Tasks.CancelEditorCommand}" />
         <KeyBinding Key="N" Modifiers="Alt" Command="{Binding NewTaskCommand}" />
@@ -88,6 +88,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition>
                         <ColumnDefinition.Style>
                             <Style TargetType="ColumnDefinition">
@@ -100,6 +101,7 @@
                             </Style>
                         </ColumnDefinition.Style>
                     </ColumnDefinition>
+                    <ColumnDefinition Width="44" />
                     <ColumnDefinition Width="44" />
                 </Grid.ColumnDefinitions>
 
@@ -152,7 +154,19 @@
                     </TextBlock>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+                <Button x:Name="GlobalSearchButton" Grid.Column="1" Click="OnOpenGlobalSearch"
+                        Style="{StaticResource Task.Button.Secondary}" MinWidth="184" Margin="0,0,10,0"
+                        IsEnabled="{Binding WorkHub.CanSearch}" ToolTip="Глобальный поиск · Ctrl+K"
+                        AutomationProperties.Name="Глобальный поиск" AutomationProperties.AutomationId="GlobalSearchOverlayButton"
+                        AutomationProperties.HelpText="Открывает permission-safe поиск. Сочетание клавиш Ctrl+K.">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource Task.Icon.Search}" Width="17" Height="17" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <TextBlock Text="Поиск по Task" Margin="8,0,12,0"/>
+                        <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                    </StackPanel>
+                </Button>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
                     <StackPanel.Style>
                         <Style TargetType="StackPanel">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -218,7 +232,7 @@
                     </Button>
                 </StackPanel>
 
-                <Border Grid.Column="2" Padding="12,0" VerticalAlignment="Stretch"
+                <Border Grid.Column="3" Padding="12,0" VerticalAlignment="Stretch"
                         AutomationProperties.Name="{Binding ConnectionStatus}"
                         AutomationProperties.HelpText="{Binding ConnectionContext}">
                     <Grid VerticalAlignment="Center">
@@ -256,7 +270,15 @@
                     </Grid>
                 </Border>
 
-                <Button Grid.Column="3"
+                <Button x:Name="NotificationsButton" Grid.Column="4" Click="OnOpenNotifications"
+                        Style="{StaticResource Task.Button.Icon}" VerticalAlignment="Center"
+                        IsEnabled="{Binding WorkHub.CanReadNotifications}" ToolTip="Центр уведомлений"
+                        AutomationProperties.Name="{Binding WorkHub.UnreadCount, StringFormat=Уведомления: {0} непрочитанных}"
+                        AutomationProperties.AutomationId="NotificationCenterButton">
+                    <Grid><Path Data="{StaticResource Task.Icon.Notifications}" Width="20" Height="20" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/><Border Background="{DynamicResource Task.Brush.Semantic.Critical}" CornerRadius="8" MinWidth="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12,-8,-8,0"><Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding WorkHub.UnreadCount}" Value="0"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style><TextBlock Text="{Binding WorkHub.UnreadCount}" Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0"/></Border></Grid>
+                </Button>
+
+                <Button Grid.Column="5"
                         Command="{Binding LogoutCommand}"
                         Style="{StaticResource Task.Button.Icon}"
                         VerticalAlignment="Center"
@@ -1045,5 +1067,55 @@
                 </Button>
             </Grid>
         </Border>
+
+        <Grid x:Name="GlobalSearchOverlay" Grid.RowSpan="3" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="100"
+              Background="#66000000" MouseLeftButtonDown="OnGlobalSearchBackdropClick"
+              AutomationProperties.Name="Глобальный поиск" AutomationProperties.AutomationId="GlobalSearchOverlay">
+            <Border Width="760" MaxWidth="760" MaxHeight="640" Margin="24,96,24,24" Padding="0"
+                    HorizontalAlignment="Center" VerticalAlignment="Top"
+                    Background="{DynamicResource Task.Brush.Surface.Base}" BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1" CornerRadius="8"
+                    DataContext="{Binding WorkHub}" MouseLeftButtonDown="OnOverlaySurfaceClick">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Grid Margin="18,16,14,12"><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Path Data="{StaticResource Task.Icon.Search}" Width="19" Height="19" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="GlobalSearchOverlayTextBox" Grid.Column="1" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="Transparent" FontSize="18" Padding="8,6" PreviewKeyDown="OnGlobalSearchTextBoxKeyDown" AutomationProperties.Name="Глобальный поисковый запрос" AutomationProperties.AutomationId="GlobalSearchOverlayTextBox">
+                            <TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding SearchCommand}"/></TextBox.InputBindings>
+                        </TextBox>
+                        <TextBlock Grid.Column="2" Text="Ctrl+K" Margin="12,0" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                        <Button Grid.Column="3" Click="OnCloseGlobalSearch" Style="{StaticResource Task.Button.Icon}" ToolTip="Закрыть поиск" AutomationProperties.Name="Закрыть поиск"><Path Data="{StaticResource Task.Icon.Status.Cancelled}" Width="18" Height="18" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/></Button>
+                    </Grid>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding SearchTypeFilters}" SelectedItem="{Binding SearchTypeFilter}" BorderThickness="0" Background="Transparent" Margin="16,0,16,8" KeyboardNavigation.DirectionalNavigation="Cycle" AutomationProperties.Name="Фильтры глобального поиска">
+                        <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="0,0,8,0"/></Style></ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <Border Grid.Row="2" Style="{StaticResource Task.State.Inline}" Margin="16,0,16,8" Visibility="{Binding IsOffline, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Offline · показаны только последние подтверждённые результаты. Они могут быть неполными." TextWrapping="Wrap"/></Border>
+                    <Grid Grid.Row="3" MinHeight="260">
+                        <ListBox x:Name="GlobalSearchResultsList" ItemsSource="{Binding OverlaySearchHits}" SelectedItem="{Binding SelectedSearchHit}" BorderThickness="0" Background="Transparent" Margin="10,0" PreviewKeyDown="OnGlobalSearchResultsKeyDown" MouseDoubleClick="OnSearchResultActivate" AutomationProperties.Name="Результаты глобального поиска" AutomationProperties.AutomationId="GlobalSearchOverlayResults">
+                            <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Padding" Value="10,8"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style></ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="36"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Path Data="{StaticResource Task.Icon.Search}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center"/><StackPanel Grid.Column="1"><TextBlock Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"><Run Text="{Binding GroupLabel, Mode=OneWay}"/><Run Text=" · "/><Run Text="{Binding TypeLabel, Mode=OneWay}"/></TextBlock><TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding TitlePrefix, Mode=OneWay}"/><Run Text="{Binding TitleMatch, Mode=OneWay}" FontWeight="Bold" Background="{DynamicResource Task.Brush.Semantic.WarningSoft}"/><Run Text="{Binding TitleSuffix, Mode=OneWay}"/></TextBlock></StackPanel><TextBlock Grid.Column="2" Text="↵" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                        </ListBox>
+                        <Border Panel.ZIndex="2"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding ShowSearchEmpty}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><Path Data="{StaticResource Task.Icon.Search}" Width="26" Height="26" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Ничего не найдено" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/><TextBlock Text="Измените запрос или фильтр. Скрытые результаты не раскрываются." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0" TextAlignment="Center"/></StackPanel></Border>
+                    </Grid>
+                    <Grid Grid.Row="4" Margin="16,10,16,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="↑↓ выбрать · Enter открыть · Esc закрыть" Foreground="{DynamicResource Task.Brush.Text.Secondary}" VerticalAlignment="Center"/><Button Grid.Column="1" Content="Все результаты" Click="OnShowAllSearchResults" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Открыть полную страницу поиска"/></Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid x:Name="NotificationOverlay" Grid.RowSpan="3" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="110" Background="#22000000" MouseLeftButtonDown="OnNotificationBackdropClick" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationCenterOverlay">
+            <Border Width="470" MaxWidth="470" Margin="0,72,72,72" HorizontalAlignment="Right" VerticalAlignment="Top" MaxHeight="650" Background="{DynamicResource Task.Brush.Surface.Base}" BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1" CornerRadius="8" DataContext="{Binding WorkHub}" MouseLeftButtonDown="OnOverlaySurfaceClick">
+                <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Grid Margin="18,16,14,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Центр уведомлений" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Уведомления" FontSize="22" FontWeight="SemiBold"/></StackPanel><Button Grid.Column="1" Click="OnCloseNotifications" Style="{StaticResource Task.Button.Icon}" ToolTip="Закрыть уведомления" AutomationProperties.Name="Закрыть уведомления"><Path Data="{StaticResource Task.Icon.Status.Cancelled}" Width="18" Height="18" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/></Button></Grid>
+                    <Grid Grid.Row="1" Margin="16,0,16,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><ComboBox ItemsSource="{Binding NotificationFilters}" SelectedItem="{Binding NotificationFilter}" Width="170" HorizontalAlignment="Left" Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Фильтр уведомлений"/><Button Grid.Column="1" Content="Прочитать все" Command="{Binding MarkAllReadCommand}" Style="{StaticResource Task.Button.Secondary}"/></Grid>
+                    <Grid Grid.Row="2" MinHeight="220">
+                        <ListBox x:Name="NotificationCenterList" ItemsSource="{Binding VisibleNotifications}" SelectedItem="{Binding SelectedNotification}" BorderThickness="0" Background="Transparent" AutomationProperties.Name="Список уведомлений" AutomationProperties.AutomationId="NotificationCenterList">
+                            <ListBox.ItemTemplate><DataTemplate><Border Padding="14" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource Task.Brush.Border.Default}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="10"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Ellipse Width="7" Height="7" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding IsUnread}" Value="False"><Setter Property="Visibility" Value="Hidden"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse><TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="6,0,10,0"/><TextBlock Grid.Column="2" Text="{Binding TimeText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="11"/></Grid><TextBlock Text="{Binding Body}" TextWrapping="Wrap" Margin="16,5,0,8" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><StackPanel Orientation="Horizontal" Margin="16,0,0,0"><Button Content="Открыть" Command="{Binding DataContext.WorkHub.OpenNotificationSourceCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Click="OnNotificationItemAction" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"/><Button Content="Прочитано" Command="{Binding DataContext.WorkHub.MarkReadCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/></StackPanel></StackPanel></Border></DataTemplate></ListBox.ItemTemplate>
+                        </ListBox>
+                        <Border Panel.ZIndex="2"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasVisibleNotifications}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><Path Data="{StaticResource Task.Icon.Notifications}" Width="26" Height="26" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Новых уведомлений нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/><TextBlock Text="Доступные события появятся здесь." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0"/></StackPanel></Border>
+                    </Grid>
+                    <TextBlock Grid.Row="3" Text="Действия повторно проверяют состояние и права; изменённая цель не считается успешно обработанной." Margin="16,10,16,14" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"/>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

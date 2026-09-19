@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "result": "PASS",
+  "scenarios": [
+    "normal",
+    "normal-overlay",
+    "offline",
+    "limited-role"
+  ],
+  "screenshots": [
+    {
+      "file": "limited-role.png",
+      "sha256": "9C4617CF439EFAA4B5E5845BC6D28A3D9400AD4B69F3B56102D43EDE4AD8D439",
+      "bytes": 107469
+    },
+    {
+      "file": "normal-overlay.png",
+      "sha256": "EA48F8498C94889CD35B55571B66AE839110E9F08223075E234436B957A32088",
+      "bytes": 81692
+    },
+    {
+      "file": "normal.png",
+      "sha256": "201B1E8062A84C8615A488D80B10D994873A5F8424B1E0099F2DDCB79577BB92",
+      "bytes": 124276
+    },
+    {
+      "file": "offline.png",
+      "sha256": "7E8F4A9E17FEACC2DDFF938DF6C82FBF8382EE47AC0E0492EE2998DFE7A7DD42",
+      "bytes": 123180
+    }
+  ],
+  "checks": [
+    "Release WPF executable exists.",
+    "Grouped search results expose a stable UIA root.",
+    "normal window bounds are available.",
+    "normal screenshot contains a rendered WPF surface.",
+    "normal-overlay window bounds are available.",
+    "normal-overlay screenshot contains a rendered WPF surface.",
+    "Offline feedback is exposed through UIA.",
+    "Offline state keeps the last confirmed result list available.",
+    "offline window bounds are available.",
+    "offline screenshot contains a rendered WPF surface.",
+    "Release WPF executable exists.",
+    "Limited-role redaction state is visible and named.",
+    "limited-role window bounds are available.",
+    "limited-role screenshot contains a rendered WPF surface."
+  ],
+  "completedAtUtc": "2026-09-19T11:59:14.4411714+00:00"
+}

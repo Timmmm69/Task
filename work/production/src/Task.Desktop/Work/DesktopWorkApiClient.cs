@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Task.Desktop.Security;
@@ -11,14 +12,71 @@ public sealed record DesktopCatalogItem(Guid Id, long Version, string Name, stri
 public sealed record DesktopContact(Guid Id, long Version, string DisplayName, string FirstName,
     string? LastName, string? Notes, string Status, string LifecycleState);
 public sealed record DesktopSearchResult(Guid ObjectId, string ObjectType, string Title,
-    Guid? ParentObjectId, long Version, DateTimeOffset UpdatedAt);
+    Guid? ParentObjectId, long Version, DateTimeOffset UpdatedAt)
+{
+    public string TypeLabel => ObjectType switch
+    {
+        "task" => "Задача",
+        "project" => "Проект",
+        "calendar_event" => "Событие",
+        "catalog_item" or "file_location" => "Файл",
+        "contact" => "Контакт",
+        "company" => "Компания",
+        "employee_profile" => "Сотрудник",
+        "interaction" => "Взаимодействие",
+        _ => "Объект",
+    };
+
+    public string GroupLabel => ObjectType switch
+    {
+        "task" or "calendar_event" => "Задачи",
+        "project" => "Проекты",
+        "catalog_item" or "file_location" => "Файлы",
+        "contact" or "company" or "interaction" => "CRM",
+        "employee_profile" => "Сотрудники",
+        _ => "Прочее",
+    };
+}
 public sealed record DesktopNotification(Guid Id, long Version, string NotificationType, string Title,
-    string Body, string Severity, string Status, Guid? SourceObjectId, DateTimeOffset NotBefore);
+    string Body, string Severity, string Status, Guid? SourceObjectId, DateTimeOffset NotBefore)
+{
+    public bool IsUnread => Status is not ("read" or "dismissed");
+    public string SeverityLabel => Severity switch
+    {
+        "critical" => "Критическое",
+        "warning" => "Важное",
+        _ => "Информационное",
+    };
+    public string TimeText => NotBefore.ToLocalTime().ToString("dd MMM, HH:mm", CultureInfo.GetCultureInfo("ru-RU"));
+}
 public sealed record DesktopFileLocation(Guid Id, long Version, string LocationType,
     string RawPath, bool CanOpenOnDevice);
 public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, string Title,
     long Version, string LifecycleState, DateTimeOffset UpdatedAt, DateTimeOffset? ArchivedAt,
-    DateTimeOffset? DeletedAt, DateTimeOffset? PurgeAfter);
+    DateTimeOffset? DeletedAt, DateTimeOffset? PurgeAfter, string LedgerStatus = "")
+{
+    public string TypeLabel => ObjectType switch
+    {
+        "task" => "Задача",
+        "project" => "Проект",
+        "calendar_event" => "Событие",
+        "catalog_item" => "Файл",
+        "contact" => "Контакт",
+        "company" => "Компания",
+        "interaction" => "Взаимодействие",
+        _ => "Объект",
+    };
+    public bool IsRetentionBlocked => LedgerStatus == "blocked_by_hold";
+    public string LifecycleLabel => LifecycleState == "archived" ? "Archived" : "Trashed";
+    public string ChangedText => LifecycleState == "archived"
+        ? $"Архивирован {(ArchivedAt ?? UpdatedAt).ToLocalTime():dd MMMM yyyy, HH:mm}"
+        : $"Перемещён в корзину {(DeletedAt ?? UpdatedAt).ToLocalTime():dd MMMM yyyy, HH:mm}";
+    public string RetentionText => IsRetentionBlocked
+        ? "Установлено юридическое удержание · срок удаления не наступит до снятия удержания"
+        : PurgeAfter is { } purge
+            ? $"Автоматическое удаление метаданных после {purge.ToLocalTime():dd MMMM yyyy}"
+            : "Срок хранения определяется политикой организации";
+}
 public sealed record DesktopUserSettings(long Version, string Language, string TimeFormat,
     int FirstDayOfWeek, string WorkdayStart, string WorkdayEnd, IReadOnlyList<int> WeekendDays,
     int DefaultTaskDurationMinutes, int DefaultReminderOffsetMinutes, bool AutostartEnabled,
@@ -328,7 +386,9 @@ public sealed class DesktopWorkApiClient : IDesktopWorkApiClient
     private static DesktopFileLocation? MapLocation(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "locationType") is { Length: > 0 } type && Text(n, "rawPath") is { Length: > 0 } path && n["canOpenOnDevice"] is JsonValue flag && flag.TryGetValue<bool>(out var canOpen)
         ? new(id, version, type, path, canOpen) : null;
     private static DesktopLifecycleItem? MapLifecycle(JsonNode n) => Guid.TryParse(Text(n, "objectId"), out var id) && Text(n, "objectType") is { Length: > 0 } type && Text(n, "title") is { Length: > 0 } title && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "lifecycleState") is { Length: > 0 } lifecycle && DateTimeOffset.TryParse(Text(n, "updatedAt"), out var updated)
-        ? new(id, type, title, version, lifecycle, updated, Date(n, "archivedAt"), Date(n, "deletedAt"), Date(n, "purgeAfter")) : null;
+        ? new(id, type, title, version, lifecycle, updated,
+            DateEither(n, "archivedAt", "archived_at"), DateEither(n, "deletedAt", "deleted_at"),
+            DateEither(n, "purgeAfter", "purge_after"), Text(n, "status") ?? string.Empty) : null;
     private static DesktopUserSettings? MapUserSettings(JsonNode n) =>
         n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "language") is { Length: > 0 } language && Text(n, "timeFormat") is { Length: > 0 } format && Text(n, "workdayStart") is { Length: > 0 } start && Text(n, "workdayEnd") is { Length: > 0 } end && Text(n, "missingFileBehavior") is { Length: > 0 } missing && Int(n, "firstDayOfWeek") is { } first && Int(n, "defaultTaskDurationMinutes") is { } duration && Int(n, "defaultReminderOffsetMinutes") is { } reminder && Bool(n, "autostartEnabled") is { } autostart && Bool(n, "allowLocalPaths") is { } local && Bool(n, "confirmCatalogDelete") is { } confirm && ReadIntArray(n, "weekendDays") is { } weekends
             ? new(version, language, format, first, start, end, weekends, duration, reminder, autostart, local, confirm, missing) : null;
@@ -341,6 +401,8 @@ public sealed class DesktopWorkApiClient : IDesktopWorkApiClient
     private static int? Int(JsonNode n, string name) => n[name] is JsonValue value && value.TryGetValue<int>(out var result) ? result : null;
     private static bool? Bool(JsonNode n, string name) => n[name] is JsonValue value && value.TryGetValue<bool>(out var result) ? result : null;
     private static DateTimeOffset? Date(JsonNode n, string name) => DateTimeOffset.TryParse(Text(n, name), out var result) ? result : null;
+    private static DateTimeOffset? DateEither(JsonNode n, string camelName, string databaseName) =>
+        Date(n, camelName) ?? Date(n, databaseName);
     private static IReadOnlyList<int>? ReadIntArray(JsonNode n, string name)
     {
         if (n[name] is not JsonArray values) return null;

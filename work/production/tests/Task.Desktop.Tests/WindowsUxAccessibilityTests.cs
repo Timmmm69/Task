@@ -69,6 +69,8 @@ public sealed class WindowsUxAccessibilityTests
         Assert.Contains("Tab", Attribute(auth, "HelpText"), StringComparison.Ordinal);
         Assert.Equal("OnWindowPreviewKeyDown", Attribute(main, "PreviewKeyDown"));
         Assert.Contains("F6", Attribute(main, "HelpText"), StringComparison.Ordinal);
+        Assert.Contains("Ctrl+K", Attribute(main, "HelpText"), StringComparison.Ordinal);
+        Assert.Contains("Escape", Attribute(main, "HelpText"), StringComparison.Ordinal);
 
         var scrollViewer = auth.Descendants().Single(element =>
             element.Name.LocalName == "ScrollViewer" && TryAttribute(element, "Padding") == "28");
@@ -80,12 +82,12 @@ public sealed class WindowsUxAccessibilityTests
     {
         var contracts = new Dictionary<string, string[]>
         {
-            ["MainWindow.xaml"] = ["MainWindow", "NavigationListBox", "SelectedSectionArea", "TasksScreen"],
+            ["MainWindow.xaml"] = ["MainWindow", "NavigationListBox", "SelectedSectionArea", "TasksScreen", "GlobalSearchOverlay", "GlobalSearchOverlayResults", "NotificationCenterOverlay", "NotificationCenterList"],
             [Path.Combine("Views", "TodayView.xaml")] = ["TodayScreen"],
             [Path.Combine("Views", "CalendarView.xaml")] = ["CalendarScreen"],
             [Path.Combine("Views", "ProjectsView.xaml")] = ["ProjectsView"],
             [Path.Combine("Views", "WorkHubView.xaml")] =
-                ["WorkHubView", "CatalogList", "ContactsList", "NotificationsList", "SettingsView"],
+                ["WorkHubView", "CatalogList", "ContactsList", "GlobalSearchResults", "NotificationsList", "LifecycleItemsList", "LifecycleInspector", "WorkHubFeedbackText", "WorkHubLimitedRoleState", "WorkHubLimitedRoleText", "WorkHubLoadingState", "SettingsView"],
         };
 
         foreach (var (relative, ids) in contracts)

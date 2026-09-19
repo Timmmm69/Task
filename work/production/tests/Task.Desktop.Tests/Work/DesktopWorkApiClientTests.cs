@@ -76,7 +76,7 @@ public sealed class DesktopWorkApiClientTests
         const string organization = """{"version":1,"trashRetentionDays":30,"historyRetentionDays":1095,"changeFeedRetentionDays":90,"recurrenceHorizonDays":90,"recurrenceMinInstances":20,"defaultWorkdayStart":"09:00:00","defaultWorkdayEnd":"18:00:00","firstDayOfWeek":1,"maxRequestBytes":1048576}""";
         var responses = new Queue<HttpResponseMessage>([
             Json(HttpStatusCode.OK, $$"""{"items":[{"objectId":"{{archivedId:D}}","objectType":"project","title":"Plan","version":3,"lifecycleState":"archived","updatedAt":"2026-09-10T08:00:00Z","archivedAt":"2026-09-10T08:00:00Z"}]}"""),
-            Json(HttpStatusCode.OK, $$"""{"items":[{"objectId":"{{trashedId:D}}","objectType":"task","title":"Old task","version":4,"lifecycleState":"trashed","updatedAt":"2026-09-10T09:00:00Z","deletedAt":"2026-09-10T09:00:00Z","purgeAfter":"2026-10-10T09:00:00Z"}]}"""),
+            Json(HttpStatusCode.OK, $$"""{"items":[{"objectId":"{{trashedId:D}}","objectType":"task","title":"Old task","version":4,"lifecycleState":"trashed","updatedAt":"2026-09-10T09:00:00Z","deleted_at":"2026-09-10T09:00:00Z","purge_after":"2026-10-10T09:00:00Z","status":"blocked_by_hold"}]}"""),
             Json(HttpStatusCode.OK, user), Json(HttpStatusCode.OK, preferences), Json(HttpStatusCode.OK, organization),
             Json(HttpStatusCode.OK, "{}"), Json(HttpStatusCode.OK, "{}"),
             Json(HttpStatusCode.OK, user.Replace("\"version\":1", "\"version\":2")),
@@ -86,7 +86,10 @@ public sealed class DesktopWorkApiClientTests
         await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(responses.Dequeue()));
 
         Assert.Single(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>.Succeeded>(await fixture.Client.GetArchiveAsync()).Value);
-        Assert.Single(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>.Succeeded>(await fixture.Client.GetTrashAsync()).Value);
+        var trashItem = Assert.Single(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>.Succeeded>(await fixture.Client.GetTrashAsync()).Value);
+        Assert.True(trashItem.IsRetentionBlocked);
+        Assert.NotNull(trashItem.PurgeAfter);
+        Assert.Contains("юридическое удержание", trashItem.RetentionText);
         var userSettings = Assert.IsType<DesktopWorkResult<DesktopUserSettings>.Succeeded>(await fixture.Client.GetUserSettingsAsync()).Value;
         var notificationSettings = Assert.IsType<DesktopWorkResult<DesktopNotificationPreferences>.Succeeded>(await fixture.Client.GetNotificationPreferencesAsync()).Value;
         var organizationSettings = Assert.IsType<DesktopWorkResult<DesktopOrganizationSettings>.Succeeded>(await fixture.Client.GetOrganizationSettingsAsync()).Value;

@@ -37,20 +37,72 @@ public sealed class WorkHubViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task SearchPresentationGroupsAndHighlightsOnlyAuthorizedResults()
+    {
+        using var vm = new WorkHubViewModel(new FakeClient(), ["Search.Use"]);
+        vm.Activate(WorkHubArea.Search);
+        vm.SearchQuery = "pha";
+
+        await vm.SearchCommand.ExecuteAsync();
+
+        var group = Assert.Single(vm.SearchGroups);
+        Assert.Equal("Задачи", group.Title);
+        var hit = Assert.Single(group.Items);
+        Assert.Equal("Al", hit.TitlePrefix);
+        Assert.Equal("pha", hit.TitleMatch, ignoreCase: true);
+        Assert.Equal(1, vm.SearchResultCount);
+        Assert.Contains("область доступа проверена сервером", vm.SearchSummaryText);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task OfflineSearchKeepsConfirmedResultsAndBlocksNewRequest()
+    {
+        using var vm = new WorkHubViewModel(new FakeClient(), ["Search.Use"]);
+        vm.Activate(WorkHubArea.Search);
+        vm.SearchQuery = "alpha";
+        await vm.SearchCommand.ExecuteAsync();
+
+        vm.UpdateConnectivity(false);
+
+        Assert.Single(vm.SearchResults);
+        Assert.False(vm.SearchCommand.CanExecute(null));
+        Assert.True(vm.IsOffline);
+        Assert.Contains("подтверждённого кэша", vm.SearchSummaryText);
+    }
+
+    [Fact]
+    public void MissingCapabilityProducesLimitedRoleStateWithoutCounts()
+    {
+        using var vm = new WorkHubViewModel(new FakeClient(), []);
+
+        vm.Activate(WorkHubArea.Search);
+
+        Assert.True(vm.IsLimitedRole);
+        Assert.False(vm.SearchCommand.CanExecute(null));
+        Assert.Contains("Ограниченная роль", vm.AccessText);
+        Assert.Empty(vm.SearchResults);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task NotificationCommandsMaintainUnreadCount()
     {
         var client = new FakeClient(); using var vm = new WorkHubViewModel(client, ["Notification.ReadOwn"]);
         vm.Activate(WorkHubArea.Notifications);
         await Eventually(() => vm.Notifications.Count == 2);
         Assert.Equal(2, vm.UnreadCount);
+        Assert.Equal("Информационное", vm.Notifications[0].SeverityLabel);
+        Assert.Equal("Важное", vm.Notifications[1].SeverityLabel);
+        Assert.Equal(2, vm.VisibleNotifications.Count);
         var opened = (Type: "", Id: Guid.Empty);
         vm.OpenObjectRequested += (type, id) => opened = (type, id);
         await vm.OpenNotificationSourceCommand.ExecuteAsync(vm.Notifications[0]);
         Assert.Equal(("task", FakeClient.TaskId), opened);
         await vm.MarkReadCommand.ExecuteAsync();
         Assert.Equal(1, vm.UnreadCount);
+        Assert.Single(vm.VisibleNotifications);
         await vm.MarkAllReadCommand.ExecuteAsync();
         Assert.Equal(0, vm.UnreadCount);
+        Assert.Empty(vm.VisibleNotifications);
     }
 
     [Fact]
@@ -67,6 +119,7 @@ public sealed class WorkHubViewModelTests
 
         vm.Activate(WorkHubArea.Trash);
         await Eventually(() => vm.LifecycleItems.Count == 1);
+        Assert.Contains("Автоматическое удаление метаданных", vm.LifecycleItems[0].RetentionText);
         await vm.RestoreLifecycleItemCommand.ExecuteAsync(vm.LifecycleItems[0]);
         Assert.Equal(FakeClient.TrashedId, client.RestoredTrashId);
     }
@@ -104,7 +157,7 @@ public sealed class WorkHubViewModelTests
         vm.UpdateConnectivity(false);
         Assert.Equal(105, vm.DefaultTaskDurationMinutes);
         Assert.False(vm.SaveUserSettingsCommand.CanExecute(null));
-        Assert.Contains("не будут отправлены автоматически", vm.Message);
+        Assert.Contains("действия записи отключены", vm.Message);
 
         vm.UpdateConnectivity(true);
         Assert.True(vm.SaveUserSettingsCommand.CanExecute(null));

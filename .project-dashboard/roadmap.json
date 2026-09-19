@@ -198,10 +198,11 @@
         "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
         "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
         "work/production/tests/Task.Desktop.Tests/Work",
-        "outputs/20260909_prod05_work_links_search_notifications_1.0.0/validation-report.md"
+        "outputs/20260909_prod05_work_links_search_notifications_1.0.0/validation-report.md",
+        "outputs/20260919_direction2_search_notifications_lifecycle_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Production Windows vertical slice подключён к существующим API: каталог и location write/resolve/open, создание контактов, permission-filtered глобальный поиск и центр собственных уведомлений. Файл открывается только после server resolve и явного действия пользователя; executable/script пути блокируются. Source gate подтверждён, live SMB/ACL и native UIA остаются deployment acceptance.",
-      "updated_at": "2026-09-09T18:00:00+03:00",
+      "note": "Production Windows vertical slice подключён к существующим API: каталог и location write/resolve/open, создание контактов, permission-safe глобальный поиск с группами, overlay, подсветкой совпадений и redaction, а также центр уведомлений с визуальной срочностью. Release WPF UIA подтверждает normal, overlay, offline-cache и limited-role состояния без раскрытия защищённых данных; полный gate 1741 passed / 4 skipped. Live SMB/ACL остаётся deployment acceptance.",
+      "updated_at": "2026-09-19T15:10:00+03:00",
       "priority": 3,
       "dependencies": [
         "DATA-04",
@@ -211,7 +212,7 @@
       ],
       "blocked_by": [],
       "recommended_order": 0,
-      "next_action": "На стенде заказчика выполнить live PostgreSQL/API smoke, проверить реальные SMB/ACL пути и пройти native Windows UIA walkthrough четырёх разделов."
+      "next_action": "На стенде заказчика проверить реальные SMB/ACL пути и корпоративные уведомления; локальный PostgreSQL/API/Release WPF UIA gate поддерживать регрессионно."
     },
     {
       "id": "DESK-01",
@@ -276,10 +277,11 @@
         "work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs: authenticated archive, trash and settings contracts with ETag/idempotency and strict mapping",
         "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs; Views/WorkHubView.xaml: capability-aware archive, trash and settings surfaces",
         "work/production/tests/Task.Desktop.Tests/Work: lifecycle/settings contract and view-model coverage",
-        "outputs/20260910_desk03_primary_sections_1.0.0/validation-report.md"
+        "outputs/20260910_desk03_primary_sections_1.0.0/validation-report.md",
+        "outputs/20260919_direction2_search_notifications_lifecycle_1.0.0/VALIDATION_REPORT.md"
       ],
-      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Переключение WorkHub автоматически запускает pending-refresh новой секции после завершения отменённого; desktop regression gate 312/312. Native UIA и customer-stand smoke остаются deployment acceptance.",
-      "updated_at": "2026-09-12T23:05:03+03:00",
+      "note": "Все восемь перечисленных основных разделов имеют server-backed production UI; дополнительно подключена корзина. Поиск, уведомления, архив и корзина приведены к frozen Direction 2: единые карточки и инспекторы, retention и restore, loading/error/offline/limited-role состояния, keyboard focus и UIA. Release WPF normal/offline/limited-role evidence и desktop regression gate подтверждены.",
+      "updated_at": "2026-09-19T15:10:00+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-02",
@@ -813,10 +815,11 @@
         "work/production/verification/Test-Qa03Gate.ps1: чистый стенд PostgreSQL 16 + HTTPS API + Release WPF UIA",
         "work/production/verification/Test-Qa03CriticalE2E.ps1: product seed/verify, worker delivery, notifications and deterministic overlap seed",
         "outputs/20260910_qa03_critical_e2e_1.0.0/VALIDATION_REPORT.md: 23 API + 12 persistence + 8 notification + 12 UI checks PASS",
-        "outputs/20260915_calendar_direction2_1.0.0/evidence/ui-assertions.json: Release WPF calendar overlap, inspector, editor create/update and offline/read-only PASS"
+        "outputs/20260915_calendar_direction2_1.0.0/evidence/ui-assertions.json: Release WPF calendar overlap, inspector, editor create/update and offline/read-only PASS",
+        "outputs/20260919_direction2_search_notifications_lifecycle_1.0.0/evidence/validation.json: Release WPF search normal/overlay/offline/limited-role PASS"
       ],
-      "note": "Каждый критический сценарий закрыт реальным evidence на чистом стенде. Календарный UIA-flow дополнительно проверяет отдельные overlap controls, selection inspector, открытие редактора, реальный create/update, offline cache/read-only и reconnect; cleanup восстанавливает Desktop AppData.",
-      "updated_at": "2026-09-15T22:45:00+03:00",
+      "note": "Каждый критический сценарий закрыт реальным evidence на чистом стенде. Календарный UIA-flow проверяет overlap, inspector, editor, offline cache/read-only и reconnect; Direction 2 search flow дополнительно проверяет grouped result, overlay, сохранение подтверждённых результатов offline и limited-role redaction. Cleanup восстанавливает Desktop AppData.",
+      "updated_at": "2026-09-19T15:10:00+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-02",

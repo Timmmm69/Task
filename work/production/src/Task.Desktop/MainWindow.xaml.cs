@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace Task.Desktop;
 public partial class MainWindow : Window
 {
     private bool _authenticationTransitionClose;
+    private FrameworkElement? _overlayReturnFocus;
 
     public MainWindow()
         : this(new MainWindowViewModel())
@@ -108,6 +110,29 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control)
+        {
+            OpenGlobalSearch();
+            e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
+        {
+            if (GlobalSearchOverlay.Visibility == Visibility.Visible)
+            {
+                CloseGlobalSearch();
+                e.Handled = true;
+                return;
+            }
+            if (NotificationOverlay.Visibility == Visibility.Visible)
+            {
+                CloseNotifications();
+                e.Handled = true;
+                return;
+            }
+        }
+
         if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None
             && DataContext is MainWindowViewModel { Inbox.HasConversion: true } viewModel
             && viewModel.Inbox!.CancelConversionCommand.CanExecute(null))
@@ -140,6 +165,124 @@ public partial class MainWindow : Window
                 return;
             }
         }
+    }
+
+    private void OnOpenGlobalSearch(object sender, RoutedEventArgs e) => OpenGlobalSearch();
+
+    private void OpenGlobalSearch()
+    {
+        if (DataContext is not MainWindowViewModel { WorkHub: { CanSearch: true } }) return;
+        _overlayReturnFocus = Keyboard.FocusedElement as FrameworkElement ?? GlobalSearchButton;
+        NotificationOverlay.Visibility = Visibility.Collapsed;
+        GlobalSearchOverlay.Visibility = Visibility.Visible;
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+        {
+            GlobalSearchOverlayTextBox.Focus();
+            GlobalSearchOverlayTextBox.SelectAll();
+        });
+    }
+
+    private void OnCloseGlobalSearch(object sender, RoutedEventArgs e) => CloseGlobalSearch();
+
+    private void CloseGlobalSearch()
+    {
+        GlobalSearchOverlay.Visibility = Visibility.Collapsed;
+        RestoreOverlayFocus(GlobalSearchButton);
+    }
+
+    private void OnGlobalSearchBackdropClick(object sender, MouseButtonEventArgs e)
+    {
+        if (ReferenceEquals(e.OriginalSource, GlobalSearchOverlay)) CloseGlobalSearch();
+    }
+
+    private void OnOverlaySurfaceClick(object sender, MouseButtonEventArgs e) => e.Handled = true;
+
+    private void OnGlobalSearchTextBoxKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            CloseGlobalSearch();
+            e.Handled = true;
+            return;
+        }
+        if (e.Key is not (Key.Down or Key.Up) || GlobalSearchResultsList.Items.Count == 0) return;
+        GlobalSearchResultsList.SelectedIndex = e.Key == Key.Down ? 0 : GlobalSearchResultsList.Items.Count - 1;
+        GlobalSearchResultsList.ScrollIntoView(GlobalSearchResultsList.SelectedItem);
+        GlobalSearchResultsList.Focus();
+        if (GlobalSearchResultsList.ItemContainerGenerator.ContainerFromItem(GlobalSearchResultsList.SelectedItem) is ListBoxItem item) item.Focus();
+        e.Handled = true;
+    }
+
+    private void OnGlobalSearchResultsKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            ActivateSelectedSearchResult();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Escape)
+        {
+            CloseGlobalSearch();
+            e.Handled = true;
+        }
+    }
+
+    private void OnSearchResultActivate(object sender, MouseButtonEventArgs e) => ActivateSelectedSearchResult();
+
+    private void ActivateSelectedSearchResult()
+    {
+        if (DataContext is not MainWindowViewModel { WorkHub: { } workHub } || workHub.SelectedSearchHit is null) return;
+        if (workHub.OpenSearchResultCommand.CanExecute(workHub.SelectedSearchHit))
+            workHub.OpenSearchResultCommand.Execute(workHub.SelectedSearchHit);
+        CloseGlobalSearch();
+    }
+
+    private void OnShowAllSearchResults(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel viewModel) return;
+        CloseGlobalSearch();
+        viewModel.SelectedSection = viewModel.Sections.First(section => section.Route == "search");
+    }
+
+    private async void OnOpenNotifications(object sender, RoutedEventArgs e)
+    {
+        if (NotificationOverlay.Visibility == Visibility.Visible)
+        {
+            CloseNotifications();
+            return;
+        }
+        if (DataContext is not MainWindowViewModel { WorkHub: { CanReadNotifications: true } } viewModel) return;
+        _overlayReturnFocus = Keyboard.FocusedElement as FrameworkElement ?? NotificationsButton;
+        GlobalSearchOverlay.Visibility = Visibility.Collapsed;
+        NotificationOverlay.Visibility = Visibility.Visible;
+        await viewModel.WorkHub.EnsureNotificationsAsync();
+        _ = Dispatcher.BeginInvoke(DispatcherPriority.Input, () => NotificationCenterList.Focus());
+    }
+
+    private void OnCloseNotifications(object sender, RoutedEventArgs e) => CloseNotifications();
+
+    private void CloseNotifications()
+    {
+        NotificationOverlay.Visibility = Visibility.Collapsed;
+        RestoreOverlayFocus(NotificationsButton);
+    }
+
+    private void OnNotificationBackdropClick(object sender, MouseButtonEventArgs e)
+    {
+        if (ReferenceEquals(e.OriginalSource, NotificationOverlay)) CloseNotifications();
+    }
+
+    private void OnNotificationItemAction(object sender, RoutedEventArgs e) => CloseNotifications();
+
+    private void RestoreOverlayFocus(FrameworkElement fallback)
+    {
+        var target = _overlayReturnFocus;
+        _overlayReturnFocus = null;
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+        {
+            if (target is { IsVisible: true, IsEnabled: true }) target.Focus();
+            else fallback.Focus();
+        });
     }
 
     private bool FocusContentRegion()
