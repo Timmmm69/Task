@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "result": "PASS",
+  "scenarios": [
+    "normal",
+    "normal-overlay",
+    "notification-center",
+    "offline",
+    "limited-role"
+  ],
+  "screenshots": [
+    {
+      "file": "comparison-notification-center.png",
+      "sha256": "11A8BEE585CF5ED1C60EFAD70166A24631EBFEBD88192534E040B54769F2E64D",
+      "bytes": 472708
+    },
+    {
+      "file": "comparison-overlay.png",
+      "sha256": "AD67AEC6989D1E33F88B441C3BEAFCA0A6A5BCC73468307E6F5EECF2F41E653B",
+      "bytes": 401370
+    },
+    {
+      "file": "comparison-search.png",
+      "sha256": "8F212695ABBE21BD783C146B2C9736B0A37F9DFD01C51DAC43033BA72025207C",
+      "bytes": 418256
+    },
+    {
+      "file": "limited-role.png",
+      "sha256": "A2420B0B53B8CA0FC68B9CDB9314F9324FC6113628F288BB39ED1EFAD4D4233A",
+      "bytes": 105786
+    },
+    {
+      "file": "normal-overlay.png",
+      "sha256": "73F117CF2EB489434FAEFAC7EDD1D86710F7FEB3DF2363159E0DD051161CE459",
+      "bytes": 80060
+    },
+    {
+      "file": "normal.png",
+      "sha256": "5EED8382BAFADE5460E350B5193755AA550DD6539F89139C8CF8D07D72B3EE54",
+      "bytes": 122551
+    },
+    {
+      "file": "notification-center.png",
+      "sha256": "24D1D84DDBC8210090FF651FE726A9FD0B55E2DA8F502EAADCC145B4A60D7AE6",
+      "bytes": 141231
+    },
+    {
+      "file": "offline.png",
+      "sha256": "06E65E7CB6EA633A22A8C92B3A4E014BA3B85B7C3AB12179887B4A1BEA6612DF",
+      "bytes": 121888
+    }
+  ],
+  "checks": [
+    "Warning and critical notification evidence was seeded in the isolated database.",
+    "Release WPF executable exists.",
+    "Grouped search results expose a stable UIA root.",
+    "normal window bounds are available.",
+    "normal screenshot contains a rendered WPF surface.",
+    "normal-overlay window bounds are available.",
+    "normal-overlay screenshot contains a rendered WPF surface.",
+    "Notification center exposes a visible semantic urgency label through UIA.",
+    "notification-center window bounds are available.",
+    "notification-center screenshot contains a rendered WPF surface.",
+    "Offline feedback is exposed through UIA.",
+    "Offline state keeps the last confirmed result list available.",
+    "offline window bounds are available.",
+    "offline screenshot contains a rendered WPF surface.",
+    "Release WPF executable exists.",
+    "Limited-role redaction state is visible and named.",
+    "limited-role window bounds are available.",
+    "limited-role screenshot contains a rendered WPF surface."
+  ],
+  "completedAtUtc": "2026-09-19T15:45:31.4596493+00:00"
+}

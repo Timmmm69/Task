@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "package": "Task Direction 2 search, notifications and lifecycle",
+  "version": "1.0.1",
+  "date": "2026-09-19",
+  "result": "PASS",
+  "source_files": [
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 101443,
+      "sha256": "a91ddc49e9fa1d5dadb083e6ed71166471148fe402dd9d3beda10fc0c70ef920"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 12060,
+      "sha256": "7fde50be459c290bf8f89640f2eae35a2967978f800b774c5bfd5fc192a05bde"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 41159,
+      "sha256": "31b5d16f42ab1516bb83f9bf8f5f04447f68ce1d73c1f0a5eddbee70a910d441"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "bytes": 36054,
+      "sha256": "3a278b5d92d526b45463a7a9a7a2fd9611b41b14242e29ab4ebd150172365aab"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "bytes": 35856,
+      "sha256": "162e7fe6fdeac453c1634bff274ede286df5e5bc09c2620150dc10207ac219d6"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "bytes": 7881,
+      "sha256": "97015b4faadcbbeedbd76f26e8828645278b1cd08bea82969968a24fae63ef46"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs",
+      "bytes": 13288,
+      "sha256": "1d87390edb11c8bd38cc722538052087426247534cbc62e90cd1ae8e746cfc3d"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs",
+      "bytes": 17211,
+      "sha256": "45095ab35cceb2f1d2cec9755a75b01fc4df77e8c8e4f84a5b80c7df6c41adb9"
+    },
+    {
+      "path": "work/production/verification/Test-Direction2SearchLifecycle.ps1",
+      "bytes": 13829,
+      "sha256": "eb9d7166ab4ccfb693a48f4c291b1fdc2e892fadd4520ace8653a97cab54d009"
+    },
+    {
+      "path": "work/production/verification/Build-Direction2SearchLifecyclePackage.ps1",
+      "bytes": 9340,
+      "sha256": "6cd36d98fd05c85db9f9a1da85a313f196257083325b1f3d6d3174360b0665e0"
+    },
+    {
+      "path": "work/production/design-qa.md",
+      "bytes": 7086,
+      "sha256": "2388a53929e970812c425ed5111750cf2a56ad62b520d6eee261563cf8ccec75"
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 79327,
+      "sha256": "08077a285f9739d3a649195f479d863e4ee9a51e035d00c11c626bb442fa18c4"
+    }
+  ],
+  "frozen_references": [
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-search.png",
+      "bytes": 83150,
+      "sha256": "91030bf426c32fa507c965c0c2681cb6ab44db5a081fed1b02019358c956d74c"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-search-overlay.png",
+      "bytes": 76970,
+      "sha256": "f1c892bb0f89300452ee8de0013133e2baa3e20d009ba0b6e203223ad97847c3"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-lifecycle-archive.png",
+      "bytes": 84262,
+      "sha256": "864d764c5c02562ff84e76a9d050f548f2c28c0d8365aad683d78da6fae1149c"
+    },
+    {
+      "path": "work/stage_5_prototype/qa-wave-c-lifecycle-trash-retention.png",
+      "bytes": 85975,
+      "sha256": "dff973663ab11538909bbf41430fc2aaa50a3effc77d7489095e49019bceb94f"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-notification-target-changed.png",
+      "bytes": 84050,
+      "sha256": "774339439946feb79b377b656d9350137568ac5abe3b28122a7618e84caea024"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/App.jsx",
+      "bytes": 322931,
+      "sha256": "71c37ffc7873b88a8b5fc685d53a7c19a2deb986546b98a914956b40f25ab941"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/styles.css",
+      "bytes": 116673,
+      "sha256": "517d13561b4cbe065ffd3fae09f6e332dce9ff6c6a4e5343d79ff051a68eca3f"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Design_System_1.0.md",
+      "bytes": 1113,
+      "sha256": "947e2f4f12cc182361db343845af27f99797c6aead7bd4699260f48e6a2a9396"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Component_Implementation_Specs_1.0.csv",
+      "bytes": 47730,
+      "sha256": "9aeddf82a12fa323af7a48e78c4f140ad4850a6f449bf09dcaf19416293a48a2"
+    }
+  ],
+  "verification": {
+    "release_build": "PASS: 0 errors; 10 existing test-code warnings (xUnit1031, ASPDEPR004)",
+    "tests": {
+      "passed": 1742,
+      "skipped": 4,
+      "failed": 0
+    },
+    "native_uia": "PASS: normal, normal-overlay, notification-center, offline, limited-role",
+    "security": "PASS: permission-safe redaction preserved"
+  },
+  "package_files": [
+    "README.md",
+    "VERSION.txt",
+    "VALIDATION_REPORT.md",
+    "evidence/normal.png",
+    "evidence/normal-overlay.png",
+    "evidence/notification-center.png",
+    "evidence/offline.png",
+    "evidence/limited-role.png",
+    "evidence/comparison-search.png",
+    "evidence/comparison-overlay.png",
+    "evidence/comparison-notification-center.png",
+    "evidence/validation.json",
+    "manifest.json",
+    "SHA256SUMS"
+  ]
+}

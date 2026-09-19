@@ -112,6 +112,18 @@ public sealed class WindowsUxAccessibilityTests
         Assert.Contains("AutomationProperties.LiveSetting=\"Polite\"", main, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void NotificationCenterOverlay_ExposesUrgencyLabelsAndSemanticAccents()
+    {
+        var main = File.ReadAllText(ProjectFile("src", "Task.Desktop", "MainWindow.xaml"));
+
+        Assert.Contains("Text=\"{Binding SeverityLabel}\"", main, StringComparison.Ordinal);
+        Assert.Contains("Binding=\"{Binding Severity}\" Value=\"warning\"", main, StringComparison.Ordinal);
+        Assert.Contains("Binding=\"{Binding Severity}\" Value=\"critical\"", main, StringComparison.Ordinal);
+        Assert.Contains("Task.Brush.Semantic.WarningSoft", main, StringComparison.Ordinal);
+        Assert.Contains("Task.Brush.Semantic.CriticalSoft", main, StringComparison.Ordinal);
+    }
+
     private static void AssertWindowMinimum(XElement root, double width, double height)
     {
         Assert.Equal(width, double.Parse(Attribute(root, "MinWidth"), CultureInfo.InvariantCulture));

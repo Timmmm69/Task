@@ -10,7 +10,7 @@ if (-not $RepositoryRoot) {
     $RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 }
 if (-not $OutputDirectory) {
-    $OutputDirectory = Join-Path $RepositoryRoot 'outputs\20260919_direction2_search_notifications_lifecycle_1.0.0'
+    $OutputDirectory = Join-Path $RepositoryRoot 'outputs\20260919_direction2_search_notifications_lifecycle_1.0.1'
 }
 
 $outputsRoot = (Resolve-Path (Join-Path $RepositoryRoot 'outputs')).Path
@@ -31,30 +31,32 @@ if (Test-Path -LiteralPath $candidate) {
     Remove-Item -LiteralPath $resolved -Recurse -Force
 }
 
-$evidenceSource = Join-Path $RepositoryRoot 'work\production\evidence\direction2-search-lifecycle-1.0.0'
+$evidenceSource = Join-Path $RepositoryRoot 'work\production\evidence\direction2-search-lifecycle-1.0.1'
 $evidenceTarget = Join-Path $candidate 'evidence'
 [IO.Directory]::CreateDirectory($evidenceTarget) | Out-Null
-foreach ($name in @('normal.png', 'normal-overlay.png', 'offline.png', 'limited-role.png', 'validation.json')) {
+foreach ($name in @(
+    'normal.png', 'normal-overlay.png', 'notification-center.png', 'offline.png', 'limited-role.png',
+    'comparison-search.png', 'comparison-overlay.png', 'comparison-notification-center.png', 'validation.json')) {
     $source = Join-Path $evidenceSource $name
     if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { throw "Missing evidence file: $source" }
     Copy-Item -LiteralPath $source -Destination (Join-Path $evidenceTarget $name)
 }
 
-Write-TextFile (Join-Path $candidate 'VERSION.txt') '1.0.0'
+Write-TextFile (Join-Path $candidate 'VERSION.txt') '1.0.1'
 
 $readme = @'
 # Direction 2: поиск, уведомления и lifecycle
 
 Пакет фиксирует production-реализацию frozen Direction 2 для глобального поиска, центра уведомлений, архива и корзины в Windows-клиенте Task.
 
-В `evidence/` находятся фактические Release WPF-скриншоты normal, overlay, offline и limited-role, а также машинный отчёт UIA-прогона. Итог проверок описан в `VALIDATION_REPORT.md`; состав и исходные хэши — в `manifest.json`; хэши файлов пакета — в `SHA256SUMS`.
+В `evidence/` находятся фактические Release WPF-скриншоты normal, overlay, notification-center, offline и limited-role, три совмещённых сравнения с frozen prototype, а также машинный отчёт UIA-прогона. Итог проверок описан в `VALIDATION_REPORT.md`; состав и исходные хэши — в `manifest.json`; хэши файлов пакета — в `SHA256SUMS`.
 '@
 Write-TextFile (Join-Path $candidate 'README.md') $readme
 
 $validation = @'
 # Validation report — Direction 2 search, notifications and lifecycle
 
-Version: 1.0.0
+Version: 1.0.1
 
 Date: 2026-09-19
 
@@ -72,17 +74,21 @@ Result: **PASS**
 ## Verification
 
 - `dotnet build Task.sln -c Release --no-restore`: PASS, 0 errors; 10 existing test-code warnings (`xUnit1031`, `ASPDEPR004`) outside this change scope.
-- `dotnet test Task.sln -c Release --no-build --no-restore`: PASS — Desktop 336, core 815, service-host 590; всего 1741 passed, 4 skipped, 0 failed.
-- `Test-Direction2SearchLifecycle.ps1`: PASS на изолированных PostgreSQL 16 + HTTPS API + Release WPF; normal, overlay, offline retained-results и limited-role redaction.
-- Визуально проверены все четыре скриншота против frozen Direction 2 baseline; защищённые названия, совпадения, количество и связи в limited-role не показаны.
+- `dotnet test Task.sln -c Release --no-build --no-restore`: PASS — Desktop 337, core 815, service-host 590; всего 1742 passed, 4 skipped, 0 failed.
+- `Test-Direction2SearchLifecycle.ps1`: PASS на изолированных PostgreSQL 16 + HTTPS API + Release WPF; normal, overlay, notification urgency, offline retained-results и limited-role redaction.
+- Визуально проверены все пять скриншотов против frozen Direction 2 baseline; защищённые названия, совпадения, количество и связи в limited-role не показаны.
 - `git diff --check`: PASS.
 
 ## Evidence
 
 - `evidence/normal.png`
 - `evidence/normal-overlay.png`
+- `evidence/notification-center.png`
 - `evidence/offline.png`
 - `evidence/limited-role.png`
+- `evidence/comparison-search.png`
+- `evidence/comparison-overlay.png`
+- `evidence/comparison-notification-center.png`
 - `evidence/validation.json`
 
 E2E cleanup остановил API/PostgreSQL, удалил временный runtime и восстановил исходные Desktop AppData.
@@ -100,6 +106,7 @@ $sourceFiles = @(
     'work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs',
     'work/production/verification/Test-Direction2SearchLifecycle.ps1',
     'work/production/verification/Build-Direction2SearchLifecyclePackage.ps1',
+    'work/production/design-qa.md',
     '.project-dashboard/roadmap.json'
 )
 $referenceFiles = @(
@@ -130,15 +137,15 @@ function Get-Inventory([string[]]$Paths) {
 $manifest = [ordered]@{
     schemaVersion = 1
     package = 'Task Direction 2 search, notifications and lifecycle'
-    version = '1.0.0'
+    version = '1.0.1'
     date = '2026-09-19'
     result = 'PASS'
     source_files = @(Get-Inventory $sourceFiles)
     frozen_references = @(Get-Inventory $referenceFiles)
     verification = [ordered]@{
         release_build = 'PASS: 0 errors; 10 existing test-code warnings (xUnit1031, ASPDEPR004)'
-        tests = [ordered]@{ passed = 1741; skipped = 4; failed = 0 }
-        native_uia = 'PASS: normal, normal-overlay, offline, limited-role'
+        tests = [ordered]@{ passed = 1742; skipped = 4; failed = 0 }
+        native_uia = 'PASS: normal, normal-overlay, notification-center, offline, limited-role'
         security = 'PASS: permission-safe redaction preserved'
     }
     package_files = @(
@@ -147,8 +154,12 @@ $manifest = [ordered]@{
         'VALIDATION_REPORT.md',
         'evidence/normal.png',
         'evidence/normal-overlay.png',
+        'evidence/notification-center.png',
         'evidence/offline.png',
         'evidence/limited-role.png',
+        'evidence/comparison-search.png',
+        'evidence/comparison-overlay.png',
+        'evidence/comparison-notification-center.png',
         'evidence/validation.json',
         'manifest.json',
         'SHA256SUMS'
