@@ -442,7 +442,12 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     {
         switch (result)
         {
-            case DesktopWorkResult<T>.Succeeded ok: success(ok.Value); _lastRefresh = DateTimeOffset.UtcNow; OnPropertyChanged(nameof(LastSuccessfulRefreshText)); break;
+            case DesktopWorkResult<T>.Succeeded ok:
+                SetFeedback(null, WorkHubFeedbackKind.None);
+                success(ok.Value);
+                _lastRefresh = DateTimeOffset.UtcNow;
+                OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+                break;
             case DesktopWorkResult<T>.Forbidden: SetFeedback("Недостаточно прав или доступ к объекту изменился. Защищённые данные не показаны.", WorkHubFeedbackKind.Warning); break;
             case DesktopWorkResult<T>.AuthenticationFailure: SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); break;
             case DesktopWorkResult<T>.ValidationFailure invalid: SetFeedback(invalid.Message, WorkHubFeedbackKind.Warning); break;

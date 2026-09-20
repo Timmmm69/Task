@@ -17,6 +17,7 @@ public sealed class WorkHubViewModelTests
         await vm.CreateCatalogItemCommand.ExecuteAsync();
         vm.NewItemPath = @"C:\Work\contract.docx";
         await vm.AddLocationCommand.ExecuteAsync();
+        Assert.Equal("Расположение файла сохранено.", vm.Message);
         await vm.OpenFileCommand.ExecuteAsync();
 
         Assert.Equal(@"C:\Work\contract.docx", files.OpenedPath);
@@ -52,6 +53,42 @@ public sealed class WorkHubViewModelTests
         Assert.Equal("pha", hit.TitleMatch, ignoreCase: true);
         Assert.Equal(1, vm.SearchResultCount);
         Assert.Contains("область доступа проверена сервером", vm.SearchSummaryText);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task SuccessfulSearchClearsStaleValidationFeedback()
+    {
+        using var vm = new WorkHubViewModel(new FakeClient(), ["Search.Use"]);
+        vm.Activate(WorkHubArea.Search);
+        await Eventually(() => vm.Message == "Введите запрос длиной не менее двух символов.");
+
+        vm.SearchQuery = "alpha";
+        await vm.SearchCommand.ExecuteAsync();
+
+        Assert.Null(vm.Message);
+        Assert.Equal(WorkHubFeedbackKind.None, vm.FeedbackKind);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task SuccessfulRefreshClearsStaleServerUnavailableFeedback()
+    {
+        var callCount = 0;
+        var client = new FakeClient
+        {
+            CatalogHandler = _ => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>>(
+                callCount++ == 0
+                    ? new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.ServerUnavailable()
+                    : new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded([])),
+        };
+        using var vm = new WorkHubViewModel(client, ["FileCatalog.Read"]);
+        vm.Activate(WorkHubArea.Catalog);
+        await Eventually(() => vm.FeedbackKind == WorkHubFeedbackKind.Error);
+
+        vm.UpdateConnectivity(true);
+        await vm.RefreshCommand.ExecuteAsync();
+
+        Assert.Null(vm.Message);
+        Assert.Equal(WorkHubFeedbackKind.None, vm.FeedbackKind);
     }
 
     [Fact]
