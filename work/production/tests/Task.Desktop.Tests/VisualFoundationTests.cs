@@ -299,6 +299,7 @@ public sealed class VisualFoundationTests
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarEventEditor\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarReadOnlyBanner\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarRollbackBanner\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("LineHeight=\"18\" LineStackingStrategy=\"BlockLineHeight\" MaxHeight=\"36\"", xaml, StringComparison.Ordinal);
         Assert.Contains("KeyboardNavigation.TabNavigation=\"Cycle\"", xaml, StringComparison.Ordinal);
         Assert.Contains("MinWidth=\"1060\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Task.CalendarLaneWidthConverter", app, StringComparison.Ordinal);

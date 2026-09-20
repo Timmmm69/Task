@@ -421,7 +421,8 @@
                                                                         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
                                                                         <TextBlock Text="{Binding Item.Title}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
                                                                                    FontSize="{DynamicResource Task.Font.Size.Label}"
-                                                                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="34"
+                                                                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                                                                                   LineHeight="18" LineStackingStrategy="BlockLineHeight" MaxHeight="36"
                                                                                    ToolTip="{Binding Item.Title}" />
                                                                         <TextBlock Grid.Row="1" Text="{Binding Item.TimeText}"
                                                                                    FontSize="{DynamicResource Task.Font.Size.Metadata}"
