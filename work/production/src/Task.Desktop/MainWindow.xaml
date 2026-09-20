@@ -73,7 +73,18 @@
                                            Margin="10,0,0,0"
                                            FontSize="{DynamicResource Task.Font.Size.Navigation}"
                                            VerticalAlignment="Center"
-                                           TextTrimming="CharacterEllipsis" />
+                                           TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -112,10 +123,19 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{Binding SelectedSection.Title}"
-                                   Style="{StaticResource Task.Shell.PageTitle}"
                                    ToolTip="{Binding SelectedSection.Title}"
                                    AutomationProperties.LiveSetting="Polite"
-                                   AutomationProperties.HeadingLevel="Level1" />
+                                   AutomationProperties.HeadingLevel="Level1">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Shell.PageTitle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                                            <Setter Property="FontSize" Value="22" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                         <TextBlock Grid.Column="1"
                                    Text="{Binding SelectedSectionSupportingText}"
                                    Margin="18,2,0,0"
@@ -155,14 +175,48 @@
                 </StackPanel>
 
                 <Button x:Name="GlobalSearchButton" Grid.Column="1" Click="OnOpenGlobalSearch"
-                        Style="{StaticResource Task.Button.Secondary}" MinWidth="184" Margin="0,0,10,0"
+                        Margin="0,0,10,0"
                         IsEnabled="{Binding WorkHub.CanSearch}" ToolTip="Глобальный поиск · Ctrl+K"
                         AutomationProperties.Name="Глобальный поиск" AutomationProperties.AutomationId="GlobalSearchOverlayButton"
                         AutomationProperties.HelpText="Открывает permission-safe поиск. Сочетание клавиш Ctrl+K.">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+                            <Setter Property="MinWidth" Value="184" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                                    <Setter Property="MinWidth" Value="40" />
+                                    <Setter Property="Width" Value="40" />
+                                    <Setter Property="Padding" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <StackPanel Orientation="Horizontal">
                         <Path Data="{StaticResource Task.Icon.Search}" Width="17" Height="17" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                        <TextBlock Text="Поиск по Task" Margin="8,0,12,0"/>
-                        <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                        <TextBlock Text="Поиск по Task" Margin="8,0,12,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
                 </Button>
 
@@ -203,7 +257,9 @@
                                 <Setter Property="MinWidth" Value="208" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                        <Setter Property="MinWidth" Value="146" />
+                                        <Setter Property="MinWidth" Value="40" />
+                                        <Setter Property="Width" Value="40" />
+                                        <Setter Property="Padding" Value="0" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -212,7 +268,18 @@
                             <Path Data="{StaticResource Task.Icon.Add}"
                                   Width="18" Height="18" Stretch="Uniform"
                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                            <TextBlock Text="Новая задача" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Новая задача" Margin="8,0,0,0" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <TextBlock Text="Alt+N" Margin="9,0,0,0" VerticalAlignment="Center"
                                        FontSize="{DynamicResource Task.Font.Size.Metadata}"
                                        FontWeight="{DynamicResource Task.Font.Weight.Regular}"
@@ -265,7 +332,18 @@
                             <TextBlock Text="{Binding ConnectionContext}"
                                        FontSize="{DynamicResource Task.Font.Size.Metadata}"
                                        Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                                       TextTrimming="CharacterEllipsis" />
+                                       TextTrimming="CharacterEllipsis">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
                 </Border>

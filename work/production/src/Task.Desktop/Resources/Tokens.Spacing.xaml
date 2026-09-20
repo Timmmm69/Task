@@ -12,6 +12,7 @@
     <sys:Double x:Key="Task.Navigation.MenuHeight">58</sys:Double>
     <sys:Double x:Key="Task.Shell.Navigation.ExpandedWidth">212</sys:Double>
     <sys:Double x:Key="Task.Shell.Navigation.CompactWidth">178</sys:Double>
+    <sys:Double x:Key="Task.Shell.Navigation.IconOnlyWidth">64</sys:Double>
     <sys:Double x:Key="Task.Shell.HeaderHeight">70</sys:Double>
     <sys:Double x:Key="Task.Shell.FooterHeight">46</sys:Double>
     <GridLength x:Key="Task.Shell.HeaderGridLength">70</GridLength>

@@ -25,12 +25,21 @@ public sealed class IconKeyToGeometryConverter : IValueConverter
 /// <summary>Returns the canonical expanded or compact navigation width.</summary>
 public sealed class ShellNavigationWidthConverter : IValueConverter
 {
+    public const double IconOnlyBreakpoint = 900;
     public const double CompactBreakpoint = 1220;
     public const double ExpandedWidth = 212;
     public const double CompactWidth = 178;
+    public const double IconOnlyWidth = 64;
 
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        new GridLength(value is double width && width >= CompactBreakpoint ? ExpandedWidth : CompactWidth);
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var width = value is double actualWidth ? actualWidth : 0;
+        return new GridLength(width >= CompactBreakpoint
+            ? ExpandedWidth
+            : width >= IconOnlyBreakpoint
+                ? CompactWidth
+                : IconOnlyWidth);
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();

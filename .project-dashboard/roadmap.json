@@ -340,10 +340,11 @@
         "work/production/evidence/desk05/auth-200.png: authentication viewport visual PASS at the 200% equivalent",
         "work/production/evidence/desk05/main-200.png: main-window viewport visual PASS at the 200% equivalent",
         "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs: 7/7 focused contract and sizing tests",
-        "outputs/20260910_desk05_windows_ux_1.0.0/VALIDATION_REPORT.md: packaged DESK-05 validation PASS"
+        "outputs/20260910_desk05_windows_ux_1.0.0/VALIDATION_REPORT.md: packaged DESK-05 validation PASS",
+        "outputs/20260920_direction2_final_acceptance_1.0.0/VALIDATION_REPORT.md: final Direction 2 acceptance, exact 1200×900, UIA/keyboard and 100/125/150/200% evidence"
       ],
-      "note": "Нативный WPF Release проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, UIA и Tab/F6 — PASS. Экранные дикторы не входят в acceptance scope; физическая mixed-DPI топология относится к deployment smoke.",
-      "updated_at": "2026-09-10T13:53:24+03:00",
+      "note": "Нативный WPF Release повторно проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, точный viewport 1200×900, UIA Value/Invoke/Selection/Scroll и полный Tab/F6 cycle — PASS. Responsive shell ниже 900 DIP переходит в icon-only navigation и не обрезает header на 200%. Физическая mixed-DPI топология остаётся deployment smoke.",
+      "updated_at": "2026-09-20T09:45:00+03:00",
       "priority": 3,
       "dependencies": [
         "DESK-03"
@@ -765,10 +766,11 @@
       "evidence": [
         "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: 1227 passed, 2 expected skips",
         "outputs/20260830_qa_05_production_ci_gate_1.0.0/VALIDATION_REPORT.md: 1245 unique tests passed across solution and real PostgreSQL gates",
-        "GitHub Actions run 33329767707: production solution and real PostgreSQL 16 jobs PASS"
+        "GitHub Actions run 33329767707: production solution and real PostgreSQL 16 jobs PASS",
+        "outputs/20260920_direction2_final_acceptance_1.0.0/VALIDATION_REPORT.md: Release build and full solution gate, 1747 passed / 4 expected skips / 0 failed"
       ],
-      "note": "Полный production suite воспроизводимо проходит локально и в GitHub Actions; PostgreSQL-only tests подтверждены на реальном PostgreSQL 16.",
-      "updated_at": "2026-08-30T22:08:49+03:00",
+      "note": "Полный production suite воспроизводимо проходит локально и в GitHub Actions; финальная Direction 2 приёмка подтвердила 1747 passed, 4 expected PostgreSQL-only skips, 0 failed плюс изолированные PostgreSQL 16/HTTPS/WPF gates.",
+      "updated_at": "2026-09-20T09:45:00+03:00",
       "priority": 3,
       "dependencies": [
         "QA-05"

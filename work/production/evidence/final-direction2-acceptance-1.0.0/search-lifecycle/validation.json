@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "result": "PASS",
+  "scenarios": [
+    "normal",
+    "normal-overlay",
+    "notification-center",
+    "offline",
+    "limited-role"
+  ],
+  "screenshots": [
+    {
+      "file": "limited-role.png",
+      "sha256": "925D6FF9538A6A0A64F1581A463DC455F28347F4EF7B7F831DC1FB74894CC3EE",
+      "bytes": 88435
+    },
+    {
+      "file": "normal-overlay.png",
+      "sha256": "AE914E35E182C3AFDAAD5DB2CFC29EBEA9B2E8D894EDAB3E476D8212E6D7CD51",
+      "bytes": 82088
+    },
+    {
+      "file": "normal.png",
+      "sha256": "70E667F3DF83D51987D7EFAD130AE8B3F94EC05DFB8B1368425D17B52E465D9C",
+      "bytes": 104616
+    },
+    {
+      "file": "notification-center.png",
+      "sha256": "3444AB4C1A87B0D1672672B3E848D9E2AA2AA1E07B4726B665F3536551B6A053",
+      "bytes": 136983
+    },
+    {
+      "file": "offline.png",
+      "sha256": "C827B34EE6C678C18762D10CD6A35D9F86BC30EF007C83D28132B39315A98A19",
+      "bytes": 103627
+    }
+  ],
+  "checks": [
+    "Warning and critical notification evidence was seeded in the isolated database.",
+    "Release WPF executable exists.",
+    "Grouped search results expose a stable UIA root.",
+    "normal window bounds are available.",
+    "normal screenshot contains a rendered WPF surface.",
+    "normal-overlay window bounds are available.",
+    "normal-overlay screenshot contains a rendered WPF surface.",
+    "Notification center exposes a visible semantic urgency label through UIA.",
+    "notification-center window bounds are available.",
+    "notification-center screenshot contains a rendered WPF surface.",
+    "Offline feedback is exposed through UIA.",
+    "Offline state keeps the last confirmed result list available.",
+    "offline window bounds are available.",
+    "offline screenshot contains a rendered WPF surface.",
+    "Release WPF executable exists.",
+    "Limited-role redaction state is visible and named.",
+    "limited-role window bounds are available.",
+    "limited-role screenshot contains a rendered WPF surface."
+  ],
+  "completedAtUtc": "2026-09-20T06:31:39.6448137+00:00"
+}

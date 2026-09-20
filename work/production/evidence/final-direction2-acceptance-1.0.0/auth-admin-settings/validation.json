@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "result": "PASS",
+  "scenarios": [
+    "admin-limited-role.png",
+    "admin-resources.png",
+    "admin-roles.png",
+    "admin-users.png",
+    "archive-online.png",
+    "bootstrap-failure.png",
+    "bootstrap-progress.png",
+    "catalog-online.png",
+    "contacts-online.png",
+    "first-connection.png",
+    "inbox-online.png",
+    "notifications-online.png",
+    "projects-online.png",
+    "settings-notifications.png",
+    "settings-offline.png",
+    "settings-profile.png",
+    "settings-server.png",
+    "tasks-online.png",
+    "today-online.png",
+    "trash-online.png"
+  ],
+  "screenshots": [
+    {
+      "file": "admin-limited-role.png",
+      "sha256": "C5B6FF2458A6EB4F9900419D68A4FAE89564E7D6E024E0C9443E4E391B65964F",
+      "bytes": 113746
+    },
+    {
+      "file": "admin-resources.png",
+      "sha256": "E8C716DFF5DE457756ECD69DEE605CF910CC0E86C6C26B3E4C70B7A505BF34DE",
+      "bytes": 95149
+    },
+    {
+      "file": "admin-roles.png",
+      "sha256": "37E7A58737C2B13A3D95A1567C1AFFD2FD0A420A2A414641BDB375987DDB4AAA",
+      "bytes": 109522
+    },
+    {
+      "file": "admin-users.png",
+      "sha256": "B1409548A48A2C3F3796D3FE28267B92CFC927DE0F6879755B19BCDE15FB1099",
+      "bytes": 112527
+    },
+    {
+      "file": "archive-online.png",
+      "sha256": "C6AFEC167AD285E72CFC7485882E8A33F6FFB417D7EDE1071AA408B64B5776DD",
+      "bytes": 96530
+    },
+    {
+      "file": "bootstrap-failure.png",
+      "sha256": "167B070C5A10AE43D35FC9948395E98A37DE19C1833676957F7AA33905FEDB88",
+      "bytes": 541480
+    },
+    {
+      "file": "bootstrap-progress.png",
+      "sha256": "958C67104A9185060A6C108DDD15FAEB7A3A6B6EEA71396B589523266B92D2D1",
+      "bytes": 99099
+    },
+    {
+      "file": "catalog-online.png",
+      "sha256": "D02D2CF23BD2449822CDDBC9A3063C62E0C4AA58EB3AA837F0C12354A1658805",
+      "bytes": 82579
+    },
+    {
+      "file": "contacts-online.png",
+      "sha256": "C35C24F0AA25498098F5A95C74CD01C9016854A18669A36D6D9A0B47731EE8C6",
+      "bytes": 76965
+    },
+    {
+      "file": "first-connection.png",
+      "sha256": "8295571896E31DEACEC3309855067F37AEF80148845208F1492643DE6726F6C8",
+      "bytes": 541244
+    },
+    {
+      "file": "inbox-online.png",
+      "sha256": "EE4E2ECFE4BE348BA6C8B70DAB056598D8478BA035BD37101D2917A5EAB96F91",
+      "bytes": 113029
+    },
+    {
+      "file": "notifications-online.png",
+      "sha256": "A6B0A98767D0232C17FA273CE6C97B2FF48A7732C6D26F3199068B47000A0AE9",
+      "bytes": 82937
+    },
+    {
+      "file": "projects-online.png",
+      "sha256": "8AE33804299E128759109D5A3041AD2A77506DEFE893A13DB722E7AD52B4248E",
+      "bytes": 68898
+    },
+    {
+      "file": "settings-notifications.png",
+      "sha256": "52702E0B537D7C329AF2B67B8A0BA6109F23125B4AEA3BBBF1B191686B6B00F6",
+      "bytes": 91953
+    },
+    {
+      "file": "settings-offline.png",
+      "sha256": "47F26CE43D3F267EA2C8174FA4DDF85D3A86AD89253042959BDB69E2DC0CD285",
+      "bytes": 93019
+    },
+    {
+      "file": "settings-profile.png",
+      "sha256": "E785653503510EB55EA5D54B53B29A13825BE9859B7D165D731FBC9F32CA8386",
+      "bytes": 95890
+    },
+    {
+      "file": "settings-server.png",
+      "sha256": "96068E5CFCB79BBF8B73D70826A5434C9E03F38C35BBF90A5763320AF9EC1DF1",
+      "bytes": 109981
+    },
+    {
+      "file": "tasks-online.png",
+      "sha256": "10DA243A238274A1AD179232F9546CBFB3370EEFC4DE4E11D393B3DF5CA7BD95",
+      "bytes": 92711
+    },
+    {
+      "file": "today-online.png",
+      "sha256": "0ADAD6C01B42FF127FF15353D0BDAB23FF7EF25B2954E8E933B41E0E9ABBFCEC",
+      "bytes": 115278
+    },
+    {
+      "file": "trash-online.png",
+      "sha256": "4470A304BD0EDA382C299EC9DA6CB96BCB4FCD850D85F61009C2FCE327FA6FCC",
+      "bytes": 93602
+    }
+  ],
+  "checks": [
+    "Release WPF executable exists.",
+    "first-connection bounds are available.",
+    "first-connection contains a rendered WPF surface.",
+    "bootstrap-failure bounds are available.",
+    "bootstrap-failure contains a rendered WPF surface.",
+    "bootstrap-progress bounds are available.",
+    "bootstrap-progress contains a rendered WPF surface.",
+    "today-online bounds are available.",
+    "today-online contains a rendered WPF surface.",
+    "inbox-online bounds are available.",
+    "inbox-online contains a rendered WPF surface.",
+    "tasks-online bounds are available.",
+    "tasks-online contains a rendered WPF surface.",
+    "projects-online bounds are available.",
+    "projects-online contains a rendered WPF surface.",
+    "catalog-online bounds are available.",
+    "catalog-online contains a rendered WPF surface.",
+    "contacts-online bounds are available.",
+    "contacts-online contains a rendered WPF surface.",
+    "notifications-online bounds are available.",
+    "notifications-online contains a rendered WPF surface.",
+    "archive-online bounds are available.",
+    "archive-online contains a rendered WPF surface.",
+    "trash-online bounds are available.",
+    "trash-online contains a rendered WPF surface.",
+    "settings-profile bounds are available.",
+    "settings-profile contains a rendered WPF surface.",
+    "settings-notifications bounds are available.",
+    "settings-notifications contains a rendered WPF surface.",
+    "settings-server bounds are available.",
+    "settings-server contains a rendered WPF surface.",
+    "admin-users bounds are available.",
+    "admin-users contains a rendered WPF surface.",
+    "admin-roles bounds are available.",
+    "admin-roles contains a rendered WPF surface.",
+    "admin-resources bounds are available.",
+    "admin-resources contains a rendered WPF surface.",
+    "settings-offline bounds are available.",
+    "settings-offline contains a rendered WPF surface.",
+    "Capability-gated administration tab is selected for the read-only account.",
+    "admin-limited-role bounds are available.",
+    "admin-limited-role contains a rendered WPF surface."
+  ],
+  "completedAtUtc": "2026-09-20T06:28:58.6613489+00:00"
+}

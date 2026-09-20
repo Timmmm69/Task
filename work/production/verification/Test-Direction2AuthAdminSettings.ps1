@@ -150,6 +150,42 @@ try {
     Capture-Window $bootstrap 'bootstrap-progress'
     $main = Wait-Window $process.Id 'MainWindow'
 
+    Select-Navigation $main 'Navigation_today'
+    $null = Wait-ById $main 'TodayScreen'
+    Capture-Window $main 'today-online'
+
+    Select-Navigation $main 'Navigation_inbox'
+    $null = Wait-ById $main 'InboxScreen'
+    Capture-Window $main 'inbox-online'
+
+    Select-Navigation $main 'Navigation_tasks'
+    $null = Wait-ById $main 'TasksList'
+    Capture-Window $main 'tasks-online'
+
+    Select-Navigation $main 'Navigation_projects'
+    $null = Wait-ById $main 'ProjectsView'
+    Capture-Window $main 'projects-online'
+
+    Select-Navigation $main 'Navigation_catalog'
+    $null = Wait-ById $main 'CatalogList'
+    Capture-Window $main 'catalog-online'
+
+    Select-Navigation $main 'Navigation_contacts'
+    $null = Wait-ById $main 'ContactsList'
+    Capture-Window $main 'contacts-online'
+
+    Select-Navigation $main 'Navigation_notifications'
+    $null = Wait-ById $main 'NotificationsList'
+    Capture-Window $main 'notifications-online'
+
+    Select-Navigation $main 'Navigation_archive'
+    $null = Wait-ById $main 'LifecycleItemsList'
+    Capture-Window $main 'archive-online'
+
+    Select-Navigation $main 'Navigation_trash'
+    $null = Wait-ById $main 'LifecycleItemsList'
+    Capture-Window $main 'trash-online'
+
     Select-Navigation $main 'Navigation_settings'
     $settingsNavigation = Wait-ById $main 'SettingsNavigation'
     Capture-Window $main 'settings-profile'

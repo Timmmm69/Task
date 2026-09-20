@@ -84,6 +84,7 @@ public sealed class VisualFoundationTests
                 NavigationMenu = (double)theme["Task.Navigation.MenuHeight"],
                 ExpandedNavigation = (double)theme["Task.Shell.Navigation.ExpandedWidth"],
                 CompactNavigation = (double)theme["Task.Shell.Navigation.CompactWidth"],
+                IconOnlyNavigation = (double)theme["Task.Shell.Navigation.IconOnlyWidth"],
                 Header = (double)theme["Task.Shell.HeaderHeight"],
                 Footer = (double)theme["Task.Shell.FooterHeight"],
                 TaskRow = (double)theme["Task.TaskRow.MinHeight"],
@@ -116,6 +117,7 @@ public sealed class VisualFoundationTests
         Assert.Equal(58, snapshot.NavigationMenu);
         Assert.Equal(212, snapshot.ExpandedNavigation);
         Assert.Equal(178, snapshot.CompactNavigation);
+        Assert.Equal(64, snapshot.IconOnlyNavigation);
         Assert.Equal(70, snapshot.Header);
         Assert.Equal(46, snapshot.Footer);
         Assert.Equal(60, snapshot.TaskRow);
@@ -133,8 +135,10 @@ public sealed class VisualFoundationTests
     [InlineData(1487, 212)]
     [InlineData(1220, 212)]
     [InlineData(1219, 178)]
-    [InlineData(800, 178)]
-    public void NavigationWidth_UsesCanonicalCompactBreakpoint(double windowWidth, double expected)
+    [InlineData(900, 178)]
+    [InlineData(899, 64)]
+    [InlineData(800, 64)]
+    public void NavigationWidth_UsesCanonicalResponsiveBreakpoints(double windowWidth, double expected)
     {
         var converter = new ShellNavigationWidthConverter();
 
@@ -226,6 +230,7 @@ public sealed class VisualFoundationTests
         var states = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.States.xaml"));
         var buttons = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.Buttons.xaml"));
         var shell = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Controls.Shell.xaml"));
+        var theme = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Resources", "Theme.xaml"));
 
         var stableAutomationIds = new[]
         {
@@ -251,9 +256,11 @@ public sealed class VisualFoundationTests
         Assert.Contains("Task.Brush.Brand.Strong", buttons, StringComparison.Ordinal);
         Assert.Contains("Property=\"IsPressed\"", buttons, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", navigation, StringComparison.Ordinal);
+        Assert.Contains("SystemParameters.HighContrast", buttons, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", data, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", states, StringComparison.Ordinal);
         Assert.Contains("SystemParameters.HighContrast", shell, StringComparison.Ordinal);
+        Assert.Contains("SystemParameters.HighContrast", theme, StringComparison.Ordinal);
         Assert.DoesNotContain("Foreground\" Value=\"Transparent", navigation, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Foreground\" Value=\"Transparent", data, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Foreground\" Value=\"Transparent", states, StringComparison.OrdinalIgnoreCase);
@@ -323,6 +330,8 @@ public sealed class VisualFoundationTests
         Assert.Contains("KeyDown=\"OnInboxListKeyDown\"", inbox, StringComparison.Ordinal);
         Assert.Contains("ConverterParameter=640:320", inbox, StringComparison.Ordinal);
         Assert.Contains("TextWrapping=\"Wrap\"", inbox, StringComparison.Ordinal);
+        Assert.Contains("TextTrimming=\"CharacterEllipsis\"", main, StringComparison.Ordinal);
+        Assert.Contains("TextWrapping=\"Wrap\"", main, StringComparison.Ordinal);
 
         Assert.Contains("TaskProjectComboBox", editor, StringComparison.Ordinal);
         Assert.Contains("TaskDescriptionTextBox", editor, StringComparison.Ordinal);

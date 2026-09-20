@@ -36,6 +36,8 @@ public sealed class WindowsUxAccessibilityTests
         Assert.Contains("TASK_DESKTOP_DATA_DIRECTORY", app, StringComparison.Ordinal);
         Assert.Contains("DesktopAppDataPath must be inside the isolated E2E runtime", cleanStand, StringComparison.Ordinal);
         Assert.Contains("-DesktopAppDataPath', $isolatedDesktopData", runner, StringComparison.Ordinal);
+        Assert.Contains("Test-FixedViewport", runner, StringComparison.Ordinal);
+        Assert.Contains("1200 900", runner, StringComparison.Ordinal);
         Assert.DoesNotContain("Move-Item -LiteralPath $env:LOCALAPPDATA", runner, StringComparison.OrdinalIgnoreCase);
     }
 

@@ -280,6 +280,56 @@ function Test-ViewportMatrix(
     return @($matrix)
 }
 
+function Test-FixedViewport(
+    [System.Windows.Automation.AutomationElement]$window,
+    [string]$prefix,
+    [int]$logicalWidth,
+    [int]$logicalHeight,
+    [string[]]$criticalIds,
+    [string[]]$scrollableIds = @()
+) {
+    $handle = [IntPtr]$window.Current.NativeWindowHandle
+    $hostDpi = [Desk05Native]::GetDpiForWindow($handle)
+    $physicalWidth = [Math]::Min([Desk05Native]::GetSystemMetrics(0), [Math]::Round($logicalWidth * $hostDpi / 96))
+    $physicalHeight = [Math]::Min([Desk05Native]::GetSystemMetrics(1), [Math]::Round($logicalHeight * $hostDpi / 96))
+    $label = "${logicalWidth}x${logicalHeight}"
+    Assert-Desk05 ([Desk05Native]::SetWindowPos($handle, [IntPtr]::Zero, 0, 0,
+            $physicalWidth, $physicalHeight, 0x0014)) "$prefix window accepted the $label logical viewport."
+    Start-Sleep -Milliseconds 500
+    $windowRect = $window.Current.BoundingRectangle
+    $bounds = [ordered]@{}
+    foreach ($id in $criticalIds) {
+        $element = Wait-ElementById $window $id
+        $rect = $element.Current.BoundingRectangle
+        if ($scrollableIds -contains $id) {
+            $visible = -not $element.Current.IsOffscreen -and $rect.Width -gt 0 -and $rect.Height -gt 0 `
+                -and $rect.Left -lt $windowRect.Right -and $rect.Right -gt $windowRect.Left `
+                -and $rect.Top -lt $windowRect.Bottom -and $rect.Bottom -gt $windowRect.Top
+            Assert-Desk05 $visible "$prefix $id retains a visible scrollable region at $label."
+        }
+        else {
+            $inside = -not $element.Current.IsOffscreen -and $rect.Width -gt 0 -and $rect.Height -gt 0 `
+                -and $rect.Left -ge ($windowRect.Left - 2) -and $rect.Top -ge ($windowRect.Top - 2) `
+                -and $rect.Right -le ($windowRect.Right + 2) -and $rect.Bottom -le ($windowRect.Bottom + 2)
+            Assert-Desk05 $inside "$prefix $id remains unclipped at $label."
+        }
+        $bounds[$id] = @{
+            left = [Math]::Round($rect.Left, 1); top = [Math]::Round($rect.Top, 1)
+            width = [Math]::Round($rect.Width, 1); height = [Math]::Round($rect.Height, 1)
+        }
+    }
+    $imageName = "$prefix-$label.png"
+    Capture-Window $window (Join-Path $evidenceRoot $imageName)
+    return [ordered]@{
+        logicalViewport = @{ width = $logicalWidth; height = $logicalHeight }
+        actualWindowPixels = @{ width = [Math]::Round($windowRect.Width); height = [Math]::Round($windowRect.Height) }
+        hostDpi = $hostDpi
+        criticalBounds = $bounds
+        screenshot = $imageName
+        result = 'PASS'
+    }
+}
+
 function Get-FocusedAutomationPath {
     $ids = [Collections.Generic.List[string]]::new()
     $element = [System.Windows.Automation.AutomationElement]::FocusedElement
@@ -329,6 +379,8 @@ try {
     $null = Assert-UiaElement $authWindow 'ContinueFromServerSetupButton'
     $authMatrix = Test-ViewportMatrix $authWindow 'auth' `
         @('ServerAddressTextBox', 'CheckServerConnectionButton', 'ContinueFromServerSetupButton')
+    $auth1200 = Test-FixedViewport $authWindow 'auth' 1200 900 `
+        @('ServerAddressTextBox', 'CheckServerConnectionButton', 'ContinueFromServerSetupButton')
     $serverAddress.SetFocus()
     $authFocus = Send-Tab $authWindow
     Assert-Desk05 ($authFocus -contains 'CheckServerConnectionButton') `
@@ -363,6 +415,8 @@ try {
 
     $mainMatrix = Test-ViewportMatrix $mainWindow 'main' @(
         'NavigationListBox', 'TasksRefreshButton', 'NewTaskButton', 'ConnectionStatusText', 'LogoutButton', 'TasksList')
+    $main1200 = Test-FixedViewport $mainWindow 'main' 1200 900 @(
+        'NavigationListBox', 'TasksRefreshButton', 'NewTaskButton', 'ConnectionStatusText', 'LogoutButton', 'TasksList')
 
     [Desk05Native]::SetForegroundWindow([IntPtr]$mainWindow.Current.NativeWindowHandle) | Out-Null
     $navigation.SetFocus()
@@ -382,6 +436,8 @@ try {
     Select-UiaElement (Wait-ElementById $mainWindow 'Navigation_calendar')
     $null = Wait-ElementById $mainWindow 'CalendarScreen'
     $calendarMatrix = Test-ViewportMatrix $mainWindow 'calendar' @(
+        'CalendarWeekRange', 'CalendarRefresh', 'CalendarNewEvent', 'CalendarTimeline') @('CalendarTimeline')
+    $calendar1200 = Test-FixedViewport $mainWindow 'calendar' 1200 900 @(
         'CalendarWeekRange', 'CalendarRefresh', 'CalendarNewEvent', 'CalendarTimeline') @('CalendarTimeline')
 
     $result = [ordered]@{
@@ -415,6 +471,13 @@ try {
             authentication = $authMatrix
             mainWindow = $mainMatrix
             calendar = $calendarMatrix
+            result = 'PASS'
+        }
+        customViewports = @{
+            method = 'Native WPF/UIA windows at an exact 1200x900 logical viewport on the current Windows host.'
+            authentication = $auth1200
+            mainWindow = $main1200
+            calendar = $calendar1200
             result = 'PASS'
         }
         checks = @($checks)

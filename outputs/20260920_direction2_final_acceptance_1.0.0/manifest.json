@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "package": "Task final Direction 2 production acceptance",
+  "version": "1.0.0",
+  "date": "2026-09-20",
+  "result": "PASS",
+  "severitiesRemaining": {
+    "critical": 0,
+    "high": 0,
+    "removableMedium": 0
+  },
+  "verification": {
+    "releaseBuild": "PASS: 0 errors; 10 existing test-code warnings (1 xUnit1031, 9 ASPDEPR004)",
+    "fullSolutionTests": {
+      "total": 1751,
+      "passed": 1747,
+      "failed": 0,
+      "skipped": 4
+    },
+    "desk05": "PASS: UIA, keyboard, 100/125/150/200%, exact 1200x900",
+    "sectionsAndEdges": "PASS: 20 screenshots",
+    "searchLifecycle": "PASS: normal, overlay, notification urgency, offline, limited role",
+    "forcedColors": "PASS: loaded WPF HighContrast/SystemColors resource contract"
+  },
+  "sourceFiles": [
+    {
+      "path": "work/production/src/Task.Desktop/Converters/VisualFoundationConverters.cs",
+      "bytes": 6829,
+      "sha256": "53bc1ef9d8e9d64778be5ae45998de361e0cb1839f164e4c0f3f65623212f9ee"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 108172,
+      "sha256": "f14e3960a9753d096237c26eff4bb32a28b1bee7844124b36ef9b4f3fdee9adb"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Tokens.Spacing.xaml",
+      "bytes": 1958,
+      "sha256": "81c5e026055a681cbaacbb3375d4746f2b5cc86e7d81b3b9ebcc8f9f9f583333"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/VisualFoundationTests.cs",
+      "bytes": 21126,
+      "sha256": "4b435f27725cc416855ef21e81a77b4c460e58b0b1eaa690c128e90f1e6ba19a"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "bytes": 8602,
+      "sha256": "9c130ef4792a07035bbb417dc2116ed46138ac1e1ff62d91476841e21718d041"
+    },
+    {
+      "path": "work/production/verification/Test-Desk05WindowsUx.ps1",
+      "bytes": 24982,
+      "sha256": "91cd8e68c40a868b5d3916c98710d82ec70c44acea086b188bfaea189ad7fd2a"
+    },
+    {
+      "path": "work/production/verification/Test-Direction2AuthAdminSettings.ps1",
+      "bytes": 13017,
+      "sha256": "86ea0ca4c5d6af544566d4331c96903751132ac765f70c6a3d8187e1c9544ad4"
+    },
+    {
+      "path": "work/production/verification/New-FinalDirection2ContactSheet.ps1",
+      "bytes": 7000,
+      "sha256": "4b579b39b9e2bc77273f51e24e0d9f047dc25088b60fb7d3a1a477c198a0017a"
+    },
+    {
+      "path": "work/production/verification/Build-FinalDirection2AcceptancePackage.ps1",
+      "bytes": 13368,
+      "sha256": "9b801fe06aa044986e30090e0410efe12c3105ba408c1dc76e3996da78935f47"
+    },
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "bytes": 80152,
+      "sha256": "5bd1c73c1ed8e0614cd9c9c30ac5ce725f4616fe624f714f3c31edc6dd889686"
+    }
+  ],
+  "frozenReferences": [
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/FINAL_VISUAL_BASELINE_1.0.md",
+      "bytes": 1469,
+      "sha256": "b8ee2a0d2170456d1cbcaa408c54f442257851bbcefb780da9e3c5616c415ad4"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/App.jsx",
+      "bytes": 322931,
+      "sha256": "71c37ffc7873b88a8b5fc685d53a7c19a2deb986546b98a914956b40f25ab941"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/prototype/src/styles.css",
+      "bytes": 116673,
+      "sha256": "517d13561b4cbe065ffd3fae09f6e332dce9ff6c6a4e5343d79ff051a68eca3f"
+    },
+    {
+      "path": "work/stage_5_6_final_visual_baseline_and_handoff/design-system/Design_System_1.0.md",
+      "bytes": 1113,
+      "sha256": "947e2f4f12cc182361db343845af27f99797c6aead7bd4699260f48e6a2a9396"
+    },
+    {
+      "path": "work/stage_5_prototype/implementation-direction2-final.png",
+      "bytes": 141092,
+      "sha256": "c232f379a2828575e46caeeee09363eb9f6e8fe7c5a85526e719a8f077237a17"
+    },
+    {
+      "path": "work/stage_5_prototype/implementation-direction2-tasks-final.png",
+      "bytes": 77445,
+      "sha256": "77f4949fcd2089ed06dafad3a611856c9f43f304f3c40e22b5c80e6aaadc0419"
+    },
+    {
+      "path": "work/stage_5_prototype/implementation-direction2-calendar-week.png",
+      "bytes": 60815,
+      "sha256": "9018790f11a0901d3a1d94983f8dc779f50626b4cad0bdfbc1372db04bce1190"
+    },
+    {
+      "path": "work/stage_5_prototype/implementation-direction2-compact-1200x900.png",
+      "bytes": 120089,
+      "sha256": "996fd3b219404dc8108313d1c51b3aba0d8f75a7f881a8edf0adc207f7f129b7"
+    },
+    {
+      "path": "work/stage_5_prototype/edge-scaling-200.png",
+      "bytes": 98858,
+      "sha256": "29c0578dbd041902d080d5b40fd11642e82ed2b6a3c54c178f48a816f8e588e5"
+    }
+  ],
+  "packageFiles": [
+    "direction2-baseline-production-contact-sheet.png",
+    "evidence/accessibility/auth-100.png",
+    "evidence/accessibility/auth-1200x900.png",
+    "evidence/accessibility/auth-125.png",
+    "evidence/accessibility/auth-150.png",
+    "evidence/accessibility/auth-200.png",
+    "evidence/accessibility/calendar-100.png",
+    "evidence/accessibility/calendar-1200x900.png",
+    "evidence/accessibility/calendar-125.png",
+    "evidence/accessibility/calendar-150.png",
+    "evidence/accessibility/calendar-200.png",
+    "evidence/accessibility/main-100.png",
+    "evidence/accessibility/main-1200x900.png",
+    "evidence/accessibility/main-125.png",
+    "evidence/accessibility/main-150.png",
+    "evidence/accessibility/main-200.png",
+    "evidence/accessibility/phase-cleanup.stderr.log",
+    "evidence/accessibility/phase-cleanup.stdout.log",
+    "evidence/accessibility/phase-setup.stderr.log",
+    "evidence/accessibility/phase-setup.stdout.log",
+    "evidence/accessibility/release-build.stderr.log",
+    "evidence/accessibility/release-build.stdout.log",
+    "evidence/accessibility/windows-ux-tests.stderr.log",
+    "evidence/accessibility/windows-ux-tests.stdout.log",
+    "evidence/accessibility/windows-ux.json",
+    "evidence/accessibility/windows-ux.trx",
+    "evidence/full-tests/final-direction2_net10.0_20260920093345.trx",
+    "evidence/full-tests/final-direction2_net10.0_20260920093346.trx",
+    "evidence/full-tests/final-direction2_net10.0_20260920093938.trx",
+    "evidence/search-lifecycle/limited-role.png",
+    "evidence/search-lifecycle/normal-overlay.png",
+    "evidence/search-lifecycle/normal.png",
+    "evidence/search-lifecycle/notification-center.png",
+    "evidence/search-lifecycle/offline.png",
+    "evidence/search-lifecycle/validation.json",
+    "evidence/sections-and-edge-states/admin-limited-role.png",
+    "evidence/sections-and-edge-states/admin-resources.png",
+    "evidence/sections-and-edge-states/admin-roles.png",
+    "evidence/sections-and-edge-states/admin-users.png",
+    "evidence/sections-and-edge-states/archive-online.png",
+    "evidence/sections-and-edge-states/bootstrap-failure.png",
+    "evidence/sections-and-edge-states/bootstrap-progress.png",
+    "evidence/sections-and-edge-states/catalog-online.png",
+    "evidence/sections-and-edge-states/contacts-online.png",
+    "evidence/sections-and-edge-states/first-connection.png",
+    "evidence/sections-and-edge-states/inbox-online.png",
+    "evidence/sections-and-edge-states/notifications-online.png",
+    "evidence/sections-and-edge-states/projects-online.png",
+    "evidence/sections-and-edge-states/settings-notifications.png",
+    "evidence/sections-and-edge-states/settings-offline.png",
+    "evidence/sections-and-edge-states/settings-profile.png",
+    "evidence/sections-and-edge-states/settings-server.png",
+    "evidence/sections-and-edge-states/tasks-online.png",
+    "evidence/sections-and-edge-states/today-online.png",
+    "evidence/sections-and-edge-states/trash-online.png",
+    "evidence/sections-and-edge-states/validation.json",
+    "README.md",
+    "VALIDATION_REPORT.md",
+    "VERSION.txt"
+  ]
+}
