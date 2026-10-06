@@ -71,7 +71,8 @@ public sealed class ApplicationModeStartupTests : IDisposable
 
     private static async global::System.Threading.Tasks.Task AssertWindow(Process process, string title)
     {
-        for (var attempt = 0; attempt < 200; attempt++)
+        var elapsed = Stopwatch.StartNew();
+        while (elapsed.Elapsed < TimeSpan.FromSeconds(30))
         {
             Assert.False(process.HasExited, "Task exited before opening its selected context");
             process.Refresh();

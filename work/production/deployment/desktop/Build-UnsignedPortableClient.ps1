@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version,
-    [Parameter(Mandatory)][string]$OutputDirectory
+    [Parameter(Mandatory)][string]$OutputDirectory,
+    [switch]$RequireCleanSourceTree
 )
 
 $ErrorActionPreference = 'Stop'
@@ -16,10 +17,18 @@ if (Test-Path -LiteralPath $output) { throw "Output already exists: $output" }
 $desktopProject = Join-Path $projectRoot 'work\production\src\Task.Desktop\Task.Desktop.csproj'
 $revision = (git -C $projectRoot rev-parse HEAD).Trim()
 $workingTreeChanges = @(git -C $projectRoot status --short -- work/production/src)
+if ($RequireCleanSourceTree -and $workingTreeChanges.Count -ne 0) {
+    throw 'Final delivery requires committed production source.'
+}
 $payload = Join-Path $output 'Task'
 New-Item -ItemType Directory -Path $payload -Force | Out-Null
-dotnet publish $desktopProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -o $payload
+# Self-contained restore adds runtime/linker dependencies; keep those locks in obj/.
+# Never rewrite the ordinary source locks just by publishing a portable client.
+dotnet publish $desktopProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -p:NuGetLockFilePath=obj/portable.packages.lock.json -o $payload
 if ($LASTEXITCODE -ne 0) { throw 'Task desktop publish failed.' }
+if ($RequireCleanSourceTree -and @(git -C $projectRoot status --short -- work/production/src).Count -ne 0) {
+    throw 'Production source changed during final publish.'
+}
 
 $files = @(Get-ChildItem -LiteralPath $payload -Recurse -File | Sort-Object FullName | ForEach-Object {
     [ordered]@{
