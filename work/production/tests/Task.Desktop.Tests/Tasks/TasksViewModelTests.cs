@@ -418,9 +418,15 @@ public sealed class TasksViewModelTests
         await viewModel.ActivateAsync();
         await viewModel.NewTaskCommand.ExecuteAsync();
         viewModel.Editor!.Title = "Повтор";
+        var retryAvailable = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.Editor.PropertyChanged += (_, change) =>
+        {
+            if (change.PropertyName == nameof(TaskEditorViewModel.RetryAvailable) && viewModel.Editor!.RetryAvailable)
+                retryAvailable.TrySetResult();
+        };
 
         await viewModel.SaveEditorCommand.ExecuteAsync();
-        await WaitForAsync(() => viewModel.Editor!.RetryAvailable, 4000);
+        await retryAvailable.Task.WaitAsync(TimeSpan.FromSeconds(30));
         await viewModel.SaveEditorCommand.ExecuteAsync();
 
         Assert.Equal(2, client.CreateCommands.Count);
