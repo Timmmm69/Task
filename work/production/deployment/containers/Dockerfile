@@ -39,6 +39,8 @@ USER root
 RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources \
     && apt-get -o Acquire::Retries=3 update \
     && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
+        libssl3t64=3.0.13-0ubuntu3.16 \
+        openssl=3.0.13-0ubuntu3.16 \
         libgssapi-krb5-2=1.20.1-6ubuntu2.10 \
         libkrb5-3=1.20.1-6ubuntu2.10 \
         libk5crypto3=1.20.1-6ubuntu2.10 \
@@ -61,7 +63,18 @@ EXPOSE 8080
 USER app
 ENTRYPOINT ["dotnet", "Task.Api.dll"]
 
-FROM ${RUNTIME_IMAGE} AS task-worker
+FROM ${RUNTIME_IMAGE} AS task-base-runtime
+USER root
+RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources \
+    && apt-get -o Acquire::Retries=3 update \
+    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
+        libssl3t64=3.0.13-0ubuntu3.16 \
+        openssl=3.0.13-0ubuntu3.16 \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log \
+        /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache \
+        /var/lib/dpkg/status-old /var/lib/dpkg/lock /var/lib/dpkg/triggers/Lock
+
+FROM task-base-runtime AS task-worker
 ARG VERSION=0.0.0-local
 ARG GIT_SHA=unknown
 LABEL org.opencontainers.image.title="Task.Worker" \
@@ -72,7 +85,7 @@ COPY --from=build --chown=app:app /publish/task-worker/ ./
 USER app
 ENTRYPOINT ["dotnet", "Task.Worker.dll"]
 
-FROM ${RUNTIME_IMAGE} AS task-backup-agent
+FROM task-base-runtime AS task-backup-agent
 ARG VERSION=0.0.0-local
 ARG GIT_SHA=unknown
 LABEL org.opencontainers.image.title="Task.BackupAgent" \
@@ -83,7 +96,7 @@ COPY --from=build --chown=app:app /publish/task-backup-agent/ ./
 USER app
 ENTRYPOINT ["dotnet", "Task.BackupAgent.dll"]
 
-FROM ${RUNTIME_IMAGE} AS task-database-migrator-runtime
+FROM task-base-runtime AS task-database-migrator-runtime
 USER root
 RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources \
     && apt-get -o Acquire::Retries=3 update \
@@ -109,7 +122,7 @@ USER app
 ENTRYPOINT ["dotnet", "Task.DatabaseMigrator.dll"]
 
 # Validation-only target. It is not a deployable service image.
-FROM ${RUNTIME_IMAGE} AS task-container-validation
+FROM task-base-runtime AS task-container-validation
 WORKDIR /app
 COPY --from=build --chown=app:app /publish/task-container-validation/ ./
 USER app
