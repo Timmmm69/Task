@@ -8,6 +8,21 @@ namespace Task.Desktop.Tests.Projects;
 
 public sealed class ProjectsViewModelTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesProjectEditorAndDraft()
+    {
+        var client = new FakeProjectsClient { Projects = SuccessPage() };
+        using var projects = new ProjectsViewModel(client, User, Capabilities);
+        projects.Activate();
+        await WaitUntil(() => projects.State == ProjectsScreenState.Empty);
+        await projects.NewProjectCommand.ExecuteAsync();
+        var editor = projects.Editor!;
+        editor.Name = "Проект в черновике";
+        using var shell = new MainWindowViewModel(null, null, projects: projects);
+        await ApplicationModeTests.AssertCancelledAsync(shell);
+        Assert.Same(editor, projects.Editor);
+        Assert.Equal("Проект в черновике", projects.Editor!.Name);
+    }
     private static readonly Guid Organization = Guid.NewGuid();
     private static readonly Guid User = Guid.NewGuid();
     private static readonly Guid ProjectId = Guid.NewGuid();

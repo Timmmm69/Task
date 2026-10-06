@@ -26,6 +26,7 @@ if (-not $evidenceRoot.StartsWith($outputPrefix, [StringComparison]::OrdinalIgno
 }
 
 $runtimeRoot = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'TaskE2ERuntime\task-write-e2e'))
+$isolatedDesktopData = Join-Path $runtimeRoot 'desktop-appdata'
 $expectedRuntime = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'TaskE2ERuntime\task-write-e2e'))
 if ($runtimeRoot -ne $expectedRuntime) { throw 'Unexpected QA-03 runtime path.' }
 $writeE2E = Join-Path $PSScriptRoot 'Test-TaskWriteE2E.ps1'
@@ -55,7 +56,7 @@ function Invoke-Phase([string]$phase, [string[]]$extra = @()) {
     $heading = "=== Test-TaskWriteE2E phase: $phase ==="
     Append-Log @($heading) $runLog
     $arguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $writeE2E,
-        '-Phase', $phase) + $extra
+        '-Phase', $phase, '-DesktopAppDataPath', $isolatedDesktopData) + $extra
     $phaseStem = $phase.ToLowerInvariant()
     $stdoutPath = Join-Path $evidenceRoot "phase-$phaseStem.stdout.log"
     $stderrPath = Join-Path $evidenceRoot "phase-$phaseStem.stderr.log"
@@ -292,9 +293,16 @@ public static class Qa03WindowCapture {
 }
 function Start-Desktop {
     Assert-Qa03 (Test-Path -LiteralPath $desktopExe -PathType Leaf) 'Release WPF executable exists.'
-    $script:desktopProcess = Start-Process -FilePath $desktopExe -WorkingDirectory (Split-Path $desktopExe) -PassThru `
-        -RedirectStandardOutput (Join-Path $evidenceRoot 'desktop.stdout.log') `
-        -RedirectStandardError (Join-Path $evidenceRoot 'desktop.stderr.log')
+    $previousDataDirectory = [Environment]::GetEnvironmentVariable('TASK_DESKTOP_DATA_DIRECTORY', 'Process')
+    try {
+        [Environment]::SetEnvironmentVariable('TASK_DESKTOP_DATA_DIRECTORY', $isolatedDesktopData, 'Process')
+        $script:desktopProcess = Start-Process -FilePath $desktopExe -WorkingDirectory (Split-Path $desktopExe) -PassThru `
+            -RedirectStandardOutput (Join-Path $evidenceRoot 'desktop.stdout.log') `
+            -RedirectStandardError (Join-Path $evidenceRoot 'desktop.stderr.log')
+    }
+    finally {
+        [Environment]::SetEnvironmentVariable('TASK_DESKTOP_DATA_DIRECTORY', $previousDataDirectory, 'Process')
+    }
     $desktop = [System.Windows.Automation.AutomationElement]::RootElement
     $processCondition = [System.Windows.Automation.PropertyCondition]::new(
         [System.Windows.Automation.AutomationElement]::ProcessIdProperty, $script:desktopProcess.Id)
@@ -583,7 +591,7 @@ try {
     Navigate-To $window 'catalog' 'WorkHubView'
     Wait-ElementById $window 'WorkHubView' 30 | Out-Null
     Assert-Qa03 ((Assert-ListContains $window 'CatalogList' 'QA-03 deterministic file.txt' 60).Current.Name.Contains('QA-03 deterministic file.txt')) 'Catalog list renders the seeded file reference.'
-    $catalogNameBox = Wait-ElementByNameContains $window 'Название файла' 30 'Edit'
+    $catalogNameBox = Wait-ElementByNameExact $window 'Название записи' 30
     Set-ElementValue $catalogNameBox 'QA-03 ui catalog file'
     Invoke-Element (Wait-ElementById $window 'CreateCatalogItemButton' 30 -Enabled)
     $uiCatalog = Assert-ListContains $window 'CatalogList' 'QA-03 ui catalog file' 60
@@ -619,6 +627,15 @@ try {
     Assert-Qa03 ($notification.Current.Name.Contains('Напоминание')) 'Notification center renders the worker-delivered reminder.'
     $deliveredState = Assert-ListContains $window 'NotificationsList' 'delivered' 30
     Assert-Qa03 ($deliveredState.Current.Name.Contains('delivered')) 'Notification center shows the unread delivered state.'
+    # Read items are intentionally hidden by the default unread-only filter.
+    $notificationFilter = Wait-ElementByNameExact $window 'Фильтр уведомлений' 30
+    $filterExpansion = [System.Windows.Automation.ExpandCollapsePattern]$notificationFilter.GetCurrentPattern(
+        [System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+    $filterExpansion.Expand()
+    $allNotifications = Wait-ElementByNameExact $notificationFilter 'Все' 30
+    ([System.Windows.Automation.SelectionItemPattern]$allNotifications.GetCurrentPattern(
+        [System.Windows.Automation.SelectionItemPattern]::Pattern)).Select()
+    $filterExpansion.Collapse()
     Invoke-Element (Wait-ElementById $window 'MarkAllNotificationsReadButton' 30 -Enabled)
     $readState = Assert-ListContains $window 'NotificationsList' 'read' 60
     Assert-Qa03 ($readState.Current.Name.Contains('read')) 'Mark-all-read transitioned the reminder to the read state.'

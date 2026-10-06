@@ -6,6 +6,21 @@ namespace Task.Desktop.Tests.Work;
 public sealed class WorkHubViewModelTests
 {
     [Fact]
+    public async System.Threading.Tasks.Task ModeSwitchCancel_PreservesSettingsAndContactDrafts()
+    {
+        using var work = new WorkHubViewModel(new FakeClient(), ["Settings.ReadOwn", "Settings.UpdateOwn"]);
+        work.Activate(WorkHubArea.Settings);
+        await Eventually(() => work.SaveUserSettingsCommand.CanExecute(null));
+        work.DefaultTaskDurationMinutes = 105;
+        work.NewContactFirstName = "Черновик";
+        Assert.True(work.HasProfileDraft);
+        using var shell = new MainWindowViewModel(null, null, workHub: work);
+        await ApplicationModeTests.AssertCancelledAsync(shell);
+        Assert.Equal(105, work.DefaultTaskDurationMinutes);
+        Assert.Equal("Черновик", work.NewContactFirstName);
+        Assert.True(work.HasProfileDraft);
+    }
+    [Fact]
     public async System.Threading.Tasks.Task CatalogScenarioCreatesLocationAndOpensOnlyResolvedPath()
     {
         var client = new FakeClient(); var files = new RecordingFiles();

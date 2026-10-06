@@ -6,6 +6,21 @@ namespace Task.Desktop.Tests.TaskScreen;
 
 public sealed class TasksViewModelTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesTaskEditorAndDraft()
+    {
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([]));
+        using var tasks = new TasksViewModel(client, ["Task.Read", "Task.Create"]);
+        await tasks.ActivateAsync();
+        await tasks.NewTaskCommand.ExecuteAsync();
+        var editor = tasks.Editor!;
+        editor.Title = "Не потерять черновик";
+        using var shell = new MainWindowViewModel(null, null, tasks);
+        await ApplicationModeTests.AssertCancelledAsync(shell);
+        Assert.Same(editor, tasks.Editor);
+        Assert.Equal("Не потерять черновик", tasks.Editor!.Title);
+    }
     private static readonly string[] WriteCapabilities =
         ["Task.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"];
 

@@ -6,7 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Task.Desktop.Views"
         mc:Ignorable="d"
-        Title="Task"
+        Title="Task — Corporate"
+        Icon="Assets/Task.ico"
         Width="1200" Height="900" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource Task.Window.Style}"
@@ -38,6 +39,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{DynamicResource Task.Navigation.MenuGridLength}" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0" Width="48" Height="58" Margin="10,0,0,0"
@@ -49,6 +51,11 @@
                           HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
 
+                <StackPanel Grid.Row="2" Margin="8,16">
+                    <TextBlock Text="Corporate" Margin="8,0,0,8"/>
+                    <Button Content="Сменить режим" Click="OnSwitchMode" Style="{StaticResource Task.Button.Secondary}"
+                            AutomationProperties.AutomationId="SwitchModeButton"/>
+                </StackPanel>
                 <ListBox x:Name="NavigationListBox" Grid.Row="1"
                          ItemsSource="{Binding Sections}"
                          SelectedItem="{Binding SelectedSection, Mode=TwoWay}"

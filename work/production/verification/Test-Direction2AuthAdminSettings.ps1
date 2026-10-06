@@ -127,6 +127,7 @@ try {
 
     $firstConnectionData = Join-Path $evidenceRoot 'first-connection-data'
     [IO.Directory]::CreateDirectory($firstConnectionData) | Out-Null
+    [IO.File]::WriteAllText((Join-Path $firstConnectionData 'application-preferences.json'), '{"version":1,"mode":"Corporate"}', [Text.UTF8Encoding]::new($false))
     $previousDataDirectory = $env:TASK_DESKTOP_DATA_DIRECTORY
     $env:TASK_DESKTOP_DATA_DIRECTORY = $firstConnectionData
     $process = Start-Desktop

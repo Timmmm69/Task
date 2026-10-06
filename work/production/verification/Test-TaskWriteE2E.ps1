@@ -192,6 +192,8 @@ function Seed-Desktop($state, [string]$login) {
     $session = Invoke-Login $state $login
     $appData = $state.DesktopAppData
     [IO.Directory]::CreateDirectory($appData) | Out-Null
+    # This fixture intentionally exercises the existing corporate pipeline.
+    [IO.File]::WriteAllText((Join-Path $appData 'application-preferences.json'), '{"version":1,"mode":"Corporate"}', [Text.UTF8Encoding]::new($false))
     $settings = @{ version = 1; baseUrl = "$($state.BaseUrl)/" } | ConvertTo-Json -Compress
     [IO.File]::WriteAllText((Join-Path $appData 'server-settings.json'), $settings, [Text.UTF8Encoding]::new($false))
     $entry = [ordered]@{

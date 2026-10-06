@@ -12,8 +12,10 @@ public interface IDesktopRecurrenceApiClient
         string? json, long? version, string? key, CancellationToken cancellationToken);
 }
 
-public sealed class DesktopRecurrenceApiClient(HttpClient httpClient, Uri endpoint, SessionService session) : IDesktopRecurrenceApiClient
+public sealed class DesktopRecurrenceApiClient(HttpClient httpClient, Uri endpoint, SessionService session) : IDesktopRecurrenceApiClient, IDesktopRecurrenceClient
 {
+    public global::System.Threading.Tasks.Task<DesktopCalendarResult<DesktopRecurrenceReply>> ExecuteAsync(DesktopRecurrenceCommand command, CancellationToken cancellationToken) =>
+        new DesktopRecurrenceHttpAdapter(this).ExecuteAsync(command, cancellationToken);
     private readonly DesktopAuthenticatedGetExecutor _executor = new(httpClient, session);
     public async global::System.Threading.Tasks.Task<DesktopCalendarResult<JsonElement>> SendAsync(HttpMethod method,
         string path, string? json, long? version, string? key, CancellationToken cancellationToken)

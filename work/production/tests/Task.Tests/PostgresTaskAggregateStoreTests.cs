@@ -490,7 +490,8 @@ public sealed class PostgresTaskAggregateStoreTests
         var migratorDll = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory,
             "..", "..", "..", "..", "..",
-            "src", "Task.DatabaseMigrator", "bin", "Debug", "net10.0", "Task.DatabaseMigrator.dll"));
+            "src", "Task.DatabaseMigrator", "bin", new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name,
+            "net10.0", "Task.DatabaseMigrator.dll"));
         Assert.True(File.Exists(migratorDll),
             $"Build Task.DatabaseMigrator before the real PostgreSQL gate. Missing: {migratorDll}");
 

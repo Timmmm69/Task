@@ -23,11 +23,13 @@ public sealed class TaskCardEditor : ViewModelBase
     private IReadOnlyList<TaskPersonSelection> _assignees = [], _watchers = [];
     private string? _message;
     private readonly DateTimeOffset? _originalStart;
+    private readonly bool _personal;
     private DateTimeOffset? _currentStart;
     private bool _canAssign, _canWatch;
     public event Action? Changed;
-    public TaskCardEditor(TaskCardContent? source, DateTimeOffset? originalStart = null)
+    public TaskCardEditor(TaskCardContent? source, DateTimeOffset? originalStart = null, bool personal = false)
     {
+        _personal = personal;
         _originalStart = originalStart; _currentStart = originalStart;
         _source = source ?? new(); _description = _source.Description ?? "";
         _date = _source.ScheduledDate?.ToString("dd.MM.yyyy") ?? "";
@@ -107,7 +109,7 @@ public sealed class TaskCardEditor : ViewModelBase
             AssigneeIds = Assignees.Where(p => p.Selected).Select(p => p.Id).ToArray(),
             WatcherIds = Watchers.Where(p => p.Selected).Select(p => p.Id).ToArray()
         };
-        content.Validate(start); return content;
+        content.Validate(start, allowEarlierAmbiguousInstant: _personal); return content;
     }
     public string? Patch(TaskCardContent value)
     {

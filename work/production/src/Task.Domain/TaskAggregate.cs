@@ -137,7 +137,7 @@ public sealed class TaskAggregate
     public TaskAggregate Start(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         EnsureActive("An archived or trashed task must be restored before it can be started.");
-        if (WorkStatus != TaskWorkStatus.New)
+        if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.InProgress))
         {
             throw new InvalidOperationException("Only a new task can be started.");
         }
@@ -155,7 +155,7 @@ public sealed class TaskAggregate
     public TaskAggregate SubmitForReview(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         EnsureActive("An archived or trashed task must be restored before it can be submitted for review.");
-        if (WorkStatus != TaskWorkStatus.InProgress)
+        if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.Review))
         {
             throw new InvalidOperationException("Only an in-progress task can be submitted for review.");
         }
@@ -173,7 +173,7 @@ public sealed class TaskAggregate
     public TaskAggregate Complete(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         EnsureActive("An archived or trashed task must be restored before it can be completed.");
-        if (IsTerminal)
+        if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.Completed))
         {
             throw new InvalidOperationException("A completed or cancelled task cannot be completed.");
         }
@@ -191,7 +191,7 @@ public sealed class TaskAggregate
     public TaskAggregate Cancel(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         EnsureActive("An archived or trashed task must be restored before it can be cancelled.");
-        if (IsTerminal)
+        if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.Cancelled))
         {
             throw new InvalidOperationException("A completed or cancelled task cannot be cancelled.");
         }
@@ -392,18 +392,7 @@ public sealed class TaskAggregate
 
     private static string EnsureValidTitle(string title)
     {
-        var normalizedTitle = title?.Trim();
-        if (string.IsNullOrEmpty(normalizedTitle))
-        {
-            throw new ArgumentException("Task title must not be empty.", nameof(title));
-        }
-
-        if (normalizedTitle.Length > 500)
-        {
-            throw new ArgumentException("Task title must not exceed 500 characters.", nameof(title));
-        }
-
-        return normalizedTitle;
+        return TaskRules.NormalizeTitle(title);
     }
 }
 

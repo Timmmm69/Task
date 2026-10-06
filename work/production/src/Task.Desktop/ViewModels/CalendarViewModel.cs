@@ -8,6 +8,7 @@ public enum CalendarScreenState { Inactive, Loading, Loaded, Empty, Refreshing, 
 public enum CalendarViewMode { Day, Week, Month }
 public sealed record CalendarHourMarker(string Label, double Top);
 public sealed record CalendarEventStatusOption(string Value, string Label);
+public sealed record CalendarProjectChoice(Guid? Id, string Name);
 
 public sealed class CalendarItemViewModel : ViewModelBase
 {
@@ -241,8 +242,9 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
     private string _status = "scheduled";
     private bool _hasConflict;
     private bool _isSaving;
-    public CalendarEventEditorViewModel(DesktopCalendarEvent? source, TimeZoneInfo? localTimeZone = null)
+    public CalendarEventEditorViewModel(DesktopCalendarEvent? source, TimeZoneInfo? localTimeZone = null, bool personal = false)
     {
+        IsPersonal = personal;
         Source = source;
         _eventTimeZone = source is null
             ? localTimeZone ?? TimeZoneInfo.Local
@@ -262,6 +264,14 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
         }
     }
     public DesktopCalendarEvent? Source { get; private set; }
+    public bool IsPersonal { get; }
+    public bool AllowAttendees => !IsPersonal;
+    public IReadOnlyList<CalendarProjectChoice> ProjectChoices { get; set; } = [];
+    public CalendarProjectChoice? SelectedProject
+    {
+        get => ProjectChoices.FirstOrDefault(p => p.Id == (Guid.TryParse(ProjectId, out var id) ? id : (Guid?)null));
+        set { ProjectId = value?.Id?.ToString("D") ?? ""; OnPropertyChanged(); }
+    }
     public bool IsNew => Source is null;
     public string EditorTitle => IsNew ? "Новое событие" : "Редактор события";
     public string VersionText => IsNew ? $"Новое событие · {_eventTimeZone.Id}" : $"Версия {Source!.Version} · {_eventTimeZone.Id}";
@@ -335,8 +345,15 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
             var endLocal = DateTime.SpecifyKind(endDate.ToDateTime(endTime), DateTimeKind.Unspecified);
             if (effectiveTimeZone.IsInvalidTime(startLocal) || effectiveTimeZone.IsInvalidTime(endLocal))
             { ValidationMessage = "Это время отсутствует из-за перехода часового пояса."; return false; }
-            start = new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(startLocal, effectiveTimeZone), TimeSpan.Zero);
-            end = new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(endLocal, effectiveTimeZone), TimeSpan.Zero);
+            start = IsPersonal ? Personal.PersonalTimePolicy.ToUtc(startLocal, effectiveTimeZone)
+                : new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(startLocal, effectiveTimeZone), TimeSpan.Zero);
+            end = IsPersonal ? Personal.PersonalTimePolicy.ToUtc(endLocal, effectiveTimeZone)
+                : new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(endLocal, effectiveTimeZone), TimeSpan.Zero);
+            // Preserve explicit instants when only non-temporal fields are edited.
+            if (IsPersonal && Source?.StartAtUtc is { } originalStart && TimeZoneInfo.ConvertTime(originalStart, effectiveTimeZone).DateTime == startLocal)
+                start = originalStart;
+            if (IsPersonal && Source?.EndAtUtc is { } originalEnd && TimeZoneInfo.ConvertTime(originalEnd, effectiveTimeZone).DateTime == endLocal)
+                end = originalEnd;
         }
         command = new(projectId, Title.Trim(), string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
             eventDate, IsAllDay, start, end, effectiveTimeZone.Id, Status, Attendees.Select(a => a.ToAttendee()).ToArray(), endDate);
@@ -389,8 +406,13 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
     private CalendarEventEditorViewModel? _editor;
     private string? _rollbackMessage;
 
-    public CalendarViewModel(IDesktopCalendarApiClient client, IEnumerable<string>? capabilities = null, TimeZoneInfo? timeZone = null, DateTime? today = null, RecurrencePaneViewModel? recurrence = null, Func<DateTimeOffset>? clock = null)
+    private readonly Func<DayOfWeek>? _firstDay;
+    private readonly Func<TimeOnly>? _workdayStart;
+    private DayOfWeek FirstDay => _firstDay?.Invoke() ?? DayOfWeek.Monday;
+    public CalendarViewModel(IDesktopCalendarApiClient client, IEnumerable<string>? capabilities = null, TimeZoneInfo? timeZone = null, DateTime? today = null, RecurrencePaneViewModel? recurrence = null, Func<DateTimeOffset>? clock = null, bool personal = false, Func<IReadOnlyList<CalendarProjectChoice>>? projects = null, Func<DayOfWeek>? firstDay = null, Func<TimeOnly>? workdayStart = null)
     {
+        _firstDay = firstDay; _workdayStart = workdayStart;
+        IsPersonal = personal; _projects = projects;
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _timeZone = timeZone ?? TimeZoneInfo.Local;
         _clock = clock ?? (() => DateTimeOffset.UtcNow);
@@ -402,7 +424,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
             Recurrence.AccessLost += OnRecurrenceAccessLost;
         }
         _selectedDate = DateOnly.FromDateTime(today ?? DateTime.Today);
-        _weekStart = StartOfWeek(_selectedDate);
+        _weekStart = StartOfWeek(_selectedDate, FirstDay);
         RefreshCommand = new AsyncCommand((_, token) => LoadAsync(true, token), _ => IsActive && CanRead && !IsBusy);
         PreviousWeekCommand = new AsyncCommand((_, token) => MoveAsync(-1, token), _ => IsActive && CanRead && !IsBusy);
         NextWeekCommand = new AsyncCommand((_, token) => MoveAsync(1, token), _ => IsActive && CanRead && !IsBusy);
@@ -424,8 +446,9 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<CalendarDayViewModel> Days { get => _days; private set => SetProperty(ref _days, value); }
     public IReadOnlyList<CalendarHourMarker> HourMarkers { get; } = Enumerable.Range(0, 24).Select(hour => new CalendarHourMarker($"{hour:00}:00", hour * TimelineHourHeight)).ToArray();
     public double TimelineCanvasHeight => 24d * TimelineHourHeight;
-    public double InitialTimelineOffset => 8d * TimelineHourHeight;
+    public double InitialTimelineOffset => (_workdayStart?.Invoke().ToTimeSpan().TotalHours ?? 8d) * TimelineHourHeight;
     public string TimeZoneText => _timeZone.Id;
+    public string TimeZoneLabel => IsPersonal ? "Местное время" : TimeZoneText;
     public void RefreshCurrentTime()
     {
         var now = _clock();
@@ -448,7 +471,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
             if (!value.HasValue || _saving) return;
             var date = DateOnly.FromDateTime(value.Value);
             if (date == _selectedDate) return;
-            _selectedDate = date; _weekStart = StartOfWeek(date);
+            _selectedDate = date; _weekStart = StartOfWeek(date, FirstDay);
             ClearSelection();
             OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
             if (_active && CanRead) _ = LoadAsync(false, CancellationToken.None);
@@ -482,11 +505,14 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
     public string? Announcement { get => _announcement; private set => SetProperty(ref _announcement, value); }
     public string LastSuccessfulRefreshText => _lastRefresh.HasValue ? $"Обновлено {_lastRefresh.Value.ToLocalTime():HH:mm}" : "Ещё не обновлялось";
     public bool CanRead => _capabilities.Contains("Calendar.Read");
+    public bool IsPersonal { get; }
+    private readonly Func<IReadOnlyList<CalendarProjectChoice>>? _projects;
     public bool CanCreate => _active && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("CalendarEvent.Create") && Editor is null;
     public bool CanEdit => _active && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("CalendarEvent.Update") && SelectedEvent is not null && Editor is null;
     public bool CanSave => _active && _sessionAllowsWrites && _networkAvailable && Editor is not null && !IsBusy
         && (Editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update"));
-    public string WriteAccessText => !_networkAvailable
+    public string WriteAccessText => IsPersonal ? "Календарь сохраняется на этом компьютере. Пересечения показываются как предупреждения. При повторе часов используется первый UTC-момент."
+        : !_networkAvailable
         ? "Сервер недоступен. Подтверждённый календарь доступен только для просмотра."
         : CanCreate || _capabilities.Contains("CalendarEvent.Update") ? "Изменения календаря синхронизируются с сервером компании." : "Календарь доступен только для просмотра.";
     public CalendarItemViewModel? SelectedItem { get => _selectedItem; set { if (SetProperty(ref _selectedItem, value)) { UpdateSelectionFlags(); OnPropertyChanged(nameof(HasSelectedItem)); _ = LoadSelectedEventAsync(value); } } }
@@ -510,7 +536,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
 
     private CalendarEventEditorViewModel CreateEditor(DesktopCalendarEvent? source)
     {
-        var editor = new CalendarEventEditorViewModel(source, _timeZone);
+        var editor = new CalendarEventEditorViewModel(source, _timeZone, IsPersonal) { ProjectChoices = _projects?.Invoke() ?? [] };
         editor.AttachCommands(SaveEventCommand, CancelEditorCommand);
         return editor;
     }
@@ -596,7 +622,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
             CalendarViewMode.Month => _selectedDate.AddMonths(direction),
             _ => _selectedDate.AddDays(7 * direction),
         };
-        _weekStart = StartOfWeek(_selectedDate);
+        _weekStart = StartOfWeek(_selectedDate, FirstDay);
         ClearSelection();
         OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
         await LoadAsync(false, token);
@@ -611,7 +637,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
     }
 
     private async global::System.Threading.Tasks.Task GoTodayAsync(CancellationToken token)
-    { _selectedDate = DateOnly.FromDateTime(DateTime.Today); _weekStart = StartOfWeek(_selectedDate); ClearSelection(); OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); await LoadAsync(false, token); }
+    { _selectedDate = DateOnly.FromDateTime(DateTime.Today); _weekStart = StartOfWeek(_selectedDate, FirstDay); ClearSelection(); OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); await LoadAsync(false, token); }
 
     private async global::System.Threading.Tasks.Task LoadAsync(bool refresh, CancellationToken token)
     {
@@ -624,7 +650,9 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
         Message = refresh && hadData ? "Обновляем календарь; подтверждённые данные остаются видимыми." : "Загрузка расписания…";
         try
         {
-            var (firstDate, lastDateExclusive) = GetVisibleDateRange(_selectedDate, ViewMode);
+            var (firstDate, lastDateExclusive) = GetVisibleDateRange(_selectedDate, ViewMode, FirstDay);
+            _weekStart = StartOfWeek(_selectedDate, FirstDay);
+            OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
             var (fromUtc, toUtc) = GetUtcRange(firstDate, lastDateExclusive, _timeZone);
             var scheduleTask = _client.GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, ct);
             var conflictsTask = _client.GetConflictsAsync(fromUtc, toUtc, ct);
@@ -778,18 +806,18 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
         if (!preserveEditor) Editor = null;
     }
     private void RaiseCommands() { RefreshCommand.RaiseCanExecuteChanged(); PreviousWeekCommand.RaiseCanExecuteChanged(); NextWeekCommand.RaiseCanExecuteChanged(); TodayCommand.RaiseCanExecuteChanged(); DayModeCommand.RaiseCanExecuteChanged(); WeekModeCommand.RaiseCanExecuteChanged(); MonthModeCommand.RaiseCanExecuteChanged(); SelectItemCommand.RaiseCanExecuteChanged(); NewEventCommand.RaiseCanExecuteChanged(); EditEventCommand.RaiseCanExecuteChanged(); SaveEventCommand.RaiseCanExecuteChanged(); CancelEditorCommand.RaiseCanExecuteChanged(); }
-    internal static DateOnly StartOfWeek(DateOnly date) => date.AddDays(-(((int)date.DayOfWeek + 6) % 7));
-    internal static (DateOnly FirstDate, DateOnly LastDateExclusive) GetVisibleDateRange(DateOnly anchor, CalendarViewMode mode) => mode switch
+    internal static DateOnly StartOfWeek(DateOnly date, DayOfWeek firstDay = DayOfWeek.Monday) => date.AddDays(-(((int)date.DayOfWeek - (int)firstDay + 7) % 7));
+    internal static (DateOnly FirstDate, DateOnly LastDateExclusive) GetVisibleDateRange(DateOnly anchor, CalendarViewMode mode, DayOfWeek firstDay = DayOfWeek.Monday) => mode switch
     {
         CalendarViewMode.Day => (anchor, anchor.AddDays(1)),
-        CalendarViewMode.Month => GetMonthVisibleDateRange(anchor),
-        _ => (StartOfWeek(anchor), StartOfWeek(anchor).AddDays(7)),
+        CalendarViewMode.Month => GetMonthVisibleDateRange(anchor, firstDay),
+        _ => (StartOfWeek(anchor, firstDay), StartOfWeek(anchor, firstDay).AddDays(7)),
     };
-    private static (DateOnly FirstDate, DateOnly LastDateExclusive) GetMonthVisibleDateRange(DateOnly anchor)
+    private static (DateOnly FirstDate, DateOnly LastDateExclusive) GetMonthVisibleDateRange(DateOnly anchor, DayOfWeek firstDay)
     {
-        var first = StartOfWeek(new DateOnly(anchor.Year, anchor.Month, 1));
+        var first = StartOfWeek(new DateOnly(anchor.Year, anchor.Month, 1), firstDay);
         var nextMonth = new DateOnly(anchor.Year, anchor.Month, 1).AddMonths(1);
-        var last = StartOfWeek(nextMonth);
+        var last = StartOfWeek(nextMonth, firstDay);
         return (first, last == nextMonth ? last : last.AddDays(7));
     }
     internal static (DateTimeOffset FromUtc, DateTimeOffset ToUtc) GetUtcRange(DateOnly weekStart, TimeZoneInfo timeZone)

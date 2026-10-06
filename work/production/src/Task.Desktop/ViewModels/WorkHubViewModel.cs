@@ -15,6 +15,7 @@ public sealed record DesktopSearchHit(DesktopSearchResult Source, string TitlePr
 }
 
 public sealed record DesktopSearchGroup(string Title, IReadOnlyList<DesktopSearchHit> Items);
+public sealed record CatalogItemTypeChoice(string Value, string Label);
 
 public sealed class WorkHubViewModel : ViewModelBase, IDisposable
 {
@@ -75,16 +76,19 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     private bool _disposed;
     private string _settingsSection = "Профиль";
 
-    public WorkHubViewModel(IDesktopWorkApiClient client, IEnumerable<string>? capabilities, IFileAccessAdapter? files = null, string? serverAddress = null)
+    public WorkHubViewModel(IDesktopWorkApiClient client, IEnumerable<string>? capabilities, IFileAccessAdapter? files = null, string? serverAddress = null, bool personal = false)
     {
+        IsPersonal = personal;
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _files = files ?? new WindowsFileAccessAdapter();
         _capabilities = new(capabilities ?? [], StringComparer.OrdinalIgnoreCase);
+        if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
+            Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
         ServerAddress = serverAddress ?? "Сервер компании";
         RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea);
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanUseServerWrites && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
-        AddLocationCommand = new(AddLocationAsync, _ => CanUseServerWrites && CanUpdateLocation && SelectedCatalogItem is not null && !string.IsNullOrWhiteSpace(NewItemPath));
+        AddLocationCommand = new(AddLocationAsync, _ => CanUseServerWrites && CanUpdateLocation && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference" && !string.IsNullOrWhiteSpace(NewItemPath));
         OpenFileCommand = new(OpenFileAsync, _ => _active && _sessionAvailable && CanOpenFile && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference");
         CreateContactCommand = new(CreateContactAsync, _ => CanUseServerWrites && CanCreateContact && !string.IsNullOrWhiteSpace(NewContactFirstName) && !string.IsNullOrWhiteSpace(NewContactDisplayName));
         MarkReadCommand = new(MarkReadAsync, p => CanUseNotificationWrites && (p as DesktopNotification ?? SelectedNotification) is { Status: not "read" and not "dismissed" });
@@ -100,36 +104,62 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     }
 
     public event Action<string, Guid>? OpenObjectRequested;
+    public bool IsPersonal { get; }
+    public bool IsCorporate => !IsPersonal;
+    public string LoadingText => IsPersonal ? "Загружаем личные данные…" : "Проверяем актуальные данные и область доступа…";
+    public string LifecycleScopeText => IsPersonal ? "Записи личного пространства. Файлы на диске не изменяются." : "Недоступные названия, связи, владельцы и количество скрытых объектов не раскрываются.";
+    public string CatalogPathLabel => IsPersonal ? "Путь к файлу или сетевой папке" : "Локальный путь или разрешённый UNC-путь";
+    public string ContactsListName => IsPersonal ? "Личные контакты" : "Контакты компании";
+    public string LifecycleRestoreText => IsPersonal ? "Task проверит, что запись не изменилась, и восстановит её." : "Перед записью Task повторно проверит версию, scope и разрешение восстановления.";
+    public string LifecycleEmptyText => IsPersonal ? "Здесь появятся архивные или удалённые записи. Попробуйте изменить поиск или фильтр." : "Измените поиск или фильтр. Скрытые объекты не учитываются.";
+    private int _firstDayOfWeek = 1;
+    public int FirstDayOfWeek { get => _firstDayOfWeek; set => SetProperty(ref _firstDayOfWeek, value); }
+    private string _quietStart = "", _quietEnd = "", _quietZone = "";
+    public string QuietHoursStart { get => _quietStart; set => SetProperty(ref _quietStart, value); }
+    public string QuietHoursEnd { get => _quietEnd; set => SetProperty(ref _quietEnd, value); }
+    public string QuietHoursTimeZone { get => _quietZone; set => SetProperty(ref _quietZone, value); }
+    public ObjectLinksViewModel? Links { get; }
+    public bool HasLinks => Links is not null && Has("ObjectLink.Read") && _sessionAvailable && CanReadCurrentArea && (IsCatalog || IsContacts || IsSearch);
+    private DesktopContact? _selectedContact;
+    public DesktopContact? SelectedContact { get => _selectedContact; set { SetProperty(ref _selectedContact, value); Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0); } }
+    private string _newItemType = "file_reference";
+    public IReadOnlyList<CatalogItemTypeChoice> CatalogItemTypes { get; } = [new("file_reference", "Файл"), new("folder_reference", "Папка на диске"), new("virtual_folder", "Виртуальная папка")];
+    public string NewItemType { get => _newItemType; set => SetProperty(ref _newItemType, value); }
+    public string FileBehaviorText => IsPersonal ? "Task хранит только ссылку. Файл открывается на этом компьютере после нажатия «Открыть»." : "Файл не загружается на сервер. Task получает разрешённый путь и передаёт Windows после нажатия «Открыть».";
+    public string SettingsPersistenceText => IsPersonal ? "Параметры сохраняются только на этом компьютере." : "Личные параметры синхронизируются между устройствами.";
+    public string SearchScopeText => IsPersonal ? "Поиск только в личной базе: задачи, проекты, контакты и каталог." : "Показаны только доступные результаты. Скрытые объекты не входят в количество, подсказки и группы.";
+    public string ScopeStatusText => IsPersonal ? "Данные только на этом компьютере" : "Область доступа проверена сервером";
+    public string SearchScopeTitle => IsPersonal ? "Личный поиск" : "Permission-safe partial";
     public IReadOnlyList<DesktopCatalogItem> Catalog { get => _catalog; private set => SetProperty(ref _catalog, value); }
     public IReadOnlyList<DesktopContact> Contacts { get => _contacts; private set => SetProperty(ref _contacts, value); }
     public IReadOnlyList<DesktopSearchResult> SearchResults { get => _searchResults; private set { if (SetProperty(ref _searchResults, value)) NotifySearchPresentation(); } }
     public IReadOnlyList<DesktopNotification> Notifications { get => _notifications; private set { if (SetProperty(ref _notifications, value)) { OnPropertyChanged(nameof(UnreadCount)); OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); MarkAllReadCommand.RaiseCanExecuteChanged(); } } }
     public IReadOnlyList<DesktopLifecycleItem> LifecycleItems { get => _lifecycleItems; private set { if (SetProperty(ref _lifecycleItems, value)) NotifyLifecyclePresentation(); } }
     public int UnreadCount => Notifications.Count(n => n.Status is not ("read" or "dismissed"));
-    public DesktopCatalogItem? SelectedCatalogItem { get => _selectedCatalogItem; set { if (SetProperty(ref _selectedCatalogItem, value)) NotifyCommands(); } }
+    public DesktopCatalogItem? SelectedCatalogItem { get => _selectedCatalogItem; set { if (SetProperty(ref _selectedCatalogItem, value)) { Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0); NotifyCommands(); } } }
     public DesktopNotification? SelectedNotification { get => _selectedNotification; set { if (SetProperty(ref _selectedNotification, value)) MarkReadCommand.RaiseCanExecuteChanged(); } }
     public DesktopLifecycleItem? SelectedLifecycleItem { get => _selectedLifecycleItem; set { if (SetProperty(ref _selectedLifecycleItem, value)) RestoreLifecycleItemCommand.RaiseCanExecuteChanged(); } }
-    public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set => SetProperty(ref _selectedSearchHit, value); }
+    public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set { SetProperty(ref _selectedSearchHit, value); Links?.SetSource(value?.Source.ObjectId ?? Guid.Empty, value?.Source.Version ?? 0); } }
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) { SearchCommand.RaiseCanExecuteChanged(); NotifySearchPresentation(); } } }
-    public IReadOnlyList<string> SearchTypeFilters { get; } = ["Все", "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники"];
+    public IReadOnlyList<string> SearchTypeFilters => IsPersonal ? ["Все", "Задачи", "Проекты", "Файлы", "Контакты"] : ["Все", "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники"];
     public string SearchTypeFilter { get => _searchTypeFilter; set { if (SetProperty(ref _searchTypeFilter, value)) NotifySearchPresentation(); } }
     public IReadOnlyList<DesktopSearchGroup> SearchGroups => FilteredSearchResults
-        .GroupBy(result => result.GroupLabel)
-        .OrderBy(group => Array.IndexOf(new[] { "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники", "Прочее" }, group.Key))
+        .GroupBy(result => SearchGroupLabel(result))
+        .OrderBy(group => Array.IndexOf(new[] { "Задачи", "Проекты", "Файлы", IsPersonal ? "Контакты" : "CRM", "Сотрудники", "Прочее" }, group.Key))
         .Select(group => new DesktopSearchGroup(group.Key, group.Select(CreateSearchHit).ToArray()))
         .ToArray();
     public IReadOnlyList<DesktopSearchHit> OverlaySearchHits => SearchGroups.SelectMany(group => group.Items).ToArray();
     public int SearchResultCount => FilteredSearchResults.Count;
     public bool HasSearchResults => SearchResultCount > 0;
     public bool ShowSearchEmpty => !IsLoading && SearchQuery.Trim().Length >= 2 && !HasSearchResults && FeedbackKind is not WorkHubFeedbackKind.Error;
-    public string SearchSummaryText => IsOffline
+    public string SearchSummaryText => IsPersonal ? $"{SearchResultCount} результатов в личной базе" : IsOffline
         ? $"{SearchResultCount} доступных результатов из последнего подтверждённого кэша"
         : $"{SearchResultCount} доступных результатов · область доступа проверена сервером";
     public IReadOnlyList<string> NotificationFilters { get; } = ["Непрочитанные", "Все"];
     public string NotificationFilter { get => _notificationFilter; set { if (SetProperty(ref _notificationFilter, value)) { OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); } } }
     public IReadOnlyList<DesktopNotification> VisibleNotifications => NotificationFilter == "Все" ? Notifications : Notifications.Where(item => item.IsUnread).ToArray();
     public bool HasVisibleNotifications => VisibleNotifications.Count > 0;
-    public IReadOnlyList<string> LifecycleTypeFilters { get; } = ["Все типы", "Задача", "Проект", "Событие", "Файл", "Контакт", "Компания", "Взаимодействие"];
+    public IReadOnlyList<string> LifecycleTypeFilters => IsPersonal ? ["Все типы", "Задача", "Проект", "Файл", "Контакт"] : ["Все типы", "Задача", "Проект", "Событие", "Файл", "Контакт", "Компания", "Взаимодействие"];
     public string LifecycleQuery { get => _lifecycleQuery; set { if (SetProperty(ref _lifecycleQuery, value)) NotifyLifecyclePresentation(); } }
     public string LifecycleTypeFilter { get => _lifecycleTypeFilter; set { if (SetProperty(ref _lifecycleTypeFilter, value)) NotifyLifecyclePresentation(); } }
     public IReadOnlyList<DesktopLifecycleItem> VisibleLifecycleItems => LifecycleItems
@@ -160,11 +190,11 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     public int HistoryRetentionDays { get => _historyRetentionDays; set => SetProperty(ref _historyRetentionDays, value); }
     public int ChangeFeedRetentionDays { get => _changeFeedRetentionDays; set => SetProperty(ref _changeFeedRetentionDays, value); }
     public int RecurrenceHorizonDays { get => _recurrenceHorizonDays; set => SetProperty(ref _recurrenceHorizonDays, value); }
-    public IReadOnlyList<string> SettingsSections { get; } = ["Профиль", "Уведомления", "Подключение и сервер"];
+    public IReadOnlyList<string> SettingsSections => IsPersonal ? ["Профиль", "Уведомления"] : ["Профиль", "Уведомления", "Подключение и сервер"];
     public string SettingsSection { get => _settingsSection; set { if (SetProperty(ref _settingsSection, value)) { OnPropertyChanged(nameof(IsProfileSettings)); OnPropertyChanged(nameof(IsNotificationSettings)); OnPropertyChanged(nameof(IsServerSettings)); } } }
     public bool IsProfileSettings => SettingsSection == "Профиль";
     public bool IsNotificationSettings => SettingsSection == "Уведомления";
-    public bool IsServerSettings => SettingsSection == "Подключение и сервер";
+    public bool IsServerSettings => !IsPersonal && SettingsSection == "Подключение и сервер";
     public string ServerAddress { get; }
     public string SettingsConnectionStatus => !_networkAvailable ? "Сервер недоступен · только чтение" : "Подключено · TLS обязателен";
     public string? Message { get => _message; private set => SetProperty(ref _message, value); }
@@ -199,7 +229,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     public bool CanUpdateSettings => Has("Settings.UpdateOwn");
     public bool CanReadOrganization => Has("Organization.Read");
     public bool CanUpdateOrganization => Has("Organization.Update");
-    public string AccessText => !_networkAvailable ? "Offline · подтверждённые данные только для просмотра"
+    public string AccessText => IsPersonal ? "Личное пространство · Данные на этом компьютере · Файлы хранятся на диске" : !_networkAvailable ? "Offline · подтверждённые данные только для просмотра"
         : CanReadCurrentArea ? IsArchive ? "Read-only история · восстановление повторно проверяет сервер" : IsTrash ? "Retention применяется сервером · физические файлы не удаляются" : IsSettings ? "Настройки синхронизируются с сервером компании" : "Данные сервера компании · доступ по текущим правам" : "Ограниченная роль · раздел не входит в текущую область доступа";
     public string LastSuccessfulRefreshText => _lastRefresh is null ? "Раздел ещё не обновлялся" : $"Обновлено {_lastRefresh.Value.ToLocalTime():HH:mm}";
     public AsyncCommand RefreshCommand { get; }
@@ -218,6 +248,41 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     public AsyncCommand SaveOrganizationSettingsCommand { get; }
     private IEnumerable<AsyncCommand> Commands => [RefreshCommand, SearchCommand, CreateCatalogItemCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand];
 
+    internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, AddLocationCommand, CreateContactCommand,
+        RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand }
+        .Any(command => command.IsExecuting);
+    internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
+    {
+        Language = UserLanguage,
+        FirstDayOfWeek = FirstDayOfWeek,
+        TimeFormat = UserTimeFormat,
+        WorkdayStart = UserWorkdayStart,
+        WorkdayEnd = UserWorkdayEnd,
+        DefaultTaskDurationMinutes = DefaultTaskDurationMinutes,
+        DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes,
+        AutostartEnabled = AutostartEnabled,
+        AllowLocalPaths = AllowLocalPaths,
+        ConfirmCatalogDelete = ConfirmCatalogDelete,
+        MissingFileBehavior = MissingFileBehavior,
+    });
+    internal bool HasNotificationDraft => _notificationPreferences is not null && _notificationPreferences != (_notificationPreferences with
+    {
+        Enabled = NotificationsEnabled,
+        DesktopEnabled = DesktopNotificationsEnabled,
+        SoundEnabled = NotificationSoundEnabled,
+        DefaultSnoozeMinutes = DefaultSnoozeMinutes,
+        QuietHoursStart = string.IsNullOrWhiteSpace(QuietHoursStart) ? null : QuietHoursStart,
+        QuietHoursEnd = string.IsNullOrWhiteSpace(QuietHoursEnd) ? null : QuietHoursEnd,
+        QuietHoursTimeZone = string.IsNullOrWhiteSpace(QuietHoursTimeZone) ? null : QuietHoursTimeZone,
+    });
+    internal bool HasOrganizationDraft => _organizationSettings is not null && _organizationSettings != (_organizationSettings with
+    {
+        TrashRetentionDays = TrashRetentionDays,
+        HistoryRetentionDays = HistoryRetentionDays,
+        ChangeFeedRetentionDays = ChangeFeedRetentionDays,
+        RecurrenceHorizonDays = RecurrenceHorizonDays,
+    });
+
     public void Activate(WorkHubArea area)
     {
         _activationRefreshPending = false;
@@ -235,9 +300,10 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     {
         _capabilities.Clear();
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
+        if (!Has("ObjectLink.Read")) Links?.SetSource(Guid.Empty, 0);
         NotifyCommands();
     }
-    public void UpdateSessionState(bool available) { _sessionAvailable = available; if (!available) { SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotifyCommands(); }
+    public void UpdateSessionState(bool available) { _sessionAvailable = available; if (!available) { Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotifyCommands(); }
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
@@ -319,13 +385,14 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
         });
     private async System.Threading.Tasks.Task CreateCatalogItemAsync(object? _, CancellationToken ct)
     {
-        var result = await _client.CreateCatalogItemAsync(NewItemName, "file_reference", null, ct);
-        Apply(result, value => { Catalog = [value, .. Catalog]; SelectedCatalogItem = value; NewItemName = string.Empty; SetFeedback("Запись файла создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success); });
+        var result = await _client.CreateCatalogItemAsync(NewItemName, NewItemType, null, ct);
+        Apply(result, value => { Catalog = [value, .. Catalog]; SelectedCatalogItem = value; NewItemName = string.Empty; SetFeedback(value.ItemType == "virtual_folder" ? "Виртуальная папка создана в каталоге Task." : "Запись создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task AddLocationAsync(object? _, CancellationToken ct)
     {
         var item = SelectedCatalogItem; if (item is null) return;
         Apply(await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct), _ => { NewItemPath = string.Empty; SetFeedback("Расположение файла сохранено.", WorkHubFeedbackKind.Success); });
+        if (IsPersonal) Apply(await _client.GetCatalogAsync(ct), value => { Catalog = value; SelectedCatalogItem = value.FirstOrDefault(c => c.Id == item.Id); });
     }
     private async System.Threading.Tasks.Task OpenFileAsync(object? _, CancellationToken ct)
     {
@@ -372,14 +439,14 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
             DefaultTaskDurationMinutes is < 5 or > 1440 || DefaultReminderOffsetMinutes is < 0 or > 525600 ||
             MissingFileBehavior is not ("show_actions" or "keep_inactive" or "prompt_relink"))
         { SetFeedback("Проверьте формат времени и допустимые значения настроек.", WorkHubFeedbackKind.Warning); return; }
-        var draft = _userSettings with { Language = UserLanguage.Trim(), TimeFormat = UserTimeFormat, WorkdayStart = UserWorkdayStart, WorkdayEnd = UserWorkdayEnd, DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
-        Apply(await _client.UpdateUserSettingsAsync(draft, ct), value => { LoadUserSettings(value); SetFeedback("Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
+        var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = UserWorkdayStart, WorkdayEnd = UserWorkdayEnd, DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
+        Apply(await _client.UpdateUserSettingsAsync(draft, ct), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveNotificationPreferencesAsync(object? _, CancellationToken ct)
     {
         if (_notificationPreferences is null) return;
         if (DefaultSnoozeMinutes is < 1 or > 10080) { SetFeedback("Отсрочка должна быть от 1 до 10080 минут.", WorkHubFeedbackKind.Warning); return; }
-        var draft = _notificationPreferences with { Enabled = NotificationsEnabled, DesktopEnabled = DesktopNotificationsEnabled, SoundEnabled = NotificationSoundEnabled, DefaultSnoozeMinutes = DefaultSnoozeMinutes };
+        var draft = _notificationPreferences with { Enabled = NotificationsEnabled, DesktopEnabled = DesktopNotificationsEnabled, SoundEnabled = NotificationSoundEnabled, DefaultSnoozeMinutes = DefaultSnoozeMinutes, QuietHoursStart = string.IsNullOrWhiteSpace(QuietHoursStart) ? null : QuietHoursStart, QuietHoursEnd = string.IsNullOrWhiteSpace(QuietHoursEnd) ? null : QuietHoursEnd, QuietHoursTimeZone = string.IsNullOrWhiteSpace(QuietHoursTimeZone) ? null : QuietHoursTimeZone };
         Apply(await _client.UpdateNotificationPreferencesAsync(draft, ct), value => { LoadNotificationPreferences(value); SetFeedback("Настройки уведомлений сохранены.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveOrganizationSettingsAsync(object? _, CancellationToken ct)
@@ -419,6 +486,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     private void LoadUserSettings(DesktopUserSettings value)
     {
         _userSettings = value; UserLanguage = value.Language; UserTimeFormat = value.TimeFormat;
+        FirstDayOfWeek = value.FirstDayOfWeek;
         UserWorkdayStart = value.WorkdayStart; UserWorkdayEnd = value.WorkdayEnd;
         DefaultTaskDurationMinutes = value.DefaultTaskDurationMinutes; DefaultReminderOffsetMinutes = value.DefaultReminderOffsetMinutes;
         AutostartEnabled = value.AutostartEnabled; AllowLocalPaths = value.AllowLocalPaths;
@@ -428,6 +496,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     private void LoadNotificationPreferences(DesktopNotificationPreferences value)
     {
         _notificationPreferences = value; NotificationsEnabled = value.Enabled; DesktopNotificationsEnabled = value.DesktopEnabled;
+        QuietHoursStart = value.QuietHoursStart ?? ""; QuietHoursEnd = value.QuietHoursEnd ?? ""; QuietHoursTimeZone = value.QuietHoursTimeZone ?? "";
         NotificationSoundEnabled = value.SoundEnabled; DefaultSnoozeMinutes = value.DefaultSnoozeMinutes;
         SaveNotificationPreferencesCommand.RaiseCanExecuteChanged();
     }
@@ -462,8 +531,9 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     }
 
     private IReadOnlyList<DesktopSearchResult> FilteredSearchResults => SearchResults
-        .Where(result => SearchTypeFilter == "Все" || result.GroupLabel == SearchTypeFilter)
+        .Where(result => SearchTypeFilter == "Все" || SearchGroupLabel(result) == SearchTypeFilter)
         .ToArray();
+    private string SearchGroupLabel(DesktopSearchResult result) => IsPersonal && result.GroupLabel == "CRM" ? "Контакты" : result.GroupLabel;
 
     private DesktopSearchHit CreateSearchHit(DesktopSearchResult result)
     {
@@ -548,7 +618,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
-    public void Dispose() { if (_disposed) return; _disposed = true; _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
+    public void Dispose() { if (_disposed) return; _disposed = true; Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

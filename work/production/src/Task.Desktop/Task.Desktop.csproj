@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Task.Application\Task.Application.csproj" />
+    <Resource Include="Assets\Task.ico" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -11,6 +13,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Task.ico</ApplicationIcon>
     <Version>1.0.0</Version>
   </PropertyGroup>
 

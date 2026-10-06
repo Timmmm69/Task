@@ -373,6 +373,11 @@ try {
     $sessionStash = Join-Path $runtimeRoot 'desk05-admin-session'
     if (Test-Path -LiteralPath $sessionStash) { throw "Unexpected existing session stash: $sessionStash" }
     Move-Item -LiteralPath $state.DesktopAppData -Destination $sessionStash
+    # This gate starts at Corporate server setup; first-run mode selection is
+    # covered separately by ApplicationModeStartupTests.
+    [IO.Directory]::CreateDirectory($isolatedDesktopData) | Out-Null
+    [IO.File]::WriteAllText((Join-Path $isolatedDesktopData 'application-preferences.json'),
+        '{"version":1,"mode":"Corporate"}', [Text.UTF8Encoding]::new($false))
     $authWindow = Start-DesktopWindow 'AuthWindow'
     $serverAddress = Assert-UiaElement $authWindow 'ServerAddressTextBox' 'Value'
     $null = Assert-UiaElement $authWindow 'CheckServerConnectionButton' 'Invoke'

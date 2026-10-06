@@ -1,0 +1,12 @@
+<UserControl x:Class="Task.Desktop.Views.TaskChecklistView" x:Name="ChecklistView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <StackPanel>
+  <ItemsControl ItemsSource="{Binding Checklist}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,3">
+   <TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><WrapPanel>
+    <Button Command="{Binding DataContext.ToggleCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Content" Value="Отметить готовым"/><Style.Triggers><DataTrigger Binding="{Binding Completed}" Value="True"><Setter Property="Content" Value="Готово · вернуть"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
+    <Button Content="Удалить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding DataContext.RemoveCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}"/>
+   </WrapPanel></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  <TextBox Text="{Binding CheckText,UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Новый пункт чек-листа"/>
+  <Button Content="Добавить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding AddCheckCommand}"/>
+ </StackPanel>
+</UserControl>

@@ -43,6 +43,10 @@ public sealed record TaskCardContent
     }
 
     public void Validate(DateTimeOffset? startAtUtc)
+        => Validate(startAtUtc, allowEarlierAmbiguousInstant: false);
+
+    /// <summary>Explicit resolved overlap policy. Default validation still rejects ambiguous wall-clock input.</summary>
+    public void Validate(DateTimeOffset? startAtUtc, bool allowEarlierAmbiguousInstant)
     {
         if (Description?.Length > 50000) throw new ArgumentException("Description is too long.");
         if (new[] { ProjectId, ParentTaskId, RequesterUserId, PrimaryCounterpartyObjectId }.Any(id => id == Guid.Empty))
@@ -60,9 +64,12 @@ public sealed record TaskCardContent
             catch (Exception e) when (e is TimeZoneNotFoundException or InvalidTimeZoneException)
             { throw new ArgumentException("Unknown schedule time zone.", e); }
             var local = ScheduledDate.Value.ToDateTime(StartTimeLocal.Value, DateTimeKind.Unspecified);
-            if (zone.IsInvalidTime(local) || zone.IsAmbiguousTime(local))
+            if (zone.IsInvalidTime(local) || zone.IsAmbiguousTime(local) && !allowEarlierAmbiguousInstant)
                 throw new ArgumentException("Local start is invalid or ambiguous in this time zone.");
-            if (startAtUtc != new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(local, zone)))
+            var resolved = zone.IsAmbiguousTime(local)
+                ? new DateTimeOffset(local, zone.GetAmbiguousTimeOffsets(local).Max()).ToUniversalTime()
+                : new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(local, zone));
+            if (startAtUtc != resolved)
                 throw new ArgumentException("Local schedule and UTC start must agree.");
         }
         else if (ScheduledDate is not null && startAtUtc is not null)

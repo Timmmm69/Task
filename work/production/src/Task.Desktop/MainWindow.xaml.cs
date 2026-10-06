@@ -13,6 +13,8 @@ namespace Task.Desktop;
 public partial class MainWindow : Window
 {
     private bool _authenticationTransitionClose;
+    private bool _modeTransitionClose;
+    public event Action? SwitchModeRequested;
     private FrameworkElement? _overlayReturnFocus;
 
     public MainWindow()
@@ -34,6 +36,11 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(CancelEventArgs e)
     {
+        if (_modeTransitionClose)
+        {
+            base.OnClosing(e);
+            return;
+        }
         var viewModel = DataContext as MainWindowViewModel;
         var editor = viewModel?.Tasks?.Editor;
         var hasCalendarEditor = viewModel?.Calendar?.Editor is not null;
@@ -66,6 +73,14 @@ public partial class MainWindow : Window
         _authenticationTransitionClose = true;
         Close();
     }
+
+    internal void CloseAfterModeSwitch()
+    {
+        _modeTransitionClose = true;
+        Close();
+    }
+
+    private void OnSwitchMode(object sender, RoutedEventArgs e) => SwitchModeRequested?.Invoke();
 
     internal static bool ShouldCancelClose(
         bool authenticationTransition,

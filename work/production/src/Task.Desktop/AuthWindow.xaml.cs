@@ -8,6 +8,8 @@ namespace Task.Desktop;
 /// <summary>PasswordBox and focus bridge for the authentication workflow.</summary>
 public partial class AuthWindow : Window
 {
+    public event Action? SwitchModeRequested;
+    private void OnSwitchMode(object sender, RoutedEventArgs e) => SwitchModeRequested?.Invoke();
     private readonly Dictionary<PasswordBox, (ViewModelBase Owner, Action Clear)> _passwordClearBindings = [];
 
     public AuthWindow(AuthWorkflowViewModel viewModel)

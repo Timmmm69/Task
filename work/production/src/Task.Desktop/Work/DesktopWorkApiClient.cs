@@ -8,7 +8,10 @@ using Task.Desktop.Security;
 namespace Task.Desktop.Work;
 
 public sealed record DesktopCatalogItem(Guid Id, long Version, string Name, string ItemType,
-    string? Description, string? FileExtension, string LifecycleState);
+    string? Description, string? FileExtension, string LifecycleState)
+{
+    public string ItemTypeLabel => ItemType switch { "virtual_folder" => "Виртуальная папка", "folder_reference" => "Папка на диске", _ => "Файл" };
+}
 public sealed record DesktopContact(Guid Id, long Version, string DisplayName, string FirstName,
     string? LastName, string? Notes, string Status, string LifecycleState);
 public sealed record DesktopSearchResult(Guid ObjectId, string ObjectType, string Title,
@@ -71,7 +74,7 @@ public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, stri
     public string ChangedText => LifecycleState == "archived"
         ? $"Архивирован {(ArchivedAt ?? UpdatedAt).ToLocalTime():dd MMMM yyyy, HH:mm}"
         : $"Перемещён в корзину {(DeletedAt ?? UpdatedAt).ToLocalTime():dd MMMM yyyy, HH:mm}";
-    public string RetentionText => IsRetentionBlocked
+    public string RetentionText => LedgerStatus == "personal" ? "Личная запись хранится до явного удаления метаданных Task" : IsRetentionBlocked
         ? "Установлено юридическое удержание · срок удаления не наступит до снятия удержания"
         : PurgeAfter is { } purge
             ? $"Автоматическое удаление метаданных после {purge.ToLocalTime():dd MMMM yyyy}"
@@ -126,7 +129,7 @@ public interface IDesktopWorkApiClient
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopOrganizationSettings>> UpdateOrganizationSettingsAsync(DesktopOrganizationSettings settings, CancellationToken cancellationToken = default);
 }
 
-public sealed class DesktopWorkApiClient : IDesktopWorkApiClient
+public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private readonly DesktopAuthenticatedGetExecutor _executor;

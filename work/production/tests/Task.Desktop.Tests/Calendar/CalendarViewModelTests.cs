@@ -6,6 +6,24 @@ namespace Task.Desktop.Tests.Calendar;
 
 public sealed class CalendarViewModelTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesCalendarEditorAndDraft()
+    {
+        var client = new FakeCalendarClient();
+        client.ScheduleResults.Enqueue(Schedule([]));
+        client.ConflictResults.Enqueue(Conflicts());
+        using var calendar = new CalendarViewModel(client, ["Calendar.Read", "CalendarEvent.Create"], TimeZoneInfo.Utc,
+            Monday.ToDateTime(TimeOnly.MinValue));
+        calendar.Activate();
+        await SpinUntilAsync(() => !calendar.IsBusy);
+        await calendar.NewEventCommand.ExecuteAsync();
+        var editor = calendar.Editor!;
+        editor.Title = "Событие в черновике";
+        using var shell = new MainWindowViewModel(null, null, calendar: calendar);
+        await ApplicationModeTests.AssertCancelledAsync(shell);
+        Assert.Same(editor, calendar.Editor);
+        Assert.Equal("Событие в черновике", calendar.Editor!.Title);
+    }
     private static readonly DateOnly Monday = new(2026, 8, 31);
 
     [Theory]

@@ -1598,7 +1598,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         CancelTransitionCommand?.RaiseCanExecuteChanged();
     }
 
-private async global::System.Threading.Tasks.Task<TaskDisplayLookup> LoadDisplayLookupAsync(CancellationToken cancellationToken)
+    private async global::System.Threading.Tasks.Task<TaskDisplayLookup> LoadDisplayLookupAsync(CancellationToken cancellationToken)
     {
         if (_client is not IDesktopTaskWorkspaceClient workspace) return TaskDisplayLookup.Empty;
         try

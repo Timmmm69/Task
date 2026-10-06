@@ -8,6 +8,23 @@ namespace Task.Desktop.Tests.TaskScreen;
 
 public sealed class InboxViewModelTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesCaptureAndConversionDraft()
+    {
+        var source = CreateTask("Запись");
+        var client = new FakeInboxClient { PageResult = Page(source) };
+        using var inbox = new InboxViewModel(client, Capabilities);
+        using var shell = new MainWindowViewModel(null, null, inbox: inbox);
+        await inbox.ActivateAsync();
+        await inbox.ConvertCommand.ExecuteAsync(inbox.SelectedItem);
+        var editor = inbox.Conversion!;
+        editor.Title = "Черновик преобразования";
+        inbox.CaptureText = "Черновик новой записи";
+        await ApplicationModeTests.AssertCancelledAsync(shell);
+        Assert.Same(editor, inbox.Conversion);
+        Assert.Equal("Черновик преобразования", inbox.Conversion!.Title);
+        Assert.Equal("Черновик новой записи", inbox.CaptureText);
+    }
     private static readonly string[] Capabilities = ["Task.Read", "Task.Create", "Task.Update", "Project.Read"];
 
     [Fact]

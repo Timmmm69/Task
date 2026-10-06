@@ -108,6 +108,51 @@ public sealed class DesktopWorkApiClientTests
         Assert.Contains("trashRetentionDays", fixture.Requests[9].Body);
     }
 
+    [Fact]
+    public async System.Threading.Tasks.Task ObjectLinksUseExistingRoutesEtagAndKeys()
+    {
+        var source = Guid.NewGuid(); var target = Guid.NewGuid(); var link = Guid.NewGuid(); var version = 1; var present = false;
+        await using var fixture = await Fixture.CreateAsync((request, _) =>
+        {
+            if (request.Method == HttpMethod.Post) { version++; present = true; return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.Created, "{}")); }
+            if (request.Method == HttpMethod.Delete) { version++; present = false; return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, "{}")); }
+            var response = Json(HttpStatusCode.OK, present
+                ? $$"""{"items":[{"id":"{{link}}","sourceObjectId":"{{source}}","targetObjectId":"{{target}}","linkType":"task_file"}],"hasMore":false}"""
+                : "{\"items\":[],\"hasMore\":false}");
+            response.Headers.ETag = new($"\"v{version}\""); return System.Threading.Tasks.Task.FromResult(response);
+        });
+        Assert.Empty(Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.GetLinksAsync(source)).Value.Items);
+        var added = Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.AddLinkAsync(source, 1, target, "task_file")).Value;
+        Assert.Equal(2, added.SourceVersion); Assert.Equal(link, Assert.Single(added.Items).Id);
+        Assert.Empty(Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.RemoveLinkAsync(source, 2, link)).Value.Items);
+        Assert.Equal($"/api/v1/objects/{source:D}/links", fixture.Requests[1].Uri.AbsolutePath);
+        Assert.Equal($"/api/v1/objects/{source:D}/links/{link:D}", fixture.Requests[3].Uri.AbsolutePath);
+        Assert.Equal("\"v1\"", fixture.Requests[1].IfMatch); Assert.Equal("\"v2\"", fixture.Requests[3].IfMatch);
+        Assert.False(string.IsNullOrWhiteSpace(fixture.Requests[1].IdempotencyKey)); Assert.Contains(target.ToString(), fixture.Requests[1].Body);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task CorporateAndPersonalMarkersStayInTheirOwnBackend()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "Task-marker-tests", Guid.NewGuid().ToString("N"));
+        try
+        {
+            using var store = new Task.Desktop.Personal.PersonalTaskStore(new(root));
+            store.Create(new("PERSONAL_ONLY_MARKER", Task.Desktop.TaskApi.DesktopTaskPriority.Normal));
+            await using var fixture = await Fixture.CreateAsync((request, _) => System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK,
+                request.RequestUri!.Query.Contains("CORPORATE_ONLY_MARKER", StringComparison.Ordinal)
+                    ? $$"""{"items":[{"objectId":"{{ItemId}}","objectType":"task","title":"CORPORATE_ONLY_MARKER","version":1,"updatedAt":"2026-10-06T00:00:00Z"}]}"""
+                    : "{\"items\":[]}")));
+            Assert.Single(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded>(await fixture.Client.SearchAsync("CORPORATE_ONLY_MARKER")).Value);
+            Assert.Empty(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded>(await fixture.Client.SearchAsync("PERSONAL_ONLY_MARKER")).Value);
+            var client = new Task.Desktop.Personal.PersonalWorkClient(store); var requests = fixture.Requests.Count;
+            Assert.Single(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded>(await client.SearchAsync("PERSONAL_ONLY_MARKER")).Value);
+            Assert.Empty(Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded>(await client.SearchAsync("CORPORATE_ONLY_MARKER")).Value);
+            Assert.Equal(requests, fixture.Requests.Count);
+        }
+        finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+    }
+
     private static HttpResponseMessage Json(HttpStatusCode status, string body) => new(status) { Content = new StringContent(body, Encoding.UTF8, "application/json") };
 
     private sealed class Fixture : IAsyncDisposable

@@ -1,0 +1,20 @@
+<Window x:Class="Task.Desktop.ModeSwitchDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Task — несохранённые формы" Icon="Assets/Task.ico"
+        Width="560" SizeToContent="Height" MaxHeight="640"
+        WindowStartupLocation="CenterOwner" Style="{StaticResource Task.Window.Style}"
+        AutomationProperties.AutomationId="ModeSwitchGuardDialog">
+    <StackPanel Margin="28">
+        <TextBlock Text="Есть незавершённые формы" Style="{StaticResource Task.Shell.PageTitle}"/>
+        <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto" Margin="0,16,0,12">
+            <TextBlock x:Name="EditorsText" TextWrapping="Wrap"/>
+        </ScrollViewer>
+        <TextBlock x:Name="SaveNotice" TextWrapping="Wrap" Margin="0,0,0,20"/>
+        <WrapPanel HorizontalAlignment="Right">
+            <Button x:Name="SaveButton" Content="Сохранить" Click="OnSave" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,8"/>
+            <Button Content="Отбросить" Click="OnDiscard" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,8"/>
+            <Button Content="Отмена" IsCancel="True" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8"/>
+        </WrapPanel>
+    </StackPanel>
+</Window>

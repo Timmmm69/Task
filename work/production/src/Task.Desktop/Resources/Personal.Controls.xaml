@@ -1,0 +1,23 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Scoped to PersonalWindow; the canonical theme and Corporate are unchanged. -->
+    <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"/>
+    <Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}"/>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"/>
+    <Style x:Key="Personal.Navigation.Item" TargetType="ListBoxItem" BasedOn="{StaticResource Task.Navigation.Item}">
+        <Setter Property="ToolTip" Value="{Binding Title}"/>
+        <Style.Triggers><DataTrigger Binding="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=900}" Value="False"><Setter Property="Padding" Value="4,0"/><Setter Property="Margin" Value="0"/></DataTrigger></Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.Label" TargetType="TextBlock" BasedOn="{StaticResource Task.Inspector.FactLabel}">
+        <Setter Property="Margin" Value="0,12,0,5"/><Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="Personal.Feedback" TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
+        <Setter Property="Margin" Value="0,12,0,0"/>
+        <Style.Triggers><DataTrigger Binding="{Binding Message}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.Validation" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="AutomationProperties.LiveSetting" Value="Assertive"/>
+        <Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="Text" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></Trigger></Style.Triggers>
+    </Style>
+</ResourceDictionary>

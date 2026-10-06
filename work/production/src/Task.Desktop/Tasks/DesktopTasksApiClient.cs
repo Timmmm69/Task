@@ -533,7 +533,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
     {
         ValidateUtc(start);
         ValidateUtc(deadline);
-        Require(!start.HasValue || deadline >= start, "The deadline must not be earlier than the start.");
+        Require(!start.HasValue || !deadline.HasValue || deadline >= start, "The deadline must not be earlier than the start.");
     }
 
     private static void ValidateUtc(DateTimeOffset? value) =>

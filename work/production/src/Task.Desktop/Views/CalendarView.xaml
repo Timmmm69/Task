@@ -71,7 +71,7 @@
                                AutomationProperties.LiveSetting="Polite"
                                AutomationProperties.AutomationId="CalendarWeekRange" />
                     <TextBlock Text=" · " Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                    <TextBlock Text="{Binding TimeZoneText}" FontSize="{DynamicResource Task.Font.Size.Label}"
+                    <TextBlock Text="{Binding TimeZoneLabel}" FontSize="{DynamicResource Task.Font.Size.Label}"
                                Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                 </StackPanel>
             </StackPanel>
@@ -696,9 +696,14 @@
                             <WrapPanel>
                                 <StackPanel Width="300" Margin="0,0,12,12">
                                     <TextBlock Text="Проект" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding ProjectId, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"
+                                    <TextBox Text="{Binding ProjectId, UpdateSourceTrigger=PropertyChanged}"
                                              ToolTip="Идентификатор доступного проекта; поле можно оставить пустым."
-                                             AutomationProperties.Name="Идентификатор проекта" />
+                                             AutomationProperties.Name="Идентификатор проекта">
+                                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+                                    </TextBox>
+                                    <ComboBox ItemsSource="{Binding ProjectChoices}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name" AutomationProperties.Name="Личный проект события">
+                                        <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
+                                    </ComboBox>
                                 </StackPanel>
                                 <StackPanel Width="300" Margin="0,0,0,12">
                                     <TextBlock Text="Статус" Style="{StaticResource Calendar.FieldLabel}" />
@@ -714,6 +719,8 @@
                                      Style="{StaticResource Task.Input.Text}" Margin="0,0,0,14"
                                      AutomationProperties.Name="Описание события" />
 
+                            <StackPanel>
+                            <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding AllowAttendees}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
                             <TextBlock Text="Участники" FontSize="{DynamicResource Task.Font.Size.Section}"
                                        FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,8" />
                             <ItemsControl ItemsSource="{Binding Attendees}" Margin="0,0,0,8">
@@ -765,6 +772,7 @@
                                 <Button Content="Добавить" Command="{Binding AddAttendeeCommand}"
                                         Style="{StaticResource Task.Button.Secondary}" Margin="6,0,0,0" />
                             </WrapPanel>
+                            </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
 

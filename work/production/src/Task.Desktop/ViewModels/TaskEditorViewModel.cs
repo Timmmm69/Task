@@ -24,6 +24,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
     ];
 
     private DesktopTaskDto? _source;
+    private readonly bool _personal;
     private string _title = string.Empty;
     private TaskPriorityOption _priority = PriorityValues[1];
     private string _startText = string.Empty;
@@ -41,8 +42,9 @@ public sealed class TaskEditorViewModel : ViewModelBase
     private long _revision;
     private bool _suppressChanges;
 
-    public TaskEditorViewModel(TaskEditorMode mode, DesktopTaskDto? source = null)
+    public TaskEditorViewModel(TaskEditorMode mode, DesktopTaskDto? source = null, bool personal = false)
     {
+        _personal = personal;
         Mode = mode;
         Priorities = PriorityValues;
         Load(source);
@@ -232,7 +234,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
         Priority = PriorityValues.Single(option => option.Value == (source?.Priority ?? DesktopTaskPriority.Normal));
         StartText = FormatLocal(source?.StartAtUtc);
         DeadlineText = FormatLocal(source?.DeadlineAtUtc);
-        Card = new TaskCardEditor(source?.Card, source?.StartAtUtc);
+        Card = new TaskCardEditor(source?.Card, source?.StartAtUtc, _personal);
         Card.Changed += Changed;
         OnPropertyChanged(nameof(Card));
         _suppressChanges = false;
@@ -287,7 +289,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
         return !HasErrors;
     }
 
-    private static DateTimeOffset? ParseLocal(string text, out string? error)
+    private DateTimeOffset? ParseLocal(string text, out string? error)
     {
         error = null;
         if (string.IsNullOrWhiteSpace(text))
@@ -308,7 +310,8 @@ public sealed class TaskEditorViewModel : ViewModelBase
             return null;
         }
 
-        return new DateTimeOffset(local, TimeZoneInfo.Local.GetUtcOffset(local)).ToUniversalTime();
+        return _personal ? Personal.PersonalTimePolicy.ToUtc(local, TimeZoneInfo.Local)
+            : new DateTimeOffset(local, TimeZoneInfo.Local.GetUtcOffset(local)).ToUniversalTime();
     }
 
     private static string FormatLocal(DateTimeOffset? value) =>
