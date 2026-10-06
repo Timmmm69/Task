@@ -24,7 +24,7 @@ $payload = Join-Path $output 'Task'
 New-Item -ItemType Directory -Path $payload -Force | Out-Null
 # Self-contained restore adds runtime/linker dependencies; keep those locks in obj/.
 # Never rewrite the ordinary source locks just by publishing a portable client.
-dotnet publish $desktopProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -p:NuGetLockFilePath=obj/portable.packages.lock.json -o $payload
+dotnet publish $desktopProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -p:RestorePackagesWithLockFile=true -p:NuGetLockFilePath=obj/portable.packages.lock.json -o $payload
 if ($LASTEXITCODE -ne 0) { throw 'Task desktop publish failed.' }
 if ($RequireCleanSourceTree -and @(git -C $projectRoot status --short -- work/production/src).Count -ne 0) {
     throw 'Production source changed during final publish.'
