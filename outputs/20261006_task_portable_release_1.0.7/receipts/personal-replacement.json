@@ -1,0 +1,78 @@
+[
+  {
+    "category": "CONFIRMED BY NATIVE WINDOWS RUN",
+    "details": {
+      "title": "Task — выбор режима",
+      "cleanData": true
+    },
+    "result": "PASS",
+    "check": "Extracted N package first-run selector"
+  },
+  {
+    "category": "CONFIRMED BY NATIVE WINDOWS RUN",
+    "details": {
+      "title": "Task — Personal",
+      "snapshotSha256": "1C5FE50A0A68C8DADF48F17EFB7CBC50361AC185785E9D8DDBEE17D0DD064AC4"
+    },
+    "result": "PASS",
+    "check": "N Personal startup/restart exact dataset"
+  },
+  {
+    "category": "CONFIRMED BY NATIVE WINDOWS RUN",
+    "details": {
+      "businessDataPresent": false,
+      "serverConnections": 0,
+      "title": "Task — выбор режима"
+    },
+    "result": "PASS",
+    "check": "Final package first-run selector/zero server probes"
+  },
+  {
+    "category": "CONFIRMED BY NATIVE WINDOWS RUN",
+    "details": {
+      "title": "Task — Personal recovery",
+      "firstAlive": true
+    },
+    "result": "PASS",
+    "check": "Second Personal process controlled refusal"
+  },
+  {
+    "category": "CONFIRMED BY NATIVE WINDOWS RUN",
+    "details": {
+      "loginPerformed": false,
+      "firstAlive": true,
+      "title": "Task — Corporate · вход"
+    },
+    "result": "PASS",
+    "check": "Corporate second process while Personal owns DB"
+  },
+  {
+    "category": "CONFIRMED BY NATIVE WINDOWS RUN",
+    "details": {
+      "nExeSha256": "3DEC9DA1037D7E741D69F0F8BB4F132E140477DE66C1ED8273371D5C6AB06E24",
+      "nextExeSha256": "07BF49B14F376BC0C3B74994EA85539B457AD1CA6F0164E0408D6AC3AF561F8C",
+      "snapshotSha256": "1C5FE50A0A68C8DADF48F17EFB7CBC50361AC185785E9D8DDBEE17D0DD064AC4",
+      "dataOutsideApplication": true,
+      "schemaMigrationNeeded": false
+    },
+    "result": "PASS",
+    "check": "Portable package replacement exact objects/search/dedupe"
+  },
+  {
+    "category": "CONFIRMED BY AUTOMATED TEST",
+    "details": {
+      "notificationCount": 1,
+      "snapshotSha256": "0D272FC1D637F17DE1179DFD055E5AC0850A94AA675B74C5EB7B9B411C3FB7D8"
+    },
+    "result": "PASS",
+    "check": "Next occurrence/no duplicates/new backup/restart"
+  },
+  {
+    "category": "CONFIRMED BY AUTOMATED TEST",
+    "details": {
+      "fileStillExists": true
+    },
+    "result": "PASS",
+    "check": "Marker archive/trash/restore and metadata purge/file survival"
+  }
+]

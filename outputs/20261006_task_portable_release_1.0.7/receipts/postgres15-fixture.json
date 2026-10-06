@@ -1,0 +1,9 @@
+{
+  "port": 62693,
+  "source": "https://get.enterprisedb.com/postgresql/postgresql-15.19-1-windows-x64-binaries.zip",
+  "result": "PASS",
+  "version": "postgres (PostgreSQL) 15.19",
+  "serviceInstalled": false,
+  "archiveSha256": "cc54e2d349f48c7743ad0c509b755ea565ff04bb5c5e71745d114074cab0c453",
+  "isolated": true
+}

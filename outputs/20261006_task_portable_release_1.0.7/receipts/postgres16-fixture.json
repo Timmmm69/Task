@@ -1,0 +1,8 @@
+{
+  "isolated": true,
+  "postgresMajor": 16,
+  "result": "PASS",
+  "dataRoot": "C:\\Users\\novik\\AppData\\Local\\TaskE2ERuntime\\task-write-e2e\\desktop-appdata",
+  "port": 63344,
+  "https": "https://localhost:63345"
+}

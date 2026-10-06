@@ -1,0 +1,7 @@
+{
+  "dependency_advisories": true,
+  "secret_scan": true,
+  "static_application_boundary": true,
+  "login_abuse_controls": true,
+  "network_and_container_boundary": true
+}

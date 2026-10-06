@@ -1,0 +1,340 @@
+{
+  "result": "PASS",
+  "baselineNotRun": 54,
+  "newlyExecutedPassed": 54,
+  "runnerPassed": 1906,
+  "runnerSkipped": 0,
+  "runnerFailed": 0,
+  "diagnosticNotRun": 0,
+  "fixtures": [
+    "Real native PostgreSQL 16",
+    "Real native PostgreSQL 15.19"
+  ],
+  "note": "Both test connection variables supplied. The formerly silent Database.Create early returns cannot run when the configured PostgreSQL connection is present; live assertions executed.",
+  "scenarios": [
+    {
+      "testName": "Task.Tests.Postgres.PostgresSessionMaintenanceTests.RealPostgres_PurgeRemovesExpiredRecordsAndKeepsFreshOnes",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3914453"
+    },
+    {
+      "testName": "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_RotateRefreshTokenIsTenantScoped",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.3619073"
+    },
+    {
+      "testName": "Task.Tests.PostgresTaskReadStoreTests.RealPostgres_ActiveProjectionIsolationAndCursorPagination",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.2211349"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresSessionListTests.RealPostgres_GetUserSessions_IsCappedAt200",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.7200371"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAccountLookupStoreTests.RealPostgres_FindByLogin_OneHitZeroHitCollisionAndDefaultScope",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.7186095"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_LockDeadlineIsOnlyExtended",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.6699365"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresDeviceRegistrationStoreTests.RealPostgres_UpsertCreateSameFingerprintAndRevokedPreserved",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3743016"
+    },
+    {
+      "testName": "Task.Tests.PostgresCalendarEventStoreTests.RealPostgres_CalendarEventRoundTripTenantBoundaryAndConcurrency",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.2888624"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ForeignOrganizationIsolation",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.0703548"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_SuccessfulLoginResetsAndBlockedIsNeverReset",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.3550097"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_LockoutStateAndFailedIncrement",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3388134"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresSessionRefreshLookupTests.RealPostgres_FindSessionByRefreshTokenHash_ActiveConsumedUnknownExpired",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3446502"
+    },
+    {
+      "testName": "Task.Tests.Postgres.RefreshTokenRotationTests.RealPostgres_RotateThenReuse_RevokesSession",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3541168"
+    },
+    {
+      "testName": "Task.Tests.PostgresTaskAggregateStoreTests.RealPostgres_MigrationRoundTripTenantBoundaryAndConcurrency",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:04.2673256"
+    },
+    {
+      "testName": "Task.Tests.PostgresBackgroundDeliveryStoreTests.RealPostgres_BackgroundDeliveryIsLeasedIdempotentAndRetrySafe",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.7028575"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_UpdateAndDeleteRejectedByAppendOnlyTrigger",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.0457643"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresSessionMaintenanceTests.RealPostgres_PurgeHonorsBatchLimitAndCompletesInMultiplePasses",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.6655370"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_KeysetPagination_PageSizeClamp_NoGapsOrDuplicates",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.6819243"
+    },
+    {
+      "testName": "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_SessionRepositoryArgumentValidationAndFactory",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.7098690"
+    },
+    {
+      "testName": "Task.Tests.PostgresAuthorizationPolicyStoreTests.RealPostgres_AuthorizationPolicyStoreReadsRulesByOrgAndCode",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3906423"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_AppendReadRoundTrip_ClientTimestampIgnored",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3701878"
+    },
+    {
+      "testName": "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_SessionRequestStateEvaluation",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.6264181"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_Filters_AndEmptyFilterIsNoFilter",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.6272006"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresSessionListTests.RealPostgres_GetSession_ReturnsAnyState",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:03.8167195"
+    },
+    {
+      "testName": "Task.Tests.PostgresTaskAggregateStoreTests.RealPostgres15_IsRejectedBeforeBootstrapDdl",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.2544289"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ObjectReadbackAndObjectFilter",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.3465888"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresSessionListTests.RealPostgres_GetUserSessions_OrdersAndJoinsDevices",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.3505529"
+    },
+    {
+      "testName": "Task.Tests.PostgresScheduleStoreTests.RealPostgres_ScheduleWindowTenantBoundaryFiltersAndDiCoverage",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.2190365"
+    },
+    {
+      "testName": "Task.Tests.PostgresTaskAggregateStoreTests.RealPostgres_MigratorFailsClosedForLockHistoryAndMissingObjects",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:07.7460890"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_ConcurrentFailedLoginsDoNotLoseIncrements",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.6266475"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductStoresTests.RealPostgres_ProductStoresRoundTripConcurrencyTenantAndLifecycle",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:06.2640645"
+    },
+    {
+      "testName": "Task.Tests.PostgresTaskWriteCommandExecutorTests.RealPostgres16_TaskWriteIsAtomicDurableAndTenantScoped",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:04.5161053"
+    },
+    {
+      "testName": "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_SessionRepositoryRoundTripRotationAndRevocation",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.2459749"
+    },
+    {
+      "testName": "Task.Tests.Postgres.PostgresAccountCredentialStoreTests.RealPostgres_CredentialUpdateAndHistoryWithLimit",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3815530"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductStoresTests.RealPostgres_UpgradeFromVersionEightPreservesDataAndBackfillsLifecycle",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.3290280"
+    },
+    {
+      "testName": "Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.7090367"
+    },
+    {
+      "testName": "Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3264659"
+    },
+    {
+      "testName": "Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3282755"
+    },
+    {
+      "testName": "Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:02.6636903"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_DepartmentAndExpiryDoNotBecomeGlobalPermanentGrants",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.7647561"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.1186297"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_PersonalTasksCalendarAndRecurrenceArePrivate",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:03.5295063"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.ProductApi_SettingsNotificationsAndDiscovery",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.8389651"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.0011935"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_ReadWriteChildrenAndCompletion",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:05.3187960"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.ProductApi_LinksInteractionsAndFileChecksRoundTrip",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.1661668"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.6990539"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_SystemRolesHaveExplicitMatrixAndDenyWins",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.6195569"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.1771564"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_RoleAssignmentIsVersionedAuditedAndCannotRemoveLastAdmin",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.9107879"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_PrivateObjectsStayHiddenAcrossEveryProjection",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:01.3827548"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.7083874"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:04.2646056"
+    },
+    {
+      "testName": "Task.Tests.PostgresProductApiTests.Authorization_RevokedCapabilityCannotUseAnOldRequestSnapshot",
+      "result": "PASS",
+      "runs": 1,
+      "duration": "00:00:00.7003972"
+    }
+  ]
+}

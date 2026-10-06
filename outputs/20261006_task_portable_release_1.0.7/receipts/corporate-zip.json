@@ -1,0 +1,53 @@
+[
+  {
+    "check": "Corporate HTTPS readiness",
+    "detail": {
+      "trustBypass": false,
+      "certificateValidation": "default OS validation",
+      "statusCode": 200
+    },
+    "result": "PASS",
+    "environment": "Windows localhost HTTPS + isolated PostgreSQL 16",
+    "category": "CONFIRMED BY REAL CORPORATE SERVER"
+  },
+  {
+    "check": "Login/session/capabilities",
+    "detail": {
+      "capabilityCount": 63
+    },
+    "result": "PASS",
+    "environment": "Windows localhost HTTPS + isolated PostgreSQL 16",
+    "category": "CONFIRMED BY REAL CORPORATE SERVER"
+  },
+  {
+    "check": "Corporate marker present/Personal marker absent",
+    "detail": {
+      "corporateMarkerHits": 1,
+      "personalMarkerHits": 0
+    },
+    "result": "PASS",
+    "environment": "Windows localhost HTTPS + isolated PostgreSQL 16",
+    "category": "CONFIRMED BY REAL CORPORATE SERVER"
+  },
+  {
+    "check": "Logout revokes real server session",
+    "detail": {
+      "logoutStatus": 204,
+      "revokedSessionStatus": 401
+    },
+    "result": "PASS",
+    "environment": "Windows localhost HTTPS + isolated PostgreSQL 16",
+    "category": "CONFIRMED BY REAL CORPORATE SERVER"
+  },
+  {
+    "check": "Portable Corporate saved session native startup",
+    "detail": {
+      "title": "Task — Corporate",
+      "executableSha256": "07BF49B14F376BC0C3B74994EA85539B457AD1CA6F0164E0408D6AC3AF561F8C",
+      "dpapiSession": true
+    },
+    "result": "PASS",
+    "environment": "Windows localhost HTTPS + isolated PostgreSQL 16",
+    "category": "CONFIRMED BY REAL CORPORATE SERVER"
+  }
+]

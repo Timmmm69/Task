@@ -1,0 +1,1686 @@
+{
+  "regressionCommit": "4e679712e4cd4d8205fcb3923f72906ea17d4d81",
+  "applicationAndTestsUnchangedSinceRegression": true,
+  "sdk": "10.0.400",
+  "pipeline": "work/production/deployment/desktop/Build-UnsignedPortableClient.ps1",
+  "sourceCommit": "4e679712e4cd4d8205fcb3923f72906ea17d4d81",
+  "command": "-Version 1.0.7 -RequireCleanSourceTree -OutputDirectory outputs/20261006_task_portable_release_1.0.7",
+  "sourceFiles": [
+    {
+      "gitBlob": "da94047a722fc555f931a06444e5fcdb3082b90d",
+      "path": "work/production/src/Task.Api/AssemblyInfo.cs",
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "gitBlob": "5fafe474161c22762702fab780df63f4a7fd912c",
+      "path": "work/production/src/Task.Api/Audit/AuditEndpoints.cs",
+      "sha256": "c26e49b93944e3b1b61305ad8ef3c04647fd8d0d4c6a8420ba913f2ab42eb961"
+    },
+    {
+      "gitBlob": "b2e213edc105aaf631ceccb353fcf9570961d104",
+      "path": "work/production/src/Task.Api/Auth/AuthEndpoints.cs",
+      "sha256": "a147e2f3d48ddb61202d015df41388a3dac13781b103ab44b5241bf0d10bfa5e"
+    },
+    {
+      "gitBlob": "aed4b5e7483122376927da467cb5a530def9d461",
+      "path": "work/production/src/Task.Api/Auth/AuthSessionEndpoints.cs",
+      "sha256": "c17415e30f0a04f399773a1acab88e0da50f5214b08c10680b41db8151fef3e2"
+    },
+    {
+      "gitBlob": "3adb93f503ad056e8b7b9f494f8e9934a23b984a",
+      "path": "work/production/src/Task.Api/Auth/DeviceEndpoints.cs",
+      "sha256": "d8fdea5934446068df93167ea98c79f07bf3f4bdfe20f9aed8e21d6ddfd78249"
+    },
+    {
+      "gitBlob": "37edbf54e387fd8504b31ebd574d6d6f9890cd75",
+      "path": "work/production/src/Task.Api/Auth/LoginAbuseProtector.cs",
+      "sha256": "634665295f277bac3b6d4c707ae7423ba14679c6bfbe30b43593089b44850677"
+    },
+    {
+      "gitBlob": "f2d51d15d227c5353b24dde4bf6a9de31dfcf44b",
+      "path": "work/production/src/Task.Api/Calendar/CalendarEndpoints.cs",
+      "sha256": "92d9d086ffc52689a6a6ee2a5e5a9959f12098f854aa2adba1faa6616d4fe5ee"
+    },
+    {
+      "gitBlob": "beb2e9d2b9538c5d92ca555f5122be42601c4a45",
+      "path": "work/production/src/Task.Api/Calendar/CalendarWriteEndpoints.cs",
+      "sha256": "002fbef51e49951d1c0af5924e82a27b51528856897fe664f3134c0cc160c239"
+    },
+    {
+      "gitBlob": "a4db8247d8366af392bbb501b9ebc1b2049db201",
+      "path": "work/production/src/Task.Api/Calendar/RecurrenceEndpoints.cs",
+      "sha256": "7e4bd07b860e3a2773bc796058e5ef3cf9ea2a0ae5a50c7b9e78014a286ba8a4"
+    },
+    {
+      "gitBlob": "68e4cf644ca51b5e6b093f98ef245f758be83a1c",
+      "path": "work/production/src/Task.Api/Capabilities/CapabilitiesEndpoints.cs",
+      "sha256": "d14e844f2fbaa1bbc66e20638960ae98dcf96f4bcb471d7b44c76e78a98f9698"
+    },
+    {
+      "gitBlob": "c8539e6d623ba9ab514878aad5e2b81869458fc1",
+      "path": "work/production/src/Task.Api/Capabilities/ClientVersionCompatibilityMiddleware.cs",
+      "sha256": "a697338a99cbfbdf7205174701fbcfe3868cbd45ce80cb906b9e5dd94098181f"
+    },
+    {
+      "gitBlob": "cb90fee876c7560e4f8b8745d301fbfe5600ede2",
+      "path": "work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+      "sha256": "41a9ec471e4d7f734040b337bfd88bd06190f7d8c3bd1f7c0a101cd156335245"
+    },
+    {
+      "gitBlob": "23e9ec39deedba11d1cb17a81e14a463d55e4641",
+      "path": "work/production/src/Task.Api/Program.cs",
+      "sha256": "fcd6bb1746c56e2a7f3072695941345152999076fa67644d88cb72155e2698c3"
+    },
+    {
+      "gitBlob": "e8d872d4c566ec707a2037f7d4cbbcb3266ef2eb",
+      "path": "work/production/src/Task.Api/Security/AccessTokenValidator.cs",
+      "sha256": "98a017cae13043b9a4e2504cd5fb36b82b729dac208c1e742e7d002b456e74f4"
+    },
+    {
+      "gitBlob": "6a6965bca56110e9dd6fd8134b416f09a8e43626",
+      "path": "work/production/src/Task.Api/Security/IdentityRequestHash.cs",
+      "sha256": "c052ef5db0517ff45c0a8dcd797d39cc5d4e54000ca4e5c3a452e7fc883d926f"
+    },
+    {
+      "gitBlob": "d753a99a254527b5ace802595d38a642d46182dd",
+      "path": "work/production/src/Task.Api/Security/IdentityScope.cs",
+      "sha256": "223bdf0cf348196fe6e36f1ab0731b400eece82292811ad184bd2eed38dca930"
+    },
+    {
+      "gitBlob": "a4c18849c0ef7e486403ae6e8368a99c2a759552",
+      "path": "work/production/src/Task.Api/Security/TaskApiProblemResponse.cs",
+      "sha256": "416a583c556b4b147934656b42e39da922f0ed0ee61e52e911d62452648b7992"
+    },
+    {
+      "gitBlob": "bc97eb84d18bf6e903d71c6eae885182b5f78c9a",
+      "path": "work/production/src/Task.Api/Security/TaskApiSecurityFoundation.cs",
+      "sha256": "16857663879486997479c1ad0cd425dea25998f9cb25853ec066666bb40b0116"
+    },
+    {
+      "gitBlob": "24b19f0274b387d135bfdf19f9255755f6a62867",
+      "path": "work/production/src/Task.Api/Security/TaskFoundationAuthenticationHandler.cs",
+      "sha256": "e46136131a02584a589fc32625a3b7507ed591d6b388150c8c5b4bd4c0e6540f"
+    },
+    {
+      "gitBlob": "c5eb1f2961965072d6de831d567db379869788be",
+      "path": "work/production/src/Task.Api/Security/TaskJwtAuthenticationHandler.cs",
+      "sha256": "c9b8c6d4e484137a76f61493c009c149ab71b5ac83e2c05bf5f8e80573d20da2"
+    },
+    {
+      "gitBlob": "5b9089ea5187fe126602c600092d5934a28f06fc",
+      "path": "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "sha256": "35e4335252926a7cf0875f530225ea9a7e272a8dc5e36ad507f46a2527ef431d"
+    },
+    {
+      "gitBlob": "eda2ecc807a1d52c44c7bf5ebc42d8b4d877d8ff",
+      "path": "work/production/src/Task.Api/Server/SystemVersionEndpoints.cs",
+      "sha256": "9fa91678042a2c38dc3615efd732b272b81735dcd796ae2ab1ba250f3d9276a8"
+    },
+    {
+      "gitBlob": "5397313fbf56b8653f346649ab951609f2f27e60",
+      "path": "work/production/src/Task.Api/Task.Api.csproj",
+      "sha256": "101cdd9a1d1a5901128130b00ba44e63147616832b51d8b435a45b1fe06cc7f8"
+    },
+    {
+      "gitBlob": "19be6b309d3bcf3561bbc273b615e3391c1eeff3",
+      "path": "work/production/src/Task.Api/TaskApiMetrics.cs",
+      "sha256": "0f3dddd1b6f3dbf9cca59882480ce85481f8120cdaa34b195740d18fd8cec5f4"
+    },
+    {
+      "gitBlob": "210dd82acaeb1d4b78c89981172018d37e6ee104",
+      "path": "work/production/src/Task.Api/Tasks/TaskCardFields.cs",
+      "sha256": "18fe2dc94efc04ee6277ca848b0ef66ce0d766defbf034bec851d7d8b1554e3b"
+    },
+    {
+      "gitBlob": "ab25b2a8a2626a307b33c1969c886f9ede7e030e",
+      "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+      "sha256": "ff5661e556c69eec8de454e77a43283a5520a8ecfd0672debb894386f4669dae"
+    },
+    {
+      "gitBlob": "e9a1a0eb58d4f3168b3b96009ef1593761ee8a44",
+      "path": "work/production/src/Task.Api/Users/UserEndpoints.cs",
+      "sha256": "2ca79137f60af9601362b388044b10933fc9eb96859c2838287d0aaa550933ee"
+    },
+    {
+      "gitBlob": "0c208ae9181e5e5717e47ec1bd59368aebc6066e",
+      "path": "work/production/src/Task.Api/appsettings.Development.json",
+      "sha256": "73f95f9e0ceb205fc1c4dc50c07697fcfa29d7087868c2aef1d504cb38c771ec"
+    },
+    {
+      "gitBlob": "5b79ec2b61e71e551464278a2a839e61da44ac05",
+      "path": "work/production/src/Task.Api/appsettings.json",
+      "sha256": "0f520d04c60c82bcc3eeffe26b0424b6183fa333e125d23167eb183bc3f8ca83"
+    },
+    {
+      "gitBlob": "cd559b760726e45d43daae5f5aea69fef4fd4f01",
+      "path": "work/production/src/Task.Api/packages.lock.json",
+      "sha256": "271647ba364333ff251f929cc2cfaf34b2d2abdd0d911845bdf1bc1587f99ced"
+    },
+    {
+      "gitBlob": "2cec884c703176e184669c45afb5871b2b732d15",
+      "path": "work/production/src/Task.Application/Audit/IAuditEntryStore.cs",
+      "sha256": "7829108e26a7c29e717e7bf6443277f468a0deb9cf5ea686f70aaf3b0d149802"
+    },
+    {
+      "gitBlob": "2fe8c6b15fc689d3b34dfc67b426f1f721c9dfe7",
+      "path": "work/production/src/Task.Application/Background/BackgroundDeliveryContracts.cs",
+      "sha256": "7c6283fac7e46f72c6bd826f6667910e06af82d3c21ec8e1907c2f9a3d49c320"
+    },
+    {
+      "gitBlob": "dd7dca82892c07c6eda7d22afaf1a03aab37e83a",
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventConcurrencyException.cs",
+      "sha256": "977191b1cc1135b9a946fccc298ef10c37fab772498b3a73a287e2df3f4e443c"
+    },
+    {
+      "gitBlob": "938b11fd6d36cfcec996279613521480c2d79b52",
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventDetails.cs",
+      "sha256": "4ce7f3b7fadbb49726f935e8d9b93ef43f5eb5b4c217e07401296c03c473f178"
+    },
+    {
+      "gitBlob": "e13c058517dc39786da0aefaaef870ee391157da",
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventLifecycleService.cs",
+      "sha256": "b770f024b8dcf9cd1ccbd6c9e52e4fd39b837826de70ed1017e9c339ad2f4ddf"
+    },
+    {
+      "gitBlob": "a9c5f72335f2fe561fe45f9fdb5f56b5b14305e6",
+      "path": "work/production/src/Task.Application/Calendar/CalendarEventQueryService.cs",
+      "sha256": "0a13c7e4a2ca1fe82994bf7d7ae108ab6da532a4365a87d6c190c31bdfd83538"
+    },
+    {
+      "gitBlob": "370806cd5a7c3f171e965b522de240a0310ebd36",
+      "path": "work/production/src/Task.Application/Calendar/ICalendarEventStore.cs",
+      "sha256": "3d0cf7adfa2457200aca3829e9f61e27958104843fd935c9c34e7c34012233f3"
+    },
+    {
+      "gitBlob": "26bc9f45f9bf3c6a066b61080fea371e7738cc8c",
+      "path": "work/production/src/Task.Application/Calendar/IScheduleStore.cs",
+      "sha256": "8be06a118dd7b5d10f866fda1105cfa780dd86ce5df9eab6695fa1f825ee9c05"
+    },
+    {
+      "gitBlob": "f3f27891dcffcee705283ab6da2e6af1f0a974a9",
+      "path": "work/production/src/Task.Application/Calendar/RecurrenceContracts.cs",
+      "sha256": "c93a98c836e90550d14069407af9774591c38f40acfe4487bd1b5d2dabf0b90f"
+    },
+    {
+      "gitBlob": "223e5ccbeee81af75b8e31443dacc70e26ac7fbd",
+      "path": "work/production/src/Task.Application/Calendar/RecurrenceService.cs",
+      "sha256": "6b434b6cda1719e72279ff5fb57d9ede8773b9a1c816bb90d0f939f7c63408bb"
+    },
+    {
+      "gitBlob": "4c37f72a8ed9a5676457d76737d750ff55fe6a5f",
+      "path": "work/production/src/Task.Application/Calendar/ScheduleContracts.cs",
+      "sha256": "e1a7278ee84fec84141ea70f33e378161f4a17b52ca6189722df4936469cc90e"
+    },
+    {
+      "gitBlob": "ca6e95a83378c1c600270d3fcce7d8bfae1374a9",
+      "path": "work/production/src/Task.Application/Calendar/ScheduleQueryService.cs",
+      "sha256": "0e08e861dd95b6f536f6994a4fcc68bb9225fa063bc21c2b3a56202bd7779db1"
+    },
+    {
+      "gitBlob": "3ccb764f58eb6620c7ec6c2d8af8bca31b010b10",
+      "path": "work/production/src/Task.Application/Class1.cs",
+      "sha256": "963d12d15d4703bcc385c32f9a8073f2399e881d0f1d449579fc9f01a27d692c"
+    },
+    {
+      "gitBlob": "c862dcdd41978931f4f88f4aad3e97afae22fbad",
+      "path": "work/production/src/Task.Application/Files/FileLocationPolicy.cs",
+      "sha256": "ca3b828730d0daab4fbc1b954c4cf1b1cc5dcb9717940f2700394b1783097a6a"
+    },
+    {
+      "gitBlob": "a7f0f859195220770230750ce94c64710073b9fe",
+      "path": "work/production/src/Task.Application/ITaskAggregateStore.cs",
+      "sha256": "0a8ec74eaef20355c8605cfb21fcaf4486e9a8faf1922b6ac6c6c10b2e0ca508"
+    },
+    {
+      "gitBlob": "3776edbd9292c6c1db2f1d80f24a9517849ebf4e",
+      "path": "work/production/src/Task.Application/ITaskReadStore.cs",
+      "sha256": "4831812b43ead8c7e4456f3afdcee84c41258a416f130ae7b88bf2ebe10878b7"
+    },
+    {
+      "gitBlob": "5e93193e722f969f015cae97a39acba62e3cfc21",
+      "path": "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "sha256": "16ec0429db2c28095a7eb51df37b112e595f3c934067f67b29f9c7a87e2cb28b"
+    },
+    {
+      "gitBlob": "c2c2f82b029edd3e513f10c0602c500726c6f922",
+      "path": "work/production/src/Task.Application/ProductData/ProductPersistenceContracts.cs",
+      "sha256": "f892a6765973546754fe9edb869d34fb1a94b508524ab26165351679c2be2d60"
+    },
+    {
+      "gitBlob": "960aeea9ab34ea877bfd5f642845a170c0c5aac3",
+      "path": "work/production/src/Task.Application/Security/AccountLockoutPolicy.cs",
+      "sha256": "3e4b4176032bd3495b0042bd0c2fddace81b3427bfdf0b339611db3fc86068d7"
+    },
+    {
+      "gitBlob": "fbb1d91590422c6b973cf78453395522c6acc169",
+      "path": "work/production/src/Task.Application/Security/AccountLockoutService.cs",
+      "sha256": "0cd5703575eb8e9e50bae06f52442856c4412b8febdbf419325b4649ea8a3bde"
+    },
+    {
+      "gitBlob": "150dc03c67c693c6d9b27aa40bcc2cbf3524cacc",
+      "path": "work/production/src/Task.Application/Security/AuthenticatedRequestContext.cs",
+      "sha256": "c2101c29c58c4afb8ec9127c1730f8ea179d377c63c57dfa1af3cbd8bf26e89a"
+    },
+    {
+      "gitBlob": "b5eea2ae9ac0d50e857dc770a3dce69d52bc6a7c",
+      "path": "work/production/src/Task.Application/Security/IAccountCredentialStore.cs",
+      "sha256": "98aa9b25bac61aa3dcec23aea221e819dd4ddb57756155c671e9a8fd7ae8e7ba"
+    },
+    {
+      "gitBlob": "cc62a8548bd4f0927a29bfea2336662d42117fb6",
+      "path": "work/production/src/Task.Application/Security/IAccountLockoutStore.cs",
+      "sha256": "cc80fbe99d41d72a3c20d5059ce32dde02d19e4a74b6f53611c02137471f6cbc"
+    },
+    {
+      "gitBlob": "85e99a59bdeb6bd8848aa460a4bd694fde0d8a28",
+      "path": "work/production/src/Task.Application/Security/IAccountLookupStore.cs",
+      "sha256": "42fa57f464603bb5b4b2c702d98f4e11868151cab2a9b77adbb56aef2113791d"
+    },
+    {
+      "gitBlob": "42273a35c8d457d74d80fb823d946d78181beb96",
+      "path": "work/production/src/Task.Application/Security/IAuthorizationPolicyStore.cs",
+      "sha256": "b566a203b9e530e966b4b5275836dc8b22241f430e51369c5b0e2c74f9b065c6"
+    },
+    {
+      "gitBlob": "e78b98adb636bd10b9bbee5e97689f1a22f1ccb7",
+      "path": "work/production/src/Task.Application/Security/IDeviceRegistrationStore.cs",
+      "sha256": "3046aafe9453eeb6e55ff6c79b29386ed2ee7d1b7cd90b517860a7dfaae56383"
+    },
+    {
+      "gitBlob": "17bac49945924890834fbd724258c59711f182e6",
+      "path": "work/production/src/Task.Application/Security/IPasswordHasher.cs",
+      "sha256": "81f20fa6ad2f430da574eb9338739a14f10a004b118ad266026f9e756126b4d6"
+    },
+    {
+      "gitBlob": "bd7972f5054a8d46bb8d646cbd723162e9c20176",
+      "path": "work/production/src/Task.Application/Security/ISessionRepository.cs",
+      "sha256": "434030066ef12daf7d7247f10f72ca9233e3baf2e0af79dd7f80e0a53a658ee9"
+    },
+    {
+      "gitBlob": "c2f0965629d41665f10af584c895672be30ddc69",
+      "path": "work/production/src/Task.Application/Security/IUserAccountCommandStore.cs",
+      "sha256": "b07372aacaa8101751303b8017b1fcad0814b6696dcd39f41d29a00fd257d103"
+    },
+    {
+      "gitBlob": "3a93a832784167d4416d276deb7c8218c468ef74",
+      "path": "work/production/src/Task.Application/Security/IUserAccountReadStore.cs",
+      "sha256": "2755086470f903fa3c42e38f8c27f131337c89cfd74e3fae53006bf4c4e5fba0"
+    },
+    {
+      "gitBlob": "7f4a9fea932d89ded79805b62f42cc5c6f85ea68",
+      "path": "work/production/src/Task.Application/Security/JwtAccessTokenIssuer.cs",
+      "sha256": "6f571914890c60338687ba68f8e571d6ae3e23dd0ac66280e8d3772b1970a888"
+    },
+    {
+      "gitBlob": "eec02190b085fe234423f0ec9bc2c29538ec79e5",
+      "path": "work/production/src/Task.Application/Security/LoginRateLimiter.cs",
+      "sha256": "56bfbed3dbf8ac32117916a50a0347534be647c347431df0eaeb0434e29f30a0"
+    },
+    {
+      "gitBlob": "6e3cfe075275096520ed52bce35197d42253a0ef",
+      "path": "work/production/src/Task.Application/Security/LoginService.cs",
+      "sha256": "8e0744371bd835154a919b140ac63ea148f67ec03036e1876aa766e6fe8a2a15"
+    },
+    {
+      "gitBlob": "041143ad26c6c435a7a9067e9585db1c75d07dfd",
+      "path": "work/production/src/Task.Application/Security/PasswordChangeService.cs",
+      "sha256": "613cb4e0b195846590eeea76e19d999c1a5ed40d5f5e5ff2e9b6ae15ff62f911"
+    },
+    {
+      "gitBlob": "6f07560e48d642795566cb26617ac96d8132dcba",
+      "path": "work/production/src/Task.Application/Security/PermissionCode.cs",
+      "sha256": "1134d74e828d1194bcdd793a0b93030a6959723c1167ddf007819680920abc14"
+    },
+    {
+      "gitBlob": "b5943b1e2a53c9e8ebd165289bec8d493d849db5",
+      "path": "work/production/src/Task.Application/Security/PermissionDecisionService.cs",
+      "sha256": "5ba9fc1c38aa8a343efc5bb7c790149a60d051df3e1093d388a11a86904c2f68"
+    },
+    {
+      "gitBlob": "0403e658ede8ec331c8a5de66950e12c7032ba3b",
+      "path": "work/production/src/Task.Application/Security/RefreshService.cs",
+      "sha256": "d6f8b45e0b15f395fbc3e3875e05e0fe3e804e2bad815586e727e2b702b63e43"
+    },
+    {
+      "gitBlob": "a7f6eff33fd16c76b52d9fafdb77eb30d2d56d92",
+      "path": "work/production/src/Task.Application/Security/RefreshTokenRotationService.cs",
+      "sha256": "ab82fbbf75b49d036754aa7d63ef9f24657f068237975c6958629a92a9d149bb"
+    },
+    {
+      "gitBlob": "555581584695e99e08e91ddeb7c983b55121e629",
+      "path": "work/production/src/Task.Application/Security/SessionRequestState.cs",
+      "sha256": "b30a7cd9bc6c8aa74243c895ab4c1c772ad8963aad28f786952503f5f06ab6f3"
+    },
+    {
+      "gitBlob": "858a4b2be0e42c237fff6bcceb294a09db52e991",
+      "path": "work/production/src/Task.Application/Security/SessionSnapshot.cs",
+      "sha256": "a8365fa9fc25ae2553a85d50de9a21e7cb39de00cc29001b6d7a81b2974e11be"
+    },
+    {
+      "gitBlob": "1e3e607c8adf1bc705296a06a702a9a496fef265",
+      "path": "work/production/src/Task.Application/System/ServerCapabilitiesService.cs",
+      "sha256": "2f5c6bbcca0639fbb4ceeb9f8381fa17a1977ff7a1e7e3b037b0af991142a4c0"
+    },
+    {
+      "gitBlob": "3bfb113d97d20a949033996f9d2672eb613123fe",
+      "path": "work/production/src/Task.Application/Task.Application.csproj",
+      "sha256": "ca6146bebf7c328a5550ec091b9d4dca3b8005dbc33b42dc6da8d2a64642de54"
+    },
+    {
+      "gitBlob": "02d508b4ff39a89cae317d0380367f3cda988a72",
+      "path": "work/production/src/Task.Application/TaskCreateCommandService.cs",
+      "sha256": "d7a4f0b0cf3eb576b0f286e2b48d7f51bf1e130fec88a535fa4ef8ce8529724c"
+    },
+    {
+      "gitBlob": "6a9a2cbc941f6821244a66df4cb37d7dccbcd121",
+      "path": "work/production/src/Task.Application/TaskDetails.cs",
+      "sha256": "bc4e7cb2e2f1caaa01f06091e66eab61ee3afcc2f30a51119b350d4600a5c4b2"
+    },
+    {
+      "gitBlob": "77c7a1a273309531616bceec53e94782ce72fc1c",
+      "path": "work/production/src/Task.Application/TaskLifecycleConcurrencyException.cs",
+      "sha256": "fde4152f4cbeff3a214ca120133d691af923034c7d9dc4e96bff4de71d3bcb6c"
+    },
+    {
+      "gitBlob": "f939d46f79fb595ccb80512f96a98f46191c2754",
+      "path": "work/production/src/Task.Application/TaskLifecycleService.cs",
+      "sha256": "0eebb15810af95b0f74fa53692ebc8dcabf8b1df6409b95cec5906efea9aeb7a"
+    },
+    {
+      "gitBlob": "2ca83192fb36da871646fde4e511d8075c9da233",
+      "path": "work/production/src/Task.Application/TaskQueryService.cs",
+      "sha256": "f70a16a0d032e0498db1dc24c89b97c85bc03d3d0b6c4b3b2c9be84d5dfc12f5"
+    },
+    {
+      "gitBlob": "935a2b731b48f5775b47e2ec35e96c306363e6e5",
+      "path": "work/production/src/Task.Application/TaskReadContracts.cs",
+      "sha256": "b03655167cecb10aba5a2dca00e86ad67b66525f1c789bd0a0d6e3aa65db91e4"
+    },
+    {
+      "gitBlob": "dd55996ec50564d566c8d474d69e72e138e30081",
+      "path": "work/production/src/Task.Application/TaskReadCursorCodec.cs",
+      "sha256": "da15ddbf3c7539c360418e9801f9a9675e99662ff2afbd73a879027d70fbd877"
+    },
+    {
+      "gitBlob": "641c64ddeb14eb117269a85c82ec1a9074b508fe",
+      "path": "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "sha256": "752fa7eec5931ec515a04277eb3513f3ccf73792d451d454ca19f7585a379e49"
+    },
+    {
+      "gitBlob": "bd0f573b035be7c77aeb49930ff8059da4272708",
+      "path": "work/production/src/Task.Application/TaskWriteCommand.cs",
+      "sha256": "a09b27c6f77a3c9828544005b93606ea0cd7f2b93737ad4867f81bfae7a3bea6"
+    },
+    {
+      "gitBlob": "672331fc055b65e97a0baa6bbb8ec5a1232422bd",
+      "path": "work/production/src/Task.Application/packages.lock.json",
+      "sha256": "801424025e42d92dbafccd328f60f0298f50261ae1a72372dc83a44eb5b475bb"
+    },
+    {
+      "gitBlob": "da94047a722fc555f931a06444e5fcdb3082b90d",
+      "path": "work/production/src/Task.BackupAgent/AssemblyInfo.cs",
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "gitBlob": "6d4d2111b3b48ca62476194b364d747e5dd4051e",
+      "path": "work/production/src/Task.BackupAgent/BackupCommandRunner.cs",
+      "sha256": "e27f7898150f48406a05a0c17ef7651d28e1cd80ae1fbd27ac1b186838ed5c57"
+    },
+    {
+      "gitBlob": "ee1022bfd6a1b49521cbe265239f094250aaf3c4",
+      "path": "work/production/src/Task.BackupAgent/BackupMetricsPublisher.cs",
+      "sha256": "4551a3e0103026243f13f45c969b051cfbd800b6b9538ec419aa0459f5be0dbd"
+    },
+    {
+      "gitBlob": "e2fd8c2fe501ce93f416678b7cd47a4248731531",
+      "path": "work/production/src/Task.BackupAgent/BackupOptions.cs",
+      "sha256": "a562976943b6c7c359a62d382e0aab133fbe8d3ef1c5b61520ebe8c317609afa"
+    },
+    {
+      "gitBlob": "a860b20268ef4de997cc1d56ae89dd8759a84fa1",
+      "path": "work/production/src/Task.BackupAgent/BackupRestoreAgent.cs",
+      "sha256": "4ab333e5ba93600cd7cba0fef512c194b0f8ddc83e4ae0beb4c5e667e1e1fc6a"
+    },
+    {
+      "gitBlob": "c01a52247b44f8f8362e1c4a32dd445d48e9c4d9",
+      "path": "work/production/src/Task.BackupAgent/BackupSchedule.cs",
+      "sha256": "42e3f7a7b58c8a6301c98891989002252e1cb5c7eb63eabc7705ee405a72a6fe"
+    },
+    {
+      "gitBlob": "c3ca8ad49842d39d95986de4736865a95b2e23d2",
+      "path": "work/production/src/Task.BackupAgent/Program.cs",
+      "sha256": "684d91ec4bc6e167004eb4721dc9a85b6c180b3cf0631be0974be547910f051e"
+    },
+    {
+      "gitBlob": "0acfd0d5df8f0e0df7c10197ab48f76202b7a620",
+      "path": "work/production/src/Task.BackupAgent/Task.BackupAgent.csproj",
+      "sha256": "aeff7fae1720239d5dc857a2dfd984d386cb7998a98121c5b117dcfcf1e6f7f1"
+    },
+    {
+      "gitBlob": "b2dcdb67421cdf46236defda1c6fbf1d9eead5ee",
+      "path": "work/production/src/Task.BackupAgent/appsettings.Development.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "gitBlob": "b2dcdb67421cdf46236defda1c6fbf1d9eead5ee",
+      "path": "work/production/src/Task.BackupAgent/appsettings.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "gitBlob": "c8202f639966e1660b09990389651b1ec6ca4e82",
+      "path": "work/production/src/Task.BackupAgent/packages.lock.json",
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    },
+    {
+      "gitBlob": "da94047a722fc555f931a06444e5fcdb3082b90d",
+      "path": "work/production/src/Task.DatabaseMigrator/AssemblyInfo.cs",
+      "sha256": "30ca2289b900ac91e82ea888f0286161d1614802a3570179075711e70a483dde"
+    },
+    {
+      "gitBlob": "723609a2abdf1ad7b6dca5d7cbb501d4b1f290a1",
+      "path": "work/production/src/Task.DatabaseMigrator/Program.cs",
+      "sha256": "07ba02c79d71a37279e96450d2b6db1234c6e18f006b8196164ab13477b8cfc3"
+    },
+    {
+      "gitBlob": "5b4ea70e775a8a2e9d4c895235c6b69bf5e1e59b",
+      "path": "work/production/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj",
+      "sha256": "491356822b59675dab47122bc1ef60ede19bae6ebdada3101a4e2e5eb470994e"
+    },
+    {
+      "gitBlob": "4d96366193015dd0c6cc2755af17d951223bd25c",
+      "path": "work/production/src/Task.DatabaseMigrator/packages.lock.json",
+      "sha256": "4b3e8b64dc628eb18e05cfca4210ad6db9c8838d0f45820533c0f6d6f4be42f3"
+    },
+    {
+      "gitBlob": "02754f05945c568f662fd7afc63dabf48aaa2a6a",
+      "path": "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "sha256": "b8ec6a4234cb8f04ff3209a964a65b867000f90c3ed17f2b2b1a71e85cb6e776"
+    },
+    {
+      "gitBlob": "684ba53b26cfbea6fed109bf1b6cfaeb212f4e0f",
+      "path": "work/production/src/Task.Desktop/App.xaml",
+      "sha256": "091f647c996409ca10711751a2ddd00a498e774247b5a9d061c5f6f9093fdb57"
+    },
+    {
+      "gitBlob": "f8790f1d40d0b34349eaa83161abf27c6a4fd8ca",
+      "path": "work/production/src/Task.Desktop/App.xaml.cs",
+      "sha256": "e12d8efe5bd1960cc407120d25e3bc558af6f99d1eef2a365c010219617ddd44"
+    },
+    {
+      "gitBlob": "b0ec827578bab22ee9959849b4a2e11ecfc228c0",
+      "path": "work/production/src/Task.Desktop/AssemblyInfo.cs",
+      "sha256": "9242d8815ea210279f3f4c8931004c7e6754673102f43d3233820da027e5238e"
+    },
+    {
+      "gitBlob": "6a8b3f2f0efa5c941fae262b41bff6f1feb18c47",
+      "path": "work/production/src/Task.Desktop/Assets/Task.ico",
+      "sha256": "1500bf60892702387af3a458e2718069c2ab38a47cc9b4a8008f63df0083d93c"
+    },
+    {
+      "gitBlob": "52548cbba2069b8567e9a189b7ba5c347453da55",
+      "path": "work/production/src/Task.Desktop/AuthWindow.xaml",
+      "sha256": "c54485bb0bb7fd436b64444a77c3b80fe7a90566bab3ef479d3b263a7daa1693"
+    },
+    {
+      "gitBlob": "677a13777ff07154926cd6c6193852e5459fc7d8",
+      "path": "work/production/src/Task.Desktop/AuthWindow.xaml.cs",
+      "sha256": "c1bdeac85a4cbb26117ffd1a2482b0dbda5b7892bae4ddd1ca22629af5065990"
+    },
+    {
+      "gitBlob": "7230e915fad8945a10c79e21f9f1b5d59d12fbb4",
+      "path": "work/production/src/Task.Desktop/BootstrapWindow.xaml",
+      "sha256": "2abdab0aaf5455f9f826687de89141a65d3fab501c6669cf5cf1ba050a30bd3e"
+    },
+    {
+      "gitBlob": "7af4a82cbfa5d649a5bcbd1ff7baa6a8c95fb4ee",
+      "path": "work/production/src/Task.Desktop/BootstrapWindow.xaml.cs",
+      "sha256": "af846dde4a87f2c89037dc504e77296d71e8e942bb82274cf005e5c39f28c9b6"
+    },
+    {
+      "gitBlob": "4b0c1bc05f2f272631d4e45e0552b191f79f0c2e",
+      "path": "work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs",
+      "sha256": "4d18520677d64bbd2feff9142becebe22c8f38555c03f99728d6b60a2a81f1d9"
+    },
+    {
+      "gitBlob": "34898be01b4133a557d8c5db528d266f30c230a2",
+      "path": "work/production/src/Task.Desktop/Calendar/DesktopCalendarContracts.cs",
+      "sha256": "e456ff32b378760715c7574a4bdd9b93ba4c0a6ba0c19479e5ab4ff05b717d53"
+    },
+    {
+      "gitBlob": "b6b22d4da2b6ed14c508534628d4a3a6077aa409",
+      "path": "work/production/src/Task.Desktop/Calendar/DesktopRecurrenceApiClient.cs",
+      "sha256": "c32dd5d27b391c197a016182d1912a1d6ff2830ee41286d7d15228aa0d956004"
+    },
+    {
+      "gitBlob": "4ef99efb262394cd21c855153d972f99217353f2",
+      "path": "work/production/src/Task.Desktop/Calendar/DesktopRecurrenceContracts.cs",
+      "sha256": "5b834d2b75d1dcda66a5492b540f05890e311bcf6c18f33c75dd3d766ee14bfe"
+    },
+    {
+      "gitBlob": "52d0a59dd8e3a539f3ee7f0a9761624d29b45627",
+      "path": "work/production/src/Task.Desktop/Calendar/DesktopRecurrenceHttpAdapter.cs",
+      "sha256": "967da4994e2d38e64927f369651ec1aeac4ce76b549682afac864d4381e71cea"
+    },
+    {
+      "gitBlob": "cf1a30ffc87026d3b91cf6a3ae0f0d32c13c4894",
+      "path": "work/production/src/Task.Desktop/Converters/VisualFoundationConverters.cs",
+      "sha256": "53bc1ef9d8e9d64778be5ae45998de361e0cb1839f164e4c0f3f65623212f9ee"
+    },
+    {
+      "gitBlob": "440c38a31066329be346f0c5410f68a76718473f",
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "sha256": "2967564e54ebce9463aee01c6e9101194b8a3e62d86e7b448fd1130db066af65"
+    },
+    {
+      "gitBlob": "4fc722c63058a190ad156ca685d0142ae394b6fd",
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "sha256": "5f2b90f448731fb83db9abb87343cea6b57bd7748ce8a22718e87b2816c97782"
+    },
+    {
+      "gitBlob": "ffae07695d5a8c70fd97834ac21e297730add5e2",
+      "path": "work/production/src/Task.Desktop/ModeSelectorWindow.xaml",
+      "sha256": "e84bb44acecb6120656c6f7ac5ac86d673247fe2bea5251340a7f6ae9e03add1"
+    },
+    {
+      "gitBlob": "d69d9083316472e1f99f4184ec188e954bbff8a2",
+      "path": "work/production/src/Task.Desktop/ModeSelectorWindow.xaml.cs",
+      "sha256": "dcbad34c6b08b2ae43a86f637a8d3fe7a5417d050c1aa7935ed48bad4755b26c"
+    },
+    {
+      "gitBlob": "8c58ce7f6cbdffbfad59883a89a7ac2ca1096561",
+      "path": "work/production/src/Task.Desktop/ModeSwitchDialog.xaml",
+      "sha256": "94d4ac5afd1f620f62f9523135d136fe2451bd5d6e3c02fd41cd52fca52cbde4"
+    },
+    {
+      "gitBlob": "98548d885d17bb22d2a0e7e85af5f8af4195207e",
+      "path": "work/production/src/Task.Desktop/ModeSwitchDialog.xaml.cs",
+      "sha256": "f9eacde7061019d60bf54f6e035f0fd194abddd7e7a12d704c76104bacea3266"
+    },
+    {
+      "gitBlob": "d1f120b5c0f62f96ab3763e7e71afbcf01f3f0ad",
+      "path": "work/production/src/Task.Desktop/Modes/ApplicationMode.cs",
+      "sha256": "f95e0fc45d6bb63f086f7c438b08a81aaa52f7cf7e1a40f0312ecec33f700324"
+    },
+    {
+      "gitBlob": "822bf1daa76fd9413b6d6845e2ff615c4ba70330",
+      "path": "work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "sha256": "8812cdf7a59bfe9762a0a904bf320de4fae0f3f48da26c09cba4810401b3de20"
+    },
+    {
+      "gitBlob": "5f742970360875ba5adde88b45b05d9b30af824e",
+      "path": "work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs",
+      "sha256": "eaa0150f264fee4ad36921585b6776361657d8e63152d41a1f5cd5f1fb281371"
+    },
+    {
+      "gitBlob": "3829fea9631051c481368fb62acb3a0eaec638b3",
+      "path": "work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+      "sha256": "1575e381349b5bbcdd6c58bb4dd9b305ea6bcb9e562675bbf3dc5a697de3193e"
+    },
+    {
+      "gitBlob": "8824b7732d4a8f35979f89585d962691e97dbf49",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalBackupService.cs",
+      "sha256": "295ef1b4000d4c917783977d395829b79f4e16c120fe440ebea3361a96be9d42"
+    },
+    {
+      "gitBlob": "c3b23b28ac90fe63fd3814324610faf8398205cd",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalCalendarClient.cs",
+      "sha256": "8e0504711b4a08e73800d4535ed188132ef23b1fa2676f475b51cf0e902b3c26"
+    },
+    {
+      "gitBlob": "f1abe74af3a0cd35efee90e5027fb126bd7ee0ab",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalConfirmationDialog.cs",
+      "sha256": "d7b838f0f135df6b966bca9ef4f3a722f09e5764f2aeeec903ab404a95f9738c"
+    },
+    {
+      "gitBlob": "ab071aa6ba303daed8b838a329123c0aaf224cbd",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalDataPaths.cs",
+      "sha256": "529d064ec7f595f393bfa533a135720b9c5c78b645e55a8f37e8993918079555"
+    },
+    {
+      "gitBlob": "076511bddfcd5d6db4f9cfd27d164e9674e77d81",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalDatabase.cs",
+      "sha256": "6097d9db0e0671d2ba37825c910bab461042e0908e05d757077ac734a24eee37"
+    },
+    {
+      "gitBlob": "d681dc4a6cc3cdee38fa69d9275069065f434e68",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalDatabaseValidation.cs",
+      "sha256": "a44812e111efac6cc018d7ff573cfeec92b01c6ef554f99c2b832162f28940af"
+    },
+    {
+      "gitBlob": "44c5d88e46bae6cf9bf786741bd9c1a58de4f656",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalObjectLinks.cs",
+      "sha256": "7e99e3134d51bfd5f95edae6dc6a3d6da81c853f964f7bd3d402839c4f152945"
+    },
+    {
+      "gitBlob": "635a2771ad18b9132472fc771f3b233254f3a261",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalPlanningMigration.cs",
+      "sha256": "410ea03a5790def631d004e8d0e93d24d5e490092b3ba37686c424e940b4e648"
+    },
+    {
+      "gitBlob": "ad0826f519ba7956ae8d9073ca09bac834a2a877",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalPlanningViewModel.cs",
+      "sha256": "bb73fcef95792a4c4f2b50d85dd9e46ea9ad2747f6869f4121636f7bee22a5ee"
+    },
+    {
+      "gitBlob": "d94e4cad8c42a8e563d685f77d43e174e0ccce4d",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalProjects.cs",
+      "sha256": "0a0d7da452eeb8e914f4b47e95efe1ccedb502dee3aeea797bd8419fb28dae1d"
+    },
+    {
+      "gitBlob": "5f1a4edafbc4232a9fc92b95f5eb3572df40ab06",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalRecurrenceClient.cs",
+      "sha256": "6a5c745bee1be012b36c2bf0bd4215bafadba3b64ca2d41d3ceb0fa1d28c4905"
+    },
+    {
+      "gitBlob": "422009c862436b2fec0f646e33e991b5e7f6a332",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalReminders.cs",
+      "sha256": "afd4eaf87dee276412e7134e74041c9ed2bf91094e11bbce8db8a6d6a9907cdc"
+    },
+    {
+      "gitBlob": "ffc9fb6c63204abb32a28bc46841cdd641f3a663",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "sha256": "8bc2739587873be48234bde7f41eda0bdb3d7a505f14894d061b45743b223488"
+    },
+    {
+      "gitBlob": "c21030d03bd42917fec3af4183833586e2598f7f",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalStoreOwnership.cs",
+      "sha256": "f23e96766ca41be0e9101ac78b010b968ce9e82489a4c40317056ff7fd2815a5"
+    },
+    {
+      "gitBlob": "c6be12d919c9c0678207335d1c829837baa5447c",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTaskStore.cs",
+      "sha256": "a8bd0f785fadb6d42c6c0c45f2f08bc7d223b431907f60d6e11592847bb93d60"
+    },
+    {
+      "gitBlob": "03080d350386ca8760f0c673ba2c0088318bc1bd",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTasksClient.cs",
+      "sha256": "7d231e28067164f71e436b8bb7061be5b3f4a21cbc407e5aab9027a93dfbc72c"
+    },
+    {
+      "gitBlob": "bdd1285156b8d7d574069a9660a3c35f0de075e9",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+      "sha256": "701d32cf272b5a9b552bd10f25776ba902547eb9935f28dd2313ce5c6e722a5d"
+    },
+    {
+      "gitBlob": "7b291cc9606de022c49f90161b057d07d39e38a6",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTimePolicy.cs",
+      "sha256": "19003f42811b5fed22fc3124354d3d3dfb25f1431a99b23106752d868316a12a"
+    },
+    {
+      "gitBlob": "a9434000e41846482c2953569cf1bf6273f9a84b",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWindowsNotifications.cs",
+      "sha256": "7e3492db34a7adfe03fcf74d3ed1dfb1c1d19869245b1a93be6f3596599460b4"
+    },
+    {
+      "gitBlob": "8f12dad9671a9b3ee6d59e9cd008d7533e445af9",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkClient.cs",
+      "sha256": "50de57dd947365ad0d6ae350335924f1afe410b5572df1bd3d0c937be105e936"
+    },
+    {
+      "gitBlob": "7b722654a5a4d25cb76d1c38eec531722dd4eb6a",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceMigration.cs",
+      "sha256": "a1193cd4e44cf4511b2f0fb73806b73bc172da2d7548cf98cd06fd677609a5db"
+    },
+    {
+      "gitBlob": "4e0df573edf0740dee5924ecde993e5478ffaed9",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceSettings.cs",
+      "sha256": "09640029df29a9097c224c5065334f13f93c62cb7adce00219ef81911224d39f"
+    },
+    {
+      "gitBlob": "e3db431ecd890d0c531b9ce94e24ddd860a7748c",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceStore.cs",
+      "sha256": "124758aa15df426fd9628d2ee44918ad0bf1a25850611d9e02be6b4d31923e5c"
+    },
+    {
+      "gitBlob": "bcc3679b3ab9b1a9543fc8589b23102cb6b1efd6",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs",
+      "sha256": "d53047cceb15ef18b13b8b9d3df3cd74d569f29195184eab7f55e2e9d6f90c16"
+    },
+    {
+      "gitBlob": "32cc71aff467e5f8c24127458d775691faf77014",
+      "path": "work/production/src/Task.Desktop/PersonalRecoveryWindow.cs",
+      "sha256": "ac4b9cf2777fb9272aef3c5ee2f2bd2bd3af8fc6c4528ed6637c0e0a4cb05ef1"
+    },
+    {
+      "gitBlob": "82122f0566822ccd0258bce2318cbaa093b628ae",
+      "path": "work/production/src/Task.Desktop/PersonalWindow.xaml",
+      "sha256": "9d982271e1f7194a29c84fce335dfa725e4c688823bf231ea805b71c56a36d28"
+    },
+    {
+      "gitBlob": "f0501fabf5e78349febb177dbe92358ab523a7d1",
+      "path": "work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "sha256": "43cac844cabde64e39047fb0e6944e56ed52f75b8056b4ac1d3dd191aa9eb74e"
+    },
+    {
+      "gitBlob": "c1ac20991e343379ca20d4a236591557d1cd0a5c",
+      "path": "work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs",
+      "sha256": "eb83ab5c840d631b4abc188b1797599e97c104656f27bb2327bda5f8f180db49"
+    },
+    {
+      "gitBlob": "83edeba537f237bf73a5d18c63377884c9103ad3",
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Buttons.xaml",
+      "sha256": "9f4ad952c487391b2cf449d91a8aa676b6130be889ab8ca4b047ef00803500ea"
+    },
+    {
+      "gitBlob": "a4aaf4f320f8a0727222647d3dc22badad9e7159",
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Data.xaml",
+      "sha256": "d910bbabf9f50d5c36a041be935b778f4033fe47d8d4cc5b522f7de030770a69"
+    },
+    {
+      "gitBlob": "a2783e9a9e92f9a01eada725a903cc714b422c46",
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Navigation.xaml",
+      "sha256": "7673c3b83ca9f45d60ad22e150eb5ea868772fe1493c1d93c565a2e78ff45055"
+    },
+    {
+      "gitBlob": "cf6fe0074214130ddec739ea9c9b122415597832",
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Shell.xaml",
+      "sha256": "16c3a013799843436eef8ac14ba26a8f7d8ea430311a695d19c0f760758b6787"
+    },
+    {
+      "gitBlob": "9197e4e317233b7d5ce6e8cb4cf8b21da0b3fb0f",
+      "path": "work/production/src/Task.Desktop/Resources/Controls.States.xaml",
+      "sha256": "c39c67bc851e60295b9fb7f5c83e27fc429d2bda204cbd132e47ba4c3b0c5593"
+    },
+    {
+      "gitBlob": "b281d7fb3c8826da0a78b55d39d01c448a7bb133",
+      "path": "work/production/src/Task.Desktop/Resources/Icons.xaml",
+      "sha256": "c711a1313f5a908cf28d1aaa2e4b260f3df44fb6981cb50421376b314f9caa78"
+    },
+    {
+      "gitBlob": "92aef71ff26931ba482f28093d4a0e08cc7c21aa",
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Controls.xaml",
+      "sha256": "fb1ab221f001b3985712a6abd6d7a7b1c7c1a2524ad8e69c572142960c728d17"
+    },
+    {
+      "gitBlob": "76f6e114ebd530e52f574319c9464528310a00dc",
+      "path": "work/production/src/Task.Desktop/Resources/Theme.xaml",
+      "sha256": "ed86ef4e02fe41f0ab5c1ea2653d5cf39fcda02a81ddcd476578bb605e9cd742"
+    },
+    {
+      "gitBlob": "ab41f9e526a3550e5431bb89a9d3e94c2b1dab00",
+      "path": "work/production/src/Task.Desktop/Resources/Tokens.Colors.xaml",
+      "sha256": "3134ccdf7dd9413bbf2b4353647433270b85353e58988f260eee2f8d0b3bfc40"
+    },
+    {
+      "gitBlob": "49bcdc2b843970f9b75f11a9ef13e1d3d1561d2e",
+      "path": "work/production/src/Task.Desktop/Resources/Tokens.Spacing.xaml",
+      "sha256": "81c5e026055a681cbaacbb3375d4746f2b5cc86e7d81b3b9ebcc8f9f9f583333"
+    },
+    {
+      "gitBlob": "c43c02f5e9bf9e292c4c9c648ea52c7212d51bdb",
+      "path": "work/production/src/Task.Desktop/Resources/Tokens.Typography.xaml",
+      "sha256": "4ebdf07ed4b2b3e7a549be91390665a45f8a35a72f1f00390519bc6b7b6cb4ea"
+    },
+    {
+      "gitBlob": "80672877a2650b9875400cc45725cbee76161fa4",
+      "path": "work/production/src/Task.Desktop/Security/DesktopAuthApiClient.cs",
+      "sha256": "8bc229f61245cc43e4bdcf13324a1f5417eacfff89f32e56f6c40c2aec92ac8d"
+    },
+    {
+      "gitBlob": "8b7f33956228d4709a5e8fc365f5789d0b5a1523",
+      "path": "work/production/src/Task.Desktop/Security/DesktopAuthenticatedGetExecutor.cs",
+      "sha256": "86e9146cc01b663e0368cf1df3a970864e0586a5b97f6cbc5cb9a08a435015ad"
+    },
+    {
+      "gitBlob": "aeacf3a40a68fd761201219f190a3154361af605",
+      "path": "work/production/src/Task.Desktop/Security/DesktopConnectivityService.cs",
+      "sha256": "7ccf405a61fa6e488b8fbd22a6c66ee987ace3270498fa14b7d71a931f56b573"
+    },
+    {
+      "gitBlob": "ad0b6878aec20b82a190db1bf3593e713b76eb70",
+      "path": "work/production/src/Task.Desktop/Security/DesktopCredentialVault.cs",
+      "sha256": "1b35daf47b76d484fe2f5fb00ebdbcfa78a236398215d5ab03616b2fc450dc4a"
+    },
+    {
+      "gitBlob": "2d731976f58139ef2820e98a86fed4b8663eb14e",
+      "path": "work/production/src/Task.Desktop/Security/DesktopServerConnection.cs",
+      "sha256": "496a5195c50864c7cbee78a1690ae2b732aef14ccda6bdd9337d70f24045068c"
+    },
+    {
+      "gitBlob": "d30c27b9e121133b3e88d7855d04476b5dd727f9",
+      "path": "work/production/src/Task.Desktop/Security/SessionService.cs",
+      "sha256": "a7fe930779f47f9142909e986a3cd715389126f79064d57bd2e504e4d168b81b"
+    },
+    {
+      "gitBlob": "653d55af092bb06103925247d3584db8d1c8a6f1",
+      "path": "work/production/src/Task.Desktop/THIRD_PARTY_NOTICES.md",
+      "sha256": "76cb9bd656ea14385be0899e70e0fa27cfd150b4e504273874d194b14d8c84fa"
+    },
+    {
+      "gitBlob": "43b0be4afbaeb7dfd11270131b8770d5c4e57ff5",
+      "path": "work/production/src/Task.Desktop/Task.Desktop.csproj",
+      "sha256": "bffc6afc8d0d9dcde159e7ab99930c8e6091e001522d3cfbcf0f3bfc1b22473f"
+    },
+    {
+      "gitBlob": "f821ce18e559c24487948f5dc2ed94f8960e37b3",
+      "path": "work/production/src/Task.Desktop/Tasks/DesktopTaskWorkspaceClient.cs",
+      "sha256": "026c2f442ce2592cac64ac30369e8124dd44a22f9d92fc29163f79d59051afcc"
+    },
+    {
+      "gitBlob": "a5582b948eeeb51d53eace9bc6007703b806b3a0",
+      "path": "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+      "sha256": "7f4e3f2f828a5f1bf0d471bc76cd70a56ee609c113f32a536c2ad60e3e70255b"
+    },
+    {
+      "gitBlob": "8019452d62f36a5c43fc34a778dd4f8abbd9e9fd",
+      "path": "work/production/src/Task.Desktop/ViewModels/AdministrationViewModel.cs",
+      "sha256": "4416b95e3fa2e69663b21f79490696c7423e42d999bddd693743c7a94f0d0b75"
+    },
+    {
+      "gitBlob": "83053f926833d7f984306d19225fb03f3e7b30cc",
+      "path": "work/production/src/Task.Desktop/ViewModels/AsyncCommand.cs",
+      "sha256": "9f73cd343a8a4fbb9ce4e6e1e19f6101919dc8d0cd7b012a5c456c92691044dc"
+    },
+    {
+      "gitBlob": "f20ce127b2c556f4b9e90a940c5788d59cdb114e",
+      "path": "work/production/src/Task.Desktop/ViewModels/AuthWorkflowViewModel.cs",
+      "sha256": "7f957f341d4f6c9634bc6892504c1158ccadd606a9308ada7b3a64cd23828a83"
+    },
+    {
+      "gitBlob": "b30c0ac5ac6e9429b4393443c1a708b8cf9b5154",
+      "path": "work/production/src/Task.Desktop/ViewModels/AuthenticationViewModels.cs",
+      "sha256": "2a11a2ef9f74e518efdee33fdcdb8028303ed3ae6b90f049fcdcebf715ee7ba7"
+    },
+    {
+      "gitBlob": "53d8236f31a43456cf6e149d616678d0fc44a87c",
+      "path": "work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "sha256": "7621450db095b9e70b2e10225cae2479292d8803090380e79d226e57d77990f6"
+    },
+    {
+      "gitBlob": "cf9397ba76593419d1478eaf7f88e9fa1f038851",
+      "path": "work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+      "sha256": "134006c2473d310a9bc80baca74596a3a98f742596f7bf222e11a364dd01b594"
+    },
+    {
+      "gitBlob": "60c90ec35f4c3239c538df3f38180e79a80cbf74",
+      "path": "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "sha256": "240259980ddc0a6ba5a0bff89684b245ba9ee2d84f10cd39c4c6c96b1dac62fc"
+    },
+    {
+      "gitBlob": "e85fc5364cfa95ffc072f20584c75709132e56ba",
+      "path": "work/production/src/Task.Desktop/ViewModels/NavigationSection.cs",
+      "sha256": "174c4274921da4bd1d2cd1510470f19e4905ad9902961797dbe480e360336669"
+    },
+    {
+      "gitBlob": "2fbc68702d36b5315201ba570f3f111c2c5f4438",
+      "path": "work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs",
+      "sha256": "cf346e527662b745f9fcad8001c9b24c43a180e2606058dd9d2b2a5a8fed32ae"
+    },
+    {
+      "gitBlob": "217028d36a8e96eed8966391b32b74564a2e0b07",
+      "path": "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "sha256": "1a08bd06225b7f50573c0f66834a13e0f45053ff1abc91716a85dbb099b13e23"
+    },
+    {
+      "gitBlob": "dec95d7388299a48c4eb330ccbb0c4d490e76545",
+      "path": "work/production/src/Task.Desktop/ViewModels/RecurrenceEditorViewModel.cs",
+      "sha256": "98a46823311ce5fb46baca31d03d0119b0cd7589d5cebf6f37cb9aab7a28b21f"
+    },
+    {
+      "gitBlob": "38adfb47a4e7e31b27b77404bfbd2563ed962053",
+      "path": "work/production/src/Task.Desktop/ViewModels/RecurrencePaneViewModel.cs",
+      "sha256": "4f18ce7da11fde612c47d1d4e664a14506e94ddbcbba929d947d841e28677759"
+    },
+    {
+      "gitBlob": "230f5c77238677b143e8dcf64b3db6978b3ca5cf",
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs",
+      "sha256": "2818e5ddbcaf4a7ff82df0ecb94f50dc22ed397df3ddf9f67399bd85f819983d"
+    },
+    {
+      "gitBlob": "4b45028381385999b6204f4e58838cc89ec0d94f",
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+      "sha256": "b3833da671b8dce29e3a620b4b08804ee3b81ef26f29f8a6e66240efbfc972e3"
+    },
+    {
+      "gitBlob": "d3035e9fb19a5788daa057fbc1c85ad105c4eafa",
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskWorkspaceViewModel.cs",
+      "sha256": "ede64c9a333e563cde9a302bbe5d053decd9f2e92b4d191bb6f967a568f0b51f"
+    },
+    {
+      "gitBlob": "cc87f1d71a14675a8049483a6d437011d6316bb9",
+      "path": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "sha256": "d60925a7a6e072be67aa83ad70a562079967f39420815b5770cba93d52e73b41"
+    },
+    {
+      "gitBlob": "43cfde9ebe4ef8af93deed125d0739c6e2b64d83",
+      "path": "work/production/src/Task.Desktop/ViewModels/TodayPlanner.cs",
+      "sha256": "964236c0338b6c55dfd46e243a95df9f113b4a3e66e3b03258ceb737159d6fa2"
+    },
+    {
+      "gitBlob": "f9e4f8f444f6e520643843bf76842b372b6561e5",
+      "path": "work/production/src/Task.Desktop/ViewModels/TodayTasks.cs",
+      "sha256": "4ed8f186cc2e0c5b80a14f13bc3f320f49284f980965abd1ddf902a1c32cad93"
+    },
+    {
+      "gitBlob": "e6479c5ed11a1808dea429d5846de18fe9f4547a",
+      "path": "work/production/src/Task.Desktop/ViewModels/TodayViewModel.cs",
+      "sha256": "0eed7ff4188d56dd47c037d09f6a0b0b0009547f52ce487529c142282ba200af"
+    },
+    {
+      "gitBlob": "532601f0737a03a9c48b3ac6a69492f4167dd66b",
+      "path": "work/production/src/Task.Desktop/ViewModels/ViewModelBase.cs",
+      "sha256": "9132fd8ab36cc07272665bad7097430fba74dad90bc26a08ae7091c823bba1e6"
+    },
+    {
+      "gitBlob": "a603347f2d1b74e07d1ec08b6711d8c44deffa81",
+      "path": "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "sha256": "a4f1c0e81df1e4d044cc4b42f89105317a8caefee71893fa7f2ff11c7d51c338"
+    },
+    {
+      "gitBlob": "dd693a4ecf6cb757f7e3193786c4a8186647f71a",
+      "path": "work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+      "sha256": "73959215aca3fb5aa6d73e6d5299f954e1f70d92339dea08321b59fe1c54edcf"
+    },
+    {
+      "gitBlob": "a9b8849c4f7fca4c973f5e4e5efb16fb82dd4252",
+      "path": "work/production/src/Task.Desktop/Views/AdministrationView.xaml.cs",
+      "sha256": "c1e51763659d232cd334715153492443b74eb0777c1bce8758884cce00612e78"
+    },
+    {
+      "gitBlob": "3f506de56377cf8f6dedcb427e906b8d53b9eadd",
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "sha256": "da60f241af88a6d6a3210f6e927ca09756b3f3715b64fe79d62f2f1981a1fc0b"
+    },
+    {
+      "gitBlob": "13b8e886ed09bc21211191fd158819db3a5f6de6",
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml.cs",
+      "sha256": "bc060a08eda23b6aa239f8c74a276704ceea4571779f4df0585c02a7a6c47e15"
+    },
+    {
+      "gitBlob": "97e8f210417dd839f9c2f79b5800cb9c8a2604c3",
+      "path": "work/production/src/Task.Desktop/Views/InboxView.xaml",
+      "sha256": "d1fff0476000e138219bad491b4a5f342e9cb520988221977cba586db30e5c8a"
+    },
+    {
+      "gitBlob": "262ac11ec2cf418426b3eb3e843b176a4450c113",
+      "path": "work/production/src/Task.Desktop/Views/InboxView.xaml.cs",
+      "sha256": "11d651222ebf531d1ea60ca4f52672474d7ad480a63ecf749cb31057356bd376"
+    },
+    {
+      "gitBlob": "80bc1d74bfcf36b5fc7980e2c1b9dcaa73308f2d",
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinksView.xaml",
+      "sha256": "98e5f919b9b02f41fbc3c96805df2489f0efd5e467b4f3622aa64d4c04fa06a8"
+    },
+    {
+      "gitBlob": "8a14c62437caf8083d86323b7a5d761b6313fec3",
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinksView.xaml.cs",
+      "sha256": "67a01a03db94442dd916e25d8e356247960a55759b2d5a827ca63c6fa700a870"
+    },
+    {
+      "gitBlob": "bd33028c8c1ce0e7cc3f334f915830a56bcbb7a5",
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "sha256": "52c8ecdc7f04b18e270ea757b1612f8b6430e63fbfe59b65f416e701c9fd67bd"
+    },
+    {
+      "gitBlob": "77ebbc71c3cfa7986afd73084c716bd907d43178",
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs",
+      "sha256": "8ad5c451ccf9768e22fa6aec7604dca16677ca25d86ca0b169ab19069e9c5bd6"
+    },
+    {
+      "gitBlob": "9370a9c4493ccc6f4764ac2068312bc17f03dcce",
+      "path": "work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+      "sha256": "7a001956dde364516f02a30b4e0824e637a347bcad1ce5465dc484ffac417c15"
+    },
+    {
+      "gitBlob": "f4ef358315714f7ea3376cc2090e9550cc157043",
+      "path": "work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml.cs",
+      "sha256": "f7f0a5cc747bef58245ce6a314203a75d9b622b9fec824f61fca280a56bb285b"
+    },
+    {
+      "gitBlob": "a32134ecf8f7c115d58904873d6d429a5846a2ea",
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "sha256": "e45524920172639118af353e1b7e7605e0cf64fe270e798c5ae0a8058b04851b"
+    },
+    {
+      "gitBlob": "da19a96c936462cd7a4101f73fe86d4ab8a402fe",
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml.cs",
+      "sha256": "3fa1a592d1395ad22c21c582447b83c7985ee34c2b65fabc0184cb158eb06bc2"
+    },
+    {
+      "gitBlob": "bdbaf4d92416773fe23445e80f4d413983c634cc",
+      "path": "work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml",
+      "sha256": "90bd96aaf50589671c49235337f91c30a7a7f632743b24008d6e2749466e3b40"
+    },
+    {
+      "gitBlob": "abe5e48bd71408a7ab9c02ffb915297fe4768be5",
+      "path": "work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml.cs",
+      "sha256": "1eec23154c0ae106d3870588bff9668b35cbb1551c83144b4d25073a68c1a3e7"
+    },
+    {
+      "gitBlob": "54ebfccb86e08aa6278857da15f97b72fca917a8",
+      "path": "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "sha256": "6a7933b446a13bca0b393a4a4efbad4c7b201a041424e6b3dc6647163ffefffb"
+    },
+    {
+      "gitBlob": "3fe0b86198502c04de3113e5bd88ff4cf4aedacc",
+      "path": "work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+      "sha256": "8e09715b437bcbf40627cb275285aeb21172751af2eb66f396e0bf3acf527c8a"
+    },
+    {
+      "gitBlob": "80657c738478421bb3513fea6104b184aaebeeed",
+      "path": "work/production/src/Task.Desktop/Views/RecurrenceView.xaml",
+      "sha256": "5c671b0cbd94e28191980c32ab93789680c0f9a3ce5073c7eddf6e18db97fb18"
+    },
+    {
+      "gitBlob": "c2f7b8cf6ee766519fd2a373e65a477ffa670436",
+      "path": "work/production/src/Task.Desktop/Views/RecurrenceView.xaml.cs",
+      "sha256": "60d669f314192e66dce5bb09bb241761b27322429832c3bcb87929580a79c101"
+    },
+    {
+      "gitBlob": "e4c9f0803c46eacf83798fb56264830311b051f3",
+      "path": "work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml",
+      "sha256": "0cc51c0718d34c5c6390070c490647923917e25dcb615843148fb188140349e5"
+    },
+    {
+      "gitBlob": "f259e2b3995bccd8a90d20961df67424a6e52472",
+      "path": "work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml.cs",
+      "sha256": "0a81bb7b5b603de7a0fd93dee479e2181b925183d624b9ba2a5c4b9029bf6a8d"
+    },
+    {
+      "gitBlob": "f6ce4b34fc2e93cfd614a4b642f9693956a01606",
+      "path": "work/production/src/Task.Desktop/Views/TaskChecklistView.xaml",
+      "sha256": "6a7ebe1d393958c23ded860c0deca006479d4ad78c66de9028cd0713b7b3003c"
+    },
+    {
+      "gitBlob": "9b0bfdc9a8bd570431125d3754bafc1c8990dee3",
+      "path": "work/production/src/Task.Desktop/Views/TaskChecklistView.xaml.cs",
+      "sha256": "4b2a1a5fa0f63d8c817fd08596d1a20445422d09aa65d4fdee58d766cfc4f4b2"
+    },
+    {
+      "gitBlob": "9427b7003361c5604be279e8145bd25fee48b5e7",
+      "path": "work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml",
+      "sha256": "0ecbaf526155c89721e6b175185c5f594fd71af15ea64b16264b1df473196831"
+    },
+    {
+      "gitBlob": "5c854791923b4992d14dd6220eb068ea04789110",
+      "path": "work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml.cs",
+      "sha256": "9d3b18c0e5fc162ddbc973854c269ff31b6b017652e0c92ebbde3be799b5677f"
+    },
+    {
+      "gitBlob": "9058d954d0a00c9ec55a508d68e17fab49ea24fa",
+      "path": "work/production/src/Task.Desktop/Views/TodayView.xaml",
+      "sha256": "a6628d79465b99d7afb45f0f61c867670da41aaea59afc136e22c5aaf30048a3"
+    },
+    {
+      "gitBlob": "a29d71f9e8bc7bf13aad734d325ee7befac18ef4",
+      "path": "work/production/src/Task.Desktop/Views/TodayView.xaml.cs",
+      "sha256": "e286cfa1159e016e7537082c17e270d580c8cf64a6584e639fd7e000008b143b"
+    },
+    {
+      "gitBlob": "46b7ac6665ec13b77fccf2e2007b12117ad13434",
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "sha256": "6fe299447509a0478ac17db2ec9fad66d14afc4405ccbcf6bb14915f38acfc2f"
+    },
+    {
+      "gitBlob": "9b6ee5c6b9e985527dd2777a7a9148d5463ac7d2",
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs",
+      "sha256": "dc1556e7e178d88f55ee87e38c8be8adfc1856cdcbf97656213e2d81f5cd3342"
+    },
+    {
+      "gitBlob": "89d97137f1777277186d7a947f8ff92fab81ab52",
+      "path": "work/production/src/Task.Desktop/WindowsUxLayout.cs",
+      "sha256": "ebfe9c2a78793ee9e1dedcb5fbca9285784290a5f303f21b686a95c10f925f02"
+    },
+    {
+      "gitBlob": "c3a3a3b34bc29d493312da022ec4208358cf7e7f",
+      "path": "work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs",
+      "sha256": "8372d100085ea511ad466ba045f7e972d57a34e4b52796a7f364d80d8c11beec"
+    },
+    {
+      "gitBlob": "8e9519841602c7518b93c58afcb6c142c05947b5",
+      "path": "work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "sha256": "ba7797105239cb5f61091b00dba25076da0c536e1c3759341450bb881c06d551"
+    },
+    {
+      "gitBlob": "a49f35c8c4ae6916f4e8aa627200ac75dab7f301",
+      "path": "work/production/src/Task.Desktop/Work/FileAccessAdapter.cs",
+      "sha256": "ae3c8091f3272949a014ea1805e4aabfe2ab2df84ab6b089efd1675f902ff2b7"
+    },
+    {
+      "gitBlob": "817af7a678407dc87925dbda6ae7258d58858920",
+      "path": "work/production/src/Task.Desktop/app.manifest",
+      "sha256": "c9e974b0b92fc5c828f473fda98b6cd793da6efe4194c787bfe3c4a9d7fc4c16"
+    },
+    {
+      "gitBlob": "c1a7468d7b27d051561bd88102c2d4676609787d",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarAttendeeTypes.cs",
+      "sha256": "86008b28d5bd3d694b31e16215a76a7ba2c865f84730fb31204b49ffb33abc2e"
+    },
+    {
+      "gitBlob": "4f0140fb08db8783e0ade24e08abed2793621abc",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarAttendees.cs",
+      "sha256": "b59038f1bf048e3d6efd1ab53bb7caff2f3ac88b8875d3937e3467d6f3139274"
+    },
+    {
+      "gitBlob": "b55d6441e9e8f63978a6b5073b86c46319c8ce12",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarEvent.cs",
+      "sha256": "2f10acc896fb459bf55101158e84ad4a14414f120482649f9270ba61beeb27b2"
+    },
+    {
+      "gitBlob": "dd52c6672766953f0fb363dfe4b4f5616556a7ff",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarEventStatus.cs",
+      "sha256": "34842f5b64b4c94ce73ab0a1a939ee4b0f51ac73a4dd3955adb4d624797591f3"
+    },
+    {
+      "gitBlob": "a52b98362edfa2e2e507937668799c0b63db9f06",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarEventTiming.cs",
+      "sha256": "1dfa124b4c022f997b926abddba709cdb8391e6864457092e39242bd85e299c8"
+    },
+    {
+      "gitBlob": "686fda15d1c7321f095fa955ea3ed1cdcb6ccd7b",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarOverlapPolicy.cs",
+      "sha256": "a1192e7c9ef510040bc5b3d83e383cbe411ba1ed2b4aabcb0e90df6efa47dad7"
+    },
+    {
+      "gitBlob": "74ee820058cfda402a2d1b1c9623086286120670",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacement.cs",
+      "sha256": "721f67633e8d05525779721e1da08b5321ac027638efd749a28d4ac064f5b7f3"
+    },
+    {
+      "gitBlob": "9fbd952032e5cbfb2eef206fa2d76f16c6787197",
+      "path": "work/production/src/Task.Domain/Calendar/CalendarTimelinePlacementKind.cs",
+      "sha256": "cddfe78b7bc7ef4ce66c8eeca13006654b1089c2b66a113022a500dee241884f"
+    },
+    {
+      "gitBlob": "10095022fecf4f8b56fe60f6498af7a75144d790",
+      "path": "work/production/src/Task.Domain/Recurrence/OccurrenceKey.cs",
+      "sha256": "64dcace6e47fbbc7dec3d8a3a9a2fe5feabf64db6591f9a25cd6479e7b1dc6ce"
+    },
+    {
+      "gitBlob": "f96523e6ece002b0f2f74164789e7f0e5af0f6a4",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceChangeScope.cs",
+      "sha256": "fdb8969c619646f8f38a5dce282a22e16d3a5e4ca05eb58b6ef40084afaacfe0"
+    },
+    {
+      "gitBlob": "1310634807ff88fa7bbcba2a9bcc487de605cff8",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceFrequency.cs",
+      "sha256": "f6c9955fba5e24174c2e2abc9f12667a377a969ae12cde5a4f8e674751c2fd57"
+    },
+    {
+      "gitBlob": "0899929d9d994131e88ec6ccfda5bfbd155de233",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceGenerator.cs",
+      "sha256": "9ec0c1e12509908ab06f1e0b83c40e054a5da4163ba62643f4af7721d5e070ff"
+    },
+    {
+      "gitBlob": "0e04289280e879900ee19ad61824b54330e6975f",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceOccurrence.cs",
+      "sha256": "05186cca18ff43154bc6ae4e7f53bf926090aa04b775f31a11b75b5594af6dab"
+    },
+    {
+      "gitBlob": "2e5e378e7031d7751adc0aaa479f7f710b3f02f7",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceOccurrenceStatus.cs",
+      "sha256": "4f8f0b66e4e4c55dd69f5b5c8383d343d1e469b611f22308972f4d3d05f33fed"
+    },
+    {
+      "gitBlob": "4141371c83a3d5db74a921f63abc3d7333b23696",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceReminderTriggerType.cs",
+      "sha256": "3c957c6ab640c7d0a0d51f2dbbbc004226ff4b0cd5ef3c5b3f5a51fa42ed2c6e"
+    },
+    {
+      "gitBlob": "ed9f52836c89221b72526db02341ba684241398e",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceRule.cs",
+      "sha256": "d85441c4d5766200760c246f73e0c96521b58ddd2973d0476b8bff61132f6153"
+    },
+    {
+      "gitBlob": "a414267c120d4133e3707e2c4397fc678c4dfca3",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceScopeFilter.cs",
+      "sha256": "f280e67c97cad97525177efd5e4d127bcdee75c4b32c7caf71f181cc02f6f04e"
+    },
+    {
+      "gitBlob": "b1aa06d4f7a4359b0e07226f2509181092d468f6",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceSeries.cs",
+      "sha256": "efc98dcb5962d580a6db6bcf900aa52335d661c3138286d9261482e42ddf120c"
+    },
+    {
+      "gitBlob": "1c253f4b0326b73a016c00bb9f473e39cf156254",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceSeriesStatus.cs",
+      "sha256": "be2d864eddb71e76e313c4f3ab9b8437302fd2888970d442c275d104fa9b1824"
+    },
+    {
+      "gitBlob": "eb5474bf0b4ceac6d0a69119b841860743100b54",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTaskTemplate.cs",
+      "sha256": "b025fe6321a63f1ba53e768cdef12a63430d9b662a619032e633dbc92ffef57a"
+    },
+    {
+      "gitBlob": "20bd760c683fc5906eaaef645823e4ef346ec353",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTemplateChecklist.cs",
+      "sha256": "32b6fc8a17efafc5811bfe981d422b046d22816475b65fe1d1fa1f707f413503"
+    },
+    {
+      "gitBlob": "f930086f65aaef117f6aeedd841506a6fd2d1c8f",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTemplateChecklistItem.cs",
+      "sha256": "da3ead3b88235454b3f2de3ba9f841671bfcdeb5381ed59a318e3961a4eb7395"
+    },
+    {
+      "gitBlob": "58602c9cda4e5e626105cba6e6dd71872299989e",
+      "path": "work/production/src/Task.Domain/Recurrence/RecurrenceTemplateReminderRule.cs",
+      "sha256": "e65f477300bd6a51602a50044581b47ec202148458be4eb3679372896490faf6"
+    },
+    {
+      "gitBlob": "47d09d95ba5e96946a403ae28fb47a8d2e8deeab",
+      "path": "work/production/src/Task.Domain/Reminders/Reminder.cs",
+      "sha256": "c3649e3a8f898c3d6c8f5e274784d12088119b88d052bd8b722344d395f496d0"
+    },
+    {
+      "gitBlob": "cf399472d8b152587575a5e32796a437d6fae655",
+      "path": "work/production/src/Task.Domain/Reminders/ReminderOccurrence.cs",
+      "sha256": "b73c06da334b0f17097cec08e49b028dc8d5457decf511774fecd7b58a9c4484"
+    },
+    {
+      "gitBlob": "e2b4559c8cd79e2f852acd89df59852896721130",
+      "path": "work/production/src/Task.Domain/Reminders/ReminderOccurrenceKey.cs",
+      "sha256": "e487d0465c70667b0a66788a45866ac7f5d73f011b524cfbccca8fe284c3de3f"
+    },
+    {
+      "gitBlob": "ac4779cc8a69fbd07e02ee78338aaf5b13b65ded",
+      "path": "work/production/src/Task.Domain/Reminders/ReminderOccurrenceStatus.cs",
+      "sha256": "290c3588549a356057cbeceba64825a4b8ad407f44864b57a2afe6b79493e368"
+    },
+    {
+      "gitBlob": "4d6692b5bb6eee05bd5bab02ffa634ffede08616",
+      "path": "work/production/src/Task.Domain/Reminders/ReminderStatus.cs",
+      "sha256": "6ea17ad2dde37734e5bc5bc809c9028026faf519df1793ada46d9fe20971d480"
+    },
+    {
+      "gitBlob": "27af9c36c181034408323b88cdc9a00a8ceb9e3c",
+      "path": "work/production/src/Task.Domain/Reminders/ReminderTrigger.cs",
+      "sha256": "1f306741ad79185503a274c5cdd873f29496f5526cfbe8abbe26222b9cff2e4f"
+    },
+    {
+      "gitBlob": "8297c4d34e29e074187963525fe22f3c1a581103",
+      "path": "work/production/src/Task.Domain/Reminders/ReminderTriggerType.cs",
+      "sha256": "cce2aa336cd961328caf33b63b0399dc787b0332bcafed40137cb7eef38a4f2e"
+    },
+    {
+      "gitBlob": "29d7f8d497d9d8732402e11877000aeaf99907c5",
+      "path": "work/production/src/Task.Domain/SyncableEntityMetadata.cs",
+      "sha256": "c92657f97c25b06dd98cbc49cc4ff649592a9720ad20ff45eae80fe2a2150e8c"
+    },
+    {
+      "gitBlob": "ff38ae0084b0fef98cfa2448d35f9ab4a889a8a7",
+      "path": "work/production/src/Task.Domain/Task.Domain.csproj",
+      "sha256": "2cb9a7f71bc2a1bf743e87448cf3e609d1c0befdff7510c92cef194e37585ae7"
+    },
+    {
+      "gitBlob": "3de3bdeab5dca89e43b2ad8fc8b1ca3390b26315",
+      "path": "work/production/src/Task.Domain/TaskAggregate.cs",
+      "sha256": "a859ea2fb5d8320b483e644bf2dbe0f7a8d18830c94c5b659bd4bc64a70fb604"
+    },
+    {
+      "gitBlob": "86b8041a1beebb1d5feb2364431da70c778d3422",
+      "path": "work/production/src/Task.Domain/TaskCardContent.cs",
+      "sha256": "19c9b7e2aff8a40352fdcd3f0cddabae67e7ebd7a4d895cc8da6aa773debfcdb"
+    },
+    {
+      "gitBlob": "ac7240b11a5cb524170f808c6441aaeef0e20cec",
+      "path": "work/production/src/Task.Domain/TaskOverduePolicy.cs",
+      "sha256": "673a1acbd90d83a166c2f82918fb87c8d559291f7d32adad9f767f446d11c112"
+    },
+    {
+      "gitBlob": "22a3e26c9448dfa84ae93ca462f7368ffe673073",
+      "path": "work/production/src/Task.Domain/TaskPriority.cs",
+      "sha256": "d80245fb23f644dd2376527f3d4e5f2bbb0ceb76b3afe29a034111a9f1ab6dce"
+    },
+    {
+      "gitBlob": "6078708278aa70e18e490ea4a04ba73158490326",
+      "path": "work/production/src/Task.Domain/TaskRules.cs",
+      "sha256": "225cb665f0474c1b4d32a0c4f381c411b3872f25d2ec767db0e3f8bd21c5167e"
+    },
+    {
+      "gitBlob": "a862e317cdacbf42bbfd4ed39dc044c93a6c5a4f",
+      "path": "work/production/src/Task.Domain/TaskSchedule.cs",
+      "sha256": "c32019cb9c1aa74b4a766e2fcd6530a663e0a5b4ddf04a416b27546f43c8eeb0"
+    },
+    {
+      "gitBlob": "8e700a2626409eaa107f2820f1889ef8ac922a96",
+      "path": "work/production/src/Task.Domain/TaskWorkStatus.cs",
+      "sha256": "11623becc47126ed049c785dede72cc712ec34da1e46d598ef9e0e3cf4ee6049"
+    },
+    {
+      "gitBlob": "54c6f360e27e3a7fb44e82eb2d8e55cda47236dd",
+      "path": "work/production/src/Task.Domain/packages.lock.json",
+      "sha256": "89e9f9e0b38331225238916b4128e71ea195fb47cee24b64ec0997539c2ad71a"
+    },
+    {
+      "gitBlob": "6ad348a0436eb87a26c461dae1b1d853b7027581",
+      "path": "work/production/src/Task.Infrastructure/AssemblyInfo.cs",
+      "sha256": "76af5f7c9bd20b164aea2fe2a8dd8b9c05767131fb0dce84ab24099e6fb1b3ed"
+    },
+    {
+      "gitBlob": "5968ca3357becfba9539e30f96e4256bde596aae",
+      "path": "work/production/src/Task.Infrastructure/Identity/Argon2idPasswordHasher.cs",
+      "sha256": "d0e3d65c28d305f626df133e086816a076eacb77b1223583f9a5dd803c7bc662"
+    },
+    {
+      "gitBlob": "d02517f7b737c835c2a226552b30a6aaf28f167d",
+      "path": "work/production/src/Task.Infrastructure/Identity/Argon2idPasswordHasherAdapter.cs",
+      "sha256": "106b6366079678ce371f3fe47d0dcf89f9815d48e582b6afb0b5f2b5c169504e"
+    },
+    {
+      "gitBlob": "90a7c3b356efe7412d99cb1f05e4e4b062ae4b85",
+      "path": "work/production/src/Task.Infrastructure/Identity/OfflineAdministratorBootstrapper.cs",
+      "sha256": "eacfaddfdf1471e87b28daeacd1e6d6cc1dac88d5c83ed26d5395c441d4ae877"
+    },
+    {
+      "gitBlob": "53e0c6adc9850b9134eae1b7312c6bb1373e7fb5",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/001_task_persistence_foundation.sql",
+      "sha256": "ccbaad4ca7c8423421b14adf70b8b1c656620e67dc70a9b9c27e2c45c4c8b8b1"
+    },
+    {
+      "gitBlob": "b91c77d5ee57c14882f8e677a83084793b1538ae",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/002_identity_audit_foundation.sql",
+      "sha256": "9392eb2d1504f705ae1a23f22df14028ed3440469995ea73c328bdc5a395251c"
+    },
+    {
+      "gitBlob": "51e1c5af202969d93be3d2979d8ccdd80b2788dd",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/003_calendar_event_persistence.sql",
+      "sha256": "9c387a3be37bac5f327afab26b241f61c7639c93f9dafb0f96751dc7c175ab86"
+    },
+    {
+      "gitBlob": "8c737642bb1bc4964c44b42e49bd7d655cad1065",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/004_role_permissions_effect.sql",
+      "sha256": "682debe32dc53f20ad699450b85789c4a72b3fbd389ef4153ac1ac1e506e0474"
+    },
+    {
+      "gitBlob": "62fafa068cab97254af708814fd3e88faf7ae321",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/005_task_write_transaction_foundation.sql",
+      "sha256": "298eb8cf093a1ec3eb8b18cd85df6ab799ba9e40e4f4007ada415d39a064020c"
+    },
+    {
+      "gitBlob": "4df6276a6a9066b54b47419b2019fb8564d0374f",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/006_task_capability_permissions.sql",
+      "sha256": "317dfe08fd5d0ce7873aeec929fd2f9e6bd7b418ed6fcda8adb2d1ee95ac2bf3"
+    },
+    {
+      "gitBlob": "6b248d7bb3cb088e1410cf0cfc29fe2be2178aaa",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/007_calendar_event_capability_permissions.sql",
+      "sha256": "6a32181612c3a99504ae3884962fc0dea4ce215266ca4902bc2094473146fabb"
+    },
+    {
+      "gitBlob": "24fb1fe2850e4c2d503be0c968e18b6d51c8702d",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/008_calendar_recurrence.sql",
+      "sha256": "22e56e00adcf5a24eb7530056c958245f8acf525d718498b89f1f51675c202ac"
+    },
+    {
+      "gitBlob": "9b96b7076f8f2790da9d3fbfdd4a4e76c0a009ee",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/009_product_entity_stores.sql",
+      "sha256": "73f645c8a3b647d2c4c4cafd8f108958995cc138d3e4caec468ac011fc50e7b0"
+    },
+    {
+      "gitBlob": "ebbb202a23c2020e0def95d079be52eff3775618",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/010_product_api.sql",
+      "sha256": "3b39a9d0663b91de02f70fc876d13123cd5b0d60460c612d68ea5a60e967cad3"
+    },
+    {
+      "gitBlob": "5f6952c1ced4e20b312a8236a594de70b641e6e4",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/011_task_card.sql",
+      "sha256": "a3c8b4c97d10b64614c841b7e24b42b98a4c97b5af4f1e02aeef628f00fe39b0"
+    },
+    {
+      "gitBlob": "175b2afd49202a567b8fe990d49f59deec3bcf50",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/012_user_read_permission.sql",
+      "sha256": "0a92b0e804c7d58beca74a1e9d56db166bba3cce90d533bd07ef495070faf902"
+    },
+    {
+      "gitBlob": "0d19d33410a1fed0f93ea92b5f304a7fc017e2d0",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+      "sha256": "c926aba25698b4f327bf42b798a0555061f68d163b729dd8f59cfbda4622116b"
+    },
+    {
+      "gitBlob": "e1ab6d80c0da0fad6e32d966b0582d48627ac676",
+      "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/014_background_delivery.sql",
+      "sha256": "89890f0362fd9e1e7647bdca72b08c4318463483b6a63adc53e3474f4ed4c867"
+    },
+    {
+      "gitBlob": "71e3aec152f551708c2701764b49a359b4057035",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresAuthorizationAudit.cs",
+      "sha256": "78a099a94ab69b13efc5889c4ad734fbcf50b7c4a01ab1bde3696a65bb294213"
+    },
+    {
+      "gitBlob": "b649be507b08498dd8e3b83c733794b2c7888809",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresBackgroundDeliveryStore.cs",
+      "sha256": "2cc9825a5118f97600a3a0d875eeeacb0459cba2116f2076a9235341b3431d81"
+    },
+    {
+      "gitBlob": "38c830f28a6a0caae7ec546d1031eee1cbad598a",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
+      "sha256": "2cffc7461238cb720f03ee26f047214055079efdef209691ddd5d8a2e967d835"
+    },
+    {
+      "gitBlob": "f5f50488e5a3d2d18cffc5407af1f466fe7c10ca",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresCatalogItemStore.cs",
+      "sha256": "d97c4623030718286d321d5f8ebb5581d86476aadbcf0bcdf6e2f37c1ed9c825"
+    },
+    {
+      "gitBlob": "2934f02831cb6efe2ab9b77953ac3fc5729f75b1",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresContactStore.cs",
+      "sha256": "864283ec8a0ccfb36605bb5c1ed908c5f9aabb5b88be3c9587ee085ec24bafa2"
+    },
+    {
+      "gitBlob": "b8839cddfc532ab409d3c10b5a6b4f243ee18be8",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresNotificationStore.cs",
+      "sha256": "5cf92ebeb1cfd658e00c7833f706c4abed640ede3a41edb5f60f7a1f8c0c139f"
+    },
+    {
+      "gitBlob": "3659cacbfd0af328bc6a0adecf38520cdf7c1e3e",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiLinks.cs",
+      "sha256": "64f8fd72ad8c856e038dd507e3503a5dc96fdbb5699188182adde88e30472c88"
+    },
+    {
+      "gitBlob": "7875c16bd32b0b431a3204078958a7fb2c55cff7",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiQueries.cs",
+      "sha256": "45898e7c14b17fe5f3ce24060716fe672ec86338487128d21d785310393a75dc"
+    },
+    {
+      "gitBlob": "15e5c01664fbff713f37661c502623521a16d628",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "sha256": "d464e802bd18fae5b54edde3830793671627bf0862bfffaef1a26ec2fbdd1593"
+    },
+    {
+      "gitBlob": "e655e53bb8d2eab75af50363bf2d29f4d30d37a0",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRoles.cs",
+      "sha256": "aac169487d99f04a986d63fd5f19141af85859d7d99317e4d5bce823e302a3b9"
+    },
+    {
+      "gitBlob": "f5dc0953f88251e9945ca7268f982972277f6217",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSearch.cs",
+      "sha256": "a99031a34a0cb46d15218d7dd10b2f70d00e21c4c6dd2e57527156b4f91f0133"
+    },
+    {
+      "gitBlob": "a28d643d59f2206067e85bc38feaa5b5bc6c8684",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSettings.cs",
+      "sha256": "65da23af220294a68e3694c8ccb06642aed23e2612c8a9a6e2d8233d5a4b4edf"
+    },
+    {
+      "gitBlob": "0e19149ba28317103ba0e26966f980169f03b58a",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "sha256": "e4851096d40948f115b33d0577226cca162a6036e15ef3a18e1e7d95835d05b1"
+    },
+    {
+      "gitBlob": "6297654212346c343f8622d1ba1fc12bed260603",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "sha256": "1499a9513482b755e27f0ba16b6e0202d7c1657cfbbaba7f63889eb5a4c98fa2"
+    },
+    {
+      "gitBlob": "368b99222c00a629fa1d012aabb41e0515091211",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductLifecycleStore.cs",
+      "sha256": "5557048545a31d24ccf7b358302b44fdbd8271e33cfea0b71202ff752c6b6079"
+    },
+    {
+      "gitBlob": "c985da91160182f42d10f57fc9e0bf40e8e646b8",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductObjectStore.cs",
+      "sha256": "1c781b20294c1f339fccef455247bc5e070fd986e8e6b693c567eb85558ece7d"
+    },
+    {
+      "gitBlob": "684993b13792066202f664e1d4e483cbcb7002e4",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductSettingsStore.cs",
+      "sha256": "a464105823a356c92b101e22c64a29857f03be613dd0de3729eb4edb540169e5"
+    },
+    {
+      "gitBlob": "e0e4c68032769c51b16d614b88ca546c998049d4",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProjectStore.cs",
+      "sha256": "c8e49da54cd6eb25e941de6308358e433785ff513f305210a20feeefd105d4d9"
+    },
+    {
+      "gitBlob": "9c120fc726747c6b6f91fc2511d790ec2a39465f",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresRecurrenceStore.cs",
+      "sha256": "7ca058293508c1cd0d8d802cd96844c9d46105584136228422e6db77181cd995"
+    },
+    {
+      "gitBlob": "01d6e8de6e8e760dc2154ccd744cd5202d7be5c1",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresScheduleStore.cs",
+      "sha256": "d0d01850f95f50535d8e669a743ff29a9877ca509386d200adbf97eebafc5911"
+    },
+    {
+      "gitBlob": "d795179f8f19e2ccf69be20eb6b9d8b9d6d43ec7",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresSessionRepository.cs",
+      "sha256": "ddcbdba9c07f51b191128c5882f631ec20f84c080368852e03f2cf50a47b94cd"
+    },
+    {
+      "gitBlob": "4c6b463cd7cab231efe133ccca160c639bf88c7b",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskAggregateStore.cs",
+      "sha256": "a036cdfa77b49c833e4a4e75dacb61486dcc95d6443bcf7e8353231b50a8c2da"
+    },
+    {
+      "gitBlob": "690d2d59a9d16e75674b660a782cc01de97044cb",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+      "sha256": "59f837c742bb3bd63dcf586d322636f5d86af5bdccde50365ae5ecc5eaa0805a"
+    },
+    {
+      "gitBlob": "1d6b67f091698561dfa1615a043220c7645b8869",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+      "sha256": "d6e5cf24c0b722583e1dfa4881a378c68916a3abf1666842b873ae6a4b04e637"
+    },
+    {
+      "gitBlob": "26d117c18ec157e0139175f0431263185470437a",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "sha256": "32ad21aa93ee03321c231d0d003ad10cb71aa13e1a489ea910d0fb36e168cae0"
+    },
+    {
+      "gitBlob": "e3c91c62a10cfccb22a60a2911239336de954447",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountCommandStore.cs",
+      "sha256": "924176cdcd81e49843427eb188d4cc57d33a5ddae4c8a4d881fa34678851680a"
+    },
+    {
+      "gitBlob": "4d8604c10cddf339eebb9e91eee2de6262f162fe",
+      "path": "work/production/src/Task.Infrastructure/Persistence/PostgresUserAccountReadStore.cs",
+      "sha256": "3c6687bf08991c7f4feb398489b309be4633ff39b8ffc1de980a429789df1c97"
+    },
+    {
+      "gitBlob": "076064ab1c330a075513567a2998a897b01cd83f",
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "sha256": "3d722b5d545c53c0c6acc65c49cfac2f348c47d1d6cb9e0b821d4d3f6dad9f88"
+    },
+    {
+      "gitBlob": "870a9d551842fe53dab26f0412bb7d8e6ff02290",
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrator.cs",
+      "sha256": "61ada2d8244be4c0703510a698e6e6e34ba8af233858ee40200751e1703ce37c"
+    },
+    {
+      "gitBlob": "4dc0c4969cd122bd0db342b538a72cdcca974da7",
+      "path": "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceRuntime.cs",
+      "sha256": "a84dda08a98322513cfe4b9253e97507dab49706fe9fd0dd412ff190a4919b05"
+    },
+    {
+      "gitBlob": "bb8af7ddbf805938f9721a4da82e51cb40366290",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAccountCredentialStore.cs",
+      "sha256": "d6ecd2424b2e281b69bf4ee84eccb016f02d965b53cf94de2da09866af762a83"
+    },
+    {
+      "gitBlob": "91409bbd700859c67b344d512d7f6585b5ee68d5",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAccountLockoutStore.cs",
+      "sha256": "44b21a49f7de7ed70bda810131738f2c5635e453cd9a933fbe06528b308d8b83"
+    },
+    {
+      "gitBlob": "8aa69e33037d7a50d86b3ff92c9971fc6b8a33cb",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAccountLookupStore.cs",
+      "sha256": "fb588907ab9fb618ab0abd6e8dcb711f54eb908cb4fb12be200868afaa3e1c66"
+    },
+    {
+      "gitBlob": "10d1814c94c743ee5d48d807f1cd9e1af3c278f8",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAuditEntryStore.cs",
+      "sha256": "00ddd9864a5171a2d1f032793d7e6f51ef0c1e4599fb97567e03675da5de6533"
+    },
+    {
+      "gitBlob": "f0a40393ff077d6077c1907ca38c0bcee707aba3",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresAuthorizationPolicyStore.cs",
+      "sha256": "a9f25a6cceeef921ec4a4d28381f552d9a598f30283149933262c29fd3574d0d"
+    },
+    {
+      "gitBlob": "ee172e12efada973edc3c50c4fe8c3defc53dc0a",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresDeviceManagementStore.cs",
+      "sha256": "6c6a9303546dcd136ce7490a9ca44872ec55eaea7a3fd237316e1fcc40d8f71e"
+    },
+    {
+      "gitBlob": "6161726565260fbea5bf0e151194c0ec7ccaf6d8",
+      "path": "work/production/src/Task.Infrastructure/Postgres/PostgresDeviceRegistrationStore.cs",
+      "sha256": "3030b9218bcb51121ca04f3522ade27445aa5c3d665457e5007ccd21b18f3048"
+    },
+    {
+      "gitBlob": "2d964aa38b5aad12d23a6ec183a2648672d6c79c",
+      "path": "work/production/src/Task.Infrastructure/Task.Infrastructure.csproj",
+      "sha256": "1b4422d8985a3401848012f568f142e884fe583552afc07c65b00899989d2ba6"
+    },
+    {
+      "gitBlob": "17314805cd276064c8e32266bc48b9913c43013f",
+      "path": "work/production/src/Task.Infrastructure/packages.lock.json",
+      "sha256": "248442509483f4e89a088ca53255818d4e6380a9a9838301f487c5bede1a5b3d"
+    },
+    {
+      "gitBlob": "d1d08aa399f36f921a91eeedff60854de82143fc",
+      "path": "work/production/src/Task.Worker/ExpiredSessionMaintenanceWorker.cs",
+      "sha256": "4fedfab16755eff09ab3f21a5ebd3ef47793f4af6b39b6e1c9e27149c7a87142"
+    },
+    {
+      "gitBlob": "445224362ade0f22dc1dcc7d37dc0971c9fd25c9",
+      "path": "work/production/src/Task.Worker/OutboxPublisherWorker.cs",
+      "sha256": "78ec56cdaf74eb2250a8cebe66952c20b27061d837af8d8de6470483d2955928"
+    },
+    {
+      "gitBlob": "c3de53698ae0fe6a7fb217ff0575d0ccf6d4ed9a",
+      "path": "work/production/src/Task.Worker/Program.cs",
+      "sha256": "f43326c073f2402f435219bdd7dd0eb93c1ecfa2fd348f68e5f065e89098ef04"
+    },
+    {
+      "gitBlob": "1a8ac1260638fd502afd13f4e765c5501cda2b29",
+      "path": "work/production/src/Task.Worker/RecurrenceHorizonWorker.cs",
+      "sha256": "2f172d3fc6a86444dd98d504ac381261bb10025058168800e2ab8e8d25c10aaa"
+    },
+    {
+      "gitBlob": "cb134163111a5403949a257b5d15b0bf2fad0221",
+      "path": "work/production/src/Task.Worker/ReminderDeliveryWorker.cs",
+      "sha256": "8413232e8f33125d19264a6a3f8b9fd735fcb45cf9ec6fe52719941865af4719"
+    },
+    {
+      "gitBlob": "430fcaeaaa04ba22b642a4ef2d5722bb2449318f",
+      "path": "work/production/src/Task.Worker/Task.Worker.csproj",
+      "sha256": "0ee3c9a345bc6f7f8d7b132dcf6ebfcd9517fe437d35c328de474d140008b48b"
+    },
+    {
+      "gitBlob": "893d7fc6f20111e0304b97546b67d52e7a2e3f53",
+      "path": "work/production/src/Task.Worker/TaskBackgroundWorker.cs",
+      "sha256": "ea8bf27e6d36c6eba682cb8a35abc18f6a4c9745e28fa5b2c126191a6ea32a99"
+    },
+    {
+      "gitBlob": "8faba787d8bf0a571aff0b743f8ad7edc396c71d",
+      "path": "work/production/src/Task.Worker/WorkerOperationalState.cs",
+      "sha256": "57a84b6eb6480482d4cfc6e53e83bcf3b1f86cfdbd0b79c32d9f2c2be83d0fec"
+    },
+    {
+      "gitBlob": "b2dcdb67421cdf46236defda1c6fbf1d9eead5ee",
+      "path": "work/production/src/Task.Worker/appsettings.Development.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "gitBlob": "b2dcdb67421cdf46236defda1c6fbf1d9eead5ee",
+      "path": "work/production/src/Task.Worker/appsettings.json",
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "gitBlob": "c8202f639966e1660b09990389651b1ec6ca4e82",
+      "path": "work/production/src/Task.Worker/packages.lock.json",
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    }
+  ],
+  "canonicalIconSha256": "1500bf60892702387af3a458e2718069c2ab38a47cc9b4a8008f63df0083d93c"
+}

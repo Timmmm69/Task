@@ -1,0 +1,29 @@
+{
+  "realTaskAppDataUsed": false,
+  "cleanWindows": "BLOCKED: no clean guest",
+  "administrator": false,
+  "sdkInstalled": true,
+  "build": "26200",
+  "physicalOffline": "NOT RUN: no isolated guest or elevated network control",
+  "visiblePopup": "NOT RUN: native visual popup was not observed",
+  "hostNetworkSettingsChanged": false,
+  "guestTools": [
+    {
+      "available": false,
+      "name": "Get-VM"
+    },
+    {
+      "available": false,
+      "name": "VBoxManage"
+    },
+    {
+      "available": false,
+      "name": "vmrun"
+    },
+    {
+      "available": false,
+      "name": "WindowsSandbox.exe"
+    }
+  ],
+  "os": "Майкрософт Windows 11 Домашняя"
+}

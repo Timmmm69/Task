@@ -1,0 +1,65 @@
+[
+  {
+    "exitCode": 0,
+    "command": "dotnet restore Task.sln",
+    "startedAtUtc": "2026-10-06T18:46:29.5588083+00:00",
+    "seconds": 1.1661023,
+    "name": "restore"
+  },
+  {
+    "exitCode": 0,
+    "command": "pwsh -NoProfile -File ./verification/Test-DependencyAudit.ps1",
+    "startedAtUtc": "2026-10-06T18:46:30.7431280+00:00",
+    "seconds": 1.7066827,
+    "name": "dependency-audit"
+  },
+  {
+    "exitCode": 0,
+    "command": "dotnet format whitespace Task.sln --verify-no-changes --no-restore",
+    "startedAtUtc": "2026-10-06T18:46:32.4527804+00:00",
+    "seconds": 5.9909237,
+    "name": "whitespace"
+  },
+  {
+    "exitCode": 0,
+    "command": "pwsh -NoProfile -File ./verification/Test-ProjectBoundaries.ps1",
+    "startedAtUtc": "2026-10-06T18:46:38.4480603+00:00",
+    "seconds": 0.8535616,
+    "name": "boundaries"
+  },
+  {
+    "exitCode": 0,
+    "command": "dotnet build Task.sln --configuration Release --no-restore",
+    "startedAtUtc": "2026-10-06T18:46:39.3033465+00:00",
+    "seconds": 2.399869,
+    "name": "build"
+  },
+  {
+    "exitCode": 0,
+    "command": "dotnet test Task.sln --configuration Release --no-build --no-restore --logger trx --results-directory C:\\Users\\novik\\Таск\\work\\final_release_20261006\\evidence\\regression-release/tests --blame-hang --blame-hang-timeout 60s --blame-hang-dump-type none",
+    "startedAtUtc": "2026-10-06T18:46:41.7066233+00:00",
+    "seconds": 27.2940142,
+    "name": "tests"
+  },
+  {
+    "exitCode": 0,
+    "command": "pwsh -NoProfile -File ./verification/Test-ProductionSecretsTls.Contract.ps1",
+    "startedAtUtc": "2026-10-06T18:47:09.0040467+00:00",
+    "seconds": 1.7548455,
+    "name": "secrets-tls"
+  },
+  {
+    "exitCode": 0,
+    "command": "dotnet restore Task.sln --locked-mode",
+    "startedAtUtc": "2026-10-06T18:47:10.7611413+00:00",
+    "seconds": 1.0177963,
+    "name": "locked-restore"
+  },
+  {
+    "exitCode": 0,
+    "command": "pwsh -NoProfile -File ./verification/Test-IndependentSecurityReview.ps1 -Configuration Release -SkipRestore -NoBuild -SkipTests -EvidenceDirectory C:\\Users\\novik\\Таск\\work\\final_release_20261006\\evidence\\regression-release/security-review",
+    "startedAtUtc": "2026-10-06T18:47:11.7827699+00:00",
+    "seconds": 7.5118495,
+    "name": "security-review"
+  }
+]

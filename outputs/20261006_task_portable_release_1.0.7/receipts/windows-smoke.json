@@ -1,0 +1,47 @@
+{
+  "inventory": [
+    "Task/D3DCompiler_47_cor3.dll",
+    "Task/e_sqlite3.dll",
+    "Task/PenImc_cor3.dll",
+    "Task/PresentationNative_cor3.dll",
+    "Task/Task.Desktop.exe",
+    "Task/vcruntime140_cor3.dll",
+    "Task/wpfgfx_cor3.dll"
+  ],
+  "archiveSha256": "0089c094621730c37a790d178d2a235477b4d21e2add9a1e2eede0422a9132e6",
+  "result": "PASS",
+  "cleanWindows": false,
+  "checks": [
+    {
+      "dataOutsideApplication": true,
+      "result": "PASS",
+      "title": "Task — выбор режима",
+      "scenario": "FirstRun"
+    },
+    {
+      "dataOutsideApplication": true,
+      "result": "PASS",
+      "title": "Task — Personal",
+      "scenario": "Personal"
+    },
+    {
+      "dataOutsideApplication": true,
+      "result": "PASS",
+      "title": "Task — Corporate · вход",
+      "scenario": "Corporate"
+    },
+    {
+      "dataOutsideApplication": true,
+      "result": "PASS",
+      "title": "Task — Personal",
+      "scenario": "PersonalRestart"
+    }
+  ],
+  "visiblePopup": "NOT RUN",
+  "sourceCommit": "4e679712e4cd4d8205fcb3923f72906ea17d4d81",
+  "version": "1.0.7+4e679712e4cd4d8205fcb3923f72906ea17d4d81",
+  "exeSha256": "07bf49b14f376bc0c3b74994ea85539b457ad1ca6f0164e0408d6ac3af561f8c",
+  "excluded": "Only seven exact runtime files: no databases, caches, passwords/tokens, keys, certificates, installer or test fixtures",
+  "signature": "NotSigned",
+  "physicalOffline": false
+}

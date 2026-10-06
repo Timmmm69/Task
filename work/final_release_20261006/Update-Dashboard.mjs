@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+const file = new URL('../../.project-dashboard/roadmap.json', import.meta.url);
+const roadmap = JSON.parse(fs.readFileSync(file, 'utf8'));
+const evidence = 'outputs/20261006_task_portable_release_1.0.7/validation-report.md';
+const timestamp = new Intl.DateTimeFormat('sv-SE', {timeZone:'Europe/Minsk',dateStyle:'short',timeStyle:'medium'}).format(new Date()).replace(' ', 'T') + '+03:00';
+const update = (id, status, progress, note, next) => {
+  const item = roadmap.items.find(item => item.id === id);
+  if (!item) throw new Error(`Unknown dashboard item ${id}`);
+  if (status) item.status = status;
+  if (progress !== undefined) item.progress = progress;
+  const entry = evidence + ': ' + note;
+  if (!item.evidence.includes(entry)) item.evidence.push(entry);
+  const marker = ' Позднейшее обновление 2026-10-06: ';
+  const start = item.note.indexOf(marker);
+  item.note = (start >= 0 ? item.note.slice(0,start) : item.note) + marker + note;
+  item.updated_at = timestamp;
+  if (next) item.next_action = next;
+};
+update('SEC-04','done',100,'Source 4e67971, CI 37514135326: actual Linux builds/runtime integration and Trivy 0.74.0 PASS; four immutable images, zero CRITICAL/fixable HIGH/unfixed HIGH, no EOL. OpenSSL patched to 3.0.13-0ubuntu3.16; policy unchanged.','Поддерживать fail-closed dependency/security/container gates на каждом изменении runtime и pins.');
+update('OPS-01','done',100,'Container baseline closed by actual Linux CI, including five targets, least privilege, readiness/task-store, SIGTERM and backup/restore; local Docker Desktop remains unavailable.','Использовать проверенный CI/container pipeline; локальный Docker Desktop восстановить отдельно при необходимости локального развёртывания.');
+update('QA-03',undefined,undefined,'Final Release: 1906 PASS / 0 SKIP / 0 FAIL / 0 NOT RUN with actual PostgreSQL 16/15; all 54 DB scenarios executed, PG15 refused before DDL; exact portable ZIP Corporate/Personal isolation PASS.');
+update('DESK-05',undefined,undefined,'Accepted Personal UX inputs unchanged; exact ZIP native smoke/restart/replacement PASS on developer Windows. Clean Windows, physical offline, visible popup and full current DPI matrix are not accepted.','Закрыть clean-Windows/offline/visible-popup acceptance на изолированном Windows стенде; повторить полный native Windows/DPI walkthrough для текущего клиента.');
+update('OPS-05','blocked',75,'Unsigned self-contained win-x64 candidate 1.0.7, source 4e67971; canonical icon, ZIP hashes/inventory/launch and replacement without Personal loss PASS. Clean-Windows/offline/popup requirements remain BLOCKED. Certificate is not required for this portable path; signed pipeline retained.','Предоставить чистый Windows стенд и подтвердить offline/visible-popup acceptance; повторить native backup/restore system dialogs.');
+update('HAND-03',undefined,undefined,'Portable 1.0.7 manifest binds exact source commit separately from artifact publication; VERSION, ZIP/SHA-256, sanitized acceptance receipts and manual included. Candidate explicitly has BLOCKED production acceptance.');
+update('HAND-05','blocked',75,'Source published and all source CI jobs passed; current package integrity/regression/security PASS. Internal final production-ready acceptance is not approved while mandatory Windows requirements remain untested.','Закрыть mandatory clean-Windows, physical-offline и visible-popup gates, затем выпустить новый acceptance receipt для конкретного ZIP и обновить readiness sign-off.');
+fs.writeFileSync(file, JSON.stringify(roadmap,null,2)+'\n');

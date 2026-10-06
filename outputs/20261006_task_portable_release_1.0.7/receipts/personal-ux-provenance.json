@@ -1,0 +1,138 @@
+{
+  "files": [
+    {
+      "actual": "9d982271e1f7194a29c84fce335dfa725e4c688823bf231ea805b71c56a36d28",
+      "path": "work/production/src/Task.Desktop/PersonalWindow.xaml",
+      "expected": "9d982271e1f7194a29c84fce335dfa725e4c688823bf231ea805b71c56a36d28",
+      "matches": true
+    },
+    {
+      "actual": "43cac844cabde64e39047fb0e6944e56ed52f75b8056b4ac1d3dd191aa9eb74e",
+      "path": "work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "expected": "43cac844cabde64e39047fb0e6944e56ed52f75b8056b4ac1d3dd191aa9eb74e",
+      "matches": true
+    },
+    {
+      "actual": "701d32cf272b5a9b552bd10f25776ba902547eb9935f28dd2313ce5c6e722a5d",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+      "expected": "701d32cf272b5a9b552bd10f25776ba902547eb9935f28dd2313ce5c6e722a5d",
+      "matches": true
+    },
+    {
+      "actual": "bb73fcef95792a4c4f2b50d85dd9e46ea9ad2747f6869f4121636f7bee22a5ee",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalPlanningViewModel.cs",
+      "expected": "bb73fcef95792a4c4f2b50d85dd9e46ea9ad2747f6869f4121636f7bee22a5ee",
+      "matches": true
+    },
+    {
+      "actual": "d53047cceb15ef18b13b8b9d3df3cd74d569f29195184eab7f55e2e9d6f90c16",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs",
+      "expected": "d53047cceb15ef18b13b8b9d3df3cd74d569f29195184eab7f55e2e9d6f90c16",
+      "matches": true
+    },
+    {
+      "actual": "8bc2739587873be48234bde7f41eda0bdb3d7a505f14894d061b45743b223488",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "expected": "8bc2739587873be48234bde7f41eda0bdb3d7a505f14894d061b45743b223488",
+      "matches": true
+    },
+    {
+      "actual": "d7b838f0f135df6b966bca9ef4f3a722f09e5764f2aeeec903ab404a95f9738c",
+      "path": "work/production/src/Task.Desktop/Personal/PersonalConfirmationDialog.cs",
+      "expected": "d7b838f0f135df6b966bca9ef4f3a722f09e5764f2aeeec903ab404a95f9738c",
+      "matches": true
+    },
+    {
+      "actual": "1575e381349b5bbcdd6c58bb4dd9b305ea6bcb9e562675bbf3dc5a697de3193e",
+      "path": "work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+      "expected": "1575e381349b5bbcdd6c58bb4dd9b305ea6bcb9e562675bbf3dc5a697de3193e",
+      "matches": true
+    },
+    {
+      "actual": "fb1ab221f001b3985712a6abd6d7a7b1c7c1a2524ad8e69c572142960c728d17",
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Controls.xaml",
+      "expected": "fb1ab221f001b3985712a6abd6d7a7b1c7c1a2524ad8e69c572142960c728d17",
+      "matches": true
+    },
+    {
+      "actual": "a4f1c0e81df1e4d044cc4b42f89105317a8caefee71893fa7f2ff11c7d51c338",
+      "path": "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "expected": "a4f1c0e81df1e4d044cc4b42f89105317a8caefee71893fa7f2ff11c7d51c338",
+      "matches": true
+    },
+    {
+      "actual": "7621450db095b9e70b2e10225cae2479292d8803090380e79d226e57d77990f6",
+      "path": "work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "expected": "7621450db095b9e70b2e10225cae2479292d8803090380e79d226e57d77990f6",
+      "matches": true
+    },
+    {
+      "actual": "da60f241af88a6d6a3210f6e927ca09756b3f3715b64fe79d62f2f1981a1fc0b",
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "expected": "da60f241af88a6d6a3210f6e927ca09756b3f3715b64fe79d62f2f1981a1fc0b",
+      "matches": true
+    },
+    {
+      "actual": "6fe299447509a0478ac17db2ec9fad66d14afc4405ccbcf6bb14915f38acfc2f",
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "expected": "6fe299447509a0478ac17db2ec9fad66d14afc4405ccbcf6bb14915f38acfc2f",
+      "matches": true
+    },
+    {
+      "actual": "e45524920172639118af353e1b7e7605e0cf64fe270e798c5ae0a8058b04851b",
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "expected": "e45524920172639118af353e1b7e7605e0cf64fe270e798c5ae0a8058b04851b",
+      "matches": true
+    },
+    {
+      "actual": "3fa1a592d1395ad22c21c582447b83c7985ee34c2b65fabc0184cb158eb06bc2",
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml.cs",
+      "expected": "3fa1a592d1395ad22c21c582447b83c7985ee34c2b65fabc0184cb158eb06bc2",
+      "matches": true
+    },
+    {
+      "actual": "52c8ecdc7f04b18e270ea757b1612f8b6430e63fbfe59b65f416e701c9fd67bd",
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "expected": "52c8ecdc7f04b18e270ea757b1612f8b6430e63fbfe59b65f416e701c9fd67bd",
+      "matches": true
+    },
+    {
+      "actual": "8ad5c451ccf9768e22fa6aec7604dca16677ca25d86ca0b169ab19069e9c5bd6",
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs",
+      "expected": "8ad5c451ccf9768e22fa6aec7604dca16677ca25d86ca0b169ab19069e9c5bd6",
+      "matches": true
+    },
+    {
+      "actual": "7a001956dde364516f02a30b4e0824e637a347bcad1ce5465dc484ffac417c15",
+      "path": "work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+      "expected": "7a001956dde364516f02a30b4e0824e637a347bcad1ce5465dc484ffac417c15",
+      "matches": true
+    },
+    {
+      "actual": "90bd96aaf50589671c49235337f91c30a7a7f632743b24008d6e2749466e3b40",
+      "path": "work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml",
+      "expected": "90bd96aaf50589671c49235337f91c30a7a7f632743b24008d6e2749466e3b40",
+      "matches": true
+    },
+    {
+      "actual": "1eec23154c0ae106d3870588bff9668b35cbb1551c83144b4d25073a68c1a3e7",
+      "path": "work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml.cs",
+      "expected": "1eec23154c0ae106d3870588bff9668b35cbb1551c83144b4d25073a68c1a3e7",
+      "matches": true
+    },
+    {
+      "actual": "c6ac361dec7ac2fb0a731b87cddb969e28d8ff121e4816ca62ed2370cd51638d",
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalShellViewModelTests.cs",
+      "expected": "c6ac361dec7ac2fb0a731b87cddb969e28d8ff121e4816ca62ed2370cd51638d",
+      "matches": true
+    },
+    {
+      "actual": "288cfc1dacd707561596d766c306e3f1d466ce9faae6804ad5866e974c0b2eab",
+      "path": ".project-dashboard/roadmap.json",
+      "expected": "2d00b4f899af2c8b8142b744d726b4d9e4f55812cfdc1c3a0a9e5ebd48db4c3c",
+      "matches": false
+    }
+  ],
+  "scope": "Unchanged accepted Personal UX source; prior native 24 route/viewport PASS plus current 497 desktop PASS",
+  "result": "FAIL"
+}

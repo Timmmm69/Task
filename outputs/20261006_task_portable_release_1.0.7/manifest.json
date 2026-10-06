@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "product": "Task unsigned portable Windows client",
+  "version": "1.0.7",
+  "architecture": "win-x64",
+  "sourceRevision": "4e679712e4cd4d8205fcb3923f72906ea17d4d81",
+  "cleanSourceTree": true,
+  "sourceChanges": [],
+  "files": [
+    {
+      "path": "D3DCompiler_47_cor3.dll",
+      "bytes": 4741488,
+      "sha256": "a05f99734f7c4822fefc12b367af21fd0976ed6608752fb1e1e80b6ece7ecbbb"
+    },
+    {
+      "path": "e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": "PenImc_cor3.dll",
+      "bytes": 157992,
+      "sha256": "8052e85cd5a3ae9a939872b32de5b90a827456a21d8ccfc4d0c76599f1fcc217"
+    },
+    {
+      "path": "PresentationNative_cor3.dll",
+      "bytes": 1235240,
+      "sha256": "42e2e543c17e1b37499baf00d956433b8afb655348ec0fae89c926fb7d149b6e"
+    },
+    {
+      "path": "Task.Desktop.exe",
+      "bytes": 134944904,
+      "sha256": "07bf49b14f376bc0c3b74994ea85539b457ad1ca6f0164e0408d6ac3af561f8c"
+    },
+    {
+      "path": "vcruntime140_cor3.dll",
+      "bytes": 124544,
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+    },
+    {
+      "path": "wpfgfx_cor3.dll",
+      "bytes": 1956136,
+      "sha256": "0ba67759d290f5d75ff92979394077dcd533fe484511db3ea161d7e102246a73"
+    }
+  ],
+  "releaseAcceptance": "BLOCKED: clean Windows, physical offline and visible popup not accepted",
+  "sourceCi": {
+    "headSha": "4e679712e4cd4d8205fcb3923f72906ea17d4d81",
+    "url": "https://github.com/Timmmm69/Task/actions/runs/37514135326",
+    "conclusion": "success",
+    "run": 37514135326
+  },
+  "artifactPublication": {
+    "distinctFromSource": true,
+    "commitResolution": "git log -1 --format=%H -- outputs/20261006_task_portable_release_1.0.7/manifest.json",
+    "reason": "A commit cannot embed its own SHA; Git history binds this manifest and ZIP"
+  },
+  "supportingFiles": [
+    {
+      "path": ".gitattributes",
+      "bytes": 29,
+      "sha256": "730a35ae3d558080083c3103d9ac8100c3f6561678092abe341701dfa331eb1d"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 6,
+      "sha256": "8b5282b6122ab0fa54d921701b6192f1cd975eb880a29be00ce89d96872184fb"
+    },
+    {
+      "path": "personal-backup-recovery.md",
+      "bytes": 1892,
+      "sha256": "7c90aa964ff16227ee29e91d4731f97dd6b4aece9a64cefeab71796df775ed4e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6395,
+      "sha256": "1689cfd4da7776ca1361f16276dddebe9c999a194d5ce0e61a9d592c779b442c"
+    },
+    {
+      "path": "receipts/build-provenance.json",
+      "bytes": 82712,
+      "sha256": "57b5e28561d5079eee6e73c6a72a9cc8a99fcd7681107a145b34edf6a08b5615"
+    },
+    {
+      "path": "receipts/container-ci.txt",
+      "bytes": 6976,
+      "sha256": "ffb440ba6f66360aa2cb7733d68a4e6a388e29e80df4512fa2de00d126325575"
+    },
+    {
+      "path": "receipts/corporate-zip.json",
+      "bytes": 1627,
+      "sha256": "7357b60c3e660408120e55750f46d24457d7d9e717e3e091ecd2b0ce2b78c2a3"
+    },
+    {
+      "path": "receipts/db-coverage.json",
+      "bytes": 12187,
+      "sha256": "472dfedcca9b68528396c3087c49df975a270acce3147672af9cbe455459a4f6"
+    },
+    {
+      "path": "receipts/dependency-audit.json",
+      "bytes": 1434,
+      "sha256": "e8b3707af3161b877bbd00bf45ffbde49380b059060e95cb0c012dd7fb8c6a51"
+    },
+    {
+      "path": "receipts/fixture-stop.json",
+      "bytes": 228,
+      "sha256": "5a24257e621f3d194243f0b28038379798eaf77165c58dd42ec70f280a721aae"
+    },
+    {
+      "path": "receipts/personal-replacement.json",
+      "bytes": 2422,
+      "sha256": "d738e8f2633c05c489312f7d37ecec5debd9a4a0d2dc25b21e13eb7ba67eabf2"
+    },
+    {
+      "path": "receipts/personal-ux-native-baseline.json",
+      "bytes": 4292,
+      "sha256": "bf46bb24b3c1ad13fdc712843557b1b01c998cf33b8a47ed1578f38cc4ed5afc"
+    },
+    {
+      "path": "receipts/personal-ux-provenance.json",
+      "bytes": 6593,
+      "sha256": "9b1b94ec517f75ed3a8f50e4bb5d977b6149d3c94b0035fb011762c0126db68a"
+    },
+    {
+      "path": "receipts/portable-dependencies.json",
+      "bytes": 12586,
+      "sha256": "916baed99a44853758407f3cc6875c5d4a4ca48f3d05e3afc1444a3a116fcf6a"
+    },
+    {
+      "path": "receipts/postgres15-fixture.json",
+      "bytes": 328,
+      "sha256": "7f01f6ef2634919bc0bf1074d913391315728421f72259950936b87a6c09c031"
+    },
+    {
+      "path": "receipts/postgres16-fixture.json",
+      "bytes": 228,
+      "sha256": "620a4ce6f142804e1bc93c078f214037107dcc1820519406f3d6f016895bbd29"
+    },
+    {
+      "path": "receipts/release-checks.json",
+      "bytes": 2358,
+      "sha256": "dc1c811cc36350e623892268cc0c647d998e74c6ddda557130b21b945f23e31b"
+    },
+    {
+      "path": "receipts/security-review.json",
+      "bytes": 179,
+      "sha256": "1407a2accc381051fe6c384e80d90ffe5c7f3e5d796de8e94a7b4402f66c9d49"
+    },
+    {
+      "path": "receipts/source-ci.json",
+      "bytes": 10107,
+      "sha256": "5b15df33ec95ccc06eba0ff997ec462c45fbd92f1fdc4e8d247e2484bb77b41b"
+    },
+    {
+      "path": "receipts/windows-environment.json",
+      "bytes": 709,
+      "sha256": "c36c930937cfeae56145a968bf0cbd5806c0c9c3116fe7e4f503298c513578a9"
+    },
+    {
+      "path": "receipts/windows-smoke.json",
+      "bytes": 1467,
+      "sha256": "616d68fc15fb971d2534d974f1baa39501d4934be7f58dbe51132825b8409252"
+    },
+    {
+      "path": "SHA256SUMS",
+      "bytes": 99,
+      "sha256": "8f4eea8826e010960caffed4aa45a6d832701f7beeb102ec72ffd8548d01e455"
+    },
+    {
+      "path": "Task-1.0.7-win-x64-unsigned.zip",
+      "bytes": 63245900,
+      "sha256": "0089c094621730c37a790d178d2a235477b4d21e2add9a1e2eede0422a9132e6"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 6106,
+      "sha256": "a512490b182ec25eba3580e2be31dbb6ba21de693a8eb97c0544666569df0f1d"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "e447e3cbb32090cef7308408954892b2e1aab1db7c4ade17ecc4536efb5a0b65"
+    }
+  ]
+}

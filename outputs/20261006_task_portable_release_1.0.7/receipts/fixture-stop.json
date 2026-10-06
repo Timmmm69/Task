@@ -1,0 +1,9 @@
+{
+  "fixtureDirectoriesDeleted": false,
+  "postgres15Stopped": true,
+  "apiStopped": true,
+  "postgres16Stopped": true,
+  "realTaskAppDataTouched": false,
+  "fixtureFilesIncludedInDelivery": false,
+  "result": "PASS"
+}

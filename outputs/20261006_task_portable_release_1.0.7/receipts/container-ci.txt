@@ -1,0 +1,42 @@
+Production container package	Verify production container package	2026-10-06T18:51:58.8210304Z [ OK ] Docker linux/amd64 engine is available.
+Production container package	Verify production container package	2026-10-06T18:52:43.0322227Z [ OK ] Built task-api.
+Production container package	Verify production container package	2026-10-06T18:52:52.0366204Z [ OK ] Built task-worker.
+Production container package	Verify production container package	2026-10-06T18:52:53.0275665Z [ OK ] Built task-backup-agent.
+Production container package	Verify production container package	2026-10-06T18:52:59.0655627Z [ OK ] Built task-database-migrator.
+Production container package	Verify production container package	2026-10-06T18:53:00.0291810Z [ OK ] Built task-container-validation.
+Production container package	Verify production container package	2026-10-06T18:53:00.5942052Z [ OK ] Task.Api image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-06T18:53:01.0857403Z [ OK ] Task.Worker image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-06T18:53:01.5691092Z [ OK ] Task.BackupAgent image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-06T18:53:02.0640853Z [ OK ] Task.DatabaseMigrator image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-06T18:53:08.5867661Z [ OK ] PostgreSQL 16 is ready.
+Production container package	Verify production container package	2026-10-06T18:53:08.7324747Z [ OK ] Fixed migration/runtime roles were created without tracked credentials.
+Production container package	Verify production container package	2026-10-06T18:53:09.3210718Z [ OK ] Migration status returned 6 before apply.
+Production container package	Verify production container package	2026-10-06T18:53:10.4632940Z [ OK ] Migration role applied the catalog.
+Production container package	Verify production container package	2026-10-06T18:53:10.6123712Z [ OK ] Idempotent minimal runtime grants were applied by task_migration.
+Production container package	Verify production container package	2026-10-06T18:53:10.7613299Z [ OK ] Runtime grant script is idempotent.
+Production container package	Verify production container package	2026-10-06T18:53:11.3248102Z [ OK ] Migration status returned 0/Ready after apply.
+Production container package	Verify production container package	2026-10-06T18:53:11.5751975Z [ OK ] Runtime role has required DML/readiness rights and no database/schema CREATE or history write.
+Production container package	Verify production container package	2026-10-06T18:53:11.6909820Z [ OK ] Runtime role cannot CREATE TABLE.
+Production container package	Verify production container package	2026-10-06T18:53:11.8033731Z [ OK ] Runtime role cannot ALTER TABLE.
+Production container package	Verify production container package	2026-10-06T18:53:11.9137098Z [ OK ] Runtime role cannot DROP TABLE.
+Production container package	Verify production container package	2026-10-06T18:53:12.0533278Z [ OK ] Runtime role cannot UPDATE migration history.
+Production container package	Verify production container package	2026-10-06T18:53:12.1787805Z [ OK ] Runtime role cannot CREATE in calendar schema.
+Production container package	Verify production container package	2026-10-06T18:53:12.2969523Z [ OK ] Runtime role cannot UPDATE domain event history.
+Production container package	Verify production container package	2026-10-06T18:53:12.4085869Z [ OK ] Runtime role cannot DELETE recurrence command history.
+Production container package	Verify production container package	2026-10-06T18:53:12.5312227Z [ OK ] Every required task-write/calendar runtime privilege is present; history mutations and calendar DDL remain denied.
+Production container package	Verify production container package	2026-10-06T18:53:14.5013188Z [ OK ] Task.Api uses the runtime role and reports live/ready.
+Production container package	Verify production container package	2026-10-06T18:53:14.7727978Z [ OK ] PostgreSQL has no host port; network is internal; API is loopback-only.
+Production container package	Verify production container package	2026-10-06T18:53:15.4932026Z [ OK ] Production PostgresTaskAggregateStore passed add/get boundary/save/concurrency under task_runtime.
+Production container package	Verify production container package	2026-10-06T18:53:16.3331776Z [ OK ] task-worker handled SIGTERM and exited 0 in 0.09 seconds.
+Production container package	Verify production container package	2026-10-06T18:53:17.1783224Z [ OK ] task-backup-agent handled SIGTERM and exited 0 in 0.09 seconds.
+Production container package	Verify production container package	2026-10-06T18:53:17.9247044Z [ OK ] Immutable local image scan map written to /home/runner/work/_temp/task-image-map.json.
+Production container package	Verify production container package	2026-10-06T18:53:17.9248228Z [ OK ] All temporary containers, networks, volumes, and credential files were removed.
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:42.6223268Z Scanning task-api (sha256:7fa41aa49b2109da6bb5f54cd18e717ef74853191bff06706c4b730ed7c3081b) with Trivy...
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:49.5553106Z task-api: critical=0, fixable-high=0, unfixed-high=0, eol=False
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:49.5805762Z Scanning task-worker (sha256:13ce1e39515ccd317a71da14a86b10656bb7a4487ab810305e0bd983f3627615) with Trivy...
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:50.8589825Z task-worker: critical=0, fixable-high=0, unfixed-high=0, eol=False
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:50.8867498Z Scanning task-backup-agent (sha256:226c82162424723e8f28bcadf4de86125d4fd83b7fddd73ab27033b2288f8da0) with Trivy...
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:52.2985374Z task-backup-agent: critical=0, fixable-high=0, unfixed-high=0, eol=False
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:52.3247820Z Scanning task-database-migrator (sha256:4070381cc059cdfd4c37f335885607c9e62be60c756903a4223cfbf2267089f0) with Trivy...
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:53.6550653Z task-database-migrator: critical=0, fixable-high=0, unfixed-high=0, eol=False
+Production container package	Scan production container vulnerabilities	2026-10-06T18:55:53.6825306Z Container vulnerability gate passed. Evidence: /home/runner/work/_temp/task-image-vulnerabilities

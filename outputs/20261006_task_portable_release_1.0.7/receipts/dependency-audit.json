@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "parameters": "--vulnerable --include-transitive",
+  "sources": [
+    "https://api.nuget.org/v3/index.json"
+  ],
+  "projects": [
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.Domain/Task.Domain.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.Application/Task.Application.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.Infrastructure/Task.Infrastructure.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.Api/Task.Api.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.Worker/Task.Worker.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.BackupAgent/Task.BackupAgent.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.Desktop/Task.Desktop.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/tests/Task.Tests/Task.Tests.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/tests/Task.ServiceHosts.Tests/Task.ServiceHosts.Tests.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj"
+    },
+    {
+      "path": "C:/Users/novik/Таск/work/production/src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj"
+    }
+  ]
+}

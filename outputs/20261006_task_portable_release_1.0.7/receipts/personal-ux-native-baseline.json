@@ -1,0 +1,199 @@
+[
+  {
+    "Route": "today",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-today.png"
+  },
+  {
+    "Route": "inbox",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-inbox.png"
+  },
+  {
+    "Route": "calendar",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-calendar.png"
+  },
+  {
+    "Route": "tasks",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-tasks.png"
+  },
+  {
+    "Route": "projects",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-projects.png"
+  },
+  {
+    "Route": "catalog",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-catalog.png"
+  },
+  {
+    "Route": "contacts",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-contacts.png"
+  },
+  {
+    "Route": "search",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-search.png"
+  },
+  {
+    "Route": "notifications",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-notifications.png"
+  },
+  {
+    "Route": "archive",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-archive.png"
+  },
+  {
+    "Route": "trash",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-trash.png"
+  },
+  {
+    "Route": "settings",
+    "Width": 1200,
+    "Height": 820,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-1200-820-settings.png"
+  },
+  {
+    "Route": "today",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-today.png"
+  },
+  {
+    "Route": "inbox",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-inbox.png"
+  },
+  {
+    "Route": "calendar",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-calendar.png"
+  },
+  {
+    "Route": "tasks",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-tasks.png"
+  },
+  {
+    "Route": "projects",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-projects.png"
+  },
+  {
+    "Route": "catalog",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-catalog.png"
+  },
+  {
+    "Route": "contacts",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-contacts.png"
+  },
+  {
+    "Route": "search",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-search.png"
+  },
+  {
+    "Route": "notifications",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-notifications.png"
+  },
+  {
+    "Route": "archive",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-archive.png"
+  },
+  {
+    "Route": "trash",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-trash.png"
+  },
+  {
+    "Route": "settings",
+    "Width": 800,
+    "Height": 480,
+    "VisibleSections": 1,
+    "Result": "PASS",
+    "Screenshot": "matrix-800-480-settings.png"
+  },
+  {
+    "Scenario": "Real local version conflict",
+    "RetainedDraft": true,
+    "Result": "PASS"
+  }
+]
