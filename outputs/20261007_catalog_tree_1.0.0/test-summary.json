@@ -1,0 +1,26 @@
+[
+  {
+    "file": "novik_TIM_2026-10-07_23_26_44_net10.0.trx",
+    "total": 819,
+    "executed": 819,
+    "passed": 819,
+    "failed": 0,
+    "notExecuted": 0
+  },
+  {
+    "file": "novik_TIM_2026-10-07_23_26_45_net10.0.trx",
+    "total": 520,
+    "executed": 520,
+    "passed": 520,
+    "failed": 0,
+    "notExecuted": 0
+  },
+  {
+    "file": "novik_TIM_2026-10-07_23_26_45_net10.0[1].trx",
+    "total": 590,
+    "executed": 590,
+    "passed": 590,
+    "failed": 0,
+    "notExecuted": 0
+  }
+]

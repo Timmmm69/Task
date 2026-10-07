@@ -1,0 +1,12 @@
+PASS: WPF roots
+PASS: WPF nested selection -> ViewModel
+PASS: Two-way expansion
+PASS: WPF drop feedback
+PASS: Nested WPF drop -> storage move and fresh version
+PASS: Root WPF drop -> storage move
+PASS: Reveal folder
+PASS: WPF create button -> selected folder
+PASS: WPF root button clears nested selection
+PASS: WPF create folder in root
+PASS: Reveal moved file
+PASS: WPF tree, nested selection, expansion, drag/drop to folder, drop to root, create in folder, version refresh, rendered screenshot.

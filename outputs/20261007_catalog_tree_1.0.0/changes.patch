@@ -1,0 +1,1186 @@
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalWorkClient.cs b/work/production/src/Task.Desktop/Personal/PersonalWorkClient.cs
+index 8f12dad..2686c68 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalWorkClient.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalWorkClient.cs
+@@ -25,6 +25,8 @@ public sealed class PersonalWorkClient(PersonalTaskStore store) : IDesktopWorkAp
+     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) => Run(store.Contacts, cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default) => Run(() => store.SearchPersonal(query), cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) => Run(() => store.CreateCatalog(name, itemType, description), cancellationToken);
++    public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default) => Run(() => store.CreateCatalog(name, itemType, description, parentId), cancellationToken);
++    public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default) => Run(() => { store.MoveCatalog(id, version, parentId); return store.Catalog().Single(i => i.Id == id); }, cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<DesktopContact>> CreateContactAsync(string firstName, string? lastName, string displayName, CancellationToken cancellationToken = default) => Run(() => store.CreateContact(firstName, lastName, displayName), cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<bool>> AddLocationAsync(Guid itemId, long version, string rawPath, CancellationToken cancellationToken = default) => Run(() => { store.AddPersonalLocation(itemId, version, rawPath); return true; }, cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>> ResolveLocationAsync(Guid itemId, CancellationToken cancellationToken = default) => Run(() =>
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalWorkspaceStore.cs b/work/production/src/Task.Desktop/Personal/PersonalWorkspaceStore.cs
+index e3db431..ef2dd9a 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalWorkspaceStore.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalWorkspaceStore.cs
+@@ -43,9 +43,9 @@ public sealed partial class PersonalTaskStore
+     }
+     public IReadOnlyList<DesktopCatalogItem> Catalog() => Locked<IReadOnlyList<DesktopCatalogItem>>(() =>
+     {
+-        using var c = Command("SELECT id,version,name,item_type,description,lifecycle FROM personal_catalog WHERE lifecycle='active' ORDER BY name,id;");
++        using var c = Command("SELECT id,version,name,item_type,description,lifecycle,parent_id FROM personal_catalog WHERE lifecycle='active' ORDER BY name,id;");
+         using var r = c.ExecuteReader(); var rows = new List<DesktopCatalogItem>();
+-        while (r.Read()) rows.Add(new(Guid.Parse(r.GetString(0)), r.GetInt64(1), r.GetString(2), r.GetString(3), r.IsDBNull(4) ? null : r.GetString(4), null, r.GetString(5)));
++        while (r.Read()) rows.Add(new(Guid.Parse(r.GetString(0)), r.GetInt64(1), r.GetString(2), r.GetString(3), r.IsDBNull(4) ? null : r.GetString(4), null, r.GetString(5), r.IsDBNull(6) ? null : Guid.Parse(r.GetString(6))));
+         return rows;
+     });
+     public DesktopCatalogItem CreateCatalog(string name, string itemType, string? description, Guid? parentId = null) => Locked(() =>
+@@ -58,7 +58,7 @@ public sealed partial class PersonalTaskStore
+         var id = Guid.NewGuid();
+         using var c = Command("INSERT INTO personal_catalog(id,version,name,item_type,description,parent_id,updated_at) VALUES($id,1,$name,$type,$description,$parent,$now);", tx,
+             ("$id", id.ToString("D")), ("$name", name), ("$type", itemType), ("$description", description), ("$parent", parentId?.ToString("D")), ("$now", Instant(_clock.GetUtcNow())));
+-        c.ExecuteNonQuery(); tx.Commit(); return new DesktopCatalogItem(id, 1, name, itemType, description, null, "active");
++        c.ExecuteNonQuery(); tx.Commit(); return new DesktopCatalogItem(id, 1, name, itemType, description, null, "active", parentId);
+     });
+     private void ValidateCatalogParent(Guid? parent, SqliteTransaction tx)
+     {
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs b/work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs
+index bcc3679..875aa7c 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs
+@@ -15,7 +15,7 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
+     public PersonalWorkspaceViewModel(PersonalTaskStore store, IFileAccessAdapter? files = null)
+     {
+         _store = store; _area = Areas[0]; var client = new PersonalWorkClient(store);
+-        Hub = new(client, ["FileCatalog.Read", "FileCatalog.Create", "FileLocation.Update", "FileReference.Open", "Contact.Read", "Contact.Create", "Search.Use", "History.Read", "Archive.Restore", "Trash.Read", "Trash.Restore", "Settings.ReadOwn", "Settings.UpdateOwn"], files, personal: true);
++        Hub = new(client, ["FileCatalog.Read", "FileCatalog.Create", "FileCatalog.Update", "FileLocation.Update", "FileReference.Open", "Contact.Read", "Contact.Create", "Search.Use", "History.Read", "Archive.Restore", "Trash.Read", "Trash.Restore", "Settings.ReadOwn", "Settings.UpdateOwn"], files, personal: true);
+         Links = new(client, () => Selected?.Lifecycle == "active") { ShowTargetId = false };
+         Links.Changed += version => { if (_selected is not null) { _selected = _selected with { Version = version }; OnPropertyChanged(nameof(Selected)); } };
+         RefreshCommand = new((_, _) => Run(Refresh), _ => !IsBusy);
+@@ -33,7 +33,7 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
+     private void OpenObject(string type, Guid id)
+     {
+         Refresh(); Selected = Objects.FirstOrDefault(o => o.Id == id);
+-        if (type == "catalog_item") { Area = Areas[0]; Hub.SelectedCatalogItem = Hub.Catalog.FirstOrDefault(c => c.Id == id); }
++        if (type == "catalog_item") { Area = Areas[0]; _ = Hub.SelectCatalogItemAsync(id); }
+         else if (type == "contact") { Area = Areas[1]; Hub.SelectedContact = Hub.Contacts.FirstOrDefault(c => c.Id == id); }
+         OpenObjectRequested?.Invoke(type, id);
+     }
+diff --git a/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs b/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs
+index a603347..c8f237a 100644
+--- a/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs
+@@ -17,7 +17,7 @@ public sealed record DesktopSearchHit(DesktopSearchResult Source, string TitlePr
+ public sealed record DesktopSearchGroup(string Title, IReadOnlyList<DesktopSearchHit> Items);
+ public sealed record CatalogItemTypeChoice(string Value, string Label);
+ 
+-public sealed class WorkHubViewModel : ViewModelBase, IDisposable
++public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+ {
+     private readonly IDesktopWorkApiClient _client;
+     private readonly IFileAccessAdapter _files;
+@@ -29,7 +29,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+     private IReadOnlyList<DesktopSearchResult> _searchResults = [];
+     private IReadOnlyList<DesktopNotification> _notifications = [];
+     private IReadOnlyList<DesktopLifecycleItem> _lifecycleItems = [];
+-    private DesktopCatalogItem? _selectedCatalogItem;
++    private CatalogNodeViewModel? _selectedCatalogItem;
+     private DesktopNotification? _selectedNotification;
+     private DesktopLifecycleItem? _selectedLifecycleItem;
+     private DesktopSearchHit? _selectedSearchHit;
+@@ -85,10 +85,13 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+         if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
+             Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
+         ServerAddress = serverAddress ?? "Сервер компании";
+-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea);
++        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending);
+         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
+-        CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanUseServerWrites && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
+-        AddLocationCommand = new(AddLocationAsync, _ => CanUseServerWrites && CanUpdateLocation && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference" && !string.IsNullOrWhiteSpace(NewItemPath));
++        CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
++        CreateCatalogFolderCommand = new((_, ct) => CreateCatalogEntryAsync("virtual_folder", ct), _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
++        MoveCatalogItemCommand = new(MoveCatalogItemAsync, p => MoveRequest(p) is { } move && CanMoveCatalogItem(move.ItemId, move.ParentId));
++        SelectCatalogRootCommand = new((_, _) => { SelectedCatalogItem = null; return System.Threading.Tasks.Task.CompletedTask; }, _ => Has("FileCatalog.Read"));
++        AddLocationCommand = new(AddLocationAsync, _ => CanWriteCatalog && CanUpdateLocation && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference" && !string.IsNullOrWhiteSpace(NewItemPath));
+         OpenFileCommand = new(OpenFileAsync, _ => _active && _sessionAvailable && CanOpenFile && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference");
+         CreateContactCommand = new(CreateContactAsync, _ => CanUseServerWrites && CanCreateContact && !string.IsNullOrWhiteSpace(NewContactFirstName) && !string.IsNullOrWhiteSpace(NewContactDisplayName));
+         MarkReadCommand = new(MarkReadAsync, p => CanUseNotificationWrites && (p as DesktopNotification ?? SelectedNotification) is { Status: not "read" and not "dismissed" });
+@@ -136,7 +139,21 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+     public IReadOnlyList<DesktopNotification> Notifications { get => _notifications; private set { if (SetProperty(ref _notifications, value)) { OnPropertyChanged(nameof(UnreadCount)); OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); MarkAllReadCommand.RaiseCanExecuteChanged(); } } }
+     public IReadOnlyList<DesktopLifecycleItem> LifecycleItems { get => _lifecycleItems; private set { if (SetProperty(ref _lifecycleItems, value)) NotifyLifecyclePresentation(); } }
+     public int UnreadCount => Notifications.Count(n => n.Status is not ("read" or "dismissed"));
+-    public DesktopCatalogItem? SelectedCatalogItem { get => _selectedCatalogItem; set { if (SetProperty(ref _selectedCatalogItem, value)) { Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0); NotifyCommands(); } } }
++    public CatalogNodeViewModel? SelectedCatalogItem
++    {
++        get => _selectedCatalogItem;
++        set
++        {
++            var previous = _selectedCatalogItem;
++            if (!SetProperty(ref _selectedCatalogItem, value)) return;
++            if (previous is not null) previous.IsSelected = false;
++            if (value is not null) value.IsSelected = true;
++            Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0);
++            NotifyCatalogSelection();
++            NotifyCommands();
++        }
++    }
++
+     public DesktopNotification? SelectedNotification { get => _selectedNotification; set { if (SetProperty(ref _selectedNotification, value)) MarkReadCommand.RaiseCanExecuteChanged(); } }
+     public DesktopLifecycleItem? SelectedLifecycleItem { get => _selectedLifecycleItem; set { if (SetProperty(ref _selectedLifecycleItem, value)) RestoreLifecycleItemCommand.RaiseCanExecuteChanged(); } }
+     public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set { SetProperty(ref _selectedSearchHit, value); Links?.SetSource(value?.Source.ObjectId ?? Guid.Empty, value?.Source.Version ?? 0); } }
+@@ -167,7 +184,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+         .Where(item => string.IsNullOrWhiteSpace(LifecycleQuery) || item.Title.Contains(LifecycleQuery.Trim(), StringComparison.CurrentCultureIgnoreCase))
+         .ToArray();
+     public bool HasVisibleLifecycleItems => VisibleLifecycleItems.Count > 0;
+-    public string NewItemName { get => _newItemName; set { if (SetProperty(ref _newItemName, value)) CreateCatalogItemCommand.RaiseCanExecuteChanged(); } }
++    public string NewItemName { get => _newItemName; set { if (SetProperty(ref _newItemName, value)) { CreateCatalogItemCommand.RaiseCanExecuteChanged(); CreateCatalogFolderCommand.RaiseCanExecuteChanged(); } } }
+     public string NewItemPath { get => _newItemPath; set { if (SetProperty(ref _newItemPath, value)) AddLocationCommand.RaiseCanExecuteChanged(); } }
+     public string NewContactFirstName { get => _newContactFirstName; set { if (SetProperty(ref _newContactFirstName, value)) CreateContactCommand.RaiseCanExecuteChanged(); } }
+     public string NewContactLastName { get => _newContactLastName; set => SetProperty(ref _newContactLastName, value); }
+@@ -246,9 +263,9 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+     public AsyncCommand SaveUserSettingsCommand { get; }
+     public AsyncCommand SaveNotificationPreferencesCommand { get; }
+     public AsyncCommand SaveOrganizationSettingsCommand { get; }
+-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, SearchCommand, CreateCatalogItemCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand];
++    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, SearchCommand, CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, SelectCatalogRootCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand];
+ 
+-    internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, AddLocationCommand, CreateContactCommand,
++    internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
+         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand }
+         .Any(command => command.IsExecuting);
+     internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
+@@ -346,7 +363,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+         {
+             switch (Area)
+             {
+-                case WorkHubArea.Catalog: Apply(await _client.GetCatalogAsync(ct), value => { Catalog = value; SelectedCatalogItem = value.FirstOrDefault(); }); break;
++                case WorkHubArea.Catalog: await ReloadCatalogAsync(ct); break;
+                 case WorkHubArea.Contacts: Apply(await _client.GetContactsAsync(ct), value => Contacts = value); break;
+                 case WorkHubArea.Notifications: Apply(await _client.GetNotificationsAsync(ct), value => { Notifications = value; SelectedNotification = value.FirstOrDefault(); }); break;
+                 case WorkHubArea.Search when SearchQuery.Trim().Length >= 2: await SearchCoreAsync(ct); break;
+@@ -356,7 +373,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+                 case WorkHubArea.Settings: await RefreshSettingsAsync(ct); break;
+             }
+         }
+-        finally { EndOperation(); }
++        finally { EndOperation(); NotifyCommands(); }
+     }
+ 
+     private async System.Threading.Tasks.Task RefreshSettingsAsync(CancellationToken ct)
+@@ -383,16 +400,26 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+             SearchResults = value;
+             SelectedSearchHit = SearchGroups.SelectMany(group => group.Items).FirstOrDefault();
+         });
+-    private async System.Threading.Tasks.Task CreateCatalogItemAsync(object? _, CancellationToken ct)
+-    {
+-        var result = await _client.CreateCatalogItemAsync(NewItemName, NewItemType, null, ct);
+-        Apply(result, value => { Catalog = [value, .. Catalog]; SelectedCatalogItem = value; NewItemName = string.Empty; SetFeedback(value.ItemType == "virtual_folder" ? "Виртуальная папка создана в каталоге Task." : "Запись создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success); });
+-    }
++    private System.Threading.Tasks.Task CreateCatalogItemAsync(object? _, CancellationToken ct) => CreateCatalogEntryAsync(NewItemType, ct);
+     private async System.Threading.Tasks.Task AddLocationAsync(object? _, CancellationToken ct)
+     {
+         var item = SelectedCatalogItem; if (item is null) return;
+-        Apply(await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct), _ => { NewItemPath = string.Empty; SetFeedback("Расположение файла сохранено.", WorkHubFeedbackKind.Success); });
+-        if (IsPersonal) Apply(await _client.GetCatalogAsync(ct), value => { Catalog = value; SelectedCatalogItem = value.FirstOrDefault(c => c.Id == item.Id); });
++        _catalogMutationPending = true;
++        BeginOperation();
++        NotifyCommands();
++        try
++        {
++            var result = await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct);
++            if (result is DesktopWorkResult<bool>.Succeeded)
++            {
++                _catalogSnapshotCurrent = false;
++                NewItemPath = string.Empty;
++                if (await ReloadCatalogAsync(ct, item.Id)) SetFeedback("Расположение файла сохранено.", WorkHubFeedbackKind.Success);
++            }
++            else await RecoverCatalogErrorAsync(result, ct);
++        }
++        catch { _catalogSnapshotCurrent = false; throw; }
++        finally { _catalogMutationPending = false; EndOperation(); NotifyCommands(); }
+     }
+     private async System.Threading.Tasks.Task OpenFileAsync(object? _, CancellationToken ct)
+     {
+diff --git a/work/production/src/Task.Desktop/Views/WorkHubView.xaml b/work/production/src/Task.Desktop/Views/WorkHubView.xaml
+index 46b7ac6..55e96ea 100644
+--- a/work/production/src/Task.Desktop/Views/WorkHubView.xaml
++++ b/work/production/src/Task.Desktop/Views/WorkHubView.xaml
+@@ -48,14 +48,32 @@
+         <Grid Grid.Row="2" Visibility="{Binding IsCatalog, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+             <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+             <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8">
+-                <ListBox ItemsSource="{Binding Catalog}" SelectedItem="{Binding SelectedCatalogItem}" BorderThickness="0" AutomationProperties.Name="Каталог файлов" AutomationProperties.AutomationId="CatalogList">
+-                    <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="8"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding ItemTypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+-                </ListBox>
++                <DockPanel>
++                    <Button DockPanel.Dock="Top" Content="Корень каталога" Command="{Binding SelectCatalogRootCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8" AllowDrop="True" DragOver="CatalogRootDragOver" Drop="CatalogRootDrop" AutomationProperties.AutomationId="CatalogRootButton"/>
++                    <TextBlock DockPanel.Dock="Bottom" Text="Каталог пуст. Создайте папку или запись." TextWrapping="Wrap" Visibility="{Binding IsCatalogEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
++                    <TreeView ItemsSource="{Binding CatalogRoots}" BorderThickness="0" SelectedItemChanged="CatalogSelectionChanged"
++                              PreviewMouseLeftButtonDown="CatalogMouseDown" PreviewMouseMove="CatalogMouseMove" AllowDrop="True" DragOver="CatalogDragOver" Drop="CatalogDrop"
++                              AutomationProperties.Name="Дерево каталога" AutomationProperties.AutomationId="CatalogList">
++                        <TreeView.ItemContainerStyle><Style TargetType="TreeViewItem">
++                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
++                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
++                            <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
++                        </Style></TreeView.ItemContainerStyle>
++                        <TreeView.ItemTemplate><HierarchicalDataTemplate ItemsSource="{Binding Children}">
++                            <StackPanel Orientation="Horizontal" Margin="4"><TextBlock Text="{Binding Icon}" Margin="0,0,6,0"/><StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/><TextBlock Text="{Binding ItemTypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="11"/></StackPanel></StackPanel>
++                        </HierarchicalDataTemplate></TreeView.ItemTemplate>
++                    </TreeView>
++                </DockPanel>
+             </Border>
+             <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
+-                <TextBlock Text="Новая запись каталога" FontWeight="SemiBold"/>
++                <TextBlock Text="Новая запись каталога" FontWeight="SemiBold"/><TextBlock Text="{Binding CatalogCreationLocation}" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                 <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Название записи"/>
+                 <ComboBox ItemsSource="{Binding CatalogItemTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NewItemType}" Margin="0,8,0,8" AutomationProperties.AutomationId="CatalogItemType"/><Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
++                <Button Content="Создать папку" Command="{Binding CreateCatalogFolderCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="CreateCatalogFolderButton"/>
++                <Separator Margin="0,18"/>
++                <TextBlock Text="Переместить выбранный элемент в:"/>
++                <ComboBox ItemsSource="{Binding CatalogMoveDestinations}" SelectedItem="{Binding MoveDestination}" DisplayMemberPath="Label" Style="{StaticResource Task.Input.Combo}" Margin="0,6,0,8" AutomationProperties.Name="Папка назначения"/>
++                <Button Content="Переместить в…" Command="{Binding MoveCatalogItemCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoveCatalogItemButton"/>
+                 <Separator Margin="0,18"/>
+                 <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                 <TextBlock Text="{Binding CatalogPathLabel}" Margin="0,14,0,0"/>
+diff --git a/work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs b/work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs
+index 9b6ee5c..8b3e4b4 100644
+--- a/work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs
+@@ -1,8 +1,64 @@
+ using System.Windows.Controls;
++using System.Windows;
++using System.Windows.Input;
++using Task.Desktop.ViewModels;
+ 
+ namespace Task.Desktop.Views;
+ 
+ public partial class WorkHubView : UserControl
+ {
+     public WorkHubView() => InitializeComponent();
++
++    private Point _dragStart;
++    private CatalogNodeViewModel? _dragNode;
++    private static TreeViewItem? NodeContainer(object? source)
++    {
++        var element = source as DependencyObject;
++        while (element is not null && element is not TreeViewItem)
++        {
++            element = element is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D
++                ? System.Windows.Media.VisualTreeHelper.GetParent(element) : LogicalTreeHelper.GetParent(element);
++        }
++        return element as TreeViewItem;
++    }
++    private void CatalogSelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
++    {
++        if (DataContext is WorkHubViewModel vm && e.NewValue is CatalogNodeViewModel node) vm.SelectedCatalogItem = node;
++    }
++    private void CatalogMouseDown(object sender, MouseButtonEventArgs e)
++    {
++        _dragStart = e.GetPosition(this);
++        _dragNode = NodeContainer(e.OriginalSource)?.DataContext as CatalogNodeViewModel;
++    }
++    private void CatalogMouseMove(object sender, MouseEventArgs e)
++    {
++        if (e.LeftButton != MouseButtonState.Pressed || _dragNode is not { } node || DataContext is not WorkHubViewModel vm) return;
++        var offset = e.GetPosition(this) - _dragStart;
++        if (Math.Abs(offset.X) < SystemParameters.MinimumHorizontalDragDistance && Math.Abs(offset.Y) < SystemParameters.MinimumVerticalDragDistance) return;
++        _dragNode = null;
++        if (vm.CatalogMoveDestinations.Any(d => vm.CanMoveCatalogItem(node.Id, d.Id)))
++            DragDrop.DoDragDrop((DependencyObject)sender, new DataObject(typeof(CatalogNodeViewModel), node), DragDropEffects.Move);
++    }
++    private CatalogMoveRequest? DropRequest(DragEventArgs e, bool root)
++    {
++        if (DataContext is not WorkHubViewModel vm || e.Data.GetData(typeof(CatalogNodeViewModel)) is not CatalogNodeViewModel node) return null;
++        var target = NodeContainer(e.OriginalSource)?.DataContext as CatalogNodeViewModel;
++        if (!root && target is not { IsFolder: true }) return null;
++        Guid? parentId = root ? null : target!.Id;
++        return vm.CanMoveCatalogItem(node.Id, parentId) ? new(node.Id, parentId) : null;
++    }
++    private void CatalogDragOver(object sender, DragEventArgs e) => SetDropEffect(e, false);
++    private void CatalogRootDragOver(object sender, DragEventArgs e) => SetDropEffect(e, true);
++    private void SetDropEffect(DragEventArgs e, bool root)
++    {
++        e.Effects = DropRequest(e, root) is null ? DragDropEffects.None : DragDropEffects.Move;
++        e.Handled = true;
++    }
++    private void CatalogDrop(object sender, DragEventArgs e) => ExecuteDrop(e, false);
++    private void CatalogRootDrop(object sender, DragEventArgs e) => ExecuteDrop(e, true);
++    private void ExecuteDrop(DragEventArgs e, bool root)
++    {
++        if (DropRequest(e, root) is { } request && DataContext is WorkHubViewModel vm) vm.MoveCatalogItemCommand.Execute(request);
++        e.Handled = true;
++    }
+ }
+diff --git a/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs b/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs
+index 8e95198..d06f395 100644
+--- a/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs
++++ b/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs
+@@ -8,7 +8,7 @@ using Task.Desktop.Security;
+ namespace Task.Desktop.Work;
+ 
+ public sealed record DesktopCatalogItem(Guid Id, long Version, string Name, string ItemType,
+-    string? Description, string? FileExtension, string LifecycleState)
++    string? Description, string? FileExtension, string LifecycleState, Guid? ParentId = null)
+ {
+     public string ItemTypeLabel => ItemType switch { "virtual_folder" => "Виртуальная папка", "folder_reference" => "Папка на диске", _ => "Файл" };
+ }
+@@ -112,6 +112,8 @@ public interface IDesktopWorkApiClient
+     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default);
+     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default);
+     System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default);
++    System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default);
++    System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default);
+     System.Threading.Tasks.Task<DesktopWorkResult<DesktopContact>> CreateContactAsync(string firstName, string? lastName, string displayName, CancellationToken cancellationToken = default);
+     System.Threading.Tasks.Task<DesktopWorkResult<bool>> AddLocationAsync(Guid itemId, long version, string rawPath, CancellationToken cancellationToken = default);
+     System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>> ResolveLocationAsync(Guid itemId, CancellationToken cancellationToken = default);
+@@ -144,8 +146,6 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
+         _root = serverEndpoint.AbsoluteUri.TrimEnd('/') + "/api/v1/";
+     }
+ 
+-    public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) =>
+-        GetPageAsync("catalog-items?limit=200", MapCatalog, cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) =>
+         GetPageAsync("contacts?limit=200", MapContact, cancellationToken);
+     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) =>
+@@ -162,13 +162,16 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
+         return await GetPageAsync("search?q=" + System.Uri.EscapeDataString(query) + "&limit=100", MapSearch, cancellationToken).ConfigureAwait(false);
+     }
+ 
+-    public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default)
++    public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) =>
++        CreateCatalogItemAsync(name, itemType, description, null, cancellationToken);
++
++    public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default)
+     {
+         name = name?.Trim() ?? string.Empty;
+         if (name.Length is < 1 or > 500 || itemType is not ("file_reference" or "folder_reference" or "virtual_folder"))
+             return new DesktopWorkResult<DesktopCatalogItem>.ValidationFailure("Проверьте название и тип записи.");
+-        var body = new JsonObject { ["name"] = name, ["itemType"] = itemType, ["description"] = NullIfWhiteSpace(description), ["sortOrder"] = 0 };
+-        return await SendEntityAsync("catalog-items", HttpMethod.Post, body, MapCatalog, null, Key(), cancellationToken).ConfigureAwait(false);
++        var body = new JsonObject { ["name"] = name, ["itemType"] = itemType, ["description"] = NullIfWhiteSpace(description), ["sortOrder"] = 0, ["parentItemId"] = parentId };
++        return await SendEntityAsync("catalog-items", HttpMethod.Post, body, MapCatalog, null, Key(), cancellationToken, catalog: true).ConfigureAwait(false);
+     }
+ 
+     public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopContact>> CreateContactAsync(string firstName, string? lastName, string displayName, CancellationToken cancellationToken = default)
+@@ -342,12 +345,12 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
+         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException) { return new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse(); }
+     }
+ 
+-    private async System.Threading.Tasks.Task<DesktopWorkResult<T>> SendEntityAsync<T>(string path, HttpMethod method, JsonObject body, Func<JsonNode, T?> map, long? version, string? key, CancellationToken cancellationToken) where T : class
++    private async System.Threading.Tasks.Task<DesktopWorkResult<T>> SendEntityAsync<T>(string path, HttpMethod method, JsonObject body, Func<JsonNode, T?> map, long? version, string? key, CancellationToken cancellationToken, bool catalog = false) where T : class
+     {
+         var result = await SendAsync(path, method, body, version, key, cancellationToken).ConfigureAwait(false);
+-        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK or HttpStatusCode.Created } response) return Failure<T>(result);
++        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK or HttpStatusCode.Created } response) return catalog ? CatalogFailure<T>(result) : Failure<T>(result);
+         try { return JsonNode.Parse(response.Body) is { } node && map(node) is { } entity ? new DesktopWorkResult<T>.Succeeded(entity, ReadVersion(response.EntityTag)) : new DesktopWorkResult<T>.MalformedResponse(); }
+-        catch (JsonException) { return new DesktopWorkResult<T>.MalformedResponse(); }
++        catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException) { return new DesktopWorkResult<T>.MalformedResponse(); }
+     }
+ 
+     private async System.Threading.Tasks.Task<DesktopWorkResult<bool>> SendBooleanAsync(string path, JsonObject body, long? version, string? key, CancellationToken cancellationToken)
+@@ -370,16 +373,19 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
+         if (result is AuthenticatedGetResult.ServerUnavailable || result is AuthenticatedGetResult.Response { StatusCode: >= HttpStatusCode.InternalServerError }) return new DesktopWorkResult<T>.ServerUnavailable();
+         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Forbidden }) return new DesktopWorkResult<T>.Forbidden();
+         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.NotFound }) return new DesktopWorkResult<T>.NotFound();
++        if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Conflict } conflict && ErrorCode(conflict.Body) == "CATALOG_CYCLE")
++            return new DesktopWorkResult<T>.ValidationFailure("Нельзя переместить папку внутрь неё самой или её вложенной папки.");
+         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity } response) return new DesktopWorkResult<T>.ValidationFailure(Problem(response.Body));
+         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Conflict or HttpStatusCode.PreconditionFailed }) return new DesktopWorkResult<T>.Conflict();
+         return new DesktopWorkResult<T>.MalformedResponse();
+     }
+ 
++    private static string? ErrorCode(string body) { try { return JsonNode.Parse(body)?["code"]?.GetValue<string>(); } catch (Exception e) when (e is JsonException or InvalidOperationException) { return null; } }
+     private static string Problem(string body) { try { return JsonNode.Parse(body)?["title"]?.GetValue<string>() ?? "Проверьте данные."; } catch { return "Проверьте данные."; } }
+     private static long? ReadVersion(string? tag) => tag is { Length: >= 4 } && tag.StartsWith("\"v", StringComparison.Ordinal) && tag.EndsWith('"') && long.TryParse(tag.AsSpan(2, tag.Length - 3), out var value) ? value : null;
+     private static string? Text(JsonNode n, string name) => n[name]?.GetValue<string>();
+     private static DesktopCatalogItem? MapCatalog(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "name") is { Length: > 0 } name && Text(n, "itemType") is { Length: > 0 } type
+-        ? new(id, version, name, type, Text(n, "description"), Text(n, "fileExtension"), Text(n, "lifecycleState") ?? "active") : null;
++        ? new(id, version, name, type, Text(n, "description"), Text(n, "fileExtension"), Text(n, "lifecycleState") ?? "active", n["parentItemId"] is null ? null : Guid.Parse(Text(n, "parentItemId")!)) : null;
+     private static DesktopContact? MapContact(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "displayName") is { Length: > 0 } display && Text(n, "firstName") is { Length: > 0 } first
+         ? new(id, version, display, first, Text(n, "lastName"), Text(n, "notes"), Text(n, "status") ?? "active", Text(n, "lifecycleState") ?? "active") : null;
+     private static DesktopSearchResult? MapSearch(JsonNode n) => Guid.TryParse(Text(n, "objectId"), out var id) && Text(n, "objectType") is { Length: > 0 } type && Text(n, "title") is { Length: > 0 } title && n["version"]?.GetValue<long>() is > 0 and var version && DateTimeOffset.TryParse(Text(n, "updatedAt"), out var updated)
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs
+index f08492e..2695c9e 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs
+@@ -7,7 +7,7 @@ using Task.Desktop.Work;
+ 
+ namespace Task.Desktop.Tests.Work;
+ 
+-public sealed class DesktopWorkApiClientTests
++public sealed partial class DesktopWorkApiClientTests
+ {
+     private static readonly Guid SessionId = Guid.NewGuid();
+     private static readonly Guid OrganizationId = Guid.NewGuid();
+@@ -35,7 +35,7 @@ public sealed class DesktopWorkApiClientTests
+         var location = Assert.IsType<DesktopWorkResult<DesktopFileLocation?>.Succeeded>(await fixture.Client.ResolveLocationAsync(ItemId)).Value;
+ 
+         Assert.NotNull(location); Assert.Equal(@"C:\Work\plan.docx", location.RawPath);
+-        Assert.Equal(["/api/v1/catalog-items", "/api/v1/contacts", "/api/v1/notifications", "/api/v1/search", $"/api/v1/catalog-items/{ItemId:D}/resolve-location"], fixture.Requests.Select(r => r.Uri.AbsolutePath));
++        Assert.Equal(["/api/v1/catalog/tree", "/api/v1/contacts", "/api/v1/notifications", "/api/v1/search", $"/api/v1/catalog-items/{ItemId:D}/resolve-location"], fixture.Requests.Select(r => r.Uri.AbsolutePath));
+         Assert.All(fixture.Requests, request => Assert.Equal("AT_initial", request.Bearer));
+     }
+ 
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs
+index cb44420..a47c876 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs
+@@ -291,11 +291,14 @@ public sealed class WorkHubViewModelTests
+         public Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>>>? CatalogHandler { get; init; }
+         public IReadOnlyList<DesktopContact> Contacts { get; init; } = [];
+         public int ContactCallCount { get; private set; }
+-        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) => CatalogHandler is null ? Ok<IReadOnlyList<DesktopCatalogItem>>([new(ItemId, 1, "Plan", "file_reference", null, ".docx", "active")]) : CatalogHandler(cancellationToken);
++        private readonly List<DesktopCatalogItem> _catalog = [new(ItemId, 1, "Plan", "file_reference", null, ".docx", "active")];
++        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) => CatalogHandler is null ? Ok<IReadOnlyList<DesktopCatalogItem>>(_catalog.ToArray()) : CatalogHandler(cancellationToken);
+         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) { ContactCallCount++; return Ok(Contacts); }
+         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopNotification>>([new(Guid.NewGuid(), 1, "task.assigned", "One", "Body", "info", "delivered", TaskId, DateTimeOffset.UtcNow), new(Guid.NewGuid(), 1, "system.info", "Two", "Body", "warning", "delivered", null, DateTimeOffset.UtcNow)]);
+         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopSearchResult>>([new(TaskId, "task", "Alpha", null, 1, DateTimeOffset.UtcNow)]);
+-        public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) => Ok(new DesktopCatalogItem(Guid.NewGuid(), 1, name, itemType, description, null, "active"));
++        public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) => CreateCatalogItemAsync(name, itemType, description, null, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default) { var item = new DesktopCatalogItem(Guid.NewGuid(), 1, name, itemType, description, null, "active", parentId); _catalog.Add(item); return Ok(item); }
++        public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default) { var item = _catalog.Single(i => i.Id == id) with { Version = version + 1, ParentId = parentId }; _catalog.RemoveAll(i => i.Id == id); _catalog.Add(item); return Ok(item); }
+         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopContact>> CreateContactAsync(string firstName, string? lastName, string displayName, CancellationToken cancellationToken = default) => Ok(new DesktopContact(Guid.NewGuid(), 1, displayName, firstName, lastName, null, "active", "active"));
+         public System.Threading.Tasks.Task<DesktopWorkResult<bool>> AddLocationAsync(Guid itemId, long version, string rawPath, CancellationToken cancellationToken = default) { LocationMessage = "Расположение файла сохранено."; return Ok(true); }
+         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>> ResolveLocationAsync(Guid itemId, CancellationToken cancellationToken = default) => Ok<DesktopFileLocation?>(new(Guid.NewGuid(), 1, "local_path", @"C:\Work\contract.docx", true));
+diff --git a/work/production/src/Task.Desktop/ViewModels/CatalogNodeViewModel.cs b/work/production/src/Task.Desktop/ViewModels/CatalogNodeViewModel.cs
+new file mode 100644
+index 0000000..dd6b071
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/CatalogNodeViewModel.cs
+@@ -0,0 +1,25 @@
++using Task.Desktop.Work;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed class CatalogNodeViewModel(DesktopCatalogItem item) : ViewModelBase
++{
++    private bool _isExpanded;
++    private bool _isSelected;
++    internal DesktopCatalogItem Item { get; } = item;
++    public Guid Id => Item.Id;
++    public long Version => Item.Version;
++    public string Name => Item.Name;
++    public string ItemType => Item.ItemType;
++    public string ItemTypeLabel => Item.ItemTypeLabel;
++    public string? Description => Item.Description;
++    public Guid? ParentId => Item.ParentId;
++    public bool IsFolder => ItemType == "virtual_folder";
++    public string Icon => IsFolder ? "📁" : "📄";
++    public List<CatalogNodeViewModel> Children { get; } = [];
++    public bool IsExpanded { get => _isExpanded; set => SetProperty(ref _isExpanded, value); }
++    public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
++}
++
++public sealed record CatalogMoveRequest(Guid ItemId, Guid? ParentId);
++public sealed record CatalogDestination(Guid? Id, string Label);
+diff --git a/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs b/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs
+new file mode 100644
+index 0000000..52f4468
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs
+@@ -0,0 +1,160 @@
++using Task.Desktop.Work;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed partial class WorkHubViewModel
++{
++    private IReadOnlyList<CatalogNodeViewModel> _catalogRoots = [];
++    private Dictionary<Guid, CatalogNodeViewModel> _catalogNodes = [];
++    private bool _catalogMutationPending;
++    private bool _catalogSnapshotCurrent;
++    private CatalogDestination? _moveDestination;
++    public IReadOnlyList<CatalogNodeViewModel> CatalogRoots { get => _catalogRoots; private set => SetProperty(ref _catalogRoots, value); }
++    public bool IsCatalogEmpty => CatalogRoots.Count == 0;
++    public AsyncCommand CreateCatalogFolderCommand { get; private set; } = null!;
++    public AsyncCommand MoveCatalogItemCommand { get; private set; } = null!;
++    public AsyncCommand SelectCatalogRootCommand { get; private set; } = null!;
++    public CatalogDestination? MoveDestination { get => _moveDestination; set { if (SetProperty(ref _moveDestination, value)) MoveCatalogItemCommand.RaiseCanExecuteChanged(); } }
++    public string CatalogCreationLocation => CreationParentId is { } id && _catalogNodes.TryGetValue(id, out var parent) ? $"Создать в: {parent.Name}" : "Создать в: корень каталога";
++    private Guid? CreationParentId => SelectedCatalogItem is { IsFolder: true } folder ? folder.Id : SelectedCatalogItem?.ParentId;
++    private bool CanWriteCatalog => CanUseServerWrites && IsCatalog && Has("FileCatalog.Read") && _catalogSnapshotCurrent && !_catalogMutationPending && !IsLoading;
++    public IReadOnlyList<CatalogDestination> CatalogMoveDestinations => [new(null, "Корень каталога"), .. _catalogNodes.Values
++        .Where(n => n.IsFolder && SelectedCatalogItem is { } selected && IsValidCatalogMove(selected.Id, n.Id))
++        .Select(n => new CatalogDestination(n.Id, CatalogPath(n)))];
++
++    private string CatalogPath(CatalogNodeViewModel node)
++    {
++        var names = new Stack<string>();
++        names.Push(node.Name);
++        while (node.ParentId is { } parent && _catalogNodes.TryGetValue(parent, out node!)) names.Push(node.Name);
++        return string.Join(" / ", names);
++    }
++
++    public bool CanMoveCatalogItem(Guid itemId, Guid? parentId) => CanWriteCatalog && Has("FileCatalog.Update") && IsValidCatalogMove(itemId, parentId);
++    private bool IsValidCatalogMove(Guid itemId, Guid? parentId)
++    {
++        if (!_catalogNodes.TryGetValue(itemId, out var item) || item.ParentId == parentId) return false;
++        if (parentId is null) return true;
++        if (!_catalogNodes.TryGetValue(parentId.Value, out var parent) || !parent.IsFolder) return false;
++        var visited = new HashSet<Guid>();
++        for (CatalogNodeViewModel? ancestor = parent; ancestor is not null; ancestor = ancestor.ParentId is { } id ? _catalogNodes.GetValueOrDefault(id) : null)
++            if (ancestor.Id == itemId || !visited.Add(ancestor.Id)) return false;
++        return true;
++    }
++
++    private CatalogMoveRequest? MoveRequest(object? parameter) => parameter as CatalogMoveRequest ??
++        (SelectedCatalogItem is { } item && MoveDestination is { } destination ? new(item.Id, destination.Id) : null);
++
++    private void ReplaceCatalog(IReadOnlyList<DesktopCatalogItem> items, Guid? selectedId = null)
++    {
++        var expanded = _catalogNodes.Values.Where(n => n.IsExpanded).Select(n => n.Id).ToHashSet();
++        selectedId ??= SelectedCatalogItem?.Id;
++        var fallback = SelectedCatalogItem?.ParentId;
++        var nodes = items.ToDictionary(i => i.Id, i => new CatalogNodeViewModel(i) { IsExpanded = expanded.Contains(i.Id) });
++        var roots = new List<CatalogNodeViewModel>();
++        foreach (var item in items)
++        {
++            var node = nodes[item.Id];
++            if (node.ParentId is { } parent && nodes.TryGetValue(parent, out var parentNode) && parentNode.IsFolder)
++                parentNode.Children.Add(node);
++            else roots.Add(node);
++        }
++        Catalog = items;
++        _catalogNodes = nodes;
++        CatalogRoots = roots;
++        SelectedCatalogItem = selectedId is { } id ? nodes.GetValueOrDefault(id) ?? (fallback is { } fallbackId ? nodes.GetValueOrDefault(fallbackId) : null) : null;
++        OnPropertyChanged(nameof(IsCatalogEmpty));
++        NotifyCatalogSelection();
++    }
++
++    public async System.Threading.Tasks.Task<bool> SelectCatalogItemAsync(Guid id, CancellationToken cancellationToken = default)
++    {
++        if (!Has("FileCatalog.Read") || !_sessionAvailable) return false;
++        if (!_catalogNodes.ContainsKey(id) && _networkAvailable) await ReloadCatalogAsync(cancellationToken);
++        if (!_catalogNodes.TryGetValue(id, out var node)) return false;
++        for (var parent = node.ParentId; parent is { } parentId && _catalogNodes.TryGetValue(parentId, out var ancestor); parent = ancestor.ParentId)
++            ancestor.IsExpanded = true;
++        SelectedCatalogItem = node;
++        return true;
++    }
++
++    private void NotifyCatalogSelection()
++    {
++        OnPropertyChanged(nameof(CatalogCreationLocation));
++        OnPropertyChanged(nameof(CatalogMoveDestinations));
++        MoveDestination = CatalogMoveDestinations.FirstOrDefault(d => d.Id == MoveDestination?.Id) ?? CatalogMoveDestinations.FirstOrDefault();
++    }
++
++    private async System.Threading.Tasks.Task<bool> ReloadCatalogAsync(CancellationToken ct, Guid? selectedId = null, bool reveal = false)
++    {
++        var result = await _client.GetCatalogAsync(ct);
++        if (result is DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded success)
++        {
++            Apply(result, value => { ReplaceCatalog(value, selectedId); _catalogSnapshotCurrent = true; });
++            if (reveal && selectedId is { } id) await SelectCatalogItemAsync(id, ct);
++        }
++        else
++        {
++            _catalogSnapshotCurrent = false;
++            Apply(result, _ => { });
++        }
++        NotifyCommands();
++        return result is DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded;
++    }
++
++    private async System.Threading.Tasks.Task CreateCatalogEntryAsync(string type, CancellationToken ct)
++    {
++        _catalogMutationPending = true;
++        BeginOperation();
++        NotifyCommands();
++        try
++        {
++            var result = await _client.CreateCatalogItemAsync(NewItemName, type, null, CreationParentId, ct);
++            if (result is DesktopWorkResult<DesktopCatalogItem>.Succeeded success)
++            {
++                _catalogSnapshotCurrent = false;
++                ReplaceCatalog([.. Catalog, success.Value], success.Value.Id);
++                NewItemName = string.Empty;
++                if (await ReloadCatalogAsync(ct, success.Value.Id, true))
++                    SetFeedback(type == "virtual_folder" ? "Виртуальная папка создана в каталоге Task." : "Запись создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success);
++            }
++            else await RecoverCatalogErrorAsync(result, ct);
++        }
++        catch { _catalogSnapshotCurrent = false; throw; }
++        finally { _catalogMutationPending = false; EndOperation(); NotifyCommands(); }
++    }
++
++    private async System.Threading.Tasks.Task MoveCatalogItemAsync(object? parameter, CancellationToken ct)
++    {
++        var request = MoveRequest(parameter);
++        if (request is null || !CanMoveCatalogItem(request.ItemId, request.ParentId)) return;
++        var item = _catalogNodes[request.ItemId];
++        _catalogMutationPending = true;
++        BeginOperation();
++        NotifyCommands();
++        try
++        {
++            var result = await _client.MoveCatalogItemAsync(item.Id, item.Version, request.ParentId, ct);
++            if (result is DesktopWorkResult<DesktopCatalogItem>.Succeeded success)
++            {
++                _catalogSnapshotCurrent = false;
++                ReplaceCatalog(Catalog.Select(i => i.Id == item.Id ? success.Value : i).ToArray(), item.Id);
++                if (await ReloadCatalogAsync(ct, item.Id, true)) SetFeedback("Элемент перемещён.", WorkHubFeedbackKind.Success);
++            }
++            else await RecoverCatalogErrorAsync(result, ct);
++        }
++        catch { _catalogSnapshotCurrent = false; throw; }
++        finally { _catalogMutationPending = false; EndOperation(); NotifyCommands(); }
++    }
++
++    private async System.Threading.Tasks.Task RecoverCatalogErrorAsync<T>(DesktopWorkResult<T> result, CancellationToken ct)
++    {
++        if (result is DesktopWorkResult<T>.ServerUnavailable) _catalogSnapshotCurrent = false;
++        if (result is DesktopWorkResult<T>.Conflict or DesktopWorkResult<T>.NotFound or DesktopWorkResult<T>.MalformedResponse)
++        {
++            _catalogSnapshotCurrent = false;
++            if (!await ReloadCatalogAsync(ct)) return;
++        }
++        Apply(result, _ => { });
++    }
++}
+diff --git a/work/production/src/Task.Desktop/Work/DesktopCatalogApiClient.cs b/work/production/src/Task.Desktop/Work/DesktopCatalogApiClient.cs
+new file mode 100644
+index 0000000..1d5b281
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Work/DesktopCatalogApiClient.cs
+@@ -0,0 +1,67 @@
++using System.Net;
++using System.Net.Http;
++using System.Text.Json;
++using System.Text.Json.Nodes;
++using Task.Desktop.Security;
++
++namespace Task.Desktop.Work;
++
++public sealed partial class DesktopWorkApiClient
++{
++    public async System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default)
++    {
++        var items = new List<DesktopCatalogItem>();
++        var seen = new HashSet<Guid>();
++        var parents = new Queue<Guid?>();
++        parents.Enqueue(null);
++        while (parents.TryDequeue(out var parent))
++        {
++            var path = "catalog/tree?depth=1&limit=200" + (parent is null ? "" : $"&parentId={parent:D}");
++            string? cursor = null;
++            var cursors = new HashSet<string>(StringComparer.Ordinal);
++            do
++            {
++                var result = await _executor.GetAsync(Uri(path + (cursor is null ? "" : "&cursor=" + System.Uri.EscapeDataString(cursor))), Correlation(), cancellationToken).ConfigureAwait(false);
++                if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response)
++                    return CatalogFailure<IReadOnlyList<DesktopCatalogItem>>(result);
++                try
++                {
++                    var page = JsonNode.Parse(response.Body);
++                    if (page?["items"] is not JsonArray rows || rows.Count > 200)
++                        return new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.MalformedResponse();
++                    foreach (var row in rows)
++                    {
++                        var item = row is null ? null : MapCatalog(row);
++                        if (item is null || item.Id == Guid.Empty || item.ParentId != parent || !seen.Add(item.Id))
++                            return new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.MalformedResponse();
++                        items.Add(item);
++                        if (item.ItemType == "virtual_folder") parents.Enqueue(item.Id);
++                    }
++                    var more = page["hasMore"]?.GetValue<bool>();
++                    cursor = Text(page!, "nextCursor");
++                    if (more is null || more.Value && (string.IsNullOrWhiteSpace(cursor) || rows.Count == 0 || !cursors.Add(cursor)))
++                        return new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.MalformedResponse();
++                    if (!more.Value) cursor = null;
++                }
++                catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException)
++                { return new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.MalformedResponse(); }
++            } while (cursor is not null);
++        }
++        return new DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded(items);
++    }
++
++    public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default)
++    {
++        if (id == Guid.Empty || version is < 1 or > int.MaxValue || parentId == id || parentId == Guid.Empty)
++            return System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopCatalogItem>>(new DesktopWorkResult<DesktopCatalogItem>.ValidationFailure("Выберите допустимую папку назначения."));
++        return SendEntityAsync($"catalog-items/{id:D}/move", HttpMethod.Post,
++            new JsonObject { ["parentItemId"] = parentId, ["sortOrder"] = 0 }, MapCatalog, version, Key(), cancellationToken, catalog: true);
++    }
++    private static DesktopWorkResult<T> CatalogFailure<T>(AuthenticatedGetResult result)
++    {
++        if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity } response)
++            return new DesktopWorkResult<T>.ValidationFailure("Проверьте название и данные записи. Родителем может быть только доступная активная виртуальная папка.");
++        return Failure<T>(result);
++    }
++
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/CatalogTreeViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Work/CatalogTreeViewModelTests.cs
+new file mode 100644
+index 0000000..185835c
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Work/CatalogTreeViewModelTests.cs
+@@ -0,0 +1,166 @@
++using System.IO;
++using Task.Desktop.Personal;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Work;
++
++namespace Task.Desktop.Tests.Work;
++
++public sealed class CatalogTreeViewModelTests : IDisposable
++{
++    private readonly string _directory = Path.Combine(Path.GetTempPath(), "TaskCatalogTreeTests", Guid.NewGuid().ToString("N"));
++    private PersonalTaskStore Store() => new(new PersonalDataPaths(_directory));
++    private static WorkHubViewModel Hub(IDesktopWorkApiClient client, string[]? capabilities = null, bool personal = true)
++    {
++        var vm = new WorkHubViewModel(client, capabilities ?? ["FileCatalog.Read", "FileCatalog.Create", "FileCatalog.Update", "FileLocation.Update", "FileReference.Open"], personal: personal);
++        vm.Activate(WorkHubArea.Catalog);
++        return vm;
++    }
++
++    [Fact]
++    public void EmptyCatalogHasNoSelectionAndCanCreateInRoot()
++    {
++        using var store = Store(); using var vm = Hub(new PersonalWorkClient(store));
++        Assert.Empty(vm.CatalogRoots); Assert.Null(vm.SelectedCatalogItem); Assert.True(vm.IsCatalogEmpty);
++        vm.NewItemName = "Folder"; Assert.True(vm.CreateCatalogFolderCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task BuildsMultipleLevelsAndRevealsSelectedParentChain()
++    {
++        using var store = Store();
++        var root = store.CreateCatalog("Root", "virtual_folder", null);
++        var child = store.CreateCatalog("Nested", "virtual_folder", null, root.Id);
++        var file = store.CreateCatalog("File", "file_reference", null, child.Id);
++        using var vm = Hub(new PersonalWorkClient(store));
++        var node = Assert.Single(vm.CatalogRoots);
++        Assert.Equal(root.Id, node.Id); Assert.Equal(child.Id, Assert.Single(node.Children).Id);
++        Assert.Equal(file.Id, Assert.Single(node.Children[0].Children).Id);
++        Assert.True(await vm.SelectCatalogItemAsync(file.Id));
++        Assert.True(node.IsExpanded); Assert.True(node.Children[0].IsExpanded); Assert.True(vm.SelectedCatalogItem!.IsSelected);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CreatesFoldersInRootAndSelectedFolderAndFilesBesideSelectedFile()
++    {
++        using var store = Store(); using var vm = Hub(new PersonalWorkClient(store));
++        vm.NewItemName = "Root"; await vm.CreateCatalogFolderCommand.ExecuteAsync();
++        var root = vm.SelectedCatalogItem!; Assert.Null(root.ParentId);
++        vm.NewItemName = "Nested"; await vm.CreateCatalogFolderCommand.ExecuteAsync();
++        var child = vm.SelectedCatalogItem!; Assert.Equal(root.Id, child.ParentId);
++        vm.NewItemName = "File"; await vm.CreateCatalogItemCommand.ExecuteAsync();
++        var file = vm.SelectedCatalogItem!; Assert.Equal(child.Id, file.ParentId); Assert.Equal("file_reference", file.ItemType);
++        vm.NewItemName = "Sibling"; vm.NewItemType = "folder_reference"; await vm.CreateCatalogItemCommand.ExecuteAsync();
++        Assert.Equal(child.Id, vm.SelectedCatalogItem!.ParentId);
++        Assert.Equal(2, vm.CatalogRoots[0].Children[0].Children.Count);
++        Assert.True(vm.CatalogRoots[0].IsExpanded); Assert.True(vm.CatalogRoots[0].Children[0].IsExpanded);
++        await vm.SelectCatalogRootCommand.ExecuteAsync(); vm.NewItemName = "Other";
++        await vm.CreateCatalogFolderCommand.ExecuteAsync(); Assert.Equal(2, vm.CatalogRoots.Count);
++    }
++
++    [Theory]
++    [InlineData("file_reference")]
++    [InlineData("virtual_folder")]
++    public async System.Threading.Tasks.Task MovesBetweenFoldersAndBackToRootUsingFreshVersions(string type)
++    {
++        using var store = Store();
++        var a = store.CreateCatalog("A", "virtual_folder", null); var b = store.CreateCatalog("B", "virtual_folder", null);
++        var item = store.CreateCatalog("Item", type, null, a.Id);
++        using var vm = Hub(new PersonalWorkClient(store)); await vm.SelectCatalogItemAsync(item.Id);
++        vm.MoveDestination = vm.CatalogMoveDestinations.Single(d => d.Id == b.Id);
++        await vm.MoveCatalogItemCommand.ExecuteAsync();
++        Assert.Equal(b.Id, vm.SelectedCatalogItem!.ParentId); Assert.Equal(2, vm.SelectedCatalogItem.Version);
++        Assert.Empty(vm.CatalogRoots.Single(n => n.Id == a.Id).Children);
++        Assert.Equal(item.Id, Assert.Single(vm.CatalogRoots.Single(n => n.Id == b.Id).Children).Id);
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(item.Id, null));
++        Assert.Null(vm.SelectedCatalogItem!.ParentId); Assert.Equal(3, vm.SelectedCatalogItem.Version);
++        Assert.Equal(3, vm.CatalogRoots.Count);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task RejectsSelfDescendantAndRegularItemParentsInUiAndStore()
++    {
++        using var store = Store(); var root = store.CreateCatalog("Root", "virtual_folder", null);
++        var child = store.CreateCatalog("Child", "virtual_folder", null, root.Id);
++        var file = store.CreateCatalog("File", "file_reference", null);
++        using var vm = Hub(new PersonalWorkClient(store)); await vm.SelectCatalogItemAsync(root.Id);
++        foreach (var parent in new[] { root.Id, child.Id, file.Id })
++        {
++            Assert.False(vm.CanMoveCatalogItem(root.Id, parent));
++            Assert.False(await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(root.Id, parent)));
++            Assert.Throws<ArgumentException>(() => store.MoveCatalog(root.Id, 1, parent));
++        }
++        Assert.DoesNotContain(vm.CatalogMoveDestinations, d => d.Id == child.Id || d.Id == root.Id || d.Id == file.Id);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task ConflictRefreshesVersionAndKeepsWorkingForRetry()
++    {
++        using var store = Store(); var a = store.CreateCatalog("A", "virtual_folder", null); var b = store.CreateCatalog("B", "virtual_folder", null);
++        var file = store.CreateCatalog("File", "file_reference", null, a.Id);
++        using var vm = Hub(new PersonalWorkClient(store)); await vm.SelectCatalogItemAsync(file.Id);
++        store.MoveCatalog(file.Id, 1, b.Id);
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(file.Id, null));
++        Assert.Equal(WorkHubFeedbackKind.Warning, vm.FeedbackKind); Assert.Equal(b.Id, vm.SelectedCatalogItem!.ParentId); Assert.Equal(2, vm.SelectedCatalogItem.Version);
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(file.Id, null));
++        Assert.Null(vm.SelectedCatalogItem!.ParentId); Assert.Equal(3, vm.SelectedCatalogItem.Version);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task LocationMutationAlsoRefreshesItemVersionBeforeMove()
++    {
++        using var store = Store(); var folder = store.CreateCatalog("Folder", "virtual_folder", null);
++        var file = store.CreateCatalog("File", "file_reference", null);
++        using var vm = Hub(new PersonalWorkClient(store)); await vm.SelectCatalogItemAsync(file.Id);
++        vm.NewItemPath = @"C:\Work\document.docx"; await vm.AddLocationCommand.ExecuteAsync();
++        Assert.Equal(2, vm.SelectedCatalogItem!.Version);
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(file.Id, folder.Id));
++        Assert.Equal(3, vm.SelectedCatalogItem!.Version); Assert.Equal(folder.Id, vm.SelectedCatalogItem.ParentId);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task RefreshPreservesExpansionAndSelectionAndFallsBackToParent()
++    {
++        using var store = Store(); var folder = store.CreateCatalog("Folder", "virtual_folder", null);
++        var file = store.CreateCatalog("File", "file_reference", null, folder.Id);
++        using var vm = Hub(new PersonalWorkClient(store)); await vm.SelectCatalogItemAsync(file.Id);
++        await vm.RefreshCommand.ExecuteAsync(); Assert.Equal(file.Id, vm.SelectedCatalogItem!.Id); Assert.True(vm.CatalogRoots[0].IsExpanded);
++        store.ChangeWorkspaceLifecycle(file.Id, 1, "trash"); await vm.RefreshCommand.ExecuteAsync();
++        Assert.Equal(folder.Id, vm.SelectedCatalogItem!.Id); Assert.Empty(vm.SelectedCatalogItem.Children);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task MissingPermissionsAndUnavailableServerDisableWritesWithoutClearingTree()
++    {
++        using var store = Store(); var folder = store.CreateCatalog("Folder", "virtual_folder", null);
++        var file = store.CreateCatalog("File", "file_reference", null);
++        using var vm = Hub(new PersonalWorkClient(store), ["FileCatalog.Read"], false);
++        await vm.SelectCatalogItemAsync(file.Id); vm.NewItemName = "Draft";
++        Assert.False(vm.CreateCatalogItemCommand.CanExecute(null)); Assert.False(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.False(vm.CanMoveCatalogItem(file.Id, folder.Id));
++        vm.UpdateCapabilities(["FileCatalog.Read", "FileCatalog.Create", "FileCatalog.Update"]);
++        Assert.True(vm.CanMoveCatalogItem(file.Id, folder.Id));
++        vm.UpdateConnectivity(false);
++        Assert.False(vm.CreateCatalogItemCommand.CanExecute(null)); Assert.False(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.False(vm.CanMoveCatalogItem(file.Id, folder.Id));
++        Assert.Equal(2, vm.CatalogRoots.Count); Assert.Equal(file.Id, vm.SelectedCatalogItem!.Id);
++        vm.UpdateConnectivity(true); await vm.RefreshCommand.ExecuteAsync();
++        Assert.True(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.True(vm.CanMoveCatalogItem(file.Id, folder.Id));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task PersonalHierarchyAndMovedRootPersistAcrossReopen()
++    {
++        Guid rootId, nestedId, fileId;
++        using (var store = Store())
++        {
++            var root = store.CreateCatalog("Root", "virtual_folder", null); rootId = root.Id;
++            var nested = store.CreateCatalog("Nested", "virtual_folder", null, root.Id); nestedId = nested.Id;
++            var file = store.CreateCatalog("File", "file_reference", null, nested.Id); fileId = file.Id;
++            store.MoveCatalog(file.Id, 1, root.Id); store.MoveCatalog(nested.Id, 1, null);
++        }
++        using var reopened = Store(); using var vm = Hub(new PersonalWorkClient(reopened));
++        Assert.Equal(2, vm.CatalogRoots.Count); Assert.Null(vm.Catalog.Single(i => i.Id == nestedId).ParentId);
++        Assert.Equal(rootId, vm.Catalog.Single(i => i.Id == fileId).ParentId);
++        Assert.True(await vm.SelectCatalogItemAsync(fileId)); Assert.Equal(2, vm.SelectedCatalogItem!.Version);
++    }
++
++    public void Dispose() { if (Directory.Exists(_directory)) Directory.Delete(_directory, true); }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/DesktopCatalogApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Work/DesktopCatalogApiClientTests.cs
+new file mode 100644
+index 0000000..11a6e80
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Work/DesktopCatalogApiClientTests.cs
+@@ -0,0 +1,152 @@
++using System.Net;
++using System.Net.Http;
++using System.Text.Json;
++using System.Text.Json.Nodes;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Work;
++
++namespace Task.Desktop.Tests.Work;
++
++public sealed partial class DesktopWorkApiClientTests
++{
++    private static JsonObject CatalogJson(Guid id, string type = "file_reference", Guid? parent = null, long version = 1) => new()
++    {
++        ["id"] = id,
++        ["version"] = version,
++        ["name"] = "Item " + id,
++        ["itemType"] = type,
++        ["lifecycleState"] = "active",
++        ["parentItemId"] = parent,
++    };
++    private static HttpResponseMessage CatalogPage(IEnumerable<JsonObject> items, string? cursor = null) => Json(HttpStatusCode.OK,
++        new JsonObject { ["items"] = new JsonArray(items.ToArray<JsonNode?>()), ["hasMore"] = cursor is not null, ["nextCursor"] = cursor }.ToJsonString());
++
++    [Fact]
++    public async System.Threading.Tasks.Task CatalogLoadsAllPagesAndMoreThanEightLevelsWithoutDuplicates()
++    {
++        var roots = Enumerable.Range(0, 201).Select(_ => Guid.NewGuid()).ToArray();
++        var folders = Enumerable.Range(0, 12).Select(_ => Guid.NewGuid()).ToArray();
++        await using var fixture = await Fixture.CreateAsync((request, _) =>
++        {
++            Assert.Equal("/api/v1/catalog/tree", request.RequestUri!.AbsolutePath);
++            Assert.Contains("depth=1&limit=200", request.RequestUri.Query);
++            var query = request.RequestUri.Query;
++            if (!query.Contains("parentId=")) return System.Threading.Tasks.Task.FromResult(query.Contains("cursor=")
++                ? CatalogPage([CatalogJson(roots[200]), CatalogJson(folders[0], "virtual_folder")])
++                : CatalogPage(roots.Take(200).Select(id => CatalogJson(id)), "next+/="));
++            var parent = folders.Single(id => query.Contains(id.ToString("D")));
++            var index = Array.IndexOf(folders, parent);
++            return System.Threading.Tasks.Task.FromResult(CatalogPage(index == folders.Length - 1 ? [] : [CatalogJson(folders[index + 1], "virtual_folder", parent)]));
++        });
++        var items = Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded>(await fixture.Client.GetCatalogAsync()).Value;
++        Assert.Equal(213, items.Count); Assert.Equal(items.Count, items.Select(i => i.Id).Distinct().Count());
++        Assert.Equal(roots, items.Take(201).Select(i => i.Id)); Assert.Equal(folders[10], items[^1].ParentId);
++        Assert.Equal(14, fixture.Requests.Count); Assert.Contains("cursor=next%2B%2F%3D", fixture.Requests[1].Uri.Query);
++    }
++
++    [Theory]
++    [InlineData("{\"items\":[],\"hasMore\":true,\"nextCursor\":null}")]
++    [InlineData("{\"items\":[{\"id\":\"bad\"}],\"hasMore\":false}")]
++    public async System.Threading.Tasks.Task CatalogRejectsMalformedPages(string body)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, body)));
++        Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.MalformedResponse>(await fixture.Client.GetCatalogAsync());
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CreateAndMoveUseRuntimeParentContractIfMatchAndNewVersion()
++    {
++        var parent = Guid.NewGuid(); var version = 1;
++        await using var fixture = await Fixture.CreateAsync((request, _) => System.Threading.Tasks.Task.FromResult(Json(
++            request.RequestUri!.AbsolutePath.EndsWith("/move", StringComparison.Ordinal) ? HttpStatusCode.OK : HttpStatusCode.Created,
++            CatalogJson(ItemId, parent: parent, version: version++).ToJsonString())));
++        var created = Assert.IsType<DesktopWorkResult<DesktopCatalogItem>.Succeeded>(await fixture.Client.CreateCatalogItemAsync("File", "file_reference", null, parent)).Value;
++        var moved = Assert.IsType<DesktopWorkResult<DesktopCatalogItem>.Succeeded>(await fixture.Client.MoveCatalogItemAsync(created.Id, created.Version, null)).Value;
++        Assert.Equal(2, moved.Version);
++        Assert.Equal(parent.ToString(), JsonNode.Parse(fixture.Requests[0].Body)!["parentItemId"]!.ToString());
++        Assert.Null(JsonNode.Parse(fixture.Requests[1].Body)!["parentItemId"]);
++        Assert.Equal("\"v1\"", fixture.Requests[1].IfMatch); Assert.NotNull(fixture.Requests[1].IdempotencyKey);
++        Assert.Equal($"/api/v1/catalog-items/{ItemId:D}/move", fixture.Requests[1].Uri.AbsolutePath);
++    }
++
++    [Theory]
++    [InlineData(HttpStatusCode.Forbidden, "FORBIDDEN", "Forbidden")]
++    [InlineData(HttpStatusCode.NotFound, "OBJECT_NOT_VISIBLE", "NotFound")]
++    [InlineData(HttpStatusCode.PreconditionFailed, "VERSION_CONFLICT", "Conflict")]
++    [InlineData(HttpStatusCode.Conflict, "CATALOG_CYCLE", "ValidationFailure")]
++    [InlineData(HttpStatusCode.UnprocessableEntity, "VALIDATION_FAILED", "ValidationFailure")]
++    [InlineData(HttpStatusCode.ServiceUnavailable, "INTERNAL_ERROR", "ServerUnavailable")]
++    public async System.Threading.Tasks.Task MoveMapsStableErrorsToControlledResults(HttpStatusCode status, string code, string kind)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json(status, new JsonObject { ["code"] = code, ["title"] = "raw server title" }.ToJsonString())));
++        var result = await fixture.Client.MoveCatalogItemAsync(ItemId, 1, null);
++        Assert.StartsWith(kind, result.GetType().Name);
++        if (result is DesktopWorkResult<DesktopCatalogItem>.ValidationFailure failure) Assert.DoesNotContain("raw server", failure.Message);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CorporateCreationUsesSelectionAndFailedMutationRefreshDisablesWritesUntilFreshRead()
++    {
++        var folder = Guid.NewGuid(); var items = new List<JsonObject> { CatalogJson(folder, "virtual_folder") };
++        var readUnavailable = false;
++        await using var fixture = await Fixture.CreateAsync(async (request, ct) =>
++        {
++            if (request.Method == HttpMethod.Post)
++            {
++                var draft = JsonNode.Parse(await request.Content!.ReadAsStringAsync(ct))!;
++                Assert.Equal(folder.ToString(), draft["parentItemId"]!.ToString());
++                var item = CatalogJson(ItemId, parent: folder); items.Add(item); readUnavailable = true;
++                return Json(HttpStatusCode.Created, item.ToJsonString());
++            }
++            if (readUnavailable) return Json(HttpStatusCode.ServiceUnavailable, "{}");
++            var parent = request.RequestUri!.Query.Contains("parentId=") ? folder : (Guid?)null;
++            return CatalogPage(items.Where(i => i["parentItemId"]?.GetValue<Guid>() == parent).Select(i => (JsonObject)i.DeepClone()));
++        });
++        using var vm = new WorkHubViewModel(fixture.Client, ["FileCatalog.Read", "FileCatalog.Create", "FileCatalog.Update"]);
++        vm.Activate(WorkHubArea.Catalog);
++        for (var i = 0; i < 200 && vm.Catalog.Count == 0; i++) await System.Threading.Tasks.Task.Delay(10);
++        Assert.True(await vm.SelectCatalogItemAsync(folder)); vm.NewItemName = "Child";
++        await vm.CreateCatalogItemCommand.ExecuteAsync();
++        Assert.Equal(ItemId, vm.SelectedCatalogItem!.Id); Assert.Equal(folder, vm.SelectedCatalogItem.ParentId);
++        Assert.True(vm.IsOffline); Assert.Equal(2, vm.Catalog.Count);
++        vm.UpdateConnectivity(true); vm.NewItemName = "Next";
++        Assert.False(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.False(vm.CanMoveCatalogItem(ItemId, null));
++        readUnavailable = false; await vm.RefreshCommand.ExecuteAsync();
++        Assert.True(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.True(vm.CanMoveCatalogItem(ItemId, null));
++        Assert.StartsWith("Обновлено", vm.LastSuccessfulRefreshText);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CorporateTreeMovesRecoversConflictAndPreservesCacheOnServerFailure()
++    {
++        var folder = Guid.NewGuid(); var parent = (Guid?)null; long version = 1; var offline = false; var conflict = true;
++        await using var fixture = await Fixture.CreateAsync(async (request, ct) =>
++        {
++            if (offline) return Json(HttpStatusCode.ServiceUnavailable, "{}");
++            if (request.Method == HttpMethod.Get)
++                return request.RequestUri!.Query.Contains("parentId=")
++                    ? CatalogPage(parent == folder ? [CatalogJson(ItemId, parent: folder, version: version)] : [])
++                    : CatalogPage(parent is null ? [CatalogJson(folder, "virtual_folder"), CatalogJson(ItemId, version: version)] : [CatalogJson(folder, "virtual_folder")]);
++            if (conflict) { conflict = false; version++; return Json(HttpStatusCode.PreconditionFailed, "{\"code\":\"VERSION_CONFLICT\"}"); }
++            Assert.Equal($"\"v{version}\"", request.Headers.IfMatch.Single().ToString());
++            var body = JsonNode.Parse(await request.Content!.ReadAsStringAsync(ct));
++            parent = body!["parentItemId"]?.GetValue<Guid>(); version++;
++            return Json(HttpStatusCode.OK, CatalogJson(ItemId, parent: parent, version: version).ToJsonString());
++        });
++        using var vm = new WorkHubViewModel(fixture.Client, ["FileCatalog.Read", "FileCatalog.Update", "FileCatalog.Create"]);
++        vm.Activate(WorkHubArea.Catalog);
++        for (var i = 0; i < 200 && vm.Catalog.Count == 0; i++) await System.Threading.Tasks.Task.Delay(10);
++        Assert.True(await vm.SelectCatalogItemAsync(ItemId));
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(ItemId, folder));
++        Assert.Equal(2, vm.SelectedCatalogItem!.Version); Assert.Equal(WorkHubFeedbackKind.Warning, vm.FeedbackKind);
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(ItemId, folder));
++        Assert.Equal(3, vm.SelectedCatalogItem!.Version); Assert.Equal(folder, vm.SelectedCatalogItem.ParentId);
++        await vm.MoveCatalogItemCommand.ExecuteAsync(new CatalogMoveRequest(ItemId, null));
++        Assert.Equal(4, vm.SelectedCatalogItem!.Version); Assert.Null(vm.SelectedCatalogItem.ParentId);
++        offline = true; await vm.RefreshCommand.ExecuteAsync();
++        Assert.Equal(2, vm.CatalogRoots.Count); Assert.Equal(ItemId, vm.SelectedCatalogItem!.Id); Assert.True(vm.IsOffline);
++        vm.NewItemName = "Draft"; Assert.False(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.False(vm.CanMoveCatalogItem(ItemId, folder));
++        offline = false; vm.UpdateConnectivity(true); await vm.RefreshCommand.ExecuteAsync();
++        Assert.True(vm.CreateCatalogFolderCommand.CanExecute(null)); Assert.True(vm.CanMoveCatalogItem(ItemId, folder));
++    }
++}
+diff --git a/work/catalog_tree_1/UiProbe/UiProbe.csproj b/work/catalog_tree_1/UiProbe/UiProbe.csproj
+new file mode 100644
+index 0000000..b279060
+--- /dev/null
++++ b/work/catalog_tree_1/UiProbe/UiProbe.csproj
+@@ -0,0 +1,10 @@
++<Project Sdk="Microsoft.NET.Sdk">
++  <PropertyGroup>
++    <OutputType>Exe</OutputType>
++    <TargetFramework>net10.0-windows</TargetFramework>
++    <UseWPF>true</UseWPF>
++    <ImplicitUsings>enable</ImplicitUsings>
++    <Nullable>enable</Nullable>
++  </PropertyGroup>
++  <ItemGroup><ProjectReference Include="../../production/src/Task.Desktop/Task.Desktop.csproj" /></ItemGroup>
++</Project>
+diff --git a/work/catalog_tree_1/UiProbe/Program.cs b/work/catalog_tree_1/UiProbe/Program.cs
+new file mode 100644
+index 0000000..90021a6
+--- /dev/null
++++ b/work/catalog_tree_1/UiProbe/Program.cs
+@@ -0,0 +1,85 @@
++using System.IO;
++using System.Reflection;
++using System.Windows;
++using System.Windows.Automation;
++using System.Windows.Controls;
++using System.Windows.Input;
++using System.Windows.Media;
++using System.Windows.Media.Imaging;
++using System.Windows.Threading;
++using Task.Desktop.Personal;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Views;
++
++internal static class Program
++{
++    [STAThread]
++    private static int Main(string[] args)
++    {
++        var evidence = Path.GetFullPath(args[0]); Directory.CreateDirectory(evidence);
++        var data = Path.Combine(evidence, "personal-ui-data-" + Guid.NewGuid().ToString("N"));
++        try
++        {
++            var app = new Application();
++            app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/Task.Desktop;component/Resources/Theme.xaml") });
++            app.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
++            using var store = new PersonalTaskStore(new PersonalDataPaths(data));
++            var a = store.CreateCatalog("Рабочие документы", "virtual_folder", null);
++            var nested = store.CreateCatalog("Договоры", "virtual_folder", null, a.Id);
++            var b = store.CreateCatalog("Входящие", "virtual_folder", null);
++            var file = store.CreateCatalog("Договор поставки.docx", "file_reference", null, nested.Id);
++            using var vm = new WorkHubViewModel(new PersonalWorkClient(store), ["FileCatalog.Read", "FileCatalog.Create", "FileCatalog.Update", "FileReference.Open", "FileLocation.Update"], personal: true);
++            vm.Activate(WorkHubArea.Catalog);
++            var view = new WorkHubView { DataContext = vm, Width = 1100, Height = 760, Background = (Brush)app.FindResource("Task.Brush.Surface.Base"), Foreground = (Brush)app.FindResource("Task.Brush.Text.Primary") };
++            view.Measure(new Size(1100, 760)); view.Arrange(new Rect(0, 0, 1100, 760)); Pump(view);
++            var tree = Find<TreeView>(view, "CatalogList");
++            Require(tree.Items.Count == 2, "WPF roots");
++            var first = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromItem(vm.CatalogRoots.Single(n => n.Id == a.Id));
++            first.IsExpanded = true; Pump(view);
++            var child = (TreeViewItem)first.ItemContainerGenerator.ContainerFromIndex(0); child.IsExpanded = true; Pump(view);
++            var leaf = (TreeViewItem)child.ItemContainerGenerator.ContainerFromIndex(0); leaf.IsSelected = true; Pump(view);
++            Require(vm.SelectedCatalogItem?.Id == file.Id, "WPF nested selection -> ViewModel");
++            Require(vm.CatalogRoots.Single(n => n.Id == a.Id).IsExpanded && vm.CatalogRoots.Single(n => n.Id == a.Id).Children[0].IsExpanded, "Two-way expansion");
++            var destination = (TreeViewItem)tree.ItemContainerGenerator.ContainerFromItem(vm.CatalogRoots.Single(n => n.Id == b.Id));
++            Drop(destination, vm.SelectedCatalogItem!, DragDrop.DragOverEvent);
++            Drop(destination, vm.SelectedCatalogItem!, DragDrop.DropEvent); Pump(view);
++            Require(vm.SelectedCatalogItem?.ParentId == b.Id && vm.SelectedCatalogItem.Version == 2, "Nested WPF drop -> storage move and fresh version");
++            var rootButton = Find<Button>(view, "CatalogRootButton");
++            Drop(rootButton, vm.SelectedCatalogItem!, DragDrop.DropEvent); Pump(view);
++            Require(vm.SelectedCatalogItem?.ParentId is null && vm.SelectedCatalogItem?.Version == 3, "Root WPF drop -> storage move");
++            Require(vm.SelectCatalogItemAsync(nested.Id).GetAwaiter().GetResult(), "Reveal folder"); Pump(view);
++            vm.NewItemName = "Новый договор";
++            Find<Button>(view, "CreateCatalogItemButton").Command.Execute(null); Pump(view);
++            Require(vm.SelectedCatalogItem?.ParentId == nested.Id, "WPF create button -> selected folder");
++            rootButton.Command.Execute(null); Pump(view);
++            Require(vm.SelectedCatalogItem is null, "WPF root button clears nested selection");
++            vm.NewItemName = "Корневая папка";
++            Find<Button>(view, "CreateCatalogFolderButton").Command.Execute(null); Pump(view);
++            Require(vm.SelectedCatalogItem is { ParentId: null, IsFolder: true }, "WPF create folder in root");
++            Require(vm.SelectCatalogItemAsync(file.Id).GetAwaiter().GetResult(), "Reveal moved file"); Pump(view);
++            var bitmap = new RenderTargetBitmap(1100, 760, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
++            using var output = File.Create(Path.Combine(evidence, "catalog-tree-wpf.png"));
++            var png = new PngBitmapEncoder(); png.Frames.Add(BitmapFrame.Create(bitmap)); png.Save(output);
++            Console.WriteLine("PASS: WPF tree, nested selection, expansion, drag/drop to folder, drop to root, create in folder, version refresh, rendered screenshot.");
++            return 0;
++        }
++        catch (Exception exception) { Console.Error.WriteLine(exception); return 1; }
++    }
++    private static void Require(bool condition, string label) { if (!condition) throw new InvalidOperationException(label); Console.WriteLine("PASS: " + label); }
++    private static void Pump(FrameworkElement view) { view.Dispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle); view.UpdateLayout(); }
++    private static T Find<T>(DependencyObject root, string id) where T : DependencyObject
++    {
++        if (root is T match && AutomationProperties.GetAutomationId(match) == id) return match;
++        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
++        { try { return Find<T>(VisualTreeHelper.GetChild(root, i), id); } catch (KeyNotFoundException) { } }
++        throw new KeyNotFoundException(id);
++    }
++    private static void Drop(UIElement target, CatalogNodeViewModel source, RoutedEvent routedEvent)
++    {
++        var data = new DataObject(typeof(CatalogNodeViewModel), source);
++        var args = (DragEventArgs)Activator.CreateInstance(typeof(DragEventArgs), BindingFlags.Instance | BindingFlags.NonPublic,
++            null, [data, DragDropKeyStates.LeftMouseButton, DragDropEffects.Move, target, new Point(1, 1)], null)!;
++        args.RoutedEvent = routedEvent; target.RaiseEvent(args);
++        if (routedEvent == DragDrop.DragOverEvent) Require(args.Effects == DragDropEffects.Move, "WPF drop feedback");
++    }
++}
+diff --git a/work/catalog_tree_1/Verify-CatalogTree.ps1 b/work/catalog_tree_1/Verify-CatalogTree.ps1
+new file mode 100644
+index 0000000..a70d088
+--- /dev/null
++++ b/work/catalog_tree_1/Verify-CatalogTree.ps1
+@@ -0,0 +1,26 @@
++param([Parameter(Mandatory)][string]$PostgresConnection)
++$ErrorActionPreference = 'Stop'
++$production = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../production'))
++$evidence = Join-Path $PSScriptRoot 'evidence/recheck'
++New-Item -ItemType Directory -Path $evidence -Force | Out-Null
++$previousConnection = $env:TASK_POSTGRES_TEST_ADMIN_CONNECTION
++function Invoke-Gate([scriptblock]$Gate) {
++    & $Gate
++    if ($LASTEXITCODE -ne 0) { throw "Gate failed with exit code $LASTEXITCODE" }
++}
++Push-Location $production
++try {
++    $env:TASK_POSTGRES_TEST_ADMIN_CONNECTION = $PostgresConnection
++    Invoke-Gate { pwsh -NoProfile -File verification/Test-DependencyAudit.ps1 }
++    Invoke-Gate { dotnet format whitespace Task.sln --verify-no-changes --no-restore }
++    Invoke-Gate { pwsh -NoProfile -File verification/Test-ProjectBoundaries.ps1 }
++    Invoke-Gate { dotnet build Task.sln --configuration Release --no-restore }
++    Invoke-Gate { dotnet test Task.sln --configuration Release --no-build --no-restore --logger trx --results-directory $evidence }
++    Invoke-Gate { dotnet run --project ../catalog_tree_1/UiProbe/UiProbe.csproj --configuration Release -- $evidence }
++    Invoke-Gate { pwsh -NoProfile -File verification/Test-IndependentSecurityReview.ps1 -Configuration Release -SkipRestore -NoBuild -SkipTests -EvidenceDirectory (Join-Path $evidence 'security') }
++    Invoke-Gate { pwsh -NoProfile -File verification/Test-ProductionSecretsTls.Contract.ps1 }
++}
++finally {
++    $env:TASK_POSTGRES_TEST_ADMIN_CONNECTION = $previousConnection
++    Pop-Location
++}
+diff --git a/work/catalog_tree_1/.gitignore b/work/catalog_tree_1/.gitignore
+new file mode 100644
+index 0000000..f3fcdf6
+--- /dev/null
++++ b/work/catalog_tree_1/.gitignore
+@@ -0,0 +1,5 @@
++/postgres/
++/UiProbe/bin/
++/UiProbe/obj/
++/evidence/
++/postgres-runtime-path.txt

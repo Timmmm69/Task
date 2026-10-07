@@ -1,0 +1,182 @@
+{
+  "artifact": "Task Catalog Tree",
+  "version": "1.0.0",
+  "baseHead": "f6689a57f83ce5b050c626e11850a399a2006fca",
+  "files": [
+    {
+      "path": "catalog-tree-wpf.png",
+      "bytes": 57398,
+      "sha256": "4f89509116ac21e7cacf3d913f1b58673782a9c6f6cd582a86e829a6fb9d04d8"
+    },
+    {
+      "path": "changes.patch",
+      "bytes": 92257,
+      "sha256": "5253e183a58578e3462d70e5d9169fa0124c9996c765706dab517d1d46df484d"
+    },
+    {
+      "path": "evidence/build-final.log",
+      "bytes": 1516,
+      "sha256": "a241120109c8ce1607109e1f220f191bdd3c4bcc0a684c2eeb125257c7271705"
+    },
+    {
+      "path": "evidence/full-final/novik_TIM_2026-10-07_23_26_44_net10.0.trx",
+      "bytes": 1101541,
+      "sha256": "8a6f5355399f743597925ee31f78064ae7a4706c09ecc105a641aaab6759cbfa"
+    },
+    {
+      "path": "evidence/full-final/novik_TIM_2026-10-07_23_26_45_net10.0.trx",
+      "bytes": 747574,
+      "sha256": "ea2e06e36f6fcec98a92af17d105026f04538ae2de1adf222d868efc5c3a22b9"
+    },
+    {
+      "path": "evidence/full-final/novik_TIM_2026-10-07_23_26_45_net10.0[1].trx",
+      "bytes": 876908,
+      "sha256": "d5859701b456f66e704ead0ca9f28b561875534d5353d865e0aab75ddfc7d30a"
+    },
+    {
+      "path": "evidence/keyboard-final/novik_TIM_2026-10-07_23_29_42_net10.0.trx",
+      "bytes": 17423,
+      "sha256": "92d2221a9cf00b722254f7c91ca0f25c362f3d8de2abb4e5c6af16cf99c58350"
+    },
+    {
+      "path": "evidence/postgres/novik_TIM_2026-10-07_23_23_27_net10.0.trx",
+      "bytes": 26068,
+      "sha256": "cfe1cba205b2c526e2b8a568ab317bf6838d0b245b466b74b9c435066fbe2aaa"
+    },
+    {
+      "path": "evidence/security/checks.json",
+      "bytes": 194,
+      "sha256": "1400579532b714b3a87d5fbea90315735e847139d6b7a865ab144c17b15cb25a"
+    },
+    {
+      "path": "evidence/security/dependency-vulnerabilities.json",
+      "bytes": 1434,
+      "sha256": "e8b3707af3161b877bbd00bf45ffbde49380b059060e95cb0c012dd7fb8c6a51"
+    },
+    {
+      "path": "evidence/targeted/novik_TIM_2026-10-07_23_25_51_net10.0.trx",
+      "bytes": 68357,
+      "sha256": "058685f5b63be7ca8f3687702a205250c16c4ab5b56c9fbdb3b619c6f66a906a"
+    },
+    {
+      "path": "evidence/tests-final.log",
+      "bytes": 1909,
+      "sha256": "8ebfd78762f430f94ab4d12218b088a85ed2c2a559e9dd14850707ddb45960a2"
+    },
+    {
+      "path": "evidence/ui-final.log",
+      "bytes": 509,
+      "sha256": "f3ce5209bc9c9107d267ee04cb92aff12833f82634ba2576ebb7fcd40d4e32a8"
+    },
+    {
+      "path": "source/work/catalog_tree_1/.gitignore",
+      "bytes": 77,
+      "sha256": "a30b8e6280a072d82d2bfb09b7aad5f7cb50ca2d688273fa63f596b481748ffb"
+    },
+    {
+      "path": "source/work/catalog_tree_1/UiProbe/Program.cs",
+      "bytes": 6512,
+      "sha256": "5ecf1a1a2d0f57b41e1ac0b8fa8f85e1ee46e1245e5e8026fda1b510475f928e"
+    },
+    {
+      "path": "source/work/catalog_tree_1/UiProbe/UiProbe.csproj",
+      "bytes": 382,
+      "sha256": "29d5a57139d5cacf13868bf59151aed54d319307ab4acfeea3db2485581d4f85"
+    },
+    {
+      "path": "source/work/catalog_tree_1/Verify-CatalogTree.ps1",
+      "bytes": 1557,
+      "sha256": "c050e47bfc8b2a4215e4672724a686c7ebf592d20579a8c3e6ec5272c2c55826"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Personal/PersonalWorkClient.cs",
+      "bytes": 8515,
+      "sha256": "9215eb73881a6c98dc60900e7a61beeff0ae6cc61dd4e6e8459476b6aa1eecfe"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Personal/PersonalWorkspaceStore.cs",
+      "bytes": 17231,
+      "sha256": "6b60b5fad29e1edf547d4a1390ac721028f0ef57d97701aead20c9c9d1cc81b5"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs",
+      "bytes": 8395,
+      "sha256": "9bceca56b48a15bb3eed258f8f834bff84dcd8fc25174f97158394cd23e68984"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CatalogNodeViewModel.cs",
+      "bytes": 1067,
+      "sha256": "96201dd5aa6e77fb4920032a1c250acbd54ec3c2f5e82c035391ace433d58cee"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs",
+      "bytes": 8971,
+      "sha256": "86d175c521bbdd7fb703c4b8b1fe2f1872a68f8d0a656feb914c6b4b30fe1732"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 52250,
+      "sha256": "6962c57de991f0a6148b8701d7f7a1f6a2b947769df83c9b427cf7831d33175c"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "bytes": 43893,
+      "sha256": "5da46c5f7c7c5c8d609c5c0c05528cf1cb13c884252d64cafd1b1edf7dca2b74"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs",
+      "bytes": 3225,
+      "sha256": "6f1e1cf7ed3cec5d0bbb14fa0368d9994af960847668fc799c6ccc414e440631"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Work/DesktopCatalogApiClient.cs",
+      "bytes": 4212,
+      "sha256": "f8d33cf39c5cadb2a0d7d78f20d8d4d3730231563cf28f9a8ac506370691ed9f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "bytes": 37878,
+      "sha256": "b402be79eb139f7e7d9a653b33003c24f980b64098a15cc09d235f824dc8fd4c"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/CatalogTreeViewModelTests.cs",
+      "bytes": 10646,
+      "sha256": "efe74c07f20a198f5bc3c9fd1dac672a94f6524daf8bc1b14407c46509c14c96"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/DesktopCatalogApiClientTests.cs",
+      "bytes": 10807,
+      "sha256": "2a81fac0ecac45bb8c6337ab9bacca6e5496240d19a0f8214fa9b25951d02a9b"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs",
+      "bytes": 17186,
+      "sha256": "8033ee0c1ee8a03cff1a375476e04804ee1a28abf93ed74a7e571a4ec7d9bf45"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs",
+      "bytes": 20569,
+      "sha256": "00edab9b94bf03ea2edfa07a9149e3074da5417399f09e7eaad599157acd738c"
+    },
+    {
+      "path": "test-summary.json",
+      "bytes": 516,
+      "sha256": "1d111e20a454b1818a03fc8608f1731708a0b5345a581b6b45f1d29352a78dc6"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 11872,
+      "sha256": "b92263e83a7a21ba8c6271d37ac0d2235fb78c64090fe76b858552a935ec54fc"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 937,
+      "sha256": "86fca96904f2ecb0aba3ffae32ab653267ad3724b7808a59c45b85ef04d8d94b"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

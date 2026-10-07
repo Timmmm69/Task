@@ -15,7 +15,7 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
     public PersonalWorkspaceViewModel(PersonalTaskStore store, IFileAccessAdapter? files = null)
     {
         _store = store; _area = Areas[0]; var client = new PersonalWorkClient(store);
-        Hub = new(client, ["FileCatalog.Read", "FileCatalog.Create", "FileLocation.Update", "FileReference.Open", "Contact.Read", "Contact.Create", "Search.Use", "History.Read", "Archive.Restore", "Trash.Read", "Trash.Restore", "Settings.ReadOwn", "Settings.UpdateOwn"], files, personal: true);
+        Hub = new(client, ["FileCatalog.Read", "FileCatalog.Create", "FileCatalog.Update", "FileLocation.Update", "FileReference.Open", "Contact.Read", "Contact.Create", "Search.Use", "History.Read", "Archive.Restore", "Trash.Read", "Trash.Restore", "Settings.ReadOwn", "Settings.UpdateOwn"], files, personal: true);
         Links = new(client, () => Selected?.Lifecycle == "active") { ShowTargetId = false };
         Links.Changed += version => { if (_selected is not null) { _selected = _selected with { Version = version }; OnPropertyChanged(nameof(Selected)); } };
         RefreshCommand = new((_, _) => Run(Refresh), _ => !IsBusy);
@@ -33,7 +33,7 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
     private void OpenObject(string type, Guid id)
     {
         Refresh(); Selected = Objects.FirstOrDefault(o => o.Id == id);
-        if (type == "catalog_item") { Area = Areas[0]; Hub.SelectedCatalogItem = Hub.Catalog.FirstOrDefault(c => c.Id == id); }
+        if (type == "catalog_item") { Area = Areas[0]; _ = Hub.SelectCatalogItemAsync(id); }
         else if (type == "contact") { Area = Areas[1]; Hub.SelectedContact = Hub.Contacts.FirstOrDefault(c => c.Id == id); }
         OpenObjectRequested?.Invoke(type, id);
     }

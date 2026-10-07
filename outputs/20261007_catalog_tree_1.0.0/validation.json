@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-07",
+  "timezone": "Europe/Minsk",
+  "status": "PASS",
+  "scope": "Catalog hierarchy",
+  "tests": {
+    "total": 1929,
+    "passed": 1929,
+    "failed": 0,
+    "skipped": 0,
+    "desktop": 520,
+    "backend": 819,
+    "serviceHosts": 590,
+    "newCases": 23,
+    "realPostgresCatalogCases": 18,
+    "keyboardCasesRechecked": 11
+  },
+  "checks": {
+    "restore": "PASS",
+    "build": "PASS",
+    "format": "PASS",
+    "boundaries": "PASS",
+    "dependencyAudit": "PASS",
+    "securityReview": "PASS",
+    "secretsTlsContract": "PASS",
+    "dashboard": "PASS",
+    "wpfEventsLayout": "PASS",
+    "sourceSnapshotHashes": "PASS"
+  },
+  "verificationLimitations": [
+    "Physical mouse drag in installed portable client not executed"
+  ],
+  "git": {
+    "baseHead": "f6689a57f83ce5b050c626e11850a399a2006fca",
+    "committed": false,
+    "pushed": false
+  }
+}

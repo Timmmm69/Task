@@ -8,7 +8,7 @@ using Task.Desktop.Security;
 namespace Task.Desktop.Work;
 
 public sealed record DesktopCatalogItem(Guid Id, long Version, string Name, string ItemType,
-    string? Description, string? FileExtension, string LifecycleState)
+    string? Description, string? FileExtension, string LifecycleState, Guid? ParentId = null)
 {
     public string ItemTypeLabel => ItemType switch { "virtual_folder" => "Виртуальная папка", "folder_reference" => "Папка на диске", _ => "Файл" };
 }
@@ -112,6 +112,8 @@ public interface IDesktopWorkApiClient
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopContact>> CreateContactAsync(string firstName, string? lastName, string displayName, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<bool>> AddLocationAsync(Guid itemId, long version, string rawPath, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>> ResolveLocationAsync(Guid itemId, CancellationToken cancellationToken = default);
@@ -144,8 +146,6 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
         _root = serverEndpoint.AbsoluteUri.TrimEnd('/') + "/api/v1/";
     }
 
-    public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) =>
-        GetPageAsync("catalog-items?limit=200", MapCatalog, cancellationToken);
     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) =>
         GetPageAsync("contacts?limit=200", MapContact, cancellationToken);
     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) =>
@@ -162,13 +162,16 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
         return await GetPageAsync("search?q=" + System.Uri.EscapeDataString(query) + "&limit=100", MapSearch, cancellationToken).ConfigureAwait(false);
     }
 
-    public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default)
+    public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) =>
+        CreateCatalogItemAsync(name, itemType, description, null, cancellationToken);
+
+    public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default)
     {
         name = name?.Trim() ?? string.Empty;
         if (name.Length is < 1 or > 500 || itemType is not ("file_reference" or "folder_reference" or "virtual_folder"))
             return new DesktopWorkResult<DesktopCatalogItem>.ValidationFailure("Проверьте название и тип записи.");
-        var body = new JsonObject { ["name"] = name, ["itemType"] = itemType, ["description"] = NullIfWhiteSpace(description), ["sortOrder"] = 0 };
-        return await SendEntityAsync("catalog-items", HttpMethod.Post, body, MapCatalog, null, Key(), cancellationToken).ConfigureAwait(false);
+        var body = new JsonObject { ["name"] = name, ["itemType"] = itemType, ["description"] = NullIfWhiteSpace(description), ["sortOrder"] = 0, ["parentItemId"] = parentId };
+        return await SendEntityAsync("catalog-items", HttpMethod.Post, body, MapCatalog, null, Key(), cancellationToken, catalog: true).ConfigureAwait(false);
     }
 
     public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopContact>> CreateContactAsync(string firstName, string? lastName, string displayName, CancellationToken cancellationToken = default)
@@ -342,12 +345,12 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException) { return new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse(); }
     }
 
-    private async System.Threading.Tasks.Task<DesktopWorkResult<T>> SendEntityAsync<T>(string path, HttpMethod method, JsonObject body, Func<JsonNode, T?> map, long? version, string? key, CancellationToken cancellationToken) where T : class
+    private async System.Threading.Tasks.Task<DesktopWorkResult<T>> SendEntityAsync<T>(string path, HttpMethod method, JsonObject body, Func<JsonNode, T?> map, long? version, string? key, CancellationToken cancellationToken, bool catalog = false) where T : class
     {
         var result = await SendAsync(path, method, body, version, key, cancellationToken).ConfigureAwait(false);
-        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK or HttpStatusCode.Created } response) return Failure<T>(result);
+        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK or HttpStatusCode.Created } response) return catalog ? CatalogFailure<T>(result) : Failure<T>(result);
         try { return JsonNode.Parse(response.Body) is { } node && map(node) is { } entity ? new DesktopWorkResult<T>.Succeeded(entity, ReadVersion(response.EntityTag)) : new DesktopWorkResult<T>.MalformedResponse(); }
-        catch (JsonException) { return new DesktopWorkResult<T>.MalformedResponse(); }
+        catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException) { return new DesktopWorkResult<T>.MalformedResponse(); }
     }
 
     private async System.Threading.Tasks.Task<DesktopWorkResult<bool>> SendBooleanAsync(string path, JsonObject body, long? version, string? key, CancellationToken cancellationToken)
@@ -370,16 +373,19 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
         if (result is AuthenticatedGetResult.ServerUnavailable || result is AuthenticatedGetResult.Response { StatusCode: >= HttpStatusCode.InternalServerError }) return new DesktopWorkResult<T>.ServerUnavailable();
         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Forbidden }) return new DesktopWorkResult<T>.Forbidden();
         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.NotFound }) return new DesktopWorkResult<T>.NotFound();
+        if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Conflict } conflict && ErrorCode(conflict.Body) == "CATALOG_CYCLE")
+            return new DesktopWorkResult<T>.ValidationFailure("Нельзя переместить папку внутрь неё самой или её вложенной папки.");
         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity } response) return new DesktopWorkResult<T>.ValidationFailure(Problem(response.Body));
         if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Conflict or HttpStatusCode.PreconditionFailed }) return new DesktopWorkResult<T>.Conflict();
         return new DesktopWorkResult<T>.MalformedResponse();
     }
 
+    private static string? ErrorCode(string body) { try { return JsonNode.Parse(body)?["code"]?.GetValue<string>(); } catch (Exception e) when (e is JsonException or InvalidOperationException) { return null; } }
     private static string Problem(string body) { try { return JsonNode.Parse(body)?["title"]?.GetValue<string>() ?? "Проверьте данные."; } catch { return "Проверьте данные."; } }
     private static long? ReadVersion(string? tag) => tag is { Length: >= 4 } && tag.StartsWith("\"v", StringComparison.Ordinal) && tag.EndsWith('"') && long.TryParse(tag.AsSpan(2, tag.Length - 3), out var value) ? value : null;
     private static string? Text(JsonNode n, string name) => n[name]?.GetValue<string>();
     private static DesktopCatalogItem? MapCatalog(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "name") is { Length: > 0 } name && Text(n, "itemType") is { Length: > 0 } type
-        ? new(id, version, name, type, Text(n, "description"), Text(n, "fileExtension"), Text(n, "lifecycleState") ?? "active") : null;
+        ? new(id, version, name, type, Text(n, "description"), Text(n, "fileExtension"), Text(n, "lifecycleState") ?? "active", n["parentItemId"] is null ? null : Guid.Parse(Text(n, "parentItemId")!)) : null;
     private static DesktopContact? MapContact(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "displayName") is { Length: > 0 } display && Text(n, "firstName") is { Length: > 0 } first
         ? new(id, version, display, first, Text(n, "lastName"), Text(n, "notes"), Text(n, "status") ?? "active", Text(n, "lifecycleState") ?? "active") : null;
     private static DesktopSearchResult? MapSearch(JsonNode n) => Guid.TryParse(Text(n, "objectId"), out var id) && Text(n, "objectType") is { Length: > 0 } type && Text(n, "title") is { Length: > 0 } title && n["version"]?.GetValue<long>() is > 0 and var version && DateTimeOffset.TryParse(Text(n, "updatedAt"), out var updated)

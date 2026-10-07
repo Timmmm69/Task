@@ -43,9 +43,9 @@ public sealed partial class PersonalTaskStore
     }
     public IReadOnlyList<DesktopCatalogItem> Catalog() => Locked<IReadOnlyList<DesktopCatalogItem>>(() =>
     {
-        using var c = Command("SELECT id,version,name,item_type,description,lifecycle FROM personal_catalog WHERE lifecycle='active' ORDER BY name,id;");
+        using var c = Command("SELECT id,version,name,item_type,description,lifecycle,parent_id FROM personal_catalog WHERE lifecycle='active' ORDER BY name,id;");
         using var r = c.ExecuteReader(); var rows = new List<DesktopCatalogItem>();
-        while (r.Read()) rows.Add(new(Guid.Parse(r.GetString(0)), r.GetInt64(1), r.GetString(2), r.GetString(3), r.IsDBNull(4) ? null : r.GetString(4), null, r.GetString(5)));
+        while (r.Read()) rows.Add(new(Guid.Parse(r.GetString(0)), r.GetInt64(1), r.GetString(2), r.GetString(3), r.IsDBNull(4) ? null : r.GetString(4), null, r.GetString(5), r.IsDBNull(6) ? null : Guid.Parse(r.GetString(6))));
         return rows;
     });
     public DesktopCatalogItem CreateCatalog(string name, string itemType, string? description, Guid? parentId = null) => Locked(() =>
@@ -58,7 +58,7 @@ public sealed partial class PersonalTaskStore
         var id = Guid.NewGuid();
         using var c = Command("INSERT INTO personal_catalog(id,version,name,item_type,description,parent_id,updated_at) VALUES($id,1,$name,$type,$description,$parent,$now);", tx,
             ("$id", id.ToString("D")), ("$name", name), ("$type", itemType), ("$description", description), ("$parent", parentId?.ToString("D")), ("$now", Instant(_clock.GetUtcNow())));
-        c.ExecuteNonQuery(); tx.Commit(); return new DesktopCatalogItem(id, 1, name, itemType, description, null, "active");
+        c.ExecuteNonQuery(); tx.Commit(); return new DesktopCatalogItem(id, 1, name, itemType, description, null, "active", parentId);
     });
     private void ValidateCatalogParent(Guid? parent, SqliteTransaction tx)
     {

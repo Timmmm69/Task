@@ -17,7 +17,7 @@ public sealed record DesktopSearchHit(DesktopSearchResult Source, string TitlePr
 public sealed record DesktopSearchGroup(string Title, IReadOnlyList<DesktopSearchHit> Items);
 public sealed record CatalogItemTypeChoice(string Value, string Label);
 
-public sealed class WorkHubViewModel : ViewModelBase, IDisposable
+public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 {
     private readonly IDesktopWorkApiClient _client;
     private readonly IFileAccessAdapter _files;
@@ -29,7 +29,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     private IReadOnlyList<DesktopSearchResult> _searchResults = [];
     private IReadOnlyList<DesktopNotification> _notifications = [];
     private IReadOnlyList<DesktopLifecycleItem> _lifecycleItems = [];
-    private DesktopCatalogItem? _selectedCatalogItem;
+    private CatalogNodeViewModel? _selectedCatalogItem;
     private DesktopNotification? _selectedNotification;
     private DesktopLifecycleItem? _selectedLifecycleItem;
     private DesktopSearchHit? _selectedSearchHit;
@@ -85,10 +85,13 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
         if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
             Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
         ServerAddress = serverAddress ?? "Сервер компании";
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending);
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
-        CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanUseServerWrites && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
-        AddLocationCommand = new(AddLocationAsync, _ => CanUseServerWrites && CanUpdateLocation && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference" && !string.IsNullOrWhiteSpace(NewItemPath));
+        CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
+        CreateCatalogFolderCommand = new((_, ct) => CreateCatalogEntryAsync("virtual_folder", ct), _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
+        MoveCatalogItemCommand = new(MoveCatalogItemAsync, p => MoveRequest(p) is { } move && CanMoveCatalogItem(move.ItemId, move.ParentId));
+        SelectCatalogRootCommand = new((_, _) => { SelectedCatalogItem = null; return System.Threading.Tasks.Task.CompletedTask; }, _ => Has("FileCatalog.Read"));
+        AddLocationCommand = new(AddLocationAsync, _ => CanWriteCatalog && CanUpdateLocation && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference" && !string.IsNullOrWhiteSpace(NewItemPath));
         OpenFileCommand = new(OpenFileAsync, _ => _active && _sessionAvailable && CanOpenFile && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference");
         CreateContactCommand = new(CreateContactAsync, _ => CanUseServerWrites && CanCreateContact && !string.IsNullOrWhiteSpace(NewContactFirstName) && !string.IsNullOrWhiteSpace(NewContactDisplayName));
         MarkReadCommand = new(MarkReadAsync, p => CanUseNotificationWrites && (p as DesktopNotification ?? SelectedNotification) is { Status: not "read" and not "dismissed" });
@@ -136,7 +139,21 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<DesktopNotification> Notifications { get => _notifications; private set { if (SetProperty(ref _notifications, value)) { OnPropertyChanged(nameof(UnreadCount)); OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); MarkAllReadCommand.RaiseCanExecuteChanged(); } } }
     public IReadOnlyList<DesktopLifecycleItem> LifecycleItems { get => _lifecycleItems; private set { if (SetProperty(ref _lifecycleItems, value)) NotifyLifecyclePresentation(); } }
     public int UnreadCount => Notifications.Count(n => n.Status is not ("read" or "dismissed"));
-    public DesktopCatalogItem? SelectedCatalogItem { get => _selectedCatalogItem; set { if (SetProperty(ref _selectedCatalogItem, value)) { Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0); NotifyCommands(); } } }
+    public CatalogNodeViewModel? SelectedCatalogItem
+    {
+        get => _selectedCatalogItem;
+        set
+        {
+            var previous = _selectedCatalogItem;
+            if (!SetProperty(ref _selectedCatalogItem, value)) return;
+            if (previous is not null) previous.IsSelected = false;
+            if (value is not null) value.IsSelected = true;
+            Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0);
+            NotifyCatalogSelection();
+            NotifyCommands();
+        }
+    }
+
     public DesktopNotification? SelectedNotification { get => _selectedNotification; set { if (SetProperty(ref _selectedNotification, value)) MarkReadCommand.RaiseCanExecuteChanged(); } }
     public DesktopLifecycleItem? SelectedLifecycleItem { get => _selectedLifecycleItem; set { if (SetProperty(ref _selectedLifecycleItem, value)) RestoreLifecycleItemCommand.RaiseCanExecuteChanged(); } }
     public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set { SetProperty(ref _selectedSearchHit, value); Links?.SetSource(value?.Source.ObjectId ?? Guid.Empty, value?.Source.Version ?? 0); } }
@@ -167,7 +184,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
         .Where(item => string.IsNullOrWhiteSpace(LifecycleQuery) || item.Title.Contains(LifecycleQuery.Trim(), StringComparison.CurrentCultureIgnoreCase))
         .ToArray();
     public bool HasVisibleLifecycleItems => VisibleLifecycleItems.Count > 0;
-    public string NewItemName { get => _newItemName; set { if (SetProperty(ref _newItemName, value)) CreateCatalogItemCommand.RaiseCanExecuteChanged(); } }
+    public string NewItemName { get => _newItemName; set { if (SetProperty(ref _newItemName, value)) { CreateCatalogItemCommand.RaiseCanExecuteChanged(); CreateCatalogFolderCommand.RaiseCanExecuteChanged(); } } }
     public string NewItemPath { get => _newItemPath; set { if (SetProperty(ref _newItemPath, value)) AddLocationCommand.RaiseCanExecuteChanged(); } }
     public string NewContactFirstName { get => _newContactFirstName; set { if (SetProperty(ref _newContactFirstName, value)) CreateContactCommand.RaiseCanExecuteChanged(); } }
     public string NewContactLastName { get => _newContactLastName; set => SetProperty(ref _newContactLastName, value); }
@@ -246,9 +263,9 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
     public AsyncCommand SaveUserSettingsCommand { get; }
     public AsyncCommand SaveNotificationPreferencesCommand { get; }
     public AsyncCommand SaveOrganizationSettingsCommand { get; }
-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, SearchCommand, CreateCatalogItemCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand];
+    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, SearchCommand, CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, SelectCatalogRootCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand];
 
-    internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, AddLocationCommand, CreateContactCommand,
+    internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand }
         .Any(command => command.IsExecuting);
     internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
@@ -346,7 +363,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
         {
             switch (Area)
             {
-                case WorkHubArea.Catalog: Apply(await _client.GetCatalogAsync(ct), value => { Catalog = value; SelectedCatalogItem = value.FirstOrDefault(); }); break;
+                case WorkHubArea.Catalog: await ReloadCatalogAsync(ct); break;
                 case WorkHubArea.Contacts: Apply(await _client.GetContactsAsync(ct), value => Contacts = value); break;
                 case WorkHubArea.Notifications: Apply(await _client.GetNotificationsAsync(ct), value => { Notifications = value; SelectedNotification = value.FirstOrDefault(); }); break;
                 case WorkHubArea.Search when SearchQuery.Trim().Length >= 2: await SearchCoreAsync(ct); break;
@@ -356,7 +373,7 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
                 case WorkHubArea.Settings: await RefreshSettingsAsync(ct); break;
             }
         }
-        finally { EndOperation(); }
+        finally { EndOperation(); NotifyCommands(); }
     }
 
     private async System.Threading.Tasks.Task RefreshSettingsAsync(CancellationToken ct)
@@ -383,16 +400,26 @@ public sealed class WorkHubViewModel : ViewModelBase, IDisposable
             SearchResults = value;
             SelectedSearchHit = SearchGroups.SelectMany(group => group.Items).FirstOrDefault();
         });
-    private async System.Threading.Tasks.Task CreateCatalogItemAsync(object? _, CancellationToken ct)
-    {
-        var result = await _client.CreateCatalogItemAsync(NewItemName, NewItemType, null, ct);
-        Apply(result, value => { Catalog = [value, .. Catalog]; SelectedCatalogItem = value; NewItemName = string.Empty; SetFeedback(value.ItemType == "virtual_folder" ? "Виртуальная папка создана в каталоге Task." : "Запись создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success); });
-    }
+    private System.Threading.Tasks.Task CreateCatalogItemAsync(object? _, CancellationToken ct) => CreateCatalogEntryAsync(NewItemType, ct);
     private async System.Threading.Tasks.Task AddLocationAsync(object? _, CancellationToken ct)
     {
         var item = SelectedCatalogItem; if (item is null) return;
-        Apply(await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct), _ => { NewItemPath = string.Empty; SetFeedback("Расположение файла сохранено.", WorkHubFeedbackKind.Success); });
-        if (IsPersonal) Apply(await _client.GetCatalogAsync(ct), value => { Catalog = value; SelectedCatalogItem = value.FirstOrDefault(c => c.Id == item.Id); });
+        _catalogMutationPending = true;
+        BeginOperation();
+        NotifyCommands();
+        try
+        {
+            var result = await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct);
+            if (result is DesktopWorkResult<bool>.Succeeded)
+            {
+                _catalogSnapshotCurrent = false;
+                NewItemPath = string.Empty;
+                if (await ReloadCatalogAsync(ct, item.Id)) SetFeedback("Расположение файла сохранено.", WorkHubFeedbackKind.Success);
+            }
+            else await RecoverCatalogErrorAsync(result, ct);
+        }
+        catch { _catalogSnapshotCurrent = false; throw; }
+        finally { _catalogMutationPending = false; EndOperation(); NotifyCommands(); }
     }
     private async System.Threading.Tasks.Task OpenFileAsync(object? _, CancellationToken ct)
     {

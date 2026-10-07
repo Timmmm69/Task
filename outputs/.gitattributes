@@ -1,0 +1,5 @@
+# Preserve the exact bytes covered by the Catalog Tree artifact manifest.
+/20261007_catalog_tree_1.0.0/** binary
+/Task-catalog-tree-1.0.0.zip binary
+/Task-catalog-tree-1.0.0.zip.sha256 text eol=lf
+/Task-catalog-tree-1.0.0.zip.validation.json text eol=lf
