@@ -1,0 +1,9 @@
+{
+  "sha256": "2ffcffda8bb0547995b7675b64fbfc2474f05bfaa39625f68494c761ca291315",
+  "manifestSha256": "4e490da36fa0a0d17ec1487a8da54f37ec4f687afbc6f24c88091346ea671fd3",
+  "result": "PASS",
+  "uiResult": "PASS",
+  "totalTests": 1958,
+  "version": "1.0.0",
+  "checkedFiles": 43
+}

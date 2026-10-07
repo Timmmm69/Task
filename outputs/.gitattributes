@@ -3,3 +3,9 @@
 /Task-catalog-tree-1.0.0.zip binary
 /Task-catalog-tree-1.0.0.zip.sha256 text eol=lf
 /Task-catalog-tree-1.0.0.zip.validation.json text eol=lf
+
+# Preserve the exact bytes covered by the Location Manager artifact manifest.
+/20261008_location_manager_1.0.0/** binary
+/Task-location-manager-1.0.0.zip binary
+/Task-location-manager-1.0.0.zip.sha256 text eol=lf
+/Task-location-manager-1.0.0.zip.validation.json text eol=lf

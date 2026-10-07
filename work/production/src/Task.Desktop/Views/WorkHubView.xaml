@@ -65,7 +65,7 @@
                     </TreeView>
                 </DockPanel>
             </Border>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
                 <TextBlock Text="Новая запись каталога" FontWeight="SemiBold"/><TextBlock Text="{Binding CatalogCreationLocation}" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
                 <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Название записи"/>
                 <ComboBox ItemsSource="{Binding CatalogItemTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NewItemType}" Margin="0,8,0,8" AutomationProperties.AutomationId="CatalogItemType"/><Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
@@ -76,10 +76,14 @@
                 <Button Content="Переместить в…" Command="{Binding MoveCatalogItemCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoveCatalogItemButton"/>
                 <Separator Margin="0,18"/>
                 <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding CatalogPathLabel}" Margin="0,14,0,0"/>
-                <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
-                <WrapPanel>
+                <TextBlock Text="{Binding SelectedCatalogItem.Description}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                <Border Visibility="{Binding IsCorporate, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:FileLocationsView DataContext="{Binding Locations}"/></Border>
+                <StackPanel Visibility="{Binding IsPersonal, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{Binding CatalogPathLabel}" Margin="0,14,0,0"/>
+                    <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
                     <Button Content="Сохранить путь" Command="{Binding AddLocationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"/>
+                </StackPanel>
+                <WrapPanel Margin="0,10,0,0">
                     <Button Content="Открыть" Command="{Binding OpenFileCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="OpenCatalogFileButton"/>
                 </WrapPanel>
                 <TextBlock Text="{Binding FileBehaviorText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>

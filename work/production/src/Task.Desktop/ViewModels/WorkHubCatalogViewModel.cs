@@ -17,7 +17,7 @@ public sealed partial class WorkHubViewModel
     public CatalogDestination? MoveDestination { get => _moveDestination; set { if (SetProperty(ref _moveDestination, value)) MoveCatalogItemCommand.RaiseCanExecuteChanged(); } }
     public string CatalogCreationLocation => CreationParentId is { } id && _catalogNodes.TryGetValue(id, out var parent) ? $"Создать в: {parent.Name}" : "Создать в: корень каталога";
     private Guid? CreationParentId => SelectedCatalogItem is { IsFolder: true } folder ? folder.Id : SelectedCatalogItem?.ParentId;
-    private bool CanWriteCatalog => CanUseServerWrites && IsCatalog && Has("FileCatalog.Read") && _catalogSnapshotCurrent && !_catalogMutationPending && !IsLoading;
+    private bool CanWriteCatalog => CanUseServerWrites && IsCatalog && Has("FileCatalog.Read") && _catalogSnapshotCurrent && !_catalogMutationPending && Locations?.IsMutating != true && !IsLoading;
     public IReadOnlyList<CatalogDestination> CatalogMoveDestinations => [new(null, "Корень каталога"), .. _catalogNodes.Values
         .Where(n => n.IsFolder && SelectedCatalogItem is { } selected && IsValidCatalogMove(selected.Id, n.Id))
         .Select(n => new CatalogDestination(n.Id, CatalogPath(n)))];

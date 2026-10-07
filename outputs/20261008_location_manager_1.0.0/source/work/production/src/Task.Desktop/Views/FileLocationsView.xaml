@@ -1,0 +1,79 @@
+<UserControl x:Class="Task.Desktop.Views.FileLocationsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Visibility="{Binding IsVisible, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+    AutomationProperties.AutomationId="FileLocationsManager">
+    <StackPanel>
+        <WrapPanel Margin="0,0,0,8">
+            <TextBlock Text="Расположения" FontWeight="SemiBold" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="RefreshLocationsButton"/>
+        </WrapPanel>
+        <TextBlock Text="Загружаем расположения…" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,0,0,8" AutomationProperties.AutomationId="LocationsLoading"/>
+        <TextBlock Text="Расположений пока нет. Добавьте ссылку на файл или папку." TextWrapping="Wrap" Visibility="{Binding IsEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,0,0,8" AutomationProperties.AutomationId="LocationsEmpty"/>
+        <TextBlock Text="Часть путей скрыта или недоступна на этом компьютере." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Visibility="{Binding HasPartialAccess, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,0,0,8"/>
+        <ListBox ItemsSource="{Binding Items}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.AutomationId="LocationsList">
+            <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
+                <Setter Property="AutomationProperties.Name" Value="{Binding PathLabel}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style></ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate><DataTemplate>
+                <Border Style="{StaticResource Task.Surface.Subtle}" Padding="10" Margin="0,0,0,8" AutomationProperties.Name="{Binding PathLabel}">
+                    <GroupBox BorderThickness="0" Padding="0" AutomationProperties.Name="{Binding PathLabel}"><StackPanel>
+                        <WrapPanel><TextBlock Text="{Binding PrimaryLabel}" FontWeight="SemiBold" Margin="0,0,12,4"/><TextBlock Text="{Binding EnabledLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></WrapPanel>
+                        <TextBlock Text="{Binding PathLabel}" TextWrapping="Wrap" AutomationProperties.AutomationId="LocationPath"/>
+                        <TextBlock Text="{Binding TypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding ScopeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap"/>
+                        <WrapPanel Margin="0,8,0,0">
+                            <Button Content="Изменить" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,4" AutomationProperties.AutomationId="EditLocationButton"/>
+                            <Button Content="Сделать основным" Command="{Binding DataContext.MakePrimaryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,4" AutomationProperties.AutomationId="MakePrimaryLocationButton"/>
+                            <Button Content="Удалить" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,4" AutomationProperties.AutomationId="DeleteLocationButton"/>
+                        </WrapPanel>
+                    </StackPanel></GroupBox>
+                </Border>
+            </DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+        <Button Content="+ Добавить расположение" Command="{Binding AddCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,0,0,10" AutomationProperties.AutomationId="AddLocationButton"/>
+        <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,10" Visibility="{Binding EditorVisible, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="LocationEditor">
+            <StackPanel IsEnabled="{Binding IsFormEnabled}">
+                <TextBlock Text="{Binding EditorTitle}" FontWeight="SemiBold"/>
+                <TextBlock Text="Тип расположения" Margin="0,8,0,4"/>
+                <ComboBox ItemsSource="{Binding LocationTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding LocationType}" IsEnabled="{Binding PathEditable}" Style="{StaticResource Task.Input.Combo}" AutomationProperties.AutomationId="LocationTypeCombo"/>
+                <TextBlock Text="Путь" Margin="0,8,0,4"/>
+                <TextBox Text="{Binding RawPath, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding PathEditable}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="LocationPathTextBox"/>
+                <WrapPanel Margin="0,6,0,0" IsEnabled="{Binding PathEditable}">
+                    <Button Content="Выбрать файл…" Click="PickFile" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,4" AutomationProperties.AutomationId="PickLocationFileButton"/>
+                    <Button Content="Выбрать папку…" Click="PickFolder" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,4" AutomationProperties.AutomationId="PickLocationFolderButton"/>
+                </WrapPanel>
+                <StackPanel Visibility="{Binding IsUnc, Converter={StaticResource Task.BooleanToVisibilityConverter}}" IsEnabled="{Binding PathEditable}">
+                    <TextBlock Text="Разрешённый сетевой ресурс" Margin="0,8,0,4"/>
+                    <ComboBox ItemsSource="{Binding NetworkResources}" SelectedItem="{Binding NetworkResource}" DisplayMemberPath="Name" Style="{StaticResource Task.Input.Combo}" AutomationProperties.AutomationId="LocationNetworkResourceCombo"/>
+                    <TextBlock Text="{Binding NetworkResource.PathLabel}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
+                </StackPanel>
+                <TextBlock Text="Загружаем сетевые ресурсы…" Visibility="{Binding ResourcesLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                <TextBlock Text="Приоритет (меньшее число — выше)" Margin="0,8,0,4"/>
+                <TextBox Text="{Binding Priority, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Width="100" HorizontalAlignment="Left" AutomationProperties.AutomationId="LocationPriorityTextBox"/>
+                <WrapPanel Margin="0,10,0,8">
+                    <CheckBox Content="Основное" IsChecked="{Binding IsPrimary}" Margin="0,0,14,4" AutomationProperties.AutomationId="LocationPrimaryCheckBox"/>
+                    <CheckBox Content="Включено" IsChecked="{Binding IsEnabled}" AutomationProperties.AutomationId="LocationEnabledCheckBox"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <Button Content="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,6,0" AutomationProperties.AutomationId="SaveLocationButton"/>
+                    <Button Content="Отмена" Command="{Binding CancelEditCommand}" Style="{StaticResource Task.Button.Secondary}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,10" Visibility="{Binding ShowDeleteConfirmation, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Text="Удалить ссылку на это расположение? Файл или папка на диске останутся без изменений." TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding PendingDelete.PathLabel}" TextWrapping="Wrap" Margin="0,6,0,8"/>
+                <WrapPanel>
+                    <Button Content="Удалить ссылку" Command="{Binding ConfirmDeleteCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,0" AutomationProperties.AutomationId="ConfirmDeleteLocationButton"/>
+                    <Button Content="Отмена" Command="{Binding CancelDeleteCommand}" Style="{StaticResource Task.Button.Secondary}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="LocationsMessage"/>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,20 @@
+{
+  "physicalFileUnchanged": true,
+  "checks": [
+    "real WPF selection",
+    "empty",
+    "local POST",
+    "UNC resource picker",
+    "second mutation version",
+    "PATCH",
+    "real 412 draft recovery",
+    "primary",
+    "offline cache",
+    "reconnect",
+    "confirmed DELETE",
+    "last location"
+  ],
+  "result": "PASS",
+  "version": "1.0.0",
+  "catalogItemId": "e4f4ed67-d673-48f0-a885-224c6be8b69f"
+}

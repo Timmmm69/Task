@@ -1,0 +1,223 @@
+{
+  "files": [
+    {
+      "path": "evidence/accepted/desktop.stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/accepted/desktop.stdout.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/accepted/full-tests.log",
+      "size": 1963,
+      "sha256": "fb95fe47c0be789de3f5d9741e18b13d8824b0443e79581f0e66984d85f58957"
+    },
+    {
+      "path": "evidence/accepted/location-manager-ui.json",
+      "size": 430,
+      "sha256": "0f4695c9475ec86f5c1365e6ad37f2bd51473962d3b897fd10f7a0b387c35e17"
+    },
+    {
+      "path": "evidence/accepted/locations-empty.png",
+      "size": 225190,
+      "sha256": "15f9908282edb05184a66dc5ec35af3e779ce09c6cba8139bec7edf7216b1154"
+    },
+    {
+      "path": "evidence/accepted/locations-multiple.png",
+      "size": 234523,
+      "sha256": "7fe82a3f2a8604be02b276745bfca42d3cc59dfcfbb5210c6d0046c8789cf290"
+    },
+    {
+      "path": "evidence/accepted/novik_TIM_2026-10-08_01_28_15_net10.0.trx",
+      "size": 876908,
+      "sha256": "4e780e2caf2fc968afa0181c42fb272bbf9c3e8d69b6ddae35359ffb05770814"
+    },
+    {
+      "path": "evidence/accepted/novik_TIM_2026-10-08_01_28_15_net10.0[1].trx",
+      "size": 1105633,
+      "sha256": "2f4a49e800e988580e231cb4d9e96249a9276bb0d67abc16485b8f19c7df0c66"
+    },
+    {
+      "path": "evidence/accepted/novik_TIM_2026-10-08_01_28_16_net10.0.trx",
+      "size": 785450,
+      "sha256": "3f97141017a4e795fc0fffe7a94e9dff7eeff932fe0b6daf255c10522985e562"
+    },
+    {
+      "path": "evidence/accepted/phase-cleanup.stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/accepted/phase-cleanup.stdout.log",
+      "size": 132,
+      "sha256": "029b01b0aaaaddcb717b9e3eff89acd78ce15e6d5ec986638b360ac054ac8323"
+    },
+    {
+      "path": "evidence/accepted/phase-setup.stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/accepted/phase-setup.stdout.log",
+      "size": 1579,
+      "sha256": "cc039f7a47879f6c52f62ad6cb6016ea797f38d03a25155a9f61e57b3c9c3474"
+    },
+    {
+      "path": "evidence/accepted/phase-startapi.stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/accepted/phase-startapi.stdout.log",
+      "size": 106,
+      "sha256": "c467b0d75a4c35c3c50964367c7381af52b32e5b38ca5cd7542ecc1572d9cd1a"
+    },
+    {
+      "path": "evidence/accepted/phase-stopapi.stderr.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/accepted/phase-stopapi.stdout.log",
+      "size": 43,
+      "sha256": "aec83b230e832fd58ed530063f236ead49b74d9946387ce5d0b8f12d10c95c9b"
+    },
+    {
+      "path": "evidence/accepted/qa03-gate.log",
+      "size": 2027,
+      "sha256": "1c33c3e8c682094931c4f33398b6759a4de4a240a14325ce4b6b50eb77512105"
+    },
+    {
+      "path": "evidence/project-boundaries.log",
+      "size": 974,
+      "sha256": "29566c5a9d90d7892e720a5c843f09f169b907c273a2a8cb2d3f4abb76dcfedc"
+    },
+    {
+      "path": "evidence/release-build.log",
+      "size": 948,
+      "sha256": "ef1fb54af314e91dc6f070a3730b587d5f74de4b6c4a420337c7f2f0f99b5518"
+    },
+    {
+      "path": "source/work/location_manager_1/implementation.md",
+      "size": 2695,
+      "sha256": "4014ccac3ec08ba0c7d1960da115e69db274d6f7cd9d470449524d3ca37199a4"
+    },
+    {
+      "path": "source/work/location_manager_1/Package-And-Validate.ps1",
+      "size": 7272,
+      "sha256": "4d8379bf7a09d4844e6b15127e25db1a6d6b271c76ab944a4074ed180770a56d"
+    },
+    {
+      "path": "source/work/location_manager_1/Update-Dashboard.mjs",
+      "size": 1258,
+      "sha256": "907966dfbea808f626b6aedd2576f22be8ef3dc498fa2f3cfeaa7148c9bb5026"
+    },
+    {
+      "path": "source/work/production/docs/QA-03-critical-e2e-matrix.md",
+      "size": 6497,
+      "sha256": "8e0d7dcdb2be80820066f6189bc7f4427ab53fca2b6df4bb581951b39d4d8508"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "size": 7555,
+      "sha256": "edbc61f0e11810f9603a32fa121506d2494495ba096258d28781fd201ce1179f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CatalogNodeViewModel.cs",
+      "size": 1311,
+      "sha256": "d596fe29903e7a38de28b9dbd7ef47317105e5c21e2e14d84674ccc9c265af95"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/FileLocationsViewModel.cs",
+      "size": 19307,
+      "sha256": "823b299becb6d24015df8321988d2b264fbe2a391efff7b82e4dbcf4cbbf8b76"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs",
+      "size": 9004,
+      "sha256": "9f4a52d987decdccf493bd1c5f3bbe7bfc4d2b9d7322077e65c5a52669a10519"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubLocationsViewModel.cs",
+      "size": 1301,
+      "sha256": "9db5f7b18ea4e59408964b4c8e2ff4dd53b19380c868947e04b2a70ada9ff086"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "size": 53037,
+      "sha256": "ba3f95ac7fb57c24498f2c8914d22d39bb46a8e45105cbd9b23b66b02e7d383f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/FileLocationsView.xaml",
+      "size": 9653,
+      "sha256": "5a7b4b9be344ce053c37f07cf8cf0d4f54d126f234846c9640adf0cb25c6654a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/FileLocationsView.xaml.cs",
+      "size": 973,
+      "sha256": "5b37b7ca6f84191fa18d6c856035e35c8b091d936db9f8071a5d32b43189484c"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "size": 44425,
+      "sha256": "5abcae2a0d83308b83deb71541a90fc69abdcafcfc519e86d721fb157433e674"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Work/DesktopFileLocationsClient.cs",
+      "size": 10155,
+      "sha256": "5de37cd388ad03af0e42fbe38df10ac1aa99c587f76eb202741b5850a636cc46"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "size": 38984,
+      "sha256": "228ab7062c2868a8d5f1d70c1d25fcb65dfb9f9e7ffea899006598d013894fa9"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/DesktopFileLocationsClientTests.cs",
+      "size": 9676,
+      "sha256": "aee098ad544ddf382f5ba2daf11df1029f90ee9d42bae90daa6e1955c6e7875b"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/FileLocationsViewModelTests.cs",
+      "size": 16323,
+      "sha256": "8160c59949a656ca9fe3405154fb67ae2a04931e697e775a5f5c8e84a536696f"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresFileLocationManagerTests.cs",
+      "size": 6922,
+      "sha256": "6ead140784e4d983e79de422ddd8c4873c281979fff8a228054d99379657d61b"
+    },
+    {
+      "path": "source/work/production/verification/Test-Qa03Gate.ps1",
+      "size": 52772,
+      "sha256": "457f5c93ed6a18f055fecbf059aacdcab7d7250bf7b468ee25df8525876d6d0d"
+    },
+    {
+      "path": "source/work/production/verification/Test-TaskWriteE2E.ps1",
+      "size": 38048,
+      "sha256": "fda03faac0711b29b92110fb5d4e8adddc331e460e250fcfc522a035be3eb336"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 12720,
+      "sha256": "889d2539312aa89b88b48c87dabdd76d1b8329737637931788dc725a020c978a"
+    },
+    {
+      "path": "validation.json",
+      "size": 894,
+      "sha256": "e90436ab41b358f9ca4cad8088ecff8101fefad930f04c3ed0e3215178378a48"
+    },
+    {
+      "path": "VERSION",
+      "size": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ],
+  "product": "Task",
+  "baseCommit": "06443765750ccea544c136f8d22551324afed667",
+  "version": "1.0.0",
+  "scope": "Corporate Catalog Location Manager"
+}

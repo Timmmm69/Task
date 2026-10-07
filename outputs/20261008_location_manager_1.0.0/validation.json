@@ -1,0 +1,38 @@
+{
+  "scope": "Corporate Location Manager",
+  "fixtureCleanup": "PASS",
+  "upstreamPublished": false,
+  "result": "PASS",
+  "failed": 0,
+  "physicalFileUnchanged": true,
+  "skipped": 0,
+  "personalSchemaChanged": false,
+  "realWpfHttpsPostgresUi": "PASS",
+  "backendSchemaChanged": false,
+  "version": "1.0.0",
+  "testCounters": [
+    {
+      "file": "novik_TIM_2026-10-08_01_28_15_net10.0.trx",
+      "total": 590,
+      "passed": 590,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "file": "novik_TIM_2026-10-08_01_28_15_net10.0[1].trx",
+      "total": 822,
+      "passed": 822,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "file": "novik_TIM_2026-10-08_01_28_16_net10.0.trx",
+      "total": 546,
+      "passed": 546,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  ],
+  "totalPassed": 1958,
+  "realPostgresEnabled": true
+}

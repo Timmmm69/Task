@@ -53,7 +53,17 @@ public sealed record DesktopNotification(Guid Id, long Version, string Notificat
     public string TimeText => NotBefore.ToLocalTime().ToString("dd MMM, HH:mm", CultureInfo.GetCultureInfo("ru-RU"));
 }
 public sealed record DesktopFileLocation(Guid Id, long Version, string LocationType,
-    string RawPath, bool CanOpenOnDevice);
+    string? RawPath, bool CanOpenOnDevice, bool IsPrimary = false, bool IsEnabled = true,
+    int Priority = 0, Guid? NetworkResourceId = null, Guid? DeviceId = null)
+{
+    public bool IsPathVisible => !string.IsNullOrWhiteSpace(RawPath);
+    public string PathLabel => IsPathVisible ? RawPath! : "Путь скрыт вашей областью доступа";
+    public string TypeLabel => LocationType switch { "unc_path" => "Сетевое расположение", "mapped_drive" => "Подключённый диск", _ => "Локальный путь" };
+    public string PrimaryLabel => IsPrimary ? "Основное" : "Дополнительное";
+    public string EnabledLabel => IsEnabled ? "Включено" : "Отключено";
+    public string ScopeLabel => LocationType == "unc_path" ? "Разрешённый сетевой ресурс" : CanOpenOnDevice ? "Доступно на этом компьютере" : "Доступ зависит от пользователя и компьютера";
+    public override string ToString() => $"{PrimaryLabel} · {TypeLabel} · {PathLabel} · {EnabledLabel}";
+}
 public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, string Title,
     long Version, string LifecycleState, DateTimeOffset UpdatedAt, DateTimeOffset? ArchivedAt,
     DateTimeOffset? DeletedAt, DateTimeOffset? PurgeAfter, string LedgerStatus = "")

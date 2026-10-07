@@ -15,7 +15,10 @@ public sealed record DesktopSearchHit(DesktopSearchResult Source, string TitlePr
 }
 
 public sealed record DesktopSearchGroup(string Title, IReadOnlyList<DesktopSearchHit> Items);
-public sealed record CatalogItemTypeChoice(string Value, string Label);
+public sealed record CatalogItemTypeChoice(string Value, string Label)
+{
+    public override string ToString() => Label;
+}
 
 public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 {
@@ -85,7 +88,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
             Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
         ServerAddress = serverAddress ?? "Сервер компании";
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
         CreateCatalogFolderCommand = new((_, ct) => CreateCatalogEntryAsync("virtual_folder", ct), _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
@@ -102,6 +105,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         SaveUserSettingsCommand = new(SaveUserSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _userSettings is not null);
         SaveNotificationPreferencesCommand = new(SaveNotificationPreferencesAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _notificationPreferences is not null);
         SaveOrganizationSettingsCommand = new(SaveOrganizationSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateOrganization && _organizationSettings is not null);
+        InitializeLocations();
         foreach (var command in Commands) command.ExecutionFailed += OnUnexpectedFailure;
         RefreshCommand.CanExecuteChanged += OnRefreshCanExecuteChanged;
     }
@@ -149,6 +153,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             if (previous is not null) previous.IsSelected = false;
             if (value is not null) value.IsSelected = true;
             Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0);
+            Locations?.SetItem(value?.Item);
             NotifyCatalogSelection();
             NotifyCommands();
         }
@@ -267,7 +272,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 
     internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand }
-        .Any(command => command.IsExecuting);
+        .Any(command => command.IsExecuting) || Locations?.IsMutating == true;
     internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
     {
         Language = UserLanguage,
@@ -317,6 +322,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     {
         _capabilities.Clear();
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
+        Locations?.SetItem(null);
+        Locations?.SetItem(SelectedCatalogItem?.Item);
         if (!Has("ObjectLink.Read")) Links?.SetSource(Guid.Empty, 0);
         NotifyCommands();
     }
@@ -363,7 +370,14 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         {
             switch (Area)
             {
-                case WorkHubArea.Catalog: await ReloadCatalogAsync(ct); break;
+                case WorkHubArea.Catalog:
+                    var previousLocationLoad = Locations?.SelectionLoad;
+                    if (await ReloadCatalogAsync(ct) && Locations is { IsVisible: true } locations)
+                    {
+                        if (ReferenceEquals(previousLocationLoad, locations.SelectionLoad)) await locations.RefreshCommand.ExecuteAsync(null, ct);
+                        else await locations.SelectionLoad;
+                    }
+                    break;
                 case WorkHubArea.Contacts: Apply(await _client.GetContactsAsync(ct), value => Contacts = value); break;
                 case WorkHubArea.Notifications: Apply(await _client.GetNotificationsAsync(ct), value => { Notifications = value; SelectedNotification = value.FirstOrDefault(); }); break;
                 case WorkHubArea.Search when SearchQuery.Trim().Length >= 2: await SearchCoreAsync(ct); break;
@@ -426,7 +440,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         var item = SelectedCatalogItem; if (item is null) return;
         Apply(await _client.ResolveLocationAsync(item.Id, ct), location =>
         {
-            if (location is null || !location.CanOpenOnDevice) { SetFeedback("На этом компьютере нет доступного расположения файла.", WorkHubFeedbackKind.Warning); return; }
+            if (location is null || !location.CanOpenOnDevice || location.RawPath is null) { SetFeedback("На этом компьютере нет доступного расположения файла.", WorkHubFeedbackKind.Warning); return; }
             SetFeedback(_files.Open(location.RawPath).Message, WorkHubFeedbackKind.Info);
         });
     }
@@ -645,7 +659,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
-    public void Dispose() { if (_disposed) return; _disposed = true; Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
+    public void Dispose() { if (_disposed) return; _disposed = true; Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }
