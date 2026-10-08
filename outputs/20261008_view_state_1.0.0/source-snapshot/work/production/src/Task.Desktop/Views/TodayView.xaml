@@ -1,0 +1,627 @@
+<UserControl x:Class="Task.Desktop.Views.TodayView"
+             x:Name="TodayRoot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+             AutomationProperties.Name="Сегодня"
+             AutomationProperties.AutomationId="TodayScreen"
+             Background="{DynamicResource Task.Brush.Surface.Base}"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True">
+
+    <UserControl.Resources>
+        <Style x:Key="Today.FlatButton" TargetType="Button" BasedOn="{StaticResource Task.Button.Base}">
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Today.PriorityText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#6B5D00" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsHighPriority}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLowPriority}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Success}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Today.PriorityIcon" TargetType="Path">
+            <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Warning}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsHighPriority}" Value="True">
+                    <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLowPriority}" Value="True">
+                    <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Success}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="TodayTimelineCardTemplate">
+            <Grid Width="{Binding ActualWidth, ElementName=TimelineCanvasHost}"
+                  Height="{Binding TimelineHeight}">
+                <Button Style="{StaticResource Today.FlatButton}"
+                        Command="{Binding DataContext.SelectItemCommand, ElementName=TodayRoot}"
+                        CommandParameter="{Binding}"
+                        AutomationProperties.Name="{Binding AutomationName}"
+                        AutomationProperties.AutomationId="TodayTimelineTask">
+                    <Button.Margin>
+                        <MultiBinding Converter="{StaticResource Task.TimelineLaneMarginConverter}">
+                            <Binding Path="ActualWidth" ElementName="TimelineCanvasHost" />
+                            <Binding Path="TimelineLane" />
+                            <Binding Path="TimelineLaneCount" />
+                        </MultiBinding>
+                    </Button.Margin>
+                    <Grid Margin="10,7,12,7">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                              Width="20" Height="20" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Text.Secondary}"
+                              VerticalAlignment="Top" Margin="0,4,0,0" />
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding TimeText}"
+                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Row="1" Text="{Binding Title}"
+                                       Margin="0,1,0,0"
+                                       FontSize="{DynamicResource Task.Font.Size.Body}"
+                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                       TextTrimming="CharacterEllipsis" />
+                            <Grid Grid.Row="2" Margin="0,3,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding ProjectText, StringFormat='Проект: {0}'}"
+                                           FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                           Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                                    <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                          Style="{StaticResource Today.PriorityIcon}"
+                                          Width="15" Height="15" Stretch="Uniform" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding PriorityText}"
+                                               Style="{StaticResource Today.PriorityText}"
+                                               Margin="5,0,0,0"
+                                               FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TodayAllDayTemplate">
+            <Button Margin="0,4,10,4" Padding="12,0" MinHeight="40" MinWidth="210"
+                    Style="{StaticResource Today.FlatButton}"
+                    Background="{DynamicResource Task.Brush.Semantic.WarningSoft}"
+                    Command="{Binding DataContext.SelectItemCommand, ElementName=TodayRoot}"
+                    CommandParameter="{Binding}"
+                    AutomationProperties.Name="{Binding AutomationName}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                          Width="16" Height="16" Stretch="Uniform"
+                          Fill="{DynamicResource Task.Brush.Semantic.Warning}" />
+                    <TextBlock Grid.Column="1" Text="{Binding Title}" Margin="8,0,0,0"
+                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                </Grid>
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TodayQueueTemplate">
+            <Button Style="{StaticResource Today.FlatButton}"
+                    MinHeight="61" BorderThickness="0,0,0,1"
+                    BorderBrush="{DynamicResource Task.Brush.Border.Default}"
+                    Command="{Binding DataContext.SelectItemCommand, ElementName=TodayRoot}"
+                    CommandParameter="{Binding}"
+                    AutomationProperties.Name="{Binding AutomationName}"
+                    AutomationProperties.AutomationId="TodayQueueTask">
+                <Grid Margin="12,7">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                          Style="{StaticResource Today.PriorityIcon}"
+                          Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Title}"
+                                   FontSize="{DynamicResource Task.Font.Size.Body}"
+                                   FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding ProjectText, StringFormat='Проект: {0}'}"
+                                   Margin="0,3,0,0"
+                                   FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                  Style="{StaticResource Today.PriorityIcon}"
+                                  Width="14" Height="14" Stretch="Uniform" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding PriorityText}" Style="{StaticResource Today.PriorityText}"
+                                       Margin="4,0,0,0" FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding DeadlineText}" Margin="0,3,0,0"
+                                   FontSize="{DynamicResource Task.Font.Size.Metadata}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsOverdue}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Button>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border x:Name="TodayStateBanner" Grid.Row="0" Padding="16,10"
+                BorderThickness="0,0,0,1"
+                AutomationProperties.Name="{Binding StateTitle}"
+                AutomationProperties.AutomationId="TodayStateBanner"
+                AutomationProperties.LiveSetting="Assertive">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Warning}" />
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.WarningSoft}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowStateBanner}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsStateCritical}" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+                            <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.CriticalSoft}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="22" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Path Data="{StaticResource Task.Icon.Warning}" Width="18" Height="18" Stretch="Uniform"
+                      Fill="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=Border}}"
+                      VerticalAlignment="Top" Margin="0,1,0,0" />
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding StateTitle}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                               AutomationProperties.AutomationId="TodayStateBanner" />
+                    <TextBlock Text="{Binding StateDescription}" Margin="0,2,0,0"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid x:Name="TodayThreeZoneGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="47.6*" />
+                <ColumnDefinition Width="52.4*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="TodayPlannerRegion" Grid.Column="0"
+                  AutomationProperties.Name="План дня"
+                  AutomationProperties.AutomationId="TodayPlannerRegion">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="68" />
+                    <RowDefinition Height="56" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" BorderThickness="0,0,1,1"
+                        BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                    <Grid Margin="20,0,18,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Height="40" Padding="12,0" VerticalAlignment="Center"
+                                BorderBrush="{DynamicResource Task.Brush.Border.Strong}"
+                                BorderThickness="1" CornerRadius="{DynamicResource Task.Radius.Control}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource Task.Icon.Calendar}" Width="17" Height="17"
+                                      Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                                <TextBlock Text="Сегодня" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Grid.Column="1" Text="План дня" Margin="14,0,0,0"
+                                   VerticalAlignment="Center" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                   AutomationProperties.AutomationId="TodayPlannerRegion" />
+                        <TextBlock Grid.Column="2" Text="{Binding LastSuccessfulRefreshText}"
+                                   VerticalAlignment="Center"
+                                   FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                   TextTrimming="CharacterEllipsis">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" BorderThickness="0,0,1,1"
+                        BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Весь день" Margin="20,0,8,0" VerticalAlignment="Center"
+                                   FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding AllDayItems}"
+                                          ItemTemplate="{StaticResource TodayAllDayTemplate}"
+                                          AutomationProperties.Name="Весь день и без точного времени">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <TextBlock Grid.Column="1" Text="Нет задач на весь день" Margin="14,0"
+                                   VerticalAlignment="Center" FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Disabled}"
+                                   IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers><DataTrigger Binding="{Binding HasAllDayItems}" Value="False"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="2">
+                    <ScrollViewer x:Name="TimelineScrollViewer"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  AutomationProperties.Name="Временная шкала дня"
+                                  AutomationProperties.AutomationId="TodayTimelineScroll">
+                        <Grid x:Name="TimelineCanvasHost" Height="{Binding TimelineCanvasHeight}"
+                              Background="{DynamicResource Task.Brush.Surface.Base}">
+                            <ItemsControl ItemsSource="{Binding HourMarkers}" IsHitTestVisible="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><Canvas /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Width="{Binding ActualWidth, ElementName=TimelineCanvasHost}" Height="69">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Label}" Margin="20,12,8,0" VerticalAlignment="Top"
+                                                       FontSize="{DynamicResource Task.Font.Size.Body}" />
+                                            <Border Grid.Column="1" BorderThickness="1,0,0,1"
+                                                    BorderBrush="{DynamicResource Task.Brush.Border.Default}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ItemsControl ItemsSource="{Binding TimelineItems}"
+                                          ItemTemplate="{StaticResource TodayTimelineCardTemplate}"
+                                          AutomationProperties.Name="Запланированные задачи">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><Canvas /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Top" Value="{Binding TimelineTop}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+
+                            <Canvas Width="{Binding ActualWidth, ElementName=TimelineCanvasHost}"
+                                    Height="{Binding TimelineCanvasHeight}"
+                                    Panel.ZIndex="10" IsHitTestVisible="False">
+                            <Grid Width="{Binding ActualWidth, ElementName=TimelineCanvasHost}" Height="20"
+                                  Canvas.Top="{Binding CurrentTimeTop}"
+                                  AutomationProperties.Name="{Binding CurrentTimeText, StringFormat='Текущее время {0}'}">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers><DataTrigger Binding="{Binding ShowCurrentTime}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding CurrentTimeText}" Margin="17,0,0,0"
+                                           FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                           Foreground="{DynamicResource Task.Brush.Semantic.Critical}" />
+                                <Grid Grid.Column="1" VerticalAlignment="Top" Margin="0,8,0,0">
+                                    <Ellipse Width="9" Height="9" Margin="-4,-4,0,0" HorizontalAlignment="Left"
+                                             Fill="{DynamicResource Task.Brush.Semantic.Critical}" />
+                                    <Border Height="1" Background="{DynamicResource Task.Brush.Semantic.Critical}" />
+                                </Grid>
+                            </Grid>
+                            </Canvas>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <Border Padding="24" Margin="24" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                            AutomationProperties.Name="На сегодня записей нет">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers><DataTrigger Binding="{Binding ShowEmptyState}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel HorizontalAlignment="Center">
+                            <Path Data="{StaticResource Task.Icon.Today}" Width="30" Height="30" Stretch="Uniform"
+                                  Fill="{DynamicResource Task.Brush.Text.Secondary}" HorizontalAlignment="Center" />
+                            <TextBlock Text="План на сегодня пуст" Margin="0,10,0,0"
+                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextAlignment="Center" />
+                            <TextBlock Text="Запланированные задачи и события появятся на временной шкале."
+                                       Margin="0,4,0,0" TextWrapping="Wrap" TextAlignment="Center"
+                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition><RowDefinition.Style><Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="45*"/>
+                        <Style.Triggers><DataTrigger Binding="{Binding IsExpanded, ElementName=TodayQueueRegionExpansion}" Value="False"><Setter Property="Height" Value="Auto"/></DataTrigger></Style.Triggers>
+                    </Style></RowDefinition.Style></RowDefinition>
+                    <RowDefinition><RowDefinition.Style><Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="55*"/>
+                        <Style.Triggers><DataTrigger Binding="{Binding IsExpanded, ElementName=TodayInspectorRegionExpansion}" Value="False"><Setter Property="Height" Value="Auto"/></DataTrigger></Style.Triggers>
+                    </Style></RowDefinition.Style></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="TodayQueueRegion" Grid.Row="0"
+                      AutomationProperties.Name="Несрочные и просроченные задачи"
+                      AutomationProperties.AutomationId="TodayQueueRegion">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="49" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                        <Expander x:Name="TodayQueueRegionExpansion" IsExpanded="True" VerticalAlignment="Center" state:ViewState.Section="today/v1/queue" AutomationProperties.Name="Несрочные и просроченные">
+                            <Expander.Header>
+                                <Grid Margin="6,0">
+                                    <TextBlock VerticalAlignment="Center" FontSize="{DynamicResource Task.Font.Size.Section}"
+                                               FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                               AutomationProperties.AutomationId="TodayQueueRegion">
+                                        <Run Text="Несрочные и просроченные (" /><Run Text="{Binding QueueCount, Mode=OneWay}" /><Run Text=")" />
+                                    </TextBlock>
+                                </Grid>
+                            </Expander.Header>
+                        </Expander>
+                    </Border>
+                    <Grid Grid.Row="1" Visibility="{Binding IsExpanded, ElementName=TodayQueueRegionExpansion, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding QueueItems}"
+                                      ItemTemplate="{StaticResource TodayQueueTemplate}"
+                                      Margin="6,0,12,0" />
+                    </ScrollViewer>
+                    <StackPanel Margin="28" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers><DataTrigger Binding="{Binding HasQueueItems}" Value="False"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Path Data="{StaticResource Task.Icon.Tasks}" Width="25" Height="25" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Text.Disabled}" HorizontalAlignment="Center" />
+                        <TextBlock Text="Очередь пуста" Margin="0,8,0,0" FontWeight="SemiBold" />
+                        <TextBlock Text="Несрочных и просроченных задач нет."
+                                   Margin="0,3,0,0" TextAlignment="Center" TextWrapping="Wrap"
+                                   FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                    </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <Grid x:Name="TodayInspectorRegion" Grid.Row="1"
+                      AutomationProperties.Name="Детали задачи"
+                      AutomationProperties.AutomationId="TodayInspectorRegion">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="49" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border BorderThickness="0,1,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                        <Expander x:Name="TodayInspectorRegionExpansion" IsExpanded="True" VerticalAlignment="Center" state:ViewState.Section="today/v1/inspector" AutomationProperties.Name="Детали задачи">
+                            <Expander.Header>
+                                <TextBlock Text="Детали задачи" Margin="6,0" VerticalAlignment="Center"
+                                           FontSize="{DynamicResource Task.Font.Size.Section}"
+                                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                           AutomationProperties.AutomationId="TodayInspectorRegion" />
+                            </Expander.Header>
+                        </Expander>
+                    </Border>
+                    <Grid Grid.Row="1" Visibility="{Binding IsExpanded, ElementName=TodayInspectorRegionExpansion, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="20,14,20,18" DataContext="{Binding SelectedItem}">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="{Binding Title}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
+                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                                       TextWrapping="Wrap" />
+                            <WrapPanel Margin="0,14,0,0">
+                                <Border MinHeight="38" Padding="10,0" Margin="0,0,12,8"
+                                        BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1"
+                                        CornerRadius="{DynamicResource Task.Radius.Control}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                              Width="17" Height="17" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" />
+                                        <TextBlock Text="{Binding StatusText}" Margin="7,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,16,8" VerticalAlignment="Center">
+                                    <TextBlock Text="Приоритет:" VerticalAlignment="Center" />
+                                    <Path Data="{Binding PriorityIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                          Style="{StaticResource Today.PriorityIcon}" Margin="7,0,0,0"
+                                          Width="17" Height="17" Stretch="Uniform" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding PriorityText}" Style="{StaticResource Today.PriorityText}"
+                                               Margin="5,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+                                    <Path Data="{StaticResource Task.Icon.Calendar}" Width="17" Height="17" Stretch="Uniform"
+                                          Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                                    <TextBlock Text="{Binding DeadlineText, StringFormat='Срок: {0}'}" Margin="7,0,0,0" />
+                                </StackPanel>
+                            </WrapPanel>
+
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="116" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Проект:" Margin="0,0,10,12" />
+                                <TextBlock Grid.Column="1" Text="{Binding ProjectText}" Margin="0,0,0,12"
+                                           Foreground="{DynamicResource Task.Brush.Brand.Primary}" />
+                                <TextBlock Grid.Row="1" Text="Тип:" Margin="0,0,10,12" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding KindText}" Margin="0,0,0,12" />
+                                <TextBlock Grid.Row="2" Text="Время:" Margin="0,0,10,12" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding TimeText}" Margin="0,0,0,12" />
+                                <TextBlock Grid.Row="3" Text="Обновлена:" Margin="0,0,10,12" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding UpdatedText}" Margin="0,0,0,12" />
+                                <TextBlock Grid.Row="4" Text="Описание:" Margin="0,0,10,0" />
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Description}"
+                                           TextWrapping="Wrap" LineHeight="20" />
+                            </Grid>
+
+                            <Border Margin="0,16,0,0" Padding="12" BorderThickness="1"
+                                    BorderBrush="{DynamicResource Task.Brush.Semantic.Warning}"
+                                    Background="{DynamicResource Task.Brush.Semantic.WarningSoft}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.IsReadOnly, ElementName=TodayRoot}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="Только чтение. Изменения станут доступны после восстановления связи."
+                                           TextWrapping="Wrap" FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+                            </Border>
+
+                            <Button Content="Открыть карточку" Margin="0,16,0,0" HorizontalAlignment="Left"
+                                    Style="{StaticResource Task.Button.Secondary}"
+                                    Command="{Binding DataContext.OpenSelectedItemCommand, ElementName=TodayRoot}"
+                                    AutomationProperties.Name="Открыть выбранную карточку"
+                                    AutomationProperties.AutomationId="TodayOpenSelectedButton" />
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <StackPanel Margin="28" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers><DataTrigger Binding="{Binding HasSelectedItem}" Value="False"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Path Data="{StaticResource Task.Icon.Info}" Width="26" Height="26" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Text.Disabled}" HorizontalAlignment="Center" />
+                        <TextBlock Text="Выберите задачу" Margin="0,8,0,0"
+                                   FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
+                        <TextBlock Text="Детали появятся здесь, не скрывая план дня."
+                                   Margin="0,3,0,0" TextWrapping="Wrap" TextAlignment="Center"
+                                   FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                    </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Border Grid.ColumnSpan="2" Background="#EEFFFFFF" Panel.ZIndex="40"
+                    AutomationProperties.Name="Загрузка сегодняшнего плана"
+                    AutomationProperties.AutomationId="TodayLoadingState"
+                    AutomationProperties.LiveSetting="Polite">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers><DataTrigger Binding="{Binding ShowInitialLoading}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="360">
+                    <ProgressBar IsIndeterminate="True" Width="180" Height="4"
+                                 Style="{StaticResource Task.Progress.Indeterminate}" />
+                    <TextBlock Text="Формируем план дня…" Margin="0,14,0,0"
+                               FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Подтверждаем расписание и доступные задачи сервера компании."
+                               Margin="0,5,0,0" TextWrapping="Wrap" TextAlignment="Center"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

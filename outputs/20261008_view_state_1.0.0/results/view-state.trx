@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="52e3178e-3532-40e6-b2e7-d2c0ee13c5f3" name="novik@TIM 2026-10-08 20:25:56" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T20:25:56.0349517+03:00" queuing="2026-10-08T20:25:56.0349518+03:00" start="2026-10-08T20:25:54.6551582+03:00" finish="2026-10-08T20:25:57.3398959+03:00" />
+  <TestSettings name="default" id="9f2b1c5a-6f2c-4d01-9c68-7b45d118107e">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-08_20_25_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="20ae0557-4d46-4993-8e1e-63d70bf17843" testId="aa2d8f5d-5f38-bb47-ad47-4b6dc78e5c87" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Sort_AscendingAndDescendingSurviveRestart(descending: True)" computerName="TIM" duration="00:00:00.1246132" startTime="2026-10-08T20:25:55.7445876+03:00" endTime="2026-10-08T20:25:55.8694313+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20ae0557-4d46-4993-8e1e-63d70bf17843" />
+    <UnitTestResult executionId="4d3cea0d-8257-445f-8fd2-d84a27d8411f" testId="a84c22d4-1468-4012-84ca-c13717b113d6" testName="Task.Desktop.Tests.ViewStateTests.ViewStateUiTests.NativeWpf_RestartResizeSortPermissionsAndSubscriptionLifetime" computerName="TIM" duration="00:00:02.0674794" startTime="2026-10-08T20:25:55.2161750+03:00" endTime="2026-10-08T20:25:57.2876013+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d3cea0d-8257-445f-8fd2-d84a27d8411f" />
+    <UnitTestResult executionId="15de1a6c-44c9-4f46-b867-96c299ac783f" testId="0f9244ce-84f7-6b99-2bcf-e951f1517b84" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Width_ClampsToCurrentControlLimits(input: 10000, expected: 500)" computerName="TIM" duration="00:00:00.1362396" startTime="2026-10-08T20:25:56.1406373+03:00" endTime="2026-10-08T20:25:56.2767556+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="15de1a6c-44c9-4f46-b867-96c299ac783f" />
+    <UnitTestResult executionId="47e5f922-41cb-4fec-a006-7b60b43404d1" testId="02dcfeb3-2ddd-1aa3-dd02-6cfc64b87e71" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded(json: &quot;{\&quot;version\&quot;:2,\&quot;widths\&quot;:{},\&quot;sections\&quot;:{},\&quot;sor&quot;···)" computerName="TIM" duration="00:00:00.1334135" startTime="2026-10-08T20:25:55.3654245+03:00" endTime="2026-10-08T20:25:55.4950684+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47e5f922-41cb-4fec-a006-7b60b43404d1" />
+    <UnitTestResult executionId="9c3bfe01-f5fd-4d4e-ab6e-bc0ec4ea9f89" testId="2319d49c-d83b-aa69-5a9d-f8da3c45b073" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Debounce_NoSynchronousWritesAndFinalSnapshotSurvivesOrphanTempAndReset" computerName="TIM" duration="00:00:00.4046698" startTime="2026-10-08T20:25:56.6489056+03:00" endTime="2026-10-08T20:25:57.0539332+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c3bfe01-f5fd-4d4e-ab6e-bc0ec4ea9f89" />
+    <UnitTestResult executionId="517d41a2-4836-45bc-a2e6-64047b0f069d" testId="e2dffad7-facf-3758-d6f9-4d5f7f517d31" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded(json: &quot;{&quot;)" computerName="TIM" duration="00:00:00.1235250" startTime="2026-10-08T20:25:55.4956054+03:00" endTime="2026-10-08T20:25:55.6188555+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="517d41a2-4836-45bc-a2e6-64047b0f069d" />
+    <UnitTestResult executionId="d9a61dec-c88b-4f04-ab34-bd16ad956bc0" testId="d1a76aee-b605-262c-4dc1-6532212cf13f" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.FailedAtomicReplace_PreservesPreviousPreferenceAndCanRetry" computerName="TIM" duration="00:00:00.1251180" startTime="2026-10-08T20:25:56.5234414+03:00" endTime="2026-10-08T20:25:56.6487287+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9a61dec-c88b-4f04-ab34-bd16ad956bc0" />
+    <UnitTestResult executionId="8fe7acb1-7e3e-432d-95f9-2f6473d98796" testId="10503cf6-3683-4109-eebf-b4c0179db86b" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.UnknownColumnsSectionsAndCorruptIndividualValues_KeepDefaultsAndValidPreferences" computerName="TIM" duration="00:00:00.0038748" startTime="2026-10-08T20:25:55.9943299+03:00" endTime="2026-10-08T20:25:55.9983282+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fe7acb1-7e3e-432d-95f9-2f6473d98796" />
+    <UnitTestResult executionId="cf60277a-d9c7-4b8c-8919-4aaa5d108c06" testId="f2b56931-f6c6-d692-1a09-a1ab87754f68" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Width_ClampsToCurrentControlLimits(input: 125,25, expected: 125,25)" computerName="TIM" duration="00:00:00.1217704" startTime="2026-10-08T20:25:56.2769667+03:00" endTime="2026-10-08T20:25:56.3989782+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf60277a-d9c7-4b8c-8919-4aaa5d108c06" />
+    <UnitTestResult executionId="721e26d1-96b1-4933-8800-2b1e7217dc19" testId="a3d6887e-6cb7-a8f8-5710-5ea4f1e4fa0f" testName="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests.ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages" computerName="TIM" duration="00:00:00.3212516" startTime="2026-10-08T20:25:55.2170370+03:00" endTime="2026-10-08T20:25:55.5414867+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="721e26d1-96b1-4933-8800-2b1e7217dc19" />
+    <UnitTestResult executionId="535a8431-b27e-417a-9528-c97450493d98" testId="7b75d3e7-790c-419f-e68f-fcd31924ab05" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Sort_AscendingAndDescendingSurviveRestart(descending: False)" computerName="TIM" duration="00:00:00.1244049" startTime="2026-10-08T20:25:55.8695338+03:00" endTime="2026-10-08T20:25:55.9942122+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="535a8431-b27e-417a-9528-c97450493d98" />
+    <UnitTestResult executionId="dda22d44-2c04-4e80-9f28-d0066dc4b195" testId="8e1c143d-f169-ae0d-3f9d-cf3480a34ce6" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.UserDeviceAuthorityAndSurface_Isolation" computerName="TIM" duration="00:00:00.1355365" startTime="2026-10-08T20:25:55.2170638+03:00" endTime="2026-10-08T20:25:55.3586171+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dda22d44-2c04-4e80-9f28-d0066dc4b195" />
+    <UnitTestResult executionId="30228b8e-a7ee-454a-a243-4f9909d38921" testId="3a39c1d3-7b29-7065-e7f6-bcb7c5091bc4" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Restart_RestoresLogicalWidthsSortAndBothSectionStates" computerName="TIM" duration="00:00:00.1238591" startTime="2026-10-08T20:25:56.3991371+03:00" endTime="2026-10-08T20:25:56.5232993+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30228b8e-a7ee-454a-a243-4f9909d38921" />
+    <UnitTestResult executionId="0027d9bb-5e84-47e5-8af5-a0dd7f5e5d48" testId="470de32f-3a7b-aca7-1f01-0995b4a38c57" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Width_ClampsToCurrentControlLimits(input: 2, expected: 60)" computerName="TIM" duration="00:00:00.1363802" startTime="2026-10-08T20:25:56.0155506+03:00" endTime="2026-10-08T20:25:56.1402255+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0027d9bb-5e84-47e5-8af5-a0dd7f5e5d48" />
+    <UnitTestResult executionId="add03a00-14b8-4b4b-b1f3-8e964a9b73a3" testId="c270feff-2a4e-fa4a-9f9b-df1b4ed6a09d" testName="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded(json: &quot;{\&quot;version\&quot;:1,\&quot;widths\&quot;:null,\&quot;sections\&quot;:{},\&quot;s&quot;···)" computerName="TIM" duration="00:00:00.1253206" startTime="2026-10-08T20:25:55.6189531+03:00" endTime="2026-10-08T20:25:55.7444766+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="add03a00-14b8-4b4b-b1f3-8e964a9b73a3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests.ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="a3d6887e-6cb7-a8f8-5710-5ea4f1e4fa0f">
+      <Execution id="721e26d1-96b1-4933-8800-2b1e7217dc19" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests" name="ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Sort_AscendingAndDescendingSurviveRestart(descending: True)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="aa2d8f5d-5f38-bb47-ad47-4b6dc78e5c87">
+      <Execution id="20ae0557-4d46-4993-8e1e-63d70bf17843" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Sort_AscendingAndDescendingSurviveRestart" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded(json: &quot;{\&quot;version\&quot;:2,\&quot;widths\&quot;:{},\&quot;sections\&quot;:{},\&quot;sor&quot;···)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="02dcfeb3-2ddd-1aa3-dd02-6cfc64b87e71">
+      <Execution id="47e5f922-41cb-4fec-a006-7b60b43404d1" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Width_ClampsToCurrentControlLimits(input: 2, expected: 60)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="470de32f-3a7b-aca7-1f01-0995b4a38c57">
+      <Execution id="0027d9bb-5e84-47e5-8af5-a0dd7f5e5d48" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Width_ClampsToCurrentControlLimits" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.UnknownColumnsSectionsAndCorruptIndividualValues_KeepDefaultsAndValidPreferences" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="10503cf6-3683-4109-eebf-b4c0179db86b">
+      <Execution id="8fe7acb1-7e3e-432d-95f9-2f6473d98796" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="UnknownColumnsSectionsAndCorruptIndividualValues_KeepDefaultsAndValidPreferences" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded(json: &quot;{&quot;)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="e2dffad7-facf-3758-d6f9-4d5f7f517d31">
+      <Execution id="517d41a2-4836-45bc-a2e6-64047b0f069d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded(json: &quot;{\&quot;version\&quot;:1,\&quot;widths\&quot;:null,\&quot;sections\&quot;:{},\&quot;s&quot;···)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="c270feff-2a4e-fa4a-9f9b-df1b4ed6a09d">
+      <Execution id="add03a00-14b8-4b4b-b1f3-8e964a9b73a3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="CorruptOrUnsupportedStore_IsDiagnosedAndDiscarded" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Debounce_NoSynchronousWritesAndFinalSnapshotSurvivesOrphanTempAndReset" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="2319d49c-d83b-aa69-5a9d-f8da3c45b073">
+      <Execution id="9c3bfe01-f5fd-4d4e-ab6e-bc0ec4ea9f89" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Debounce_NoSynchronousWritesAndFinalSnapshotSurvivesOrphanTempAndReset" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Sort_AscendingAndDescendingSurviveRestart(descending: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="7b75d3e7-790c-419f-e68f-fcd31924ab05">
+      <Execution id="535a8431-b27e-417a-9528-c97450493d98" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Sort_AscendingAndDescendingSurviveRestart" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Restart_RestoresLogicalWidthsSortAndBothSectionStates" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="3a39c1d3-7b29-7065-e7f6-bcb7c5091bc4">
+      <Execution id="30228b8e-a7ee-454a-a243-4f9909d38921" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Restart_RestoresLogicalWidthsSortAndBothSectionStates" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateUiTests.NativeWpf_RestartResizeSortPermissionsAndSubscriptionLifetime" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="a84c22d4-1468-4012-84ca-c13717b113d6">
+      <Execution id="4d3cea0d-8257-445f-8fd2-d84a27d8411f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateUiTests" name="NativeWpf_RestartResizeSortPermissionsAndSubscriptionLifetime" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Width_ClampsToCurrentControlLimits(input: 125,25, expected: 125,25)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="f2b56931-f6c6-d692-1a09-a1ab87754f68">
+      <Execution id="cf60277a-d9c7-4b8c-8919-4aaa5d108c06" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Width_ClampsToCurrentControlLimits" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.FailedAtomicReplace_PreservesPreviousPreferenceAndCanRetry" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="d1a76aee-b605-262c-4dc1-6532212cf13f">
+      <Execution id="d9a61dec-c88b-4f04-ab34-bd16ad956bc0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="FailedAtomicReplace_PreservesPreviousPreferenceAndCanRetry" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.Width_ClampsToCurrentControlLimits(input: 10000, expected: 500)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="0f9244ce-84f7-6b99-2bcf-e951f1517b84">
+      <Execution id="15de1a6c-44c9-4f46-b867-96c299ac783f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="Width_ClampsToCurrentControlLimits" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.UserDeviceAuthorityAndSurface_Isolation" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="8e1c143d-f169-ae0d-3f9d-cf3480a34ce6">
+      <Execution id="dda22d44-2c04-4e80-9f28-d0066dc4b195" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests" name="UserDeviceAuthorityAndSurface_Isolation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="aa2d8f5d-5f38-bb47-ad47-4b6dc78e5c87" executionId="20ae0557-4d46-4993-8e1e-63d70bf17843" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a84c22d4-1468-4012-84ca-c13717b113d6" executionId="4d3cea0d-8257-445f-8fd2-d84a27d8411f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f9244ce-84f7-6b99-2bcf-e951f1517b84" executionId="15de1a6c-44c9-4f46-b867-96c299ac783f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02dcfeb3-2ddd-1aa3-dd02-6cfc64b87e71" executionId="47e5f922-41cb-4fec-a006-7b60b43404d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2319d49c-d83b-aa69-5a9d-f8da3c45b073" executionId="9c3bfe01-f5fd-4d4e-ab6e-bc0ec4ea9f89" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e2dffad7-facf-3758-d6f9-4d5f7f517d31" executionId="517d41a2-4836-45bc-a2e6-64047b0f069d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d1a76aee-b605-262c-4dc1-6532212cf13f" executionId="d9a61dec-c88b-4f04-ab34-bd16ad956bc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10503cf6-3683-4109-eebf-b4c0179db86b" executionId="8fe7acb1-7e3e-432d-95f9-2f6473d98796" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2b56931-f6c6-d692-1a09-a1ab87754f68" executionId="cf60277a-d9c7-4b8c-8919-4aaa5d108c06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a3d6887e-6cb7-a8f8-5710-5ea4f1e4fa0f" executionId="721e26d1-96b1-4933-8800-2b1e7217dc19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b75d3e7-790c-419f-e68f-fcd31924ab05" executionId="535a8431-b27e-417a-9528-c97450493d98" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e1c143d-f169-ae0d-3f9d-cf3480a34ce6" executionId="dda22d44-2c04-4e80-9f28-d0066dc4b195" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a39c1d3-7b29-7065-e7f6-bcb7c5091bc4" executionId="30228b8e-a7ee-454a-a243-4f9909d38921" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="470de32f-3a7b-aca7-1f01-0995b4a38c57" executionId="0027d9bb-5e84-47e5-8af5-a0dd7f5e5d48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c270feff-2a4e-fa4a-9f9b-df1b4ed6a09d" executionId="add03a00-14b8-4b4b-b1f3-8e964a9b73a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="15" executed="15" passed="15" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.14]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.21]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.23]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:02.32]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

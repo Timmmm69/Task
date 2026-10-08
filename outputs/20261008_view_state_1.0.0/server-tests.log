@@ -1,0 +1,5 @@
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\view_state_1\results\server-lists.trx
+
+Пройден!   : не пройдено     0, пройдено   163, пропущено     0, всего   163, длительность 10 s. - Task.ServiceHosts.Tests.dll (net10.0)

@@ -1,0 +1,178 @@
+{
+  "package": "Task desktop view state",
+  "version": "1.0.0",
+  "base_commit": "7465d14d127c03f679f7a864067ed48e9a0543ff",
+  "source_files": 20,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 10,
+      "sha256": "518bf59a49c016ec19b0e3a01f13893882d3bf1a3cdff584102451d15c626b2e"
+    },
+    {
+      "path": "build.log",
+      "bytes": 948,
+      "sha256": "a934f08b5a90b1680817fcd106567fefa7cfca27736ce3027909969fdb34d97a"
+    },
+    {
+      "path": "desktop-tests.log",
+      "bytes": 741,
+      "sha256": "796b4e368b35e923b8e3114133fd19657d5f2658b38c0d7d641adad742b4a4fb"
+    },
+    {
+      "path": "evidence/today-144.png",
+      "bytes": 21082,
+      "sha256": "63bbf641960bfd81e11d643f6d14b9e0d6f6d45798f20e1c52d29f16b72ff5dd"
+    },
+    {
+      "path": "evidence/today-96.png",
+      "bytes": 13434,
+      "sha256": "819fe85308c1c77328d72c4d0caeaad954235d60e4ffe105a89ed9dc140717cb"
+    },
+    {
+      "path": "new-tests.log",
+      "bytes": 747,
+      "sha256": "87facc02fde73fb0197c9109e20431e8db99ec4a108e81dccd2a6fd476ca482a"
+    },
+    {
+      "path": "results/desktop.trx",
+      "bytes": 1022043,
+      "sha256": "b29bc065bfc990178639aee10ddb5a319ed23202514608d39b0ca442d77f4ca2"
+    },
+    {
+      "path": "results/server-lists.trx",
+      "bytes": 237216,
+      "sha256": "e48fb7b3ed99fbeaca27ea0834291f4f3f851fd52ca20969b9479ef409427c9a"
+    },
+    {
+      "path": "results/view-state.trx",
+      "bytes": 23765,
+      "sha256": "b20607eb0b8adc21dceed65fdc9bead526813454aee89766eba75e4a6cdd3a0a"
+    },
+    {
+      "path": "server-tests.log",
+      "bytes": 612,
+      "sha256": "de87ec156937434549ebc3560145442d6711362cf64a4eb13f637b8a1a9265c5"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Infrastructure/ViewState.cs",
+      "bytes": 12699,
+      "sha256": "812998cdf697d1cc7030f318ff5251ddbc1eeb63cfce097716f6acde460442f2"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs",
+      "bytes": 10748,
+      "sha256": "11eaac4153a9f90c5d35f1564e854cfdf8e11e0b8d492f891c426d9acc3deb52"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 104573,
+      "sha256": "6a3dea145c914e232541432719cc443aab959b0a403a6ecf0963041d99e2747b"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 14473,
+      "sha256": "3082e60e47c2c5b1c8e54e33b772d37fc45c6474073782d66b54554c13e465b0"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "bytes": 17307,
+      "sha256": "d65c8b7e428936a840a81ddb51d60ef662e7bec27763786cad101616ee84db68"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+      "bytes": 11346,
+      "sha256": "306bbf1c79a8da0dea6cee713ded09cd60afd7030f99d827e1c317979f057620"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/InboxView.xaml",
+      "bytes": 29181,
+      "sha256": "d05bab4b48ef57d9bea2e5808de3df01d2240a4cc638546768d01a23a2db1ec6"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/ObjectLinksView.xaml",
+      "bytes": 1779,
+      "sha256": "e79fce1d46f5f54f45ecdf05913e2dad81f912cfca1ca81e3f7fdaa600a4bc7e"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "bytes": 6641,
+      "sha256": "8cc5014362ed85828ea5102a6147144da9505390c43b69fde1ec4ace92db1c8d"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+      "bytes": 8604,
+      "sha256": "4d79d59cf9ff2f8710beea76942249109ff1dae65a439ceed78fd60a7b6e1f38"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "bytes": 14142,
+      "sha256": "8aacc1e49acfb2a0aa1870fe8cdcfec353a9d7f0dc1bdeb83bd7bcdf238314bb"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml",
+      "bytes": 5836,
+      "sha256": "50fc41dd7a73dcafbb41140613258b4c51bf6f499a04d8c2c96e5bb10ac1b732"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "bytes": 14386,
+      "sha256": "9d767aaa3e6f1896de6002b2f01a24f283431cb450191ee25de77639620a6f26"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml",
+      "bytes": 8665,
+      "sha256": "2ce3e3edffd29d06e694ce05461bd40f0efc474a4b26c2b130b8eec23f7383a8"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml",
+      "bytes": 4982,
+      "sha256": "b8b68d9d9a9c41b45d2cd6cbfb893e04f2f9acbe8f48a37a7102fd578430ffca"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/TodayView.xaml",
+      "bytes": 45121,
+      "sha256": "c6755847a882ded4e3c19f6792603603b1b59694f2be982efd341a9b38805de3"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "bytes": 45136,
+      "sha256": "42207ddb5ca258895ae5f642888e4f870371d80ce73545c946c8012614b4551b"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "bytes": 40170,
+      "sha256": "85d39e8068e56eac651eb61c0f0455457c3a0f8da88826b7a0561970e3506461"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs",
+      "bytes": 8349,
+      "sha256": "95d412ad7669c0f39601f195ec856f015506ab242d9cb7b44f34bd685d261937"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateUiTests.cs",
+      "bytes": 14602,
+      "sha256": "d2351c6cd44403c23f466e4680884be0275148d051465c9055f6a16b01653fc1"
+    },
+    {
+      "path": "tracked-changes.patch",
+      "bytes": 49135,
+      "sha256": "86dca4e9ffff7c55121cb828ed2df161629d687dd556e5d73241ada3c7528f33"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 1073,
+      "sha256": "5a496f14ca9f842a0fecdc7e9e5357310507985f5e382e88c3e0a5346a0c363c"
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "bytes": 9782,
+      "sha256": "7114a136bb2310f30478a8130d172496ef2702b503fd9c18c47dde3bd603f601"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

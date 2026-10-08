@@ -11,6 +11,44 @@ namespace Task.Desktop.Tests.TaskApi;
 public sealed class DesktopTasksApiClientTests
 {
     [Fact]
+    public async global::System.Threading.Tasks.Task ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "Task-view-state-query", Guid.NewGuid().ToString("N"));
+        try
+        {
+            await using var preferences = new Task.Desktop.Infrastructure.ViewStateStore(directory, "server/org", AuthorId, "device");
+            await preferences.Ready;
+            preferences.SetSort("tasks/v1", new("Title", false));
+            preferences.SetSort("work-links/v1", new("Title", false));
+            await preferences.FlushAsync();
+            await using var restarted = new Task.Desktop.Infrastructure.ViewStateStore(directory, "server/org", AuthorId, "device");
+            await restarted.Ready;
+            Assert.Null(restarted.Sort("tasks/v1"));
+            Assert.NotNull(restarted.Sort("work-links/v1"));
+            var secondId = Guid.NewGuid();
+            await using var fixture = await Fixture.CreateAsync((request, _) =>
+            {
+                var next = request.RequestUri!.Query.Contains("cursor=", StringComparison.Ordinal);
+                var item = TaskJson().Replace("Подготовить отчёт", next ? "А — вторая серверная страница" : "Я — первая серверная страница");
+                if (next) item = item.Replace(TaskId.ToString("D"), secondId.ToString("D"));
+                return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK,
+                    "{\"items\":[" + item + "],\"nextCursor\":" + (next ? "null" : "\"page-2\"") + ",\"total\":2}"));
+            });
+            using var model = new Task.Desktop.ViewModels.TasksViewModel(fixture.Client);
+            await model.ActivateAsync();
+            Assert.True(model.HasNextPage);
+            await model.LoadNextPageAsync();
+            Assert.Equal(new[] { "Я — первая серверная страница", "А — вторая серверная страница" }, model.Items.Select(item => item.Title));
+            Assert.False(model.HasNextPage);
+            var requests = fixture.TaskRequests.Where(request => request.Uri.AbsolutePath == "/api/v1/tasks").ToArray();
+            Assert.Equal(2, requests.Length);
+            Assert.Equal("", requests[0].Uri.Query);
+            Assert.Equal("?cursor=page-2", requests[1].Uri.Query);
+        }
+        finally { if (Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task SimilarDraft_UsesOrdinaryPostAndAllowlistedTaskCreateBody()
     {
         var source = new DesktopTaskDto(Guid.NewGuid(), OrganizationId, 42, DateTimeOffset.UtcNow,

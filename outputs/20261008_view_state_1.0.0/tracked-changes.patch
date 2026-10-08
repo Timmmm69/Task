@@ -1,0 +1,485 @@
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml b/work/production/src/Task.Desktop/MainWindow.xaml
+index 2ba3db4..ddc9c42 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml
++++ b/work/production/src/Task.Desktop/MainWindow.xaml
+@@ -1,7 +1,7 @@
+ <Window x:Class="Task.Desktop.MainWindow"
+         x:Name="RootWindow"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:views="clr-namespace:Task.Desktop.Views"
+@@ -708,7 +708,7 @@
+                                   HorizontalAlignment="Stretch" Background="Transparent"
+                                   AutomationProperties.Name="Изменить ширину списка и сведений" />
+ 
+-                    <Expander x:Name="TaskInspectorExpander"
++                    <Expander x:Name="TaskInspectorExpander" state:ViewState.Section="main/v1/inspector"
+                               AutomationProperties.Name="Сведения о выбранной задаче">
+                         <Expander.Style>
+                             <Style TargetType="Expander">
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml.cs b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+index a73ea66..8381941 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml.cs
++++ b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+@@ -44,7 +44,7 @@ public partial class MainWindow : Window
+ 
+     protected override void OnClosing(CancelEventArgs e)
+     {
+-        if (_modeTransitionClose)
++        if (_modeTransitionClose || Infrastructure.ViewState.IsCompletingClose(this))
+         {
+             base.OnClosing(e);
+             return;
+diff --git a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+index 75c2f4c..cdad0e9 100644
+--- a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
++++ b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+@@ -328,6 +328,10 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration);
+         var window = new MainWindow(viewModel);
++        var metadata = sessionService.CurrentSessionMetadata!;
++        Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(_dataDirectory,
++            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
++            Infrastructure.ViewState.DeviceNamespace));
+         _mainWindow = window;
+         _mainSessionService = sessionService;
+         sessionService.StateChanged += OnMainSessionStateChanged;
+diff --git a/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs b/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs
+index 8646638..f535b70 100644
+--- a/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs
++++ b/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs
+@@ -108,6 +108,8 @@ internal sealed class PersonalApplicationContext(
+     private void ShowPersonal()
+     {
+         var window = new PersonalWindow(_model!);
++        Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(dataRoot, "personal",
++            _model!.Store.LocalActorId, Infrastructure.ViewState.DeviceNamespace));
+         window.SwitchModeRequested += switchMode;
+         window.BackupRequested += Backup;
+         window.RestoreRequested += Restore;
+diff --git a/work/production/src/Task.Desktop/Views/InboxView.xaml b/work/production/src/Task.Desktop/Views/InboxView.xaml
+index 3828e1f..8260d4e 100644
+--- a/work/production/src/Task.Desktop/Views/InboxView.xaml
++++ b/work/production/src/Task.Desktop/Views/InboxView.xaml
+@@ -1,7 +1,7 @@
+ <UserControl x:Class="Task.Desktop.Views.InboxView"
+              x:Name="InboxRoot"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+              AutomationProperties.Name="Входящие"
+              AutomationProperties.AutomationId="InboxScreen" AllowDrop="True" PreviewDragOver="RejectFileDrag" PreviewDrop="RejectFileDrop" DragLeave="FileDragLeave">
+     <Grid Background="{DynamicResource Task.Brush.Surface.Subtle}">
+@@ -170,7 +170,7 @@
+         <GridSplitter Grid.Row="0" Grid.Column="1" Width="8" HorizontalAlignment="Stretch" Background="Transparent"
+                       AutomationProperties.Name="Изменить ширину входящих и сведений" />
+ 
+-        <Expander x:Name="InboxInspectorExpander"
++        <Expander x:Name="InboxInspectorExpander" state:ViewState.Section="inbox/v1/inspector"
+                   AutomationProperties.Name="Сведения о записи входящих"
+                   AutomationProperties.AutomationId="InboxInspectorExpander">
+             <Expander.Style>
+diff --git a/work/production/src/Task.Desktop/Views/ObjectLinksView.xaml b/work/production/src/Task.Desktop/Views/ObjectLinksView.xaml
+index 80bc1d7..ee0e93c 100644
+--- a/work/production/src/Task.Desktop/Views/ObjectLinksView.xaml
++++ b/work/production/src/Task.Desktop/Views/ObjectLinksView.xaml
+@@ -1,5 +1,5 @@
+ <UserControl x:Class="Task.Desktop.Views.ObjectLinksView"
+- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
++ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
+  <StackPanel Margin="8">
+   <WrapPanel>
+    <Button Content="Обновить связи" Command="{Binding RefreshCommand}" Margin="0,0,8,8"/>
+@@ -9,7 +9,7 @@
+    <Button Content="Убрать связь" Command="{Binding RemoveCommand}" Margin="0,0,8,8"/>
+   </WrapPanel>
+   <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" MaxHeight="130" AutomationProperties.AutomationId="ObjectLinksList">
+-   <DataGrid.Columns><DataGridTextColumn Header="Тип" Binding="{Binding TypeLabel}" Width="130"/><DataGridTextColumn Header="Объект" Binding="{Binding Title}" Width="*"/></DataGrid.Columns>
++   <DataGrid.Columns><DataGridTextColumn state:ViewState.ColumnId="type" Header="Тип" Binding="{Binding TypeLabel}" SortMemberPath="TypeLabel" Width="130" MinWidth="60" MaxWidth="500"/><DataGridTextColumn state:ViewState.ColumnId="title" Header="Объект" Binding="{Binding Title}" SortMemberPath="Title" Width="*" MinWidth="100" MaxWidth="1600"/></DataGrid.Columns>
+   </DataGrid>
+   <TextBlock Text="{Binding Message}" TextWrapping="Wrap"/>
+  </StackPanel>
+diff --git a/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml b/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml
+index bd33028..bad7a95 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml
+@@ -1,4 +1,4 @@
+-<UserControl x:Class="Task.Desktop.Views.PersonalProjectsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
++<UserControl x:Class="Task.Desktop.Views.PersonalProjectsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
+  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+  <Grid Margin="20">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+@@ -21,7 +21,7 @@
+        <TextBlock Text="Описание" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding ProjectDescription,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinHeight="96" MaxHeight="180" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AutomationProperties.Name="Описание проекта"/>
+        <TextBlock Text="Статус" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding StatusChoices}" SelectedValue="{Binding ProjectStatus}" SelectedValuePath="Value" DisplayMemberPath="Name"/>
+        <WrapPanel><StackPanel Margin="0,0,16,0"><TextBlock Text="Начало" Style="{StaticResource Personal.Label}"/><DatePicker SelectedDate="{Binding StartDate}" MinHeight="36"/></StackPanel><StackPanel><TextBlock Text="Плановое окончание" Style="{StaticResource Personal.Label}"/><DatePicker SelectedDate="{Binding EndDate}" MinHeight="36"/></StackPanel></WrapPanel>
+-       <Expander Header="Хранение проекта" Margin="0,18,0,0"><StackPanel><TextBlock Text="Состояние" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding LifecycleChoices}" SelectedValue="{Binding Lifecycle}" SelectedValuePath="Value" DisplayMemberPath="Name"/></StackPanel></Expander>
++       <Expander Header="Хранение проекта" state:ViewState.Section="personal-projects/v1/storage" Margin="0,18,0,0"><StackPanel><TextBlock Text="Состояние" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding LifecycleChoices}" SelectedValue="{Binding Lifecycle}" SelectedValuePath="Value" DisplayMemberPath="Name"/></StackPanel></Expander>
+       </StackPanel></ScrollViewer>
+       <Border Grid.Row="2" Padding="20,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><WrapPanel HorizontalAlignment="Right"><Button Content="Отменить" Click="OnCancel" Margin="0,0,8,0"/><Button Content="Сохранить" Click="OnSave" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveProject"/></WrapPanel></Border>
+      </Grid>
+diff --git a/work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml b/work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml
+index 9370a9c..82e0c9d 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml
+@@ -1,11 +1,11 @@
+-<UserControl x:Class="Task.Desktop.Views.PersonalRemindersView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
++<UserControl x:Class="Task.Desktop.Views.PersonalRemindersView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
+  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled"><ScrollViewer.Style><Style TargetType="ScrollViewer"><Setter Property="VerticalScrollBarVisibility" Value="Disabled"/><Style.Triggers><DataTrigger Binding="{Binding ActualHeight,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=650}" Value="False"><Setter Property="VerticalScrollBarVisibility" Value="Auto"/></DataTrigger></Style.Triggers></Style></ScrollViewer.Style><Grid Margin="20" MinHeight="520">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <Grid Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="Напоминания и события" Style="{StaticResource Task.State.Title}"/><Button Grid.Column="1" Content="Обновить" Command="{Binding RefreshCommand}"/></Grid>
+   <StackPanel Grid.Row="1" Margin="0,0,0,14">
+    <Border Style="{StaticResource Task.State.Inline}"><TextBlock Text="Напоминания приходят, пока Task работает. Работа в фоне доступна в настройках." Style="{StaticResource Task.State.Body}"/></Border>
+-   <Expander Header="Новое напоминание" Margin="0,14,0,0" IsExpanded="False"><ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
++   <Expander Header="Новое напоминание" state:ViewState.Section="personal-reminders/v1/create" Margin="0,14,0,0" IsExpanded="False"><ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
+     <WrapPanel><StackPanel Width="280" Margin="0,0,12,0"><TextBlock Text="Задача или событие" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Targets}" SelectedItem="{Binding Target}" DisplayMemberPath="Title" AutomationProperties.AutomationId="PersonalReminderTarget"/></StackPanel><StackPanel Width="180"><TextBlock Text="Когда напомнить" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Triggers}" SelectedItem="{Binding Trigger}" DisplayMemberPath="Name"/></StackPanel></WrapPanel>
+     <WrapPanel><StackPanel Width="100" Margin="0,0,12,0" Visibility="{Binding IsRelativeReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="За минут" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding OffsetMinutes,UpdateSourceTrigger=PropertyChanged}"/></StackPanel><StackPanel Width="240" Visibility="{Binding IsAbsoluteReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Дата и время" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding AbsoluteTime,UpdateSourceTrigger=PropertyChanged}" ToolTip="ДД.ММ.ГГГГ ЧЧ:ММ · местное время"/><TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,4,0,0"/></StackPanel><Button Content="Добавить напоминание" Command="{Binding AddReminderCommand}" Style="{StaticResource Task.Button.Primary}" VerticalAlignment="Bottom" Margin="12,12,0,0" AutomationProperties.AutomationId="PersonalAddReminder"/></WrapPanel>
+    </StackPanel></Border></ScrollViewer></Expander>
+diff --git a/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml b/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
+index a32134e..176ab0d 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
+@@ -1,5 +1,5 @@
+ <UserControl x:Class="Task.Desktop.Views.PersonalTasksView" x:Name="PersonalTasks"
+- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+  xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:api="clr-namespace:Task.Desktop.TaskApi">
+  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+  <Grid Margin="24">
+@@ -36,7 +36,7 @@
+    </StackPanel></Border>
+    <Border Grid.RowSpan="2" Background="{DynamicResource Task.Brush.Surface.Base}" Visibility="{Binding IsBusy,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><ProgressBar IsIndeterminate="True" Width="160" Style="{StaticResource Task.Progress.Indeterminate}"/><TextBlock Text="Обновляем задачи…" Style="{StaticResource Task.State.Body}" Margin="0,12,0,0"/></StackPanel></Border>
+   </Grid>
+-  <Expander Grid.Row="3" Header="Сведения о задаче" Margin="0,12,0,0" IsExpanded="False" AutomationProperties.Name="Сведения о задаче">
++  <Expander Grid.Row="3" Header="Сведения о задаче" state:ViewState.Section="personal-tasks/v1/details" Margin="0,12,0,0" IsExpanded="False" AutomationProperties.Name="Сведения о задаче">
+    <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
+     <TextBlock Text="{Binding Selected.Title,TargetNullValue=Выберите задачу}" Style="{StaticResource Task.State.Title}"/>
+     <TextBlock Text="{Binding Selected.Source.Card.Description}" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+@@ -60,7 +60,7 @@
+         <StackPanel><TextBlock Text="Приоритет" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text" AutomationProperties.Name="Приоритет"/></StackPanel>
+         <StackPanel Grid.Column="2"><TextBlock Text="Проект" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}" DisplayMemberPath="Name" AutomationProperties.AutomationId="PersonalTaskProject" AutomationProperties.Name="Проект задачи"/></StackPanel>
+        </Grid>
+-       <Expander Header="Планирование и связи" Margin="0,20,0,0" IsExpanded="False"><StackPanel>
++       <Expander Header="Планирование и связи" state:ViewState.Section="personal-tasks/v1/planning" Margin="0,20,0,0" IsExpanded="False"><StackPanel>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <StackPanel><TextBlock Text="Дата без времени" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" ToolTip="ДД.ММ.ГГГГ" AutomationProperties.AutomationId="PersonalScheduledDate"/><TextBlock Text="ДД.ММ.ГГГГ" Style="{StaticResource Task.State.Body}" FontSize="12"/></StackPanel>
+          <StackPanel Grid.Column="2"><TextBlock Text="Длительность, минут" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Duration,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Длительность"/></StackPanel>
+diff --git a/work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml b/work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml
+index bdbaf4d..3bddae5 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml
+@@ -1,9 +1,9 @@
+-<UserControl x:Class="Task.Desktop.Views.PersonalWorkspaceView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:views="clr-namespace:Task.Desktop.Views">
++<UserControl x:Class="Task.Desktop.Views.PersonalWorkspaceView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views">
+  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+  <Grid>
+   <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <views:WorkHubView DataContext="{Binding Hub}"/>
+-  <Expander Grid.Row="1" Header="Связи и действия с записью" Margin="20,0,20,12" IsExpanded="False" Visibility="{Binding ShowObjectActions,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
++  <Expander Grid.Row="1" Header="Связи и действия с записью" state:ViewState.Section="personal-workspace/v1/actions" Margin="20,0,20,12" IsExpanded="False" Visibility="{Binding ShowObjectActions,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+    <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
+     <TextBlock Text="Запись" Style="{StaticResource Personal.Label}"/><DockPanel><Button Content="Обновить" Command="{Binding RefreshCommand}" DockPanel.Dock="Right" Margin="12,0,0,0"/><ComboBox ItemsSource="{Binding Objects}" SelectedItem="{Binding Selected}" AutomationProperties.Name="Запись для действий" AutomationProperties.AutomationId="PersonalMetadataObject"/></DockPanel>
+     <TextBlock Text="{Binding Selected.LifecycleText}" Style="{StaticResource Task.State.Body}" Margin="0,8,0,0"/>
+@@ -11,10 +11,10 @@
+     <WrapPanel><ComboBox ItemsSource="{Binding Folders}" SelectedItem="{Binding Folder}" Width="240" Margin="0,0,12,0" AutomationProperties.Name="Папка каталога"/><Button Content="Переместить в папку" Command="{Binding MoveCommand}"/></WrapPanel>
+     <Border Style="{StaticResource Personal.Feedback}"><TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive"/></Border>
+     <StackPanel Visibility="{Binding NeedsProjectRecovery,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12,0,0"><TextBlock Text="Выберите, куда восстановить проект." Style="{StaticResource Task.State.Body}"/><WrapPanel Margin="0,8,0,0"><Button Content="В активные" Command="{Binding RecoverProjectCommand}" CommandParameter="active"/><Button Content="В архив" Command="{Binding RecoverProjectCommand}" CommandParameter="archived" Margin="8,0,0,0"/></WrapPanel></StackPanel>
+-    <Expander Header="Связанные записи" Margin="0,16,0,0"><StackPanel><TextBlock Text="Связать с записью" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding ActiveObjects}" SelectedItem="{Binding Target}" AutomationProperties.Name="Связанная запись" AutomationProperties.AutomationId="PersonalLinkTarget"/><views:ObjectLinksView DataContext="{Binding Links}"/></StackPanel></Expander>
++    <Expander Header="Связанные записи" state:ViewState.Section="personal-workspace/v1/links" Margin="0,16,0,0"><StackPanel><TextBlock Text="Связать с записью" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding ActiveObjects}" SelectedItem="{Binding Target}" AutomationProperties.Name="Связанная запись" AutomationProperties.AutomationId="PersonalLinkTarget"/><views:ObjectLinksView state:ViewState.Surface="personal-links/v1" DataContext="{Binding Links}"/></StackPanel></Expander>
+    </StackPanel></Border></ScrollViewer>
+   </Expander>
+-  <Expander Grid.Row="2" Header="Резервные копии и работа в фоне" Margin="20,0,20,16" IsExpanded="False" Visibility="{Binding Hub.IsSettings,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Резервные копии и работа в фоне">
++  <Expander Grid.Row="2" Header="Резервные копии и работа в фоне" state:ViewState.Section="personal-workspace/v1/backup" Margin="20,0,20,16" IsExpanded="False" Visibility="{Binding Hub.IsSettings,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Резервные копии и работа в фоне">
+    <ScrollViewer MaxHeight="230" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
+     <TextBlock Text="Резервная копия личного пространства" Style="{StaticResource Task.State.Title}"/><TextBlock Text="Сохраняет задачи, проекты, расписание, контакты и ссылки. Сами файлы каталога копируйте отдельно." Style="{StaticResource Task.State.Body}" Margin="0,6,0,12"/>
+     <WrapPanel><Button Content="Создать резервную копию" Click="OnBackup" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,8" AutomationProperties.AutomationId="PersonalBackupButton"/><Button Content="Восстановить из копии…" Click="OnRestore" Margin="0,0,0,8" AutomationProperties.AutomationId="PersonalRestoreButton"/></WrapPanel>
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+index 54ebfcc..ee89e6f 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+@@ -1,6 +1,6 @@
+ <UserControl x:Class="Task.Desktop.Views.ProjectsView"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="980"
+@@ -62,7 +62,7 @@
+                         <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12"><StackPanel><TextBlock Text="Руководитель" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding Source.ManagerUserId, TargetNullValue=Не назначен}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
+                     </UniformGrid>
+ 
+-                    <Expander Header="Участники проекта" IsExpanded="True" Margin="0,0,0,14">
++                    <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Margin="0,0,0,14">
+                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
+                             <Grid Margin="0,0,0,10">
+                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="220"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+@@ -94,7 +94,7 @@
+                         </StackPanel>
+                     </Expander>
+ 
+-                    <Expander Header="Связанные задачи" IsExpanded="True">
++                    <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True">
+                         <ItemsControl ItemsSource="{Binding DataContext.RelatedTasks, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
+                             <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="10" Margin="0,0,0,6"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="{Binding Title}" FontWeight="SemiBold"/><TextBlock Grid.Column="1" Text="{Binding StatusText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></Grid></Border></DataTemplate></ItemsControl.ItemTemplate>
+                         </ItemsControl>
+diff --git a/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml b/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml
+index e4c9f08..6d706e3 100644
+--- a/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml
++++ b/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml
+@@ -1,7 +1,7 @@
+ <UserControl x:Class="Task.Desktop.Views.TaskCardEditorView"
+              x:Name="TaskCardEditorRoot"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
++             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
+     <UserControl.Resources>
+         <Style x:Key="Task.Editor.Label" TargetType="TextBlock">
+             <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
+@@ -58,7 +58,7 @@
+         <TextBlock Text="Назначение недоступно без права Task.Assign; уже выбранные значения остаются видимыми."
+                    Style="{StaticResource Task.Editor.Hint}" />
+ 
+-        <Expander Header="Дополнительные связи и планирование" IsExpanded="False" Margin="0,16,0,0"
++        <Expander Header="Дополнительные связи и планирование" state:ViewState.Section="task-editor/v1/planning" IsExpanded="False" Margin="0,16,0,0"
+                   AutomationProperties.Name="Дополнительные поля задачи">
+             <StackPanel Margin="0,12,0,0">
+                 <Grid>
+diff --git a/work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml b/work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml
+index 9427b70..a68e726 100644
+--- a/work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml
++++ b/work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml
+@@ -1,5 +1,5 @@
+ <UserControl x:Class="Task.Desktop.Views.TaskWorkspaceView" x:Name="Workspace"
+- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:views="clr-namespace:Task.Desktop.Views">
++ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views">
+  <UserControl.Resources>
+   <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,5"/></Style>
+   <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Margin" Value="0,4,5,4"/></Style>
+@@ -9,33 +9,33 @@
+   <TextBlock Text="{Binding ContextText}"/>
+   <TextBlock Text="{Binding Message}" AutomationProperties.LiveSetting="Assertive"/>
+   <Button Content="Обновить связи" Command="{Binding RefreshCommand}"/>
+-  <Expander Header="Чек-лист"><views:TaskChecklistView/></Expander>
+-  <Expander Header="Подзадачи"><StackPanel>
++  <Expander Header="Чек-лист" state:ViewState.Section="task/v1/checklist"><views:TaskChecklistView/></Expander>
++  <Expander Header="Подзадачи" state:ViewState.Section="task/v1/subtasks"><StackPanel>
+    <TextBlock Text="Чтобы добавить подзадачу, создайте задачу и выберите эту задачу как родительскую."/>
+    <ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   </StackPanel></Expander>
+   <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,14,0,5"/>
+   <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск файлов и зависимостей"/>
+   <Button Content="Найти связи" Command="{Binding SearchCommand}"/>
+-  <Expander Header="Связанные файлы"><StackPanel>
++  <Expander Header="Связанные файлы" state:ViewState.Section="task/v1/files"><StackPanel>
+    <TextBlock Text="{Binding FilesNotice}"/>
+    <ItemsControl ItemsSource="{Binding Files}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать связь" Command="{Binding DataContext.RemoveFileCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <ComboBox ItemsSource="{Binding FileOptions}" SelectedItem="{Binding File}" DisplayMemberPath="Name" AutomationProperties.Name="Файл для задачи"/>
+    <Button Content="Связать с файлом" Command="{Binding AddFileCommand}"/>
+   </StackPanel></Expander>
+-  <Expander Header="Предшествующие задачи"><StackPanel>
++  <Expander Header="Предшествующие задачи" state:ViewState.Section="task/v1/predecessors"><StackPanel>
+    <TextBlock Text="Зависимость «окончание — начало». Перед завершением проверьте состояния предшествующих задач."/>
+    <ItemsControl ItemsSource="{Binding Dependencies}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать зависимость" Command="{Binding DataContext.RemoveDependencyCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <ComboBox ItemsSource="{Binding TaskOptions}" SelectedItem="{Binding Dependency}" DisplayMemberPath="Name" AutomationProperties.Name="Предшествующая задача"/>
+    <Button Content="Добавить зависимость" Command="{Binding AddDependencyCommand}"/>
+   </StackPanel></Expander>
+-  <Expander Header="Комментарии"><StackPanel>
++  <Expander Header="Комментарии" state:ViewState.Section="task/v1/comments"><StackPanel>
+    <TextBlock Text="Последние 200 комментариев"/>
+    <ItemsControl ItemsSource="{Binding Comments}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}" Margin="0,6"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <TextBox Text="{Binding Comment,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="70" MaxHeight="150" VerticalScrollBarVisibility="Auto" MaxLength="50000" AutomationProperties.Name="Новый комментарий задачи"/>
+    <Button Content="Добавить комментарий" Command="{Binding AddCommentCommand}"/>
+   </StackPanel></Expander>
+-  <Expander Header="История изменений" IsExpanded="False"><StackPanel>
++  <Expander Header="История изменений" state:ViewState.Section="task/v1/history" IsExpanded="False"><StackPanel>
+    <TextBlock Text="{Binding HistoryNotice}"/>
+    <ItemsControl ItemsSource="{Binding History}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   </StackPanel></Expander>
+diff --git a/work/production/src/Task.Desktop/Views/TodayView.xaml b/work/production/src/Task.Desktop/Views/TodayView.xaml
+index 9058d95..3c95c73 100644
+--- a/work/production/src/Task.Desktop/Views/TodayView.xaml
++++ b/work/production/src/Task.Desktop/Views/TodayView.xaml
+@@ -1,7 +1,7 @@
+ <UserControl x:Class="Task.Desktop.Views.TodayView"
+              x:Name="TodayRoot"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+              AutomationProperties.Name="Сегодня"
+              AutomationProperties.AutomationId="TodayScreen"
+              Background="{DynamicResource Task.Brush.Surface.Base}"
+@@ -423,8 +423,14 @@
+ 
+             <Grid Grid.Column="1">
+                 <Grid.RowDefinitions>
+-                    <RowDefinition Height="45*" />
+-                    <RowDefinition Height="55*" />
++                    <RowDefinition><RowDefinition.Style><Style TargetType="RowDefinition">
++                        <Setter Property="Height" Value="45*"/>
++                        <Style.Triggers><DataTrigger Binding="{Binding IsExpanded, ElementName=TodayQueueRegionExpansion}" Value="False"><Setter Property="Height" Value="Auto"/></DataTrigger></Style.Triggers>
++                    </Style></RowDefinition.Style></RowDefinition>
++                    <RowDefinition><RowDefinition.Style><Style TargetType="RowDefinition">
++                        <Setter Property="Height" Value="55*"/>
++                        <Style.Triggers><DataTrigger Binding="{Binding IsExpanded, ElementName=TodayInspectorRegionExpansion}" Value="False"><Setter Property="Height" Value="Auto"/></DataTrigger></Style.Triggers>
++                    </Style></RowDefinition.Style></RowDefinition>
+                 </Grid.RowDefinitions>
+ 
+                 <Grid x:Name="TodayQueueRegion" Grid.Row="0"
+@@ -435,20 +441,25 @@
+                         <RowDefinition Height="*" />
+                     </Grid.RowDefinitions>
+                     <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+-                        <Grid Margin="18,0">
+-                            <TextBlock VerticalAlignment="Center" FontSize="{DynamicResource Task.Font.Size.Section}"
+-                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+-                                       AutomationProperties.AutomationId="TodayQueueRegion">
+-                                <Run Text="Несрочные и просроченные (" /><Run Text="{Binding QueueCount, Mode=OneWay}" /><Run Text=")" />
+-                            </TextBlock>
+-                        </Grid>
++                        <Expander x:Name="TodayQueueRegionExpansion" IsExpanded="True" VerticalAlignment="Center" state:ViewState.Section="today/v1/queue" AutomationProperties.Name="Несрочные и просроченные">
++                            <Expander.Header>
++                                <Grid Margin="6,0">
++                                    <TextBlock VerticalAlignment="Center" FontSize="{DynamicResource Task.Font.Size.Section}"
++                                               FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
++                                               AutomationProperties.AutomationId="TodayQueueRegion">
++                                        <Run Text="Несрочные и просроченные (" /><Run Text="{Binding QueueCount, Mode=OneWay}" /><Run Text=")" />
++                                    </TextBlock>
++                                </Grid>
++                            </Expander.Header>
++                        </Expander>
+                     </Border>
+-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
++                    <Grid Grid.Row="1" Visibility="{Binding IsExpanded, ElementName=TodayQueueRegionExpansion, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
++                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                         <ItemsControl ItemsSource="{Binding QueueItems}"
+                                       ItemTemplate="{StaticResource TodayQueueTemplate}"
+                                       Margin="6,0,12,0" />
+                     </ScrollViewer>
+-                    <StackPanel Grid.Row="1" Margin="28" HorizontalAlignment="Center" VerticalAlignment="Center">
++                    <StackPanel Margin="28" HorizontalAlignment="Center" VerticalAlignment="Center">
+                         <StackPanel.Style>
+                             <Style TargetType="StackPanel">
+                                 <Setter Property="Visibility" Value="Collapsed" />
+@@ -463,6 +474,7 @@
+                                    FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                    Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                     </StackPanel>
++                    </Grid>
+                 </Grid>
+ 
+                 <Grid x:Name="TodayInspectorRegion" Grid.Row="1"
+@@ -473,12 +485,17 @@
+                         <RowDefinition Height="*" />
+                     </Grid.RowDefinitions>
+                     <Border BorderThickness="0,1,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+-                        <TextBlock Text="Детали задачи" Margin="18,0" VerticalAlignment="Center"
+-                                   FontSize="{DynamicResource Task.Font.Size.Section}"
+-                                   FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+-                                   AutomationProperties.AutomationId="TodayInspectorRegion" />
++                        <Expander x:Name="TodayInspectorRegionExpansion" IsExpanded="True" VerticalAlignment="Center" state:ViewState.Section="today/v1/inspector" AutomationProperties.Name="Детали задачи">
++                            <Expander.Header>
++                                <TextBlock Text="Детали задачи" Margin="6,0" VerticalAlignment="Center"
++                                           FontSize="{DynamicResource Task.Font.Size.Section}"
++                                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
++                                           AutomationProperties.AutomationId="TodayInspectorRegion" />
++                            </Expander.Header>
++                        </Expander>
+                     </Border>
+-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
++                    <Grid Grid.Row="1" Visibility="{Binding IsExpanded, ElementName=TodayInspectorRegionExpansion, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
++                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                         <StackPanel Margin="20,14,20,18" DataContext="{Binding SelectedItem}">
+                             <StackPanel.Style>
+                                 <Style TargetType="StackPanel">
+@@ -563,7 +580,7 @@
+                         </StackPanel>
+                     </ScrollViewer>
+ 
+-                    <StackPanel Grid.Row="1" Margin="28" HorizontalAlignment="Center" VerticalAlignment="Center">
++                    <StackPanel Margin="28" HorizontalAlignment="Center" VerticalAlignment="Center">
+                         <StackPanel.Style>
+                             <Style TargetType="StackPanel">
+                                 <Setter Property="Visibility" Value="Collapsed" />
+@@ -579,6 +596,7 @@
+                                    FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                    Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                     </StackPanel>
++                    </Grid>
+                 </Grid>
+             </Grid>
+ 
+diff --git a/work/production/src/Task.Desktop/Views/WorkHubView.xaml b/work/production/src/Task.Desktop/Views/WorkHubView.xaml
+index 029788f..ea56d23 100644
+--- a/work/production/src/Task.Desktop/Views/WorkHubView.xaml
++++ b/work/production/src/Task.Desktop/Views/WorkHubView.xaml
+@@ -1,6 +1,6 @@
+ <UserControl x:Class="Task.Desktop.Views.WorkHubView"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:views="clr-namespace:Task.Desktop.Views"
++        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views"
+         AutomationProperties.Name="Рабочие данные" AutomationProperties.AutomationId="WorkHubView">
+     <Grid Margin="20">
+         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+@@ -256,6 +256,6 @@
+             </StackPanel>
+             </Grid>
+         </ScrollViewer>
+-        <Expander Grid.Row="3" Header="Связи выбранного объекта" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView DataContext="{Binding Links}"/></Expander>
++        <Expander Grid.Row="3" Header="Связи выбранного объекта" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/></Expander>
+     </Grid>
+ </UserControl>
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
+index 4be5766..d2980fe 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
+@@ -10,6 +10,44 @@ namespace Task.Desktop.Tests.TaskApi;
+ 
+ public sealed class DesktopTasksApiClientTests
+ {
++    [Fact]
++    public async global::System.Threading.Tasks.Task ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages()
++    {
++        var directory = Path.Combine(Path.GetTempPath(), "Task-view-state-query", Guid.NewGuid().ToString("N"));
++        try
++        {
++            await using var preferences = new Task.Desktop.Infrastructure.ViewStateStore(directory, "server/org", AuthorId, "device");
++            await preferences.Ready;
++            preferences.SetSort("tasks/v1", new("Title", false));
++            preferences.SetSort("work-links/v1", new("Title", false));
++            await preferences.FlushAsync();
++            await using var restarted = new Task.Desktop.Infrastructure.ViewStateStore(directory, "server/org", AuthorId, "device");
++            await restarted.Ready;
++            Assert.Null(restarted.Sort("tasks/v1"));
++            Assert.NotNull(restarted.Sort("work-links/v1"));
++            var secondId = Guid.NewGuid();
++            await using var fixture = await Fixture.CreateAsync((request, _) =>
++            {
++                var next = request.RequestUri!.Query.Contains("cursor=", StringComparison.Ordinal);
++                var item = TaskJson().Replace("Подготовить отчёт", next ? "А — вторая серверная страница" : "Я — первая серверная страница");
++                if (next) item = item.Replace(TaskId.ToString("D"), secondId.ToString("D"));
++                return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK,
++                    "{\"items\":[" + item + "],\"nextCursor\":" + (next ? "null" : "\"page-2\"") + ",\"total\":2}"));
++            });
++            using var model = new Task.Desktop.ViewModels.TasksViewModel(fixture.Client);
++            await model.ActivateAsync();
++            Assert.True(model.HasNextPage);
++            await model.LoadNextPageAsync();
++            Assert.Equal(new[] { "Я — первая серверная страница", "А — вторая серверная страница" }, model.Items.Select(item => item.Title));
++            Assert.False(model.HasNextPage);
++            var requests = fixture.TaskRequests.Where(request => request.Uri.AbsolutePath == "/api/v1/tasks").ToArray();
++            Assert.Equal(2, requests.Length);
++            Assert.Equal("", requests[0].Uri.Query);
++            Assert.Equal("?cursor=page-2", requests[1].Uri.Query);
++        }
++        finally { if (Directory.Exists(directory)) Directory.Delete(directory, true); }
++    }
++
+     [Fact]
+     public async global::System.Threading.Tasks.Task SimilarDraft_UsesOrdinaryPostAndAllowlistedTaskCreateBody()
+     {

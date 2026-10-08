@@ -1,0 +1,6 @@
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Внимание! Перезапись файла с результатами: C:\Users\novik\Таск\work\view_state_1\results\desktop.trx
+Файл результатов: C:\Users\novik\Таск\work\view_state_1\results\desktop.trx
+
+Пройден!   : не пройдено     0, пройдено   711, пропущено     0, всего   711, длительность 4 s. - Task.Desktop.Tests.dll (net10.0)

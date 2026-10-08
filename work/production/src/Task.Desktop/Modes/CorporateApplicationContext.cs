@@ -328,6 +328,10 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration);
         var window = new MainWindow(viewModel);
+        var metadata = sessionService.CurrentSessionMetadata!;
+        Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(_dataDirectory,
+            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
+            Infrastructure.ViewState.DeviceNamespace));
         _mainWindow = window;
         _mainSessionService = sessionService;
         sessionService.StateChanged += OnMainSessionStateChanged;
