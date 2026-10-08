@@ -1,0 +1,108 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "361612038356c12bec74037317377071d37b17b58dcf58c6f41f416d717b2c6c",
+      "bytes": 15
+    },
+    {
+      "path": "evidence/boundaries.log",
+      "sha256": "a6cd66b5382453e77e2beab45984176c14673416be5146ab13d6810edd0a1604",
+      "bytes": 1950
+    },
+    {
+      "path": "evidence/build.log",
+      "sha256": "528b717a86a00bc584c214f3278233e435e2aed42a4a13db33d210030314b726",
+      "bytes": 196
+    },
+    {
+      "path": "evidence/database_net10.0_20261008143213.trx",
+      "sha256": "3338ef47640cc371262f18ff85d18af4001f4ffd24202edd2fd1298da27213fc",
+      "bytes": 844040
+    },
+    {
+      "path": "evidence/database_net10.0_20261008143225.trx",
+      "sha256": "5c0a9332e7c5a0040afa13919a27b1ff1540a8d4fa8560e889b292a70d5b5cce",
+      "bytes": 876908
+    },
+    {
+      "path": "evidence/database_net10.0_20261008143258.trx",
+      "sha256": "bb07684a7778c4ed829f18b698dc4ef52b01138d51714d5ee11d734feee1ba95",
+      "bytes": 1109731
+    },
+    {
+      "path": "evidence/tests.log",
+      "sha256": "6fd416deba0f06c5aa504cbc455de2affb5f618946be9834dd54ef25fa4cc1bd",
+      "bytes": 2830
+    },
+    {
+      "path": "source/work/production/docs/task-similar-create.md",
+      "sha256": "3ba513551bf0448f4e79a02909e71106262b359c1ccf5b85cfff2b44c7910b76",
+      "bytes": 6177
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/MainWindow.xaml",
+      "sha256": "cb867311b831897490c366ebe7e8d6d2e6f8c6b7081d9c9da27fc78a3fe6c126",
+      "bytes": 104101
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+      "sha256": "13b3f774a784e77c4495b7061334bc8632af5899aa372d880c0d0d0e5e104238",
+      "bytes": 14428
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "sha256": "b4c13d846003ca6a0ffb2cc19bd9d4f592a32441bef17e5a2641dad08cdf30fe",
+      "bytes": 74603
+    },
+    {
+      "path": "source/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "sha256": "82be1abd8c2a8b5c3a394cb3bf5db43d39ee3fad9fe81a85bb8873d6b1ca5c6a",
+      "bytes": 10428
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "sha256": "0491ef7d1a827c267434f9479cfc100e310aa740e2f311cefd74627db82b57e1",
+      "bytes": 37639
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/SimilarTaskTests.cs",
+      "sha256": "b198b6e136ae200adc79877e9f41cf0d3729664a42bfbeef10427c07629c5cd7",
+      "bytes": 11872
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs",
+      "sha256": "0d31fd3b6723cf4f2acb5c08aa1afcbe3b127ed0fcd88394cb61ebeecc8b439f",
+      "bytes": 39750
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "sha256": "07a6f1e9ba8b48d8e54d9b815f75b6240d87ef53203c47e9495aa29353fc149a",
+      "bytes": 10045
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresTaskCardWorkflowTests.cs",
+      "sha256": "5e657d6b59d2ed5837f22715deddd0fe782c0cbcc00b5ffb970f6ab31d391d79",
+      "bytes": 11872
+    },
+    {
+      "path": "source-inventory.json",
+      "sha256": "14fc7a1092b93765d5a8150d595efa79bae0c9ca962cee7b8d2088df47ee421e",
+      "bytes": 1899
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "0b6c793f29e825d08f027bdf75662b037a1865a87cd1caac58e6f0e63d305314",
+      "bytes": 2399
+    },
+    {
+      "path": "VERSION",
+      "sha256": "603f99d8187cffc1d216a54f0e9ad36f40fbcb40ba306f5a9e87850ef8bb88ea",
+      "bytes": 10
+    }
+  ],
+  "status": "local source verified",
+  "baseCommit": "1a866b541413afdf702d1896e12c46735a848a7b",
+  "version": "1.0.0",
+  "feature": "Create similar task"
+}

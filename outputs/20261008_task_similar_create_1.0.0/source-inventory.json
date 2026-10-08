@@ -1,0 +1,42 @@
+﻿[
+    {
+        "sha256":  "cb867311b831897490c366ebe7e8d6d2e6f8c6b7081d9c9da27fc78a3fe6c126",
+        "path":  "work/production/src/Task.Desktop/MainWindow.xaml"
+    },
+    {
+        "sha256":  "b4c13d846003ca6a0ffb2cc19bd9d4f592a32441bef17e5a2641dad08cdf30fe",
+        "path":  "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs"
+    },
+    {
+        "sha256":  "13b3f774a784e77c4495b7061334bc8632af5899aa372d880c0d0d0e5e104238",
+        "path":  "work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs"
+    },
+    {
+        "sha256":  "82be1abd8c2a8b5c3a394cb3bf5db43d39ee3fad9fe81a85bb8873d6b1ca5c6a",
+        "path":  "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs"
+    },
+    {
+        "sha256":  "b198b6e136ae200adc79877e9f41cf0d3729664a42bfbeef10427c07629c5cd7",
+        "path":  "work/production/tests/Task.Desktop.Tests/Tasks/SimilarTaskTests.cs"
+    },
+    {
+        "sha256":  "0491ef7d1a827c267434f9479cfc100e310aa740e2f311cefd74627db82b57e1",
+        "path":  "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs"
+    },
+    {
+        "sha256":  "0d31fd3b6723cf4f2acb5c08aa1afcbe3b127ed0fcd88394cb61ebeecc8b439f",
+        "path":  "work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs"
+    },
+    {
+        "sha256":  "07a6f1e9ba8b48d8e54d9b815f75b6240d87ef53203c47e9495aa29353fc149a",
+        "path":  "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs"
+    },
+    {
+        "sha256":  "5e657d6b59d2ed5837f22715deddd0fe782c0cbcc00b5ffb970f6ab31d391d79",
+        "path":  "work/production/tests/Task.Tests/PostgresTaskCardWorkflowTests.cs"
+    },
+    {
+        "sha256":  "3ba513551bf0448f4e79a02909e71106262b359c1ccf5b85cfff2b44c7910b76",
+        "path":  "work/production/docs/task-similar-create.md"
+    }
+]

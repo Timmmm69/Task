@@ -335,6 +335,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         EditTaskCommand = new AsyncCommand(
             async (_, token) => { OpenEditEditor(); await LoadEditorOptionsAsync(token); },
             _ => CanEdit);
+        CreateSimilarTaskCommand = new AsyncCommand(OpenSimilarEditorAsync, _ => CanCreateSimilar);
         LoadOptionsCommand = new AsyncCommand(async (_, token) => await LoadEditorOptionsAsync(token), _ => Editor is not null && !IsMutationBusy);
         SaveEditorCommand = new AsyncCommand(
             async (_, token) => await SaveEditorAsync(token).ConfigureAwait(true),
@@ -476,6 +477,9 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     }
 
     public bool CanCreate => CanWrite("Task.Create");
+    public bool CanCreateSimilar => CanCreate && _capabilities.Contains("Task.Read")
+        && DetailsState == TaskDetailsState.Loaded && SelectedDetails?.Id == SelectedItem?.Id
+        && SelectedItem is not null && !HasEditor && !IsMutationBusy;
     public bool CanCreateFromShell => _sessionAllowsWrites
         && _networkAvailable
         && !_writePermissionChanged
@@ -604,7 +608,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     public TaskDetailsState DetailsState
     {
         get => _detailsState;
-        private set => SetProperty(ref _detailsState, value);
+        private set { if (SetProperty(ref _detailsState, value)) NotifyMutationState(); }
     }
 
     public string? ScreenMessage
@@ -954,6 +958,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         RefreshCommand.Dispose();
         LoadMoreCommand.Dispose();
         NewTaskCommand.Dispose();
+        CreateSimilarTaskCommand.Dispose();
         EditTaskCommand.Dispose();
         SaveEditorCommand.Dispose();
         CancelEditorCommand.Dispose();
@@ -1168,6 +1173,38 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         CloseEditor();
         Editor = new TaskEditorViewModel(TaskEditorMode.Create);
         Announcement = "Открыта форма создания задачи.";
+    }
+
+    public AsyncCommand CreateSimilarTaskCommand { get; }
+
+    private async System.Threading.Tasks.Task OpenSimilarEditorAsync(object? parameter, CancellationToken token)
+    {
+        if (!CanCreateSimilar || SelectedItem is not { } selected) return;
+        var generation = Volatile.Read(ref _activationGeneration);
+        using var cancellation = CreateActivationLink(token);
+        IsMutationBusy = true;
+        try
+        {
+            // Re-read before copying: the visible card may have lost access since it was loaded.
+            var result = await _client.GetTaskByIdAsync(selected.Id, cancellation.Token);
+            if (!IsCurrentActivation(generation) || cancellation.IsCancellationRequested || !CanCreate || !_capabilities.Contains("Task.Read") || SelectedItem?.Id != selected.Id || HasEditor) return;
+            if (result is not DesktopTasksApiResult<DesktopTaskDto>.Succeeded source)
+            {
+                SelectedDetails = null;
+                DetailsState = TaskDetailsState.Error;
+                DetailMessage = "Не удалось прочитать исходную задачу. Обновите карточку и проверьте доступ.";
+                return;
+            }
+            var options = _client is IDesktopTaskWorkspaceClient workspace
+                ? await workspace.GetOptionsAsync(string.Empty, cancellation.Token) : null;
+            if (!IsCurrentActivation(generation) || cancellation.IsCancellationRequested || !CanCreate || !_capabilities.Contains("Task.Read") || SelectedItem?.Id != selected.Id || HasEditor) return;
+            Editor = TaskEditorViewModel.FromSimilar(source.Value, options is { Succeeded: true } ? options.Body : null,
+                _capabilities.Contains("Task.Assign"), _capabilities.Contains("Task.Watch"));
+            Announcement = "Открыта форма создания похожей задачи. Проверьте данные перед сохранением.";
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
+        catch (Exception) { DetailMessage = "Не удалось подготовить форму. Обновите карточку и повторите действие."; }
+        finally { IsMutationBusy = false; }
     }
 
     private void OpenEditEditor()
@@ -1575,6 +1612,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private void NotifyMutationState()
     {
         OnPropertyChanged(nameof(CanCreate));
+        OnPropertyChanged(nameof(CanCreateSimilar));
         OnPropertyChanged(nameof(CanCreateFromShell));
         OnPropertyChanged(nameof(CanUpdate));
         OnPropertyChanged(nameof(CanChangeStatus));
@@ -1586,6 +1624,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanComplete));
         OnPropertyChanged(nameof(CanCancel));
         NewTaskCommand?.RaiseCanExecuteChanged();
+        CreateSimilarTaskCommand?.RaiseCanExecuteChanged();
         EditTaskCommand?.RaiseCanExecuteChanged();
         LoadOptionsCommand?.RaiseCanExecuteChanged();
         SaveEditorCommand?.RaiseCanExecuteChanged();

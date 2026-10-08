@@ -77,9 +77,10 @@
       "progress": 100,
       "evidence": [
         "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: real PostgreSQL + HTTPS API + WPF E2E PASS",
-        "outputs/20260904_task_product_completion_1.0.0/VALIDATION_REPORT.md"
+        "outputs/20260904_task_product_completion_1.0.0/VALIDATION_REPORT.md",
+        "outputs/20261008_task_similar_create_1.0.0/VALIDATION_REPORT.md: существующий create editor, безопасное предзаполнение, capabilities, ordinary POST; PostgreSQL 16 solution gate 2002 PASS"
       ],
-      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF. Быстрая Deactivate→Activate защищена generation-проверкой и ожиданием request gate; desktop regression gate 312/312.",
+      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF. Быстрая Deactivate→Activate защищена generation-проверкой и ожиданием request gate; desktop regression gate 312/312. 2026-10-08: «Создать похожую задачу» открывает обычную Create форму без побочных writes; safe allowlist, недоступные relations, capabilities, completed source, 403/422/offline/idempotency и текущие archive/trash read boundaries проверены. Полный PostgreSQL 16 gate: 2002 PASS; native UI walkthrough отдельно не запускался.",
       "updated_at": "2026-09-12T23:05:03+03:00",
       "priority": 3,
       "dependencies": [

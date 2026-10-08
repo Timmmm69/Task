@@ -10,6 +10,29 @@ namespace Task.Desktop.Tests.TaskApi;
 
 public sealed class DesktopTasksApiClientTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task SimilarDraft_UsesOrdinaryPostAndAllowlistedTaskCreateBody()
+    {
+        var source = new DesktopTaskDto(Guid.NewGuid(), OrganizationId, 42, DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow, "Похожая", AuthorId, DesktopTaskStatus.Completed, DesktopTaskPriority.High,
+            DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, [], [], Guid.NewGuid(),
+            new Task.Domain.TaskCardContent { Description = "Текст", PlannedDurationMinutes = 30 }, DateTimeOffset.UtcNow);
+        var editor = Task.Desktop.ViewModels.TaskEditorViewModel.FromSimilar(source, new System.Text.Json.Nodes.JsonObject(), true, true);
+        var command = editor.BuildCreateCommand()!;
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(WriteSuccess(HttpStatusCode.Created, replayed: false)));
+        await fixture.Client.CreateTaskAsync(command);
+        var request = Assert.Single(fixture.TaskRequests);
+        Assert.Equal(HttpMethod.Post, request.Method);
+        Assert.Equal("https://task.example.test/api/v1/tasks", request.Uri.AbsoluteUri);
+        Assert.Equal(command.IdempotencyKey, request.IdempotencyKey); Assert.Null(request.IfMatch);
+        var body = System.Text.Json.Nodes.JsonNode.Parse(request.Body!)!.AsObject();
+        Assert.Equal("Похожая", body["title"]!.ToString());
+        Assert.Equal(30, body["plannedDurationMinutes"]!.GetValue<int>());
+        foreach (var field in new[] { "startAtUtc", "deadlineAt", "scheduledDate", "startTimeLocal", "scheduleTimeZone", "parentTaskId", "requesterUserId" }) Assert.Null(body[field]);
+        foreach (var forbidden in new[] { "id", "version", "organizationId", "authorUserId", "status", "lifecycleState", "createdAt", "updatedAt", "completedAt", "cancelledAt", "recurrenceSeriesId", "recurrenceOccurrenceId", "recurrenceExceptions", "reminders", "comments", "commentVersions", "history", "audit", "checklist", "subtasks", "objectLinks", "fileLinks" }) Assert.False(body.ContainsKey(forbidden), forbidden);
+    }
+
     private static readonly Guid SessionId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2936");
     private static readonly Guid OrganizationId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2937");
     private static readonly Guid TaskId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2938");

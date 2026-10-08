@@ -21,16 +21,19 @@ internal sealed partial class PostgresProductApiStore
         if (query.Length > 200) throw Invalid("Search text is too long.");
         var limit = QueryInt(r, "limit", 200, 1, 200);
         var body = new JsonObject();
+        // Creation choices must pass the same effective project permission as POST /tasks.
+        // Existing edit selections survive searches; read-only callers retain display lookups.
+        var createChoices = r.Permissions.Contains("Task.Create");
         foreach (var (key, sql, permission) in new[] {
             ("people", "SELECT u.id,e.display_name AS name FROM iam.user_accounts u JOIN org.employee_profiles e ON e.id=u.employee_profile_id AND e.organization_id=u.organization_id JOIN core.objects o ON o.id=u.id WHERE u.organization_id=@org AND u.account_status='active' AND o.lifecycle_state='active'", "Employee.Read"),
-            ("projects", "SELECT p.id,p.name FROM projects.projects p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND o.lifecycle_state='active' AND work.task_project_visible(@org,p.id,@user)", "Project.Read"),
+            ("projects", "SELECT p.id,p.name FROM projects.projects p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND o.lifecycle_state='active' AND work.task_project_visible(@org,p.id,@user) AND (NOT @createChoices OR work.task_project_writable(@org,p.id,@user,'task.create'))", "Project.Read"),
             ("counterparties", "SELECT p.id,p.display_name AS name FROM crm.contacts p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND o.lifecycle_state='active' AND iam.object_allowed(@org,o.id,@user,'contact.read',@admin) UNION ALL SELECT p.id,p.name FROM crm.companies p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND o.lifecycle_state='active' AND iam.object_allowed(@org,o.id,@user,'contact.read',@admin)", "Contact.Read"),
             ("tasks", "SELECT p.id,p.title AS name FROM work.tasks p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND o.lifecycle_state='active' AND work.task_visible(@org,p.id,@user)", "Task.Read"),
             ("files", "SELECT p.id,p.name FROM files.catalog_items p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND o.lifecycle_state='active' AND iam.object_allowed(@org,o.id,@user,'filecatalog.read',@admin)", "FileCatalog.Read") })
         {
             var rows = r.Permissions.Contains(permission) ? Many(c, t,
                 "SELECT to_jsonb(options) FROM (" + sql + ") options WHERE name ILIKE @q ORDER BY name,id LIMIT @limit;", r,
-                ("q", "%" + query.Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_") + "%"), ("limit", limit + 1)) : [];
+                ("q", "%" + query.Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_") + "%"), ("limit", limit + 1), ("createChoices", createChoices)) : [];
             body[key + "HasMore"] = rows.Count > limit;
             body[key] = new JsonArray(rows.Take(limit).ToArray<JsonNode?>());
         }

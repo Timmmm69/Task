@@ -823,7 +823,7 @@ public sealed class TasksViewModelTests
             new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
         public Func<DesktopCreateTaskCommand, CancellationToken,
             global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>>>? CreateHandler
-        { get; init; }
+        { get; set; }
 
         public DesktopTasksApiResult<DesktopTaskDto> DetailResult { get; set; } =
             new DesktopTasksApiResult<DesktopTaskDto>.NotFound();

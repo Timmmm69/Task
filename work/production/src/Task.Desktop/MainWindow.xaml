@@ -825,6 +825,23 @@
                                                 </Style>
                                             </Button.Style>
                                         </Button>
+                                        <Button Content="Создать похожую задачу"
+                                                Command="{Binding DataContext.Tasks.CreateSimilarTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                Margin="0,0,0,10"
+                                                AutomationProperties.Name="Создать похожую задачу"
+                                                AutomationProperties.HelpText="Открыть форму создания с безопасными полями исходной задачи. Сохранение требует подтверждения."
+                                                AutomationProperties.AutomationId="CreateSimilarTaskButton">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DataContext.Tasks.CanCreateSimilar, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
                                         <WrapPanel Margin="0,0,0,8">
                                             <Button Content="Начать" CommandParameter="InProgress"
                                                     Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -972,6 +989,8 @@
                                         AutomationProperties.Name="Закрыть форму задачи" />
                             </Grid>
 
+                            <TextBlock Text="{Binding SimilarNotice}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                       AutomationProperties.Name="Основа новой задачи" AutomationProperties.LiveSetting="Polite" />
                             <TextBlock Text="Название" FontWeight="SemiBold" Margin="0,0,0,5" />
                             <TextBox x:Name="TaskTitleTextBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                      MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="20"
