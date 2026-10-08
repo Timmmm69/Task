@@ -4,7 +4,7 @@ using Task.Desktop.ViewModels;
 
 namespace Task.Desktop.Tests.TaskScreen;
 
-public sealed class TasksViewModelTests
+public sealed partial class TasksViewModelTests
 {
     [Fact]
     public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesTaskEditorAndDraft()
@@ -811,6 +811,7 @@ public sealed class TasksViewModelTests
         public int CreateCallCount { get; private set; }
         public int PatchCallCount { get; private set; }
         public int TransitionCallCount { get; private set; }
+        public Func<CancellationToken, global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>>>? TransitionHandler { get; set; }
         public List<DesktopCreateTaskCommand> CreateCommands { get; } = [];
         public ConcurrentQueue<DesktopTaskWriteResult<DesktopTaskDto>> CreateResults { get; } = new();
         public DesktopPatchTaskCommand? LastPatch { get; private set; }
@@ -877,7 +878,7 @@ public sealed class TasksViewModelTests
         {
             TransitionCallCount++;
             LastTransition = command;
-            return global::System.Threading.Tasks.Task.FromResult(TransitionResult);
+            return TransitionHandler?.Invoke(cancellationToken) ?? global::System.Threading.Tasks.Task.FromResult(TransitionResult);
         }
     }
 }

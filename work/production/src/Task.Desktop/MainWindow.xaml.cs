@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     private bool _modeTransitionClose;
     public event Action? SwitchModeRequested;
     private FrameworkElement? _overlayReturnFocus;
+    private readonly Dictionary<Guid, IInputElement?> _completionReturnFocus = [];
     private readonly MainWindowViewModel _viewModel;
 
     public MainWindow()
@@ -36,6 +37,8 @@ public partial class MainWindow : Window
         if (viewModel.Tasks is not null)
         {
             viewModel.Tasks.PropertyChanged += OnTasksPropertyChanged;
+            viewModel.Tasks.CompletionPresented += OnCompletionPresented;
+            viewModel.Tasks.CompletionPresentationEnded += OnCompletionPresentationEnded;
         }
     }
 
@@ -98,6 +101,8 @@ public partial class MainWindow : Window
         if (_viewModel.Tasks is { } tasks)
         {
             tasks.PropertyChanged -= OnTasksPropertyChanged;
+            tasks.CompletionPresented -= OnCompletionPresented;
+            tasks.CompletionPresentationEnded -= OnCompletionPresentationEnded;
         }
 
         _viewModel.Palette.Close();
@@ -107,8 +112,40 @@ public partial class MainWindow : Window
         base.OnClosed(e);
     }
 
+    private void OnCompletionPresented(Guid taskId)
+    {
+        var focused = Keyboard.FocusedElement;
+        if (focused is null || ReferenceEquals(focused, this) || TasksList.IsKeyboardFocusWithin
+            || focused is DependencyObject element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == "ConfirmTransitionButton")
+            _completionReturnFocus[taskId] = focused;
+    }
+
+    private void OnCompletionPresentationEnded(Guid taskId)
+    {
+        if (!_completionReturnFocus.Remove(taskId, out var origin)) return;
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+        {
+            if (!IsActive || !TasksList.IsVisible) return;
+            // A user who moved to another control during the pulse keeps their focus.
+            var focused = Keyboard.FocusedElement;
+            if (!ShouldRestoreCompletionFocus(focused, origin, this)) return;
+            if (TasksList.SelectedItem is { } selected)
+            {
+                TasksList.ScrollIntoView(selected);
+                if (TasksList.ItemContainerGenerator.ContainerFromItem(selected) is ListBoxItem row) row.Focus();
+                else TasksList.Focus();
+            }
+            else TasksRefreshButton.Focus();
+        });
+    }
+
+    internal static bool ShouldRestoreCompletionFocus(IInputElement? focused, IInputElement? origin, IInputElement window) =>
+        focused is null || ReferenceEquals(focused, origin) || ReferenceEquals(focused, window);
+
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(TasksViewModel.IsActive) && sender is TasksViewModel { IsActive: false })
+            _completionReturnFocus.Clear();
         if (e.PropertyName != nameof(TasksViewModel.Editor)
             || sender is not TasksViewModel { Editor: not null })
         {

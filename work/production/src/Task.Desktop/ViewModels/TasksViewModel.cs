@@ -69,10 +69,12 @@ public sealed class TaskItemViewModel
 {
     private static readonly CultureInfo RussianCulture = CultureInfo.GetCultureInfo("ru-RU");
 
-    public TaskItemViewModel(DesktopTaskDto task, TaskDisplayLookup? lookup = null)
+    public TaskItemViewModel(DesktopTaskDto task, TaskDisplayLookup? lookup = null, TaskCompletionFeedback? completionFeedback = null)
     {
+        CompletionFeedback = completionFeedback;
         ArgumentNullException.ThrowIfNull(task);
         lookup ??= TaskDisplayLookup.Empty;
+        DisplayLookup = lookup;
         Source = task;
         IsOverdue = task.DeadlineAtUtc < DateTimeOffset.UtcNow
             && task.Status is not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled;
@@ -96,6 +98,8 @@ public sealed class TaskItemViewModel
 
     public string Title => Source.Title;
 
+    public TaskCompletionFeedback? CompletionFeedback { get; }
+    internal TaskDisplayLookup DisplayLookup { get; }
     public string StatusText { get; }
 
     public string PriorityText { get; }
@@ -274,7 +278,7 @@ public sealed class TaskDetailsViewModel
 /// Read-only task screen state. Network and session access stay behind
 /// <see cref="IDesktopTasksApiClient"/>; the view model only coordinates presentation.
 /// </summary>
-public sealed class TasksViewModel : ViewModelBase, IDisposable
+public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 {
     private readonly IDesktopTasksApiClient _client;
     private readonly SemaphoreSlim _requestGate = new(1, 1);
@@ -316,11 +320,18 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private bool _transitionRetryAvailable = true;
     private string _transitionReason = string.Empty;
     private string? _announcement;
+    private readonly Func<bool> _completionMotionEnabled;
+    private readonly Func<TimeSpan, global::System.Threading.Tasks.Task> _completionDelay;
 
     public TasksViewModel(
         IDesktopTasksApiClient client,
-        IEnumerable<string>? capabilities = null)
+        IEnumerable<string>? capabilities = null,
+        Func<bool>? completionMotionEnabled = null,
+        Func<TimeSpan, global::System.Threading.Tasks.Task>? completionDelay = null)
     {
+        _completionMotionEnabled = completionMotionEnabled ?? (() => System.Windows.SystemParameters.ClientAreaAnimation
+            && !System.Windows.SystemParameters.HighContrast);
+        _completionDelay = completionDelay ?? (duration => global::System.Threading.Tasks.Task.Delay(duration));
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _capabilities = new HashSet<string>(capabilities ?? [], StringComparer.Ordinal);
         RefreshCommand = new AsyncCommand(
@@ -855,6 +866,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
         }
 
         IsActive = false;
+        ResetCompletionFeedback();
         Interlocked.Increment(ref _activationGeneration);
         _activationCancellation?.Cancel();
         _activationCancellation?.Dispose();
@@ -1459,9 +1471,12 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
             switch (result)
             {
                 case DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success:
+                    var completion = target == DesktopTaskStatus.Completed
+                        ? AcknowledgeCompletion(selected.Source, success.Value) : null;
                     ApplyServerTask(success.Value);
                     Announcement = $"Статус задачи изменён: {TaskItemViewModel.LocalizeStatus(success.Value.Status)}.";
                     ClearTransition();
+                    if (completion is not null) _ = FinishCompletionAsync(completion);
                     break;
                 case DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict:
                     ClearTransition();
@@ -1569,12 +1584,17 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
     private void ApplyServerTask(DesktopTaskDto task)
     {
         CancelDetailsLoad();
-        _allTasks = _allTasks.Where(existing => existing.Id != task.Id).Prepend(task).ToArray();
+        _allTasks = _allTasks.Any(existing => existing.Id == task.Id)
+            ? _allTasks.Select(existing => existing.Id == task.Id ? task : existing).ToArray()
+            : _allTasks.Prepend(task).ToArray();
         UpdateProjectFilters();
         ApplyFilters(task.Id);
-        SelectedDetails = new TaskDetailsViewModel(task, _displayLookup);
-        DetailsState = TaskDetailsState.Loaded;
-        DetailMessage = string.Empty;
+        if (SelectedItem?.Id == task.Id)
+        {
+            SelectedDetails = new TaskDetailsViewModel(task, _displayLookup);
+            DetailsState = TaskDetailsState.Loaded;
+            DetailMessage = string.Empty;
+        }
         SetLoadedState();
         NotifyMutationState();
     }
@@ -1673,10 +1693,18 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
 
     private void ApplyFilters(Guid? selectedId)
     {
-        var projected = _allTasks.Select(task => new TaskItemViewModel(task, _displayLookup));
+        var existingRows = Items.ToDictionary(item => item.Id);
+        var projected = _allTasks.Select(task =>
+        {
+            var feedback = GetCompletionFeedback(task);
+            return existingRows.TryGetValue(task.Id, out var row) && ReferenceEquals(row.Source, task)
+                && ReferenceEquals(row.DisplayLookup, _displayLookup)
+                && ReferenceEquals(row.CompletionFeedback, feedback)
+                    ? row : new TaskItemViewModel(task, _displayLookup, feedback);
+        });
         if (SelectedStatusFilter != "Все статусы")
         {
-            projected = projected.Where(item => item.StatusText == SelectedStatusFilter);
+            projected = projected.Where(item => item.StatusText == SelectedStatusFilter || item.CompletionFeedback is not null);
         }
         if (SelectedProjectFilter != "Все проекты")
         {
@@ -1716,6 +1744,7 @@ public sealed class TasksViewModel : ViewModelBase, IDisposable
 
     private void ClearTaskData()
     {
+        ResetCompletionFeedback();
         _allTasks = Array.Empty<DesktopTaskDto>();
         Items = Array.Empty<TaskItemViewModel>();
         ProjectFilters = ["Все проекты"];

@@ -633,6 +633,9 @@
                                      Style="{StaticResource Task.DataList}"
                                      BorderThickness="0"
                                      TabIndex="5"
+                                     ScrollViewer.CanContentScroll="True"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.VirtualizationMode="Recycling"
                                      KeyDown="OnTasksListKeyDown"
                                      AutomationProperties.Name="Список задач"
                                      AutomationProperties.AutomationId="TasksList"
@@ -665,7 +668,8 @@
                                             <Border Grid.Column="3" Style="{StaticResource Task.Semantic.StatusPill}"
                                                     AutomationProperties.Name="{Binding StatusText}">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                                    <Path views:CompletionFeedbackBehavior.Feedback="{Binding CompletionFeedback}"
+                                                          Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
                                                           Tag="{Binding StatusTone}"
                                                           Style="{StaticResource Task.Semantic.Icon}" />
                                                     <TextBlock Text="{Binding StatusText}" Margin="6,0,0,0"
