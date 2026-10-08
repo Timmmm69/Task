@@ -303,11 +303,12 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             tasksClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
+        var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
         var calendar = new CalendarViewModel(
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
-                sessionService.CurrentSessionMetadata!.UserId));
+                sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync);
         var today = new TodayViewModel(
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
@@ -319,7 +320,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             tasksClient);
         var workHub = new WorkHubViewModel(
-            new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
+            workClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             serverAddress: serverEndpoint.GetLeftPart(UriPartial.Authority));
         var administration = new AdministrationViewModel(

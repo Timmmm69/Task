@@ -1,0 +1,50 @@
+{
+  "version": "1.0.1",
+  "suites": [
+    {
+      "suite": "desktop",
+      "total": 678,
+      "passed": 678,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "suite": "domain",
+      "total": 215,
+      "passed": 215,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    {
+      "suite": "api",
+      "total": 33,
+      "passed": 33,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  ],
+  "totalPassed": 926,
+  "ui": {
+    "passed": true,
+    "viewport": "1120x700",
+    "slotAccessibleName": "четверг, 8 октября 2026 09:00 +00:00 — 09:30 +00:00 · 30 мин",
+    "scrollOffset": 561,
+    "logicalFocus": "CalendarTimelineScroll",
+    "automaticWrites": 0,
+    "uiHeartbeatsDuringRead": 24
+  },
+  "build": {
+    "passed": true,
+    "evidence": "evidence/build.txt"
+  },
+  "dashboard": {
+    "valid": true,
+    "changedItem": "PROD-03",
+    "progressUnchanged": true
+  },
+  "limitations": [
+    "Corporate Calendar has no reliable per-user Task/Event ownership projection: all permission-visible intervals are conservatively considered.",
+    "No live corporate PostgreSQL/network session was exercised.",
+    "Actual OS High Contrast and a physical screen reader were not toggled; inherited system-color triggers, names and real UI Automation peers were reviewed."
+  ]
+}

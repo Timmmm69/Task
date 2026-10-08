@@ -125,7 +125,7 @@
     {
       "id": "PROD-03",
       "title": "Календарь показывает и изменяет расписание",
-      "description": "Доступны день, неделя, месяц, события, повторения и предупреждения о пересечениях.",
+      "description": "Доступны день, неделя, месяц, события, повторения, предупреждения о пересечениях и поиск рабочего окна на 15/30/60 минут.",
       "category": "product",
       "weight": 12,
       "criticality": "critical",
@@ -141,10 +141,11 @@
         "work/production/src/Task.Desktop/Views/CalendarView.xaml",
         "outputs/20260901_calendar_desktop_vertical_slice_1.0.0",
         "outputs/20260902_calendar_product_completion_1.0.0",
-        "outputs/20260915_calendar_direction2_1.0.0/validation-report.md: Direction 2 week grid, overlap lanes, canonical editor, inspector and offline/read-only WPF evidence"
+        "outputs/20260915_calendar_direction2_1.0.0/validation-report.md: Direction 2 week grid, overlap lanes, canonical editor, inspector and offline/read-only WPF evidence",
+        "outputs/20261008_calendar_free_time_1.0.1/validation-report.md: client free slots, DST, complete offline cache, bounded range retry, real WPF navigation/focus/highlight"
       ],
-      "note": "Production WPF-календарь приведён к Direction 2: недельная временная сетка, day headers/current-time marker, lane-размещение пересечений, выбранный inspector и канонический event editor. Реальный Release WPF gate подтверждает create/update, offline cache/read-only и reconnect без изменения API/DST-контракта.",
-      "updated_at": "2026-09-15T22:45:00+03:00",
+      "note": "Production WPF-календарь приведён к Direction 2: недельная временная сетка, day headers/current-time marker, lane-размещение пересечений, выбранный inspector и канонический event editor. Реальный Release WPF gate подтверждает create/update, offline cache/read-only и reconnect без изменения API/DST-контракта. 2026-10-08: добавлен клиентский поиск первых трёх рабочих окон по реальным UserSettings и доступным Calendar read models; 926 тестов PASS, WPF navigation/focus/timed highlight и отзывчивость dispatcher PASS. Серверная сущность не добавлялась; общий Calendar учитывается консервативно, неизвестная/скрытая занятость не обещается.",
+      "updated_at": "2026-10-08T00:00:00+03:00",
       "priority": 2,
       "dependencies": [
         "DATA-03",

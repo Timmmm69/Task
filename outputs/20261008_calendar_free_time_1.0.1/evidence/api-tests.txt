@@ -1,0 +1,6 @@
+Тестовый запуск для C:\Users\novik\Таск\work\free_time_1\publish-check\work\production\tests\Task.ServiceHosts.Tests\bin\Debug\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Внимание! Перезапись файла с результатами: C:\Users\novik\Таск\work\free_time_1\evidence\api.trx
+Файл результатов: C:\Users\novik\Таск\work\free_time_1\evidence\api.trx
+
+Пройден!   : не пройдено     0, пройдено    33, пропущено     0, всего    33, длительность 1 s. - Task.ServiceHosts.Tests.dll (net10.0)

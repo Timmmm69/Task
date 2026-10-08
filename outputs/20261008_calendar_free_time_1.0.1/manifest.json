@@ -1,0 +1,180 @@
+{
+  "version": "1.0.1",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 71,
+      "sha256": "a9760b55f619ee4b68ca8784c72f30879b976924a96316bd67b544746869f6b8"
+    },
+    {
+      "path": "evidence/api-tests.txt",
+      "bytes": 769,
+      "sha256": "951830c988f9a71a37bd824cd73da880039e9b088b4acd35793a1849c61edbd9"
+    },
+    {
+      "path": "evidence/api.trx",
+      "bytes": 53713,
+      "sha256": "c912d02af94e30dfbb98ca3c3a5abbf859745f7e1f8b233976022ed720b55750"
+    },
+    {
+      "path": "evidence/build.txt",
+      "bytes": 14220,
+      "sha256": "d6112c74f1131f058b08dbcf2d53f146816e568400d9a79861588e2b8a7c996e"
+    },
+    {
+      "path": "evidence/desktop-tests.txt",
+      "bytes": 770,
+      "sha256": "5bcc7ac4f54a5c2892edd0ee3e6700b3bc66d8abbae88f21d8631445f1b43195"
+    },
+    {
+      "path": "evidence/desktop.trx",
+      "bytes": 1013665,
+      "sha256": "6bc7036af520ed3b8aa4fc20e8009d73543bfe4a2c6f92dec39e31aed2dea7f9"
+    },
+    {
+      "path": "evidence/domain-tests.txt",
+      "bytes": 739,
+      "sha256": "781ac434b9da104eae83450ce87367716391822442897642514e6115ad3484aa"
+    },
+    {
+      "path": "evidence/domain.trx",
+      "bytes": 300452,
+      "sha256": "cc06ac78cb811d4834be68179cc08e17940f25b7f698088fa90fab1a8ef1d084"
+    },
+    {
+      "path": "evidence/ui-probe.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/ui/search.png",
+      "bytes": 90406,
+      "sha256": "34fe0945b89e9022bbd1a73f1c8cff897fcf9af48ea00999836ab361a5a60ded"
+    },
+    {
+      "path": "evidence/ui/selected.png",
+      "bytes": 46586,
+      "sha256": "97fee2c6fdb9c07e2f799c6b6916576ed6daf143d108a6371e6d335a38f88ba4"
+    },
+    {
+      "path": "evidence/ui/ui-result.json",
+      "bytes": 333,
+      "sha256": "5c0fb28d444a48182e35a0624b592a1a81dcf29a6b08ed6d26bde15a853ba0fa"
+    },
+    {
+      "path": "evidence/validated-source-tree.txt",
+      "bytes": 42,
+      "sha256": "b6e17293eb71d358c76b1f9eb46d6a742f6d0cc0b052692ffb4c4bb807220e6f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs",
+      "bytes": 20214,
+      "sha256": "9560d41a56792a2fd18779b8e70889374fa542d12e64269587efc39ecd590f87"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Calendar/DesktopCalendarContracts.cs",
+      "bytes": 3895,
+      "sha256": "e4607b11b3572025397941508c06df965efe0ab56cd0c0555a7fe93ad63507eb"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Calendar/FreeTimeSearch.cs",
+      "bytes": 9319,
+      "sha256": "951a83d16978c5173a3cb5844dcb895e311a40078053a639521114e3be677635"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "bytes": 16987,
+      "sha256": "8acae539cd4cc0d1a6f668e7fc9308d9a1d5fad37c487c76401cc80bde9bbbea"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+      "bytes": 11158,
+      "sha256": "acadfc8ccbf42e956f8a30ecd754229f10edd8bfb5dfedd67fe1f2cb1ca8cd61"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "bytes": 7775,
+      "sha256": "55328bd1f063ded9312b6aef60367f0b7355a173a4a1ba697294e31b8a0a5d3f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.FreeTime.cs",
+      "bytes": 10368,
+      "sha256": "ca0f252308f6403265d673dbd6dd38c17e066648cb8b6d4f3d649d3acd14e6a8"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "bytes": 58621,
+      "sha256": "2efb8e63d1bd7aa479fb0e12b9ab1860e2c4410f1067856c0bb1a78c02ded34e"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 28884,
+      "sha256": "ae198c18714b4a0b65e95aa38990365d716dc36f1e4d7912fba76bd470740dc9"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs",
+      "bytes": 8979,
+      "sha256": "55c24438c9e7a0781a70b6c9ea0af53cb5b49cf18cfbffbafce1e0385940818d"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+      "bytes": 15483,
+      "sha256": "efd404d276c28a8fbd5d62f3ecca4cda6fcb55540e75a6f4d22f524703224e56"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "bytes": 74283,
+      "sha256": "f80bc5f890cd6daf20489f32dabaac4ab51d4aab7ec82b1b3deec933223e442f"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/CalendarView.xaml.cs",
+      "bytes": 4035,
+      "sha256": "ae71713f9c8e96dae4153caed967343f49ac20cf0658ea905169a1473975eb6a"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs",
+      "bytes": 11494,
+      "sha256": "d86b747a73e32596dd37e3e59be61ce03cc8659bef9516c4416da2511dcf3746"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/FreeTimeSearchTests.cs",
+      "bytes": 20484,
+      "sha256": "5dde09358ea067ab45fdc8ab58828e5058d49960ad39752786ed0736f5a508a1"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "bytes": 11206,
+      "sha256": "3abd824e3533f0b11185de05b313b331d770a8822dcd0a6000a1d0e9dedaba68"
+    },
+    {
+      "path": "tracked-source.diff",
+      "bytes": 82525,
+      "sha256": "279b903f82d8130e4f421509934de7f697a6ca8be222164790f03fd9cc8f3ae2"
+    },
+    {
+      "path": "validation-report.json",
+      "bytes": 1302,
+      "sha256": "d809869ac48eb15c03bf870d3e5862d26cdd164feb7c1ad290a8b25ade03b161"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 12759,
+      "sha256": "ad97c9139a1aead8027b6c68dafe92bad96828c49178602f446e2024c4921d51"
+    },
+    {
+      "path": "verification/UiProbe/Program.cs",
+      "bytes": 7028,
+      "sha256": "7891ebdfcfee927dec9ecfddf18fe2e10b7507d1998309eb941d33bf9a0521cf"
+    },
+    {
+      "path": "verification/UiProbe/UiProbe.csproj",
+      "bytes": 356,
+      "sha256": "56363014a3a3e9de4deb406efb7d18921a723667274e373f7e310ba3f8c679f0"
+    },
+    {
+      "path": "version.json",
+      "bytes": 163,
+      "sha256": "c00b4759b0576d2bbdb463422f0c67548acc5039d0f0faca22f52f0ed0960736"
+    }
+  ]
+}

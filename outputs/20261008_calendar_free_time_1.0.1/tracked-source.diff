@@ -1,0 +1,1171 @@
+diff --git a/work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs b/work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs
+index 4b0c1bc..4b005f4 100644
+--- a/work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs
++++ b/work/production/src/Task.Desktop/Calendar/DesktopCalendarApiClient.cs
+@@ -101,6 +101,8 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
+         AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Forbidden } r => new DesktopCalendarResult<T>.Forbidden(r.CorrelationId),
+         AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.NotFound } r => new DesktopCalendarResult<T>.NotFound(r.CorrelationId),
+         AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.PreconditionFailed } r => new DesktopCalendarResult<T>.VersionConflict(r.CorrelationId),
++        AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity } r when IsRangeError(r.Body) =>
++            new DesktopCalendarResult<T>.RangeTooLarge(r.CorrelationId),
+         AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity } r =>
+             new DesktopCalendarResult<T>.ValidationFailure(ReadProblemTitle(r.Body), r.CorrelationId),
+         AuthenticatedGetResult.Response r when (int)r.StatusCode >= 500 => new DesktopCalendarResult<T>.ServerUnavailable(r.CorrelationId),
+@@ -128,6 +130,20 @@ public sealed class DesktopCalendarApiClient : IDesktopCalendarApiClient
+         catch (JsonException) { return false; }
+     }
+ 
++    private static bool IsRangeError(string body)
++    {
++        try
++        {
++            using var document = JsonDocument.Parse(body);
++            var root = document.RootElement;
++            var code = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("code", out var c) && c.ValueKind == JsonValueKind.String ? c.GetString() : null;
++            var title = ReadProblemTitle(body);
++            return code == "CALENDAR_RANGE_TOO_LARGE" || code == "VALIDATION_FAILED"
++                && (title.Contains("больше 500 записей", StringComparison.Ordinal) || title.Contains("слишком много пересечений", StringComparison.Ordinal));
++        }
++        catch (JsonException) { return false; }
++    }
++
+     private static bool TryMapItem(ScheduleItemPayload p, out DesktopScheduleItem item)
+     {
+         item = null!;
+diff --git a/work/production/src/Task.Desktop/Calendar/DesktopCalendarContracts.cs b/work/production/src/Task.Desktop/Calendar/DesktopCalendarContracts.cs
+index 34898be..5e5cc99 100644
+--- a/work/production/src/Task.Desktop/Calendar/DesktopCalendarContracts.cs
++++ b/work/production/src/Task.Desktop/Calendar/DesktopCalendarContracts.cs
+@@ -76,6 +76,7 @@ public abstract record DesktopCalendarResult<T>(string? CorrelationId)
+     public sealed record AuthenticationFailure() : DesktopCalendarResult<T>((string?)null);
+     public sealed record ServerUnavailable(string? Id = null) : DesktopCalendarResult<T>(Id);
+     public sealed record ValidationFailure(string Message, string? Id = null) : DesktopCalendarResult<T>(Id);
++    public sealed record RangeTooLarge(string? Id = null) : DesktopCalendarResult<T>(Id);
+     public sealed record VersionConflict(string? Id = null) : DesktopCalendarResult<T>(Id);
+     public sealed record MalformedResponse(string? Id = null) : DesktopCalendarResult<T>(Id);
+ }
+diff --git a/work/production/src/Task.Desktop/Calendar/FreeTimeSearch.cs b/work/production/src/Task.Desktop/Calendar/FreeTimeSearch.cs
+new file mode 100644
+index 0000000..cc2445e
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Calendar/FreeTimeSearch.cs
+@@ -0,0 +1,157 @@
++using System.Globalization;
++using Task.Desktop.Personal;
++using Task.Desktop.Work;
++using Task.Domain.Calendar;
++
++namespace Task.Desktop.Calendar;
++
++public sealed record FreeTimeSlot(DateTimeOffset StartUtc, DateTimeOffset EndUtc, TimeZoneInfo Zone)
++{
++    public DateOnly Date => DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(StartUtc, Zone).DateTime);
++    public int DurationMinutes => (int)(EndUtc - StartUtc).TotalMinutes;
++    public string Label => $"{TimeZoneInfo.ConvertTime(StartUtc, Zone).ToString("dddd, d MMMM yyyy HH:mm zzz", CultureInfo.GetCultureInfo("ru-RU"))} — {TimeZoneInfo.ConvertTime(EndUtc, Zone):HH:mm zzz} · {DurationMinutes} мин";
++    public double Top => TimeZoneInfo.ConvertTime(StartUtc, Zone).TimeOfDay.TotalHours * 69;
++    public double Height => Math.Max(24, (TimeZoneInfo.ConvertTime(EndUtc, Zone).DateTime - TimeZoneInfo.ConvertTime(StartUtc, Zone).DateTime).TotalHours * 69);
++}
++
++/// <summary>Client-only gaps over complete, permission-filtered Calendar read models.</summary>
++public static class FreeTimeCalculator
++{
++    // The application already chooses the earlier instant in an ambiguous hour.
++    // An ending boundary includes the second occurrence of that hour.
++    public static DateTimeOffset Boundary(DateOnly date, TimeOnly time, TimeZoneInfo zone, bool ending = false)
++    {
++        var local = date.ToDateTime(time, DateTimeKind.Unspecified);
++        for (var i = 0; zone.IsInvalidTime(local) && i < 1440; i++) local = local.AddMinutes(1);
++        if (zone.IsInvalidTime(local)) throw new ArgumentException("Рабочая граница отсутствует в этом часовом поясе.");
++        return ending && zone.IsAmbiguousTime(local)
++            ? new DateTimeOffset(local, zone.GetAmbiguousTimeOffsets(local).Min()).ToUniversalTime()
++            : PersonalTimePolicy.ToUtc(local, zone);
++    }
++
++    public static IReadOnlyList<FreeTimeSlot> Find(IReadOnlyList<DesktopScheduleItem> items,
++        DesktopUserSettings settings, TimeZoneInfo zone, DateOnly first, DateOnly lastExclusive,
++        DateTimeOffset now, int minutes, bool personal = false)
++    {
++        if (minutes is not (15 or 30 or 60) || lastExclusive <= first || lastExclusive.DayNumber - first.DayNumber > 7
++            || !TimeOnly.TryParse(settings.WorkdayStart, out var startTime)
++            || !TimeOnly.TryParse(settings.WorkdayEnd, out var endTime) || endTime <= startTime
++            || settings.WeekendDays.Any(d => d is < 1 or > 7))
++            throw new ArgumentException("Некорректные рабочие часы или диапазон поиска.");
++        var busy = items.Where(i => !i.IsAllDay && i.Status != "cancelled" && (!personal || i.Status != "completed")
++                && i.StartAtUtc.HasValue && i.EndAtUtc > i.StartAtUtc)
++            .Select(i => CalendarTimelinePlacement.Timeline(i.StartAtUtc!.Value.ToUniversalTime(), i.EndAtUtc!.Value.ToUniversalTime()))
++            .OrderBy(i => i.StartUtc).ToArray();
++        var slots = new List<FreeTimeSlot>(3);
++        // Minute precision matches the existing create editor, never rounds into the past.
++        var earliest = new DateTimeOffset(((now.UtcTicks + TimeSpan.TicksPerMinute - 1) / TimeSpan.TicksPerMinute) * TimeSpan.TicksPerMinute, TimeSpan.Zero);
++        var index = 0;
++        for (var day = first; day < lastExclusive && slots.Count < 3; day = day.AddDays(1))
++        {
++            if (settings.WeekendDays.Contains((int)day.DayOfWeek == 0 ? 7 : (int)day.DayOfWeek)) continue;
++            var start = Boundary(day, startTime, zone);
++            var end = Boundary(day, endTime, zone, ending: true);
++            if (end <= start || end <= earliest) continue;
++            var period = CalendarTimelinePlacement.Timeline(start, end);
++            var cursor = start > earliest ? start : earliest;
++            while (index < busy.Length && busy[index].EndUtc <= cursor) index++;
++            for (var i = index; i < busy.Length && busy[i].StartUtc < end && slots.Count < 3; i++)
++            {
++                // Reuse the canonical intersection; do not implement a second overlap policy.
++                var overlap = CalendarOverlapPolicy.Evaluate(period, busy[i]);
++                if (!overlap.HasOverlap) continue;
++                AddGap(overlap.OverlapStartUtc!.Value);
++                if (overlap.OverlapEndUtc > cursor) cursor = overlap.OverlapEndUtc.Value;
++            }
++            AddGap(end);
++            void AddGap(DateTimeOffset gapEnd)
++            {
++                while (slots.Count < 3 && gapEnd - cursor >= TimeSpan.FromMinutes(minutes))
++                {
++                    var slotEnd = cursor.AddMinutes(minutes);
++                    slots.Add(new(cursor, slotEnd, zone)); cursor = slotEnd;
++                }
++            }
++        }
++        return slots;
++    }
++}
++
++public sealed record FreeTimeSearchResult(IReadOnlyList<FreeTimeSlot> Slots, bool Stale, string? Error = null,
++    DesktopCalendarResult<DesktopSchedulePage>? Failure = null);
++
++public sealed class FreeTimeSearch(IDesktopCalendarApiClient client, TimeZoneInfo zone, bool personal = false)
++{
++    private readonly List<DesktopSchedulePage> _cache = [];
++    public void Clear() => _cache.Clear();
++    public DesktopSchedulePage? CachedRange(DateTimeOffset from, DateTimeOffset to)
++    {
++        var covered = from;
++        var pages = new List<DesktopSchedulePage>();
++        foreach (var page in _cache.OrderBy(p => p.RangeStartUtc))
++        {
++            if (page.RangeStartUtc > covered) break;
++            if (page.RangeEndUtc <= covered) continue;
++            pages.Add(page); covered = page.RangeEndUtc;
++            if (covered >= to) return new(pages.SelectMany(p => p.Items).DistinctBy(i => (i.ItemType, i.ObjectId)).ToArray(), from, to);
++        }
++        return null;
++    }
++    public void Remember(DesktopSchedulePage page)
++    {
++        // Never mix an older version of an overlapping range with a fresh page.
++        _cache.RemoveAll(p => p.RangeStartUtc < page.RangeEndUtc && p.RangeEndUtc > page.RangeStartUtc);
++        _cache.Add(page);
++        if (_cache.Count > 32) _cache.RemoveAt(0);
++    }
++
++    public async System.Threading.Tasks.Task<FreeTimeSearchResult> SearchAsync(DesktopUserSettings settings,
++        DateOnly first, DateOnly last, DateTimeOffset now, int minutes, bool online, CancellationToken token)
++    {
++        var from = FreeTimeCalculator.Boundary(first, TimeOnly.MinValue, zone);
++        var to = FreeTimeCalculator.Boundary(last, TimeOnly.MinValue, zone);
++        var pages = new List<DesktopSchedulePage>();
++        var stale = !online;
++        var requests = 0;
++        var failure = await Read(from, to);
++        if (failure is not null) return new([], stale, failure is DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge
++            ? "Календарь превышает лимит даже после дробления диапазона. Свободное время определить нельзя."
++            : "Недостаточно подтверждённых данных для всего диапазона. Свободное время определить нельзя.", failure);
++        var slots = await System.Threading.Tasks.Task.Run(() =>
++        {
++            var items = pages.SelectMany(p => p.Items).DistinctBy(i => (i.ItemType, i.ObjectId)).ToArray();
++            return FreeTimeCalculator.Find(items, settings, zone, first, last, now, minutes, personal);
++        }, token);
++        return new(slots, stale);
++
++        async System.Threading.Tasks.Task<DesktopCalendarResult<DesktopSchedulePage>?> Read(DateTimeOffset a, DateTimeOffset b)
++        {
++            token.ThrowIfCancellationRequested();
++            DesktopCalendarResult<DesktopSchedulePage> result = new DesktopCalendarResult<DesktopSchedulePage>.ServerUnavailable();
++            // Personal reads SQLite synchronously before returning its Task; keep those reads off the UI too.
++            if (online)
++            {
++                if (requests >= 64) return new DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge();
++                requests++;
++                result = await System.Threading.Tasks.Task.Run(() => client.GetScheduleAsync(a, b, zone.Id, token), token);
++            }
++            token.ThrowIfCancellationRequested();
++            if (result is DesktopCalendarResult<DesktopSchedulePage>.Succeeded success)
++            {
++                if (success.Value.RangeStartUtc != a || success.Value.RangeEndUtc != b)
++                    return new DesktopCalendarResult<DesktopSchedulePage>.MalformedResponse();
++                Remember(success.Value); pages.Add(success.Value); return null;
++            }
++            // Current API uses VALIDATION_FAILED for >500 items; also accept the explicit range code.
++            if (result is DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge && b - a > TimeSpan.FromHours(1))
++            {
++                var middle = a.AddTicks((b - a).Ticks / 2);
++                return await Read(a, middle) ?? await Read(middle, b);
++            }
++            if (result is not DesktopCalendarResult<DesktopSchedulePage>.ServerUnavailable) return result;
++            stale = true;
++            if (CachedRange(a, b) is { } cached) { pages.Add(cached); return null; }
++            return result;
++        }
++    }
++}
+diff --git a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+index 822bf1d..75c2f4c 100644
+--- a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
++++ b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+@@ -303,11 +303,12 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
+             tasksClient,
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
++        var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
+         var calendar = new CalendarViewModel(
+             calendarClient,
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+             recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
+-                sessionService.CurrentSessionMetadata!.UserId));
++                sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync);
+         var today = new TodayViewModel(
+             calendarClient,
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+@@ -319,7 +320,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+             tasksClient);
+         var workHub = new WorkHubViewModel(
+-            new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
++            workClient,
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+             serverAddress: serverEndpoint.GetLeftPart(UriPartial.Authority));
+         var administration = new AdministrationViewModel(
+diff --git a/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs b/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs
+index 3829fea..8646638 100644
+--- a/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs
++++ b/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs
+@@ -27,6 +27,8 @@ public sealed class PersonalApplicationModel : IDisposable
+                 recurrence: recurrence, clock: time.GetUtcNow, personal: true,
+                 firstDay: () => (DayOfWeek)(_store.WorkspaceSettings().FirstDayOfWeek % 7),
+                 workdayStart: () => TimeOnly.Parse(_store.WorkspaceSettings().WorkdayStart),
++                userSettings: _ => System.Threading.Tasks.Task.FromResult<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>>(
++                    new Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>.Succeeded(_store.WorkspaceSettings())),
+                 projects: () => new CalendarProjectChoice[] { new(null, "Без проекта") }.Concat(_store.Projects().Where(p => p.Lifecycle == "active").Select(p => new CalendarProjectChoice(p.Id, p.Name))).ToArray());
+             _ = _store.List();
+             _ = _store.Projects();
+diff --git a/work/production/src/Task.Desktop/PersonalWindow.xaml.cs b/work/production/src/Task.Desktop/PersonalWindow.xaml.cs
+index c70f261..ca86411 100644
+--- a/work/production/src/Task.Desktop/PersonalWindow.xaml.cs
++++ b/work/production/src/Task.Desktop/PersonalWindow.xaml.cs
+@@ -23,6 +23,14 @@ public partial class PersonalWindow : Window
+     {
+         _model = model;
+         _shell = new(model);
++        if (model.Calendar is { } calendar)
++            calendar.CreateTaskAtFreeTime = async (slot, token) =>
++            {
++                if (model.Tasks is not { } tasks || tasks.Editor is not null || !tasks.NewCommand.CanExecute(null)) return;
++                Navigate("tasks");
++                await tasks.NewCommand.ExecuteAsync(cancellationToken: token);
++                tasks.Editor?.SeedCalendarSlot(slot);
++            };
+         InitializeComponent();
+         DataContext = _shell;
+         _shell.Palette.FocusRequested += OnPaletteFocus;
+diff --git a/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.FreeTime.cs b/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.FreeTime.cs
+new file mode 100644
+index 0000000..7065ef6
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.FreeTime.cs
+@@ -0,0 +1,132 @@
++using Task.Desktop.Calendar;
++using Task.Desktop.Work;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed partial class CalendarViewModel
++{
++    private FreeTimeSearch _freeTimeSearch = null!;
++    private Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopUserSettings>>>? _loadFreeTimeSettings;
++    private DesktopUserSettings? _freeTimeSettings;
++    private CancellationTokenSource? _freeTimeCancellation;
++    private long _freeTimeGeneration;
++    private DateOnly _searchNextDate;
++    private bool _showFreeTime, _findingTime, _canSearchFurther, _freeTimeStale, _showFreeTimeHighlight;
++    private int _freeTimeMinutes = 30;
++    private string? _freeTimeMessage;
++    private IReadOnlyList<FreeTimeSlot> _freeTimeSlots = [];
++    private FreeTimeSlot? _chosenFreeTime;
++
++    public bool ShowFreeTime { get => _showFreeTime; private set => SetProperty(ref _showFreeTime, value); }
++    public bool IsFindingTime => _findingTime;
++    public int FreeTimeMinutes { get => _freeTimeMinutes; private set => SetProperty(ref _freeTimeMinutes, value); }
++    public string? FreeTimeMessage { get => _freeTimeMessage; private set => SetProperty(ref _freeTimeMessage, value); }
++    public IReadOnlyList<FreeTimeSlot> FreeTimeSlots { get => _freeTimeSlots; private set => SetProperty(ref _freeTimeSlots, value); }
++    public FreeTimeSlot? ChosenFreeTime { get => _chosenFreeTime; private set { SetProperty(ref _chosenFreeTime, value); OnPropertyChanged(nameof(HasChosenFreeTime)); OnPropertyChanged(nameof(ShowEmptyState)); } }
++    public bool HasChosenFreeTime => ChosenFreeTime is not null;
++    public bool ShowFreeTimeHighlight { get => _showFreeTimeHighlight; set => SetProperty(ref _showFreeTimeHighlight, value); }
++    public event Action<FreeTimeSlot>? FreeTimeChosen;
++    public Func<FreeTimeSlot, CancellationToken, System.Threading.Tasks.Task>? CreateTaskAtFreeTime { get; set; }
++    public AsyncCommand FindTimeCommand { get; private set; } = null!;
++    public AsyncCommand FreeTimeDurationCommand { get; private set; } = null!;
++    public AsyncCommand MoreFreeTimeCommand { get; private set; } = null!;
++    public AsyncCommand ChooseFreeTimeCommand { get; private set; } = null!;
++    public AsyncCommand CloseFreeTimeCommand { get; private set; } = null!;
++    public AsyncCommand CreateTaskAtFreeTimeCommand { get; private set; } = null!;
++    private bool CanFindTime => _active && CanRead && _sessionAllowsWrites && !_disposed && !IsBusy && Editor is null;
++
++    private void InitializeFreeTime(Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopUserSettings>>>? settings)
++    {
++        _loadFreeTimeSettings = settings; _freeTimeSearch = new(_client, _timeZone, IsPersonal);
++        FindTimeCommand = new(async (_, token) => { ShowFreeTime = true; FreeTimeMinutes = 30; await FindFreeTimeAsync(false, token); }, _ => CanFindTime);
++        FreeTimeDurationCommand = new(async (value, token) => { FreeTimeMinutes = int.Parse(value!.ToString()!); await FindFreeTimeAsync(false, token); }, value => CanFindTime && ShowFreeTime && value?.ToString() is "15" or "30" or "60");
++        MoreFreeTimeCommand = new(async (_, token) => await FindFreeTimeAsync(true, token), _ => CanFindTime && ShowFreeTime && _canSearchFurther);
++        ChooseFreeTimeCommand = new((value, _) => { if (value is FreeTimeSlot slot) ChooseFreeTime(slot); return System.Threading.Tasks.Task.CompletedTask; }, value => CanFindTime && value is FreeTimeSlot slot && FreeTimeSlots.Contains(slot));
++        CloseFreeTimeCommand = new((_, _) => { CloseFreeTime(); return System.Threading.Tasks.Task.CompletedTask; });
++        CreateTaskAtFreeTimeCommand = new(async (_, token) => { if (ChosenFreeTime is { } slot && CreateTaskAtFreeTime is { } create) await create(slot, token); }, _ => CanFindTime && _networkAvailable && !_freeTimeStale && ChosenFreeTime is { } chosen && chosen.StartUtc >= _clock() && CreateTaskAtFreeTime is not null);
++        foreach (var command in FreeTimeCommands) command.ExecutionFailed += _ => FreeTimeMessage = "Не удалось найти время. Повторите поиск.";
++    }
++    private IEnumerable<AsyncCommand> FreeTimeCommands => [FindTimeCommand, FreeTimeDurationCommand, MoreFreeTimeCommand, ChooseFreeTimeCommand, CloseFreeTimeCommand, CreateTaskAtFreeTimeCommand];
++    private void RaiseFreeTimeCommands()
++    {
++        if (FindTimeCommand is null) return;
++        foreach (var command in FreeTimeCommands) command.RaiseCanExecuteChanged();
++    }
++
++    private async System.Threading.Tasks.Task FindFreeTimeAsync(bool further, CancellationToken token)
++    {
++        _freeTimeCancellation?.Cancel(); _freeTimeCancellation?.Dispose();
++        _freeTimeCancellation = CancellationTokenSource.CreateLinkedTokenSource(token);
++        var ct = _freeTimeCancellation.Token;
++        var generation = ++_freeTimeGeneration;
++        FreeTimeSlots = []; ChosenFreeTime = null; ShowFreeTimeHighlight = false; _canSearchFurther = false;
++        _findingTime = true; OnPropertyChanged(nameof(IsBusy)); RaiseCommands();
++        FreeTimeMessage = "Ищем ближайшее рабочее время…";
++        try
++        {
++            var settingsStale = !_networkAvailable;
++            if (_networkAvailable && _loadFreeTimeSettings is not null)
++            {
++                var settings = await _loadFreeTimeSettings(ct);
++                if (generation != _freeTimeGeneration || ct.IsCancellationRequested) return;
++                if (settings is DesktopWorkResult<DesktopUserSettings>.Succeeded success) _freeTimeSettings = success.Value;
++                else if (settings is DesktopWorkResult<DesktopUserSettings>.ServerUnavailable) settingsStale = true;
++                else
++                {
++                    _freeTimeSettings = null;
++                    if (settings is DesktopWorkResult<DesktopUserSettings>.AuthenticationFailure) UpdateSessionState(false);
++                    FreeTimeMessage = "Рабочие настройки пользователя недоступны. Поиск не выполнен."; return;
++                }
++            }
++            if (settingsStale) UpdateConnectivity(false);
++            if (_freeTimeSettings is null) { FreeTimeMessage = "Нет подтверждённых рабочих настроек пользователя. Подключитесь к серверу и повторите поиск."; return; }
++            var now = _clock();
++            var first = further ? _searchNextDate : DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now, _timeZone).DateTime);
++            var last = first.AddDays(7);
++            var result = await _freeTimeSearch.SearchAsync(_freeTimeSettings, first, last, now, FreeTimeMinutes, _networkAvailable && !settingsStale, ct);
++            if (generation != _freeTimeGeneration || !_active || !CanRead || !_sessionAllowsWrites || ct.IsCancellationRequested) return;
++            if (result.Failure is DesktopCalendarResult<DesktopSchedulePage>.Forbidden or DesktopCalendarResult<DesktopSchedulePage>.AuthenticationFailure)
++            { HandleFailure(result.Failure, false); FreeTimeMessage = "Доступ к календарю потерян. Поиск не выполнен."; return; }
++            _freeTimeStale = result.Stale || settingsStale;
++            if (_freeTimeStale) UpdateConnectivity(false);
++            FreeTimeSlots = result.Slots;
++            _canSearchFurther = result.Error is null && result.Slots.Count == 0;
++            if (result.Error is null) _searchNextDate = last;
++            FreeTimeMessage = result.Error ?? $"{first:dd.MM.yyyy} — {last.AddDays(-1):dd.MM.yyyy}, {_timeZone.Id}. "
++                + (_freeTimeStale ? "Данные могут быть неактуальны. Создание и сохранение заблокированы. " : "")
++                + (result.Slots.Count == 0 ? "Подходящих окон нет. Можно показать следующую неделю." : "Выберите окно для перехода к нему. Оно не резервируется.");
++            Announcement = FreeTimeMessage;
++        }
++        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
++        finally
++        {
++            if (generation == _freeTimeGeneration) { _findingTime = false; OnPropertyChanged(nameof(IsBusy)); RaiseCommands(); }
++        }
++    }
++
++    private void ChooseFreeTime(FreeTimeSlot slot)
++    {
++        if (slot.StartUtc < _clock()) { FreeTimeSlots = []; FreeTimeMessage = "Это время уже прошло. Повторите поиск."; return; }
++        var from = FreeTimeCalculator.Boundary(slot.Date, TimeOnly.MinValue, _timeZone);
++        var to = FreeTimeCalculator.Boundary(slot.Date.AddDays(1), TimeOnly.MinValue, _timeZone);
++        if (_freeTimeSearch.CachedRange(from, to) is not { } page) { FreeTimeSlots = []; FreeTimeMessage = "Диапазон больше не находится в кеше. Повторите поиск."; return; }
++        _requestCancellation?.Cancel(); Interlocked.Increment(ref _generation);
++        _selectedDate = slot.Date; _weekStart = StartOfWeek(slot.Date, FirstDay); ViewMode = CalendarViewMode.Day;
++        Apply(page, [], slot.Date, slot.Date.AddDays(1)); State = page.Items.Count == 0 ? CalendarScreenState.Empty : CalendarScreenState.Loaded;
++        OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
++        ChosenFreeTime = slot; ShowFreeTimeHighlight = true; ShowFreeTime = false;
++        Announcement = $"Выбрано окно: {slot.Label}."; Message = _freeTimeStale ? "Данные могут быть неактуальны. Сервер недоступен." : null;
++        RaiseCommands(); FreeTimeChosen?.Invoke(slot);
++    }
++    private void CloseFreeTime()
++    {
++        ++_freeTimeGeneration; _freeTimeCancellation?.Cancel();
++        _findingTime = false; ShowFreeTime = false; FreeTimeSlots = []; ChosenFreeTime = null; ShowFreeTimeHighlight = false; _canSearchFurther = false;
++        OnPropertyChanged(nameof(IsBusy)); RaiseFreeTimeCommands();
++    }
++    private void DisposeFreeTime()
++    {
++        CloseFreeTime(); _freeTimeCancellation?.Dispose(); _freeTimeCancellation = null;
++        foreach (var command in FreeTimeCommands) command.Dispose();
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs b/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs
+index 14bf582..8cf3fa0 100644
+--- a/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs
+@@ -379,7 +379,7 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
+     }
+ }
+ 
+-public sealed class CalendarViewModel : ViewModelBase, IDisposable
++public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
+ {
+     private const double TimelineHourHeight = 69d;
+     private readonly IDesktopCalendarApiClient _client;
+@@ -408,8 +408,8 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+ 
+     private readonly Func<DayOfWeek>? _firstDay;
+     private readonly Func<TimeOnly>? _workdayStart;
+-    private DayOfWeek FirstDay => _firstDay?.Invoke() ?? DayOfWeek.Monday;
+-    public CalendarViewModel(IDesktopCalendarApiClient client, IEnumerable<string>? capabilities = null, TimeZoneInfo? timeZone = null, DateTime? today = null, RecurrencePaneViewModel? recurrence = null, Func<DateTimeOffset>? clock = null, bool personal = false, Func<IReadOnlyList<CalendarProjectChoice>>? projects = null, Func<DayOfWeek>? firstDay = null, Func<TimeOnly>? workdayStart = null)
++    private DayOfWeek FirstDay => _firstDay?.Invoke() ?? (_freeTimeSettings is { } settings ? (DayOfWeek)(settings.FirstDayOfWeek % 7) : DayOfWeek.Monday);
++    public CalendarViewModel(IDesktopCalendarApiClient client, IEnumerable<string>? capabilities = null, TimeZoneInfo? timeZone = null, DateTime? today = null, RecurrencePaneViewModel? recurrence = null, Func<DateTimeOffset>? clock = null, bool personal = false, Func<IReadOnlyList<CalendarProjectChoice>>? projects = null, Func<DayOfWeek>? firstDay = null, Func<TimeOnly>? workdayStart = null, Func<CancellationToken, System.Threading.Tasks.Task<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>>>? userSettings = null)
+     {
+         _firstDay = firstDay; _workdayStart = workdayStart;
+         IsPersonal = personal; _projects = projects;
+@@ -441,6 +441,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+         EditEventCommand = new AsyncCommand((_, _) => { if (SelectedEvent is not null) Editor = CreateEditor(SelectedEvent); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => CanEdit);
+         SaveEventCommand = new AsyncCommand((_, token) => SaveAsync(token), _ => CanSave);
+         CancelEditorCommand = new AsyncCommand((_, _) => { Editor = null; return global::System.Threading.Tasks.Task.CompletedTask; }, _ => Editor is not null && !IsBusy);
++        InitializeFreeTime(userSettings);
+     }
+ 
+     public IReadOnlyList<CalendarDayViewModel> Days { get => _days; private set => SetProperty(ref _days, value); }
+@@ -471,6 +472,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+             if (!value.HasValue || _saving) return;
+             var date = DateOnly.FromDateTime(value.Value);
+             if (date == _selectedDate) return;
++            CloseFreeTime();
+             _selectedDate = date; _weekStart = StartOfWeek(date, FirstDay);
+             ClearSelection();
+             OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
+@@ -485,10 +487,10 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+     };
+     public CalendarScreenState State { get => _state; private set { if (SetProperty(ref _state, value)) { OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsSaving)); OnPropertyChanged(nameof(ShowMessage)); OnPropertyChanged(nameof(ShowInitialLoading)); OnPropertyChanged(nameof(ShowEmptyState)); OnPropertyChanged(nameof(ShowStateBanner)); OnPropertyChanged(nameof(StateTitle)); OnPropertyChanged(nameof(StateDescription)); RaiseCommands(); } } }
+     public bool IsActive => _active;
+-    public bool IsBusy => _saving || State is CalendarScreenState.Loading or CalendarScreenState.Refreshing;
++    public bool IsBusy => IsFindingTime || _saving || State is CalendarScreenState.Loading or CalendarScreenState.Refreshing;
+     public bool IsSaving => _saving;
+     public bool ShowInitialLoading => State == CalendarScreenState.Loading && Days.Count == 0;
+-    public bool ShowEmptyState => State == CalendarScreenState.Empty;
++    public bool ShowEmptyState => State == CalendarScreenState.Empty && ChosenFreeTime is null;
+     public bool IsReadOnly => !_networkAvailable || !_sessionAllowsWrites
+         || !(_capabilities.Contains("CalendarEvent.Create") || _capabilities.Contains("CalendarEvent.Update"));
+     public bool ShowReadOnlyState => _active && CanRead && IsReadOnly;
+@@ -572,6 +574,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+     public void Deactivate()
+     {
+         if (!_active) return;
++        CloseFreeTime();
+         _active = false; Recurrence?.SetAccess(_capabilities, false); Interlocked.Increment(ref _generation); _requestCancellation?.Cancel();
+         State = CalendarScreenState.Inactive; OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
+     }
+@@ -624,6 +627,12 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+     {
+         if (_networkAvailable == available) return;
+         _networkAvailable = available;
++        if (!available && (FreeTimeSlots.Count > 0 || ChosenFreeTime is not null))
++        {
++            _freeTimeStale = true;
++            FreeTimeMessage = "Сервер недоступен. Данные могут быть неактуальны. Создание и сохранение заблокированы.";
++            Announcement = FreeTimeMessage;
++        }
+         Recurrence?.SetAccess(_capabilities, _active && _sessionAllowsWrites && available);
+         OnPropertyChanged(nameof(CanCreate));
+         OnPropertyChanged(nameof(CanEdit));
+@@ -640,6 +649,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+ 
+     private async global::System.Threading.Tasks.Task MoveAsync(int direction, CancellationToken token)
+     {
++        CloseFreeTime();
+         _selectedDate = ViewMode switch
+         {
+             CalendarViewMode.Day => _selectedDate.AddDays(direction),
+@@ -655,13 +665,14 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+     private async global::System.Threading.Tasks.Task SetViewModeAsync(CalendarViewMode mode, CancellationToken token)
+     {
+         if (ViewMode == mode) return;
++        CloseFreeTime();
+         ViewMode = mode;
+         ClearSelection();
+         await LoadAsync(false, token);
+     }
+ 
+     private async global::System.Threading.Tasks.Task GoTodayAsync(CancellationToken token)
+-    { _selectedDate = DateOnly.FromDateTime(DateTime.Today); _weekStart = StartOfWeek(_selectedDate, FirstDay); ClearSelection(); OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); await LoadAsync(false, token); }
++    { CloseFreeTime(); _selectedDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(_clock(), _timeZone).DateTime); _weekStart = StartOfWeek(_selectedDate, FirstDay); ClearSelection(); OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); await LoadAsync(false, token); }
+ 
+     private async global::System.Threading.Tasks.Task LoadAsync(bool refresh, CancellationToken token)
+     {
+@@ -685,6 +696,7 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+             if (scheduleTask.Result is DesktopCalendarResult<DesktopSchedulePage>.Succeeded schedule
+                 && conflictsTask.Result is DesktopCalendarResult<IReadOnlyList<DesktopScheduleConflict>>.Succeeded conflicts)
+             {
++                _freeTimeSearch.Remember(schedule.Value);
+                 Apply(schedule.Value, conflicts.Value, firstDate, lastDateExclusive); _lastRefresh = DateTimeOffset.UtcNow; OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+                 State = schedule.Value.Items.Count == 0 ? CalendarScreenState.Empty : CalendarScreenState.Loaded;
+                 Message = schedule.Value.Items.Count == 0 ? "В выбранном периоде нет записей." : null;
+@@ -824,12 +836,13 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+     }
+     private void ClearProtectedData(bool preserveEditor = false)
+     {
++        CloseFreeTime(); _freeTimeSearch.Clear(); _freeTimeSettings = null;
+         Recurrence?.SetAccess(_capabilities, false);
+         Days = Array.Empty<CalendarDayViewModel>();
+         ClearSelection();
+         if (!preserveEditor) Editor = null;
+     }
+-    private void RaiseCommands() { RefreshCommand.RaiseCanExecuteChanged(); PreviousWeekCommand.RaiseCanExecuteChanged(); NextWeekCommand.RaiseCanExecuteChanged(); TodayCommand.RaiseCanExecuteChanged(); DayModeCommand.RaiseCanExecuteChanged(); WeekModeCommand.RaiseCanExecuteChanged(); MonthModeCommand.RaiseCanExecuteChanged(); SelectItemCommand.RaiseCanExecuteChanged(); NewEventCommand.RaiseCanExecuteChanged(); EditEventCommand.RaiseCanExecuteChanged(); SaveEventCommand.RaiseCanExecuteChanged(); CancelEditorCommand.RaiseCanExecuteChanged(); }
++    private void RaiseCommands() { RaiseFreeTimeCommands(); RefreshCommand.RaiseCanExecuteChanged(); PreviousWeekCommand.RaiseCanExecuteChanged(); NextWeekCommand.RaiseCanExecuteChanged(); TodayCommand.RaiseCanExecuteChanged(); DayModeCommand.RaiseCanExecuteChanged(); WeekModeCommand.RaiseCanExecuteChanged(); MonthModeCommand.RaiseCanExecuteChanged(); SelectItemCommand.RaiseCanExecuteChanged(); NewEventCommand.RaiseCanExecuteChanged(); EditEventCommand.RaiseCanExecuteChanged(); SaveEventCommand.RaiseCanExecuteChanged(); CancelEditorCommand.RaiseCanExecuteChanged(); }
+     internal static DateOnly StartOfWeek(DateOnly date, DayOfWeek firstDay = DayOfWeek.Monday) => date.AddDays(-(((int)date.DayOfWeek - (int)firstDay + 7) % 7));
+     internal static (DateOnly FirstDate, DateOnly LastDateExclusive) GetVisibleDateRange(DateOnly anchor, CalendarViewMode mode, DayOfWeek firstDay = DayOfWeek.Monday) => mode switch
+     {
+@@ -854,7 +867,9 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
+     }
+     public void Dispose()
+     {
+-        if (_disposed) return; _disposed = true; Deactivate(); Recurrence?.Dispose(); _requestCancellation?.Dispose();
++        if (_disposed) return;
++        DisposeFreeTime();
++        _disposed = true; Deactivate(); Recurrence?.Dispose(); _requestCancellation?.Dispose();
+         foreach (var command in new[] { RefreshCommand, PreviousWeekCommand, NextWeekCommand, TodayCommand, DayModeCommand, WeekModeCommand, MonthModeCommand, SelectItemCommand, NewEventCommand, EditEventCommand, SaveEventCommand, CancelEditorCommand }) command.Dispose();
+     }
+ }
+diff --git a/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs b/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
+index 19471cc..4bc597c 100644
+--- a/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
+@@ -57,6 +57,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+         if (Calendar is not null)
+         {
+             Calendar.PropertyChanged += OnCalendarPropertyChanged;
++            Calendar.CreateTaskAtFreeTime = async (slot, token) =>
++            {
++                if (Tasks is null || Tasks.Editor is not null || !IsConnected || !Tasks.CanCreateFromShell) return;
++                await OpenNewTaskAsync(null, token);
++                if (Tasks.Editor is { Mode: TaskEditorMode.Create } draft) draft.SeedCalendarSlot(slot);
++            };
+         }
+         if (Projects is not null)
+         {
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs b/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
+index 230f5c7..917ab1b 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
+@@ -27,6 +27,7 @@ public sealed class TaskCardEditor : ViewModelBase
+     private DateTimeOffset? _currentStart;
+     private bool _canAssign, _canWatch;
+     public event Action? Changed;
++    public TimeZoneInfo? ScheduleZone { get; set; }
+     public TaskCardEditor(TaskCardContent? source, DateTimeOffset? originalStart = null, bool personal = false)
+     {
+         _personal = personal;
+@@ -92,9 +93,13 @@ public sealed class TaskCardEditor : ViewModelBase
+             if (!int.TryParse(Duration, out var parsed) || parsed is < 1 or > 10080) throw new ArgumentException("Длительность: от 1 до 10080 минут."); duration = parsed;
+         }
+         // Exact start owns the local schedule tuple; a date alone remains an all-day planning date.
+-        var local = start?.ToLocalTime();
++        var effectiveZone = ScheduleZone ?? TimeZoneInfo.Local;
++        var local = start is { } instant ? TimeZoneInfo.ConvertTime(instant, effectiveZone) : (DateTimeOffset?)null;
+         var preserveSchedule = start == _originalStart && start is not null;
+-        var zone = TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZoneInfo.Local.Id, out var iana) ? iana : TimeZoneInfo.Local.Id;
++        var zone = TimeZoneInfo.TryConvertWindowsIdToIanaId(effectiveZone.Id, out var iana) ? iana : effectiveZone.Id;
++        // The existing server contract rejects ambiguous wall-clock fields.
++        // Keep the explicit UTC instant from a selected slot without inventing a new DST write policy.
++        var utcOnly = ScheduleZone is not null && local is { } at && effectiveZone.IsAmbiguousTime(at.DateTime);
+         var content = new TaskCardContent
+         {
+             Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
+@@ -102,9 +107,9 @@ public sealed class TaskCardEditor : ViewModelBase
+             ParentTaskId = Parent?.Id,
+             RequesterUserId = Requester?.Id,
+             PrimaryCounterpartyObjectId = Counterparty?.Id,
+-            ScheduledDate = preserveSchedule ? _source.ScheduledDate : local is null ? date : DateOnly.FromDateTime(local.Value.DateTime),
+-            StartTimeLocal = preserveSchedule ? _source.StartTimeLocal : local is null ? null : TimeOnly.FromDateTime(local.Value.DateTime),
+-            ScheduleTimeZone = preserveSchedule ? _source.ScheduleTimeZone : local is null ? null : zone,
++            ScheduledDate = utcOnly ? null : preserveSchedule ? _source.ScheduledDate : local is null ? date : DateOnly.FromDateTime(local.Value.DateTime),
++            StartTimeLocal = utcOnly ? null : preserveSchedule ? _source.StartTimeLocal : local is null ? null : TimeOnly.FromDateTime(local.Value.DateTime),
++            ScheduleTimeZone = utcOnly ? null : preserveSchedule ? _source.ScheduleTimeZone : local is null ? null : zone,
+             PlannedDurationMinutes = duration,
+             AssigneeIds = Assignees.Where(p => p.Selected).Select(p => p.Id).ToArray(),
+             WatcherIds = Watchers.Where(p => p.Selected).Select(p => p.Id).ToArray()
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs
+index bc87323..2e8b06a 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs
+@@ -43,6 +43,22 @@ public sealed class TaskEditorViewModel : ViewModelBase
+     private bool _retryAvailable = true;
+     private long _revision;
+     private bool _suppressChanges;
++    private TimeZoneInfo? _slotZone;
++    private DateTimeOffset? _slotStartUtc;
++    private string? _slotStartText;
++
++    public void SeedCalendarSlot(Task.Desktop.Calendar.FreeTimeSlot slot)
++    {
++        if (Mode != TaskEditorMode.Create) throw new InvalidOperationException("Only a create draft can be seeded.");
++        _slotZone = slot.Zone; _slotStartUtc = slot.StartUtc;
++        _slotStartText = TimeZoneInfo.ConvertTime(slot.StartUtc, slot.Zone).ToString("g", RussianCulture);
++        Card.ScheduleZone = slot.Zone;
++        StartText = _slotStartText;
++        Card.Date = slot.Date.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
++        Card.Duration = slot.DurationMinutes.ToString(CultureInfo.InvariantCulture);
++        Changed();
++        SetStatus($"Черновик на выбранное время · {slot.Zone.Id}. Окно не зарезервировано; сохраните задачу после проверки.");
++    }
+ 
+     public TaskEditorViewModel(TaskEditorMode mode, DesktopTaskDto? source = null, bool personal = false)
+     {
+@@ -335,6 +351,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
+     private DateTimeOffset? ParseLocal(string text, out string? error)
+     {
+         error = null;
++        if (_slotStartUtc.HasValue && text.Trim() == _slotStartText) return _slotStartUtc;
+         if (string.IsNullOrWhiteSpace(text))
+         {
+             return null;
+@@ -347,14 +364,15 @@ public sealed class TaskEditorViewModel : ViewModelBase
+         }
+ 
+         local = DateTime.SpecifyKind(local, DateTimeKind.Unspecified);
+-        if (TimeZoneInfo.Local.IsInvalidTime(local))
++        var zone = _slotZone ?? TimeZoneInfo.Local;
++        if (zone.IsInvalidTime(local))
+         {
+             error = "Это локальное время не существует из-за перехода часового пояса.";
+             return null;
+         }
+ 
+-        return _personal ? Personal.PersonalTimePolicy.ToUtc(local, TimeZoneInfo.Local)
+-            : new DateTimeOffset(local, TimeZoneInfo.Local.GetUtcOffset(local)).ToUniversalTime();
++        return _personal ? Personal.PersonalTimePolicy.ToUtc(local, zone)
++            : new DateTimeOffset(local, zone.GetUtcOffset(local)).ToUniversalTime();
+     }
+ 
+     private static string FormatLocal(DateTimeOffset? value) =>
+diff --git a/work/production/src/Task.Desktop/Views/CalendarView.xaml b/work/production/src/Task.Desktop/Views/CalendarView.xaml
+index 3f506de..dd96616 100644
+--- a/work/production/src/Task.Desktop/Views/CalendarView.xaml
++++ b/work/production/src/Task.Desktop/Views/CalendarView.xaml
+@@ -145,9 +145,47 @@
+             </Button>
+             <Button Content="Повторения" Command="{Binding Recurrence.OpenCommand}" Style="{StaticResource Task.Button.Secondary}"
+                     Margin="6,0,0,0" AutomationProperties.Name="Повторяющиеся задачи" />
++            <Button Content="Найти время" Command="{Binding FindTimeCommand}" Style="{StaticResource Task.Button.Secondary}"
++                    Margin="6,0,0,0" AutomationProperties.Name="Найти свободное рабочее окно" AutomationProperties.AutomationId="CalendarFindTime" />
+         </WrapPanel>
+ 
+         <StackPanel Grid.Row="2">
++            <Border Padding="12" Margin="0,0,0,8">
++                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}"><Setter Property="Visibility" Value="Collapsed"/>
++                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
++                    <Style.Triggers><DataTrigger Binding="{Binding ShowFreeTime}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
++                </Style></Border.Style>
++                <StackPanel>
++                    <WrapPanel>
++                        <TextBlock Text="Свободное окно · длительность" VerticalAlignment="Center" Margin="0,0,8,0"/>
++                        <Button Content="15 мин" Command="{Binding FreeTimeDurationCommand}" CommandParameter="15" Style="{StaticResource Calendar.ModeButton}" AutomationProperties.Name="Искать окно на 15 минут"/>
++                        <Button Content="30 мин" Command="{Binding FreeTimeDurationCommand}" CommandParameter="30" Style="{StaticResource Calendar.ModeButton}" AutomationProperties.Name="Искать окно на 30 минут"/>
++                        <Button Content="60 мин" Command="{Binding FreeTimeDurationCommand}" CommandParameter="60" Style="{StaticResource Calendar.ModeButton}" AutomationProperties.Name="Искать окно на 60 минут"/>
++                        <Button Content="Закрыть" Command="{Binding CloseFreeTimeCommand}" Style="{StaticResource Calendar.ModeButton}" AutomationProperties.Name="Закрыть поиск свободного времени"/>
++                    </WrapPanel>
++                    <TextBlock Text="{Binding FreeTimeMinutes, StringFormat=Выбрано: {0} минут}" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite"/>
++                    <TextBlock Text="Рабочие часы и выходные — из ваших настроек. Учитываются доступные вам записи календаря, включая общие. Записи без времени начала и конца не блокируют точное время." TextWrapping="Wrap" Margin="0,6,0,0"/>
++                    <TextBlock Text="{Binding FreeTimeMessage}" TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="CalendarFreeTimeStatus"/>
++                    <ItemsControl ItemsSource="{Binding FreeTimeSlots}" Margin="0,6,0,0">
++                        <ItemsControl.ItemTemplate><DataTemplate>
++                            <Button Content="{Binding Label}" HorizontalContentAlignment="Left" Margin="0,0,0,4"
++                                    Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="{Binding Label}"
++                                    Command="{Binding DataContext.ChooseFreeTimeCommand, ElementName=CalendarRoot}" CommandParameter="{Binding}"/>
++                        </DataTemplate></ItemsControl.ItemTemplate>
++                    </ItemsControl>
++                    <Button Content="Показать дальше" Command="{Binding MoreFreeTimeCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.Name="Искать в следующей неделе"/>
++                </StackPanel>
++            </Border>
++            <Border Padding="8" Margin="0,0,0,8">
++                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}"><Setter Property="Visibility" Value="Collapsed"/>
++                    <Style.Triggers><DataTrigger Binding="{Binding HasChosenFreeTime}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
++                </Style></Border.Style>
++                <StackPanel>
++                    <TextBlock Text="{Binding ChosenFreeTime.Label}" TextWrapping="Wrap"/>
++                    <TextBlock Text="Окно не зарезервировано. Проверьте данные перед сохранением." TextWrapping="Wrap"/>
++                    <Button Content="Создать задачу в это время" Command="{Binding CreateTaskAtFreeTimeCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,6,0,0" AutomationProperties.Name="Открыть обычный черновик задачи на выбранное время"/>
++                </StackPanel>
++            </Border>
+             <Border Margin="0,0,0,8">
+                 <Border.Style>
+                     <Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
+@@ -329,6 +367,16 @@
+                                           Focusable="True" AutomationProperties.Name="Недельная временная сетка"
+                                           AutomationProperties.AutomationId="CalendarTimeline">
+                                 <Grid x:Name="CalendarTimelineHost" Height="{Binding TimelineCanvasHeight}">
++                                    <Canvas Panel.ZIndex="10" IsHitTestVisible="False" Margin="72,0,0,0">
++                                        <Border Canvas.Top="{Binding ChosenFreeTime.Top}" Height="{Binding ChosenFreeTime.Height}"
++                                                Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}"
++                                                BorderThickness="3" BorderBrush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
++                                                Background="Transparent">
++                                            <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Collapsed"/>
++                                                <Style.Triggers><DataTrigger Binding="{Binding ShowFreeTimeHighlight}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
++                                            </Style></Border.Style>
++                                        </Border>
++                                    </Canvas>
+                                     <ItemsControl ItemsSource="{Binding HourMarkers}" IsHitTestVisible="False">
+                                         <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                         <ItemsControl.ItemContainerStyle>
+diff --git a/work/production/src/Task.Desktop/Views/CalendarView.xaml.cs b/work/production/src/Task.Desktop/Views/CalendarView.xaml.cs
+index 13b8e88..ee41627 100644
+--- a/work/production/src/Task.Desktop/Views/CalendarView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/CalendarView.xaml.cs
+@@ -3,16 +3,28 @@ using System.Windows.Controls;
+ using System.Windows.Input;
+ using System.Windows.Threading;
+ using Task.Desktop.ViewModels;
++using Task.Desktop.Calendar;
+ 
+ namespace Task.Desktop.Views;
+ 
+ public partial class CalendarView : UserControl
+ {
+     private readonly DispatcherTimer _currentTimeTimer = new() { Interval = TimeSpan.FromMinutes(1) };
++    private readonly DispatcherTimer _slotHighlightTimer = new() { Interval = TimeSpan.FromSeconds(5) };
+ 
+     public CalendarView()
+     {
+         InitializeComponent();
++        DataContextChanged += (_, e) =>
++        {
++            if (e.OldValue is CalendarViewModel old) old.FreeTimeChosen -= OnFreeTimeChosen;
++            if (IsLoaded && e.NewValue is CalendarViewModel current) current.FreeTimeChosen += OnFreeTimeChosen;
++        };
++        _slotHighlightTimer.Tick += (_, _) =>
++        {
++            _slotHighlightTimer.Stop();
++            if (DataContext is CalendarViewModel current) current.ShowFreeTimeHighlight = false;
++        };
+         _currentTimeTimer.Tick += (_, _) =>
+         {
+             if (DataContext is CalendarViewModel viewModel) viewModel.RefreshCurrentTime();
+@@ -21,12 +33,28 @@ public partial class CalendarView : UserControl
+         {
+             if (DataContext is CalendarViewModel viewModel)
+             {
++                viewModel.FreeTimeChosen -= OnFreeTimeChosen;
++                viewModel.FreeTimeChosen += OnFreeTimeChosen;
+                 CalendarTimelineScroll.ScrollToVerticalOffset(viewModel.InitialTimelineOffset);
+                 viewModel.RefreshCurrentTime();
+             }
+             _currentTimeTimer.Start();
+         });
+-        Unloaded += (_, _) => _currentTimeTimer.Stop();
++        Unloaded += (_, _) =>
++        {
++            _currentTimeTimer.Stop(); _slotHighlightTimer.Stop();
++            if (DataContext is CalendarViewModel viewModel) { viewModel.FreeTimeChosen -= OnFreeTimeChosen; viewModel.ShowFreeTimeHighlight = false; }
++        };
++    }
++
++    private void OnFreeTimeChosen(FreeTimeSlot slot)
++    {
++        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
++        {
++            CalendarTimelineScroll.ScrollToVerticalOffset(Math.Max(0, slot.Top - 60));
++            CalendarTimelineScroll.Focus();
++            _slotHighlightTimer.Stop(); _slotHighlightTimer.Start();
++        });
+     }
+ 
+     private void OnClearSelection(object sender, RoutedEventArgs e)
+@@ -51,6 +79,10 @@ public partial class CalendarView : UserControl
+     private void OnCalendarPreviewKeyDown(object sender, KeyEventArgs e)
+     {
+         if (DataContext is not CalendarViewModel viewModel) return;
++        if (e.Key == Key.Escape && viewModel.ShowFreeTime)
++        {
++            _ = viewModel.CloseFreeTimeCommand.ExecuteAsync(); CalendarTimelineScroll.Focus(); e.Handled = true; return;
++        }
+         if (e.Key == Key.Escape && viewModel.Editor is null && viewModel.SelectedItem is not null)
+         {
+             viewModel.SelectedItem = null;
+diff --git a/work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs
+index bdcbff7..3ad4b1d 100644
+--- a/work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs
+@@ -9,6 +9,28 @@ namespace Task.Desktop.Tests.Calendar;
+ 
+ public sealed class DesktopCalendarApiClientTests
+ {
++    [Theory]
++    [InlineData("{\"code\":42,\"title\":\"Invalid range\"}")]
++    [InlineData("{\"code\":{},\"title\":\"Invalid range\"}")]
++    [InlineData("[]")]
++    public async System.Threading.Tasks.Task MalformedRangeCode_IsControlledValidationFailure(string body)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.UnprocessableEntity, body)));
++        var from = DateTimeOffset.Parse("2026-10-05T00:00:00Z");
++        Assert.IsType<DesktopCalendarResult<DesktopSchedulePage>.ValidationFailure>(await fixture.Client.GetScheduleAsync(from, from.AddDays(7), "UTC", default));
++    }
++
++    [Theory]
++    [InlineData("CALENDAR_RANGE_TOO_LARGE", "Range too large")]
++    [InlineData("VALIDATION_FAILED", "В периоде больше 500 записей. Выберите меньший диапазон календаря.")]
++    public async System.Threading.Tasks.Task CalendarRangeErrors_AreRecognized(string code, string title)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(
++            Json(HttpStatusCode.UnprocessableEntity, System.Text.Json.JsonSerializer.Serialize(new { code, title }))));
++        var from = DateTimeOffset.Parse("2026-10-05T00:00:00Z");
++        Assert.IsType<DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge>(await fixture.Client.GetScheduleAsync(from, from.AddDays(7), "UTC", default));
++    }
++
+     private static readonly Guid SessionId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2936");
+     private static readonly Guid OrganizationId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2937");
+     private static readonly Guid UserId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2938");
+diff --git a/work/production/tests/Task.Desktop.Tests/Calendar/FreeTimeSearchTests.cs b/work/production/tests/Task.Desktop.Tests/Calendar/FreeTimeSearchTests.cs
+new file mode 100644
+index 0000000..a6cb480
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Calendar/FreeTimeSearchTests.cs
+@@ -0,0 +1,310 @@
++using System.Diagnostics;
++using Task.Desktop.Calendar;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Work;
++
++namespace Task.Desktop.Tests.Calendar;
++
++public sealed class FreeTimeSearchTests
++{
++    private static readonly DateOnly Monday = new(2026, 10, 5);
++    private static readonly DesktopUserSettings Settings = new(1, "ru", "24h", 1, "09:00", "18:00", [6, 7], 30, 10, false, true, true, "ask");
++    private static DateTimeOffset At(int hour, int minute = 0) => new(Monday.ToDateTime(new TimeOnly(hour, minute)), TimeSpan.Zero);
++    private static DesktopScheduleItem Busy(int fromHour, int toHour, int fromMinute = 0, int toMinute = 0,
++        string status = "scheduled", DesktopScheduleItemType type = DesktopScheduleItemType.CalendarEvent) =>
++        new(Guid.NewGuid(), type, "Занято", Monday, At(fromHour, fromMinute), At(toHour, toMinute), false, null, status, null);
++    private static IReadOnlyList<FreeTimeSlot> Find(IReadOnlyList<DesktopScheduleItem> items, DateTimeOffset? now = null, int minutes = 30) =>
++        FreeTimeCalculator.Find(items, Settings, TimeZoneInfo.Utc, Monday, Monday.AddDays(1), now ?? At(8), minutes);
++
++    [Theory]
++    [InlineData(15)] [InlineData(30)] [InlineData(60)]
++    public void EmptyDay_ReturnsFirstThreeNonOverlappingSlots(int minutes)
++    {
++        var slots = Find([], minutes: minutes);
++        Assert.Equal(3, slots.Count); Assert.Equal(At(9), slots[0].StartUtc);
++        Assert.All(slots, s => Assert.Equal(minutes, s.DurationMinutes));
++        Assert.Equal(slots[0].EndUtc, slots[1].StartUtc);
++    }
++
++    [Fact] public void FullyBusyDay_HasNoSlots() => Assert.Empty(Find([Busy(9, 18)]));
++    [Theory] [InlineData(30, 1)] [InlineData(29, 0)]
++    public void ExactGap_RequiresFullDuration(int gap, int expected)
++    {
++        var slots = Find([Busy(9, 12), Busy(12, 18, fromMinute: gap)]);
++        Assert.Equal(expected, slots.Count);
++        if (expected == 1) Assert.Equal(At(12), slots[0].StartUtc);
++    }
++
++    [Fact]
++    public void UnsortedOverlappingAdjacentAndNestedItems_FormOneBusyUnion()
++    {
++        var slots = Find([Busy(11, 12), Busy(9, 10), Busy(10, 11), Busy(9, 11, 30, 30), Busy(10, 10, 5, 20)]);
++        Assert.Equal(At(12), slots[0].StartUtc);
++    }
++    [Fact]
++    public void ItemsOutsideAndAcrossWorkBoundaries_AreClipped()
++    {
++        var slots = Find([Busy(7, 8), Busy(8, 10), Busy(17, 20), Busy(20, 21)]);
++        Assert.Equal(At(10), slots[0].StartUtc);
++        Assert.Empty(Find([Busy(8, 20)]));
++    }
++    [Fact]
++    public void PastTimeToday_IsRoundedForwardToMinutePrecision()
++    {
++        var slots = Find([], At(14, 12).AddSeconds(3));
++        Assert.Equal(At(14, 13), slots[0].StartUtc);
++        Assert.Empty(Find([], At(17, 31)));
++    }
++    [Theory] [InlineData(4, 18)] [InlineData(5, 10)] [InlineData(6, 10)]
++    public void NextWorkingDay_SkipsConfiguredWeekends(int days, int hour)
++    {
++        var slots = FreeTimeCalculator.Find([], Settings, TimeZoneInfo.Utc, Monday.AddDays(days), Monday.AddDays(11), At(hour).AddDays(days), 30);
++        Assert.Equal(Monday.AddDays(7), slots[0].Date); Assert.Equal(At(9).AddDays(7), slots[0].StartUtc);
++    }
++    [Fact]
++    public void DateOnlyCancelledAndPointItems_DoNotBlockTime()
++    {
++        var dateOnly = Busy(9, 18, type: DesktopScheduleItemType.Task) with { StartAtUtc = null, EndAtUtc = null, IsAllDay = true };
++        var point = Busy(9, 18, type: DesktopScheduleItemType.Task) with { EndAtUtc = null };
++        Assert.Equal(At(9), Find([dateOnly, point, Busy(9, 18, status: "cancelled")])[0].StartUtc);
++    }
++    [Fact]
++    public void CompletedStatus_PreservesModeSpecificCalendarSemantics()
++    {
++        var done = Busy(9, 18, status: "completed", type: DesktopScheduleItemType.Task);
++        Assert.Empty(Find([done]));
++        Assert.Equal(3, FreeTimeCalculator.Find([done], Settings, TimeZoneInfo.Utc, Monday, Monday.AddDays(1), At(8), 30, personal: true).Count);
++    }
++
++    [Theory]
++    [InlineData(2026, 3, 8, 2)] [InlineData(2026, 11, 1, 3)]
++    public void DstTransitions_UseElapsedUtcDurationAndOffsets(int year, int month, int day, int count)
++    {
++        var zone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York");
++        var date = new DateOnly(year, month, day);
++        var settings = Settings with { WorkdayStart = "01:00", WorkdayEnd = month == 3 ? "04:00" : "03:00", WeekendDays = [6] };
++        var now = FreeTimeCalculator.Boundary(date, TimeOnly.MinValue, zone);
++        var slots = FreeTimeCalculator.Find([], settings, zone, date, date.AddDays(1), now, 60);
++        Assert.Equal(count, slots.Count); Assert.All(slots, s => Assert.Equal(TimeSpan.FromHours(1), s.EndUtc - s.StartUtc));
++        Assert.Equal(month == 3 ? 3 : 1, TimeZoneInfo.ConvertTime(slots[0].EndUtc, zone).Hour);
++        if (month == 11) Assert.NotEqual(TimeZoneInfo.ConvertTime(slots[0].StartUtc, zone).Offset, TimeZoneInfo.ConvertTime(slots[1].StartUtc, zone).Offset);
++    }
++    [Fact]
++    public void DstInvalidWorkBoundary_MovesToFirstExistingMinute()
++    {
++        var zone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York"); var date = new DateOnly(2026, 3, 8);
++        var result = FreeTimeCalculator.Boundary(date, new(2, 30), zone);
++        Assert.Equal(3, TimeZoneInfo.ConvertTime(result, zone).Hour);
++        Assert.Equal(0, TimeZoneInfo.ConvertTime(result, zone).Minute);
++    }
++    [Fact]
++    public void DstAmbiguousWorkEnd_IncludesBothOccurrences()
++    {
++        var zone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York"); var date = new DateOnly(2026, 11, 1);
++        Assert.Equal(TimeSpan.FromHours(1), FreeTimeCalculator.Boundary(date, new(1, 30), zone, true) - FreeTimeCalculator.Boundary(date, new(1, 30), zone));
++    }
++    [Fact]
++    public void DifferentMachineZone_UsesExplicitCalendarZone()
++    {
++        var offset = TimeZoneInfo.Local.BaseUtcOffset == TimeSpan.FromHours(11) ? TimeSpan.FromHours(-7) : TimeSpan.FromHours(11);
++        var zone = TimeZoneInfo.CreateCustomTimeZone("CalendarTest", offset, "CalendarTest", "CalendarTest");
++        var start = new DateTimeOffset(Monday.ToDateTime(new(9, 0)), offset).ToUniversalTime();
++        var slots = FreeTimeCalculator.Find([], Settings, zone, Monday, Monday.AddDays(1), start.AddHours(-1), 30);
++        Assert.Equal(start, slots[0].StartUtc); Assert.Equal(Monday, slots[0].Date);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task OfflineCompleteCache_AllowsStaleResultsAndNoNetworkCalls()
++    {
++        var client = new Client(); var search = new FreeTimeSearch(client, TimeZoneInfo.Utc);
++        search.Remember(new([], At(0), At(0).AddDays(7)));
++        var result = await search.SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, false, default);
++        Assert.True(result.Stale); Assert.Null(result.Error); Assert.Equal(3, result.Slots.Count); Assert.Empty(client.Ranges);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task OfflineIncompleteCache_NeverInventsSlots()
++    {
++        var client = new Client(); var search = new FreeTimeSearch(client, TimeZoneInfo.Utc);
++        search.Remember(new([], At(0), At(0).AddDays(6)));
++        var result = await search.SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, false, default);
++        Assert.True(result.Stale); Assert.NotNull(result.Error); Assert.Empty(result.Slots);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task ServerUnavailable_FallsBackOnlyToCompleteCoverage()
++    {
++        var client = new Client { Read = (_, _) => new DesktopCalendarResult<DesktopSchedulePage>.ServerUnavailable() };
++        var search = new FreeTimeSearch(client, TimeZoneInfo.Utc);
++        search.Remember(new([], At(0), At(0).AddDays(3))); search.Remember(new([], At(0).AddDays(3), At(0).AddDays(7)));
++        var result = await search.SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, true, default);
++        Assert.True(result.Stale); Assert.Null(result.Error); Assert.Equal(3, result.Slots.Count);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task RangeError_IsSplitIntoBoundedRequests()
++    {
++        var client = new Client { Read = (from, to) => to - from > TimeSpan.FromDays(1)
++            ? new DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge() : new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], from, to)) };
++        var result = await new FreeTimeSearch(client, TimeZoneInfo.Utc).SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, true, default);
++        Assert.Null(result.Error); Assert.Equal(3, result.Slots.Count); Assert.InRange(client.Ranges.Count, 2, 64);
++        Assert.All(client.Ranges, r => Assert.True(r.To - r.From <= TimeSpan.FromDays(7)));
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task UnsplittableRangeAndInvalidCoverage_ReturnNoSlots()
++    {
++        var client = new Client { Read = (_, _) => new DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge() };
++        var result = await new FreeTimeSearch(client, TimeZoneInfo.Utc).SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, true, default);
++        Assert.NotNull(result.Error); Assert.Empty(result.Slots);
++        client.Read = (from, to) => new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], from, to.AddMinutes(-1)));
++        result = await new FreeTimeSearch(client, TimeZoneInfo.Utc).SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, true, default);
++        Assert.IsType<DesktopCalendarResult<DesktopSchedulePage>.MalformedResponse>(result.Failure); Assert.Empty(result.Slots);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task Forbidden_DoesNotFallBackToCachedPermissions()
++    {
++        var client = new Client { Read = (_, _) => new DesktopCalendarResult<DesktopSchedulePage>.Forbidden() };
++        var search = new FreeTimeSearch(client, TimeZoneInfo.Utc); search.Remember(new([], At(0), At(0).AddDays(7)));
++        var result = await search.SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, true, default);
++        Assert.Empty(result.Slots); Assert.IsType<DesktopCalendarResult<DesktopSchedulePage>.Forbidden>(result.Failure);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task FreshOverlappingPage_DiscardsOldCoverageRatherThanMixingVersions()
++    {
++        var search = new FreeTimeSearch(new Client(), TimeZoneInfo.Utc);
++        search.Remember(new([], At(0), At(0).AddDays(7)));
++        search.Remember(new([Busy(9, 18)], At(0), At(0).AddDays(1)));
++        var result = await search.SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, false, default);
++        Assert.Empty(result.Slots); Assert.NotNull(result.Error);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CalendarSelection_NavigatesHighlightsAndOnlyOffersDraft()
++    {
++        var client = new Client(); using var vm = Vm(client);
++        await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();
++        Assert.Equal(30, vm.FreeTimeMinutes); Assert.Equal(3, vm.FreeTimeSlots.Count);
++        FreeTimeSlot? chosen = null; vm.FreeTimeChosen += slot => chosen = slot;
++        var drafts = 0; vm.CreateTaskAtFreeTime = (_, _) => { drafts++; return System.Threading.Tasks.Task.CompletedTask; };
++        await vm.ChooseFreeTimeCommand.ExecuteAsync(vm.FreeTimeSlots[0]);
++        Assert.NotNull(chosen); Assert.Equal(CalendarViewMode.Day, vm.ViewMode); Assert.Equal(Monday.ToDateTime(TimeOnly.MinValue), vm.SelectedDate);
++        Assert.True(vm.ShowFreeTimeHighlight); Assert.False(vm.ShowFreeTime); Assert.Equal(0, drafts); Assert.Equal(0, client.Writes);
++        await vm.CreateTaskAtFreeTimeCommand.ExecuteAsync(); Assert.Equal(1, drafts); Assert.Equal(0, client.Writes);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task CalendarOfflineCompleteCache_DisablesAllWrites()
++    {
++        var client = new Client(); using var vm = Vm(client);
++        await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync(); vm.UpdateConnectivity(false);
++        await vm.FindTimeCommand.ExecuteAsync(); Assert.Equal(3, vm.FreeTimeSlots.Count); Assert.Contains("неактуальны", vm.FreeTimeMessage);
++        await vm.ChooseFreeTimeCommand.ExecuteAsync(vm.FreeTimeSlots[0]);
++        Assert.False(vm.NewEventCommand.CanExecute(null)); Assert.False(vm.CreateTaskAtFreeTimeCommand.CanExecute(null)); Assert.False(vm.SaveEventCommand.CanExecute(null));
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task CalendarOfflineIncompleteCache_ExplainsMissingData()
++    {
++        var client = new Client(); using var vm = Vm(client);
++        await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();
++        // A fresh shorter page deliberately invalidates the old overlapping cached range.
++        client.Read = (from, to) => new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], from, to));
++        await vm.DayModeCommand.ExecuteAsync(); vm.UpdateConnectivity(false);
++        await vm.FindTimeCommand.ExecuteAsync(); Assert.Empty(vm.FreeTimeSlots); Assert.Contains("Недостаточно", vm.FreeTimeMessage);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task CalendarWithoutRealSettings_DoesNotUseInventedDefaults()
++    {
++        using var vm = new CalendarViewModel(new Client(), ["Calendar.Read"], TimeZoneInfo.Utc, clock: () => At(8));
++        await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();
++        Assert.Empty(vm.FreeTimeSlots); Assert.Contains("настроек", vm.FreeTimeMessage);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task ShowFurther_RequestsOnlyTheNextWeek()
++    {
++        var client = new Client { Read = (from, to) => new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new(
++            [Busy(0, 23) with { StartAtUtc = from, EndAtUtc = to }], from, to)) };
++        using var vm = Vm(client); await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();
++        Assert.Empty(vm.FreeTimeSlots); Assert.True(vm.MoreFreeTimeCommand.CanExecute(null));
++        await vm.MoreFreeTimeCommand.ExecuteAsync(); var last = client.Ranges.Last();
++        Assert.Equal(At(0).AddDays(7), last.From); Assert.Equal(At(0).AddDays(14), last.To);
++    }
++    [Fact]
++    public async System.Threading.Tasks.Task SessionLoss_CancelsLateSearchAndClearsResults()
++    {
++        var client = new Client(); using var vm = Vm(client); await vm.ActivateAsync();
++        var pending = new TaskCompletionSource<DesktopCalendarResult<DesktopSchedulePage>>(TaskCreationOptions.RunContinuationsAsynchronously);
++        client.Pending = pending.Task;
++        var task = vm.FindTimeCommand.ExecuteAsync(); vm.UpdateSessionState(false);
++        pending.SetResult(new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], At(0), At(0).AddDays(7)))); await task;
++        Assert.Empty(vm.FreeTimeSlots); Assert.False(vm.FindTimeCommand.CanExecute(null)); Assert.False(vm.ShowFreeTime);
++    }
++    [Theory] [InlineData(0)] [InlineData(1)]
++    public void OrdinaryCreateDraft_KeepsExactDstInstantAndDuration(int repeatedHour)
++    {
++        var zone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York");
++        var start = DateTimeOffset.Parse("2026-11-01T05:00:00Z").AddHours(repeatedHour);
++        var editor = new TaskEditorViewModel(TaskEditorMode.Create) { Title = "Встреча" };
++        editor.SeedCalendarSlot(new(start, start.AddMinutes(30), zone));
++        var command = editor.BuildCreateCommand();
++        Assert.NotNull(command); Assert.Equal(start, command!.StartAtUtc); Assert.Equal(30, command.Card!.PlannedDurationMinutes);
++        command.Card.Validate(command.StartAtUtc);
++    }
++    [Fact]
++    public void LargeCalendar_IsSortPlusScan()
++    {
++        var items = Enumerable.Range(0, 100_000).Select(_ => Busy(9, 18)).ToArray();
++        var timer = Stopwatch.StartNew(); Assert.Empty(Find(items)); timer.Stop();
++        Assert.True(timer.Elapsed < TimeSpan.FromSeconds(5), $"Calculation took {timer.Elapsed}");
++    }
++
++    private static CalendarViewModel Vm(Client client) => new(client, ["Calendar.Read", "CalendarEvent.Create"], TimeZoneInfo.Utc,
++        Monday.ToDateTime(TimeOnly.MinValue), clock: () => At(8), userSettings: _ => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopUserSettings>>(new DesktopWorkResult<DesktopUserSettings>.Succeeded(Settings)));
++    [Theory]
++    [InlineData("next")] [InlineData("previous")] [InlineData("today")] [InlineData("week")] [InlineData("month")] [InlineData("date")]
++    public async System.Threading.Tasks.Task ManualNavigation_ClearsChosenSlotAndCreateOffer(string navigation)
++    {
++        using var vm = Vm(new Client()); await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();
++        await vm.ChooseFreeTimeCommand.ExecuteAsync(vm.FreeTimeSlots[0]);
++        Assert.NotNull(vm.ChosenFreeTime);
++        switch (navigation)
++        {
++            case "next": await vm.NextWeekCommand.ExecuteAsync(); break;
++            case "previous": await vm.PreviousWeekCommand.ExecuteAsync(); break;
++            case "today": await vm.TodayCommand.ExecuteAsync(); break;
++            case "week": await vm.WeekModeCommand.ExecuteAsync(); break;
++            case "month": await vm.MonthModeCommand.ExecuteAsync(); break;
++            case "date": vm.SelectedDate = Monday.AddDays(1).ToDateTime(TimeOnly.MinValue); break;
++        }
++        Assert.Null(vm.ChosenFreeTime); Assert.False(vm.ShowFreeTimeHighlight); Assert.False(vm.CreateTaskAtFreeTimeCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CorporateShell_UsesOrdinaryCreateFlowWithoutSaving()
++    {
++        var tasksClient = new TaskScreen.TasksViewModelTests.FakeTasksApiClient();
++        using var tasks = new TasksViewModel(tasksClient, ["Task.Read", "Task.Create"]);
++        using var calendar = Vm(new Client());
++        using var shell = new MainWindowViewModel(new Uri("https://task.test/"), null, tasks, calendar);
++        shell.SelectedSection = shell.Sections.Single(s => s.Route == "calendar");
++        for (var i = 0; calendar.IsBusy && i < 100; i++) await System.Threading.Tasks.Task.Delay(5);
++        await calendar.FindTimeCommand.ExecuteAsync();
++        var slot = calendar.FreeTimeSlots[0]; await calendar.ChooseFreeTimeCommand.ExecuteAsync(slot);
++        Assert.Null(tasks.Editor);
++        await calendar.CreateTaskAtFreeTimeCommand.ExecuteAsync();
++        Assert.Equal("tasks", shell.SelectedSection?.Route); Assert.NotNull(tasks.Editor);
++        tasks.Editor!.Title = "Черновик";
++        var command = tasks.Editor.BuildCreateCommand();
++        Assert.Equal(slot.StartUtc, command!.StartAtUtc); Assert.Equal(30, command.Card!.PlannedDurationMinutes);
++        Assert.Equal(0, tasksClient.CreateCallCount);
++    }
++
++    private sealed class Client : IDesktopCalendarApiClient
++    {
++        public List<(DateTimeOffset From, DateTimeOffset To)> Ranges { get; } = [];
++        public Func<DateTimeOffset, DateTimeOffset, DesktopCalendarResult<DesktopSchedulePage>> Read { get; set; } = (from, to) => new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], from, to));
++        public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopSchedulePage>>? Pending { get; set; }
++        public int Writes { get; private set; }
++        public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopSchedulePage>> GetScheduleAsync(DateTimeOffset from, DateTimeOffset to, string zone, CancellationToken token)
++        { Ranges.Add((from, to)); return Pending ?? System.Threading.Tasks.Task.FromResult(Read(from, to)); }
++        public System.Threading.Tasks.Task<DesktopCalendarResult<IReadOnlyList<DesktopScheduleConflict>>> GetConflictsAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken token) => System.Threading.Tasks.Task.FromResult<DesktopCalendarResult<IReadOnlyList<DesktopScheduleConflict>>>(new DesktopCalendarResult<IReadOnlyList<DesktopScheduleConflict>>.Succeeded([]));
++        public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> GetEventAsync(Guid id, CancellationToken token) => throw new NotSupportedException();
++        public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> CreateEventAsync(DesktopCalendarEventCommand command, CancellationToken token) { Writes++; throw new NotSupportedException(); }
++        public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> UpdateEventAsync(Guid id, long version, DesktopCalendarEventCommand command, CancellationToken token) { Writes++; throw new NotSupportedException(); }
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs b/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs
+index 2a99130..cc2383d 100644
+--- a/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs
+@@ -7,6 +7,24 @@ namespace Task.Desktop.Tests;
+ 
+ public sealed class WindowsUxAccessibilityTests
+ {
++    [Fact]
++    public void FreeTimeSearch_ExposesKeyboardNamesLiveStatusAndContrastHighlight()
++    {
++        var file = ProjectFile("src", "Task.Desktop", "Views", "CalendarView.xaml");
++        var root = XDocument.Load(file).Root!;
++        var find = root.Descendants().Single(e => TryAttribute(e, "AutomationId") == "CalendarFindTime");
++        Assert.Contains("Найти", Attribute(find, "Name"));
++        Assert.NotEqual("False", TryAttribute(find, "IsTabStop"));
++        var status = root.Descendants().Single(e => TryAttribute(e, "AutomationId") == "CalendarFreeTimeStatus");
++        Assert.Equal("Polite", Attribute(status, "LiveSetting"));
++        var slot = root.Descendants().Single(e => TryAttribute(e, "Command")?.Contains("ChooseFreeTimeCommand") == true);
++        Assert.Equal("{Binding Label}", Attribute(slot, "Name"));
++        var xaml = File.ReadAllText(file);
++        Assert.Contains("SystemColors.HighlightBrushKey", xaml);
++        var code = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Views", "CalendarView.xaml.cs"));
++        Assert.Contains("CalendarTimelineScroll.Focus()", code); Assert.Contains("Key.Escape", code);
++    }
++
+     [Fact]
+     public void SimilarTaskAction_ExposesKeyboardCommandAndAccessibleContext()
+     {
