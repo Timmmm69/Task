@@ -263,10 +263,11 @@
         "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md",
         "outputs/20260904_task_product_completion_1.0.0/VALIDATION_REPORT.md",
         "outputs/20261005_personal_tasks_1.0.0/validation-report.md",
-        "outputs/20261006_personal_planning_1.0.0/validation-report.md"
+        "outputs/20261006_personal_planning_1.0.0/validation-report.md",
+        "outputs/20261008_inbox_zero_1.0.1/validation-report.md"
       ],
-      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458. 2026-10-05: Personal task CRUD, shared statuses, schedule/deadline, один уровень подзадач, Inbox и checklist работают в отдельной SQLite БД. Проверены транзакции, версии, миграция, rollback, zero corporate requests и 7 задач в WPF после двух перезапусков; итоговый gate 1795 PASS / 4 SKIP. Полная системная сетевая изоляция отдельно не подтверждена. 2026-10-06: Personal tasks могут ссылаться на локальные проекты; recurring materialization использует Domain generator и existing DST helper, persisted identity и scoped overrides. Restart и Local/UTC consistency подтверждены.",
-      "updated_at": "2026-10-06T02:05:00+03:00",
+      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458. 2026-10-05: Personal task CRUD, shared statuses, schedule/deadline, один уровень подзадач, Inbox и checklist работают в отдельной SQLite БД. Проверены транзакции, версии, миграция, rollback, zero corporate requests и 7 задач в WPF после двух перезапусков; итоговый gate 1795 PASS / 4 SKIP. Полная системная сетевая изоляция отдельно не подтверждена. 2026-10-06: Personal tasks могут ссылаться на локальные проекты; recurring materialization использует Domain generator и existing DST helper, persisted identity и scoped overrides. Restart и Local/UTC consistency подтверждены. 2026-10-08: Inbox Zero 1.0.1: полный cursor snapshot, total/completeness guards, confirmed conversion refresh, distinct offline/error/loading, 120 ms/reduced-motion и focus/UIA. Release build PASS; Desktop 696 PASS / 0 FAIL / 0 SKIP, native WPF PASS. В Desktop нет realtime transport: используется 15-second polling existing API; нет Inbox filter/delete command. Live multi-client и ручное прослушивание screen reader отдельно не проверены.",
+      "updated_at": "2026-10-08T15:00:00+03:00",
       "priority": 3,
       "dependencies": [
         "PROD-01"

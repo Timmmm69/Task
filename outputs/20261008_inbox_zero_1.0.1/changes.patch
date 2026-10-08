@@ -1,0 +1,724 @@
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs b/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
+index bdd1285..9ccc2d3 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
+@@ -27,6 +27,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     private readonly CancellationTokenSource _lifetime = new();
+     private IReadOnlyList<DesktopTaskDto> _all = [];
+     private bool _loadFailed;
++    private bool _hasLoaded;
+     private IReadOnlyList<PersonalTaskItem> _items = [];
+     private PersonalTaskItem? _selected;
+     private TaskEditorViewModel? _editor;
+@@ -67,7 +68,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     public bool IsSettings => SelectedSection.Title == "Настройки";
+     public IReadOnlyList<PersonalTaskItem> Items { get => _items; private set { SetProperty(ref _items, value); OnPropertyChanged(nameof(ShowEmpty)); } }
+     public bool HasSelection => Selected is not null;
+-    public bool ShowEmpty => !IsBusy && Items.Count == 0 && !_loadFailed;
++    public bool ShowEmpty => _hasLoaded && !IsBusy && Items.Count == 0 && !_loadFailed;
+     public string EmptyTitle => IsInbox ? "Входящие разобраны" : SelectedSection.Title == "Сегодня" ? "На сегодня задач нет" : "Задач пока нет";
+     public string EmptyBody => IsInbox ? "Запишите новую задачу в поле выше." : "Создайте задачу или запланируйте существующую.";
+     public PersonalTaskItem? Selected
+@@ -108,10 +109,12 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     }
+     private async System.Threading.Tasks.Task ReloadAsync()
+     {
++        _loadFailed = true;
+         var result = await _client.GetTasksAsync(cancellationToken: _lifetime.Token);
+         if (result is DesktopTasksApiResult<DesktopTaskPage>.Succeeded ok)
+         {
+             _loadFailed = false;
++            _hasLoaded = true;
+             _all = ok.Value.Items; Filter();
+             if (Selected is { } selection) Selected = Items.FirstOrDefault(t => t.Source.Id == selection.Source.Id);
+         }
+diff --git a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+index a59ec1a..ab1b480 100644
+--- a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+@@ -74,6 +74,9 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+     private bool _sessionAllowsWrites = true;
+     private bool _writePermissionChanged;
+     private bool _hasLoaded;
++    private bool _hasCompleteSnapshot;
++    private bool _isRefreshing;
++    private long _offlineGeneration;
+     private DateTimeOffset? _lastSuccessfulRefreshAt;
+     private bool _disposed;
+     private CancellationTokenSource? _activationCancellation;
+@@ -113,6 +116,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+             OnPropertyChanged(nameof(HasItems));
+             OnPropertyChanged(nameof(DisplayedCountText));
+             OnPropertyChanged(nameof(ShowBlockingState));
++            OnPropertyChanged(nameof(ShowInboxZero));
+         }
+     }
+ 
+@@ -167,6 +171,8 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+             OnPropertyChanged(nameof(ShowBlockingState));
+             OnPropertyChanged(nameof(StateTitle));
+             OnPropertyChanged(nameof(StateIconKey));
++            OnPropertyChanged(nameof(ShowInboxZero));
++            NotifyAccessState();
+         }
+     }
+ 
+@@ -195,6 +201,8 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+             OnPropertyChanged(nameof(CanCapture));
+             OnPropertyChanged(nameof(CanConvert));
+             OnPropertyChanged(nameof(CanSaveConversion));
++            OnPropertyChanged(nameof(ShowInboxZero));
++            OnPropertyChanged(nameof(DisplayedCountText));
+             NotifyCommandState();
+         }
+     }
+@@ -202,27 +210,31 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+     public bool HasItems => Items.Count > 0;
+     public bool HasSelectedItem => SelectedItem is not null;
+     public bool HasConversion => Conversion is not null;
+-    public bool IsInitialLoading => State == InboxScreenState.InitialLoading;
+-    public bool ShowBlockingState => !HasItems && State is InboxScreenState.Empty or InboxScreenState.Offline
++    public bool IsRefreshing => _isRefreshing;
++    public bool IsInitialLoading => !HasItems && IsRefreshing;
++    public bool ShowInboxZero => State == InboxScreenState.Empty && _hasCompleteSnapshot
++        && !HasItems && !IsRefreshing && !IsBusy && _networkAvailable && _sessionAllowsWrites;
++    public bool ShowBlockingState => !HasItems && !IsRefreshing && State is InboxScreenState.Offline
+         or InboxScreenState.Forbidden or InboxScreenState.SessionEnded or InboxScreenState.Error;
+-    public bool IsReadOnly => !_networkAvailable || !_sessionAllowsWrites || _writePermissionChanged;
+-    public string WriteAccessText => !_networkAvailable
++    public bool IsReadOnly => !_networkAvailable || !_sessionAllowsWrites || _writePermissionChanged
++        || State is InboxScreenState.Offline or InboxScreenState.Forbidden or InboxScreenState.SessionEnded;
++    public string WriteAccessText => !_networkAvailable || State == InboxScreenState.Offline
+         ? "Входящие доступны только для чтения: сервер недоступен."
+-        : !_sessionAllowsWrites
++        : !_sessionAllowsWrites || State == InboxScreenState.SessionEnded
+             ? "Сессия не подтверждена. Войдите снова, чтобы изменять входящие."
+-            : _writePermissionChanged
++            : _writePermissionChanged || State == InboxScreenState.Forbidden
+                 ? "Права на изменение входящих были отозваны."
+                 : "Новые записи и преобразование сохраняются на сервере компании.";
+     public bool CanCaptureFromShell => !IsReadOnly && _capabilities.Contains("Task.Create");
+-    public bool CanCapture => IsActive && !IsBusy && !IsReadOnly
++    public bool CanCapture => IsActive && !IsBusy && !IsRefreshing && !IsReadOnly
+         && _capabilities.Contains("Task.Create") && !string.IsNullOrWhiteSpace(CaptureText);
+     public bool CanConvert => CanConvertItem(SelectedItem);
+     public bool CanSaveConversion => Conversion is { CanSubmit: true }
+-        && !string.IsNullOrWhiteSpace(Conversion.DeadlineText) && !IsBusy && !IsReadOnly
++        && !string.IsNullOrWhiteSpace(Conversion.DeadlineText) && !IsBusy && !IsRefreshing && !IsReadOnly
+         && _capabilities.Contains("Task.Update");
+     public string DisplayedCountText => Items.Count switch
+     {
+-        0 => "Нет необработанных записей",
++        0 => ShowInboxZero ? "Нет необработанных записей" : "Нет отображаемых записей",
+         1 => "1 необработанная запись",
+         >= 2 and <= 4 => $"{Items.Count} необработанные записи",
+         _ => $"{Items.Count} необработанных записей",
+@@ -281,6 +293,11 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+     {
+         ThrowIfDisposed();
+         _networkAvailable = available;
++        if (!available)
++        {
++            _offlineGeneration++;
++            _hasCompleteSnapshot = false;
++        }
+         if (!available && IsActive)
+         {
+             State = InboxScreenState.Offline;
+@@ -322,37 +339,60 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+ 
+     private async global::System.Threading.Tasks.Task FetchAsync(bool initial, long generation, CancellationToken cancellationToken)
+     {
+-        if (!await _requestGate.WaitAsync(0, cancellationToken).ConfigureAwait(true)) return;
++        await _requestGate.WaitAsync(cancellationToken).ConfigureAwait(true);
+         try
+         {
++            if (!IsActive || generation != Volatile.Read(ref _activationGeneration)) return;
++            _hasCompleteSnapshot = false;
++            SetRefreshing(true);
++            if (!_sessionAllowsWrites) { State = InboxScreenState.SessionEnded; return; }
++            var offlineGeneration = _offlineGeneration;
+             State = initial ? InboxScreenState.InitialLoading : State;
+             if (initial) ScreenMessage = "Загружаем входящие…";
+-            var result = await _client.GetTasksAsync(null, cancellationToken).ConfigureAwait(true);
+-            if (!IsActive || generation != Volatile.Read(ref _activationGeneration)) return;
+-            if (result is DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
+-            {
+-                var selectedId = SelectedItem?.Id;
+-                var replacement = success.Value.Items.Where(InboxItemViewModel.IsCaptureOnly)
+-                    .Select(task => new InboxItemViewModel(task)).ToArray();
+-                Items = replacement;
+-                SelectedItem = selectedId.HasValue
+-                    ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? replacement.FirstOrDefault()
+-                    : replacement.FirstOrDefault();
+-                _hasLoaded = true;
+-                _lastSuccessfulRefreshAt = DateTimeOffset.UtcNow;
+-                OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+-                State = replacement.Length == 0 ? InboxScreenState.Empty : InboxScreenState.Loaded;
+-                ScreenMessage = replacement.Length == 0
+-                    ? "Здесь появятся быстрые записи без проекта, срока и исполнителя."
+-                    : string.Empty;
+-            }
+-            else
++            var tasks = new Dictionary<Guid, DesktopTaskDto>();
++            var cursors = new HashSet<string>(StringComparer.Ordinal);
++            string? cursor = null;
++            long? total = null;
++            do
+             {
+-                ApplyReadFailure(result);
+-            }
++                var result = await _client.GetTasksAsync(cursor, cancellationToken).ConfigureAwait(true);
++                if (!IsActive || generation != Volatile.Read(ref _activationGeneration)
++                    || cancellationToken.IsCancellationRequested || offlineGeneration != _offlineGeneration || !_sessionAllowsWrites) return;
++                if (result is not DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
++                {
++                    ApplyReadFailure(result);
++                    return;
++                }
++                if (total.HasValue && success.Value.Total.HasValue && total != success.Value.Total)
++                    throw new InvalidOperationException("Inbox snapshot changed during pagination.");
++                total = success.Value.Total ?? total;
++                foreach (var task in success.Value.Items) tasks[task.Id] = task;
++                cursor = success.Value.NextCursor;
++                if (!string.IsNullOrEmpty(cursor) && !cursors.Add(cursor))
++                    throw new InvalidOperationException("Repeated Inbox cursor.");
++            } while (!string.IsNullOrEmpty(cursor));
++            if (total.HasValue && total.Value != tasks.Count)
++                throw new InvalidOperationException("Incomplete Inbox snapshot.");
++            _networkAvailable = true;
++            var selectedId = SelectedItem?.Id;
++            var replacement = tasks.Values.Where(InboxItemViewModel.IsCaptureOnly)
++                .Select(task => new InboxItemViewModel(task)).ToArray();
++            Items = replacement;
++            SelectedItem = selectedId.HasValue
++                ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? replacement.FirstOrDefault()
++                : replacement.FirstOrDefault();
++            _hasLoaded = true;
++            _hasCompleteSnapshot = true;
++            _lastSuccessfulRefreshAt = DateTimeOffset.UtcNow;
++            OnPropertyChanged(nameof(LastSuccessfulRefreshText));
++            State = replacement.Length == 0 ? InboxScreenState.Empty : InboxScreenState.Loaded;
++            ScreenMessage = replacement.Length == 0
++                ? "Здесь появятся быстрые записи без проекта, срока и исполнителя."
++                : string.Empty;
+         }
+         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+         {
++            if (generation == Volatile.Read(ref _activationGeneration)) State = InboxScreenState.Idle;
+         }
+         catch (Exception)
+         {
+@@ -363,11 +403,23 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+         }
+         finally
+         {
++            SetRefreshing(false);
+             _requestGate.Release();
+             NotifyCommandState();
+         }
+     }
+ 
++    private void SetRefreshing(bool value)
++    {
++        _isRefreshing = value;
++        OnPropertyChanged(nameof(IsRefreshing));
++        OnPropertyChanged(nameof(IsInitialLoading));
++        OnPropertyChanged(nameof(ShowBlockingState));
++        OnPropertyChanged(nameof(ShowInboxZero));
++        OnPropertyChanged(nameof(DisplayedCountText));
++        NotifyAccessState();
++    }
++
+     private void ApplyReadFailure(DesktopTasksApiResult<DesktopTaskPage> result)
+     {
+         State = result switch
+@@ -400,6 +452,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+             catch (ArgumentException)
+             {
+                 ScreenMessage = "Название должно содержать от 1 до 500 символов.";
++                if (!HasItems) State = InboxScreenState.Error;
+                 return;
+             }
+             var result = await _client.CreateTaskAsync(command, cancellationToken).ConfigureAwait(true);
+@@ -421,6 +474,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+         catch (Exception)
+         {
+             ScreenMessage = "Сервер недоступен. Запись не добавлена; текст сохранён.";
++            if (!HasItems) State = InboxScreenState.Offline;
+         }
+         finally
+         {
+@@ -478,8 +532,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+                     Items = Items.Where(item => item.Id != success.Value.Id).ToArray();
+                     SelectedItem = Items.FirstOrDefault();
+                     CloseConversion();
+-                    State = Items.Count == 0 ? InboxScreenState.Empty : InboxScreenState.Loaded;
+-                    ScreenMessage = "Задача создана, исходная запись закрыта. Связь сохранена в истории задачи.";
++                    State = InboxScreenState.Loaded;
++                    await RefreshAsync(cancellationToken).ConfigureAwait(true);
++                    if (State is InboxScreenState.Empty or InboxScreenState.Loaded)
++                        ScreenMessage = "Задача создана, исходная запись закрыта. Связь сохранена в истории задачи.";
+                     break;
+                 case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
+                     editor.ApplyServerValidation(validation.Message, validation.FieldErrors);
+@@ -541,9 +597,15 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+             NotifyAccessState();
+         }
+         Conversion?.SetStatus(ScreenMessage);
++        if (State == InboxScreenState.Empty)
++        {
++            State = result is DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable
++                ? InboxScreenState.Offline : InboxScreenState.Error;
++            NotifyAccessState();
++        }
+     }
+ 
+-    private bool CanConvertItem(InboxItemViewModel? item) => item is not null && IsActive && !IsBusy && !IsReadOnly
++    private bool CanConvertItem(InboxItemViewModel? item) => item is not null && IsActive && !IsBusy && !IsRefreshing && !IsReadOnly
+         && _capabilities.Contains("Task.Update") && InboxItemViewModel.IsCaptureOnly(item.Source);
+ 
+     private void CloseConversion()
+@@ -561,6 +623,9 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+     private void NotifyAccessState()
+     {
+         OnPropertyChanged(nameof(IsReadOnly));
++        OnPropertyChanged(nameof(ShowInboxZero));
++        OnPropertyChanged(nameof(CanCaptureFromShell));
++        OnPropertyChanged(nameof(DisplayedCountText));
+         OnPropertyChanged(nameof(WriteAccessText));
+         OnPropertyChanged(nameof(CanCapture));
+         OnPropertyChanged(nameof(CanConvert));
+diff --git a/work/production/src/Task.Desktop/Views/InboxView.xaml b/work/production/src/Task.Desktop/Views/InboxView.xaml
+index f59d8c7..3828e1f 100644
+--- a/work/production/src/Task.Desktop/Views/InboxView.xaml
++++ b/work/production/src/Task.Desktop/Views/InboxView.xaml
+@@ -34,7 +34,7 @@
+                     </Grid.ColumnDefinitions>
+                     <Path Data="{StaticResource Task.Icon.Inbox}" Width="20" Height="20" Stretch="Uniform"
+                           Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center" />
+-                    <TextBox Grid.Column="1" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
++                    <TextBox x:Name="InboxCaptureTextBox" Grid.Column="1" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
+                              MaxLength="500" Margin="10,0" TabIndex="10"
+                              Style="{StaticResource Task.Input.Text}"
+                              AutomationProperties.Name="Быстро добавить во входящие"
+@@ -75,6 +75,22 @@
+                 </Border>
+ 
+                 <Grid Grid.Row="3">
++                    <Border x:Name="InboxZeroPanel" Style="{StaticResource Task.State.Panel}"
++                            Visibility="{Binding ShowInboxZero, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
++                            AutomationProperties.AutomationId="InboxZeroPanel">
++                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
++                            <Path Data="{StaticResource Task.Icon.Inbox}" Width="28" Height="28" Stretch="Uniform"
++                                  Fill="{DynamicResource Task.Brush.Brand.Primary}" />
++                            <TextBlock x:Name="InboxZeroHeading" Text="Входящие разобраны" Style="{StaticResource Task.State.Title}"
++                                       Margin="0,12,0,0" TextAlignment="Center" Focusable="True"
++                                       AutomationProperties.HeadingLevel="Level2" AutomationProperties.LiveSetting="Polite" />
++                            <TextBlock Text="Все записи разобраны. Новую мысль можно записать, когда она появится."
++                                       Style="{StaticResource Task.State.Body}" Margin="0,6,0,16" TextAlignment="Center" />
++                            <Button x:Name="InboxZeroCreateButton" Content="Добавить запись" Click="OnStartCapture"
++                                    IsEnabled="{Binding CanCaptureFromShell}" Style="{StaticResource Task.Button.Secondary}"
++                                    AutomationProperties.Name="Добавить новую запись во входящие" />
++                        </StackPanel>
++                    </Border>
+                     <Border AutomationProperties.Name="Загрузка входящих" AutomationProperties.LiveSetting="Polite">
+                         <Border.Style>
+                             <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+diff --git a/work/production/src/Task.Desktop/Views/InboxView.xaml.cs b/work/production/src/Task.Desktop/Views/InboxView.xaml.cs
+index e344be7..f717f9b 100644
+--- a/work/production/src/Task.Desktop/Views/InboxView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/InboxView.xaml.cs
+@@ -3,12 +3,19 @@ using System.Windows;
+ using System.Windows.Controls;
+ using System.Windows.Input;
+ using System.Windows.Threading;
++using System.Windows.Media.Animation;
+ using Task.Desktop.ViewModels;
+ 
+ namespace Task.Desktop.Views;
+ 
+ public partial class InboxView : UserControl
+ {
++    // No desktop realtime transport exists yet. Refresh the authoritative API while this view is open.
++    private readonly DispatcherTimer _refreshTimer = new() { Interval = TimeSpan.FromSeconds(15) };
++    private bool _hadItems;
++    private bool _restoreFocus;
++    private bool _zeroVisible;
++    internal Func<bool> MotionEnabled { get; set; } = () => SystemParameters.ClientAreaAnimation && !SystemParameters.HighContrast;
+     private ExplorerDropOverlay? _fileOverlay;
+     private int _fileDragRevision;
+     public const string FileDropBlocker = "Файлы во входящие пока не поддерживаются: используйте каталог. Серверный Inbox file_link/rawPath не реализован.";
+@@ -40,24 +47,85 @@ public partial class InboxView : UserControl
+     {
+         InitializeComponent();
+         DataContextChanged += OnDataContextChanged;
++        Loaded += OnLoaded;
+         Unloaded += OnUnloaded;
++        _refreshTimer.Tick += OnRefreshTick;
+     }
+ 
+     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+     {
+         ClearFileDrag();
+         if (e.OldValue is InboxViewModel oldViewModel) oldViewModel.PropertyChanged -= OnViewModelPropertyChanged;
++        _restoreFocus = false;
++        _zeroVisible = false;
++        _hadItems = e.NewValue is InboxViewModel { HasItems: true };
+         if (e.NewValue is InboxViewModel newViewModel) newViewModel.PropertyChanged += OnViewModelPropertyChanged;
+     }
+ 
++    private void OnLoaded(object sender, RoutedEventArgs e)
++    {
++        if (DataContext is InboxViewModel model)
++        {
++            model.PropertyChanged -= OnViewModelPropertyChanged;
++            model.PropertyChanged += OnViewModelPropertyChanged;
++        }
++        _refreshTimer.Start();
++    }
++
++    internal async global::System.Threading.Tasks.Task RefreshVisibleInboxAsync()
++    {
++        if (DataContext is InboxViewModel { IsActive: true, IsRefreshing: false, IsBusy: false } model
++            && model.State is not InboxScreenState.Forbidden and not InboxScreenState.SessionEnded)
++            await model.RefreshCommand.ExecuteAsync();
++    }
++
++    private async void OnRefreshTick(object? sender, EventArgs e) => await RefreshVisibleInboxAsync();
++    private void OnStartCapture(object sender, RoutedEventArgs e) => InboxCaptureTextBox.Focus();
++
+     private void OnUnloaded(object sender, RoutedEventArgs e)
+     {
+         ClearFileDrag();
++        _refreshTimer.Stop();
+         if (DataContext is InboxViewModel viewModel) viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+     }
+ 
+     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+     {
++        if (sender is not InboxViewModel model) return;
++        if (e.PropertyName == nameof(InboxViewModel.IsRefreshing) && model.IsRefreshing
++            && InboxZeroPanel.IsKeyboardFocusWithin) _restoreFocus = true;
++        if (e.PropertyName == nameof(InboxViewModel.IsRefreshing) && !model.IsRefreshing && model.HasItems && _restoreFocus)
++        {
++            _restoreFocus = false;
++            Dispatcher.BeginInvoke(() => { if (IsLoaded && model.HasItems) InboxList.Focus(); }, DispatcherPriority.Input);
++        }
++        if (e.PropertyName == nameof(InboxViewModel.Items))
++        {
++            if (_hadItems && !model.HasItems)
++                _restoreFocus = IsKeyboardFocusWithin && !InboxCaptureTextBox.IsKeyboardFocusWithin;
++            _hadItems = model.HasItems;
++        }
++        if (e.PropertyName == nameof(InboxViewModel.ShowInboxZero))
++        {
++            if (model.ShowInboxZero && !_zeroVisible)
++            {
++                InboxZeroPanel.BeginAnimation(OpacityProperty, null);
++                if (MotionEnabled()) InboxZeroPanel.BeginAnimation(OpacityProperty,
++                    new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(120)) { FillBehavior = FillBehavior.Stop });
++            }
++            else if (!model.ShowInboxZero) InboxZeroPanel.BeginAnimation(OpacityProperty, null);
++            _zeroVisible = model.ShowInboxZero;
++        }
++        if (e.PropertyName == nameof(InboxViewModel.ShowInboxZero) && model.ShowInboxZero && _restoreFocus)
++        {
++            _restoreFocus = false;
++            Dispatcher.BeginInvoke(() =>
++            {
++                if (!IsLoaded || !model.ShowInboxZero) return;
++                if (InboxZeroCreateButton.IsEnabled) InboxZeroCreateButton.Focus();
++                else InboxZeroHeading.Focus();
++            }, DispatcherPriority.Input);
++        }
+         if (e.PropertyName != nameof(InboxViewModel.Conversion) || sender is not InboxViewModel { Conversion: not null }) return;
+         Dispatcher.BeginInvoke(() =>
+         {
+diff --git a/work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs b/work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs
+index 5d9bfee..72d26a3 100644
+--- a/work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs
+@@ -14,6 +14,17 @@ public sealed class PersonalWorkflowTests : IDisposable
+ {
+     private readonly string _root = Path.Combine(Path.GetTempPath(), "Task-personal-workflow", Guid.NewGuid().ToString("N"));
+     [Fact]
++    public async System.Threading.Tasks.Task InboxZero_WaitsForConfirmedLocalSnapshot()
++    {
++        using var model = new PersonalApplicationModel(_root);
++        var vm = model.Tasks!;
++        vm.SelectedSection = model.Sections.Single(s => s.Title == "Входящие");
++        Assert.False(vm.ShowEmpty);
++        await vm.RefreshAsync();
++        Assert.True(vm.ShowEmpty);
++        Assert.Equal("Входящие разобраны", vm.EmptyTitle);
++    }
++    [Fact]
+     public async System.Threading.Tasks.Task ParentChoices_AreLoadedFromLocalTasksWithoutHiddenCommandFailures()
+     {
+         using var model = new PersonalApplicationModel(_root); var vm = model.Tasks!;
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs
+index bfefc03..ded9231 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs
+@@ -25,7 +25,7 @@ public sealed class InboxViewModelTests
+         Assert.Equal("Черновик преобразования", inbox.Conversion!.Title);
+         Assert.Equal("Черновик новой записи", inbox.CaptureText);
+     }
+-    private static readonly string[] Capabilities = ["Task.Read", "Task.Create", "Task.Update", "Project.Read"];
++    internal static readonly string[] Capabilities = ["Task.Read", "Task.Create", "Task.Update", "Project.Read"];
+ 
+     [Fact]
+     public async global::System.Threading.Tasks.Task ActivationShowsOnlyCaptureOnlyServerTasks()
+@@ -105,6 +105,7 @@ public sealed class InboxViewModelTests
+         Assert.Null(viewModel.Conversion);
+         Assert.Equal(InboxScreenState.Empty, viewModel.State);
+         Assert.Contains("Связь сохранена", viewModel.ScreenMessage, StringComparison.Ordinal);
++        Assert.True(viewModel.ShowInboxZero);
+     }
+ 
+     [Fact]
+@@ -122,14 +123,219 @@ public sealed class InboxViewModelTests
+         Assert.Equal(InboxScreenState.Offline, viewModel.State);
+     }
+ 
+-    private static DesktopTasksApiResult<DesktopTaskPage> Page(params DesktopTaskDto[] tasks) =>
++    internal static DesktopTasksApiResult<DesktopTaskPage> Page(params DesktopTaskDto[] tasks) =>
+         new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new DesktopTaskPage(tasks, null, tasks.Length));
+ 
+-    private static DesktopTaskDto CreateTask(string title, TaskCardContent? card = null) => new(
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async global::System.Threading.Tasks.Task LastConversion_WaitsForRefresh_AndDoesNotHideConcurrentAddOrError(bool concurrentAdd)
++    {
++        var source = CreateTask("Последняя запись");
++        var client = new FakeInboxClient
++        {
++            PageResult = Page(source),
++            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { DeadlineAtUtc = DateTimeOffset.UtcNow.AddDays(1) }, 2, false)
++        };
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
++        model.Conversion!.DeadlineText = DateTime.Now.AddDays(1).ToString("dd.MM.yyyy HH:mm");
++        var pending = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>();
++        client.Read = (_, _) => pending.Task;
++        var save = model.SaveConversionCommand.ExecuteAsync();
++        Assert.True(model.IsBusy);
++        Assert.True(model.IsRefreshing);
++        Assert.False(model.ShowInboxZero);
++        pending.SetResult(concurrentAdd ? Page(CreateTask("Новая запись другого клиента")) : new DesktopTasksApiResult<DesktopTaskPage>.ServerUnavailable());
++        await save;
++        Assert.False(model.ShowInboxZero);
++        Assert.Equal(concurrentAdd ? InboxScreenState.Loaded : InboxScreenState.Offline, model.State);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task CaptureFailure_DoesNotLeavePositiveZeroBehindError()
++    {
++        var client = new FakeInboxClient();
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        model.CaptureText = "Не потерять текст";
++        await model.CaptureCommand.ExecuteAsync();
++        Assert.False(model.ShowInboxZero);
++        Assert.Equal("Не потерять текст", model.CaptureText);
++        Assert.True(model.IsReadOnly);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task CaptureDraft_IsNotAnInboxFilter()
++    {
++        var client = new FakeInboxClient { PageResult = Page(CreateTask("Запись")) };
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        model.CaptureText = "Нет совпадений";
++        Assert.Single(model.Items);
++        Assert.False(model.ShowInboxZero);
++        client.PageResult = Page();
++        await model.RefreshCommand.ExecuteAsync();
++        Assert.True(model.ShowInboxZero);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task Refresh_PreventsCaptureFromBeingOverwrittenByOlderSnapshot()
++    {
++        var client = new FakeInboxClient();
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        model.CaptureText = "Новая запись";
++        var pending = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>();
++        client.Read = (_, _) => pending.Task;
++        var refresh = model.RefreshCommand.ExecuteAsync();
++        Assert.False(model.CanCapture);
++        await model.CaptureCommand.ExecuteAsync();
++        Assert.Null(client.LastCreate);
++        pending.SetResult(Page());
++        await refresh;
++        Assert.True(model.CanCapture);
++        Assert.Equal("Новая запись", model.CaptureText);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task InitialEmpty_IsConfirmedOnlyAfterLoad()
++    {
++        var pending = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>();
++        var client = new FakeInboxClient { Read = (_, _) => pending.Task };
++        using var model = new InboxViewModel(client, Capabilities);
++        Assert.False(model.ShowInboxZero);
++        var load = model.ActivateAsync();
++        Assert.True(model.IsInitialLoading);
++        Assert.False(model.ShowInboxZero);
++        pending.SetResult(Page());
++        await load;
++        Assert.True(model.ShowInboxZero);
++        Assert.False(model.IsInitialLoading);
++    }
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async global::System.Threading.Tasks.Task FirstPageWithoutInbox_LoadsRemainingPages(bool emptyFirstPage)
++    {
++        var item = CreateTask("Поздняя запись");
++        var first = emptyFirstPage ? Array.Empty<DesktopTaskDto>() : [CreateTask("Задача", new TaskCardContent { Description = "Разобрана" })];
++        var seen = new List<string?>();
++        var client = new FakeInboxClient
++        {
++            Read = (cursor, _) =>
++        {
++            seen.Add(cursor);
++            return global::System.Threading.Tasks.Task.FromResult<DesktopTasksApiResult<DesktopTaskPage>>(
++                new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(cursor is null
++                    ? new(first, "next", first.Length + 1) : new([item], null, first.Length + 1)));
++        }
++        };
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        Assert.Equal(new string?[] { null, "next" }, seen);
++        Assert.Equal(item.Id, Assert.Single(model.Items).Id);
++        Assert.False(model.ShowInboxZero);
++    }
++
++    [Theory]
++    [InlineData("missing")]
++    [InlineData("repeat")]
++    [InlineData("failure")]
++    public async global::System.Threading.Tasks.Task IncompletePagination_NeverClaimsZero(string kind)
++    {
++        var calls = 0;
++        var client = new FakeInboxClient
++        {
++            Read = (_, _) =>
++        {
++            calls++;
++            DesktopTasksApiResult<DesktopTaskPage> result = kind == "failure" && calls > 1
++                ? new DesktopTasksApiResult<DesktopTaskPage>.ServerUnavailable()
++                : new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([], kind == "missing" ? null : "next", 1));
++            return global::System.Threading.Tasks.Task.FromResult(result);
++        }
++        };
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        Assert.False(model.ShowInboxZero);
++        Assert.True(model.ShowBlockingState);
++        Assert.InRange(calls, 1, 2);
++    }
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async global::System.Threading.Tasks.Task OfflineOrFailedRefresh_HidesPreviousZero(bool offline)
++    {
++        var client = new FakeInboxClient();
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        Assert.True(model.ShowInboxZero);
++        if (offline) model.UpdateConnectivity(false);
++        else
++        {
++            client.Read = (_, _) => throw new InvalidOperationException();
++            await model.RefreshCommand.ExecuteAsync();
++        }
++        Assert.False(model.ShowInboxZero);
++        Assert.True(model.ShowBlockingState);
++        Assert.Equal(offline ? InboxScreenState.Offline : InboxScreenState.Error, model.State);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task OfflineDuringLoad_IgnoresLateSuccess()
++    {
++        var pending = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>();
++        using var model = new InboxViewModel(new FakeInboxClient { Read = (_, _) => pending.Task }, Capabilities);
++        var load = model.ActivateAsync();
++        model.UpdateConnectivity(false);
++        pending.SetResult(Page());
++        await load;
++        Assert.Equal(InboxScreenState.Offline, model.State);
++        Assert.False(model.ShowInboxZero);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task ExternalAddThenDelete_AuthoritativeRefreshEntersAndLeavesZero()
++    {
++        var client = new FakeInboxClient();
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        client.PageResult = Page(CreateTask("Добавлено другим клиентом"));
++        await model.RefreshCommand.ExecuteAsync();
++        Assert.False(model.ShowInboxZero);
++        Assert.Single(model.Items);
++        var pending = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>();
++        client.Read = (_, _) => pending.Task;
++        var refresh = model.RefreshCommand.ExecuteAsync();
++        Assert.False(model.ShowInboxZero);
++        Assert.Single(model.Items);
++        pending.SetResult(Page());
++        await refresh;
++        Assert.True(model.ShowInboxZero);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task StaleItems_AreRetainedWhenRefreshFails()
++    {
++        var client = new FakeInboxClient { PageResult = Page(CreateTask("Кеш")) };
++        using var model = new InboxViewModel(client, Capabilities);
++        await model.ActivateAsync();
++        client.PageResult = new DesktopTasksApiResult<DesktopTaskPage>.ServerUnavailable();
++        await model.RefreshCommand.ExecuteAsync();
++        Assert.Single(model.Items);
++        Assert.False(model.ShowInboxZero);
++        Assert.Contains("ранее загруженные", model.ScreenMessage);
++    }
++
++    internal static DesktopTaskDto CreateTask(string title, TaskCardContent? card = null) => new(
+         Guid.NewGuid(), Guid.NewGuid(), 1, DateTimeOffset.UtcNow.AddMinutes(-10), DateTimeOffset.UtcNow,
+         title, Guid.NewGuid(), DesktopTaskStatus.New, DesktopTaskPriority.Normal, null, null, [], [], null, card);
+ 
+-    private sealed class FakeInboxClient : IDesktopTasksApiClient, IDesktopTaskWorkspaceClient
++    internal sealed class FakeInboxClient : IDesktopTasksApiClient, IDesktopTaskWorkspaceClient
+     {
+         public DesktopTasksApiResult<DesktopTaskPage> PageResult { get; set; } = Page();
+         public DesktopTaskWriteResult<DesktopTaskDto> CreateResult { get; set; } = new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
+@@ -137,9 +343,10 @@ public sealed class InboxViewModelTests
+         public TaskWorkspaceResult OptionsResult { get; set; } = new(new JsonObject(), 0, null);
+         public DesktopCreateTaskCommand? LastCreate { get; private set; }
+         public DesktopPatchTaskCommand? LastPatch { get; private set; }
++        public Func<string?, CancellationToken, global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>? Read { get; set; }
+ 
+         public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) =>
+-            global::System.Threading.Tasks.Task.FromResult(PageResult);
++            Read?.Invoke(cursor, cancellationToken) ?? global::System.Threading.Tasks.Task.FromResult(PageResult);
+ 
+         public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+             global::System.Threading.Tasks.Task.FromResult<DesktopTasksApiResult<DesktopTaskDto>>(new DesktopTasksApiResult<DesktopTaskDto>.NotFound());
+@@ -153,6 +360,8 @@ public sealed class InboxViewModelTests
+         public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default)
+         {
+             LastPatch = command;
++            if (PatchResult is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
++                PageResult = Page(success.Value);
+             return global::System.Threading.Tasks.Task.FromResult(PatchResult);
+         }
+ 

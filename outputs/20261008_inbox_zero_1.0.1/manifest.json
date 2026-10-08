@@ -1,0 +1,95 @@
+{
+  "version": "1.0.1",
+  "name": "Task Inbox Zero",
+  "scope": [
+    "work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+    "work/production/src/Task.Desktop/Views/InboxView.xaml",
+    "work/production/src/Task.Desktop/Views/InboxView.xaml.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+    "work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Tasks/InboxZeroUiTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs"
+  ],
+  "files": [
+    {
+      "sha256": "f829b6e7eeb61dbc0751eeeffda002f6c1803427f72e4efb8510fa6f6006ef0e",
+      "bytes": 41,
+      "path": ".gitattributes"
+    },
+    {
+      "sha256": "09372b68e57754c91bbd2f6f2c9bdb472de974c419c9565628666dfd7d7704ff",
+      "bytes": 41138,
+      "path": "changes.patch"
+    },
+    {
+      "sha256": "fe537c0c24403daf1caaeb30682c47cdb9e69881f909fc240e5b15baedcd233a",
+      "bytes": 8480,
+      "path": "validation-report.md"
+    },
+    {
+      "sha256": "f34306bb50e2d2ec59c788b9013c5ac682ef7f7f69345a3e957e38c0b6ba2fdd",
+      "bytes": 7,
+      "path": "VERSION"
+    },
+    {
+      "sha256": "51b3794c68ab574faaca89f453081f59ff684ea763e46b1b3f734dafcfbf1b1f",
+      "bytes": 948,
+      "path": "evidence/build.log"
+    },
+    {
+      "sha256": "4ef5309d69eb094b2097608b09766ad99e491db4e84898ffd75bbf1d3cf03101",
+      "bytes": 999915,
+      "path": "evidence/desktop.trx"
+    },
+    {
+      "sha256": "95d3317e773db7196bd1d735e3a67ef308971abda8592790f68833bf2b33e896",
+      "bytes": 999915,
+      "path": "evidence/publication/novik_TIM_2026-10-08_20_03_39_net10.0.trx"
+    },
+    {
+      "sha256": "744aa07e0b72b891e0b47f483028578881b09c2f34ebad0c3208a26ed8556e44",
+      "bytes": 1118378,
+      "path": "evidence/publication/novik_TIM_2026-10-08_20_03_41_net10.0.trx"
+    },
+    {
+      "sha256": "7784e95d8d43fe198987de3184347207cbc11ad4f07515e927d814ac7951f414",
+      "bytes": 876908,
+      "path": "evidence/publication/novik_TIM_2026-10-08_20_03_41_net10.0[1].trx"
+    },
+    {
+      "sha256": "77360103276691f7cf5fbc1a3904cf858eb8272a22b5f1e3709b16cc08a869d2",
+      "bytes": 16135,
+      "path": "source-snapshot/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs"
+    },
+    {
+      "sha256": "0f52062e4a80860d4496d3e9b24490ba2dcd05be879de4c37e2a125f11175e09",
+      "bytes": 29922,
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs"
+    },
+    {
+      "sha256": "2dd937841e77c037fd97a4c63686471c375382b9e1fcf29bd622fea9180b2f1f",
+      "bytes": 29080,
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/InboxView.xaml"
+    },
+    {
+      "sha256": "a5c0e3a8ed2338740d8393914aec04be6de27cd12d6c1522c9ebce16c337fc31",
+      "bytes": 6723,
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/InboxView.xaml.cs"
+    },
+    {
+      "sha256": "11e506247a0edad8341ba7431a95eb991b50afad24e50fcb0920238cc83152ca",
+      "bytes": 7764,
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs"
+    },
+    {
+      "sha256": "45f8890a0ec08a4730849602edfb0336979c5df23a4f0208fa27441f8a9062ac",
+      "bytes": 18719,
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs"
+    },
+    {
+      "sha256": "faa5831c19f30a90b5372baa0a4418bfae0ba308134e30b4ea445d4748512e1f",
+      "bytes": 7878,
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Tasks/InboxZeroUiTests.cs"
+    }
+  ]
+}
