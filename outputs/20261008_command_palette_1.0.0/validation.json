@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "baseline": "87558d222d197ad35bf852d1ba2ac43428a53256",
+  "result": "PASS",
+  "build": "Release solution PASS",
+  "tests": {
+    "total": 1980,
+    "passed": 1980,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0,
+    "suites": [
+      {
+        "file": "final_net10.0_20261008140227.trx",
+        "passed": 568,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "final_net10.0_20261008140237.trx",
+        "passed": 590,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "final_net10.0_20261008140246.trx",
+        "passed": 822,
+        "failed": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "changed_source_files": [
+    "work/production/src/Task.Desktop/MainWindow.xaml",
+    "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalShellPalette.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+    "work/production/src/Task.Desktop/PersonalWindow.xaml",
+    "work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+    "work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/CommandPaletteViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowPalette.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubSearch.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+    "work/production/src/Task.Desktop/Views/CommandPaletteView.xaml",
+    "work/production/src/Task.Desktop/Views/CommandPaletteView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Calendar/CalendarViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/CommandPaletteTests.cs",
+    "work/production/tests/Task.Desktop.Tests/CommandPaletteWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Personal/PersonalShellViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs"
+  ],
+  "limits": [
+    "Existing bounded Search first page",
+    "No object routes for employee_profile/interaction",
+    "Manual Narrator and physical DPI/HC matrix unverified"
+  ]
+}

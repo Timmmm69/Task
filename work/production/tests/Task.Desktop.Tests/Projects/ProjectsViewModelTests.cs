@@ -9,6 +9,19 @@ namespace Task.Desktop.Tests.Projects;
 public sealed class ProjectsViewModelTests
 {
     [Fact]
+    public async System.Threading.Tasks.Task SearchNavigation_SelectsRequestedProjectAfterAuthoritativeGet_RefusesStaleAccess()
+    {
+        var client = new FakeProjectsClient { Projects = SuccessPage(), Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project()) };
+        using var projects = new ProjectsViewModel(client, User, ["Project.Read"]);
+        projects.Activate();
+        await projects.OpenByIdAsync(ProjectId);
+        Assert.Equal(ProjectId, projects.SelectedItem?.Id);
+        client.Project = new DesktopProjectResult<DesktopProjectDto>.Forbidden();
+        await projects.OpenByIdAsync(ProjectId);
+        Assert.Null(projects.SelectedItem);
+        Assert.Equal(ProjectsScreenState.Forbidden, projects.State);
+    }
+    [Fact]
     public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesProjectEditorAndDraft()
     {
         var client = new FakeProjectsClient { Projects = SuccessPage() };

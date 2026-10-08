@@ -1,0 +1,52 @@
+<UserControl x:Class="Task.Desktop.Views.CommandPaletteView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False" KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.ControlTabNavigation="Cycle"
+             KeyboardNavigation.DirectionalNavigation="Contained" PreviewKeyDown="OnPreviewKeyDown"
+             AutomationProperties.Name="Палитра команд" AutomationProperties.AutomationId="CommandPalette">
+    <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="1" CornerRadius="8" Padding="16">
+        <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="19"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <TextBox x:Name="QueryField" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Padding="8"
+                         AutomationProperties.Name="Команда или поисковый запрос" AutomationProperties.AutomationId="GlobalSearchOverlayTextBox"/>
+                <Button Grid.Column="1" Content="Закрыть" Click="OnClose" Margin="12,0,0,0" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Закрыть палитру команд"/>
+            </Grid>
+            <!-- Reserve the loading row so asynchronous search never moves the list. -->
+            <ProgressBar Grid.Row="1" Height="3" Margin="0,10,0,6" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Выполняется поиск"/>
+            <ListBox x:Name="EntriesList" Grid.Row="2" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" SelectionChanged="OnSelectionChanged"
+                     MouseDoubleClick="OnActivate" Style="{StaticResource Task.DataList}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch"
+                     ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                     AutomationProperties.Name="Команды и результаты поиска" AutomationProperties.AutomationId="GlobalSearchOverlayResults">
+                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+                    <Setter Property="Padding" Value="8"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}"/>
+                    <Setter Property="IsEnabled" Value="{Binding CanOpen}"/>
+                    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate></Setter.Value></Setter>
+                    <Style.Triggers><Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                    </Trigger></Style.Triggers>
+                </Style></ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate><DataTemplate><StackPanel>
+                    <TextBlock Text="{Binding SectionLabel}" FontWeight="Bold" Margin="0,0,0,4">
+                        <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding SectionLabel}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding TypeLabel}" FontSize="12"/>
+                </StackPanel></DataTemplate></ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Grid.Row="3" Margin="0,10,0,0">
+                <TextBlock Text="{Binding StatusText}" TextWrapping="Wrap"/>
+                <TextBlock x:Name="SelectionStatus" Text="{Binding SelectionText}" FontSize="12" Margin="0,4,0,0"
+                           AutomationProperties.LiveSetting="Polite" AutomationProperties.Name="{Binding SelectionText}"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

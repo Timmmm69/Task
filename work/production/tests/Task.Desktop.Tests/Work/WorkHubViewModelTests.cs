@@ -6,6 +6,21 @@ namespace Task.Desktop.Tests.Work;
 public sealed class WorkHubViewModelTests
 {
     [Fact]
+    public async System.Threading.Tasks.Task SearchNavigation_RefreshesCatalogAndContactsBeforeSelecting()
+    {
+        var contact = new DesktopContact(Guid.NewGuid(), 1, "Contact", "Contact", null, null, "active", "active");
+        var client = new FakeClient { Contacts = [contact] };
+        using var hub = new WorkHubViewModel(client, ["FileCatalog.Read", "Contact.Read"]);
+        hub.Activate(WorkHubArea.Catalog);
+        await hub.OpenSearchObjectAsync("catalog_item", FakeClient.ItemId);
+        Assert.Equal(FakeClient.ItemId, hub.SelectedCatalogItem?.Id);
+        hub.Activate(WorkHubArea.Contacts);
+        var calls = client.ContactCallCount;
+        await hub.OpenSearchObjectAsync("contact", contact.Id);
+        Assert.True(client.ContactCallCount > calls);
+        Assert.Equal(contact.Id, hub.SelectedContact?.Id);
+    }
+    [Fact]
     public async System.Threading.Tasks.Task ModeSwitchCancel_PreservesSettingsAndContactDrafts()
     {
         using var work = new WorkHubViewModel(new FakeClient(), ["Settings.ReadOwn", "Settings.UpdateOwn"]);
@@ -276,7 +291,7 @@ public sealed class WorkHubViewModelTests
         public FileOpenResult Open(string path) { OpenedPath = path; return new(FileOpenStatus.Opened, "Открыто"); }
     }
 
-    private sealed class FakeClient : IDesktopWorkApiClient
+    internal sealed class FakeClient : IDesktopWorkApiClient
     {
         public static readonly Guid ItemId = Guid.NewGuid();
         public static readonly Guid TaskId = Guid.NewGuid();
@@ -291,11 +306,17 @@ public sealed class WorkHubViewModelTests
         public Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>>>? CatalogHandler { get; init; }
         public IReadOnlyList<DesktopContact> Contacts { get; init; } = [];
         public int ContactCallCount { get; private set; }
+        public Func<string, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>>? SearchHandler { get; init; }
+        public int SearchCallCount { get; private set; }
         private readonly List<DesktopCatalogItem> _catalog = [new(ItemId, 1, "Plan", "file_reference", null, ".docx", "active")];
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) => CatalogHandler is null ? Ok<IReadOnlyList<DesktopCatalogItem>>(_catalog.ToArray()) : CatalogHandler(cancellationToken);
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) { ContactCallCount++; return Ok(Contacts); }
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopNotification>>([new(Guid.NewGuid(), 1, "task.assigned", "One", "Body", "info", "delivered", TaskId, DateTimeOffset.UtcNow), new(Guid.NewGuid(), 1, "system.info", "Two", "Body", "warning", "delivered", null, DateTimeOffset.UtcNow)]);
-        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopSearchResult>>([new(TaskId, "task", "Alpha", null, 1, DateTimeOffset.UtcNow)]);
+        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default)
+        {
+            SearchCallCount++;
+            return SearchHandler?.Invoke(query, cancellationToken) ?? Ok<IReadOnlyList<DesktopSearchResult>>([new(TaskId, "task", "Alpha", null, 1, DateTimeOffset.UtcNow)]);
+        }
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) => CreateCatalogItemAsync(name, itemType, description, null, cancellationToken);
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default) { var item = new DesktopCatalogItem(Guid.NewGuid(), 1, name, itemType, description, null, "active", parentId); _catalog.Add(item); return Ok(item); }
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default) { var item = _catalog.Single(i => i.Id == id) with { Version = version + 1, ParentId = parentId }; _catalog.RemoveAll(i => i.Id == id); _catalog.Add(item); return Ok(item); }

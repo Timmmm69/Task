@@ -7,6 +7,23 @@ namespace Task.Desktop.Tests.Calendar;
 public sealed class CalendarViewModelTests
 {
     [Fact]
+    public async System.Threading.Tasks.Task SearchNavigation_OpensEventInItsDateRange_AfterServerRecheck()
+    {
+        var id = Guid.NewGuid(); var client = new FakeCalendarClient();
+        client.ScheduleResults.Enqueue(Schedule([])); client.ConflictResults.Enqueue(Conflicts());
+        client.ScheduleResults.Enqueue(Schedule([])); client.ConflictResults.Enqueue(Conflicts());
+        client.EventResults.Enqueue(Event(id));
+        using var calendar = new CalendarViewModel(client, ["Calendar.Read"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue));
+        await calendar.ActivateAsync();
+        await calendar.OpenEventByIdAsync(id);
+        Assert.Equal(id, calendar.SelectedItem?.Id);
+        Assert.Equal(id, calendar.SelectedEvent?.Id);
+        Assert.Equal(1, client.EventCalls);
+        client.EventResults.Enqueue(new DesktopCalendarResult<DesktopCalendarEvent>.Forbidden());
+        await calendar.OpenEventByIdAsync(id);
+        Assert.Null(calendar.SelectedItem); Assert.Null(calendar.SelectedEvent);
+    }
+    [Fact]
     public async global::System.Threading.Tasks.Task ModeSwitchCancel_PreservesCalendarEditorAndDraft()
     {
         var client = new FakeCalendarClient();

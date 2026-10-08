@@ -576,6 +576,30 @@ public sealed class CalendarViewModel : ViewModelBase, IDisposable
         State = CalendarScreenState.Inactive; OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
     }
 
+    public async System.Threading.Tasks.Task OpenEventByIdAsync(Guid id)
+    {
+        if (!_active || !CanRead || !_networkAvailable || _disposed) return;
+        if (Editor is not null) { Message = "Сначала сохраните или закройте открытую форму события."; return; }
+        var token = _requestCancellation?.Token ?? CancellationToken.None;
+        var result = await _client.GetEventAsync(id, token);
+        if (token.IsCancellationRequested || !_active || !CanRead || _disposed) return;
+        if (result is not DesktopCalendarResult<DesktopCalendarEvent>.Succeeded success)
+        {
+            ClearSelection(); HandleFailure(result, Days.Count > 0); return;
+        }
+        var value = success.Value;
+        _selectedDate = value.EventDate; _weekStart = StartOfWeek(_selectedDate, FirstDay);
+        OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
+        var expectedGeneration = _generation + 1;
+        await LoadAsync(false, CancellationToken.None);
+        if (!_active || !CanRead || _disposed || _generation != expectedGeneration || State is not (CalendarScreenState.Loaded or CalendarScreenState.Empty)) return;
+        _selectedItem = Days.SelectMany(d => d.Items).FirstOrDefault(i => i.Id == id)
+            ?? new CalendarItemViewModel(new(id, DesktopScheduleItemType.CalendarEvent, value.Title, value.EventDate,
+                value.StartAtUtc, value.EndAtUtc, value.IsAllDay, value.ProjectId, value.Status, null), null, _timeZone);
+        OnPropertyChanged(nameof(SelectedItem)); OnPropertyChanged(nameof(HasSelectedItem)); UpdateSelectionFlags();
+        SelectedEvent = value; Announcement = $"Открыто событие {value.Title}.";
+    }
+
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
         _capabilities.Clear(); foreach (var capability in capabilities ?? []) _capabilities.Add(capability);

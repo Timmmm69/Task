@@ -213,6 +213,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
             : _writePermissionChanged
                 ? "Права на изменение входящих были отозваны."
                 : "Новые записи и преобразование сохраняются на сервере компании.";
+    public bool CanCaptureFromShell => !IsReadOnly && _capabilities.Contains("Task.Create");
     public bool CanCapture => IsActive && !IsBusy && !IsReadOnly
         && _capabilities.Contains("Task.Create") && !string.IsNullOrWhiteSpace(CaptureText);
     public bool CanConvert => CanConvertItem(SelectedItem);

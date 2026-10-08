@@ -1,0 +1,197 @@
+{
+  "package": "Task-command-palette",
+  "version": "1.0.0",
+  "baseline": "87558d222d197ad35bf852d1ba2ac43428a53256",
+  "files": [
+    {
+      "path": "VALIDATION_REPORT.md",
+      "bytes": 4324,
+      "sha256": "540893145d76794db9fd95085aa92c11b88da5fe65a0229577f3de8359a93529"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 2608,
+      "sha256": "42776a2b82a6b13d08c5664e66be2b0e87d3c224173004c81b6587b4e8032049"
+    },
+    {
+      "path": "VERSION.txt",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    },
+    {
+      "path": "evidence/build.log",
+      "bytes": 948,
+      "sha256": "b64ad41ff79579904d5971299a86faddb755028677f749d7cfc1b0754e7ef396"
+    },
+    {
+      "path": "evidence/palette-752x432.png",
+      "bytes": 14372,
+      "sha256": "c265e07006da5ab748b3577414acb9357df55de9523fd86a656187cf25020f2d"
+    },
+    {
+      "path": "evidence/palette-760x640.png",
+      "bytes": 19580,
+      "sha256": "5a8a5555e9eb603519a8d618886489c38777ba50d7ea87808177bb2357745f92"
+    },
+    {
+      "path": "evidence/tests-final.log",
+      "bytes": 269381,
+      "sha256": "71a65d29a3bfb57215ff4259cd7210697548aa7af169a7d4d7b8a0e826f43d7e"
+    },
+    {
+      "path": "evidence/tests.log",
+      "bytes": 268962,
+      "sha256": "027be55ed159d0ff83536f3bf7773e252767b833f56566e03fc7667d402cb13a"
+    },
+    {
+      "path": "evidence/tests/novik_TIM_2026-10-08_13_56_23_net10.0.trx",
+      "bytes": 812919,
+      "sha256": "fac560e749bd6513b7352d9fdfeea7d6259ff93d4c4ab543865ebf1386a1ee37"
+    },
+    {
+      "path": "evidence/tests/novik_TIM_2026-10-08_13_56_24_net10.0.trx",
+      "bytes": 876908,
+      "sha256": "7dbfb940d430a77e3b7c359dccc120703d87a41340902fa9365d954f583c7b56"
+    },
+    {
+      "path": "evidence/tests/novik_TIM_2026-10-08_13_56_24_net10.0[1].trx",
+      "bytes": 1105633,
+      "sha256": "134e1ca76141c816b14bd1ce11aff55094e77dd34d96008ee061015f2381c70d"
+    },
+    {
+      "path": "evidence/tests-final/final_net10.0_20261008140227.trx",
+      "bytes": 817125,
+      "sha256": "6d649069d655c8ddd91784368c78b42f3dffe0a0975f368bdd8777dafb02f7ef"
+    },
+    {
+      "path": "evidence/tests-final/final_net10.0_20261008140237.trx",
+      "bytes": 876908,
+      "sha256": "e865ae48b5bf60c67893bdb9ff11880aa9a321b13e21c23fb5db416cf55b98e8"
+    },
+    {
+      "path": "evidence/tests-final/final_net10.0_20261008140246.trx",
+      "bytes": 1105633,
+      "sha256": "d564dcdf6290e75e594b0486751c079a836914da28eae1b3a09385c339a04acd"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 102046,
+      "sha256": "1a0f59e8cb34275f84bfc6d0feec6ef53070dd9e0f5e8a0afa0e6289fcc8afe7"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 12388,
+      "sha256": "040834e217a7fa967edfb610783e6239a9175913e3b7518ef19ef320f09dab1a"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/PersonalWindow.xaml",
+      "bytes": 8480,
+      "sha256": "f433c6552a7ea0ecc73e7797504aa454962c763c0d0e4f0e90a47faec3169f92"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "bytes": 7343,
+      "sha256": "dcc9adb07873267a775e6308104ad64371c32fb71aca3706a6f808745c7224ec"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Personal/PersonalShellPalette.cs",
+      "bytes": 1169,
+      "sha256": "28bf9a3a14ef0cf8a5a76b281fc9c25a1cecbf9f1d08e1778d9447cb60da1c56"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "bytes": 6099,
+      "sha256": "3e462e9442427c1a16accb65349c93c73a2814c729da2a533b6bbcfa85c78ec2"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "bytes": 57584,
+      "sha256": "c92b5df2531e2687a303a5620dcd49fe5d97ea3819e1d0f15b1e93788355f404"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/CommandPaletteViewModel.cs",
+      "bytes": 6825,
+      "sha256": "265b535528a9aa6cb35dea8c312267dcff65d9dd0c284e43d5e89cc116f01586"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+      "bytes": 26277,
+      "sha256": "a89a351f1f28a37f96cc61ddaa87fb81c69adfe1ea0ffeece1f2994b695b0996"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/MainWindowPalette.cs",
+      "bytes": 1674,
+      "sha256": "eea73aebb0d5c0ffc4a698d0912f86436654eb5a2206a25a602923be6a77d25c"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 28516,
+      "sha256": "e8a13539677c4130b592dfb62a289edd592a174b0a4ef579a6d6581844c4ecb2"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "bytes": 29423,
+      "sha256": "d2fb76e5aebf7ce1b4df2b057b8998cd8a9e985bdf9f086bdd070f16e7ae9676"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/WorkHubSearch.cs",
+      "bytes": 5253,
+      "sha256": "c32c6722fc2e23f34e7642f42f30a86c61d2f897a634465892b73f81184cba5e"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 53205,
+      "sha256": "a345bdbfdd3ac52f58257a18f3828afd48bf6e4646648d01728259003414f86c"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/CommandPaletteView.xaml",
+      "bytes": 5202,
+      "sha256": "c8a3dec1b54afab355ed8bb83feefe72ff3a888f3bf65ec028deab01548a5acb"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/CommandPaletteView.xaml.cs",
+      "bytes": 2019,
+      "sha256": "878244bb2f3ebde2c007432027683a7b5002fb7a4f57d59b8bf8324e55b0f92b"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/CommandPaletteTests.cs",
+      "bytes": 12950,
+      "sha256": "5ed3d444472d07fdcd3f34f90269cf5408f71527771711bd1ed55f1221086bde"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/CommandPaletteWindowsTests.cs",
+      "bytes": 7321,
+      "sha256": "27b5db82865d2d40fed37a88bc0410bc2932f068358dee9d508607b59cd32360"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs",
+      "bytes": 8717,
+      "sha256": "add74a400afb09ff1a20325a0c09e362122ae7471d125645855826adba80b0c9"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Calendar/CalendarViewModelTests.cs",
+      "bytes": 24520,
+      "sha256": "903e37120f956be259759fb9752d542f842252dec4a7545251004a6d7f8fe49a"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Personal/PersonalShellViewModelTests.cs",
+      "bytes": 6584,
+      "sha256": "bb78fc4a163e15b70d5b3b2a046888dafa2f6b468e1b386ca8b1213d87300319"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "bytes": 16784,
+      "sha256": "7aa0e80546bffdc5ad1b731351d0e437a875c9256eab896eb5b46f4da0eb2821"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs",
+      "bytes": 21781,
+      "sha256": "5f675660801ba5b90146e6b20f3e68da895aac074c7d078f4770da1106b5e69b"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 69,
+      "sha256": "9bd3ec8111ff1ca3c3834550a3f95e9b95194c571c4128ec582a63e26fb52679"
+    }
+  ]
+}

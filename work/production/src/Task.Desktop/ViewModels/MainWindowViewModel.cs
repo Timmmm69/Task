@@ -8,7 +8,7 @@ namespace Task.Desktop.ViewModels;
 /// View model for the main window shell: navigation sections,
 /// the selected section and the connection status.
 /// </summary>
-public sealed class MainWindowViewModel : ViewModelBase, IDisposable
+public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private readonly Func<CancellationToken, global::System.Threading.Tasks.Task>? _logout;
     private readonly DesktopConnectivityService? _connectivity;
@@ -93,6 +93,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             new("settings", "Настройки", "Раздел «Настройки»: параметры приложения появятся после подключения к серверу.", "Task.Icon.Settings", "Параметры приложения"),
         };
 
+        Palette = new(WorkHub, PaletteCommands, new System.ComponentModel.INotifyPropertyChanged?[] { this, Tasks, Inbox, Calendar, Projects }.OfType<System.ComponentModel.INotifyPropertyChanged>().ToArray());
         SelectedSection = Sections[0];
         LogoutCommand = new AsyncCommand(LogoutAsync, _ => _logout is not null);
         LogoutCommand.ExecutionFailed += OnLogoutFailed;
@@ -369,6 +370,7 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         _disposed = true;
+        Palette.Dispose();
         if (Tasks is not null)
         {
             Tasks.PropertyChanged -= OnTasksPropertyChanged;
@@ -533,6 +535,9 @@ public sealed class MainWindowViewModel : ViewModelBase, IDisposable
             if (route is null) return;
             SelectedSection = Sections.First(section => section.Route == route);
             if (route == "tasks" && Tasks is not null) { await Tasks.ActivateAsync(); await Tasks.OpenByIdAsync(id); }
+            else if (route == "projects" && Projects is not null) await Projects.OpenByIdAsync(id);
+            else if (route == "calendar" && Calendar is not null) await Calendar.OpenEventByIdAsync(id);
+            else if (route is "catalog" or "contacts" && WorkHub is not null) await WorkHub.OpenSearchObjectAsync(objectType, id);
         }
         catch (Exception)
         {

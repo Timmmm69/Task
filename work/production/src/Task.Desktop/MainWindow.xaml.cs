@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     private bool _modeTransitionClose;
     public event Action? SwitchModeRequested;
     private FrameworkElement? _overlayReturnFocus;
+    private readonly MainWindowViewModel _viewModel;
 
     public MainWindow()
         : this(new MainWindowViewModel())
@@ -25,8 +26,12 @@ public partial class MainWindow : Window
     public MainWindow(MainWindowViewModel viewModel)
     {
         ArgumentNullException.ThrowIfNull(viewModel);
+        _viewModel = viewModel;
         InitializeComponent();
         DataContext = viewModel;
+        viewModel.Palette.FocusRequested += OnPaletteFocusRequested;
+        viewModel.Palette.Closed += OnPaletteClosed;
+        viewModel.InboxCaptureRequested += OnInboxCaptureRequested;
         SourceInitialized += (_, _) => WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
         if (viewModel.Tasks is not null)
         {
@@ -90,11 +95,15 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        if (DataContext is MainWindowViewModel { Tasks: not null } viewModel)
+        if (_viewModel.Tasks is { } tasks)
         {
-            viewModel.Tasks.PropertyChanged -= OnTasksPropertyChanged;
+            tasks.PropertyChanged -= OnTasksPropertyChanged;
         }
 
+        _viewModel.Palette.Close();
+        _viewModel.Palette.FocusRequested -= OnPaletteFocusRequested;
+        _viewModel.Palette.Closed -= OnPaletteClosed;
+        _viewModel.InboxCaptureRequested -= OnInboxCaptureRequested;
         base.OnClosed(e);
     }
 
@@ -125,9 +134,8 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control)
+        if (HandlePaletteShortcut(e.Key, Keyboard.Modifiers))
         {
-            OpenGlobalSearch();
             e.Handled = true;
             return;
         }
@@ -157,6 +165,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        if (GlobalSearchOverlay.Visibility == Visibility.Visible) return;
         if (e.Key != Key.F6 || Keyboard.Modifiers != ModifierKeys.None)
         {
             return;
@@ -182,83 +191,50 @@ public partial class MainWindow : Window
         }
     }
 
+    internal bool HandlePaletteShortcut(Key key, ModifierKeys modifiers)
+    {
+        if (key == Key.K && modifiers == ModifierKeys.Control) { OpenGlobalSearch(); return true; }
+        return false;
+    }
     private void OnOpenGlobalSearch(object sender, RoutedEventArgs e) => OpenGlobalSearch();
 
     private void OpenGlobalSearch()
     {
-        if (DataContext is not MainWindowViewModel { WorkHub: { CanSearch: true } }) return;
-        _overlayReturnFocus = Keyboard.FocusedElement as FrameworkElement ?? GlobalSearchButton;
-        NotificationOverlay.Visibility = Visibility.Collapsed;
-        GlobalSearchOverlay.Visibility = Visibility.Visible;
-        Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+        if (DataContext is not MainWindowViewModel model) return;
+        if (!model.Palette.IsOpen)
         {
-            GlobalSearchOverlayTextBox.Focus();
-            GlobalSearchOverlayTextBox.SelectAll();
-        });
+            _overlayReturnFocus = Keyboard.FocusedElement as FrameworkElement ?? GlobalSearchButton;
+            NotificationOverlay.Visibility = Visibility.Collapsed;
+            GlobalSearchOverlay.Visibility = Visibility.Visible;
+        }
+        model.Palette.Open();
     }
 
-    private void OnCloseGlobalSearch(object sender, RoutedEventArgs e) => CloseGlobalSearch();
-
-    private void CloseGlobalSearch()
+    private void CloseGlobalSearch() => (DataContext as MainWindowViewModel)?.Palette.Close();
+    private void OnPaletteClosed()
     {
         GlobalSearchOverlay.Visibility = Visibility.Collapsed;
         RestoreOverlayFocus(GlobalSearchButton);
     }
-
+    private void OnPaletteFocusRequested() => Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+    {
+        if ((DataContext as MainWindowViewModel)?.Palette.IsOpen == true) PaletteSurface.FocusQuery();
+    });
+    private void OnInboxCaptureRequested() => Dispatcher.BeginInvoke(DispatcherPriority.Input,
+        () => FocusAutomationTarget(ContentRegion, "InboxCaptureTextBox"));
+    private static bool FocusAutomationTarget(DependencyObject root, string id)
+    {
+        if (root is UIElement element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == id)
+            return element.Focus();
+        for (var index = 0; index < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); index++)
+            if (FocusAutomationTarget(System.Windows.Media.VisualTreeHelper.GetChild(root, index), id)) return true;
+        return false;
+    }
     private void OnGlobalSearchBackdropClick(object sender, MouseButtonEventArgs e)
     {
         if (ReferenceEquals(e.OriginalSource, GlobalSearchOverlay)) CloseGlobalSearch();
     }
-
     private void OnOverlaySurfaceClick(object sender, MouseButtonEventArgs e) => e.Handled = true;
-
-    private void OnGlobalSearchTextBoxKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Escape)
-        {
-            CloseGlobalSearch();
-            e.Handled = true;
-            return;
-        }
-        if (e.Key is not (Key.Down or Key.Up) || GlobalSearchResultsList.Items.Count == 0) return;
-        GlobalSearchResultsList.SelectedIndex = e.Key == Key.Down ? 0 : GlobalSearchResultsList.Items.Count - 1;
-        GlobalSearchResultsList.ScrollIntoView(GlobalSearchResultsList.SelectedItem);
-        GlobalSearchResultsList.Focus();
-        if (GlobalSearchResultsList.ItemContainerGenerator.ContainerFromItem(GlobalSearchResultsList.SelectedItem) is ListBoxItem item) item.Focus();
-        e.Handled = true;
-    }
-
-    private void OnGlobalSearchResultsKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            ActivateSelectedSearchResult();
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Escape)
-        {
-            CloseGlobalSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void OnSearchResultActivate(object sender, MouseButtonEventArgs e) => ActivateSelectedSearchResult();
-
-    private void ActivateSelectedSearchResult()
-    {
-        if (DataContext is not MainWindowViewModel { WorkHub: { } workHub } || workHub.SelectedSearchHit is null) return;
-        if (workHub.OpenSearchResultCommand.CanExecute(workHub.SelectedSearchHit))
-            workHub.OpenSearchResultCommand.Execute(workHub.SelectedSearchHit);
-        CloseGlobalSearch();
-    }
-
-    private void OnShowAllSearchResults(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainWindowViewModel viewModel) return;
-        CloseGlobalSearch();
-        viewModel.SelectedSection = viewModel.Sections.First(section => section.Route == "search");
-    }
-
     private async void OnOpenNotifications(object sender, RoutedEventArgs e)
     {
         if (NotificationOverlay.Visibility == Visibility.Visible)
@@ -267,8 +243,8 @@ public partial class MainWindow : Window
             return;
         }
         if (DataContext is not MainWindowViewModel { WorkHub: { CanReadNotifications: true } } viewModel) return;
+        CloseGlobalSearch();
         _overlayReturnFocus = Keyboard.FocusedElement as FrameworkElement ?? NotificationsButton;
-        GlobalSearchOverlay.Visibility = Visibility.Collapsed;
         NotificationOverlay.Visibility = Visibility.Visible;
         await viewModel.WorkHub.EnsureNotificationsAsync();
         _ = Dispatcher.BeginInvoke(DispatcherPriority.Input, () => NotificationCenterList.Focus());
@@ -295,7 +271,8 @@ public partial class MainWindow : Window
         _overlayReturnFocus = null;
         Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
         {
-            if (target is { IsVisible: true, IsEnabled: true }) target.Focus();
+            if (!IsVisible) return;
+            if (target is { IsVisible: true, IsEnabled: true } && PresentationSource.FromVisual(target) == PresentationSource.FromVisual(this)) target.Focus();
             else fallback.Focus();
         });
     }

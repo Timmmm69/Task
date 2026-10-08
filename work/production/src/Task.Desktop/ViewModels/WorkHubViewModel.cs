@@ -100,7 +100,12 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         MarkReadCommand = new(MarkReadAsync, p => CanUseNotificationWrites && (p as DesktopNotification ?? SelectedNotification) is { Status: not "read" and not "dismissed" });
         MarkAllReadCommand = new(MarkAllReadAsync, _ => CanUseNotificationWrites && Notifications.Any(n => n.Status is not ("read" or "dismissed")));
         OpenNotificationSourceCommand = new(OpenNotificationSourceAsync, p => p is DesktopNotification { SourceObjectId: not null });
-        OpenSearchResultCommand = new(OpenSearchResultAsync, p => p is DesktopSearchResult or DesktopSearchHit);
+        OpenSearchResultCommand = new(OpenSearchResultAsync, p => p switch
+        {
+            DesktopSearchHit hit => CanOpenSearchResult(hit.Source),
+            DesktopSearchResult result => CanOpenSearchResult(result),
+            _ => false,
+        });
         RestoreLifecycleItemCommand = new(RestoreLifecycleItemAsync, p => CanUseServerWrites && (p as DesktopLifecycleItem ?? SelectedLifecycleItem) is not null && (IsArchive ? CanRestoreArchive : IsTrash && CanRestoreTrash));
         SaveUserSettingsCommand = new(SaveUserSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _userSettings is not null);
         SaveNotificationPreferencesCommand = new(SaveNotificationPreferencesAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _notificationPreferences is not null);
@@ -162,7 +167,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public DesktopNotification? SelectedNotification { get => _selectedNotification; set { if (SetProperty(ref _selectedNotification, value)) MarkReadCommand.RaiseCanExecuteChanged(); } }
     public DesktopLifecycleItem? SelectedLifecycleItem { get => _selectedLifecycleItem; set { if (SetProperty(ref _selectedLifecycleItem, value)) RestoreLifecycleItemCommand.RaiseCanExecuteChanged(); } }
     public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set { SetProperty(ref _selectedSearchHit, value); Links?.SetSource(value?.Source.ObjectId ?? Guid.Empty, value?.Source.Version ?? 0); } }
-    public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) { SearchCommand.RaiseCanExecuteChanged(); NotifySearchPresentation(); } } }
+    public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) { OnSearchQueryChanged(); SearchCommand.RaiseCanExecuteChanged(); NotifySearchPresentation(); } } }
     public IReadOnlyList<string> SearchTypeFilters => IsPersonal ? ["Все", "Задачи", "Проекты", "Файлы", "Контакты"] : ["Все", "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники"];
     public string SearchTypeFilter { get => _searchTypeFilter; set { if (SetProperty(ref _searchTypeFilter, value)) NotifySearchPresentation(); } }
     public IReadOnlyList<DesktopSearchGroup> SearchGroups => FilteredSearchResults
@@ -320,6 +325,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public void Deactivate() { _active = false; _activationRefreshPending = false; Interlocked.Increment(ref _activationGeneration); _activation?.Cancel(); NotifyCommands(); }
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
+        InvalidateSearch();
         _capabilities.Clear();
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
         Locations?.SetItem(null);
@@ -327,11 +333,19 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (!Has("ObjectLink.Read")) Links?.SetSource(Guid.Empty, 0);
         NotifyCommands();
     }
-    public void UpdateSessionState(bool available) { _sessionAvailable = available; if (!available) { Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotifyCommands(); }
+    public void UpdateSessionState(bool available) { _sessionAvailable = available; if (!available) { InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotifyCommands(); }
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
         _networkAvailable = available;
+        if (!available)
+        {
+            ++_searchGeneration;
+            _searchDebounce?.Cancel();
+            _searchRequest?.Cancel();
+            SearchCommand.Cancel();
+            IsSearchLoading = false;
+        }
         if (!available) SetFeedback("Сервер недоступен. Показаны только последние подтверждённые данные; действия записи отключены.", WorkHubFeedbackKind.Warning);
         else if (FeedbackKind == WorkHubFeedbackKind.Warning) SetFeedback("Подключение восстановлено. Обновите раздел, чтобы получить актуальные данные.", WorkHubFeedbackKind.Info);
         OnPropertyChanged(nameof(IsOffline));
@@ -408,12 +422,6 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         finally { EndOperation(); }
     }
 
-    private async System.Threading.Tasks.Task SearchCoreAsync(CancellationToken ct) =>
-        Apply(await _client.SearchAsync(SearchQuery, ct), value =>
-        {
-            SearchResults = value;
-            SelectedSearchHit = SearchGroups.SelectMany(group => group.Items).FirstOrDefault();
-        });
     private System.Threading.Tasks.Task CreateCatalogItemAsync(object? _, CancellationToken ct) => CreateCatalogEntryAsync(NewItemType, ct);
     private async System.Threading.Tasks.Task AddLocationAsync(object? _, CancellationToken ct)
     {
@@ -661,5 +669,5 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     }
     private void NotifyCommands() { Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
-    public void Dispose() { if (_disposed) return; _disposed = true; Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
+    public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

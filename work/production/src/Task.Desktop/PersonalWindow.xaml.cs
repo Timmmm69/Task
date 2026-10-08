@@ -25,6 +25,9 @@ public partial class PersonalWindow : Window
         _shell = new(model);
         InitializeComponent();
         DataContext = _shell;
+        _shell.Palette.FocusRequested += OnPaletteFocus;
+        _shell.Palette.Closed += OnPaletteClosed;
+        _shell.InboxCaptureRequested += OnInboxCapture;
         _shell.PropertyChanged += OnRouteChanged;
         Loaded += async (_, _) =>
         {
@@ -46,7 +49,7 @@ public partial class PersonalWindow : Window
         };
         _schedulerTimer.Tick += (_, _) => Reconcile();
         SystemEvents.PowerModeChanged += OnPowerModeChanged;
-        Closed += (_, _) => { _closed = true; _schedulerTimer.Stop(); SystemEvents.PowerModeChanged -= OnPowerModeChanged; _windowsNotifications?.Dispose(); _shell.PropertyChanged -= OnRouteChanged; _shell.Dispose(); };
+        Closed += (_, _) => { _closed = true; _schedulerTimer.Stop(); SystemEvents.PowerModeChanged -= OnPowerModeChanged; _windowsNotifications?.Dispose(); _shell.PropertyChanged -= OnRouteChanged; _shell.Palette.FocusRequested -= OnPaletteFocus; _shell.Palette.Closed -= OnPaletteClosed; _shell.InboxCaptureRequested -= OnInboxCapture; _shell.Dispose(); };
     }
     private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
     {
@@ -81,11 +84,50 @@ public partial class PersonalWindow : Window
         }
         catch (OperationCanceledException) when (_closed || _model.IsDisposed) { }
     }
-    private void OnSearch(object sender, RoutedEventArgs e) => Navigate("search");
+    private FrameworkElement? _paletteReturnFocus;
+    private void OpenPalette()
+    {
+        if (!_shell.Palette.IsOpen)
+        {
+            _paletteReturnFocus = Keyboard.FocusedElement as FrameworkElement;
+            PaletteOverlay.Visibility = Visibility.Visible;
+        }
+        _shell.Palette.Open();
+    }
+    private void OnPaletteFocus() => Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+    {
+        if (_shell.Palette.IsOpen && !_closed) PaletteSurface.FocusQuery();
+    });
+    private void OnPaletteClosed()
+    {
+        PaletteOverlay.Visibility = Visibility.Collapsed;
+        var target = _paletteReturnFocus; _paletteReturnFocus = null;
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+        {
+            if (_closed) return;
+            if (target is { IsVisible: true, IsEnabled: true }) target.Focus(); else SectionsList.Focus();
+        });
+    }
+    private void OnPaletteBackdrop(object sender, MouseButtonEventArgs e)
+    {
+        if (ReferenceEquals(e.OriginalSource, PaletteOverlay)) _shell.Palette.Close();
+    }
+    private void OnPaletteSurface(object sender, MouseButtonEventArgs e) => e.Handled = true;
+    private void OnInboxCapture() => Dispatcher.BeginInvoke(DispatcherPriority.Input,
+        () => FocusCapture(TasksSurface));
+    private static bool FocusCapture(DependencyObject root)
+    {
+        if (root is UIElement element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == "PersonalCaptureText") return element.Focus();
+        for (var index = 0; index < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); index++)
+            if (FocusCapture(System.Windows.Media.VisualTreeHelper.GetChild(root, index))) return true;
+        return false;
+    }
+    private void OnSearch(object sender, RoutedEventArgs e) => OpenPalette();
     private void OnNotifications(object sender, RoutedEventArgs e) => Navigate("notifications");
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control) { Navigate("search"); e.Handled = true; }
+        if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control) { OpenPalette(); e.Handled = true; }
+        else if (_shell.Palette.IsOpen) { if (e.Key == Key.Escape) { _shell.Palette.Close(); e.Handled = true; } return; }
         else if (e.Key == Key.Escape && _model.Tasks?.HasEditor == true) { TasksSurface.RequestCancel(); e.Handled = true; }
         else if (e.Key == Key.N && Keyboard.Modifiers == ModifierKeys.Alt && _shell.IsTasks) { _model.Tasks?.NewCommand.Execute(null); e.Handled = true; }
         else if (e.Key == Key.F6 && _shell.CanNavigate)
