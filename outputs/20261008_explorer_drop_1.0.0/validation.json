@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "build": "PASS: Release, zero errors",
+  "tests": [
+    {
+      "total": 615,
+      "passed": 615,
+      "failed": 0,
+      "notExecuted": 0,
+      "file": "novik_TIM_2026-10-08_16_09_58_net10.0.trx"
+    },
+    {
+      "total": 825,
+      "passed": 821,
+      "failed": 0,
+      "notExecuted": 0,
+      "file": "novik_TIM_2026-10-08_16_10_00_net10.0.trx"
+    },
+    {
+      "total": 590,
+      "passed": 590,
+      "failed": 0,
+      "notExecuted": 0,
+      "file": "novik_TIM_2026-10-08_16_10_00_net10.0[1].trx"
+    }
+  ],
+  "newTests": 28,
+  "desktopTests": 615,
+  "totalPassed": 2026,
+  "skipped": 4,
+  "nativeWpf": "PASS: isolated STA window, routed drag events, overlay lifetime, folder target, offline effect, canceled drag, keyboard focus",
+  "postgres": "NOT VERIFIED: TASK_POSTGRES_TEST_ADMIN_CONNECTION absent; several DB tests return early without it",
+  "explorerPhysicalMouse": "NOT VERIFIED: routed FileDrop events tested, physical Explorer drag not performed",
+  "smbAcl": "NOT VERIFIED on a real company share; UNC policy and allowlist tested with metadata/API doubles",
+  "inbox": "BLOCKED: canonical InboxItemCreate supports file_link/rawPath, but current application only captures DesktopCreateTaskCommand through POST tasks; current ProductApiContracts has no inbox-items route",
+  "selfReview": "PASS: scoped diff, metadata only, no enumeration/open/upload/copy/move/delete, sequential commands, dispatcher-preserving continuations, background attributes, capped batch and journal, hashed journal path keys, no compensations or disk pending commands",
+  "verifiedBase": "b03ef62ba73c9a332bd9bba392f0a9d68ad0ea22",
+  "publication": "Reviewed publication authorized by user; clean verification excludes unrelated working changes"
+}

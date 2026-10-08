@@ -1,0 +1,145 @@
+{
+  "name": "Organizer Explorer Drop",
+  "version": "1.0.0",
+  "sources": [
+    "work/production/src/Task.Desktop/Work/CatalogPathAddition.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubPathAdditionViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+    "work/production/src/Task.Desktop/Views/ExplorerDropOverlay.cs",
+    "work/production/src/Task.Desktop/Views/WorkHubExplorerDrop.cs",
+    "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+    "work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs",
+    "work/production/src/Task.Desktop/Views/InboxView.xaml",
+    "work/production/src/Task.Desktop/Views/InboxView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/CatalogPathAdditionTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ExplorerDropViewTests.cs"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 30,
+      "sha256": "32966c8f89acc0110f6a39bf66f2c0cfe327afcaf642ca8546e36bdad19f1e18"
+    },
+    {
+      "path": "evidence/accepted/build.log",
+      "bytes": 152,
+      "sha256": "44178fe6eb8eaf26856be0565254f07b89b424b824a5fbbbc10e28d5c340e650"
+    },
+    {
+      "path": "evidence/accepted/novik_TIM_2026-10-08_15_01_27_net10.0.trx",
+      "bytes": 1118378,
+      "sha256": "9626382d6fb63f6bfabf15d2f7de6aa69d514780ba1ebfe50c895dd275eae489"
+    },
+    {
+      "path": "evidence/accepted/novik_TIM_2026-10-08_15_01_27_net10.0[1].trx",
+      "bytes": 882507,
+      "sha256": "97656482c5d83d1f76ff11529f036e9909db1d14fb93e6169ecd2958ace8dc8e"
+    },
+    {
+      "path": "evidence/accepted/novik_TIM_2026-10-08_15_01_27_net10.0[2].trx",
+      "bytes": 876908,
+      "sha256": "1233569b1fb7c56a0ff61e2d29a7fef0beb512de3265ec2b53facf42f56c88ee"
+    },
+    {
+      "path": "evidence/accepted/tests.log",
+      "bytes": 1956,
+      "sha256": "5b8540ee352369f83436472831102e804080513bedeedbce6e728506e0e26527"
+    },
+    {
+      "path": "evidence/publish-final/build.log",
+      "bytes": 9842,
+      "sha256": "283165a87e6127dc2ce19aeaf5f9e443de783bd8315c592dac0e54c209739de1"
+    },
+    {
+      "path": "evidence/publish-final/novik_TIM_2026-10-08_16_09_58_net10.0.trx",
+      "bytes": 924499,
+      "sha256": "3c6f19f3c537ba92418bbb79c9cd6705d407e1636b92791e5898a70be265a473"
+    },
+    {
+      "path": "evidence/publish-final/novik_TIM_2026-10-08_16_10_00_net10.0.trx",
+      "bytes": 1172828,
+      "sha256": "4e57f751d902aed61bbe6f22bb3e47038ac5e69c0084d7ef0c14e34b4abd1725"
+    },
+    {
+      "path": "evidence/publish-final/novik_TIM_2026-10-08_16_10_00_net10.0[1].trx",
+      "bytes": 915848,
+      "sha256": "6f1dfc861d3e502571205023d6bca35249349e1322dbc2a88f6616454c62f5fc"
+    },
+    {
+      "path": "evidence/publish-final/tests.log",
+      "bytes": 2067,
+      "sha256": "6898e7cc48ae42d0dc2ff8dbc5d075d66a640d7930249abfd67c3361b0acf96a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubPathAdditionViewModel.cs",
+      "bytes": 2131,
+      "sha256": "9b1beef79afa584ff6e622f9c9711f409b1833ddfbd128c85609b3cddd4f774a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 53279,
+      "sha256": "9bdd46268c1c5118a073f8d10dd4275f03bc9d51a5727cf8aacf541ff5ae52b9"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ExplorerDropOverlay.cs",
+      "bytes": 1128,
+      "sha256": "bf30642ccfddb37d1c89d23d6f6594a9ba5dc6dc3d9ad3a3d67e0f0f87d9de74"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/InboxView.xaml",
+      "bytes": 27316,
+      "sha256": "0f5b6e078fbc63f654938c8889fd397a4a55c496ab12554922992c5737ff44a5"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/InboxView.xaml.cs",
+      "bytes": 3337,
+      "sha256": "15b7f0e0d7fefec739b2958fddd902e0487ac988a838b2f708fa9eb2737379cc"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/WorkHubExplorerDrop.cs",
+      "bytes": 6959,
+      "sha256": "a2b58177995094fe64130d091330c88822cfc11ab8d6488da4bba577daff43c0"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "bytes": 45000,
+      "sha256": "13b403b3786cca2a4a06f480d76050ad2b75e3781f91056eb38647b1bd327a37"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/WorkHubView.xaml.cs",
+      "bytes": 3322,
+      "sha256": "81041fe59dcd6d4d3ff6a8140779c0c8ada3721334535fa0fe7bd6a05927e091"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Work/CatalogPathAddition.cs",
+      "bytes": 10821,
+      "sha256": "186f6e061a0170171e5c3abcb5cc714a61a83717bd7bb7d8bafdb112497c8f8e"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/CatalogPathAdditionTests.cs",
+      "bytes": 14175,
+      "sha256": "bdb44411dcf3060da872c93a75e7c7fead6e2544c755a7497c100b3d2f276c43"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/ExplorerDropViewTests.cs",
+      "bytes": 9898,
+      "sha256": "dbd8a1ec115966452b30b274cbc81e1fbeb6f9141732ab533f8132f8bc5153ee"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 6250,
+      "sha256": "8edb01cda6f003fcfacf7291abfda2d2de5bcbb48f562cd3933567660b8a61dd"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 1777,
+      "sha256": "fbdf2f0900485ac3695afb2bb256117d033ec7789420df010c07f9f25e3dc602"
+    },
+    {
+      "path": "version.txt",
+      "bytes": 6,
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+    }
+  ],
+  "verifiedBase": "b03ef62ba73c9a332bd9bba392f0a9d68ad0ea22"
+}
