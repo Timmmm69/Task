@@ -119,6 +119,28 @@ public sealed partial class PersonalTaskStore
         return result;
     }
     public IReadOnlyList<PersonalNotification> Notifications() => Locked(() => Notifications(null));
+    public void MarkAllPersonalNotificationsRead() => Locked(() =>
+    {
+        using var c = Command("UPDATE personal_notifications SET is_read=1;", null); return c.ExecuteNonQuery();
+    });
+    public PersonalReminder SnoozeNotification(Guid notificationId, DateTimeOffset? until = null) => Locked(() =>
+    {
+        using var tx = _database.Connection.BeginTransaction();
+        var notification = Notifications(tx).SingleOrDefault(n => n.Id == notificationId) ?? throw new PersonalTaskNotFoundException();
+        var old = Reminders(tx).Single(r => r.Id == notification.ReminderId);
+        if (notification.IsRead || old.State != "delivered") throw new ArgumentException("Это напоминание уже обработано.");
+        var target = ReminderTarget(old, tx);
+        if (!target.Valid) throw new ArgumentException("Задача или событие больше неактуальны.");
+        var due = until ?? _clock.GetUtcNow().AddMinutes(ReadWorkspaceSettings("notifications", DefaultWorkspaceNotifications, tx).DefaultSnoozeMinutes);
+        if (due <= _clock.GetUtcNow() || due > _clock.GetUtcNow().AddDays(7)) throw new ArgumentException("Выберите время в ближайшие семь дней.");
+        var reminder = new PersonalReminder(Guid.NewGuid(), 1, old.TargetId, old.TargetKind, ReminderTriggerType.Absolute,
+            null, due, due, "pending");
+        reminder = reminder with { DedupeKey = ReminderOccurrenceKey.From(reminder.Id, due).Value };
+        PersistReminder(reminder, tx);
+        PersistReminder(old with { State = "cancelled", Version = old.Version + 1 }, tx);
+        using var read = Command("UPDATE personal_notifications SET is_read=1 WHERE id=$id;", tx, ("$id", notificationId.ToString("D")));
+        read.ExecuteNonQuery(); tx.Commit(); return reminder;
+    });
     public void MarkNotificationRead(Guid id) => Locked(() =>
     {
         using var c = Command("UPDATE personal_notifications SET is_read=1 WHERE id=$id;", null, ("$id", id.ToString("D"))); return c.ExecuteNonQuery();
@@ -127,14 +149,25 @@ public sealed partial class PersonalTaskStore
     {
         using var tx = _database.Connection.BeginTransaction();
         var allowed = CanPresentPersonalNotification(tx);
-        var pending = allowed ? Notifications(tx).Where(n => n.PresentationState == "pending").ToArray() : [];
-        using var c = Command("UPDATE personal_notifications SET presentation_state=$state WHERE presentation_state='pending';", tx, ("$state", allowed ? "claimed" : "suppressed"));
-        c.ExecuteNonQuery(); tx.Commit(); return (IReadOnlyList<PersonalNotification>)pending;
+        var reminders = Reminders(tx).ToDictionary(r => r.Id);
+        var pending = allowed ? Notifications(tx).Where(n => n.PresentationState == "pending" && !n.IsRead
+            && reminders.TryGetValue(n.ReminderId, out var r) && r.State == "delivered" && ReminderTarget(r, tx).Valid).ToArray() : [];
+        if (allowed)
+        {
+            var eligible = pending.Select(n => n.Id).ToHashSet();
+            foreach (var n in Notifications(tx).Where(n => n.PresentationState == "pending"))
+            {
+                using var claim = Command("UPDATE personal_notifications SET presentation_state=$state WHERE id=$id AND presentation_state='pending';", tx,
+                    ("$id", n.Id.ToString("D")), ("$state", eligible.Contains(n.Id) ? "claimed" : "suppressed"));
+                claim.ExecuteNonQuery();
+            }
+        }
+        tx.Commit(); return (IReadOnlyList<PersonalNotification>)pending;
     });
     public void CompletePresentation(Guid id, bool accepted) => Locked(() =>
     {
         using var c = Command("UPDATE personal_notifications SET presentation_state=$state WHERE id=$id AND presentation_state='claimed';", null,
-            ("$id", id.ToString("D")), ("$state", accepted ? "submitted" : "unavailable")); return c.ExecuteNonQuery();
+            ("$id", id.ToString("D")), ("$state", accepted ? "submitted" : "pending")); return c.ExecuteNonQuery();
     });
 }
 

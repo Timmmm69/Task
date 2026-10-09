@@ -45,7 +45,7 @@ internal static class ProductEndpoints
                 await Check(readCapability);
                 if (!granted.Contains(readCapability)) throw new ProductApiException(403, "FORBIDDEN", "Object read access is required.");
             }
-            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks")
+            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks" or "reminders")
                 foreach (var code in new[] { "Project.Read", "Contact.Read", "FileCatalog.Read", "Task.Read", "Calendar.Read", "Employee.Read" })
                     await Check(code);
             if (route.Resource == "tasks") { await Check("History.Read"); if (route.Permission != "Task.Read" && !granted.Contains("Task.Read")) throw new ProductApiException(403, "FORBIDDEN", "Task read access is required."); }

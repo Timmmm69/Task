@@ -1,0 +1,319 @@
+{
+  "package": "task_notifications",
+  "version": "1.1.0",
+  "status": "READY",
+  "scope": "Corporate reminder management; cumulative desktop notifications implementation",
+  "base_commit": "bc6ab70ef25f206e5b68e6a2c70c0e39409fcf3a",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "changes.patch",
+      "bytes": 242716,
+      "sha256": "d6c3046a383f9f773966bc25932013a225f42bd38fb2fc64bfd250be28c4896f"
+    },
+    {
+      "path": "evidence/build-final.log",
+      "bytes": 2475,
+      "sha256": "d78499dc9bec84784a3596c1f345a448fc5e6488e45435ee86d9c6856d94ebff"
+    },
+    {
+      "path": "evidence/desktop-final.log",
+      "bytes": 656,
+      "sha256": "cad67a6597bc631d8b8fb57e7a1245c9311a4fc2b21f9f9e61f461a0aa5aa8b2"
+    },
+    {
+      "path": "evidence/desktop-final/novik_TIM_2026-10-09_13_47_45_net10.0.trx",
+      "bytes": 8935,
+      "sha256": "c1a5b3a29c9914f7818dfa8b2d29443dad528265d5e02c5f6c461e091ffdef95"
+    },
+    {
+      "path": "evidence/tests-verified.log",
+      "bytes": 1921,
+      "sha256": "b46be89847da40f15047401ce32d707c3ad34ef7f9dd22621abfab0b573ac139"
+    },
+    {
+      "path": "evidence/verified/novik_TIM_2026-10-09_13_45_18_net10.0.trx",
+      "bytes": 1061762,
+      "sha256": "5538bd7ae2611a5810cd1a070a7d909c3a4e1499197d76a630ddd43734a0c0cc"
+    },
+    {
+      "path": "evidence/verified/novik_TIM_2026-10-09_13_45_19_net10.0.trx",
+      "bytes": 905023,
+      "sha256": "d93940fe4f9ca65a452f71874d7805feb8835c511e3e8d2ae6be4f3905d06454"
+    },
+    {
+      "path": "evidence/verified/novik_TIM_2026-10-09_13_45_20_net10.0.trx",
+      "bytes": 1125419,
+      "sha256": "80db2093a8dd5b2bd1d9662017a31d44fce2cf5a3205a1c5612225469522e7b0"
+    },
+    {
+      "path": "source-overlay/work/production/docs/reminder-api.md",
+      "bytes": 2841,
+      "sha256": "fcc31f266a4f17889093bc7bf793aa8ef5336dcdb7aab3f077407ba02af7e124"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+      "bytes": 9613,
+      "sha256": "53a3f0539d4795a93ff13a3766f9a22c736fea990de5e6ef985a0a87660fad15"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "bytes": 10263,
+      "sha256": "6fc3e3a49e0c7300f9908b31f71d6ee40a18e37395d4395d43368542f4b4c0c4"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 14762,
+      "sha256": "172207ff863aaca882fc4ffcaa799b89795561f0c2ec55c48bc102f6473b3fb2"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "bytes": 17550,
+      "sha256": "ce6de194615650467930434e8ee309d799ea98434b94d507c5279e61faffc1be"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs",
+      "bytes": 6208,
+      "sha256": "7873bb9fbd57cc0c9f227d71eec1c7ec6c488e1db094f9ff8b4ac535885ea1f5"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+      "bytes": 11508,
+      "sha256": "ee08a9531223a17febc67960db196f715d0c01a0f738b3adbbe6a8e5a87edd75"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Notifications/CorporateNotificationAgent.cs",
+      "bytes": 4858,
+      "sha256": "3ef58704f8c0add1787ba25f9b4670e258d048f77d6716c5727bd92ed12648f5"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs",
+      "bytes": 6312,
+      "sha256": "c2f05f4efc0e22db0034b1d60b29c4eaec5da6002e272ba343cd616a9c52dc21"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Notifications/NotificationPresentation.cs",
+      "bytes": 1245,
+      "sha256": "2f469e9094bc8980120fbba42b9eab4b17560acaf2a83c7fec9bbecac1bdf1bb"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Notifications/NotificationPresentationJournal.cs",
+      "bytes": 3063,
+      "sha256": "cb7911153954e01ee9e01e5ea251d9f70b55a382be121febc717ddeabbf8faae"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Notifications/WindowsAutostart.cs",
+      "bytes": 852,
+      "sha256": "b9c15e7c2ea854dc446e72460a6d601df91ffc4c67fde797c06c5e5183d09b55"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Notifications/WindowsToastPresenter.cs",
+      "bytes": 4008,
+      "sha256": "0450cf089cdc392fa1b7b3e67ccb446de2d7c8e721c58468e940c9cfa4b767cd"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Personal/PersonalPlanningViewModel.cs",
+      "bytes": 15956,
+      "sha256": "9bcb19c38e8f428b49b2a200294dcd56cac9c0c7e47502d44dedaa34dd3e4d0e"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Personal/PersonalReminders.cs",
+      "bytes": 13538,
+      "sha256": "a9fa4d162b53067b3e785e5c3d1a84522ac89086f922c8a62dce96c62056b5b4"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "bytes": 6404,
+      "sha256": "bc20909859e2023f1323df5f1076bde17fcfc10ef8f86898e3177ee1fbad43be"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Personal/PersonalWindowsNotifications.cs",
+      "bytes": 4577,
+      "sha256": "9d474dc304f0ebd801c5c141cd79272cf33230b3c98fbdd16c5ca6ec996f489a"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Personal/PersonalWorkspaceSettings.cs",
+      "bytes": 4056,
+      "sha256": "ca3492d2e8e9036cf43bb42c57cb1f59735e8a22c763d90348e4a1fdb7c7d4b0"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "bytes": 10422,
+      "sha256": "8913246d9d809f663efdc455824d360c244324a5637c3217e8d6a330bc702c1e"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Task.Desktop.csproj",
+      "bytes": 911,
+      "sha256": "46163c18de8eddef6d456b8271f1c5a0e3acfd28e4747480c0b6130079d369c4"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/ViewModels/CorporateRemindersViewModel.cs",
+      "bytes": 13690,
+      "sha256": "b55e69a74dea7c763efd8c5054378f13b2cb274e778a2f038715fe463e4fa2c7"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/ViewModels/MainWindowPalette.cs",
+      "bytes": 1758,
+      "sha256": "a0dc9ecac9454a421d7943df53059b1d0ac07718750d242513cbb0d7e9eaa67e"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 28972,
+      "sha256": "42bce12dc5d74e4cb7b1655e4d34086712cc4e6c879b6c4aad2648a5f6b2372a"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "bytes": 55753,
+      "sha256": "1a0955f64306e9366bd33637e3db4f84fe81611fa3f9dffd2686ba1719fbcfae"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+      "bytes": 9317,
+      "sha256": "91428f03023fe4bbbdf89b7a5fb905b45403e8c23cd6acbabf65f17cd106ae4a"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "bytes": 49177,
+      "sha256": "6974017256b4c31b19969acf7c954ba30032d4d458cb74e41c7f2cc06735d0c3"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Work/DesktopNotificationApi.cs",
+      "bytes": 2617,
+      "sha256": "979db9d77ef45d7f1c6d9868fcbe2842917332602152c66d4e72f95baf1586dc"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Work/DesktopReminderApi.cs",
+      "bytes": 7374,
+      "sha256": "ad85f4b3a520a7bc3267ca2c3fbb2bde065cafb6d56b800533764a7105d12ff8"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "bytes": 39441,
+      "sha256": "d66cf0c2895a128b83e69b3fb10407081097d5c890036e16b8ccb4e113671b39"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/Migrations/015_reminder_commands.sql",
+      "bytes": 1598,
+      "sha256": "440e7dad49c8cb12d5fa4c98e6898af71ad10f42340fc547b73e2e5aeef89f16"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresBackgroundDeliveryStore.cs",
+      "bytes": 29896,
+      "sha256": "b9eb3d9f716fc2cbaeb21dc8c6902886cdd0e074b6b872da195f9f48b9dab4ac"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresEventNotifications.cs",
+      "bytes": 5267,
+      "sha256": "f02556af6d49dafc3977010b062638a89630e4b4d0d50b7b955050838ed4e744"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiReminders.cs",
+      "bytes": 19967,
+      "sha256": "306c04f465b50aee81d0707731db61de39e7ce0686ef18e633d50d25e7e84017"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSettings.cs",
+      "bytes": 11394,
+      "sha256": "abe5b5b0530b97ea6d18e96d0e158b81bc942d20e6415f7fabaef24d1256fcbc"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+      "bytes": 33073,
+      "sha256": "e56b8d767cf074655ba93c917b85357f2f90a8603e212403c3ccf705d3ee17ab"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "bytes": 31119,
+      "sha256": "6f5f22845f24e52a84ea8307fdf513ab810efec51e01cc2704fbf10d49b0ccfb"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+      "bytes": 2408,
+      "sha256": "3b897d94e698429d1b273d10866f1133152f144a9c59e609a74c2ba4d6543282"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Worker/ReminderDeliveryWorker.cs",
+      "bytes": 5036,
+      "sha256": "14f5455c75afa57431e56750ca1d57d5cde110bf04a0208831e76691175e6c53"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Personal/PersonalPlanningTests.cs",
+      "bytes": 30329,
+      "sha256": "7c721f1599124ba0f4d8120e1951366beaffa1dcf6b670a3e6364b76b1ce1246"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkspaceTests.cs",
+      "bytes": 18457,
+      "sha256": "00a0063752994fb071806ca84d4ecdaa6a2d436c066427f8fe9d0368bdf413fe"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj",
+      "bytes": 983,
+      "sha256": "4a56819d4b73801b223706cf317b49e49cc657144c568e55428c6e808995d5bb"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Work/CorporateNotificationAgentTests.cs",
+      "bytes": 12081,
+      "sha256": "6422493503241ab424edc7dc5540ccbee8c4eddb1787417122b1821259153dcb"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Work/CorporateReminderViewModelTests.cs",
+      "bytes": 5162,
+      "sha256": "0928af04788ffcda45586783dd59e4391784de38406d9c4eed540dd0d8da398d"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Work/DesktopReminderApiTests.cs",
+      "bytes": 4450,
+      "sha256": "bf674026204653409e863a34289478b926514233d2bc432279d43106be31b134"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs",
+      "bytes": 23696,
+      "sha256": "148b024145ca021bcb5ddb3b782c05ae4679563f96d10df868b94ae0111d5c23"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.ServiceHosts.Tests/BackgroundDeliveryWorkerTests.cs",
+      "bytes": 10260,
+      "sha256": "83cf7e4a0c8e02b3424ee1da6222c4fab0b54241add361610edf62c29d56190f"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresBackgroundDeliveryStoreTests.cs",
+      "bytes": 17130,
+      "sha256": "35968de819487d5aab5d3bdf772f398445b2e18524376df83be7ea89c11e4fdf"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresNotificationEventTests.cs",
+      "bytes": 5221,
+      "sha256": "d020d91bdf24e2c8067d80d67d07491c8bb53ad70f41db379046b8e2038f50a1"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresProductApiTests.cs",
+      "bytes": 25379,
+      "sha256": "49782b9d79c2361bfbb8bac1261a7af4f937b575bd55457f2a9b62ab907be377"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresReminderCommandTests.cs",
+      "bytes": 12836,
+      "sha256": "2271312eadb8493aa6ffd6cb814c5614b8046a616d40020a41d57a2c0524bf6a"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs",
+      "bytes": 3698,
+      "sha256": "343506b7413a55ef157f00fcd4ccab5558b8e38480f165906f034698d35ac35d"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 7470,
+      "sha256": "b86705bbd825fb4e967651b835efccf044c375e542d51b1fd1839e0199d55515"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 5865,
+      "sha256": "c6b0b935ab87524ccef898645999aeaa3a2169ce78442f9c3011c71ff04e4e2f"
+    }
+  ]
+}

@@ -395,6 +395,8 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         outbox.Parameters.Add(new NpgsqlParameter<string> { TypedValue = command.EventType });
         AddJson(outbox, outboxPayload);
         await outbox.ExecuteNonQueryAsync(cancellationToken);
+        await using var notifications = PostgresEventNotifications.Command(connection, transaction, eventId);
+        await notifications.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private static async global::System.Threading.Tasks.Task CompleteAsync(

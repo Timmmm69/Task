@@ -106,6 +106,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
     {
         if (_isShuttingDown) return;
         _isShuttingDown = true;
+        _mainWindow?.StopNotificationDelivery();
         _startupCancellation.Cancel();
         CloseBootstrap();
         if (_workflow is not null)
@@ -329,6 +330,8 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration);
         var window = new MainWindow(viewModel);
         var metadata = sessionService.CurrentSessionMetadata!;
+        window.ConfigureNotifications(workClient, _dataDirectory,
+            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D") + "/" + metadata.UserId.ToString("D"));
         Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(_dataDirectory,
             serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
             Infrastructure.ViewState.DeviceNamespace));

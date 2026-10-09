@@ -21,6 +21,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(12, "user_read_permission", "012_user_read_permission.sql"),
         Load(13, "object_authorization", "013_object_authorization.sql"),
         Load(14, "background_delivery", "014_background_delivery.sql"),
+        Load(15, "reminder_commands", "015_reminder_commands.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

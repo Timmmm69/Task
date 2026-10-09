@@ -3,7 +3,7 @@ using Task.Desktop.Work;
 
 namespace Task.Desktop.Tests.Work;
 
-public sealed class WorkHubViewModelTests
+public sealed partial class WorkHubViewModelTests
 {
     [Fact]
     public async System.Threading.Tasks.Task SearchNavigation_RefreshesCatalogAndContactsBeforeSelecting()
@@ -279,6 +279,27 @@ public sealed class WorkHubViewModelTests
         Assert.Equal("Contact", Assert.Single(vm.Contacts).DisplayName);
     }
 
+    [Fact]
+    public async System.Threading.Tasks.Task NotificationRefreshCannotRestoreContentAfterReadPermissionIsRevoked()
+    {
+        var pending = new TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopNotification>>>();
+        var client = new FakeClient { NotificationHandler = _ => pending.Task };
+        using var vm = new WorkHubViewModel(client, ["Notification.ReadOwn"]);
+        var refresh = vm.EnsureNotificationsAsync(); vm.UpdateCapabilities([]);
+        pending.SetResult(new DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Succeeded([new(Guid.NewGuid(), 1, "task_assigned", "Private", "Body", "info", "delivered", Guid.NewGuid(), DateTimeOffset.UtcNow)]));
+        await refresh; Assert.Empty(vm.Notifications); Assert.Equal(0, vm.UnreadCount);
+        Assert.False(vm.OpenNotificationSourceCommand.CanExecute(new DesktopNotification(Guid.NewGuid(), 1, "task_assigned", "Private", "Body", "info", "delivered", Guid.NewGuid(), DateTimeOffset.UtcNow)));
+    }
+    [Fact]
+    public async System.Threading.Tasks.Task NotificationSourceUnderstandsExistingUnderscoreTypes()
+    {
+        using var vm = new WorkHubViewModel(new FakeClient(), ["Notification.ReadOwn"]);
+        var id = Guid.NewGuid(); string? openedType = null; Guid? openedId = null;
+        vm.OpenObjectRequested += (type, value) => { openedType = type; openedId = value; };
+        await vm.OpenNotificationSourceCommand.ExecuteAsync(new DesktopNotification(Guid.NewGuid(), 1, "task_assigned", "Task", "Body", "info", "delivered", id, DateTimeOffset.UtcNow));
+        Assert.Equal("task", openedType); Assert.Equal(id, openedId);
+    }
+
     private static async System.Threading.Tasks.Task Eventually(Func<bool> condition)
     {
         for (var i = 0; i < 50 && !condition(); i++) await System.Threading.Tasks.Task.Delay(10);
@@ -291,8 +312,9 @@ public sealed class WorkHubViewModelTests
         public FileOpenResult Open(string path) { OpenedPath = path; return new(FileOpenStatus.Opened, "Открыто"); }
     }
 
-    internal sealed class FakeClient : IDesktopWorkApiClient
+    internal sealed partial class FakeClient : IDesktopWorkApiClient, IDesktopReminderApiClient
     {
+        public Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>>>? NotificationHandler { get; init; }
         public static readonly Guid ItemId = Guid.NewGuid();
         public static readonly Guid TaskId = Guid.NewGuid();
         public static readonly Guid ArchivedId = Guid.NewGuid();
@@ -311,7 +333,7 @@ public sealed class WorkHubViewModelTests
         private readonly List<DesktopCatalogItem> _catalog = [new(ItemId, 1, "Plan", "file_reference", null, ".docx", "active")];
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default) => CatalogHandler is null ? Ok<IReadOnlyList<DesktopCatalogItem>>(_catalog.ToArray()) : CatalogHandler(cancellationToken);
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) { ContactCallCount++; return Ok(Contacts); }
-        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopNotification>>([new(Guid.NewGuid(), 1, "task.assigned", "One", "Body", "info", "delivered", TaskId, DateTimeOffset.UtcNow), new(Guid.NewGuid(), 1, "system.info", "Two", "Body", "warning", "delivered", null, DateTimeOffset.UtcNow)]);
+        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) => NotificationHandler?.Invoke(cancellationToken) ?? Ok<IReadOnlyList<DesktopNotification>>([new(Guid.NewGuid(), 1, "task.assigned", "One", "Body", "info", "delivered", TaskId, DateTimeOffset.UtcNow), new(Guid.NewGuid(), 1, "system.info", "Two", "Body", "warning", "delivered", null, DateTimeOffset.UtcNow)]);
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default)
         {
             SearchCallCount++;

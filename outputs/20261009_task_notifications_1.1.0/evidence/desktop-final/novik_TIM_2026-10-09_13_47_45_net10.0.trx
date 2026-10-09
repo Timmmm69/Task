@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e4bf148f-d755-4e6d-b158-dcf8a060ed0b" name="novik@TIM 2026-10-09 13:47:45" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-09T13:47:45.7721993+03:00" queuing="2026-10-09T13:47:45.7721995+03:00" start="2026-10-09T13:47:44.5620030+03:00" finish="2026-10-09T13:47:45.7794936+03:00" />
+  <TestSettings name="default" id="69a6e164-d9ac-40c2-9d98-8626d34881a9">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-09_13_47_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a8889824-7faf-44dd-9573-f4d890d56091" testId="f3b8c3d6-92eb-589c-a00c-2917cbc18c21" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ReminderClient_ReadsAllPagesAndRejectsPartialOrMismatchedOccurrence" computerName="TIM" duration="00:00:00.0078067" startTime="2026-10-09T13:47:45.6332456+03:00" endTime="2026-10-09T13:47:45.6408896+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a8889824-7faf-44dd-9573-f4d890d56091" />
+    <UnitTestResult executionId="d7b419b6-e983-44f9-a0e1-a01f4329a4f4" testId="51b53782-724c-5134-99f8-aca56c1252ec" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ReminderClient_UsesOwnRecipientRuleEtagAndIndependentOccurrenceEtag" computerName="TIM" duration="00:00:00.0909668" startTime="2026-10-09T13:47:45.5373717+03:00" endTime="2026-10-09T13:47:45.6329983+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7b419b6-e983-44f9-a0e1-a01f4329a4f4" />
+    <UnitTestResult executionId="80947f9b-ee14-4b09-ab84-e35ec12658ad" testId="ac5bc59e-aefd-2c29-6900-d189356f175b" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.CorporateReminders_SnoozeUsesSavedDefaultAndOccurrenceVersionThenRefreshes" computerName="TIM" duration="00:00:00.0121285" startTime="2026-10-09T13:47:45.5811334+03:00" endTime="2026-10-09T13:47:45.5838800+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80947f9b-ee14-4b09-ab84-e35ec12658ad" />
+    <UnitTestResult executionId="a057c20f-1e28-4b69-8e39-02eac53db809" testId="004f72bb-842b-22e5-56a5-2a43a337acd5" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.CorporateReminders_RevocationDropsInFlightResponse" computerName="TIM" duration="00:00:00.0608454" startTime="2026-10-09T13:47:45.5844041+03:00" endTime="2026-10-09T13:47:45.6472432+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a057c20f-1e28-4b69-8e39-02eac53db809" />
+    <UnitTestResult executionId="094b994a-ee26-42ba-b792-ed6700a2eca2" testId="877fbfe5-d2ee-5088-251b-d46a605a9424" testName="Task.Desktop.Tests.Work.WorkHubViewModelTests.CorporateReminders_ManageOwnDoesNotRequireNotificationReadAndConflictRetainsDraft" computerName="TIM" duration="00:00:00.0274141" startTime="2026-10-09T13:47:45.5388171+03:00" endTime="2026-10-09T13:47:45.5715912+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="094b994a-ee26-42ba-b792-ed6700a2eca2" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ReminderClient_UsesOwnRecipientRuleEtagAndIndependentOccurrenceEtag" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="51b53782-724c-5134-99f8-aca56c1252ec">
+      <Execution id="d7b419b6-e983-44f9-a0e1-a01f4329a4f4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="ReminderClient_UsesOwnRecipientRuleEtagAndIndependentOccurrenceEtag" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.CorporateReminders_SnoozeUsesSavedDefaultAndOccurrenceVersionThenRefreshes" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="ac5bc59e-aefd-2c29-6900-d189356f175b">
+      <Execution id="80947f9b-ee14-4b09-ab84-e35ec12658ad" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="CorporateReminders_SnoozeUsesSavedDefaultAndOccurrenceVersionThenRefreshes" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.CorporateReminders_ManageOwnDoesNotRequireNotificationReadAndConflictRetainsDraft" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="877fbfe5-d2ee-5088-251b-d46a605a9424">
+      <Execution id="094b994a-ee26-42ba-b792-ed6700a2eca2" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="CorporateReminders_ManageOwnDoesNotRequireNotificationReadAndConflictRetainsDraft" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ReminderClient_ReadsAllPagesAndRejectsPartialOrMismatchedOccurrence" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="f3b8c3d6-92eb-589c-a00c-2917cbc18c21">
+      <Execution id="a8889824-7faf-44dd-9573-f4d890d56091" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="ReminderClient_ReadsAllPagesAndRejectsPartialOrMismatchedOccurrence" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.WorkHubViewModelTests.CorporateReminders_RevocationDropsInFlightResponse" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="004f72bb-842b-22e5-56a5-2a43a337acd5">
+      <Execution id="a057c20f-1e28-4b69-8e39-02eac53db809" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.WorkHubViewModelTests" name="CorporateReminders_RevocationDropsInFlightResponse" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f3b8c3d6-92eb-589c-a00c-2917cbc18c21" executionId="a8889824-7faf-44dd-9573-f4d890d56091" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51b53782-724c-5134-99f8-aca56c1252ec" executionId="d7b419b6-e983-44f9-a0e1-a01f4329a4f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac5bc59e-aefd-2c29-6900-d189356f175b" executionId="80947f9b-ee14-4b09-ab84-e35ec12658ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="004f72bb-842b-22e5-56a5-2a43a337acd5" executionId="a057c20f-1e28-4b69-8e39-02eac53db809" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="877fbfe5-d2ee-5088-251b-d46a605a9424" executionId="094b994a-ee26-42ba-b792-ed6700a2eca2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.22]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.33]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.37]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.50]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

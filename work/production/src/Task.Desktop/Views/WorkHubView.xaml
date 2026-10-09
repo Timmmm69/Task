@@ -159,7 +159,7 @@
         </Grid>
 
         <Grid Grid.Row="2" Visibility="{Binding IsNotifications, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationsSurface">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal"><ComboBox ItemsSource="{Binding NotificationFilters}" SelectedItem="{Binding NotificationFilter}" MinWidth="170" Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Фильтр уведомлений"/><TextBlock Text="{Binding UnreadCount, StringFormat=Непрочитано: {0}}" Margin="14,0,0,0" VerticalAlignment="Center"/></StackPanel>
                 <Button Grid.Column="1" Content="Прочитать все" Command="{Binding MarkAllReadCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="MarkAllNotificationsReadButton"/>
@@ -172,13 +172,36 @@
                             <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                 <Ellipse Width="7" Height="7" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Top" Margin="0,6,0,0"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding IsUnread}" Value="False"><Setter Property="Visibility" Value="Hidden"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse>
                                 <StackPanel Grid.Column="1" Margin="10,0,16,0"><TextBlock><Run Text="{Binding SeverityLabel, Mode=OneWay}" FontWeight="SemiBold"/><Run Text=" · "/><Run Text="{Binding TimeText, Mode=OneWay}"/></TextBlock><TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="16" Margin="0,4,0,0" TextWrapping="Wrap"/><TextBlock Text="{Binding Body}" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel>
-                                <StackPanel Grid.Column="2"><Button Content="Открыть" Command="{Binding DataContext.OpenNotificationSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6"/><Button Content="Прочитано" Command="{Binding DataContext.MarkReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/></StackPanel>
+                                <StackPanel Grid.Column="2"><Button Content="Открыть" Command="{Binding DataContext.OpenNotificationSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6"/><Button Content="Прочитано" Command="{Binding DataContext.MarkReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/><Button Content="Отложить" Command="{Binding DataContext.SnoozeNotificationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding CanSnooze,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" Margin="0,6,0,0"/></StackPanel>
                             </Grid>
                         </Border>
                     </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
                 <Border Panel.ZIndex="2"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasVisibleNotifications}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><Path Data="{StaticResource Task.Icon.Notifications}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Новых уведомлений нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/><TextBlock Text="Здесь появятся только разрешённые события." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0"/></StackPanel></Border>
             </Grid>
+            <Expander Grid.Row="2" Header="Мои корпоративные напоминания" Margin="0,12,0,0" Visibility="{Binding CanManageCorporateReminders,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="CorporateRemindersPanel">
+                <ScrollViewer MaxHeight="330" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,8">
+                        <WrapPanel><Button Content="Обновить" Command="{Binding RefreshRemindersCommand}"/><Button Content="Новое" Command="{Binding NewReminderCommand}" Margin="8,0"/></WrapPanel>
+                        <ListBox ItemsSource="{Binding CorporateReminders}" SelectedItem="{Binding SelectedCorporateReminder}" DisplayMemberPath="DisplayText" MaxHeight="110" Margin="0,8" AutomationProperties.Name="Мои напоминания"/>
+                        <TextBlock Text="Задача или событие (при редактировании можно оставить прежний объект)" TextWrapping="Wrap"/>
+                        <WrapPanel><TextBox Text="{Binding ReminderSearch,UpdateSourceTrigger=PropertyChanged}" Width="220" AutomationProperties.Name="Поиск цели напоминания"/><Button Content="Найти" Command="{Binding SearchReminderTargetsCommand}" Margin="8,0"/></WrapPanel>
+                        <ComboBox ItemsSource="{Binding ReminderTargets}" SelectedItem="{Binding ReminderTarget}" DisplayMemberPath="Title" Margin="0,6" AutomationProperties.Name="Выбор задачи или события"/>
+                        <WrapPanel>
+                            <StackPanel Width="160" Margin="0,0,12,8"><TextBlock Text="Когда напомнить"/><ComboBox ItemsSource="{Binding ReminderTriggers}" SelectedItem="{Binding ReminderTrigger}"/></StackPanel>
+                            <StackPanel Width="150" Margin="0,0,12,8"><TextBlock Text="Отступ, мин (пусто — настройка)" TextWrapping="Wrap"/><TextBox Text="{Binding ReminderOffset,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+                            <StackPanel Width="200" Margin="0,0,12,8"><TextBlock Text="Дата и время (dd.MM.yyyy HH:mm)"/><TextBox Text="{Binding ReminderAbsolute,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+                        </WrapPanel>
+                        <WrapPanel><Button Content="Сохранить" Command="{Binding SaveReminderCommand}"/><Button Content="Отменить" Command="{Binding CancelReminderCommand}" Margin="8,0"/><Button Content="Восстановить" Command="{Binding RestoreReminderCommand}"/></WrapPanel>
+                        <WrapPanel Margin="0,8">
+                            <ComboBox ItemsSource="{Binding SnoozePresets}" SelectedItem="{Binding SnoozePreset}" MinWidth="150" AutomationProperties.Name="Время отсрочки"/>
+                            <TextBox Text="{Binding SnoozeUntil,UpdateSourceTrigger=PropertyChanged}" Width="170" Margin="8,0" ToolTip="Для собственной отсрочки: dd.MM.yyyy HH:mm"/>
+                            <Button Content="Отложить" Command="{Binding SnoozeReminderCommand}"/>
+                            <Button Content="Закрыть срабатывание" Command="{Binding DismissReminderCommand}" Margin="8,0"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Expander>
         </Grid>
 
         <Grid Grid.Row="2" Visibility="{Binding IsLifecycle, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Архив и корзина" AutomationProperties.AutomationId="LifecycleSurface">
@@ -216,7 +239,7 @@
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Длительность задачи, мин"/><TextBox Text="{Binding DefaultTaskDurationMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Напоминать за, мин"/><TextBox Text="{Binding DefaultReminderOffsetMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                         </WrapPanel>
-                        <CheckBox Visibility="{Binding IsCorporate, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Content="Запускать Task вместе с Windows" IsChecked="{Binding AutostartEnabled}" Margin="0,4"/>
+                        <CheckBox Content="Запускать Task вместе с Windows" IsChecked="{Binding AutostartEnabled}" Margin="0,4"/>
                         <CheckBox Content="Разрешать локальные пути" IsChecked="{Binding AllowLocalPaths}" Margin="0,4"/>
                         <CheckBox Content="Подтверждать удаление записей каталога" IsChecked="{Binding ConfirmCatalogDelete}" Margin="0,4"/>
                         <StackPanel Width="320" HorizontalAlignment="Left" Margin="0,10,0,0"><TextBlock Text="Если файл недоступен"/><ComboBox SelectedValue="{Binding MissingFileBehavior}" SelectedValuePath="Tag"><ComboBoxItem Content="Показать действия" Tag="show_actions"/><ComboBoxItem Content="Оставить неактивным" Tag="keep_inactive"/><ComboBoxItem Content="Предложить новый путь" Tag="prompt_relink"/></ComboBox></StackPanel>
@@ -228,8 +251,9 @@
                     <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding CanReadSettings}" Value="True"/><Condition Binding="{Binding IsNotificationSettings}" Value="True"/></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers></Style></Border.Style>
                     <StackPanel>
                         <TextBlock Text="Уведомления" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                        <StackPanel Visibility="{Binding IsPersonal, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Не беспокоить (HH:mm; пусто — выключено)"/><WrapPanel><TextBox Text="{Binding QuietHoursStart, UpdateSourceTrigger=PropertyChanged}" Width="90"/><TextBox Text="{Binding QuietHoursEnd, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="8,0"/><TextBox Text="{Binding QuietHoursTimeZone, UpdateSourceTrigger=PropertyChanged}" Width="220" ToolTip="Часовой пояс, например Europe/Minsk"/></WrapPanel></StackPanel><CheckBox Content="Получать уведомления" IsChecked="{Binding NotificationsEnabled}" Margin="0,12,0,4"/>
+                        <StackPanel><TextBlock Text="Не беспокоить (HH:mm; пусто — выключено)"/><WrapPanel><TextBox Text="{Binding QuietHoursStart, UpdateSourceTrigger=PropertyChanged}" Width="90"/><TextBox Text="{Binding QuietHoursEnd, UpdateSourceTrigger=PropertyChanged}" Width="90" Margin="8,0"/><TextBox Text="{Binding QuietHoursTimeZone, UpdateSourceTrigger=PropertyChanged}" Width="220" ToolTip="Часовой пояс, например Europe/Minsk"/></WrapPanel></StackPanel><CheckBox Content="Получать уведомления" IsChecked="{Binding NotificationsEnabled}" Margin="0,12,0,4"/>
                         <CheckBox Content="Показывать desktop-уведомления" IsChecked="{Binding DesktopNotificationsEnabled}" Margin="0,4"/>
+                        <TextBlock Text="Закрытие окна оставляет Task в системном трее, если он доступен. Полный выход — через меню значка Task; после выхода уведомления не показываются." TextWrapping="Wrap" Margin="0,6"/>
                         <CheckBox Content="Воспроизводить звук" IsChecked="{Binding NotificationSoundEnabled}" Margin="0,4"/>
                         <StackPanel Width="260" HorizontalAlignment="Left" Margin="0,10,0,0"><TextBlock Text="Отсрочка по умолчанию, мин"/><TextBox Text="{Binding DefaultSnoozeMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                         <Button Content="Сохранить уведомления" Command="{Binding SaveNotificationPreferencesCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,14,0,0" AutomationProperties.AutomationId="SaveNotificationPreferencesButton"/>

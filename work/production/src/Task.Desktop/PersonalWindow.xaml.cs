@@ -19,6 +19,9 @@ public partial class PersonalWindow : Window
     private int _focusRegion;
     private readonly DispatcherTimer _schedulerTimer = new() { Interval = TimeSpan.FromSeconds(5) };
     private PersonalWindowsNotifications? _windowsNotifications;
+    private Notifications.WindowsToastPresenter? _toast;
+    private bool _explicitExit;
+    private bool? _autostartApplied;
     public PersonalWindow(PersonalApplicationModel model)
     {
         _model = model;
@@ -46,18 +49,39 @@ public partial class PersonalWindow : Window
                 if (model.Calendar is { } calendar) await calendar.ActivateAsync();
                 if (_closed || model.IsDisposed) return;
                 Reconcile(); _schedulerTimer.Start();
+                if (Environment.GetCommandLineArgs().Contains("--background") && _windowsNotifications?.IsAvailable == true) Hide();
             }
             catch (OperationCanceledException) when (_closed || model.IsDisposed) { }
         };
         SourceInitialized += (_, _) =>
         {
             WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
-            _windowsNotifications = new(this);
+            _windowsNotifications = new(this, () => { _explicitExit = true; Close(); }, "Task · Personal · работает в фоне");
+            _toast = new(Dispatcher, ActivatePersonalNotification);
             _shell.BackgroundAvailable = _windowsNotifications.IsAvailable;
         };
         _schedulerTimer.Tick += (_, _) => Reconcile();
         SystemEvents.PowerModeChanged += OnPowerModeChanged;
-        Closed += (_, _) => { _closed = true; _schedulerTimer.Stop(); SystemEvents.PowerModeChanged -= OnPowerModeChanged; _windowsNotifications?.Dispose(); _shell.PropertyChanged -= OnRouteChanged; _shell.Palette.FocusRequested -= OnPaletteFocus; _shell.Palette.Closed -= OnPaletteClosed; _shell.InboxCaptureRequested -= OnInboxCapture; _shell.Dispose(); };
+        Closed += (_, _) => { _closed = true; _schedulerTimer.Stop(); SystemEvents.PowerModeChanged -= OnPowerModeChanged; _toast?.Dispose(); _windowsNotifications?.Dispose(); _shell.PropertyChanged -= OnRouteChanged; _shell.Palette.FocusRequested -= OnPaletteFocus; _shell.Palette.Closed -= OnPaletteClosed; _shell.InboxCaptureRequested -= OnInboxCapture; _shell.Dispose(); };
+    }
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (!_explicitExit && !_model.IsDisposed && !Infrastructure.ViewState.IsCompletingClose(this) && _windowsNotifications?.IsAvailable == true)
+        { e.Cancel = true; Hide(); }
+        base.OnClosing(e);
+    }
+    internal void CloseForContextTransition() { _closed = true; _schedulerTimer.Stop(); _toast?.Dispose(); _explicitExit = true; Close(); }
+    private void ActivatePersonalNotification(Guid id, string action)
+    {
+        if (_closed || _model.IsDisposed) return;
+        try
+        {
+            if (action == "snooze") _model.Planning?.Snooze(id, useDefault: true);
+            else if (action == "read") { _model.Store.MarkNotificationRead(id); _model.Planning?.Refresh(); }
+            else { Show(); WindowState = WindowState.Normal; Activate(); _model.Planning?.OpenNotification(id); }
+        }
+        catch (Exception error) when (error is ArgumentException or PersonalTaskNotFoundException or Microsoft.Data.Sqlite.SqliteException or System.IO.IOException or UnauthorizedAccessException)
+        { _model.Planning?.ReportPresentationError("Действие не выполнено. Проверьте актуальность напоминания и повторите попытку."); }
     }
     private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
     {
@@ -69,8 +93,18 @@ public partial class PersonalWindow : Window
         _model.Planning?.Reconcile();
         try
         {
+            var preferences = _model.Store.WorkspaceNotificationPreferences();
+            if (!Notifications.NotificationPresentationPolicy.Allows(preferences, DateTimeOffset.UtcNow)) _toast?.Clear();
+            else _toast?.Reconcile(_model.Store.Notifications().Where(n => !n.IsRead).Select(n => n.Id).ToHashSet());
+            var autostart = _model.Store.WorkspaceSettings().AutostartEnabled;
+            if (_autostartApplied != autostart)
+            {
+                if (Notifications.WindowsAutostart.Apply(autostart)) _autostartApplied = autostart;
+                else _model.Planning?.ReportPresentationError("Автозапуск не применён: проверьте доступ к настройкам Windows и расположение Task.");
+            }
             foreach (var notification in _model.ClaimPresentations())
-                _model.CompletePresentation(notification.Id, _windowsNotifications?.Submit(notification, _model.NotificationSound) == true);
+                _model.CompletePresentation(notification.Id, _toast?.Submit(new(notification.Id, notification.Title,
+                    "Личное напоминание", notification.DueAt, _model.NotificationSound, CanSnooze: true)) == true);
         }
         catch (Exception error) when (error is Microsoft.Data.Sqlite.SqliteException or System.IO.IOException or UnauthorizedAccessException) { /* durable center is retained; retry next pass */ }
     }

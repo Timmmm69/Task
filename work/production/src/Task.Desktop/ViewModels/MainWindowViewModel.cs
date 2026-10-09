@@ -362,6 +362,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         get => _sessionMessage;
         private set => SetProperty(ref _sessionMessage, value);
     }
+    internal void ReportNotificationError(string message) => SessionMessage = message;
 
     public bool IsBusy => LogoutCommand.IsExecuting;
 

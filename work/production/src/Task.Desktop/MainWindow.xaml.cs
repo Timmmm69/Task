@@ -69,21 +69,28 @@ public partial class MainWindow : Window
                 MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
         }))
         {
+            _explicitExit = false;
             e.Cancel = true;
             return;
         }
 
+        if (!_authenticationTransitionClose && !_explicitExit && _tray?.IsAvailable == true)
+        {
+            e.Cancel = true; Hide();
+        }
         base.OnClosing(e);
     }
 
     internal void CloseForAuthenticationTransition()
     {
+        StopNotificationDelivery();
         _authenticationTransitionClose = true;
         Close();
     }
 
     internal void CloseAfterModeSwitch()
     {
+        StopNotificationDelivery();
         _modeTransitionClose = true;
         Close();
     }
@@ -98,6 +105,7 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        DisposeNotifications();
         if (_viewModel.Tasks is { } tasks)
         {
             tasks.PropertyChanged -= OnTasksPropertyChanged;

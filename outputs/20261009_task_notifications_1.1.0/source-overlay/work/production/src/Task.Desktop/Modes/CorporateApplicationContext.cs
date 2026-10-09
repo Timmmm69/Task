@@ -1,0 +1,464 @@
+using System.ComponentModel;
+using System.Net.Http;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Threading;
+using Task.Desktop.Security;
+using Task.Desktop.Calendar;
+using Task.Desktop.TaskApi;
+using Task.Desktop.ViewModels;
+using Task.Desktop.Projects;
+using Task.Desktop.Work;
+using Task.Desktop.Administration;
+
+
+namespace Task.Desktop.Modes;
+
+/// <summary>Desktop composition root and authentication-aware window coordinator.</summary>
+internal sealed class CorporateApplicationContext : IApplicationExecutionContext
+{
+    private readonly List<HttpClient> _ownedHttpClients = [];
+    private readonly CancellationTokenSource _startupCancellation = new();
+
+    private AuthWorkflowViewModel? _workflow;
+    private AuthWindow? _authWindow;
+    private BootstrapWindow? _bootstrapWindow;
+    private BootstrapViewModel? _bootstrapViewModel;
+    private MainWindow? _mainWindow;
+    private SessionService? _mainSessionService;
+    private bool _isShuttingDown;
+
+    private readonly global::System.Windows.Application _application;
+    private readonly string _dataDirectory;
+    private readonly Action _shutdown;
+    private readonly Action _switchMode;
+    public ApplicationMode Mode => ApplicationMode.Corporate;
+
+    public CorporateApplicationContext(global::System.Windows.Application application, string dataDirectory,
+        Action shutdown, Action switchMode)
+    {
+        _application = application;
+        _dataDirectory = dataDirectory;
+        _shutdown = shutdown;
+        _switchMode = switchMode;
+    }
+
+    public async global::System.Threading.Tasks.Task<bool> PrepareSwitchAsync()
+    {
+        if (_mainWindow?.DataContext is not MainWindowViewModel shell) return true;
+        if (ModeSwitchGuard.Inspect(shell).Any(editor => editor.IsBusy()))
+        {
+            MessageBox.Show(_mainWindow, "Дождитесь завершения текущей операции и повторите переключение.",
+                "Смена режима Task", MessageBoxButton.OK, MessageBoxImage.Information);
+            return false;
+        }
+        var window = _mainWindow;
+        window.IsEnabled = false;
+        try
+        {
+            var prepared = await ModeSwitchGuard.PrepareAsync(ModeSwitchGuard.Inspect(shell),
+                () => shell.IsConnected && _mainSessionService?.CurrentState == SessionAuthState.SignedIn,
+                (names, canSave) => ModeSwitchDialog.Choose(window, names, canSave));
+            return prepared;
+        }
+        finally { if (window.IsVisible) window.IsEnabled = true; }
+    }
+
+    public async global::System.Threading.Tasks.Task StartAsync()
+    {
+
+        try
+        {
+            var desktopDataDirectory = _dataDirectory;
+            var vault = new DesktopCredentialVault(desktopDataDirectory);
+            var workflow = new AuthWorkflowViewModel(
+                new DesktopServerSettingsStore(desktopDataDirectory),
+                new DesktopServerProbeClient(CreateHttpClient()),
+                vault,
+                endpoint => CreateSessionService(endpoint, vault),
+                SynchronizationContext.Current);
+
+            _workflow = workflow;
+            workflow.PropertyChanged += OnWorkflowPropertyChanged;
+            ShowAuthenticationWindow();
+            await workflow.StartAsync(_startupCancellation.Token);
+        }
+        catch (OperationCanceledException) when (_startupCancellation.IsCancellationRequested)
+        {
+        }
+        catch (Exception) when (_isShuttingDown)
+        {
+            // A cancelled old context must never open a startup error over the new mode.
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine(exception);
+            MessageBox.Show(
+                "Task не удалось запустить. Перезапустите приложение или обратитесь к ИТ-администратору.",
+                "Ошибка запуска Task",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            BeginShutdown();
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_isShuttingDown) return;
+        _isShuttingDown = true;
+        _mainWindow?.StopNotificationDelivery();
+        _startupCancellation.Cancel();
+        CloseBootstrap();
+        if (_workflow is not null)
+        {
+            _workflow.PropertyChanged -= OnWorkflowPropertyChanged;
+            _workflow.Dispose();
+        }
+
+        DetachMainSession();
+
+        foreach (var httpClient in _ownedHttpClients)
+        {
+            httpClient.Dispose();
+        }
+
+        if (_authWindow is not null)
+        {
+            _authWindow.Closed -= OnAuthWindowClosed;
+            _authWindow.Close();
+            _authWindow = null;
+        }
+        if (_mainWindow is not null)
+        {
+            var window = _mainWindow;
+            _mainWindow = null;
+            // PrepareSwitchAsync has already resolved editor protection. This method is
+            // separate from authentication's intentional bypass of close protection.
+            window.CloseAfterModeSwitch();
+        }
+        _startupCancellation.Dispose();
+    }
+
+    private HttpClient CreateHttpClient()
+    {
+        var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
+        var version = Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.0.0";
+        httpClient.DefaultRequestHeaders.Add("X-Task-Client-Version", version);
+        _ownedHttpClients.Add(httpClient);
+        return httpClient;
+    }
+
+    private SessionService CreateSessionService(Uri endpoint, DesktopCredentialVault vault)
+    {
+        var apiClient = new DesktopAuthApiClient(CreateHttpClient(), endpoint.AbsoluteUri);
+        var version = Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "0.1.0";
+        return new SessionService(
+            apiClient,
+            vault,
+            Environment.MachineName,
+            ClientPlatform.Windows,
+            version,
+            Environment.OSVersion.VersionString);
+    }
+
+    private void OnWorkflowPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(AuthWorkflowViewModel.CurrentState) || _workflow is null)
+        {
+            return;
+        }
+
+        if (_workflow.IsReady)
+        {
+            BeginBootstrap();
+        }
+        else if (_mainWindow is not null)
+        {
+            ShowAuthenticationWindow();
+        }
+    }
+
+    private void ShowAuthenticationWindow()
+    {
+        var workflow = _workflow;
+        if (workflow is null || _isShuttingDown)
+        {
+            return;
+        }
+
+        if (_authWindow is null)
+        {
+            _authWindow = new AuthWindow(workflow);
+            _authWindow.SwitchModeRequested += _switchMode;
+            _authWindow.Closed += OnAuthWindowClosed;
+            _authWindow.Show();
+        }
+
+        _application.MainWindow = _authWindow;
+
+        CloseBootstrap();
+
+        if (_mainWindow is not null)
+        {
+            var window = _mainWindow;
+            _mainWindow = null;
+            DetachMainSession();
+            window.CloseForAuthenticationTransition();
+        }
+
+        _authWindow.Activate();
+    }
+
+    private void BeginBootstrap()
+    {
+        var workflow = _workflow;
+        var sessionService = workflow?.ReadySessionService;
+        if (workflow is null || sessionService is null || _isShuttingDown || _bootstrapWindow is not null || _mainWindow is not null)
+        {
+            return;
+        }
+
+        var viewModel = new BootstrapViewModel(sessionService, workflow.LogoutAsync);
+        var window = new BootstrapWindow(viewModel);
+        _bootstrapViewModel = viewModel;
+        _bootstrapWindow = window;
+        viewModel.Completed += OnBootstrapCompleted;
+        window.Closed += OnBootstrapWindowClosed;
+        window.SwitchModeRequested += _switchMode;
+        _application.MainWindow = window;
+        window.Show();
+
+        if (_authWindow is not null)
+        {
+            var authWindow = _authWindow;
+            _authWindow = null;
+            authWindow.Closed -= OnAuthWindowClosed;
+            authWindow.Close();
+        }
+
+        _ = viewModel.StartAsync(_startupCancellation.Token);
+    }
+
+    private void OnBootstrapCompleted()
+    {
+        if (_isShuttingDown) return;
+        _application.Dispatcher.BeginInvoke(() =>
+        {
+            if (_isShuttingDown) return;
+            CloseBootstrap();
+            ShowMainWindow();
+        });
+    }
+
+    private void OnBootstrapWindowClosed(object? sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, _bootstrapWindow)) return;
+        CloseBootstrap();
+        if (_workflow?.IsReady == true && _mainWindow is null) BeginShutdown();
+    }
+
+    private void CloseBootstrap()
+    {
+        if (_bootstrapViewModel is not null)
+        {
+            _bootstrapViewModel.Completed -= OnBootstrapCompleted;
+            _bootstrapViewModel.Dispose();
+            _bootstrapViewModel = null;
+        }
+        if (_bootstrapWindow is not null)
+        {
+            var window = _bootstrapWindow;
+            _bootstrapWindow = null;
+            window.Closed -= OnBootstrapWindowClosed;
+            if (window.IsVisible) window.Close();
+        }
+    }
+
+    private void ShowMainWindow()
+    {
+        var workflow = _workflow;
+        if (workflow is null || !workflow.IsReady || _isShuttingDown || _mainWindow is not null)
+        {
+            return;
+        }
+
+        var sessionService = workflow.ReadySessionService;
+        var serverEndpoint = workflow.ServerEndpoint;
+        if (sessionService is null || serverEndpoint is null)
+        {
+            ShowAuthenticationWindow();
+            return;
+        }
+
+        var connectivity = new DesktopConnectivityService(new DispatcherSynchronizationContext(_application.Dispatcher));
+
+        var tasksClient = new DesktopTasksApiClient(
+            CreateHttpClient(),
+            serverEndpoint,
+            sessionService,
+            connectivity);
+        var tasks = new TasksViewModel(
+            tasksClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+        var inbox = new InboxViewModel(
+            tasksClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+        var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
+        var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
+        var calendar = new CalendarViewModel(
+            calendarClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
+                sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync);
+        var today = new TodayViewModel(
+            calendarClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            tasksClient: tasksClient,
+            currentUserId: sessionService.CurrentSessionMetadata!.UserId);
+        var projects = new ProjectsViewModel(
+            new DesktopProjectsApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
+            sessionService.CurrentSessionMetadata!.UserId,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            tasksClient);
+        var workHub = new WorkHubViewModel(
+            workClient,
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+            serverAddress: serverEndpoint.GetLeftPart(UriPartial.Authority));
+        var administration = new AdministrationViewModel(
+            new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration);
+        var window = new MainWindow(viewModel);
+        var metadata = sessionService.CurrentSessionMetadata!;
+        window.ConfigureNotifications(workClient, _dataDirectory,
+            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D") + "/" + metadata.UserId.ToString("D"));
+        Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(_dataDirectory,
+            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
+            Infrastructure.ViewState.DeviceNamespace));
+        _mainWindow = window;
+        _mainSessionService = sessionService;
+        sessionService.StateChanged += OnMainSessionStateChanged;
+        _application.MainWindow = window;
+        window.Closed += OnMainWindowClosed;
+        window.SwitchModeRequested += _switchMode;
+        window.Show();
+        ApplyMainSessionState(sessionService);
+
+        if (_authWindow is not null)
+        {
+            var authWindow = _authWindow;
+            _authWindow = null;
+            authWindow.Closed -= OnAuthWindowClosed;
+            authWindow.Close();
+        }
+    }
+
+    private void OnAuthWindowClosed(object? sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, _authWindow))
+        {
+            return;
+        }
+
+        _authWindow = null;
+        if (_workflow?.IsReady != true)
+        {
+            BeginShutdown();
+        }
+    }
+
+    private void OnMainWindowClosed(object? sender, EventArgs e)
+    {
+        if (sender is MainWindow window)
+        {
+            if (window.DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
+            window.DataContext = null;
+        }
+
+        if (!ReferenceEquals(sender, _mainWindow))
+        {
+            return;
+        }
+
+        DetachMainSession();
+        _mainWindow = null;
+        if (_workflow?.IsReady == true)
+        {
+            BeginShutdown();
+        }
+    }
+
+    private void OnMainSessionStateChanged(SessionAuthState _)
+    {
+        var sessionService = _mainSessionService;
+        if (sessionService is null || _isShuttingDown)
+        {
+            return;
+        }
+
+        _application.Dispatcher.BeginInvoke(() => ApplyMainSessionState(sessionService));
+    }
+
+    private void ApplyMainSessionState(SessionService sessionService)
+    {
+        if (!ReferenceEquals(sessionService, _mainSessionService)
+            || _mainWindow?.DataContext is not MainWindowViewModel { Tasks: not null } viewModel)
+        {
+            return;
+        }
+
+        var signedIn = sessionService.CurrentState == SessionAuthState.SignedIn;
+        if (signedIn)
+        {
+            viewModel.Tasks.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Inbox?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Calendar?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Today?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.WorkHub?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Projects?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.Administration?.UpdateCapabilities(
+                sessionService.CurrentSessionMetadata?.Capabilities);
+        }
+
+        viewModel.Tasks.UpdateSessionState(signedIn);
+        viewModel.Inbox?.UpdateSessionState(signedIn);
+        // A token refresh keeps the authenticated session; clearing it here would
+        // discard an open calendar/recurrence editor every refresh interval.
+        viewModel.Calendar?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
+        viewModel.Today?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
+        viewModel.WorkHub?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
+        viewModel.Projects?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
+        viewModel.Administration?.UpdateSessionState(signedIn || sessionService.CurrentState == SessionAuthState.Refreshing);
+    }
+
+    private void DetachMainSession()
+    {
+        if (_mainSessionService is null)
+        {
+            return;
+        }
+
+        _mainSessionService.StateChanged -= OnMainSessionStateChanged;
+        _mainSessionService = null;
+    }
+
+    private void BeginShutdown()
+    {
+        if (_isShuttingDown)
+        {
+            return;
+        }
+
+        _shutdown();
+    }
+}

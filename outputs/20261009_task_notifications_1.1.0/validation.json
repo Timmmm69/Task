@@ -1,0 +1,120 @@
+{
+  "version": "1.1.0",
+  "status": "READY",
+  "scope": "Corporate reminder management; cumulative desktop notifications implementation",
+  "base_commit": "bc6ab70ef25f206e5b68e6a2c70c0e39409fcf3a",
+  "migration_version": 15,
+  "build": {
+    "exit_code": 0,
+    "command": "dotnet build work/production/Task.sln --configuration Release"
+  },
+  "full_gate": {
+    "skipped": 0,
+    "passed": 2182,
+    "failed": 0,
+    "database": "isolated real PostgreSQL 16 with restricted runtime role",
+    "command": "dotnet test work/production/Task.sln --configuration Release --no-build"
+  },
+  "final_targeted_gate": {
+    "skipped": 0,
+    "passed": 5,
+    "failed": 0
+  },
+  "runs": [
+    {
+      "gate": "verified",
+      "file": "evidence/verified/novik_TIM_2026-10-09_13_45_18_net10.0.trx",
+      "passed": 738,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "gate": "verified",
+      "file": "evidence/verified/novik_TIM_2026-10-09_13_45_19_net10.0.trx",
+      "passed": 608,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "gate": "verified",
+      "file": "evidence/verified/novik_TIM_2026-10-09_13_45_20_net10.0.trx",
+      "passed": 836,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "gate": "desktop-final",
+      "file": "evidence/desktop-final/novik_TIM_2026-10-09_13_47_45_net10.0.trx",
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "source_files": [
+    "work/production/docs/reminder-api.md",
+    "work/production/src/Task.Api/ProductData/ProductEndpoints.cs",
+    "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+    "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+    "work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+    "work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs",
+    "work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+    "work/production/src/Task.Desktop/Notifications/CorporateNotificationAgent.cs",
+    "work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs",
+    "work/production/src/Task.Desktop/Notifications/NotificationPresentation.cs",
+    "work/production/src/Task.Desktop/Notifications/NotificationPresentationJournal.cs",
+    "work/production/src/Task.Desktop/Notifications/WindowsAutostart.cs",
+    "work/production/src/Task.Desktop/Notifications/WindowsToastPresenter.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalPlanningViewModel.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalReminders.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalWindowsNotifications.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalWorkspaceSettings.cs",
+    "work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+    "work/production/src/Task.Desktop/Task.Desktop.csproj",
+    "work/production/src/Task.Desktop/ViewModels/CorporateRemindersViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowPalette.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+    "work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+    "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+    "work/production/src/Task.Desktop/Work/DesktopNotificationApi.cs",
+    "work/production/src/Task.Desktop/Work/DesktopReminderApi.cs",
+    "work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+    "work/production/src/Task.Infrastructure/Persistence/Migrations/015_reminder_commands.sql",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresBackgroundDeliveryStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresEventNotifications.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiReminders.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSettings.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+    "work/production/src/Task.Infrastructure/Persistence/TaskPersistenceMigrationCatalog.cs",
+    "work/production/src/Task.Worker/ReminderDeliveryWorker.cs",
+    "work/production/tests/Task.Desktop.Tests/Personal/PersonalPlanningTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkspaceTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj",
+    "work/production/tests/Task.Desktop.Tests/Work/CorporateNotificationAgentTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/CorporateReminderViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/DesktopReminderApiTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/WorkHubViewModelTests.cs",
+    "work/production/tests/Task.ServiceHosts.Tests/BackgroundDeliveryWorkerTests.cs",
+    "work/production/tests/Task.Tests/PostgresBackgroundDeliveryStoreTests.cs",
+    "work/production/tests/Task.Tests/PostgresNotificationEventTests.cs",
+    "work/production/tests/Task.Tests/PostgresProductApiTests.cs",
+    "work/production/tests/Task.Tests/PostgresReminderCommandTests.cs",
+    "work/production/tests/Task.Tests/TaskPersistenceMigrationHistoryTests.cs"
+  ],
+  "independent_review": "No remaining Critical/High/Medium findings",
+  "dashboard": {
+    "validated": true,
+    "progress_increased": false,
+    "ordered": true
+  },
+  "checks": {
+    "diff_whitespace": "PASS",
+    "canonical_sources_unchanged": true,
+    "old_migrations_unchanged": true
+  },
+  "excluded_by_user": [
+    "Physical Windows banner/click/sound/lock/sleep/logon acceptance"
+  ]
+}

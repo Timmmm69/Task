@@ -50,6 +50,8 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
             if (write && request.Route.Resource == "catalog-items")
                 Run(connection, transaction, "SELECT pg_advisory_xact_lock(hashtextextended('task-catalog:' || @org::text,0));", request);
             var operation = request.Route.Method + " " + request.Route.Path + ":" + request.Id + ":" + request.ChildId;
+            if (request.Route.Resource == "reminders" && !request.Permissions.Contains("Reminder.ManageOwn"))
+                throw Error(403, "FORBIDDEN", "Reminder management permission is required.");
             if (request.IdempotencyKey is not null)
             {
                 var replay = One(connection, transaction,
@@ -68,8 +70,10 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
                     }
                     if (request.Id is not null && request.Route.Resource == "objects")
                         CheckLinkWrite(connection, transaction, request, RequireAny(connection, transaction, request, request.Id.Value));
+                    if (request.Route.Resource == "reminders")
+                        RequireReminder(connection, transaction, request with { Id = request.Id ?? GuidValue(replay["result"]!["body"]!.AsObject(), "id") });
                     var result = replay["result"]!.AsObject();
-                    if (request.Id is null && request.Route.Operation == "create" && result["body"]?["id"] is { } replayId)
+                    if (request.Id is null && request.Route.Operation == "create" && request.Route.Resource != "reminders" && result["body"]?["id"] is { } replayId)
                         RequireObject(connection, transaction, request with { Id = Guid.Parse(replayId.ToString()) }, Resources[request.Route.Resource]);
                     return RedactResponse(request, new(result["body"]?.DeepClone(), result["status"]!.GetValue<int>(), result["version"]?.GetValue<int>()));
                 }
@@ -95,6 +99,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
 
     private ProductApiResponse Dispatch(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
+        if (r.Route.Resource == "reminders") return Reminders(c, t, r);
         if (r.Route.Resource is "roles" or "project-roles" or "user-roles") return Roles(c, t, r);
         if (r.Route.Resource is "user-settings" or "organization-settings" or "preferences") return Settings(c, t, r);
         if (r.Route.Operation.StartsWith("task-", StringComparison.Ordinal)) return TaskWorkspace(c, t, r);
@@ -303,12 +308,18 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
     private static void Record(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, string type, Guid id, int version, JsonObject? old, JsonObject current)
     {
         var eventId = Guid.NewGuid();
+        var action = type == "reminder" ? r.Route.Operation switch
+        {
+            "create" => "ReminderCreated", "patch" => "ReminderUpdated", "cancel" => "ReminderCancelled",
+            "snooze" => "ReminderSnoozed", "dismiss" => "ReminderDismissed", "reschedule" => "ReminderRestored", _ => throw Invalid("Invalid reminder event.")
+        } : type + "." + r.Route.Operation;
         // Paths and contact values never enter public audit/outbox payloads.
         var state = new JsonObject { ["id"] = id, ["version"] = version, ["lifecycleState"] = current["lifecycleState"]?.DeepClone() };
+        if (type == "project" && r.Route.Operation == "member-add") state["recipientUserId"] = r.Body["userAccountId"]?.DeepClone();
         var changed = current.Where(pair => old is null || !JsonNode.DeepEquals(pair.Value, old[pair.Key])).Select(pair => pair.Key).ToArray();
         Run(c, t, "INSERT INTO governance.domain_events(id,organization_id,aggregate_id,aggregate_type,aggregate_version,event_type,actor_user_id,correlation_id,operation_id,idempotency_key,changed_fields,payload) " +
             "VALUES(@event,@org,@id,@type,@version,@action,@user,@correlation,@operation,@key,@fields,@payload::jsonb);", r,
-            ("event", eventId), ("id", id), ("type", type), ("version", version), ("action", type + "." + r.Route.Operation),
+            ("event", eventId), ("id", id), ("type", type), ("version", version), ("action", action),
             ("operation", r.Route.Method + ":" + r.Route.Resource + ":" + r.Route.Operation + ":" + id),
             ("key", r.IdempotencyKey ?? eventId.ToString("N")), ("fields", changed), ("payload", state.ToJsonString()));
         Run(c, t, "INSERT INTO governance.outbox_messages(id,organization_id,domain_event_id,destination,message_type,payload) " +
@@ -317,6 +328,11 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
             "VALUES(@event,@org,@user,@action,@id,@type,'success',@correlation,@event,@payload::jsonb,@old::jsonb,@new::jsonb);", r,
             ("event", eventId), ("action", type + "." + r.Route.Operation), ("id", id), ("type", type), ("payload", state.ToJsonString()),
             ("old", old is null ? "null" : new JsonObject { ["version"] = Version(old) }.ToJsonString()), ("new", state.ToJsonString()));
+        if (type is "task" or "project")
+        {
+            using var notifications = PostgresEventNotifications.Command(c, t, eventId);
+            notifications.ExecuteNonQuery();
+        }
     }
 
     private static NpgsqlCommand Command(NpgsqlConnection c, NpgsqlTransaction t, string sql, ProductApiRequest r, params (string, object?)[] args)

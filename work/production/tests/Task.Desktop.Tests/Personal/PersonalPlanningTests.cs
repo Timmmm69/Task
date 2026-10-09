@@ -266,6 +266,43 @@ public sealed class PersonalPlanningTests : IDisposable
         Assert.Equal("claimed", again.Notifications()[0].PresentationState); // interruption after claim cannot repeat a Windows popup
     }
     [Fact]
+    public void SnoozePersistsNewOccurrenceUsesDefaultAndCannotDuplicate()
+    {
+        Guid id; Guid next;
+        using (var store = Open())
+        {
+            var prefs = store.WorkspaceNotificationPreferences();
+            store.SaveWorkspaceNotifications(prefs with { DefaultSnoozeMinutes = 30 });
+            var task = store.Create(new("Snooze task", DesktopTaskPriority.Normal, _clock.Now));
+            store.AddReminder(task.Id, DesktopScheduleItemType.Task, ReminderTriggerType.AtStart);
+            Assert.Equal(1, store.ReconcileReminders()); id = Assert.Single(store.Notifications()).Id;
+            var snoozed = store.SnoozeNotification(id); next = snoozed.Id;
+            Assert.Equal(_clock.Now.AddMinutes(30), snoozed.DueAt); Assert.True(store.Notifications()[0].IsRead);
+            Assert.Throws<ArgumentException>(() => store.SnoozeNotification(id));
+            Assert.Equal(2, store.Reminders().Count); Assert.Equal(0, store.ReconcileReminders());
+        }
+        _clock.Now = _clock.Now.AddMinutes(30);
+        using var reopened = Open(); Assert.Equal(1, reopened.ReconcileReminders());
+        Assert.Equal(2, reopened.Notifications().Count); Assert.Equal(next, reopened.Notifications().First(n => n.Id != id).ReminderId);
+        Assert.Equal(0, reopened.ReconcileReminders());
+        reopened.MarkAllPersonalNotificationsRead(); Assert.All(reopened.Notifications(), n => Assert.True(n.IsRead));
+    }
+    [Fact]
+    public void PersonalPopupDefersAndRetriesButCannotSnoozeCancelledTarget()
+    {
+        using var store = Open();
+        var task = store.Create(new("Target", DesktopTaskPriority.Normal, _clock.Now));
+        store.AddReminder(task.Id, DesktopScheduleItemType.Task, ReminderTriggerType.AtStart); store.ReconcileReminders();
+        store.SaveWorkspaceNotifications(store.WorkspaceNotificationPreferences() with { DesktopEnabled = false });
+        Assert.Empty(store.ClaimPresentations()); Assert.Equal("pending", Assert.Single(store.Notifications()).PresentationState);
+        store.SaveWorkspaceNotifications(store.WorkspaceNotificationPreferences() with { DesktopEnabled = true });
+        var notification = Assert.Single(store.ClaimPresentations()); store.CompletePresentation(notification.Id, false);
+        Assert.Equal("pending", Assert.Single(store.Notifications()).PresentationState);
+        Assert.Single(store.ClaimPresentations()); store.CompletePresentation(notification.Id, true); Assert.Empty(store.ClaimPresentations());
+        store.Transition(new(task.Id, 1, DesktopTaskStatus.Cancelled));
+        Assert.Throws<ArgumentException>(() => store.SnoozeNotification(notification.Id)); Assert.Single(store.Reminders());
+    }
+    [Fact]
     public void ReminderRecalculationAndTerminalTargets_DoNotDeliverStaleNotifications()
     {
         using var store = Open(); var start = _clock.Now.AddHours(1);

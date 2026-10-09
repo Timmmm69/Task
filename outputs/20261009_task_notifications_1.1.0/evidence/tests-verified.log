@@ -1,0 +1,15 @@
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\corporate_reminders_1\evidence\verified\novik_TIM_2026-10-09_13_45_18_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   738, пропущено     0, всего   738, длительность 6 s. - Task.Desktop.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\corporate_reminders_1\evidence\verified\novik_TIM_2026-10-09_13_45_19_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   608, пропущено     0, всего   608, длительность 21 s. - Task.ServiceHosts.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\corporate_reminders_1\evidence\verified\novik_TIM_2026-10-09_13_45_20_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   836, пропущено     0, всего   836, длительность 40 s. - Task.Tests.dll (net10.0)

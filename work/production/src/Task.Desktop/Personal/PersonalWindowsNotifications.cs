@@ -13,9 +13,12 @@ internal sealed class PersonalWindowsNotifications : IDisposable
     private readonly int _taskbarCreated;
     private IconData _data;
     private bool _registered;
+    private readonly Action? _exit;
+    private readonly string _tip;
     public bool IsAvailable => _registered;
-    public PersonalWindowsNotifications(Window window)
+    public PersonalWindowsNotifications(Window window, Action? exit = null, string tip = "Task · Personal")
     {
+        _exit = exit; _tip = tip;
         _window = window; var handle = new WindowInteropHelper(window).Handle;
         _source = HwndSource.FromHwnd(handle)!;
         _data = new()
@@ -26,7 +29,7 @@ internal sealed class PersonalWindowsNotifications : IDisposable
             Flags = 7,
             CallbackMessage = Callback,
             Icon = LoadIcon(IntPtr.Zero, new IntPtr(32512)),
-            Tip = "Task · Personal",
+            Tip = _tip,
             Info = "",
             InfoTitle = ""
         };
@@ -42,6 +45,16 @@ internal sealed class PersonalWindowsNotifications : IDisposable
     private IntPtr Hook(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (message == _taskbarCreated) Register();
+        if (message == Callback && ((long)lParam & 0xFFFF) is 0x205 or 0x7B)
+        {
+            var menu = new System.Windows.Controls.ContextMenu();
+            var open = new System.Windows.Controls.MenuItem { Header = "Открыть Task" };
+            open.Click += (_, _) => { _window.Show(); _window.WindowState = WindowState.Normal; _window.Activate(); };
+            var exit = new System.Windows.Controls.MenuItem { Header = "Выйти из Task (уведомления остановятся)" };
+            exit.Click += (_, _) => _exit?.Invoke();
+            menu.Items.Add(open); if (_exit is not null) menu.Items.Add(exit);
+            menu.IsOpen = true; handled = true;
+        }
         if (message == Callback && ((long)lParam & 0xFFFF) is 0x400 or 0x401 or 0x202 or 0x405)
         { _window.Show(); _window.WindowState = WindowState.Normal; _window.Activate(); handled = true; }
         return IntPtr.Zero;

@@ -137,7 +137,7 @@ internal sealed class PersonalApplicationContext(
         next.Closed += OnClosed;
         application.MainWindow = next;
         next.Show();
-        if (old is not null) { old.Closed -= OnClosed; old.Close(); old.DataContext = null; }
+        if (old is not null) { old.Closed -= OnClosed; if (old is PersonalWindow personal) personal.CloseForContextTransition(); else old.Close(); old.DataContext = null; }
     }
     private void Backup()
     {
@@ -187,6 +187,6 @@ internal sealed class PersonalApplicationContext(
         _disposed = true;
         CloseModel();
         _ownership?.Dispose(); _ownership = null;
-        if (_window is not null) { _window.Closed -= OnClosed; _window.Close(); _window.DataContext = null; _window = null; }
+        if (_window is not null) { _window.Closed -= OnClosed; if (_window is PersonalWindow personal) personal.CloseForContextTransition(); else _window.Close(); _window.DataContext = null; _window = null; }
     }
 }
