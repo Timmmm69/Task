@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "version": "1.0.0",
+  "archive_sha256": "3596547d460b81354a6ba10d1edc417c3a2abcc4833bc8be823b1b23b691846e",
+  "payload_files_verified": 60,
+  "desktop_tests_passed": 747,
+  "native_checks_passed": 47
+}

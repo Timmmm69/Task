@@ -1,0 +1,331 @@
+{
+  "name": "Task UX journey",
+  "version": "1.0.0",
+  "base_commit": "7b9cd800d3e465a281ac96d10824ad7475aee9cd",
+  "desktop_tests_passed": 747,
+  "native_checks_passed": 47,
+  "source_scope": [
+    "work/production/src/Task.Desktop/AuthWindow.xaml",
+    "work/production/src/Task.Desktop/MainWindow.xaml",
+    "work/production/src/Task.Desktop/ModeSelectorWindow.xaml",
+    "work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+    "work/production/src/Task.Desktop/PersonalWindow.xaml",
+    "work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs",
+    "work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+    "work/production/src/Task.Desktop/Views/InboxView.xaml",
+    "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+    "work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml",
+    "work/production/src/Task.Desktop/Views/TodayView.xaml",
+    "work/production/tests/Task.Desktop.Tests/ApplicationModeStartupTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Personal/PersonalJourneyTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs",
+    "work/production/verification/Test-DesktopShell.ps1",
+    "work/ux_journey_1/README.md",
+    "work/ux_journey_1/UiProbe/Program.cs",
+    "work/ux_journey_1/UiProbe/UiProbe.csproj",
+    "work/ux_journey_1/desktop.runsettings",
+    "work/ux_journey_1/package.py",
+    "work/ux_journey_1/update-dashboard.mjs"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 10,
+      "sha256": "518bf59a49c016ec19b0e3a01f13893882d3bf1a3cdff584102451d15c626b2e"
+    },
+    {
+      "path": "changes.patch",
+      "size": 87893,
+      "sha256": "276fb58f6cb0e90a1e3d5fb8d58ba2fcf1f443e892379dbb9e224920fee4e7fd"
+    },
+    {
+      "path": "evidence/desktop-gate.trx",
+      "size": 1070357,
+      "sha256": "5e9ee4874fd77331a77af4a31cea36375e936d42505c2efef8f586bd84dc46f2"
+    },
+    {
+      "path": "evidence/focus-gate.trx",
+      "size": 3020,
+      "sha256": "d93e44a68f147b75095ed96cf5d5d63b57a251112207a98547b899df66a035b7"
+    },
+    {
+      "path": "evidence/native/corporate-day-small-144.png",
+      "size": 74976,
+      "sha256": "cd65555f9ba6a93b3919d55d6fb7386b75adb6a31d42c0ce4239e55cafc4eaac"
+    },
+    {
+      "path": "evidence/native/corporate-day-small-96.png",
+      "size": 46106,
+      "sha256": "956d7bc5ad40d06fdf712bd0a007bea50541e342040e5199422718bd3f09c747"
+    },
+    {
+      "path": "evidence/native/corporate-editor-144.png",
+      "size": 186439,
+      "sha256": "8a1559c34a58fd6f0aa9885648a41838e0d9cda55222e3cd36741fbe78123f7a"
+    },
+    {
+      "path": "evidence/native/corporate-editor-96.png",
+      "size": 110911,
+      "sha256": "6d2e182157f716c849e6f79ea68ef86497c7941b2af7102fe7b5f18ec18c71a3"
+    },
+    {
+      "path": "evidence/native/corporate-editor-small-144.png",
+      "size": 77930,
+      "sha256": "5283dbe5b730e9d96cad78062d0122e19d6e93c143ef7a916feb869cd56aa28b"
+    },
+    {
+      "path": "evidence/native/corporate-editor-small-96.png",
+      "size": 47989,
+      "sha256": "6d05dff5e6336c715763afec70e71e89f69991354c903a94f285690a66e5dfc6"
+    },
+    {
+      "path": "evidence/native/corporate-empty-144.png",
+      "size": 65522,
+      "sha256": "16f22811dccc995ce5c2917051ee17867a9a720be778597baba11f8852c00b6e"
+    },
+    {
+      "path": "evidence/native/corporate-empty-96.png",
+      "size": 40119,
+      "sha256": "57ca64db112ce6d3d9ccc1ae3fac9cd3f8670a2bd02ff6e8abc39c95af71e192"
+    },
+    {
+      "path": "evidence/native/corporate-saved-144.png",
+      "size": 150606,
+      "sha256": "ee5567be17978df890c0ff4e8eb49c6b58419ed646bf923a2c6b27fbbb9c6d1d"
+    },
+    {
+      "path": "evidence/native/corporate-saved-96.png",
+      "size": 88489,
+      "sha256": "a1a09368967505faafbde5600aa5380aaa6501a17c16ba5b88369797c8b2a730"
+    },
+    {
+      "path": "evidence/native/mode-selector-144.png",
+      "size": 50999,
+      "sha256": "4c580dad951da462071a6df40a74dc98b45f4e7fb95f5431e089cd50814be719"
+    },
+    {
+      "path": "evidence/native/mode-selector-96.png",
+      "size": 30091,
+      "sha256": "b1aa6bfbe9b1175f361da37eceefd87e17faa11e54dfc916578070a862eec793"
+    },
+    {
+      "path": "evidence/native/mode-selector-small-144.png",
+      "size": 34099,
+      "sha256": "e044fa83337380d0431ac734e6982de8fab1f4f1787264f611cebe99afa157f4"
+    },
+    {
+      "path": "evidence/native/mode-selector-small-96.png",
+      "size": 20427,
+      "sha256": "da3f9ef8f40b330dc4073154db70c6d21e99e03db2812ac7da5b49077352d77d"
+    },
+    {
+      "path": "evidence/native/personal-day-small-144.png",
+      "size": 60994,
+      "sha256": "540d1e83fbb0e2e3735fa08165e80365b3abd666936c6c736b41b39678192a47"
+    },
+    {
+      "path": "evidence/native/personal-day-small-96.png",
+      "size": 36447,
+      "sha256": "79501d200c78a2c75cf5522c7cb5d17a2a3b79dbddba22d427d2e81d1011dca1"
+    },
+    {
+      "path": "evidence/native/personal-editor-144.png",
+      "size": 146512,
+      "sha256": "bdc7e2f6c8e5a6d6ff2cfe4478efef6da9407efb0c1bed3f6ceb22de4a3b33e2"
+    },
+    {
+      "path": "evidence/native/personal-editor-96.png",
+      "size": 85091,
+      "sha256": "60da91dc9e9ebfced0b9fdb2126dc003e50f7d687f1b0676f08439eb71c4c18c"
+    },
+    {
+      "path": "evidence/native/personal-editor-small-144.png",
+      "size": 62868,
+      "sha256": "a131004da6f19ca74fd0e9859e412e6eea072805a097eda87c7b995155958e86"
+    },
+    {
+      "path": "evidence/native/personal-editor-small-96.png",
+      "size": 37154,
+      "sha256": "595044d49b0f3c11c6db097e0e1357484ccf7b8f33bbcc04fbd3ba6db2369e7d"
+    },
+    {
+      "path": "evidence/native/personal-empty-144.png",
+      "size": 68811,
+      "sha256": "cd86092db3b88eb1187537f50a7331a562118c4b6721fb105323865593d591f6"
+    },
+    {
+      "path": "evidence/native/personal-empty-96.png",
+      "size": 41973,
+      "sha256": "738189746244fc18595bdc337430959228f5a791739aa43003817a46e19a543c"
+    },
+    {
+      "path": "evidence/native/personal-saved-144.png",
+      "size": 122193,
+      "sha256": "9fc9d5edd35be771bffadb32d8a853a3463dd54b5fe8d0941b1e0c5cc242b78f"
+    },
+    {
+      "path": "evidence/native/personal-saved-96.png",
+      "size": 71792,
+      "sha256": "ca1ae09bc743f5907f9bb724e9c7d3a87c72d0c58816a6dafd1a3ea90b4aeb39"
+    },
+    {
+      "path": "evidence/native/ui-results.json",
+      "size": 2328,
+      "sha256": "4fe56d38a71497084b70beef6b8910cb918c1ac6ab802fab50709c91ebe51d5a"
+    },
+    {
+      "path": "evidence/release-build.log",
+      "size": 152,
+      "sha256": "b7ecc459994fd02f8250b72c72cb0b7990428342990a7971fc6e86ef975b9b04"
+    },
+    {
+      "path": "evidence/shell-contract.log",
+      "size": 958,
+      "sha256": "236f096750ceccbf4278ad613622a770424fa041ff0e2395ad769df043e732f1"
+    },
+    {
+      "path": "README.md",
+      "size": 476,
+      "sha256": "2d9185ffac677b75346e25f13cd3afe00915bdb9fb6970dee2ab4ad9c190cedc"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/AuthWindow.xaml",
+      "size": 23954,
+      "sha256": "736690fc86ca2e5e1a7cb34a790fc2a885c7780e849efb9ee44440d47b05692f"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/MainWindow.xaml",
+      "size": 107537,
+      "sha256": "49d7ea7a9f1cd611db0fc025ff3c047a7d261c9aca5ed027b3c94bf9dfc7024c"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ModeSelectorWindow.xaml",
+      "size": 2328,
+      "sha256": "a2dcba45f1c9a6e8285c35ac273066cc49271b3a69f4efbdfd145043e820c8a4"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "size": 6829,
+      "sha256": "6175d3cfaa66cb91a161b06a486224c6557f72fdf27cb9fd1132b2bcf7a18f55"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+      "size": 17623,
+      "sha256": "59c593f9c4a7d179574c2d101c6f2944aed14a9ce0f2ced3b720a82a9ef0bd32"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/PersonalWindow.xaml",
+      "size": 8529,
+      "sha256": "6943a54ffe0c98580baf553fd30121e4b695bfc1f84e862e44374cbe28f0d639"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+      "size": 29956,
+      "sha256": "009e5ad49e9a90bb81380af1d330f350f589eab9a49879bec72b85c81638247e"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "size": 29249,
+      "sha256": "4291dc178ed6c5e086f40e11c31376747fc1f7149bfa1d4208c7f6bad7aa8c88"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs",
+      "size": 9337,
+      "sha256": "a3ad0eaf6dea0c4e7c32ab1302c412cff0c8deffd1a4e18d2bb53e21e39c02a4"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+      "size": 15575,
+      "sha256": "89bdf2616a3cb5acc0b1bcc78b9ae58602177bb2a1fc330d35b1a739d7d57ccc"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "size": 78321,
+      "sha256": "b2506a5e3e22dc7a9ae7b426e57cf4b3b2042dada9c114ad83a9641f74a1b237"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/InboxView.xaml",
+      "size": 29283,
+      "sha256": "a85f015d1ef89ee84ebd583241c713bd53caf0d9a79ba4a496aba1aa11e14882"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "size": 16422,
+      "sha256": "774e9e86e02e424937ddf1e276a5a7f77f1a4bbffb2cccb818102fa446a20bf1"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml",
+      "size": 9065,
+      "sha256": "563bb4e34a0ca65a5357f610ee854655d8c0458d5f585b42e4fb3170e2ee2b74"
+    },
+    {
+      "path": "source-snapshot/work/production/src/Task.Desktop/Views/TodayView.xaml",
+      "size": 44859,
+      "sha256": "f6fc76bbe5fd85c7097d54d7228ea7852c0ae4a8bc05b89afe76fe66fce28199"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/ApplicationModeStartupTests.cs",
+      "size": 3863,
+      "sha256": "0f07e8c665799f4a8c10e10aa7623f2e92b5b9e494d879e796e87902dbff6f62"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Personal/PersonalJourneyTests.cs",
+      "size": 3371,
+      "sha256": "be20346127a289fbe926ae6fcf8f10e0823af4c5ca2d3b974f90ad4834c7fa63"
+    },
+    {
+      "path": "source-snapshot/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs",
+      "size": 5704,
+      "sha256": "aa3436a11260befa6b7b0f6c20bb7e9e9731b1bbd5133e5dfb33f02f0d7ecfe4"
+    },
+    {
+      "path": "source-snapshot/work/production/verification/Test-DesktopShell.ps1",
+      "size": 5024,
+      "sha256": "b01fe7eee849317998f45743f005927897d1641885f24d907a3c19da608ce72a"
+    },
+    {
+      "path": "source-snapshot/work/ux_journey_1/desktop.runsettings",
+      "size": 164,
+      "sha256": "86f8a4e78b6bc5cc4ae0b2758ea558e9c3658f307ecf203b576427e4052461b7"
+    },
+    {
+      "path": "source-snapshot/work/ux_journey_1/package.py",
+      "size": 9934,
+      "sha256": "95cd0f6d41f06b7387ee33e797268b40669bfc4aedd464d7e492e51aca57aa39"
+    },
+    {
+      "path": "source-snapshot/work/ux_journey_1/README.md",
+      "size": 2991,
+      "sha256": "bf4bd8ed463aef4609d3d57fbe239b53dbc11517e89642c50d2c19de51f69ea3"
+    },
+    {
+      "path": "source-snapshot/work/ux_journey_1/UiProbe/Program.cs",
+      "size": 15056,
+      "sha256": "3b68f3358a2967d4a40c1c3c23b5fe127a3aed9211e684025f21dd08463f34a6"
+    },
+    {
+      "path": "source-snapshot/work/ux_journey_1/UiProbe/UiProbe.csproj",
+      "size": 379,
+      "sha256": "ce6454ec38d50af5161ce3741d54282da2275cabefddd577541aa0a5d66717df"
+    },
+    {
+      "path": "source-snapshot/work/ux_journey_1/update-dashboard.mjs",
+      "size": 2052,
+      "sha256": "908e0eeba7257689a1ddac2d310636307b0934f66db32c86d98542f7f4626e13"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 4973,
+      "sha256": "19ff90b25185c7e1c8102bf6b6248e927f9de479dd7eb847002ce634d34a3339"
+    },
+    {
+      "path": "VERSION",
+      "size": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

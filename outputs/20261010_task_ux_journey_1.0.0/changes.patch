@@ -1,0 +1,1013 @@
+diff --git a/work/production/src/Task.Desktop/AuthWindow.xaml b/work/production/src/Task.Desktop/AuthWindow.xaml
+index 52548cb..e9d2eda 100644
+--- a/work/production/src/Task.Desktop/AuthWindow.xaml
++++ b/work/production/src/Task.Desktop/AuthWindow.xaml
+@@ -5,7 +5,7 @@
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
+         mc:Ignorable="d"
+-        Title="Task — Corporate · вход"
++        Title="Task — вход в пространство компании"
+         Icon="Assets/Task.ico"
+         Width="1120" Height="700" MinWidth="800" MinHeight="480"
+         WindowStartupLocation="CenterScreen"
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml b/work/production/src/Task.Desktop/MainWindow.xaml
+index ddc9c42..f669f43 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml
++++ b/work/production/src/Task.Desktop/MainWindow.xaml
+@@ -4,9 +4,9 @@
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+-        xmlns:views="clr-namespace:Task.Desktop.Views"
++        xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
+         mc:Ignorable="d"
+-        Title="Task — Corporate"
++        Title="Task — пространство компании"
+         Icon="Assets/Task.ico"
+         Width="1200" Height="900" MinWidth="800" MinHeight="480"
+         WindowStartupLocation="CenterScreen"
+@@ -52,7 +52,7 @@
+                 </Border>
+ 
+                 <StackPanel Grid.Row="2" Margin="8,16">
+-                    <TextBlock Text="Corporate" Margin="8,0,0,8"/>
++                    <TextBlock Text="Компания" Margin="8,0,0,8"/>
+                     <Button Content="Сменить режим" Click="OnSwitchMode" Style="{StaticResource Task.Button.Secondary}"
+                             AutomationProperties.AutomationId="SwitchModeButton"/>
+                 </StackPanel>
+@@ -149,8 +149,9 @@
+                                    ToolTip="{Binding SelectedSectionSupportingText}">
+                             <TextBlock.Style>
+                                 <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Shell.PageContext}">
+-                                    <Setter Property="Visibility" Value="Visible" />
++                                    <Setter Property="Visibility" Value="Collapsed" />
+                                     <Style.Triggers>
++                                        <DataTrigger Binding="{Binding IsTodaySectionSelected}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                         <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                                             <Setter Property="Visibility" Value="Collapsed" />
+                                         </DataTrigger>
+@@ -159,6 +160,7 @@
+                             </TextBlock.Style>
+                         </TextBlock>
+                     </Grid>
++                    <TextBlock Text="{Binding SelectedSection.SupportingText}" TextWrapping="Wrap" Margin="0,4,0,0" Style="{StaticResource Task.Shell.StatusText}" AutomationProperties.AutomationId="SectionHelpText" />
+                     <TextBlock Text="{Binding SessionMessage}"
+                                FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+@@ -447,6 +449,7 @@
+                     <RowDefinition Height="Auto" />
+                     <RowDefinition Height="*" />
+                     <RowDefinition Height="Auto" />
++                    <RowDefinition Height="Auto" />
+                 </Grid.RowDefinitions>
+ 
+                 <Grid Grid.Row="0" Margin="0,0,0,14">
+@@ -567,10 +570,16 @@
+                                    TextAlignment="Center" />
+                         <TextBlock Text="{Binding ScreenMessage}" Style="{StaticResource Task.State.Body}"
+                                    Margin="0,6,0,16" TextAlignment="Center" />
+-                        <Button Content="Обновить" Command="{Binding RefreshCommand}"
+-                                Style="{StaticResource Task.Button.Secondary}"
+-                                MinWidth="108"
+-                                AutomationProperties.Name="Повторить загрузку списка задач" />
++                        <Button Content="Создать задачу" Command="{Binding NewTaskCommand}" ToolTip="{Binding CreateActionHint}" ToolTipService.ShowOnDisabled="True" MinWidth="160" AutomationProperties.AutomationId="TasksEmptyCreateTask">
++                            <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers>
++                                <DataTrigger Binding="{Binding State}" Value="{x:Static vm:TasksScreenState.Empty}"><Setter Property="Visibility" Value="Visible"/></DataTrigger>
++                            </Style.Triggers></Style></Button.Style>
++                        </Button>
++                        <Button Content="Обновить" Command="{Binding RefreshCommand}" MinWidth="108" AutomationProperties.Name="Повторить загрузку списка задач">
++                            <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Style.Triggers>
++                                <DataTrigger Binding="{Binding State}" Value="{x:Static vm:TasksScreenState.Empty}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
++                            </Style.Triggers></Style></Button.Style>
++                        </Button>
+                     </StackPanel>
+                 </Border>
+ 
+@@ -966,12 +975,21 @@
+                     </Button>
+                 </Grid>
+ 
+-                <TextBlock Text="{Binding Announcement}" Width="1" Height="1" Opacity="0"
+-                           IsHitTestVisible="False" AutomationProperties.Name="Уведомление задач"
+-                           AutomationProperties.AutomationId="TasksAnnouncement"
+-                           AutomationProperties.LiveSetting="Assertive" />
++                <Border Grid.Row="5" Margin="0,8,0,0">
++                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}"><Style.Triggers>
++                        <DataTrigger Binding="{Binding Announcement}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
++                        <DataTrigger Binding="{Binding Announcement}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
++                    </Style.Triggers></Style></Border.Style>
++                    <StackPanel>
++                        <TextBlock Text="{Binding Announcement}" TextWrapping="Wrap" AutomationProperties.Name="Уведомление задач"
++                                   AutomationProperties.AutomationId="TasksAnnouncement" AutomationProperties.LiveSetting="Assertive" />
++                        <Button Content="Открыть задачу" Command="{Binding OpenSavedTaskCommand}" Style="{StaticResource Task.Button.Secondary}"
++                                Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}"
++                                HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="TasksOpenSavedTask" />
++                    </StackPanel>
++                </Border>
+ 
+-                <Border Grid.RowSpan="5" HorizontalAlignment="Right" Width="510" MaxWidth="510"
++                <Border Grid.RowSpan="6" HorizontalAlignment="Right" Width="510" MaxWidth="510"
+                         Background="{DynamicResource Task.Brush.Surface.Base}"
+                         BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0"
+                         Padding="20" Panel.ZIndex="20" DataContext="{Binding Editor}"
+@@ -995,17 +1013,18 @@
+ 
+                             <TextBlock Text="{Binding SimilarNotice}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                        AutomationProperties.Name="Основа новой задачи" AutomationProperties.LiveSetting="Polite" />
+-                            <TextBlock Text="Название" FontWeight="SemiBold" Margin="0,0,0,5" />
++                            <TextBlock Text="Название (обязательно)" FontWeight="SemiBold" Margin="0,0,0,5" />
+                             <TextBox x:Name="TaskTitleTextBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                      MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="20"
+                                      AutomationProperties.Name="Название задачи"
+                                      AutomationProperties.AutomationId="TaskTitleTextBox"
+                                      AutomationProperties.HelpText="Обязательное поле, не более 500 символов" />
++                            <TextBlock Text="Например: подготовить договор" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                             <TextBlock Text="{Binding TitleError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                                        TextWrapping="Wrap" Margin="0,4,0,12" AutomationProperties.Name="Ошибка названия задачи"
+                                        AutomationProperties.LiveSetting="Assertive" />
+ 
+-                            <TextBlock Text="Приоритет" FontWeight="SemiBold" Margin="0,0,0,5" />
++                            <TextBlock Text="Приоритет (обычный по умолчанию)" FontWeight="SemiBold" Margin="0,0,0,5" />
+                             <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}"
+                                       DisplayMemberPath="Text" Style="{StaticResource Task.Input.Combo}" TabIndex="21"
+                                       AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="TaskPriorityComboBox" />
+@@ -1015,22 +1034,32 @@
+                                        AutomationProperties.Name="Ошибка приоритета задачи"
+                                        AutomationProperties.LiveSetting="Assertive" />
+ 
++                            <TextBlock Text="Запланировать на день (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
++                            <TextBox Text="{Binding Card.Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}"
++                                     Style="{StaticResource Task.Input.Text}" TabIndex="22"
++                                     AutomationProperties.Name="День задачи" AutomationProperties.AutomationId="TaskScheduledDateTextBox"
++                                     AutomationProperties.HelpText="{Binding Card.DateHint}" />
++                            <TextBlock Text="{Binding Card.DateHint}" TextWrapping="Wrap" Margin="0,4,0,0"
++                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}" />
++
+                             <TextBlock Text="Начало (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
+                             <TextBox Text="{Binding StartText, UpdateSourceTrigger=PropertyChanged}"
+-                                     Style="{StaticResource Task.Input.Text}" TabIndex="22"
++                                     Style="{StaticResource Task.Input.Text}" TabIndex="23"
+                                      AutomationProperties.Name="Дата и время начала"
+                                      AutomationProperties.AutomationId="TaskStartTextBox"
+                                      AutomationProperties.HelpText="Локальная дата и время, например 28.08.2026 14:30" />
++                            <TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ · местное время" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                             <TextBlock Text="{Binding StartError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                                        TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.Name="Ошибка времени начала"
+                                        AutomationProperties.LiveSetting="Assertive" />
+ 
+                             <TextBlock Text="Срок (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
+                             <TextBox Text="{Binding DeadlineText, UpdateSourceTrigger=PropertyChanged}"
+-                                     Style="{StaticResource Task.Input.Text}" TabIndex="23"
++                                     Style="{StaticResource Task.Input.Text}" TabIndex="24"
+                                      AutomationProperties.Name="Срок задачи"
+                                      AutomationProperties.AutomationId="TaskDeadlineTextBox"
+                                      AutomationProperties.HelpText="Локальная дата и время; срок не может быть раньше начала" />
++                            <TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ · местное время" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                             <TextBlock Text="{Binding DeadlineError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                                        TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.Name="Ошибка срока задачи"
+                                        AutomationProperties.LiveSetting="Assertive" />
+@@ -1073,7 +1102,7 @@
+                                 <Button Content="{Binding SubmitText}" Style="{StaticResource Task.Button.Primary}"
+                                         IsDefault="True" MinWidth="116" Margin="0,0,8,8" TabIndex="40"
+                                         Command="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+-                                        AutomationProperties.Name="Сохранить задачу" AutomationProperties.AutomationId="SaveTaskButton" />
++                                        AutomationProperties.Name="{Binding SubmitText}" AutomationProperties.AutomationId="SaveTaskButton" />
+                                 <Button Content="Отмена" Style="{StaticResource Task.Button.Secondary}"
+                                         Margin="0,0,0,8" TabIndex="41"
+                                         Command="{Binding DataContext.Tasks.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+diff --git a/work/production/src/Task.Desktop/ModeSelectorWindow.xaml b/work/production/src/Task.Desktop/ModeSelectorWindow.xaml
+index ffae076..56ee236 100644
+--- a/work/production/src/Task.Desktop/ModeSelectorWindow.xaml
++++ b/work/production/src/Task.Desktop/ModeSelectorWindow.xaml
+@@ -8,19 +8,19 @@
+     <Grid Margin="32">
+         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+         <StackPanel>
+-            <TextBlock Text="Выберите режим Task" Style="{StaticResource Task.Shell.PageTitle}"/>
++            <TextBlock Text="Выберите пространство" Style="{StaticResource Task.Shell.PageTitle}" TextWrapping="Wrap"/>
+             <TextBlock Text="Личное и корпоративное пространства разделены." TextWrapping="Wrap" Margin="0,12,0,16"/>
+         </StackPanel>
+         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+         <StackPanel VerticalAlignment="Center">
+-            <Button Content="Personal — личное пространство" Click="OnPersonal"
++            <Button Content="Личное пространство" Click="OnPersonal"
+                     Style="{StaticResource Task.Button.Primary}" Margin="0,0,0,8"
+                     AutomationProperties.AutomationId="SelectPersonalModeButton"/>
+             <TextBlock Text="Личные задачи, календарь и напоминания. Работает без подключения к серверу и входа." TextWrapping="Wrap" Margin="0,0,0,20"/>
+-            <Button Content="Corporate — пространство компании" Click="OnCorporate"
++            <Button Content="Пространство компании" Click="OnCorporate"
+                     Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8"
+                     AutomationProperties.AutomationId="SelectCorporateModeButton"/>
+-            <TextBlock Text="Подключение к серверу компании и существующий вход." TextWrapping="Wrap"/>
++            <TextBlock Text="Для совместной работы. Понадобятся подключение к серверу и учётная запись компании." TextWrapping="Wrap"/>
+         </StackPanel>
+         </ScrollViewer>
+         <Button Grid.Row="2" Content="Отмена" IsCancel="True" HorizontalAlignment="Right"
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs b/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs
+index 0a243af..3356f8f 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs
+@@ -18,6 +18,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
+         _selectedSection = Sections[0];
+         Palette = new(model.Workspace?.Hub, PaletteCommands, this);
+         foreach (var child in Children) child.PropertyChanged += OnChildChanged;
++        if (Tasks is { } tasks) tasks.OpenTasksRequested += OpenTasks;
+         if (model.Workspace is { } workspace) workspace.OpenObjectRequested += OpenObject;
+         if (model.Planning is { } planning) planning.OpenObjectRequested += OpenObject;
+         ApplyRoute();
+@@ -28,10 +29,10 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
+     public PersonalWorkspaceViewModel? Workspace => _model.Workspace;
+     public IReadOnlyList<NavigationSection> Sections { get; } =
+     [
+-        new("today", "Сегодня", "", "Task.Icon.Today", "План на текущий день"),
+-        new("inbox", "Входящие", "", "Task.Icon.Inbox", "Быстрый сбор задач"),
++        new("today", "Сегодня", "", "Task.Icon.Today", "Посмотрите план на сегодня"),
++        new("inbox", "Входящие", "", "Task.Icon.Inbox", "Запишите сейчас, разберите позже"),
+         new("calendar", "Календарь", "", "Task.Icon.Calendar", "Личное расписание"),
+-        new("tasks", "Задачи", "", "Task.Icon.Tasks", "Все личные задачи"),
++        new("tasks", "Задачи", "", "Task.Icon.Tasks", "Найдите задачу и измените её детали"),
+         new("projects", "Проекты", "", "Task.Icon.Projects", "Личные проекты"),
+         new("catalog", "Каталог", "", "Task.Icon.Catalog", "Файлы и папки"),
+         new("contacts", "Контакты", "", "Task.Icon.Contacts", "Личные контакты"),
+@@ -88,6 +89,13 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
+         if (type == "project" && Planning is { } planning) planning.SelectedProject = planning.Projects.FirstOrDefault(p => p.Id == id);
+         if (type == "calendar_event" && Calendar is { } calendar) _ = calendar.OpenEventByIdAsync(id);
+     }
++    private void OpenTasks(Guid? id)
++    {
++        if (!CanNavigate) return;
++        _requestedTaskId = id;
++        SelectedSection = Sections.First(s => s.Route == "tasks");
++        SelectRequestedTask();
++    }
+     private void SelectRequestedTask()
+     {
+         if (SelectedSection.Route != "tasks" || _requestedTaskId is not { } id || Tasks is not { } tasks) return;
+@@ -99,6 +107,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
+     {
+         Palette.Dispose();
+         foreach (var child in Children) child.PropertyChanged -= OnChildChanged;
++        if (Tasks is { } tasks) tasks.OpenTasksRequested -= OpenTasks;
+         if (Workspace is { } workspace) workspace.OpenObjectRequested -= OpenObject;
+         if (Planning is { } planning) planning.OpenObjectRequested -= OpenObject;
+     }
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs b/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
+index 9ccc2d3..42d70d9 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
+@@ -31,6 +31,8 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     private IReadOnlyList<PersonalTaskItem> _items = [];
+     private PersonalTaskItem? _selected;
+     private TaskEditorViewModel? _editor;
++    private Guid? _savedTaskId;
++    public event Action<Guid?>? OpenTasksRequested;
+     private string _capture = "", _check = "", _message = "";
+     private bool _busy, _disposed;
+     private PersonalSection _section;
+@@ -40,6 +42,8 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+         _client = client; _section = sections.First(s => s.Title == "Задачи");
+         RefreshCommand = new(async (_, _) => await RefreshAsync(), _ => !IsBusy && string.IsNullOrEmpty(CheckText));
+         NewCommand = new(async (_, _) => await OpenAsync(null), _ => CanSelectTask);
++        OpenTasksCommand = new((_, _) => { OpenTasksRequested?.Invoke(null); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanNavigate);
++        OpenSavedTaskCommand = new((_, _) => { OpenTasksRequested?.Invoke(_savedTaskId); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanNavigate && _savedTaskId.HasValue);
+         EditCommand = new(async (_, _) => await OpenAsync(Selected?.Source), _ => CanEdit && CanSelectTask);
+         SaveCommand = new(async (_, _) => await SaveAsync(), _ => Editor?.CanSubmit == true && !IsBusy);
+         CancelCommand = new((_, _) => { Editor = null; Message = ""; return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy);
+@@ -51,9 +55,13 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+         RemoveCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item, true); }, _ => CanEdit && CanSelectTask);
+         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить действие. Введённые данные остались в форме.";
+     }
+-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, NewCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand];
++    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand];
+     public AsyncCommand RefreshCommand { get; }
+     public AsyncCommand NewCommand { get; }
++    public AsyncCommand OpenTasksCommand { get; }
++    public AsyncCommand OpenSavedTaskCommand { get; }
++    public bool ShowSavedTaskAction => _savedTaskId.HasValue;
++    public bool IsToday => SelectedSection.Title == "Сегодня";
+     public AsyncCommand EditCommand { get; }
+     public AsyncCommand SaveCommand { get; }
+     public AsyncCommand CancelCommand { get; }
+@@ -63,7 +71,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     public AsyncCommand AddCheckCommand { get; }
+     public AsyncCommand ToggleCheckCommand { get; }
+     public AsyncCommand RemoveCheckCommand { get; }
+-    public PersonalSection SelectedSection { get => _section; set { if (value is not null && SetProperty(ref _section, value)) { Filter(); OnPropertyChanged(nameof(IsInbox)); OnPropertyChanged(nameof(IsSettings)); OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody)); } } }
++    public PersonalSection SelectedSection { get => _section; set { if (value is not null && SetProperty(ref _section, value)) { Filter(); OnPropertyChanged(nameof(IsInbox)); OnPropertyChanged(nameof(IsToday)); OnPropertyChanged(nameof(IsSettings)); OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody)); } } }
+     public bool IsInbox => SelectedSection.Title == "Входящие";
+     public bool IsSettings => SelectedSection.Title == "Настройки";
+     public IReadOnlyList<PersonalTaskItem> Items { get => _items; private set { SetProperty(ref _items, value); OnPropertyChanged(nameof(ShowEmpty)); } }
+@@ -92,11 +100,11 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); OnPropertyChanged(nameof(IsNotBusy)); OnPropertyChanged(nameof(ShowEmpty)); Notify(); } }
+     public bool IsNotBusy => !IsBusy;
+     public bool CanEdit => !IsBusy && Selected is not null && !TaskRules.IsTerminal((TaskWorkStatus)Selected.Source.Status);
+-    public string CaptureText { get => _capture; set { SetProperty(ref _capture, value); OnPropertyChanged(nameof(CanNavigate)); CaptureCommand.RaiseCanExecuteChanged(); } }
++    public string CaptureText { get => _capture; set { SetProperty(ref _capture, value); OnPropertyChanged(nameof(CanNavigate)); CaptureCommand.RaiseCanExecuteChanged(); OpenTasksCommand.RaiseCanExecuteChanged(); OpenSavedTaskCommand.RaiseCanExecuteChanged(); } }
+     public string CheckText { get => _check; set { SetProperty(ref _check, value); Notify(); } }
+     public bool CanSelectTask => !IsBusy && Editor is null && string.IsNullOrEmpty(CheckText);
+     public bool CanNavigate => CanSelectTask && string.IsNullOrEmpty(CaptureText);
+-    public string Message { get => _message; private set { SetProperty(ref _message, value); OnPropertyChanged(nameof(ShowEmpty)); } }
++    public string Message { get => _message; private set { _savedTaskId = null; SetProperty(ref _message, value); OnPropertyChanged(nameof(ShowEmpty)); OnPropertyChanged(nameof(ShowSavedTaskAction)); OpenSavedTaskCommand.RaiseCanExecuteChanged(); } }
+     public IReadOnlyList<TaskWorkspaceItem> Checklist { get; private set; } = [];
+     public bool HasDrafts => Editor is not null || !string.IsNullOrEmpty(CaptureText) || !string.IsNullOrEmpty(CheckText);
+ 
+@@ -158,9 +166,14 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+         try
+         {
+             var result = create is not null ? await _client.CreateTaskAsync(create, _lifetime.Token) : await _client.PatchTaskAsync(patch!, _lifetime.Token);
+-            if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded)
++            if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
+             {
+-                Editor = null; Message = "Задача сохранена."; await ReloadAsync();
++                Editor = null;
++                Message = editor.Mode == TaskEditorMode.Create
++                    ? InboxItemViewModel.IsCaptureOnly(success.Value) ? "Задача создана во «Входящих» и доступна в разделе «Задачи»." : "Задача создана в разделе «Задачи»."
++                    : "Изменения сохранены. Задача доступна в разделе «Задачи».";
++                await ReloadAsync();
++                if (!_loadFailed) { _savedTaskId = success.Value.Id; OnPropertyChanged(nameof(ShowSavedTaskAction)); }
+             }
+             else
+             {
+@@ -176,7 +189,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+         try
+         {
+             var result = await _client.CreateTaskAsync(new(text.Trim(), DesktopTaskPriority.Normal), _lifetime.Token);
+-            if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded) { if (CaptureText == text) CaptureText = ""; Message = "Входящая задача сохранена."; await ReloadAsync(); }
++            if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded) { if (CaptureText == text) CaptureText = ""; Message = "Задача добавлена во «Входящие»."; await ReloadAsync(); }
+             else Message = Error(result);
+         }
+         finally { IsBusy = false; }
+diff --git a/work/production/src/Task.Desktop/PersonalWindow.xaml b/work/production/src/Task.Desktop/PersonalWindow.xaml
+index f0354ba..edc8743 100644
+--- a/work/production/src/Task.Desktop/PersonalWindow.xaml
++++ b/work/production/src/Task.Desktop/PersonalWindow.xaml
+@@ -1,6 +1,6 @@
+ <Window x:Class="Task.Desktop.PersonalWindow" x:Name="RootWindow"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:views="clr-namespace:Task.Desktop.Views"
+-        Title="Task — Personal" Icon="Assets/Task.ico" Width="1200" Height="900" MinWidth="800" MinHeight="480"
++        Title="Task — личное пространство" Icon="Assets/Task.ico" Width="1200" Height="900" MinWidth="800" MinHeight="480"
+         WindowStartupLocation="CenterScreen" Style="{StaticResource Task.Window.Style}" UseLayoutRounding="True" SnapsToDevicePixels="True"
+         PreviewKeyDown="OnWindowPreviewKeyDown" AutomationProperties.AutomationId="PersonalWindow" AutomationProperties.Name="Task — личное пространство">
+     <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
+@@ -30,7 +30,7 @@
+         <Border x:Name="HeaderRegion" Grid.Column="1" Style="{StaticResource Task.Shell.HeaderSurface}">
+             <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                 <StackPanel VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock Text="{Binding SelectedSection.Title}" Style="{StaticResource Task.Shell.PageTitle}" AutomationProperties.HeadingLevel="Level1"/>
+-                    <TextBlock Text="{Binding SelectedSection.SupportingText}" Style="{StaticResource Task.Shell.StatusText}"/>
++                    <TextBlock Text="{Binding SelectedSection.SupportingText}" Style="{StaticResource Task.Shell.StatusText}" TextWrapping="Wrap"/>
+                 </StackPanel>
+                 <Button Grid.Column="1" Click="OnSearch" Style="{StaticResource Task.Button.Icon}" Margin="0,0,8,0" IsEnabled="{Binding CanNavigate}" ToolTip="Поиск по Task · Ctrl+K" AutomationProperties.Name="Поиск по Task"><Path Data="{StaticResource Task.Icon.Search}" Width="19" Height="19" Stretch="Uniform" Fill="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}"/></Button>
+                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0"><Ellipse Width="9" Height="9" Fill="{DynamicResource Task.Brush.Semantic.Success}" Margin="0,0,7,0"/><TextBlock Text="На этом компьютере" Style="{StaticResource Task.Shell.StatusText}"/></StackPanel>
+diff --git a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+index ab1b480..0e9d421 100644
+--- a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+@@ -535,7 +535,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+                     State = InboxScreenState.Loaded;
+                     await RefreshAsync(cancellationToken).ConfigureAwait(true);
+                     if (State is InboxScreenState.Empty or InboxScreenState.Loaded)
+-                        ScreenMessage = "Задача создана, исходная запись закрыта. Связь сохранена в истории задачи.";
++                        ScreenMessage = "Задача создана в разделе «Задачи», исходная запись закрыта. Связь сохранена в истории задачи.";
+                     break;
+                 case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
+                     editor.ApplyServerValidation(validation.Message, validation.FieldErrors);
+diff --git a/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs b/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
+index b4e6244..9198e6e 100644
+--- a/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
+@@ -45,6 +45,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+         _connectivity = connectivity;
+         NewTaskCommand = new AsyncCommand(OpenNewTaskAsync,
+             _ => Tasks?.CanCreateFromShell == true && IsConnected);
++        OpenTasksCommand = new AsyncCommand(OpenTasksAsync, _ => Tasks is not null);
+         if (Today is not null)
+         {
+             Today.PropertyChanged += OnTodayPropertyChanged;
+@@ -84,10 +85,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+         }
+         Sections = new ObservableCollection<NavigationSection>
+         {
+-            new("today", "Сегодня", "Раздел «Сегодня»: сводка задач на текущий день появится после подключения к серверу.", "Task.Icon.Today", "Сводка на текущий день"),
+-            new("inbox", "Входящие", "Раздел «Входящие»: новые и назначенные задачи появятся после подключения к серверу.", "Task.Icon.Inbox", "Новые и назначенные записи"),
++            new("today", "Сегодня", "Раздел «Сегодня»: сводка задач на текущий день появится после подключения к серверу.", "Task.Icon.Today", "Посмотрите план на сегодня"),
++            new("inbox", "Входящие", "Раздел «Входящие»: новые и назначенные задачи появятся после подключения к серверу.", "Task.Icon.Inbox", "Запишите сейчас, разберите позже"),
+             new("calendar", "Календарь", "Раздел «Календарь»: календарная сетка появится после подключения к серверу.", "Task.Icon.Calendar", "Расписание компании"),
+-            new("tasks", "Задачи", "Раздел «Задачи»: список задач появится после подключения к серверу.", "Task.Icon.Tasks", "Активные задачи компании"),
++            new("tasks", "Задачи", "Раздел «Задачи»: список задач появится после подключения к серверу.", "Task.Icon.Tasks", "Найдите задачу и измените её детали"),
+             new("projects", "Проекты", "Раздел «Проекты»: список проектов появится после подключения к серверу.", "Task.Icon.Projects", "Рабочие проекты компании"),
+             new("catalog", "Каталог", "Раздел «Каталог»: файлы и записи каталога появятся после подключения к серверу.", "Task.Icon.Catalog", "Файлы и записи каталога"),
+             new("contacts", "Контакты", "Раздел «Контакты»: список контактов появится после подключения к серверу.", "Task.Icon.Contacts", "Контакты компании"),
+@@ -171,6 +172,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+         if (Tasks.NewTaskCommand.CanExecute(null))
+             await Tasks.NewTaskCommand.ExecuteAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
+     }
++    private global::System.Threading.Tasks.Task OpenTasksAsync(object? parameter, CancellationToken cancellationToken)
++    {
++        SelectedSection = Sections.First(section => section.Route == "tasks");
++        return global::System.Threading.Tasks.Task.CompletedTask;
++    }
+ 
+     private void OpenTodayItem(object? item) => _ = OpenTodayItemAsync(item);
+ 
+@@ -368,6 +374,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+ 
+     public AsyncCommand LogoutCommand { get; }
+     public AsyncCommand NewTaskCommand { get; }
++    public AsyncCommand OpenTasksCommand { get; }
+ 
+     public void Dispose()
+     {
+@@ -412,6 +419,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+ 
+         LogoutCommand.Dispose();
+         NewTaskCommand.Dispose();
++        OpenTasksCommand.Dispose();
+         Tasks?.Dispose();
+         Inbox?.Dispose();
+         Calendar?.Dispose();
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs b/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
+index 917ab1b..182a443 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
+@@ -55,7 +55,10 @@ public sealed class TaskCardEditor : ViewModelBase
+     public bool CanAssign { get => _canAssign; set => SetProperty(ref _canAssign, value); }
+     public bool CanWatch { get => _canWatch; set => SetProperty(ref _canWatch, value); }
+     public bool IsDateOnly => _currentStart is null;
+-    public void UpdateStart(DateTimeOffset? start) { _currentStart = start; OnPropertyChanged(nameof(IsDateOnly)); }
++    public string DateHint => IsDateOnly
++        ? "ДД.ММ.ГГГГ. Оставьте пустым, если день пока не выбран."
++        : "День определяется временем начала. Чтобы выбрать только день, очистите поле «Начало».";
++    public void UpdateStart(DateTimeOffset? start) { _currentStart = start; OnPropertyChanged(nameof(IsDateOnly)); OnPropertyChanged(nameof(DateHint)); }
+ 
+     public void SetOptions(JsonObject options)
+     {
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs
+index 2e8b06a..ecb6e22 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs
+@@ -115,7 +115,8 @@ public sealed class TaskEditorViewModel : ViewModelBase
+     public Guid? SourceId => _source?.Id;
+     public IReadOnlyList<TaskPriorityOption> Priorities { get; }
+     public string Heading => Mode == TaskEditorMode.Create ? "Новая задача" : "Изменить задачу";
+-    public string SubmitText => _retryAvailable ? "Сохранить" : "Повтор станет доступен…";
++    public string SubmitText => !_retryAvailable ? "Повтор станет доступен…"
++        : Mode == TaskEditorMode.Create ? "Создать задачу" : "Сохранить изменения";
+     public long Revision => _revision;
+     public bool HasUnsavedChanges => _isDirty;
+     public bool HasConflict => _hasConflict;
+diff --git a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+index dc960a1..5958182 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+@@ -320,6 +320,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+     private bool _transitionRetryAvailable = true;
+     private string _transitionReason = string.Empty;
+     private string? _announcement;
++    private Guid? _savedTaskId;
+     private readonly Func<bool> _completionMotionEnabled;
+     private readonly Func<TimeSpan, global::System.Threading.Tasks.Task> _completionDelay;
+ 
+@@ -337,6 +338,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         RefreshCommand = new AsyncCommand(
+             async (_, token) => await RefreshAsync(token).ConfigureAwait(true),
+             _ => IsActive && !IsBusy);
++        OpenSavedTaskCommand = new AsyncCommand(
++            async (_, _) => { if (_savedTaskId is { } id) await OpenByIdAsync(id).ConfigureAwait(true); },
++            _ => _savedTaskId.HasValue && IsActive && _sessionAllowsWrites && _networkAvailable
++                && _capabilities.Contains("Task.Read") && Editor is null && !IsBusy && !IsMutationBusy);
+         LoadMoreCommand = new AsyncCommand(
+             async (_, token) => await LoadNextPageAsync(token).ConfigureAwait(true),
+             _ => IsActive && !IsBusy && HasNextPage);
+@@ -504,6 +509,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         : IsReadOnly
+         ? "Доступен только просмотр задач. Для изменений нужны соответствующие права."
+         : "Изменения сохраняются на сервере компании.";
++    public string CreateActionHint => !_networkAvailable ? "Подключитесь к серверу, чтобы создать задачу."
++        : !_sessionAllowsWrites ? "Войдите снова, чтобы создать задачу."
++        : !_capabilities.Contains("Task.Create") || _writePermissionChanged ? "У вас нет разрешения создавать задачи."
++        : Editor is not null ? "Сначала сохраните или закройте открытую форму."
++        : IsBusy || IsMutationBusy ? "Дождитесь завершения текущего действия."
++        : "Создать задачу";
+     public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled } && !IsMutationBusy;
+     public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
+     public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
+@@ -558,8 +569,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+     public string? Announcement
+     {
+         get => _announcement;
+-        private set => SetProperty(ref _announcement, value);
++        private set { _savedTaskId = null; SetProperty(ref _announcement, value); OnPropertyChanged(nameof(ShowSavedTaskAction)); OpenSavedTaskCommand.RaiseCanExecuteChanged(); }
+     }
++    public bool ShowSavedTaskAction => _savedTaskId.HasValue && SelectedItem?.Id != _savedTaskId;
+ 
+     public AsyncCommand LoadOptionsCommand { get; }
+ 
+@@ -700,6 +712,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         : "Данные ещё не обновлялись";
+ 
+     public AsyncCommand RefreshCommand { get; }
++    public AsyncCommand OpenSavedTaskCommand { get; }
+ 
+     public AsyncCommand LoadMoreCommand { get; }
+     public AsyncCommand NewTaskCommand { get; }
+@@ -968,6 +981,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         _disposed = true;
+         Deactivate();
+         RefreshCommand.Dispose();
++        OpenSavedTaskCommand.Dispose();
+         LoadMoreCommand.Dispose();
+         NewTaskCommand.Dispose();
+         CreateSimilarTaskCommand.Dispose();
+@@ -1348,8 +1362,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                 ApplyServerTask(success.Value);
+                 _pendingEditorCommand = null;
+                 Announcement = editor.Mode == TaskEditorMode.Create
+-                    ? "Задача создана и выбрана."
+-                    : "Изменения задачи сохранены.";
++                    ? InboxItemViewModel.IsCaptureOnly(success.Value)
++                        ? "Задача создана во «Входящих» и доступна в разделе «Задачи»."
++                        : "Задача создана в разделе «Задачи»."
++                    : "Изменения сохранены. Задача доступна в разделе «Задачи».";
++                _savedTaskId = success.Value.Id;
+                 Editor = null;
+                 break;
+             case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
+@@ -1366,7 +1383,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                 _ = EnableEditorRetryAsync(editor, generation);
+                 break;
+             case DesktopTaskWriteResult<DesktopTaskDto>.IdempotencyConflict:
+-                editor.SetStatus("Ключ предыдущей команды уже использован. Нажмите «Сохранить» ещё раз для новой попытки.");
++                editor.SetStatus($"Предыдущая попытка уже обработана. Нажмите «{editor.SubmitText}» ещё раз для новой попытки.");
+                 _pendingEditorCommand = null;
+                 _pendingEditorRevision = -1;
+                 break;
+@@ -1638,6 +1655,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         OnPropertyChanged(nameof(CanChangeStatus));
+         OnPropertyChanged(nameof(IsReadOnly));
+         OnPropertyChanged(nameof(WriteAccessText));
++        OnPropertyChanged(nameof(CreateActionHint));
++        OnPropertyChanged(nameof(ShowSavedTaskAction));
++        OpenSavedTaskCommand?.RaiseCanExecuteChanged();
+         OnPropertyChanged(nameof(CanEdit));
+         OnPropertyChanged(nameof(CanStart));
+         OnPropertyChanged(nameof(CanSubmitForReview));
+diff --git a/work/production/src/Task.Desktop/Views/InboxView.xaml b/work/production/src/Task.Desktop/Views/InboxView.xaml
+index 8260d4e..36158c6 100644
+--- a/work/production/src/Task.Desktop/Views/InboxView.xaml
++++ b/work/production/src/Task.Desktop/Views/InboxView.xaml
+@@ -249,7 +249,7 @@
+                         <Grid Margin="0,0,0,20">
+                             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                             <StackPanel>
+-                                <TextBlock Text="INBOX → TASK" FontSize="{DynamicResource Task.Font.Size.Metadata}"
++                                <TextBlock Text="ИЗ ЗАПИСИ В ЗАДАЧУ" FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                            Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                                 <TextBlock Text="Преобразовать в задачу" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
+                                            FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,8,0,0" />
+@@ -259,7 +259,7 @@
+                                     AutomationProperties.Name="Закрыть преобразование" />
+                         </Grid>
+ 
+-                        <TextBlock Text="Название задачи" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
++                        <TextBlock Text="Название задачи (обязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
+                         <TextBox x:Name="InboxConversionTitleBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                  MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="30"
+                                  AutomationProperties.Name="Название преобразуемой задачи"
+@@ -267,7 +267,7 @@
+                         <TextBlock Text="{Binding TitleError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                                    TextWrapping="Wrap" Margin="0,4,0,12" AutomationProperties.LiveSetting="Assertive" />
+ 
+-                        <TextBlock Text="Проект" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
++                        <TextBlock Text="Проект (необязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
+                         <ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}"
+                                   DisplayMemberPath="Name" Style="{StaticResource Task.Input.Combo}" TabIndex="31"
+                                   AutomationProperties.Name="Проект задачи" AutomationProperties.AutomationId="InboxConversionProject" />
+@@ -283,7 +283,7 @@
+                                           AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="InboxConversionPriority" />
+                             </StackPanel>
+                             <StackPanel Grid.Column="2">
+-                                <TextBlock Text="Срок" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
++                                <TextBlock Text="Срок (необязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
+                                 <TextBox Text="{Binding DeadlineText, UpdateSourceTrigger=PropertyChanged}"
+                                          Style="{StaticResource Task.Input.Text}" TabIndex="33"
+                                          AutomationProperties.Name="Срок задачи" AutomationProperties.AutomationId="InboxConversionDeadline"
+diff --git a/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml b/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
+index 176ab0d..c112c01 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
+@@ -33,6 +33,10 @@
+    </ListBox>
+    <Border Grid.Row="1" Style="{StaticResource Task.State.Panel}" Visibility="{Binding ShowEmpty,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="430">
+     <Path Data="{StaticResource Task.Icon.Tasks}" Width="30" Height="30" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding EmptyTitle}" Style="{StaticResource Task.State.Title}" TextAlignment="Center" Margin="0,12,0,0"/><TextBlock Text="{Binding EmptyBody}" Style="{StaticResource Task.State.Body}" TextAlignment="Center" Margin="0,8,0,0"/>
++    <Button Content="Создать задачу" Command="{Binding NewCommand}" Margin="0,16,0,0" AutomationProperties.AutomationId="PersonalEmptyCreateTask">
++     <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}"><Style.Triggers><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Button.Style>
++    </Button>
++    <Button Content="Открыть задачи" Command="{Binding OpenTasksCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,16,0,0" Visibility="{Binding IsToday,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="PersonalEmptyOpenTasks"/>
+    </StackPanel></Border>
+    <Border Grid.RowSpan="2" Background="{DynamicResource Task.Brush.Surface.Base}" Visibility="{Binding IsBusy,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><ProgressBar IsIndeterminate="True" Width="160" Style="{StaticResource Task.Progress.Indeterminate}"/><TextBlock Text="Обновляем задачи…" Style="{StaticResource Task.State.Body}" Margin="0,12,0,0"/></StackPanel></Border>
+   </Grid>
+@@ -46,7 +50,10 @@
+     </StackPanel>
+    </StackPanel></Border></ScrollViewer>
+   </Expander>
+-  <Border Grid.Row="4" Style="{StaticResource Personal.Feedback}"><TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive"/></Border>
++  <Border Grid.Row="4" Style="{StaticResource Personal.Feedback}"><StackPanel>
++   <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive"/>
++   <Button Content="Открыть задачу" Command="{Binding OpenSavedTaskCommand}" Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="PersonalOpenSavedTask"/>
++  </StackPanel></Border>
+ 
+   <Grid Grid.RowSpan="5" Background="#66000000" Visibility="{Binding HasEditor,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="50" Margin="-24" KeyboardNavigation.TabNavigation="Cycle" AutomationProperties.Name="Редактор личной задачи">
+    <Border MaxWidth="660" Margin="20" Style="{StaticResource Task.Inspector.Panel}" Padding="0">
+@@ -54,30 +61,32 @@
+      <Border Padding="24,18" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1"><TextBlock Text="{Binding Editor.Heading}" Style="{StaticResource Task.Shell.PageTitle}"/></Border>
+      <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel DataContext="{Binding Editor}" Margin="24,0,24,20">
+       <StackPanel IsEnabled="{Binding DataContext.IsNotBusy,ElementName=PersonalTasks}">
+-       <TextBlock Text="Название" Style="{StaticResource Personal.Label}"/><TextBox x:Name="TitleInput" Text="{Binding Title,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" AutomationProperties.Name="Название задачи" AutomationProperties.AutomationId="PersonalTaskTitle"/><TextBlock Text="{Binding TitleError}" Style="{StaticResource Personal.Validation}"/>
+-       <TextBlock Text="Описание" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Description,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="180" VerticalScrollBarVisibility="Auto" MaxLength="50000" AutomationProperties.AutomationId="PersonalTaskDescription" AutomationProperties.Name="Описание задачи"/>
++       <TextBlock Text="Название (обязательно)" Style="{StaticResource Personal.Label}"/><TextBox x:Name="TitleInput" Text="{Binding Title,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" TabIndex="20" AutomationProperties.Name="Название задачи" AutomationProperties.HelpText="Обязательное поле, не более 500 символов" AutomationProperties.AutomationId="PersonalTaskTitle"/><TextBlock Text="Например: подготовить договор" Style="{StaticResource Task.State.Body}" FontSize="12"/><TextBlock Text="{Binding TitleError}" Style="{StaticResource Personal.Validation}"/>
++       <TextBlock Text="Запланировать на день (необязательно)" Style="{StaticResource Personal.Label}"/>
++       <TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" TabIndex="23" AutomationProperties.Name="День задачи" AutomationProperties.AutomationId="PersonalScheduledDate" AutomationProperties.HelpText="{Binding Card.DateHint}"/>
++       <TextBlock Text="{Binding Card.DateHint}" Style="{StaticResource Task.State.Body}" FontSize="12"/>
++       <TextBlock Text="Описание (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Description,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="180" VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="24" AutomationProperties.AutomationId="PersonalTaskDescription" AutomationProperties.Name="Описание задачи"/>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+-        <StackPanel><TextBlock Text="Приоритет" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text" AutomationProperties.Name="Приоритет"/></StackPanel>
+-        <StackPanel Grid.Column="2"><TextBlock Text="Проект" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}" DisplayMemberPath="Name" AutomationProperties.AutomationId="PersonalTaskProject" AutomationProperties.Name="Проект задачи"/></StackPanel>
++        <StackPanel><TextBlock Text="Приоритет (обычный по умолчанию)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text" TabIndex="21" AutomationProperties.Name="Приоритет"/></StackPanel>
++        <StackPanel Grid.Column="2"><TextBlock Text="Проект (необязательно)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}" DisplayMemberPath="Name" TabIndex="22" AutomationProperties.AutomationId="PersonalTaskProject" AutomationProperties.Name="Проект задачи"/></StackPanel>
+        </Grid>
+        <Expander Header="Планирование и связи" state:ViewState.Section="personal-tasks/v1/planning" Margin="0,20,0,0" IsExpanded="False"><StackPanel>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+-         <StackPanel><TextBlock Text="Дата без времени" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" ToolTip="ДД.ММ.ГГГГ" AutomationProperties.AutomationId="PersonalScheduledDate"/><TextBlock Text="ДД.ММ.ГГГГ" Style="{StaticResource Task.State.Body}" FontSize="12"/></StackPanel>
+-         <StackPanel Grid.Column="2"><TextBlock Text="Длительность, минут" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Duration,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Длительность"/></StackPanel>
++         <StackPanel Grid.ColumnSpan="3"><TextBlock Text="Длительность, минут (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Duration,UpdateSourceTrigger=PropertyChanged}" TabIndex="27" AutomationProperties.Name="Длительность"/></StackPanel>
+         </Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+-         <StackPanel><TextBlock Text="Начало" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding StartText,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="PersonalStart"/><TextBlock Text="{Binding StartError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
+-         <StackPanel Grid.Column="2"><TextBlock Text="Срок" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding DeadlineText,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="PersonalDeadline"/><TextBlock Text="{Binding DeadlineError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
++         <StackPanel><TextBlock Text="Начало (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding StartText,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" AutomationProperties.Name="Дата и время начала" AutomationProperties.HelpText="ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalStart"/><TextBlock Text="{Binding StartError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
++         <StackPanel Grid.Column="2"><TextBlock Text="Срок (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding DeadlineText,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="Срок задачи" AutomationProperties.HelpText="ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalDeadline"/><TextBlock Text="{Binding DeadlineError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
+         </Grid>
+         <TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ · местное время" Style="{StaticResource Task.State.Body}" FontSize="12" Margin="0,6,0,0"/>
+-        <TextBlock Text="Родительская задача" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Tasks}" SelectedItem="{Binding Card.Parent}" DisplayMemberPath="Name" AutomationProperties.AutomationId="PersonalParentTask"/>
++        <TextBlock Text="Родительская задача (необязательно)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Tasks}" SelectedItem="{Binding Card.Parent}" DisplayMemberPath="Name" TabIndex="28" AutomationProperties.Name="Родительская задача" AutomationProperties.AutomationId="PersonalParentTask"/>
+        </StackPanel></Expander>
+        <TextBlock Text="{Binding CardError}" Style="{StaticResource Personal.Validation}"/>
+       </StackPanel>
+       <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource Personal.Validation}"/>
+       <Border Style="{StaticResource Task.State.Inline}" Margin="0,12,0,0" Visibility="{Binding HasConflict,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel><TextBlock Text="Задача изменилась. Ваш черновик сохранён. Загрузите актуальную версию, чтобы продолжить." TextWrapping="Wrap"/><Button Content="Загрузить актуальную версию" Command="{Binding DataContext.ReloadEditorCommand,ElementName=PersonalTasks}" Margin="0,10,0,0" HorizontalAlignment="Left"/></StackPanel></Border>
+      </StackPanel></ScrollViewer>
+-     <Border Grid.Row="2" Padding="24,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отменить" Click="OnCancelEditor" Margin="0,0,10,0"/><Button Content="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveTask"/></StackPanel></Border>
++     <Border Grid.Row="2" Padding="24,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отмена" Click="OnCancelEditor" TabIndex="41" Margin="0,0,10,0"/><Button Content="{Binding Editor.SubmitText}" Command="{Binding SaveCommand}" TabIndex="40" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveTask" AutomationProperties.Name="{Binding Editor.SubmitText}"/></StackPanel></Border>
+     </Grid>
+    </Border>
+   </Grid>
+diff --git a/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml b/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml
+index 6d706e3..6786669 100644
+--- a/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml
++++ b/work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml
+@@ -20,10 +20,10 @@
+     </UserControl.Resources>
+ 
+     <StackPanel>
+-        <TextBlock Text="Описание" Style="{StaticResource Task.Editor.Label}" />
++        <TextBlock Text="Описание (необязательно)" Style="{StaticResource Task.Editor.Label}" />
+         <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                  AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="220"
+-                 VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="24"
++                 VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="25"
+                  Style="{StaticResource Task.Input.Text}"
+                  AutomationProperties.Name="Описание задачи"
+                  AutomationProperties.AutomationId="TaskDescriptionTextBox" />
+@@ -31,19 +31,19 @@
+         <Grid Margin="0,14,0,0">
+             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+             <StackPanel>
+-                <TextBlock Text="Проект" Style="{StaticResource Task.Editor.Label}" />
+-                <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" TabIndex="25"
++                <TextBlock Text="Проект (необязательно)" Style="{StaticResource Task.Editor.Label}" />
++                <ComboBox ItemsSource="{Binding Projects}" SelectedItem="{Binding Project}" TabIndex="26"
+                           AutomationProperties.Name="Проект задачи" AutomationProperties.AutomationId="TaskProjectComboBox" />
+             </StackPanel>
+             <StackPanel Grid.Column="2">
+-                <TextBlock Text="Плановая длительность, минут" Style="{StaticResource Task.Editor.Label}" />
+-                <TextBox Text="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" TabIndex="26"
++                <TextBlock Text="Длительность, минут (необязательно)" Style="{StaticResource Task.Editor.Label}" />
++                <TextBox Text="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" TabIndex="27"
+                          Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Плановая длительность"
+                          AutomationProperties.AutomationId="TaskDurationTextBox" />
+             </StackPanel>
+         </Grid>
+ 
+-        <TextBlock Text="Исполнители" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
++        <TextBlock Text="Исполнители (необязательно)" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
+         <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+             <ItemsControl ItemsSource="{Binding Assignees}" IsEnabled="{Binding CanAssign}">
+                 <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+@@ -55,23 +55,19 @@
+                 </ItemsControl.ItemTemplate>
+             </ItemsControl>
+         </ScrollViewer>
+-        <TextBlock Text="Назначение недоступно без права Task.Assign; уже выбранные значения остаются видимыми."
+-                   Style="{StaticResource Task.Editor.Hint}" />
++        <TextBlock Text="У вас нет разрешения назначать исполнителей. Уже назначенные сотрудники остаются видимыми.">
++            <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Task.Editor.Hint}"><Style.Triggers>
++                <DataTrigger Binding="{Binding CanAssign}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
++            </Style.Triggers></Style></TextBlock.Style>
++        </TextBlock>
+ 
+         <Expander Header="Дополнительные связи и планирование" state:ViewState.Section="task-editor/v1/planning" IsExpanded="False" Margin="0,16,0,0"
+                   AutomationProperties.Name="Дополнительные поля задачи">
+             <StackPanel Margin="0,12,0,0">
+                 <Grid>
+                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+-                    <StackPanel>
+-                        <TextBlock Text="Дата без времени" Style="{StaticResource Task.Editor.Label}" />
+-                        <TextBox Text="{Binding Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsDateOnly}"
+-                                 TabIndex="27" Style="{StaticResource Task.Input.Text}"
+-                                 AutomationProperties.Name="Дата задачи без времени"
+-                                 AutomationProperties.HelpText="Формат ДД.ММ.ГГГГ; доступно, когда начало не указано" />
+-                    </StackPanel>
+-                    <StackPanel Grid.Column="2">
+-                        <TextBlock Text="Родительская задача" Style="{StaticResource Task.Editor.Label}" />
++                    <StackPanel Grid.ColumnSpan="3">
++                        <TextBlock Text="Родительская задача (необязательно)" Style="{StaticResource Task.Editor.Label}" />
+                         <ComboBox ItemsSource="{Binding Tasks}" SelectedItem="{Binding Parent}" TabIndex="28"
+                                   AutomationProperties.Name="Родительская задача" />
+                     </StackPanel>
+@@ -80,18 +76,18 @@
+                 <Grid Margin="0,14,0,0">
+                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                     <StackPanel>
+-                        <TextBlock Text="Постановщик" Style="{StaticResource Task.Editor.Label}" />
++                        <TextBlock Text="Постановщик (необязательно)" Style="{StaticResource Task.Editor.Label}" />
+                         <ComboBox ItemsSource="{Binding People}" SelectedItem="{Binding Requester}" TabIndex="29"
+                                   AutomationProperties.Name="Постановщик задачи" />
+                     </StackPanel>
+                     <StackPanel Grid.Column="2">
+-                        <TextBlock Text="Контакт или контрагент" Style="{StaticResource Task.Editor.Label}" />
++                        <TextBlock Text="Контакт или контрагент (необязательно)" Style="{StaticResource Task.Editor.Label}" />
+                         <ComboBox ItemsSource="{Binding Counterparties}" SelectedItem="{Binding Counterparty}" TabIndex="30"
+                                   AutomationProperties.Name="Контрагент задачи" />
+                     </StackPanel>
+                 </Grid>
+ 
+-                <TextBlock Text="Наблюдатели" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
++                <TextBlock Text="Наблюдатели (необязательно)" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
+                 <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                     <ItemsControl ItemsSource="{Binding Watchers}" IsEnabled="{Binding CanWatch}">
+                         <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+@@ -99,6 +95,11 @@
+                     </ItemsControl>
+                 </ScrollViewer>
+ 
++                <TextBlock Text="У вас нет разрешения менять наблюдателей. Уже выбранные сотрудники остаются видимыми.">
++                    <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Task.Editor.Hint}"><Style.Triggers>
++                        <DataTrigger Binding="{Binding CanWatch}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
++                    </Style.Triggers></Style></TextBlock.Style>
++                </TextBlock>
+                 <TextBlock Text="Поиск сотрудников, проектов, задач и контактов" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
+                 <Grid>
+                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+diff --git a/work/production/src/Task.Desktop/Views/TodayView.xaml b/work/production/src/Task.Desktop/Views/TodayView.xaml
+index 3c95c73..0e1e3fd 100644
+--- a/work/production/src/Task.Desktop/Views/TodayView.xaml
++++ b/work/production/src/Task.Desktop/Views/TodayView.xaml
+@@ -416,6 +416,8 @@
+                                        Margin="0,4,0,0" TextWrapping="Wrap" TextAlignment="Center"
+                                        FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                        Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
++                            <Button Content="Открыть задачи" Command="{Binding DataContext.OpenTasksCommand, RelativeSource={RelativeSource AncestorType=Window}}"
++                                    Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Center" Margin="0,16,0,0" AutomationProperties.AutomationId="TodayEmptyOpenTasks" />
+                         </StackPanel>
+                     </Border>
+                 </Grid>
+diff --git a/work/production/tests/Task.Desktop.Tests/ApplicationModeStartupTests.cs b/work/production/tests/Task.Desktop.Tests/ApplicationModeStartupTests.cs
+index 0f9b402..3a8e52d 100644
+--- a/work/production/tests/Task.Desktop.Tests/ApplicationModeStartupTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/ApplicationModeStartupTests.cs
+@@ -35,7 +35,7 @@ public sealed class ApplicationModeStartupTests : IDisposable
+         using var process = Launch();
+         try
+         {
+-            await AssertWindow(process, "Task — Personal");
++            await AssertWindow(process, "Task — личное пространство");
+             await global::System.Threading.Tasks.Task.Delay(200);
+             Assert.False(server.Pending()); // No probe, login, restore or authenticated request.
+             Assert.Equal(settings, File.ReadAllText(settingsPath));
+@@ -51,7 +51,7 @@ public sealed class ApplicationModeStartupTests : IDisposable
+     {
+         new ApplicationModePreference(_directory).Save(ApplicationMode.Corporate);
+         using var process = Launch();
+-        try { await AssertWindow(process, "Task — Corporate · вход"); }
++        try { await AssertWindow(process, "Task — вход в пространство компании"); }
+         finally { Stop(process); }
+     }
+ 
+diff --git a/work/production/tests/Task.Desktop.Tests/Personal/PersonalJourneyTests.cs b/work/production/tests/Task.Desktop.Tests/Personal/PersonalJourneyTests.cs
+new file mode 100644
+index 0000000..92d5378
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Personal/PersonalJourneyTests.cs
+@@ -0,0 +1,64 @@
++using System.IO;
++using Task.Desktop.Modes;
++using Task.Desktop.Personal;
++
++namespace Task.Desktop.Tests.Personal;
++
++public sealed class PersonalJourneyTests : IDisposable
++{
++    private readonly string _root = Path.Combine(Path.GetTempPath(), "Task-journey", Guid.NewGuid().ToString("N"));
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task TodayEmptyAction_OpensTasks_AndPreservesCaptureDraft()
++    {
++        using var model = new PersonalApplicationModel(_root);
++        using var shell = new PersonalShellViewModel(model);
++        var vm = model.Tasks!;
++        await vm.RefreshAsync(); Assert.True(vm.IsToday); Assert.True(vm.ShowEmpty);
++        await vm.OpenTasksCommand.ExecuteAsync();
++        Assert.Equal("tasks", shell.SelectedSection.Route);
++        shell.SelectedSection = shell.Sections.Single(s => s.Route == "inbox");
++        vm.CaptureText = "Не потерять";
++        Assert.False(vm.OpenTasksCommand.CanExecute(null));
++        await vm.OpenTasksCommand.ExecuteAsync();
++        Assert.Equal("inbox", shell.SelectedSection.Route); Assert.Equal("Не потерять", vm.CaptureText);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task SaveOutsideTodayFilter_OffersPersistedTask_AndOpenNavigatesAndSelectsIt()
++    {
++        using var model = new PersonalApplicationModel(_root);
++        using var shell = new PersonalShellViewModel(model);
++        var vm = model.Tasks!;
++        await vm.NewCommand.ExecuteAsync(); vm.Editor!.Title = "Будущий договор";
++        vm.Editor.Card.Date = "20.12.2030";
++        await vm.SaveCommand.ExecuteAsync();
++        Assert.Empty(vm.Items); Assert.True(vm.ShowSavedTaskAction);
++        Assert.Contains("разделе «Задачи»", vm.Message);
++        Assert.True(vm.OpenSavedTaskCommand.CanExecute(null));
++        await vm.OpenSavedTaskCommand.ExecuteAsync();
++        Assert.Equal("tasks", shell.SelectedSection.Route);
++        Assert.Equal("Будущий договор", vm.Selected?.Title);
++        Assert.Equal(new DateOnly(2030, 12, 20), model.Store.Get(vm.Selected!.Source.Id)!.Card!.ScheduledDate);
++        await vm.EditCommand.ExecuteAsync(); Assert.Equal("Сохранить изменения", vm.Editor!.SubmitText);
++        Assert.False(vm.OpenSavedTaskCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task CaptureAndInboxEdit_ConfirmCorrectDestination_AndOpenConvertedTask()
++    {
++        using var model = new PersonalApplicationModel(_root);
++        using var shell = new PersonalShellViewModel(model);
++        shell.SelectedSection = shell.Sections.Single(s => s.Route == "inbox");
++        var vm = model.Tasks!; vm.CaptureText = "Запись"; await vm.CaptureCommand.ExecuteAsync();
++        Assert.Contains("«Входящие»", vm.Message);
++        vm.Selected = Assert.Single(vm.Items); var id = vm.Selected.Source.Id;
++        await vm.EditCommand.ExecuteAsync(); vm.Editor!.Card.Description = "Уточнили задачу";
++        await vm.SaveCommand.ExecuteAsync(); Assert.Empty(vm.Items);
++        Assert.True(vm.ShowSavedTaskAction);
++        await vm.OpenSavedTaskCommand.ExecuteAsync();
++        Assert.Equal("tasks", shell.SelectedSection.Route); Assert.Equal(id, vm.Selected?.Source.Id);
++    }
++
++    public void Dispose() { if (Directory.Exists(_root)) Directory.Delete(_root, true); }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs
+new file mode 100644
+index 0000000..b966614
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs
+@@ -0,0 +1,109 @@
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed partial class TasksViewModelTests
++{
++    [Fact]
++    public async global::System.Threading.Tasks.Task ReadOnlyShell_EmptyTodayActionRoutesToTasks()
++    {
++        using var vm = new TasksViewModel(new FakeTasksApiClient(), ["Task.Read"]);
++        using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, vm);
++        Assert.Equal("today", shell.SelectedSection!.Route);
++        Assert.True(shell.OpenTasksCommand.CanExecute(null));
++        await shell.OpenTasksCommand.ExecuteAsync();
++        Assert.Equal("tasks", shell.SelectedSection!.Route); Assert.True(vm.IsActive);
++        Assert.False(vm.CanCreate);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task CreateWithoutDetails_ConfirmsInboxAndTasksDestination()
++    {
++        var created = CreateTask("Записать мысль") with { DeadlineAtUtc = null };
++        var client = new FakeTasksApiClient { CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, false) };
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync(); await vm.NewTaskCommand.ExecuteAsync();
++        vm.Editor!.Title = created.Title; await vm.SaveEditorCommand.ExecuteAsync();
++        Assert.Contains("«Входящих»", vm.Announcement); Assert.Contains("«Задачи»", vm.Announcement);
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task SavedTaskHiddenByFilter_CanBeOpenedWithReadPermissionAfterWriteRevocation()
++    {
++        var existing = CreateTask("Другая", DesktopTaskStatus.InProgress);
++        var created = CreateTask("Новая");
++        var client = new FakeTasksApiClient
++        {
++            CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, false),
++            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(created),
++        };
++        client.EnqueuePage(SucceededPage([existing]));
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        vm.SelectedStatusFilter = "В работе";
++        await vm.NewTaskCommand.ExecuteAsync();
++        Assert.Equal("Создать задачу", vm.Editor!.SubmitText);
++        vm.Editor.Title = created.Title;
++        await vm.SaveEditorCommand.ExecuteAsync();
++        Assert.Null(vm.Editor);
++        Assert.Contains("разделе «Задачи»", vm.Announcement);
++        Assert.DoesNotContain(vm.Items, x => x.Id == created.Id);
++        Assert.True(vm.ShowSavedTaskAction);
++        vm.UpdateCapabilities(["Task.Read"]);
++        Assert.True(vm.OpenSavedTaskCommand.CanExecute(null));
++        await vm.OpenSavedTaskCommand.ExecuteAsync();
++        Assert.Equal(created.Id, vm.SelectedItem?.Id);
++        Assert.Equal("Все статусы", vm.SelectedStatusFilter);
++        Assert.False(vm.ShowSavedTaskAction);
++        vm.UpdateSessionState(false);
++        Assert.False(vm.OpenSavedTaskCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async global::System.Threading.Tasks.Task FailedSave_KeepsDraftAndDoesNotOfferSuccessfulResult()
++    {
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage([]));
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync(); await vm.NewTaskCommand.ExecuteAsync();
++        var draft = vm.Editor!; draft.Title = "Сохранить позже";
++        await vm.SaveEditorCommand.ExecuteAsync();
++        Assert.Same(draft, vm.Editor); Assert.Equal("Сохранить позже", draft.Title);
++        Assert.False(vm.ShowSavedTaskAction); Assert.False(vm.OpenSavedTaskCommand.CanExecute(null));
++        Assert.Contains("Сервер недоступен", draft.StatusMessage);
++    }
++
++    [Fact]
++    public void DayField_AndTimedSchedule_PreserveExistingContractAndValidation()
++    {
++        var draft = new TaskEditorViewModel(TaskEditorMode.Create) { Title = "План" };
++        draft.Card.Date = "12.10.2026";
++        Assert.True(draft.Card.IsDateOnly);
++        Assert.Equal(new DateOnly(2026, 10, 12), draft.BuildCreateCommand()!.Card!.ScheduledDate);
++        var changes = new List<string?>();
++        draft.Card.PropertyChanged += (_, e) => changes.Add(e.PropertyName);
++        draft.StartText = "13.10.2026 10:30";
++        Assert.False(draft.Card.IsDateOnly); Assert.Contains("очистите", draft.Card.DateHint);
++        Assert.Contains(nameof(TaskCardEditor.DateHint), changes);
++        var timed = draft.BuildCreateCommand()!;
++        Assert.Equal(new DateOnly(2026, 10, 13), timed.Card!.ScheduledDate);
++        Assert.Equal(new TimeOnly(10, 30), timed.Card.StartTimeLocal);
++        draft.StartText = "";
++        Assert.True(draft.Card.IsDateOnly);
++        Assert.Equal(new DateOnly(2026, 10, 12), draft.BuildCreateCommand()!.Card!.ScheduledDate);
++        draft.Card.Date = "31.02.2026";
++        Assert.False(draft.CanSubmit); Assert.NotNull(draft.CardError);
++    }
++
++    [Fact]
++    public void SubmitText_PreservesRetryState_AndDistinguishesCreateFromEdit()
++    {
++        var create = new TaskEditorViewModel(TaskEditorMode.Create);
++        var edit = new TaskEditorViewModel(TaskEditorMode.Edit, CreateTask());
++        Assert.Equal("Создать задачу", create.SubmitText);
++        Assert.Equal("Сохранить изменения", edit.SubmitText);
++        create.SetRetryAvailable(false); Assert.Equal("Повтор станет доступен…", create.SubmitText);
++        create.SetRetryAvailable(true); Assert.Equal("Создать задачу", create.SubmitText);
++    }
++}
+diff --git a/work/production/verification/Test-DesktopShell.ps1 b/work/production/verification/Test-DesktopShell.ps1
+index 11ab8b5..daea10f 100644
+--- a/work/production/verification/Test-DesktopShell.ps1
++++ b/work/production/verification/Test-DesktopShell.ps1
+@@ -107,8 +107,8 @@ try {
+ 
+     if ($null -ne $statusText) {
+         $statusBinding = Get-AttributeValue -Node $statusText -LocalName 'Text'
+-        $statusBindingOk = ($statusBinding -match '^\{Binding\s+ConnectionStatus\s*\}$')
+-        Write-VerificationResult -Name 'ConnectionStatusText binds Text to ConnectionStatus' -Condition $statusBindingOk -Detail $statusBinding
++        $statusBindingOk = ($statusBinding -match '^\{Binding\s+ConnectionTitle\s*\}$')
++        Write-VerificationResult -Name 'ConnectionStatusText binds Text to ConnectionTitle' -Condition $statusBindingOk -Detail $statusBinding
+ 
+         $liveSetting = Get-AttributeValue -Node $statusText -LocalName 'AutomationProperties.LiveSetting'
+         $liveSettingOk = ($liveSetting -eq 'Polite')
+@@ -130,4 +130,4 @@ catch {
+     Write-Host ''
+     Write-Host 'Desktop shell contract verification: FAILED'
+     exit 1
+-}
+\ No newline at end of file
++}

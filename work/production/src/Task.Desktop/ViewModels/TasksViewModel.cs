@@ -320,6 +320,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private bool _transitionRetryAvailable = true;
     private string _transitionReason = string.Empty;
     private string? _announcement;
+    private Guid? _savedTaskId;
     private readonly Func<bool> _completionMotionEnabled;
     private readonly Func<TimeSpan, global::System.Threading.Tasks.Task> _completionDelay;
 
@@ -337,6 +338,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         RefreshCommand = new AsyncCommand(
             async (_, token) => await RefreshAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy);
+        OpenSavedTaskCommand = new AsyncCommand(
+            async (_, _) => { if (_savedTaskId is { } id) await OpenByIdAsync(id).ConfigureAwait(true); },
+            _ => _savedTaskId.HasValue && IsActive && _sessionAllowsWrites && _networkAvailable
+                && _capabilities.Contains("Task.Read") && Editor is null && !IsBusy && !IsMutationBusy);
         LoadMoreCommand = new AsyncCommand(
             async (_, token) => await LoadNextPageAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy && HasNextPage);
@@ -504,6 +509,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         : IsReadOnly
         ? "Доступен только просмотр задач. Для изменений нужны соответствующие права."
         : "Изменения сохраняются на сервере компании.";
+    public string CreateActionHint => !_networkAvailable ? "Подключитесь к серверу, чтобы создать задачу."
+        : !_sessionAllowsWrites ? "Войдите снова, чтобы создать задачу."
+        : !_capabilities.Contains("Task.Create") || _writePermissionChanged ? "У вас нет разрешения создавать задачи."
+        : Editor is not null ? "Сначала сохраните или закройте открытую форму."
+        : IsBusy || IsMutationBusy ? "Дождитесь завершения текущего действия."
+        : "Создать задачу";
     public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled } && !IsMutationBusy;
     public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
     public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
@@ -558,8 +569,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     public string? Announcement
     {
         get => _announcement;
-        private set => SetProperty(ref _announcement, value);
+        private set { _savedTaskId = null; SetProperty(ref _announcement, value); OnPropertyChanged(nameof(ShowSavedTaskAction)); OpenSavedTaskCommand.RaiseCanExecuteChanged(); }
     }
+    public bool ShowSavedTaskAction => _savedTaskId.HasValue && SelectedItem?.Id != _savedTaskId;
 
     public AsyncCommand LoadOptionsCommand { get; }
 
@@ -700,6 +712,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         : "Данные ещё не обновлялись";
 
     public AsyncCommand RefreshCommand { get; }
+    public AsyncCommand OpenSavedTaskCommand { get; }
 
     public AsyncCommand LoadMoreCommand { get; }
     public AsyncCommand NewTaskCommand { get; }
@@ -968,6 +981,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         _disposed = true;
         Deactivate();
         RefreshCommand.Dispose();
+        OpenSavedTaskCommand.Dispose();
         LoadMoreCommand.Dispose();
         NewTaskCommand.Dispose();
         CreateSimilarTaskCommand.Dispose();
@@ -1348,8 +1362,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 ApplyServerTask(success.Value);
                 _pendingEditorCommand = null;
                 Announcement = editor.Mode == TaskEditorMode.Create
-                    ? "Задача создана и выбрана."
-                    : "Изменения задачи сохранены.";
+                    ? InboxItemViewModel.IsCaptureOnly(success.Value)
+                        ? "Задача создана во «Входящих» и доступна в разделе «Задачи»."
+                        : "Задача создана в разделе «Задачи»."
+                    : "Изменения сохранены. Задача доступна в разделе «Задачи».";
+                _savedTaskId = success.Value.Id;
                 Editor = null;
                 break;
             case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
@@ -1366,7 +1383,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 _ = EnableEditorRetryAsync(editor, generation);
                 break;
             case DesktopTaskWriteResult<DesktopTaskDto>.IdempotencyConflict:
-                editor.SetStatus("Ключ предыдущей команды уже использован. Нажмите «Сохранить» ещё раз для новой попытки.");
+                editor.SetStatus($"Предыдущая попытка уже обработана. Нажмите «{editor.SubmitText}» ещё раз для новой попытки.");
                 _pendingEditorCommand = null;
                 _pendingEditorRevision = -1;
                 break;
@@ -1638,6 +1655,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanChangeStatus));
         OnPropertyChanged(nameof(IsReadOnly));
         OnPropertyChanged(nameof(WriteAccessText));
+        OnPropertyChanged(nameof(CreateActionHint));
+        OnPropertyChanged(nameof(ShowSavedTaskAction));
+        OpenSavedTaskCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(CanEdit));
         OnPropertyChanged(nameof(CanStart));
         OnPropertyChanged(nameof(CanSubmitForReview));

@@ -55,7 +55,10 @@ public sealed class TaskCardEditor : ViewModelBase
     public bool CanAssign { get => _canAssign; set => SetProperty(ref _canAssign, value); }
     public bool CanWatch { get => _canWatch; set => SetProperty(ref _canWatch, value); }
     public bool IsDateOnly => _currentStart is null;
-    public void UpdateStart(DateTimeOffset? start) { _currentStart = start; OnPropertyChanged(nameof(IsDateOnly)); }
+    public string DateHint => IsDateOnly
+        ? "ДД.ММ.ГГГГ. Оставьте пустым, если день пока не выбран."
+        : "День определяется временем начала. Чтобы выбрать только день, очистите поле «Начало».";
+    public void UpdateStart(DateTimeOffset? start) { _currentStart = start; OnPropertyChanged(nameof(IsDateOnly)); OnPropertyChanged(nameof(DateHint)); }
 
     public void SetOptions(JsonObject options)
     {
