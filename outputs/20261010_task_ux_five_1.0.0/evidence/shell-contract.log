@@ -1,0 +1,16 @@
+Verifying Desktop shell contract from: C:\Users\novik\Таск\work\production\src\Task.Desktop\MainWindow.xaml
+
+[ OK ]  MainWindow.xaml exists (C:\Users\novik\Таск\work\production\src\Task.Desktop\MainWindow.xaml)
+[ OK ]  MainWindow.xaml parses as well-formed XML
+[ OK ]  XAML root element is Window (Window)
+[ OK ]  AutomationId=NavigationListBox present
+[ OK ]  AutomationId=SelectedSectionArea present
+[ OK ]  AutomationId=ConnectionStatusText present
+[ OK ]  NavigationListBox is a ListBox (ListBox)
+[ OK ]  NavigationListBox ItemsSource binds to Sections ({Binding Sections})
+[ OK ]  NavigationListBox SelectedItem binds to SelectedSection ({Binding SelectedSection, Mode=TwoWay})
+[ OK ]  SelectedSectionArea is a content container (Grid)
+[ OK ]  ConnectionStatusText binds Text to ConnectionTitle ({Binding ConnectionTitle})
+[ OK ]  ConnectionStatusText has LiveSetting=Polite (Polite)
+
+Desktop shell contract verification: PASSED

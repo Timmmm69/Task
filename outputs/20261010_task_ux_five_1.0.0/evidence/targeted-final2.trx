@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e7d112bc-12f8-44d7-bbd1-62212ef5a6a6" name="novik@TIM 2026-10-10 12:59:54" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-10T12:59:54.8049313+03:00" queuing="2026-10-10T12:59:54.8049314+03:00" start="2026-10-10T12:59:53.6761634+03:00" finish="2026-10-10T12:59:54.8092543+03:00" />
+  <TestSettings name="default" id="6308a1c6-96c4-4c60-8faa-65a42f58e3c0">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-10_12_59_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="51a76b8b-903f-47ee-87b5-46444d9f1b0d" testId="9b473de1-767e-c9a8-3f12-a32acc86b5f9" testName="Task.Desktop.Tests.FiveImprovementsTests.Shortcut_LeavesMultilineEnter_ImeAndRepeatAlone" computerName="TIM" duration="00:00:00.0004287" startTime="2026-10-10T12:59:54.7227679+03:00" endTime="2026-10-10T12:59:54.7232593+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51a76b8b-903f-47ee-87b5-46444d9f1b0d" />
+    <UnitTestResult executionId="187e19bc-1d5f-4c04-a2ea-4b9836b08115" testId="59105aea-6735-46b2-e23a-ec826e04c9d8" testName="Task.Desktop.Tests.FiveImprovementsTests.CorporateCapture_DoesNotEraseNextDraft_OrSendTwice" computerName="TIM" duration="00:00:00.0911299" startTime="2026-10-10T12:59:54.5137982+03:00" endTime="2026-10-10T12:59:54.6117105+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="187e19bc-1d5f-4c04-a2ea-4b9836b08115" />
+    <UnitTestResult executionId="efc981da-2b20-44d3-ba44-03bf93710516" testId="50454ad5-7fc7-b6ad-6f78-5bc8cd35f57d" testName="Task.Desktop.Tests.FiveImprovementsTests.Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged(terminal: Cancelled)" computerName="TIM" duration="00:00:00.0482620" startTime="2026-10-10T12:59:54.6175571+03:00" endTime="2026-10-10T12:59:54.6674639+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="efc981da-2b20-44d3-ba44-03bf93710516" />
+    <UnitTestResult executionId="e1f741a0-9852-4e18-91b8-eda89fb0089f" testId="841a64fc-957a-97d4-0218-52a223f1b839" testName="Task.Desktop.Tests.FiveImprovementsTests.Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged(terminal: Completed)" computerName="TIM" duration="00:00:00.0142891" startTime="2026-10-10T12:59:54.6682555+03:00" endTime="2026-10-10T12:59:54.6828914+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1f741a0-9852-4e18-91b8-eda89fb0089f" />
+    <UnitTestResult executionId="f3306d79-de10-4849-9e37-be613643cf02" testId="24f7b7b9-c40d-d41c-e676-b52468d8c2a3" testName="Task.Desktop.Tests.FiveImprovementsTests.DayPicker_PreservesInvalidRawInput_AndEmptyDate" computerName="TIM" duration="00:00:00.0022396" startTime="2026-10-10T12:59:54.6867487+03:00" endTime="2026-10-10T12:59:54.6890430+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3306d79-de10-4849-9e37-be613643cf02" />
+    <UnitTestResult executionId="9d7b4c07-ba17-4b31-9f17-3bebd8b8d09a" testId="e344edaf-8fdc-cafc-f409-17576fe7e7e4" testName="Task.Desktop.Tests.FiveImprovementsTests.Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst(instant: &quot;2026-03-08T04:30:00Z&quot;, expected: &quot;08.03.2026&quot;)" computerName="TIM" duration="00:00:00.0001806" startTime="2026-10-10T12:59:54.6864385+03:00" endTime="2026-10-10T12:59:54.6866594+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d7b4c07-ba17-4b31-9f17-3bebd8b8d09a" />
+    <UnitTestResult executionId="f47145b7-4e35-4a0e-b8f5-d90e32c1e4d9" testId="e8689310-4fe1-171d-67d1-a65ee0e14b39" testName="Task.Desktop.Tests.FiveImprovementsTests.Command_RejectsRepeat_AndContainsFailure" computerName="TIM" duration="00:00:00.0010505" startTime="2026-10-10T12:59:54.7233564+03:00" endTime="2026-10-10T12:59:54.7244596+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f47145b7-4e35-4a0e-b8f5-d90e32c1e4d9" />
+    <UnitTestResult executionId="febd72c2-77a6-4157-b285-e9572a02ffa3" testId="1bf52f3a-185d-6d89-0612-39bc3efcd621" testName="Task.Desktop.Tests.FiveImprovementsTests.FailedChecklistToggleAndCapture_KeepConfirmedStateAndDraft" computerName="TIM" duration="00:00:00.0329693" startTime="2026-10-10T12:59:54.6891458+03:00" endTime="2026-10-10T12:59:54.7225136+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="febd72c2-77a6-4157-b285-e9572a02ffa3" />
+    <UnitTestResult executionId="22839c7d-adf8-4eb9-aefb-b248dbb8c5ef" testId="1af4e92f-c372-e803-3922-db741ad39bad" testName="Task.Desktop.Tests.FiveImprovementsTests.Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst(instant: &quot;2026-11-01T03:30:00Z&quot;, expected: &quot;01.11.2026&quot;)" computerName="TIM" duration="00:00:00.0025689" startTime="2026-10-10T12:59:54.6836786+03:00" endTime="2026-10-10T12:59:54.6863297+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22839c7d-adf8-4eb9-aefb-b248dbb8c5ef" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst(instant: &quot;2026-03-08T04:30:00Z&quot;, expected: &quot;08.03.2026&quot;)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="e344edaf-8fdc-cafc-f409-17576fe7e7e4">
+      <Execution id="9d7b4c07-ba17-4b31-9f17-3bebd8b8d09a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged(terminal: Completed)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="841a64fc-957a-97d4-0218-52a223f1b839">
+      <Execution id="e1f741a0-9852-4e18-91b8-eda89fb0089f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.Command_RejectsRepeat_AndContainsFailure" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="e8689310-4fe1-171d-67d1-a65ee0e14b39">
+      <Execution id="f47145b7-4e35-4a0e-b8f5-d90e32c1e4d9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="Command_RejectsRepeat_AndContainsFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.FailedChecklistToggleAndCapture_KeepConfirmedStateAndDraft" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="1bf52f3a-185d-6d89-0612-39bc3efcd621">
+      <Execution id="febd72c2-77a6-4157-b285-e9572a02ffa3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="FailedChecklistToggleAndCapture_KeepConfirmedStateAndDraft" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.Shortcut_LeavesMultilineEnter_ImeAndRepeatAlone" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="9b473de1-767e-c9a8-3f12-a32acc86b5f9">
+      <Execution id="51a76b8b-903f-47ee-87b5-46444d9f1b0d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="Shortcut_LeavesMultilineEnter_ImeAndRepeatAlone" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged(terminal: Cancelled)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="50454ad5-7fc7-b6ad-6f78-5bc8cd35f57d">
+      <Execution id="efc981da-2b20-44d3-ba44-03bf93710516" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.CorporateCapture_DoesNotEraseNextDraft_OrSendTwice" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="59105aea-6735-46b2-e23a-ec826e04c9d8">
+      <Execution id="187e19bc-1d5f-4c04-a2ea-4b9836b08115" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="CorporateCapture_DoesNotEraseNextDraft_OrSendTwice" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.DayPicker_PreservesInvalidRawInput_AndEmptyDate" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="24f7b7b9-c40d-d41c-e676-b52468d8c2a3">
+      <Execution id="f3306d79-de10-4849-9e37-be613643cf02" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="DayPicker_PreservesInvalidRawInput_AndEmptyDate" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.FiveImprovementsTests.Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst(instant: &quot;2026-11-01T03:30:00Z&quot;, expected: &quot;01.11.2026&quot;)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\debug\net10.0-windows\task.desktop.tests.dll" id="1af4e92f-c372-e803-3922-db741ad39bad">
+      <Execution id="22839c7d-adf8-4eb9-aefb-b248dbb8c5ef" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Debug\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.FiveImprovementsTests" name="Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9b473de1-767e-c9a8-3f12-a32acc86b5f9" executionId="51a76b8b-903f-47ee-87b5-46444d9f1b0d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59105aea-6735-46b2-e23a-ec826e04c9d8" executionId="187e19bc-1d5f-4c04-a2ea-4b9836b08115" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50454ad5-7fc7-b6ad-6f78-5bc8cd35f57d" executionId="efc981da-2b20-44d3-ba44-03bf93710516" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="841a64fc-957a-97d4-0218-52a223f1b839" executionId="e1f741a0-9852-4e18-91b8-eda89fb0089f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="24f7b7b9-c40d-d41c-e676-b52468d8c2a3" executionId="f3306d79-de10-4849-9e37-be613643cf02" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e344edaf-8fdc-cafc-f409-17576fe7e7e4" executionId="9d7b4c07-ba17-4b31-9f17-3bebd8b8d09a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8689310-4fe1-171d-67d1-a65ee0e14b39" executionId="f47145b7-4e35-4a0e-b8f5-d90e32c1e4d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1bf52f3a-185d-6d89-0612-39bc3efcd621" executionId="febd72c2-77a6-4157-b285-e9572a02ffa3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1af4e92f-c372-e803-3922-db741ad39bad" executionId="22839c7d-adf8-4eb9-aefb-b248dbb8c5ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.53]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

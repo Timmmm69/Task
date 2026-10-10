@@ -1,0 +1,1006 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index 7c5fc82..dac4b66 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -110,10 +110,11 @@
+         "work/production/tests/Task.Desktop.Tests/Today/TodayTaskSummaryTests.cs",
+         "outputs/production_today_v1.1.0/validation-report.md",
+         "outputs/20260914_today_direction2_timeline_planner_1.0.0/validation-report.md: Release WPF normal/compact/offline visual and critical E2E PASS",
+-        "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified."
++        "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified.",
++        "outputs/20261010_task_ux_five_1.0.0/validation-report.md: calendar/Today/Tomorrow, form keyboard, pinned corporate footer, confirmed checklist checkbox, Personal terminal filter; 756 desktop tests PASS, native WPF keyboard/screenshots and Release build PASS."
+       ],
+-      "note": "Экран «Сегодня» приведён к каноническому Direction 2 Timeline Planner: трёхзонная композиция, часовая шкала и текущее время, очередь, синхронный инспектор и offline/read-only режим на последних подтверждённых данных. Release build, desktop regression и реальный PostgreSQL/HTTPS/WPF QA-03 gate пройдены; normal, compact 1200×900 и offline evidence сняты. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись.",
+-      "updated_at": "2026-10-10T00:00:00+03:00",
++      "note": "Экран «Сегодня» приведён к каноническому Direction 2 Timeline Planner: трёхзонная композиция, часовая шкала и текущее время, очередь, синхронный инспектор и offline/read-only режим на последних подтверждённых данных. Release build, desktop regression и реальный PostgreSQL/HTTPS/WPF QA-03 gate пройдены; normal, compact 1200×900 и offline evidence сняты. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись. 2026-10-10: реализованы пять улучшений форм Task: календарь и быстрые дни, Enter/Ctrl+Enter, закреплённые кнопки корпоративной задачи, checkbox с подтверждённым состоянием, фильтр завершённых/отменённых Personal (по умолчанию выключен). Проверены ошибки, черновики, минимальные окна и системный фокус. Progress/status не повышались.",
++      "updated_at": "2026-10-10T10:02:19.897Z",
+       "priority": 2,
+       "dependencies": [
+         "PROD-03",
+@@ -371,10 +372,11 @@
+         "outputs/20261006_task_portable_release_1.0.7/validation-report.md: Accepted Personal UX inputs unchanged; exact ZIP native smoke/restart/replacement PASS on developer Windows. Clean Windows, physical offline, visible popup and full current DPI matrix are not accepted.",
+         "outputs/20261008_command_palette_1.0.0/VALIDATION_REPORT.md: Command Palette, shared Search, keyboard/focus/virtualization and Release PostgreSQL 16 gate",
+         "outputs/20261008_view_state_1.0.0/VALIDATION_REPORT.md: device-local view state; 711 desktop + 163 server-list PASS; native resize/sort/permissions/lifetime and isolation verified; live-server manual and physical mixed-DPI NOT RUN.",
+-        "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified."
++        "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified.",
++        "outputs/20261010_task_ux_five_1.0.0/validation-report.md: calendar/Today/Tomorrow, form keyboard, pinned corporate footer, confirmed checklist checkbox, Personal terminal filter; 756 desktop tests PASS, native WPF keyboard/screenshots and Release build PASS."
+       ],
+-      "note": "Нативный WPF Release повторно проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, точный viewport 1200×900, UIA Value/Invoke/Selection/Scroll и полный Tab/F6 cycle — PASS. Responsive shell ниже 900 DIP переходит в icon-only navigation и не обрезает header на 200%. Физическая mixed-DPI топология остаётся deployment smoke. 2026-10-06: Personal приведён к существующей оболочке и компонентам Corporate: единая боковая навигация, списки, карточки, редакторы и настройки резервных копий/фона. Native 1200×820 и 800×480: 24 раздела/размера, видимые основные действия и реальный конфликт с сохранением черновика; 497 desktop PASS / 0 SKIP. Это локальное UX-подтверждение; полная готовность приложения и следующие этапы не объявлены. Позднейшее обновление 2026-10-06: Accepted Personal UX inputs unchanged; exact ZIP native smoke/restart/replacement PASS on developer Windows. Clean Windows, physical offline, visible popup and full current DPI matrix are not accepted. 2026-10-08: Command Palette 1.0.0 расширяет существующий global search popup: Ctrl+K, локальные capability-aware команды, общий Search API с debounce/cancellation, очистка scope, offline navigation/read-only, keyboard/focus restore и virtualization. Полный Release gate: 1980 PASS / 0 SKIP / 0 FAIL / 0 NOT RUN на PostgreSQL 16. WPF keyboard и 200% equivalent bounds проверены; системные HC selection colors/outline проверены, ручной Narrator и аппаратная DPI/HC матрица этим пакетом не подтверждаются. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись.",
+-      "updated_at": "2026-10-10T00:00:00+03:00",
++      "note": "Нативный WPF Release повторно проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, точный viewport 1200×900, UIA Value/Invoke/Selection/Scroll и полный Tab/F6 cycle — PASS. Responsive shell ниже 900 DIP переходит в icon-only navigation и не обрезает header на 200%. Физическая mixed-DPI топология остаётся deployment smoke. 2026-10-06: Personal приведён к существующей оболочке и компонентам Corporate: единая боковая навигация, списки, карточки, редакторы и настройки резервных копий/фона. Native 1200×820 и 800×480: 24 раздела/размера, видимые основные действия и реальный конфликт с сохранением черновика; 497 desktop PASS / 0 SKIP. Это локальное UX-подтверждение; полная готовность приложения и следующие этапы не объявлены. Позднейшее обновление 2026-10-06: Accepted Personal UX inputs unchanged; exact ZIP native smoke/restart/replacement PASS on developer Windows. Clean Windows, physical offline, visible popup and full current DPI matrix are not accepted. 2026-10-08: Command Palette 1.0.0 расширяет существующий global search popup: Ctrl+K, локальные capability-aware команды, общий Search API с debounce/cancellation, очистка scope, offline navigation/read-only, keyboard/focus restore и virtualization. Полный Release gate: 1980 PASS / 0 SKIP / 0 FAIL / 0 NOT RUN на PostgreSQL 16. WPF keyboard и 200% equivalent bounds проверены; системные HC selection colors/outline проверены, ручной Narrator и аппаратная DPI/HC матрица этим пакетом не подтверждаются. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись. 2026-10-10: реализованы пять улучшений форм Task: календарь и быстрые дни, Enter/Ctrl+Enter, закреплённые кнопки корпоративной задачи, checkbox с подтверждённым состоянием, фильтр завершённых/отменённых Personal (по умолчанию выключен). Проверены ошибки, черновики, минимальные окна и системный фокус. Progress/status не повышались.",
++      "updated_at": "2026-10-10T10:02:19.898Z",
+       "priority": 3,
+       "dependencies": [
+         "DESK-03"
+@@ -893,10 +895,11 @@
+         "outputs/20260920_direction2_auth_admin_settings_1.0.0/evidence/accessibility/windows-ux.json",
+         "outputs/20261006_task_final_acceptance_1.0.0/qa04/evidence/qa04-completion.json: fresh accessibility and completion gates PASS; full dual-mode acceptance remains BLOCKED",
+         "outputs/20261006_task_portable_environment_acceptance_1.0.0/validation-report.md: paired current native screenshots inspected; full dual-mode visual/100–200% matrix remains BLOCKED; previous evidence is not promoted",
+-        "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified."
++        "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified.",
++        "outputs/20261010_task_ux_five_1.0.0/validation-report.md: calendar/Today/Tomorrow, form keyboard, pinned corporate footer, confirmed checklist checkbox, Personal terminal filter; 756 desktop tests PASS, native WPF keyboard/screenshots and Release build PASS."
+       ],
+-      "note": "Шаги 1–8 закрыты; свежий Direction 2 regression подтвердил 100/125/150/200%, Tab/F6, UIA Value/Invoke/Selection и cleanup. Forced-colors сохранён через общие HighContrast/SystemColors resources. Narrator и mixed-monitor остаются в прежних границах acceptance/deployment smoke. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись.",
+-      "updated_at": "2026-10-10T00:00:00+03:00",
++      "note": "Шаги 1–8 закрыты; свежий Direction 2 regression подтвердил 100/125/150/200%, Tab/F6, UIA Value/Invoke/Selection и cleanup. Forced-colors сохранён через общие HighContrast/SystemColors resources. Narrator и mixed-monitor остаются в прежних границах acceptance/deployment smoke. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись. 2026-10-10: реализованы пять улучшений форм Task: календарь и быстрые дни, Enter/Ctrl+Enter, закреплённые кнопки корпоративной задачи, checkbox с подтверждённым состоянием, фильтр завершённых/отменённых Personal (по умолчанию выключен). Проверены ошибки, черновики, минимальные окна и системный фокус. Progress/status не повышались.",
++      "updated_at": "2026-10-10T10:02:19.898Z",
+       "priority": 4,
+       "dependencies": [
+         "DESK-05",
+diff --git a/work/production/src/Task.Desktop/Infrastructure/FormKeyboard.cs b/work/production/src/Task.Desktop/Infrastructure/FormKeyboard.cs
+new file mode 100644
+index 0000000..8f1d35e
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Infrastructure/FormKeyboard.cs
+@@ -0,0 +1,75 @@
++using System.Windows;
++using System.Windows.Controls;
++using System.Windows.Input;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Infrastructure;
++
++/// <summary>Local shortcuts share the button command and never intercept IME or key repeats.</summary>
++public static class FormKeyboard
++{
++    public static readonly DependencyProperty SaveProperty = DependencyProperty.RegisterAttached(
++        "Save", typeof(ICommand), typeof(FormKeyboard), new PropertyMetadata(null, Attach));
++    public static readonly DependencyProperty CaptureProperty = DependencyProperty.RegisterAttached(
++        "Capture", typeof(AsyncCommand), typeof(FormKeyboard), new PropertyMetadata(null, Attach));
++    public static void SetSave(DependencyObject target, ICommand? value) => target.SetValue(SaveProperty, value);
++    public static ICommand? GetSave(DependencyObject target) => (ICommand?)target.GetValue(SaveProperty);
++    public static void SetCapture(DependencyObject target, AsyncCommand? value) => target.SetValue(CaptureProperty, value);
++    public static AsyncCommand? GetCapture(DependencyObject target) => (AsyncCommand?)target.GetValue(CaptureProperty);
++    private static void Attach(DependencyObject target, DependencyPropertyChangedEventArgs e)
++    {
++        if (target is not UIElement element) return;
++        element.PreviewKeyDown -= OnKey;
++        element.PreviewKeyDown += OnKey;
++        if (target is TextBox input && e.Property == CaptureProperty)
++        {
++            input.TextChanged -= OnCaptureTextChanged;
++            input.TextChanged += OnCaptureTextChanged;
++        }
++    }
++    private static void OnCaptureTextChanged(object sender, TextChangedEventArgs e)
++    {
++        if (sender is not TextBox { Text.Length: 0, IsVisible: true } input || GetCapture(input)?.IsExecuting != true) return;
++        var context = input.DataContext;
++        var window = Window.GetWindow(input);
++        var owner = FindOwner(input);
++        var focused = Keyboard.FocusedElement;
++        input.Dispatcher.BeginInvoke(() =>
++        {
++            if (input.Text.Length == 0 && input.IsLoaded && input.IsVisible && ReferenceEquals(context, input.DataContext)
++                && ReferenceEquals(focused, Keyboard.FocusedElement)
++                && owner?.IsKeyboardFocusWithin == true && window?.IsActive == true) input.Focus();
++        }, System.Windows.Threading.DispatcherPriority.Input);
++    }
++    private static UserControl? FindOwner(DependencyObject element)
++    {
++        for (var parent = System.Windows.Media.VisualTreeHelper.GetParent(element); parent is not null;
++             parent = System.Windows.Media.VisualTreeHelper.GetParent(parent))
++            if (parent is UserControl view) return view;
++        return null;
++    }
++    internal static bool IsShortcut(Key key, ModifierKeys modifiers, bool repeat, bool capture) =>
++        !repeat && key == Key.Enter && modifiers == (capture ? ModifierKeys.None : ModifierKeys.Control);
++    private static async void OnKey(object sender, KeyEventArgs e)
++    {
++        if (sender is not FrameworkElement { IsVisible: true, IsKeyboardFocusWithin: true } element) return;
++        // ImeProcessed is deliberately not treated as Enter: composition keeps ownership of the key.
++        if (GetSave(element) is { } save && IsShortcut(e.Key, Keyboard.Modifiers, e.IsRepeat, false))
++        {
++            e.Handled = true;
++            if (save.CanExecute(null)) save.Execute(null);
++        }
++        else if (element is TextBox { AcceptsReturn: false } input && GetCapture(input) is { } capture
++            && IsShortcut(e.Key, Keyboard.Modifiers, e.IsRepeat, true))
++        {
++            e.Handled = true;
++            if (!capture.CanExecute(null)) return;
++            var context = input.DataContext;
++            var window = Window.GetWindow(input);
++            await capture.ExecuteAsync();
++            // Only a confirmed successful write clears the model's text. No delayed focus into another view/account.
++            if (input.Text.Length == 0 && input.IsLoaded && input.IsVisible && input.IsKeyboardFocusWithin
++                && ReferenceEquals(context, input.DataContext) && window?.IsActive == true) input.Focus();
++        }
++    }
++}
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml b/work/production/src/Task.Desktop/MainWindow.xaml
+index f669f43..7e433b6 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml
++++ b/work/production/src/Task.Desktop/MainWindow.xaml
+@@ -993,13 +993,14 @@
+                         Background="{DynamicResource Task.Brush.Surface.Base}"
+                         BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0"
+                         Padding="20" Panel.ZIndex="20" DataContext="{Binding Editor}"
+-                        AutomationProperties.Name="Форма задачи" AutomationProperties.AutomationId="TaskEditorPanel">
++                        state:FormKeyboard.Save="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}" AutomationProperties.Name="Форма задачи" AutomationProperties.AutomationId="TaskEditorPanel">
+                     <Border.Style>
+                         <Style TargetType="Border">
+                             <Setter Property="Visibility" Value="Visible" />
+                             <Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+                         </Style>
+                     </Border.Style>
++                    <Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                         <StackPanel>
+                             <Grid Margin="0,0,0,18">
+@@ -1039,6 +1040,7 @@
+                                      Style="{StaticResource Task.Input.Text}" TabIndex="22"
+                                      AutomationProperties.Name="День задачи" AutomationProperties.AutomationId="TaskScheduledDateTextBox"
+                                      AutomationProperties.HelpText="{Binding Card.DateHint}" />
++                            <views:TaskDayPicker DataContext="{Binding Card}"/>
+                             <TextBlock Text="{Binding Card.DateHint}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                        Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+ 
+@@ -1098,9 +1100,12 @@
+                                 </StackPanel>
+                             </Border>
+ 
+-                            <WrapPanel Margin="0,18,0,0">
++
++                        </StackPanel>
++                    </ScrollViewer>
++                    <StackPanel Grid.Row="1"><TextBlock Text="Ctrl+Enter — сохранить" Margin="0,8,0,0"/>                            <WrapPanel Margin="0,18,0,0">
+                                 <Button Content="{Binding SubmitText}" Style="{StaticResource Task.Button.Primary}"
+-                                        IsDefault="True" MinWidth="116" Margin="0,0,8,8" TabIndex="40"
++                                        MinWidth="116" Margin="0,0,8,8" TabIndex="40"
+                                         Command="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                         AutomationProperties.Name="{Binding SubmitText}" AutomationProperties.AutomationId="SaveTaskButton" />
+                                 <Button Content="Отмена" Style="{StaticResource Task.Button.Secondary}"
+@@ -1108,8 +1113,7 @@
+                                         Command="{Binding DataContext.Tasks.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                         AutomationProperties.Name="Отменить редактирование задачи" />
+                             </WrapPanel>
+-                        </StackPanel>
+-                    </ScrollViewer>
++                    </StackPanel></Grid>
+                 </Border>
+             </Grid>
+ 
+diff --git a/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs b/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
+index 42d70d9..1af0ff0 100644
+--- a/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
++++ b/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs
+@@ -34,7 +34,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     private Guid? _savedTaskId;
+     public event Action<Guid?>? OpenTasksRequested;
+     private string _capture = "", _check = "", _message = "";
+-    private bool _busy, _disposed;
++    private bool _busy, _disposed, _hideCompleted, _filtering;
+     private PersonalSection _section;
+     public PersonalTasksViewModel(PersonalTasksClient client, IReadOnlyList<PersonalSection> sections, Func<IReadOnlyList<PersonalProject>>? projects = null)
+     {
+@@ -46,7 +46,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+         OpenSavedTaskCommand = new((_, _) => { OpenTasksRequested?.Invoke(_savedTaskId); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanNavigate && _savedTaskId.HasValue);
+         EditCommand = new(async (_, _) => await OpenAsync(Selected?.Source), _ => CanEdit && CanSelectTask);
+         SaveCommand = new(async (_, _) => await SaveAsync(), _ => Editor?.CanSubmit == true && !IsBusy);
+-        CancelCommand = new((_, _) => { Editor = null; Message = ""; return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy);
++        CancelCommand = new((_, _) => { Editor = null; Message = ""; Filter(); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy);
+         CaptureCommand = new(async (_, _) => await CaptureAsync(), _ => !IsBusy && !string.IsNullOrWhiteSpace(CaptureText) && CaptureText.Trim().Length <= 500);
+         TransitionCommand = new(async (p, _) => { if (p is DesktopTaskStatus status) await TransitionAsync(status); }, p => CanSelectTask && Selected is not null && p is DesktopTaskStatus status && TaskRules.CanTransition((TaskWorkStatus)Selected.Source.Status, (TaskWorkStatus)status));
+         ReloadEditorCommand = new(async (_, _) => await ReloadEditorAsync(), _ => !IsBusy && Editor?.HasConflict == true);
+@@ -55,7 +55,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+         RemoveCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item, true); }, _ => CanEdit && CanSelectTask);
+         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить действие. Введённые данные остались в форме.";
+     }
+-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand];
++    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand, ShowCompletedCommand];
+     public AsyncCommand RefreshCommand { get; }
+     public AsyncCommand NewCommand { get; }
+     public AsyncCommand OpenTasksCommand { get; }
+@@ -73,16 +73,25 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+     public AsyncCommand RemoveCheckCommand { get; }
+     public PersonalSection SelectedSection { get => _section; set { if (value is not null && SetProperty(ref _section, value)) { Filter(); OnPropertyChanged(nameof(IsInbox)); OnPropertyChanged(nameof(IsToday)); OnPropertyChanged(nameof(IsSettings)); OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody)); } } }
+     public bool IsInbox => SelectedSection.Title == "Входящие";
++    public bool IsTasks => SelectedSection.Title == "Задачи";
++    public bool HideCompleted { get => _hideCompleted; set { if (SetProperty(ref _hideCompleted, value)) Filter(); } }
++    public bool HasHiddenTasks => IsTasks && HideCompleted && _all.Any(t => TaskRules.IsTerminal((TaskWorkStatus)t.Status));
++    public AsyncCommand ShowCompletedCommand => _showCompletedCommand ??= new((_, _) => { HideCompleted = false; return System.Threading.Tasks.Task.CompletedTask; });
++    private AsyncCommand? _showCompletedCommand;
+     public bool IsSettings => SelectedSection.Title == "Настройки";
+     public IReadOnlyList<PersonalTaskItem> Items { get => _items; private set { SetProperty(ref _items, value); OnPropertyChanged(nameof(ShowEmpty)); } }
+     public bool HasSelection => Selected is not null;
+     public bool ShowEmpty => _hasLoaded && !IsBusy && Items.Count == 0 && !_loadFailed;
+-    public string EmptyTitle => IsInbox ? "Входящие разобраны" : SelectedSection.Title == "Сегодня" ? "На сегодня задач нет" : "Задач пока нет";
+-    public string EmptyBody => IsInbox ? "Запишите новую задачу в поле выше." : "Создайте задачу или запланируйте существующую.";
++    public string EmptyTitle => HasHiddenTasks ? "Нет незавершённых задач" : IsInbox ? "Входящие разобраны" : SelectedSection.Title == "Сегодня" ? "На сегодня задач нет" : "Задач пока нет";
++    public string EmptyBody => HasHiddenTasks ? "Завершённые и отменённые задачи скрыты фильтром." : IsInbox ? "Запишите новую задачу в поле выше." : "Создайте задачу или запланируйте существующую.";
+     public PersonalTaskItem? Selected
+     {
+         get => _selected;
+-        set { if (SetProperty(ref _selected, value)) { Checklist = []; OnPropertyChanged(nameof(Checklist)); OnPropertyChanged(nameof(HasSelection)); Notify(); if (value is not null) _ = LoadChecklistAsync(value.Source.Id); } }
++        set
++        {
++            if (value is null && (_filtering || _selected is { } old && HasDrafts && !Items.Any(t => t.Source.Id == old.Source.Id))) return;
++            if (SetProperty(ref _selected, value)) { Checklist = []; OnPropertyChanged(nameof(Checklist)); OnPropertyChanged(nameof(HasSelection)); Notify(); if (value is not null) _ = LoadChecklistAsync(value.Source.Id); }
++        }
+     }
+     public TaskEditorViewModel? Editor
+     {
+@@ -139,7 +148,14 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+             tasks = tasks.Where(t => !TaskRules.IsTerminal((TaskWorkStatus)t.Status) &&
+                 (t.Card?.ScheduledDate == today || t.DeadlineAtUtc?.ToLocalTime().Date <= DateTime.Today));
+         }
+-        Items = tasks.Select(t => new PersonalTaskItem(t)).ToArray();
++        if (IsTasks && HideCompleted) tasks = tasks.Where(t => !TaskRules.IsTerminal((TaskWorkStatus)t.Status));
++        _filtering = true;
++        try { Items = tasks.Select(t => new PersonalTaskItem(t)).ToArray(); }
++        finally { _filtering = false; }
++        // Retain a selected task while its editor or checklist draft still owns it.
++        if (Selected is { } selected && !Items.Any(t => t.Source.Id == selected.Source.Id) && !HasDrafts) Selected = null;
++        OnPropertyChanged(nameof(IsTasks)); OnPropertyChanged(nameof(HasHiddenTasks));
++        OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody));
+     }
+     private async System.Threading.Tasks.Task OpenAsync(DesktopTaskDto? source)
+     {
+diff --git a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+index 0e9d421..8f44dbc 100644
+--- a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+@@ -442,7 +442,8 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+ 
+     private async global::System.Threading.Tasks.Task CaptureAsync(CancellationToken cancellationToken)
+     {
+-        var title = CaptureText.Trim();
++        var capturedText = CaptureText;
++        var title = capturedText.Trim();
+         if (!CanCapture || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true)) return;
+         IsBusy = true;
+         try
+@@ -461,7 +462,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+                 var item = new InboxItemViewModel(success.Value);
+                 Items = [item, .. Items.Where(existing => existing.Id != item.Id)];
+                 SelectedItem = item;
+-                CaptureText = string.Empty;
++                if (CaptureText == capturedText) CaptureText = string.Empty;
+                 State = InboxScreenState.Loaded;
+                 ScreenMessage = "Запись добавлена во входящие.";
+             }
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs b/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
+index 182a443..d3798bf 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs
+@@ -38,7 +38,19 @@ public sealed class TaskCardEditor : ViewModelBase
+         SetOptions(new JsonObject());
+     }
+     public string Description { get => _description; set { if (SetProperty(ref _description, value)) Changed?.Invoke(); } }
+-    public string Date { get => _date; set { if (SetProperty(ref _date, value)) Changed?.Invoke(); } }
++    public string Date { get => _date; set { if (SetProperty(ref _date, value)) { OnPropertyChanged(nameof(CalendarDate)); Changed?.Invoke(); } } }
++    public DateTime? CalendarDate
++    {
++        get => DateOnly.TryParseExact(Date.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var day)
++            ? day.ToDateTime(TimeOnly.MinValue) : null;
++        set { if (IsDateOnly && value.HasValue) Date = value.Value.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture); }
++    }
++    public void SelectRelativeDay(int offset, DateTimeOffset? now = null)
++    {
++        if (!IsDateOnly) return;
++        var local = TimeZoneInfo.ConvertTime(now ?? DateTimeOffset.UtcNow, ScheduleZone ?? TimeZoneInfo.Local);
++        CalendarDate = local.Date.AddDays(offset);
++    }
+     public string Duration { get => _duration; set { if (SetProperty(ref _duration, value)) Changed?.Invoke(); } }
+     public string Search { get => _search; set => SetProperty(ref _search, value); }
+     public string? Message { get => _message; set => SetProperty(ref _message, value); }
+diff --git a/work/production/src/Task.Desktop/Views/InboxView.xaml b/work/production/src/Task.Desktop/Views/InboxView.xaml
+index 36158c6..f986a34 100644
+--- a/work/production/src/Task.Desktop/Views/InboxView.xaml
++++ b/work/production/src/Task.Desktop/Views/InboxView.xaml
+@@ -34,13 +34,13 @@
+                     </Grid.ColumnDefinitions>
+                     <Path Data="{StaticResource Task.Icon.Inbox}" Width="20" Height="20" Stretch="Uniform"
+                           Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center" />
+-                    <TextBox x:Name="InboxCaptureTextBox" Grid.Column="1" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
++                    <TextBox x:Name="InboxCaptureTextBox" state:FormKeyboard.Capture="{Binding CaptureCommand}" Grid.Column="1" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
+                              MaxLength="500" Margin="10,0" TabIndex="10"
+                              Style="{StaticResource Task.Input.Text}"
+                              AutomationProperties.Name="Быстро добавить во входящие"
+                              AutomationProperties.AutomationId="InboxCaptureTextBox"
+-                             AutomationProperties.HelpText="Введите короткую запись без проекта, срока и исполнителя" />
+-                    <Button Grid.Column="2" Content="Добавить" Command="{Binding CaptureCommand}"
++                             AutomationProperties.HelpText="Enter — записать. Введите короткую запись без проекта, срока и исполнителя" />
++                    <Button Grid.Column="2" Content="Добавить · Enter" Command="{Binding CaptureCommand}"
+                             Style="{StaticResource Task.Button.Primary}" MinWidth="104" TabIndex="11"
+                             AutomationProperties.Name="Добавить запись во входящие"
+                             AutomationProperties.AutomationId="InboxCaptureButton" />
+@@ -242,6 +242,7 @@
+                     Background="{DynamicResource Task.Brush.Surface.Base}"
+                     BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0"
+                     Padding="26" DataContext="{Binding Conversion}"
++                    state:FormKeyboard.Save="{Binding DataContext.SaveConversionCommand, ElementName=InboxRoot}" KeyboardNavigation.TabNavigation="Cycle"
+                     AutomationProperties.Name="Преобразовать в задачу"
+                     AutomationProperties.AutomationId="InboxConversionPanel">
+                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+@@ -322,6 +323,7 @@
+                                     AutomationProperties.AutomationId="InboxReloadConflictButton" />
+                         </StackPanel>
+ 
++                        <TextBlock Text="Ctrl+Enter — создать задачу" Margin="0,0,0,8"/>
+                         <WrapPanel HorizontalAlignment="Right">
+                             <Button Content="Отмена" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,10,0" TabIndex="34"
+                                     Command="{Binding DataContext.CancelConversionCommand, ElementName=InboxRoot}" />
+diff --git a/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml b/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml
+index bad7a95..bd4e935 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml
+@@ -13,7 +13,7 @@
+    </Grid>
+    <Grid Grid.Column="2">
+     <Border><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Inspector.Panel}"><Style.Triggers><DataTrigger Binding="{Binding IsProjectEditing}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel><TextBlock Text="{Binding SelectedProject.Name,TargetNullValue=Выберите проект,FallbackValue=Выберите проект}" Style="{StaticResource Task.State.Title}"/><TextBlock Text="{Binding SelectedProject.Description}" Style="{StaticResource Task.State.Body}" Margin="0,12,0,0"/><TextBlock Text="{Binding SelectedProject.StatusText}" Margin="0,12,0,0"/><TextBlock Text="{Binding SelectedProject.LifecycleText}" Style="{StaticResource Task.State.Body}"/></StackPanel></Border>
+-    <Border Style="{StaticResource Task.Inspector.Panel}" Padding="0" Visibility="{Binding IsProjectEditing,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
++    <Border Style="{StaticResource Task.Inspector.Panel}" Padding="0" PreviewKeyDown="OnEditorKey" Visibility="{Binding IsProjectEditing,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+      <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <TextBlock Text="Проект" Style="{StaticResource Task.State.Title}" Margin="20,18"/>
+       <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"><StackPanel Margin="20,0,20,20">
+@@ -23,7 +23,7 @@
+        <WrapPanel><StackPanel Margin="0,0,16,0"><TextBlock Text="Начало" Style="{StaticResource Personal.Label}"/><DatePicker SelectedDate="{Binding StartDate}" MinHeight="36"/></StackPanel><StackPanel><TextBlock Text="Плановое окончание" Style="{StaticResource Personal.Label}"/><DatePicker SelectedDate="{Binding EndDate}" MinHeight="36"/></StackPanel></WrapPanel>
+        <Expander Header="Хранение проекта" state:ViewState.Section="personal-projects/v1/storage" Margin="0,18,0,0"><StackPanel><TextBlock Text="Состояние" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding LifecycleChoices}" SelectedValue="{Binding Lifecycle}" SelectedValuePath="Value" DisplayMemberPath="Name"/></StackPanel></Expander>
+       </StackPanel></ScrollViewer>
+-      <Border Grid.Row="2" Padding="20,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><WrapPanel HorizontalAlignment="Right"><Button Content="Отменить" Click="OnCancel" Margin="0,0,8,0"/><Button Content="Сохранить" Click="OnSave" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveProject"/></WrapPanel></Border>
++      <Border Grid.Row="2" Padding="20,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><WrapPanel HorizontalAlignment="Right"><TextBlock Text="Ctrl+Enter — сохранить" VerticalAlignment="Center" Margin="0,0,8,0"/><Button Content="Отменить" Click="OnCancel" Margin="0,0,8,0"/><Button Content="Сохранить" Click="OnSave" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveProject"/></WrapPanel></Border>
+      </Grid>
+     </Border>
+    </Grid>
+diff --git a/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs b/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs
+index 77ebbc7..e7bb45c 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs
+@@ -5,6 +5,15 @@ namespace Task.Desktop.Views;
+ public partial class PersonalProjectsView : System.Windows.Controls.UserControl
+ {
+     public PersonalProjectsView() => InitializeComponent();
++    private void OnEditorKey(object sender, System.Windows.Input.KeyEventArgs e)
++    {
++        if (sender is FrameworkElement { IsVisible: true, IsKeyboardFocusWithin: true }
++            && Task.Desktop.Infrastructure.FormKeyboard.IsShortcut(e.Key, System.Windows.Input.Keyboard.Modifiers, e.IsRepeat, false))
++        {
++            e.Handled = true;
++            OnSave(sender, e);
++        }
++    }
+     private void OnCancel(object sender, RoutedEventArgs e)
+     {
+         if (DataContext is not PersonalPlanningViewModel model || !model.CancelProjectCommand.CanExecute(null)) return;
+diff --git a/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml b/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
+index c112c01..141cd42 100644
+--- a/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
++++ b/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml
+@@ -11,10 +11,11 @@
+    </WrapPanel>
+   </Grid>
+   <StackPanel Grid.Row="1" Margin="0,0,0,12">
++   <StackPanel Visibility="{Binding IsTasks,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><CheckBox Content="Скрыть завершённые" IsChecked="{Binding HideCompleted}" Margin="0,0,0,8"/><StackPanel Visibility="{Binding HasHiddenTasks,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Завершённые и отменённые задачи скрыты." TextWrapping="Wrap"/><Button Content="Показать завершённые" Command="{Binding ShowCompletedCommand}" HorizontalAlignment="Left" Margin="0,6,0,8"/></StackPanel></StackPanel>
+    <Border Style="{StaticResource Task.State.Inline}"><TextBlock Text="Личные задачи сохраняются на этом компьютере." TextWrapping="Wrap"/></Border>
+    <Border Style="{StaticResource Task.State.Inline}" Visibility="{Binding IsInbox,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12,0,0"><StackPanel>
+     <TextBlock Text="Запишите задачу сейчас, детали добавьте позже." Style="{StaticResource Task.State.Body}" Margin="0,0,0,8"/>
+-    <DockPanel><Button Content="Записать" Command="{Binding CaptureCommand}" DockPanel.Dock="Right" Style="{StaticResource Task.Button.Primary}" Margin="12,0,0,0" AutomationProperties.AutomationId="PersonalCapture"/><TextBox Text="{Binding CaptureText,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" AutomationProperties.AutomationId="PersonalCaptureText" AutomationProperties.Name="Быстрая задача"/></DockPanel>
++    <TextBlock Text="Enter — записать" Margin="0,0,0,6"/><DockPanel><Button Content="Записать" Command="{Binding CaptureCommand}" DockPanel.Dock="Right" Style="{StaticResource Task.Button.Primary}" Margin="12,0,0,0" AutomationProperties.AutomationId="PersonalCapture"/><TextBox state:FormKeyboard.Capture="{Binding CaptureCommand}" Text="{Binding CaptureText,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" AutomationProperties.AutomationId="PersonalCaptureText" AutomationProperties.Name="Быстрая задача"/></DockPanel>
+    </StackPanel></Border>
+   </StackPanel>
+   <Grid Grid.Row="2">
+@@ -55,7 +56,7 @@
+    <Button Content="Открыть задачу" Command="{Binding OpenSavedTaskCommand}" Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="PersonalOpenSavedTask"/>
+   </StackPanel></Border>
+ 
+-  <Grid Grid.RowSpan="5" Background="#66000000" Visibility="{Binding HasEditor,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="50" Margin="-24" KeyboardNavigation.TabNavigation="Cycle" AutomationProperties.Name="Редактор личной задачи">
++  <Grid Grid.RowSpan="5" Background="#66000000" Visibility="{Binding HasEditor,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="50" Margin="-24" KeyboardNavigation.TabNavigation="Cycle" state:FormKeyboard.Save="{Binding SaveCommand}" AutomationProperties.Name="Редактор личной задачи">
+    <Border MaxWidth="660" Margin="20" Style="{StaticResource Task.Inspector.Panel}" Padding="0">
+     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Border Padding="24,18" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1"><TextBlock Text="{Binding Editor.Heading}" Style="{StaticResource Task.Shell.PageTitle}"/></Border>
+@@ -64,6 +65,7 @@
+        <TextBlock Text="Название (обязательно)" Style="{StaticResource Personal.Label}"/><TextBox x:Name="TitleInput" Text="{Binding Title,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" TabIndex="20" AutomationProperties.Name="Название задачи" AutomationProperties.HelpText="Обязательное поле, не более 500 символов" AutomationProperties.AutomationId="PersonalTaskTitle"/><TextBlock Text="Например: подготовить договор" Style="{StaticResource Task.State.Body}" FontSize="12"/><TextBlock Text="{Binding TitleError}" Style="{StaticResource Personal.Validation}"/>
+        <TextBlock Text="Запланировать на день (необязательно)" Style="{StaticResource Personal.Label}"/>
+        <TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" TabIndex="23" AutomationProperties.Name="День задачи" AutomationProperties.AutomationId="PersonalScheduledDate" AutomationProperties.HelpText="{Binding Card.DateHint}"/>
++       <views:TaskDayPicker DataContext="{Binding Card}"/>
+        <TextBlock Text="{Binding Card.DateHint}" Style="{StaticResource Task.State.Body}" FontSize="12"/>
+        <TextBlock Text="Описание (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Description,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="180" VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="24" AutomationProperties.AutomationId="PersonalTaskDescription" AutomationProperties.Name="Описание задачи"/>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+@@ -86,7 +88,7 @@
+       <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource Personal.Validation}"/>
+       <Border Style="{StaticResource Task.State.Inline}" Margin="0,12,0,0" Visibility="{Binding HasConflict,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel><TextBlock Text="Задача изменилась. Ваш черновик сохранён. Загрузите актуальную версию, чтобы продолжить." TextWrapping="Wrap"/><Button Content="Загрузить актуальную версию" Command="{Binding DataContext.ReloadEditorCommand,ElementName=PersonalTasks}" Margin="0,10,0,0" HorizontalAlignment="Left"/></StackPanel></Border>
+      </StackPanel></ScrollViewer>
+-     <Border Grid.Row="2" Padding="24,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отмена" Click="OnCancelEditor" TabIndex="41" Margin="0,0,10,0"/><Button Content="{Binding Editor.SubmitText}" Command="{Binding SaveCommand}" TabIndex="40" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveTask" AutomationProperties.Name="{Binding Editor.SubmitText}"/></StackPanel></Border>
++     <Border Grid.Row="2" Padding="24,14" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0"><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отмена" Click="OnCancelEditor" TabIndex="41" Margin="0,0,10,0"/><TextBlock Text="Ctrl+Enter — сохранить" VerticalAlignment="Center" Margin="0,0,12,0"/><Button Content="{Binding Editor.SubmitText}" Command="{Binding SaveCommand}" TabIndex="40" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="PersonalSaveTask" AutomationProperties.Name="{Binding Editor.SubmitText}"/></StackPanel></Border>
+     </Grid>
+    </Border>
+   </Grid>
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+index ee89e6f..72c6a75 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+@@ -104,7 +104,7 @@
+ 
+             <Border Grid.ColumnSpan="3" HorizontalAlignment="Right" Width="420" Background="{DynamicResource Task.Brush.Surface.Base}"
+                     BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0" Padding="20" Panel.ZIndex="10"
+-                    DataContext="{Binding Editor}" AutomationProperties.Name="Форма проекта" AutomationProperties.AutomationId="ProjectEditorPanel">
++                    DataContext="{Binding Editor}" state:FormKeyboard.Save="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" AutomationProperties.Name="Форма проекта" AutomationProperties.AutomationId="ProjectEditorPanel">
+                 <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style>
+                 <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+                     <TextBlock Text="{Binding Heading}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold" Margin="0,0,0,16"/>
+@@ -115,7 +115,7 @@
+                     <TextBlock Text="Дата начала (ДД.ММ.ГГГГ)" FontWeight="SemiBold"/><TextBox Text="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
+                     <TextBlock Text="Плановое завершение (ДД.ММ.ГГГГ)" FontWeight="SemiBold"/><TextBox Text="{Binding PlannedEndDate, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
+                     <TextBlock Text="{Binding Error}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap" Margin="0,0,0,12" AutomationProperties.LiveSetting="Assertive"/>
+-                    <WrapPanel><Button Content="{Binding SubmitText}" Command="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,0" AutomationProperties.AutomationId="SaveProjectButton"/><Button Content="Отмена" Command="{Binding DataContext.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Task.Button.Secondary}"/></WrapPanel>
++                    <TextBlock Text="Ctrl+Enter — сохранить" Margin="0,0,0,8"/><WrapPanel><Button Content="{Binding SubmitText}" Command="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,0" AutomationProperties.AutomationId="SaveProjectButton"/><Button Content="Отмена" Command="{Binding DataContext.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Task.Button.Secondary}"/></WrapPanel>
+                 </StackPanel></ScrollViewer>
+             </Border>
+         </Grid>
+diff --git a/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml b/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml
+index f6ce4b3..bbac797 100644
+--- a/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml
++++ b/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml
+@@ -2,8 +2,10 @@
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <StackPanel>
+   <ItemsControl ItemsSource="{Binding Checklist}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,3">
+-   <TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><WrapPanel>
+-    <Button Command="{Binding DataContext.ToggleCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Content" Value="Отметить готовым"/><Style.Triggers><DataTrigger Binding="{Binding Completed}" Value="True"><Setter Property="Content" Value="Готово · вернуть"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
++   <CheckBox IsChecked="{Binding Completed,Mode=OneWay}" Click="OnToggle" MinHeight="32"
++    Command="{Binding DataContext.ToggleCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}" AutomationProperties.Name="{Binding Text}">
++    <TextBlock TextWrapping="Wrap" Text="{Binding Text}"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding Completed}" Value="True"><Setter Property="TextDecorations" Value="Strikethrough"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
++   </CheckBox><WrapPanel>
+     <Button Content="Удалить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding DataContext.RemoveCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}"/>
+    </WrapPanel></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   <TextBox Text="{Binding CheckText,UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Новый пункт чек-листа"/>
+diff --git a/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml.cs b/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml.cs
+index 9b0bfdc..83ef6d9 100644
+--- a/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/TaskChecklistView.xaml.cs
+@@ -4,4 +4,9 @@ namespace Task.Desktop.Views;
+ public partial class TaskChecklistView : UserControl
+ {
+     public TaskChecklistView() => InitializeComponent();
++    private void OnToggle(object sender, System.Windows.RoutedEventArgs e)
++    {
++        // WPF toggles before invoking the command; immediately restore confirmed data.
++        if (sender is CheckBox checkbox) checkbox.GetBindingExpression(CheckBox.IsCheckedProperty)?.UpdateTarget();
++    }
+ }
+diff --git a/work/production/src/Task.Desktop/Views/TaskDayPicker.xaml b/work/production/src/Task.Desktop/Views/TaskDayPicker.xaml
+new file mode 100644
+index 0000000..6cbf387
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Views/TaskDayPicker.xaml
+@@ -0,0 +1,9 @@
++<UserControl x:Class="Task.Desktop.Views.TaskDayPicker"
++ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
++ <WrapPanel IsEnabled="{Binding IsDateOnly}" Margin="0,6,0,0">
++  <DatePicker x:Name="Picker" SelectedDate="{Binding CalendarDate}" Width="150" MinHeight="32"
++   AutomationProperties.Name="Календарь дня задачи" ToolTip="Выбрать день в календаре"/>
++  <Button Content="Сегодня" Click="Today" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
++  <Button Content="Завтра" Click="Tomorrow" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
++ </WrapPanel>
++</UserControl>
+diff --git a/work/production/src/Task.Desktop/Views/TaskDayPicker.xaml.cs b/work/production/src/Task.Desktop/Views/TaskDayPicker.xaml.cs
+new file mode 100644
+index 0000000..f8216f1
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Views/TaskDayPicker.xaml.cs
+@@ -0,0 +1,20 @@
++using System.Windows;
++using System.Windows.Controls;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Views;
++
++public partial class TaskDayPicker : UserControl
++{
++    public TaskDayPicker()
++    {
++        InitializeComponent();
++        // Manual input belongs to the explicit raw text field. The DatePicker supplies the calendar only.
++        Picker.Loaded += (_, _) =>
++        {
++            if (Picker.Template.FindName("PART_TextBox", Picker) is TextBox text) text.IsReadOnly = true;
++        };
++    }
++    private void Today(object sender, RoutedEventArgs e) { if (DataContext is TaskCardEditor card) card.SelectRelativeDay(0); }
++    private void Tomorrow(object sender, RoutedEventArgs e) { if (DataContext is TaskCardEditor card) card.SelectRelativeDay(1); }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/FiveImprovementsTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/FiveImprovementsTests.cs
+new file mode 100644
+index 0000000..a1c6b6e
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/FiveImprovementsTests.cs
+@@ -0,0 +1,141 @@
++using System.IO;
++using System.Windows.Input;
++using Task.Desktop.Infrastructure;
++using Task.Desktop.Modes;
++using Task.Desktop.Personal;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests;
++
++public sealed class FiveImprovementsTests
++{
++    [Fact]
++    public async global::System.Threading.Tasks.Task CorporateCapture_DoesNotEraseNextDraft_OrSendTwice()
++    {
++        var path = Path.Combine(Path.GetTempPath(), "Task-five", Guid.NewGuid().ToString("N"));
++        try
++        {
++            using var model = new PersonalApplicationModel(path);
++            var created = model.Store.Create(new("first", DesktopTaskPriority.Normal));
++            var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++            var client = new TaskScreen.TasksViewModelTests.FakeTasksApiClient { CreateHandler = (_, _) => release.Task };
++            client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([], null, 0)));
++            using var inbox = new InboxViewModel(client, ["Task.Read", "Task.Create"]);
++            await inbox.ActivateAsync(); inbox.CaptureText = "first";
++            var send = inbox.CaptureCommand.ExecuteAsync();
++            Assert.False(await inbox.CaptureCommand.ExecuteAsync());
++            inbox.CaptureText = "next draft";
++            release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, false));
++            await send;
++            Assert.Equal(1, client.CreateCallCount); Assert.Equal("next draft", inbox.CaptureText);
++        }
++        finally { if (Directory.Exists(path)) Directory.Delete(path, true); }
++    }
++    [Fact]
++    public async global::System.Threading.Tasks.Task FailedChecklistToggleAndCapture_KeepConfirmedStateAndDraft()
++    {
++        var path = Path.Combine(Path.GetTempPath(), "Task-five", Guid.NewGuid().ToString("N"));
++        try
++        {
++            using var model = new PersonalApplicationModel(path);
++            using var shell = new PersonalShellViewModel(model);
++            shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks");
++            var vm = model.Tasks!;
++            await vm.NewCommand.ExecuteAsync(); vm.Editor!.Title = "check"; await vm.SaveCommand.ExecuteAsync();
++            vm.Selected = Assert.Single(vm.Items); vm.CheckText = "item"; await vm.AddCheckCommand.ExecuteAsync();
++            var item = Assert.Single(vm.Checklist);
++            using var connection = new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={Path.Combine(path, "Personal", "tasks.db")};Pooling=False");
++            connection.Open(); using var sql = connection.CreateCommand();
++            sql.CommandText = "CREATE TRIGGER reject_write BEFORE UPDATE ON tasks BEGIN SELECT RAISE(ABORT, 'fixture'); END;"; sql.ExecuteNonQuery();
++            await vm.ToggleCheckCommand.ExecuteAsync(item);
++            Assert.False(Assert.Single(vm.Checklist).Completed);
++            vm.CheckText = "keep checklist"; await vm.AddCheckCommand.ExecuteAsync(); Assert.Equal("keep checklist", vm.CheckText);
++            sql.CommandText = "CREATE TRIGGER reject_create BEFORE INSERT ON tasks BEGIN SELECT RAISE(ABORT, 'fixture'); END;"; sql.ExecuteNonQuery();
++            vm.CaptureText = "keep capture"; await vm.CaptureCommand.ExecuteAsync(); Assert.Equal("keep capture", vm.CaptureText);
++            sql.CommandText = "DROP TRIGGER reject_write; DROP TRIGGER reject_create;"; sql.ExecuteNonQuery();
++            vm.CheckText = ""; await vm.ToggleCheckCommand.ExecuteAsync(item);
++            Assert.True(Assert.Single(vm.Checklist).Completed);
++            await vm.ToggleCheckCommand.ExecuteAsync(Assert.Single(vm.Checklist));
++            Assert.False(Assert.Single(vm.Checklist).Completed);
++        }
++        finally { if (Directory.Exists(path)) Directory.Delete(path, true); }
++    }
++    [Fact]
++    public void DayPicker_PreservesInvalidRawInput_AndEmptyDate()
++    {
++        var card = new TaskCardEditor(null);
++        card.Date = "31.02.2026";
++        Assert.Null(card.CalendarDate);
++        card.CalendarDate = null;
++        Assert.Equal("31.02.2026", card.Date);
++        Assert.Throws<ArgumentException>(() => card.Build(null));
++        card.CalendarDate = new DateTime(2026, 10, 10);
++        Assert.Equal(new DateOnly(2026, 10, 10), card.Build(null).ScheduledDate);
++        card.Date = ""; Assert.Null(card.Build(null).ScheduledDate);
++        card.UpdateStart(DateTimeOffset.UtcNow);
++        card.SelectRelativeDay(1); Assert.Equal("", card.Date);
++    }
++    [Theory]
++    [InlineData("2026-03-08T04:30:00Z", "08.03.2026")]
++    [InlineData("2026-11-01T03:30:00Z", "01.11.2026")]
++    public void Tomorrow_UsesCalendarDay_InScheduleZone_AcrossDst(string instant, string expected)
++    {
++        var card = new TaskCardEditor(null) { ScheduleZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time") };
++        card.SelectRelativeDay(1, DateTimeOffset.Parse(instant));
++        Assert.Equal(expected, card.Date);
++    }
++    [Fact]
++    public void Shortcut_LeavesMultilineEnter_ImeAndRepeatAlone()
++    {
++        Assert.True(FormKeyboard.IsShortcut(Key.Enter, ModifierKeys.None, false, true));
++        Assert.True(FormKeyboard.IsShortcut(Key.Enter, ModifierKeys.Control, false, false));
++        Assert.False(FormKeyboard.IsShortcut(Key.Enter, ModifierKeys.None, false, false));
++        Assert.False(FormKeyboard.IsShortcut(Key.ImeProcessed, ModifierKeys.Control, false, false));
++        Assert.False(FormKeyboard.IsShortcut(Key.Enter, ModifierKeys.Control, true, false));
++        Assert.False(FormKeyboard.IsShortcut(Key.Enter, ModifierKeys.Control | ModifierKeys.Shift, false, false));
++    }
++    [Fact]
++    public async global::System.Threading.Tasks.Task Command_RejectsRepeat_AndContainsFailure()
++    {
++        var pending = new TaskCompletionSource(); int calls = 0; string draft = "keep";
++        using var command = new AsyncCommand(async (_, _) => { calls++; await pending.Task; throw new IOException(); });
++        bool failure = false; command.ExecutionFailed += _ => failure = true;
++        var first = command.ExecuteAsync();
++        Assert.False(await command.ExecuteAsync()); Assert.Equal(1, calls);
++        pending.SetResult(); await first;
++        Assert.True(failure); Assert.Equal("keep", draft); Assert.True(command.CanExecute(null));
++    }
++    [Theory]
++    [InlineData(DesktopTaskStatus.Completed)]
++    [InlineData(DesktopTaskStatus.Cancelled)]
++    public async global::System.Threading.Tasks.Task Filter_IsViewOnly_DefaultOff_PreservesDrafts_AndLeavesInboxUnchanged(DesktopTaskStatus terminal)
++    {
++        var path = Path.Combine(Path.GetTempPath(), "Task-five", Guid.NewGuid().ToString("N"));
++        try
++        {
++            using var model = new PersonalApplicationModel(path);
++            using var shell = new PersonalShellViewModel(model);
++            shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks");
++            var vm = model.Tasks!;
++            await vm.NewCommand.ExecuteAsync(); vm.Editor!.Title = "done"; await vm.SaveCommand.ExecuteAsync();
++            vm.Selected = Assert.Single(vm.Items);
++            await vm.TransitionCommand.ExecuteAsync(terminal);
++            Assert.False(vm.HideCompleted); Assert.Single(vm.Items);
++            vm.CaptureText = "capture draft"; vm.CheckText = "check draft";
++            vm.HideCompleted = true;
++            Assert.Empty(vm.Items); Assert.True(vm.HasHiddenTasks);
++            Assert.Contains("скрыты", vm.EmptyBody); Assert.Equal("capture draft", vm.CaptureText); Assert.Equal("check draft", vm.CheckText);
++            await vm.ShowCompletedCommand.ExecuteAsync(); Assert.Single(vm.Items);
++            vm.CheckText = ""; vm.CaptureText = "";
++            await vm.NewCommand.ExecuteAsync(); vm.Editor!.Title = "editor draft";
++            vm.HideCompleted = true; Assert.Equal("editor draft", vm.Editor.Title);
++            await vm.CancelCommand.ExecuteAsync();
++            shell.SelectedSection = shell.Sections.Single(s => s.Route == "inbox");
++            vm.CaptureText = "inbox"; await vm.CaptureCommand.ExecuteAsync();
++            Assert.Single(vm.Items); Assert.False(vm.HasHiddenTasks);
++            Assert.Equal(2, model.Store.List().Count);
++        }
++        finally { if (Directory.Exists(path)) Directory.Delete(path, true); }
++    }
++}
+diff --git a/work/ux_five_1/README.md b/work/ux_five_1/README.md
+new file mode 100644
+index 0000000..f945daf
+--- /dev/null
++++ b/work/ux_five_1/README.md
+@@ -0,0 +1,18 @@
++# Task — пять улучшений форм, 1.0.0
++
++Календарь WPF дополняет строгий ручной ввод даты без времени. Сегодня/Завтра используют ScheduleZone либо локальную зону; точное начало сохраняет владение днём. Enter отправляет короткую запись; Ctrl+Enter использует команды видимой формы задач/проектов. Обычный Enter остаётся переносом строки. Checkbox возвращается к подтверждённым данным до выполнения существующей команды. Фильтр Personal действует только в «Задачах», по умолчанию выключен и не сохраняется между запусками.
++
++Последовательная проверка из корня:
++
++```powershell
++dotnet build work/production/src/Task.Desktop/Task.Desktop.csproj -c Release --no-restore
++dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj --no-restore --settings work/ux_journey_1/desktop.runsettings --filter 'FullyQualifiedName!~ShellShortcut_KeyboardOnly_FocusTrapAndRestore'
++dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj --no-build --settings work/ux_journey_1/desktop.runsettings --filter 'FullyQualifiedName~ShellShortcut_KeyboardOnly_FocusTrapAndRestore'
++pwsh -NoProfile -File work/production/verification/Test-DesktopShell.ps1
++dotnet run --project work/ux_journey_1/UiProbe/UiProbe.csproj -- work/ux_five_1/evidence/new-empty-native-directory
++python work/ux_five_1/package.py
++```
++
++UiProbe открывает настоящие WPF-окна и посылает системные клавиши последовательно. Повторный запуск требует нового каталога фикстур. Corporate использует локальные presentation adapters без сети/credentials. 144 DPI — WPF render, не проверка физического mixed-DPI окружения. Системный фокус требует активного рабочего стола без конкурирующих UI-прогонов.
++
++Пакет содержит source overlay, manifest, SHA-256, отчёт и фактические evidence; это не portable release. Обновление dashboard сохраняет чужие рабочие изменения, а `roadmap-for-index.json` содержит только три затронутых пункта поверх HEAD.
+diff --git a/work/ux_five_1/package.py b/work/ux_five_1/package.py
+new file mode 100644
+index 0000000..58cf13b
+--- /dev/null
++++ b/work/ux_five_1/package.py
+@@ -0,0 +1,70 @@
++from pathlib import Path
++import hashlib, json, shutil, subprocess, zipfile
++import xml.etree.ElementTree as ET
++
++root = Path(__file__).resolve().parents[2]
++out = root / 'outputs/20261010_task_ux_five_1.0.0'
++assert not out.exists(), 'Use a new version; never overwrite evidence.'
++out.mkdir(parents=True)
++(out / '.gitattributes').write_bytes(b'* binary\n')
++scope = [p for p in subprocess.check_output(['git', 'diff', '--cached', '--name-only'], cwd=root).decode().splitlines() if not p.startswith('outputs/')]
++assert scope and all(p.startswith(('work/production/', 'work/ux_journey_1/UiProbe/', 'work/ux_five_1/')) or p == '.project-dashboard/roadmap.json' for p in scope)
++for name in scope:
++    dest = out / 'source-snapshot' / name
++    dest.parent.mkdir(parents=True, exist_ok=True)
++    dest.write_bytes(subprocess.check_output(['git', 'show', ':' + name], cwd=root))
++(out / 'changes.patch').write_bytes(subprocess.check_output(['git', 'diff', '--cached', '--binary', '--', *scope], cwd=root))
++evidence = root / 'work/ux_five_1/evidence'
++for name in ['desktop-final.trx', 'focus-final.trx', 'targeted-final2.trx', 'release-build.log', 'shell-contract.log', 'native-publish.log']:
++    dest = out / 'evidence' / name
++    dest.parent.mkdir(parents=True, exist_ok=True)
++    shutil.copyfile(evidence / name, dest)
++native = json.loads((evidence / 'native-publish/ui-results.json').read_text(encoding='utf-8-sig'))
++assert native['status'] == 'PASS' and not native['bindingErrors']
++dest = out / 'evidence/native'
++dest.mkdir()
++for file in (evidence / 'native-publish').iterdir():
++    if file.suffix == '.png' or file.name == 'ui-results.json': shutil.copyfile(file, dest / file.name)
++ns = {'t': 'http://microsoft.com/schemas/VisualStudio/TeamTest/2010'}
++counts = {}
++for name in ['desktop-final', 'focus-final', 'targeted-final2']:
++    counters = ET.parse(evidence / (name + '.trx')).find('.//t:Counters', ns).attrib
++    assert int(counters['failed']) == 0 and counters['total'] == counters['passed']
++    counts[name] = int(counters['passed'])
++assert counts['desktop-final'] + counts['focus-final'] == 756 and counts['targeted-final2'] == 9
++(out / 'VERSION').write_text('1.0.0\n', encoding='utf-8')
++(out / 'README.md').write_text('Task — five form improvements. Source overlay and verified evidence; not a portable release. See validation-report.md.\n', encoding='utf-8')
++(out / 'validation-report.md').write_text(f'''# Task: пять улучшений форм — validation 1.0.0
++
++PASS. Проверен итоговый diff; scope — только эти улучшения. Sources не менялись.
++
++- Календарь WPF, ручной ввод, Сегодня/Завтра: дата без времени, пустое значение, неверный день без исправления, ScheduleZone/local timezone и переходы DST; точное начало ограничивает выбор дня.
++- Enter/Ctrl+Enter: команды и CanExecute активной видимой формы, multiline Enter в задачах/проектах обоих пространств, busy/repeat и IME rejection; ошибка и новый черновик во время запроса сохраняются. Отложенный focus не входит в скрытый view/изменённый context.
++- Corporate footer находится вне ScrollViewer и в границах окна 800x480; поля прокручиваются. Существующие retry/conflict/discard команды сохранены.
++- Checkbox использует прежний versioned command. Native Space, возврат в невыполненное состояние и реальная SQLite-ошибка подтверждают отсутствие ложной галочки. Удаление отдельно; доступное имя берётся из текста, завершённый текст зачёркнут без снижения контраста.
++- Personal filter default off, только «Задачи»: completed/cancelled, счётчик/объяснение/показ скрытых, сохранность редактора/capture/checklist drafts. Настройка не сохраняется; существующие установки показывают все задачи при запуске.
++
++Фактические проверки: 9 targeted tests (входят в общий набор); 755 desktop regression + 1 OS-focus test отдельным последовательным процессом; Release build 0 errors/0 warnings; shell contract PASS. Native WPF: {len(native['checks'])} checks PASS, {len(list(dest.glob('*.png')))} PNG, bindingErrors=[]; реальные системные клавиши, размеры 1200x900 и 800x480, 96/144 DPI renders. Основные normal/minimum/error/checkbox/filter screenshots визуально осмотрены.
++
++Границы: synthetic local fixtures; Corporate presentation adapters проверяют интерфейс и существующие VM/commands без живого сервера компании/credentials. 144 DPI — render, не физический mixed-monitor тест. IME/repeat проверены через классификацию клавиш, не установкой каждого IME. High contrast: checkbox использует стандартные WPF цвета и зачёркивание без opacity; отдельное переключение темы Windows не выполнялось. Existing xUnit1031 warning в DesktopCredentialVaultTests не изменялся. Пакет не содержит installer/portable binary.
++
++Dashboard: только evidence/note/timestamp DESK-05, QA-04, PROD-02; progress/status без повышения. npm run dashboard:order и dashboard:validate PASS. Чужие локальные dashboard правки исключены из index.
++''', encoding='utf-8')
++def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
++entries = [{'path': p.relative_to(out).as_posix(), 'size': p.stat().st_size, 'sha256': digest(p)} for p in sorted(out.rglob('*')) if p.is_file()]
++(out / 'manifest.json').write_text(json.dumps({'version': '1.0.0', 'status': 'PASS', 'baseCommit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root).decode().strip(), 'files': entries}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
++entries.append({'path': 'manifest.json', 'size': (out/'manifest.json').stat().st_size, 'sha256': digest(out/'manifest.json')})
++(out / 'SHA256SUMS').write_text(''.join(f"{e['sha256']}  {e['path']}\n" for e in entries), encoding='utf-8')
++archive = out.parent / (out.name + '.zip')
++with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as z:
++    for file in sorted(out.rglob('*')):
++        if file.is_file(): z.write(file, file.relative_to(out).as_posix())
++with zipfile.ZipFile(archive) as z:
++    assert z.testzip() is None
++    for e in entries:
++        assert digest(out / e['path']) == e['sha256']
++        assert hashlib.sha256(z.read(e['path'])).hexdigest() == e['sha256']
++sha = digest(archive)
++Path(str(archive) + '.sha256').write_text(sha + '  ' + archive.name + '\n', encoding='utf-8')
++Path(str(archive) + '.validation.json').write_text(json.dumps({'status': 'PASS', 'version': '1.0.0', 'sha256': sha, 'zipCrc': 'PASS', 'entriesVerified': len(entries), 'desktopTests': 756, 'nativeChecks': len(native['checks'])}, indent=2) + '\n', encoding='utf-8')
++print(json.dumps({'package': out.name, 'sha256': sha, 'verifiedFiles': len(entries), 'nativeChecks': len(native['checks'])}))
+diff --git a/work/ux_five_1/update-dashboard.mjs b/work/ux_five_1/update-dashboard.mjs
+new file mode 100644
+index 0000000..d7de928
+--- /dev/null
++++ b/work/ux_five_1/update-dashboard.mjs
+@@ -0,0 +1,21 @@
++import { readFileSync, writeFileSync } from 'node:fs';
++import { execFileSync } from 'node:child_process';
++import { applyRecommendedOrder } from '../../.project-dashboard/execution-plan.mjs';
++const path = '.project-dashboard/roadmap.json';
++const before = readFileSync(path, 'utf8');
++writeFileSync('work/ux_five_1/roadmap-before.json', before);
++const base = JSON.parse(execFileSync('git', ['show', `HEAD:${path}`], { encoding: 'utf8' }));
++const working = JSON.parse(before.replace(/^\uFEFF/, ''));
++const evidence = 'outputs/20261010_task_ux_five_1.0.0/validation-report.md: calendar/Today/Tomorrow, form keyboard, pinned corporate footer, confirmed checklist checkbox, Personal terminal filter; 756 desktop tests PASS, native WPF keyboard/screenshots and Release build PASS.';
++const note = ' 2026-10-10: реализованы пять улучшений форм Task: календарь и быстрые дни, Enter/Ctrl+Enter, закреплённые кнопки корпоративной задачи, checkbox с подтверждённым состоянием, фильтр завершённых/отменённых Personal (по умолчанию выключен). Проверены ошибки, черновики, минимальные окна и системный фокус. Progress/status не повышались.';
++for (const data of [base, working]) {
++  for (const item of data.items) {
++    if (!['DESK-05', 'QA-04', 'PROD-02'].includes(item.id)) continue;
++    if (!item.evidence.includes(evidence)) item.evidence.push(evidence);
++    if (!item.note.includes('реализованы пять улучшений форм Task')) item.note += note;
++    item.updated_at = new Date().toISOString();
++  }
++}
++writeFileSync(path, `${JSON.stringify(working, null, 2)}\n`);
++base.items = applyRecommendedOrder(base.items);
++writeFileSync('work/ux_five_1/roadmap-for-index.json', `${JSON.stringify(base, null, 2)}\n`);
+diff --git a/work/ux_journey_1/UiProbe/FixtureProjects.cs b/work/ux_journey_1/UiProbe/FixtureProjects.cs
+new file mode 100644
+index 0000000..0a778c8
+--- /dev/null
++++ b/work/ux_journey_1/UiProbe/FixtureProjects.cs
+@@ -0,0 +1,29 @@
++using Task.Desktop.Projects;
++using T = System.Threading.Tasks.Task;
++
++internal sealed class FixtureProjects : IDesktopProjectsApiClient
++{
++    public bool Fail { get; set; } = true;
++    public List<DesktopProjectDto> Items { get; } = [];
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(string? cursor = null, CancellationToken cancellationToken = default) =>
++        T.FromResult<DesktopProjectResult<DesktopProjectPage>>(new DesktopProjectResult<DesktopProjectPage>.Succeeded(new(Items.ToArray(), null, false)));
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> GetProjectAsync(Guid id, CancellationToken cancellationToken = default) =>
++        T.FromResult<DesktopProjectResult<DesktopProjectDto>>(new DesktopProjectResult<DesktopProjectDto>.Succeeded(Items.Single(p => p.Id == id)));
++    public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>> GetRolesAsync(CancellationToken cancellationToken = default) =>
++        T.FromResult<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>>(new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([]));
++    public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>> GetMembersAsync(Guid projectId, CancellationToken cancellationToken = default) =>
++        T.FromResult<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>>(new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]));
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> CreateProjectAsync(DesktopProjectDraft draft, string idempotencyKey, CancellationToken cancellationToken = default)
++    {
++        if (Fail) return T.FromResult<DesktopProjectResult<DesktopProjectDto>>(new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable());
++        var project = new DesktopProjectDto(Guid.NewGuid(), Guid.NewGuid(), 1, draft.Name, draft.Description, draft.OwnerUserId,
++            draft.ManagerUserId, draft.Status, draft.StartDate, draft.PlannedEndDate, null, null, null, "active");
++        Items.Add(project);
++        return T.FromResult<DesktopProjectResult<DesktopProjectDto>>(new DesktopProjectResult<DesktopProjectDto>.Succeeded(project));
++    }
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> UpdateProjectAsync(Guid id, long version, DesktopProjectDraft draft, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> ArchiveProjectAsync(Guid id, long version, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectMemberDto>> AddMemberAsync(Guid projectId, long projectVersion, Guid userId, Guid roleId, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectMemberDto>> ChangeMemberRoleAsync(Guid projectId, long projectVersion, Guid userId, Guid roleId, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> RemoveMemberAsync(Guid projectId, long projectVersion, Guid userId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++}
+diff --git a/work/ux_journey_1/UiProbe/Program.cs b/work/ux_journey_1/UiProbe/Program.cs
+index ba93a22..eba1afd 100644
+--- a/work/ux_journey_1/UiProbe/Program.cs
++++ b/work/ux_journey_1/UiProbe/Program.cs
+@@ -63,7 +63,10 @@ internal static class Program
+         using var store = new PersonalTaskStore(new(Path.Combine(_root, "corporate-fixture")));
+         using var tasks = new TasksViewModel(new PersonalTasksClient(store), ["Task.Read", "Task.Create", "Task.Update"]);
+         using var today = new TodayViewModel(new PersonalCalendarClient(store), ["Calendar.Read", "Task.Read"], tasksClient: new PersonalTasksClient(store));
+-        using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks, today: today);
++        using var inbox = new InboxViewModel(new PersonalTasksClient(store), ["Task.Read", "Task.Create", "Task.Update"]);
++        var projectClient = new FixtureProjects();
++        using var projects = new ProjectsViewModel(projectClient, Guid.NewGuid(), ["Project.Read", "Project.Create"]);
++        using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks, today: today, inbox: inbox, projects: projects);
+         shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks");
+         await tasks.ActivateAsync();
+         var corporate = new MainWindow(shell); corporate.Show();
+@@ -99,13 +102,32 @@ internal static class Program
+         Check(rights.IsVisible && !rights.Text.Contains("Task.Assign"), "Assignment denial explains rights in plain language");
+         tasks.Editor.Card.CanAssign = true; await Drain(corporate);
+         Check(!rights.IsVisible, "Assignment denial disappears when allowed");
++        var description = Find<TextBox>(corporate, "TaskDescriptionTextBox");
++        description.Text = "Строка"; description.BringIntoView(); description.Focus();
++        await PressNative(corporate, 0x0D);
++        Check(description.Text.Contains('\n') && tasks.Editor is not null, "Ordinary Enter inserts newline in corporate task description");
+         await Capture(corporate, "corporate-editor", 1200, 900);
+         await Capture(corporate, "corporate-editor-small", 800, 480);
++        var submit = Find<Button>(corporate, "SaveTaskButton");
++        var submitPoint = submit.TranslatePoint(new Point(), corporate);
++        Check(submit.IsVisible && submitPoint.Y + submit.ActualHeight <= corporate.ActualHeight, "Corporate footer bounded at minimum size");
++        Check(!HasAncestor<ScrollViewer>(submit), "Corporate footer outside scroll content");
++        var corporatePicker = Descendants<DatePicker>(corporate).First(x => x.IsVisible);
++        corporatePicker.IsDropDownOpen = true; await Drain(corporate);
++        Check(tasks.Editor is not null && corporatePicker.IsDropDownOpen, "Calendar opens without submitting form");
++        corporatePicker.IsDropDownOpen = false;
++        tasks.Editor!.Card.Date = "31.02.2026"; await Drain(corporate);
++        Check(tasks.Editor.Card.CalendarDate is null && date.Text == "31.02.2026", "Invalid corporate day remains raw and blocks save");
++        Check(!tasks.SaveEditorCommand.CanExecute(null), "Invalid date disables shared submit command");
++        await Capture(corporate, "corporate-date-error", 1200, 900);
++        corporatePicker.SelectedDate = new DateTime(2030, 12, 20); await Drain(corporate);
++        Check(tasks.Editor.Card.Date == "20.12.2030", "Calendar selection updates raw day");
+         date.Focus(); date.BringIntoView(); await Drain(corporate);
+         Check(date.IsKeyboardFocused, "Corporate day can be focused in minimum window");
+         await CaptureFocused(corporate, "corporate-day-small", date);
+         tasks.SelectedStatusFilter = "В работе";
+-        await tasks.SaveEditorCommand.ExecuteAsync(); await Drain(corporate);
++        date.Focus(); await PressNative(corporate, 0x0D, control: true); await Drain(corporate);
++        Check(tasks.Editor is null, "Corporate Ctrl+Enter uses shared save command");
+         var announcement = Find<TextBlock>(corporate, "TasksAnnouncement");
+         Check(announcement.IsVisible && announcement.Opacity == 1 && announcement.Text.Contains("разделе «Задачи»"), "Corporate saved result is visible and names destination");
+         Check(Find<Button>(corporate, "TasksOpenSavedTask").IsVisible, "Hidden saved task offers Open action");
+@@ -115,6 +137,28 @@ internal static class Program
+         await tasks.EditTaskCommand.ExecuteAsync(); await Drain(corporate);
+         Check(Find<Button>(corporate, "SaveTaskButton").Content.Equals("Сохранить изменения"), "Corporate edit label");
+         await tasks.DiscardEditorCommand.ExecuteAsync();
++        shell.SelectedSection = shell.Sections.Single(s => s.Route == "inbox"); await inbox.ActivateAsync(); await Drain(corporate);
++        var corporateCapture = Find<TextBox>(corporate, "InboxCaptureTextBox"); corporateCapture.Focus(); inbox.CaptureText = "Company capture";
++        await PressNative(corporate, 0x0D); await Drain(corporate);
++        Check(inbox.CaptureText == "" && corporateCapture.IsKeyboardFocused, "Corporate Inbox Enter writes and restores capture focus");
++        await inbox.ConvertCommand.ExecuteAsync(inbox.SelectedItem); await Drain(corporate);
++        inbox.Conversion!.DeadlineText = "20.12.2030 17:00";
++        var conversionTitle = Find<TextBox>(corporate, "InboxConversionTitleBox"); conversionTitle.Focus();
++        await PressNative(corporate, 0x0D, control: true); await Drain(corporate);
++        Check(inbox.Conversion is null && !inbox.Items.Any(x => x.Title == "Company capture"), "Inbox task conversion Ctrl+Enter uses same validated command");
++        shell.SelectedSection = shell.Sections.Single(s => s.Route == "projects"); projects.Activate(); await projects.RefreshCommand.ExecuteAsync();
++        await projects.NewProjectCommand.ExecuteAsync(); await Drain(corporate);
++        var corporateProjectName = Find<TextBox>(corporate, "ProjectNameTextBox"); corporateProjectName.Focus(); projects.Editor!.Name = "Corporate keyboard project";
++        var projectDescription = Descendants<TextBox>(corporate).First(x => x.IsVisible && x.AcceptsReturn);
++        projectDescription.Text = "Строка"; projectDescription.Focus(); await PressNative(corporate, 0x0D);
++        Check(projectDescription.Text.Contains('\n') && projects.Editor is not null, "Ordinary Enter remains newline in corporate project");
++        corporateProjectName.Focus();
++        await PressNative(corporate, 0x0D, control: true); await Drain(corporate);
++        Check(projects.Editor?.Name == "Corporate keyboard project" && projectClient.Items.Count == 0, "Corporate project failure preserves editor draft");
++        await Capture(corporate, "corporate-project-error", 1200, 900);
++        await Capture(corporate, "corporate-project-small", 800, 480);
++        projectClient.Fail = false; corporateProjectName.Focus(); await PressNative(corporate, 0x0D, control: true); await Drain(corporate);
++        Check(projects.Editor is null && projectClient.Items.Single().Name == "Corporate keyboard project", "Corporate project Ctrl+Enter saves using existing command");
+         corporate.Close();
+ 
+         using var model = new PersonalApplicationModel(Path.Combine(_root, "personal-fixture"));
+@@ -134,19 +178,92 @@ internal static class Program
+         Check(personalTitle.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)), "Personal Tab advances from title");
+         Check(Keyboard.FocusedElement is ComboBox, "Personal Tab follows explicit priority order");
+         vm.Editor!.Title = "Подготовить личный план"; vm.Editor.Card.Date = "20.12.2030";
++        var personalDescription = Find<TextBox>(personal, "PersonalTaskDescription"); personalDescription.Text = "Строка";
++        personalDescription.BringIntoView(); personalDescription.Focus(); await PressNative(personal, 0x0D);
++        Check(personalDescription.Text.Contains('\n') && vm.Editor is not null, "Ordinary Enter remains newline in personal task");
+         await Capture(personal, "personal-editor", 1200, 900);
+         await Capture(personal, "personal-editor-small", 800, 480);
+         personalDate.Focus(); personalDate.BringIntoView(); await Drain(personal);
+         Check(personalDate.IsKeyboardFocused, "Personal day can be focused in minimum window");
+         await CaptureFocused(personal, "personal-day-small", personalDate);
+-        await vm.SaveCommand.ExecuteAsync(); await Drain(personal);
++        personalDate.Focus(); await PressNative(personal, 0x0D, control: true); await Drain(personal);
++        Check(vm.Editor is null, "Personal Ctrl+Enter uses shared save command");
+         Check(Find<Button>(personal, "PersonalOpenSavedTask").IsVisible, "Personal saved result offers Open action");
+         await vm.OpenSavedTaskCommand.ExecuteAsync(); await Drain(personal);
+         Check(personalShell.SelectedSection.Route == "tasks" && vm.Selected?.Title == "Подготовить личный план", "Personal Open selects persisted task");
+         await Capture(personal, "personal-saved", 1200, 900);
+         await vm.EditCommand.ExecuteAsync(); await Drain(personal);
+         Check(Find<Button>(personal, "PersonalSaveTask").Content.Equals("Сохранить изменения"), "Personal edit label");
+-        await vm.CancelCommand.ExecuteAsync(); personal.Close();
++        await vm.CancelCommand.ExecuteAsync();
++        vm.Selected = vm.Items.Single();
++        vm.CheckText = "Подтверждённый пункт"; await vm.AddCheckCommand.ExecuteAsync(); await Drain(personal);
++        Descendants<Expander>(personal).Single(x => Equals(x.Header, "Сведения о задаче")).IsExpanded = true; await Drain(personal);
++        var checkbox = Descendants<CheckBox>(personal).Single(x => AutomationProperties.GetName(x) == "Подтверждённый пункт");
++        checkbox.Focus(); await PressNative(personal, 0x20); await Drain(personal);
++        Check(vm.Checklist.Single().Completed, "Checklist Space writes through existing versioned command");
++        Check(Descendants<CheckBox>(personal).Single(x => AutomationProperties.GetName(x) == "Подтверждённый пункт").IsChecked == true, "Checkbox matches confirmed result");
++        using (var connection = new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={Path.Combine(_root, "personal-fixture", "Personal", "tasks.db")};Pooling=False"))
++        {
++            connection.Open(); using var sql = connection.CreateCommand();
++            sql.CommandText = "CREATE TRIGGER reject_toggle BEFORE UPDATE ON tasks BEGIN SELECT RAISE(ABORT, 'fixture'); END;"; sql.ExecuteNonQuery();
++            checkbox = Descendants<CheckBox>(personal).Single(x => AutomationProperties.GetName(x) == "Подтверждённый пункт");
++            checkbox.Focus(); await PressNative(personal, 0x20); await Drain(personal);
++            Check(vm.Checklist.Single().Completed && checkbox.IsChecked == true, "Failed checkbox write retains confirmed tick");
++            await Capture(personal, "personal-checklist-error", 1200, 900);
++            sql.CommandText = "DROP TRIGGER reject_toggle;"; sql.ExecuteNonQuery();
++        }
++        checkbox.Focus(); await PressNative(personal, 0x20); await Drain(personal);
++        Check(!vm.Checklist.Single().Completed, "Checklist Space can return item to incomplete");
++        checkbox = Descendants<CheckBox>(personal).Single(x => AutomationProperties.GetName(x) == "Подтверждённый пункт");
++        checkbox.Focus(); await PressNative(personal, 0x20); await Drain(personal);
++        await Capture(personal, "personal-checklist", 1200, 900);
++        await vm.TransitionCommand.ExecuteAsync(Task.Desktop.TaskApi.DesktopTaskStatus.Completed);
++        vm.HideCompleted = true; await Drain(personal);
++        Check(vm.Items.Count == 0 && vm.HasHiddenTasks && vm.Selected is null, "Filter clears hidden selection and shows explanation");
++        await Capture(personal, "personal-filter", 800, 480);
++        await vm.ShowCompletedCommand.ExecuteAsync();
++        personalShell.SelectedSection = personalShell.Sections.Single(s => s.Route == "inbox"); await Drain(personal);
++        var capture = Find<TextBox>(personal, "PersonalCaptureText"); capture.Focus(); vm.CaptureText = "Клавиатурная запись";
++        await PressNative(personal, 0x0D); await Drain(personal);
++        Check(vm.CaptureText == "" && capture.IsKeyboardFocused && vm.Items.Single().Title == "Клавиатурная запись", "Inbox Enter confirms write and retains capture focus");
++        personalShell.SelectedSection = personalShell.Sections.Single(s => s.Route == "projects");
++        await model.Planning!.NewProjectCommand.ExecuteAsync(); await Drain(personal);
++        var projectName = Find<TextBox>(personal, "PersonalProjectName"); projectName.Focus(); model.Planning.ProjectName = "Клавиатурный проект";
++        var personalProjectDescription = Descendants<TextBox>(personal).First(x => x.IsVisible && x.AcceptsReturn);
++        personalProjectDescription.Text = "Строка"; personalProjectDescription.Focus(); await PressNative(personal, 0x0D);
++        Check(personalProjectDescription.Text.Contains('\n') && model.Planning.IsProjectEditing, "Ordinary Enter remains newline in personal project");
++        await Capture(personal, "personal-project", 1200, 900); await Capture(personal, "personal-project-small", 800, 480);
++        projectName.Focus();
++        await PressNative(personal, 0x0D, control: true); await Drain(personal);
++        Check(!model.Planning.IsProjectEditing && model.Planning.Projects.Single().Name == "Клавиатурный проект", "Personal project Ctrl+Enter preserves save click path");
++        personal.Close();
++        var input = new TextBox { Text = "draft", DataContext = new object() };
++        var next = new Button { Content = "Next" };
++        var panel = new StackPanel(); panel.Children.Add(input); panel.Children.Add(next);
++        var focusWindow = new Window { Content = new UserControl { Content = panel }, Width = 400, Height = 200 };
++        using var focusCommand = new AsyncCommand((_, _) =>
++        {
++            input.Text = ""; input.DataContext = new object(); input.Visibility = Visibility.Collapsed; next.Focus();
++            return System.Threading.Tasks.Task.CompletedTask;
++        });
++        Task.Desktop.Infrastructure.FormKeyboard.SetCapture(input, focusCommand);
++        focusWindow.Show(); input.Focus(); await PressNative(focusWindow, 0x0D);
++        Check(next.IsKeyboardFocused, "Deferred capture focus cannot enter hidden view or changed account context");
++        focusWindow.Close();
++    }
++
++    [System.Runtime.InteropServices.DllImport("user32.dll")]
++    private static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
++    private static async System.Threading.Tasks.Task PressNative(Window window, byte key, bool control = false)
++    {
++        window.Activate();
++        try
++        {
++            if (control) keybd_event(0x11, 0, 0, UIntPtr.Zero);
++            keybd_event(key, 0, 0, UIntPtr.Zero); keybd_event(key, 0, 2, UIntPtr.Zero);
++        }
++        finally { if (control) keybd_event(0x11, 0, 2, UIntPtr.Zero); }
++        await System.Threading.Tasks.Task.Delay(500); await Drain(window);
+     }
+ 
+     private static void Check(bool condition, string name)

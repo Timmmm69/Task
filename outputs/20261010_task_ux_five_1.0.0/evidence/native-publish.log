@@ -1,0 +1,79 @@
+PASS Personal mode has plain Russian name
+PASS Corporate mode has plain Russian name
+PASS Rendered mode-selector at 580x480
+PASS Rendered mode-selector-small at 440x340
+PASS Corporate mode remains reachable by keyboard at minimum size
+PASS Corporate Today empty offers navigation to existing tasks
+PASS Corporate Today empty action navigates to tasks
+PASS Corporate empty state offers task creation
+PASS Corporate section explains next step
+PASS Rendered corporate-empty at 800x480
+PASS Corporate day is outside advanced fields
+PASS Corporate day is available on create
+PASS Corporate create label
+PASS Corporate submit accessible name matches action
+PASS Corporate title can advance by Tab
+PASS Corporate Tab moves title to priority
+PASS Corporate Tab reaches day before exact start
+PASS Corporate exact start explains disabled day
+PASS Clearing exact start restores day input
+PASS Assignment denial explains rights in plain language
+PASS Assignment denial disappears when allowed
+PASS Ordinary Enter inserts newline in corporate task description
+PASS Rendered corporate-editor at 1200x900
+PASS Rendered corporate-editor-small at 800x480
+PASS Corporate footer bounded at minimum size
+PASS Corporate footer outside scroll content
+PASS Calendar opens without submitting form
+PASS Invalid corporate day remains raw and blocks save
+PASS Invalid date disables shared submit command
+PASS Rendered corporate-date-error at 1200x900
+PASS Calendar selection updates raw day
+PASS Corporate day can be focused in minimum window
+PASS Focused day is in window bounds: corporate-day-small
+PASS Corporate Ctrl+Enter uses shared save command
+PASS Corporate saved result is visible and names destination
+PASS Hidden saved task offers Open action
+PASS Corporate Open selects saved task through filter
+PASS Rendered corporate-saved at 1200x900
+PASS Corporate edit label
+PASS Corporate Inbox Enter writes and restores capture focus
+PASS Inbox task conversion Ctrl+Enter uses same validated command
+PASS Ordinary Enter remains newline in corporate project
+PASS Corporate project failure preserves editor draft
+PASS Rendered corporate-project-error at 1200x900
+PASS Rendered corporate-project-small at 800x480
+PASS Corporate project Ctrl+Enter saves using existing command
+PASS Personal Today empty offers existing tasks
+PASS Personal empty action navigates shell
+PASS Personal Tasks empty offers creation
+PASS Rendered personal-empty at 800x480
+PASS Personal day is outside advanced fields
+PASS Personal create label
+PASS Personal Tab advances from title
+PASS Personal Tab follows explicit priority order
+PASS Ordinary Enter remains newline in personal task
+PASS Rendered personal-editor at 1200x900
+PASS Rendered personal-editor-small at 800x480
+PASS Personal day can be focused in minimum window
+PASS Focused day is in window bounds: personal-day-small
+PASS Personal Ctrl+Enter uses shared save command
+PASS Personal saved result offers Open action
+PASS Personal Open selects persisted task
+PASS Rendered personal-saved at 1200x900
+PASS Personal edit label
+PASS Checklist Space writes through existing versioned command
+PASS Checkbox matches confirmed result
+PASS Failed checkbox write retains confirmed tick
+PASS Rendered personal-checklist-error at 1200x900
+PASS Checklist Space can return item to incomplete
+PASS Rendered personal-checklist at 1200x900
+PASS Filter clears hidden selection and shows explanation
+PASS Rendered personal-filter at 800x480
+PASS Inbox Enter confirms write and retains capture focus
+PASS Ordinary Enter remains newline in personal project
+PASS Rendered personal-project at 1200x900
+PASS Rendered personal-project-small at 800x480
+PASS Personal project Ctrl+Enter preserves save click path
+PASS Deferred capture focus cannot enter hidden view or changed account context
+PASS No WPF binding errors

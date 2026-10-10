@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "version": "1.0.0",
+  "sha256": "8bebf23701013bd67346c8d8295af111fabd6e185e8fd99dfad6f0f3a16e3d20",
+  "zipCrc": "PASS",
+  "entriesVerified": 74,
+  "desktopTests": 756,
+  "nativeChecks": 79
+}
