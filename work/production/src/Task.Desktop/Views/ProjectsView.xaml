@@ -56,6 +56,7 @@
                                     Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Архивировать завершённый проект"/>
                         </WrapPanel>
                     </Grid>
+                    <Button Content="Добавить задачу" Command="{Binding DataContext.AddProjectTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,12,0,0" ToolTip="{Binding DataContext.ProjectTaskActionHint,RelativeSource={RelativeSource AncestorType=Window}}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="Добавить задачу" AutomationProperties.AutomationId="ProjectAddTask"/>
                     <UniformGrid Columns="3" Margin="0,16,0,16">
                         <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,8,0"><StackPanel><TextBlock Text="Статус" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
                         <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,8,0"><StackPanel><TextBlock Text="Владелец" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding Source.OwnerUserId}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>

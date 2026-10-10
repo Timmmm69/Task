@@ -10,6 +10,35 @@ namespace Task.Desktop.Tests.TaskApi;
 
 public sealed class DesktopTasksApiClientTests
 {
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public async global::System.Threading.Tasks.Task ContextCreate_ProductionClientWritesAndReadsRelation(bool parent)
+    {
+        var relation = Guid.NewGuid(); string? saved = null;
+        await using var fixture = await Fixture.CreateAsync(async (request, token) =>
+        {
+            if (request.Method == HttpMethod.Post)
+            {
+                var body = System.Text.Json.Nodes.JsonNode.Parse(await request.Content!.ReadAsStringAsync(token))!.AsObject();
+                Assert.Equal(relation.ToString(), body[parent ? "parentTaskId" : "projectId"]!.ToString());
+                Assert.Null(body[parent ? "projectId" : "parentTaskId"]);
+                var response = System.Text.Json.Nodes.JsonNode.Parse(TaskJson())!.AsObject();
+                response["title"] = body["title"]!.ToString(); response["status"] = "new"; response["priority"] = "normal";
+                response["startAtUtc"] = null; response["deadlineAt"] = null;
+                response[parent ? "parentTaskId" : "projectId"] = relation.ToString(); saved = response.ToJsonString();
+                return WriteResponse(HttpStatusCode.Created, saved, "\"v7\"", "false");
+            }
+            return JsonResponse(HttpStatusCode.OK, saved!);
+        });
+        var editor = new Task.Desktop.ViewModels.TaskEditorViewModel(Task.Desktop.ViewModels.TaskEditorMode.Create) { Title = "Новая" };
+        if (parent) editor.Card.SeedParent(relation, "Родитель"); else editor.Card.SeedProject(relation, "Проект");
+        var created = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(await fixture.Client.CreateTaskAsync(editor.BuildCreateCommand()!));
+        var reloaded = Assert.IsType<DesktopTasksApiResult<DesktopTaskDto>.Succeeded>(await fixture.Client.GetTaskByIdAsync(created.Value.Id));
+        Assert.Equal(relation, parent ? reloaded.Value.Card!.ParentTaskId : reloaded.Value.Card!.ProjectId);
+        Assert.Equal(HttpMethod.Post, fixture.TaskRequests.First().Method);
+        Assert.Equal(HttpMethod.Get, fixture.TaskRequests.Last().Method);
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages()
     {

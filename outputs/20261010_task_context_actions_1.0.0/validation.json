@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "required_checks": "PASS",
+  "desktop": {
+    "desktop-regression-final.trx": 759,
+    "CommandPaletteWindowsTests.trx": 3,
+    "CompletionFeedbackUiTests.trx": 5,
+    "ExplorerDropViewTests.trx": 1,
+    "ViewStateUiTests.trx": 1,
+    "InboxZeroUiTests.trx": 1,
+    "TaskContextActionsUiTests.trx": 1
+  },
+  "desktop_total": 771,
+  "targeted": 14,
+  "postgres": [
+    [
+      "database_net10.0_20261010140345.trx",
+      6
+    ],
+    [
+      "database_net10.0_20261010140354.trx",
+      5
+    ]
+  ],
+  "previous_ui_checks": 79,
+  "binding_errors": 0,
+  "optional_boundary_check": "BASELINE_FAILURE",
+  "source_files": 22
+}

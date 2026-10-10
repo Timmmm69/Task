@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bf43cbb7-bf6d-46b7-966d-5dc2db659264" name="novik@TIM 2026-10-10 14:15:18" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-10T14:15:18.5486608+03:00" queuing="2026-10-10T14:15:18.5486611+03:00" start="2026-10-10T14:15:17.2898451+03:00" finish="2026-10-10T14:15:18.6686401+03:00" />
+  <TestSettings name="default" id="3798de0d-72d7-4e55-badf-2d1d4dfd0cdf">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-10_14_15_18" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7c29f3a1-9f11-4f8f-b555-8dea12b69a73" testId="de01d4e4-dca7-6c2a-adfd-b340d21141b4" testName="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests.ContextCreate_ProductionClientWritesAndReadsRelation(parent: False)" computerName="TIM" duration="00:00:00.0023528" startTime="2026-10-10T14:15:18.5307351+03:00" endTime="2026-10-10T14:15:18.5330558+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c29f3a1-9f11-4f8f-b555-8dea12b69a73" />
+    <UnitTestResult executionId="862e1f60-92f0-48f9-bee2-fd397aed0a25" testId="3328e105-e5ad-be9f-d74a-bf6ac18f2422" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: False, forbidden: False)" computerName="TIM" duration="00:00:00.0807305" startTime="2026-10-10T14:15:18.4008478+03:00" endTime="2026-10-10T14:15:18.4918787+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="862e1f60-92f0-48f9-bee2-fd397aed0a25" />
+    <UnitTestResult executionId="31c8290f-2ccc-496a-b479-61267d62f7c9" testId="8a1ce6a7-0822-8f9a-f36d-3eec4c70f17c" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.TerminalAndNestedParentsCannotOpenCreation(status: Cancelled, nested: False)" computerName="TIM" duration="00:00:00.0003199" startTime="2026-10-10T14:15:18.5073172+03:00" endTime="2026-10-10T14:15:18.5075836+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31c8290f-2ccc-496a-b479-61267d62f7c9" />
+    <UnitTestResult executionId="737e33f6-d9ff-4436-ade1-0e78c13a46af" testId="89c583f9-0789-6943-086a-da92ebca0464" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.TerminalAndNestedParentsCannotOpenCreation(status: New, nested: True)" computerName="TIM" duration="00:00:00.0008663" startTime="2026-10-10T14:15:18.5064931+03:00" endTime="2026-10-10T14:15:18.5072185+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="737e33f6-d9ff-4436-ade1-0e78c13a46af" />
+    <UnitTestResult executionId="245bf638-6f47-4278-9e44-883676abe052" testId="c4943a51-4b4c-6ead-4a5c-6815fd092bd4" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.RowUsesClickedItemAndProtectsDraft(readOnly: True)" computerName="TIM" duration="00:00:00.0055702" startTime="2026-10-10T14:15:18.5015849+03:00" endTime="2026-10-10T14:15:18.5052242+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="245bf638-6f47-4278-9e44-883676abe052" />
+    <UnitTestResult executionId="77a2e8d5-26c6-42cf-bb62-6295de6bc32f" testId="2464d09a-8a61-4277-4c32-9ab23eda0a8e" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.TerminalAndNestedParentsCannotOpenCreation(status: Completed, nested: False)" computerName="TIM" duration="00:00:00.0000478" startTime="2026-10-10T14:15:18.5283305+03:00" endTime="2026-10-10T14:15:18.5283723+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77a2e8d5-26c6-42cf-bb62-6295de6bc32f" />
+    <UnitTestResult executionId="1d597cc6-9465-4f9e-9f39-204f47552f03" testId="15067e85-74ca-0f9e-37a8-3de41161dd06" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.PersonalUsesLocalProjectsAndPersistsParentWithoutInheritingProject" computerName="TIM" duration="00:00:00.1049135" startTime="2026-10-10T14:15:18.5286911+03:00" endTime="2026-10-10T14:15:18.6140522+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d597cc6-9465-4f9e-9f39-204f47552f03" />
+    <UnitTestResult executionId="80c1a264-034f-4a52-881b-97ee97aa4cc5" testId="eef08913-6bfc-aac2-e7e2-f1b9f79457f3" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: False, forbidden: True)" computerName="TIM" duration="00:00:00.0008667" startTime="2026-10-10T14:15:18.5009526+03:00" endTime="2026-10-10T14:15:18.5009779+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80c1a264-034f-4a52-881b-97ee97aa4cc5" />
+    <UnitTestResult executionId="8b761e0c-c5cf-41b1-9aa1-36b9d8e88cb5" testId="4183a585-8e10-bbc8-90de-7038f49ee165" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: True, forbidden: True)" computerName="TIM" duration="00:00:00.0009401" startTime="2026-10-10T14:15:18.5008649+03:00" endTime="2026-10-10T14:15:18.5008966+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b761e0c-c5cf-41b1-9aa1-36b9d8e88cb5" />
+    <UnitTestResult executionId="945aee46-bd3f-4001-95be-6a22125c2975" testId="5c5bd3ca-b49a-424e-d445-486cd9591616" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: True, forbidden: False)" computerName="TIM" duration="00:00:00.0036342" startTime="2026-10-10T14:15:18.5003004+03:00" endTime="2026-10-10T14:15:18.5003535+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="945aee46-bd3f-4001-95be-6a22125c2975" />
+    <UnitTestResult executionId="ae3c3fca-82f1-439e-87d5-7f88b9bd8f40" testId="bc88a5aa-6ee6-0c0c-38fa-5f5fefce3b35" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.RowUsesClickedItemAndProtectsDraft(readOnly: False)" computerName="TIM" duration="00:00:00.0010695" startTime="2026-10-10T14:15:18.5053337+03:00" endTime="2026-10-10T14:15:18.5063344+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae3c3fca-82f1-439e-87d5-7f88b9bd8f40" />
+    <UnitTestResult executionId="df49a483-5ccc-4feb-86a7-2fd84fcd1657" testId="d313dec8-47e9-d45c-17f2-c0ddc49fb52c" testName="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests.ContextCreate_ProductionClientWritesAndReadsRelation(parent: True)" computerName="TIM" duration="00:00:00.1239258" startTime="2026-10-10T14:15:18.4025141+03:00" endTime="2026-10-10T14:15:18.5306521+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df49a483-5ccc-4feb-86a7-2fd84fcd1657" />
+    <UnitTestResult executionId="f57c897c-4149-4f25-bb4d-2c52f0db1a5e" testId="9dc62d1c-5ed0-0e40-8bfd-f75410396fef" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.BusyRefreshBlocksAllContextActionsWithoutWrites" computerName="TIM" duration="00:00:00.0043974" startTime="2026-10-10T14:15:18.6141907+03:00" endTime="2026-10-10T14:15:18.6187828+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f57c897c-4149-4f25-bb4d-2c52f0db1a5e" />
+    <UnitTestResult executionId="7f3d0dad-2518-489e-a180-66b2828a8d44" testId="302e7567-4c95-a35d-ff09-9216ec22d906" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.PermissionBusyWorkspaceDraftAndFreshTerminalAreRespected" computerName="TIM" duration="00:00:00.0011524" startTime="2026-10-10T14:15:18.5286139+03:00" endTime="2026-10-10T14:15:18.5286351+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f3d0dad-2518-489e-a180-66b2828a8d44" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: True, forbidden: True)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="4183a585-8e10-bbc8-90de-7038f49ee165">
+      <Execution id="8b761e0c-c5cf-41b1-9aa1-36b9d8e88cb5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="ContextSeedLateOptionsUserClearCancelAndFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.PersonalUsesLocalProjectsAndPersistsParentWithoutInheritingProject" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="15067e85-74ca-0f9e-37a8-3de41161dd06">
+      <Execution id="1d597cc6-9465-4f9e-9f39-204f47552f03" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="PersonalUsesLocalProjectsAndPersistsParentWithoutInheritingProject" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.RowUsesClickedItemAndProtectsDraft(readOnly: True)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="c4943a51-4b4c-6ead-4a5c-6815fd092bd4">
+      <Execution id="245bf638-6f47-4278-9e44-883676abe052" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="RowUsesClickedItemAndProtectsDraft" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests.ContextCreate_ProductionClientWritesAndReadsRelation(parent: True)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="d313dec8-47e9-d45c-17f2-c0ddc49fb52c">
+      <Execution id="df49a483-5ccc-4feb-86a7-2fd84fcd1657" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests" name="ContextCreate_ProductionClientWritesAndReadsRelation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.TerminalAndNestedParentsCannotOpenCreation(status: New, nested: True)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="89c583f9-0789-6943-086a-da92ebca0464">
+      <Execution id="737e33f6-d9ff-4436-ade1-0e78c13a46af" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="TerminalAndNestedParentsCannotOpenCreation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: False, forbidden: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="3328e105-e5ad-be9f-d74a-bf6ac18f2422">
+      <Execution id="862e1f60-92f0-48f9-bee2-fd397aed0a25" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="ContextSeedLateOptionsUserClearCancelAndFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.TerminalAndNestedParentsCannotOpenCreation(status: Completed, nested: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="2464d09a-8a61-4277-4c32-9ab23eda0a8e">
+      <Execution id="77a2e8d5-26c6-42cf-bb62-6295de6bc32f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="TerminalAndNestedParentsCannotOpenCreation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.BusyRefreshBlocksAllContextActionsWithoutWrites" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="9dc62d1c-5ed0-0e40-8bfd-f75410396fef">
+      <Execution id="f57c897c-4149-4f25-bb4d-2c52f0db1a5e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="BusyRefreshBlocksAllContextActionsWithoutWrites" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.PermissionBusyWorkspaceDraftAndFreshTerminalAreRespected" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="302e7567-4c95-a35d-ff09-9216ec22d906">
+      <Execution id="7f3d0dad-2518-489e-a180-66b2828a8d44" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="PermissionBusyWorkspaceDraftAndFreshTerminalAreRespected" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: False, forbidden: True)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="eef08913-6bfc-aac2-e7e2-f1b9f79457f3">
+      <Execution id="80c1a264-034f-4a52-881b-97ee97aa4cc5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="ContextSeedLateOptionsUserClearCancelAndFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.ContextSeedLateOptionsUserClearCancelAndFailure(parent: True, forbidden: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="5c5bd3ca-b49a-424e-d445-486cd9591616">
+      <Execution id="945aee46-bd3f-4001-95be-6a22125c2975" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="ContextSeedLateOptionsUserClearCancelAndFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests.ContextCreate_ProductionClientWritesAndReadsRelation(parent: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="de01d4e4-dca7-6c2a-adfd-b340d21141b4">
+      <Execution id="7c29f3a1-9f11-4f8f-b555-8dea12b69a73" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskApi.DesktopTasksApiClientTests" name="ContextCreate_ProductionClientWritesAndReadsRelation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.TerminalAndNestedParentsCannotOpenCreation(status: Cancelled, nested: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="8a1ce6a7-0822-8f9a-f36d-3eec4c70f17c">
+      <Execution id="31c8290f-2ccc-496a-b479-61267d62f7c9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="TerminalAndNestedParentsCannotOpenCreation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests.RowUsesClickedItemAndProtectsDraft(readOnly: False)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="bc88a5aa-6ee6-0c0c-38fa-5f5fefce3b35">
+      <Execution id="ae3c3fca-82f1-439e-87d5-7f88b9bd8f40" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsTests" name="RowUsesClickedItemAndProtectsDraft" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="de01d4e4-dca7-6c2a-adfd-b340d21141b4" executionId="7c29f3a1-9f11-4f8f-b555-8dea12b69a73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3328e105-e5ad-be9f-d74a-bf6ac18f2422" executionId="862e1f60-92f0-48f9-bee2-fd397aed0a25" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a1ce6a7-0822-8f9a-f36d-3eec4c70f17c" executionId="31c8290f-2ccc-496a-b479-61267d62f7c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="89c583f9-0789-6943-086a-da92ebca0464" executionId="737e33f6-d9ff-4436-ade1-0e78c13a46af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4943a51-4b4c-6ead-4a5c-6815fd092bd4" executionId="245bf638-6f47-4278-9e44-883676abe052" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2464d09a-8a61-4277-4c32-9ab23eda0a8e" executionId="77a2e8d5-26c6-42cf-bb62-6295de6bc32f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15067e85-74ca-0f9e-37a8-3de41161dd06" executionId="1d597cc6-9465-4f9e-9f39-204f47552f03" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eef08913-6bfc-aac2-e7e2-f1b9f79457f3" executionId="80c1a264-034f-4a52-881b-97ee97aa4cc5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4183a585-8e10-bbc8-90de-7038f49ee165" executionId="8b761e0c-c5cf-41b1-9aa1-36b9d8e88cb5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5c5bd3ca-b49a-424e-d445-486cd9591616" executionId="945aee46-bd3f-4001-95be-6a22125c2975" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc88a5aa-6ee6-0c0c-38fa-5f5fefce3b35" executionId="ae3c3fca-82f1-439e-87d5-7f88b9bd8f40" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d313dec8-47e9-d45c-17f2-c0ddc49fb52c" executionId="df49a483-5ccc-4feb-86a7-2fd84fcd1657" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9dc62d1c-5ed0-0e40-8bfd-f75410396fef" executionId="f57c897c-4149-4f25-bb4d-2c52f0db1a5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="302e7567-4c95-a35d-ff09-9216ec22d906" executionId="7f3d0dad-2518-489e-a180-66b2828a8d44" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="14" executed="14" passed="14" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.25]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.39]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.42]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.67]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

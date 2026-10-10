@@ -37,6 +37,7 @@ public partial class MainWindow : Window
         if (viewModel.Tasks is not null)
         {
             viewModel.Tasks.PropertyChanged += OnTasksPropertyChanged;
+            viewModel.Tasks.RowDetailsRequested += OnRowDetailsRequested;
             viewModel.Tasks.CompletionPresented += OnCompletionPresented;
             viewModel.Tasks.CompletionPresentationEnded += OnCompletionPresentationEnded;
         }
@@ -109,6 +110,7 @@ public partial class MainWindow : Window
         if (_viewModel.Tasks is { } tasks)
         {
             tasks.PropertyChanged -= OnTasksPropertyChanged;
+            tasks.RowDetailsRequested -= OnRowDetailsRequested;
             tasks.CompletionPresented -= OnCompletionPresented;
             tasks.CompletionPresentationEnded -= OnCompletionPresentationEnded;
         }
@@ -154,6 +156,8 @@ public partial class MainWindow : Window
     {
         if (e.PropertyName == nameof(TasksViewModel.IsActive) && sender is TasksViewModel { IsActive: false })
             _completionReturnFocus.Clear();
+        if (e.PropertyName == nameof(TasksViewModel.Editor) && sender is TasksViewModel { Editor: null })
+            Dispatcher.BeginInvoke(DispatcherPriority.Input, () => { if (TasksList.IsVisible && TasksList.IsEnabled) TasksList.Focus(); });
         if (e.PropertyName != nameof(TasksViewModel.Editor)
             || sender is not TasksViewModel { Editor: not null })
         {
@@ -161,6 +165,12 @@ public partial class MainWindow : Window
         }
 
         Dispatcher.BeginInvoke(DispatcherPriority.Input, () => TaskTitleTextBox.Focus());
+    }
+
+    private void OnRowDetailsRequested()
+    {
+        TaskInspectorExpander.IsExpanded = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, () => TaskDetailsArea.Focus());
     }
 
     private void OnTasksListKeyDown(object sender, KeyEventArgs e)

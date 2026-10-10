@@ -26,6 +26,7 @@ public sealed class TaskCardEditor : ViewModelBase
     private readonly bool _personal;
     private DateTimeOffset? _currentStart;
     private bool _canAssign, _canWatch;
+    private bool _updatingOptions;
     public event Action? Changed;
     public TimeZoneInfo? ScheduleZone { get; set; }
     public TaskCardEditor(TaskCardContent? source, DateTimeOffset? originalStart = null, bool personal = false)
@@ -54,8 +55,11 @@ public sealed class TaskCardEditor : ViewModelBase
     public string Duration { get => _duration; set { if (SetProperty(ref _duration, value)) Changed?.Invoke(); } }
     public string Search { get => _search; set => SetProperty(ref _search, value); }
     public string? Message { get => _message; set => SetProperty(ref _message, value); }
-    public TaskChoice? Project { get => _project; set { if (SetProperty(ref _project, value)) Changed?.Invoke(); } }
-    public TaskChoice? Parent { get => _parent; set { if (SetProperty(ref _parent, value)) Changed?.Invoke(); } }
+    public TaskChoice? Project { get => _project; set { if (!_updatingOptions && SetProperty(ref _project, value ?? new(null, "Не указано"))) Changed?.Invoke(); } }
+    public TaskChoice? Parent { get => _parent; set { if (!_updatingOptions && SetProperty(ref _parent, value ?? new(null, "Не указано"))) { OnPropertyChanged(nameof(HasParent)); Changed?.Invoke(); } } }
+    public bool HasParent => Parent?.Id.HasValue == true;
+    public void SeedProject(Guid id, string name) { Project = new(id, name); SetOptions(new JsonObject()); }
+    public void SeedParent(Guid id, string name) { Parent = new(id, name); SetOptions(new JsonObject()); }
     public TaskChoice? Requester { get => _requester; set { if (SetProperty(ref _requester, value)) Changed?.Invoke(); } }
     public TaskChoice? Counterparty { get => _counterparty; set { if (SetProperty(ref _counterparty, value)) Changed?.Invoke(); } }
     public IReadOnlyList<TaskChoice> Projects => _projects;
@@ -74,15 +78,15 @@ public sealed class TaskCardEditor : ViewModelBase
 
     public void SetOptions(JsonObject options)
     {
-        IReadOnlyList<TaskChoice> Choices(string key, Guid? selected)
+        IReadOnlyList<TaskChoice> Choices(string key, Guid? selected, TaskChoice? current = null)
         {
             var values = (options[key]?.AsArray() ?? []).Select(n => new TaskChoice(Guid.Parse(n!["id"]!.ToString()), n["name"]!.ToString())).ToList();
-            if (selected.HasValue && values.All(v => v.Id != selected)) values.Insert(0, new(selected, "Текущее значение (вне результатов поиска)"));
+            if (selected.HasValue && values.All(v => v.Id != selected)) values.Insert(0, new(selected, current?.Name ?? "Текущее значение (вне результатов поиска)"));
             values.Insert(0, new(null, "Не указано")); return values;
         }
         var project = _project is null ? _source.ProjectId : _project.Id; var parent = _parent is null ? _source.ParentTaskId : _parent.Id;
         var requester = _requester is null ? _source.RequesterUserId : _requester.Id; var counterparty = _counterparty is null ? _source.PrimaryCounterpartyObjectId : _counterparty.Id;
-        _projects = Choices("projects", project); _tasks = Choices("tasks", parent); _people = Choices("people", requester); _counterparties = Choices("counterparties", counterparty);
+        _projects = Choices("projects", project, _project); _tasks = Choices("tasks", parent, _parent); _people = Choices("people", requester); _counterparties = Choices("counterparties", counterparty);
         _project = _projects.First(v => v.Id == project); _parent = _tasks.First(v => v.Id == parent); _requester = _people.First(v => v.Id == requester); _counterparty = _counterparties.First(v => v.Id == counterparty);
         IReadOnlyList<TaskPersonSelection> SelectPeople(IReadOnlyList<TaskPersonSelection> existing, IReadOnlyList<Guid> original)
         {
@@ -92,7 +96,11 @@ public sealed class TaskCardEditor : ViewModelBase
             return names.Select(p => { var item = new TaskPersonSelection(p.Key, p.Value, selected.Contains(p.Key)); item.PropertyChanged += (_, _) => Changed?.Invoke(); return item; }).ToArray();
         }
         _assignees = SelectPeople(_assignees, _source.AssigneeIds); _watchers = SelectPeople(_watchers, _source.WatcherIds);
-        foreach (var name in new[] { nameof(Projects), nameof(Tasks), nameof(People), nameof(Counterparties), nameof(Project), nameof(Parent), nameof(Requester), nameof(Counterparty), nameof(Assignees), nameof(Watchers) }) OnPropertyChanged(name);
+        // ItemsSource replacement can synchronously write null back through SelectedItem.
+        // Keep the user's current relation while WPF reconciles the new collections.
+        _updatingOptions = true;
+        try { foreach (var name in new[] { nameof(Projects), nameof(Tasks), nameof(People), nameof(Counterparties), nameof(Project), nameof(Parent), nameof(HasParent), nameof(Requester), nameof(Counterparty), nameof(Assignees), nameof(Watchers) }) OnPropertyChanged(name); }
+        finally { _updatingOptions = false; }
         Message = options.Any(p => p.Key.EndsWith("HasMore") && p.Value?.GetValue<bool>() == true) ? "Показаны первые 200 результатов. Уточните поиск." : null;
     }
 

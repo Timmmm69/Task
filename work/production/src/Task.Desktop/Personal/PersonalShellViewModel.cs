@@ -15,6 +15,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     public PersonalShellViewModel(PersonalApplicationModel model)
     {
         _model = model;
+        AddProjectTaskCommand = new(async (_, _) => await OpenProjectTaskAsync(), _ => CanAddProjectTask);
         _selectedSection = Sections[0];
         Palette = new(model.Workspace?.Hub, PaletteCommands, this);
         foreach (var child in Children) child.PropertyChanged += OnChildChanged;
@@ -65,6 +66,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     private IEnumerable<ViewModelBase> Children => new ViewModelBase?[] { Tasks, Planning, Calendar, Calendar?.Recurrence, Workspace, Workspace?.Hub }.OfType<ViewModelBase>();
     private void OnChildChanged(object? sender, PropertyChangedEventArgs e)
     {
+        AddProjectTaskCommand.RaiseCanExecuteChanged(); OnPropertyChanged(nameof(ProjectTaskActionHint));
         if (ReferenceEquals(sender, Tasks) && e.PropertyName == nameof(PersonalTasksViewModel.Items)) SelectRequestedTask();
         OnPropertyChanged(nameof(CanNavigate)); OnPropertyChanged(nameof(NavigationHint));
     }
@@ -105,6 +107,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     }
     public void Dispose()
     {
+        AddProjectTaskCommand.Dispose();
         Palette.Dispose();
         foreach (var child in Children) child.PropertyChanged -= OnChildChanged;
         if (Tasks is { } tasks) tasks.OpenTasksRequested -= OpenTasks;

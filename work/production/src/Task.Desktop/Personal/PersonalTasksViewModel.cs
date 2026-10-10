@@ -45,6 +45,19 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         OpenTasksCommand = new((_, _) => { OpenTasksRequested?.Invoke(null); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanNavigate);
         OpenSavedTaskCommand = new((_, _) => { OpenTasksRequested?.Invoke(_savedTaskId); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanNavigate && _savedTaskId.HasValue);
         EditCommand = new(async (_, _) => await OpenAsync(Selected?.Source), _ => CanEdit && CanSelectTask);
+        OpenRowCommand = new(async (p, _) =>
+        {
+            if (p is not PersonalTaskItem row) return;
+            Selected = row;
+            if (EditCommand.CanExecute(null)) await EditCommand.ExecuteAsync();
+            else DetailsExpanded = true;
+        }, p => CanSelectTask && p is PersonalTaskItem row && Items.Contains(row));
+        AddSubtaskCommand = new(async (_, _) =>
+        {
+            var parent = Selected!.Source;
+            await OpenAsync(null);
+            if (Editor is not null) { Editor.Card.SeedParent(parent.Id, parent.Title); SetChoices(); }
+        }, _ => CanAddSubtask);
         SaveCommand = new(async (_, _) => await SaveAsync(), _ => Editor?.CanSubmit == true && !IsBusy);
         CancelCommand = new((_, _) => { Editor = null; Message = ""; Filter(); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy);
         CaptureCommand = new(async (_, _) => await CaptureAsync(), _ => !IsBusy && !string.IsNullOrWhiteSpace(CaptureText) && CaptureText.Trim().Length <= 500);
@@ -55,9 +68,23 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         RemoveCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item, true); }, _ => CanEdit && CanSelectTask);
         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить действие. Введённые данные остались в форме.";
     }
-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand, ShowCompletedCommand];
+    private IEnumerable<AsyncCommand> Commands => [OpenRowCommand, AddSubtaskCommand, RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand, ShowCompletedCommand];
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand NewCommand { get; }
+    public AsyncCommand OpenRowCommand { get; }
+    public AsyncCommand AddSubtaskCommand { get; }
+    private bool _detailsExpanded;
+    public bool DetailsExpanded { get => _detailsExpanded; set => SetProperty(ref _detailsExpanded, value); }
+    public bool CanAddSubtask => CanSelectTask && CanEdit && Selected?.Source.Card?.ParentTaskId is null;
+    public string SubtaskActionHint => !CanSelectTask ? "Сначала завершите текущее действие или сохраните черновик."
+        : !CanAddSubtask ? "Подзадачу можно добавить только к незавершённой задаче верхнего уровня."
+        : "Открыть форму с выбранной родительской задачей.";
+    public async System.Threading.Tasks.Task CreateFromProjectAsync(PersonalProject project)
+    {
+        if (!CanNavigate || project.Lifecycle != "active" || !_projects().Any(p => p.Id == project.Id && p.Lifecycle == "active")) return;
+        await OpenAsync(null);
+        if (Editor is not null) { Editor.Card.SeedProject(project.Id, project.Name); SetChoices(); }
+    }
     public AsyncCommand OpenTasksCommand { get; }
     public AsyncCommand OpenSavedTaskCommand { get; }
     public bool ShowSavedTaskAction => _savedTaskId.HasValue;
@@ -159,9 +186,15 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     }
     private async System.Threading.Tasks.Task OpenAsync(DesktopTaskDto? source)
     {
-        if (Editor is not null) return;
+        if (!CanSelectTask) return;
         // Fresh choices are derived exclusively from the same local store.
         await RefreshAsync();
+        if (_disposed || Editor is not null) return;
+        if (source is not null)
+        {
+            source = _all.FirstOrDefault(t => t.Id == source.Id);
+            if (source is null || TaskRules.IsTerminal((TaskWorkStatus)source.Status)) { DetailsExpanded = true; return; }
+        }
         Editor = new(source is null ? TaskEditorMode.Create : TaskEditorMode.Edit, source, personal: true);
         SetChoices();
     }
@@ -267,7 +300,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         new("Входящая задача", () => !string.IsNullOrEmpty(CaptureText), () => IsBusy, CaptureCommand),
         new("Чек-лист", () => !string.IsNullOrEmpty(CheckText), () => IsBusy, AddCheckCommand),
     ];
-    private void Notify() { OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); }
+    private void Notify() { OnPropertyChanged(nameof(CanAddSubtask)); OnPropertyChanged(nameof(SubtaskActionHint)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); }
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;

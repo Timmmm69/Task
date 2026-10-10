@@ -17,7 +17,10 @@ public partial class PersonalTasksView : UserControl
     }
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(PersonalTasksViewModel.HasEditor) && sender is PersonalTasksViewModel { HasEditor: true }) Dispatcher.BeginInvoke(() => TitleInput.Focus());
+        if (e.PropertyName == nameof(PersonalTasksViewModel.HasEditor) && sender is PersonalTasksViewModel model)
+            Dispatcher.BeginInvoke(() => { if (!IsVisible) return; if (model.HasEditor) TitleInput.Focus(); else if (TasksList.IsEnabled) TasksList.Focus(); });
+        if (e.PropertyName == nameof(PersonalTasksViewModel.DetailsExpanded) && sender is PersonalTasksViewModel { DetailsExpanded: true })
+            Dispatcher.BeginInvoke(() => { if (IsVisible) DetailsExpander.Focus(); });
     }
     private void OnCancelEditor(object sender, RoutedEventArgs e) => RequestCancel();
     internal void RequestCancel()

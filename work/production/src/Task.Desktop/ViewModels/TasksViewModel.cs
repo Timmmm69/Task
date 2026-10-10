@@ -346,11 +346,27 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             async (_, token) => await LoadNextPageAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy && HasNextPage);
         NewTaskCommand = new AsyncCommand(
-            async (_, token) => { OpenCreateEditor(); await LoadEditorOptionsAsync(token); },
-            _ => CanCreate);
+            async (p, token) => { OpenCreateEditor(); if (p is TaskChoice { Id: { } id } project) Editor?.Card.SeedProject(id, project.Name); await LoadEditorOptionsAsync(token); },
+            _ => CanOpenCreateEditor);
         EditTaskCommand = new AsyncCommand(
             async (_, token) => { OpenEditEditor(); await LoadEditorOptionsAsync(token); },
-            _ => CanEdit);
+            _ => CanEdit && CanOpenTaskAction);
+        OpenRowCommand = new(async (p, token) =>
+        {
+            if (p is not TaskItemViewModel row) return;
+            SelectedItem = row;
+            await _detailsLoadTask.WaitAsync(token);
+            if (SelectedItem?.Id != row.Id || !CanOpenTaskAction) return;
+            if (DetailsState == TaskDetailsState.Loaded && EditTaskCommand.CanExecute(null)) await EditTaskCommand.ExecuteAsync(cancellationToken: token);
+            else RowDetailsRequested?.Invoke();
+        }, p => CanOpenTaskAction && Workspace?.IsBusy != true && _capabilities.Contains("Task.Read") && p is TaskItemViewModel row && Items.Contains(row));
+        AddSubtaskCommand = new(async (_, token) =>
+        {
+            if (SelectedDetails is not { } parent) return;
+            OpenCreateEditor();
+            Editor?.Card.SeedParent(parent.Id, parent.Source.Title);
+            await LoadEditorOptionsAsync(token);
+        }, _ => CanAddSubtask);
         CreateSimilarTaskCommand = new AsyncCommand(OpenSimilarEditorAsync, _ => CanCreateSimilar);
         LoadOptionsCommand = new AsyncCommand(async (_, token) => await LoadEditorOptionsAsync(token), _ => Editor is not null && !IsMutationBusy);
         SaveEditorCommand = new AsyncCommand(
@@ -493,6 +509,21 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     }
 
     public bool CanCreate => CanWrite("Task.Create");
+    public bool CanSelectTaskRows => Editor is null && !IsMutationBusy
+        && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment);
+    public bool CanOpenTaskAction => IsActive && !IsBusy && !IsMutationBusy && Editor is null
+        && !PendingTransition.HasValue
+        && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment);
+    public bool CanOpenCreateEditor => CanCreate && CanOpenTaskAction && Workspace?.IsBusy != true;
+    public bool CanAddSubtask => CanOpenCreateEditor && _capabilities.Contains("Task.Read")
+        && DetailsState == TaskDetailsState.Loaded && SelectedDetails?.Id == SelectedItem?.Id
+        && SelectedDetails is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled } && SelectedDetails.Source.Card?.ParentTaskId is null;
+    public string SubtaskActionHint => !CanOpenCreateEditor ? CreateActionHint
+        : !CanAddSubtask ? "Подзадачу можно добавить только к доступной незавершённой задаче верхнего уровня."
+        : "Открыть форму с выбранной родительской задачей.";
+    public AsyncCommand OpenRowCommand { get; }
+    public AsyncCommand AddSubtaskCommand { get; }
+    public event Action? RowDetailsRequested;
     public bool CanCreateSimilar => CanCreate && _capabilities.Contains("Task.Read")
         && DetailsState == TaskDetailsState.Loaded && SelectedDetails?.Id == SelectedItem?.Id
         && SelectedItem is not null && !HasEditor && !IsMutationBusy;
@@ -513,9 +544,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         : !_sessionAllowsWrites ? "Войдите снова, чтобы создать задачу."
         : !_capabilities.Contains("Task.Create") || _writePermissionChanged ? "У вас нет разрешения создавать задачи."
         : Editor is not null ? "Сначала сохраните или закройте открытую форму."
-        : IsBusy || IsMutationBusy ? "Дождитесь завершения текущего действия."
+        : !string.IsNullOrEmpty(Workspace?.CheckText) || !string.IsNullOrEmpty(Workspace?.Comment) ? "Сначала сохраните текст комментария или чек-листа."
+        : IsBusy || IsMutationBusy || Workspace?.IsBusy == true ? "Дождитесь завершения текущего действия."
         : "Создать задачу";
-    public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled } && !IsMutationBusy;
+    public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled }
+        && (SelectedDetails?.Id != SelectedItem.Id || SelectedDetails.Source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)) && !IsMutationBusy;
     public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
     public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
     public bool CanComplete => CanTransitionTo(DesktopTaskStatus.Completed);
@@ -593,6 +626,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         get => _selectedDetails;
         private set
         {
+            if (Workspace is not null) Workspace.PropertyChanged -= OnWorkspaceChanged;
             var previousWorkspace = SelectedDetails?.Id == value?.Id ? Workspace : null;
             SetProperty(ref _selectedDetails, value);
             Workspace = value is not null && _client is IDesktopTaskWorkspaceClient client
@@ -600,6 +634,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                     task => { if (IsActive && SelectedDetails?.Id == task.Id) ApplyServerTask(task); },
                     _activationCancellation?.Token ?? CancellationToken.None) : null;
             if (previousWorkspace is not null) Workspace?.CopyDrafts(previousWorkspace);
+            if (Workspace is not null) Workspace.PropertyChanged += OnWorkspaceChanged;
             Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites);
             OnPropertyChanged(nameof(Workspace));
             if (Workspace is not null) _ = Workspace.LoadAsync();
@@ -983,6 +1018,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         RefreshCommand.Dispose();
         OpenSavedTaskCommand.Dispose();
         LoadMoreCommand.Dispose();
+        OpenRowCommand.Dispose(); AddSubtaskCommand.Dispose();
         NewTaskCommand.Dispose();
         CreateSimilarTaskCommand.Dispose();
         EditTaskCommand.Dispose();
@@ -1113,6 +1149,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private System.Threading.Tasks.Task _detailsLoadTask = System.Threading.Tasks.Task.CompletedTask;
     private void BeginLoadDetails(TaskItemViewModel? item)
     {
         CancelDetailsLoad();
@@ -1129,7 +1166,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             _activationCancellation?.Token ?? CancellationToken.None);
         DetailsState = TaskDetailsState.Loading;
         DetailMessage = "Загружаем карточку задачи…";
-        _ = LoadDetailsAsync(item.Id, generation, _detailCancellation.Token);
+        _detailsLoadTask = LoadDetailsAsync(item.Id, generation, _detailCancellation.Token);
     }
 
     private async global::System.Threading.Tasks.Task LoadDetailsAsync(
@@ -1195,7 +1232,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     private void OpenCreateEditor()
     {
-        if (!CanCreate) return;
+        if (!CanOpenCreateEditor) return;
         CloseEditor();
         Editor = new TaskEditorViewModel(TaskEditorMode.Create);
         Announcement = "Открыта форма создания задачи.";
@@ -1235,9 +1272,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     private void OpenEditEditor()
     {
-        if (!CanEdit || SelectedItem is null) return;
+        if (!CanEdit || !CanOpenTaskAction || SelectedItem is null) return;
         CloseEditor();
-        Editor = new TaskEditorViewModel(TaskEditorMode.Edit, SelectedItem.Source);
+        Editor = new TaskEditorViewModel(TaskEditorMode.Edit, SelectedDetails?.Id == SelectedItem.Id ? SelectedDetails.Source : SelectedItem.Source);
         Announcement = "Открыта форма изменения задачи.";
     }
 
@@ -1636,6 +1673,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         && _capabilities.Contains(capability)
         && State is not TasksScreenState.SessionEnded and not TasksScreenState.Forbidden;
 
+    private void OnWorkspaceChanged(object? sender, PropertyChangedEventArgs e) => NotifyMutationState();
+
     private void OnEditorPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(TaskEditorViewModel.CanSubmit)
@@ -1648,6 +1687,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     private void NotifyMutationState()
     {
+        OnPropertyChanged(nameof(CanSelectTaskRows));
+        OnPropertyChanged(nameof(CanOpenCreateEditor));
+        OnPropertyChanged(nameof(CanAddSubtask));
+        OnPropertyChanged(nameof(SubtaskActionHint));
+        OpenRowCommand?.RaiseCanExecuteChanged();
+        AddSubtaskCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(CanCreate));
         OnPropertyChanged(nameof(CanCreateSimilar));
         OnPropertyChanged(nameof(CanCreateFromShell));

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5e72df72-8e8d-4a22-88ee-e67285d1b483" name="novik@TIM 2026-10-10 14:15:23" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-10T14:15:23.8969708+03:00" queuing="2026-10-10T14:15:23.8969710+03:00" start="2026-10-10T14:15:22.1212426+03:00" finish="2026-10-10T14:15:23.9045687+03:00" />
+  <TestSettings name="default" id="ac91a7a0-0b13-4c8b-bfab-344dd650bc71">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-10_14_15_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b9f7d1c0-23e8-4591-a503-aa283dac37e7" testId="fa12f25d-8227-9190-87a2-f87590878167" testName="Task.Desktop.Tests.CompletionFeedbackUiTests.BoundList_ExpiryKeepsAnotherTasksPendingConfirmation" computerName="TIM" duration="00:00:00.0825243" startTime="2026-10-10T14:15:23.3022492+03:00" endTime="2026-10-10T14:15:23.3755291+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9f7d1c0-23e8-4591-a503-aa283dac37e7" />
+    <UnitTestResult executionId="79befaf2-4857-46bf-b708-a00d54c7dc24" testId="ca276dc3-acce-2442-1b3b-f0054e9c7a3b" testName="Task.Desktop.Tests.CompletionFeedbackUiTests.ReducedMotion_GlyphStaysStatic" computerName="TIM" duration="00:00:00.0066251" startTime="2026-10-10T14:15:23.6914973+03:00" endTime="2026-10-10T14:15:23.6989067+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79befaf2-4857-46bf-b708-a00d54c7dc24" />
+    <UnitTestResult executionId="af229f30-011f-4bac-81de-9e193ab6c762" testId="41c4f907-9310-264f-bff8-ca2255e9ecf0" testName="Task.Desktop.Tests.CompletionFeedbackUiTests.GlyphPulse_ResetsAfterPlaybackAndRecycling_WithoutChangingLayout" computerName="TIM" duration="00:00:00.5828956" startTime="2026-10-10T14:15:22.6987934+03:00" endTime="2026-10-10T14:15:23.2908437+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af229f30-011f-4bac-81de-9e193ab6c762" />
+    <UnitTestResult executionId="e5b0b8d0-d099-4818-af9d-f97190311079" testId="d3b4d2ad-63ac-0597-8577-418af22259b5" testName="Task.Desktop.Tests.CompletionFeedbackUiTests.ProductionWiring_PreservesAccessibleStatusContrastAndRecycling" computerName="TIM" duration="00:00:00.0115260" startTime="2026-10-10T14:15:23.6992407+03:00" endTime="2026-10-10T14:15:23.7108324+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5b0b8d0-d099-4818-af9d-f97190311079" />
+    <UnitTestResult executionId="a23e95d2-93ec-414f-b7fb-4943880a28a4" testId="5dc739fd-188a-e6df-4808-577672da1a26" testName="Task.Desktop.Tests.CompletionFeedbackUiTests.RecycledListContainers_DoNotCarryFeedbackToOtherTasksOrStealKeyboardFocus" computerName="TIM" duration="00:00:00.3149721" startTime="2026-10-10T14:15:23.3763617+03:00" endTime="2026-10-10T14:15:23.6912259+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a23e95d2-93ec-414f-b7fb-4943880a28a4" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.CompletionFeedbackUiTests.ProductionWiring_PreservesAccessibleStatusContrastAndRecycling" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="d3b4d2ad-63ac-0597-8577-418af22259b5">
+      <Execution id="e5b0b8d0-d099-4818-af9d-f97190311079" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CompletionFeedbackUiTests" name="ProductionWiring_PreservesAccessibleStatusContrastAndRecycling" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CompletionFeedbackUiTests.ReducedMotion_GlyphStaysStatic" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="ca276dc3-acce-2442-1b3b-f0054e9c7a3b">
+      <Execution id="79befaf2-4857-46bf-b708-a00d54c7dc24" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CompletionFeedbackUiTests" name="ReducedMotion_GlyphStaysStatic" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CompletionFeedbackUiTests.RecycledListContainers_DoNotCarryFeedbackToOtherTasksOrStealKeyboardFocus" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="5dc739fd-188a-e6df-4808-577672da1a26">
+      <Execution id="a23e95d2-93ec-414f-b7fb-4943880a28a4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CompletionFeedbackUiTests" name="RecycledListContainers_DoNotCarryFeedbackToOtherTasksOrStealKeyboardFocus" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CompletionFeedbackUiTests.BoundList_ExpiryKeepsAnotherTasksPendingConfirmation" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="fa12f25d-8227-9190-87a2-f87590878167">
+      <Execution id="b9f7d1c0-23e8-4591-a503-aa283dac37e7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CompletionFeedbackUiTests" name="BoundList_ExpiryKeepsAnotherTasksPendingConfirmation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CompletionFeedbackUiTests.GlyphPulse_ResetsAfterPlaybackAndRecycling_WithoutChangingLayout" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="41c4f907-9310-264f-bff8-ca2255e9ecf0">
+      <Execution id="af229f30-011f-4bac-81de-9e193ab6c762" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CompletionFeedbackUiTests" name="GlyphPulse_ResetsAfterPlaybackAndRecycling_WithoutChangingLayout" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="fa12f25d-8227-9190-87a2-f87590878167" executionId="b9f7d1c0-23e8-4591-a503-aa283dac37e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca276dc3-acce-2442-1b3b-f0054e9c7a3b" executionId="79befaf2-4857-46bf-b708-a00d54c7dc24" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="41c4f907-9310-264f-bff8-ca2255e9ecf0" executionId="af229f30-011f-4bac-81de-9e193ab6c762" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3b4d2ad-63ac-0597-8577-418af22259b5" executionId="e5b0b8d0-d099-4818-af9d-f97190311079" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5dc739fd-188a-e6df-4808-577672da1a26" executionId="a23e95d2-93ec-414f-b7fb-4943880a28a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.09]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:01.22]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

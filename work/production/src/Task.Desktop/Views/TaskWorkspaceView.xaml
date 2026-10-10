@@ -11,7 +11,7 @@
   <Button Content="Обновить связи" Command="{Binding RefreshCommand}"/>
   <Expander Header="Чек-лист" state:ViewState.Section="task/v1/checklist"><views:TaskChecklistView/></Expander>
   <Expander Header="Подзадачи" state:ViewState.Section="task/v1/subtasks"><StackPanel>
-   <TextBlock Text="Чтобы добавить подзадачу, создайте задачу и выберите эту задачу как родительскую."/>
+   <TextBlock Text="Добавьте подзадачу действием в карточке выше."/>
    <ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
   </StackPanel></Expander>
   <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,14,0,5"/>

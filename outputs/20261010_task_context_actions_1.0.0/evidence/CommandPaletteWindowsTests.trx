@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bc06ca07-36d2-4361-9af9-66ce97ad7a47" name="novik@TIM 2026-10-10 14:15:21" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-10T14:15:21.2906058+03:00" queuing="2026-10-10T14:15:21.2906063+03:00" start="2026-10-10T14:15:19.4153843+03:00" finish="2026-10-10T14:15:21.2975653+03:00" />
+  <TestSettings name="default" id="d43f63f7-db8f-4666-b97e-feb499b5b53b">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-10_14_15_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="75a22315-e27f-4709-ba92-a3a8c1312ee3" testId="884eb33b-a1e1-e7fa-6acc-008d6c7cb51c" testName="Task.Desktop.Tests.CommandPaletteWindowsTests.ShellShortcut_KeyboardOnly_FocusTrapAndRestore" computerName="TIM" duration="00:00:00.6349080" startTime="2026-10-10T14:15:20.4364157+03:00" endTime="2026-10-10T14:15:21.0715682+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75a22315-e27f-4709-ba92-a3a8c1312ee3" />
+    <UnitTestResult executionId="e7af7396-af74-4a3b-9f77-82a6449540f3" testId="d6212996-11ec-b485-df10-2369a543c038" testName="Task.Desktop.Tests.CommandPaletteWindowsTests.Palette_IsBoundedAndVirtualized_WithAccessibleSelection(width: 752, height: 432)" computerName="TIM" duration="00:00:00.3290289" startTime="2026-10-10T14:15:20.0482592+03:00" endTime="2026-10-10T14:15:20.3834631+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7af7396-af74-4a3b-9f77-82a6449540f3" />
+    <UnitTestResult executionId="8fab3339-5320-4af9-801a-e1919f0a1f52" testId="c2007786-62bb-058a-2fe6-0c47272dd70e" testName="Task.Desktop.Tests.CommandPaletteWindowsTests.Palette_IsBoundedAndVirtualized_WithAccessibleSelection(width: 760, height: 640)" computerName="TIM" duration="00:00:00.0508884" startTime="2026-10-10T14:15:20.3900251+03:00" endTime="2026-10-10T14:15:20.4352388+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fab3339-5320-4af9-801a-e1919f0a1f52" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.CommandPaletteWindowsTests.Palette_IsBoundedAndVirtualized_WithAccessibleSelection(width: 752, height: 432)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="d6212996-11ec-b485-df10-2369a543c038">
+      <Execution id="e7af7396-af74-4a3b-9f77-82a6449540f3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CommandPaletteWindowsTests" name="Palette_IsBoundedAndVirtualized_WithAccessibleSelection" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CommandPaletteWindowsTests.Palette_IsBoundedAndVirtualized_WithAccessibleSelection(width: 760, height: 640)" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="c2007786-62bb-058a-2fe6-0c47272dd70e">
+      <Execution id="8fab3339-5320-4af9-801a-e1919f0a1f52" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CommandPaletteWindowsTests" name="Palette_IsBoundedAndVirtualized_WithAccessibleSelection" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CommandPaletteWindowsTests.ShellShortcut_KeyboardOnly_FocusTrapAndRestore" storage="c:\users\novik\таск\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="884eb33b-a1e1-e7fa-6acc-008d6c7cb51c">
+      <Execution id="75a22315-e27f-4709-ba92-a3a8c1312ee3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CommandPaletteWindowsTests" name="ShellShortcut_KeyboardOnly_FocusTrapAndRestore" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="884eb33b-a1e1-e7fa-6acc-008d6c7cb51c" executionId="75a22315-e27f-4709-ba92-a3a8c1312ee3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6212996-11ec-b485-df10-2369a543c038" executionId="e7af7396-af74-4a3b-9f77-82a6449540f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2007786-62bb-058a-2fe6-0c47272dd70e" executionId="8fab3339-5320-4af9-801a-e1919f0a1f52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.14]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.16]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:01.21]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

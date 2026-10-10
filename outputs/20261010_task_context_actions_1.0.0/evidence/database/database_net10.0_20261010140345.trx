@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2099e86d-7c55-4d5d-a34e-79c86e090b0c" name="novik@TIM 2026-10-10 14:03:45" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-10T14:03:45.4041601+03:00" queuing="2026-10-10T14:03:45.4041607+03:00" start="2026-10-10T14:03:42.3679731+03:00" finish="2026-10-10T14:03:45.4092813+03:00" />
+  <TestSettings name="default" id="6d93bf4d-f020-407f-8aaf-28e5c73b39e6">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-10_14_03_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ed0c9a14-e343-4179-b474-f08fea7f17a4" testId="181bb5a3-7115-2558-fe7e-a39948a2fd69" testName="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;description\&quot;:false}&quot;)" computerName="TIM" duration="00:00:00.0519377" startTime="2026-10-10T14:03:45.0884114+03:00" endTime="2026-10-10T14:03:45.1344369+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed0c9a14-e343-4179-b474-f08fea7f17a4" />
+    <UnitTestResult executionId="a19cc89b-362b-4461-8935-7680ddb85cd0" testId="6f8d50de-eb2f-8966-d550-95c6b8f16cfa" testName="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;assigneeIds\&quot;:null}&quot;)" computerName="TIM" duration="00:00:00.0427922" startTime="2026-10-10T14:03:45.1875901+03:00" endTime="2026-10-10T14:03:45.2304833+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a19cc89b-362b-4461-8935-7680ddb85cd0" />
+    <UnitTestResult executionId="9b66761d-ffa4-4159-9cf4-ad8c28497aac" testId="52ae97fd-40fd-ffaf-e0da-83f595d4b269" testName="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_CreateAndReadPreserveDescriptionAndDate" computerName="TIM" duration="00:00:00.0540257" startTime="2026-10-10T14:03:45.2897146+03:00" endTime="2026-10-10T14:03:45.3439463+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b66761d-ffa4-4159-9cf4-ad8c28497aac" />
+    <UnitTestResult executionId="38575b52-b9b3-47c3-87e7-daf9f5109d4c" testId="834efe75-2b98-e8cd-7b58-246094e5d520" testName="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;plannedDurationMinutes\&quot;:10081}&quot;)" computerName="TIM" duration="00:00:00.4902012" startTime="2026-10-10T14:03:44.6093785+03:00" endTime="2026-10-10T14:03:45.0824294+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="38575b52-b9b3-47c3-87e7-daf9f5109d4c" />
+    <UnitTestResult executionId="1b0caead-04b8-43f0-a4b6-7c37747be367" testId="6450f036-a8c5-6443-748f-c08ba3af1995" testName="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;startTimeLocal\&quot;:\&quot;09:00:00\&quot;}&quot;)" computerName="TIM" duration="00:00:00.0527266" startTime="2026-10-10T14:03:45.1349606+03:00" endTime="2026-10-10T14:03:45.1874470+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b0caead-04b8-43f0-a4b6-7c37747be367" />
+    <UnitTestResult executionId="3037a06f-c164-4ff1-8358-9c12867ef107" testId="dee33257-670e-c7a6-ca6e-f0282f6b5224" testName="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_DescriptionPatchPreservesExistingSchedule" computerName="TIM" duration="00:00:00.0579068" startTime="2026-10-10T14:03:45.2315431+03:00" endTime="2026-10-10T14:03:45.2895281+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3037a06f-c164-4ff1-8358-9c12867ef107" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;assigneeIds\&quot;:null}&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="6f8d50de-eb2f-8966-d550-95c6b8f16cfa">
+      <Execution id="a19cc89b-362b-4461-8935-7680ddb85cd0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.TaskEndpointsTests" name="TaskCard_InvalidPatchDoesNotMutate" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_DescriptionPatchPreservesExistingSchedule" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="dee33257-670e-c7a6-ca6e-f0282f6b5224">
+      <Execution id="3037a06f-c164-4ff1-8358-9c12867ef107" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.TaskEndpointsTests" name="TaskCard_DescriptionPatchPreservesExistingSchedule" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_CreateAndReadPreserveDescriptionAndDate" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="52ae97fd-40fd-ffaf-e0da-83f595d4b269">
+      <Execution id="9b66761d-ffa4-4159-9cf4-ad8c28497aac" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.TaskEndpointsTests" name="TaskCard_CreateAndReadPreserveDescriptionAndDate" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;startTimeLocal\&quot;:\&quot;09:00:00\&quot;}&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="6450f036-a8c5-6443-748f-c08ba3af1995">
+      <Execution id="1b0caead-04b8-43f0-a4b6-7c37747be367" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.TaskEndpointsTests" name="TaskCard_InvalidPatchDoesNotMutate" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;description\&quot;:false}&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="181bb5a3-7115-2558-fe7e-a39948a2fd69">
+      <Execution id="ed0c9a14-e343-4179-b474-f08fea7f17a4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.TaskEndpointsTests" name="TaskCard_InvalidPatchDoesNotMutate" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.TaskEndpointsTests.TaskCard_InvalidPatchDoesNotMutate(body: &quot;{\&quot;plannedDurationMinutes\&quot;:10081}&quot;)" storage="c:\users\novik\таск\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="834efe75-2b98-e8cd-7b58-246094e5d520">
+      <Execution id="38575b52-b9b3-47c3-87e7-daf9f5109d4c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.TaskEndpointsTests" name="TaskCard_InvalidPatchDoesNotMutate" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="181bb5a3-7115-2558-fe7e-a39948a2fd69" executionId="ed0c9a14-e343-4179-b474-f08fea7f17a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f8d50de-eb2f-8966-d550-95c6b8f16cfa" executionId="a19cc89b-362b-4461-8935-7680ddb85cd0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52ae97fd-40fd-ffaf-e0da-83f595d4b269" executionId="9b66761d-ffa4-4159-9cf4-ad8c28497aac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="834efe75-2b98-e8cd-7b58-246094e5d520" executionId="38575b52-b9b3-47c3-87e7-daf9f5109d4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6450f036-a8c5-6443-748f-c08ba3af1995" executionId="1b0caead-04b8-43f0-a4b6-7c37747be367" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dee33257-670e-c7a6-ca6e-f0282f6b5224" executionId="3037a06f-c164-4ff1-8358-9c12867ef107" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="6" executed="6" passed="6" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:01.33]   Discovering: Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:01.49]   Discovered:  Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:01.52]   Starting:    Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:02.31]   Finished:    Task.ServiceHosts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

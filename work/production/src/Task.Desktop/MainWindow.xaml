@@ -645,10 +645,11 @@
                                      ScrollViewer.CanContentScroll="True"
                                      VirtualizingPanel.IsVirtualizing="True"
                                      VirtualizingPanel.VirtualizationMode="Recycling"
+                                     IsEnabled="{Binding CanSelectTaskRows}" state:TaskRowAction.Command="{Binding OpenRowCommand}"
                                      KeyDown="OnTasksListKeyDown"
                                      AutomationProperties.Name="Список задач"
                                      AutomationProperties.AutomationId="TasksList"
-                                     AutomationProperties.HelpText="Стрелки выбирают задачу, Enter открывает сведения">
+                                     AutomationProperties.HelpText="Стрелки выбирают задачу, Enter открывает сведения; двойной щелчок — изменить или просмотреть">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid ToolTip="{Binding Title}">
@@ -733,7 +734,10 @@
                                         <Setter Property="Grid.Row" Value="1" />
                                         <Setter Property="Grid.Column" Value="0" />
                                         <Setter Property="Grid.ColumnSpan" Value="3" />
-                                        <Setter Property="Header" Value="Сведения о задаче" />
+                                        <Setter Property="Header"><Setter.Value><WrapPanel>
+                                            <TextBlock Text="Сведения о задаче" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                            <Button Content="Добавить подзадачу" Command="{Binding DataContext.Tasks.AddSubtaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Secondary}" ToolTip="{Binding DataContext.Tasks.SubtaskActionHint,RelativeSource={RelativeSource AncestorType=Window}}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="Добавить подзадачу" AutomationProperties.AutomationId="CompactAddSubtaskButton"/>
+                                        </WrapPanel></Setter.Value></Setter>
                                         <Setter Property="IsExpanded" Value="False" />
                                         <Setter Property="Margin" Value="0,12,0,0" />
                                         <Setter Property="MaxHeight" Value="240" />
@@ -838,6 +842,7 @@
                                                 </Style>
                                             </Button.Style>
                                         </Button>
+                                        <Button Content="Добавить подзадачу" Command="{Binding DataContext.Tasks.AddSubtaskCommand, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,0,10" ToolTip="{Binding DataContext.Tasks.SubtaskActionHint, RelativeSource={RelativeSource AncestorType=Window}}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="Добавить подзадачу" AutomationProperties.AutomationId="AddSubtaskButton"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Style.Triggers><DataTrigger Binding="{Binding ActualWidth,ElementName=RootWindow,Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=1320}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Button.Style></Button>
                                         <Button Content="Создать похожую задачу"
                                                 Command="{Binding DataContext.Tasks.CreateSimilarTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 Margin="0,0,0,10"
@@ -1020,6 +1025,7 @@
                                      AutomationProperties.Name="Название задачи"
                                      AutomationProperties.AutomationId="TaskTitleTextBox"
                                      AutomationProperties.HelpText="Обязательное поле, не более 500 символов" />
+                            <TextBlock Visibility="{Binding Card.HasParent,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Text="{Binding Card.Parent.Name,StringFormat=Родитель: {0}}" TextWrapping="Wrap" Margin="0,4,0,8"/>
                             <TextBlock Text="Например: подготовить договор" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                             <TextBlock Text="{Binding TitleError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
                                        TextWrapping="Wrap" Margin="0,4,0,12" AutomationProperties.Name="Ошибка названия задачи"

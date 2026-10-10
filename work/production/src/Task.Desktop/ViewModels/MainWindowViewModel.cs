@@ -43,6 +43,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Inbox = inbox;
         Administration = administration;
         _connectivity = connectivity;
+        AddProjectTaskCommand = new AsyncCommand(OpenProjectTaskAsync, _ => CanAddProjectTask);
         NewTaskCommand = new AsyncCommand(OpenNewTaskAsync,
             _ => Tasks?.CanCreateFromShell == true && IsConnected);
         OpenTasksCommand = new AsyncCommand(OpenTasksAsync, _ => Tasks is not null);
@@ -418,6 +419,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         LogoutCommand.Dispose();
+        AddProjectTaskCommand.Dispose();
         NewTaskCommand.Dispose();
         OpenTasksCommand.Dispose();
         Tasks?.Dispose();
@@ -431,6 +433,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        NotifyProjectTaskAction();
         if (e.PropertyName is nameof(TasksViewModel.IsReadOnly)
             or nameof(TasksViewModel.WriteAccessText)
             or nameof(TasksViewModel.CanCreate)
@@ -471,6 +474,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void OnProjectsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        NotifyProjectTaskAction();
         if (e.PropertyName is nameof(ProjectsViewModel.CanUpdate)
             or nameof(ProjectsViewModel.AccessText)
             or nameof(ProjectsViewModel.LastSuccessfulRefreshText))

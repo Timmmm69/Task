@@ -118,7 +118,8 @@ public partial class PersonalWindow : Window
         if (e.PropertyName != nameof(PersonalShellViewModel.SelectedSection) || _closed || _model.IsDisposed) return;
         try
         {
-            if (_shell.IsTasks && _model.Tasks is { HasDrafts: false } tasks) await tasks.RefreshAsync();
+            // Project creation owns its refresh before opening the ordinary editor.
+            if (_shell.IsTasks && !_shell.AddProjectTaskCommand.IsExecuting && _model.Tasks is { HasDrafts: false } tasks) await tasks.RefreshAsync();
             if (_closed || _model.IsDisposed) return;
             if (_shell.IsProjects || _shell.IsNotifications) _model.Planning?.Refresh();
             if (_shell.IsWorkspace) _model.Workspace?.Refresh();

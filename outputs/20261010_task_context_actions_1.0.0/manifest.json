@@ -1,0 +1,571 @@
+{
+  "version": "1.0.0",
+  "base_commit": "3a8eceda2e7ec4db13d0f2db2ca5023e079a60cc",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "path": "evidence/CommandPaletteWindowsTests.log",
+      "bytes": 1188,
+      "sha256": "0d2b721639ece9d0d5053c99703245381c2d10bfd5e008df080a9d7db31155f4"
+    },
+    {
+      "path": "evidence/CommandPaletteWindowsTests.trx",
+      "bytes": 5958,
+      "sha256": "f3073df21aac9882a1c04e92a9ab2f9ebbdd8defeff949917d7f163d11818694"
+    },
+    {
+      "path": "evidence/CompletionFeedbackUiTests.log",
+      "bytes": 1184,
+      "sha256": "8bcef0a7c9402f8562b4ad17c5355c91f77e291a6be6152a9f818c15f824138b"
+    },
+    {
+      "path": "evidence/CompletionFeedbackUiTests.trx",
+      "bytes": 8722,
+      "sha256": "0b0898cd0a0727a5d21fa13d586d04581bc44c9b68550673f03fd686a9c2aa3d"
+    },
+    {
+      "path": "evidence/database/boundaries.log",
+      "bytes": 2178,
+      "sha256": "8413012746810a73086c01d9d2d5a34058ed914e427df9ccce8a9487118779fb"
+    },
+    {
+      "path": "evidence/database/build.log",
+      "bytes": 16264,
+      "sha256": "c8a03b51beb4f8c42ba53a80d7976655e09dea5f53943368e930f55686ceef86"
+    },
+    {
+      "path": "evidence/database/database_net10.0_20261010140342.trx",
+      "bytes": 1923,
+      "sha256": "758fdc66e2eec4cb1f74f9bef4e268061479d7554c4c19a4dfee6bde50c1327e"
+    },
+    {
+      "path": "evidence/database/database_net10.0_20261010140345.trx",
+      "bytes": 10322,
+      "sha256": "1f29c8fce186f8e3b6e17529df8bc63b44d039cdcf3d13e3e1193a20e60426e7"
+    },
+    {
+      "path": "evidence/database/database_net10.0_20261010140354.trx",
+      "bytes": 8414,
+      "sha256": "5ebaeadeb8035de4d84370df98b639e8798530943ae600026e0f19706424243c"
+    },
+    {
+      "path": "evidence/database/tests.log",
+      "bytes": 3166,
+      "sha256": "57414b4136a224f1f5ce94a0a09fa2ce4da506ba0eda8f42bf9583672f74c77b"
+    },
+    {
+      "path": "evidence/desktop-regression-final.trx",
+      "bytes": 1092381,
+      "sha256": "f9d270edecee05843009e4cb9bac2096d4011320d40c10c2eceadbb84f46f1fe"
+    },
+    {
+      "path": "evidence/ExplorerDropViewTests.log",
+      "bytes": 1168,
+      "sha256": "c0283e4710c5d21f6c6acb7eded3f790a95c621762a8d50e5b829fad9d82b788"
+    },
+    {
+      "path": "evidence/ExplorerDropViewTests.trx",
+      "bytes": 3039,
+      "sha256": "739624b5c032561701024913bf03cbe61ae0d354452b98d6159399acd6c2ee3c"
+    },
+    {
+      "path": "evidence/InboxZeroUiTests.log",
+      "bytes": 1148,
+      "sha256": "67785ebfa8fa28f477b3cd72ddfee86cc00dd649a1acc89916900cf666fe0152"
+    },
+    {
+      "path": "evidence/InboxZeroUiTests.trx",
+      "bytes": 3069,
+      "sha256": "4b3785beaebf05bde0b2104555ab1e0a7d75b26ca6a0649877879154ace99936"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-date-error-144.png",
+      "bytes": 195663,
+      "sha256": "2ea410f19864f3d7c87508564ba72a7bf54be41289895dd88a95db1e1d6d14e7"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-date-error-96.png",
+      "bytes": 115819,
+      "sha256": "1e440d3b1b9a7f22228688dbb12d34d33dc476d70c38d5d89e97fd1acf85394f"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-day-small-144.png",
+      "bytes": 195188,
+      "sha256": "7ea81c9005874b23ad0b410447eff893e8024e4182af88ff04ee98026d920bca"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-day-small-96.png",
+      "bytes": 115543,
+      "sha256": "972c9149b318b705b4cc1a2280207fcadc73107b26c8d0879c88159313e6a066"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-editor-144.png",
+      "bytes": 194737,
+      "sha256": "d2062ddf0a7b6a16b023eae62428bf9f9073dcc50c82f0db87dc22ff074d25de"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-editor-96.png",
+      "bytes": 115222,
+      "sha256": "cdc9374167983c0cca95d02e629f0a0282254cfb3efca23f60c23b923bde7e9a"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-editor-small-144.png",
+      "bytes": 77465,
+      "sha256": "1a6c613e0cef0e34f9bf9b1edb3229dcb37e709a221635149275b0b3cf9b091f"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-editor-small-96.png",
+      "bytes": 47460,
+      "sha256": "ded021e3a760e9c6cbdb8008227fea8169abc5aed92360eb0680c98996e1941d"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-empty-144.png",
+      "bytes": 65522,
+      "sha256": "16f22811dccc995ce5c2917051ee17867a9a720be778597baba11f8852c00b6e"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-empty-96.png",
+      "bytes": 40119,
+      "sha256": "57ca64db112ce6d3d9ccc1ae3fac9cd3f8670a2bd02ff6e8abc39c95af71e192"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-project-error-144.png",
+      "bytes": 150819,
+      "sha256": "ace862397b7feb945cb3bcab6f2b706dc6d2336eea9780457e0d6f99be64d2f0"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-project-error-96.png",
+      "bytes": 90572,
+      "sha256": "440e445536d25f814d9d8c9babf9178ef0dfd36f57b76093a28c76516ef043c0"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-project-small-144.png",
+      "bytes": 66240,
+      "sha256": "c797fa415f2b8667489dd834c49d20d11dcb89e1ce05829238e0e9e2def8a361"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-project-small-96.png",
+      "bytes": 41561,
+      "sha256": "5ec236e2f7cf4154aca7a542e774084b66a8467b4d88e348d5a7669d7d79d8c3"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-saved-144.png",
+      "bytes": 154878,
+      "sha256": "188d2a55078ea3e1be179feae580eb411ba8e4777106517f7a4bb5d067f08bfa"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/corporate-saved-96.png",
+      "bytes": 90958,
+      "sha256": "2b29890dd3dcfed74a157faf058eb9ed06335396209665877171fe58fb592751"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/mode-selector-144.png",
+      "bytes": 50999,
+      "sha256": "4c580dad951da462071a6df40a74dc98b45f4e7fb95f5431e089cd50814be719"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/mode-selector-96.png",
+      "bytes": 30091,
+      "sha256": "b1aa6bfbe9b1175f361da37eceefd87e17faa11e54dfc916578070a862eec793"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/mode-selector-small-144.png",
+      "bytes": 34099,
+      "sha256": "e044fa83337380d0431ac734e6982de8fab1f4f1787264f611cebe99afa157f4"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/mode-selector-small-96.png",
+      "bytes": 20427,
+      "sha256": "da3f9ef8f40b330dc4073154db70c6d21e99e03db2812ac7da5b49077352d77d"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-checklist-144.png",
+      "bytes": 147346,
+      "sha256": "5935f9c03eaea0bbdc62ee879f08a78297745a2de73c11d5a7e8ae977e5531d2"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-checklist-96.png",
+      "bytes": 88129,
+      "sha256": "bb4edc0a84747cb439655035a178af306c6c1ddd5df2558c7cc53421bbe7e549"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-checklist-error-144.png",
+      "bytes": 160192,
+      "sha256": "243f9b5f7f2282ecd319fcdd1ff060a135ac6dfcab59729f1d18add5bfd5c32b"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-checklist-error-96.png",
+      "bytes": 94968,
+      "sha256": "fd79cf1f894b6a301a30239b8df3056077942672f6a7ccba836cae94aed921a5"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-day-small-144.png",
+      "bytes": 64814,
+      "sha256": "a10e8026e5ef3ff6877f5d4da408fb6e90ab0fe6135473cea533b3eed35c0b92"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-day-small-96.png",
+      "bytes": 38608,
+      "sha256": "4bb6c27d8674530dfcdbcbab32b11cbcb3f14d74af8c215c6a6803d2cb894ba7"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-editor-144.png",
+      "bytes": 163039,
+      "sha256": "b690fe5937ccb01af15d27f7a332f3139947d967bedab8391f8b4a49357bf809"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-editor-96.png",
+      "bytes": 94588,
+      "sha256": "5986b9a17e08479c26bb9a75e1436bf7bf725aa1dfcd039cf7b8578585710539"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-editor-small-144.png",
+      "bytes": 66229,
+      "sha256": "35cb4f5a92cce80b0773c1e739dc6fa66b164fa8411ba6dab3dcf844ba6efd7f"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-editor-small-96.png",
+      "bytes": 38931,
+      "sha256": "b432cb053db9bc93c9b0358aae4c501498cbe0bc418408fc055000ab1171e879"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-empty-144.png",
+      "bytes": 68829,
+      "sha256": "7bb1ae35b31d2c018d10652c733f22df4a1ee6be4b4320827ac7679b23e1bcdb"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-empty-96.png",
+      "bytes": 41841,
+      "sha256": "4a3471694a74378402752f269cf0e3903d409bffc19d524b2e6e0620a11105f0"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-filter-144.png",
+      "bytes": 70327,
+      "sha256": "6d4c8f8504b29661c59cb35526bc5eb9ac50e2e50c2c3689078aeb5b58c8cdd6"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-filter-96.png",
+      "bytes": 42232,
+      "sha256": "8012a5eacc9f0b336b15ff19be73822003243c5de325fc8986714e4a5a971dbb"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-project-144.png",
+      "bytes": 136224,
+      "sha256": "692564837edc848064e851f3bcddeefa1467f4fded5f0062af30eb3ff968d141"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-project-96.png",
+      "bytes": 80352,
+      "sha256": "624a73d8bb6dbe0cd36662a077b8893a15fe82c17a16154ebd61832016cfca27"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-project-small-144.png",
+      "bytes": 72028,
+      "sha256": "48b4a9f8fdfa0816f1802e038d835183bd7192bf18795ed069d264eb05f1ae82"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-project-small-96.png",
+      "bytes": 44003,
+      "sha256": "086432b9870d036c9f2fb958a0b80537692efed9288a152d2dbe29f69616ee86"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-saved-144.png",
+      "bytes": 138078,
+      "sha256": "335220161505093a933f841f4b7f519069c0acb73dde41ed1589296330798f9c"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/personal-saved-96.png",
+      "bytes": 78579,
+      "sha256": "27027e40a38b44a92457d7362565a334ad403d30948da4f0d066b413bcc9a4d8"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted/ui-results.json",
+      "bytes": 4137,
+      "sha256": "91b09e749cf4f6424f1237e536b5f82658456f8953e063f5a1b1b3ac09a361ac"
+    },
+    {
+      "path": "evidence/previous-journeys-accepted.log",
+      "bytes": 3886,
+      "sha256": "d0ac6dfad626f06e411d08323ff8f2b5bf3eab9726c6b325037397b1a3f0d01d"
+    },
+    {
+      "path": "evidence/release-build.log",
+      "bytes": 152,
+      "sha256": "ea5ec61b71d717bc46bcba69600acc1d8bbc6bc410733259eebe034ee74e6882"
+    },
+    {
+      "path": "evidence/screenshots/corporate-project-draft-minimum.png",
+      "bytes": 48324,
+      "sha256": "5e2d4f6d0274157815896d6cb36ee115ccc97204bc3615e3c087a3a6de7b3ab7"
+    },
+    {
+      "path": "evidence/screenshots/corporate-project-draft-normal.png",
+      "bytes": 136126,
+      "sha256": "7634e136541ad7973918e925db7cb79963bea66d4cb05ae0121b17be815baa98"
+    },
+    {
+      "path": "evidence/screenshots/corporate-project-minimum.png",
+      "bytes": 49040,
+      "sha256": "09798d0deacfb905d7df13da7541a63ba7df51881454cbbce188ddee4c000497"
+    },
+    {
+      "path": "evidence/screenshots/corporate-project-normal.png",
+      "bytes": 99669,
+      "sha256": "97d9dc5222690f73db7d682906b5abc258604225f67d5ef4ef57373417ab9b16"
+    },
+    {
+      "path": "evidence/screenshots/corporate-subtask-draft-minimum.png",
+      "bytes": 48338,
+      "sha256": "9c98e9689aae20937a0c4ca6cd2c2839917213b836b74fb4c4ce4c8656614bfd"
+    },
+    {
+      "path": "evidence/screenshots/corporate-subtask-draft-normal.png",
+      "bytes": 138048,
+      "sha256": "aa4072b73a3090fc3c347a07f14e058f359b4dafe2310bb810c49c309d85b89a"
+    },
+    {
+      "path": "evidence/screenshots/corporate-task-card-minimum.png",
+      "bytes": 44622,
+      "sha256": "3f91d6a954f5e9d6971bdf47b686e4a4bca1a0fa8a53e4169afb2cfd023736f0"
+    },
+    {
+      "path": "evidence/screenshots/corporate-task-card-normal.png",
+      "bytes": 112603,
+      "sha256": "74c0453299fb7688a42ad0c3c40d957c128361ddeed18215787665f074cfa8e8"
+    },
+    {
+      "path": "evidence/screenshots/personal-project-draft-minimum.png",
+      "bytes": 38793,
+      "sha256": "986dc48e4974f3f4e480fcc43f7fcb7e8995277158131dbb333a07d4399c9d54"
+    },
+    {
+      "path": "evidence/screenshots/personal-project-draft-normal.png",
+      "bytes": 91919,
+      "sha256": "a3dbe2a849b2eef70d12ac9c011b18e543c3dece90ef29cd667769e09ad067cf"
+    },
+    {
+      "path": "evidence/screenshots/personal-project-minimum.png",
+      "bytes": 37125,
+      "sha256": "1a7f8a965656efb6355418b62be8a067b77d8221735f035673619cda17f403fa"
+    },
+    {
+      "path": "evidence/screenshots/personal-project-normal.png",
+      "bytes": 62415,
+      "sha256": "23ef013743c8b68825e5f21309c1935f656ce39d68a815815557bfcf9445e686"
+    },
+    {
+      "path": "evidence/screenshots/personal-subtask-draft-minimum.png",
+      "bytes": 35458,
+      "sha256": "029bd0b1babe670b957e5f9d533a06b301ca6997ce292295f03760a711a4eff5"
+    },
+    {
+      "path": "evidence/screenshots/personal-subtask-draft-normal.png",
+      "bytes": 102444,
+      "sha256": "35660fa5be96f73e35430439fbb9e517d1eb8c17eb7f7393a6367c4c6411a427"
+    },
+    {
+      "path": "evidence/screenshots/personal-task-card-minimum.png",
+      "bytes": 39059,
+      "sha256": "b5bc754f0dd66825d175643121c25efb10fe945467ab9b22ff48d569f127c041"
+    },
+    {
+      "path": "evidence/screenshots/personal-task-card-normal.png",
+      "bytes": 87917,
+      "sha256": "f6f514315584d8c420b1375cefbee19b3b7d156865aa9686b1a58766bbf7fef6"
+    },
+    {
+      "path": "evidence/targeted-final.log",
+      "bytes": 1146,
+      "sha256": "fe6453f1658ae3d35a00893f4e4c806865006c68040608387b594de5ccfe9131"
+    },
+    {
+      "path": "evidence/targeted-final.trx",
+      "bytes": 22036,
+      "sha256": "fb7795144874f1489a7a421cca1eb466086706f9f59405c8ec7155e8676e09b3"
+    },
+    {
+      "path": "evidence/TaskContextActionsUiTests.log",
+      "bytes": 1186,
+      "sha256": "6b829f913bdcf20b1c6d954b40eb49720989819e89ad4b6b803c7dcfbd19198a"
+    },
+    {
+      "path": "evidence/TaskContextActionsUiTests.trx",
+      "bytes": 3081,
+      "sha256": "08ce71a1632a6ab4a13eecda2b23cafe9ee139b046ae8346e90f79511153a0c0"
+    },
+    {
+      "path": "evidence/ViewStateUiTests.log",
+      "bytes": 1148,
+      "sha256": "49f795247543f1ec057c211708039697dd381140c48abc42b464ac0aef71b8e2"
+    },
+    {
+      "path": "evidence/ViewStateUiTests.trx",
+      "bytes": 3084,
+      "sha256": "b0e61f6a5d13bb73b5d7269ffe1caae64e5f6667cce5cdf1d66e2e6c55e1142b"
+    },
+    {
+      "path": "Package.py",
+      "bytes": 10136,
+      "sha256": "06010d1aa2400b08b3cf60d3d0ca5c54c86d686ad5ff53febb2bfd95fbddde66"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1700,
+      "sha256": "c2be1ebd08225176b5da0b3cad13a930a5955ea14eedcc9935323c22b8e286ec"
+    },
+    {
+      "path": "roadmap-for-index.json",
+      "bytes": 115282,
+      "sha256": "16c56bf94ff85066832554c95e26179a7d19218c8bf33e3149ecbc3c0b807e86"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Infrastructure/TaskRowAction.cs",
+      "bytes": 2263,
+      "sha256": "3fa0bba90b758a98368f6c0cbe702b7dca3317957e138fde6d4959f8c703a332"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 111354,
+      "sha256": "7f1c688abd003049f75168bed0d82c7f666ef49223789d85ac592d1868cbaeab"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 15726,
+      "sha256": "e1d9c6a4a72e34c7a1cdff1870dfd722b68d6adbfeaf758e05dbc994576f5ee2"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "bytes": 7200,
+      "sha256": "81d284c9ed2a76252a266abf66a0b35ee8b1694835d195704afb0ffd52795a9a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Personal/PersonalShellViewModel.ProjectTask.cs",
+      "bytes": 988,
+      "sha256": "164b724bd941d3d03831a3ce52ac40f23ef7316cba7aade290c327f2bfeb759e"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+      "bytes": 21622,
+      "sha256": "a532115b25a262c96bb50c437609a26bee2db4ce1996b471c63e4ca5817540fc"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "bytes": 10735,
+      "sha256": "4d34eecea41101b8dd2bf5285ff55c33e043ae7ab8b75064fbcdf78c4d68ee69"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 30059,
+      "sha256": "ddff5861503840b1022e14512e96ba221ec2c24678cafc219c208cb388b34cd6"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.ProjectTask.cs",
+      "bytes": 1979,
+      "sha256": "72f1d70f7f1eeda3c841331919a56e305d94b2c4c4c46c3371ca123ddb15e32e"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TaskCardEditor.cs",
+      "bytes": 10967,
+      "sha256": "989a74172fb53a89e495cba206831e89716e05a977fc8b714accd418ec86e1cf"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "bytes": 82064,
+      "sha256": "f144deacb9173916f919b412e15ab6be00ae49d99083226cd9f44d895da98c4b"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "bytes": 7260,
+      "sha256": "b6822b8df3ba5c2213bff930cfa51044f8a7fda3552767dfbd46d375a9d826c5"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "bytes": 18644,
+      "sha256": "73c359d468b2820d6188f2ee3935b6896f8e6ab53bec89052c3a1918f38d5899"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/PersonalTasksView.xaml.cs",
+      "bytes": 1720,
+      "sha256": "049372500853a634db8c2522ac4974fd3f0aea6cd712b970a5800cd815c00d3b"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "bytes": 15225,
+      "sha256": "842f8161ddaf485763b0bc248e9f023ad3e8ae2478612f2ef562392b89e201ad"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml",
+      "bytes": 4959,
+      "sha256": "8c80c322adc9ff0b5bb173daa79fcbc9c3dd5ca025926e1472ef00a0749d8192"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "bytes": 42568,
+      "sha256": "81a4db93dfff8542accf0727807b99a6c7b721f87af5f50403219f0631b3aa3d"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskActionFixtures.cs",
+      "bytes": 2922,
+      "sha256": "cd90a8267cdc04c3d5d86b8c567d65258ce660aa19b44dca90f2d29caf297e9d"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskContextActionsTests.cs",
+      "bytes": 14295,
+      "sha256": "5a73bb4728c7d68d40e08321591afcb5d1a99ac07b310ff910b8966995b193bf"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskContextActionsUiTests.cs",
+      "bytes": 17127,
+      "sha256": "aeb155387b3ec9187064ef220ab74d6aebb05553dff3f30c008cdf6c1d150ec9"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateUiTests.cs",
+      "bytes": 14918,
+      "sha256": "8b90ffd3977ae3d0b7a6c27afe010e1f622ca4d1a74bb5780886f538de377d7b"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresTaskContextActionsTests.cs",
+      "bytes": 3237,
+      "sha256": "1b7186f174033367cbdedd1a7a78cc4d8cb3bf4f82a0acc467b58bbb517b4f6f"
+    },
+    {
+      "path": "source-scope.json",
+      "bytes": 1589,
+      "sha256": "0192ec5711e4cc506894d91f3e40826ec345ba1f37f0ad8444a90d24efc58c38"
+    },
+    {
+      "path": "Update-Dashboard.mjs",
+      "bytes": 1825,
+      "sha256": "0b8ee024253530582589081750ac3dd268a466cd4425601dd7ec56f759f14dba"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 5297,
+      "sha256": "07d121fac9bbc6de5ab2838532e2f087c27b93e4c4ebd874ae373447f58bf912"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 676,
+      "sha256": "8406b1d4974dc4605083a927bf93fbe3d1a07eba1e697af6d09d5e27f844c070"
+    },
+    {
+      "path": "Verify-Database.ps1",
+      "bytes": 2632,
+      "sha256": "29b592054773e5d5128aab113632d3f2d936eaea8cbcc847e68946d889e4384c"
+    },
+    {
+      "path": "Verify-Desktop.ps1",
+      "bytes": 1439,
+      "sha256": "4b92f8a8f453afea8b467daf2596968f2cb026451eca0a036bcf87dd75439dff"
+    },
+    {
+      "path": "version.txt",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
