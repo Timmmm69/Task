@@ -1,0 +1,20 @@
+{
+  "clientVersion": "1.0.10",
+  "sourceRevision": "bb6b903e0404565f328090ce1197679897722fd3",
+  "uiTaskSaveConfirmed": true,
+  "taskCount": 1,
+  "ruleCount": 1,
+  "notificationCount": 1,
+  "rules": [
+    [
+      "task_deadline",
+      "delivered"
+    ]
+  ],
+  "presentationStates": [
+    [
+      "submitted"
+    ]
+  ],
+  "visualBannerConfirmed": false
+}

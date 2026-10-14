@@ -1,0 +1,65 @@
+[
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:09:29.6892614+00:00",
+    "name": "restore",
+    "seconds": 1.2817326,
+    "command": "dotnet restore Task.sln"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:09:30.9884340+00:00",
+    "name": "dependency-audit",
+    "seconds": 1.4147822,
+    "command": "pwsh -NoProfile -File ./verification/Test-DependencyAudit.ps1"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:09:32.4065295+00:00",
+    "name": "whitespace",
+    "seconds": 6.573705,
+    "command": "dotnet format whitespace Task.sln --verify-no-changes --no-restore"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:09:38.9822507+00:00",
+    "name": "boundaries",
+    "seconds": 0.4802439,
+    "command": "pwsh -NoProfile -File ./verification/Test-ProjectBoundaries.ps1"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:09:39.4641610+00:00",
+    "name": "build",
+    "seconds": 1.5576326,
+    "command": "dotnet build Task.sln --configuration Release --no-restore"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:09:41.0235678+00:00",
+    "name": "tests",
+    "seconds": 61.6763737,
+    "command": "dotnet test Task.sln --configuration Release --no-build --no-restore --logger trx --results-directory C:\\Users\\novik\\Таск\\work\\automatic_deadline_reminders_1\\customer-gate/tests --blame-hang --blame-hang-timeout 60s --blame-hang-dump-type none"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:10:42.7016435+00:00",
+    "name": "secrets-tls",
+    "seconds": 7.1572105,
+    "command": "pwsh -NoProfile -File ./verification/Test-ProductionSecretsTls.Contract.ps1"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:10:49.8602778+00:00",
+    "name": "locked-restore",
+    "seconds": 1.020966,
+    "command": "dotnet restore Task.sln --locked-mode"
+  },
+  {
+    "exitCode": 0,
+    "startedAtUtc": "2026-10-14T04:10:50.8829385+00:00",
+    "name": "security-review",
+    "seconds": 6.8998131,
+    "command": "pwsh -NoProfile -File ./verification/Test-IndependentSecurityReview.ps1 -Configuration Release -SkipRestore -NoBuild -SkipTests -EvidenceDirectory C:\\Users\\novik\\Таск\\work\\automatic_deadline_reminders_1\\customer-gate/security-review"
+  }
+]

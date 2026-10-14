@@ -1,0 +1,4 @@
+client/Task/
+*.zip
+client/*.zip
+server-linux-x64/

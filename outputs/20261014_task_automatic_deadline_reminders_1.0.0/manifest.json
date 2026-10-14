@@ -1,0 +1,807 @@
+{
+  "schemaVersion": 1,
+  "product": "Task automatic deadline reminders",
+  "packageVersion": "1.0.0",
+  "clientVersion": "1.0.10",
+  "sourceRevision": "bb6b903e0404565f328090ce1197679897722fd3",
+  "personalSchema": 5,
+  "corporateMigration": 16,
+  "fullGate": {
+    "passed": 2249,
+    "failed": 0,
+    "skipped": 0
+  },
+  "windowsRequestAccepted": {
+    "personal": true,
+    "corporate": true
+  },
+  "visualBannerConfirmed": false,
+  "containerRuntimeVerified": false,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 54,
+      "sha256": "f441c9443af50d212aad33c394714db070c0884ab9bdaa4c668954e3c25187ee"
+    },
+    {
+      "path": "client/manifest.json",
+      "bytes": 1404,
+      "sha256": "679e9442c5d7337bc71b04b4efa6e676bacea43d3e2eb3b7684c8233cdc8cfc2"
+    },
+    {
+      "path": "client/SHA256SUMS",
+      "bytes": 100,
+      "sha256": "8a1cdfb8dda4ec829f011c0575cb5cb7c3b1c3f819ec063f2904d208847f5e7a"
+    },
+    {
+      "path": "client/Task/D3DCompiler_47_cor3.dll",
+      "bytes": 4741488,
+      "sha256": "a05f99734f7c4822fefc12b367af21fd0976ed6608752fb1e1e80b6ece7ecbbb"
+    },
+    {
+      "path": "client/Task/e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": "client/Task/PenImc_cor3.dll",
+      "bytes": 157992,
+      "sha256": "8052e85cd5a3ae9a939872b32de5b90a827456a21d8ccfc4d0c76599f1fcc217"
+    },
+    {
+      "path": "client/Task/PresentationNative_cor3.dll",
+      "bytes": 1235240,
+      "sha256": "42e2e543c17e1b37499baf00d956433b8afb655348ec0fae89c926fb7d149b6e"
+    },
+    {
+      "path": "client/Task/Task.Desktop.exe",
+      "bytes": 159668322,
+      "sha256": "6356a031350bc9451ccb457c8146bcac304a84e2e2f90f461f0165ef984ef646"
+    },
+    {
+      "path": "client/Task/vcruntime140_cor3.dll",
+      "bytes": 124544,
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+    },
+    {
+      "path": "client/Task/wpfgfx_cor3.dll",
+      "bytes": 1956136,
+      "sha256": "0ba67759d290f5d75ff92979394077dcd533fe484511db3ea161d7e102246a73"
+    },
+    {
+      "path": "client/Task-1.0.10-win-x64-unsigned.zip",
+      "bytes": 69753094,
+      "sha256": "b3bfb65e32c59a5dc6a95db3407445795c8088efe120709d84d3da6506c3d45f"
+    },
+    {
+      "path": "evidence/boundaries.log",
+      "bytes": 986,
+      "sha256": "a48e1297d824aed11453a56aa335427b83792a9444ab11741f7348c3a408d070"
+    },
+    {
+      "path": "evidence/build.log",
+      "bytes": 3945,
+      "sha256": "44f48fa45e29bd2a55316ba84452618265290bf88981d64a7a26eee38a36beec"
+    },
+    {
+      "path": "evidence/checks.json",
+      "bytes": 2343,
+      "sha256": "566d097a4b77eed5367dab1dda2fa2023d1bca62013f157bcba5e5e83c56335f"
+    },
+    {
+      "path": "evidence/dependency-audit.log",
+      "bytes": 2172,
+      "sha256": "af2e2fd3a8d15a598909335f00cbe266015a1d029a3133ba70805f92918f23c9"
+    },
+    {
+      "path": "evidence/locked-restore.log",
+      "bytes": 1980,
+      "sha256": "e84c2f5b8e0df84e1710c8856fe9e88e209d0d3df387e2e9f2d8dc2d0a577509"
+    },
+    {
+      "path": "evidence/native-corporate.json",
+      "bytes": 228,
+      "sha256": "ddba1dac9a8bd3524560083e0f931a2f8901fbd372a74c8019b2f7cb3b68964a"
+    },
+    {
+      "path": "evidence/native-personal.json",
+      "bytes": 195,
+      "sha256": "fd7815535ae7f4fad4486a751913ab64eab08ca87416db86ac045144ea3f0e50"
+    },
+    {
+      "path": "evidence/portable-smoke.json",
+      "bytes": 375,
+      "sha256": "9cf894065bc59462da5ab7fe07f12c5c6a2257d93f8a0d27907d012736496b53"
+    },
+    {
+      "path": "evidence/secrets-tls.log",
+      "bytes": 336,
+      "sha256": "bf76eb3698c2ed1c0ef1e23a8d7228aea036f549514942a1de8743fc49abe559"
+    },
+    {
+      "path": "evidence/security-review.log",
+      "bytes": 149,
+      "sha256": "1a78ee29e1492eeb3c958e9bd3c13c606a470b8daae39ff3d6ea2c6f634ee90e"
+    },
+    {
+      "path": "evidence/test-results.json",
+      "bytes": 508151,
+      "sha256": "76b383c4388d8c86ed195171a36d4d198bd6320d8c7764a276c404996237357b"
+    },
+    {
+      "path": "evidence/tests.log",
+      "bytes": 2609,
+      "sha256": "f3c2e23387e69264ec5bb49a9ca688b018ba00cd4ba20fade010d3db75ec89b7"
+    },
+    {
+      "path": "evidence/whitespace.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2569,
+      "sha256": "ecc85aa9154eedd2f1479d92ec838a2c02d0b9e594d3927d9adc6a72a8b97e6b"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/appsettings.Development.json",
+      "bytes": 127,
+      "sha256": "73f95f9e0ceb205fc1c4dc50c07697fcfa29d7087868c2aef1d504cb38c771ec"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/appsettings.json",
+      "bytes": 284,
+      "sha256": "98a9c774b215098b6397945db75f564bafc7ea9a30f5a6a0f0fa6a4133cc93e4"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/BouncyCastle.Cryptography.dll",
+      "bytes": 5155728,
+      "sha256": "ef92fc661e8d7ba8ec4d39a7cdfcdba41f14cb327f0d24fe79d0b5bb428899b5"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Microsoft.Bcl.Cryptography.dll",
+      "bytes": 19248,
+      "sha256": "91c6bab93638c268569a38bc87770a5e3ef9932676f5b7a6d47aef4208062925"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Microsoft.Extensions.Hosting.WindowsServices.dll",
+      "bytes": 29456,
+      "sha256": "5d205dfe187612f937e12e9fd22c651b5a2a9d3ee53967d9a6cd57f1029903ab"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Microsoft.IdentityModel.Abstractions.dll",
+      "bytes": 19256,
+      "sha256": "f0d349d3b696b871d7988f8e13f9873f463edd1a31d367b22aaa39cdb071b186"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Microsoft.IdentityModel.JsonWebTokens.dll",
+      "bytes": 174384,
+      "sha256": "7cdcc830f1e3c3ae4be44a67e37568495d02642955c7d21c1dc5d9947f67e891"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Microsoft.IdentityModel.Logging.dll",
+      "bytes": 38200,
+      "sha256": "a4476867e60d666daa22233f954672939861f2292cc699df88093056042f6c48"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Microsoft.IdentityModel.Tokens.dll",
+      "bytes": 408352,
+      "sha256": "16c33e63bffff90f1b8698f899f96f3311329f26e940b8f031b1f26d82bc41b1"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Npgsql.dll",
+      "bytes": 1478656,
+      "sha256": "e2bcafe1660fe4543fe9dfcabed972ec8d32259e5ea8009462ce1de23c7034c2"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/System.ServiceProcess.ServiceController.dll",
+      "bytes": 35080,
+      "sha256": "6c655144e339e47fbaa5eb94c4be6d1b32616434c173a92be5afa6547fa21ba7"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Api.deps.json",
+      "bytes": 8041,
+      "sha256": "3aa375f7f9d6d05e037a18d3a78f35f0b81daaed9bce628b1b572e2b0e8f7be8"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Api.dll",
+      "bytes": 378368,
+      "sha256": "93ba16faf5559a0846f66689d428d4c3936450a97de55d331ba1266e1824cd54"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Api.runtimeconfig.json",
+      "bytes": 491,
+      "sha256": "41442586a8262bc96a1c80f82f4d9384c03bfd465d221cbf01fb3563170f9e65"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Api.staticwebassets.endpoints.json",
+      "bytes": 53,
+      "sha256": "c1686417e8d5c31bba969f12b6f3d2b35e6609adb5ca42f212261a3a02771aac"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Application.dll",
+      "bytes": 378880,
+      "sha256": "2f8894167bd364f7c81216647aaf10ded34292e2af80abf60f8ea47b60d46105"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Domain.dll",
+      "bytes": 105984,
+      "sha256": "6b35d123eee337424c2db6e6d8dbc3d19fbc753736703e548ae6ce764cd0ab68"
+    },
+    {
+      "path": "server-linux-x64/Task.Api/Task.Infrastructure.dll",
+      "bytes": 732672,
+      "sha256": "5cccd87f50db27e715197cfb89b3dd805b46bf71da91b859c4b2431b1fd70c76"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/appsettings.Development.json",
+      "bytes": 137,
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/appsettings.json",
+      "bytes": 137,
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/BouncyCastle.Cryptography.dll",
+      "bytes": 5155728,
+      "sha256": "ef92fc661e8d7ba8ec4d39a7cdfcdba41f14cb327f0d24fe79d0b5bb428899b5"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Bcl.Cryptography.dll",
+      "bytes": 19248,
+      "sha256": "91c6bab93638c268569a38bc87770a5e3ef9932676f5b7a6d47aef4208062925"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.Abstractions.dll",
+      "bytes": 28456,
+      "sha256": "cfdb91156d4d875ba6f540e53f96988e266ab24ab6f367150db6eb9b645cfeb3"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.Binder.dll",
+      "bytes": 43304,
+      "sha256": "6e30012a3f649ba2e4a4101ce77b777b0e89be05302fe7c11118cf680e561922"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.CommandLine.dll",
+      "bytes": 25384,
+      "sha256": "5b85cf6e3d3b6c5ec48192ff9202121b360d2e2c18c1d27c4725fbf689f1a3fd"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.dll",
+      "bytes": 44880,
+      "sha256": "7811862ac6c2456e1efd7ff300e6567ff373fbccf4266a853dac376b5b8c19c3"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.EnvironmentVariables.dll",
+      "bytes": 21840,
+      "sha256": "4968b1713382a9683acdd3d70b783316646cc73b9da1624b70e058298d07b909"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.FileExtensions.dll",
+      "bytes": 28456,
+      "sha256": "3d7015f88ca1c903e288eb73cea65baef251cb41ed99e4cbb607b18816d32aac"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.Json.dll",
+      "bytes": 27944,
+      "sha256": "2b72db01838c8ba1f221ac767d28f2f67a0c63be581910bcfef2b0832bed115f"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Configuration.UserSecrets.dll",
+      "bytes": 26448,
+      "sha256": "f117a8b446857fcc2760d17255c6623d94f9dbbb11c7893b4276fd889042f711"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+      "bytes": 65832,
+      "sha256": "43497d8f23b82159295933effe92c82447469b60cdbefcca4a62232e4ebbca99"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.DependencyInjection.dll",
+      "bytes": 95528,
+      "sha256": "21a7fd5e0dba0f36c5d7643e572a11aaed01ac901532bd7b96a919eb02749389"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Diagnostics.Abstractions.dll",
+      "bytes": 31056,
+      "sha256": "629fcc3e78969fba52d7bf7ab21eaea2a7711fa4e0b4b91bd37ad8b35816d60c"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Diagnostics.dll",
+      "bytes": 36136,
+      "sha256": "e66c773c8976cf0c056b360ecf87637f28639810189bdf4d6bb579db6a3e3466"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.FileProviders.Abstractions.dll",
+      "bytes": 23336,
+      "sha256": "c823eea339af2beca2c3004bb077118d0db6379f908e7324e59461ef2c08e4b6"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.FileProviders.Physical.dll",
+      "bytes": 45392,
+      "sha256": "ab90ea779dad07f90a64d69ac7037befe97f3f70d025596d339ec0814401e86c"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.FileSystemGlobbing.dll",
+      "bytes": 47952,
+      "sha256": "c6cd6e791178b3f99f5ff4b46e51955edb92e6fa76ed6709e778e52612a0594e"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Hosting.Abstractions.dll",
+      "bytes": 54056,
+      "sha256": "97d564d9adf28cdbc2e6ac36ba6bf242ae70edc8b6c8841387370aaaf095de7e"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Hosting.dll",
+      "bytes": 71976,
+      "sha256": "d341be29a1aa7ce1026499776edbd457370586d0d1d6d231c42630e579fac09e"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Hosting.WindowsServices.dll",
+      "bytes": 28968,
+      "sha256": "327fdcdea21358502d83b3a74a0c02f5fcb4348369f3569187df6ad4d98fa653"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.Abstractions.dll",
+      "bytes": 66856,
+      "sha256": "cec836c1dff8e64701ee4fd3a710bd971fef953c90a34b577d9f4363103e6c39"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.Configuration.dll",
+      "bytes": 28456,
+      "sha256": "b0e3dea3ef2f0169171a58d024ccebbad0c2a1d35d4278d5a21c6f8a537b59e7"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.Console.dll",
+      "bytes": 76072,
+      "sha256": "97f7643ed779c0deb030ebef8e95388a9cbfb194e271391075dae297674d5897"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.Debug.dll",
+      "bytes": 19792,
+      "sha256": "54dd5ec754cd6e98e5a1a2f6caef643d4cb4507c1b64281fc810d4db1b0a0578"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.dll",
+      "bytes": 51536,
+      "sha256": "26d66b29b64a36bc7416e999b0fb55bc4b2d9d1358b6bef830c6a0ecdc81f86e"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.EventLog.dll",
+      "bytes": 24872,
+      "sha256": "45050b78770e4b1c10dadda4a71c31c04b7a9d24ff661bdfe52854e4c6e8e94e"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Logging.EventSource.dll",
+      "bytes": 34640,
+      "sha256": "64ec3197a6ec86920dbee666725bf5a9a5cd4b8aa4037b6153e4e29014b61b9d"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Options.ConfigurationExtensions.dll",
+      "bytes": 21800,
+      "sha256": "4f6119f2f95f656412c4f31fdf80b739314060beeb374ea3aa92feb3164582f7"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Options.dll",
+      "bytes": 65320,
+      "sha256": "c734c6a9feca3a2df39597e028efea8eea796e7e5dfc815df8b5893384297728"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.Extensions.Primitives.dll",
+      "bytes": 44880,
+      "sha256": "1f9f027817b0f277f45cceb0927c14e41cabfe6d52dafb5ab6bf68895294814b"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.IdentityModel.Abstractions.dll",
+      "bytes": 19256,
+      "sha256": "f0d349d3b696b871d7988f8e13f9873f463edd1a31d367b22aaa39cdb071b186"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.IdentityModel.JsonWebTokens.dll",
+      "bytes": 174384,
+      "sha256": "7cdcc830f1e3c3ae4be44a67e37568495d02642955c7d21c1dc5d9947f67e891"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.IdentityModel.Logging.dll",
+      "bytes": 38200,
+      "sha256": "a4476867e60d666daa22233f954672939861f2292cc699df88093056042f6c48"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Microsoft.IdentityModel.Tokens.dll",
+      "bytes": 408352,
+      "sha256": "16c33e63bffff90f1b8698f899f96f3311329f26e940b8f031b1f26d82bc41b1"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Npgsql.dll",
+      "bytes": 1478656,
+      "sha256": "e2bcafe1660fe4543fe9dfcabed972ec8d32259e5ea8009462ce1de23c7034c2"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/packages.lock.json",
+      "bytes": 18450,
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/System.Diagnostics.EventLog.dll",
+      "bytes": 53544,
+      "sha256": "0acf444ae24d786e9c24451e9a0d17cc39c015af3330f9872b65662ea493d08c"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/System.ServiceProcess.ServiceController.dll",
+      "bytes": 34600,
+      "sha256": "b30ca2c5b91d41f7be2581df9c4f2ca8722a569c4bcb6ec821445e518d0045b8"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Task.Application.dll",
+      "bytes": 378880,
+      "sha256": "2f8894167bd364f7c81216647aaf10ded34292e2af80abf60f8ea47b60d46105"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Task.BackupAgent.deps.json",
+      "bytes": 34600,
+      "sha256": "708a57134dcc580ba2646640c3d6406fdf6520bdbab7bda2221031da9bb7626e"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Task.BackupAgent.dll",
+      "bytes": 29184,
+      "sha256": "53c720fb638948ebb8df1f19f4c50648cb22b2fa216e1eadcc93e4d41562e67d"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Task.BackupAgent.runtimeconfig.json",
+      "bytes": 342,
+      "sha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Task.Domain.dll",
+      "bytes": 105984,
+      "sha256": "6b35d123eee337424c2db6e6d8dbc3d19fbc753736703e548ae6ce764cd0ab68"
+    },
+    {
+      "path": "server-linux-x64/Task.BackupAgent/Task.Infrastructure.dll",
+      "bytes": 732672,
+      "sha256": "5cccd87f50db27e715197cfb89b3dd805b46bf71da91b859c4b2431b1fd70c76"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/BouncyCastle.Cryptography.dll",
+      "bytes": 5155728,
+      "sha256": "ef92fc661e8d7ba8ec4d39a7cdfcdba41f14cb327f0d24fe79d0b5bb428899b5"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Bcl.Cryptography.dll",
+      "bytes": 19248,
+      "sha256": "91c6bab93638c268569a38bc87770a5e3ef9932676f5b7a6d47aef4208062925"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Extensions.Configuration.Abstractions.dll",
+      "bytes": 28984,
+      "sha256": "5def68e1c7d9c1fcf56153bb669e00d84c1ae17b35fb09c5a8ccf93e9b934d3e"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Extensions.Configuration.Binder.dll",
+      "bytes": 43792,
+      "sha256": "0637a0ab2b5a77b000c0d96c46573dae8c04fa86ae1374b5a1f00855a712d6f9"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Extensions.Configuration.dll",
+      "bytes": 45320,
+      "sha256": "94c3981084f713a51ad3d266145154d2468f59c4cd3e2bde82941bf84e97fb55"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+      "bytes": 66312,
+      "sha256": "7c97c4463fe0fc11d1f22f4d160b2bd2288981adf1de2717a6ff3fb993ddf294"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Extensions.Logging.Abstractions.dll",
+      "bytes": 67344,
+      "sha256": "a76a735b63e6ef3b0bf41ff92423cbd16103b8952e8306140a9bd650346034dc"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.Extensions.Primitives.dll",
+      "bytes": 45328,
+      "sha256": "6aaf929343fd02415d6cb5d903816c2f1c831b194bfe7a15789879093d0fa6b7"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.IdentityModel.Abstractions.dll",
+      "bytes": 19256,
+      "sha256": "f0d349d3b696b871d7988f8e13f9873f463edd1a31d367b22aaa39cdb071b186"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.IdentityModel.JsonWebTokens.dll",
+      "bytes": 174384,
+      "sha256": "7cdcc830f1e3c3ae4be44a67e37568495d02642955c7d21c1dc5d9947f67e891"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.IdentityModel.Logging.dll",
+      "bytes": 38200,
+      "sha256": "a4476867e60d666daa22233f954672939861f2292cc699df88093056042f6c48"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Microsoft.IdentityModel.Tokens.dll",
+      "bytes": 408352,
+      "sha256": "16c33e63bffff90f1b8698f899f96f3311329f26e940b8f031b1f26d82bc41b1"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Npgsql.dll",
+      "bytes": 1478656,
+      "sha256": "e2bcafe1660fe4543fe9dfcabed972ec8d32259e5ea8009462ce1de23c7034c2"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Task.Application.dll",
+      "bytes": 378880,
+      "sha256": "2f8894167bd364f7c81216647aaf10ded34292e2af80abf60f8ea47b60d46105"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Task.DatabaseMigrator.deps.json",
+      "bytes": 11346,
+      "sha256": "390c19d31e104e6d66b3d31977029c5b6b173e0517181ec0da92f091ba13eb37"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Task.DatabaseMigrator.dll",
+      "bytes": 19968,
+      "sha256": "36e47502527c18ec7e3c7cedb4e7eedae718ec330eece688c74c1d9ca8469e2a"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Task.DatabaseMigrator.runtimeconfig.json",
+      "bytes": 342,
+      "sha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Task.Domain.dll",
+      "bytes": 105984,
+      "sha256": "6b35d123eee337424c2db6e6d8dbc3d19fbc753736703e548ae6ce764cd0ab68"
+    },
+    {
+      "path": "server-linux-x64/Task.DatabaseMigrator/Task.Infrastructure.dll",
+      "bytes": 732672,
+      "sha256": "5cccd87f50db27e715197cfb89b3dd805b46bf71da91b859c4b2431b1fd70c76"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/appsettings.Development.json",
+      "bytes": 137,
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/appsettings.json",
+      "bytes": 137,
+      "sha256": "ab16b7b75d012475e615a41c21000c9215c6e02cd70b9c2618d25d885aa6ff33"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/BouncyCastle.Cryptography.dll",
+      "bytes": 5155728,
+      "sha256": "ef92fc661e8d7ba8ec4d39a7cdfcdba41f14cb327f0d24fe79d0b5bb428899b5"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Bcl.Cryptography.dll",
+      "bytes": 19248,
+      "sha256": "91c6bab93638c268569a38bc87770a5e3ef9932676f5b7a6d47aef4208062925"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.Abstractions.dll",
+      "bytes": 28456,
+      "sha256": "cfdb91156d4d875ba6f540e53f96988e266ab24ab6f367150db6eb9b645cfeb3"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.Binder.dll",
+      "bytes": 43304,
+      "sha256": "6e30012a3f649ba2e4a4101ce77b777b0e89be05302fe7c11118cf680e561922"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.CommandLine.dll",
+      "bytes": 25384,
+      "sha256": "5b85cf6e3d3b6c5ec48192ff9202121b360d2e2c18c1d27c4725fbf689f1a3fd"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.dll",
+      "bytes": 44880,
+      "sha256": "7811862ac6c2456e1efd7ff300e6567ff373fbccf4266a853dac376b5b8c19c3"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.EnvironmentVariables.dll",
+      "bytes": 21840,
+      "sha256": "4968b1713382a9683acdd3d70b783316646cc73b9da1624b70e058298d07b909"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.FileExtensions.dll",
+      "bytes": 28456,
+      "sha256": "3d7015f88ca1c903e288eb73cea65baef251cb41ed99e4cbb607b18816d32aac"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.Json.dll",
+      "bytes": 27944,
+      "sha256": "2b72db01838c8ba1f221ac767d28f2f67a0c63be581910bcfef2b0832bed115f"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Configuration.UserSecrets.dll",
+      "bytes": 26448,
+      "sha256": "f117a8b446857fcc2760d17255c6623d94f9dbbb11c7893b4276fd889042f711"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+      "bytes": 65832,
+      "sha256": "43497d8f23b82159295933effe92c82447469b60cdbefcca4a62232e4ebbca99"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.DependencyInjection.dll",
+      "bytes": 95528,
+      "sha256": "21a7fd5e0dba0f36c5d7643e572a11aaed01ac901532bd7b96a919eb02749389"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Diagnostics.Abstractions.dll",
+      "bytes": 31056,
+      "sha256": "629fcc3e78969fba52d7bf7ab21eaea2a7711fa4e0b4b91bd37ad8b35816d60c"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Diagnostics.dll",
+      "bytes": 36136,
+      "sha256": "e66c773c8976cf0c056b360ecf87637f28639810189bdf4d6bb579db6a3e3466"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.FileProviders.Abstractions.dll",
+      "bytes": 23336,
+      "sha256": "c823eea339af2beca2c3004bb077118d0db6379f908e7324e59461ef2c08e4b6"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.FileProviders.Physical.dll",
+      "bytes": 45392,
+      "sha256": "ab90ea779dad07f90a64d69ac7037befe97f3f70d025596d339ec0814401e86c"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.FileSystemGlobbing.dll",
+      "bytes": 47952,
+      "sha256": "c6cd6e791178b3f99f5ff4b46e51955edb92e6fa76ed6709e778e52612a0594e"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Hosting.Abstractions.dll",
+      "bytes": 54056,
+      "sha256": "97d564d9adf28cdbc2e6ac36ba6bf242ae70edc8b6c8841387370aaaf095de7e"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Hosting.dll",
+      "bytes": 71976,
+      "sha256": "d341be29a1aa7ce1026499776edbd457370586d0d1d6d231c42630e579fac09e"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Hosting.WindowsServices.dll",
+      "bytes": 28968,
+      "sha256": "327fdcdea21358502d83b3a74a0c02f5fcb4348369f3569187df6ad4d98fa653"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.Abstractions.dll",
+      "bytes": 66856,
+      "sha256": "cec836c1dff8e64701ee4fd3a710bd971fef953c90a34b577d9f4363103e6c39"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.Configuration.dll",
+      "bytes": 28456,
+      "sha256": "b0e3dea3ef2f0169171a58d024ccebbad0c2a1d35d4278d5a21c6f8a537b59e7"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.Console.dll",
+      "bytes": 76072,
+      "sha256": "97f7643ed779c0deb030ebef8e95388a9cbfb194e271391075dae297674d5897"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.Debug.dll",
+      "bytes": 19792,
+      "sha256": "54dd5ec754cd6e98e5a1a2f6caef643d4cb4507c1b64281fc810d4db1b0a0578"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.dll",
+      "bytes": 51536,
+      "sha256": "26d66b29b64a36bc7416e999b0fb55bc4b2d9d1358b6bef830c6a0ecdc81f86e"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.EventLog.dll",
+      "bytes": 24872,
+      "sha256": "45050b78770e4b1c10dadda4a71c31c04b7a9d24ff661bdfe52854e4c6e8e94e"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Logging.EventSource.dll",
+      "bytes": 34640,
+      "sha256": "64ec3197a6ec86920dbee666725bf5a9a5cd4b8aa4037b6153e4e29014b61b9d"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Options.ConfigurationExtensions.dll",
+      "bytes": 21800,
+      "sha256": "4f6119f2f95f656412c4f31fdf80b739314060beeb374ea3aa92feb3164582f7"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Options.dll",
+      "bytes": 65320,
+      "sha256": "c734c6a9feca3a2df39597e028efea8eea796e7e5dfc815df8b5893384297728"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.Extensions.Primitives.dll",
+      "bytes": 44880,
+      "sha256": "1f9f027817b0f277f45cceb0927c14e41cabfe6d52dafb5ab6bf68895294814b"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.IdentityModel.Abstractions.dll",
+      "bytes": 19256,
+      "sha256": "f0d349d3b696b871d7988f8e13f9873f463edd1a31d367b22aaa39cdb071b186"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.IdentityModel.JsonWebTokens.dll",
+      "bytes": 174384,
+      "sha256": "7cdcc830f1e3c3ae4be44a67e37568495d02642955c7d21c1dc5d9947f67e891"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.IdentityModel.Logging.dll",
+      "bytes": 38200,
+      "sha256": "a4476867e60d666daa22233f954672939861f2292cc699df88093056042f6c48"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Microsoft.IdentityModel.Tokens.dll",
+      "bytes": 408352,
+      "sha256": "16c33e63bffff90f1b8698f899f96f3311329f26e940b8f031b1f26d82bc41b1"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Npgsql.dll",
+      "bytes": 1478656,
+      "sha256": "e2bcafe1660fe4543fe9dfcabed972ec8d32259e5ea8009462ce1de23c7034c2"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/packages.lock.json",
+      "bytes": 18450,
+      "sha256": "81f9b4476725cc308888bd9ddd56b3b19065e925fc6fed64378f0d33d55e22b6"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/System.Diagnostics.EventLog.dll",
+      "bytes": 53544,
+      "sha256": "0acf444ae24d786e9c24451e9a0d17cc39c015af3330f9872b65662ea493d08c"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/System.ServiceProcess.ServiceController.dll",
+      "bytes": 34600,
+      "sha256": "b30ca2c5b91d41f7be2581df9c4f2ca8722a569c4bcb6ec821445e518d0045b8"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Task.Application.dll",
+      "bytes": 378880,
+      "sha256": "2f8894167bd364f7c81216647aaf10ded34292e2af80abf60f8ea47b60d46105"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Task.Domain.dll",
+      "bytes": 105984,
+      "sha256": "6b35d123eee337424c2db6e6d8dbc3d19fbc753736703e548ae6ce764cd0ab68"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Task.Infrastructure.dll",
+      "bytes": 732672,
+      "sha256": "5cccd87f50db27e715197cfb89b3dd805b46bf71da91b859c4b2431b1fd70c76"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Task.Worker.deps.json",
+      "bytes": 34585,
+      "sha256": "6d7442eb75b2bf79cd42c52c91ef7b11739118f1c8f65a01170800116cb0912e"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Task.Worker.dll",
+      "bytes": 38912,
+      "sha256": "1c14ee0f3e5eefd2831ec39eb6276f0decf910c589e6fc9eee29d1481aa8d614"
+    },
+    {
+      "path": "server-linux-x64/Task.Worker/Task.Worker.runtimeconfig.json",
+      "bytes": 342,
+      "sha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097"
+    },
+    {
+      "path": "server-source.zip",
+      "bytes": 1851301,
+      "sha256": "fd5b217902a3f30581a7b31e86d63f9c0e029f7ef5325e0b82eb90f352df0543"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 7328,
+      "sha256": "c5d4a094f7f75e3ecf24089d9ae5b801425d197bb7ef1045b7090ffc4276552d"
+    },
+    {
+      "path": "version.json",
+      "bytes": 213,
+      "sha256": "6983c627a5339eee690d9a01666093217b9daf672cd3fc22b368bde1a89b0cce"
+    }
+  ]
+}

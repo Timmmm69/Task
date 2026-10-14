@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "product": "Task unsigned portable Windows client",
+  "version": "1.0.10",
+  "architecture": "win-x64",
+  "sourceRevision": "bb6b903e0404565f328090ce1197679897722fd3",
+  "cleanSourceTree": true,
+  "sourceChanges": [],
+  "files": [
+    {
+      "path": "D3DCompiler_47_cor3.dll",
+      "bytes": 4741488,
+      "sha256": "a05f99734f7c4822fefc12b367af21fd0976ed6608752fb1e1e80b6ece7ecbbb"
+    },
+    {
+      "path": "e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": "PenImc_cor3.dll",
+      "bytes": 157992,
+      "sha256": "8052e85cd5a3ae9a939872b32de5b90a827456a21d8ccfc4d0c76599f1fcc217"
+    },
+    {
+      "path": "PresentationNative_cor3.dll",
+      "bytes": 1235240,
+      "sha256": "42e2e543c17e1b37499baf00d956433b8afb655348ec0fae89c926fb7d149b6e"
+    },
+    {
+      "path": "Task.Desktop.exe",
+      "bytes": 159668322,
+      "sha256": "6356a031350bc9451ccb457c8146bcac304a84e2e2f90f461f0165ef984ef646"
+    },
+    {
+      "path": "vcruntime140_cor3.dll",
+      "bytes": 124544,
+      "sha256": "d5e4d9a3e835fa679450145d6a7d94e36573a509317111904d9b3712c30d9066"
+    },
+    {
+      "path": "wpfgfx_cor3.dll",
+      "bytes": 1956136,
+      "sha256": "0ba67759d290f5d75ff92979394077dcd533fe484511db3ea161d7e102246a73"
+    }
+  ]
+}
