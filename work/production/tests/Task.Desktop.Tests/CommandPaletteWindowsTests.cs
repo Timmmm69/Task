@@ -102,7 +102,7 @@ public sealed class CommandPaletteWindowsTests
     private static void Drain() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.Background);
     private static void EnsureResources()
     {
-        var app = global::System.Windows.Application.Current ?? new global::System.Windows.Application();
+        var app = global::System.Windows.Application.Current ?? new global::System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         if (app.Resources.Contains("Task.Shell.NavigationSurface")) return;
         app.Resources.MergedDictionaries.Add((ResourceDictionary)global::System.Windows.Application.LoadComponent(new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative)));
         app.Resources["Task.IconKeyToGeometryConverter"] = new IconKeyToGeometryConverter();

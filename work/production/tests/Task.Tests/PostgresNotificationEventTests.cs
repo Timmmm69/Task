@@ -16,7 +16,7 @@ public sealed partial class PostgresProductApiTests
         var id = Guid.NewGuid();
         var command = new TaskWriteCommand(db.Organization, db.User, db.Session, "POST_api_v1_tasks", Guid.NewGuid(), "notification-failure-001",
             TaskWriteRequestHasher.ComputeSha256("{}"), id, null, "task.create", "TaskCreated", ["assigneeIds"], "{}",
-            _ => { var task = TaskAggregate.Create(id, db.Organization, db.User, "Atomic", DateTimeOffset.UtcNow, content: new TaskCardContent { AssigneeIds = [db.OtherUser] }); return new(task, new TaskWriteHttpResult(201, new Dictionary<string,string>(), "{}", id)); });
+            _ => { var task = TaskAggregate.Create(id, db.Organization, db.User, "Atomic", DateTimeOffset.UtcNow, content: new TaskCardContent { AssigneeIds = [db.OtherUser] }); return new(task, new TaskWriteHttpResult(201, new Dictionary<string, string>(), "{}", id)); });
         await Assert.ThrowsAsync<PostgresException>(() => db.Runtime.CreateTaskWriteCommandExecutor().ExecuteAsync(command));
         Assert.Null(db.Runtime.CreateTaskStore().Get(id, db.Organization));
         Assert.Equal(0, db.Count("notify.notifications")); Assert.Equal(0, db.Count("governance.domain_events"));

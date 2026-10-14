@@ -24,6 +24,8 @@ GRANT SELECT, INSERT, UPDATE ON TABLE iam.idempotency_records TO task_runtime;
 GRANT SELECT, INSERT ON TABLE governance.domain_events TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE governance.outbox_messages TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE calendar.events, calendar.recurrence_series, calendar.recurrence_occurrences, calendar.reminders, calendar.reminder_occurrences TO task_runtime;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE calendar.task_deadline_preferences, calendar.task_deadline_scan TO task_runtime;
+GRANT EXECUTE ON FUNCTION calendar.deadline_local_anchor(date,time,text), calendar.reconcile_task_deadline(uuid,uuid,boolean) TO task_runtime;
 GRANT SELECT ON TABLE sync.change_feed TO task_runtime;
 GRANT USAGE, SELECT ON SEQUENCE sync.change_sequence TO task_runtime;
 GRANT EXECUTE ON FUNCTION sync.project_domain_event_change(uuid, uuid, varchar, varchar, bigint, bigint, text[], jsonb) TO task_runtime;

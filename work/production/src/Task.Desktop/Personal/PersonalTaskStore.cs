@@ -21,7 +21,7 @@ public sealed partial class PersonalTaskStore : IDisposable
     private readonly Guid _actor;
     private readonly TimeProvider _clock;
     public Guid LocalActorId => _actor;
-    private const string Columns = "id,version,created_at,updated_at,title,description,status,priority,start_at,deadline,scheduled_date,start_time,time_zone,duration,project_id,parent_task_id,counterparty_id,completed_at";
+    private const string Columns = "id,version,created_at,updated_at,title,description,status,priority,start_at,deadline,scheduled_date,start_time,time_zone,duration,project_id,parent_task_id,counterparty_id,completed_at,deadline_date,deadline_zone,deadline_reminder_offset,deadline_reminder_time";
 
     public PersonalTaskStore(PersonalDataPaths paths, TimeProvider? clock = null) : this(paths, clock, null) { }
     internal PersonalTaskStore(PersonalDataPaths paths, TimeProvider? clock, PersonalStoreOwnership? ownership, Action<string>? fault = null, bool restoring = false)
@@ -35,6 +35,7 @@ public sealed partial class PersonalTaskStore : IDisposable
             _database = new(paths, fault, restoring);
             using var command = Command("SELECT value FROM personal_metadata WHERE key='PersonalActorId';");
             _actor = Guid.Parse((string)command.ExecuteScalar()!);
+            InitializeDeadlineReminders();
         }
         catch { _database?.Dispose(); if (_ownsLease) _ownership.Dispose(); throw; }
     }
@@ -74,6 +75,10 @@ public sealed partial class PersonalTaskStore : IDisposable
         new TaskCardContent
         {
             Description = r.IsDBNull(5) ? null : r.GetString(5),
+            DeadlineDate = r.IsDBNull(18) ? null : DateOnly.Parse(r.GetString(18), CultureInfo.InvariantCulture),
+            DeadlineTimeZone = r.IsDBNull(19) ? null : r.GetString(19),
+            DeadlineReminderOffsetMinutes = r.IsDBNull(20) ? null : r.GetInt32(20),
+            DeadlineReminderTime = r.IsDBNull(21) ? null : r.GetString(21),
             ScheduledDate = r.IsDBNull(10) ? null : DateOnly.Parse(r.GetString(10), CultureInfo.InvariantCulture),
             StartTimeLocal = r.IsDBNull(11) ? null : TimeOnly.Parse(r.GetString(11), CultureInfo.InvariantCulture),
             ScheduleTimeZone = r.IsDBNull(12) ? null : r.GetString(12),
@@ -103,7 +108,9 @@ public sealed partial class PersonalTaskStore : IDisposable
         _ = TaskRules.NormalizeTitle(task.Title);
         if (!Enum.IsDefined(task.Priority)) throw new ArgumentException("Unknown priority.");
         _ = TaskSchedule.Create(task.StartAtUtc, task.DeadlineAtUtc);
-        var card = task.Card ?? new(); card.Validate(task.StartAtUtc, allowEarlierAmbiguousInstant: true);
+        var card = task.Card ?? new();
+        if (card.DeadlineDate is not null && task.DeadlineAtUtc is not null) throw new ArgumentException("Выберите дату срока или точный срок.");
+        card.Validate(task.StartAtUtc, allowEarlierAmbiguousInstant: true);
         if (card.RequesterUserId is not null || card.AssigneeIds.Count != 0 || card.WatcherIds.Count != 0)
             throw new ArgumentException("Corporate participants are unavailable in Personal.");
         if (Get(task.Id, tx)?.Card?.ProjectId != card.ProjectId) ValidateProjectLink(card.ProjectId, tx);
@@ -122,8 +129,8 @@ public sealed partial class PersonalTaskStore : IDisposable
     {
         var card = task.Card ?? new();
         var sql = create
-            ? $"INSERT INTO tasks ({Columns}) VALUES ($id,$version,$created,$updated,$title,$description,$status,$priority,$start,$deadline,$date,$time,$zone,$duration,$project,$parent,$counterparty,$completed);"
-            : "UPDATE tasks SET version=$version,updated_at=$updated,title=$title,description=$description,status=$status,priority=$priority,start_at=$start,deadline=$deadline,scheduled_date=$date,start_time=$time,time_zone=$zone,duration=$duration,project_id=$project,parent_task_id=$parent,counterparty_id=$counterparty,completed_at=$completed WHERE id=$id AND version=$expected;";
+            ? $"INSERT INTO tasks ({Columns}) VALUES ($id,$version,$created,$updated,$title,$description,$status,$priority,$start,$deadline,$date,$time,$zone,$duration,$project,$parent,$counterparty,$completed,$deadlineDate,$deadlineZone,$reminderOffset,$reminderTime);"
+            : "UPDATE tasks SET version=$version,updated_at=$updated,title=$title,description=$description,status=$status,priority=$priority,start_at=$start,deadline=$deadline,scheduled_date=$date,start_time=$time,time_zone=$zone,duration=$duration,project_id=$project,parent_task_id=$parent,counterparty_id=$counterparty,completed_at=$completed,deadline_date=$deadlineDate,deadline_zone=$deadlineZone,deadline_reminder_offset=COALESCE($reminderOffset,deadline_reminder_offset) WHERE id=$id AND version=$expected;";
         using var command = Command(sql, tx,
             ("$id", task.Id.ToString("D")), ("$version", task.Version), ("$expected", task.Version - 1),
             ("$created", Instant(task.CreatedAtUtc)), ("$updated", Instant(task.UpdatedAtUtc)),
@@ -133,8 +140,10 @@ public sealed partial class PersonalTaskStore : IDisposable
             ("$time", card.StartTimeLocal?.ToString("HH:mm:ss.fffffff", CultureInfo.InvariantCulture)),
             ("$zone", card.ScheduleTimeZone), ("$duration", card.PlannedDurationMinutes),
             ("$project", card.ProjectId?.ToString("D")), ("$parent", card.ParentTaskId?.ToString("D")),
+            ("$deadlineDate", card.DeadlineDate?.ToString("yyyy-MM-dd")), ("$deadlineZone", card.DeadlineTimeZone), ("$reminderTime", card.DeadlineReminderTime), ("$reminderOffset", card.DeadlineReminderOffsetMinutes),
             ("$counterparty", card.PrimaryCounterpartyObjectId?.ToString("D")), ("$completed", Instant(task.CompletedAtUtc)));
         if (command.ExecuteNonQuery() != 1) throw new PersonalVersionConflictException();
+        ReconcileDeadlineReminder(task.Id, tx);
     }
 
     public DesktopTaskDto Create(DesktopCreateTaskCommand input) => Locked(() =>
@@ -143,7 +152,8 @@ public sealed partial class PersonalTaskStore : IDisposable
         var task = new DesktopTaskDto(Guid.NewGuid(), Guid.Empty, 1, now, now, TaskRules.NormalizeTitle(input.Title), _actor,
             DesktopTaskStatus.New, input.Priority, input.StartAtUtc, input.DeadlineAtUtc, [], [], null, input.Card ?? new());
         using var tx = _database.Connection.BeginTransaction();
-        Validate(task, tx); Save(task, tx, true); tx.Commit(); return task;
+        var replay = ReplayTaskCommand(input.IdempotencyKey, input, tx); if (replay is not null) { tx.Commit(); return replay; }
+        Validate(task, tx); Save(task, tx, true); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit(); return saved;
     });
     private DesktopTaskDto Current(Guid id, long version, SqliteTransaction tx)
     {
@@ -155,6 +165,7 @@ public sealed partial class PersonalTaskStore : IDisposable
     public DesktopTaskDto Patch(DesktopPatchTaskCommand input) => Locked(() =>
     {
         using var tx = _database.Connection.BeginTransaction();
+        var replay = ReplayTaskCommand(input.IdempotencyKey, input, tx); if (replay is not null) { tx.Commit(); return replay; }
         var old = Current(input.Id, input.ExpectedVersion, tx);
         var task = old with
         {
@@ -166,7 +177,13 @@ public sealed partial class PersonalTaskStore : IDisposable
             Version = checked(old.Version + 1),
             UpdatedAtUtc = _clock.GetUtcNow(),
         };
-        Validate(task, tx); Save(task, tx, false); tx.Commit(); return task;
+        if (old.DeadlineAtUtc != task.DeadlineAtUtc || old.Card?.DeadlineDate != task.Card?.DeadlineDate
+            || old.Card?.DeadlineTimeZone != task.Card?.DeadlineTimeZone || old.Card?.DeadlineReminderOffsetMinutes != task.Card?.DeadlineReminderOffsetMinutes)
+        {
+            using var clear = Command("UPDATE tasks SET deadline_suppressed_due=NULL WHERE id=$id;", tx, ("$id", task.Id.ToString("D")));
+            clear.ExecuteNonQuery();
+        }
+        Validate(task, tx); Save(task, tx, false); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit(); return saved;
     });
     public DesktopTaskDto Transition(DesktopTransitionTaskCommand input) => Locked(() =>
     {
@@ -180,7 +197,7 @@ public sealed partial class PersonalTaskStore : IDisposable
             UpdatedAtUtc = now,
             CompletedAtUtc = input.TargetStatus == DesktopTaskStatus.Completed ? now : null
         };
-        Save(task, tx, false); tx.Commit(); return task;
+        Save(task, tx, false); var saved = Get(task.Id, tx)!; tx.Commit(); return saved;
     });
 
     public IReadOnlyList<TaskWorkspaceItem> Checklist(Guid taskId) => Locked<IReadOnlyList<TaskWorkspaceItem>>(() =>

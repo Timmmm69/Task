@@ -8,9 +8,9 @@ namespace Task.Desktop.Work;
 
 public sealed record DesktopReminderOccurrence(Guid Id, long Version, Guid ReminderId, DateTimeOffset DueAt, string Status);
 public sealed record DesktopReminder(Guid Id, long Version, Guid TargetObjectId, string TargetTitle, string TriggerType,
-    int? OffsetMinutes, DateTimeOffset? AbsoluteTriggerAt, DateTimeOffset NextTriggerAt, string Status, DesktopReminderOccurrence? CurrentOccurrence)
+    int? OffsetMinutes, DateTimeOffset? AbsoluteTriggerAt, DateTimeOffset NextTriggerAt, string Status, DesktopReminderOccurrence? CurrentOccurrence, bool IsAutomatic = false)
 {
-    public string DisplayText => $"{TargetTitle} · {NextTriggerAt.ToLocalTime():dd.MM.yyyy HH:mm} · {Status switch { "scheduled" => "Запланировано", "snoozed" => "Отложено", "due" => "Пора напомнить", "delivered" => "Доставлено", "cancelled" => "Отменено", _ => "Неактивно" }}";
+    public string DisplayText => $"{TargetTitle}{(IsAutomatic ? " · До срока (автоматически)" : "")} · {NextTriggerAt.ToLocalTime():dd.MM.yyyy HH:mm} · {Status switch { "scheduled" => "Запланировано", "snoozed" => "Отложено", "due" => "Пора напомнить", "delivered" => "Доставлено", "cancelled" => "Отменено", _ => "Неактивно" }}";
 }
 public interface IDesktopReminderApiClient
 {
@@ -78,6 +78,6 @@ public sealed partial class DesktopWorkApiClient : IDesktopReminderApiClient
                 || !Guid.TryParse(Text(x, "reminderId"), out var rid) || rid != id || !DateTimeOffset.TryParse(Text(x, "dueAt"), out var due) || Text(x, "status") is not { } xs) return null;
             occurrence = new(xid, xv, rid, due, xs);
         }
-        return new(id, version, target, Text(n, "targetTitle") ?? "Задача или событие", trigger, Int(n, "offsetMinutes"), Date(n, "absoluteTriggerAt"), next, status, occurrence);
+        return new(id, version, target, Text(n, "targetTitle") ?? "Задача или событие", trigger, Int(n, "offsetMinutes"), Date(n, "absoluteTriggerAt"), next, status, occurrence, Bool(n, "isAutomatic") ?? false);
     }
 }

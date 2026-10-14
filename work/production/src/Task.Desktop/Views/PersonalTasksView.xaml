@@ -74,13 +74,21 @@
         <StackPanel><TextBlock Text="Приоритет (обычный по умолчанию)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text" TabIndex="21" AutomationProperties.Name="Приоритет"/></StackPanel>
         <StackPanel Grid.Column="2"><TextBlock Text="Проект (необязательно)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}" DisplayMemberPath="Name" TabIndex="22" AutomationProperties.AutomationId="PersonalTaskProject" AutomationProperties.Name="Проект задачи"/></StackPanel>
        </Grid>
+         <StackPanel><TextBlock Text="Срок (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding DeadlineText,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="Срок задачи" AutomationProperties.HelpText="ДД.ММ.ГГГГ или ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalDeadline"/><TextBlock Text="{Binding DeadlineError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
+<StackPanel Margin="0,8,0,12">
+ <TextBlock Text="Напомнить"/>
+ <ComboBox ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
+ <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Width="100" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
+ <TextBlock Text="{Binding ReminderPreview}" TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite"/>
+ <TextBlock Text="{Binding ReminderRecipientHint}" TextWrapping="Wrap" FontSize="12"/>
+</StackPanel>
        <Expander Header="Планирование и связи" state:ViewState.Section="personal-tasks/v1/planning" Margin="0,20,0,0" IsExpanded="False"><StackPanel>
         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
          <StackPanel Grid.ColumnSpan="3"><TextBlock Text="Длительность, минут (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Duration,UpdateSourceTrigger=PropertyChanged}" TabIndex="27" AutomationProperties.Name="Длительность"/></StackPanel>
         </Grid>
         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
          <StackPanel><TextBlock Text="Начало (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding StartText,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" AutomationProperties.Name="Дата и время начала" AutomationProperties.HelpText="ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalStart"/><TextBlock Text="{Binding StartError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
-         <StackPanel Grid.Column="2"><TextBlock Text="Срок (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding DeadlineText,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="Срок задачи" AutomationProperties.HelpText="ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalDeadline"/><TextBlock Text="{Binding DeadlineError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
+
         </Grid>
         <TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ · местное время" Style="{StaticResource Task.State.Body}" FontSize="12" Margin="0,6,0,0"/>
         <TextBlock Text="Родительская задача (необязательно)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Tasks}" SelectedItem="{Binding Card.Parent}" DisplayMemberPath="Name" TabIndex="28" AutomationProperties.Name="Родительская задача" AutomationProperties.AutomationId="PersonalParentTask"/>

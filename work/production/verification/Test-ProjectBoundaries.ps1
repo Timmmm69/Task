@@ -31,7 +31,7 @@ $AllowedDependencies = @{
 
 $expectedFramework = {
     param([string]$ProjectName)
-    if ($ProjectName -eq 'Task.Desktop') { return 'net10.0-windows' }
+    if ($ProjectName -eq 'Task.Desktop') { return 'net10.0-windows10.0.17763.0' }
     return 'net10.0'
 }
 

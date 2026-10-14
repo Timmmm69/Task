@@ -16,7 +16,7 @@ internal sealed class ExplorerDropOverlay(UIElement target) : Adorner(target)
         if (Message.Length == 0) return;
         var text = new FormattedText(Message, System.Globalization.CultureInfo.GetCultureInfo("ru-RU"),
             FlowDirection.LeftToRight, new Typeface("Segoe UI"), 14, brush, VisualTreeHelper.GetDpi(this).PixelsPerDip)
-            { MaxTextWidth = Math.Max(40, AdornedElement.RenderSize.Width - 32) };
+        { MaxTextWidth = Math.Max(40, AdornedElement.RenderSize.Width - 32) };
         context.DrawRectangle(Brushes.White, new Pen(brush, 1), new Rect(8, 8, text.Width + 16, text.Height + 16));
         context.DrawText(text, new Point(16, 16));
     }

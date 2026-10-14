@@ -310,8 +310,13 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         var eventId = Guid.NewGuid();
         var action = type == "reminder" ? r.Route.Operation switch
         {
-            "create" => "ReminderCreated", "patch" => "ReminderUpdated", "cancel" => "ReminderCancelled",
-            "snooze" => "ReminderSnoozed", "dismiss" => "ReminderDismissed", "reschedule" => "ReminderRestored", _ => throw Invalid("Invalid reminder event.")
+            "create" => "ReminderCreated",
+            "patch" => "ReminderUpdated",
+            "cancel" => "ReminderCancelled",
+            "snooze" => "ReminderSnoozed",
+            "dismiss" => "ReminderDismissed",
+            "reschedule" => "ReminderRestored",
+            _ => throw Invalid("Invalid reminder event.")
         } : type + "." + r.Route.Operation;
         // Paths and contact values never enter public audit/outbox payloads.
         var state = new JsonObject { ["id"] = id, ["version"] = version, ["lifecycleState"] = current["lifecycleState"]?.DeepClone() };

@@ -163,7 +163,7 @@ public sealed class PersonalPersistenceTests : IDisposable
         using (var upgraded = new PersonalTaskStore(Paths)) { Assert.Equal(task.Id, Assert.Single(upgraded.List()).Id); Assert.Empty(upgraded.Checklist(task.Id)); }
         using (var reopened = new PersonalTaskStore(Paths)) Assert.Equal(1, reopened.Get(task.Id)!.Version);
         using var connection = OpenSql(); using var command = connection.CreateCommand(); command.CommandText = "PRAGMA user_version;";
-        Assert.Equal(4L, command.ExecuteScalar());
+        Assert.Equal((long)PersonalDatabase.CurrentSchemaVersion, command.ExecuteScalar());
     }
 
     [Fact]

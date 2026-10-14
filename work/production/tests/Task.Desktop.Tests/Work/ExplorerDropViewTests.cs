@@ -20,8 +20,10 @@ public sealed class ExplorerDropViewTests
         {
             var start = new System.Diagnostics.ProcessStartInfo("dotnet")
             {
-                UseShellExecute = false, CreateNoWindow = true,
-                RedirectStandardOutput = true, RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
             };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ExplorerDropViewTests).Assembly.Location);
@@ -44,7 +46,7 @@ public sealed class ExplorerDropViewTests
             try
             {
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext());
-                var app = System.Windows.Application.Current ?? new System.Windows.Application();
+                var app = System.Windows.Application.Current ?? new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
                 if (!app.Resources.Contains("Task.Shell.NavigationSurface"))
                 {
                     app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
@@ -114,7 +116,8 @@ public sealed class ExplorerDropViewTests
             }
             catch (Exception e) { completed.SetException(e); }
             finally { window?.Close(); Dispatcher.CurrentDispatcher.InvokeShutdown(); }
-        }) { IsBackground = true };
+        })
+        { IsBackground = true };
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
         await completed.Task.WaitAsync(TimeSpan.FromSeconds(30));
     }

@@ -5,8 +5,9 @@ using Task.Desktop.ViewModels;
 namespace Task.Desktop.Personal;
 
 /// <summary>Typed presentation adapter. The only dependency is local storage.</summary>
-public sealed class PersonalTasksClient(PersonalTaskStore store) : IDesktopTasksApiClient
+public sealed class PersonalTasksClient(PersonalTaskStore store) : IDesktopDeadlineSettingsClient, IDesktopTasksApiClient
 {
+    public System.Threading.Tasks.Task<Task.Desktop.Work.DesktopUserSettings?> GetDeadlineSettingsAsync(CancellationToken token = default) => System.Threading.Tasks.Task.FromResult<Task.Desktop.Work.DesktopUserSettings?>(store.WorkspaceSettings());
     public async System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default)
     {
         if (cursor is not null) return new DesktopTasksApiResult<DesktopTaskPage>.InvalidCursor();

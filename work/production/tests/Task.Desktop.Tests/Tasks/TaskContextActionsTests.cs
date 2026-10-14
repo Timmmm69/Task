@@ -13,7 +13,8 @@ namespace Task.Desktop.Tests.TaskScreen;
 public sealed class TaskContextActionsTests
 {
     [Theory]
-    [InlineData(false)] [InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async System.Threading.Tasks.Task RowUsesClickedItemAndProtectsDraft(bool readOnly)
     {
         var first = ActionTasksClient.Source("Первая"); var second = ActionTasksClient.Source("Вторая");
@@ -37,7 +38,8 @@ public sealed class TaskContextActionsTests
     }
 
     [Theory]
-    [InlineData(DesktopTaskStatus.Completed, false)] [InlineData(DesktopTaskStatus.Cancelled, false)]
+    [InlineData(DesktopTaskStatus.Completed, false)]
+    [InlineData(DesktopTaskStatus.Cancelled, false)]
     [InlineData(DesktopTaskStatus.New, true)]
     public async System.Threading.Tasks.Task TerminalAndNestedParentsCannotOpenCreation(DesktopTaskStatus status, bool nested)
     {
@@ -51,7 +53,10 @@ public sealed class TaskContextActionsTests
     }
 
     [Theory]
-    [InlineData(false, false)] [InlineData(true, false)] [InlineData(false, true)] [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
     public async System.Threading.Tasks.Task ContextSeedLateOptionsUserClearCancelAndFailure(bool parent, bool forbidden)
     {
         var source = ActionTasksClient.Source("Родитель"); var client = new ActionTasksClient(source);

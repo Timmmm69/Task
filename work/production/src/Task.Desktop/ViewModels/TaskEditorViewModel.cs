@@ -14,7 +14,7 @@ public enum TaskEditorMode
 public sealed record TaskPriorityOption(DesktopTaskPriority Value, string Text);
 
 /// <summary>Local draft for the Task side panel. Network operations remain in TasksViewModel.</summary>
-public sealed class TaskEditorViewModel : ViewModelBase
+public sealed partial class TaskEditorViewModel : ViewModelBase
 {
     private static readonly CultureInfo RussianCulture = CultureInfo.GetCultureInfo("ru-RU");
     private static readonly IReadOnlyList<TaskPriorityOption> PriorityValues =
@@ -217,7 +217,7 @@ public sealed class TaskEditorViewModel : ViewModelBase
         var startField = !string.Equals(StartText.Trim(), FormatLocal(_source.StartAtUtc), StringComparison.Ordinal)
             ? DesktopTaskField<DateTimeOffset?>.From(start)
             : default;
-        var deadlineField = !string.Equals(DeadlineText.Trim(), FormatLocal(_source.DeadlineAtUtc), StringComparison.Ordinal)
+        var deadlineField = !string.Equals(DeadlineText.Trim(), (_source.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(_source.DeadlineAtUtc)), StringComparison.Ordinal)
             ? DesktopTaskField<DateTimeOffset?>.From(deadline)
             : default;
         var cardPatch = Card.Patch(Card.Build(start));
@@ -293,9 +293,10 @@ public sealed class TaskEditorViewModel : ViewModelBase
         Title = source?.Title ?? string.Empty;
         Priority = PriorityValues.Single(option => option.Value == (source?.Priority ?? DesktopTaskPriority.Normal));
         StartText = FormatLocal(source?.StartAtUtc);
-        DeadlineText = FormatLocal(source?.DeadlineAtUtc);
+        DeadlineText = source?.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(source?.DeadlineAtUtc);
         Card = new TaskCardEditor(source?.Card, source?.StartAtUtc, _personal);
         Card.Changed += Changed;
+        LoadReminderChoice();
         OnPropertyChanged(nameof(Card));
         _suppressChanges = false;
         _isDirty = false;
@@ -331,7 +332,14 @@ public sealed class TaskEditorViewModel : ViewModelBase
             : Title.Trim().Length > 500 ? "Название не должно превышать 500 символов." : null;
         PriorityError = null;
         startUtc = ParseLocal(StartText, out var startError);
-        deadlineUtc = ParseLocal(DeadlineText, out var deadlineError);
+        var isDate = DateOnly.TryParseExact(DeadlineText.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var deadlineDate);
+        deadlineUtc = isDate ? null : ParseLocal(DeadlineText, out _);
+        var deadlineError = isDate ? null : GetDeadlineError();
+        Card.DeadlineDate = isDate ? deadlineDate : null;
+        var deadlineZone = _source?.Card?.DeadlineDate == Card.DeadlineDate ? _source?.Card?.DeadlineTimeZone : null;
+        var zoneId = (_slotZone ?? TimeZoneInfo.Local).Id;
+        Card.DeadlineTimeZone = isDate ? deadlineZone ?? (TimeZoneInfo.TryConvertWindowsIdToIanaId(zoneId, out var iana) ? iana : zoneId) : null;
+        _reminderDeadline = deadlineUtc;
         StartError = startError;
         DeadlineError = deadlineError;
         if (StartError is null && DeadlineError is null
@@ -343,11 +351,14 @@ public sealed class TaskEditorViewModel : ViewModelBase
         CardError = null;
         if (_source is not null && StartText.Trim() == FormatLocal(_source.StartAtUtc)) startUtc = _source.StartAtUtc;
         Card.UpdateStart(startUtc);
-        try { _ = Card.Build(startUtc); } catch (ArgumentException e) { CardError = e.Message; }
+        try { ValidateReminder(); _ = Card.Build(startUtc); } catch (ArgumentException e) { CardError = e.Message; }
         OnPropertyChanged(nameof(CardError));
+        OnPropertyChanged(nameof(ReminderPreview));
         NotifyState();
         return !HasErrors;
     }
+
+    private string? GetDeadlineError() { _ = ParseLocal(DeadlineText, out var error); return error; }
 
     private DateTimeOffset? ParseLocal(string text, out string? error)
     {

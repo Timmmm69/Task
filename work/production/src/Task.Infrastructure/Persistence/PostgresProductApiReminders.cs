@@ -42,7 +42,7 @@ internal sealed partial class PostgresProductApiStore
             var more = rows.Count > limit;
             rows = rows.Take(limit).ToList();
             foreach (var row in rows) AddOccurrence(c, t, r, row);
-            return new(new JsonObject { ["items"] = new JsonArray(rows.Select(x => (JsonNode?)PublicReminder(r,x)).ToArray()), ["nextCursor"] = more ? Cursor(r, GuidValue(rows[^1], "id").ToString()) : null, ["total"] = null });
+            return new(new JsonObject { ["items"] = new JsonArray(rows.Select(x => (JsonNode?)PublicReminder(r, x)).ToArray()), ["nextCursor"] = more ? Cursor(r, GuidValue(rows[^1], "id").ToString()) : null, ["total"] = null });
         }
         ValidateQuery(r, "includeOccurrence");
         if (r.Route.Operation == "create")
@@ -60,15 +60,23 @@ internal sealed partial class PostgresProductApiStore
             CreateOccurrence(c, t, r, id, due);
             var created = RequireReminder(c, t, r with { Id = id });
             Record(c, t, r, "reminder", id, Version(created), null, created);
-            return new(PublicReminder(r,created), 201, Version(created));
+            return new(PublicReminder(r, created), 201, Version(created));
         }
         var current = RequireReminder(c, t, r);
-        if (r.Route.Operation == "get") return new(PublicReminder(r,current), Version: Version(current));
+        if (r.Route.Operation == "get") return new(PublicReminder(r, current), Version: Version(current));
         var occurrenceAction = r.Route.Operation is "snooze" or "dismiss";
         var occurrence = current["currentOccurrence"] as JsonObject;
         var expected = occurrenceAction ? occurrence is null ? 0 : Version(occurrence) : Version(current);
         if (r.ExpectedVersion is null) throw Error(428, "PRECONDITION_REQUIRED", "If-Match is required.");
         if (r.ExpectedVersion != expected) throw Error(412, "VERSION_CONFLICT", "Reminder or current occurrence changed.");
+        if (Text(current, "managedSource") == "task_deadline")
+        {
+            if (r.Route.Operation == "patch") throw Invalid("Измените интервал в карточке задачи, в поле «Напомнить».");
+            if (r.Route.Operation is "cancel" or "dismiss")
+                Run(c, t, "UPDATE calendar.task_deadline_preferences SET offset_minutes=-1 WHERE organization_id=@org AND task_id=@target AND recipient_user_id=@user;", r, ("target", GuidValue(current, "targetObjectId")));
+            if (r.Route.Operation == "reschedule")
+                Run(c, t, "UPDATE calendar.task_deadline_preferences SET offset_minutes=coalesce((SELECT default_reminder_offset_minutes FROM org.user_settings WHERE organization_id=@org AND user_account_id=@user),15) WHERE organization_id=@org AND task_id=@target AND recipient_user_id=@user;", r, ("target", GuidValue(current, "targetObjectId")));
+        }
         var updated = current.DeepClone().AsObject();
         DateTimeOffset? next = null;
         switch (r.Route.Operation)
@@ -126,7 +134,7 @@ internal sealed partial class PostgresProductApiStore
         Record(c, t, r, "reminder", r.Id!.Value, Version(result), current, result);
         if (r.Route.Operation == "dismiss") return new(null, 204);
         if (r.Route.Operation == "snooze") return new(result["currentOccurrence"]!.DeepClone(), Version: Version(result["currentOccurrence"]!.AsObject()));
-        return new(PublicReminder(r,result), r.Route.Operation == "cancel" ? 202 : 200, Version(result));
+        return new(PublicReminder(r, result), r.Route.Operation == "cancel" ? 202 : 200, Version(result));
     }
 
     private static JsonObject ParseReminderFilter(string raw)
@@ -188,6 +196,9 @@ internal sealed partial class PostgresProductApiStore
     }
     private static JsonObject RequireReminder(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
+        var target = One(c, t, "SELECT jsonb_build_object('targetObjectId',r.target_object_id)" + ReminderFrom + "WHERE " + ReminderVisibility + " AND r.id=@id;", r, ("id", r.Id));
+        if (target is null) throw Error(404, "OBJECT_NOT_VISIBLE", "Reminder is not visible.");
+        RequireReminderTarget(c, t, r, GuidValue(target, "targetObjectId"), false);
         var row = One(c, t, "SELECT to_jsonb(r)||jsonb_build_object('targetTitle',coalesce(task.title,event.title))" + ReminderFrom +
             "LEFT JOIN work.tasks task ON task.id=o.id LEFT JOIN calendar.events event ON event.id=o.id WHERE " + ReminderVisibility + " AND r.id=@id FOR UPDATE OF r;", r, ("id", r.Id));
         if (row is null) throw Error(404, "OBJECT_NOT_VISIBLE", "Reminder is not visible.");
@@ -206,15 +217,15 @@ internal sealed partial class PostgresProductApiStore
     private static JsonObject PublicOccurrence(JsonObject row)
     {
         var fields = "id organizationId version reminderId dueAt status attemptCount nextAttemptAt createdAt updatedAt".Split(' ').ToHashSet();
-        return new JsonObject(row.Where(p => fields.Contains(p.Key)).Select(p => KeyValuePair.Create(p.Key,p.Value?.DeepClone())));
+        return new JsonObject(row.Where(p => fields.Contains(p.Key)).Select(p => KeyValuePair.Create(p.Key, p.Value?.DeepClone())));
     }
     private static JsonObject PublicReminder(ProductApiRequest r, JsonObject row)
     {
         var extended = r.Query.GetValueOrDefault("includeOccurrence", "false");
         if (extended is not ("true" or "false")) throw Invalid("includeOccurrence must be true or false.");
         var fields = "id organizationId version createdAt updatedAt targetObjectId recipientUserId triggerType offsetMinutes absoluteTriggerAt nextTriggerAt status snoozedUntil deliveredAt".Split(' ').ToHashSet();
-        if (extended == "true") { fields.Add("currentOccurrence"); fields.Add("targetTitle"); }
-        return new JsonObject(row.Where(p => fields.Contains(p.Key)).Select(p => KeyValuePair.Create(p.Key,p.Value?.DeepClone())));
+        if (extended == "true") { fields.Add("currentOccurrence"); fields.Add("targetTitle"); fields.Add("isAutomatic"); row["isAutomatic"] = Text(row, "managedSource") == "task_deadline"; }
+        return new JsonObject(row.Where(p => fields.Contains(p.Key)).Select(p => KeyValuePair.Create(p.Key, p.Value?.DeepClone())));
     }
     private static void CreateOccurrence(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, Guid id, DateTimeOffset due)
     {

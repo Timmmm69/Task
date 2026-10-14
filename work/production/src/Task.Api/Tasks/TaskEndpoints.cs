@@ -1210,7 +1210,7 @@ internal static partial class TaskEndpoints
             task.DeadlineAtUtc?.UtcDateTime,
             AssigneeIds: task.Content?.AssigneeIds ?? [],
             WatcherIds: task.Content?.WatcherIds ?? [],
-            RecurrenceSeriesId: task.RecurrenceSeriesId, CompletedAt: task.CompletedAtUtc?.UtcDateTime);
+            RecurrenceSeriesId: task.RecurrenceSeriesId, CompletedAt: task.CompletedAtUtc?.UtcDateTime, DeadlineDate: task.Content?.DeadlineDate, DeadlineTimeZone: task.Content?.DeadlineTimeZone, DeadlineReminderOffsetMinutes: task.Content?.DeadlineReminderOffsetMinutes, DeadlineReminderTime: task.Content?.DeadlineReminderTime);
 
     private static string ToContractValue(TaskWorkStatus status) => status switch
     {
@@ -1279,7 +1279,11 @@ internal static partial class TaskEndpoints
         [property: JsonPropertyName("assigneeIds")] IReadOnlyList<Guid> AssigneeIds,
         [property: JsonPropertyName("watcherIds")] IReadOnlyList<Guid> WatcherIds,
         [property: JsonPropertyName("recurrenceSeriesId")] Guid? RecurrenceSeriesId,
-        [property: JsonPropertyName("completedAt")] DateTime? CompletedAt = null);
+        [property: JsonPropertyName("completedAt")] DateTime? CompletedAt = null,
+        [property: JsonPropertyName("deadlineDate")] DateOnly? DeadlineDate = null,
+        [property: JsonPropertyName("deadlineTimeZone")] string? DeadlineTimeZone = null,
+        [property: JsonPropertyName("deadlineReminderOffsetMinutes")] int? DeadlineReminderOffsetMinutes = null,
+        [property: JsonPropertyName("deadlineReminderTime")] string? DeadlineReminderTime = null);
 
     internal sealed record TaskPageResponse(
         [property: JsonPropertyName("items")] IReadOnlyList<TaskResponse> Items,

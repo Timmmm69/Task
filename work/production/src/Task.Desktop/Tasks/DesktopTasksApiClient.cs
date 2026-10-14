@@ -225,6 +225,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
         }
 
         _executor = new DesktopAuthenticatedGetExecutor(httpClient, sessionService, connectivity);
+        _deadlineSettings = new(httpClient, serverEndpoint, sessionService, connectivity);
         _tasksUri = new Uri($"{serverEndpoint.AbsoluteUri.TrimEnd('/')}/api/v1/tasks", UriKind.Absolute);
     }
 
@@ -800,9 +801,17 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
         public TimeOnly? StartTimeLocal { get; init; }
         public string? ScheduleTimeZone { get; init; }
         public int? PlannedDurationMinutes { get; init; }
+        public DateOnly? DeadlineDate { get; init; }
+        public string? DeadlineTimeZone { get; init; }
+        public int? DeadlineReminderOffsetMinutes { get; init; }
+        public string? DeadlineReminderTime { get; init; }
         public TaskCardContent Card => new()
         {
             Description = Description,
+            DeadlineDate = DeadlineDate,
+            DeadlineTimeZone = DeadlineTimeZone,
+            DeadlineReminderOffsetMinutes = DeadlineReminderOffsetMinutes,
+            DeadlineReminderTime = DeadlineReminderTime,
             ProjectId = ProjectId,
             ParentTaskId = ParentTaskId,
             RequesterUserId = RequesterUserId,

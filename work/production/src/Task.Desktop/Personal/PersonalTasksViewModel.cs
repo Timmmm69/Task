@@ -16,7 +16,7 @@ public sealed record PersonalTaskItem(DesktopTaskDto Source)
     public string PriorityText => TaskItemViewModel.LocalizePriority(Source.Priority);
     public string ScheduleText => Source.StartAtUtc is { } start ? start.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
         : Source.Card?.ScheduledDate?.ToString("dd.MM.yyyy") ?? "Без даты";
-    public string DeadlineText => TaskItemViewModel.FormatDate(Source.DeadlineAtUtc, "Без срока");
+    public string DeadlineText => Source.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? TaskItemViewModel.FormatDate(Source.DeadlineAtUtc, "Без срока");
 }
 
 /// <summary>Personal presentation uses the shared draft, statuses and Inbox semantics.</summary>
@@ -196,6 +196,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
             if (source is null || TaskRules.IsTerminal((TaskWorkStatus)source.Status)) { DetailsExpanded = true; return; }
         }
         Editor = new(source is null ? TaskEditorMode.Create : TaskEditorMode.Edit, source, personal: true);
+        if (await _client.GetDeadlineSettingsAsync(_lifetime.Token) is { } settings) Editor.SetReminderDefaults(settings);
         SetChoices();
     }
     private void SetChoices()

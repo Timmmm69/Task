@@ -18,7 +18,7 @@ public sealed class VisualFoundationTests
         var snapshot = RunOnSta(() =>
         {
             var application = global::System.Windows.Application.Current
-                ?? new global::System.Windows.Application();
+                ?? new global::System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             if (!application.Resources.Contains("Task.Shell.NavigationSurface"))
             {
                 application.Resources.MergedDictionaries.Add((ResourceDictionary)global::System.Windows.Application.LoadComponent(

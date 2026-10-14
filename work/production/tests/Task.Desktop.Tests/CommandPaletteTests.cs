@@ -106,11 +106,14 @@ public sealed class CommandPaletteTests
     public async System.Threading.Tasks.Task Debounce_SearchesOnlyLatestValidQuery_PreservesServerRanking()
     {
         var queries = new List<string>();
-        var client = new FakeClient { SearchHandler = (q, _) =>
+        var client = new FakeClient
+        {
+            SearchHandler = (q, _) =>
         {
             queries.Add(q);
             return Ok([Result("project", "Second"), Result("task", "First")]);
-        }};
+        }
+        };
         using var hub = new WorkHubViewModel(client, ["Search.Use"]);
         using var palette = new CommandPaletteViewModel(hub, () => []);
         palette.Open(); palette.Query = "a";
@@ -133,11 +136,14 @@ public sealed class CommandPaletteTests
     {
         var oldResponse = new System.Threading.Tasks.TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>();
         CancellationToken oldToken = default;
-        var client = new FakeClient { SearchHandler = (q, ct) =>
+        var client = new FakeClient
+        {
+            SearchHandler = (q, ct) =>
         {
             if (q == "old") { oldToken = ct; return oldResponse.Task; }
             return Ok([Result("task", "New")]);
-        }};
+        }
+        };
         using var hub = new WorkHubViewModel(client, ["Search.Use"]);
         using var palette = new CommandPaletteViewModel(hub, () => []);
         palette.Open(); palette.Query = "old";
@@ -158,13 +164,16 @@ public sealed class CommandPaletteTests
     [InlineData(503, "недоступен")]
     public async System.Threading.Tasks.Task FailedSearch_HasExplicitFeedback_AndNoProtectedResults(int status, string message)
     {
-        var client = new FakeClient { SearchHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(status switch
+        var client = new FakeClient
         {
-            401 => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure(),
-            403 => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden(),
-            422 => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ValidationFailure("Некорректный запрос"),
-            _ => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ServerUnavailable(),
-        })};
+            SearchHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(status switch
+            {
+                401 => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure(),
+                403 => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden(),
+                422 => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ValidationFailure("Некорректный запрос"),
+                _ => new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ServerUnavailable(),
+            })
+        };
         using var hub = new WorkHubViewModel(client, ["Search.Use", "Task.Read"]);
         using var shell = new MainWindowViewModel(new Uri("https://task.test"), null, workHub: hub);
         shell.Palette.Open(); shell.Palette.Query = "lookup";

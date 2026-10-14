@@ -18,7 +18,8 @@ public sealed record PersonalReminderItem(PersonalReminder Source, string Title)
 {
     public override string ToString() => Title;
     public string State => Source.State switch { "pending" => "Ожидает", "due" => "Пора напомнить", "delivered" => "Доставлено", "expired" => "Неактуально", _ => "Отменено" };
-    public string DueText => Source.DueAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "Ожидает точного времени";
+    public string DueText => (Source.ManagedSource == "task_deadline" ? "До срока (автоматически) · " : "")
+        + (Source.DueAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "Ожидает точного времени");
 }
 
 public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
@@ -108,8 +109,10 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
     {
         DateTimeOffset? until = useDefault ? null : SnoozeChoice switch
         {
-            "5 минут" => _clock.GetUtcNow().AddMinutes(5), "15 минут" => _clock.GetUtcNow().AddMinutes(15),
-            "30 минут" => _clock.GetUtcNow().AddMinutes(30), "1 час" => _clock.GetUtcNow().AddHours(1),
+            "5 минут" => _clock.GetUtcNow().AddMinutes(5),
+            "15 минут" => _clock.GetUtcNow().AddMinutes(15),
+            "30 минут" => _clock.GetUtcNow().AddMinutes(30),
+            "1 час" => _clock.GetUtcNow().AddHours(1),
             "До завтра" => PersonalTimePolicy.ToUtc(TimeZoneInfo.ConvertTime(_clock.GetUtcNow(), TimeZoneInfo.Local).Date.AddDays(1).AddHours(9), TimeZoneInfo.Local),
             "Дата и время" => PersonalTimePolicy.ToUtc(DateTime.ParseExact(SnoozeDateTime.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture), TimeZoneInfo.Local),
             _ => null,

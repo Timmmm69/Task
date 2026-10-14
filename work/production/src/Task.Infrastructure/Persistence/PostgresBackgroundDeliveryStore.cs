@@ -194,6 +194,10 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         await using var reconcile = new NpgsqlCommand(
             """
+            -- Recheck recipients/access on each pass, including account or role changes.
+            SELECT calendar.reconcile_task_deadline(s.organization_id,s.task_id)
+            FROM (SELECT organization_id,task_id FROM calendar.task_deadline_scan
+                ORDER BY checked_at,organization_id,task_id LIMIT @batch) s;
             WITH definitions AS (
                 SELECT r.id, o.lifecycle_state,
                     CASE o.object_type WHEN 'task' THEN task.status WHEN 'calendar_event' THEN event.status END AS target_status,
@@ -223,6 +227,7 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
                 AND occurrence.status IN ('created','failed','claimed')
                 AND (reminder.status IN ('expired','cancelled') OR reminder.next_trigger_at<>occurrence.due_at);
             """, connection, transaction);
+        reconcile.Parameters.AddWithValue("batch", batchSize);
         await reconcile.ExecuteNonQueryAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
             """
@@ -331,7 +336,10 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        // Commands and delivery lock the rule before its occurrence, avoiding cancellation races.
+        // Task writes own the object before the rule; delivery follows the same lock order.
+        await using (var objectLock = new NpgsqlCommand("SELECT id FROM core.objects WHERE organization_id=$1 AND id=$2 FOR SHARE;", connection, transaction))
+        { objectLock.Parameters.AddWithValue(delivery.OrganizationId); objectLock.Parameters.AddWithValue(delivery.TargetObjectId); await objectLock.ExecuteScalarAsync(cancellationToken); }
+        // Commands and delivery lock the rule before its occurrence.
         await using (var rule = new NpgsqlCommand("SELECT id FROM calendar.reminders WHERE id=$1 FOR UPDATE;", connection, transaction))
         {
             rule.Parameters.AddWithValue(delivery.ReminderId);
@@ -349,7 +357,10 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
                 AND occurrence.lease_expires_at>=clock_timestamp()
                 AND r.status IN ('due','scheduled','snoozed') AND r.next_trigger_at=occurrence.due_at
                 AND o.lifecycle_state='active'
-                AND ((o.object_type='task' AND task.status NOT IN ('completed','cancelled'))
+                AND EXISTS(SELECT 1 FROM iam.user_accounts u JOIN core.objects account ON account.organization_id=u.organization_id AND account.id=u.id
+                    WHERE u.organization_id=r.organization_id AND u.id=r.recipient_user_id AND u.account_status='active' AND account.lifecycle_state='active')
+                AND iam.object_allowed(r.organization_id,o.id,r.recipient_user_id,CASE o.object_type WHEN 'task' THEN 'task.read' ELSE 'calendar.read' END,false)
+                AND ((o.object_type='task'  AND task.status NOT IN ('completed','cancelled'))
                     OR (o.object_type='calendar_event' AND event.status='scheduled'))
             FOR SHARE OF o;
             """, connection, transaction))
@@ -374,8 +385,14 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
             }
         }
 
-        await using (var createObject = new NpgsqlCommand(
-            """
+        await using (var dedupeLock = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtextextended($1,0));", connection, transaction))
+        { dedupeLock.Parameters.AddWithValue($"deadline-delivery:{delivery.OrganizationId}:{delivery.TargetObjectId}:{delivery.RecipientUserId}:{delivery.DueAtUtc:O}"); await dedupeLock.ExecuteNonQueryAsync(cancellationToken); }
+        await using var duplicate = new NpgsqlCommand("SELECT EXISTS(SELECT 1 FROM notify.notifications WHERE organization_id=$1 AND source_object_id=$2 AND recipient_user_id=$3 AND notification_type='reminder' AND not_before=$4);", connection, transaction);
+        duplicate.Parameters.AddWithValue(delivery.OrganizationId); duplicate.Parameters.AddWithValue(delivery.TargetObjectId); duplicate.Parameters.AddWithValue(delivery.RecipientUserId); duplicate.Parameters.AddWithValue(delivery.DueAtUtc);
+        if (await duplicate.ExecuteScalarAsync(cancellationToken) is not true)
+        {
+            await using (var createObject = new NpgsqlCommand(
+                """
             INSERT INTO core.objects (
                 id, organization_id, object_type, lifecycle_state, version,
                 created_at, created_by, updated_at, updated_by)
@@ -385,40 +402,41 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
               JOIN calendar.reminders AS reminder ON reminder.id = occurrence.reminder_id
              WHERE occurrence.id = $1 AND occurrence.status = 'claimed' AND occurrence.lock_token = $2;
             """,
-            connection,
-            transaction))
-        {
-            createObject.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.OccurrenceId });
-            createObject.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.LeaseToken });
-            if (await createObject.ExecuteNonQueryAsync(cancellationToken) != 1)
-                throw new InvalidOperationException("REMINDER_LEASE_LOST");
-        }
+                connection,
+                transaction))
+            {
+                createObject.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.OccurrenceId });
+                createObject.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.LeaseToken });
+                if (await createObject.ExecuteNonQueryAsync(cancellationToken) != 1)
+                    throw new InvalidOperationException("REMINDER_LEASE_LOST");
+            }
 
-        await using (var createNotification = new NpgsqlCommand(
-            """
+            await using (var createNotification = new NpgsqlCommand(
+                """
             INSERT INTO notify.notifications (
                 id, organization_id, recipient_user_id, notification_type, source_object_id,
                 title, body, severity, status, not_before, delivered_at,
                 deduplication_key, action_payload)
-            VALUES ($1, $2, $3, 'reminder', $4, 'Напоминание',
+            VALUES ($1, $2, $3, 'reminder', $4, coalesce((SELECT title FROM work.tasks WHERE organization_id=$2 AND id=$4),(SELECT title FROM calendar.events WHERE organization_id=$2 AND id=$4),'Напоминание'),
                     'Наступило время напоминания.', 'info', 'delivered', $5,
                     clock_timestamp(), $6,
                     jsonb_build_object('reminderId', $7::text, 'targetObjectId', $4::text,
                         'sourceObjectType', (SELECT object_type FROM core.objects WHERE organization_id=$2 AND id=$4)));
             """,
-            connection,
-            transaction))
-        {
-            createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.OccurrenceId });
-            createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.OrganizationId });
-            createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.RecipientUserId });
-            createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.TargetObjectId });
-            createNotification.Parameters.Add(new NpgsqlParameter<DateTimeOffset> { TypedValue = delivery.DueAtUtc });
-            createNotification.Parameters.Add(new NpgsqlParameter<string> { TypedValue = delivery.IdempotencyKey });
-            createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.ReminderId });
-            await createNotification.ExecuteNonQueryAsync(cancellationToken);
-        }
+                connection,
+                transaction))
+            {
+                createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.OccurrenceId });
+                createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.OrganizationId });
+                createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.RecipientUserId });
+                createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.TargetObjectId });
+                createNotification.Parameters.Add(new NpgsqlParameter<DateTimeOffset> { TypedValue = delivery.DueAtUtc });
+                createNotification.Parameters.Add(new NpgsqlParameter<string> { TypedValue = delivery.IdempotencyKey });
+                createNotification.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = delivery.ReminderId });
+                await createNotification.ExecuteNonQueryAsync(cancellationToken);
+            }
 
+        }
         await using (var complete = new NpgsqlCommand(
             """
             WITH completed AS (

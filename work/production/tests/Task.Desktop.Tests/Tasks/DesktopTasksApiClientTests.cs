@@ -11,7 +11,8 @@ namespace Task.Desktop.Tests.TaskApi;
 public sealed class DesktopTasksApiClientTests
 {
     [Theory]
-    [InlineData(false)] [InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async global::System.Threading.Tasks.Task ContextCreate_ProductionClientWritesAndReadsRelation(bool parent)
     {
         var relation = Guid.NewGuid(); string? saved = null;

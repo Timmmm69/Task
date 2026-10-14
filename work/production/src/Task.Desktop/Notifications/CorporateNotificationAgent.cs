@@ -52,7 +52,7 @@ public sealed class CorporateNotificationAgent : IDisposable
                 .Where(n => n.NotBefore <= now && (n.ExpiresAt is null || n.ExpiresAt > now)).ToArray();
             _update(items);
             _presenter.Reconcile(items.Where(n => n.IsUnread).Select(n => n.Id).ToHashSet());
-            _journal.InitializeBaseline(items.Where(n => n.NotBefore < _startedAt).Select(n => n.Id).ToArray());
+            _journal.InitializeBaseline(items.Where(n => (n.DeliveredAt ?? n.NotBefore) < _startedAt).Select(n => n.Id).ToArray());
             if (preferences is null || !NotificationPresentationPolicy.Allows(preferences, now)) { _presenter.Clear(); return; }
             var presented = 0;
             foreach (var item in items.Where(n => n.Status is "pending" or "delivered")

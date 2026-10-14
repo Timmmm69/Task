@@ -13,10 +13,18 @@ public sealed class SimilarTaskTests
         Guid.NewGuid(), Guid.NewGuid(), 99, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow,
         "Договор", Guid.NewGuid(), status, DesktopTaskPriority.High, DateTimeOffset.UtcNow,
         DateTimeOffset.UtcNow.AddDays(3), [Guid.NewGuid()], [Guid.NewGuid()], Guid.NewGuid(),
-        new TaskCardContent { Description = "Подготовить", PlannedDurationMinutes = 45,
-            ProjectId = Guid.NewGuid(), PrimaryCounterpartyObjectId = Guid.NewGuid(),
-            ParentTaskId = Guid.NewGuid(), RequesterUserId = Guid.NewGuid(),
-            ScheduledDate = new(2026, 10, 8), StartTimeLocal = new(10, 0), ScheduleTimeZone = "Europe/Minsk" },
+        new TaskCardContent
+        {
+            Description = "Подготовить",
+            PlannedDurationMinutes = 45,
+            ProjectId = Guid.NewGuid(),
+            PrimaryCounterpartyObjectId = Guid.NewGuid(),
+            ParentTaskId = Guid.NewGuid(),
+            RequesterUserId = Guid.NewGuid(),
+            ScheduledDate = new(2026, 10, 8),
+            StartTimeLocal = new(10, 0),
+            ScheduleTimeZone = "Europe/Minsk"
+        },
         status == DesktopTaskStatus.Completed ? DateTimeOffset.UtcNow : null);
 
     private static JsonObject Options(DesktopTaskDto source) => new()

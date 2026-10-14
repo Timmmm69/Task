@@ -63,7 +63,7 @@ public sealed class PersonalSafetyTests : IDisposable
             {
                 Assert.Equal(new[] { "metadata.json", "personal.db" }, zip.Entries.Select(e => e.FullName).Order().ToArray());
                 using var entry = zip.GetEntry("personal.db")!.Open(); Assert.Equal(metadata.Sha256, Convert.ToHexString(SHA256.HashData(entry)));
-                Assert.Equal(4, metadata.SchemaVersion); Assert.Equal(1, metadata.FormatVersion); Assert.Equal(TimeSpan.Zero, metadata.CreatedAtUtc.Offset);
+                Assert.Equal(PersonalDatabase.CurrentSchemaVersion, metadata.SchemaVersion); Assert.Equal(1, metadata.FormatVersion); Assert.Equal(TimeSpan.Zero, metadata.CreatedAtUtc.Offset);
                 Assert.NotEmpty(metadata.AppVersion);
             }
             store.Patch(new(task.Id, 2, title: DesktopTaskField<string>.From("Changed")));
@@ -268,7 +268,7 @@ public sealed class PersonalSafetyTests : IDisposable
             else
             {
                 service.Restore(Package, close, reopen); Assert.Equal("Historical backup", Assert.Single(store!.List()).Title);
-                Assert.Equal(4, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath));
+                Assert.Equal(PersonalDatabase.CurrentSchemaVersion, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath));
             }
             Assert.False(service.HasPendingRestore);
         }
@@ -286,7 +286,7 @@ public sealed class PersonalSafetyTests : IDisposable
         using (var upgraded = new PersonalTaskStore(Paths)) Assert.Equal("Task N", upgraded.Get(id)!.Title);
         var after = Bytes;
         using (var nextBuild = new PersonalTaskStore(Paths)) Assert.Equal(id, Assert.Single(nextBuild.List()).Id);
-        Assert.Equal(after, Bytes); Assert.Equal(4, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath));
+        Assert.Equal(after, Bytes); Assert.Equal(PersonalDatabase.CurrentSchemaVersion, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath));
         Assert.Single(Directory.GetFiles(Path.Combine(Paths.DirectoryPath, "recovery"), "migration-*.db"));
         Assert.DoesNotContain("bin", Paths.DatabasePath); Assert.DoesNotContain("Release", Paths.DatabasePath);
     }

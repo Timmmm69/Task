@@ -97,7 +97,7 @@ public sealed partial class TodayViewModel
                 .OrderBy(t => t.DeadlineAtUtc ?? DateTimeOffset.MaxValue).ThenBy(t => t.Title, StringComparer.CurrentCulture)
                 .Select(t => new TaskItemViewModel(t)).ToArray();
             _activeTaskItems = active;
-            _overdueTasks = active.Where(t => t.Source.DeadlineAtUtc < _clock()).ToArray();
+            _overdueTasks = active.Where(t => Task.Domain.TaskRules.IsOverdue(t.Source.DeadlineAtUtc, t.Source.Card, _clock())).ToArray();
             _reviewTasks = active.Where(t => t.Source.Status == DesktopTaskStatus.Review).ToArray();
             _waitingTasks = active.Where(t => t.Source.Status != DesktopTaskStatus.Review
                 && !t.Source.AssigneeIds.Contains(currentUserId)

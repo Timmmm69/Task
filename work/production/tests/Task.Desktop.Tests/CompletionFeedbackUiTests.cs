@@ -27,13 +27,24 @@ public sealed class CompletionFeedbackUiTests
             var pulse = new TaskCompletionFeedback(dto.Id, dto.Version, true);
             var glyph = new Path
             {
-                Width = 16, Height = 16, Stretch = Stretch.Uniform,
-                Data = Geometry.Parse("M 0,5 L 4,9 L 12,0"), Stroke = SystemColors.WindowTextBrush,
+                Width = 16,
+                Height = 16,
+                Stretch = Stretch.Uniform,
+                Data = Geometry.Parse("M 0,5 L 4,9 L 12,0"),
+                Stroke = SystemColors.WindowTextBrush,
                 DataContext = new TaskItemViewModel(dto, completionFeedback: pulse)
             };
             CompletionFeedbackBehavior.SetFeedback(glyph, pulse);
-            var window = new Window { Content = glyph, Width = 160, Height = 100,
-                Left = -20000, ShowActivated = false, ShowInTaskbar = false, WindowStyle = WindowStyle.None };
+            var window = new Window
+            {
+                Content = glyph,
+                Width = 160,
+                Height = 100,
+                Left = -20000,
+                ShowActivated = false,
+                ShowInTaskbar = false,
+                WindowStyle = WindowStyle.None
+            };
             try
             {
                 window.Show();
@@ -83,8 +94,16 @@ public sealed class CompletionFeedbackUiTests
             VirtualizingPanel.SetIsVirtualizing(list, true);
             VirtualizingPanel.SetVirtualizationMode(list, VirtualizationMode.Recycling);
             ScrollViewer.SetCanContentScroll(list, true);
-            var window = new Window { Content = list, Width = 160, Height = 120,
-                Left = -20000, ShowActivated = false, ShowInTaskbar = false, WindowStyle = WindowStyle.None };
+            var window = new Window
+            {
+                Content = list,
+                Width = 160,
+                Height = 120,
+                Left = -20000,
+                ShowActivated = false,
+                ShowInTaskbar = false,
+                WindowStyle = WindowStyle.None
+            };
             try
             {
                 window.Show();
@@ -216,7 +235,8 @@ public sealed class CompletionFeedbackUiTests
                 finally { dispatcher.BeginInvokeShutdown(DispatcherPriority.Background); }
             });
             Dispatcher.Run();
-        }) { IsBackground = true };
+        })
+        { IsBackground = true };
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         return completed.Task.WaitAsync(TimeSpan.FromSeconds(10));

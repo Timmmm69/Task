@@ -25,6 +25,12 @@ internal static class PostgresTaskCardValidation
     public static void Validate(NpgsqlConnection connection, NpgsqlTransaction transaction, TaskAggregate task, Guid actor, TaskAggregate? previous = null)
     {
         var card = task.Content;
+        if (card.DeadlineDate is not null)
+        {
+            using var zone = new NpgsqlCommand("SELECT EXISTS(SELECT 1 FROM pg_timezone_names WHERE name=$1);", connection, transaction);
+            zone.Parameters.AddWithValue(card.DeadlineTimeZone!);
+            if (zone.ExecuteScalar() is not true) throw new ArgumentException("Date-only deadlines require an IANA time zone.");
+        }
         if (previous?.Content.ProjectId is { } oldProject && oldProject != card.ProjectId)
         {
             using var sourceProject = new NpgsqlCommand("SELECT work.task_project_writable($1,$2,$3,'task.update');", connection, transaction);

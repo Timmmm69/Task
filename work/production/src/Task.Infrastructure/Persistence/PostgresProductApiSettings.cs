@@ -40,6 +40,7 @@ internal sealed partial class PostgresProductApiStore
             ["weekendDays"] = new JsonArray(6, 7),
             ["defaultTaskDurationMinutes"] = 60,
             ["defaultReminderOffsetMinutes"] = 15,
+            ["dateOnlyReminderTime"] = "09:00:00",
             ["autostartEnabled"] = true,
             ["allowLocalPaths"] = true,
             ["confirmCatalogDelete"] = true,
@@ -51,8 +52,9 @@ internal sealed partial class PostgresProductApiStore
         if (r.ExpectedVersion != Version(current)) throw Error(412, "VERSION_CONFLICT", "Settings version has changed.");
         ValidateFields(r.Body, organization
             ? "trashRetentionDays historyRetentionDays changeFeedRetentionDays recurrenceHorizonDays recurrenceMinInstances defaultWorkdayStart defaultWorkdayEnd firstDayOfWeek maxRequestBytes"
-            : "language timeFormat firstDayOfWeek workdayStart workdayEnd weekendDays defaultTaskDurationMinutes defaultReminderOffsetMinutes autostartEnabled allowLocalPaths confirmCatalogDelete missingFileBehavior customPreferences");
+            : "language timeFormat firstDayOfWeek workdayStart workdayEnd weekendDays defaultTaskDurationMinutes defaultReminderOffsetMinutes dateOnlyReminderTime autostartEnabled allowLocalPaths confirmCatalogDelete missingFileBehavior customPreferences");
         if (r.Body.Count == 0) throw Invalid("At least one settings field is required.");
+        if (r.Body["dateOnlyReminderTime"] is { } reminderTime && !TimeOnly.TryParse(reminderTime.ToString(), out _)) throw Invalid("Invalid date-only reminder time.");
         if (r.Body["customPreferences"] is not null && r.Body["customPreferences"] is not JsonObject) throw Invalid("customPreferences must be an object.");
         if (r.Body["weekendDays"] is JsonArray days && days.Select(d => d!.GetValue<int>()).Distinct().Count() != days.Count) throw Invalid("Weekend days must be unique.");
         foreach (var pair in r.Body) current[pair.Key] = pair.Value?.DeepClone();

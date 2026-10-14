@@ -20,7 +20,7 @@ internal static partial class TaskEndpoints
         using var document = JsonDocument.Parse(body);
         var service = context.RequestServices.GetService<PermissionDecisionService>();
         foreach (var (field, permission) in new[] { ("assigneeIds", "task.assign"), ("watcherIds", "task.watch"),
-                     ("projectId", "project.read"), ("primaryCounterpartyObjectId", "contact.read"), ("parentTaskId", "task.read") })
+                     ("projectId", "project.read"), ("primaryCounterpartyObjectId", "contact.read"), ("parentTaskId", "task.read"), ("deadlineReminderOffsetMinutes", "reminder.manageown") })
         {
             if (!document.RootElement.TryGetProperty(field, out var value) || value.ValueKind == JsonValueKind.Null) continue;
             if (context.Request.Method == "POST" && value.ValueKind == JsonValueKind.Array && value.GetArrayLength() == 0) continue;

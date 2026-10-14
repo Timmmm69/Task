@@ -10,8 +10,11 @@ public sealed partial class MainWindowViewModel
         && Tasks.Editor is null && !Tasks.IsBusy && !Tasks.IsMutationBusy
         && Tasks.Workspace?.IsBusy != true && string.IsNullOrEmpty(Tasks.Workspace?.CheckText)
         && string.IsNullOrEmpty(Tasks.Workspace?.Comment)
-        && Projects is { IsActive: true, CanRead: true, IsDetailLoading: false, Editor: null,
-            SelectedItem.Source.LifecycleState: "active" }
+        && Projects is
+        {
+            IsActive: true, CanRead: true, IsDetailLoading: false, Editor: null,
+            SelectedItem.Source.LifecycleState: "active"
+        }
         && Projects.State == ProjectsScreenState.Loaded
         && Calendar?.Editor is null && Inbox?.HasConversion != true;
     public string ProjectTaskActionHint => CanAddProjectTask ? "Открыть форму с выбранным проектом."

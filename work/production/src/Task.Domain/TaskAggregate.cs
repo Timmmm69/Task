@@ -25,6 +25,8 @@ public sealed class TaskAggregate
         Schedule = schedule;
         Content = content ?? new TaskCardContent();
         Content.Validate(schedule.StartsAtUtc);
+        if (Content.DeadlineDate is not null && schedule.DeadlineUtc is not null)
+            throw new ArgumentException("Choose a date-only deadline or an exact deadline.");
     }
 
     public SyncableEntityMetadata Metadata { get; }

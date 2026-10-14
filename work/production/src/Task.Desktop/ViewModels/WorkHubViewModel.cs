@@ -55,6 +55,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private string _userWorkdayEnd = "18:00:00";
     private int _defaultTaskDurationMinutes = 60;
     private int _defaultReminderOffsetMinutes = 15;
+    private string _dateOnlyReminderTime = "09:00";
     private bool _autostartEnabled = true;
     private bool _allowLocalPaths = true;
     private bool _confirmCatalogDelete = true;
@@ -217,6 +218,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public string UserWorkdayStart { get => _userWorkdayStart; set => SetProperty(ref _userWorkdayStart, value); }
     public string UserWorkdayEnd { get => _userWorkdayEnd; set => SetProperty(ref _userWorkdayEnd, value); }
     public int DefaultTaskDurationMinutes { get => _defaultTaskDurationMinutes; set => SetProperty(ref _defaultTaskDurationMinutes, value); }
+    public string DateOnlyReminderTime { get => _dateOnlyReminderTime; set => SetProperty(ref _dateOnlyReminderTime, value); }
     public int DefaultReminderOffsetMinutes { get => _defaultReminderOffsetMinutes; set => SetProperty(ref _defaultReminderOffsetMinutes, value); }
     public bool AutostartEnabled { get => _autostartEnabled; set => SetProperty(ref _autostartEnabled, value); }
     public bool AllowLocalPaths { get => _allowLocalPaths; set => SetProperty(ref _allowLocalPaths, value); }
@@ -301,6 +303,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         WorkdayEnd = UserWorkdayEnd,
         DefaultTaskDurationMinutes = DefaultTaskDurationMinutes,
         DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes,
+        DateOnlyReminderTime = DateOnlyReminderTime,
         AutostartEnabled = AutostartEnabled,
         AllowLocalPaths = AllowLocalPaths,
         ConfirmCatalogDelete = ConfirmCatalogDelete,
@@ -512,7 +515,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             DefaultTaskDurationMinutes is < 5 or > 1440 || DefaultReminderOffsetMinutes is < 0 or > 525600 ||
             MissingFileBehavior is not ("show_actions" or "keep_inactive" or "prompt_relink"))
         { SetFeedback("Проверьте формат времени и допустимые значения настроек.", WorkHubFeedbackKind.Warning); return; }
-        var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = UserWorkdayStart, WorkdayEnd = UserWorkdayEnd, DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
+        var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = UserWorkdayStart, WorkdayEnd = UserWorkdayEnd, DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, DateOnlyReminderTime = DateOnlyReminderTime, AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
         Apply(await _client.UpdateUserSettingsAsync(draft, ct), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveNotificationPreferencesAsync(object? _, CancellationToken ct)
@@ -570,6 +573,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         _userSettings = value; UserLanguage = value.Language; UserTimeFormat = value.TimeFormat;
         FirstDayOfWeek = value.FirstDayOfWeek;
         UserWorkdayStart = value.WorkdayStart; UserWorkdayEnd = value.WorkdayEnd;
+        DateOnlyReminderTime = value.DateOnlyReminderTime;
         DefaultTaskDurationMinutes = value.DefaultTaskDurationMinutes; DefaultReminderOffsetMinutes = value.DefaultReminderOffsetMinutes;
         AutostartEnabled = value.AutostartEnabled; AllowLocalPaths = value.AllowLocalPaths;
         ConfirmCatalogDelete = value.ConfirmCatalogDelete; MissingFileBehavior = value.MissingFileBehavior;

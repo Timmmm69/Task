@@ -7,7 +7,7 @@ namespace Task.Desktop.Personal;
 internal sealed class PersonalDatabase : IDisposable
 {
     internal const int ApplicationId = 0x54534B50;
-    internal const int CurrentSchemaVersion = 4;
+    internal const int CurrentSchemaVersion = 5;
     internal SqliteConnection Connection { get; }
 
     public PersonalDatabase(PersonalDataPaths paths, Action<string>? fault = null, bool restoring = false, int targetVersion = CurrentSchemaVersion)
@@ -115,6 +115,12 @@ internal sealed class PersonalDatabase : IDisposable
         if (version == 3 && targetVersion >= 4)
         {
             command.CommandText = PersonalWorkspaceMigration.Sql;
+            command.ExecuteNonQuery();
+            version = 4;
+        }
+        if (version == 4 && targetVersion >= 5)
+        {
+            command.CommandText = PersonalDeadlineMigration.Sql;
             command.ExecuteNonQuery();
         }
         command.CommandText = "SELECT value FROM personal_metadata WHERE key='PersonalActorId';";

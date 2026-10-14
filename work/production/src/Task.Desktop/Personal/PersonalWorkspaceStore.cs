@@ -181,7 +181,9 @@ public sealed partial class PersonalTaskStore
                 archived_at=CASE WHEN $state='archived' THEN COALESCE(archived_at,$now) WHEN $state='active' THEN NULL ELSE archived_at END,
                 deleted_at=CASE WHEN $state='trashed' THEN $now ELSE NULL END,updated_at=$now;
             """, tx, ("$id", id.ToString("D")), ("$prior", target == "trashed" ? item.Lifecycle : null), ("$state", target), ("$now", now));
-        ledger.ExecuteNonQuery(); BumpWorkspaceObject(item, tx); tx.Commit(); return true;
+        ledger.ExecuteNonQuery(); BumpWorkspaceObject(item, tx);
+        if (item.ObjectType == "task") ReconcileDeadlineReminder(id, tx);
+        tx.Commit(); return true;
     });
     public void PurgeWorkspaceObject(Guid id, long version) => Locked(() =>
     {
@@ -199,8 +201,6 @@ public sealed partial class PersonalTaskStore
         if (dependencies.ExecuteScalar() is not null) throw new ArgumentException("Объект используется. Сначала удалите или переназначьте зависимые записи Task.");
         using var c = Command("""
             DELETE FROM object_links WHERE source_id=$id OR target_id=$id;
-            DELETE FROM personal_notifications WHERE target_id=$id;
-            DELETE FROM personal_reminders WHERE target_id=$id;
             DELETE FROM personal_lifecycle WHERE object_id=$id;
             """ + (item.ObjectType == "task" ? "DELETE FROM checklist WHERE task_id=$id;" : "") + $"DELETE FROM {WorkspaceTable(item.ObjectType)} WHERE id=$id AND version=$version;", tx,
             ("$id", id.ToString("D")), ("$version", version));

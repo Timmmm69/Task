@@ -51,7 +51,9 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 t.status,
                 t.priority,
                 t.start_at_utc,
-                t.deadline_at, t.card_content, t.completed_at,
+                t.deadline_at, t.card_content || jsonb_build_object('deadlineReminderOffsetMinutes',
+                    (SELECT p.offset_minutes FROM calendar.task_deadline_preferences p WHERE p.organization_id=o.organization_id AND p.task_id=o.id AND p.recipient_user_id=$3), 'deadlineReminderTime',
+                    (SELECT p.date_only_time::text FROM calendar.task_deadline_preferences p WHERE p.organization_id=o.organization_id AND p.task_id=o.id AND p.recipient_user_id=$3)), t.completed_at,
                 (SELECT series_id FROM calendar.recurrence_occurrences ro WHERE ro.organization_id=o.organization_id AND ro.task_id=o.id LIMIT 1)
             FROM core.objects AS o
             INNER JOIN work.tasks AS t
@@ -110,7 +112,9 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 t.status,
                 t.priority,
                 t.start_at_utc,
-                t.deadline_at, t.card_content, t.completed_at,
+                t.deadline_at, t.card_content || jsonb_build_object('deadlineReminderOffsetMinutes',
+                    (SELECT p.offset_minutes FROM calendar.task_deadline_preferences p WHERE p.organization_id=o.organization_id AND p.task_id=o.id AND p.recipient_user_id=$6), 'deadlineReminderTime',
+                    (SELECT p.date_only_time::text FROM calendar.task_deadline_preferences p WHERE p.organization_id=o.organization_id AND p.task_id=o.id AND p.recipient_user_id=$6)), t.completed_at,
                 (SELECT series_id FROM calendar.recurrence_occurrences ro WHERE ro.organization_id=o.organization_id AND ro.task_id=o.id LIMIT 1),
                 snapshot.boundary
             FROM snapshot
@@ -172,8 +176,11 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
         ParseWorkStatus(reader.GetString(7)),
         ParsePriority(reader.GetString(8)),
         ReadNullableUtcTimestamp(reader, 9),
-        ReadNullableUtcTimestamp(reader, 10), TaskCardContent.FromJson(reader.GetString(11)),
+        ReadNullableUtcTimestamp(reader, 10), ReadCard(reader.GetString(11)),
         ReadNullableUtcTimestamp(reader, 12), reader.IsDBNull(13) ? null : reader.GetGuid(13));
+
+    private static TaskCardContent ReadCard(string json) => TaskCardContent.FromJson(json) with
+    { DeadlineReminderTime = System.Text.Json.Nodes.JsonNode.Parse(json)?["deadlineReminderTime"]?.GetValue<string>() };
 
     private static DateTimeOffset ReadUtcTimestamp(NpgsqlDataReader reader, int ordinal) =>
         reader.GetFieldValue<DateTimeOffset>(ordinal).ToUniversalTime();

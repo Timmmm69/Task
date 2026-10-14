@@ -38,7 +38,7 @@ public sealed class InboxItemViewModel
         var card = task.Card;
         return task.Status == DesktopTaskStatus.New
             && task.StartAtUtc is null
-            && task.DeadlineAtUtc is null
+            && task.DeadlineAtUtc is null && task.Card?.DeadlineDate is null
             && task.AssigneeIds.Count == 0
             && task.WatcherIds.Count == 0
             && (card is null ||

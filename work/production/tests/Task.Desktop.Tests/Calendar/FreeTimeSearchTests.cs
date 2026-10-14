@@ -17,7 +17,9 @@ public sealed class FreeTimeSearchTests
         FreeTimeCalculator.Find(items, Settings, TimeZoneInfo.Utc, Monday, Monday.AddDays(1), now ?? At(8), minutes);
 
     [Theory]
-    [InlineData(15)] [InlineData(30)] [InlineData(60)]
+    [InlineData(15)]
+    [InlineData(30)]
+    [InlineData(60)]
     public void EmptyDay_ReturnsFirstThreeNonOverlappingSlots(int minutes)
     {
         var slots = Find([], minutes: minutes);
@@ -27,7 +29,9 @@ public sealed class FreeTimeSearchTests
     }
 
     [Fact] public void FullyBusyDay_HasNoSlots() => Assert.Empty(Find([Busy(9, 18)]));
-    [Theory] [InlineData(30, 1)] [InlineData(29, 0)]
+    [Theory]
+    [InlineData(30, 1)]
+    [InlineData(29, 0)]
     public void ExactGap_RequiresFullDuration(int gap, int expected)
     {
         var slots = Find([Busy(9, 12), Busy(12, 18, fromMinute: gap)]);
@@ -55,7 +59,10 @@ public sealed class FreeTimeSearchTests
         Assert.Equal(At(14, 13), slots[0].StartUtc);
         Assert.Empty(Find([], At(17, 31)));
     }
-    [Theory] [InlineData(4, 18)] [InlineData(5, 10)] [InlineData(6, 10)]
+    [Theory]
+    [InlineData(4, 18)]
+    [InlineData(5, 10)]
+    [InlineData(6, 10)]
     public void NextWorkingDay_SkipsConfiguredWeekends(int days, int hour)
     {
         var slots = FreeTimeCalculator.Find([], Settings, TimeZoneInfo.Utc, Monday.AddDays(days), Monday.AddDays(11), At(hour).AddDays(days), 30);
@@ -77,7 +84,8 @@ public sealed class FreeTimeSearchTests
     }
 
     [Theory]
-    [InlineData(2026, 3, 8, 2)] [InlineData(2026, 11, 1, 3)]
+    [InlineData(2026, 3, 8, 2)]
+    [InlineData(2026, 11, 1, 3)]
     public void DstTransitions_UseElapsedUtcDurationAndOffsets(int year, int month, int day, int count)
     {
         var zone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York");
@@ -141,8 +149,11 @@ public sealed class FreeTimeSearchTests
     [Fact]
     public async System.Threading.Tasks.Task RangeError_IsSplitIntoBoundedRequests()
     {
-        var client = new Client { Read = (from, to) => to - from > TimeSpan.FromDays(1)
-            ? new DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge() : new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], from, to)) };
+        var client = new Client
+        {
+            Read = (from, to) => to - from > TimeSpan.FromDays(1)
+            ? new DesktopCalendarResult<DesktopSchedulePage>.RangeTooLarge() : new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], from, to))
+        };
         var result = await new FreeTimeSearch(client, TimeZoneInfo.Utc).SearchAsync(Settings, Monday, Monday.AddDays(7), At(8), 30, true, default);
         Assert.Null(result.Error); Assert.Equal(3, result.Slots.Count); Assert.InRange(client.Ranges.Count, 2, 64);
         Assert.All(client.Ranges, r => Assert.True(r.To - r.From <= TimeSpan.FromDays(7)));
@@ -217,8 +228,11 @@ public sealed class FreeTimeSearchTests
     [Fact]
     public async System.Threading.Tasks.Task ShowFurther_RequestsOnlyTheNextWeek()
     {
-        var client = new Client { Read = (from, to) => new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new(
-            [Busy(0, 23) with { StartAtUtc = from, EndAtUtc = to }], from, to)) };
+        var client = new Client
+        {
+            Read = (from, to) => new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new(
+            [Busy(0, 23) with { StartAtUtc = from, EndAtUtc = to }], from, to))
+        };
         using var vm = Vm(client); await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();
         Assert.Empty(vm.FreeTimeSlots); Assert.True(vm.MoreFreeTimeCommand.CanExecute(null));
         await vm.MoreFreeTimeCommand.ExecuteAsync(); var last = client.Ranges.Last();
@@ -234,7 +248,9 @@ public sealed class FreeTimeSearchTests
         pending.SetResult(new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new([], At(0), At(0).AddDays(7)))); await task;
         Assert.Empty(vm.FreeTimeSlots); Assert.False(vm.FindTimeCommand.CanExecute(null)); Assert.False(vm.ShowFreeTime);
     }
-    [Theory] [InlineData(0)] [InlineData(1)]
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
     public void OrdinaryCreateDraft_KeepsExactDstInstantAndDuration(int repeatedHour)
     {
         var zone = TimeZoneInfo.FindSystemTimeZoneById("America/New_York");
@@ -256,7 +272,12 @@ public sealed class FreeTimeSearchTests
     private static CalendarViewModel Vm(Client client) => new(client, ["Calendar.Read", "CalendarEvent.Create"], TimeZoneInfo.Utc,
         Monday.ToDateTime(TimeOnly.MinValue), clock: () => At(8), userSettings: _ => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopUserSettings>>(new DesktopWorkResult<DesktopUserSettings>.Succeeded(Settings)));
     [Theory]
-    [InlineData("next")] [InlineData("previous")] [InlineData("today")] [InlineData("week")] [InlineData("month")] [InlineData("date")]
+    [InlineData("next")]
+    [InlineData("previous")]
+    [InlineData("today")]
+    [InlineData("week")]
+    [InlineData("month")]
+    [InlineData("date")]
     public async System.Threading.Tasks.Task ManualNavigation_ClearsChosenSlotAndCreateOffer(string navigation)
     {
         using var vm = Vm(new Client()); await vm.ActivateAsync(); await vm.FindTimeCommand.ExecuteAsync();

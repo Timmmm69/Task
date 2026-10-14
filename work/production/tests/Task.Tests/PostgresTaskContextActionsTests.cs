@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using Task.Application;
 using Task.Domain;
 namespace Task.Tests;
+
 public sealed partial class PostgresProductApiTests
 {
     [Fact]

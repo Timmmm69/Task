@@ -21,8 +21,14 @@ public sealed class ViewStateUiTests
     {
         if (Environment.GetEnvironmentVariable("TASK_VIEW_STATE_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                RedirectStandardOutput = true, RedirectStandardError = true, WindowStyle = ProcessWindowStyle.Hidden };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ViewStateUiTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWpf_RestartResizeSortPermissionsAndSubscriptionLifetime));
             start.Environment["TASK_VIEW_STATE_PROBE"] = "1";

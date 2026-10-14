@@ -127,6 +127,12 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                 command.AuditAction == "task.change_status" ? "task.changestatus" : "task.update");
             var mutation = command.Mutation(current)
                 ?? throw new InvalidOperationException("The Task mutation returned no result.");
+            if (command.RevalidatePermissions && mutation.Aggregate.Content.DeadlineReminderOffsetMinutes is not null)
+            {
+                using var preferenceAccess = new NpgsqlCommand("SELECT iam.permission_available($1,$2,'reminder.manageown');", connection, transaction);
+                preferenceAccess.Parameters.AddWithValue(command.OrganizationId); preferenceAccess.Parameters.AddWithValue(command.ActorUserId);
+                if (preferenceAccess.ExecuteScalar() is not true) throw new KeyNotFoundException("Own reminder preference is not writable.");
+            }
             if (current is null)
             {
                 using var scope = new NpgsqlCommand("SELECT iam.scope_allows($1,$2,$3,'task.create') AND NOT iam.scope_denied($1,$2,$3,'task.create');", connection, transaction);
@@ -200,6 +206,17 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                     cancellationToken);
             }
 
+            // Resolve the private projection after task/rule writes, before persisting the replay response.
+            using (var ownReminder = new NpgsqlCommand("SELECT offset_minutes,date_only_time::text FROM calendar.task_deadline_preferences WHERE organization_id=$1 AND task_id=$2 AND recipient_user_id=$3;", connection, transaction))
+            {
+                ownReminder.Parameters.AddWithValue(command.OrganizationId); ownReminder.Parameters.AddWithValue(command.TaskId); ownReminder.Parameters.AddWithValue(command.ActorUserId);
+                using var own = ownReminder.ExecuteReader();
+                if (own.Read() && System.Text.Json.Nodes.JsonNode.Parse(mutation.HttpResult.BodyJson) is System.Text.Json.Nodes.JsonObject body)
+                {
+                    body["deadlineReminderOffsetMinutes"] = own.GetInt32(0); body["deadlineReminderTime"] = own.GetString(1);
+                    mutation = mutation with { HttpResult = mutation.HttpResult with { BodyJson = body.ToJsonString() } };
+                }
+            }
             var headersJson = JsonSerializer.Serialize(mutation.HttpResult.Headers);
             await CompleteAsync(
                 connection,

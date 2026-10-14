@@ -6,7 +6,7 @@ namespace Task.Tests;
 public sealed partial class PostgresProductApiTests
 {
     private static ProductApiResponse ReminderCall(Database db, string operation, string body = "{}", Guid? id = null, int? version = null,
-        string? key = null, Guid? user = null, Dictionary<string,string>? query = null)
+        string? key = null, Guid? user = null, Dictionary<string, string>? query = null)
     {
         query = query is null ? new() : new(query);
         query["includeOccurrence"] = "true";
@@ -16,12 +16,14 @@ public sealed partial class PostgresProductApiTests
     {
         var id = Guid.NewGuid();
         db.Sql("INSERT INTO core.objects(id,organization_id,object_type,created_at,created_by,updated_at,updated_by) VALUES($1,$2,'task',clock_timestamp(),$3,clock_timestamp(),$3);", id, db.Organization, db.User);
-        db.Sql("INSERT INTO work.tasks(id,organization_id,title,start_at_utc,deadline_at) VALUES($1,$2,'Reminder target',clock_timestamp()+interval '1 day',clock_timestamp()+interval '2 days');", id, db.Organization);
+        db.Sql("INSERT INTO work.tasks(id,organization_id,title,start_at_utc,deadline_at,card_content) VALUES($1,$2,'Reminder target',clock_timestamp()+interval '1 day',clock_timestamp()+interval '2 days','{\"deadlineReminderOffsetMinutes\":-1}');", id, db.Organization);
         return id;
     }
     private static string ReminderBody(Database db, Guid target, string trigger = "absolute", DateTimeOffset? due = null) => new JsonObject
     {
-        ["targetObjectId"] = target, ["recipientUserId"] = db.User, ["triggerType"] = trigger,
+        ["targetObjectId"] = target,
+        ["recipientUserId"] = db.User,
+        ["triggerType"] = trigger,
         ["absoluteTriggerAt"] = trigger == "absolute" ? JsonValue.Create(due ?? DateTimeOffset.UtcNow.AddHours(2)) : null,
         ["offsetMinutes"] = null
     }.ToJsonString();
@@ -32,26 +34,30 @@ public sealed partial class PostgresProductApiTests
     {
         using var db = Database.Create(); if (db is null) return;
         var target = ReminderTarget(db);
-        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2);",db.User,db.Role("system_employee"));
-        var body = ReminderBody(db,target);
-        var created = db.Call("reminders","create",body,key:"reminder-permission-001",admin:false,revalidatePermissions:true);
+        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2);", db.User, db.Role("system_employee"));
+        var body = ReminderBody(db, target);
+        var created = db.Call("reminders", "create", body, key: "reminder-permission-001", admin: false, revalidatePermissions: true);
         Assert.Null(created.Body!["currentOccurrence"]); Assert.Null(created.Body["targetTitle"]);
         Assert.Null(created.Body["snoozeCount"]); Assert.Null(created.Body["createdBy"]);
-        var page = db.Call("reminders","list",admin:false,revalidatePermissions:true).Body!;
+        var page = db.Call("reminders", "list", admin: false, revalidatePermissions: true).Body!;
         Assert.Null(page["hasMore"]); Assert.True(page.AsObject().ContainsKey("total"));
-        db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'task.read','deny');",db.Role("system_employee"));
-        Assert.Equal(404,Assert.Throws<ProductApiException>(()=>db.Call("reminders","create",body,key:"reminder-permission-001",admin:false,revalidatePermissions:true)).Status);
-        db.Sql("DELETE FROM iam.role_permissions WHERE role_id=$1 AND permission_code='task.read' AND effect='deny';",db.Role("system_employee"));
-        db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'reminder.manageown','deny');",db.Role("system_employee"));
-        Assert.Equal(403,Assert.Throws<ProductApiException>(()=>db.Call("reminders","create",body,key:"reminder-permission-001",admin:false,revalidatePermissions:true)).Status);
-        Assert.Equal(1,db.Count("calendar.reminders"));
+        db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'task.read','deny');", db.Role("system_employee"));
+        Assert.Equal(404, Assert.Throws<ProductApiException>(() => db.Call("reminders", "create", body, key: "reminder-permission-001", admin: false, revalidatePermissions: true)).Status);
+        db.Sql("DELETE FROM iam.role_permissions WHERE role_id=$1 AND permission_code='task.read' AND effect='deny';", db.Role("system_employee"));
+        db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'reminder.manageown','deny');", db.Role("system_employee"));
+        Assert.Equal(403, Assert.Throws<ProductApiException>(() => db.Call("reminders", "create", body, key: "reminder-permission-001", admin: false, revalidatePermissions: true)).Status);
+        Assert.Equal(1, db.Count("calendar.reminders"));
         db.Sql("CREATE FUNCTION public.fail_reminder_event() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.event_type='ReminderCreated' THEN RAISE EXCEPTION 'fixture rollback'; END IF; RETURN NEW; END $$; CREATE TRIGGER fail_reminder_event BEFORE INSERT ON governance.domain_events FOR EACH ROW EXECUTE FUNCTION public.fail_reminder_event();");
-        Assert.Throws<Npgsql.PostgresException>(()=>db.Call("reminders","create",body));
-        Assert.Equal(1,db.Count("calendar.reminders")); Assert.Equal(1,db.Count("calendar.reminder_occurrences")); Assert.Equal(1,db.Count("governance.domain_events"));
+        Assert.Throws<Npgsql.PostgresException>(() => db.Call("reminders", "create", body));
+        Assert.Equal(1, db.Count("calendar.reminders")); Assert.Equal(1, db.Count("calendar.reminder_occurrences")); Assert.Equal(1, db.Count("governance.domain_events"));
     }
 
     [Theory]
-    [InlineData("absolute")][InlineData("before_start")][InlineData("before_deadline")][InlineData("at_start")][InlineData("at_deadline")]
+    [InlineData("absolute")]
+    [InlineData("before_start")]
+    [InlineData("before_deadline")]
+    [InlineData("at_start")]
+    [InlineData("at_deadline")]
     public void ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(string trigger)
     {
         using var db = Database.Create(); if (db is null) return;

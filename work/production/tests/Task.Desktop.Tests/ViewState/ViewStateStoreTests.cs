@@ -34,7 +34,9 @@ public sealed class ViewStateStoreTests : IDisposable
     }
 
     [Theory]
-    [InlineData(2, 60)] [InlineData(10000, 500)] [InlineData(125.25, 125.25)]
+    [InlineData(2, 60)]
+    [InlineData(10000, 500)]
+    [InlineData(125.25, 125.25)]
     public async System.Threading.Tasks.Task Width_ClampsToCurrentControlLimits(double input, double expected)
     {
         await using var store = Create(); await store.Ready;
@@ -121,7 +123,8 @@ public sealed class ViewStateStoreTests : IDisposable
     }
 
     [Theory]
-    [InlineData(false)] [InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async System.Threading.Tasks.Task Sort_AscendingAndDescendingSurviveRestart(bool descending)
     {
         await using var store = Create(); await store.Ready;

@@ -131,7 +131,7 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             FormatMoment(taskDetails?.Source.UpdatedAtUtc, timeZone, "Не указано"),
             top,
             Math.Max(54d, durationMinutes / 60d * HourHeight - 6d),
-            taskDetails?.Source.DeadlineAtUtc < now);
+            taskDetails is not null && Task.Domain.TaskRules.IsOverdue(taskDetails.Source.DeadlineAtUtc, taskDetails.Source.Card, now));
     }
 
     internal static TodayPlannerItemViewModel FromTask(
@@ -170,7 +170,7 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             FormatMoment(source.UpdatedAtUtc, timeZone, "Не указано"),
             start?.TimeOfDay.TotalMinutes / 60d * HourHeight ?? 0d,
             Math.Max(54d, (source.Card?.PlannedDurationMinutes ?? 45) / 60d * HourHeight - 6d),
-            source.DeadlineAtUtc < now);
+            Task.Domain.TaskRules.IsOverdue(source.DeadlineAtUtc, source.Card, now));
     }
 
     private static string FirstContent(params string?[] values) =>
@@ -372,7 +372,7 @@ public sealed partial class TodayViewModel
             .ToHashSet();
         var queue = _activeTaskItems
             .Where(item => !scheduledIds.Contains(item.Id))
-            .Where(item => item.Source.DeadlineAtUtc < now || !item.Source.StartAtUtc.HasValue)
+            .Where(item => Task.Domain.TaskRules.IsOverdue(item.Source.DeadlineAtUtc, item.Source.Card, now) || !item.Source.StartAtUtc.HasValue)
             .Select(item => TodayPlannerItemViewModel.FromTask(item, _timeZone, now))
             .OrderByDescending(item => item.IsOverdue)
             .ThenBy(item => item.Source is TaskItemViewModel task ? task.Source.DeadlineAtUtc : null)

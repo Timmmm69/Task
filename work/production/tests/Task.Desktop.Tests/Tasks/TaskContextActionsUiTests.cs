@@ -72,7 +72,8 @@ public sealed class TaskContextActionsUiTests
                     holder.Children.Add(nestedButton); holder.Children.Add(check); var nestedRow = new ListBoxItem { Content = holder, DataContext = second };
                     var nestedList = new ListBox(); nestedList.Items.Add(nestedRow); var testWindow = new Window { Content = nestedList, Width = 300, Height = 200, ShowInTaskbar = false };
                     testWindow.Show(); testWindow.UpdateLayout(); Assert.Null(TaskRowAction.ResolveRow(nestedList, nestedButton)); Assert.Null(TaskRowAction.ResolveRow(nestedList, check)); testWindow.Close();
-                    Assert.True(company.Activate()); await DoubleClick(text);
+                    // Closing the auxiliary window posts foreground restoration asynchronously.
+                    await Drain(company); await TaskContextActionsTests.Until(() => company.Activate()); await DoubleClick(text);
                     await TaskContextActionsTests.Until(() => tasks.Editor is not null); await Drain(company);
                     Assert.Equal(second.Id, tasks.Editor!.SourceId); Assert.True(Find<TextBox>(company, "TaskTitleTextBox").IsKeyboardFocused);
                     await tasks.DiscardEditorCommand.ExecuteAsync(); await Drain(company); Assert.True(list.IsKeyboardFocused);

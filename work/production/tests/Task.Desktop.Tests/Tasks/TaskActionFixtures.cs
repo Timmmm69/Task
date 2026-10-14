@@ -1,5 +1,6 @@
 using Task.Desktop.Projects;
 namespace Task.Desktop.Tests.TaskScreen;
+
 internal sealed class ActionProjectsClient : IDesktopProjectsApiClient
 {
     public DesktopProjectDto Project { get; set; } = new(Guid.NewGuid(), Guid.NewGuid(), 1, "Проект команды", null, Guid.NewGuid(), null, DesktopProjectStatus.Active, null, null, null, null, null, "active");

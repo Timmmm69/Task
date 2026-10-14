@@ -225,6 +225,7 @@ public sealed partial class PostgresProductApiTests
         public Guid Session { get; } = Guid.NewGuid();
         public Guid OtherSession { get; } = Guid.NewGuid();
         public TaskPersistenceRuntime Runtime { get; }
+        public TaskPersistenceRuntime ApiRuntime => apiRuntime;
         public NpgsqlDataSource Source => source;
         public Guid Role(string code)
         { using var command = source.CreateCommand("SELECT id FROM iam.roles WHERE organization_id=$1 AND code=$2"); command.Parameters.AddWithValue(Organization); command.Parameters.AddWithValue(code); return (Guid)command.ExecuteScalar()!; }

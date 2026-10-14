@@ -17,7 +17,7 @@ public sealed class PersonalWorkspaceTests : IDisposable
     private PersonalDataPaths Paths => new(_root);
     private PersonalTaskStore Open() => new(Paths);
     private static long Version(PersonalTaskStore s, Guid id) => s.WorkspaceObjects().Single(o => o.Id == id).Version;
-    internal const string RemoveWorkspaceSchema = """
+    internal const string RemoveWorkspaceSchema = PersonalPlanningTests.RemoveDeadlineSchema + """
         DROP VIEW personal_objects; DROP INDEX personal_tasks_active; DROP INDEX personal_projects_active;
         DROP TABLE object_links; DROP TABLE personal_file_locations; DROP TABLE personal_catalog;
         DROP TABLE personal_contacts; DROP TABLE personal_lifecycle; DROP TABLE personal_workspace_settings;

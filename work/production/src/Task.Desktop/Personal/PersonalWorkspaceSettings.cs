@@ -26,7 +26,7 @@ public sealed partial class PersonalTaskStore
     {
         if (settings.FirstDayOfWeek is < 1 or > 7 || settings.WeekendDays.Any(d => d is < 1 or > 7) || settings.WeekendDays.Distinct().Count() != settings.WeekendDays.Count
             || !TimeOnly.TryParse(settings.WorkdayStart, out var start) || !TimeOnly.TryParse(settings.WorkdayEnd, out var end) || end <= start
-            || settings.DefaultTaskDurationMinutes is < 5 or > 1440 || settings.DefaultReminderOffsetMinutes is < 0 or > 525600
+            || !TimeOnly.TryParse(settings.DateOnlyReminderTime, out _) || settings.DefaultTaskDurationMinutes is < 5 or > 1440 || settings.DefaultReminderOffsetMinutes is < 0 or > 525600
             || settings.TimeFormat is not ("12h" or "24h") || settings.Language.Length is < 2 or > 16
             || settings.MissingFileBehavior is not ("show_actions" or "keep_inactive" or "prompt_relink"))
             throw new ArgumentException("Проверьте параметры Personal.");

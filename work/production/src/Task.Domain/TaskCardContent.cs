@@ -15,6 +15,13 @@ public sealed record TaskCardContent
     public TimeOnly? StartTimeLocal { get; init; }
     public string? ScheduleTimeZone { get; init; }
     public int? PlannedDurationMinutes { get; init; }
+    public DateOnly? DeadlineDate { get; init; }
+    public string? DeadlineTimeZone { get; init; }
+    // A command/read projection for the current user's preference. -1 is explicit opt-out.
+    // Corporate persistence stores it separately from shared task content.
+    public int? DeadlineReminderOffsetMinutes { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string? DeadlineReminderTime { get; init; }
     public IReadOnlyList<Guid> AssigneeIds { get; init; } = [];
     public IReadOnlyList<Guid> WatcherIds { get; init; } = [];
 
@@ -22,7 +29,8 @@ public sealed record TaskCardContent
     public static readonly IReadOnlySet<string> Fields = new HashSet<string>(StringComparer.Ordinal)
     {
         "description", "projectId", "parentTaskId", "requesterUserId", "primaryCounterpartyObjectId",
-        "scheduledDate", "startTimeLocal", "scheduleTimeZone", "plannedDurationMinutes", "assigneeIds", "watcherIds"
+        "scheduledDate", "startTimeLocal", "scheduleTimeZone", "plannedDurationMinutes", "assigneeIds", "watcherIds",
+        "deadlineDate", "deadlineTimeZone", "deadlineReminderOffsetMinutes"
     };
 
     public string ToJson() => JsonSerializer.Serialize(this, JsonOptions);
@@ -55,6 +63,9 @@ public sealed record TaskCardContent
             if (ids is null || ids.Count > 100 || ids.Any(id => id == Guid.Empty) || ids.Distinct().Count() != ids.Count)
                 throw new ArgumentException("Participants must be unique valid identifiers (maximum 100).");
         if (PlannedDurationMinutes is <= 0 or > 10080) throw new ArgumentException("Duration is outside the accepted range.");
+        if (DeadlineReminderOffsetMinutes is < -1 or > 525600) throw new ArgumentException("Reminder interval is outside the accepted range.");
+        if (DeadlineDate is not null && (DeadlineTimeZone is null || !TimeZoneInfo.TryFindSystemTimeZoneById(DeadlineTimeZone, out _)))
+            throw new ArgumentException("A date-only deadline requires a time zone.");
         if (StartTimeLocal is not null)
         {
             if (ScheduledDate is null || string.IsNullOrWhiteSpace(ScheduleTimeZone))

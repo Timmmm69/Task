@@ -22,7 +22,18 @@ public sealed class PersonalPlanningTests : IDisposable
     private readonly string _root = Path.Combine(Path.GetTempPath(), "Task-planning-tests", Guid.NewGuid().ToString("N"));
     private PersonalDataPaths Paths => new(_root);
     private readonly Clock _clock = new(new(2026, 10, 5, 8, 0, 0, TimeSpan.Zero));
-    internal const string RemovePlanningSchema = """
+    internal const string RemoveDeadlineSchema = """
+        DROP INDEX personal_task_deadline_reminder;
+        ALTER TABLE personal_reminders DROP COLUMN managed_source;
+        ALTER TABLE tasks DROP COLUMN deadline_date;
+        ALTER TABLE tasks DROP COLUMN deadline_zone;
+        ALTER TABLE tasks DROP COLUMN deadline_reminder_offset;
+        ALTER TABLE tasks DROP COLUMN deadline_reminder_time;
+        ALTER TABLE tasks DROP COLUMN deadline_suppressed_due;
+        DROP TABLE personal_task_commands;
+        DELETE FROM personal_metadata WHERE key='DeadlineReminderBackfillV5';
+        """;
+    internal const string RemovePlanningSchema = RemoveDeadlineSchema + """
         DROP VIEW personal_objects; DROP INDEX personal_tasks_active; DROP INDEX personal_projects_active;
         DROP TABLE object_links; DROP TABLE personal_file_locations; DROP TABLE personal_catalog;
         DROP TABLE personal_contacts; DROP TABLE personal_lifecycle; DROP TABLE personal_workspace_settings;
@@ -383,7 +394,7 @@ public sealed class PersonalPlanningTests : IDisposable
                 model.Calendar.Recurrence.Editor.Frequency = "daily"; model.Calendar.Recurrence.Editor.StartDate = new(2026, 10, 5); model.Calendar.Recurrence.Editor.Termination = "count"; model.Calendar.Recurrence.Editor.Count = "65";
                 await model.Calendar.Recurrence.SaveCommand.ExecuteAsync(); seriesId = Assert.Single(model.Calendar.Recurrence.Series).Id;
                 planning.Refresh(); planning.Target = planning.Targets.Single(t => t.Title == "Offline task"); planning.Trigger = planning.Triggers.Single(t => t.Type == ReminderTriggerType.AtStart);
-                await planning.AddReminderCommand.ExecuteAsync(); Assert.Single(planning.Reminders);
+                await planning.AddReminderCommand.ExecuteAsync(); Assert.Single(planning.Reminders.Where(r => r.Source.ManagedSource is null));
                 before = JsonSerializer.Serialize(planning.Projects);
             }
             using (var store = Open())

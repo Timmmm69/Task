@@ -29,11 +29,19 @@ public sealed class TaskCardEditor : ViewModelBase
     private bool _updatingOptions;
     public event Action? Changed;
     public TimeZoneInfo? ScheduleZone { get; set; }
+    public DateOnly? DeadlineDate { get; set; }
+    public string? DeadlineTimeZone { get; set; }
+    public int? DeadlineReminderOffsetMinutes { get; set; }
+    public string? DeadlineReminderTime { get; set; }
     public TaskCardEditor(TaskCardContent? source, DateTimeOffset? originalStart = null, bool personal = false)
     {
         _personal = personal;
         _originalStart = originalStart; _currentStart = originalStart;
-        _source = source ?? new(); _description = _source.Description ?? "";
+        _source = source ?? new();
+        DeadlineDate = _source.DeadlineDate; DeadlineTimeZone = _source.DeadlineTimeZone;
+        DeadlineReminderOffsetMinutes = _source.DeadlineReminderOffsetMinutes;
+        DeadlineReminderTime = _source.DeadlineReminderTime;
+        _description = _source.Description ?? "";
         _date = _source.ScheduledDate?.ToString("dd.MM.yyyy") ?? "";
         _duration = _source.PlannedDurationMinutes?.ToString(CultureInfo.InvariantCulture) ?? "";
         SetOptions(new JsonObject());
@@ -125,6 +133,10 @@ public sealed class TaskCardEditor : ViewModelBase
         var utcOnly = ScheduleZone is not null && local is { } at && effectiveZone.IsAmbiguousTime(at.DateTime);
         var content = new TaskCardContent
         {
+            DeadlineDate = DeadlineDate,
+            DeadlineTimeZone = DeadlineTimeZone,
+            DeadlineReminderOffsetMinutes = DeadlineReminderOffsetMinutes,
+            DeadlineReminderTime = DeadlineReminderTime,
             Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
             ProjectId = Project?.Id,
             ParentTaskId = Parent?.Id,

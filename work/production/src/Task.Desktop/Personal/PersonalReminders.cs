@@ -7,7 +7,7 @@ namespace Task.Desktop.Personal;
 
 public sealed record PersonalReminder(Guid Id, long Version, Guid TargetId, DesktopScheduleItemType TargetKind,
     ReminderTriggerType TriggerType, int? OffsetMinutes, DateTimeOffset? AbsoluteAt, DateTimeOffset? DueAt,
-    string State, string? DedupeKey = null, DateTimeOffset? DeliveredAt = null, string? LastDelivery = null);
+    string State, string? DedupeKey = null, DateTimeOffset? DeliveredAt = null, string? LastDelivery = null, string? ManagedSource = null);
 public sealed record PersonalNotification(Guid Id, Guid ReminderId, string DedupeKey, Guid TargetId,
     string Title, DateTimeOffset DueAt, DateTimeOffset DeliveredAt, bool IsRead, string PresentationState)
 {
@@ -20,7 +20,7 @@ public sealed partial class PersonalTaskStore
     private static PersonalReminder ReadReminder(SqliteDataReader r) => new(Guid.Parse(r.GetString(0)), r.GetInt64(1),
         Guid.Parse(r.GetString(2)), (DesktopScheduleItemType)r.GetInt32(3), (ReminderTriggerType)r.GetInt32(4),
         r.IsDBNull(5) ? null : r.GetInt32(5), ReadInstant(r, 6), ReadInstant(r, 7), r.GetString(8),
-        r.IsDBNull(9) ? null : r.GetString(9), ReadInstant(r, 10), r.IsDBNull(11) ? null : r.GetString(11));
+        r.IsDBNull(9) ? null : r.GetString(9), ReadInstant(r, 10), r.IsDBNull(11) ? null : r.GetString(11), r.IsDBNull(12) ? null : r.GetString(12));
     private IReadOnlyList<PersonalReminder> Reminders(SqliteTransaction? tx)
     {
         using var c = Command("SELECT * FROM personal_reminders ORDER BY id;", tx); using var r = c.ExecuteReader();
@@ -48,13 +48,13 @@ public sealed partial class PersonalTaskStore
     private void PersistReminder(PersonalReminder reminder, SqliteTransaction tx)
     {
         using var c = Command("""
-            INSERT INTO personal_reminders VALUES ($id,$version,$target,$kind,$type,$offset,$absolute,$due,$state,$key,$delivered,$metadata)
-            ON CONFLICT(id) DO UPDATE SET version=$version,due_at=$due,state=$state,dedupe_key=$key,
+            INSERT INTO personal_reminders VALUES ($id,$version,$target,$kind,$type,$offset,$absolute,$due,$state,$key,$delivered,$metadata,$source)
+            ON CONFLICT(id) DO UPDATE SET version=$version,due_at=$due,state=$state,dedupe_key=$key,offset_minutes=$offset,absolute_at=$absolute,
             delivered_at=$delivered,last_delivery=$metadata;
             """, tx, ("$id", reminder.Id.ToString("D")), ("$version", reminder.Version), ("$target", reminder.TargetId.ToString("D")),
             ("$kind", (int)reminder.TargetKind), ("$type", (int)reminder.TriggerType), ("$offset", reminder.OffsetMinutes),
             ("$absolute", Instant(reminder.AbsoluteAt)), ("$due", Instant(reminder.DueAt)), ("$state", reminder.State),
-            ("$key", reminder.DedupeKey), ("$delivered", Instant(reminder.DeliveredAt)), ("$metadata", reminder.LastDelivery));
+            ("$key", reminder.DedupeKey), ("$delivered", Instant(reminder.DeliveredAt)), ("$metadata", reminder.LastDelivery), ("$source", reminder.ManagedSource));
         c.ExecuteNonQuery();
     }
     public PersonalReminder AddReminder(Guid targetId, DesktopScheduleItemType kind, ReminderTriggerType type, int? offset = null, DateTimeOffset? absolute = null) => Locked(() =>
@@ -74,12 +74,18 @@ public sealed partial class PersonalTaskStore
         using var tx = _database.Connection.BeginTransaction(); var old = Reminders(tx).SingleOrDefault(r => r.Id == id) ?? throw new PersonalTaskNotFoundException();
         if (old.Version != version) throw new PersonalVersionConflictException();
         if (old.State is "cancelled" or "expired") throw new ArgumentException("Reminder is already terminal.");
+        if (old.ManagedSource == DeadlineSource)
+        {
+            using var choice = Command("UPDATE tasks SET deadline_reminder_offset=-1 WHERE id=$id;", tx, ("$id", old.TargetId.ToString("D")));
+            choice.ExecuteNonQuery();
+        }
         var cancelled = old with { Version = old.Version + 1, State = "cancelled" }; PersistReminder(cancelled, tx); tx.Commit(); return cancelled;
     });
     /// <summary>Reconciles against current target schedules. Notification record and delivery commit atomically.</summary>
     public int ReconcileReminders() => Locked(() =>
     {
         var now = _clock.GetUtcNow(); var delivered = 0; using var tx = _database.Connection.BeginTransaction();
+        ReconcileAllDeadlineReminders(tx);
         foreach (var old in Reminders(tx).Where(r => r.State is "pending" or "due"))
         {
             var target = ReminderTarget(old, tx);
@@ -99,7 +105,7 @@ public sealed partial class PersonalTaskStore
                 VALUES ($id,$reminder,$key,$target,$title,$due,$now) ON CONFLICT(dedupe_key) DO NOTHING;
                 """, tx, ("$id", Guid.NewGuid().ToString("D")), ("$reminder", old.Id.ToString("D")), ("$key", updated.DedupeKey),
                 ("$target", old.TargetId.ToString("D")), ("$title", target.Title), ("$due", Instant(due)), ("$now", Instant(now)));
-            delivered += notification.ExecuteNonQuery();
+            if (!Notifications(tx).Any(n => n.TargetId == old.TargetId && n.DueAt == due)) delivered += notification.ExecuteNonQuery();
             PersistReminder(updated with
             {
                 State = "delivered",
@@ -151,7 +157,7 @@ public sealed partial class PersonalTaskStore
         var allowed = CanPresentPersonalNotification(tx);
         var reminders = Reminders(tx).ToDictionary(r => r.Id);
         var pending = allowed ? Notifications(tx).Where(n => n.PresentationState == "pending" && !n.IsRead
-            && reminders.TryGetValue(n.ReminderId, out var r) && r.State == "delivered" && ReminderTarget(r, tx).Valid).ToArray() : [];
+            && reminders.TryGetValue(n.ReminderId, out var r) && r.State == "delivered" && r.DueAt == n.DueAt && ReminderTarget(r, tx).Valid).ToArray() : [];
         if (allowed)
         {
             var eligible = pending.Select(n => n.Id).ToHashSet();

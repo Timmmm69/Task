@@ -17,7 +17,7 @@ public sealed partial class WorkHubViewModel
         ? ReminderTarget is not null
         : (ReminderTarget is not null && ReminderTarget.ObjectId != SelectedCorporateReminder.TargetObjectId)
             || ReminderTrigger != (SelectedCorporateReminder.TriggerType switch { "before_start" => "До начала", "at_start" => "В начале", "at_deadline" => "В срок", "absolute" => "Дата и время", _ => "До срока" })
-            || (SelectedCorporateReminder.TriggerType.StartsWith("before_",StringComparison.Ordinal) && ReminderOffset != SelectedCorporateReminder.OffsetMinutes)
+            || (SelectedCorporateReminder.TriggerType.StartsWith("before_", StringComparison.Ordinal) && ReminderOffset != SelectedCorporateReminder.OffsetMinutes)
             || (SelectedCorporateReminder.TriggerType == "absolute" && ReminderAbsolute != SelectedCorporateReminder.AbsoluteTriggerAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")));
     public IReadOnlyList<DesktopReminder> CorporateReminders { get => _reminders; private set => SetProperty(ref _reminders, value); }
     public IReadOnlyList<DesktopSearchResult> ReminderTargets { get => _reminderTargets; private set => SetProperty(ref _reminderTargets, value); }
@@ -66,7 +66,7 @@ public sealed partial class WorkHubViewModel
             if (!ReminderResponseCurrent(generation, ct)) return;
             Apply(settings, value => { SelectedCorporateReminder = null; ReminderTarget = null; ReminderOffset = value.DefaultReminderOffsetMinutes; });
         }, _ => Allowed());
-        SaveReminderCommand = new(SaveCorporateReminderAsync, _ => Allowed());
+        SaveReminderCommand = new(SaveCorporateReminderAsync, _ => Allowed() && SelectedCorporateReminder?.IsAutomatic != true);
         CancelReminderCommand = new(async (_, ct) => await ChangeReminderAsync("cancel", ct), _ => Allowed() && SelectedCorporateReminder is { Status: not "cancelled" and not "expired" });
         RestoreReminderCommand = new(async (_, ct) => await ChangeReminderAsync("restore", ct), _ => Allowed() && SelectedCorporateReminder is { Status: "cancelled" or "expired" });
         SnoozeReminderCommand = new(async (_, ct) => await ChangeReminderAsync("snooze", ct), _ => Actionable());
@@ -93,6 +93,7 @@ public sealed partial class WorkHubViewModel
     private async System.Threading.Tasks.Task SaveCorporateReminderAsync(object? _, CancellationToken ct)
     {
         if (_client is not IDesktopReminderApiClient api) return;
+        if (SelectedCorporateReminder?.IsAutomatic == true) { SetFeedback("Интервал автоматического напоминания меняется в карточке задачи, в поле «Напомнить».", WorkHubFeedbackKind.Warning); return; }
         var target = ReminderTarget?.ObjectId ?? SelectedCorporateReminder?.TargetObjectId;
         if (target is null) { SetFeedback("Найдите и выберите задачу или событие.", WorkHubFeedbackKind.Warning); return; }
         var trigger = ReminderTrigger switch { "До начала" => "before_start", "В начале" => "at_start", "В срок" => "at_deadline", "Дата и время" => "absolute", _ => "before_deadline" };
@@ -136,7 +137,8 @@ public sealed partial class WorkHubViewModel
         var generation = _notificationAccessGeneration;
         var result = action switch
         {
-            "cancel" => await api.CancelReminderAsync(item, ct), "restore" => await api.RestoreReminderAsync(item, ct),
+            "cancel" => await api.CancelReminderAsync(item, ct),
+            "restore" => await api.RestoreReminderAsync(item, ct),
             _ when item.CurrentOccurrence is { } x => await api.ActOnReminderAsync(item.Id, x.Version, until, ct),
             _ => new DesktopWorkResult<bool>.ValidationFailure("Срабатывание недоступно. Обновите список.")
         };

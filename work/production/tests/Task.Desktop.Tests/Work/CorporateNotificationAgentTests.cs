@@ -26,6 +26,15 @@ public sealed class CorporateNotificationAgentTests : IDisposable
     private async System.Threading.Tasks.Task Seed(CorporateNotificationAgent agent) { Set(); await agent.RunPassAsync(); }
 
     [Fact]
+    public async System.Threading.Tasks.Task FirstPassShowsNewlyDeliveredReminderEvenWhenCalculatedTriggerAlreadyPassed()
+    {
+        var item = Notification() with { NotificationType = "reminder", ReminderId = Guid.NewGuid(), DeliveredAt = _clock.Now.AddSeconds(1) };
+        Set(item);
+        using var journal = new NotificationPresentationJournal(_directory, "elapsed-trigger"); using var agent = Agent(journal);
+        _clock.Now = _clock.Now.AddSeconds(2); await agent.RunPassAsync();
+        Assert.Equal(item.Id, Assert.Single(_presenter.Items).Id); await agent.RunPassAsync(); Assert.Single(_presenter.Items);
+    }
+    [Fact]
     public async System.Threading.Tasks.Task AutomaticallyShowsNewItemAndUpdatesUnreadWithoutOpeningCenterOrMarkingRead()
     {
         using var journal = new NotificationPresentationJournal(_directory, "server/org/user"); using var agent = Agent(journal);

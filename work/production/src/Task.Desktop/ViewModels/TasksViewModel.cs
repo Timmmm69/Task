@@ -76,11 +76,11 @@ public sealed class TaskItemViewModel
         lookup ??= TaskDisplayLookup.Empty;
         DisplayLookup = lookup;
         Source = task;
-        IsOverdue = task.DeadlineAtUtc < DateTimeOffset.UtcNow
+        IsOverdue = Task.Domain.TaskRules.IsOverdue(task.DeadlineAtUtc, task.Card, DateTimeOffset.UtcNow)
             && task.Status is not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled;
         StatusText = IsOverdue ? "Просрочена" : LocalizeStatus(task.Status);
         PriorityText = LocalizePriority(task.Priority);
-        DeadlineText = FormatDate(task.DeadlineAtUtc, "Без срока");
+        DeadlineText = task.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatDate(task.DeadlineAtUtc, "Без срока");
         UpdatedText = FormatDate(task.UpdatedAtUtc, "Не указано");
         StatusIconKey = IsOverdue ? "Task.Icon.Info" : StatusIcon(task.Status);
         StatusTone = IsOverdue ? TaskVisualTone.Critical : StatusVisualTone(task.Status);
@@ -105,6 +105,7 @@ public sealed class TaskItemViewModel
     public string PriorityText { get; }
 
     public string DeadlineText { get; }
+    public string ReminderText => TaskReminderDisplay.Text(Source);
 
     public string UpdatedText { get; }
 
@@ -227,7 +228,7 @@ public sealed class TaskDetailsViewModel
         StatusText = TaskItemViewModel.LocalizeStatus(task.Status);
         PriorityText = TaskItemViewModel.LocalizePriority(task.Priority);
         StartText = TaskItemViewModel.FormatDate(task.StartAtUtc, "Не указано");
-        DeadlineText = TaskItemViewModel.FormatDate(task.DeadlineAtUtc, "Без срока");
+        DeadlineText = task.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? TaskItemViewModel.FormatDate(task.DeadlineAtUtc, "Без срока");
         CreatedText = TaskItemViewModel.FormatDate(task.CreatedAtUtc, "Не указано");
         UpdatedText = TaskItemViewModel.FormatDate(task.UpdatedAtUtc, "Не указано");
         StatusIconKey = TaskItemViewModel.StatusIcon(task.Status);
@@ -254,6 +255,7 @@ public sealed class TaskDetailsViewModel
     public string StartText { get; }
 
     public string DeadlineText { get; }
+    public string ReminderText => TaskReminderDisplay.Text(Source);
 
     public string CreatedText { get; }
 
@@ -612,6 +614,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     {
         var editor = Editor;
         if (editor is null || _client is not IDesktopTaskWorkspaceClient client) return;
+        if (_client is IDesktopDeadlineSettingsClient settingsClient && await settingsClient.GetDeadlineSettingsAsync(token) is { } settings) editor.SetReminderDefaults(settings);
+        if (Editor != editor) return;
         editor.Card.CanAssign = _capabilities.Contains("Task.Assign");
         editor.Card.CanWatch = _capabilities.Contains("Task.Watch");
         var options = await client.GetOptionsAsync(editor.Card.Search, token);

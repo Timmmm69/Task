@@ -45,6 +45,7 @@ internal static class PersonalDatabaseValidation
         if (version >= 2) tables.Add("checklist");
         if (version >= 3) tables.UnionWith(["personal_projects", "personal_events", "personal_series", "personal_occurrences", "personal_reminders", "personal_notifications", "personal_recurrence_commands"]);
         if (version >= 4) tables.UnionWith(["personal_catalog", "personal_file_locations", "personal_contacts", "object_links", "personal_lifecycle", "personal_workspace_settings"]);
+        if (version >= 5) tables.Add("personal_task_commands");
         command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';";
         using (var reader = command.ExecuteReader())
         {
@@ -77,6 +78,12 @@ internal static class PersonalDatabaseValidation
             columns["personal_lifecycle"] = "object_id,previous_state,archived_at,deleted_at,updated_at";
             columns["personal_workspace_settings"] = "key,version,payload";
         }
+        if (version >= 5)
+        {
+            columns["tasks"] += ",deadline_date,deadline_zone,deadline_reminder_offset,deadline_reminder_time,deadline_suppressed_due";
+            columns["personal_reminders"] += ",managed_source";
+            columns["personal_task_commands"] = "key,fingerprint,result";
+        }
         foreach (var (table, expected) in columns)
         {
             command.CommandText = $"PRAGMA table_info({table});";
@@ -94,7 +101,7 @@ internal static class PersonalDatabaseValidation
                 : "SELECT key,value FROM personal_metadata LIMIT 0;";
             using var reader = command.ExecuteReader();
         }
-        if (version == 4)
+        if (version >= 4)
         {
             command.CommandText = "SELECT id,object_type,title,search_text,version,lifecycle,updated_at FROM personal_objects LIMIT 0;";
             using var reader = command.ExecuteReader();

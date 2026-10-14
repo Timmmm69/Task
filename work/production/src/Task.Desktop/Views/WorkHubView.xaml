@@ -237,6 +237,7 @@
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Начало рабочего дня"/><TextBox Text="{Binding UserWorkdayStart, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Конец рабочего дня"/><TextBox Text="{Binding UserWorkdayEnd, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Длительность задачи, мин"/><TextBox Text="{Binding DefaultTaskDurationMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
+                            <StackPanel Width="300" Margin="0,0,12,10"><TextBlock Text="Время напоминания для задач со сроком без времени" TextWrapping="Wrap"/><TextBox Text="{Binding DateOnlyReminderTime, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Время напоминания для срока без времени"/></StackPanel>
                             <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Напоминать за, мин"/><TextBox Text="{Binding DefaultReminderOffsetMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
                         </WrapPanel>
                         <CheckBox Content="Запускать Task вместе с Windows" IsChecked="{Binding AutostartEnabled}" Margin="0,4"/>
