@@ -47,7 +47,7 @@ public interface IDesktopAdministrationApiClient
     global::System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNetworkResource>>> GetResourcesAsync(CancellationToken cancellationToken = default);
 }
 
-public sealed class DesktopAdministrationApiClient : IDesktopAdministrationApiClient
+public sealed partial class DesktopAdministrationApiClient : IDesktopAdministrationApiClient, IDesktopEmployeeDirectory
 {
     private readonly DesktopAuthenticatedGetExecutor _executor;
     private readonly string _root;
