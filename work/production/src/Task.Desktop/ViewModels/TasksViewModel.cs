@@ -1403,9 +1403,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 ApplyServerTask(success.Value);
                 _pendingEditorCommand = null;
                 Announcement = editor.Mode == TaskEditorMode.Create
-                    ? InboxItemViewModel.IsCaptureOnly(success.Value)
-                        ? "Задача создана во «Входящих» и доступна в разделе «Задачи»."
-                        : "Задача создана в разделе «Задачи»."
+                    ? "Задача создана в разделе «Задачи»."
                     : "Изменения сохранены. Задача доступна в разделе «Задачи».";
                 _savedTaskId = success.Value.Id;
                 Editor = null;

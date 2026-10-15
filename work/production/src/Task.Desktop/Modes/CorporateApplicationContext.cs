@@ -301,7 +301,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             tasksClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var inbox = new InboxViewModel(
-            tasksClient,
+            new DesktopInboxApiClient(CreateHttpClient(), serverEndpoint, sessionService, tasksClient, connectivity),
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
         var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);

@@ -359,7 +359,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
             idempotencyKey,
             cancellationToken).ConfigureAwait(false);
 
-    private static DesktopTaskWriteResult<DesktopTaskDto> MapWriteResult(
+    internal static DesktopTaskWriteResult<DesktopTaskDto> MapWriteResult(
         AuthenticatedGetResult result,
         HttpStatusCode successStatus) => result switch
         {
@@ -577,7 +577,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
             _ => MapFailure<DesktopTaskPage>(result),
         };
 
-    private static DesktopTasksApiResult<DesktopTaskDto> MapTaskResult(
+    internal static DesktopTasksApiResult<DesktopTaskDto> MapTaskResult(
         AuthenticatedGetResult result) => result switch
         {
             AuthenticatedGetResult.Response response when response.StatusCode == HttpStatusCode.OK =>

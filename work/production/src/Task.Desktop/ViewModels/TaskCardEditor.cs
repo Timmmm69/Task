@@ -157,4 +157,5 @@ public sealed class TaskCardEditor : ViewModelBase
         var patch = new JsonObject(); foreach (var (key, v) in after) if (!JsonNode.DeepEquals(before[key], v)) patch[key] = v?.DeepClone();
         return patch.Count == 0 ? null : patch.ToJsonString();
     }
+    internal void RebaseSource(TaskCardContent? source) => _source = source ?? new();
 }

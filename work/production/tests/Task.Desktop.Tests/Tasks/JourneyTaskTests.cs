@@ -18,14 +18,14 @@ public sealed partial class TasksViewModelTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task CreateWithoutDetails_ConfirmsInboxAndTasksDestination()
+    public async global::System.Threading.Tasks.Task CreateWithoutDetails_ConfirmsTaskDestinationWithoutInferringInboxMembership()
     {
         var created = CreateTask("Записать мысль") with { DeadlineAtUtc = null };
         var client = new FakeTasksApiClient { CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, false) };
         using var vm = new TasksViewModel(client, WriteCapabilities);
         await vm.ActivateAsync(); await vm.NewTaskCommand.ExecuteAsync();
         vm.Editor!.Title = created.Title; await vm.SaveEditorCommand.ExecuteAsync();
-        Assert.Contains("«Входящих»", vm.Announcement); Assert.Contains("«Задачи»", vm.Announcement);
+        Assert.DoesNotContain("«Входящих»", vm.Announcement); Assert.Contains("«Задачи»", vm.Announcement);
     }
 
     [Fact]

@@ -65,6 +65,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
     private IReadOnlyList<InboxItemViewModel> _items = [];
     private InboxItemViewModel? _selectedItem;
     private TaskEditorViewModel? _conversion;
+    private DesktopTaskDto? _conversionTarget;
+    private Guid? _conversionInboxId;
+    private DesktopPatchTaskCommand? _conversionPatch;
+    private long _conversionPatchRevision;
     private string _captureText = string.Empty;
     private string _screenMessage = string.Empty;
     private InboxScreenState _state;
@@ -225,13 +229,15 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
             : _writePermissionChanged || State == InboxScreenState.Forbidden
                 ? "Права на изменение входящих были отозваны."
                 : "Новые записи и преобразование сохраняются на сервере компании.";
-    public bool CanCaptureFromShell => !IsReadOnly && _capabilities.Contains("Task.Create");
+    private bool UsesInboxContract => _client is IDesktopInboxConversionClient;
+    private bool CanManageInbox => _capabilities.Contains(UsesInboxContract ? "Inbox.ManageOwn" : "Task.Update");
+    public bool CanCaptureFromShell => !IsReadOnly && _capabilities.Contains(UsesInboxContract ? "Inbox.ManageOwn" : "Task.Create");
     public bool CanCapture => IsActive && !IsBusy && !IsRefreshing && !IsReadOnly
-        && _capabilities.Contains("Task.Create") && !string.IsNullOrWhiteSpace(CaptureText);
+        && _capabilities.Contains(UsesInboxContract ? "Inbox.ManageOwn" : "Task.Create") && !string.IsNullOrWhiteSpace(CaptureText);
     public bool CanConvert => CanConvertItem(SelectedItem);
     public bool CanSaveConversion => Conversion is { CanSubmit: true }
         && !IsBusy && !IsRefreshing && !IsReadOnly
-        && _capabilities.Contains("Task.Update");
+        && CanManageInbox;
     public string DisplayedCountText => Items.Count switch
     {
         0 => ShowInboxZero ? "Нет необработанных записей" : "Нет отображаемых записей",
@@ -375,7 +381,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
                 throw new InvalidOperationException("Incomplete Inbox snapshot.");
             _networkAvailable = true;
             var selectedId = SelectedItem?.Id;
-            var replacement = tasks.Values.Where(InboxItemViewModel.IsCaptureOnly)
+            var replacement = tasks.Values.Where(task => UsesInboxContract || InboxItemViewModel.IsCaptureOnly(task))
                 .Select(task => new InboxItemViewModel(task)).ToArray();
             Items = replacement;
             SelectedItem = selectedId.HasValue
@@ -487,6 +493,9 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
     private async global::System.Threading.Tasks.Task OpenConversionAsync(InboxItemViewModel? item, CancellationToken cancellationToken)
     {
         if (!CanConvertItem(item)) return;
+        _conversionTarget = null;
+        _conversionInboxId = item!.Id;
+        _conversionPatch = null;
         SelectedItem = item;
         Conversion = new TaskEditorViewModel(TaskEditorMode.Edit, item!.Source);
         await LoadConversionOptionsAsync(Conversion, cancellationToken).ConfigureAwait(true);
@@ -514,26 +523,30 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         var editor = Conversion;
         if (editor is null) return;
         if (!CanSaveConversion) return;
-        var command = editor.BuildPatchCommand();
-        if (command is null) return;
+        if (!editor.ValidateConversion()) return;
+        var command = UsesInboxContract ? null : editor.BuildPatchCommand();
+        if (!UsesInboxContract && command is null) return;
         if (!await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true)) return;
         IsBusy = true;
         editor.IsBusy = true;
         try
         {
-            var result = await _client.PatchTaskAsync(command, cancellationToken).ConfigureAwait(true);
+            var result = UsesInboxContract ? await SaveCanonicalConversionAsync(editor, cancellationToken).ConfigureAwait(true)
+                : await _client.PatchTaskAsync(command!, cancellationToken).ConfigureAwait(true);
             if (!ReferenceEquals(Conversion, editor)) return;
             switch (result)
             {
                 case DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success:
-                    var remainsInInbox = InboxItemViewModel.IsCaptureOnly(success.Value);
-                    Items = Items.Where(item => item.Id != success.Value.Id).ToArray();
+                    var remainsInInbox = !UsesInboxContract && InboxItemViewModel.IsCaptureOnly(success.Value);
+                    var sourceId = _conversionInboxId ?? success.Value.Id;
+                    Items = Items.Where(item => item.Id != sourceId).ToArray();
                     SelectedItem = Items.FirstOrDefault();
                     CloseConversion();
                     State = InboxScreenState.Loaded;
                     await RefreshAsync(cancellationToken).ConfigureAwait(true);
                     if (State is InboxScreenState.Empty or InboxScreenState.Loaded)
                         ScreenMessage = remainsInInbox ? "Изменения сохранены. Запись остаётся во входящих."
+                            : UsesInboxContract ? "Задача создана в разделе «Задачи». Исходная запись обработана; связь с ней сохранена."
                             : "Задача создана в разделе «Задачи», исходная запись закрыта. Связь сохранена в истории задачи.";
                     break;
                 case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
@@ -547,6 +560,8 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
                     ApplyWriteFailure(result, "Не удалось преобразовать запись. Черновик сохранён.");
                     break;
             }
+            if (result is not DesktopTaskWriteResult<DesktopTaskDto>.Succeeded && _conversionTarget is not null)
+                editor.SetStatus(editor.StatusMessage + " Задача уже создана. Черновик сохранён; повторное сохранение не создаст копию.");
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
         catch (Exception)
@@ -561,6 +576,25 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private async global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> SaveCanonicalConversionAsync(TaskEditorViewModel editor, CancellationToken token)
+    {
+        if (_conversionTarget is null)
+        {
+            var converted = await ((IDesktopInboxConversionClient)_client).ConvertAsync(editor.SourceId!.Value, editor.SourceVersion, editor.Title, token).ConfigureAwait(true);
+            if (converted is not DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success) return converted;
+            _conversionTarget = success.Value;
+            editor.RetargetConversion(success.Value);
+        }
+        var command = editor.BuildPatchCommand();
+        if (command is null) return new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(_conversionTarget, _conversionTarget.Version, false);
+        if (_conversionPatch is null || _conversionPatchRevision != editor.Revision)
+        {
+            _conversionPatch = command;
+            _conversionPatchRevision = editor.Revision;
+        }
+        return await _client.PatchTaskAsync(_conversionPatch, token).ConfigureAwait(true);
+    }
+
     private async global::System.Threading.Tasks.Task ReloadConflictAsync(CancellationToken cancellationToken)
     {
         var editor = Conversion;
@@ -570,6 +604,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded success)
         {
             var replacement = new TaskEditorViewModel(TaskEditorMode.Edit, success.Value);
+            if (_conversionTarget is not null) { _conversionTarget = success.Value; _conversionPatch = null; }
             Conversion = replacement;
             replacement.SetStatus("Загружена актуальная версия. Проверьте поля и повторите преобразование.");
             await LoadConversionOptionsAsync(replacement, cancellationToken).ConfigureAwait(true);
@@ -605,11 +640,14 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
     }
 
     private bool CanConvertItem(InboxItemViewModel? item) => item is not null && IsActive && !IsBusy && !IsRefreshing && !IsReadOnly
-        && _capabilities.Contains("Task.Update") && InboxItemViewModel.IsCaptureOnly(item.Source);
+        && CanManageInbox && (UsesInboxContract || InboxItemViewModel.IsCaptureOnly(item.Source));
 
     private void CloseConversion()
     {
         Conversion = null;
+        _conversionTarget = null;
+        _conversionInboxId = null;
+        _conversionPatch = null;
     }
 
     private void OnConversionPropertyChanged(object? sender, PropertyChangedEventArgs e)

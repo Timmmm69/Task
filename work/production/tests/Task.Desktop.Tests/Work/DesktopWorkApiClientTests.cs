@@ -158,7 +158,8 @@ public sealed partial class DesktopWorkApiClientTests
     private sealed class Fixture : IAsyncDisposable
     {
         private readonly string _directory; private readonly HttpClient _auth; private readonly HttpClient _http; private readonly SessionService _session;
-        private Fixture(string directory, HttpClient auth, HttpClient http, SessionService session, DesktopWorkApiClient client, List<CapturedRequest> requests) { _directory = directory; _auth = auth; _http = http; _session = session; Client = client; Requests = requests; }
+        private Fixture(string directory, HttpClient auth, HttpClient http, SessionService session, DesktopWorkApiClient client, List<CapturedRequest> requests) { _directory = directory; _auth = auth; _http = http; _session = session; Client = client; Requests = requests; Inbox = new(http, new Uri("https://task.example.test"), session, new(http, new Uri("https://task.example.test"), session)); }
+        public Task.Desktop.TaskApi.DesktopInboxApiClient Inbox { get; }
         public DesktopWorkApiClient Client { get; }
         public List<CapturedRequest> Requests { get; }
         public static async System.Threading.Tasks.Task<Fixture> CreateAsync(Func<HttpRequestMessage, CancellationToken, System.Threading.Tasks.Task<HttpResponseMessage>> responder)

@@ -113,6 +113,36 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
     public TaskCardEditor Card { get; private set; } = null!;
     public string? CardError { get; private set; }
     public Guid? SourceId => _source?.Id;
+    internal long SourceVersion => _source?.Version ?? 0;
+    internal bool ValidateConversion() => Validate(out _, out _);
+    internal void RetargetConversion(DesktopTaskDto task)
+    {
+        Validate(out var start, out _);
+        var previous = Card;
+        var patch = previous.Patch(previous.Build(start));
+        var merged = JsonNode.Parse((task.Card ?? new()).ToJson())!.AsObject();
+        if (patch is not null)
+            foreach (var field in JsonNode.Parse(patch)!.AsObject()) merged[field.Key] = field.Value?.DeepClone();
+        _suppressChanges = true;
+        if (Title.Trim() == _source?.Title) Title = task.Title;
+        if (Priority.Value == _source?.Priority) Priority = PriorityValues.Single(value => value.Value == task.Priority);
+        if (StartText.Trim() == FormatLocal(_source?.StartAtUtc)) StartText = FormatLocal(task.StartAtUtc);
+        if (DeadlineText.Trim() == (_source?.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(_source?.DeadlineAtUtc)))
+            DeadlineText = task.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(task.DeadlineAtUtc);
+        _source = task;
+        Card = new TaskCardEditor(TaskCardContent.FromJson(merged.ToJsonString()), task.StartAtUtc, _personal)
+        { CanAssign = previous.CanAssign, CanWatch = previous.CanWatch, ScheduleZone = previous.ScheduleZone };
+        Card.RebaseSource(task.Card);
+        JsonArray Choices(IReadOnlyList<TaskChoice> choices) => new(choices.Where(choice => choice.Id.HasValue)
+            .Select(choice => (JsonNode)new JsonObject { ["id"] = choice.Id!.Value.ToString("D"), ["name"] = choice.Name }).ToArray());
+        Card.SetOptions(new JsonObject { ["projects"] = Choices(previous.Projects), ["tasks"] = Choices(previous.Tasks),
+            ["people"] = Choices(previous.People), ["counterparties"] = Choices(previous.Counterparties) });
+        previous.Changed -= Changed; Card.Changed += Changed;
+        _suppressChanges = false;
+        OnPropertyChanged(nameof(Card));
+        OnPropertyChanged(nameof(SourceId));
+        Validate(out _, out _);
+    }
     public IReadOnlyList<TaskPriorityOption> Priorities { get; }
     public string Heading => Mode == TaskEditorMode.Create ? "Новая задача" : "Изменить задачу";
     public string SubmitText => !_retryAvailable ? "Повтор станет доступен…"
