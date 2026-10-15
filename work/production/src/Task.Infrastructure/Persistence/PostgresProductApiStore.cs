@@ -332,6 +332,10 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         } : type + "." + r.Route.Operation;
         // Paths and contact values never enter public audit/outbox payloads.
         var state = new JsonObject { ["id"] = id, ["version"] = version, ["lifecycleState"] = current["lifecycleState"]?.DeepClone() };
+        if (r.Route.Resource == "inbox-items" && type == "task" && r.Id is { } inboxSource)
+            state["sourceObjectId"] = inboxSource;
+        if (type == "inbox_item" && current["convertedObjectId"] is { } convertedObject)
+            state["convertedObjectId"] = convertedObject.DeepClone();
         if (type == "project" && r.Route.Operation == "member-add") state["recipientUserId"] = r.Body["userAccountId"]?.DeepClone();
         var changed = current.Where(pair => old is null || !JsonNode.DeepEquals(pair.Value, old[pair.Key])).Select(pair => pair.Key).ToArray();
         Run(c, t, "INSERT INTO governance.domain_events(id,organization_id,aggregate_id,aggregate_type,aggregate_version,event_type,actor_user_id,correlation_id,operation_id,idempotency_key,changed_fields,payload) " +

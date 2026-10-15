@@ -61,6 +61,7 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal("new", converted.Body["status"]!.GetValue<string>());
         Assert.Equal("Without deadline", converted.Body["title"]!.GetValue<string>());
         Assert.Equal(1, db.Count("work.tasks"));
+        Assert.Equal(id.ToString(), DeadlineValue<string>(db, "SELECT metadata->>'sourceObjectId' FROM governance.audit_entries WHERE object_id=$1 AND object_type='task' LIMIT 1", Id(converted)));
         Assert.Empty(db.Call("inbox-items", "list").Body!["items"]!.AsArray());
         var after = db.Call("inbox-items", "get", id: id);
         Assert.Equal("converted", after.Body!["status"]!.GetValue<string>());
