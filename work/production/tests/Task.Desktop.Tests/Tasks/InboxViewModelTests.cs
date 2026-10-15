@@ -27,6 +27,58 @@ public sealed class InboxViewModelTests
     }
     internal static readonly string[] Capabilities = ["Task.Read", "Task.Create", "Task.Update", "Project.Read"];
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async global::System.Threading.Tasks.Task ConversionWithoutDeadline_PreservesDraftOnFailureAndDoesNotDuplicate(bool fail)
+    {
+        var source = CreateTask("Запись");
+        var converted = source with { Version = 2, Card = new TaskCardContent { Description = "Описание" } };
+        var client = new FakeInboxClient { PageResult = Page(source) };
+        client.PatchResult = fail ? new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable()
+            : new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(converted, 2, false);
+        using var model = new InboxViewModel(client, Capabilities);
+        await model.ActivateAsync();
+        await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
+        var editor = model.Conversion!;
+        editor.Card.Description = "Описание";
+        Assert.True(model.CanSaveConversion);
+        await model.SaveConversionCommand.ExecuteAsync();
+        Assert.False(client.LastPatch!.DeadlineAtUtc.IsSpecified);
+        if (fail)
+        {
+            Assert.Same(editor, model.Conversion);
+            Assert.Equal("Описание", editor.Card.Description);
+            Assert.Contains("недоступен", editor.StatusMessage);
+        }
+        else
+        {
+            Assert.Null(model.Conversion);
+            Assert.True(model.ShowInboxZero);
+            await model.SaveConversionCommand.ExecuteAsync();
+            Assert.Equal(1, client.PatchCalls);
+        }
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ConversionRequiredTitleAndNoChanges_DoNotBlockSubsequentSave()
+    {
+        var source = CreateTask("Запись");
+        var client = new FakeInboxClient { PageResult = Page(source) };
+        using var model = new InboxViewModel(client, Capabilities);
+        await model.ActivateAsync();
+        await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
+        await model.SaveConversionCommand.ExecuteAsync(); // No changes must not acquire the mutation gate.
+        model.Conversion!.Title = "";
+        Assert.False(model.CanSaveConversion);
+        await model.SaveConversionCommand.ExecuteAsync();
+        Assert.Null(client.LastPatch);
+        model.Conversion.Title = "Запись";
+        model.Conversion.Card.Description = "Описание";
+        await model.SaveConversionCommand.ExecuteAsync();
+        Assert.Equal(1, client.PatchCalls);
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task ActivationShowsOnlyCaptureOnlyServerTasks()
     {
@@ -343,6 +395,7 @@ public sealed class InboxViewModelTests
         public TaskWorkspaceResult OptionsResult { get; set; } = new(new JsonObject(), 0, null);
         public DesktopCreateTaskCommand? LastCreate { get; private set; }
         public DesktopPatchTaskCommand? LastPatch { get; private set; }
+        public int PatchCalls { get; private set; }
         public Func<string?, CancellationToken, global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>? Read { get; set; }
 
         public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) =>
@@ -360,6 +413,7 @@ public sealed class InboxViewModelTests
         public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default)
         {
             LastPatch = command;
+            PatchCalls++;
             if (PatchResult is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
                 PageResult = Page(success.Value);
             return global::System.Threading.Tasks.Task.FromResult(PatchResult);

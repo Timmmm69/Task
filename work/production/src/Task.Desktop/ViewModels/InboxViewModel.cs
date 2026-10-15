@@ -230,7 +230,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         && _capabilities.Contains("Task.Create") && !string.IsNullOrWhiteSpace(CaptureText);
     public bool CanConvert => CanConvertItem(SelectedItem);
     public bool CanSaveConversion => Conversion is { CanSubmit: true }
-        && !string.IsNullOrWhiteSpace(Conversion.DeadlineText) && !IsBusy && !IsRefreshing && !IsReadOnly
+        && !IsBusy && !IsRefreshing && !IsReadOnly
         && _capabilities.Contains("Task.Update");
     public string DisplayedCountText => Items.Count switch
     {
@@ -513,14 +513,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
     {
         var editor = Conversion;
         if (editor is null) return;
-        if (string.IsNullOrWhiteSpace(editor.DeadlineText))
-        {
-            editor.SetStatus("Укажите срок задачи.");
-            return;
-        }
-        if (!CanSaveConversion || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true)) return;
+        if (!CanSaveConversion) return;
         var command = editor.BuildPatchCommand();
         if (command is null) return;
+        if (!await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true)) return;
         IsBusy = true;
         editor.IsBusy = true;
         try
