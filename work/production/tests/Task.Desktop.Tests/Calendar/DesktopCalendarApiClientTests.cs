@@ -98,6 +98,35 @@ public sealed class DesktopCalendarApiClientTests
             new(null, "Планёрка", null, new DateOnly(2026, 9, 1), true, null, null, "UTC"), CancellationToken.None));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async System.Threading.Tasks.Task MixedAttendeesUseExistingSeparateCollectionsAndRoundTrip(bool update)
+    {
+        var id = Guid.NewGuid(); var responded = DateTimeOffset.Parse("2026-09-01T06:00:00Z");
+        DesktopCalendarAttendee[] attendees = [new(id, true, "optional", "accepted", responded), new(id, false, "observer", "tentative", responded)];
+        await using var fixture = await Fixture.CreateAsync(async (request, token) =>
+        {
+            var payload = System.Text.Json.Nodes.JsonNode.Parse(await request.Content!.ReadAsStringAsync(token))!;
+            var users = payload["userAttendees"]!.AsArray(); var contacts = payload["contactAttendees"]!.AsArray();
+            Assert.Single(users); Assert.Single(contacts);
+            Assert.Equal(id, users[0]!["userAccountId"]!.GetValue<Guid>());
+            Assert.Null(users[0]!["contactId"]); Assert.Equal("accepted", users[0]!["responseStatus"]!.GetValue<string>());
+            Assert.Equal(id, contacts[0]!["contactId"]!.GetValue<Guid>());
+            Assert.Null(contacts[0]!["userAccountId"]); Assert.Equal("observer", contacts[0]!["role"]!.GetValue<string>());
+            var response = System.Text.Json.Nodes.JsonNode.Parse(EventJson())!;
+            response["userAttendees"] = users.DeepClone(); response["contactAttendees"] = contacts.DeepClone();
+            return WithEtag(Json(update ? HttpStatusCode.OK : HttpStatusCode.Created, response.ToJsonString()), "\"v3\"");
+        });
+        var command = new DesktopCalendarEventCommand(null, "Планёрка", "Описание", new(2026, 9, 1), false,
+            DateTimeOffset.Parse("2026-09-01T07:00:00Z"), DateTimeOffset.Parse("2026-09-01T08:00:00Z"), "Europe/Minsk", Attendees: attendees);
+        var result = update ? await fixture.Client.UpdateEventAsync(EventId, 2, command, default)
+            : await fixture.Client.CreateEventAsync(command, default);
+        var saved = Assert.IsType<DesktopCalendarResult<DesktopCalendarEvent>.Succeeded>(result).Value;
+        Assert.Equal(attendees, saved.Attendees); Assert.Equal("Europe/Minsk", saved.TimeZoneId);
+        Assert.Equal(update ? "\"v2\"" : null, fixture.Requests[0].IfMatch);
+    }
+
     private static string EventJson(int version = 3) => $$"""{"id":"{{EventId:D}}","organizationId":"{{OrganizationId:D}}","version":{{version}},"createdAt":"2026-08-01T00:00:00Z","updatedAt":"2026-08-02T00:00:00Z","projectId":null,"title":"Планёрка","description":"Описание","eventDate":"2026-09-01","isAllDay":false,"startAtUtc":"2026-09-01T07:00:00Z","endAtUtc":"2026-09-01T08:00:00Z","timeZone":"Europe/Minsk","status":"scheduled","userAttendees":[],"contactAttendees":[]}""";
     private static HttpResponseMessage Json(HttpStatusCode status, string body) => new(status) { Content = new StringContent(body, Encoding.UTF8, "application/json") };
     private static HttpResponseMessage WithEtag(HttpResponseMessage response, string etag) { response.Headers.TryAddWithoutValidation("ETag", etag); return response; }

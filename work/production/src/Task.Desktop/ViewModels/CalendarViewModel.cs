@@ -207,6 +207,9 @@ public sealed class CalendarAttendeeEditorRow : ViewModelBase
         Id = attendee.Id; IsUser = attendee.IsUser; _role = attendee.Role; _responseStatus = attendee.ResponseStatus;
         _respondedAtUtc = attendee.RespondedAtUtc; _initialResponseStatus = attendee.ResponseStatus; _initialRespondedAtUtc = attendee.RespondedAtUtc;
     }
+    private string? _displayName;
+    public string DisplayName => _displayName ?? (IsUser ? "Сотрудник (имя недоступно)" : "Контакт");
+    internal void SetName(string? name) { _displayName = name; OnPropertyChanged(nameof(DisplayName)); }
     public Guid Id { get; }
     public bool IsUser { get; }
     public string KindText => IsUser ? "Сотрудник" : "Контакт";
@@ -225,7 +228,7 @@ public sealed class CalendarAttendeeEditorRow : ViewModelBase
     public DesktopCalendarAttendee ToAttendee() => new(Id, IsUser, Role, ResponseStatus, RespondedAtUtc);
 }
 
-public sealed class CalendarEventEditorViewModel : ViewModelBase
+public sealed partial class CalendarEventEditorViewModel : ViewModelBase
 {
     private string _title = string.Empty;
     private string? _description;
@@ -250,8 +253,8 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
             ? localTimeZone ?? TimeZoneInfo.Local
             : FindTimeZone(source.TimeZoneId, localTimeZone ?? TimeZoneInfo.Local);
         Attendees = new(source?.Attendees.Select(a => new CalendarAttendeeEditorRow(a)) ?? []);
-        AddAttendeeCommand = new AsyncCommand((_, _) => { AddAttendee(); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => CanAddAttendee);
-        RemoveAttendeeCommand = new AsyncCommand((parameter, _) => { if (parameter is CalendarAttendeeEditorRow row) Attendees.Remove(row); return global::System.Threading.Tasks.Task.CompletedTask; });
+        AddAttendeeCommand = new AsyncCommand((_, token) => AddAttendeeAsync(token), _ => CanAddAttendee);
+        RemoveAttendeeCommand = new AsyncCommand((parameter, _) => { if (parameter is CalendarAttendeeEditorRow row) Attendees.Remove(row); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => CanEditAttendees);
         if (source is null) return;
         _title = source.Title; _description = source.Description; _date = source.EventDate.ToDateTime(TimeOnly.MinValue); _endDate = _date;
         _projectId = source.ProjectId?.ToString() ?? string.Empty; _status = source.Status;
@@ -287,15 +290,17 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
     public string ProjectId { get => _projectId; set { if (SetProperty(ref _projectId, value)) ValidationMessage = null; } }
     public string Status { get => _status; set { if (SetProperty(ref _status, value)) ValidationMessage = null; } }
     public bool HasConflict { get => _hasConflict; private set => SetProperty(ref _hasConflict, value); }
-    public bool IsSaving { get => _isSaving; internal set => SetProperty(ref _isSaving, value); }
+    public bool IsSaving { get => _isSaving; internal set { if (SetProperty(ref _isSaving, value)) NotifyAttendeeCommands(); } }
     public string ValidationTitle => HasConflict ? "Конфликт версий" : "Проверьте данные";
     public IReadOnlyList<CalendarEventStatusOption> StatusOptions { get; } =
         [new("scheduled", "Запланировано"), new("cancelled", "Отменено")];
     public ObservableCollection<CalendarAttendeeEditorRow> Attendees { get; }
     public string AttendeeId { get => _attendeeId; set { if (SetProperty(ref _attendeeId, value)) { ValidationMessage = null; AddAttendeeCommand.RaiseCanExecuteChanged(); } } }
-    public bool IsUserAttendee { get => _isUserAttendee; set { if (SetProperty(ref _isUserAttendee, value)) AddAttendeeCommand.RaiseCanExecuteChanged(); } }
+    public bool IsUserAttendee { get => _isUserAttendee; set { if (SetProperty(ref _isUserAttendee, value)) ResetAttendeeEntry(); } }
     public IReadOnlyList<CalendarAttendeeKind> AttendeeKinds { get; } = [new(true, "Сотрудник"), new(false, "Контакт")];
-    public bool CanAddAttendee => Guid.TryParse(AttendeeId, out var id) && id != Guid.Empty && Attendees.Count(a => a.IsUser == IsUserAttendee) < 500;
+    public bool CanAddAttendee => CanEditAttendees && AttendeeAccountId is not null
+        && (!ShowEmployeePicker || AttendeePicker?.State == EmployeePickerState.Ready)
+        && Attendees.Count(a => a.IsUser == IsUserAttendee) < 500;
     public AsyncCommand AddAttendeeCommand { get; }
     public AsyncCommand RemoveAttendeeCommand { get; }
     public AsyncCommand? SaveCommand { get; private set; }
@@ -305,17 +310,9 @@ public sealed class CalendarEventEditorViewModel : ViewModelBase
     {
         SaveCommand = saveCommand;
         CancelCommand = cancelCommand;
+        AddAttendeeCommand.CanExecuteChanged += (_, _) => saveCommand.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(SaveCommand));
         OnPropertyChanged(nameof(CancelCommand));
-    }
-
-    private void AddAttendee()
-    {
-        if (!Guid.TryParse(AttendeeId, out var id) || id == Guid.Empty) { ValidationMessage = "Введите корректный идентификатор участника."; return; }
-        if (Attendees.Any(a => a.IsUser == IsUserAttendee && a.Id == id)) { ValidationMessage = "Этот участник уже добавлен."; return; }
-        if (Attendees.Count(a => a.IsUser == IsUserAttendee) >= 500) { ValidationMessage = "Можно добавить не более 500 участников каждого типа."; return; }
-        Attendees.Add(new(new DesktopCalendarAttendee(id, IsUserAttendee, "required", "pending", null)));
-        AttendeeId = string.Empty;
     }
 
     public bool TryBuild(TimeZoneInfo timeZone, out DesktopCalendarEventCommand command)
@@ -383,6 +380,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
 {
     private const double TimelineHourHeight = 69d;
     private readonly IDesktopCalendarApiClient _client;
+    private readonly Task.Desktop.Administration.IDesktopEmployeeDirectory? _employeeDirectory;
     private readonly TimeZoneInfo _timeZone;
     private readonly Func<DateTimeOffset> _clock;
     private readonly HashSet<string> _capabilities;
@@ -409,9 +407,9 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private readonly Func<DayOfWeek>? _firstDay;
     private readonly Func<TimeOnly>? _workdayStart;
     private DayOfWeek FirstDay => _firstDay?.Invoke() ?? (_freeTimeSettings is { } settings ? (DayOfWeek)(settings.FirstDayOfWeek % 7) : DayOfWeek.Monday);
-    public CalendarViewModel(IDesktopCalendarApiClient client, IEnumerable<string>? capabilities = null, TimeZoneInfo? timeZone = null, DateTime? today = null, RecurrencePaneViewModel? recurrence = null, Func<DateTimeOffset>? clock = null, bool personal = false, Func<IReadOnlyList<CalendarProjectChoice>>? projects = null, Func<DayOfWeek>? firstDay = null, Func<TimeOnly>? workdayStart = null, Func<CancellationToken, System.Threading.Tasks.Task<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>>>? userSettings = null)
+    public CalendarViewModel(IDesktopCalendarApiClient client, IEnumerable<string>? capabilities = null, TimeZoneInfo? timeZone = null, DateTime? today = null, RecurrencePaneViewModel? recurrence = null, Func<DateTimeOffset>? clock = null, bool personal = false, Func<IReadOnlyList<CalendarProjectChoice>>? projects = null, Func<DayOfWeek>? firstDay = null, Func<TimeOnly>? workdayStart = null, Func<CancellationToken, System.Threading.Tasks.Task<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>>>? userSettings = null, Task.Desktop.Administration.IDesktopEmployeeDirectory? employeeDirectory = null)
     {
-        _firstDay = firstDay; _workdayStart = workdayStart;
+        _firstDay = firstDay; _workdayStart = workdayStart; _employeeDirectory = employeeDirectory;
         IsPersonal = personal; _projects = projects;
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _timeZone = timeZone ?? TimeZoneInfo.Local;
@@ -509,9 +507,9 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public bool CanRead => _capabilities.Contains("Calendar.Read");
     public bool IsPersonal { get; }
     private readonly Func<IReadOnlyList<CalendarProjectChoice>>? _projects;
-    public bool CanCreate => _active && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("CalendarEvent.Create") && Editor is null;
-    public bool CanEdit => _active && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("CalendarEvent.Update") && SelectedEvent is not null && Editor is null;
-    public bool CanSave => _active && _sessionAllowsWrites && _networkAvailable && Editor is not null && !IsBusy
+    public bool CanCreate => CanRead && _active && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("CalendarEvent.Create") && Editor is null;
+    public bool CanEdit => CanRead && _active && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("CalendarEvent.Update") && SelectedEvent is not null && Editor is null;
+    public bool CanSave => CanRead && _active && _sessionAllowsWrites && _networkAvailable && Editor is not null && !IsBusy && !Editor.AddAttendeeCommand.IsExecuting
         && (Editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update"));
     public string WriteAccessText => IsPersonal ? "Календарь сохраняется на этом компьютере. Пересечения показываются как предупреждения. При повторе часов используется первый UTC-момент."
         : !_networkAvailable
@@ -520,7 +518,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public CalendarItemViewModel? SelectedItem { get => _selectedItem; set { if (SetProperty(ref _selectedItem, value)) { UpdateSelectionFlags(); OnPropertyChanged(nameof(HasSelectedItem)); _ = LoadSelectedEventAsync(value); } } }
     public bool HasSelectedItem => SelectedItem is not null;
     public DesktopCalendarEvent? SelectedEvent { get => _selectedEvent; private set { if (SetProperty(ref _selectedEvent, value)) { OnPropertyChanged(nameof(CanEdit)); RaiseCommands(); } } }
-    public CalendarEventEditorViewModel? Editor { get => _editor; private set { if (SetProperty(ref _editor, value)) { OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); RaiseCommands(); } } }
+    public CalendarEventEditorViewModel? Editor { get => _editor; private set { if (!ReferenceEquals(_editor, value)) { _editor?.Dispose(); SetProperty(ref _editor, value); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); RaiseCommands(); } } }
     public string? RollbackMessage { get => _rollbackMessage; private set { if (SetProperty(ref _rollbackMessage, value)) OnPropertyChanged(nameof(ShowRollback)); } }
     public bool ShowRollback => RollbackMessage is not null;
     public AsyncCommand RefreshCommand { get; }
@@ -539,6 +537,9 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private CalendarEventEditorViewModel CreateEditor(DesktopCalendarEvent? source)
     {
         var editor = new CalendarEventEditorViewModel(source, _timeZone, IsPersonal) { ProjectChoices = _projects?.Invoke() ?? [] };
+        editor.AuthenticationRequired += () => UpdateSessionState(false);
+        editor.InitializePeople(_employeeDirectory, _capabilities, _active && CanRead && _sessionAllowsWrites && _networkAvailable
+            && (source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update")));
         editor.AttachCommands(SaveEventCommand, CancelEditorCommand);
         return editor;
     }
@@ -546,7 +547,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public void Activate()
     {
         if (_disposed || _active) return;
-        _active = true; Recurrence?.SetAccess(_capabilities, _sessionAllowsWrites); OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
+        _active = true; UpdateEditorAccess(); Recurrence?.SetAccess(_capabilities, _sessionAllowsWrites); OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
         if (!CanRead) { ClearProtectedData(); State = CalendarScreenState.Forbidden; Message = "Нет права Calendar.Read для просмотра расписания."; return; }
         if (!_networkAvailable)
         {
@@ -560,7 +561,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public async global::System.Threading.Tasks.Task ActivateAsync()
     {
         if (_disposed || _active) return;
-        _active = true; Recurrence?.SetAccess(_capabilities, _sessionAllowsWrites); OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
+        _active = true; UpdateEditorAccess(); Recurrence?.SetAccess(_capabilities, _sessionAllowsWrites); OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
         if (!CanRead) { ClearProtectedData(); State = CalendarScreenState.Forbidden; Message = "Нет права Calendar.Read для просмотра расписания."; return; }
         if (!_networkAvailable)
         {
@@ -575,7 +576,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     {
         if (!_active) return;
         CloseFreeTime();
-        _active = false; Recurrence?.SetAccess(_capabilities, false); Interlocked.Increment(ref _generation); _requestCancellation?.Cancel();
+        _active = false; UpdateEditorAccess(); Recurrence?.SetAccess(_capabilities, false); Interlocked.Increment(ref _generation); _requestCancellation?.Cancel();
         State = CalendarScreenState.Inactive; OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(ShowReadOnlyState)); RaiseCommands();
     }
 
@@ -606,6 +607,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
         _capabilities.Clear(); foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
+        UpdateEditorAccess();
         Recurrence?.SetAccess(_capabilities, _active && _sessionAllowsWrites); OnPropertyChanged(nameof(CanRead)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(WriteAccessText)); RaiseCommands();
         OnPropertyChanged(nameof(IsReadOnly)); OnPropertyChanged(nameof(ShowReadOnlyState));
         if (!CanRead) { Interlocked.Increment(ref _generation); _requestCancellation?.Cancel(); ClearProtectedData(); State = CalendarScreenState.Forbidden; Message = "Право Calendar.Read отозвано. Данные календаря очищены."; }
@@ -614,7 +616,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
 
     public void UpdateSessionState(bool signedIn)
     {
-        _sessionAllowsWrites = signedIn; Recurrence?.SetAccess(_capabilities, _active && signedIn);
+        _sessionAllowsWrites = signedIn; UpdateEditorAccess(); Recurrence?.SetAccess(_capabilities, _active && signedIn);
         OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); RaiseCommands();
         OnPropertyChanged(nameof(IsReadOnly)); OnPropertyChanged(nameof(ShowReadOnlyState));
         if (signedIn) return;
@@ -626,7 +628,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
-        _networkAvailable = available;
+        _networkAvailable = available; UpdateEditorAccess();
         if (!available && (FreeTimeSlots.Count > 0 || ChosenFreeTime is not null))
         {
             _freeTimeStale = true;
@@ -753,6 +755,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         if (State == CalendarScreenState.SessionEnded)
         {
             _sessionAllowsWrites = false;
+            UpdateEditorAccess();
             OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanEdit)); RaiseCommands();
         }
         if (State == CalendarScreenState.SessionEnded) ClearProtectedData(preserveEditor: true);
@@ -782,13 +785,17 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private async global::System.Threading.Tasks.Task SaveAsync(CancellationToken token)
     {
         var editor = Editor;
-        if (!CanSave || editor is null || !editor.TryBuild(_timeZone, out var command)) return;
+        if (!CanSave || editor is null || !editor.TryBuild(_timeZone, out _)) return;
         RollbackMessage = null;
         var generation = _generation;
         DesktopCalendarResult<DesktopCalendarEvent> result;
         _saving = true; editor.IsSaving = true; OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsSaving)); RaiseCommands();
         try
         {
+            if (!await editor.ValidateNewEmployeesAsync(token) || !ReferenceEquals(editor, Editor)
+                || !_active || !_sessionAllowsWrites || !_networkAvailable || !CanRead || generation != _generation
+                || !(editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update"))) return;
+            if (!editor.TryBuild(_timeZone, out var command)) return;
             result = editor.Source is null
             ? await _client.CreateEventAsync(command, token)
             : await _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token);
@@ -819,6 +826,11 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
                 editor.ValidationMessage = "Событие изменено другим пользователем. Ваш черновик сохранён; обновите серверную версию и повторите сохранение.";
             }
         }
+        else if (result is DesktopCalendarResult<DesktopCalendarEvent>.NotFound)
+        {
+            editor.ValidationMessage = "Событие удалено или стало недоступным. Черновик сохранён; закройте форму и обновите календарь.";
+            editor.UpdatePeopleAccess(_capabilities, false);
+        }
         else if (result is DesktopCalendarResult<DesktopCalendarEvent>.ValidationFailure validation)
             editor.ValidationMessage = validation.Message;
         else if (result is DesktopCalendarResult<DesktopCalendarEvent>.Forbidden or DesktopCalendarResult<DesktopCalendarEvent>.AuthenticationFailure) HandleFailure(result, Days.Count > 0);
@@ -842,6 +854,8 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         ClearSelection();
         if (!preserveEditor) Editor = null;
     }
+    private void UpdateEditorAccess() => Editor?.UpdatePeopleAccess(_capabilities, _active && CanRead && _sessionAllowsWrites && _networkAvailable
+        && (Editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update")));
     private void RaiseCommands() { RaiseFreeTimeCommands(); RefreshCommand.RaiseCanExecuteChanged(); PreviousWeekCommand.RaiseCanExecuteChanged(); NextWeekCommand.RaiseCanExecuteChanged(); TodayCommand.RaiseCanExecuteChanged(); DayModeCommand.RaiseCanExecuteChanged(); WeekModeCommand.RaiseCanExecuteChanged(); MonthModeCommand.RaiseCanExecuteChanged(); SelectItemCommand.RaiseCanExecuteChanged(); NewEventCommand.RaiseCanExecuteChanged(); EditEventCommand.RaiseCanExecuteChanged(); SaveEventCommand.RaiseCanExecuteChanged(); CancelEditorCommand.RaiseCanExecuteChanged(); }
     internal static DateOnly StartOfWeek(DateOnly date, DayOfWeek firstDay = DayOfWeek.Monday) => date.AddDays(-(((int)date.DayOfWeek - (int)firstDay + 7) % 7));
     internal static (DateOnly FirstDate, DateOnly LastDateExclusive) GetVisibleDateRange(DateOnly anchor, CalendarViewMode mode, DayOfWeek firstDay = DayOfWeek.Monday) => mode switch
@@ -869,7 +883,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     {
         if (_disposed) return;
         DisposeFreeTime();
-        _disposed = true; Deactivate(); Recurrence?.Dispose(); _requestCancellation?.Dispose();
+        _disposed = true; Deactivate(); Editor = null; Recurrence?.Dispose(); _requestCancellation?.Dispose();
         foreach (var command in new[] { RefreshCommand, PreviousWeekCommand, NextWeekCommand, TodayCommand, DayModeCommand, WeekModeCommand, MonthModeCommand, SelectItemCommand, NewEventCommand, EditEventCommand, SaveEventCommand, CancelEditorCommand }) command.Dispose();
     }
 }

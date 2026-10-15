@@ -19,6 +19,8 @@ public sealed class CalendarAttendeeEditorTests
         Assert.Single(editor.Attendees);
         Assert.Equal("Этот участник уже добавлен.", editor.ValidationMessage);
         editor.IsUserAttendee = false;
+        Assert.Equal("", editor.AttendeeId);
+        editor.AttendeeId = id.ToString();
         await editor.AddAttendeeCommand.ExecuteAsync();
         Assert.Equal(2, editor.Attendees.Count);
     }

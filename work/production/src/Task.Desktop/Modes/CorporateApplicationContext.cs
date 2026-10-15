@@ -309,7 +309,8 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
-                sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync);
+                sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync,
+            employeeDirectory: new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity));
         var today = new TodayViewModel(
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),

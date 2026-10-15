@@ -8,6 +8,7 @@
              AutomationProperties.AutomationId="CalendarScreen"
              PreviewKeyDown="OnCalendarPreviewKeyDown">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="Calendar.ModeButton" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
             <Setter Property="MinWidth" Value="82" />
             <Setter Property="Margin" Value="0,0,4,0" />
@@ -681,6 +682,11 @@
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                                   Margin="0,16,0,14">
+                        <ScrollViewer.Style>
+                            <Style TargetType="ScrollViewer"><Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSaving}" Value="True"><Setter Property="IsEnabled" Value="False" /></DataTrigger>
+                            </Style.Triggers></Style>
+                        </ScrollViewer.Style>
                         <StackPanel>
                             <Border Margin="0,0,0,12">
                                 <Border.Style>
@@ -771,7 +777,7 @@
                             <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding AllowAttendees}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
                             <TextBlock Text="Участники" FontSize="{DynamicResource Task.Font.Size.Section}"
                                        FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,8" />
-                            <ItemsControl ItemsSource="{Binding Attendees}" Margin="0,0,0,8">
+                            <ItemsControl ItemsSource="{Binding Attendees}" Margin="0,0,0,8" IsEnabled="{Binding CanEditAttendees}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1"
@@ -780,6 +786,7 @@
                                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                                 <StackPanel>
                                                     <TextBlock Text="{Binding KindText}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
+                                                    <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" />
                                                     <TextBlock Text="{Binding Id}" FontSize="{DynamicResource Task.Font.Size.Metadata}"
                                                                Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" />
                                                     <WrapPanel Margin="0,7,0,0">
@@ -809,17 +816,24 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <WrapPanel>
-                                <TextBox Width="300" Text="{Binding AttendeeId, UpdateSourceTrigger=PropertyChanged}"
-                                         Style="{StaticResource Task.Input.Text}"
-                                         AutomationProperties.Name="Идентификатор сотрудника или контакта" />
-                                <ComboBox Width="130" ItemsSource="{Binding AttendeeKinds}" DisplayMemberPath="Label"
+                            <StackPanel IsEnabled="{Binding CanEditAttendees}">
+                                <ComboBox Width="160" HorizontalAlignment="Left" ItemsSource="{Binding AttendeeKinds}" DisplayMemberPath="Label"
                                           SelectedValue="{Binding IsUserAttendee}" SelectedValuePath="IsUser"
-                                          Style="{StaticResource Task.Input.Combo}" Margin="6,0,0,0"
+                                          Style="{StaticResource Task.Input.Combo}" Margin="0,0,0,8"
                                           AutomationProperties.Name="Тип участника" />
+                                <views:EmployeePickerView DataContext="{Binding AttendeePicker}"
+                                    Visibility="{Binding DataContext.ShowEmployeePicker, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
+                                <TextBox Text="{Binding AttendeeId, UpdateSourceTrigger=PropertyChanged}"
+                                         Visibility="{Binding ShowAttendeeId, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                         Style="{StaticResource Task.Input.Text}"
+                                         AutomationProperties.AutomationId="CalendarAttendeeId"
+                                         AutomationProperties.Name="UUID сотрудника или контакта" />
+                                <TextBlock Text="{Binding AttendeeEntryHint}" TextWrapping="Wrap" Margin="0,6,0,8"
+                                           Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                                 <Button Content="Добавить" Command="{Binding AddAttendeeCommand}"
-                                        Style="{StaticResource Task.Button.Secondary}" Margin="6,0,0,0" />
-                            </WrapPanel>
+                                        HorizontalAlignment="Left" AutomationProperties.AutomationId="CalendarAddAttendee"
+                                        Style="{StaticResource Task.Button.Secondary}" />
+                            </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
