@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "sourceCommit": "9a1bddc21811ee1abda3de484250b5b68cd562a6",
+  "zipSha256": "d6eaf6c958d340836ae8407f9e7a05f5422dd7d9cdbe44d95b8217e5044b0846",
+  "zipPayloadHashesVerified": 21,
+  "desktopPassed": 901,
+  "employeePickerPassed": 42,
+  "serverContractPassed": 13,
+  "failed": 0,
+  "skipped": 0,
+  "universalRoleCoverage": "BLOCKED",
+  "projectCalendarIntegration": "OUT_OF_SCOPE",
+  "zipAllFilesVerified": 23
+}
