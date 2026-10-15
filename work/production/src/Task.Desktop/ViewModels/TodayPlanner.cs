@@ -119,9 +119,9 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             item.Title,
             item.TypeText,
             item.TimeText,
-            taskDetails?.StatusText ?? item.StatusText,
+            taskDetails is not null ? TaskItemViewModel.LocalizeStatus(taskDetails.Source.Status) : item.StatusText,
             priorityText,
-            taskDetails?.StatusIconKey ?? ResolveStatusIconKey(item.StatusText),
+            ResolveStatusIconKey(taskDetails is not null ? TaskItemViewModel.LocalizeStatus(taskDetails.Source.Status) : item.StatusText),
             taskDetails?.PriorityIconKey ?? CalendarPriorityIconKey(source.Priority),
             priorityTone,
             taskDetails?.DeadlineText ?? FormatCalendarDeadline(source, timeZone),
@@ -158,9 +158,9 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             item.Title,
             "Задача",
             timeText,
-            item.StatusText,
+            TaskItemViewModel.LocalizeStatus(source.Status),
             item.PriorityText,
-            item.StatusIconKey,
+            ResolveStatusIconKey(TaskItemViewModel.LocalizeStatus(source.Status)),
             item.PriorityIconKey,
             item.PriorityTone,
             item.DeadlineText,
@@ -219,7 +219,7 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
         "В работе" => "Task.Icon.Status.InProgress",
         "На проверке" => "Task.Icon.Status.Review",
         "Завершена" => "Task.Icon.Status.Completed",
-        "Отменено" => "Task.Icon.Status.Cancelled",
+        "Отменено" or "Отменена" => "Task.Icon.Status.Cancelled",
         _ => "Task.Icon.Status.New",
     };
 
@@ -295,6 +295,9 @@ public sealed partial class TodayViewModel
             UpdateSelectionFlags();
             OnPropertyChanged(nameof(HasSelectedItem));
             OpenSelectedItemCommand.RaiseCanExecuteChanged();
+            ClearActionConfirmation();
+            NotifyQuickActions();
+            if (NeedsTaskReload && !_taskReloadAttempted.Contains(value!.Id)) _ = ReloadSelectedTaskAsync(CancellationToken.None);
         }
     }
 
@@ -332,6 +335,7 @@ public sealed partial class TodayViewModel
         OnPropertyChanged(nameof(ShowReadOnlyState));
         NotifyStatePresentation();
         RefreshCommand.RaiseCanExecuteChanged();
+        NotifyQuickActions();
     }
 
     private void UpdateClockProjection()
@@ -347,13 +351,14 @@ public sealed partial class TodayViewModel
 
     private void RebuildPlannerItems()
     {
-        var selectedId = _selectionWasExplicit ? SelectedItem?.Id : null;
+        var selectedId = _selectionWasExplicit || !IsBusy ? SelectedItem?.Id : null;
+        var selectedWasEvent = SelectedItem?.Source is CalendarItemViewModel { IsCalendarEvent: true };
         var now = _clock();
-        var taskById = _activeTaskItems.ToDictionary(item => item.Id);
+        var taskById = _taskSnapshots.ToDictionary(pair => pair.Key, pair => new TaskItemViewModel(pair.Value));
         var timeline = TimedItems
             .Select(item => TodayPlannerItemViewModel.FromCalendar(
                 item,
-                taskById.GetValueOrDefault(item.Id),
+                item.IsCalendarEvent ? null : taskById.GetValueOrDefault(item.Id),
                 _timeZone,
                 now))
             .OrderBy(item => item.TimelineTop)
@@ -363,11 +368,12 @@ public sealed partial class TodayViewModel
         var allDay = UntimedItems
             .Select(item => TodayPlannerItemViewModel.FromCalendar(
                 item,
-                taskById.GetValueOrDefault(item.Id),
+                item.IsCalendarEvent ? null : taskById.GetValueOrDefault(item.Id),
                 _timeZone,
                 now))
             .ToArray();
         var scheduledIds = TimedItems.Concat(UntimedItems)
+            .Where(item => !item.IsCalendarEvent)
             .Select(item => item.Id)
             .ToHashSet();
         var queue = _activeTaskItems
@@ -391,7 +397,8 @@ public sealed partial class TodayViewModel
         OnPropertyChanged(nameof(HasPlannerItems));
 
         SelectedItem = timeline.Concat(allDay).Concat(queue)
-            .FirstOrDefault(item => item.Id == selectedId)
+            .FirstOrDefault(item => item.Id == selectedId
+                && (item.Source is CalendarItemViewModel { IsCalendarEvent: true }) == selectedWasEvent)
             ?? timeline.FirstOrDefault()
             ?? queue.FirstOrDefault()
             ?? allDay.FirstOrDefault();
@@ -445,7 +452,7 @@ public sealed partial class TodayViewModel
     private void UpdateSelectionFlags()
     {
         foreach (var item in TimelineItems.Concat(AllDayItems).Concat(QueueItems))
-            item.IsSelected = item.Id == SelectedItem?.Id;
+            item.IsSelected = ReferenceEquals(item, SelectedItem);
     }
 
     private void ClearPlannerItems()

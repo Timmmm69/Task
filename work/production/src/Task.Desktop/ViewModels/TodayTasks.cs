@@ -21,6 +21,8 @@ public sealed partial class TodayViewModel
 
     private void ClearTaskItems()
     {
+        _taskSnapshots.Clear();
+        _taskReloadAttempted.Clear();
         _activeTaskItems = [];
         _overdueTasks = [];
         _reviewTasks = [];
@@ -91,19 +93,13 @@ public sealed partial class TodayViewModel
                 return;
             }
 
-            var currentUserId = _currentUserId.Value;
-            var active = tasks.Values.Where(t => t.Status is not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled)
-                .Where(t => t.AuthorUserId == currentUserId || t.AssigneeIds.Contains(currentUserId) || t.WatcherIds.Contains(currentUserId))
-                .OrderBy(t => t.DeadlineAtUtc ?? DateTimeOffset.MaxValue).ThenBy(t => t.Title, StringComparer.CurrentCulture)
-                .Select(t => new TaskItemViewModel(t)).ToArray();
-            _activeTaskItems = active;
-            _overdueTasks = active.Where(t => Task.Domain.TaskRules.IsOverdue(t.Source.DeadlineAtUtc, t.Source.Card, _clock())).ToArray();
-            _reviewTasks = active.Where(t => t.Source.Status == DesktopTaskStatus.Review).ToArray();
-            _waitingTasks = active.Where(t => t.Source.Status != DesktopTaskStatus.Review
-                && !t.Source.AssigneeIds.Contains(currentUserId)
-                && t.Source.AssigneeIds.Count > 0).ToArray();
+            _taskSnapshots = tasks;
+            _tasksNeedingReload.ExceptWith(tasks.Keys);
+            foreach (var task in tasks.Values)
+                if (_unconfirmedCommands.TryGetValue(task.Id, out var command) && task.Version > command.ExpectedVersion)
+                    _unconfirmedCommands.Remove(task.Id);
+            RebuildTaskSummaries();
             TasksMessage = null;
-            NotifyTaskItems();
             RebuildPlannerItems();
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { }
@@ -112,5 +108,22 @@ public sealed partial class TodayViewModel
             if (_active && generation == _generation && CanReadTasks)
                 TasksMessage = "Сервер задач недоступен. Повторите обновление.";
         }
+    }
+
+    private void RebuildTaskSummaries()
+    {
+        var currentUserId = _currentUserId.GetValueOrDefault();
+        var active = _taskSnapshots.Values.Where(t => t.Status is not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled)
+            .Where(t => _currentUserId.HasValue)
+            .Where(t => t.AuthorUserId == currentUserId || t.AssigneeIds.Contains(currentUserId) || t.WatcherIds.Contains(currentUserId))
+            .OrderBy(t => t.DeadlineAtUtc ?? DateTimeOffset.MaxValue).ThenBy(t => t.Title, StringComparer.CurrentCulture)
+            .Select(t => new TaskItemViewModel(t)).ToArray();
+        _activeTaskItems = active;
+        _overdueTasks = active.Where(t => Task.Domain.TaskRules.IsOverdue(t.Source.DeadlineAtUtc, t.Source.Card, _clock())).ToArray();
+        _reviewTasks = active.Where(t => t.Source.Status == DesktopTaskStatus.Review).ToArray();
+        _waitingTasks = active.Where(t => t.Source.Status != DesktopTaskStatus.Review
+            && !t.Source.AssigneeIds.Contains(currentUserId)
+            && t.Source.AssigneeIds.Count > 0).ToArray();
+        NotifyTaskItems();
     }
 }
