@@ -315,6 +315,24 @@ public sealed partial class TodayViewModelTests
         Assert.Same(client.Commands[0], client.Commands[1]);
     }
 
+    [Fact]
+    public async AsyncTask QuickActions_ObjectScopeForbiddenDoesNotDisableOtherTasks()
+    {
+        var denied = QuickTask(); var allowed = QuickTask() with { Title = "Allowed" };
+        var client = new QuickClient(denied, allowed);
+        client.Results.Enqueue(new DesktopTaskWriteResult<DesktopTaskDto>.Forbidden());
+        using var vm = QuickVm(client); await vm.ActivateAsync();
+        await vm.SelectItemCommand.ExecuteAsync(vm.QueueItems.Single(i => i.Id == denied.Id));
+        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
+        Assert.False(vm.CanStart);
+        await vm.SelectItemCommand.ExecuteAsync(vm.QueueItems.Single(i => i.Id == allowed.Id));
+        Assert.True(vm.CanStart);
+        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
+        Assert.Equal(2, client.Commands.Count); Assert.Equal(allowed.Id, client.Commands[1].Id);
+        await vm.SelectItemCommand.ExecuteAsync(vm.QueueItems.Single(i => i.Id == denied.Id));
+        Assert.False(vm.CanStart);
+    }
+
     private static DesktopTaskDto QuickTask() => SummaryTask("Quick", User, [User], Clock().AddDays(-1)) with { Version = 7 };
     private static DesktopTaskWriteResult<DesktopTaskDto> QuickSuccess(DesktopTaskDto task, DesktopTaskStatus target) =>
         new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(task with { Version = task.Version + 1, Status = target }, task.Version + 1, false);

@@ -324,6 +324,45 @@ public sealed partial class TodayViewModelTests
         Assert.Equal("120", vm.Planning!.Duration);
     }
 
+    [Fact]
+    public async AsyncTask Planning_FreshScreenDoesNotRestoreClearedPlanningFromDeadlineProjection()
+    {
+        var task = PlanningTask() with { DeadlineAtUtc = Clock().AddHours(6),
+            Card = new TaskCardContent { ScheduledDate = Today } };
+        var client = new PlanningClient(task);
+        var calendar = new FakeCalendarClient();
+        calendar.ScheduleResults.Enqueue(Schedule([]));
+        using (var first = PlanningVm(client, calendar))
+        {
+            await first.ActivateAsync(); first.Planning!.Date = null;
+            await first.SavePlanningCommand.ExecuteAsync();
+            Assert.Empty(first.AllDayItems); Assert.Single(first.QueueItems);
+        }
+        // Existing Calendar API returns a deadline-only row even after planning has been cleared.
+        var reopenedCalendar = new FakeCalendarClient();
+        reopenedCalendar.ScheduleResults.Enqueue(Schedule([UntimedTask(Today, task.Title) with
+            { ObjectId = task.Id, EndAtUtc = task.DeadlineAtUtc }]));
+        using var reopened = PlanningVm(client, reopenedCalendar); await reopened.ActivateAsync();
+        Assert.Empty(reopened.AllDayItems); Assert.Empty(reopened.TimelineItems);
+        Assert.Equal(task.Id, Assert.Single(reopened.QueueItems).Id);
+        Assert.Null(reopened.Planning!.Date);
+        Assert.Equal(task.DeadlineAtUtc, client.Tasks[task.Id].DeadlineAtUtc);
+    }
+
+    [Fact]
+    public async AsyncTask Planning_LegacyUtcDurationOvernightAppearsWithoutCalendarDeadlineRow()
+    {
+        var task = PlanningTask() with
+        {
+            StartAtUtc = new DateTimeOffset(Today.AddDays(-1).ToDateTime(new(23, 30)), TimeSpan.Zero),
+            DeadlineAtUtc = null, Card = new TaskCardContent { PlannedDurationMinutes = 120 }
+        };
+        var client = new PlanningClient(task); using var vm = PlanningVm(client);
+        await vm.ActivateAsync();
+        Assert.Equal(task.Id, Assert.Single(vm.TimelineItems).Id);
+        Assert.Equal(0, vm.TimelineItems[0].TimelineTop); Assert.Empty(vm.QueueItems);
+    }
+
     private static DesktopTaskDto PlanningTask() => QuickTask() with { DeadlineAtUtc = Clock().AddDays(10),
         Card = new TaskCardContent { Description = "Keep me", ProjectId = Guid.NewGuid(), PlannedDurationMinutes = 60,
             DeadlineReminderOffsetMinutes = 15 } };

@@ -244,7 +244,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         var taskAccessChanged = CanReadTasks != updatedCapabilities.Contains("Task.Read");
         var calendarAccessChanged = CanRead != updatedCapabilities.Contains("Calendar.Read");
         if (taskAccessChanged) StopQuickActions();
-        _statusPermissionDenied = false;
+        _statusPermissionDeniedTasks.Clear();
         _planningDenied.Clear();
         if (!updatedCapabilities.Contains("Task.Update")) StopPlanning();
         if (!updatedCapabilities.Contains("Task.ChangeStatus")) ClearActionConfirmation();
@@ -458,7 +458,9 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             .ThenBy(item => item.Title, StringComparer.CurrentCulture)
             .ToArray();
 
-        foreach (var task in _taskSnapshots.Values.Where(t => t.Card?.ScheduledDate is not null || _planningProjectionIds.Contains(t.Id)))
+        // Calendar's legacy Task rows use deadlines as interval ends and omit date-only/duration-only plans.
+        // Reconcile every known Task from its canonical DTO on each load, including cleared planning.
+        foreach (var task in _taskSnapshots.Values)
             UpdateTaskPlanningProjection(task);
         RebuildPlannerItems();
     }

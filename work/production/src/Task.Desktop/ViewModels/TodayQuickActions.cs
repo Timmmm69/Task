@@ -12,7 +12,7 @@ public sealed partial class TodayViewModel
     private readonly HashSet<Guid> _tasksNeedingReload = [];
     private readonly HashSet<Guid> _taskReloadAttempted = [];
     private bool _isActionBusy;
-    private bool _statusPermissionDenied;
+    private readonly HashSet<Guid> _statusPermissionDeniedTasks = [];
     private long _actionEpoch;
     private DesktopTransitionTaskCommand? _confirmation;
     private string? _actionMessage;
@@ -41,11 +41,12 @@ public sealed partial class TodayViewModel
     public AsyncCommand ReloadSelectedTaskCommand { get; private set; } = null!;
 
     private bool CanWriteStatus => !_disposed && IsActive && _sessionAvailable && IsConnected
-        && CanReadTasks && _capabilities.Contains("Task.ChangeStatus") && !_statusPermissionDenied
+        && CanReadTasks && _capabilities.Contains("Task.ChangeStatus")
+        && SelectedTask is { } task && !_statusPermissionDeniedTasks.Contains(task.Id)
         && !IsBusy && !IsActionBusy && !NeedsTaskReload && !HasPlanningRetry;
 
     private bool CanShowTransition(DesktopTaskStatus target) => ShowTaskActions
-        && _capabilities.Contains("Task.ChangeStatus") && !_statusPermissionDenied && SelectedTask is { } task
+        && _capabilities.Contains("Task.ChangeStatus") && SelectedTask is { } task && !_statusPermissionDeniedTasks.Contains(task.Id)
         && TasksViewModel.IsAllowedTransition(task.Status, target)
         && (!_unconfirmedCommands.TryGetValue(task.Id, out var pending) || pending.TargetStatus == target);
 
@@ -118,7 +119,7 @@ public sealed partial class TodayViewModel
         ReloadSelectedTaskCommand.Cancel();
         ClearActionConfirmation();
         ActionMessage = null;
-        if (!_sessionAvailable) { _unconfirmedCommands.Clear(); _tasksNeedingReload.Clear(); }
+        if (!_sessionAvailable) { _unconfirmedCommands.Clear(); _tasksNeedingReload.Clear(); _statusPermissionDeniedTasks.Clear(); }
     }
 
     private async global::System.Threading.Tasks.Task ExecuteTransitionAsync(
@@ -147,7 +148,7 @@ public sealed partial class TodayViewModel
                     UpdateSessionState(false);
                     break;
                 case DesktopTaskWriteResult<DesktopTaskDto>.Forbidden:
-                    _statusPermissionDenied = true;
+                    _statusPermissionDeniedTasks.Add(command.Id);
                     _unconfirmedCommands.Remove(command.Id);
                     ClearActionConfirmation();
                     ActionMessage = "Нет права Task.ChangeStatus. Доступен только просмотр.";
@@ -301,6 +302,7 @@ public sealed partial class TodayViewModel
         _tasksNeedingReload.Remove(id);
         _planningRetries.Remove(id);
         _planningDenied.Remove(id);
+        _statusPermissionDeniedTasks.Remove(id);
         RemoveTaskCalendarProjection(id);
         RebuildTaskSummaries();
         RebuildPlannerItems();
