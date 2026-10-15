@@ -1,0 +1,141 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-15",
+  "branch": "fix/desktop-four-usability-improvements",
+  "baseCommit": "c583f200e0e60db3fe3d2b33bf798897d0d99c46",
+  "verifiedCodeCommit": "20a43998f515a82104cf7065639ec8ef51fd550a",
+  "cleanSnapshot": true,
+  "releaseBuild": {
+    "exitCode": 0,
+    "warnings": 11,
+    "errors": 0
+  },
+  "suites": [
+    {
+      "assembly": "task.desktop.tests.dll",
+      "total": 851,
+      "executed": 851,
+      "passed": 851,
+      "failed": 0
+    },
+    {
+      "assembly": "task.tests.dll",
+      "total": 852,
+      "executed": 848,
+      "passed": 848,
+      "failed": 0
+    },
+    {
+      "assembly": "task.servicehosts.tests.dll",
+      "total": 608,
+      "executed": 608,
+      "passed": 608,
+      "failed": 0
+    }
+  ],
+  "reportedPassed": 2307,
+  "reportedSkipped": 4,
+  "postgresNotRunOutputCount": 35,
+  "postgresNotRunTests": [
+    "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_SessionRepositoryArgumentValidationAndFactory",
+    "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_LockDeadlineIsOnlyExtended",
+    "Task.Tests.PostgresBackgroundDeliveryStoreTests.RealPostgres_BackgroundDeliveryIsLeasedIdempotentAndRetrySafe",
+    "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ForeignOrganizationIsolation",
+    "Task.Tests.PostgresTaskAggregateStoreTests.RealPostgres_MigrationRoundTripTenantBoundaryAndConcurrency",
+    "Task.Tests.PostgresTaskAggregateStoreTests.RealPostgres_MigratorFailsClosedForLockHistoryAndMissingObjects",
+    "Task.Tests.Postgres.PostgresSessionListTests.RealPostgres_GetUserSessions_IsCappedAt200",
+    "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_Filters_AndEmptyFilterIsNoFilter",
+    "Task.Tests.PostgresAuthorizationPolicyStoreTests.RealPostgres_AuthorizationPolicyStoreReadsRulesByOrgAndCode",
+    "Task.Tests.Postgres.RefreshTokenRotationTests.RealPostgres_RotateThenReuse_RevokesSession",
+    "Task.Tests.Postgres.PostgresDeviceRegistrationStoreTests.RealPostgres_UpsertCreateSameFingerprintAndRevokedPreserved",
+    "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_AppendReadRoundTrip_ClientTimestampIgnored",
+    "Task.Tests.PostgresProductStoresTests.RealPostgres_UpgradeFromVersionEightPreservesDataAndBackfillsLifecycle",
+    "Task.Tests.Postgres.PostgresSessionListTests.RealPostgres_GetSession_ReturnsAnyState",
+    "Task.Tests.PostgresTaskAggregateStoreTests.RealPostgres15_IsRejectedBeforeBootstrapDdl",
+    "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_ObjectReadbackAndObjectFilter",
+    "Task.Tests.Postgres.PostgresAccountLookupStoreTests.RealPostgres_FindByLogin_OneHitZeroHitCollisionAndDefaultScope",
+    "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_LockoutStateAndFailedIncrement",
+    "Task.Tests.PostgresCalendarEventStoreTests.RealPostgres_CalendarEventRoundTripTenantBoundaryAndConcurrency",
+    "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_ConcurrentFailedLoginsDoNotLoseIncrements",
+    "Task.Tests.Postgres.PostgresAccountCredentialStoreTests.RealPostgres_CredentialUpdateAndHistoryWithLimit",
+    "Task.Tests.PostgresScheduleStoreTests.RealPostgres_ScheduleWindowTenantBoundaryFiltersAndDiCoverage",
+    "Task.Tests.Postgres.PostgresAccountLockoutStoreTests.RealPostgres_SuccessfulLoginResetsAndBlockedIsNeverReset",
+    "Task.Tests.PostgresTaskWriteCommandExecutorTests.RealPostgres16_TaskWriteIsAtomicDurableAndTenantScoped",
+    "Task.Tests.Postgres.PostgresSessionListTests.RealPostgres_GetUserSessions_OrdersAndJoinsDevices",
+    "Task.Tests.Postgres.PostgresSessionMaintenanceTests.RealPostgres_PurgeHonorsBatchLimitAndCompletesInMultiplePasses",
+    "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_SessionRepositoryRoundTripRotationAndRevocation",
+    "Task.Tests.Postgres.PostgresSessionMaintenanceTests.RealPostgres_PurgeRemovesExpiredRecordsAndKeepsFreshOnes",
+    "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_RotateRefreshTokenIsTenantScoped",
+    "Task.Tests.PostgresSessionRepositoryTests.RealPostgres_SessionRequestStateEvaluation",
+    "Task.Tests.PostgresTaskReadStoreTests.RealPostgres_ActiveProjectionIsolationAndCursorPagination",
+    "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_UpdateAndDeleteRejectedByAppendOnlyTrigger",
+    "Task.Tests.Postgres.PostgresSessionRefreshLookupTests.RealPostgres_FindSessionByRefreshTokenHash_ActiveConsumedUnknownExpired",
+    "Task.Tests.Postgres.PostgresAuditEntryStoreTests.RealPostgres_KeysetPagination_PageSizeClamp_NoGapsOrDuplicates",
+    "Task.Tests.PostgresProductStoresTests.RealPostgres_ProductStoresRoundTripConcurrencyTenantAndLifecycle"
+  ],
+  "postgresGateVerified": false,
+  "nativeWpfWindowVerified": true,
+  "liveCorporateServerUiVerified": false,
+  "scopeFiles": [
+    "work/production/src/Task.Desktop/ViewModels/CommandPaletteViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubPagination.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubSearch.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubSettingsPresentation.cs",
+    "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+    "work/production/src/Task.Desktop/Views/CommandPaletteView.xaml",
+    "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+    "work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+    "work/production/tests/Task.Desktop.Tests/SearchNavigationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/SettingsWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/DesktopSettingsPresentationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/DesktopWorkPaginationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/WorkHubNavigationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/WorkHubPaginationTests.cs"
+  ],
+  "taskFiles": {
+    "1": [
+      "src/Task.Desktop/ViewModels/InboxViewModel.cs",
+      "tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs"
+    ],
+    "2": [
+      "src/Task.Desktop/Work/DesktopWorkApiClient.cs",
+      "src/Task.Desktop/ViewModels/WorkHubPagination.cs",
+      "src/Task.Desktop/ViewModels/WorkHubSearch.cs",
+      "src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "src/Task.Desktop/ViewModels/CommandPaletteViewModel.cs",
+      "src/Task.Desktop/Views/WorkHubView.xaml",
+      "src/Task.Desktop/Views/CommandPaletteView.xaml",
+      "tests/Task.Desktop.Tests/Work/DesktopWorkPaginationTests.cs",
+      "tests/Task.Desktop.Tests/Work/WorkHubPaginationTests.cs"
+    ],
+    "3": [
+      "src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "src/Task.Desktop/ViewModels/WorkHubSearch.cs",
+      "src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs",
+      "src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "tests/Task.Desktop.Tests/SearchNavigationTests.cs",
+      "tests/Task.Desktop.Tests/Work/WorkHubNavigationTests.cs"
+    ],
+    "4": [
+      "src/Task.Desktop/Views/WorkHubView.xaml",
+      "src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+      "src/Task.Desktop/ViewModels/WorkHubSettingsPresentation.cs",
+      "tests/Task.Desktop.Tests/SettingsWindowsTests.cs",
+      "tests/Task.Desktop.Tests/Work/DesktopSettingsPresentationTests.cs"
+    ]
+  },
+  "taskStatus": {
+    "1": "partial: optional deadline fixed; title-only conversion blocked by existing production inbox model",
+    "2": "implemented",
+    "3": "implemented with explicit unsupported-type fallback",
+    "4": "implemented"
+  },
+  "apiRoutesDtosPermissionsUnchanged": true,
+  "userChangesPreserved": true,
+  "draftPrReady": true,
+  "fullAcceptanceReady": false
+}

@@ -1,0 +1,12 @@
+
+> dashboard:validate
+> node .project-dashboard/validate.mjs
+
+{
+  "valid": true,
+  "items": 40,
+  "categories": 8,
+  "gates": 6,
+  "overall": 98.71,
+  "handoff_ready": false
+}

@@ -1,0 +1,15 @@
+{
+  "userTrackedEditsPreserved": true,
+  "files": [
+    "work/production/src/Task.Desktop/App.xaml.cs",
+    "work/production/src/Task.Desktop/Infrastructure/ViewState.cs",
+    "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+    "work/production/src/Task.Desktop/Modes/ApplicationMode.cs",
+    "work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs",
+    "work/production/src/Task.Desktop/Personal/PersonalWindowsNotifications.cs",
+    "work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+    "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+    ".project-dashboard/roadmap.json"
+  ],
+  "dashboardUserEditsSemanticallyPreserved": true
+}

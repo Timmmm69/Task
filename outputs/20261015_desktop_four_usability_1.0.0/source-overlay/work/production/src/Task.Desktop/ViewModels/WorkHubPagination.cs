@@ -1,0 +1,96 @@
+using Task.Desktop.Work;
+
+namespace Task.Desktop.ViewModels;
+
+public sealed partial class WorkHubViewModel
+{
+    private string? _listCursor;
+    private string? _searchCursor;
+    private readonly HashSet<string> _listCursors = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _searchCursors = new(StringComparer.Ordinal);
+    private long _listGeneration;
+    public AsyncCommand LoadMoreCommand { get; private set; } = null!;
+    public bool HasMoreResults => (_paletteSearchActive || IsSearch) ? _searchCursor is not null
+        : Area is WorkHubArea.Contacts or WorkHubArea.Archive or WorkHubArea.Trash && _listCursor is not null;
+
+    private void InitializePagination() => LoadMoreCommand = new(async (_, ct) =>
+    {
+        if (_paletteSearchActive || IsSearch) await SearchCoreAsync(ct, append: true);
+        else await LoadListPageAsync(true, ct);
+    }, _ => HasMoreResults && !_disposed && _sessionAvailable && _networkAvailable
+        && (_paletteSearchActive ? CanSearch : _active && CanReadCurrentArea) && !RefreshCommand.IsExecuting && !IsLoading && !IsSearchLoading);
+
+    private void NotifyPagination()
+    {
+        OnPropertyChanged(nameof(HasMoreResults));
+        LoadMoreCommand.RaiseCanExecuteChanged();
+    }
+
+    private void ResetListPagination()
+    {
+        ++_listGeneration;
+        _listCursor = null;
+        _listCursors.Clear();
+        LoadMoreCommand.Cancel();
+        NotifyPagination();
+    }
+
+    private async System.Threading.Tasks.Task LoadListPageAsync(bool append, CancellationToken ct)
+    {
+        if (!append) ResetListPagination();
+        var generation = _listGeneration;
+        var activation = _activationGeneration;
+        var area = Area;
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, _activation?.Token ?? CancellationToken.None);
+        BeginOperation();
+        try
+        {
+            if (area == WorkHubArea.Contacts)
+            {
+                var result = await _client.GetContactsAsync(append ? _listCursor : null, linked.Token);
+                if (!Current()) return;
+                ApplyListPage(result, append, values => Contacts = values,
+                    Contacts, item => item.Id);
+            }
+            else
+            {
+                var result = area == WorkHubArea.Archive
+                    ? await _client.GetArchiveAsync(append ? _listCursor : null, linked.Token)
+                    : await _client.GetTrashAsync(append ? _listCursor : null, linked.Token);
+                if (!Current()) return;
+                ApplyListPage(result, append, values => { LifecycleItems = values; SelectFirstVisibleLifecycleItem(); },
+                    LifecycleItems, item => item.ObjectId);
+            }
+        }
+        catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
+        finally { EndOperation(); NotifyPagination(); }
+
+        bool Current() => !linked.IsCancellationRequested && !_disposed && _sessionAvailable
+            && activation == _activationGeneration && generation == _listGeneration && area == Area && CanReadCurrentArea;
+    }
+
+    private void ApplyListPage<T>(DesktopWorkResult<IReadOnlyList<T>> result, bool append,
+        Action<IReadOnlyList<T>> set, IReadOnlyList<T> previous, Func<T, Guid> id)
+    {
+        if (result is DesktopWorkResult<IReadOnlyList<T>>.Succeeded page)
+        {
+            Apply(result, values => set((append ? previous.Concat(values) : values).DistinctBy(id).ToArray()));
+            _listCursor = page.NextCursor;
+            if (_listCursor is not null && !_listCursors.Add(_listCursor))
+            {
+                _listCursor = null;
+                SetFeedback("Сервер повторил страницу. Обновите раздел, чтобы продолжить.", WorkHubFeedbackKind.Warning);
+            }
+        }
+        else
+        {
+            if (result is DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse) _listCursor = null;
+            if (result is DesktopWorkResult<IReadOnlyList<T>>.Forbidden or DesktopWorkResult<IReadOnlyList<T>>.AuthenticationFailure)
+            {
+                set([]);
+                ResetListPagination();
+            }
+            Apply(result, _ => { });
+        }
+    }
+}

@@ -1,0 +1,23 @@
+Тестовый запуск для C:\Users\novik\Таск\work\desktop_four_1\verify\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\desktop_four_1\verify\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\desktop_four_1\verify\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:01.49]     Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [SKIP]
+[xUnit.net 00:00:01.49]     Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [1 ms]
+[xUnit.net 00:00:01.76]     Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [SKIP]
+  Пропущен Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [1 ms]
+[xUnit.net 00:00:01.77]     Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [SKIP]
+  Пропущен Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [1 ms]
+Файл результатов: C:\Users\novik\Таск\work\desktop_four_1\results-clean\novik_TIM_2026-10-15_16_45_26_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   848, пропущено     4, всего   852, длительность 3 s. - Task.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\desktop_four_1\results-clean\novik_TIM_2026-10-15_16_45_25_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   851, пропущено     0, всего   851, длительность 8 s. - Task.Desktop.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\desktop_four_1\results-clean\novik_TIM_2026-10-15_16_45_26_net10.0[1].trx
+
+Пройден!   : не пройдено     0, пройдено   608, пропущено     0, всего   608, длительность 15 s. - Task.ServiceHosts.Tests.dll (net10.0)
