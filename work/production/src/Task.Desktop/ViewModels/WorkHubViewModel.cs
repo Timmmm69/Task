@@ -114,6 +114,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         SaveUserSettingsCommand = new(SaveUserSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _userSettings is not null);
         SaveNotificationPreferencesCommand = new(SaveNotificationPreferencesAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _notificationPreferences is not null);
         SaveOrganizationSettingsCommand = new(SaveOrganizationSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateOrganization && _organizationSettings is not null);
+        PropertyChanged += OnSettingsValueChanged;
         InitializeLocations();
         foreach (var command in Commands) command.ExecutionFailed += OnUnexpectedFailure;
         RefreshCommand.CanExecuteChanged += OnRefreshCanExecuteChanged;
@@ -514,19 +515,21 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task SaveUserSettingsAsync(object? parameter, CancellationToken ct)
     {
         if (_userSettings is null) return;
+        if (ProfileSettingsError is { } error) { SetFeedback(error, WorkHubFeedbackKind.Warning); return; }
         if (UserLanguage.Trim().Length is < 2 or > 16 || UserTimeFormat is not ("12h" or "24h") ||
             !TimeOnly.TryParse(UserWorkdayStart, out _) || !TimeOnly.TryParse(UserWorkdayEnd, out _) ||
             DefaultTaskDurationMinutes is < 5 or > 1440 || DefaultReminderOffsetMinutes is < 0 or > 525600 ||
             MissingFileBehavior is not ("show_actions" or "keep_inactive" or "prompt_relink"))
         { SetFeedback("Проверьте формат времени и допустимые значения настроек.", WorkHubFeedbackKind.Warning); return; }
-        var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = UserWorkdayStart, WorkdayEnd = UserWorkdayEnd, DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, DateOnlyReminderTime = DateOnlyReminderTime, AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
+        var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = NormalizeTime(UserWorkdayStart), WorkdayEnd = NormalizeTime(UserWorkdayEnd), DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, DateOnlyReminderTime = NormalizeTime(DateOnlyReminderTime), AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
         Apply(await _client.UpdateUserSettingsAsync(draft, ct), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveNotificationPreferencesAsync(object? _, CancellationToken ct)
     {
         if (_notificationPreferences is null) return;
+        if (NotificationSettingsError is { } error) { SetFeedback(error, WorkHubFeedbackKind.Warning); return; }
         if (DefaultSnoozeMinutes is < 1 or > 10080) { SetFeedback("Отсрочка должна быть от 1 до 10080 минут.", WorkHubFeedbackKind.Warning); return; }
-        var draft = _notificationPreferences with { Enabled = NotificationsEnabled, DesktopEnabled = DesktopNotificationsEnabled, SoundEnabled = NotificationSoundEnabled, DefaultSnoozeMinutes = DefaultSnoozeMinutes, QuietHoursStart = string.IsNullOrWhiteSpace(QuietHoursStart) ? null : QuietHoursStart, QuietHoursEnd = string.IsNullOrWhiteSpace(QuietHoursEnd) ? null : QuietHoursEnd, QuietHoursTimeZone = string.IsNullOrWhiteSpace(QuietHoursTimeZone) ? null : QuietHoursTimeZone };
+        var draft = _notificationPreferences with { Enabled = NotificationsEnabled, DesktopEnabled = DesktopNotificationsEnabled, SoundEnabled = NotificationSoundEnabled, DefaultSnoozeMinutes = DefaultSnoozeMinutes, QuietHoursStart = string.IsNullOrWhiteSpace(QuietHoursStart) ? null : NormalizeTime(QuietHoursStart), QuietHoursEnd = string.IsNullOrWhiteSpace(QuietHoursEnd) ? null : NormalizeTime(QuietHoursEnd), QuietHoursTimeZone = string.IsNullOrWhiteSpace(QuietHoursTimeZone) ? null : QuietHoursTimeZone };
         Apply(await _client.UpdateNotificationPreferencesAsync(draft, ct), value => { LoadNotificationPreferences(value); SetFeedback("Настройки уведомлений сохранены.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveOrganizationSettingsAsync(object? _, CancellationToken ct)
@@ -685,6 +688,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(IsLoading));
             OnPropertyChanged(nameof(ShowSearchEmpty));
         }
+        NotifyPagination();
     }
 
     private void SetFeedback(string? message, WorkHubFeedbackKind kind)
@@ -697,7 +701,11 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private bool Has(string capability) => _capabilities.Contains(capability);
     private bool CanUseServerWrites => _active && _sessionAvailable && _networkAvailable;
     private bool CanUseNotificationWrites => _sessionAvailable && _networkAvailable && CanReadNotifications;
-    private void OnRefreshCanExecuteChanged(object? sender, EventArgs e) => TryStartActivationRefresh();
+    private void OnRefreshCanExecuteChanged(object? sender, EventArgs e)
+    {
+        NotifyPagination();
+        TryStartActivationRefresh();
+    }
     private void TryStartActivationRefresh()
     {
         if (_disposed || !_activationRefreshPending || !_active || _activation is null || !RefreshCommand.CanExecute(null)) return;
