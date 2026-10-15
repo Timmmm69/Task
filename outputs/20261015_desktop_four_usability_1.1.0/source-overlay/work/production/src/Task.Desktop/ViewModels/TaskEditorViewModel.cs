@@ -1,0 +1,428 @@
+using System.Globalization;
+using Task.Desktop.TaskApi;
+using System.Text.Json.Nodes;
+using Task.Domain;
+
+namespace Task.Desktop.ViewModels;
+
+public enum TaskEditorMode
+{
+    Create,
+    Edit,
+}
+
+public sealed record TaskPriorityOption(DesktopTaskPriority Value, string Text);
+
+/// <summary>Local draft for the Task side panel. Network operations remain in TasksViewModel.</summary>
+public sealed partial class TaskEditorViewModel : ViewModelBase
+{
+    private static readonly CultureInfo RussianCulture = CultureInfo.GetCultureInfo("ru-RU");
+    private static readonly IReadOnlyList<TaskPriorityOption> PriorityValues =
+    [
+        new(DesktopTaskPriority.Low, "Низкий"),
+        new(DesktopTaskPriority.Normal, "Обычный"),
+        new(DesktopTaskPriority.High, "Высокий"),
+        new(DesktopTaskPriority.Critical, "Критический"),
+    ];
+
+    private DesktopTaskDto? _source;
+    private readonly bool _personal;
+    private string _title = string.Empty;
+    private TaskPriorityOption _priority = PriorityValues[1];
+    private string _startText = string.Empty;
+    private string _deadlineText = string.Empty;
+    private string? _titleError;
+    private string? _priorityError;
+    private string? _startError;
+    private string? _deadlineError;
+    private string? _statusMessage;
+    private bool _isBusy;
+    private bool _isDirty;
+    private bool _hasConflict;
+    private bool _isDiscardConfirmationVisible;
+    private bool _retryAvailable = true;
+    private long _revision;
+    private bool _suppressChanges;
+    private TimeZoneInfo? _slotZone;
+    private DateTimeOffset? _slotStartUtc;
+    private string? _slotStartText;
+
+    public void SeedCalendarSlot(Task.Desktop.Calendar.FreeTimeSlot slot)
+    {
+        if (Mode != TaskEditorMode.Create) throw new InvalidOperationException("Only a create draft can be seeded.");
+        _slotZone = slot.Zone; _slotStartUtc = slot.StartUtc;
+        _slotStartText = TimeZoneInfo.ConvertTime(slot.StartUtc, slot.Zone).ToString("g", RussianCulture);
+        Card.ScheduleZone = slot.Zone;
+        StartText = _slotStartText;
+        Card.Date = slot.Date.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+        Card.Duration = slot.DurationMinutes.ToString(CultureInfo.InvariantCulture);
+        Changed();
+        SetStatus($"Черновик на выбранное время · {slot.Zone.Id}. Окно не зарезервировано; сохраните задачу после проверки.");
+    }
+
+    public TaskEditorViewModel(TaskEditorMode mode, DesktopTaskDto? source = null, bool personal = false)
+    {
+        _personal = personal;
+        Mode = mode;
+        Priorities = PriorityValues;
+        Load(source);
+    }
+
+    public TaskEditorMode Mode { get; }
+    public string? SimilarNotice { get; private set; }
+
+    /// <summary>Seed the ordinary create editor from an explicit allowlist, never the task aggregate.</summary>
+    public static TaskEditorViewModel FromSimilar(DesktopTaskDto source, JsonObject? options, bool canAssign, bool canWatch)
+    {
+        var removed = new List<string>();
+        HashSet<Guid> Available(string key) => (options?[key]?.AsArray() ?? [])
+            .Select(n => Guid.Parse(n!["id"]!.ToString())).ToHashSet();
+        Guid? Relation(Guid? id, string key, string label)
+        {
+            if (id is null || Available(key).Contains(id.Value)) return id;
+            removed.Add(label); return null;
+        }
+        IReadOnlyList<Guid> Participants(IReadOnlyList<Guid> ids, bool allowed, string label)
+        {
+            var available = Available("people");
+            var retained = ids.Where(id => allowed && available.Contains(id)).ToArray();
+            if (retained.Length != ids.Count) removed.Add(label);
+            return retained;
+        }
+        var card = new TaskCardContent
+        {
+            Description = source.Card?.Description,
+            PlannedDurationMinutes = source.Card?.PlannedDurationMinutes,
+            ProjectId = Relation(source.Card?.ProjectId, "projects", "проект"),
+            PrimaryCounterpartyObjectId = Relation(source.Card?.PrimaryCounterpartyObjectId, "counterparties", "контрагент"),
+            AssigneeIds = Participants(source.AssigneeIds, canAssign, "исполнители"),
+            WatcherIds = Participants(source.WatcherIds, canWatch, "наблюдатели")
+        };
+        var editor = new TaskEditorViewModel(TaskEditorMode.Create);
+        editor.Card.Changed -= editor.Changed;
+        editor.Card = new TaskCardEditor(card) { CanAssign = canAssign, CanWatch = canWatch };
+        editor.Card.SetOptions(options ?? new JsonObject());
+        editor.Card.Changed += editor.Changed;
+        editor.Title = source.Title;
+        editor.Priority = PriorityValues.Single(p => p.Value == source.Priority);
+        editor.SimilarNotice = "На основе другой задачи. Проверьте данные и сохраните. Даты и повторение очищены."
+            + (removed.Count == 0 ? "" : $" Не перенесены недоступные или неподтверждённые значения: {string.Join(", ", removed)}. Выберите их заново при необходимости.")
+            + (options is null ? " Варианты связей не удалось проверить." : "");
+        return editor;
+    }
+    public TaskCardEditor Card { get; private set; } = null!;
+    public string? CardError { get; private set; }
+    public Guid? SourceId => _source?.Id;
+    internal long SourceVersion => _source?.Version ?? 0;
+    internal bool ValidateConversion() => Validate(out _, out _);
+    internal void RetargetConversion(DesktopTaskDto task)
+    {
+        Validate(out var start, out _);
+        var previous = Card;
+        var patch = previous.Patch(previous.Build(start));
+        var merged = JsonNode.Parse((task.Card ?? new()).ToJson())!.AsObject();
+        if (patch is not null)
+            foreach (var field in JsonNode.Parse(patch)!.AsObject()) merged[field.Key] = field.Value?.DeepClone();
+        _suppressChanges = true;
+        if (Title.Trim() == _source?.Title) Title = task.Title;
+        if (Priority.Value == _source?.Priority) Priority = PriorityValues.Single(value => value.Value == task.Priority);
+        if (StartText.Trim() == FormatLocal(_source?.StartAtUtc)) StartText = FormatLocal(task.StartAtUtc);
+        if (DeadlineText.Trim() == (_source?.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(_source?.DeadlineAtUtc)))
+            DeadlineText = task.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(task.DeadlineAtUtc);
+        _source = task;
+        Card = new TaskCardEditor(TaskCardContent.FromJson(merged.ToJsonString()), task.StartAtUtc, _personal)
+        { CanAssign = previous.CanAssign, CanWatch = previous.CanWatch, ScheduleZone = previous.ScheduleZone };
+        Card.RebaseSource(task.Card);
+        JsonArray Choices(IReadOnlyList<TaskChoice> choices) => new(choices.Where(choice => choice.Id.HasValue)
+            .Select(choice => (JsonNode)new JsonObject { ["id"] = choice.Id!.Value.ToString("D"), ["name"] = choice.Name }).ToArray());
+        Card.SetOptions(new JsonObject { ["projects"] = Choices(previous.Projects), ["tasks"] = Choices(previous.Tasks),
+            ["people"] = Choices(previous.People), ["counterparties"] = Choices(previous.Counterparties) });
+        previous.Changed -= Changed; Card.Changed += Changed;
+        _suppressChanges = false;
+        OnPropertyChanged(nameof(Card));
+        OnPropertyChanged(nameof(SourceId));
+        Validate(out _, out _);
+    }
+    public IReadOnlyList<TaskPriorityOption> Priorities { get; }
+    public string Heading => Mode == TaskEditorMode.Create ? "Новая задача" : "Изменить задачу";
+    public string SubmitText => !_retryAvailable ? "Повтор станет доступен…"
+        : Mode == TaskEditorMode.Create ? "Создать задачу" : "Сохранить изменения";
+    public long Revision => _revision;
+    public bool HasUnsavedChanges => _isDirty;
+    public bool HasConflict => _hasConflict;
+    public bool IsDiscardConfirmationVisible => _isDiscardConfirmationVisible;
+    public bool RetryAvailable => _retryAvailable;
+    public bool HasErrors => TitleError is not null || PriorityError is not null
+        || StartError is not null || DeadlineError is not null || CardError is not null;
+    public bool CanSubmit => !_isBusy && !_hasConflict && _retryAvailable && !HasErrors;
+
+    public string Title
+    {
+        get => _title;
+        set
+        {
+            if (SetProperty(ref _title, value ?? string.Empty))
+            {
+                Changed();
+            }
+        }
+    }
+
+    public TaskPriorityOption Priority
+    {
+        get => _priority;
+        set
+        {
+            if (value is not null && SetProperty(ref _priority, value))
+            {
+                Changed();
+            }
+        }
+    }
+
+    public string StartText
+    {
+        get => _startText;
+        set
+        {
+            if (SetProperty(ref _startText, value ?? string.Empty))
+            {
+                Changed();
+            }
+        }
+    }
+
+    public string DeadlineText
+    {
+        get => _deadlineText;
+        set
+        {
+            if (SetProperty(ref _deadlineText, value ?? string.Empty))
+            {
+                Changed();
+            }
+        }
+    }
+
+    public string? TitleError { get => _titleError; private set => SetProperty(ref _titleError, value); }
+    public string? PriorityError { get => _priorityError; private set => SetProperty(ref _priorityError, value); }
+    public string? StartError { get => _startError; private set => SetProperty(ref _startError, value); }
+    public string? DeadlineError { get => _deadlineError; private set => SetProperty(ref _deadlineError, value); }
+    public string? StatusMessage { get => _statusMessage; private set => SetProperty(ref _statusMessage, value); }
+
+    public bool IsBusy
+    {
+        get => _isBusy;
+        set
+        {
+            if (SetProperty(ref _isBusy, value))
+            {
+                NotifyState();
+            }
+        }
+    }
+
+    public DesktopCreateTaskCommand? BuildCreateCommand()
+    {
+        if (Mode != TaskEditorMode.Create || !Validate(out var start, out var deadline))
+        {
+            return null;
+        }
+
+        return new DesktopCreateTaskCommand(Title.Trim(), Priority.Value, start, deadline, Card.Build(start));
+    }
+
+    public DesktopPatchTaskCommand? BuildPatchCommand()
+    {
+        if (Mode != TaskEditorMode.Edit || _source is null || !Validate(out var start, out var deadline))
+        {
+            return null;
+        }
+
+        var title = Title.Trim();
+        var titleField = title != _source.Title ? DesktopTaskField<string>.From(title) : default;
+        var priorityField = Priority.Value != _source.Priority
+            ? DesktopTaskField<DesktopTaskPriority>.From(Priority.Value)
+            : default;
+        var startField = !string.Equals(StartText.Trim(), FormatLocal(_source.StartAtUtc), StringComparison.Ordinal)
+            ? DesktopTaskField<DateTimeOffset?>.From(start)
+            : default;
+        var deadlineField = !string.Equals(DeadlineText.Trim(), (_source.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(_source.DeadlineAtUtc)), StringComparison.Ordinal)
+            ? DesktopTaskField<DateTimeOffset?>.From(deadline)
+            : default;
+        var cardPatch = Card.Patch(Card.Build(start));
+        if (cardPatch is null && !titleField.IsSpecified && !priorityField.IsSpecified
+            && !startField.IsSpecified && !deadlineField.IsSpecified)
+        {
+            StatusMessage = "Нет изменений для сохранения.";
+            return null;
+        }
+
+        return new DesktopPatchTaskCommand(
+            _source.Id,
+            _source.Version,
+            titleField,
+            priorityField,
+            startField,
+            deadlineField, cardPatch);
+    }
+
+    public void LoadLatest(DesktopTaskDto task)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+        Load(task);
+        StatusMessage = "Загружена актуальная версия. Проверьте изменения и сохраните снова.";
+    }
+
+    public void ApplyServerValidation(
+        string message,
+        IReadOnlyDictionary<string, IReadOnlyList<string>> fieldErrors)
+    {
+        StatusMessage = string.IsNullOrWhiteSpace(message)
+            ? "Проверьте заполненные поля."
+            : message;
+        foreach (var (field, errors) in fieldErrors)
+        {
+            var safe = errors.FirstOrDefault();
+            if (field.Equals("title", StringComparison.OrdinalIgnoreCase)) TitleError = safe;
+            if (field.Equals("priority", StringComparison.OrdinalIgnoreCase)) PriorityError = safe;
+            if (field.Equals("startAtUtc", StringComparison.OrdinalIgnoreCase)) StartError = safe;
+            if (field.Equals("deadlineAtUtc", StringComparison.OrdinalIgnoreCase)) DeadlineError = safe;
+        }
+        NotifyState();
+    }
+
+    public void SetStatus(string message) => StatusMessage = message;
+
+    public void SetConflict()
+    {
+        _hasConflict = true;
+        StatusMessage = "Задача уже изменена другим пользователем.";
+        OnPropertyChanged(nameof(HasConflict));
+        NotifyState();
+    }
+
+    public void ShowDiscardConfirmation(bool visible)
+    {
+        _isDiscardConfirmationVisible = visible;
+        OnPropertyChanged(nameof(IsDiscardConfirmationVisible));
+    }
+
+    public void SetRetryAvailable(bool available)
+    {
+        _retryAvailable = available;
+        OnPropertyChanged(nameof(RetryAvailable));
+        OnPropertyChanged(nameof(SubmitText));
+        NotifyState();
+    }
+
+    private void Load(DesktopTaskDto? source)
+    {
+        _suppressChanges = true;
+        _source = source;
+        Title = source?.Title ?? string.Empty;
+        Priority = PriorityValues.Single(option => option.Value == (source?.Priority ?? DesktopTaskPriority.Normal));
+        StartText = FormatLocal(source?.StartAtUtc);
+        DeadlineText = source?.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? FormatLocal(source?.DeadlineAtUtc);
+        Card = new TaskCardEditor(source?.Card, source?.StartAtUtc, _personal);
+        Card.Changed += Changed;
+        LoadReminderChoice();
+        OnPropertyChanged(nameof(Card));
+        _suppressChanges = false;
+        _isDirty = false;
+        _hasConflict = false;
+        _isDiscardConfirmationVisible = false;
+        _retryAvailable = true;
+        _revision++;
+        Validate(out _, out _);
+        OnPropertyChanged(nameof(HasUnsavedChanges));
+        OnPropertyChanged(nameof(HasConflict));
+        OnPropertyChanged(nameof(IsDiscardConfirmationVisible));
+        NotifyState();
+    }
+
+    private void Changed()
+    {
+        if (_suppressChanges)
+        {
+            return;
+        }
+
+        _isDirty = true;
+        _revision++;
+        StatusMessage = null;
+        Validate(out _, out _);
+        OnPropertyChanged(nameof(HasUnsavedChanges));
+    }
+
+    private bool Validate(out DateTimeOffset? startUtc, out DateTimeOffset? deadlineUtc)
+    {
+        TitleError = string.IsNullOrWhiteSpace(Title)
+            ? "Введите название задачи."
+            : Title.Trim().Length > 500 ? "Название не должно превышать 500 символов." : null;
+        PriorityError = null;
+        startUtc = ParseLocal(StartText, out var startError);
+        var isDate = DateOnly.TryParseExact(DeadlineText.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var deadlineDate);
+        deadlineUtc = isDate ? null : ParseLocal(DeadlineText, out _);
+        var deadlineError = isDate ? null : GetDeadlineError();
+        Card.DeadlineDate = isDate ? deadlineDate : null;
+        var deadlineZone = _source?.Card?.DeadlineDate == Card.DeadlineDate ? _source?.Card?.DeadlineTimeZone : null;
+        var zoneId = (_slotZone ?? TimeZoneInfo.Local).Id;
+        Card.DeadlineTimeZone = isDate ? deadlineZone ?? (TimeZoneInfo.TryConvertWindowsIdToIanaId(zoneId, out var iana) ? iana : zoneId) : null;
+        _reminderDeadline = deadlineUtc;
+        StartError = startError;
+        DeadlineError = deadlineError;
+        if (StartError is null && DeadlineError is null
+            && startUtc.HasValue && deadlineUtc.HasValue && deadlineUtc < startUtc)
+        {
+            DeadlineError = "Срок не может быть раньше начала.";
+        }
+
+        CardError = null;
+        if (_source is not null && StartText.Trim() == FormatLocal(_source.StartAtUtc)) startUtc = _source.StartAtUtc;
+        Card.UpdateStart(startUtc);
+        try { ValidateReminder(); _ = Card.Build(startUtc); } catch (ArgumentException e) { CardError = e.Message; }
+        OnPropertyChanged(nameof(CardError));
+        OnPropertyChanged(nameof(ReminderPreview));
+        NotifyState();
+        return !HasErrors;
+    }
+
+    private string? GetDeadlineError() { _ = ParseLocal(DeadlineText, out var error); return error; }
+
+    private DateTimeOffset? ParseLocal(string text, out string? error)
+    {
+        error = null;
+        if (_slotStartUtc.HasValue && text.Trim() == _slotStartText) return _slotStartUtc;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+
+        if (!DateTime.TryParse(text.Trim(), RussianCulture, DateTimeStyles.AllowWhiteSpaces, out var local))
+        {
+            error = "Укажите дату и время, например 28.08.2026 14:30.";
+            return null;
+        }
+
+        local = DateTime.SpecifyKind(local, DateTimeKind.Unspecified);
+        var zone = _slotZone ?? TimeZoneInfo.Local;
+        if (zone.IsInvalidTime(local))
+        {
+            error = "Это локальное время не существует из-за перехода часового пояса.";
+            return null;
+        }
+
+        return _personal ? Personal.PersonalTimePolicy.ToUtc(local, zone)
+            : new DateTimeOffset(local, zone.GetUtcOffset(local)).ToUniversalTime();
+    }
+
+    private static string FormatLocal(DateTimeOffset? value) =>
+        value?.ToLocalTime().ToString("g", RussianCulture) ?? string.Empty;
+
+    private void NotifyState()
+    {
+        OnPropertyChanged(nameof(HasErrors));
+        OnPropertyChanged(nameof(CanSubmit));
+    }
+}
