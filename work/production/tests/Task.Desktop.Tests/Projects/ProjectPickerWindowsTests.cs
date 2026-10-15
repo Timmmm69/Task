@@ -71,6 +71,13 @@ public sealed partial class ProjectsViewModelTests
                     Assert.DoesNotContain(ProjectDescendants<EmployeePickerView>(view), v => v.IsVisible);
                     Assert.True(ProjectDescendants<TextBox>(view).Single(t => System.Windows.Automation.AutomationProperties.GetAutomationId(t) == "ProjectMemberUserId").IsVisible);
                     SaveProjectFrame(view, "project-uuid-fallback.png");
+                    await vm.EditProjectCommand.ExecuteAsync(); PumpProject();
+                    var editorBeforeGrant = vm.Editor;
+                    vm.UpdateCapabilities(Capabilities.Append("User.Read")); PumpProject();
+                    Assert.Same(editorBeforeGrant, vm.Editor);
+                    Assert.True(ProjectDescendants<EmployeePickerView>(view).Single(v => ReferenceEquals(v.DataContext, vm.Editor!.ManagerPicker)).IsVisible);
+                    Assert.False(ProjectDescendants<TextBox>(view).Single(t => System.Windows.Automation.AutomationProperties.GetName(t) == "UUID руководителя — необязательно").IsVisible);
+                    SaveProjectFrame(view, "project-live-user-read-grant.png");
                     done.SetResult();
                 }
                 catch (Exception error) { done.SetException(error); }

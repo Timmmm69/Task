@@ -18,14 +18,15 @@ public sealed partial class ProjectEditorViewModel
     {
         UsesManagerPicker = directory is not null && capabilities.Contains("User.Read", StringComparer.OrdinalIgnoreCase);
         OnPropertyChanged(nameof(UsesManagerPicker));
-        if (!UsesManagerPicker) return;
+        // Keep an access-gated picker for live capability grants while this form stays open.
+        if (directory is null) return;
         ManagerPicker = new(directory!, capabilities);
         ManagerPicker.UpdateAccess(capabilities, sessionReady, online);
         ManagerPicker.PropertyChanged += ManagerChanged;
         ClearManagerCommand.Dispose();
         ClearManagerCommand = new((_, _) => { ManagerId = ""; ManagerPicker.ClearSelection(); return AsyncTask.CompletedTask; });
         OnPropertyChanged(nameof(ManagerPicker)); OnPropertyChanged(nameof(ClearManagerCommand));
-        if (Source?.ManagerUserId is not { } manager) return;
+        if (!UsesManagerPicker || Source?.ManagerUserId is not { } manager) return;
         _initializingManager = true;
         try { await ManagerPicker.PreselectAsync(manager, cancellationToken); }
         finally { _initializingManager = false; }
@@ -43,6 +44,7 @@ public sealed partial class ProjectEditorViewModel
     public void UpdatePeopleAccess(IEnumerable<string> capabilities, bool sessionReady, bool online)
     {
         if (ManagerPicker is null) return;
+        var enablePicker = !UsesManagerPicker && capabilities.Contains("User.Read", StringComparer.OrdinalIgnoreCase);
         // Keep the stored ID when directory access changes; the UUID fallback remains explicit.
         _initializingManager = true;
         try
@@ -52,6 +54,8 @@ public sealed partial class ProjectEditorViewModel
             OnPropertyChanged(nameof(UsesManagerPicker));
         }
         finally { _initializingManager = false; }
+        if (enablePicker && sessionReady && online && Guid.TryParse(ManagerId, out var manager) && manager != Guid.Empty)
+            _ = ManagerPicker.PreselectAsync(manager);
     }
 
     public void Dispose()

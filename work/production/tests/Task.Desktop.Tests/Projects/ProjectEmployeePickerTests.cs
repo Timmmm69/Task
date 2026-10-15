@@ -115,6 +115,37 @@ public sealed partial class ProjectsViewModelTests
         Assert.Equal(0, client.AddCalls);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async AsyncTask GrantingUserReadEnablesManagerPickerInTheOpenEditor(bool existing)
+    {
+        var manager = Employee(); var directory = Directory(manager);
+        var client = PickerClient(Project() with { ManagerUserId = existing ? manager.Id : null });
+        using var vm = PickerModel(client, directory, Capabilities); vm.Activate();
+        await (existing ? vm.EditProjectCommand : vm.NewProjectCommand).ExecuteAsync();
+        var editor = vm.Editor!; editor.Name = "Проект с новым доступом";
+        Assert.False(editor.UsesManagerPicker);
+        Assert.NotNull(editor.ManagerPicker);
+        await editor.ManagerPicker.SearchAsync();
+        Assert.Equal(0, directory.GetCalls + directory.SearchCalls);
+        vm.UpdateCapabilities(Capabilities.Append("User.Read"));
+        Assert.Same(editor, vm.Editor); Assert.True(editor.UsesManagerPicker);
+        Assert.True(editor.ManagerPicker.CanQuery);
+        await editor.ManagerPicker.CurrentOperation;
+        if (existing)
+        {
+            Assert.Equal(manager.Id, editor.ManagerPicker.SelectedUserAccountId);
+            Assert.True(editor.TryBuild(out var preserved)); Assert.Equal(manager.Id, preserved.ManagerUserId);
+        }
+        await Choose(editor.ManagerPicker, manager);
+        Assert.True(editor.TryBuild(out var draft)); Assert.Equal(manager.Id, draft.ManagerUserId);
+        vm.UpdateCapabilities(Capabilities);
+        Assert.False(editor.UsesManagerPicker); Assert.False(editor.ManagerPicker.CanQuery);
+        Assert.Null(editor.ManagerPicker.SelectedEmployee); Assert.Empty(editor.ManagerPicker.Results);
+        Assert.Equal(manager.Id.ToString("D"), editor.ManagerId);
+    }
+
     [Fact]
     public async AsyncTask ManagerPreselectionChangeClearAndCreateWithoutManagerPreserveOwnerAndVersion()
     {
