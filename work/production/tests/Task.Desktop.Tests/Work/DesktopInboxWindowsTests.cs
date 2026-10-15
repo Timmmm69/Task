@@ -59,8 +59,9 @@ public sealed partial class DesktopWorkApiClientTests
                     using var model = new InboxViewModel(fixture.Inbox, ["Inbox.ReadOwn", "Inbox.ManageOwn", "Task.Read"]);
                     await model.ActivateAsync(); await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
                     var view = new InboxView { DataContext = model, Background = Brushes.White, MotionEnabled = () => false };
-                    window = new Window { Content = view, Width = 1280, Height = 900, Title = "Task — преобразование без срока" };
-                    window.Show(); window.Activate(); DrainInbox();
+                    window = new Window { Content = view, Width = 1280, Height = 900, Left = -20000, ShowInTaskbar = false,
+                        ShowActivated = false, Title = "Task — преобразование без срока" };
+                    window.Show(); DrainInbox();
                     var save = InboxControl<Button>(view, "InboxSaveConversionButton");
                     var deadline = InboxControl<TextBox>(view, "InboxConversionDeadline");
                     Assert.Equal("", deadline.Text); Assert.True(save.IsEnabled); Assert.True(model.CanSaveConversion);
