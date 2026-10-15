@@ -1,0 +1,167 @@
+{
+  "tests": {
+    "desktop-regression": {
+      "passed": 923,
+      "failed": 0,
+      "total": 923
+    },
+    "projects-and-employees": {
+      "passed": 77,
+      "failed": 0,
+      "total": 77
+    },
+    "server-contract": {
+      "passed": 251,
+      "failed": 0,
+      "total": 251
+    }
+  },
+  "changed_files": [
+    "work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectEmployeePickerTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectPickerWindowsTests.cs",
+    "work/production/docs/PROD-04-projects-and-members.md",
+    "work/production/docs/PROJECT-EMPLOYEE-PICKER-5.2.md",
+    ".project-dashboard/roadmap.json"
+  ],
+  "source_base": "1cfb6c2",
+  "artifact": "Task project Employee Picker 5.2",
+  "limitations": [
+    "Full role coverage blocked without User.Read; UUID fallback retained",
+    "No live organization database/network role walkthrough"
+  ],
+  "files": [
+    {
+      "bytes": 30,
+      "path": ".gitattributes",
+      "sha256": "f06202a408fef9b9ea69bb6b1cb8160dbb0378c5bb67a444d510d231813824c8"
+    },
+    {
+      "bytes": 986,
+      "path": "evidence/boundaries.log",
+      "sha256": "a48e1297d824aed11453a56aa335427b83792a9444ab11741f7348c3a408d070"
+    },
+    {
+      "bytes": 152,
+      "path": "evidence/build-final.log",
+      "sha256": "41bfe44b477b39cd11ce7183ded6d8333111f1833268de023a040820c2bfc24d"
+    },
+    {
+      "bytes": 11585,
+      "path": "evidence/build.log",
+      "sha256": "e55d1a5f4dea600f670813f78ff5c28d49e747390bbfd8bfbee1b61b42b03e8a"
+    },
+    {
+      "bytes": 1389574,
+      "path": "evidence/desktop-regression.trx",
+      "sha256": "af827212262b7b0bd7c3fe7b30f0754bddcf51f974e40d975c300dcae4f6330b"
+    },
+    {
+      "bytes": 125,
+      "path": "evidence/diff-check.log",
+      "sha256": "0b0a387b40f38767ced2cb48553b52537ea66a6d0bbda5c572b7aee915752f00"
+    },
+    {
+      "bytes": 75702,
+      "path": "evidence/project-manager-narrow.png",
+      "sha256": "e9094c456a83459e158b389f8a51f90cf67fbef0d3d1626682dd35d360a9de86"
+    },
+    {
+      "bytes": 84921,
+      "path": "evidence/project-manager-picker.png",
+      "sha256": "3cb93e20b86af43edf3237d104dc097ddc161497b17fb4a633c742668be0f71d"
+    },
+    {
+      "bytes": 76717,
+      "path": "evidence/project-manager-save.png",
+      "sha256": "e51282a7ed3e718063d67f116cd689741fc98609615f19ab8fa7871373e5444e"
+    },
+    {
+      "bytes": 61430,
+      "path": "evidence/project-member-picker.png",
+      "sha256": "df25d4317ab5e86e996d63688c340b198aca783cd25dbe722ea168b9beb052c2"
+    },
+    {
+      "bytes": 49625,
+      "path": "evidence/project-uuid-fallback.png",
+      "sha256": "30f9a749c1452fff90f1bdaa8e42b50e54bff8a9d7ba08177e37dcc5f3f651f5"
+    },
+    {
+      "bytes": 118892,
+      "path": "evidence/projects-and-employees.trx",
+      "sha256": "7d4d55961e0d4586c7485706f0e00cb54eb1ead0670563979cb73d9b70d819e3"
+    },
+    {
+      "bytes": 405337,
+      "path": "evidence/server-contract.trx",
+      "sha256": "c315f3a4630394b6a8d0b9a95ffa00c264e6a38440e7ebb3eaf8307b30ef188e"
+    },
+    {
+      "bytes": 122598,
+      "path": "source/.project-dashboard/roadmap.json",
+      "sha256": "27671a85abc04fd6e4e2fb534eb731acbbb0d5ecfd3c71cd20dc00c0ab5f41c4"
+    },
+    {
+      "bytes": 5617,
+      "path": "source/work/production/docs/PROD-04-projects-and-members.md",
+      "sha256": "78349d146f87d0752a0fb368bfa2e62edc77af63626846c6357a9eca08fe80d2"
+    },
+    {
+      "bytes": 8221,
+      "path": "source/work/production/docs/PROJECT-EMPLOYEE-PICKER-5.2.md",
+      "sha256": "0e5e121a1b042f610bd4a1c6d692b37897c18c73b3c76fdaf2e799e34d967538"
+    },
+    {
+      "bytes": 17754,
+      "path": "source/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "sha256": "c48417d014f3e011d6242effe22330623b8e59a2ea6fe1d4d954a3955c2a244d"
+    },
+    {
+      "bytes": 33798,
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "sha256": "d8a282f1cdfd9065d0af3b825c904e9594a3540b0aec242ca2e17fb89b0c9136"
+    },
+    {
+      "bytes": 9093,
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs",
+      "sha256": "b3d2cfb807de91ad038e478591826f5fa0f0c8944ffbc0cc1234e823646f9131"
+    },
+    {
+      "bytes": 17536,
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "sha256": "09a2c6e0533a27efd92141d1f4e04539e53e018ea75f5c63bee8158509919857"
+    },
+    {
+      "bytes": 14970,
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectEmployeePickerTests.cs",
+      "sha256": "2b85ab999c6ba2ee8dde4ca8348bcbe72b54e9c11b72f6383b354c2eafe432e7"
+    },
+    {
+      "bytes": 7307,
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectPickerWindowsTests.cs",
+      "sha256": "df9e41c6eb0a78ed16ec0601e73d5eca32510a76bded8c46379ad52af531f136"
+    },
+    {
+      "bytes": 17095,
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "sha256": "6ec9187208e7b3242fa4ff7c31046d787d2c399e850f284a0ab421d475fd1e57"
+    },
+    {
+      "bytes": 8683,
+      "path": "validation-report.md",
+      "sha256": "fe1b51f4abf57e8fff777ada35b64f5754af294cfa67cdee08ce41c6f711c8bf"
+    },
+    {
+      "bytes": 7,
+      "path": "VERSION",
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ],
+  "version": "1.0.0",
+  "branch": "feature/employee-picker",
+  "date": "2026-10-15"
+}

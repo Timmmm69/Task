@@ -1,0 +1,23 @@
+{
+  "tests": {
+    "desktop-regression": {
+      "passed": 923,
+      "failed": 0,
+      "total": 923
+    },
+    "projects-and-employees": {
+      "passed": 77,
+      "failed": 0,
+      "total": 77
+    },
+    "server-contract": {
+      "passed": 251,
+      "failed": 0,
+      "total": 251
+    }
+  },
+  "files_verified": 25,
+  "zip_sha256": "4d37a36f0d0851c228b6d784459c1380c00c74ca26f4b991740402e59faab16e",
+  "version": "1.0.0",
+  "passed": true
+}

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using Task.Desktop.Projects;
 using Task.Desktop.TaskApi;
+using Task.Desktop.Administration;
 
 namespace Task.Desktop.ViewModels;
 
@@ -15,6 +16,12 @@ public sealed class ProjectItemViewModel : ViewModelBase
     public DesktopProjectDto Source { get; private set; }
     public Guid Id => Source.Id;
     public string Name => Source.Name;
+    private string _ownerText = "Учётная запись · имя недоступно";
+    private string? _managerText;
+    public string OwnerText => _ownerText;
+    public string ManagerText => Source.ManagerUserId is null ? "Не назначен" : _managerText ?? "Учётная запись · имя недоступно";
+    public void SetPeopleNames(string? owner, string? manager)
+    { _ownerText = owner ?? "Учётная запись · имя недоступно"; _managerText = manager; OnPropertyChanged(nameof(OwnerText)); OnPropertyChanged(nameof(ManagerText)); }
     public string Description => string.IsNullOrWhiteSpace(Source.Description) ? "Описание не указано" : Source.Description;
     public string StatusText => LocalizeStatus(Source.Status);
     public string DatesText => Source.StartDate is null && Source.PlannedEndDate is null ? "Сроки не указаны"
@@ -24,6 +31,7 @@ public sealed class ProjectItemViewModel : ViewModelBase
         Source = source;
         OnPropertyChanged(nameof(Source)); OnPropertyChanged(nameof(Name)); OnPropertyChanged(nameof(Description));
         OnPropertyChanged(nameof(StatusText)); OnPropertyChanged(nameof(DatesText));
+        SetPeopleNames(null, null);
     }
     public static string LocalizeStatus(DesktopProjectStatus status) => status switch
     { DesktopProjectStatus.Planning => "Планируется", DesktopProjectStatus.Active => "Активный", DesktopProjectStatus.Paused => "Приостановлен", DesktopProjectStatus.Completed => "Завершён", _ => status.ToString() };
@@ -36,13 +44,15 @@ public sealed class ProjectMemberItemViewModel : ViewModelBase
     { Source = source; Roles = roles; _selectedRole = roles.FirstOrDefault(role => role.Id == source.ProjectRoleId); }
     public DesktopProjectMemberDto Source { get; }
     public Guid UserAccountId => Source.UserAccountId;
-    public string UserText => Source.UserAccountId.ToString("D");
+    private string _userText = "Учётная запись · имя недоступно";
+    public string UserText { get => _userText; private set => SetProperty(ref _userText, value); }
+    public void SetName(string? name) => UserText = name ?? "Учётная запись · имя недоступно";
     public IReadOnlyList<DesktopProjectRoleDto> Roles { get; }
     public DesktopProjectRoleDto? SelectedRole { get => _selectedRole; set => SetProperty(ref _selectedRole, value); }
     public string RoleText => SelectedRole?.Name ?? Source.ProjectRoleId.ToString("D");
 }
 
-public sealed class ProjectEditorViewModel : ViewModelBase
+public sealed partial class ProjectEditorViewModel : ViewModelBase, IDisposable
 {
     private string _name;
     private string _description;
@@ -90,6 +100,8 @@ public sealed class ProjectEditorViewModel : ViewModelBase
         if (name.Length is < 1 or > 300) return Fail("Укажите название проекта (до 300 символов).");
         if (Description.Length > 10000) return Fail("Описание не должно превышать 10 000 символов.");
         if (!TryGuid(ManagerId, out var manager)) return Fail("Идентификатор руководителя должен быть UUID или пустым.");
+        if (UsesManagerPicker && manager is not null && ManagerPicker?.SelectedUserAccountId != manager)
+            return Fail("Подтвердите доступного активного руководителя или снимите назначение.");
         if (!TryDate(StartDate, out var start)) return Fail("Дата начала: используйте формат ДД.ММ.ГГГГ.");
         if (!TryDate(PlannedEndDate, out var end)) return Fail("Плановая дата: используйте формат ДД.ММ.ГГГГ.");
         if (start.HasValue && end < start) return Fail("Плановая дата завершения не может быть раньше даты начала.");
@@ -116,7 +128,7 @@ public sealed class ProjectEditorViewModel : ViewModelBase
     { value = null; if (string.IsNullOrWhiteSpace(text)) return true; if (DateOnly.TryParseExact(text.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)) { value = parsed; return true; } return false; }
 }
 
-public sealed class ProjectsViewModel : ViewModelBase, IDisposable
+public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
 {
     private readonly IDesktopProjectsApiClient _client;
     private readonly IDesktopTasksApiClient? _tasks;
@@ -140,19 +152,20 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public ProjectsViewModel(IDesktopProjectsApiClient client, Guid currentUserId,
-        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null)
+        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         if (currentUserId == Guid.Empty) throw new ArgumentException("Current user id must not be empty.", nameof(currentUserId));
         _currentUserId = currentUserId; _tasks = tasks;
         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        _directory = directory;
         RefreshCommand = new(RefreshAsync, _ => IsActive && _sessionAvailable && CanRead);
-        NewProjectCommand = new((_, _) => { Editor = new(_currentUserId); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanCreate);
-        EditProjectCommand = new((_, _) => { if (SelectedItem is not null) Editor = new(SelectedItem.Source.OwnerUserId, SelectedItem.Source); return System.Threading.Tasks.Task.CompletedTask; }, _ => CanUpdate && SelectedItem is not null);
+        NewProjectCommand = new((_, ct) => OpenEditorAsync(null, ct), _ => CanCreate);
+        EditProjectCommand = new((_, ct) => OpenEditorAsync(SelectedItem?.Source, ct), _ => CanUpdate && SelectedItem is not null);
         SaveProjectCommand = new(SaveAsync, _ => Editor is not null && (Editor.Source is null ? CanCreate : CanUpdate));
         CancelEditorCommand = new((_, _) => { Editor = null; return System.Threading.Tasks.Task.CompletedTask; });
         ArchiveProjectCommand = new(ArchiveAsync, _ => CanArchive && SelectedItem?.Source.Status == DesktopProjectStatus.Completed);
-        AddMemberCommand = new(AddMemberAsync, _ => CanManageMembers && SelectedItem is not null && NewMemberRole is not null && Guid.TryParse(NewMemberUserId, out var id) && id != Guid.Empty);
+        AddMemberCommand = new(AddMemberAsync, _ => CanAddMember);
         ChangeMemberRoleCommand = new(ChangeMemberRoleAsync, parameter => CanManageMembers && parameter is ProjectMemberItemViewModel { SelectedRole: not null });
         RemoveMemberCommand = new(RemoveMemberAsync, parameter => CanManageMembers && parameter is ProjectMemberItemViewModel member && member.UserAccountId != SelectedItem?.Source.OwnerUserId);
     }
@@ -168,15 +181,16 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
         set
         {
             if (!SetProperty(ref _selectedItem, value)) return;
+            ResetPeople(); _membersConfirmed = false; Members = []; RelatedTasks = [];
             NotifyCommands();
             if (value is null) { Members = []; RelatedTasks = []; }
             else if (IsActive) _ = LoadDetailsAsync(value, _activation?.Token ?? CancellationToken.None);
         }
     }
-    public ProjectEditorViewModel? Editor { get => _editor; private set { if (SetProperty(ref _editor, value)) NotifyCommands(); } }
+    public ProjectEditorViewModel? Editor { get => _editor; private set { var previous = _editor; if (SetProperty(ref _editor, value)) { if (previous?.ManagerPicker is { } picker) picker.PropertyChanged -= ManagerAccessChanged; previous?.Dispose(); NotifyCommands(); } } }
     public ProjectsScreenState State { get => _state; private set => SetProperty(ref _state, value); }
     public string? Message { get => _message; private set => SetProperty(ref _message, value); }
-    public bool IsDetailLoading { get => _isDetailLoading; private set => SetProperty(ref _isDetailLoading, value); }
+    public bool IsDetailLoading { get => _isDetailLoading; private set { if (SetProperty(ref _isDetailLoading, value)) AddMemberCommand.RaiseCanExecuteChanged(); } }
     public string NewMemberUserId { get => _newMemberUserId; set { if (SetProperty(ref _newMemberUserId, value)) AddMemberCommand.RaiseCanExecuteChanged(); } }
     public DesktopProjectRoleDto? NewMemberRole { get => _newMemberRole; set { if (SetProperty(ref _newMemberRole, value)) AddMemberCommand.RaiseCanExecuteChanged(); } }
     public bool IsActive { get; private set; }
@@ -204,6 +218,7 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     {
         if (_disposed || IsActive) return;
         IsActive = true; _activation = new(); NotifyCommands();
+        Editor?.UpdatePeopleAccess(_capabilities, _sessionAvailable, _networkAvailable);
         if (!CanRead) { State = ProjectsScreenState.Forbidden; Message = "Раздел проектов недоступен для текущей роли."; return; }
         _ = RefreshCommand.ExecuteAsync(cancellationToken: _activation.Token);
     }
@@ -211,6 +226,7 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     {
         if (!IsActive) return;
         IsActive = false; _activation?.Cancel(); _activation?.Dispose(); _activation = null; NotifyCommands();
+        ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, false, _networkAvailable);
     }
 
     public async System.Threading.Tasks.Task OpenByIdAsync(Guid id)
@@ -231,8 +247,11 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
 
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
+        _directoryForbidden = false;
+        _writesForbidden = false;
         _capabilities.Clear();
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
+        ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, _sessionAvailable, _networkAvailable);
         NotifyCommands();
     }
 
@@ -240,6 +259,7 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     {
         if (_sessionAvailable == available) return;
         _sessionAvailable = available;
+        ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, available, _networkAvailable);
         if (!available)
         {
             _activation?.Cancel();
@@ -253,6 +273,7 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     {
         if (_networkAvailable == available) return;
         _networkAvailable = available;
+        ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, _sessionAvailable, available);
         if (!available && Editor is not null)
             Editor.SetError("Сервер недоступен. Черновик сохранён в форме и не будет отправлен автоматически.");
         NotifyCommands();
@@ -303,9 +324,13 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
                 if (!ReferenceEquals(SelectedItem, item)) return;
                 Members = memberResult is DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded members
                     ? members.Value.Select(member => new ProjectMemberItemViewModel(member, Roles)).ToArray() : [];
+                _membersConfirmed = memberResult is DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded;
+                if (!_membersConfirmed) ApplyFailure(memberResult);
             }
             else Members = [];
-            RelatedTasks = await LoadRelatedTasksAsync(item.Id, cancellationToken).ConfigureAwait(true);
+            await ResolvePeopleAsync(item, cancellationToken);
+            var related = await LoadRelatedTasksAsync(item.Id, cancellationToken).ConfigureAwait(true);
+            if (ReferenceEquals(SelectedItem, item) && IsActive && _sessionAvailable) RelatedTasks = related;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
         catch (Exception)
@@ -338,12 +363,21 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task SaveAsync(object? _, CancellationToken cancellationToken)
     {
         var editor = Editor; if (editor is null || !editor.TryBuild(out var draft)) return;
+        if (editor.UsesManagerPicker && draft.ManagerUserId is { } manager && editor.ManagerPicker is { } picker)
+        {
+            await picker.PreselectAsync(manager, cancellationToken);
+            if (!ReferenceEquals(Editor, editor) || !(editor.Source is null ? CanCreate : CanUpdate)) return;
+            if (picker.SelectedUserAccountId != manager) { editor.SetError(picker.StatusText); return; }
+            if (!editor.TryBuild(out draft)) return;
+        }
         DesktopProjectResult<DesktopProjectDto> result = editor.Source is null
             ? await _client.CreateProjectAsync(draft, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true)
             : await _client.UpdateProjectAsync(editor.Source.Id, editor.Source.Version, draft, cancellationToken).ConfigureAwait(true);
+        if (!ReferenceEquals(Editor, editor) || !_sessionAvailable || !IsActive) return;
         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
         {
             Upsert(success.Value); Editor = null; Message = "Проект сохранён сервером.";
+            if (SelectedItem is { } saved) await ResolvePeopleAsync(saved, cancellationToken);
         }
         else if (result is DesktopProjectResult<DesktopProjectDto>.ValidationFailure validation) editor.SetError(validation.Message);
         else if (result is DesktopProjectResult<DesktopProjectDto>.VersionConflict)
@@ -375,10 +409,20 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task AddMemberAsync(object? _, CancellationToken cancellationToken)
     {
         var item = SelectedItem; var role = NewMemberRole;
-        if (item is null || role is null || !Guid.TryParse(NewMemberUserId.Trim(), out var user) || user == Guid.Empty) return;
-        var result = await _client.AddMemberAsync(item.Id, item.Source.Version, user, role.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
+        var user = NewMemberAccountId;
+        if (!CanAddMember || item is null || role is null || user is null) return;
+        var picker = MemberPicker; var generation = _peopleGeneration;
+        if (UsesEmployeePicker && picker is not null)
+        {
+            await picker.PreselectAsync(user.Value, cancellationToken);
+            if (generation != _peopleGeneration || !ReferenceEquals(SelectedItem, item) || !CanManageMembers) return;
+            if (picker.SelectedUserAccountId != user) { Message = picker.StatusText; return; }
+        }
+        if (!CanAddMember) return;
+        var result = await _client.AddMemberAsync(item.Id, item.Source.Version, user.Value, role.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
+        if (generation != _peopleGeneration || !ReferenceEquals(SelectedItem, item) || !_sessionAvailable) return;
         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)
-        { AdvanceVersion(item, success.EntityVersion); NewMemberUserId = string.Empty; await ReloadMembersAsync(item, cancellationToken); Message = "Участник добавлен."; }
+        { AdvanceVersion(item, success.EntityVersion); NewMemberUserId = string.Empty; ResetPeople(); await ReloadMembersAsync(item, cancellationToken); }
         else ApplyFailure(result);
     }
 
@@ -404,7 +448,8 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     {
         var result = await _client.GetMembersAsync(item.Id, cancellationToken).ConfigureAwait(true);
         if (ReferenceEquals(SelectedItem, item) && result is DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded success)
-            Members = success.Value.Select(member => new ProjectMemberItemViewModel(member, Roles)).ToArray();
+        { _membersConfirmed = true; Members = success.Value.Select(member => new ProjectMemberItemViewModel(member, Roles)).ToArray(); await ResolvePeopleAsync(item, cancellationToken); AddMemberCommand.RaiseCanExecuteChanged(); if (_sessionAvailable && ReferenceEquals(SelectedItem, item)) Message = "Список участников обновлён сервером."; }
+        else if (ReferenceEquals(SelectedItem, item)) { _membersConfirmed = false; Members = []; ApplyFailure(result); }
     }
 
     private void AdvanceVersion(ProjectItemViewModel item, long? version)
@@ -420,8 +465,8 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
     {
         switch (result)
         {
-            case DesktopProjectResult<T>.AuthenticationFailure: State = ProjectsScreenState.SessionEnded; Message = "Сессия завершена. Выполните вход снова."; break;
-            case DesktopProjectResult<T>.Forbidden: State = ProjectsScreenState.Forbidden; Message = "Права на проекты изменились. Действие недоступно."; break;
+            case DesktopProjectResult<T>.AuthenticationFailure: UpdateSessionState(false); Message = "Сессия завершена. Выполните вход снова."; break;
+            case DesktopProjectResult<T>.Forbidden: _writesForbidden = true; ResetPeople(); NotifyCommands(); State = ProjectsScreenState.Forbidden; Message = "Права на проекты изменились. Действие недоступно."; break;
             case DesktopProjectResult<T>.VersionConflict: Message = "Данные проекта изменились. Обновите раздел и повторите действие."; break;
             case DesktopProjectResult<T>.ValidationFailure validation: Message = validation.Message; break;
             case DesktopProjectResult<T>.InvalidState: Message = "Текущее состояние проекта не допускает это действие."; break;
@@ -436,11 +481,12 @@ public sealed class ProjectsViewModel : ViewModelBase, IDisposable
         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.RaiseCanExecuteChanged();
     }
 
-    private bool CanWrite(string capability) => IsActive && _sessionAvailable && _networkAvailable
+    private bool CanWrite(string capability) => !_writesForbidden && IsActive && _sessionAvailable && _networkAvailable
         && CanRead && _capabilities.Contains(capability);
     public void Dispose()
     {
         if (_disposed) return; _disposed = true; Deactivate();
+        MemberPicker?.Dispose(); Editor?.Dispose();
         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.Dispose();
     }
 }

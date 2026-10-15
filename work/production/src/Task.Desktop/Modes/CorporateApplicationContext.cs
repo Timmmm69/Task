@@ -319,7 +319,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             new DesktopProjectsApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
             sessionService.CurrentSessionMetadata!.UserId,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
-            tasksClient);
+            tasksClient, new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity));
         var workHub = new WorkHubViewModel(
             workClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),

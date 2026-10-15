@@ -6,7 +6,7 @@ using Task.Desktop.Tests.TaskScreen;
 
 namespace Task.Desktop.Tests.Projects;
 
-public sealed class ProjectsViewModelTests
+public sealed partial class ProjectsViewModelTests
 {
     [Fact]
     public async System.Threading.Tasks.Task SearchNavigation_SelectsRequestedProjectAfterAuthoritativeGet_RefusesStaleAccess()
@@ -254,6 +254,9 @@ public sealed class ProjectsViewModelTests
         public Guid LastMemberProject { get; private set; }
         public long LastMemberProjectVersion { get; private set; }
         public Guid LastMemberUser { get; private set; }
+        public Guid LastMemberRole { get; private set; }
+        public string? LastMemberKey { get; private set; }
+        public int AddCalls { get; private set; }
 
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(string? cursor = null, CancellationToken cancellationToken = default)
         { ProjectPageCalls++; return System.Threading.Tasks.Task.FromResult(Projects); }
@@ -271,7 +274,7 @@ public sealed class ProjectsViewModelTests
         { LastUpdateVersion = version; LastDraft = draft; return System.Threading.Tasks.Task.FromResult(Update); }
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> ArchiveProjectAsync(Guid id, long version, string idempotencyKey, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult(Archive);
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectMemberDto>> AddMemberAsync(Guid projectId, long projectVersion, Guid userId, Guid roleId, string idempotencyKey, CancellationToken cancellationToken = default)
-        { LastMemberProject = projectId; LastMemberProjectVersion = projectVersion; LastMemberUser = userId; return System.Threading.Tasks.Task.FromResult(Add); }
+        { AddCalls++; LastMemberProject = projectId; LastMemberProjectVersion = projectVersion; LastMemberUser = userId; LastMemberRole = roleId; LastMemberKey = idempotencyKey; return System.Threading.Tasks.Task.FromResult(Add); }
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectMemberDto>> ChangeMemberRoleAsync(Guid projectId, long projectVersion, Guid userId, Guid roleId, string idempotencyKey, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult(Add);
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> RemoveMemberAsync(Guid projectId, long projectVersion, Guid userId, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult(Update);
     }
