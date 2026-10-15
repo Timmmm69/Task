@@ -9,3 +9,6 @@
 /Task-location-manager-1.0.0.zip binary
 /Task-location-manager-1.0.0.zip.sha256 text eol=lf
 /Task-location-manager-1.0.0.zip.validation.json text eol=lf
+
+# Preserve manifest-covered Task 6 verification receipts on Windows checkouts.
+/20261016_today_quick_actions_final_review_1.0.1/** text eol=lf

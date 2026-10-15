@@ -1,0 +1,22 @@
+{
+  "version": "1.0.1",
+  "sourceCommit": "1270a638de61e08fd37f7a1e98ab43e774d049c1",
+  "algorithm": "SHA-256",
+  "files": [
+    {
+      "path": "validation-report.md",
+      "bytes": 5314,
+      "sha256": "969cf1f5567330471b23168de450eb6ccd14514a1a9d38954751eeaa053c68d4"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3868,
+      "sha256": "b4feb1f6dda0a0fbf726df3bed6ed0c386931f6d3c0cac73d2de798537968932"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "44e161e4495cac2cf7858043e9e6418e9579f0ddcfae826f9a372622968ce066"
+    }
+  ]
+}

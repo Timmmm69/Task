@@ -1,0 +1,103 @@
+{
+  "version": "1.0.1",
+  "status": "PASS",
+  "date": "2026-10-16",
+  "sourceCommit": "1270a638de61e08fd37f7a1e98ab43e774d049c1",
+  "stage61Commit": "ab22d7b1d618d9699bb086586486b719b53c7fe7",
+  "stage62Commit": "ba78c851da3ede7f05e36441a0e608a5f48d82d0",
+  "baseCommit": "d88277d55827acd72bed43b521104a3585d086f4",
+  "gates": {
+    "desktop-verified": {
+      "passed": 1059,
+      "failed": 0,
+      "skipped": 0,
+      "receiptSha256": "89f2150ccf6f1e28a35b567d8f0d5d03adca0c8d14af45b879b30f17ce7115ce"
+    },
+    "endpoints": {
+      "passed": 166,
+      "failed": 0,
+      "skipped": 0,
+      "receiptSha256": "4f0a73d2a3dde15b11cb329058310c75a861f2c306205b7a904d32a81c5a84c0"
+    },
+    "domain": {
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0,
+      "receiptSha256": "663ac5e55f5dad0517229097538bcd98f0889fba0941ba9c297438a5f5e3c2e4"
+    },
+    "today-review": {
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "receiptSha256": "ec17cd26e971f383221b93217f6deb600a7f1566ce5d4246bfc95624d56af954"
+    },
+    "inbox-focus-recheck": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "receiptSha256": "9358e2913ae08b656dfbe7fe28d835a81c4fd8f1cd7617156c4f58f1363729a1"
+    },
+    "palette-model-isolated": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "receiptSha256": "d6a2701fb94e389fd9e0dac521aad8e42e08b87517b55bc3c49758e928aef394"
+    }
+  },
+  "diagnosticRuns": {
+    "projection-before": {
+      "passed": 0,
+      "failed": 2,
+      "receiptSha256": "46ecc63091157addbd25b26bfa03780cedf408a3cb051748ab6e51c95008254b"
+    },
+    "permission-before": {
+      "passed": 0,
+      "failed": 1,
+      "receiptSha256": "7e395fd6cd0719a0738360b0c745dfd9cc5129f703a868311df9d6fed0e67c17"
+    },
+    "desktop-initial": {
+      "passed": 1058,
+      "failed": 1,
+      "receiptSha256": "a640ed75dab022392015509658a57f57ce253594e318aaf19a03c7283e976a56"
+    },
+    "desktop-final": {
+      "passed": 1058,
+      "failed": 1,
+      "receiptSha256": "5271f9e8936ffe7c58aaff58fd0f383eff9cf45ef61d12dff82395df17eeba32"
+    },
+    "desktop-serial": {
+      "passed": 1058,
+      "failed": 1,
+      "receiptSha256": "898c509432c9740ccf6cfeca179fba31af2cd3e8d3bf678b18426cff4a352316"
+    }
+  },
+  "build": {
+    "configuration": "Release",
+    "errors": 0,
+    "warnings": 0,
+    "receiptSha256": "155b27e42363b938b15f5fe71602fc445cc6d44c8ac8754a6318280f0b43b6ca"
+  },
+  "independentAgentReview": "NOT RUN: service usage limit; primary agent performed review",
+  "limitations": [
+    "No deployed PostgreSQL/HTTPS/two-device E2E in this session",
+    "Unchanged Inbox and CommandPalette tests have intermittent failures in diagnostic full runs"
+  ],
+  "sourceFiles": [
+    ".project-dashboard/roadmap.json",
+    "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/TodayPlanner.cs",
+    "work/production/src/Task.Desktop/ViewModels/TodayPlanning.cs",
+    "work/production/src/Task.Desktop/ViewModels/TodayPlanningEditor.cs",
+    "work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs",
+    "work/production/src/Task.Desktop/ViewModels/TodayTasks.cs",
+    "work/production/src/Task.Desktop/ViewModels/TodayViewModel.cs",
+    "work/production/src/Task.Desktop/Views/TodayView.xaml",
+    "work/production/src/Task.Desktop/Views/TodayView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Today/TodayPlanningTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Today/TodayPlanningWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsWindowsTests.cs",
+    "work/production/tests/Task.ServiceHosts.Tests/TaskCardEndpointsTests.cs"
+  ]
+}
