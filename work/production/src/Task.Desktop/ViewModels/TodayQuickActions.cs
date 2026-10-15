@@ -42,7 +42,7 @@ public sealed partial class TodayViewModel
 
     private bool CanWriteStatus => !_disposed && IsActive && _sessionAvailable && IsConnected
         && CanReadTasks && _capabilities.Contains("Task.ChangeStatus") && !_statusPermissionDenied
-        && !IsBusy && !IsActionBusy && !NeedsTaskReload;
+        && !IsBusy && !IsActionBusy && !NeedsTaskReload && !HasPlanningRetry;
 
     private bool CanShowTransition(DesktopTaskStatus target) => ShowTaskActions
         && _capabilities.Contains("Task.ChangeStatus") && !_statusPermissionDenied && SelectedTask is { } task
@@ -99,6 +99,7 @@ public sealed partial class TodayViewModel
 
     private void NotifyQuickActions()
     {
+        NotifyPlanning();
         foreach (var property in new[] { nameof(ShowTaskActions), nameof(NeedsTaskReload), nameof(CanStart),
             nameof(CanSubmitForReview), nameof(CanComplete), nameof(CanCancel),
             nameof(IsTransitionConfirmationVisible), nameof(PendingTransitionText) }) OnPropertyChanged(property);
@@ -110,6 +111,7 @@ public sealed partial class TodayViewModel
 
     private void StopQuickActions()
     {
+        StopPlanning();
         _actionEpoch++;
         TransitionCommand.Cancel();
         ConfirmTransitionCommand.Cancel();
@@ -255,9 +257,14 @@ public sealed partial class TodayViewModel
     {
         if (_taskSnapshots.TryGetValue(task.Id, out var current) && current.Version > task.Version) return;
         _taskSnapshots[task.Id] = task;
+        if (_planningRetries.TryGetValue(task.Id, out var planning) && task.Version > planning.Command.ExpectedVersion)
+            _planningRetries.Remove(task.Id);
         if (_unconfirmedCommands.TryGetValue(task.Id, out var pending) && task.Version > pending.ExpectedVersion)
             _unconfirmedCommands.Remove(task.Id);
-        if (task.Status is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)
+        if (_planningProjectionIds.Contains(task.Id) || task.Card?.ScheduledDate is not null
+            || current is not null && (current.StartAtUtc != task.StartAtUtc || current.Card != task.Card))
+            UpdateTaskPlanningProjection(task);
+        else if (task.Status is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)
             RemoveTaskCalendarProjection(task.Id);
         else
         {
@@ -277,6 +284,7 @@ public sealed partial class TodayViewModel
         }
         RebuildTaskSummaries();
         RebuildPlannerItems();
+        SyncPlanning();
         State = HasItems ? TodayScreenState.Loaded : TodayScreenState.Empty;
         NotifyQuickActions();
     }
@@ -291,6 +299,8 @@ public sealed partial class TodayViewModel
     {
         _taskSnapshots.Remove(id);
         _tasksNeedingReload.Remove(id);
+        _planningRetries.Remove(id);
+        _planningDenied.Remove(id);
         RemoveTaskCalendarProjection(id);
         RebuildTaskSummaries();
         RebuildPlannerItems();

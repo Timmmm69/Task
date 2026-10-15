@@ -21,6 +21,7 @@ public sealed partial class TodayViewModel
 
     private void ClearTaskItems()
     {
+        if (!CanReadTasks || !_sessionAvailable) _planningRetries.Clear();
         _taskSnapshots.Clear();
         _taskReloadAttempted.Clear();
         _activeTaskItems = [];
@@ -94,6 +95,9 @@ public sealed partial class TodayViewModel
             }
 
             _taskSnapshots = tasks;
+            foreach (var task in tasks.Values)
+                if (_planningRetries.TryGetValue(task.Id, out var retry) && task.Version > retry.Command.ExpectedVersion)
+                    _planningRetries.Remove(task.Id);
             _tasksNeedingReload.ExceptWith(tasks.Keys);
             foreach (var task in tasks.Values)
                 if (_unconfirmedCommands.TryGetValue(task.Id, out var command) && task.Version > command.ExpectedVersion)

@@ -617,6 +617,43 @@
                                         Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Загрузить актуальную задачу" />
                             </StackPanel>
 
+                            <StackPanel x:Name="TodayPlanningPanel" DataContext="{Binding DataContext, ElementName=TodayRoot}"
+                                        Margin="0,16,0,0" Visibility="{Binding ShowPlanning, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                        AutomationProperties.Name="Планирование задачи">
+                                <TextBlock Text="Планирование" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
+                                <TextBlock Text="{Binding PlanningAccessText}" Margin="0,6,0,8" TextWrapping="Wrap"
+                                           FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+                                <StackPanel IsEnabled="{Binding CanEditPlanning}">
+                                    <Label Content="_Дата планирования" Target="{Binding ElementName=TodayPlanningDate}" Padding="0,0,0,4" />
+                                    <DatePicker x:Name="TodayPlanningDate" SelectedDate="{Binding Planning.Date, UpdateSourceTrigger=PropertyChanged}"
+                                                DateValidationError="PlanningDateValidationError" LostKeyboardFocus="PlanningDateLostFocus" Language="ru-RU" SelectedDateFormat="Short"
+                                                AutomationProperties.Name="Дата планирования" AutomationProperties.AutomationId="TodayPlanningDate" />
+                                    <Label Content="_Время начала" Target="{Binding ElementName=TodayPlanningTime}" Padding="0,8,0,4" />
+                                    <TextBox x:Name="TodayPlanningTime" Text="{Binding Planning.Time, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource Task.Input.Text}" MaxLength="8"
+                                             AutomationProperties.Name="Время начала, ЧЧ:ММ, пустое поле — без времени" AutomationProperties.AutomationId="TodayPlanningTime" />
+                                    <TextBlock Text="{Binding Planning.ZoneText}" Margin="0,4,0,0" TextWrapping="Wrap"
+                                               FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+                                    <Label Content="Длительность, _мин" Target="{Binding ElementName=TodayPlanningDuration}" Padding="0,8,0,4" />
+                                    <TextBox x:Name="TodayPlanningDuration" Text="{Binding Planning.Duration, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource Task.Input.Text}" MaxLength="5"
+                                             AutomationProperties.Name="Плановая длительность, от 1 до 10080 минут" AutomationProperties.AutomationId="TodayPlanningDuration" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding Planning.Error}" Margin="0,6,0,0" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource Task.Brush.Semantic.Critical}" AutomationProperties.LiveSetting="Polite" />
+                                <TextBlock Text="{Binding PlanningMessage}" Margin="0,6,0,0" TextWrapping="Wrap"
+                                           AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="TodayPlanningMessage" />
+                                <WrapPanel Margin="0,8,0,0">
+                                    <Button Content="Сохранить" Command="{Binding SavePlanningCommand}" Style="{StaticResource Task.Button.Secondary}"
+                                            Margin="0,0,6,6" AutomationProperties.Name="Сохранить планирование" AutomationProperties.AutomationId="TodaySavePlanning" />
+                                    <Button Content="Отмена" Command="{Binding CancelPlanningCommand}" Style="{StaticResource Task.Button.Secondary}"
+                                            Margin="0,0,0,6" AutomationProperties.Name="Отменить редактирование планирования" AutomationProperties.AutomationId="TodayCancelPlanning" />
+                                </WrapPanel>
+                                <Button Content="Загрузить актуальную задачу" Command="{Binding ReloadSelectedTaskCommand}" HorizontalAlignment="Left"
+                                        Visibility="{Binding ShowPlanningReload, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                        Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Обновить планирование задачи" />
+                            </StackPanel>
+
                             <Button x:Name="TodayOpenSelectedButton" Content="Открыть карточку" Margin="0,16,0,0" HorizontalAlignment="Left"
                                     Style="{StaticResource Task.Button.Secondary}"
                                     Command="{Binding DataContext.OpenSelectedItemCommand, ElementName=TodayRoot}"

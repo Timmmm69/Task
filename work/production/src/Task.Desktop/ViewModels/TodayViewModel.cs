@@ -65,6 +65,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         }, item => IsActive && _sessionAvailable && (item is CalendarItemViewModel { IsCalendarEvent: true } ? CanRead : CanReadTasks));
         InitializePlannerCommands();
         InitializeQuickActions();
+        InitializePlanning();
 
         RefreshCommand = new AsyncCommand(
             async (_, token) =>
@@ -244,6 +245,8 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         var calendarAccessChanged = CanRead != updatedCapabilities.Contains("Calendar.Read");
         if (taskAccessChanged) StopQuickActions();
         _statusPermissionDenied = false;
+        _planningDenied.Clear();
+        if (!updatedCapabilities.Contains("Task.Update")) StopPlanning();
         if (!updatedCapabilities.Contains("Task.ChangeStatus")) ClearActionConfirmation();
         _capabilities.Clear();
         foreach (var capability in updatedCapabilities)
@@ -455,6 +458,8 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             .ThenBy(item => item.Title, StringComparer.CurrentCulture)
             .ToArray();
 
+        foreach (var task in _taskSnapshots.Values.Where(t => t.Card?.ScheduledDate is not null || _planningProjectionIds.Contains(t.Id)))
+            UpdateTaskPlanningProjection(task);
         RebuildPlannerItems();
     }
 
@@ -533,5 +538,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         ConfirmTransitionCommand.Dispose();
         CancelTransitionCommand.Dispose();
         ReloadSelectedTaskCommand.Dispose();
+        SavePlanningCommand.Dispose();
+        CancelPlanningCommand.Dispose();
     }
 }
