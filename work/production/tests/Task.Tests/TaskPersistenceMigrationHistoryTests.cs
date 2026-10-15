@@ -5,10 +5,10 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
-    public void Catalog_ExpectsAutomaticDeadlineReminderVersionSixteen()
+    public void Catalog_ExpectsInboxConversionVersionSeventeen()
     {
-        Assert.Equal(16, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("automatic_deadline_reminders", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(17, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("inbox_conversion", TaskPersistenceMigrationCatalog.All[^1].Name);
     }
 
     [Fact]

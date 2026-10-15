@@ -72,7 +72,7 @@ internal sealed partial class PostgresProductApiStore
         {
             foreach (var (name, resource) in Resources)
             {
-                if (resource.Type is "employee_profile" or "notification" or "network_resource") continue;
+                if (resource.Type is "employee_profile" or "notification" or "network_resource" or "inbox_item") continue;
                 if (!r.Permissions.Contains(resource.ReadPermission)) continue;
                 var found = One(c, t, $"SELECT jsonb_build_object('id',o.id) FROM {resource.Table} p JOIN core.objects o ON o.id=p.id AND o.organization_id=p.organization_id " +
                     $"WHERE o.organization_id=@org AND o.id=@id AND {Visibility(resource)};", r, ("id", r.Id));
@@ -101,7 +101,7 @@ internal sealed partial class PostgresProductApiStore
         var union = new List<string>();
         foreach (var resource in Resources.Values)
         {
-            if (resource.Type is "notification" or "network_resource" or "employee_profile" || !r.Permissions.Contains(resource.ReadPermission) ||
+            if (resource.Type is "notification" or "network_resource" or "employee_profile" or "inbox_item" || !r.Permissions.Contains(resource.ReadPermission) ||
                 (types.Length > 0 && !types.Contains(resource.Type))) continue;
             var extra = "";
             if (r.Query.TryGetValue("projectId", out var project) || r.Query.TryGetValue("projectIds", out project))
@@ -141,6 +141,7 @@ internal sealed partial class PostgresProductApiStore
     {
         "project" or "company" => "concat_ws(' ',p.name,to_jsonb(p)->>'description',to_jsonb(p)->>'notes')",
         "contact" => "concat_ws(' ',p.first_name,p.last_name,p.middle_name,p.display_name,p.notes)",
+        "inbox_item" => "concat_ws(' ',p.title,p.content)",
         "catalog_item" => "concat_ws(' ',p.name,p.description,p.note_content)",
         "task" or "calendar_event" => "concat_ws(' ',p.title,to_jsonb(p)->>'description')",
         "notification" => "concat_ws(' ',p.title,p.body)",

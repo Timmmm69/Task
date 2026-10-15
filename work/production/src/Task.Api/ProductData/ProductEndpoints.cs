@@ -45,12 +45,13 @@ internal static class ProductEndpoints
                 await Check(readCapability);
                 if (!granted.Contains(readCapability)) throw new ProductApiException(403, "FORBIDDEN", "Object read access is required.");
             }
-            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks" or "reminders")
+            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks" or "reminders" or "inbox-items")
                 foreach (var code in new[] { "Project.Read", "Contact.Read", "FileCatalog.Read", "Task.Read", "Calendar.Read", "Employee.Read" })
                     await Check(code);
             if (route.Resource == "tasks") { await Check("History.Read"); if (route.Permission != "Task.Read" && !granted.Contains("Task.Read")) throw new ProductApiException(403, "FORBIDDEN", "Task read access is required."); }
             if (route.Operation is "locations" or "resolve" || route.Resource is "network-resources" or "search") await Check("FileLocation.ReadSensitivePath");
             if (route.Resource == "search") await Check("FileReference.Open");
+            if (route.Resource == "inbox-items") await Check("Task.Update");
             if (route.Resource is "archive" or "trash")
                 foreach (var code in new[] { "Project.Restore", "Contact.Restore", "FileCatalog.Restore", "Task.Update", "CalendarEvent.Update", "Interaction.Update" }) await Check(code);
             if (route.Resource == "objects" && route.Method != "GET")
@@ -108,6 +109,7 @@ internal static class ProductEndpoints
             var response = store.Execute(new(identity.OrganizationId, identity.UserAccountId, identity.SessionId,
                 correlation, route, id, childId, body, query, version, key.Length == 0 ? null : key, hash, granted, context.RequestAborted, RevalidatePermissions: true));
             if (response.Version is { } responseVersion) context.Response.Headers.ETag = $"\"v{responseVersion}\"";
+            if (route.Idempotent || key.Length > 0) context.Response.Headers["Idempotency-Replayed"] = response.WasReplayed ? "true" : "false";
             return response.Status == 204 ? Results.NoContent() : Results.Json(response.Body, statusCode: response.Status);
         }
         catch (ProductApiException exception)

@@ -18,7 +18,7 @@ using Task.Application.Security;
 
 namespace Task.ServiceHosts.Tests;
 
-public sealed class ProductEndpointsTests
+public sealed partial class ProductEndpointsTests
 {
     private static readonly Guid Organization = Guid.NewGuid();
     private static readonly Guid User = Guid.NewGuid();
@@ -182,9 +182,10 @@ public sealed class ProductEndpointsTests
 
     private sealed class RecordingStore(Exception? failure = null) : IProductApiStore
     {
+        public ProductApiResponse? Reply { get; init; }
         public ProductApiRequest? LastRequest { get; private set; }
         public ProductApiResponse Execute(ProductApiRequest request)
-        { LastRequest = request; if (failure is not null) throw failure; return new(new JsonObject { ["name"] = "saved" }, Version: 2); }
+        { LastRequest = request; if (failure is not null) throw failure; return Reply ?? new(new JsonObject { ["name"] = "saved" }, Version: 2); }
     }
     private sealed class Policy(bool allowed) : IAuthorizationPolicyStore
     {

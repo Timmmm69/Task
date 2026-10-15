@@ -171,6 +171,7 @@ public sealed partial class PostgresProductApiTests
     {
         using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
         // Recreate the exact pre-v16 schema, then run the accepted migrator on populated data.
+        db.Sql("DROP TABLE work.inbox_items; DELETE FROM infrastructure.schema_migrations WHERE version=17;");
         db.Sql("DROP TRIGGER task_deadline_saved ON work.tasks; DROP TRIGGER task_deadline_lifecycle ON core.objects; DROP FUNCTION calendar.task_deadline_saved(); DROP FUNCTION calendar.task_deadline_lifecycle(); DROP FUNCTION calendar.reconcile_task_deadline(uuid,uuid,boolean); DROP FUNCTION calendar.deadline_local_anchor(date,time,text); DROP TABLE calendar.task_deadline_preferences; DROP TABLE calendar.task_deadline_scan; DROP INDEX calendar.uq_task_deadline_reminder; ALTER TABLE calendar.reminders DROP COLUMN managed_source; ALTER TABLE org.user_settings DROP COLUMN date_only_reminder_time;");
         db.Sql("DELETE FROM infrastructure.schema_migrations WHERE version=16;");
         var future = DeadlineTask(db, DateTimeOffset.UtcNow.AddHours(1));

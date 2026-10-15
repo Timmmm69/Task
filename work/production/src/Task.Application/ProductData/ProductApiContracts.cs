@@ -11,7 +11,7 @@ public sealed record ProductApiRequest(
     CancellationToken CancellationToken = default,
     bool RevalidatePermissions = false);
 
-public sealed record ProductApiResponse(JsonNode? Body, int Status = 200, int? Version = null);
+public sealed record ProductApiResponse(JsonNode? Body, int Status = 200, int? Version = null, bool WasReplayed = false);
 
 public interface IProductApiStore
 {
@@ -56,6 +56,11 @@ public static class ProductApiRoutes
                 routes.Add(new(method, "/api/v1/" + path, resource, operation, code, version, key));
         }
         Extra("GET", "tasks/options", "tasks", "task-options", "Task.Read");
+        Extra("GET", "inbox-items", "inbox-items", "list", "Inbox.ReadOwn");
+        Extra("POST", "inbox-items", "inbox-items", "create", "Inbox.ManageOwn", false, true);
+        Extra("GET", "inbox-items/{id}", "inbox-items", "get", "Inbox.ReadOwn");
+        Extra("PATCH", "inbox-items/{id}", "inbox-items", "patch", "Inbox.ManageOwn", true);
+        Extra("POST", "inbox-items/{id}/convert-to-task", "inbox-items", "convert-to-task", "Inbox.ManageOwn", true, true);
         Extra("GET", "tasks/{id}/workspace", "tasks", "task-workspace", "Task.Read");
         Extra("GET", "tasks/{id}/history", "tasks", "history", "History.Read");
         Extra("POST", "tasks/{id}/checklist", "tasks", "task-check-add", "Task.Update", true, true);

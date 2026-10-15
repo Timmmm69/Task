@@ -25,6 +25,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         ["calendar-events"] = new("calendar.events", "calendar_event", "Calendar.Read", ""),
         ["interactions"] = new("crm.interactions", "interaction", "Contact.Read", "counterpartyObjectId interactionType occurredAt subject details nextStep nextStepDueAt participantObjectIds"),
         ["employees"] = new("org.employee_profiles", "employee_profile", "Employee.Read", ""),
+        ["inbox-items"] = new("work.inbox_items", "inbox_item", "Inbox.ReadOwn", "itemType title content rawUrl rawPath status"),
     };
 
     public ProductApiResponse Execute(ProductApiRequest request)
@@ -66,16 +67,21 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
                     if (request.Id is not null && Resources.TryGetValue(request.Route.Resource, out var replayResource))
                     {
                         RequireObject(connection, transaction, request, replayResource);
-                        if (request.Route.Resource != "notifications") CheckObjectAction(connection, transaction, request, request.Id.Value, request.Route.Permission);
+                        if (request.Route.Resource is not ("notifications" or "inbox-items")) CheckObjectAction(connection, transaction, request, request.Id.Value, request.Route.Permission);
                     }
                     if (request.Id is not null && request.Route.Resource == "objects")
                         CheckLinkWrite(connection, transaction, request, RequireAny(connection, transaction, request, request.Id.Value));
                     if (request.Route.Resource == "reminders")
                         RequireReminder(connection, transaction, request with { Id = request.Id ?? GuidValue(replay["result"]!["body"]!.AsObject(), "id") });
                     var result = replay["result"]!.AsObject();
+                    if (request.Route.Resource == "inbox-items" && request.Route.Operation == "convert-to-task")
+                    {
+                        if (!request.Permissions.Contains("Task.Read")) throw Error(403, "FORBIDDEN", "Task read access is required.");
+                        RequireObject(connection, transaction, request with { Id = GuidValue(result["body"]!.AsObject(), "id") }, Resources["tasks"]);
+                    }
                     if (request.Id is null && request.Route.Operation == "create" && request.Route.Resource != "reminders" && result["body"]?["id"] is { } replayId)
                         RequireObject(connection, transaction, request with { Id = Guid.Parse(replayId.ToString()) }, Resources[request.Route.Resource]);
-                    return RedactResponse(request, new(result["body"]?.DeepClone(), result["status"]!.GetValue<int>(), result["version"]?.GetValue<int>()));
+                    return RedactResponse(request, new(result["body"]?.DeepClone(), result["status"]!.GetValue<int>(), result["version"]?.GetValue<int>(), WasReplayed: true));
                 }
             }
             var response = Dispatch(connection, transaction, request);
@@ -99,6 +105,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
 
     private ProductApiResponse Dispatch(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
+        if (r.Route.Resource == "inbox-items") return Inbox(c, t, r);
         if (r.Route.Resource == "reminders") return Reminders(c, t, r);
         if (r.Route.Resource is "roles" or "project-roles" or "user-roles") return Roles(c, t, r);
         if (r.Route.Resource is "user-settings" or "organization-settings" or "preferences") return Settings(c, t, r);
@@ -223,6 +230,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
 
     private static string Visibility(Resource resource) => resource.Type switch
     {
+        "inbox_item" => "p.owner_user_id=@user AND (p.legacy_task_id IS NULL OR iam.object_allowed(@org,p.legacy_task_id,@user,'task.read',false))",
         "notification" => "p.recipient_user_id=@user AND (p.source_object_id IS NULL OR EXISTS(SELECT 1 FROM core.objects source WHERE source.organization_id=@org AND source.id=p.source_object_id AND source.lifecycle_state<>'trashed' AND iam.object_allowed(@org,source.id,@user,CASE source.object_type WHEN 'task' THEN 'task.read' WHEN 'project' THEN 'project.read' WHEN 'calendar_event' THEN 'calendar.read' WHEN 'catalog_item' THEN 'filecatalog.read' ELSE 'contact.read' END,@admin)))",
         _ => $"iam.object_allowed(@org,o.id,@user,'{resource.ReadPermission.ToLowerInvariant()}',@admin)",
     };
@@ -308,7 +316,11 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
     private static void Record(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, string type, Guid id, int version, JsonObject? old, JsonObject current)
     {
         var eventId = Guid.NewGuid();
-        var action = type == "reminder" ? r.Route.Operation switch
+        var action = type == "task" && r.Route.Operation == "create" ? "TaskCreated" : type == "inbox_item" ? r.Route.Operation switch
+        {
+            "create" => "InboxItemCreated", "patch" => "InboxItemUpdated", "convert-to-task" => "InboxItemConvertedToTask",
+            _ => throw Invalid("Invalid inbox event.")
+        } : type == "reminder" ? r.Route.Operation switch
         {
             "create" => "ReminderCreated",
             "patch" => "ReminderUpdated",
