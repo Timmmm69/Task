@@ -15,6 +15,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     private NavigationSection? _selectedSection;
     private string? _sessionMessage;
     private bool _disposed;
+    private readonly SemaphoreSlim _workObjectNavigationGate = new(1, 1);
+    private long _workObjectNavigationGeneration;
 
     public MainWindowViewModel()
         : this(null, null, null, null, null, null, null, null)
@@ -538,31 +540,41 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     internal async global::System.Threading.Tasks.Task OpenWorkObjectAsync(string objectType, Guid id)
     {
+        var generation = Interlocked.Increment(ref _workObjectNavigationGeneration);
+        await _workObjectNavigationGate.WaitAsync();
         try
         {
-            if (_disposed) return;
+            if (_disposed || generation != _workObjectNavigationGeneration) return;
+            SessionMessage = null;
+            if (id == Guid.Empty) { SessionMessage = "Не удалось определить выбранный объект."; return; }
             var route = objectType switch
             {
                 "task" => "tasks",
                 "project" => "projects",
-                "contact" or "company" => "contacts",
+                "contact" => "contacts",
                 "catalog_item" or "file_location" => "catalog",
                 "calendar_event" => "calendar",
                 "notification" => "notifications",
                 _ => null,
             };
-            if (route is null) return;
+            if (route is null)
+            {
+                SessionMessage = "Для этого типа результата в текущем приложении нет экрана открытия.";
+                return;
+            }
             SelectedSection = Sections.First(section => section.Route == route);
             if (route == "tasks" && Tasks is not null) { await Tasks.ActivateAsync(); await Tasks.OpenByIdAsync(id); }
             else if (route == "projects" && Projects is not null) await Projects.OpenByIdAsync(id);
             else if (route == "calendar" && Calendar is not null) await Calendar.OpenEventByIdAsync(id);
             else if (route is "catalog" or "contacts" && WorkHub is not null) await WorkHub.OpenSearchObjectAsync(objectType, id);
+            else if (route != "notifications") SessionMessage = "Экран выбранного объекта недоступен в текущем режиме.";
         }
         catch (Exception)
         {
-            if (!_disposed)
+            if (!_disposed && generation == _workObjectNavigationGeneration)
                 SessionMessage = "Не удалось открыть выбранный объект. Повторите попытку.";
         }
+        finally { _workObjectNavigationGate.Release(); }
     }
 
     private static bool TryGetWorkArea(string? route, out WorkHubArea area)

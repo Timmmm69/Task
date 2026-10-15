@@ -87,7 +87,11 @@ public sealed partial class WorkHubViewModel
 
     private async System.Threading.Tasks.Task<bool> ReloadCatalogAsync(CancellationToken ct, Guid? selectedId = null, bool reveal = false)
     {
+        var generation = _activationGeneration;
+        var openGeneration = _searchObjectGeneration;
         var result = await _client.GetCatalogAsync(ct);
+        if (ct.IsCancellationRequested || _disposed || !_sessionAvailable || !Has("FileCatalog.Read")
+            || generation != _activationGeneration || openGeneration != _searchObjectGeneration) return false;
         if (result is DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded success)
         {
             Apply(result, value => { ReplaceCatalog(value, selectedId); _catalogSnapshotCurrent = true; });

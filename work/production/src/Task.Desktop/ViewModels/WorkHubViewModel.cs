@@ -345,6 +345,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
         ++_notificationAccessGeneration;
+        ++_searchObjectGeneration;
         ResetListPagination();
         InvalidateSearch();
         _capabilities.Clear();
@@ -544,7 +545,13 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             DesktopSearchResult source => source,
             _ => null,
         };
-        if (result is not null) OpenObjectRequested?.Invoke(result.ObjectType, result.ParentObjectId ?? result.ObjectId);
+        if (result is not null && CanOpenSearchResult(result))
+        {
+            if (result.ObjectType == "file_location" && result.ParentObjectId is null)
+                SetFeedback("Не удалось определить файл для выбранного расположения. Обновите поиск.", WorkHubFeedbackKind.Warning);
+            else OpenObjectRequested?.Invoke(result.ObjectType,
+                result.ObjectType == "file_location" ? result.ParentObjectId!.Value : result.ObjectId);
+        }
         return System.Threading.Tasks.Task.CompletedTask;
     }
     private async System.Threading.Tasks.Task OpenNotificationSourceAsync(object? parameter, CancellationToken ct)

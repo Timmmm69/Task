@@ -11,30 +11,67 @@ public sealed partial class WorkHubViewModel
     private bool _paletteSearchActive;
     private bool _isSearchLoading;
     private string? _searchMessage;
+    private long _searchObjectGeneration;
     public bool IsSearchLoading { get => _isSearchLoading; private set => SetProperty(ref _isSearchLoading, value); }
     public string? SearchMessage { get => _searchMessage; private set => SetProperty(ref _searchMessage, value); }
     public bool HasCapability(string capability) => _sessionAvailable && Has(capability);
     public bool CanOpenSearchResult(DesktopSearchResult result) => !_disposed && _sessionAvailable && _networkAvailable
-        && CanSearch && SearchResults.Contains(result)
-        && result.ObjectType is "task" or "project" or "calendar_event" or "catalog_item" or "file_location" or "contact" or "company";
+        && CanSearch && SearchResults.Contains(result);
 
     public async System.Threading.Tasks.Task OpenSearchObjectAsync(string type, Guid id)
     {
         if (!_active || !_sessionAvailable || !_networkAvailable || _disposed) return;
         var generation = _activationGeneration;
+        var openGeneration = ++_searchObjectGeneration;
+        RefreshCommand.Cancel();
+        ResetListPagination();
         var token = _activation?.Token ?? CancellationToken.None;
+        bool Current() => !token.IsCancellationRequested && !_disposed && generation == _activationGeneration
+            && openGeneration == _searchObjectGeneration && _sessionAvailable && _networkAvailable;
         if (type is "catalog_item" or "file_location")
         {
             SelectedCatalogItem = null;
-            if (await ReloadCatalogAsync(token) && !token.IsCancellationRequested && generation == _activationGeneration)
-                await SelectCatalogItemAsync(id, token);
+            if (!Has("FileCatalog.Read")) { SetFeedback("Недостаточно прав для открытия файла.", WorkHubFeedbackKind.Warning); return; }
+            var result = await _client.GetCatalogAsync(token);
+            if (!Current() || !Has("FileCatalog.Read")) return;
+            Apply(result, value => { ReplaceCatalog(value); _catalogSnapshotCurrent = true; });
+            if (result is DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>.Succeeded)
+            {
+                if (!Catalog.Any(item => item.Id == id && item.LifecycleState == "active") || !await SelectCatalogItemAsync(id, token))
+                {
+                    SelectedCatalogItem = null;
+                    SetFeedback("Файл больше не доступен. Обновите результаты поиска.", WorkHubFeedbackKind.Warning);
+                }
+            }
         }
         else if (type == "contact")
         {
             SelectedContact = null;
-            var result = await _client.GetContactsAsync(token);
-            if (token.IsCancellationRequested || _disposed || generation != _activationGeneration) return;
-            Apply(result, value => { Contacts = value; SelectedContact = value.FirstOrDefault(c => c.Id == id); });
+            if (!Has("Contact.Read")) { SetFeedback("Недостаточно прав для открытия контакта.", WorkHubFeedbackKind.Warning); return; }
+            string? cursor = null;
+            var cursors = new HashSet<string>(StringComparer.Ordinal);
+            var contacts = new List<DesktopContact>();
+            for (var pageNumber = 0; pageNumber < 500; pageNumber++)
+            {
+                var result = await _client.GetContactsAsync(cursor, token);
+                if (!Current() || !Has("Contact.Read")) return;
+                if (result is not DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded page)
+                {
+                    if (result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Forbidden or DesktopWorkResult<IReadOnlyList<DesktopContact>>.AuthenticationFailure)
+                        Contacts = [];
+                    Apply(result, _ => { }); return;
+                }
+                contacts.AddRange(page.Value);
+                Contacts = contacts.DistinctBy(contact => contact.Id).ToArray();
+                SelectedContact = Contacts.FirstOrDefault(contact => contact.Id == id && contact.LifecycleState == "active");
+                _listCursor = page.NextCursor;
+                if (_listCursor is not null) _listCursors.Add(_listCursor);
+                NotifyPagination();
+                if (SelectedContact is not null) { SetFeedback(null, WorkHubFeedbackKind.None); return; }
+                cursor = page.NextCursor;
+                if (cursor is null || !cursors.Add(cursor)) break;
+            }
+            SetFeedback("Контакт больше не доступен. Обновите результаты поиска.", WorkHubFeedbackKind.Warning);
         }
     }
 
