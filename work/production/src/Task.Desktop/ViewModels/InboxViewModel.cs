@@ -526,13 +526,15 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
             switch (result)
             {
                 case DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success:
+                    var remainsInInbox = InboxItemViewModel.IsCaptureOnly(success.Value);
                     Items = Items.Where(item => item.Id != success.Value.Id).ToArray();
                     SelectedItem = Items.FirstOrDefault();
                     CloseConversion();
                     State = InboxScreenState.Loaded;
                     await RefreshAsync(cancellationToken).ConfigureAwait(true);
                     if (State is InboxScreenState.Empty or InboxScreenState.Loaded)
-                        ScreenMessage = "Задача создана в разделе «Задачи», исходная запись закрыта. Связь сохранена в истории задачи.";
+                        ScreenMessage = remainsInInbox ? "Изменения сохранены. Запись остаётся во входящих."
+                            : "Задача создана в разделе «Задачи», исходная запись закрыта. Связь сохранена в истории задачи.";
                     break;
                 case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
                     editor.ApplyServerValidation(validation.Message, validation.FieldErrors);

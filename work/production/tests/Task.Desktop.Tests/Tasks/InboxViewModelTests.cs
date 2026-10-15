@@ -69,6 +69,9 @@ public sealed class InboxViewModelTests
         await model.ActivateAsync();
         await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
         await model.SaveConversionCommand.ExecuteAsync(); // No changes must not acquire the mutation gate.
+        Assert.Null(client.LastPatch);
+        Assert.NotNull(model.Conversion);
+        Assert.Contains("Нет изменений", model.Conversion.StatusMessage);
         model.Conversion!.Title = "";
         Assert.False(model.CanSaveConversion);
         await model.SaveConversionCommand.ExecuteAsync();
@@ -177,6 +180,42 @@ public sealed class InboxViewModelTests
 
     internal static DesktopTasksApiResult<DesktopTaskPage> Page(params DesktopTaskDto[] tasks) =>
         new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new DesktopTaskPage(tasks, null, tasks.Length));
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task ConcurrentConversionSaveUsesSingleWriteAndKeepsNullDeadline()
+    {
+        var source = CreateTask("Запись");
+        var converted = source with { Version = 2, Card = new TaskCardContent { Description = "Описание" } };
+        var pending = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
+        var client = new FakeInboxClient { PageResult = Page(source), PendingPatch = pending };
+        using var model = new InboxViewModel(client, Capabilities);
+        await model.ActivateAsync(); await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
+        model.Conversion!.Card.Description = "Описание";
+        var first = model.SaveConversionCommand.ExecuteAsync();
+        Assert.True(model.IsBusy);
+        Assert.False(await model.SaveConversionCommand.ExecuteAsync());
+        Assert.Equal(1, client.PatchCalls);
+        Assert.False(client.LastPatch!.DeadlineAtUtc.IsSpecified);
+        client.PageResult = Page(converted);
+        pending.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(converted, 2, false));
+        await first;
+        Assert.Null(model.Conversion);
+        Assert.True(model.ShowInboxZero);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task TitleOnlyPatchDoesNotClaimThatInboxSourceWasClosed()
+    {
+        var source = CreateTask("Запись");
+        var client = new FakeInboxClient { PageResult = Page(source), PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { Title = "Новое название", Version = 2 }, 2, false) };
+        using var model = new InboxViewModel(client, Capabilities);
+        await model.ActivateAsync(); await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
+        model.Conversion!.Title = "Новое название";
+        await model.SaveConversionCommand.ExecuteAsync();
+        Assert.Single(model.Items);
+        Assert.Contains("остаётся во входящих", model.ScreenMessage);
+        Assert.False(model.ShowInboxZero);
+    }
 
     [Theory]
     [InlineData(true)]
@@ -396,6 +435,7 @@ public sealed class InboxViewModelTests
         public DesktopCreateTaskCommand? LastCreate { get; private set; }
         public DesktopPatchTaskCommand? LastPatch { get; private set; }
         public int PatchCalls { get; private set; }
+        public TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>? PendingPatch { get; init; }
         public Func<string?, CancellationToken, global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>? Read { get; set; }
 
         public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) =>
@@ -414,6 +454,7 @@ public sealed class InboxViewModelTests
         {
             LastPatch = command;
             PatchCalls++;
+            if (PendingPatch is { } pending) return pending.Task;
             if (PatchResult is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
                 PageResult = Page(success.Value);
             return global::System.Threading.Tasks.Task.FromResult(PatchResult);

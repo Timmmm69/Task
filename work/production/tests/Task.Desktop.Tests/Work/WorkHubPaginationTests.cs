@@ -6,6 +6,23 @@ namespace Task.Desktop.Tests.Work;
 public sealed partial class WorkHubViewModelTests
 {
     [Fact]
+    public async System.Threading.Tasks.Task AreaSwitchDuringContinuationLoadsNewAreaAndRejectsCancelledPage()
+    {
+        var pending = new TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>();
+        var contact = new DesktopContact(Guid.NewGuid(), 1, "Contact", "Contact", null, null, "active", "active");
+        var client = new FakeClient { Contacts = [contact], SearchPageHandler = (_, cursor, _) => cursor is null ? SearchPage("item", "next") : pending.Task };
+        using var hub = new WorkHubViewModel(client, ["Search.Use", "Contact.Read"]);
+        hub.Activate(WorkHubArea.Search); hub.SearchQuery = "item";
+        await hub.SearchCommand.ExecuteAsync();
+        var more = hub.LoadMoreCommand.ExecuteAsync();
+        hub.Activate(WorkHubArea.Contacts);
+        Assert.Equal(contact.Id, Assert.Single(hub.Contacts).Id);
+        pending.SetResult(new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([]));
+        await more;
+        Assert.Equal(contact.Id, Assert.Single(hub.Contacts).Id);
+        Assert.Equal("item", Assert.Single(hub.SearchResults).Title);
+    }
+    [Fact]
     public async System.Threading.Tasks.Task QueryChangeIgnoresOldContinuationEvenWhenTransportIgnoresCancellation()
     {
         var pending = new TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>();

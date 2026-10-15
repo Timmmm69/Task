@@ -54,6 +54,7 @@ public sealed partial class DesktopWorkApiClientTests
     [InlineData("search", "forbidden")]
     [InlineData("contacts", "forbidden")]
     [InlineData("search", "cancel")]
+    [InlineData("search", "expired")]
     [InlineData("contacts", "cancel")]
     public async System.Threading.Tasks.Task NextPageFailurePreservesDataExceptWhenAccessIsRevoked(string route, string failure)
     {
@@ -64,6 +65,7 @@ public sealed partial class DesktopWorkApiClientTests
             {
                 if (failure == "network") return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.ServiceUnavailable, "{}"));
                 if (failure == "forbidden") return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.Forbidden, "{}"));
+                if (failure == "expired") return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.Gone, "{\"code\":\"SEARCH_CURSOR_EXPIRED\"}"));
                 if (failure == "cancel") throw new OperationCanceledException(ct);
             }
             return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, JsonSerializer.Serialize(new { items = new[] { Row(route) }, nextCursor = "same" })));
@@ -77,8 +79,8 @@ public sealed partial class DesktopWorkApiClientTests
             await hub.LoadMoreCommand.ExecuteAsync(null, cts.Token);
         }
         else await hub.LoadMoreCommand.ExecuteAsync();
-        Assert.Equal(failure == "forbidden" ? 0 : 1, Count(hub, route));
-        if (failure is "repeat" or "forbidden") Assert.False(hub.HasMoreResults);
+        Assert.Equal(failure is "forbidden" or "expired" ? 0 : 1, Count(hub, route));
+        if (failure is "repeat" or "forbidden" or "expired") Assert.False(hub.HasMoreResults);
         Assert.False(hub.IsSearchLoading);
         Assert.False(hub.IsLoading);
         Assert.InRange(call, 1, 2);

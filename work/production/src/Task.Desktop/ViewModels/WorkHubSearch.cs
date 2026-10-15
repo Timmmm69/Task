@@ -154,7 +154,8 @@ public sealed partial class WorkHubViewModel
             var result = await _client.SearchAsync(query, append ? _searchCursor : null, request.Token);
             if (request.IsCancellationRequested || _disposed || generation != _searchGeneration) return;
             if (!append || result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden
-                or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure)
+                or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure
+                or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Conflict)
             {
                 SearchResults = [];
                 _searchCursor = null;

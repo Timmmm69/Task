@@ -362,6 +362,8 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
     private async System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<T>>> GetPageAsync<T>(string path, Func<JsonNode, T?> map, CancellationToken cancellationToken, string? cursor = null) where T : class
     {
         var result = await _executor.GetAsync(Uri(path + (cursor is null ? "" : "&cursor=" + System.Uri.EscapeDataString(cursor))), Correlation(), cancellationToken).ConfigureAwait(false);
+        if (result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Gone } expired
+            && ErrorCode(expired.Body) == "SEARCH_CURSOR_EXPIRED") return new DesktopWorkResult<IReadOnlyList<T>>.Conflict();
         if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response) return Failure<IReadOnlyList<T>>(result);
         try
         {

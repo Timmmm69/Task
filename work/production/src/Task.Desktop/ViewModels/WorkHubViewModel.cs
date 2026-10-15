@@ -91,7 +91,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
             Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
         ServerAddress = serverAddress ?? "Сервер компании";
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !LoadMoreCommand.IsExecuting && !_catalogMutationPending && Locations?.IsMutating != true);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
         InitializePagination();
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
@@ -159,7 +159,15 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public string ScopeStatusText => IsPersonal ? "Данные только на этом компьютере" : "Область доступа проверена сервером";
     public string SearchScopeTitle => IsPersonal ? "Личный поиск" : "Permission-safe partial";
     public IReadOnlyList<DesktopCatalogItem> Catalog { get => _catalog; private set => SetProperty(ref _catalog, value); }
-    public IReadOnlyList<DesktopContact> Contacts { get => _contacts; private set => SetProperty(ref _contacts, value); }
+    public IReadOnlyList<DesktopContact> Contacts
+    {
+        get => _contacts;
+        private set
+        {
+            if (SetProperty(ref _contacts, value) && SelectedContact is { } selected)
+                SelectedContact = value.FirstOrDefault(contact => contact.Id == selected.Id && contact.LifecycleState == "active");
+        }
+    }
     public IReadOnlyList<DesktopSearchResult> SearchResults { get => _searchResults; private set { if (SetProperty(ref _searchResults, value)) NotifySearchPresentation(); } }
     public IReadOnlyList<DesktopNotification> Notifications { get => _notifications; private set { if (SetProperty(ref _notifications, value)) { OnPropertyChanged(nameof(UnreadCount)); OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); MarkAllReadCommand.RaiseCanExecuteChanged(); } } }
     public IReadOnlyList<DesktopLifecycleItem> LifecycleItems { get => _lifecycleItems; private set { if (SetProperty(ref _lifecycleItems, value)) NotifyLifecyclePresentation(); } }
