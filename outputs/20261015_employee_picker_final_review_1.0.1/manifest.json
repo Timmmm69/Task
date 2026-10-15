@@ -1,0 +1,386 @@
+{
+  "artifact": "Task final Employee Picker 5.1-5.3 verification",
+  "version": "1.0.1",
+  "date": "2026-10-15",
+  "branch": "feature/employee-picker",
+  "source_commit": "fa8a15cf93da166040741c869d8b761d72a8eaf3",
+  "base": "5465c4e",
+  "scope": [
+    "work/production/docs/CALENDAR-EMPLOYEE-PICKER-5.3.md",
+    "work/production/docs/EMPLOYEE-PICKER-5.1.md",
+    "work/production/docs/PROD-04-projects-and-members.md",
+    "work/production/docs/PROJECT-EMPLOYEE-PICKER-5.2.md",
+    "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+    "work/production/src/Task.Desktop/Administration/DesktopEmployeeDirectory.cs",
+    "work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+    "work/production/src/Task.Desktop/ViewModels/CalendarEventEditorViewModel.Employees.cs",
+    "work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/EmployeePickerViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+    "work/production/src/Task.Desktop/Views/EmployeePickerView.xaml",
+    "work/production/src/Task.Desktop/Views/EmployeePickerView.xaml.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/tests/Task.Desktop.Tests/Calendar/CalendarAttendeeEditorTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Calendar/CalendarEmployeePickerTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Calendar/CalendarPickerWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Employees/EmployeeDirectoryClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectEmployeePickerTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectPickerWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+    ".project-dashboard/roadmap.json",
+    "work/employee_picker_final_review/Test-Postgres.ps1"
+  ],
+  "tests": {
+    "desktop-final": {
+      "total": 959,
+      "passed": 959,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "scoped-review": {
+      "total": 206,
+      "passed": 206,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "domain-postgres": {
+      "total": 233,
+      "passed": 233,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "server-final": {
+      "total": 259,
+      "passed": 259,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "grant-fix": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  },
+  "final_gate_passed": true,
+  "total_nonoverlapping_tests": 1451,
+  "real_postgres_16_executed": true,
+  "historical_native_activation_flake_recorded": true,
+  "limitations": [
+    "UUID compatibility without User.Read and for contacts",
+    "Calendar server active-account race remains existing contract limit",
+    "No manual production organization walkthrough"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 56,
+      "sha256": "68bc1914a9dc8ee342f3fb58577c59cfac97dd85eefea477481ce9638aa28fbb"
+    },
+    {
+      "path": "evidence/backend-scope-check.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/boundaries.log",
+      "bytes": 986,
+      "sha256": "a48e1297d824aed11453a56aa335427b83792a9444ab11741f7348c3a408d070"
+    },
+    {
+      "path": "evidence/build.log",
+      "bytes": 2009,
+      "sha256": "ba23fd89b8364afd5109e1b8f52ea41d168b0c8654924be7cd92b566a6382381"
+    },
+    {
+      "path": "evidence/calendar-added-employee.png",
+      "bytes": 64209,
+      "sha256": "2871e0af5744ee4d2205755df4bc2e15b1dd052d92255238fd4cb9a2c028d08b"
+    },
+    {
+      "path": "evidence/calendar-contact.png",
+      "bytes": 66867,
+      "sha256": "a9412e71978da86faa223e0f1599e7db3cd5e0b31415907fcbc761d64a271f92"
+    },
+    {
+      "path": "evidence/calendar-employee-picker.png",
+      "bytes": 57000,
+      "sha256": "2cc56e195157f38e4b52d6bb129c0ea52ba66b1693d7ddec863ca2133d81c1ca"
+    },
+    {
+      "path": "evidence/calendar-no-user-read.png",
+      "bytes": 63735,
+      "sha256": "a7c92211c5ec7e3227c6023eeed14cb52f2f55cb59352f62c9777e5ecfcc6fb5"
+    },
+    {
+      "path": "evidence/calendar-picker-narrow.png",
+      "bytes": 62626,
+      "sha256": "1137c759e5610b8a6f6d7939cce9e5d01f2f19abb391d8d36e047626e33a7ab4"
+    },
+    {
+      "path": "evidence/dashboard-order.log",
+      "bytes": 185,
+      "sha256": "975089889f3298dfbb090b520deadc53c84ee99665996dbcd50a34ae7370c070"
+    },
+    {
+      "path": "evidence/dashboard-validation.log",
+      "bytes": 188,
+      "sha256": "23c8d7f864fa4aba84c0303edbeb4d68bbb049c80e6a0d270e29760a784d07f1"
+    },
+    {
+      "path": "evidence/desktop-final.trx",
+      "bytes": 1444308,
+      "sha256": "e96c33e0f3845cd3e3f26757134b15791f595b6661b849e9e04938babb731486"
+    },
+    {
+      "path": "evidence/desktop-window-activation-failure.log",
+      "bytes": 3692,
+      "sha256": "2e1e0fda4ce7c5fe9dc90e51b86e03533775d38f67f46699f8e3a24ee129b579"
+    },
+    {
+      "path": "evidence/desktop-window-activation-failure.trx",
+      "bytes": 1450495,
+      "sha256": "3fe63a9d0c2941fb3dbd637293a9d75b4f2be2bfaea61abef3dfc41f220d2fbf"
+    },
+    {
+      "path": "evidence/desktop.log",
+      "bytes": 878,
+      "sha256": "5a03a5b2dff7df93ae0adcb6d3a0a14a2c0b008a9a619ef37f9d02dbccca9b1b"
+    },
+    {
+      "path": "evidence/diff-check.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/domain-postgres.log",
+      "bytes": 657,
+      "sha256": "0d7013ef67991ea56e125ce8b0cbd1196b110f0f28413619b954d043fdce1da7"
+    },
+    {
+      "path": "evidence/domain-postgres.trx",
+      "bytes": 329211,
+      "sha256": "90e57294a222bf35ab6b3568ccea947dc25dd9f880179ec8a5f713b7770fbc19"
+    },
+    {
+      "path": "evidence/grant-fix.log",
+      "bytes": 2383,
+      "sha256": "77b58851f996c836c1d523210bd9974692beae4e3994d6aee4019f496efc7e72"
+    },
+    {
+      "path": "evidence/grant-fix.trx",
+      "bytes": 6152,
+      "sha256": "59bf4a9d0bc69a65c16367ca15d25b3c0593c3b52b75d2100c8c3ee7d7379c20"
+    },
+    {
+      "path": "evidence/postgres-runtime.json",
+      "bytes": 112,
+      "sha256": "b746632e0a223d358d900bd7aeeaa63b3156ba3083767fddff05248e6db4b4a0"
+    },
+    {
+      "path": "evidence/project-live-user-read-grant.png",
+      "bytes": 69531,
+      "sha256": "12b872c22e49d05da903e1d531a1f31e404f584a743e02907f3b7117645e7437"
+    },
+    {
+      "path": "evidence/project-manager-narrow.png",
+      "bytes": 75661,
+      "sha256": "f1dc0a71f055d0e45122deb8d41da20a6221f3d9a5737612fd07f92398f5746e"
+    },
+    {
+      "path": "evidence/project-manager-picker.png",
+      "bytes": 84895,
+      "sha256": "c3eeaade7911775437fb92abf7a69f6c38a7ec4306ff7bfc9cfcb97838277ceb"
+    },
+    {
+      "path": "evidence/project-manager-save.png",
+      "bytes": 76698,
+      "sha256": "6aa79ee5281b47af41cce904fa05ca066fc1198e9bd23d6b847052a1baf83687"
+    },
+    {
+      "path": "evidence/project-member-picker.png",
+      "bytes": 61422,
+      "sha256": "967e2799900f8bc335e689b67e10953f7d0abda86f9dae28891aef2ca6b769c6"
+    },
+    {
+      "path": "evidence/project-uuid-fallback.png",
+      "bytes": 49569,
+      "sha256": "75732b83c83bfd79e7bd9885ec23a62662b511241a64af6257a872a456abbcc8"
+    },
+    {
+      "path": "evidence/scoped-review.trx",
+      "bytes": 312090,
+      "sha256": "bbd58df5ca6f9fde6d72290c77cbe8fefb51c4fea1549938a7083678c786a153"
+    },
+    {
+      "path": "evidence/scoped.log",
+      "bytes": 878,
+      "sha256": "480250c9245e81311563971f9ffc02a36d555fda3947a0e252bb9c81b09cc2ef"
+    },
+    {
+      "path": "evidence/server-final.trx",
+      "bytes": 417768,
+      "sha256": "afb27246b6011e27dbe723c94486479e95c5f1b4ecbdf4b82ef4c3f732f346af"
+    },
+    {
+      "path": "evidence/server.log",
+      "bytes": 689,
+      "sha256": "87f1522713a54c67dfd836ecac3f25c89f17efb87be9f06280fc86ffb583b866"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 126852,
+      "sha256": "e0a7e3e8c7da478ac2afe270607c647a763c5eb96daf2fd5383aaff24a52b360"
+    },
+    {
+      "path": "source/work/employee_picker_final_review/Test-Postgres.ps1",
+      "bytes": 2511,
+      "sha256": "c757da1f5fcb840c0105cf6a87635b50f8b661da4f87c3cd1aa14809f556956f"
+    },
+    {
+      "path": "source/work/production/docs/CALENDAR-EMPLOYEE-PICKER-5.3.md",
+      "bytes": 4911,
+      "sha256": "d20527d2c643592caca96c877c0cd41b2079394c91fd489c7b1413b4ba52892a"
+    },
+    {
+      "path": "source/work/production/docs/EMPLOYEE-PICKER-5.1.md",
+      "bytes": 8707,
+      "sha256": "9d7886994943d0e5c14f503a0f7127a0b996e214bd80f4982ab0f30843870dc1"
+    },
+    {
+      "path": "source/work/production/docs/PROD-04-projects-and-members.md",
+      "bytes": 5617,
+      "sha256": "78349d146f87d0752a0fb368bfa2e62edc77af63626846c6357a9eca08fe80d2"
+    },
+    {
+      "path": "source/work/production/docs/PROJECT-EMPLOYEE-PICKER-5.2.md",
+      "bytes": 9209,
+      "sha256": "1a27d3a974c73c8dfe34bc57b856fadef5a92945cb2951ef98a7b144e0d5b36c"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "bytes": 7729,
+      "sha256": "880b21569b54bff27ee0c5a0e1713eacd02cc96d5ec0579b5f509a114ec68355"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Administration/DesktopEmployeeDirectory.cs",
+      "bytes": 4940,
+      "sha256": "ced08ffbeeb5eb459ae99f2f9d9b5ffa978c899591fafbaae39ac881e9dd1141"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "bytes": 17888,
+      "sha256": "79ca1bd459a806ecbdb1f0d40f52657392933ed4f8bc89fc4929758a76efe55b"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CalendarEventEditorViewModel.Employees.cs",
+      "bytes": 10726,
+      "sha256": "c9acaf58aa0eb00093708a32185d8a622a9aa998189a22a6f1515858dde330ef"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs",
+      "bytes": 60737,
+      "sha256": "747933bbe146515a976f77dda0d98841c7cbdc5d8671f89ef3916a16f92564bf"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/EmployeePickerViewModel.cs",
+      "bytes": 12011,
+      "sha256": "4b0e0241ebc697137c23b663a0b2d0c6c95a5f13e7de24c10a0043688158a427"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "bytes": 33798,
+      "sha256": "d8a282f1cdfd9065d0af3b825c904e9594a3540b0aec242ca2e17fb89b0c9136"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs",
+      "bytes": 9504,
+      "sha256": "a04de6e73aa5a9f2a1a9206e321ec8ac7cbb958fd9909ce2b64602277ae1139e"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "bytes": 76666,
+      "sha256": "6fd58ddea2abd0f01d9afd56e67c152ee1b8ec37bc4eee5bcb4a89c46e3baf9d"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/EmployeePickerView.xaml",
+      "bytes": 4829,
+      "sha256": "4f209ab750e1db51bac709ad94b9f8bfc5ae93f6cbd2948da4c3ae35c3d1aaf7"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/EmployeePickerView.xaml.cs",
+      "bytes": 1931,
+      "sha256": "3e17bc4f12a5e2e195a45836918696557b7c7e393a23cb0cd33d7638ccb3b141"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "bytes": 17536,
+      "sha256": "09a2c6e0533a27efd92141d1f4e04539e53e018ea75f5c63bee8158509919857"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarAttendeeEditorTests.cs",
+      "bytes": 3812,
+      "sha256": "2f4288e9256ad0e64db2db3f4c706712b70ec42894b1cc4d17fd583a28031a60"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarEmployeePickerTests.cs",
+      "bytes": 20388,
+      "sha256": "012e0d94c5a85c7f52789a4e3e2f3155466f7deed556ed145d7db3501f0901dd"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/CalendarPickerWindowsTests.cs",
+      "bytes": 7866,
+      "sha256": "0247cc8f7e8bb05468018c45dc1ad5edbefdaf3f1b940d091f6ec95b56eb3a48"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Calendar/DesktopCalendarApiClientTests.cs",
+      "bytes": 13920,
+      "sha256": "e9f22246140b60e8060e3b3a7457a3d84b75318b487d393b4323f20456f46ff9"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Employees/EmployeeDirectoryClientTests.cs",
+      "bytes": 10108,
+      "sha256": "874178f6c7959d5ead170f88ca1b155a45f80d7971929022d436377421beca94"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerTests.cs",
+      "bytes": 13986,
+      "sha256": "04bfee2162486486fa121dfa86a531cc00b777fbdc12ed8bfca7ad31fb5380b9"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerWindowsTests.cs",
+      "bytes": 8428,
+      "sha256": "1decf50d718959c0b418e87bdc493122cd90aa234f1cbedb92ab1092e3af07db"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectEmployeePickerTests.cs",
+      "bytes": 16732,
+      "sha256": "b2825a78b62d7240f8ef29e081577437fc2f1ba9644d7d0dfd1554ab1beab389"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectPickerWindowsTests.cs",
+      "bytes": 8051,
+      "sha256": "cb2438060e555a208e8e186eb7225a94e6d9d3cde179f0acaa1e243c9d58c874"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "bytes": 17095,
+      "sha256": "6ec9187208e7b3242fa4ff7c31046d787d2c399e850f284a0ab421d475fd1e57"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 7872,
+      "sha256": "42ae6fd7ed8b7f7dea2815b9e994e4928f507e4f153348b5ef6e47824a732b4d"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "f34306bb50e2d2ec59c788b9013c5ac682ef7f7f69345a3e957e38c0b6ba2fdd"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "version": "1.0.1",
+  "zip_sha256": "6df6ded952eb5f261fe16e15a44bfb17339128b04c5c5f9e1df5cae61c3f9a43",
+  "files_verified": 63,
+  "artifact_integrity_passed": true,
+  "final_gate_passed": true,
+  "tests": {
+    "desktop-final": {
+      "total": 959,
+      "passed": 959,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "scoped-review": {
+      "total": 206,
+      "passed": 206,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "domain-postgres": {
+      "total": 233,
+      "passed": 233,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "server-final": {
+      "total": 259,
+      "passed": 259,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "grant-fix": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  }
+}

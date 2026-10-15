@@ -1,0 +1,30 @@
+Тестовый запуск для C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:55.26]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]
+  Не пройден Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [568 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.<>c__DisplayClass0_1.<<NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 62
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\ðóð░Ðüð║\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 140
+   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\ðóð░Ðüð║\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 141
+--- End of stack trace from previous location ---
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 580 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.77]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 34
+--- End of stack trace from previous location ---
+Внимание! Перезапись файла с результатами: C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\employee_picker_final_review\evidence\desktop-final.trx
+Файл результатов: C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\employee_picker_final_review\evidence\desktop-final.trx
+
+Не пройден!: не пройдено     1, пройдено   958, пропущено     0, всего   959, длительность 55 s. - Task.Desktop.Tests.dll (net10.0)

@@ -1,0 +1,5 @@
+
+> dashboard:order
+> node .project-dashboard/recalculate-order.mjs
+
+Next: OPS-05 - Windows-клиент устанавливается и безопасно обновляется

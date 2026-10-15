@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="49c8b95d-720c-4298-b118-bf3419157ce5" name="novik@TIM 2026-10-15 22:49:12" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-15T22:49:12.5253309+03:00" queuing="2026-10-15T22:49:12.5253313+03:00" start="2026-10-15T22:49:09.2011610+03:00" finish="2026-10-15T22:49:13.1268216+03:00" />
+  <TestSettings name="default" id="6aa20fd3-2f16-41a6-82bf-eabb8a8dfae5">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-15_22_49_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c29a7dc2-54f9-4b5a-9856-30972bd5f3ed" testId="e055ce14-0372-e5e2-ff94-e873ad04c1ac" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.GrantingUserReadEnablesManagerPickerInTheOpenEditor(existing: False)" computerName="TIM" duration="00:00:00.3495778" startTime="2026-10-15T22:49:12.3829469+03:00" endTime="2026-10-15T22:49:12.7332645+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c29a7dc2-54f9-4b5a-9856-30972bd5f3ed" />
+    <UnitTestResult executionId="da58e969-d20a-494e-b1e5-3276b983bc4d" testId="79d23967-c39c-412b-449d-2786fcac1f3b" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback" computerName="TIM" duration="00:00:02.2510313" startTime="2026-10-15T22:49:10.1076694+03:00" endTime="2026-10-15T22:49:12.3693020+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da58e969-d20a-494e-b1e5-3276b983bc4d" />
+    <UnitTestResult executionId="19224a07-41b6-4590-8ef7-8ebc5249f455" testId="24eba18e-2b32-031b-59b2-15e086a413a0" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.GrantingUserReadEnablesManagerPickerInTheOpenEditor(existing: True)" computerName="TIM" duration="00:00:00.3160006" startTime="2026-10-15T22:49:12.7341013+03:00" endTime="2026-10-15T22:49:13.0507147+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19224a07-41b6-4590-8ef7-8ebc5249f455" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.GrantingUserReadEnablesManagerPickerInTheOpenEditor(existing: False)" storage="c:\users\novik\таск\work\employee_picker_5_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="e055ce14-0372-e5e2-ff94-e873ad04c1ac">
+      <Execution id="c29a7dc2-54f9-4b5a-9856-30972bd5f3ed" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="GrantingUserReadEnablesManagerPickerInTheOpenEditor" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback" storage="c:\users\novik\таск\work\employee_picker_5_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="79d23967-c39c-412b-449d-2786fcac1f3b">
+      <Execution id="da58e969-d20a-494e-b1e5-3276b983bc4d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="NativeProjectsHostReusesPickersAndPreservesUuidFallback" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.GrantingUserReadEnablesManagerPickerInTheOpenEditor(existing: True)" storage="c:\users\novik\таск\work\employee_picker_5_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="24eba18e-2b32-031b-59b2-15e086a413a0">
+      <Execution id="19224a07-41b6-4590-8ef7-8ebc5249f455" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\employee_picker_5_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="GrantingUserReadEnablesManagerPickerInTheOpenEditor" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e055ce14-0372-e5e2-ff94-e873ad04c1ac" executionId="c29a7dc2-54f9-4b5a-9856-30972bd5f3ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79d23967-c39c-412b-449d-2786fcac1f3b" executionId="da58e969-d20a-494e-b1e5-3276b983bc4d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="24eba18e-2b32-031b-59b2-15e086a413a0" executionId="19224a07-41b6-4590-8ef7-8ebc5249f455" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.24]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.34]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.35]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:03.33]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

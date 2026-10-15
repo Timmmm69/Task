@@ -1,0 +1,6 @@
+{
+  "postgres": "16",
+  "loopback_only": true,
+  "executed": true,
+  "test_connection_configured": true
+}
