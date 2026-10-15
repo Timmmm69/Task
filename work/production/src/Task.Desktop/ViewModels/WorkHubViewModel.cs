@@ -91,7 +91,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
             Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
         ServerAddress = serverAddress ?? "Сервер компании";
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !LoadMoreCommand.IsExecuting && !_catalogMutationPending && Locations?.IsMutating != true);
+        InitializePagination();
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
         CreateCatalogFolderCommand = new((_, ct) => CreateCatalogEntryAsync("virtual_folder", ct), _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
@@ -288,7 +289,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public AsyncCommand SaveUserSettingsCommand { get; }
     public AsyncCommand SaveNotificationPreferencesCommand { get; }
     public AsyncCommand SaveOrganizationSettingsCommand { get; }
-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, SearchCommand, CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, SelectCatalogRootCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand, .. _reminderCommands];
+    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, LoadMoreCommand, SearchCommand, CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, SelectCatalogRootCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand, .. _reminderCommands];
 
     internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand,
@@ -332,6 +333,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         _activationRefreshPending = false;
         _activation?.Cancel(); _activation?.Dispose(); _activation = new();
         Interlocked.Increment(ref _activationGeneration);
+        ResetListPagination();
         Area = area; _active = true;
         SetFeedback(null, WorkHubFeedbackKind.None);
         _activationRefreshPending = true;
@@ -343,6 +345,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
         ++_notificationAccessGeneration;
+        ResetListPagination();
         InvalidateSearch();
         _capabilities.Clear();
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
@@ -355,7 +358,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         NotificationAccessChanged?.Invoke();
         NotifyCommands();
     }
-    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotificationAccessChanged?.Invoke(); NotifyCommands(); }
+    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { ResetListPagination(); ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotificationAccessChanged?.Invoke(); NotifyCommands(); }
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
@@ -419,12 +422,12 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
                         else await locations.SelectionLoad;
                     }
                     break;
-                case WorkHubArea.Contacts: Apply(await _client.GetContactsAsync(ct), value => Contacts = value); break;
+                case WorkHubArea.Contacts: await LoadListPageAsync(false, ct); break;
                 case WorkHubArea.Notifications: await EnsureNotificationsAsync(ct); break;
                 case WorkHubArea.Search when SearchQuery.Trim().Length >= 2: await SearchCoreAsync(ct); break;
                 case WorkHubArea.Search: SearchResults = []; SetFeedback("Введите запрос длиной не менее двух символов.", WorkHubFeedbackKind.Info); break;
-                case WorkHubArea.Archive: Apply(await _client.GetArchiveAsync(ct), value => { LifecycleItems = value; SelectFirstVisibleLifecycleItem(); }); break;
-                case WorkHubArea.Trash: Apply(await _client.GetTrashAsync(ct), value => { LifecycleItems = value; SelectFirstVisibleLifecycleItem(); }); break;
+                case WorkHubArea.Archive: await LoadListPageAsync(false, ct); break;
+                case WorkHubArea.Trash: await LoadListPageAsync(false, ct); break;
                 case WorkHubArea.Settings: await RefreshSettingsAsync(ct); break;
             }
         }

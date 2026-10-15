@@ -10,7 +10,12 @@
                 <TextBlock Text="{Binding AreaTitle}" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold"/>
                 <TextBlock Text="{Binding AccessText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubRefreshButton"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="Загрузить ещё" Command="{Binding LoadMoreCommand}" Margin="0,0,8,0"
+                        Visibility="{Binding HasMoreResults, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                        Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubLoadMoreButton"/>
+                <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubRefreshButton"/>
+            </StackPanel>
         </Grid>
 
         <Border Grid.Row="1" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12"

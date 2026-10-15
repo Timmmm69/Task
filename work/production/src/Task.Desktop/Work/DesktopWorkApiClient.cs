@@ -106,7 +106,10 @@ public sealed record DesktopOrganizationSettings(long Version, int TrashRetentio
 public abstract record DesktopWorkResult<T>
 {
     private DesktopWorkResult() { }
-    public sealed record Succeeded(T Value, long? EntityVersion = null) : DesktopWorkResult<T>;
+    public sealed record Succeeded(T Value, long? EntityVersion = null) : DesktopWorkResult<T>
+    {
+        public string? NextCursor { get; init; }
+    }
     public sealed record AuthenticationFailure : DesktopWorkResult<T>;
     public sealed record Forbidden : DesktopWorkResult<T>;
     public sealed record NotFound : DesktopWorkResult<T>;
@@ -120,8 +123,10 @@ public interface IDesktopWorkApiClient
 {
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopCatalogItem>>> GetCatalogAsync(CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(string? cursor, CancellationToken cancellationToken) => GetContactsAsync(cancellationToken);
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, string? cursor, CancellationToken cancellationToken) => SearchAsync(query, cancellationToken);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, Guid? parentId, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> MoveCatalogItemAsync(Guid id, long version, Guid? parentId, CancellationToken cancellationToken = default);
@@ -131,7 +136,9 @@ public interface IDesktopWorkApiClient
     System.Threading.Tasks.Task<DesktopWorkResult<bool>> MarkNotificationReadAsync(Guid notificationId, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<bool>> MarkAllNotificationsReadAsync(IReadOnlyCollection<Guid> notificationIds, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetArchiveAsync(CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetArchiveAsync(string? cursor, CancellationToken cancellationToken) => GetArchiveAsync(cancellationToken);
     System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetTrashAsync(CancellationToken cancellationToken = default);
+    System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetTrashAsync(string? cursor, CancellationToken cancellationToken) => GetTrashAsync(cancellationToken);
     System.Threading.Tasks.Task<DesktopWorkResult<bool>> RestoreArchiveAsync(Guid objectId, long version, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<bool>> RestoreTrashAsync(Guid objectId, long version, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopWorkResult<DesktopUserSettings>> GetUserSettingsAsync(CancellationToken cancellationToken = default);
@@ -160,19 +167,28 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
     }
 
     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(CancellationToken cancellationToken = default) =>
-        GetPageAsync("contacts?limit=200", MapContact, cancellationToken);
+        GetContactsAsync(null, cancellationToken);
+    public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopContact>>> GetContactsAsync(string? cursor, CancellationToken cancellationToken) =>
+        GetPageAsync("contacts?limit=200", MapContact, cancellationToken, cursor);
     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>> GetNotificationsAsync(CancellationToken cancellationToken = default) =>
         GetNotificationPagesAsync(cancellationToken);
     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetArchiveAsync(CancellationToken cancellationToken = default) =>
-        GetPageAsync("archive?limit=200", MapLifecycle, cancellationToken);
+        GetArchiveAsync(null, cancellationToken);
+    public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetArchiveAsync(string? cursor, CancellationToken cancellationToken) =>
+        GetPageAsync("archive?limit=200", MapLifecycle, cancellationToken, cursor);
     public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetTrashAsync(CancellationToken cancellationToken = default) =>
-        GetPageAsync("trash?limit=200", MapLifecycle, cancellationToken);
+        GetTrashAsync(null, cancellationToken);
+    public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetTrashAsync(string? cursor, CancellationToken cancellationToken) =>
+        GetPageAsync("trash?limit=200", MapLifecycle, cancellationToken, cursor);
 
-    public async System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default)
+    public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, CancellationToken cancellationToken = default) =>
+        SearchAsync(query, null, cancellationToken);
+
+    public async System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchAsync(string query, string? cursor, CancellationToken cancellationToken)
     {
         query = query?.Trim() ?? string.Empty;
         if (query.Length is < 2 or > 200) return new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ValidationFailure("Введите от 2 до 200 символов.");
-        return await GetPageAsync("search?q=" + System.Uri.EscapeDataString(query) + "&limit=100", MapSearch, cancellationToken).ConfigureAwait(false);
+        return await GetPageAsync("search?q=" + System.Uri.EscapeDataString(query) + "&limit=100", MapSearch, cancellationToken, cursor).ConfigureAwait(false);
     }
 
     public System.Threading.Tasks.Task<DesktopWorkResult<DesktopCatalogItem>> CreateCatalogItemAsync(string name, string itemType, string? description, CancellationToken cancellationToken = default) =>
@@ -335,7 +351,7 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
             ? new DesktopWorkResult<bool>.Succeeded(true) : Failure<bool>(result);
     }
 
-    private async System.Threading.Tasks.Task<DesktopWorkResult<T>> GetEntityAsync<T>(string path, Func<JsonNode, T?> map, CancellationToken cancellationToken) where T : class
+    private async System.Threading.Tasks.Task<DesktopWorkResult<T>> GetEntityAsync<T>(string path, Func<JsonNode, T?> map, CancellationToken cancellationToken, string? cursor = null) where T : class
     {
         var result = await _executor.GetAsync(Uri(path), Correlation(), cancellationToken).ConfigureAwait(false);
         if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response) return Failure<T>(result);
@@ -343,18 +359,24 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException) { return new DesktopWorkResult<T>.MalformedResponse(); }
     }
 
-    private async System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<T>>> GetPageAsync<T>(string path, Func<JsonNode, T?> map, CancellationToken cancellationToken) where T : class
+    private async System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<T>>> GetPageAsync<T>(string path, Func<JsonNode, T?> map, CancellationToken cancellationToken, string? cursor = null) where T : class
     {
-        var result = await _executor.GetAsync(Uri(path), Correlation(), cancellationToken).ConfigureAwait(false);
+        var result = await _executor.GetAsync(Uri(path + (cursor is null ? "" : "&cursor=" + System.Uri.EscapeDataString(cursor))), Correlation(), cancellationToken).ConfigureAwait(false);
         if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response) return Failure<IReadOnlyList<T>>(result);
         try
         {
-            var items = JsonNode.Parse(response.Body)?["items"]?.AsArray();
+            var node = JsonNode.Parse(response.Body);
+            if (node is not JsonObject) return new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse();
+            var next = Text(node!, "nextCursor");
+            if (string.IsNullOrWhiteSpace(next)) next = null;
+            if (next is not null && next == cursor || Bool(node!, "hasMore") == true && next is null)
+                return new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse();
+            var items = node?["items"]?.AsArray();
             if (items is null || items.Count > 500) return new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse();
             var mapped = items.Select(item => item is null ? null : map(item)).ToArray();
             return mapped.Any(item => item is null)
                 ? new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse()
-                : new DesktopWorkResult<IReadOnlyList<T>>.Succeeded(mapped!);
+                : new DesktopWorkResult<IReadOnlyList<T>>.Succeeded(mapped!) { NextCursor = next };
         }
         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException) { return new DesktopWorkResult<IReadOnlyList<T>>.MalformedResponse(); }
     }

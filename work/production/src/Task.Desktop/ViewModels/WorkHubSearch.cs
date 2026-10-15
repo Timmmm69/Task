@@ -55,6 +55,9 @@ public sealed partial class WorkHubViewModel
     public void InvalidateSearch()
     {
         ++_searchGeneration;
+        _searchCursor = null;
+        _searchCursors.Clear();
+        LoadMoreCommand.Cancel();
         _searchDebounce?.Cancel();
         _searchRequest?.Cancel();
         SearchCommand.Cancel();
@@ -62,6 +65,7 @@ public sealed partial class WorkHubViewModel
         SearchResults = [];
         SelectedSearchHit = null;
         SearchMessage = null;
+        NotifyPagination();
     }
 
     private void OnSearchQueryChanged()
@@ -95,7 +99,7 @@ public sealed partial class WorkHubViewModel
         }
     }
 
-    private async System.Threading.Tasks.Task SearchCoreAsync(CancellationToken cancellationToken)
+    private async System.Threading.Tasks.Task SearchCoreAsync(CancellationToken cancellationToken, bool append = false)
     {
         if (_disposed || !_sessionAvailable || !_networkAvailable || !CanSearch) return;
         var query = SearchQuery.Trim();
@@ -104,23 +108,42 @@ public sealed partial class WorkHubViewModel
         using var request = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         _searchRequest = request;
         var generation = ++_searchGeneration;
+        if (!append) { _searchCursor = null; _searchCursors.Clear(); }
         IsSearchLoading = true;
+        NotifyPagination();
         SearchMessage = null;
         try
         {
-            var result = await _client.SearchAsync(query, request.Token);
+            var result = await _client.SearchAsync(query, append ? _searchCursor : null, request.Token);
             if (request.IsCancellationRequested || _disposed || generation != _searchGeneration) return;
-            // Never keep a previous authorized subset after an unsuccessful recheck.
-            SearchResults = [];
-            Apply(result, value => SearchResults = value);
+            if (!append || result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden
+                or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure)
+            {
+                SearchResults = [];
+                _searchCursor = null;
+            }
+            Apply(result, value => SearchResults = (append ? SearchResults.Concat(value) : value)
+                .DistinctBy(item => (item.ObjectType, item.ObjectId)).ToArray());
+            if (result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded page)
+            {
+                _searchCursor = page.NextCursor;
+                if (_searchCursor is not null && !_searchCursors.Add(_searchCursor))
+                {
+                    _searchCursor = null;
+                    SetFeedback("Сервер повторил страницу. Выполните поиск заново.", WorkHubFeedbackKind.Warning);
+                }
+            }
+            else if (result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.MalformedResponse) _searchCursor = null;
             if (result is Work.DesktopWorkResult<IReadOnlyList<Work.DesktopSearchResult>>.AuthenticationFailure)
                 UpdateSessionState(false);
             SearchMessage = Message;
         }
+        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
         finally
         {
             if (ReferenceEquals(_searchRequest, request)) _searchRequest = null;
             if (generation == _searchGeneration) IsSearchLoading = false;
+            NotifyPagination();
         }
     }
 }

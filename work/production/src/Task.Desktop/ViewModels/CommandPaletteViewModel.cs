@@ -51,6 +51,8 @@ public sealed class CommandPaletteViewModel : ViewModelBase, IDisposable
         set { if (SetProperty(ref _selected, value)) OnPropertyChanged(nameof(SelectionText)); }
     }
     public bool IsLoading => _search?.IsSearchLoading == true;
+    public AsyncCommand? LoadMoreCommand => _search?.LoadMoreCommand;
+    public bool HasMoreResults => _search?.HasMoreResults == true;
     public string SelectionText => Selected is null ? "Нет выбранного действия" : $"{Selected.AutomationName}. {Items.ToList().IndexOf(Selected) + 1} из {Items.Count}";
     public string StatusText => _search?.IsOffline == true
         ? "Сервер недоступен. Доступны локальные переходы; серверный поиск недоступен."
@@ -127,11 +129,13 @@ public sealed class CommandPaletteViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(SelectionText));
         OnPropertyChanged(nameof(StatusText));
         OnPropertyChanged(nameof(IsLoading));
+        OnPropertyChanged(nameof(HasMoreResults));
     }
     private void OnSourceChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (ReferenceEquals(sender, _search) && e.PropertyName is not (nameof(WorkHubViewModel.SearchResults)
             or nameof(WorkHubViewModel.IsSearchLoading) or nameof(WorkHubViewModel.SearchMessage)
+            or nameof(WorkHubViewModel.HasMoreResults)
             or nameof(WorkHubViewModel.IsOffline) or nameof(WorkHubViewModel.CanReadCurrentArea))) return;
         Rebuild();
     }
