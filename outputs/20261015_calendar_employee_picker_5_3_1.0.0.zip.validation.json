@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "zip_sha256": "42e7de0c01463ec672b45c100eef9f459b0581d650b7b8791012ded2beb58619",
+  "files_verified": 45,
+  "artifact_integrity_passed": true,
+  "scoped_gate_passed": true,
+  "full_desktop_gate_passed": false,
+  "tests": {
+    "employee-project-calendar-final": {
+      "total": 204,
+      "passed": 204,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "desktop-regression": {
+      "total": 957,
+      "passed": 956,
+      "failed": 1,
+      "notExecuted": 0,
+      "failed_tests": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    },
+    "server-contract": {
+      "total": 259,
+      "passed": 259,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "domain-calendar": {
+      "total": 174,
+      "passed": 174,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "baseline-window-activation": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "failed_tests": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    },
+    "window-activation-recheck": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "failed_tests": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    }
+  }
+}

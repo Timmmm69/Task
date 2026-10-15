@@ -1,0 +1,4 @@
+ed80529 feat(desktop): integrate shared employee picker into projects
+1cfb6c2 docs: package employee picker validation and record readiness limits
+9a1bddc feat(desktop): add reusable employee picker with WPF and MVVM verification
+bccc86c feat(desktop): add bounded employee reads using existing User API
