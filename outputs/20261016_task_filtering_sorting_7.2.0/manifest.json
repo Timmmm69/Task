@@ -4,8 +4,8 @@
   "files": [
     {
       "path": ".gitattributes",
-      "bytes": 9,
-      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+      "bytes": 10,
+      "sha256": "518bf59a49c016ec19b0e3a01f13893882d3bf1a3cdff584102451d15c626b2e"
     },
     {
       "path": "evidence/api-integration.trx",
@@ -80,7 +80,7 @@
     {
       "path": "source.zip",
       "bytes": 55812,
-      "sha256": "70197933e6e7081945eea2bc253d87e2b27ef9ba2a504dfd6ddc6ce37ae5ff15"
+      "sha256": "f7dd57722fe91bedd1bbf2dffb8a7132cce8d8d1f1508112b9accb8b540b9c36"
     },
     {
       "path": "validation-report.md",

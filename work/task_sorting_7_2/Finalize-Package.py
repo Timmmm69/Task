@@ -10,7 +10,7 @@ root = Path(__file__).resolve().parents[2]
 work = root / 'work/task_sorting_7_2'
 output = root / 'outputs/20261016_task_filtering_sorting_7.2.0'
 output.mkdir(parents=True, exist_ok=True)
-(output / '.gitattributes').write_text('* -text\n', encoding='utf-8')
+(output / '.gitattributes').write_text('* binary\n', encoding='utf-8')
 
 def git(*args):
     return subprocess.check_output(['git', *args], cwd=root)
