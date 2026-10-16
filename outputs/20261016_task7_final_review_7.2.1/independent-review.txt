@@ -1,0 +1,3 @@
+Read-only independent review: no actionable findings.
+Scope: TaskFilters.cs and TasksViewModel.cs against origin/main; typed filters, local operations, selection/card reuse, cursor-page version deduplication, authentication/permission clearing, page errors.
+Reviewer did not rerun the test suite or manual PostgreSQL/LAN scenarios.

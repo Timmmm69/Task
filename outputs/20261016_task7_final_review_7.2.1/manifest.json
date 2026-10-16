@@ -1,0 +1,52 @@
+{
+  "version": "7.2.1",
+  "sourceCommit": "d4b27bd1b6cdfcd56659bf96a65cad9a333ef035",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 9,
+      "sha256": "54da72ffe7b7a9529b193ff0de762c16c29616be3c582b4ed940400e6d2a8ded"
+    },
+    {
+      "path": "evidence/api-review.trx",
+      "bytes": 263360,
+      "sha256": "7fc143e8caa876f7e4c0dfcd8384a19216c7f5146ce251c025b15b3fdc2365af"
+    },
+    {
+      "path": "evidence/context-review.trx",
+      "bytes": 3139,
+      "sha256": "f760f129122286d52ab3989b726a9ddca4d954ab30a32545bb78a5ca6e6247e1"
+    },
+    {
+      "path": "evidence/desktop-review.trx",
+      "bytes": 1682708,
+      "sha256": "0105d93bad6353c24bae0fc38e93eb8aa91aba71c7f617e11ffc5eb630a2cd52"
+    },
+    {
+      "path": "evidence/domain-review.trx",
+      "bytes": 118329,
+      "sha256": "7aeedceee08b560534a56318327dd64a8e4f99911b7e1e05361b2125b0e5149b"
+    },
+    {
+      "path": "independent-review.txt",
+      "bytes": 332,
+      "sha256": "e558849be6127e89f5b0b3773f12cfaa26bb425f5d3438488a6b565236330f6e"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 3283,
+      "sha256": "b6b6a5517c371c06cd8c2a57b549616521633784bfa8fbc923f8b9516c164b46"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 879,
+      "sha256": "8855164a2e1f3bf464a1146757c9a90e02f431382c02f1912df09b726c0c6df9"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "d4e1b76ed0d76666ba32fcfaf876e4fb8040a8516f3ef2d9affd040aa10cae9a"
+    }
+  ],
+  "checksumPolicy": "manifest excludes itself and SHA256SUMS; SHA256SUMS includes manifest, excludes itself"
+}

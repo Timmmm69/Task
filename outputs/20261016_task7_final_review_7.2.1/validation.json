@@ -1,0 +1,43 @@
+{
+  "version": "7.2.1",
+  "sourceCommit": "d4b27bd1b6cdfcd56659bf96a65cad9a333ef035",
+  "decision": "ready_for_main",
+  "newProductionChanges": false,
+  "actionableFindings": [],
+  "testRuns": {
+    "desktop-review.trx": {
+      "total": 1118,
+      "passed": 1118,
+      "failed": 0,
+      "skipped": 0
+    },
+    "context-review.trx": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "api-review.trx": {
+      "total": 174,
+      "passed": 174,
+      "failed": 0,
+      "skipped": 0
+    },
+    "domain-review.trx": {
+      "total": 86,
+      "passed": 85,
+      "failed": 0,
+      "skipped": 1
+    }
+  },
+  "total": {
+    "passed": 1378,
+    "failed": 0,
+    "skipped": 1
+  },
+  "limits": [
+    "Real PostgreSQL connection not configured",
+    "Manual live server/LAN/Narrator not run",
+    "Hardware mixed-DPI transitions not run"
+  ]
+}

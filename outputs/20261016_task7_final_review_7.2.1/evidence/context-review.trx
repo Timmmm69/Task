@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ef9d2bb0-6bb7-4a57-8426-0861b4b22e58" name="novik@TIM 2026-10-16 08:45:37" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T08:45:37.0449547+03:00" queuing="2026-10-16T08:45:37.0449551+03:00" start="2026-10-16T08:45:30.0420061+03:00" finish="2026-10-16T08:45:37.0557389+03:00" />
+  <TestSettings name="default" id="98d38295-486d-43d2-9a42-6bb7f74ed2fd">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-16_08_45_37" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ce645279-cabf-4443-a453-fed3a355b87e" testId="cf01f7a5-7cc3-a148-6544-6758b61d039d" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" computerName="TIM" duration="00:00:06.3791947" startTime="2026-10-16T08:45:30.5553900+03:00" endTime="2026-10-16T08:45:36.9420529+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce645279-cabf-4443-a453-fed3a355b87e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" storage="c:\users\novik\таск\work\task_filtering_7_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="cf01f7a5-7cc3-a148-6544-6758b61d039d">
+      <Execution id="ce645279-cabf-4443-a453-fed3a355b87e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\task_filtering_7_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests" name="NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cf01f7a5-7cc3-a148-6544-6758b61d039d" executionId="ce645279-cabf-4443-a453-fed3a355b87e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.19]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:06.60]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
