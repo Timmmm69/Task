@@ -6,7 +6,7 @@ namespace Task.Desktop.Tests.TaskScreen;
 public sealed partial class TasksViewModelTests
 {
     [Fact]
-    public async global::System.Threading.Tasks.Task Completion_WaitsForServer_ThenRetainsFilteredRowWithoutBlockingInput()
+    public async global::System.Threading.Tasks.Task Completion_WaitsForServer_ThenRespectsStatusFilterAndPreservesFeedback()
     {
         var task = CreateTask(status: DesktopTaskStatus.InProgress);
         var completed = task with { Status = DesktopTaskStatus.Completed, Version = 2 };
@@ -16,20 +16,24 @@ public sealed partial class TasksViewModelTests
         client.EnqueuePage(SucceededPage([task]));
         using var vm = new TasksViewModel(client, WriteCapabilities, () => true, _ => finish.Task);
         await vm.ActivateAsync();
-        vm.SelectedStatusFilter = "В работе";
+        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
         await vm.TransitionCommand.ExecuteAsync("Completed");
         var request = vm.ConfirmTransitionCommand.ExecuteAsync();
         Assert.Null(Assert.Single(vm.Items).CompletionFeedback);
         Assert.Equal(DesktopTaskStatus.InProgress, vm.SelectedItem!.Source.Status);
         response.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(completed, 2, false));
         await request;
+        Assert.Empty(vm.Items);
+        vm.SelectedStatusFilter = DesktopTaskStatus.Completed;
         var row = Assert.Single(vm.Items);
         var feedback = Assert.IsType<TaskCompletionFeedback>(row.CompletionFeedback);
         Assert.Equal("Завершена", row.StatusText);
         Assert.False(vm.IsMutationBusy);
         Assert.Contains("Завершена", vm.Announcement);
+        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+        Assert.Empty(vm.Items);
         finish.SetResult();
-        await WaitForAsync(() => vm.Items.Count == 0);
+        await WaitForAsync(() => !feedback.IsActive);
         Assert.False(feedback.IsActive);
         Assert.Null(vm.SelectedItem);
     }
@@ -109,7 +113,7 @@ public sealed partial class TasksViewModelTests
             return global::System.Threading.Tasks.Task.CompletedTask;
         });
         await vm.ActivateAsync();
-        vm.SelectedStatusFilter = "В работе";
+        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
         await vm.TransitionCommand.ExecuteAsync("Completed");
         await vm.ConfirmTransitionCommand.ExecuteAsync();
         Assert.False(delayed);
@@ -170,7 +174,7 @@ public sealed partial class TasksViewModelTests
         client.EnqueuePage(SucceededPage([first, second]));
         using var vm = new TasksViewModel(client, WriteCapabilities, () => true, _ => finish.Task);
         await vm.ActivateAsync();
-        vm.SelectedStatusFilter = "В работе";
+        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
         await vm.TransitionCommand.ExecuteAsync("Completed");
         await vm.ConfirmTransitionCommand.ExecuteAsync();
         vm.SelectedItem = vm.Items.Single(row => row.Id == second.Id);
@@ -198,7 +202,7 @@ public sealed partial class TasksViewModelTests
             return finish.Task;
         });
         await vm.ActivateAsync();
-        vm.SelectedStatusFilter = "В работе";
+        vm.SelectedStatusFilter = null;
         foreach (var task in new[] { first, second })
         {
             vm.SelectedItem = vm.Items.Single(row => row.Id == task.Id);
@@ -210,9 +214,10 @@ public sealed partial class TasksViewModelTests
         Assert.Equal(2, vm.Items.Count(row => row.CompletionFeedback is not null));
         Assert.False(vm.IsMutationBusy);
         finishes.Dequeue().SetResult();
-        await WaitForAsync(() => vm.Items.Count == 1);
+        await WaitForAsync(() => vm.Items.Count(row => row.CompletionFeedback is not null) == 1);
         Assert.Equal(second.Id, vm.SelectedItem!.Id);
         finishes.Dequeue().SetResult();
-        await WaitForAsync(() => vm.Items.Count == 0);
+        await WaitForAsync(() => vm.Items.All(row => row.CompletionFeedback is null));
+        Assert.Equal(2, vm.Items.Count);
     }
 }

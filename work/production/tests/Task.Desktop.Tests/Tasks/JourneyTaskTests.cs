@@ -41,7 +41,7 @@ public sealed partial class TasksViewModelTests
         client.EnqueuePage(SucceededPage([existing]));
         using var vm = new TasksViewModel(client, WriteCapabilities);
         await vm.ActivateAsync();
-        vm.SelectedStatusFilter = "В работе";
+        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
         await vm.NewTaskCommand.ExecuteAsync();
         Assert.Equal("Создать задачу", vm.Editor!.SubmitText);
         vm.Editor.Title = created.Title;
@@ -54,7 +54,7 @@ public sealed partial class TasksViewModelTests
         Assert.True(vm.OpenSavedTaskCommand.CanExecute(null));
         await vm.OpenSavedTaskCommand.ExecuteAsync();
         Assert.Equal(created.Id, vm.SelectedItem?.Id);
-        Assert.Equal("Все статусы", vm.SelectedStatusFilter);
+        Assert.Null(vm.SelectedStatusFilter);
         Assert.False(vm.ShowSavedTaskAction);
         vm.UpdateSessionState(false);
         Assert.False(vm.OpenSavedTaskCommand.CanExecute(null));

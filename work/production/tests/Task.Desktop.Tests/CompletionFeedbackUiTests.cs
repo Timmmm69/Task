@@ -169,7 +169,7 @@ public sealed class CompletionFeedbackUiTests
             list.SetBinding(System.Windows.Controls.Primitives.Selector.SelectedItemProperty,
                 new Binding(nameof(TasksViewModel.SelectedItem)) { Mode = BindingMode.TwoWay });
             await vm.ActivateAsync();
-            vm.SelectedStatusFilter = "В работе";
+            vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
             await vm.TransitionCommand.ExecuteAsync("Completed");
             await vm.ConfirmTransitionCommand.ExecuteAsync();
             vm.SelectedItem = vm.Items.Single(row => row.Id == second.Id);

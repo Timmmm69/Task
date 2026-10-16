@@ -290,10 +290,14 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private IReadOnlyList<TaskItemViewModel> _items = Array.Empty<TaskItemViewModel>();
     private IReadOnlyList<DesktopTaskDto> _allTasks = Array.Empty<DesktopTaskDto>();
     private TaskDisplayLookup _displayLookup = TaskDisplayLookup.Empty;
-    private IReadOnlyList<string> _projectFilters = ["Все проекты"];
-    private string _selectedStatusFilter = "Все статусы";
-    private string _selectedProjectFilter = "Все проекты";
+    private IReadOnlyList<TaskProjectFilter> _projectFilters = [TaskProjectFilter.AllProjects];
+    private DesktopTaskStatus? _selectedStatusFilter;
+    private TaskProjectFilter _selectedProjectFilter = TaskProjectFilter.AllProjects;
+    private DesktopTaskPriority? _selectedPriorityFilter;
+    private TaskDeadlineFilter _selectedDeadlineFilter;
+    private readonly TimeProvider _filterTimeProvider;
     private TaskItemViewModel? _selectedItem;
+    private bool _replacingFilteredItems;
     private TaskDetailsViewModel? _selectedDetails;
     private TasksScreenState _state = TasksScreenState.Inactive;
     private TaskDetailsState _detailsState;
@@ -330,8 +334,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         IDesktopTasksApiClient client,
         IEnumerable<string>? capabilities = null,
         Func<bool>? completionMotionEnabled = null,
-        Func<TimeSpan, global::System.Threading.Tasks.Task>? completionDelay = null)
+        Func<TimeSpan, global::System.Threading.Tasks.Task>? completionDelay = null,
+        TimeProvider? filterTimeProvider = null)
     {
+        _filterTimeProvider = filterTimeProvider ?? TimeProvider.System;
         _completionMotionEnabled = completionMotionEnabled ?? (() => System.Windows.SystemParameters.ClientAreaAnimation
             && !System.Windows.SystemParameters.HighContrast);
         _completionDelay = completionDelay ?? (duration => global::System.Threading.Tasks.Task.Delay(duration));
@@ -399,50 +405,78 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         ResetFiltersCommand = new AsyncCommand(
             (_, _) =>
             {
-                SelectedStatusFilter = "Все статусы";
-                SelectedProjectFilter = "Все проекты";
+                ResetFilters();
                 return global::System.Threading.Tasks.Task.CompletedTask;
             },
             _ => HasActiveFilters);
     }
 
-    public IReadOnlyList<string> StatusFilters { get; } =
-        ["Все статусы", "Запланирована", "В работе", "На проверке", "Просрочена", "Завершена", "Отменена"];
+    public IReadOnlyList<TaskFilterOption<DesktopTaskStatus?>> StatusFilters { get; } =
+        [new(null, "Все статусы"), .. Enum.GetValues<DesktopTaskStatus>()
+            .Select(value => new TaskFilterOption<DesktopTaskStatus?>(value, TaskItemViewModel.LocalizeStatus(value)))];
+    public IReadOnlyList<TaskFilterOption<DesktopTaskPriority?>> PriorityFilters { get; } =
+        [new(null, "Все приоритеты"), .. Enum.GetValues<DesktopTaskPriority>()
+            .Select(value => new TaskFilterOption<DesktopTaskPriority?>(value, TaskItemViewModel.LocalizePriority(value)))];
+    public IReadOnlyList<TaskFilterOption<TaskDeadlineFilter>> DeadlineFilters { get; } =
+        [new(TaskDeadlineFilter.All, "Все сроки"), new(TaskDeadlineFilter.Overdue, "Просроченные"),
+         new(TaskDeadlineFilter.Today, "На сегодня"), new(TaskDeadlineFilter.NextSevenDays, "Ближайшие 7 дней"),
+         new(TaskDeadlineFilter.NoDeadline, "Без срока")];
 
-    public IReadOnlyList<string> ProjectFilters
+    public IReadOnlyList<TaskProjectFilter> ProjectFilters
     {
         get => _projectFilters;
-        private set
-        {
-            _projectFilters = value;
-            OnPropertyChanged();
-        }
+        private set { _projectFilters = value; OnPropertyChanged(); }
     }
 
-    public string SelectedStatusFilter
+    public DesktopTaskStatus? SelectedStatusFilter
     {
         get => _selectedStatusFilter;
-        set
-        {
-            if (!SetProperty(ref _selectedStatusFilter, value)) return;
-            ApplyFilters(SelectedItem?.Id);
-            NotifyFilterState();
-        }
+        set { if (SetProperty(ref _selectedStatusFilter, value)) ApplyLocalFilters(); }
     }
-
-    public string SelectedProjectFilter
+    public TaskProjectFilter SelectedProjectFilter
     {
         get => _selectedProjectFilter;
         set
         {
-            if (!SetProperty(ref _selectedProjectFilter, value)) return;
-            ApplyFilters(SelectedItem?.Id);
-            NotifyFilterState();
+            // WPF can briefly clear selection while ItemsSource is being replaced.
+            if (value is not null && SetProperty(ref _selectedProjectFilter, value)) ApplyLocalFilters();
         }
     }
+    public DesktopTaskPriority? SelectedPriorityFilter
+    {
+        get => _selectedPriorityFilter;
+        set { if (SetProperty(ref _selectedPriorityFilter, value)) ApplyLocalFilters(); }
+    }
+    public TaskDeadlineFilter SelectedDeadlineFilter
+    {
+        get => _selectedDeadlineFilter;
+        set { if (SetProperty(ref _selectedDeadlineFilter, value)) ApplyLocalFilters(); }
+    }
 
-    public bool HasActiveFilters => SelectedStatusFilter != "Все статусы" || SelectedProjectFilter != "Все проекты";
-    public bool IsFilteredEmpty => _allTasks.Count > 0 && Items.Count == 0;
+    private void ResetFilters()
+    {
+        _selectedStatusFilter = null;
+        _selectedProjectFilter = TaskProjectFilter.AllProjects;
+        _selectedPriorityFilter = null;
+        _selectedDeadlineFilter = TaskDeadlineFilter.All;
+        OnPropertyChanged(nameof(SelectedStatusFilter));
+        OnPropertyChanged(nameof(SelectedProjectFilter));
+        OnPropertyChanged(nameof(SelectedPriorityFilter));
+        OnPropertyChanged(nameof(SelectedDeadlineFilter));
+        ApplyLocalFilters();
+    }
+
+    private void ApplyLocalFilters()
+    {
+        // Changing a local filter must not initiate a detail request for another row.
+        ApplyFilters(SelectedItem?.Id, localOnly: true);
+        NotifyFilterState();
+    }
+
+    public bool HasActiveFilters => SelectedStatusFilter.HasValue || !SelectedProjectFilter.IsAll
+        || SelectedPriorityFilter.HasValue || SelectedDeadlineFilter != TaskDeadlineFilter.All;
+    public bool IsFilteredEmpty => HasActiveFilters && _hasLoaded && (_allTasks.Count > 0 || HasNextPage)
+        && Items.Count == 0 && !IsFailureState && !IsInitialLoading;
 
     public IReadOnlyList<TaskItemViewModel> Items
     {
@@ -464,6 +498,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         get => _selectedItem;
         set
         {
+            if (_replacingFilteredItems && value is null) return;
             if (!SetProperty(ref _selectedItem, value))
             {
                 return;
@@ -657,10 +692,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(IsRefreshing));
                 OnPropertyChanged(nameof(IsEmptyState));
                 OnPropertyChanged(nameof(IsFailureState));
+                OnPropertyChanged(nameof(IsFilteredEmpty));
                 OnPropertyChanged(nameof(ShowBlockingState));
                 OnPropertyChanged(nameof(ShowInlineMessage));
                 OnPropertyChanged(nameof(StateTitle));
                 OnPropertyChanged(nameof(StateIconKey));
+                OnPropertyChanged(nameof(DisplayedCountText));
                 RaiseCommandStateChanged();
                 NotifyMutationState();
             }
@@ -742,7 +779,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         ? "Task.Icon.Tasks"
         : "Task.Icon.Error";
 
-    public string DisplayedCountText => $"Показано {Items.Count} из {_allTasks.Count}";
+    public string DisplayedCountText => State == TasksScreenState.InvalidCursor
+        ? $"Найдено среди загруженных задач: {Items.Count} из {_allTasks.Count}. Результат неполный — обновите список."
+        : HasNextPage
+        ? $"Найдено среди загруженных задач: {Items.Count} из {_allTasks.Count}. Есть ещё задачи — нажмите «Загрузить ещё» или «Обновить»."
+        : $"Показано {Items.Count} из {_allTasks.Count}";
 
     public bool HasSuccessfulRefresh => _lastSuccessfulRefreshAt.HasValue;
 
@@ -882,10 +923,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded success)
             {
                 _allTasks = _allTasks.Where(task => task.Id != id).Append(success.Value).ToArray();
-                _selectedStatusFilter = "Все статусы";
-                _selectedProjectFilter = "Все проекты";
-                OnPropertyChanged(nameof(SelectedStatusFilter));
-                OnPropertyChanged(nameof(SelectedProjectFilter));
+                ResetFilters();
                 UpdateProjectFilters();
                 ApplyFilters(id);
                 SetLoadedState();
@@ -1079,6 +1117,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 ApplyFilters(selectedId);
                 SetNextCursor(success.Value.NextCursor);
                 _hasLoaded = true;
+                OnPropertyChanged(nameof(IsFilteredEmpty));
                 RecordSuccessfulRefresh();
                 SetLoadedState();
             }
@@ -1746,19 +1785,25 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     private void UpdateProjectFilters()
     {
-        var projects = _allTasks.Select(task => new TaskItemViewModel(task, _displayLookup).ProjectText)
-            .Distinct(StringComparer.CurrentCulture)
-            .OrderBy(project => project, StringComparer.CurrentCulture)
+        var selected = SelectedProjectFilter;
+        var projects = _allTasks.Select(task => task.Card?.ProjectId).Distinct()
+            .Select(id => new TaskProjectFilter(id, id.HasValue
+                ? _displayLookup.Projects.GetValueOrDefault(id.Value) ?? "Проект назначен"
+                : "Без проекта"))
+            .OrderBy(option => option.Name, StringComparer.CurrentCulture).ThenBy(option => option.ProjectId)
             .ToArray();
-        ProjectFilters = ["Все проекты", .. projects];
-        if (!ProjectFilters.Contains(SelectedProjectFilter, StringComparer.CurrentCulture))
-        {
-            _selectedProjectFilter = "Все проекты";
-            OnPropertyChanged(nameof(SelectedProjectFilter));
-        }
+        // Use neutral ordinal suffixes for equal names; never expose inaccessible names or IDs.
+        projects = projects.GroupBy(option => option.Name).SelectMany(group => group.Count() == 1
+            ? group : group.Select((option, index) => option with { Name = $"{option.Name} ({index + 1})" })).ToArray();
+        var options = new[] { TaskProjectFilter.AllProjects }.Concat(projects).ToArray();
+        _selectedProjectFilter = options.FirstOrDefault(option => option.IsAll == selected.IsAll
+            && option.ProjectId == selected.ProjectId) ?? TaskProjectFilter.AllProjects;
+        ProjectFilters = options;
+        OnPropertyChanged(nameof(SelectedProjectFilter));
+        NotifyFilterState();
     }
 
-    private void ApplyFilters(Guid? selectedId)
+    private void ApplyFilters(Guid? selectedId, bool localOnly = false)
     {
         var existingRows = Items.ToDictionary(item => item.Id);
         var projected = _allTasks.Select(task =>
@@ -1769,20 +1814,20 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 && ReferenceEquals(row.CompletionFeedback, feedback)
                     ? row : new TaskItemViewModel(task, _displayLookup, feedback);
         });
-        if (SelectedStatusFilter != "Все статусы")
-        {
-            projected = projected.Where(item => item.StatusText == SelectedStatusFilter || item.CompletionFeedback is not null);
-        }
-        if (SelectedProjectFilter != "Все проекты")
-        {
-            projected = projected.Where(item => item.ProjectText == SelectedProjectFilter);
-        }
+        var now = _filterTimeProvider.GetUtcNow();
+        projected = projected.Where(item =>
+            (!SelectedStatusFilter.HasValue || item.Source.Status == SelectedStatusFilter.Value)
+            && (SelectedProjectFilter.IsAll || item.Source.Card?.ProjectId == SelectedProjectFilter.ProjectId)
+            && (!SelectedPriorityFilter.HasValue || item.Source.Priority == SelectedPriorityFilter.Value)
+            && TaskDeadlineFiltering.Matches(item.Source, SelectedDeadlineFilter, now, _filterTimeProvider.LocalTimeZone));
 
         var replacement = projected.ToArray();
-        Items = replacement;
+        _replacingFilteredItems = true;
+        try { Items = replacement; }
+        finally { _replacingFilteredItems = false; }
         SelectedItem = selectedId.HasValue
-            ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? replacement.FirstOrDefault()
-            : replacement.FirstOrDefault();
+            ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? (localOnly ? null : replacement.FirstOrDefault())
+            : localOnly ? null : replacement.FirstOrDefault();
     }
 
     private void NotifyFilterState()
@@ -1814,7 +1859,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         ResetCompletionFeedback();
         _allTasks = Array.Empty<DesktopTaskDto>();
         Items = Array.Empty<TaskItemViewModel>();
-        ProjectFilters = ["Все проекты"];
+        ProjectFilters = [TaskProjectFilter.AllProjects];
+        _selectedProjectFilter = TaskProjectFilter.AllProjects;
+        OnPropertyChanged(nameof(SelectedProjectFilter));
         SetNextCursor(null);
         SelectedItem = null;
         SelectedDetails = null;
@@ -1825,6 +1872,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     {
         _nextCursor = string.IsNullOrWhiteSpace(value) ? null : value;
         OnPropertyChanged(nameof(HasNextPage));
+        OnPropertyChanged(nameof(IsFilteredEmpty));
+        OnPropertyChanged(nameof(DisplayedCountText));
         RaiseCommandStateChanged();
     }
 

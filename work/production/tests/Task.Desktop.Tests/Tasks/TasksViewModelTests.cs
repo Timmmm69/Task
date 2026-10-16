@@ -42,7 +42,7 @@ public sealed partial class TasksViewModelTests
         Assert.False(viewModel.ShowInlineMessage);
         Assert.True(viewModel.HasSuccessfulRefresh);
         Assert.StartsWith("Последнее обновление:", viewModel.LastSuccessfulRefreshText, StringComparison.Ordinal);
-        Assert.Equal("Показано 1 из 1", viewModel.DisplayedCountText);
+        Assert.StartsWith("Найдено среди загруженных задач: 1 из 1", viewModel.DisplayedCountText);
         Assert.Single(viewModel.Items);
         Assert.Equal("В работе", viewModel.Items[0].StatusText);
         Assert.Equal("Критический", viewModel.Items[0].PriorityText);
@@ -740,7 +740,7 @@ public sealed partial class TasksViewModelTests
         using var viewModel = new TasksViewModel(client, ["Task.Read"]);
         await viewModel.ActivateAsync();
 
-        viewModel.SelectedStatusFilter = "В работе";
+        viewModel.SelectedStatusFilter = DesktopTaskStatus.InProgress;
 
         Assert.Empty(viewModel.Items);
         Assert.True(viewModel.IsFilteredEmpty);
@@ -802,12 +802,13 @@ public sealed partial class TasksViewModelTests
         }
     }
 
-    internal sealed class FakeTasksApiClient : IDesktopTasksApiClient
+    internal class FakeTasksApiClient : IDesktopTasksApiClient
     {
         private readonly ConcurrentQueue<Func<string?, CancellationToken,
             global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>> _pages = new();
 
         public int PageCallCount { get; private set; }
+        public int DetailCallCount { get; private set; }
         public int CreateCallCount { get; private set; }
         public int PatchCallCount { get; private set; }
         public int TransitionCallCount { get; private set; }
@@ -849,7 +850,13 @@ public sealed partial class TasksViewModelTests
         public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(
             Guid id,
             CancellationToken cancellationToken = default) =>
-            global::System.Threading.Tasks.Task.FromResult(DetailResult);
+            CountDetailRead();
+
+        private global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> CountDetailRead()
+        {
+            DetailCallCount++;
+            return global::System.Threading.Tasks.Task.FromResult(DetailResult);
+        }
 
         public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(
             DesktopCreateTaskCommand command,
