@@ -1,0 +1,10 @@
+WPF dispatcher, 10000 rows; physical DPI scale: 1,5; OS: Microsoft Windows NT 10.0.26200.0; .NET: 10.0.11
+Times measure synchronous filter/sort/projection and binding notification; rendering is drained after each sample. One sample per order, no percentile claim.
+UpdatedNewest: 13,47 ms
+UpdatedOldest: 10,77 ms
+DeadlineNearest: 14,40 ms
+DeadlineLatest: 12,00 ms
+PriorityHighest: 9,17 ms
+PriorityLowest: 9,44 ms
+TitleAscending: 9,03 ms
+TitleDescending: 13,59 ms

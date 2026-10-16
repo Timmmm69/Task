@@ -1,0 +1,1513 @@
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml b/work/production/src/Task.Desktop/MainWindow.xaml
+index db780bc..7a7cd84 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml
++++ b/work/production/src/Task.Desktop/MainWindow.xaml
+@@ -429,14 +429,17 @@
+             </StackPanel>
+ 
+             <!-- CMP-009 PageLayout and Task read vertical slice -->
+-            <Grid Margin="{DynamicResource Task.Padding.Page}"
+-                  DataContext="{Binding Tasks}"
++            <Grid DataContext="{Binding Tasks}"
+                   AutomationProperties.Name="Экран задач"
+                   AutomationProperties.AutomationId="TasksScreen">
+                 <Grid.Style>
+                     <Style TargetType="Grid" BasedOn="{StaticResource Task.Grid.SurfaceBase}">
++                        <Setter Property="Margin" Value="{DynamicResource Task.Padding.Page}" />
+                         <Setter Property="Visibility" Value="Collapsed" />
+                         <Style.Triggers>
++                            <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=600}" Value="False">
++                                <Setter Property="Margin" Value="12,0" />
++                            </DataTrigger>
+                             <DataTrigger Binding="{Binding DataContext.IsTasksSectionSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                 <Setter Property="Visibility" Value="Visible" />
+                             </DataTrigger>
+@@ -452,33 +455,61 @@
+                     <RowDefinition Height="Auto" />
+                 </Grid.RowDefinitions>
+ 
+-                <Grid Grid.Row="0" Margin="0,0,0,14">
+-                    <Grid.ColumnDefinitions>
+-                        <ColumnDefinition Width="Auto" />
+-                        <ColumnDefinition Width="12" />
+-                        <ColumnDefinition Width="Auto" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="Auto" />
+-                    </Grid.ColumnDefinitions>
+-                    <StackPanel>
+-                        <TextBlock Text="Статус" Style="{StaticResource Task.Inspector.FactLabel}" />
+-                        <ComboBox ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatusFilter}"
+-                                  MinWidth="180" Style="{StaticResource Task.Input.Combo}" TabIndex="3"
+-                                  AutomationProperties.Name="Фильтр задач по статусу"
++                <WrapPanel Grid.Row="0" Margin="0,0,0,6" KeyboardNavigation.TabNavigation="Continue">
++                    <WrapPanel.Resources>
++                        <Style x:Key="TasksFilterCombo" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
++                            <Style.Triggers>
++                                <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=600}" Value="False">
++                                    <Setter Property="MinHeight" Value="30" />
++                                    <Setter Property="Padding" Value="10,2" />
++                                </DataTrigger>
++                            </Style.Triggers>
++                        </Style>
++                        <Style x:Key="TasksFilterLabel" TargetType="TextBlock" BasedOn="{StaticResource Task.Inspector.FactLabel}">
++                            <Style.Triggers>
++                                <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=600}" Value="False">
++                                    <Setter Property="Visibility" Value="Collapsed" />
++                                </DataTrigger>
++                            </Style.Triggers>
++                        </Style>
++                    </WrapPanel.Resources>
++                    <StackPanel Margin="0,0,12,8">
++                        <TextBlock Text="Статус" Style="{StaticResource TasksFilterLabel}" />
++                        <ComboBox ItemsSource="{Binding StatusFilters}" SelectedValue="{Binding SelectedStatusFilter}" SelectedValuePath="Value" DisplayMemberPath="Name"
++                                  Width="140" Style="{StaticResource TasksFilterCombo}" TabIndex="3" ToolTip="Статус"
++                                  AutomationProperties.Name="Фильтр задач: статус"
+                                   AutomationProperties.AutomationId="TasksStatusFilter" />
+                     </StackPanel>
+-                    <StackPanel Grid.Column="2">
+-                        <TextBlock Text="Проект" Style="{StaticResource Task.Inspector.FactLabel}" />
+-                        <ComboBox ItemsSource="{Binding ProjectFilters}" SelectedItem="{Binding SelectedProjectFilter}"
+-                                  MinWidth="200" Style="{StaticResource Task.Input.Combo}" TabIndex="4"
+-                                  AutomationProperties.Name="Фильтр задач по проекту"
++                    <StackPanel Margin="0,0,12,8">
++                        <TextBlock Text="Проект" Style="{StaticResource TasksFilterLabel}" />
++                        <ComboBox ItemsSource="{Binding ProjectFilters}" SelectedItem="{Binding SelectedProjectFilter}" DisplayMemberPath="Name"
++                                  Width="160" Style="{StaticResource TasksFilterCombo}" TabIndex="4" ToolTip="Проект"
++                                  AutomationProperties.Name="Фильтр задач: проект"
+                                   AutomationProperties.AutomationId="TasksProjectFilter" />
+                     </StackPanel>
+-                    <TextBlock Grid.Column="4" Text="{Binding DisplayedCountText}" VerticalAlignment="Bottom" Margin="16,0,0,11"
+-                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+-                               Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+-                               AutomationProperties.Name="Количество задач после фильтрации" />
+-                </Grid>
++                    <StackPanel Margin="0,0,12,8">
++                        <TextBlock Text="Приоритет" Style="{StaticResource TasksFilterLabel}" />
++                        <ComboBox ItemsSource="{Binding PriorityFilters}" SelectedValue="{Binding SelectedPriorityFilter}" SelectedValuePath="Value" DisplayMemberPath="Name"
++                                  Width="140" Style="{StaticResource TasksFilterCombo}" TabIndex="5" ToolTip="Приоритет"
++                                  AutomationProperties.Name="Фильтр задач: приоритет"
++                                  AutomationProperties.AutomationId="TasksPriorityFilter" />
++                    </StackPanel>
++                    <StackPanel Margin="0,0,12,8">
++                        <TextBlock Text="Срок" Style="{StaticResource TasksFilterLabel}" />
++                        <ComboBox ItemsSource="{Binding DeadlineFilters}" SelectedValue="{Binding SelectedDeadlineFilter}" SelectedValuePath="Value" DisplayMemberPath="Name"
++                                  Width="170" Style="{StaticResource TasksFilterCombo}" TabIndex="6" ToolTip="Срок"
++                                  AutomationProperties.Name="Фильтр задач: срок"
++                                  AutomationProperties.AutomationId="TasksDeadlineFilter" />
++                    </StackPanel>
++                    <StackPanel Margin="0,0,12,8">
++                        <TextBlock Text="Сортировка" Style="{StaticResource TasksFilterLabel}" />
++                        <ComboBox ItemsSource="{Binding SortOrders}" SelectedValue="{Binding SelectedSortOrder}" SelectedValuePath="Value" DisplayMemberPath="Name"
++                                  Width="290" Style="{StaticResource TasksFilterCombo}" TabIndex="7"
++                                  ToolTip="Сортировка загруженных задач. При догрузке порядок пересчитывается."
++                                  AutomationProperties.Name="Сортировка загруженных задач"
++                                  AutomationProperties.AutomationId="TasksSortOrder" />
++                    </StackPanel>
++                </WrapPanel>
+ 
+                 <Border Grid.Row="1" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
+                     <Grid>
+@@ -641,7 +672,7 @@
+                                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                      Style="{StaticResource Task.DataList}"
+                                      BorderThickness="0"
+-                                     TabIndex="5"
++                                     TabIndex="8"
+                                      ScrollViewer.CanContentScroll="True"
+                                      VirtualizingPanel.IsVirtualizing="True"
+                                      VirtualizingPanel.VirtualizationMode="Recycling"
+@@ -931,7 +962,7 @@
+                         <Path Data="{StaticResource Task.Icon.Search}" Width="28" Height="28" Stretch="Uniform"
+                               Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                         <TextBlock Text="По этим фильтрам задач нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0" TextAlignment="Center" />
+-                        <TextBlock Text="Сбросьте фильтры, чтобы вернуть полный список." Style="{StaticResource Task.State.Body}" Margin="0,6,0,16" TextAlignment="Center" />
++                        <TextBlock Text="Сбросьте фильтры или загрузите следующую страницу, если она доступна." Style="{StaticResource Task.State.Body}" Margin="0,6,0,16" TextAlignment="Center" />
+                         <Button Content="Сбросить фильтры" Command="{Binding ResetFiltersCommand}"
+                                 Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Сбросить фильтры задач" />
+                     </StackPanel>
+@@ -940,15 +971,18 @@
+                 <Grid Grid.Row="4" Margin="0,12,0,0" MinHeight="40">
+                     <Grid.ColumnDefinitions>
+                         <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="100" />
++                        <ColumnDefinition Width="Auto" />
+                         <ColumnDefinition Width="Auto" />
+                     </Grid.ColumnDefinitions>
+-                    <TextBlock Text="{Binding DisplayedCountText}"
++                    <TextBlock Text="{Binding DisplayedCountText}" TextWrapping="Wrap" Margin="0,0,12,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                AutomationProperties.Name="Количество показанных задач" />
+                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
++                        <Button Content="Сбросить фильтры" Command="{Binding ResetFiltersCommand}"
++                                Style="{StaticResource Task.Button.Secondary}" TabIndex="7" VerticalAlignment="Center" Margin="0,0,12,0"
++                                AutomationProperties.Name="Сбросить все фильтры задач" AutomationProperties.AutomationId="TasksResetFilters" />
+                         <ProgressBar IsIndeterminate="True" Width="72">
+                             <ProgressBar.Style>
+                                 <Style TargetType="ProgressBar" BasedOn="{StaticResource Task.Progress.Indeterminate}">
+@@ -965,7 +999,7 @@
+                     <Button Grid.Column="2" Content="Загрузить ещё"
+                             Command="{Binding LoadMoreCommand}"
+                             MinWidth="124"
+-                            TabIndex="6"
++                            TabIndex="9"
+                             AutomationProperties.Name="Загрузить следующую страницу задач"
+                             AutomationProperties.AutomationId="TasksLoadMoreButton">
+                         <Button.Style>
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskFilters.cs b/work/production/src/Task.Desktop/ViewModels/TaskFilters.cs
+new file mode 100644
+index 0000000..738d389
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/TaskFilters.cs
+@@ -0,0 +1,42 @@
++using Task.Desktop.TaskApi;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed record TaskFilterOption<T>(T Value, string Name);
++
++public sealed record TaskProjectFilter(Guid? ProjectId, string Name, bool IsAll = false)
++{
++    public static TaskProjectFilter AllProjects { get; } = new(null, "Все проекты", true);
++}
++
++public enum TaskDeadlineFilter { All, Overdue, Today, NextSevenDays, NoDeadline }
++
++internal static class TaskDeadlineFiltering
++{
++    internal static DateOnly? CalendarDate(DesktopTaskDto task, TimeZoneInfo userZone) =>
++        task.DeadlineAtUtc is { } instant
++            ? DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(instant, userZone).DateTime)
++            : task.Card?.DeadlineDate;
++
++    public static bool Matches(DesktopTaskDto task, TaskDeadlineFilter filter, DateTimeOffset now, TimeZoneInfo userZone)
++    {
++        if (filter == TaskDeadlineFilter.All) return true;
++        if (filter == TaskDeadlineFilter.Overdue)
++            return task.Status is not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled
++                && Task.Domain.TaskRules.IsOverdue(task.DeadlineAtUtc, task.Card, now);
++
++        // The domain gives the exact instant precedence. A date-only deadline is already
++        // a calendar date and must not be shifted through UTC or the machine's offset.
++        var day = CalendarDate(task, userZone);
++        if (filter == TaskDeadlineFilter.NoDeadline) return day is null;
++        if (day is null) return false;
++        var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now, userZone).DateTime);
++        return filter switch
++        {
++            TaskDeadlineFilter.Today => day == today,
++            // Seven calendar dates, including today and the sixth following date.
++            TaskDeadlineFilter.NextSevenDays => day >= today && day.Value.DayNumber - today.DayNumber <= 6,
++            _ => false,
++        };
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskSorting.cs b/work/production/src/Task.Desktop/ViewModels/TaskSorting.cs
+new file mode 100644
+index 0000000..a1e5097
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/TaskSorting.cs
+@@ -0,0 +1,49 @@
++using System.Globalization;
++using Task.Desktop.TaskApi;
++
++namespace Task.Desktop.ViewModels;
++
++public enum TaskSortOrder
++{
++    UpdatedNewest, UpdatedOldest, DeadlineNearest, DeadlineLatest,
++    PriorityHighest, PriorityLowest, TitleAscending, TitleDescending,
++}
++
++internal static class TaskSorting
++{
++    // Task's current UI language is Russian. Do not let the OS language change title order.
++    private static readonly StringComparer TitleComparer = StringComparer.Create(CultureInfo.GetCultureInfo("ru-RU"), ignoreCase: true);
++
++    public static IEnumerable<DesktopTaskDto> Apply(IEnumerable<DesktopTaskDto> tasks, TaskSortOrder order, TimeZoneInfo userZone)
++    {
++        IOrderedEnumerable<DesktopTaskDto> sorted = order switch
++        {
++            TaskSortOrder.DeadlineNearest => tasks.OrderBy(task => Deadline(task, userZone) is null)
++                .ThenBy(task => Deadline(task, userZone)),
++            TaskSortOrder.DeadlineLatest => tasks.OrderBy(task => Deadline(task, userZone) is null)
++                .ThenByDescending(task => Deadline(task, userZone)),
++            TaskSortOrder.PriorityHighest => tasks.OrderBy(task => PriorityRank(task.Priority)),
++            TaskSortOrder.PriorityLowest => tasks.OrderByDescending(task => PriorityRank(task.Priority)),
++            TaskSortOrder.TitleAscending => tasks.OrderBy(task => task.Title ?? string.Empty, TitleComparer),
++            TaskSortOrder.TitleDescending => tasks.OrderByDescending(task => task.Title ?? string.Empty, TitleComparer),
++            TaskSortOrder.UpdatedOldest => tasks.OrderBy(task => task.UpdatedAtUtc is null).ThenBy(task => task.UpdatedAtUtc),
++            _ => tasks.OrderBy(task => task.UpdatedAtUtc is null).ThenByDescending(task => task.UpdatedAtUtc),
++        };
++        return sorted.ThenBy(task => task.Id);
++    }
++
++    private static int PriorityRank(DesktopTaskPriority priority) => priority switch
++    {
++        DesktopTaskPriority.Critical => 0, DesktopTaskPriority.High => 1,
++        DesktopTaskPriority.Normal => 2, DesktopTaskPriority.Low => 3, _ => 4,
++    };
++
++    private static (int Day, long Instant)? Deadline(DesktopTaskDto task, TimeZoneInfo userZone)
++    {
++        var day = TaskDeadlineFiltering.CalendarDate(task, userZone);
++        // Compare calendar dates first, using the same semantics as filtering. Within a day,
++        // exact instants keep UTC order (including a DST fold); a date-only deadline is due
++        // through that entire day and follows timed deadlines. Never convert DateOnly to UTC.
++        return day is null ? null : (day.Value.DayNumber, task.DeadlineAtUtc?.UtcTicks ?? long.MaxValue);
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+index 0cee1e3..7c0ceac 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+@@ -290,10 +290,15 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+     private IReadOnlyList<TaskItemViewModel> _items = Array.Empty<TaskItemViewModel>();
+     private IReadOnlyList<DesktopTaskDto> _allTasks = Array.Empty<DesktopTaskDto>();
+     private TaskDisplayLookup _displayLookup = TaskDisplayLookup.Empty;
+-    private IReadOnlyList<string> _projectFilters = ["Все проекты"];
+-    private string _selectedStatusFilter = "Все статусы";
+-    private string _selectedProjectFilter = "Все проекты";
++    private IReadOnlyList<TaskProjectFilter> _projectFilters = [TaskProjectFilter.AllProjects];
++    private DesktopTaskStatus? _selectedStatusFilter;
++    private TaskProjectFilter _selectedProjectFilter = TaskProjectFilter.AllProjects;
++    private DesktopTaskPriority? _selectedPriorityFilter;
++    private TaskDeadlineFilter _selectedDeadlineFilter;
++    private TaskSortOrder _selectedSortOrder = TaskSortOrder.UpdatedNewest;
++    private readonly TimeProvider _filterTimeProvider;
+     private TaskItemViewModel? _selectedItem;
++    private bool _replacingFilteredItems;
+     private TaskDetailsViewModel? _selectedDetails;
+     private TasksScreenState _state = TasksScreenState.Inactive;
+     private TaskDetailsState _detailsState;
+@@ -330,8 +335,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         IDesktopTasksApiClient client,
+         IEnumerable<string>? capabilities = null,
+         Func<bool>? completionMotionEnabled = null,
+-        Func<TimeSpan, global::System.Threading.Tasks.Task>? completionDelay = null)
++        Func<TimeSpan, global::System.Threading.Tasks.Task>? completionDelay = null,
++        TimeProvider? filterTimeProvider = null)
+     {
++        _filterTimeProvider = filterTimeProvider ?? TimeProvider.System;
+         _completionMotionEnabled = completionMotionEnabled ?? (() => System.Windows.SystemParameters.ClientAreaAnimation
+             && !System.Windows.SystemParameters.HighContrast);
+         _completionDelay = completionDelay ?? (duration => global::System.Threading.Tasks.Task.Delay(duration));
+@@ -399,50 +406,94 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         ResetFiltersCommand = new AsyncCommand(
+             (_, _) =>
+             {
+-                SelectedStatusFilter = "Все статусы";
+-                SelectedProjectFilter = "Все проекты";
++                ResetFilters();
+                 return global::System.Threading.Tasks.Task.CompletedTask;
+             },
+             _ => HasActiveFilters);
+     }
+ 
+-    public IReadOnlyList<string> StatusFilters { get; } =
+-        ["Все статусы", "Запланирована", "В работе", "На проверке", "Просрочена", "Завершена", "Отменена"];
++    public IReadOnlyList<TaskFilterOption<DesktopTaskStatus?>> StatusFilters { get; } =
++        [new(null, "Все статусы"), .. Enum.GetValues<DesktopTaskStatus>()
++            .Select(value => new TaskFilterOption<DesktopTaskStatus?>(value, TaskItemViewModel.LocalizeStatus(value)))];
++    public IReadOnlyList<TaskFilterOption<DesktopTaskPriority?>> PriorityFilters { get; } =
++        [new(null, "Все приоритеты"), .. Enum.GetValues<DesktopTaskPriority>()
++            .Select(value => new TaskFilterOption<DesktopTaskPriority?>(value, TaskItemViewModel.LocalizePriority(value)))];
++    public IReadOnlyList<TaskFilterOption<TaskDeadlineFilter>> DeadlineFilters { get; } =
++        [new(TaskDeadlineFilter.All, "Все сроки"), new(TaskDeadlineFilter.Overdue, "Просроченные"),
++         new(TaskDeadlineFilter.Today, "На сегодня"), new(TaskDeadlineFilter.NextSevenDays, "Ближайшие 7 дней"),
++         new(TaskDeadlineFilter.NoDeadline, "Без срока")];
+ 
+-    public IReadOnlyList<string> ProjectFilters
++    public IReadOnlyList<TaskProjectFilter> ProjectFilters
+     {
+         get => _projectFilters;
+-        private set
+-        {
+-            _projectFilters = value;
+-            OnPropertyChanged();
+-        }
++        private set { _projectFilters = value; OnPropertyChanged(); }
+     }
+ 
+-    public string SelectedStatusFilter
++    public IReadOnlyList<TaskFilterOption<TaskSortOrder>> SortOrders { get; } =
++        [new(TaskSortOrder.UpdatedNewest, "Последнее изменение: сначала новые"),
++         new(TaskSortOrder.UpdatedOldest, "Последнее изменение: сначала старые"),
++         new(TaskSortOrder.DeadlineNearest, "Срок: сначала ближайшие"),
++         new(TaskSortOrder.DeadlineLatest, "Срок: сначала поздние"),
++         new(TaskSortOrder.PriorityHighest, "Сначала высокий приоритет"),
++         new(TaskSortOrder.PriorityLowest, "Сначала низкий приоритет"),
++         new(TaskSortOrder.TitleAscending, "Название: А–Я"),
++         new(TaskSortOrder.TitleDescending, "Название: Я–А")];
++
++    public TaskSortOrder SelectedSortOrder
+     {
+-        get => _selectedStatusFilter;
+-        set
+-        {
+-            if (!SetProperty(ref _selectedStatusFilter, value)) return;
+-            ApplyFilters(SelectedItem?.Id);
+-            NotifyFilterState();
+-        }
++        get => _selectedSortOrder;
++        set { if (Enum.IsDefined(value) && SetProperty(ref _selectedSortOrder, value)) ApplyLocalFilters(); }
+     }
+ 
+-    public string SelectedProjectFilter
++    public DesktopTaskStatus? SelectedStatusFilter
++    {
++        get => _selectedStatusFilter;
++        set { if (SetProperty(ref _selectedStatusFilter, value)) ApplyLocalFilters(); }
++    }
++    public TaskProjectFilter SelectedProjectFilter
+     {
+         get => _selectedProjectFilter;
+         set
+         {
+-            if (!SetProperty(ref _selectedProjectFilter, value)) return;
+-            ApplyFilters(SelectedItem?.Id);
+-            NotifyFilterState();
++            // WPF can briefly clear selection while ItemsSource is being replaced.
++            if (value is not null && SetProperty(ref _selectedProjectFilter, value)) ApplyLocalFilters();
+         }
+     }
++    public DesktopTaskPriority? SelectedPriorityFilter
++    {
++        get => _selectedPriorityFilter;
++        set { if (SetProperty(ref _selectedPriorityFilter, value)) ApplyLocalFilters(); }
++    }
++    public TaskDeadlineFilter SelectedDeadlineFilter
++    {
++        get => _selectedDeadlineFilter;
++        set { if (SetProperty(ref _selectedDeadlineFilter, value)) ApplyLocalFilters(); }
++    }
+ 
+-    public bool HasActiveFilters => SelectedStatusFilter != "Все статусы" || SelectedProjectFilter != "Все проекты";
+-    public bool IsFilteredEmpty => _allTasks.Count > 0 && Items.Count == 0;
++    private void ResetFilters()
++    {
++        _selectedStatusFilter = null;
++        _selectedProjectFilter = TaskProjectFilter.AllProjects;
++        _selectedPriorityFilter = null;
++        _selectedDeadlineFilter = TaskDeadlineFilter.All;
++        OnPropertyChanged(nameof(SelectedStatusFilter));
++        OnPropertyChanged(nameof(SelectedProjectFilter));
++        OnPropertyChanged(nameof(SelectedPriorityFilter));
++        OnPropertyChanged(nameof(SelectedDeadlineFilter));
++        ApplyLocalFilters();
++    }
++
++    private void ApplyLocalFilters()
++    {
++        // Changing a local filter must not initiate a detail request for another row.
++        ApplyFilters(SelectedItem?.Id, localOnly: true);
++        NotifyFilterState();
++    }
++
++    public bool HasActiveFilters => SelectedStatusFilter.HasValue || !SelectedProjectFilter.IsAll
++        || SelectedPriorityFilter.HasValue || SelectedDeadlineFilter != TaskDeadlineFilter.All;
++    public bool IsFilteredEmpty => HasActiveFilters && _hasLoaded && (_allTasks.Count > 0 || HasNextPage)
++        && Items.Count == 0 && !IsFailureState && !IsInitialLoading;
+ 
+     public IReadOnlyList<TaskItemViewModel> Items
+     {
+@@ -464,6 +515,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         get => _selectedItem;
+         set
+         {
++            if (_replacingFilteredItems && value is null) return;
+             if (!SetProperty(ref _selectedItem, value))
+             {
+                 return;
+@@ -657,10 +709,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                 OnPropertyChanged(nameof(IsRefreshing));
+                 OnPropertyChanged(nameof(IsEmptyState));
+                 OnPropertyChanged(nameof(IsFailureState));
++                OnPropertyChanged(nameof(IsFilteredEmpty));
+                 OnPropertyChanged(nameof(ShowBlockingState));
+                 OnPropertyChanged(nameof(ShowInlineMessage));
+                 OnPropertyChanged(nameof(StateTitle));
+                 OnPropertyChanged(nameof(StateIconKey));
++                OnPropertyChanged(nameof(DisplayedCountText));
+                 RaiseCommandStateChanged();
+                 NotifyMutationState();
+             }
+@@ -742,7 +796,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         ? "Task.Icon.Tasks"
+         : "Task.Icon.Error";
+ 
+-    public string DisplayedCountText => $"Показано {Items.Count} из {_allTasks.Count}";
++    public string DisplayedCountText => State == TasksScreenState.InvalidCursor
++        ? $"Найдено среди загруженных задач: {Items.Count} из {_allTasks.Count}. Результат неполный — обновите список."
++        : HasNextPage
++        ? $"Найдено среди загруженных задач: {Items.Count} из {_allTasks.Count}. Есть ещё задачи — нажмите «Загрузить ещё» или «Обновить»."
++        : $"Показано {Items.Count} из {_allTasks.Count}";
+ 
+     public bool HasSuccessfulRefresh => _lastSuccessfulRefreshAt.HasValue;
+ 
+@@ -882,10 +940,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded success)
+             {
+                 _allTasks = _allTasks.Where(task => task.Id != id).Append(success.Value).ToArray();
+-                _selectedStatusFilter = "Все статусы";
+-                _selectedProjectFilter = "Все проекты";
+-                OnPropertyChanged(nameof(SelectedStatusFilter));
+-                OnPropertyChanged(nameof(SelectedProjectFilter));
++                ResetFilters();
+                 UpdateProjectFilters();
+                 ApplyFilters(id);
+                 SetLoadedState();
+@@ -969,10 +1024,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             if (result is DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
+             {
+                 var selectedId = SelectedItem?.Id;
+-                _allTasks = _allTasks.Concat(success.Value.Items)
+-                    .GroupBy(item => item.Id)
+-                    .Select(group => group.Last())
+-                    .ToArray();
++                _allTasks = DeduplicateTasks(_allTasks.Concat(success.Value.Items));
+                 UpdateProjectFilters();
+                 ApplyFilters(selectedId);
+                 SetNextCursor(success.Value.NextCursor);
+@@ -1074,11 +1126,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             {
+                 var selectedId = SelectedItem?.Id;
+                 _displayLookup = await LoadDisplayLookupAsync(linkedCancellation.Token).ConfigureAwait(true);
+-                _allTasks = success.Value.Items;
++                _allTasks = DeduplicateTasks(success.Value.Items);
+                 UpdateProjectFilters();
+                 ApplyFilters(selectedId);
+                 SetNextCursor(success.Value.NextCursor);
+                 _hasLoaded = true;
++                OnPropertyChanged(nameof(IsFilteredEmpty));
+                 RecordSuccessfulRefresh();
+                 SetLoadedState();
+             }
+@@ -1739,22 +1792,34 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+ 
+     private void UpdateProjectFilters()
+     {
+-        var projects = _allTasks.Select(task => new TaskItemViewModel(task, _displayLookup).ProjectText)
+-            .Distinct(StringComparer.CurrentCulture)
+-            .OrderBy(project => project, StringComparer.CurrentCulture)
++        var selected = SelectedProjectFilter;
++        var projects = _allTasks.Select(task => task.Card?.ProjectId).Distinct()
++            .Select(id => new TaskProjectFilter(id, id.HasValue
++                ? _displayLookup.Projects.GetValueOrDefault(id.Value) ?? "Проект назначен"
++                : "Без проекта"))
++            .OrderBy(option => option.Name, StringComparer.CurrentCulture).ThenBy(option => option.ProjectId)
+             .ToArray();
+-        ProjectFilters = ["Все проекты", .. projects];
+-        if (!ProjectFilters.Contains(SelectedProjectFilter, StringComparer.CurrentCulture))
+-        {
+-            _selectedProjectFilter = "Все проекты";
+-            OnPropertyChanged(nameof(SelectedProjectFilter));
+-        }
++        // Use neutral ordinal suffixes for equal names; never expose inaccessible names or IDs.
++        projects = projects.GroupBy(option => option.Name).SelectMany(group => group.Count() == 1
++            ? group : group.Select((option, index) => option with { Name = $"{option.Name} ({index + 1})" })).ToArray();
++        var options = new[] { TaskProjectFilter.AllProjects }.Concat(projects).ToArray();
++        _selectedProjectFilter = options.FirstOrDefault(option => option.IsAll == selected.IsAll
++            && option.ProjectId == selected.ProjectId) ?? TaskProjectFilter.AllProjects;
++        ProjectFilters = options;
++        OnPropertyChanged(nameof(SelectedProjectFilter));
++        NotifyFilterState();
+     }
+ 
+-    private void ApplyFilters(Guid? selectedId)
++    private void ApplyFilters(Guid? selectedId, bool localOnly = false)
+     {
+         var existingRows = Items.ToDictionary(item => item.Id);
+-        var projected = _allTasks.Select(task =>
++        var now = _filterTimeProvider.GetUtcNow();
++        var filtered = _allTasks.Where(task =>
++            (!SelectedStatusFilter.HasValue || task.Status == SelectedStatusFilter.Value)
++            && (SelectedProjectFilter.IsAll || task.Card?.ProjectId == SelectedProjectFilter.ProjectId)
++            && (!SelectedPriorityFilter.HasValue || task.Priority == SelectedPriorityFilter.Value)
++            && TaskDeadlineFiltering.Matches(task, SelectedDeadlineFilter, now, _filterTimeProvider.LocalTimeZone));
++        var projected = TaskSorting.Apply(filtered, SelectedSortOrder, _filterTimeProvider.LocalTimeZone).Select(task =>
+         {
+             var feedback = GetCompletionFeedback(task);
+             return existingRows.TryGetValue(task.Id, out var row) && ReferenceEquals(row.Source, task)
+@@ -1762,22 +1827,21 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                 && ReferenceEquals(row.CompletionFeedback, feedback)
+                     ? row : new TaskItemViewModel(task, _displayLookup, feedback);
+         });
+-        if (SelectedStatusFilter != "Все статусы")
+-        {
+-            projected = projected.Where(item => item.StatusText == SelectedStatusFilter || item.CompletionFeedback is not null);
+-        }
+-        if (SelectedProjectFilter != "Все проекты")
+-        {
+-            projected = projected.Where(item => item.ProjectText == SelectedProjectFilter);
+-        }
+-
+         var replacement = projected.ToArray();
+-        Items = replacement;
++        _replacingFilteredItems = true;
++        try { Items = replacement; }
++        finally { _replacingFilteredItems = false; }
+         SelectedItem = selectedId.HasValue
+-            ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? replacement.FirstOrDefault()
+-            : replacement.FirstOrDefault();
++            ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? (localOnly ? null : replacement.FirstOrDefault())
++            : localOnly ? null : replacement.FirstOrDefault();
+     }
+ 
++    private static DesktopTaskDto[] DeduplicateTasks(IEnumerable<DesktopTaskDto> tasks) => tasks
++        .GroupBy(task => task.Id)
++        // A later cursor page must not overwrite a confirmed newer version. On equal versions
++        // prefer the most recent response, as before. Refresh still replaces the authorized set.
++        .Select(group => group.Reverse().MaxBy(task => task.Version)!).ToArray();
++
+     private void NotifyFilterState()
+     {
+         OnPropertyChanged(nameof(HasActiveFilters));
+@@ -1807,7 +1871,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         ResetCompletionFeedback();
+         _allTasks = Array.Empty<DesktopTaskDto>();
+         Items = Array.Empty<TaskItemViewModel>();
+-        ProjectFilters = ["Все проекты"];
++        ProjectFilters = [TaskProjectFilter.AllProjects];
++        _selectedProjectFilter = TaskProjectFilter.AllProjects;
++        OnPropertyChanged(nameof(SelectedProjectFilter));
+         SetNextCursor(null);
+         SelectedItem = null;
+         SelectedDetails = null;
+@@ -1818,6 +1884,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+     {
+         _nextCursor = string.IsNullOrWhiteSpace(value) ? null : value;
+         OnPropertyChanged(nameof(HasNextPage));
++        OnPropertyChanged(nameof(IsFilteredEmpty));
++        OnPropertyChanged(nameof(DisplayedCountText));
+         RaiseCommandStateChanged();
+     }
+ 
+diff --git a/work/production/tests/Task.Desktop.Tests/CompletionFeedbackUiTests.cs b/work/production/tests/Task.Desktop.Tests/CompletionFeedbackUiTests.cs
+index 0e6f70c..5a8dc32 100644
+--- a/work/production/tests/Task.Desktop.Tests/CompletionFeedbackUiTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/CompletionFeedbackUiTests.cs
+@@ -169,7 +169,7 @@ public sealed class CompletionFeedbackUiTests
+             list.SetBinding(System.Windows.Controls.Primitives.Selector.SelectedItemProperty,
+                 new Binding(nameof(TasksViewModel.SelectedItem)) { Mode = BindingMode.TwoWay });
+             await vm.ActivateAsync();
+-            vm.SelectedStatusFilter = "В работе";
++            vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+             await vm.TransitionCommand.ExecuteAsync("Completed");
+             await vm.ConfirmTransitionCommand.ExecuteAsync();
+             vm.SelectedItem = vm.Items.Single(row => row.Id == second.Id);
+diff --git a/work/production/tests/Task.Desktop.Tests/TaskFilteringWindowsTests.cs b/work/production/tests/Task.Desktop.Tests/TaskFilteringWindowsTests.cs
+new file mode 100644
+index 0000000..261b031
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/TaskFilteringWindowsTests.cs
+@@ -0,0 +1,186 @@
++using System.Diagnostics;
++using System.IO;
++using System.Windows;
++using System.Windows.Automation;
++using System.Windows.Controls;
++using System.Windows.Input;
++using System.Windows.Media;
++using System.Windows.Media.Imaging;
++using System.Windows.Threading;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests;
++
++[Collection("CompletionWpfUi")]
++public sealed class TaskFilteringWindowsTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task Native_FourFiltersKeyboardPaginationAndSmallWindow()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_FILTER_UI_CHILD") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
++                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(Native_FourFiltersKeyboardPaginationAndSmallWindow));
++            start.Environment["TASK_FILTER_UI_CHILD"] = "1";
++            using var process = Process.Start(start)!;
++            var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
++            try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60)); Assert.True(process.ExitCode == 0, await stdout + await stderr); }
++            finally { if (!process.HasExited) process.Kill(true); }
++            return;
++        }
++        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var dispatcher = Dispatcher.CurrentDispatcher;
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
++            dispatcher.BeginInvoke(async () =>
++            {
++                MainWindow? window = null;
++                try
++                {
++                    var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
++                    app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
++                    app.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
++                    foreach (var name in new[] { "IconKeyToGeometryConverter", "ShellNavigationWidthConverter", "WindowWidthAtLeastConverter", "ResponsiveGridLengthConverter", "TimelineLaneMarginConverter", "CalendarLaneWidthConverter", "CalendarLaneLeftConverter" })
++                        app.Resources["Task." + name] = Activator.CreateInstance(typeof(MainWindow).Assembly.GetType("Task.Desktop.Converters." + name)!);
++                    var now = new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero);
++                    var first = new DesktopTaskDto(Guid.Parse("00000000-0000-0000-0000-000000000001"), Guid.NewGuid(), 1, now,
++                        now, "Проверить фильтры", Guid.NewGuid(), DesktopTaskStatus.InProgress,
++                        DesktopTaskPriority.High, null, null, [], [], null);
++                    var peer = first with { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Title = "Акт проверки" };
++                    var second = first with { Id = Guid.NewGuid(), Priority = DesktopTaskPriority.Critical };
++                    var client = new TaskScreen.TasksViewModelTests.FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(first) };
++                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([first, peer], "next", null)));
++                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([second], "remaining", null)));
++                    using var tasks = new TasksViewModel(client, ["Task.Read"]);
++                    using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
++                    shell.SelectedSection = shell.Sections.Single(section => section.Route == "tasks");
++                    await tasks.ActivateAsync();
++                    window = new MainWindow(shell) { ShowInTaskbar = false, ShowActivated = false };
++                    window.Show(); await Drain(window);
++                    var status = Find<ComboBox>(window, "TasksStatusFilter");
++                    var project = Find<ComboBox>(window, "TasksProjectFilter");
++                    var priority = Find<ComboBox>(window, "TasksPriorityFilter");
++                    var deadline = Find<ComboBox>(window, "TasksDeadlineFilter");
++                    var sort = Find<ComboBox>(window, "TasksSortOrder");
++                    Assert.All(new[] { status, project, priority, deadline, sort }, combo => Assert.False(string.IsNullOrEmpty(AutomationProperties.GetName(combo))));
++                    Assert.Equal(8, sort.Items.Count);
++                    var list = Find<ListBox>(window, "TasksList");
++                    var selected = tasks.SelectedItem;
++                    var reads = client.DetailCallCount;
++                    status.SelectedValue = DesktopTaskStatus.InProgress;
++                    priority.SelectedValue = DesktopTaskPriority.High;
++                    deadline.SelectedValue = TaskDeadlineFilter.NoDeadline;
++                    await Drain(window);
++                    Assert.Same(selected, tasks.SelectedItem);
++                    Assert.Same(selected, list.SelectedItem);
++                    Assert.Equal(reads, client.DetailCallCount);
++                    var details = tasks.SelectedDetails;
++                    foreach (var option in tasks.SortOrders)
++                    {
++                        sort.SelectedValue = option.Value; await Drain(window);
++                        Assert.Same(selected, tasks.SelectedItem); Assert.Same(selected, list.SelectedItem);
++                        Assert.Same(details, tasks.SelectedDetails);
++                    }
++                    Assert.Equal(reads, client.DetailCallCount);
++                    // WPF must preserve the selected ID even when project options are rebuilt.
++                    project.SelectedItem = tasks.ProjectFilters.Single(option => !option.IsAll);
++                    priority.SelectedValue = DesktopTaskPriority.Critical;
++                    await Drain(window);
++                    Assert.True(tasks.IsFilteredEmpty);
++                    var more = Find<Button>(window, "TasksLoadMoreButton");
++                    Assert.True(more.IsVisible && more.IsEnabled);
++                    await tasks.LoadMoreCommand.ExecuteAsync(); await Drain(window);
++                    Assert.Equal(second.Id, Assert.Single(tasks.Items).Id);
++                    Assert.False(tasks.SelectedProjectFilter.IsAll);
++                    await tasks.ResetFiltersCommand.ExecuteAsync(); await Drain(window);
++                    Assert.Null(status.SelectedValue); Assert.Null(priority.SelectedValue);
++                    Assert.Equal(TaskDeadlineFilter.All, deadline.SelectedValue);
++                    Assert.True(((TaskProjectFilter)project.SelectedItem).IsAll);
++                    Assert.Equal(TaskSortOrder.TitleDescending, sort.SelectedValue);
++                    status.SelectedValue = DesktopTaskStatus.InProgress; // Keep reset enabled for the Tab traversal.
++                    // Logical viewports for 1920x1080 at 125/150/200%, plus the minimum window.
++                    // The physical desktop DPI is recorded separately; these are layout equivalents.
++                    foreach (var size in new[] { (800d, 480d), (1200d, 900d), (1536d, 864d), (1280d, 720d), (960d, 540d) })
++                    {
++                        window.Width = size.Item1; window.Height = size.Item2; await Drain(window);
++                        foreach (var combo in new[] { status, project, priority, deadline, sort })
++                        {
++                            var origin = combo.TranslatePoint(new Point(), window);
++                            Assert.True(combo.IsVisible && combo.ActualHeight > 0);
++                            Assert.InRange(origin.X + combo.ActualWidth, 0, window.ActualWidth);
++                            Assert.InRange(origin.Y + combo.ActualHeight, 0, window.ActualHeight);
++                        }
++                        Assert.True(list.ActualHeight >= 40, $"List viewport is only {list.ActualHeight} DIP; " + string.Join("; ", new[] { status, project, priority, deadline, sort }.Select(combo => $"{AutomationProperties.GetAutomationId(combo)}={combo.TranslatePoint(new Point(), window)} {combo.ActualWidth}x{combo.ActualHeight}")));
++                        Assert.True(more.IsVisible && more.IsEnabled);
++                        Assert.InRange(more.TranslatePoint(new Point(0, more.ActualHeight), window).Y, 0, window.ActualHeight);
++                        Assert.True(status.Focus());
++                        foreach (var next in new Control[] { project, priority, deadline, sort, Find<Button>(window, "TasksResetFilters") })
++                        {
++                            Assert.True(((UIElement)Keyboard.FocusedElement).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
++                            Assert.Same(next, Keyboard.FocusedElement);
++                        }
++                        var evidence = Environment.GetEnvironmentVariable("TASK_FILTER_EVIDENCE");
++                        if (!string.IsNullOrEmpty(evidence))
++                        {
++                            Directory.CreateDirectory(evidence);
++                            var visual = (FrameworkElement)VisualTreeHelper.GetChild(window, 0);
++                            var bitmap = new RenderTargetBitmap((int)visual.ActualWidth, (int)visual.ActualHeight, 96, 96, PixelFormats.Pbgra32);
++                            bitmap.Render(visual); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
++                            using var file = File.Create(Path.Combine(evidence, $"filters-{size.Item1}.png")); encoder.Save(file);
++                        }
++                    }
++                    Assert.Equal(2, client.PageCallCount);
++                    // Measure the complete synchronous filter/sort/projection on this WPF dispatcher.
++                    var bulk = Enumerable.Range(1, 10000).Select(i => first with
++                    {
++                        Id = Guid.Parse($"00000000-0000-0000-0001-{i:000000000000}"),
++                        Title = $"Задача {10000 - i:00000}", Priority = (DesktopTaskPriority)(i % 4),
++                        UpdatedAtUtc = now.AddMinutes(-i), DeadlineAtUtc = i % 5 == 0 ? null : now.AddMinutes(i),
++                    }).ToArray();
++                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new(bulk, null, null)));
++                    await tasks.RefreshAsync(); await tasks.ResetFiltersCommand.ExecuteAsync(); await Drain(window);
++                    var timings = new List<string>();
++                    foreach (var option in tasks.SortOrders)
++                    {
++                        var watch = Stopwatch.StartNew(); tasks.SelectedSortOrder = option.Value; watch.Stop();
++                        timings.Add($"{option.Value}: {watch.Elapsed.TotalMilliseconds:F2} ms");
++                        Assert.Equal(10000, tasks.Items.Count);
++                        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(2), $"10k local rows took {watch.Elapsed}");
++                        await Drain(window);
++                        Assert.True(list.ItemContainerGenerator.ContainerFromIndex(9999) is null, "List must remain virtualized");
++                    }
++                    var output = Environment.GetEnvironmentVariable("TASK_FILTER_EVIDENCE");
++                    if (!string.IsNullOrEmpty(output))
++                        File.WriteAllLines(Path.Combine(output, "sorting-performance.txt"),
++                            new[] { $"WPF dispatcher, 10000 rows; physical DPI scale: {VisualTreeHelper.GetDpi(window).DpiScaleX}; OS: {Environment.OSVersion}; .NET: {Environment.Version}",
++                                "Times measure synchronous filter/sort/projection and binding notification; rendering is drained after each sample. One sample per order, no percentile claim." }.Concat(timings));
++                    done.SetResult();
++                }
++                catch (Exception error) { done.SetException(error); }
++                finally { window?.CloseAfterModeSwitch(); dispatcher.InvokeShutdown(); }
++            });
++            Dispatcher.Run();
++        }) { IsBackground = true };
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        try { await done.Task.WaitAsync(TimeSpan.FromSeconds(45)); }
++        finally { Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5)))); }
++    }
++
++    private static async System.Threading.Tasks.Task Drain(Window window)
++    { await Dispatcher.Yield(DispatcherPriority.Background); window.UpdateLayout(); await System.Threading.Tasks.Task.Delay(50); }
++
++    private static T Find<T>(DependencyObject root, string id) where T : DependencyObject
++    {
++        if (root is T match && (AutomationProperties.GetAutomationId(root) == id || root is FrameworkElement element && element.Name == id)) return match;
++        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
++        {
++            try { return Find<T>(VisualTreeHelper.GetChild(root, index), id); }
++            catch (InvalidOperationException) { }
++        }
++        throw new InvalidOperationException(id);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/CompletionFeedbackTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/CompletionFeedbackTests.cs
+index f5a1c85..9cad2d4 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/CompletionFeedbackTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/CompletionFeedbackTests.cs
+@@ -6,7 +6,7 @@ namespace Task.Desktop.Tests.TaskScreen;
+ public sealed partial class TasksViewModelTests
+ {
+     [Fact]
+-    public async global::System.Threading.Tasks.Task Completion_WaitsForServer_ThenRetainsFilteredRowWithoutBlockingInput()
++    public async global::System.Threading.Tasks.Task Completion_WaitsForServer_ThenRespectsStatusFilterAndPreservesFeedback()
+     {
+         var task = CreateTask(status: DesktopTaskStatus.InProgress);
+         var completed = task with { Status = DesktopTaskStatus.Completed, Version = 2 };
+@@ -16,20 +16,24 @@ public sealed partial class TasksViewModelTests
+         client.EnqueuePage(SucceededPage([task]));
+         using var vm = new TasksViewModel(client, WriteCapabilities, () => true, _ => finish.Task);
+         await vm.ActivateAsync();
+-        vm.SelectedStatusFilter = "В работе";
++        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+         await vm.TransitionCommand.ExecuteAsync("Completed");
+         var request = vm.ConfirmTransitionCommand.ExecuteAsync();
+         Assert.Null(Assert.Single(vm.Items).CompletionFeedback);
+         Assert.Equal(DesktopTaskStatus.InProgress, vm.SelectedItem!.Source.Status);
+         response.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(completed, 2, false));
+         await request;
++        Assert.Empty(vm.Items);
++        vm.SelectedStatusFilter = DesktopTaskStatus.Completed;
+         var row = Assert.Single(vm.Items);
+         var feedback = Assert.IsType<TaskCompletionFeedback>(row.CompletionFeedback);
+         Assert.Equal("Завершена", row.StatusText);
+         Assert.False(vm.IsMutationBusy);
+         Assert.Contains("Завершена", vm.Announcement);
++        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
++        Assert.Empty(vm.Items);
+         finish.SetResult();
+-        await WaitForAsync(() => vm.Items.Count == 0);
++        await WaitForAsync(() => !feedback.IsActive);
+         Assert.False(feedback.IsActive);
+         Assert.Null(vm.SelectedItem);
+     }
+@@ -109,7 +113,7 @@ public sealed partial class TasksViewModelTests
+             return global::System.Threading.Tasks.Task.CompletedTask;
+         });
+         await vm.ActivateAsync();
+-        vm.SelectedStatusFilter = "В работе";
++        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+         await vm.TransitionCommand.ExecuteAsync("Completed");
+         await vm.ConfirmTransitionCommand.ExecuteAsync();
+         Assert.False(delayed);
+@@ -170,7 +174,7 @@ public sealed partial class TasksViewModelTests
+         client.EnqueuePage(SucceededPage([first, second]));
+         using var vm = new TasksViewModel(client, WriteCapabilities, () => true, _ => finish.Task);
+         await vm.ActivateAsync();
+-        vm.SelectedStatusFilter = "В работе";
++        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+         await vm.TransitionCommand.ExecuteAsync("Completed");
+         await vm.ConfirmTransitionCommand.ExecuteAsync();
+         vm.SelectedItem = vm.Items.Single(row => row.Id == second.Id);
+@@ -198,7 +202,7 @@ public sealed partial class TasksViewModelTests
+             return finish.Task;
+         });
+         await vm.ActivateAsync();
+-        vm.SelectedStatusFilter = "В работе";
++        vm.SelectedStatusFilter = null;
+         foreach (var task in new[] { first, second })
+         {
+             vm.SelectedItem = vm.Items.Single(row => row.Id == task.Id);
+@@ -210,9 +214,10 @@ public sealed partial class TasksViewModelTests
+         Assert.Equal(2, vm.Items.Count(row => row.CompletionFeedback is not null));
+         Assert.False(vm.IsMutationBusy);
+         finishes.Dequeue().SetResult();
+-        await WaitForAsync(() => vm.Items.Count == 1);
++        await WaitForAsync(() => vm.Items.Count(row => row.CompletionFeedback is not null) == 1);
+         Assert.Equal(second.Id, vm.SelectedItem!.Id);
+         finishes.Dequeue().SetResult();
+-        await WaitForAsync(() => vm.Items.Count == 0);
++        await WaitForAsync(() => vm.Items.All(row => row.CompletionFeedback is null));
++        Assert.Equal(2, vm.Items.Count);
+     }
+ }
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs
+index acb9bac..381bf80 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs
+@@ -41,7 +41,7 @@ public sealed partial class TasksViewModelTests
+         client.EnqueuePage(SucceededPage([existing]));
+         using var vm = new TasksViewModel(client, WriteCapabilities);
+         await vm.ActivateAsync();
+-        vm.SelectedStatusFilter = "В работе";
++        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+         await vm.NewTaskCommand.ExecuteAsync();
+         Assert.Equal("Создать задачу", vm.Editor!.SubmitText);
+         vm.Editor.Title = created.Title;
+@@ -54,7 +54,7 @@ public sealed partial class TasksViewModelTests
+         Assert.True(vm.OpenSavedTaskCommand.CanExecute(null));
+         await vm.OpenSavedTaskCommand.ExecuteAsync();
+         Assert.Equal(created.Id, vm.SelectedItem?.Id);
+-        Assert.Equal("Все статусы", vm.SelectedStatusFilter);
++        Assert.Null(vm.SelectedStatusFilter);
+         Assert.False(vm.ShowSavedTaskAction);
+         vm.UpdateSessionState(false);
+         Assert.False(vm.OpenSavedTaskCommand.CanExecute(null));
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TaskFilteringTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TaskFilteringTests.cs
+new file mode 100644
+index 0000000..f42f8d1
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TaskFilteringTests.cs
+@@ -0,0 +1,287 @@
++using System.Net.Http;
++using System.Text.Json.Nodes;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++using Task.Domain;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed partial class TasksViewModelTests
++{
++    private sealed class FilterClock(DateTimeOffset? now = null, TimeZoneInfo? zone = null) : TimeProvider
++    {
++        public override DateTimeOffset GetUtcNow() => now ?? new(2026, 10, 16, 22, 30, 0, TimeSpan.Zero);
++        public override TimeZoneInfo LocalTimeZone => zone ?? TimeZoneInfo.CreateCustomTimeZone("FilterUser", TimeSpan.FromHours(3), "FilterUser", "FilterUser");
++    }
++
++    [Theory]
++    [InlineData(DesktopTaskStatus.New)]
++    [InlineData(DesktopTaskStatus.InProgress)]
++    [InlineData(DesktopTaskStatus.Review)]
++    [InlineData(DesktopTaskStatus.Completed)]
++    [InlineData(DesktopTaskStatus.Cancelled)]
++    public async System.Threading.Tasks.Task Filter_UsesBusinessStatusEvenWhenDisplaySaysOverdue(DesktopTaskStatus status)
++    {
++        var tasks = Enum.GetValues<DesktopTaskStatus>().Select(value => CreateTask(status: value)
++            with { DeadlineAtUtc = new FilterClock().GetUtcNow().AddDays(-1) }).ToArray();
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage(tasks));
++        using var vm = new TasksViewModel(client, filterTimeProvider: new FilterClock());
++        await vm.ActivateAsync();
++        vm.SelectedStatusFilter = status;
++        Assert.Equal(status, Assert.Single(vm.Items).Source.Status);
++        Assert.DoesNotContain(vm.StatusFilters, option => option.Name == "Просрочена");
++        vm.SelectedStatusFilter = null;
++        Assert.Equal(5, vm.Items.Count);
++    }
++
++    [Theory]
++    [InlineData(DesktopTaskPriority.Low)]
++    [InlineData(DesktopTaskPriority.Normal)]
++    [InlineData(DesktopTaskPriority.High)]
++    [InlineData(DesktopTaskPriority.Critical)]
++    public async System.Threading.Tasks.Task Filter_AllPriorityValuesAndReset(DesktopTaskPriority priority)
++    {
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage(Enum.GetValues<DesktopTaskPriority>().Select(value => CreateTask(priority: value)).ToArray()));
++        using var vm = new TasksViewModel(client);
++        await vm.ActivateAsync();
++        vm.SelectedPriorityFilter = priority;
++        Assert.Equal(priority, Assert.Single(vm.Items).Source.Priority);
++        await vm.ResetFiltersCommand.ExecuteAsync();
++        Assert.Equal(4, vm.Items.Count);
++        Assert.False(vm.HasActiveFilters);
++    }
++
++    private sealed class FilterOptionsClient : FakeTasksApiClient, IDesktopTaskWorkspaceClient
++    {
++        public JsonObject Options { get; set; } = new();
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetOptionsAsync(string query, CancellationToken token) =>
++            System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(Options, 0, null));
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetWorkspaceAsync(Guid id, CancellationToken token) =>
++            System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(null, 0, "Недоступно"));
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> WriteWorkspaceAsync(Guid id, long version, string path, HttpMethod method, JsonObject body, string key, CancellationToken token) =>
++            throw new InvalidOperationException("Local filtering must never write.");
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Filter_ProjectsUseIdsPreserveSelectionAndDoNotLeakMissingNames()
++    {
++        var firstId = Guid.NewGuid();
++        var secondId = Guid.NewGuid();
++        var hiddenId = Guid.NewGuid();
++        var first = CreateTask() with { Card = new TaskCardContent { ProjectId = firstId } };
++        var second = CreateTask() with { Card = new TaskCardContent { ProjectId = secondId } };
++        var hidden = CreateTask() with { Card = new TaskCardContent { ProjectId = hiddenId } };
++        var noProject = CreateTask();
++        var client = new FilterOptionsClient
++        {
++            Options = new JsonObject { ["projects"] = new JsonArray(
++                new JsonObject { ["id"] = firstId.ToString(), ["name"] = "Одинаковый" },
++                new JsonObject { ["id"] = secondId.ToString(), ["name"] = "Одинаковый" }) }
++        };
++        client.EnqueuePage(SucceededPage([first, second, hidden, noProject], "next"));
++        client.EnqueuePage(SucceededPage([first]));
++        using var vm = new TasksViewModel(client);
++        await vm.ActivateAsync();
++        Assert.Equal(5, vm.ProjectFilters.Count);
++        var names = vm.ProjectFilters.Where(option => option.Name.StartsWith("Одинаковый")).Select(option => option.Name).ToArray();
++        Assert.Equal(2, names.Distinct().Count());
++        vm.SelectedProjectFilter = vm.ProjectFilters.Single(option => option.ProjectId == firstId);
++        Assert.Equal(first.Id, Assert.Single(vm.Items).Id);
++        await vm.LoadNextPageAsync();
++        Assert.Equal(firstId, vm.SelectedProjectFilter.ProjectId);
++        Assert.Equal(first.Id, Assert.Single(vm.Items).Id);
++        vm.SelectedProjectFilter = vm.ProjectFilters.Single(option => option.ProjectId == hiddenId);
++        Assert.Equal("Проект назначен", vm.SelectedProjectFilter.Name);
++        Assert.Equal(hidden.Id, Assert.Single(vm.Items).Id);
++        Assert.DoesNotContain(hiddenId.ToString(), vm.SelectedProjectFilter.Name);
++        vm.SelectedProjectFilter = vm.ProjectFilters.Single(option => !option.IsAll && option.ProjectId is null);
++        Assert.Equal(noProject.Id, Assert.Single(vm.Items).Id);
++        client.EnqueuePage(SucceededPage([first]));
++        await vm.RefreshAsync();
++        Assert.True(vm.SelectedProjectFilter.IsAll); // Removed option has an objective reason to reset.
++    }
++
++    [Theory]
++    [InlineData(-1, false)]
++    [InlineData(0, true)]
++    [InlineData(6, true)]
++    [InlineData(7, false)]
++    public async System.Threading.Tasks.Task Filter_SevenCalendarDatesIncludeTodayAndSixthDay(int offset, bool expected)
++    {
++        var day = new DateOnly(2026, 10, 17).AddDays(offset);
++        var task = CreateTask() with { DeadlineAtUtc = null, Card = new TaskCardContent { DeadlineDate = day, DeadlineTimeZone = "UTC" } };
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage([task]));
++        using var vm = new TasksViewModel(client, filterTimeProvider: new FilterClock());
++        await vm.ActivateAsync();
++        vm.SelectedDeadlineFilter = TaskDeadlineFilter.NextSevenDays;
++        Assert.Equal(expected, vm.Items.Count == 1);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Filter_DeadlinePrecedenceTimezoneMidnightAndNulls()
++    {
++        var clock = new FilterClock(); // UTC Oct 16, user's calendar Oct 17.
++        var today = CreateTask() with { DeadlineAtUtc = new DateTimeOffset(2026, 10, 16, 21, 0, 0, TimeSpan.Zero),
++            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 11, 1), DeadlineTimeZone = "UTC" } };
++        var yesterday = CreateTask() with { DeadlineAtUtc = today.DeadlineAtUtc!.Value.AddTicks(-1) };
++        var noDeadline = CreateTask() with { DeadlineAtUtc = null };
++        var completed = today with { Id = Guid.NewGuid(), Status = DesktopTaskStatus.Completed };
++        var cancelled = today with { Id = Guid.NewGuid(), Status = DesktopTaskStatus.Cancelled };
++        var dateOnly = CreateTask() with { DeadlineAtUtc = null,
++            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 10, 16), DeadlineTimeZone = "UTC" } };
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage([today, yesterday, noDeadline, completed, cancelled, dateOnly]));
++        using var vm = new TasksViewModel(client, filterTimeProvider: clock);
++        await vm.ActivateAsync();
++        vm.SelectedDeadlineFilter = TaskDeadlineFilter.Today;
++        Assert.Equal(new[] { today.Id, completed.Id, cancelled.Id }.Order(), vm.Items.Select(item => item.Id).Order());
++        vm.SelectedDeadlineFilter = TaskDeadlineFilter.Overdue;
++        Assert.Equal(new[] { today.Id, yesterday.Id }.Order(), vm.Items.Select(item => item.Id).Order());
++        // Date-only Oct 16 is still today in its own UTC zone: domain rule says not overdue.
++        Assert.False(TaskRules.IsOverdue(null, dateOnly.Card, clock.GetUtcNow()));
++        vm.SelectedDeadlineFilter = TaskDeadlineFilter.NoDeadline;
++        Assert.Equal(noDeadline.Id, Assert.Single(vm.Items).Id);
++        vm.SelectedDeadlineFilter = TaskDeadlineFilter.NextSevenDays;
++        Assert.DoesNotContain(vm.Items, item => item.Id == noDeadline.Id || item.Id == yesterday.Id);
++    }
++
++    [Theory]
++    [InlineData("2026-03-08T06:59:59Z", true)]
++    [InlineData("2026-03-08T07:00:00Z", true)]
++    [InlineData("2026-03-09T03:59:59Z", true)]
++    [InlineData("2026-03-09T04:00:00Z", false)]
++    public async System.Threading.Tasks.Task Filter_UserCalendarHandlesDaylightSavingBoundary(string deadline, bool expected)
++    {
++        var clock = new FilterClock(DateTimeOffset.Parse("2026-03-08T05:00:00Z"), TimeZoneInfo.FindSystemTimeZoneById("America/New_York"));
++        var task = CreateTask() with { DeadlineAtUtc = DateTimeOffset.Parse(deadline) };
++        var client = new FakeTasksApiClient(); client.EnqueuePage(SucceededPage([task]));
++        using var vm = new TasksViewModel(client, filterTimeProvider: clock);
++        await vm.ActivateAsync(); vm.SelectedDeadlineFilter = TaskDeadlineFilter.Today;
++        Assert.Equal(expected, vm.Items.Count == 1);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Filter_EmptyPageWithCursorStillAllowsContinuation()
++    {
++        var client = new FakeTasksApiClient(); client.EnqueuePage(SucceededPage([], "next"));
++        client.EnqueuePage(SucceededPage([CreateTask(priority: DesktopTaskPriority.High)]));
++        using var vm = new TasksViewModel(client); await vm.ActivateAsync();
++        vm.SelectedPriorityFilter = DesktopTaskPriority.High;
++        Assert.True(vm.IsFilteredEmpty); Assert.True(vm.LoadMoreCommand.CanExecute(null));
++        await vm.LoadMoreCommand.ExecuteAsync(); Assert.Single(vm.Items);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Filter_CombinesAllConditionsPreservesSelectionAndRefreshes()
++    {
++        var project = Guid.NewGuid();
++        var target = CreateTask(status: DesktopTaskStatus.InProgress, priority: DesktopTaskPriority.High) with
++        { DeadlineAtUtc = null, Card = new TaskCardContent { ProjectId = project, DeadlineDate = new DateOnly(2026, 10, 17), DeadlineTimeZone = "UTC" } };
++        var tasks = new[] { target, target with { Id = Guid.NewGuid(), Status = DesktopTaskStatus.New },
++            target with { Id = Guid.NewGuid(), Priority = DesktopTaskPriority.Low },
++            target with { Id = Guid.NewGuid(), Card = target.Card with { ProjectId = Guid.NewGuid() } },
++            target with { Id = Guid.NewGuid(), Card = target.Card with { DeadlineDate = null } } };
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage(tasks));
++        client.EnqueuePage(SucceededPage(tasks));
++        using var vm = new TasksViewModel(client, filterTimeProvider: new FilterClock());
++        await vm.ActivateAsync();
++        vm.SelectedItem = vm.Items.Single(item => item.Id == target.Id);
++        var selected = vm.SelectedItem;
++        vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
++        vm.SelectedPriorityFilter = DesktopTaskPriority.High;
++        vm.SelectedProjectFilter = vm.ProjectFilters.Single(option => option.ProjectId == project);
++        vm.SelectedDeadlineFilter = TaskDeadlineFilter.Today;
++        Assert.Equal(target.Id, Assert.Single(vm.Items).Id);
++        Assert.Same(selected, vm.SelectedItem);
++        await vm.RefreshAsync();
++        Assert.Equal(target.Id, Assert.Single(vm.Items).Id);
++        Assert.Equal(DesktopTaskPriority.High, vm.SelectedPriorityFilter);
++        Assert.Equal(TaskDeadlineFilter.Today, vm.SelectedDeadlineFilter);
++        await vm.ResetFiltersCommand.ExecuteAsync();
++        Assert.Null(vm.SelectedStatusFilter);
++        Assert.Null(vm.SelectedPriorityFilter);
++        Assert.True(vm.SelectedProjectFilter.IsAll);
++        Assert.Equal(TaskDeadlineFilter.All, vm.SelectedDeadlineFilter);
++        Assert.Equal(5, vm.Items.Count);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Filter_EmptyFirstPageCanContinueAndErrorRetainsResults()
++    {
++        var first = CreateTask(priority: DesktopTaskPriority.Low);
++        var matching = CreateTask(priority: DesktopTaskPriority.Critical);
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage([first], "second"));
++        client.EnqueuePage(SucceededPage([first, matching], "third"));
++        client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.ServerUnavailable());
++        client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.InvalidCursor());
++        using var vm = new TasksViewModel(client);
++        await vm.ActivateAsync();
++        vm.SelectedPriorityFilter = DesktopTaskPriority.Critical;
++        Assert.True(vm.IsFilteredEmpty);
++        Assert.True(vm.LoadMoreCommand.CanExecute(null));
++        Assert.StartsWith("Найдено среди загруженных задач: 0 из 1", vm.DisplayedCountText);
++        Assert.Null(vm.SelectedItem);
++        await vm.LoadNextPageAsync();
++        Assert.Equal(matching.Id, Assert.Single(vm.Items).Id);
++        await vm.LoadNextPageAsync();
++        Assert.Equal(matching.Id, Assert.Single(vm.Items).Id);
++        Assert.True(vm.HasNextPage);
++        await vm.LoadNextPageAsync();
++        Assert.Equal(TasksScreenState.InvalidCursor, vm.State);
++        Assert.Contains("Результат неполный", vm.DisplayedCountText);
++        vm.SelectedPriorityFilter = null;
++        Assert.Equal(2, vm.Items.Count); // No duplicate from the second page.
++        Assert.Equal(4, client.PageCallCount);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task Filter_LocalOfflineReadOnlyDoesNotReadDetailsOrWrite(bool offline)
++    {
++        var first = CreateTask(priority: DesktopTaskPriority.Low);
++        var second = CreateTask(priority: DesktopTaskPriority.High);
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage([first, second]));
++        using var vm = new TasksViewModel(client, ["Task.Read"]);
++        await vm.ActivateAsync();
++        vm.SelectedItem = vm.Items.Single(item => item.Id == first.Id);
++        var detailReads = client.DetailCallCount;
++        if (offline) vm.UpdateConnectivity(false);
++        vm.SelectedPriorityFilter = DesktopTaskPriority.High;
++        Assert.Equal(second.Id, Assert.Single(vm.Items).Id);
++        Assert.Null(vm.SelectedItem);
++        await vm.ResetFiltersCommand.ExecuteAsync();
++        Assert.Equal(1, client.PageCallCount);
++        Assert.Equal(detailReads, client.DetailCallCount);
++        Assert.Equal(0, client.CreateCallCount + client.PatchCallCount + client.TransitionCallCount);
++        Assert.True(vm.IsReadOnly);
++        Assert.False(vm.NewTaskCommand.CanExecute(null));
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task Filter_CannotRestoreDataAfterReadDeniedOrSessionExpired(bool expired)
++    {
++        var client = new FakeTasksApiClient();
++        client.EnqueuePage(SucceededPage([CreateTask()]));
++        client.EnqueuePage(expired ? new DesktopTasksApiResult<DesktopTaskPage>.AuthenticationFailure()
++            : new DesktopTasksApiResult<DesktopTaskPage>.Forbidden());
++        using var vm = new TasksViewModel(client, ["Task.Read"]);
++        await vm.ActivateAsync();
++        await vm.RefreshAsync();
++        vm.SelectedPriorityFilter = DesktopTaskPriority.Critical;
++        await vm.ResetFiltersCommand.ExecuteAsync();
++        Assert.Empty(vm.Items);
++        Assert.False(vm.IsFilteredEmpty);
++        Assert.False(vm.HasNextPage);
++        Assert.Equal(expired ? TasksScreenState.SessionEnded : TasksScreenState.Forbidden, vm.State);
++        Assert.Equal(2, client.PageCallCount);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TaskSortingTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TaskSortingTests.cs
+new file mode 100644
+index 0000000..3185a2f
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TaskSortingTests.cs
+@@ -0,0 +1,246 @@
++using System.Globalization;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++using Task.Domain;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed partial class TasksViewModelTests
++{
++    private static readonly DateTimeOffset SortTime = new(2026, 10, 16, 12, 0, 0, TimeSpan.Zero);
++    private static DesktopTaskDto SortTask(int id, string title = "Задача") => CreateTask(title) with
++    {
++        Id = Guid.Parse($"00000000-0000-0000-0000-{id:000000000000}"),
++        CreatedAtUtc = SortTime.AddDays(-1), UpdatedAtUtc = SortTime, DeadlineAtUtc = null,
++    };
++
++    [Theory]
++    [InlineData(TaskSortOrder.UpdatedNewest, 3, 2, 1)]
++    [InlineData(TaskSortOrder.UpdatedOldest, 1, 2, 3)]
++    [InlineData(TaskSortOrder.DeadlineNearest, 1, 2, 3)]
++    [InlineData(TaskSortOrder.DeadlineLatest, 3, 2, 1)]
++    [InlineData(TaskSortOrder.PriorityHighest, 3, 2, 1)]
++    [InlineData(TaskSortOrder.PriorityLowest, 1, 2, 3)]
++    [InlineData(TaskSortOrder.TitleAscending, 1, 2, 3)]
++    [InlineData(TaskSortOrder.TitleDescending, 3, 2, 1)]
++    public async System.Threading.Tasks.Task Sort_AllEightDirections(TaskSortOrder order, int a, int b, int c)
++    {
++        var tasks = new[]
++        {
++            SortTask(1, "Арбуз") with { UpdatedAtUtc = SortTime.AddDays(-1), DeadlineAtUtc = SortTime, Priority = DesktopTaskPriority.Low },
++            SortTask(2, "Ёлка") with { DeadlineAtUtc = SortTime.AddDays(1), Priority = DesktopTaskPriority.Normal },
++            SortTask(3, "Яблоко") with { UpdatedAtUtc = SortTime.AddDays(1), DeadlineAtUtc = SortTime.AddDays(2), Priority = DesktopTaskPriority.Critical },
++        };
++        var client = new FakeTasksApiClient(); client.EnqueuePage(SucceededPage([tasks[1], tasks[2], tasks[0]]));
++        using var vm = new TasksViewModel(client); await vm.ActivateAsync();
++        vm.SelectedSortOrder = order;
++        Assert.Equal(new[] { tasks[a - 1].Id, tasks[b - 1].Id, tasks[c - 1].Id }, vm.Items.Select(row => row.Id));
++        Assert.Equal(8, vm.SortOrders.Count);
++        Assert.Equal(1, client.PageCallCount);
++    }
++
++    [Theory]
++    [InlineData(TaskSortOrder.UpdatedNewest)]
++    [InlineData(TaskSortOrder.UpdatedOldest)]
++    [InlineData(TaskSortOrder.DeadlineNearest)]
++    [InlineData(TaskSortOrder.DeadlineLatest)]
++    [InlineData(TaskSortOrder.PriorityHighest)]
++    [InlineData(TaskSortOrder.PriorityLowest)]
++    [InlineData(TaskSortOrder.TitleAscending)]
++    [InlineData(TaskSortOrder.TitleDescending)]
++    public void Sort_EqualValuesUseIdRegardlessOfInputOrder(TaskSortOrder order)
++    {
++        var first = SortTask(1); var second = SortTask(2);
++        foreach (var input in new[] { new[] { second, first }, new[] { first, second } })
++            Assert.Equal(new[] { first.Id, second.Id }, TaskSorting.Apply(input, order, TimeZoneInfo.Utc).Select(task => task.Id));
++    }
++
++    [Theory]
++    [InlineData(TaskSortOrder.UpdatedNewest)]
++    [InlineData(TaskSortOrder.UpdatedOldest)]
++    [InlineData(TaskSortOrder.DeadlineNearest)]
++    [InlineData(TaskSortOrder.DeadlineLatest)]
++    public void Sort_NullDatesAlwaysLast(TaskSortOrder order)
++    {
++        var missing1 = SortTask(1) with { UpdatedAtUtc = null };
++        var missing2 = SortTask(2) with { UpdatedAtUtc = null };
++        var dated = SortTask(3) with { DeadlineAtUtc = SortTime };
++        Assert.Equal(new[] { dated.Id, missing1.Id, missing2.Id },
++            TaskSorting.Apply([missing2, dated, missing1], order, TimeZoneInfo.Utc).Select(task => task.Id));
++    }
++
++    [Fact]
++    public void Sort_PriorityUsesBusinessOrderAndItsReverse()
++    {
++        var tasks = Enum.GetValues<DesktopTaskPriority>().Select((priority, i) => SortTask(i + 1) with { Priority = priority }).ToArray();
++        Assert.Equal(new[] { DesktopTaskPriority.Critical, DesktopTaskPriority.High, DesktopTaskPriority.Normal, DesktopTaskPriority.Low },
++            TaskSorting.Apply(tasks, TaskSortOrder.PriorityHighest, TimeZoneInfo.Utc).Select(task => task.Priority));
++        Assert.Equal(tasks.Select(task => task.Priority), TaskSorting.Apply(tasks, TaskSortOrder.PriorityLowest, TimeZoneInfo.Utc).Select(task => task.Priority));
++    }
++
++    [Fact]
++    public void Sort_RussianTitlesIgnoreOsCultureAndKeepUnusualInputUnmodified()
++    {
++        var before = CultureInfo.CurrentCulture;
++        var tasks = new[] { SortTask(4, "Я"), SortTask(3, "ёж"), SortTask(2, "Арбуз"), SortTask(1, "арбуз"),
++            SortTask(6, ""), SortTask(5, null!), SortTask(7, "🚀"), SortTask(8, new string('Ж', 10000)) };
++        try
++        {
++            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
++            var ascending = TaskSorting.Apply(tasks, TaskSortOrder.TitleAscending, TimeZoneInfo.Utc).ToArray();
++            Assert.Equal(new[] { tasks[5].Id, tasks[4].Id }, ascending.Take(2).Select(task => task.Id));
++            Assert.True(Array.IndexOf(ascending, tasks[3]) < Array.IndexOf(ascending, tasks[2]));
++            Assert.True(Array.IndexOf(ascending, tasks[2]) < Array.IndexOf(ascending, tasks[1]));
++            Assert.True(Array.IndexOf(ascending, tasks[1]) < Array.IndexOf(ascending, tasks[0]));
++            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("tr-TR");
++            Assert.Equal(ascending, TaskSorting.Apply(tasks, TaskSortOrder.TitleAscending, TimeZoneInfo.Utc));
++            Assert.Null(tasks[5].Title); Assert.Equal("арбуз", tasks[3].Title);
++            Assert.Equal(tasks.Length, TaskSorting.Apply(tasks, TaskSortOrder.TitleDescending, TimeZoneInfo.Utc).Count());
++        }
++        finally { CultureInfo.CurrentCulture = before; }
++    }
++
++    [Fact]
++    public void Sort_MixedDeadlinesUseNormativeInstantPrecedenceAndCalendarDates()
++    {
++        var zone = new FilterClock().LocalTimeZone; // UTC+3
++        var instant = SortTask(1) with { DeadlineAtUtc = new DateTimeOffset(2026, 10, 16, 21, 30, 0, TimeSpan.Zero),
++            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 12, 1), DeadlineTimeZone = "UTC" } };
++        var date = SortTask(2) with { Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 10, 17), DeadlineTimeZone = "UTC" } };
++        var earlier = SortTask(3) with { Card = date.Card! with { DeadlineDate = new DateOnly(2026, 10, 16) } };
++        var later = SortTask(4) with { DeadlineAtUtc = instant.DeadlineAtUtc!.Value.AddHours(1) };
++        var missing = SortTask(5);
++        var tasks = new[] { missing, date, later, earlier, instant };
++        Assert.Equal(new[] { earlier.Id, instant.Id, later.Id, date.Id, missing.Id },
++            TaskSorting.Apply(tasks, TaskSortOrder.DeadlineNearest, zone).Select(task => task.Id));
++        Assert.Equal(new[] { date.Id, later.Id, instant.Id, earlier.Id, missing.Id },
++            TaskSorting.Apply(tasks, TaskSortOrder.DeadlineLatest, zone).Select(task => task.Id));
++        Assert.Equal(new DateOnly(2026, 12, 1), instant.Card!.DeadlineDate);
++        Assert.Equal(new DateOnly(2026, 10, 17), date.Card!.DeadlineDate);
++    }
++
++    [Fact]
++    public void Sort_ExactInstantsKeepOrderAcrossDstFoldAndDifferentOffsets()
++    {
++        var first = SortTask(1) with { DeadlineAtUtc = DateTimeOffset.Parse("2026-11-01T01:45:00-04:00") };
++        var second = SortTask(2) with { DeadlineAtUtc = DateTimeOffset.Parse("2026-11-01T01:15:00-05:00") };
++        var equal = SortTask(3) with { DeadlineAtUtc = second.DeadlineAtUtc!.Value.ToOffset(TimeSpan.FromHours(3)), UpdatedAtUtc = second.UpdatedAtUtc!.Value.ToOffset(TimeSpan.FromHours(-5)) };
++        Assert.Equal(new[] { first.Id, second.Id, equal.Id }, TaskSorting.Apply([equal, second, first], TaskSortOrder.DeadlineNearest,
++            TimeZoneInfo.FindSystemTimeZoneById("America/New_York")).Select(task => task.Id));
++        Assert.Equal(new[] { second.Id, equal.Id }, TaskSorting.Apply([equal, second], TaskSortOrder.UpdatedNewest, TimeZoneInfo.Utc).Select(task => task.Id));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Sort_FiltersResetSelectionDetailsAndSessionStayLocal()
++    {
++        var target = SortTask(2, "Яблоко") with { Priority = DesktopTaskPriority.High, Card = new TaskCardContent { ProjectId = SortTask(9).Id } };
++        var other = target with { Id = SortTask(1).Id, Title = "Арбуз" };
++        var excluded = SortTask(3, "Абрикос");
++        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(target) };
++        client.EnqueuePage(SucceededPage([target, excluded, other]));
++        client.EnqueuePage(SucceededPage([other, target, excluded]));
++        using var vm = new TasksViewModel(client, ["Task.Read"]); await vm.ActivateAsync();
++        vm.SelectedItem = vm.Items.Single(row => row.Id == target.Id);
++        var selected = vm.SelectedItem; var details = vm.SelectedDetails; var reads = client.DetailCallCount;
++        vm.SelectedPriorityFilter = DesktopTaskPriority.High;
++        vm.SelectedProjectFilter = vm.ProjectFilters.Single(option => option.ProjectId == target.Card!.ProjectId);
++        vm.UpdateConnectivity(false);
++        foreach (var option in vm.SortOrders) vm.SelectedSortOrder = option.Value;
++        vm.SelectedSortOrder = TaskSortOrder.TitleAscending;
++        Assert.Equal(new[] { other.Id, target.Id }, vm.Items.Select(row => row.Id));
++        Assert.Same(selected, vm.SelectedItem); Assert.Same(details, vm.SelectedDetails);
++        Assert.Equal(reads, client.DetailCallCount); Assert.Equal(1, client.PageCallCount);
++        Assert.True(vm.IsReadOnly);
++        await vm.ResetFiltersCommand.ExecuteAsync();
++        Assert.Equal(TaskSortOrder.TitleAscending, vm.SelectedSortOrder);
++        Assert.Equal(3, vm.Items.Count); Assert.Same(selected, vm.SelectedItem);
++        vm.UpdateConnectivity(true); await vm.RefreshAsync();
++        Assert.Equal(target.Id, vm.SelectedItem?.Id); Assert.Equal(TaskSortOrder.TitleAscending, vm.SelectedSortOrder);
++        vm.Deactivate(); await vm.ActivateAsync();
++        Assert.Equal(TaskSortOrder.TitleAscending, vm.SelectedSortOrder);
++        Assert.Equal(0, client.CreateCallCount + client.PatchCallCount + client.TransitionCallCount);
++        vm.SelectedSortOrder = (TaskSortOrder)999; // Invalid input cannot erase the loaded list.
++        Assert.Equal(3, vm.Items.Count); Assert.Equal(TaskSortOrder.TitleAscending, vm.SelectedSortOrder);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Sort_PageMergeDeduplicatesKeepsNewerVersionAndRecoversFromNetworkFailure()
++    {
++        var first = SortTask(2, "Б") with { Version = 5 }; var next = SortTask(1, "А");
++        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(first) };
++        client.EnqueuePage(SucceededPage([first, first with { Version = 1, Title = "Устарела" }], "next"));
++        client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.ServerUnavailable());
++        client.EnqueuePage(SucceededPage([first with { Version = 2, Title = "Устарела" }, next, next]));
++        using var vm = new TasksViewModel(client); await vm.ActivateAsync();
++        vm.SelectedSortOrder = TaskSortOrder.TitleAscending;
++        var selected = vm.SelectedItem;
++        await vm.LoadNextPageAsync();
++        Assert.Equal(first.Id, Assert.Single(vm.Items).Id); Assert.True(vm.HasNextPage);
++        vm.SelectedSortOrder = TaskSortOrder.TitleDescending;
++        Assert.Same(selected, vm.SelectedItem);
++        await vm.LoadNextPageAsync(); vm.SelectedSortOrder = TaskSortOrder.TitleAscending;
++        Assert.Equal(new[] { next.Id, first.Id }, vm.Items.Select(row => row.Id));
++        Assert.Equal(5, vm.Items.Single(row => row.Id == first.Id).Source.Version);
++        Assert.Equal(first.Id, vm.SelectedItem?.Id); Assert.False(vm.HasNextPage);
++        Assert.Equal(3, client.PageCallCount);
++    }
++
++    [Theory]
++    [InlineData(TaskSortOrder.PriorityHighest)]
++    [InlineData(TaskSortOrder.TitleDescending)]
++    [InlineData(TaskSortOrder.DeadlineNearest)]
++    [InlineData(TaskSortOrder.UpdatedNewest)]
++    public async System.Threading.Tasks.Task Sort_ConfirmedSaveRepositionsWithoutDuplicates(TaskSortOrder order)
++    {
++        var edited = SortTask(1, "А") with { UpdatedAtUtc = SortTime.AddDays(-1), Priority = DesktopTaskPriority.Low, DeadlineAtUtc = SortTime.AddDays(3) };
++        var other = SortTask(2, "Б") with { DeadlineAtUtc = SortTime.AddDays(2) };
++        var saved = edited with { Version = 2, Title = "Я", Priority = DesktopTaskPriority.Critical, DeadlineAtUtc = SortTime, UpdatedAtUtc = SortTime.AddDays(1) };
++        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(edited),
++            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, 2, false) };
++        client.EnqueuePage(SucceededPage([other, edited], "next"));
++        client.EnqueuePage(SucceededPage([edited])); // A stale cursor snapshot after save.
++        using var vm = new TasksViewModel(client, WriteCapabilities); await vm.ActivateAsync();
++        vm.SelectedSortOrder = order;
++        Assert.Equal(other.Id, vm.Items[0].Id);
++        vm.SelectedItem = vm.Items.Single(row => row.Id == edited.Id);
++        await vm.EditTaskCommand.ExecuteAsync(); vm.Editor!.Title = "Я";
++        await vm.SaveEditorCommand.ExecuteAsync();
++        Assert.Equal(saved.Id, vm.Items[0].Id); Assert.Equal(2, vm.Items.Count);
++        Assert.Equal(saved, vm.SelectedItem!.Source); Assert.Equal(saved.Id, vm.SelectedDetails?.Id);
++        await vm.LoadNextPageAsync();
++        Assert.Equal(saved, vm.Items[0].Source); Assert.Equal(2, vm.Items.Count);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Sort_FilteredSaveAndRemovedSelectionAreSafe()
++    {
++        var task = SortTask(1) with { Priority = DesktopTaskPriority.High };
++        var saved = task with { Version = 2, Priority = DesktopTaskPriority.Low, Card = new TaskCardContent { ProjectId = SortTask(8).Id }, Status = DesktopTaskStatus.InProgress };
++        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
++            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, 2, false) };
++        client.EnqueuePage(SucceededPage([task])); client.EnqueuePage(SucceededPage([]));
++        using var vm = new TasksViewModel(client, WriteCapabilities); await vm.ActivateAsync();
++        vm.SelectedPriorityFilter = DesktopTaskPriority.High; vm.SelectedSortOrder = TaskSortOrder.PriorityHighest;
++        await vm.EditTaskCommand.ExecuteAsync(); vm.Editor!.Priority = vm.Editor.Priorities.Single(option => option.Value == DesktopTaskPriority.Low);
++        await vm.SaveEditorCommand.ExecuteAsync();
++        Assert.Empty(vm.Items); Assert.Null(vm.SelectedItem); Assert.Null(vm.SelectedDetails);
++        await vm.ResetFiltersCommand.ExecuteAsync(); Assert.Equal(saved, Assert.Single(vm.Items).Source);
++        vm.SelectedItem = vm.Items[0];
++        await vm.RefreshAsync(); Assert.Empty(vm.Items); Assert.Null(vm.SelectedItem); Assert.Null(vm.SelectedDetails);
++        Assert.Equal(TaskSortOrder.PriorityHighest, vm.SelectedSortOrder);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task Sort_CannotResurrectForbiddenOrExpiredData(bool expired)
++    {
++        var client = new FakeTasksApiClient(); client.EnqueuePage(SucceededPage([SortTask(1)], "next"));
++        client.EnqueuePage(expired ? new DesktopTasksApiResult<DesktopTaskPage>.AuthenticationFailure() : new DesktopTasksApiResult<DesktopTaskPage>.Forbidden());
++        using var vm = new TasksViewModel(client, ["Task.Read"]); await vm.ActivateAsync();
++        await vm.LoadNextPageAsync();
++        foreach (var option in vm.SortOrders) { vm.SelectedSortOrder = option.Value; Assert.Empty(vm.Items); }
++        Assert.Null(vm.SelectedItem); Assert.Null(vm.SelectedDetails); Assert.False(vm.HasNextPage);
++        Assert.Equal(2, client.PageCallCount);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs
+index c18a16b..eb9f598 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs
+@@ -42,7 +42,7 @@ public sealed partial class TasksViewModelTests
+         Assert.False(viewModel.ShowInlineMessage);
+         Assert.True(viewModel.HasSuccessfulRefresh);
+         Assert.StartsWith("Последнее обновление:", viewModel.LastSuccessfulRefreshText, StringComparison.Ordinal);
+-        Assert.Equal("Показано 1 из 1", viewModel.DisplayedCountText);
++        Assert.StartsWith("Найдено среди загруженных задач: 1 из 1", viewModel.DisplayedCountText);
+         Assert.Single(viewModel.Items);
+         Assert.Equal("В работе", viewModel.Items[0].StatusText);
+         Assert.Equal("Критический", viewModel.Items[0].PriorityText);
+@@ -98,10 +98,10 @@ public sealed partial class TasksViewModelTests
+     }
+ 
+     [Fact]
+-    public async global::System.Threading.Tasks.Task LoadMore_AppendsNextPage()
++    public async global::System.Threading.Tasks.Task LoadMore_IntegratesNextPageInDefaultSort()
+     {
+-        var first = CreateTask(title: "Первая");
+-        var second = CreateTask(title: "Вторая");
++        var first = CreateTask(title: "Первая") with { UpdatedAtUtc = new DateTimeOffset(2026, 10, 15, 0, 0, 0, TimeSpan.Zero) };
++        var second = CreateTask(title: "Вторая") with { UpdatedAtUtc = first.UpdatedAtUtc!.Value.AddDays(1) };
+         var client = new FakeTasksApiClient();
+         client.EnqueuePage(SucceededPage([first], "cursor-1"));
+         client.EnqueuePage((cursor, _) => global::System.Threading.Tasks.Task.FromResult(
+@@ -114,7 +114,7 @@ public sealed partial class TasksViewModelTests
+         var started = await viewModel.LoadNextPageAsync();
+ 
+         Assert.True(started);
+-        Assert.Equal(["Первая", "Вторая"], viewModel.Items.Select(item => item.Title));
++        Assert.Equal(["Вторая", "Первая"], viewModel.Items.Select(item => item.Title));
+         Assert.False(viewModel.HasNextPage);
+         Assert.Equal(TasksScreenState.Loaded, viewModel.State);
+     }
+@@ -740,7 +740,7 @@ public sealed partial class TasksViewModelTests
+         using var viewModel = new TasksViewModel(client, ["Task.Read"]);
+         await viewModel.ActivateAsync();
+ 
+-        viewModel.SelectedStatusFilter = "В работе";
++        viewModel.SelectedStatusFilter = DesktopTaskStatus.InProgress;
+ 
+         Assert.Empty(viewModel.Items);
+         Assert.True(viewModel.IsFilteredEmpty);
+@@ -802,12 +802,13 @@ public sealed partial class TasksViewModelTests
+         }
+     }
+ 
+-    internal sealed class FakeTasksApiClient : IDesktopTasksApiClient
++    internal class FakeTasksApiClient : IDesktopTasksApiClient
+     {
+         private readonly ConcurrentQueue<Func<string?, CancellationToken,
+             global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>> _pages = new();
+ 
+         public int PageCallCount { get; private set; }
++        public int DetailCallCount { get; private set; }
+         public int CreateCallCount { get; private set; }
+         public int PatchCallCount { get; private set; }
+         public int TransitionCallCount { get; private set; }
+@@ -849,7 +850,13 @@ public sealed partial class TasksViewModelTests
+         public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(
+             Guid id,
+             CancellationToken cancellationToken = default) =>
+-            global::System.Threading.Tasks.Task.FromResult(DetailResult);
++            CountDetailRead();
++
++        private global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> CountDetailRead()
++        {
++            DetailCallCount++;
++            return global::System.Threading.Tasks.Task.FromResult(DetailResult);
++        }
+ 
+         public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(
+             DesktopCreateTaskCommand command,

@@ -1,0 +1,102 @@
+{
+  "version": "7.2.0",
+  "sourceCommit": "687b3877c64af98d691dc2ef23978b604cfa8f98",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "path": "evidence/api-integration.trx",
+      "bytes": 263360,
+      "sha256": "d5de71ec9c8035fe385cda13f522f167bbc6b93e7c9999c6846b1c31e5f15539"
+    },
+    {
+      "path": "evidence/build-release.txt",
+      "bytes": 152,
+      "sha256": "06265c88d2ce44fa724fcabeddea1bfc0c0b375e9bfb3bd0413bb1aa65f1b87b"
+    },
+    {
+      "path": "evidence/context-native-final.trx",
+      "bytes": 3139,
+      "sha256": "3b3acfae2725cc6c4bfa3cee3250fa70193ace1af0378e60e2c4289caa3df61c"
+    },
+    {
+      "path": "evidence/desktop-final.trx",
+      "bytes": 1682708,
+      "sha256": "1c0f4a8f78f65919aace7ac5b8a6d09bc9622ea67d40c902fc0b37990c1eeb67"
+    },
+    {
+      "path": "evidence/domain-query-final.trx",
+      "bytes": 118329,
+      "sha256": "43d38e83d3f6709cbb8f7697773e953a022fcbe25425f2e2aa3a0444d34794d8"
+    },
+    {
+      "path": "evidence/filters-1200.png",
+      "bytes": 117919,
+      "sha256": "129afb80abcbf3ab941f29e223a8299102e15210a8b7320214ba9009fb42edcb"
+    },
+    {
+      "path": "evidence/filters-1280.png",
+      "bytes": 110975,
+      "sha256": "9bbf728f40e1ea213d44a16de789bf3803f051ff53e6ad836c2205a5cfad44ad"
+    },
+    {
+      "path": "evidence/filters-1536.png",
+      "bytes": 145383,
+      "sha256": "a8cb74ace433d0873da4a64f2581a895174956ae061e9a14fa799ec959ef344d"
+    },
+    {
+      "path": "evidence/filters-800.png",
+      "bytes": 64161,
+      "sha256": "013f1fd0fadb16b353bd78d7243642d775c9b251b991856b1985d8001656a01c"
+    },
+    {
+      "path": "evidence/filters-960.png",
+      "bytes": 86690,
+      "sha256": "6cb12ba57b348e19161ece9beb54df726df40e5fc914f6afd4c8522b923a1bf5"
+    },
+    {
+      "path": "evidence/sorting-final.trx",
+      "bytes": 53572,
+      "sha256": "3e725db7ea7624db5a602c6e071aded205e1e3b7de364d59b1896574cce0ef3f"
+    },
+    {
+      "path": "evidence/sorting-performance.txt",
+      "bytes": 472,
+      "sha256": "6217af44386e195de87385beb6e87dc87198141fa523462de7599a6f074efca9"
+    },
+    {
+      "path": "evidence/targeted-final.trx",
+      "bytes": 168204,
+      "sha256": "0947488948c623f84f644d0773399274a89c6144db7ddec024b001576f9b6df7"
+    },
+    {
+      "path": "feature.patch",
+      "bytes": 94645,
+      "sha256": "580c983a7b8af4e0e5a32dab24ef1b5d85aed84485d44fcc936201c0be906879"
+    },
+    {
+      "path": "source.zip",
+      "bytes": 55812,
+      "sha256": "70197933e6e7081945eea2bc253d87e2b27ef9ba2a504dfd6ddc6ce37ae5ff15"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 16461,
+      "sha256": "16c8ea05f478669c8b2462fe6846790f870c2972f3c0187a9180e9687efb76d5"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 4416,
+      "sha256": "29c205b2ca3494136ba689b1f528326237bf9141b3f40253360de6adb5fca5c5"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "d024af23973dc2244f09bf75b146cdb22275c37e1b1343bbbefc0933cbe9c17d"
+    }
+  ],
+  "checksumPolicy": "manifest excludes itself and SHA256SUMS; SHA256SUMS includes manifest, excludes itself"
+}
