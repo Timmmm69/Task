@@ -98,10 +98,10 @@ public sealed partial class TasksViewModelTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task LoadMore_AppendsNextPage()
+    public async global::System.Threading.Tasks.Task LoadMore_IntegratesNextPageInDefaultSort()
     {
-        var first = CreateTask(title: "Первая");
-        var second = CreateTask(title: "Вторая");
+        var first = CreateTask(title: "Первая") with { UpdatedAtUtc = new DateTimeOffset(2026, 10, 15, 0, 0, 0, TimeSpan.Zero) };
+        var second = CreateTask(title: "Вторая") with { UpdatedAtUtc = first.UpdatedAtUtc!.Value.AddDays(1) };
         var client = new FakeTasksApiClient();
         client.EnqueuePage(SucceededPage([first], "cursor-1"));
         client.EnqueuePage((cursor, _) => global::System.Threading.Tasks.Task.FromResult(
@@ -114,7 +114,7 @@ public sealed partial class TasksViewModelTests
         var started = await viewModel.LoadNextPageAsync();
 
         Assert.True(started);
-        Assert.Equal(["Первая", "Вторая"], viewModel.Items.Select(item => item.Title));
+        Assert.Equal(["Вторая", "Первая"], viewModel.Items.Select(item => item.Title));
         Assert.False(viewModel.HasNextPage);
         Assert.Equal(TasksScreenState.Loaded, viewModel.State);
     }

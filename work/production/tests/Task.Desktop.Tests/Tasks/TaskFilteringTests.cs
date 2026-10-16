@@ -137,9 +137,9 @@ public sealed partial class TasksViewModelTests
         using var vm = new TasksViewModel(client, filterTimeProvider: clock);
         await vm.ActivateAsync();
         vm.SelectedDeadlineFilter = TaskDeadlineFilter.Today;
-        Assert.Equal(new[] { today.Id, completed.Id, cancelled.Id }, vm.Items.Select(item => item.Id));
+        Assert.Equal(new[] { today.Id, completed.Id, cancelled.Id }.Order(), vm.Items.Select(item => item.Id).Order());
         vm.SelectedDeadlineFilter = TaskDeadlineFilter.Overdue;
-        Assert.Equal(new[] { today.Id, yesterday.Id }, vm.Items.Select(item => item.Id));
+        Assert.Equal(new[] { today.Id, yesterday.Id }.Order(), vm.Items.Select(item => item.Id).Order());
         // Date-only Oct 16 is still today in its own UTC zone: domain rule says not overdue.
         Assert.False(TaskRules.IsOverdue(null, dateOnly.Card, clock.GetUtcNow()));
         vm.SelectedDeadlineFilter = TaskDeadlineFilter.NoDeadline;
@@ -189,6 +189,7 @@ public sealed partial class TasksViewModelTests
         client.EnqueuePage(SucceededPage(tasks));
         using var vm = new TasksViewModel(client, filterTimeProvider: new FilterClock());
         await vm.ActivateAsync();
+        vm.SelectedItem = vm.Items.Single(item => item.Id == target.Id);
         var selected = vm.SelectedItem;
         vm.SelectedStatusFilter = DesktopTaskStatus.InProgress;
         vm.SelectedPriorityFilter = DesktopTaskPriority.High;
@@ -249,6 +250,7 @@ public sealed partial class TasksViewModelTests
         client.EnqueuePage(SucceededPage([first, second]));
         using var vm = new TasksViewModel(client, ["Task.Read"]);
         await vm.ActivateAsync();
+        vm.SelectedItem = vm.Items.Single(item => item.Id == first.Id);
         var detailReads = client.DetailCallCount;
         if (offline) vm.UpdateConnectivity(false);
         vm.SelectedPriorityFilter = DesktopTaskPriority.High;

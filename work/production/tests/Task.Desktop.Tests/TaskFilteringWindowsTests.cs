@@ -46,13 +46,15 @@ public sealed class TaskFilteringWindowsTests
                     app.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
                     foreach (var name in new[] { "IconKeyToGeometryConverter", "ShellNavigationWidthConverter", "WindowWidthAtLeastConverter", "ResponsiveGridLengthConverter", "TimelineLaneMarginConverter", "CalendarLaneWidthConverter", "CalendarLaneLeftConverter" })
                         app.Resources["Task." + name] = Activator.CreateInstance(typeof(MainWindow).Assembly.GetType("Task.Desktop.Converters." + name)!);
-                    var first = new DesktopTaskDto(Guid.NewGuid(), Guid.NewGuid(), 1, DateTimeOffset.UtcNow,
-                        DateTimeOffset.UtcNow, "Проверить фильтры", Guid.NewGuid(), DesktopTaskStatus.InProgress,
+                    var now = new DateTimeOffset(2026, 10, 16, 12, 0, 0, TimeSpan.Zero);
+                    var first = new DesktopTaskDto(Guid.Parse("00000000-0000-0000-0000-000000000001"), Guid.NewGuid(), 1, now,
+                        now, "Проверить фильтры", Guid.NewGuid(), DesktopTaskStatus.InProgress,
                         DesktopTaskPriority.High, null, null, [], [], null);
+                    var peer = first with { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Title = "Акт проверки" };
                     var second = first with { Id = Guid.NewGuid(), Priority = DesktopTaskPriority.Critical };
-                    var client = new TaskScreen.TasksViewModelTests.FakeTasksApiClient();
-                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([first], "next", null)));
-                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([second], null, null)));
+                    var client = new TaskScreen.TasksViewModelTests.FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(first) };
+                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([first, peer], "next", null)));
+                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new([second], "remaining", null)));
                     using var tasks = new TasksViewModel(client, ["Task.Read"]);
                     using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
                     shell.SelectedSection = shell.Sections.Single(section => section.Route == "tasks");
@@ -63,7 +65,9 @@ public sealed class TaskFilteringWindowsTests
                     var project = Find<ComboBox>(window, "TasksProjectFilter");
                     var priority = Find<ComboBox>(window, "TasksPriorityFilter");
                     var deadline = Find<ComboBox>(window, "TasksDeadlineFilter");
-                    Assert.All(new[] { status, project, priority, deadline }, combo => Assert.False(string.IsNullOrEmpty(AutomationProperties.GetName(combo))));
+                    var sort = Find<ComboBox>(window, "TasksSortOrder");
+                    Assert.All(new[] { status, project, priority, deadline, sort }, combo => Assert.False(string.IsNullOrEmpty(AutomationProperties.GetName(combo))));
+                    Assert.Equal(8, sort.Items.Count);
                     var list = Find<ListBox>(window, "TasksList");
                     var selected = tasks.SelectedItem;
                     var reads = client.DetailCallCount;
@@ -73,6 +77,14 @@ public sealed class TaskFilteringWindowsTests
                     await Drain(window);
                     Assert.Same(selected, tasks.SelectedItem);
                     Assert.Same(selected, list.SelectedItem);
+                    Assert.Equal(reads, client.DetailCallCount);
+                    var details = tasks.SelectedDetails;
+                    foreach (var option in tasks.SortOrders)
+                    {
+                        sort.SelectedValue = option.Value; await Drain(window);
+                        Assert.Same(selected, tasks.SelectedItem); Assert.Same(selected, list.SelectedItem);
+                        Assert.Same(details, tasks.SelectedDetails);
+                    }
                     Assert.Equal(reads, client.DetailCallCount);
                     // WPF must preserve the selected ID even when project options are rebuilt.
                     project.SelectedItem = tasks.ProjectFilters.Single(option => !option.IsAll);
@@ -88,20 +100,25 @@ public sealed class TaskFilteringWindowsTests
                     Assert.Null(status.SelectedValue); Assert.Null(priority.SelectedValue);
                     Assert.Equal(TaskDeadlineFilter.All, deadline.SelectedValue);
                     Assert.True(((TaskProjectFilter)project.SelectedItem).IsAll);
+                    Assert.Equal(TaskSortOrder.TitleDescending, sort.SelectedValue);
                     status.SelectedValue = DesktopTaskStatus.InProgress; // Keep reset enabled for the Tab traversal.
-                    foreach (var size in new[] { (800d, 480d), (1200d, 900d) })
+                    // Logical viewports for 1920x1080 at 125/150/200%, plus the minimum window.
+                    // The physical desktop DPI is recorded separately; these are layout equivalents.
+                    foreach (var size in new[] { (800d, 480d), (1200d, 900d), (1536d, 864d), (1280d, 720d), (960d, 540d) })
                     {
                         window.Width = size.Item1; window.Height = size.Item2; await Drain(window);
-                        foreach (var combo in new[] { status, project, priority, deadline })
+                        foreach (var combo in new[] { status, project, priority, deadline, sort })
                         {
                             var origin = combo.TranslatePoint(new Point(), window);
                             Assert.True(combo.IsVisible && combo.ActualHeight > 0);
                             Assert.InRange(origin.X + combo.ActualWidth, 0, window.ActualWidth);
                             Assert.InRange(origin.Y + combo.ActualHeight, 0, window.ActualHeight);
                         }
-                        Assert.True(list.ActualHeight >= 40, $"List viewport is only {list.ActualHeight} DIP");
+                        Assert.True(list.ActualHeight >= 40, $"List viewport is only {list.ActualHeight} DIP; " + string.Join("; ", new[] { status, project, priority, deadline, sort }.Select(combo => $"{AutomationProperties.GetAutomationId(combo)}={combo.TranslatePoint(new Point(), window)} {combo.ActualWidth}x{combo.ActualHeight}")));
+                        Assert.True(more.IsVisible && more.IsEnabled);
+                        Assert.InRange(more.TranslatePoint(new Point(0, more.ActualHeight), window).Y, 0, window.ActualHeight);
                         Assert.True(status.Focus());
-                        foreach (var next in new Control[] { project, priority, deadline, Find<Button>(window, "TasksResetFilters") })
+                        foreach (var next in new Control[] { project, priority, deadline, sort, Find<Button>(window, "TasksResetFilters") })
                         {
                             Assert.True(((UIElement)Keyboard.FocusedElement).MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
                             Assert.Same(next, Keyboard.FocusedElement);
@@ -117,6 +134,30 @@ public sealed class TaskFilteringWindowsTests
                         }
                     }
                     Assert.Equal(2, client.PageCallCount);
+                    // Measure the complete synchronous filter/sort/projection on this WPF dispatcher.
+                    var bulk = Enumerable.Range(1, 10000).Select(i => first with
+                    {
+                        Id = Guid.Parse($"00000000-0000-0000-0001-{i:000000000000}"),
+                        Title = $"Задача {10000 - i:00000}", Priority = (DesktopTaskPriority)(i % 4),
+                        UpdatedAtUtc = now.AddMinutes(-i), DeadlineAtUtc = i % 5 == 0 ? null : now.AddMinutes(i),
+                    }).ToArray();
+                    client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new(bulk, null, null)));
+                    await tasks.RefreshAsync(); await tasks.ResetFiltersCommand.ExecuteAsync(); await Drain(window);
+                    var timings = new List<string>();
+                    foreach (var option in tasks.SortOrders)
+                    {
+                        var watch = Stopwatch.StartNew(); tasks.SelectedSortOrder = option.Value; watch.Stop();
+                        timings.Add($"{option.Value}: {watch.Elapsed.TotalMilliseconds:F2} ms");
+                        Assert.Equal(10000, tasks.Items.Count);
+                        Assert.True(watch.Elapsed < TimeSpan.FromSeconds(2), $"10k local rows took {watch.Elapsed}");
+                        await Drain(window);
+                        Assert.True(list.ItemContainerGenerator.ContainerFromIndex(9999) is null, "List must remain virtualized");
+                    }
+                    var output = Environment.GetEnvironmentVariable("TASK_FILTER_EVIDENCE");
+                    if (!string.IsNullOrEmpty(output))
+                        File.WriteAllLines(Path.Combine(output, "sorting-performance.txt"),
+                            new[] { $"WPF dispatcher, 10000 rows; physical DPI scale: {VisualTreeHelper.GetDpi(window).DpiScaleX}; OS: {Environment.OSVersion}; .NET: {Environment.Version}",
+                                "Times measure synchronous filter/sort/projection and binding notification; rendering is drained after each sample. One sample per order, no percentile claim." }.Concat(timings));
                     done.SetResult();
                 }
                 catch (Exception error) { done.SetException(error); }

@@ -295,6 +295,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private TaskProjectFilter _selectedProjectFilter = TaskProjectFilter.AllProjects;
     private DesktopTaskPriority? _selectedPriorityFilter;
     private TaskDeadlineFilter _selectedDeadlineFilter;
+    private TaskSortOrder _selectedSortOrder = TaskSortOrder.UpdatedNewest;
     private readonly TimeProvider _filterTimeProvider;
     private TaskItemViewModel? _selectedItem;
     private bool _replacingFilteredItems;
@@ -426,6 +427,22 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     {
         get => _projectFilters;
         private set { _projectFilters = value; OnPropertyChanged(); }
+    }
+
+    public IReadOnlyList<TaskFilterOption<TaskSortOrder>> SortOrders { get; } =
+        [new(TaskSortOrder.UpdatedNewest, "Последнее изменение: сначала новые"),
+         new(TaskSortOrder.UpdatedOldest, "Последнее изменение: сначала старые"),
+         new(TaskSortOrder.DeadlineNearest, "Срок: сначала ближайшие"),
+         new(TaskSortOrder.DeadlineLatest, "Срок: сначала поздние"),
+         new(TaskSortOrder.PriorityHighest, "Сначала высокий приоритет"),
+         new(TaskSortOrder.PriorityLowest, "Сначала низкий приоритет"),
+         new(TaskSortOrder.TitleAscending, "Название: А–Я"),
+         new(TaskSortOrder.TitleDescending, "Название: Я–А")];
+
+    public TaskSortOrder SelectedSortOrder
+    {
+        get => _selectedSortOrder;
+        set { if (Enum.IsDefined(value) && SetProperty(ref _selectedSortOrder, value)) ApplyLocalFilters(); }
     }
 
     public DesktopTaskStatus? SelectedStatusFilter
@@ -1007,10 +1024,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             if (result is DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
             {
                 var selectedId = SelectedItem?.Id;
-                _allTasks = _allTasks.Concat(success.Value.Items)
-                    .GroupBy(item => item.Id)
-                    .Select(group => group.Last())
-                    .ToArray();
+                _allTasks = DeduplicateTasks(_allTasks.Concat(success.Value.Items));
                 UpdateProjectFilters();
                 ApplyFilters(selectedId);
                 SetNextCursor(success.Value.NextCursor);
@@ -1112,7 +1126,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             {
                 var selectedId = SelectedItem?.Id;
                 _displayLookup = await LoadDisplayLookupAsync(linkedCancellation.Token).ConfigureAwait(true);
-                _allTasks = success.Value.Items;
+                _allTasks = DeduplicateTasks(success.Value.Items);
                 UpdateProjectFilters();
                 ApplyFilters(selectedId);
                 SetNextCursor(success.Value.NextCursor);
@@ -1799,7 +1813,13 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private void ApplyFilters(Guid? selectedId, bool localOnly = false)
     {
         var existingRows = Items.ToDictionary(item => item.Id);
-        var projected = _allTasks.Select(task =>
+        var now = _filterTimeProvider.GetUtcNow();
+        var filtered = _allTasks.Where(task =>
+            (!SelectedStatusFilter.HasValue || task.Status == SelectedStatusFilter.Value)
+            && (SelectedProjectFilter.IsAll || task.Card?.ProjectId == SelectedProjectFilter.ProjectId)
+            && (!SelectedPriorityFilter.HasValue || task.Priority == SelectedPriorityFilter.Value)
+            && TaskDeadlineFiltering.Matches(task, SelectedDeadlineFilter, now, _filterTimeProvider.LocalTimeZone));
+        var projected = TaskSorting.Apply(filtered, SelectedSortOrder, _filterTimeProvider.LocalTimeZone).Select(task =>
         {
             var feedback = GetCompletionFeedback(task);
             return existingRows.TryGetValue(task.Id, out var row) && ReferenceEquals(row.Source, task)
@@ -1807,13 +1827,6 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 && ReferenceEquals(row.CompletionFeedback, feedback)
                     ? row : new TaskItemViewModel(task, _displayLookup, feedback);
         });
-        var now = _filterTimeProvider.GetUtcNow();
-        projected = projected.Where(item =>
-            (!SelectedStatusFilter.HasValue || item.Source.Status == SelectedStatusFilter.Value)
-            && (SelectedProjectFilter.IsAll || item.Source.Card?.ProjectId == SelectedProjectFilter.ProjectId)
-            && (!SelectedPriorityFilter.HasValue || item.Source.Priority == SelectedPriorityFilter.Value)
-            && TaskDeadlineFiltering.Matches(item.Source, SelectedDeadlineFilter, now, _filterTimeProvider.LocalTimeZone));
-
         var replacement = projected.ToArray();
         _replacingFilteredItems = true;
         try { Items = replacement; }
@@ -1822,6 +1835,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             ? replacement.FirstOrDefault(item => item.Id == selectedId.Value) ?? (localOnly ? null : replacement.FirstOrDefault())
             : localOnly ? null : replacement.FirstOrDefault();
     }
+
+    private static DesktopTaskDto[] DeduplicateTasks(IEnumerable<DesktopTaskDto> tasks) => tasks
+        .GroupBy(task => task.Id)
+        // A later cursor page must not overwrite a confirmed newer version. On equal versions
+        // prefer the most recent response, as before. Refresh still replaces the authorized set.
+        .Select(group => group.Reverse().MaxBy(task => task.Version)!).ToArray();
 
     private void NotifyFilterState()
     {

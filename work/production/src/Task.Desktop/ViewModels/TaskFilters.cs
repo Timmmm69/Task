@@ -13,6 +13,11 @@ public enum TaskDeadlineFilter { All, Overdue, Today, NextSevenDays, NoDeadline 
 
 internal static class TaskDeadlineFiltering
 {
+    internal static DateOnly? CalendarDate(DesktopTaskDto task, TimeZoneInfo userZone) =>
+        task.DeadlineAtUtc is { } instant
+            ? DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(instant, userZone).DateTime)
+            : task.Card?.DeadlineDate;
+
     public static bool Matches(DesktopTaskDto task, TaskDeadlineFilter filter, DateTimeOffset now, TimeZoneInfo userZone)
     {
         if (filter == TaskDeadlineFilter.All) return true;
@@ -22,9 +27,7 @@ internal static class TaskDeadlineFiltering
 
         // The domain gives the exact instant precedence. A date-only deadline is already
         // a calendar date and must not be shifted through UTC or the machine's offset.
-        var day = task.DeadlineAtUtc is { } instant
-            ? DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(instant, userZone).DateTime)
-            : task.Card?.DeadlineDate;
+        var day = CalendarDate(task, userZone);
         if (filter == TaskDeadlineFilter.NoDeadline) return day is null;
         if (day is null) return false;
         var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now, userZone).DateTime);

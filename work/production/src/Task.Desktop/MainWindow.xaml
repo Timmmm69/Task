@@ -456,33 +456,58 @@
                 </Grid.RowDefinitions>
 
                 <WrapPanel Grid.Row="0" Margin="0,0,0,6" KeyboardNavigation.TabNavigation="Continue">
+                    <WrapPanel.Resources>
+                        <Style x:Key="TasksFilterCombo" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=600}" Value="False">
+                                    <Setter Property="MinHeight" Value="30" />
+                                    <Setter Property="Padding" Value="10,2" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                        <Style x:Key="TasksFilterLabel" TargetType="TextBlock" BasedOn="{StaticResource Task.Inspector.FactLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=600}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </WrapPanel.Resources>
                     <StackPanel Margin="0,0,12,8">
-                        <TextBlock Text="Статус" Style="{StaticResource Task.Inspector.FactLabel}" />
+                        <TextBlock Text="Статус" Style="{StaticResource TasksFilterLabel}" />
                         <ComboBox ItemsSource="{Binding StatusFilters}" SelectedValue="{Binding SelectedStatusFilter}" SelectedValuePath="Value" DisplayMemberPath="Name"
-                                  Width="140" Style="{StaticResource Task.Input.Combo}" TabIndex="3"
+                                  Width="140" Style="{StaticResource TasksFilterCombo}" TabIndex="3" ToolTip="Статус"
                                   AutomationProperties.Name="Фильтр задач: статус"
                                   AutomationProperties.AutomationId="TasksStatusFilter" />
                     </StackPanel>
                     <StackPanel Margin="0,0,12,8">
-                        <TextBlock Text="Проект" Style="{StaticResource Task.Inspector.FactLabel}" />
+                        <TextBlock Text="Проект" Style="{StaticResource TasksFilterLabel}" />
                         <ComboBox ItemsSource="{Binding ProjectFilters}" SelectedItem="{Binding SelectedProjectFilter}" DisplayMemberPath="Name"
-                                  Width="160" Style="{StaticResource Task.Input.Combo}" TabIndex="4"
+                                  Width="160" Style="{StaticResource TasksFilterCombo}" TabIndex="4" ToolTip="Проект"
                                   AutomationProperties.Name="Фильтр задач: проект"
                                   AutomationProperties.AutomationId="TasksProjectFilter" />
                     </StackPanel>
                     <StackPanel Margin="0,0,12,8">
-                        <TextBlock Text="Приоритет" Style="{StaticResource Task.Inspector.FactLabel}" />
+                        <TextBlock Text="Приоритет" Style="{StaticResource TasksFilterLabel}" />
                         <ComboBox ItemsSource="{Binding PriorityFilters}" SelectedValue="{Binding SelectedPriorityFilter}" SelectedValuePath="Value" DisplayMemberPath="Name"
-                                  Width="140" Style="{StaticResource Task.Input.Combo}" TabIndex="5"
+                                  Width="140" Style="{StaticResource TasksFilterCombo}" TabIndex="5" ToolTip="Приоритет"
                                   AutomationProperties.Name="Фильтр задач: приоритет"
                                   AutomationProperties.AutomationId="TasksPriorityFilter" />
                     </StackPanel>
                     <StackPanel Margin="0,0,12,8">
-                        <TextBlock Text="Срок" Style="{StaticResource Task.Inspector.FactLabel}" />
+                        <TextBlock Text="Срок" Style="{StaticResource TasksFilterLabel}" />
                         <ComboBox ItemsSource="{Binding DeadlineFilters}" SelectedValue="{Binding SelectedDeadlineFilter}" SelectedValuePath="Value" DisplayMemberPath="Name"
-                                  Width="170" Style="{StaticResource Task.Input.Combo}" TabIndex="6"
+                                  Width="170" Style="{StaticResource TasksFilterCombo}" TabIndex="6" ToolTip="Срок"
                                   AutomationProperties.Name="Фильтр задач: срок"
                                   AutomationProperties.AutomationId="TasksDeadlineFilter" />
+                    </StackPanel>
+                    <StackPanel Margin="0,0,12,8">
+                        <TextBlock Text="Сортировка" Style="{StaticResource TasksFilterLabel}" />
+                        <ComboBox ItemsSource="{Binding SortOrders}" SelectedValue="{Binding SelectedSortOrder}" SelectedValuePath="Value" DisplayMemberPath="Name"
+                                  Width="290" Style="{StaticResource TasksFilterCombo}" TabIndex="7"
+                                  ToolTip="Сортировка загруженных задач. При догрузке порядок пересчитывается."
+                                  AutomationProperties.Name="Сортировка загруженных задач"
+                                  AutomationProperties.AutomationId="TasksSortOrder" />
                     </StackPanel>
                 </WrapPanel>
 
