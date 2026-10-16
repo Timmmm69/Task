@@ -1,0 +1,57 @@
+{
+  "version": "7.1.0",
+  "source_commit": "d302e66e02725fe27c3ee79595b4f94cc837b2a8",
+  "base_commit": "d88277d55827acd72bed43b521104a3585d086f4",
+  "files": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "ecfb9d59bd1e831399e7ebdcaf1ef8234b057eb442f72bf0497739d1e840ac1d",
+      "bytes": 127729
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "sha256": "691d857752c908535fb42a6122b4fc0a21746a26c9e84b24cbf843bf0d3b859b",
+      "bytes": 112695
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TaskFilters.cs",
+      "sha256": "9cbac6cbe458000897ea3b18fda846bd26a58338aed800879f47f2b2bed57811",
+      "bytes": 1773
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "sha256": "398829aa1bffb1cef5f8d52a820d469d978f2cb84601fd6325f9e40d5a503fe6",
+      "bytes": 84421
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/CompletionFeedbackUiTests.cs",
+      "sha256": "a15ab4a366ac88923a48ce30c5fdc923bcbfbaa6055a58213b9fe73333e257d3",
+      "bytes": 12795
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/TaskFilteringWindowsTests.cs",
+      "sha256": "f5d62916f546e3f3ef2641547d14d38cc39bc4ed0744ad80e9cbdfe651a14bf5",
+      "bytes": 9905
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/CompletionFeedbackTests.cs",
+      "sha256": "5e27d6a20aa739b4c89673aa08ec714a96f56766141ab3dbf1cb20920e3639f9",
+      "bytes": 10685
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/JourneyTaskTests.cs",
+      "sha256": "7267049998ec0c9d33049730e0224eddd8cad430fd08420c2038b12d1e28011a",
+      "bytes": 5717
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskFilteringTests.cs",
+      "sha256": "5803543107880c1c52f63bd6ac50fe8e7b1f11d6adde9b81581f915cf3da0bad",
+      "bytes": 16005
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs",
+      "sha256": "654cc4aaa88f2a2f6f90ef1ffbe67d4966a8b97a39f7c292f1ca68499f390250",
+      "bytes": 39461
+    }
+  ]
+}

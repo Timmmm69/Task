@@ -1,0 +1,66 @@
+{
+  "version": "7.1.0",
+  "source_commit": "d302e66e02725fe27c3ee79595b4f94cc837b2a8",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "evidence/context-native-final.log",
+      "bytes": 643,
+      "sha256": "0b0311158edadcc2a08a00ea14577cf673ce2f4477b5f5cf3168bba860a5e7f7"
+    },
+    {
+      "path": "evidence/context-native-final.trx",
+      "bytes": 3111,
+      "sha256": "ee954908c6281eb670ce0fa5e983d3666139420edbab7e876278da32f3221822"
+    },
+    {
+      "path": "evidence/desktop-release-final.log",
+      "bytes": 2334,
+      "sha256": "71c8958af20e70d615eaedaa45e142ff0ef57036126092404767d57f8d16d5d0"
+    },
+    {
+      "path": "evidence/desktop-release-final.trx",
+      "bytes": 1475687,
+      "sha256": "6674b0257e5e9ee79ad590583d665367d1b3e1c43f63efab6606ae0b394fb6ac"
+    },
+    {
+      "path": "evidence/filters-1200.png",
+      "bytes": 101226,
+      "sha256": "1fd95fc53a777f946dfd033b47baba72872b4db44de3201808cec3278e936d02"
+    },
+    {
+      "path": "evidence/filters-800.png",
+      "bytes": 57541,
+      "sha256": "04a605af92d3fdac634bb923bc0476e42a4ab36da1d04c713fd9ad8608d578bd"
+    },
+    {
+      "path": "implementation.patch.zip",
+      "bytes": 15435,
+      "sha256": "e3933ab05ec7014c8333f9fb5eb3b185dd9c88ddd0df7ed968075973f1d359d8"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 2137,
+      "sha256": "1fd6fa3193c2c9c380241dcb93fbea528708e36361ef2b0a1c3fc17569d5cfe6"
+    },
+    {
+      "path": "source.zip",
+      "bytes": 79556,
+      "sha256": "c40dd2b7a450b48f9ec26f2e11ffaed7b0aeb7813b38f87a6b54d98485316286"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 10670,
+      "sha256": "cebdbbbf9e4dcb6198d7a53f2992dd3ee7547e5edaf93a52693f19005d6ca19f"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "da047e879ec2d0884ab8e8937d816adddaad831420c84eaca1a63db5a9b4436d"
+    }
+  ]
+}
