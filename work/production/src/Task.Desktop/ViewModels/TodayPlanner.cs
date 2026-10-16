@@ -99,14 +99,19 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
         var end = source.EndAtUtc.HasValue
             ? TimeZoneInfo.ConvertTime(source.EndAtUtc.Value, timeZone)
             : (DateTimeOffset?)null;
+        if (taskDetails is not null)
+            end = start.HasValue && taskDetails.Source.Card?.PlannedDurationMinutes is { } minutes
+                ? TimeZoneInfo.ConvertTime(source.StartAtUtc!.Value.AddMinutes(minutes), timeZone) : null;
         var durationMinutes = start.HasValue
             ? Math.Max(30d, (end - start)?.TotalMinutes
                 ?? taskDetails?.Source.Card?.PlannedDurationMinutes
                 ?? 45d)
             : 45d;
-        var top = start.HasValue
-            ? start.Value.TimeOfDay.TotalMinutes / 60d * HourHeight
-            : 0d;
+        var day = TimeZoneInfo.ConvertTime(now, timeZone).Date;
+        var firstMinute = start.HasValue && start.Value.Date >= day ? start.Value.TimeOfDay.TotalMinutes : 0d;
+        if (start.HasValue && end.HasValue)
+            durationMinutes = Math.Max(0d, (end.Value.Date > day ? 1440d : end.Value.TimeOfDay.TotalMinutes) - firstMinute);
+        var top = firstMinute / 60d * HourHeight;
         var priorityText = taskDetails?.PriorityText
             ?? NormalizeCalendarPriority(item.PriorityText);
         var priorityTone = taskDetails?.PriorityTone
@@ -118,10 +123,11 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             item.Id,
             item.Title,
             item.TypeText,
-            item.TimeText,
-            taskDetails?.StatusText ?? item.StatusText,
+            taskDetails is null ? item.TimeText : start.HasValue
+                ? end.HasValue ? $"{start:HH:mm}–{end:HH:mm}" : $"{start:HH:mm}" : "Без точного времени",
+            taskDetails is not null ? TaskItemViewModel.LocalizeStatus(taskDetails.Source.Status) : item.StatusText,
             priorityText,
-            taskDetails?.StatusIconKey ?? ResolveStatusIconKey(item.StatusText),
+            ResolveStatusIconKey(taskDetails is not null ? TaskItemViewModel.LocalizeStatus(taskDetails.Source.Status) : item.StatusText),
             taskDetails?.PriorityIconKey ?? CalendarPriorityIconKey(source.Priority),
             priorityTone,
             taskDetails?.DeadlineText ?? FormatCalendarDeadline(source, timeZone),
@@ -130,7 +136,7 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             FormatMoment(taskDetails?.Source.CreatedAtUtc, timeZone, "Не указано"),
             FormatMoment(taskDetails?.Source.UpdatedAtUtc, timeZone, "Не указано"),
             top,
-            Math.Max(54d, durationMinutes / 60d * HourHeight - 6d),
+            Math.Min(24d * HourHeight - top, Math.Max(54d, durationMinutes / 60d * HourHeight - 6d)),
             taskDetails is not null && Task.Domain.TaskRules.IsOverdue(taskDetails.Source.DeadlineAtUtc, taskDetails.Source.Card, now));
     }
 
@@ -143,8 +149,8 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
         var start = source.StartAtUtc.HasValue
             ? TimeZoneInfo.ConvertTime(source.StartAtUtc.Value, timeZone)
             : (DateTimeOffset?)null;
-        var end = source.DeadlineAtUtc.HasValue
-            ? TimeZoneInfo.ConvertTime(source.DeadlineAtUtc.Value, timeZone)
+        var end = start.HasValue && source.Card?.PlannedDurationMinutes is { } minutes
+            ? TimeZoneInfo.ConvertTime(source.StartAtUtc!.Value.AddMinutes(minutes), timeZone)
             : (DateTimeOffset?)null;
         var timeText = start.HasValue
             ? end.HasValue && end.Value.Date == start.Value.Date
@@ -158,9 +164,9 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
             item.Title,
             "Задача",
             timeText,
-            item.StatusText,
+            TaskItemViewModel.LocalizeStatus(source.Status),
             item.PriorityText,
-            item.StatusIconKey,
+            ResolveStatusIconKey(TaskItemViewModel.LocalizeStatus(source.Status)),
             item.PriorityIconKey,
             item.PriorityTone,
             item.DeadlineText,
@@ -219,7 +225,7 @@ public sealed class TodayPlannerItemViewModel : ViewModelBase
         "В работе" => "Task.Icon.Status.InProgress",
         "На проверке" => "Task.Icon.Status.Review",
         "Завершена" => "Task.Icon.Status.Completed",
-        "Отменено" => "Task.Icon.Status.Cancelled",
+        "Отменено" or "Отменена" => "Task.Icon.Status.Cancelled",
         _ => "Task.Icon.Status.New",
     };
 
@@ -295,6 +301,10 @@ public sealed partial class TodayViewModel
             UpdateSelectionFlags();
             OnPropertyChanged(nameof(HasSelectedItem));
             OpenSelectedItemCommand.RaiseCanExecuteChanged();
+            ClearActionConfirmation();
+            SyncPlanning();
+            NotifyQuickActions();
+            if (NeedsTaskReload && !_taskReloadAttempted.Contains(value!.Id)) _ = ReloadSelectedTaskAsync(CancellationToken.None);
         }
     }
 
@@ -332,6 +342,7 @@ public sealed partial class TodayViewModel
         OnPropertyChanged(nameof(ShowReadOnlyState));
         NotifyStatePresentation();
         RefreshCommand.RaiseCanExecuteChanged();
+        NotifyQuickActions();
     }
 
     private void UpdateClockProjection()
@@ -347,13 +358,14 @@ public sealed partial class TodayViewModel
 
     private void RebuildPlannerItems()
     {
-        var selectedId = _selectionWasExplicit ? SelectedItem?.Id : null;
+        var selectedId = _selectionWasExplicit || !IsBusy ? SelectedItem?.Id : null;
+        var selectedWasEvent = SelectedItem?.Source is CalendarItemViewModel { IsCalendarEvent: true };
         var now = _clock();
-        var taskById = _activeTaskItems.ToDictionary(item => item.Id);
+        var taskById = _taskSnapshots.ToDictionary(pair => pair.Key, pair => new TaskItemViewModel(pair.Value));
         var timeline = TimedItems
             .Select(item => TodayPlannerItemViewModel.FromCalendar(
                 item,
-                taskById.GetValueOrDefault(item.Id),
+                item.IsCalendarEvent ? null : taskById.GetValueOrDefault(item.Id),
                 _timeZone,
                 now))
             .OrderBy(item => item.TimelineTop)
@@ -363,16 +375,18 @@ public sealed partial class TodayViewModel
         var allDay = UntimedItems
             .Select(item => TodayPlannerItemViewModel.FromCalendar(
                 item,
-                taskById.GetValueOrDefault(item.Id),
+                item.IsCalendarEvent ? null : taskById.GetValueOrDefault(item.Id),
                 _timeZone,
                 now))
             .ToArray();
         var scheduledIds = TimedItems.Concat(UntimedItems)
+            .Where(item => !item.IsCalendarEvent)
             .Select(item => item.Id)
             .ToHashSet();
         var queue = _activeTaskItems
             .Where(item => !scheduledIds.Contains(item.Id))
-            .Where(item => Task.Domain.TaskRules.IsOverdue(item.Source.DeadlineAtUtc, item.Source.Card, now) || !item.Source.StartAtUtc.HasValue)
+            .Where(item => Task.Domain.TaskRules.IsOverdue(item.Source.DeadlineAtUtc, item.Source.Card, now)
+                || !item.Source.StartAtUtc.HasValue && (item.Source.Card?.ScheduledDate is null || item.Source.Card.ScheduledDate <= _today))
             .Select(item => TodayPlannerItemViewModel.FromTask(item, _timeZone, now))
             .OrderByDescending(item => item.IsOverdue)
             .ThenBy(item => item.Source is TaskItemViewModel task ? task.Source.DeadlineAtUtc : null)
@@ -391,7 +405,8 @@ public sealed partial class TodayViewModel
         OnPropertyChanged(nameof(HasPlannerItems));
 
         SelectedItem = timeline.Concat(allDay).Concat(queue)
-            .FirstOrDefault(item => item.Id == selectedId)
+            .FirstOrDefault(item => item.Id == selectedId
+                && (item.Source is CalendarItemViewModel { IsCalendarEvent: true }) == selectedWasEvent)
             ?? timeline.FirstOrDefault()
             ?? queue.FirstOrDefault()
             ?? allDay.FirstOrDefault();
@@ -445,7 +460,7 @@ public sealed partial class TodayViewModel
     private void UpdateSelectionFlags()
     {
         foreach (var item in TimelineItems.Concat(AllDayItems).Concat(QueueItems))
-            item.IsSelected = item.Id == SelectedItem?.Id;
+            item.IsSelected = ReferenceEquals(item, SelectedItem);
     }
 
     private void ClearPlannerItems()

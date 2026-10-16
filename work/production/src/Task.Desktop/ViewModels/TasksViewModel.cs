@@ -1633,17 +1633,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         return IsAllowedTransition(current, target);
     }
 
-    private static bool IsAllowedTransition(DesktopTaskStatus current, DesktopTaskStatus target)
-    {
-        if (current is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) return false;
-        return target switch
-        {
-            DesktopTaskStatus.InProgress => current == DesktopTaskStatus.New,
-            DesktopTaskStatus.Review => current == DesktopTaskStatus.InProgress,
-            DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled => true,
-            _ => false,
-        };
-    }
+    internal static bool IsAllowedTransition(DesktopTaskStatus current, DesktopTaskStatus target) =>
+        Enum.TryParse<Task.Domain.TaskWorkStatus>(current.ToString(), out var from)
+        && Enum.TryParse<Task.Domain.TaskWorkStatus>(target.ToString(), out var to)
+        && Task.Domain.TaskRules.CanTransition(from, to);
 
     private static bool TryReadStatus(object? parameter, out DesktopTaskStatus status)
     {

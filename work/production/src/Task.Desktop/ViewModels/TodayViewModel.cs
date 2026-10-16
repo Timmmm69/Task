@@ -64,11 +64,13 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             return global::System.Threading.Tasks.Task.CompletedTask;
         }, item => IsActive && _sessionAvailable && (item is CalendarItemViewModel { IsCalendarEvent: true } ? CanRead : CanReadTasks));
         InitializePlannerCommands();
+        InitializeQuickActions();
+        InitializePlanning();
 
         RefreshCommand = new AsyncCommand(
             async (_, token) =>
                 await LoadAsync(refresh: true, token).ConfigureAwait(true),
-            _ => IsActive && _sessionAvailable && IsConnected && CanAccess && !IsBusy);
+            _ => IsActive && _sessionAvailable && IsConnected && CanAccess && !IsBusy && !IsActionBusy);
     }
 
     public TodayScreenState State
@@ -89,6 +91,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             OpenItemCommand.RaiseCanExecuteChanged();
             SelectItemCommand.RaiseCanExecuteChanged();
             OpenSelectedItemCommand.RaiseCanExecuteChanged();
+            NotifyQuickActions();
         }
     }
 
@@ -218,6 +221,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         }
 
         _active = false;
+        StopQuickActions();
         Interlocked.Increment(ref _generation);
         _requestCancellation?.Cancel();
 
@@ -239,6 +243,11 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         var updatedCapabilities = capabilities?.ToArray() ?? [];
         var taskAccessChanged = CanReadTasks != updatedCapabilities.Contains("Task.Read");
         var calendarAccessChanged = CanRead != updatedCapabilities.Contains("Calendar.Read");
+        if (taskAccessChanged) StopQuickActions();
+        _statusPermissionDeniedTasks.Clear();
+        _planningDenied.Clear();
+        if (!updatedCapabilities.Contains("Task.Update")) StopPlanning();
+        if (!updatedCapabilities.Contains("Task.ChangeStatus")) ClearActionConfirmation();
         _capabilities.Clear();
         foreach (var capability in updatedCapabilities)
         {
@@ -264,6 +273,8 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             Message = "Право Calendar.Read отозвано. Данные экрана «Сегодня» очищены.";
             return;
         }
+
+        NotifyQuickActions();
 
         if (taskAccessChanged || calendarAccessChanged)
         {
@@ -293,6 +304,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
 
         if (!sessionAvailable)
         {
+            StopQuickActions();
             Interlocked.Increment(ref _generation);
             _requestCancellation?.Cancel();
             ClearProtectedData();
@@ -301,6 +313,8 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             Message = "Сессия завершена. Войдите снова.";
             return;
         }
+
+        NotifyQuickActions();
 
         if (changed
             && _active
@@ -444,6 +458,10 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             .ThenBy(item => item.Title, StringComparer.CurrentCulture)
             .ToArray();
 
+        // Calendar's legacy Task rows use deadlines as interval ends and omit date-only/duration-only plans.
+        // Reconcile every known Task from its canonical DTO on each load, including cleared planning.
+        foreach (var task in _taskSnapshots.Values)
+            UpdateTaskPlanningProjection(task);
         RebuildPlannerItems();
     }
 
@@ -518,5 +536,11 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         OpenItemCommand.Dispose();
         SelectItemCommand.Dispose();
         OpenSelectedItemCommand.Dispose();
+        TransitionCommand.Dispose();
+        ConfirmTransitionCommand.Dispose();
+        CancelTransitionCommand.Dispose();
+        ReloadSelectedTaskCommand.Dispose();
+        SavePlanningCommand.Dispose();
+        CancelPlanningCommand.Dispose();
     }
 }

@@ -5,6 +5,25 @@ namespace Task.ServiceHosts.Tests;
 
 public sealed partial class TaskEndpointsTests
 {
+    [Theory]
+    [InlineData("{\"startAtUtc\":null,\"scheduledDate\":\"2026-08-25\"}")]
+    [InlineData("{\"startAtUtc\":\"2026-08-24T13:30:00Z\",\"scheduledDate\":\"2026-08-24\",\"startTimeLocal\":\"13:30:00\",\"scheduleTimeZone\":\"UTC\"}")]
+    [InlineData("{\"plannedDurationMinutes\":90}")]
+    public async System.Threading.Tasks.Task TaskCard_QuickPlanningPatchKeepsDeadlineAndUnrelatedFields(string body)
+    {
+        var original = CurrentTask(); var executor = new FakeUpdateExecutor { Current = original };
+        using var server = CreateServer(new FakeTaskReadStore(Projection), writeExecutor: executor,
+            aggregateStore: new FakeUpdateAggregateStore(original));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        var response = await PatchTaskAsync(client, TaskId.ToString("D"), body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(original.Schedule.DeadlineUtc, executor.Current!.Schedule.DeadlineUtc);
+        Assert.Equal(original.Title, executor.Current.Title); Assert.Equal(original.Priority, executor.Current.Priority);
+        Assert.Equal(original.WorkStatus, executor.Current.WorkStatus);
+        Assert.Equal(original.Content.Description, executor.Current.Content.Description);
+        Assert.Equal(8, executor.Current.Metadata.Version);
+    }
+
     [Fact]
     public async System.Threading.Tasks.Task TaskCard_CreateAndReadPreserveDescriptionAndDate()
     {

@@ -10,6 +10,37 @@ namespace Task.Desktop.Tests.TaskApi;
 
 public sealed class DesktopTasksApiClientTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task TodayPlanning_RealSerializerSendsOnlyChangedFieldsAndStableWriteHeaders()
+    {
+        var source = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.Nodes.JsonObject>(TaskJson())!;
+        source["scheduledDate"] = "2026-08-24"; source["startTimeLocal"] = "12:00:00";
+        source["scheduleTimeZone"] = "UTC"; source["plannedDurationMinutes"] = 60;
+        var saved = source.DeepClone().AsObject(); saved["version"] = 8;
+        saved["startAtUtc"] = "2026-08-24T13:30:00Z"; saved["startTimeLocal"] = "13:30:00";
+        await using var fixture = await Fixture.CreateAsync((request, _) => global::System.Threading.Tasks.Task.FromResult(
+            request.Method == HttpMethod.Get ? JsonResponse(HttpStatusCode.OK, source.ToJsonString())
+                : WriteResponse(HttpStatusCode.OK, saved.ToJsonString(), "\"v8\"", "false")));
+        var loaded = Assert.IsType<DesktopTasksApiResult<DesktopTaskDto>.Succeeded>(await fixture.Client.GetTaskByIdAsync(TaskId));
+        var draft = new Task.Desktop.ViewModels.TodayPlanningEditor(loaded.Value, TimeZoneInfo.Utc) { Time = "13:30" };
+        var command = draft.BuildPatch()!;
+        var result = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(await fixture.Client.PatchTaskAsync(command));
+        await fixture.Client.PatchTaskAsync(command);
+        var writes = fixture.TaskRequests.Where(r => r.Method == HttpMethod.Patch).ToArray();
+        Assert.Equal(2, writes.Length);
+        foreach (var request in writes)
+        {
+            Assert.Equal("\"v7\"", request.IfMatch); Assert.Equal(command.IdempotencyKey, request.IdempotencyKey);
+            var body = System.Text.Json.Nodes.JsonNode.Parse(request.Body!)!.AsObject();
+            Assert.Equal(new[] { "startAtUtc", "startTimeLocal" }, body.Select(p => p.Key).Order().ToArray());
+            Assert.Equal("2026-08-24T13:30:00Z", body["startAtUtc"]!.ToString());
+            Assert.Equal("13:30:00", body["startTimeLocal"]!.ToString());
+        }
+        Assert.Equal(writes[0].BodyBytes, writes[1].BodyBytes);
+        Assert.Equal(loaded.Value.DeadlineAtUtc, result.Value.DeadlineAtUtc);
+        Assert.Equal(60, result.Value.Card!.PlannedDurationMinutes);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
