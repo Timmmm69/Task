@@ -1,0 +1,774 @@
+[
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+    "lines": [
+      {
+        "line": 51,
+        "text": "    private static async Task<IResult> GetTasksAsync("
+      },
+      {
+        "line": 52,
+        "text": "        HttpContext context,"
+      },
+      {
+        "line": 53,
+        "text": "        CancellationToken cancellationToken)"
+      },
+      {
+        "line": 54,
+        "text": "    {"
+      },
+      {
+        "line": 55,
+        "text": "        var requestContext = ReadRequestContext(context);"
+      },
+      {
+        "line": 56,
+        "text": "        if (requestContext is null)"
+      },
+      {
+        "line": 57,
+        "text": "        {"
+      },
+      {
+        "line": 58,
+        "text": "            return await WriteProblemAsync("
+      },
+      {
+        "line": 59,
+        "text": "                context,"
+      },
+      {
+        "line": 60,
+        "text": "                StatusCodes.Status500InternalServerError,"
+      },
+      {
+        "line": 61,
+        "text": "                \"INTERNAL_ERROR\","
+      },
+      {
+        "line": 62,
+        "text": "                \"The authenticated request context is unavailable.\","
+      },
+      {
+        "line": 63,
+        "text": "                retryable: true);"
+      },
+      {
+        "line": 64,
+        "text": "        }"
+      },
+      {
+        "line": 65,
+        "text": ""
+      },
+      {
+        "line": 66,
+        "text": "        var readStore = context.RequestServices.GetService<ITaskReadStore>();"
+      },
+      {
+        "line": 67,
+        "text": "        if (readStore is null)"
+      },
+      {
+        "line": 68,
+        "text": "        {"
+      },
+      {
+        "line": 69,
+        "text": "            return await WriteProblemAsync("
+      },
+      {
+        "line": 70,
+        "text": "                context,"
+      },
+      {
+        "line": 71,
+        "text": "                StatusCodes.Status503ServiceUnavailable,"
+      },
+      {
+        "line": 72,
+        "text": "                \"INTERNAL_ERROR\","
+      },
+      {
+        "line": 73,
+        "text": "                \"Task read access is not configured.\","
+      },
+      {
+        "line": 74,
+        "text": "                retryable: true);"
+      },
+      {
+        "line": 75,
+        "text": "        }"
+      },
+      {
+        "line": 76,
+        "text": ""
+      },
+      {
+        "line": 77,
+        "text": "        if (!TryReadListQuery(context.Request.Query, out var cursor))"
+      },
+      {
+        "line": 78,
+        "text": "        {"
+      },
+      {
+        "line": 79,
+        "text": "            return await WriteProblemAsync("
+      },
+      {
+        "line": 80,
+        "text": "                context,"
+      },
+      {
+        "line": 81,
+        "text": "                StatusCodes.Status400BadRequest,"
+      },
+      {
+        "line": 82,
+        "text": "                \"VALIDATION_FAILED\","
+      },
+      {
+        "line": 83,
+        "text": "                \"This Task API increment supports only cursor pagination without filter or sort.\","
+      },
+      {
+        "line": 84,
+        "text": "                retryable: false);"
+      },
+      {
+        "line": 85,
+        "text": "        }"
+      },
+      {
+        "line": 86,
+        "text": ""
+      },
+      {
+        "line": 87,
+        "text": "        try"
+      },
+      {
+        "line": 88,
+        "text": "        {"
+      },
+      {
+        "line": 89,
+        "text": "            var page = await readStore.GetPageAsync("
+      },
+      {
+        "line": 90,
+        "text": "                new TaskReadPageRequest("
+      },
+      {
+        "line": 91,
+        "text": "                    requestContext.OrganizationId,"
+      },
+      {
+        "line": 92,
+        "text": "                    requestContext.UserAccountId,"
+      },
+      {
+        "line": 93,
+        "text": "                    requestContext.AuthorizationScopeVersion,"
+      },
+      {
+        "line": 94,
+        "text": "                    cursor),"
+      },
+      {
+        "line": 95,
+        "text": "                cancellationToken);"
+      },
+      {
+        "line": 96,
+        "text": ""
+      },
+      {
+        "line": 97,
+        "text": "            return Results.Json(new TaskPageResponse("
+      },
+      {
+        "line": 98,
+        "text": "                page.Items.Select(ToResponse).ToArray(),"
+      },
+      {
+        "line": 99,
+        "text": "                page.NextCursor,"
+      },
+      {
+        "line": 100,
+        "text": "                page.Total));"
+      },
+      {
+        "line": 101,
+        "text": "        }"
+      },
+      {
+        "line": 102,
+        "text": "        catch (TaskReadCursorException)"
+      },
+      {
+        "line": 103,
+        "text": "        {"
+      },
+      {
+        "line": 104,
+        "text": "            return await WriteProblemAsync("
+      },
+      {
+        "line": 105,
+        "text": "                context,"
+      },
+      {
+        "line": 106,
+        "text": "                StatusCodes.Status400BadRequest,"
+      },
+      {
+        "line": 107,
+        "text": "                \"SEARCH_CURSOR_INVALID\","
+      },
+      {
+        "line": 108,
+        "text": "                \"The search cursor is invalid.\","
+      },
+      {
+        "line": 109,
+        "text": "                retryable: false);"
+      },
+      {
+        "line": 110,
+        "text": "        }"
+      }
+    ]
+  },
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+    "lines": [
+      {
+        "line": 272,
+        "text": "    private static bool TryReadListQuery(IQueryCollection query, out string? cursor)"
+      },
+      {
+        "line": 273,
+        "text": "    {"
+      },
+      {
+        "line": 274,
+        "text": "        cursor = Normalize(query[\"cursor\"].ToString());"
+      },
+      {
+        "line": 275,
+        "text": "        var filter = Normalize(query[\"filter\"].ToString());"
+      },
+      {
+        "line": 276,
+        "text": "        var sort = Normalize(query[\"sort\"].ToString());"
+      },
+      {
+        "line": 277,
+        "text": "        var pageValue = Normalize(query[\"page\"].ToString());"
+      },
+      {
+        "line": 278,
+        "text": ""
+      },
+      {
+        "line": 279,
+        "text": "        if (filter is not null || sort is not null)"
+      },
+      {
+        "line": 280,
+        "text": "        {"
+      },
+      {
+        "line": 281,
+        "text": "            return false;"
+      },
+      {
+        "line": 282,
+        "text": "        }"
+      },
+      {
+        "line": 283,
+        "text": ""
+      },
+      {
+        "line": 284,
+        "text": "        return pageValue is null"
+      },
+      {
+        "line": 285,
+        "text": "            || int.TryParse(pageValue, NumberStyles.None, CultureInfo.InvariantCulture, out var page)"
+      },
+      {
+        "line": 286,
+        "text": "                && page == 1;"
+      },
+      {
+        "line": 287,
+        "text": "    }"
+      },
+      {
+        "line": 288,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Application/TaskReadContracts.cs",
+    "lines": [
+      {
+        "line": 24,
+        "text": "public sealed record TaskReadPageRequest("
+      },
+      {
+        "line": 25,
+        "text": "    Guid OrganizationId,"
+      },
+      {
+        "line": 26,
+        "text": "    Guid UserAccountId,"
+      },
+      {
+        "line": 27,
+        "text": "    long AuthorizationScopeVersion,"
+      },
+      {
+        "line": 28,
+        "text": "    string? Cursor = null);"
+      },
+      {
+        "line": 29,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+    "lines": [
+      {
+        "line": 147,
+        "text": "            items.Add(ReadProjection(reader));"
+      },
+      {
+        "line": 148,
+        "text": "            snapshotBoundaryUtc ??= ReadUtcTimestamp(reader, 14);"
+      },
+      {
+        "line": 149,
+        "text": "        }"
+      },
+      {
+        "line": 150,
+        "text": ""
+      },
+      {
+        "line": 151,
+        "text": "        string? nextCursor = null;"
+      },
+      {
+        "line": 152,
+        "text": "        if (items.Count == PageSize + 1)"
+      },
+      {
+        "line": 153,
+        "text": "        {"
+      },
+      {
+        "line": 154,
+        "text": "            items.RemoveAt(PageSize);"
+      },
+      {
+        "line": 155,
+        "text": "            var last = items[^1];"
+      },
+      {
+        "line": 156,
+        "text": "            nextCursor = TaskReadCursorCodec.Create("
+      },
+      {
+        "line": 157,
+        "text": "                request.OrganizationId,"
+      },
+      {
+        "line": 158,
+        "text": "                request.UserAccountId,"
+      },
+      {
+        "line": 159,
+        "text": "                request.AuthorizationScopeVersion,"
+      },
+      {
+        "line": 160,
+        "text": "                snapshotBoundaryUtc!.Value,"
+      },
+      {
+        "line": 161,
+        "text": "                last.UpdatedAtUtc,"
+      },
+      {
+        "line": 162,
+        "text": "                last.Id);"
+      },
+      {
+        "line": 163,
+        "text": "        }"
+      },
+      {
+        "line": 164,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/011_task_card.sql",
+    "lines": [
+      {
+        "line": 1,
+        "text": "-- Additive task-card persistence; core.objects remains the concurrency/lifecycle owner."
+      },
+      {
+        "line": 2,
+        "text": "ALTER TABLE work.tasks ADD COLUMN card_content jsonb NOT NULL DEFAULT '{}';"
+      },
+      {
+        "line": 3,
+        "text": "ALTER TABLE work.tasks ADD CONSTRAINT ck_tasks_card_object CHECK (jsonb_typeof(card_content) = 'object');"
+      },
+      {
+        "line": 4,
+        "text": "ALTER TABLE work.tasks ADD COLUMN project_id uuid GENERATED ALWAYS AS ((card_content->>'projectId')::uuid) STORED;"
+      },
+      {
+        "line": 5,
+        "text": "ALTER TABLE work.tasks ADD COLUMN parent_task_id uuid GENERATED ALWAYS AS ((card_content->>'parentTaskId')::uuid) STORED;"
+      },
+      {
+        "line": 6,
+        "text": "ALTER TABLE work.tasks ADD CONSTRAINT fk_task_project FOREIGN KEY (organization_id,project_id) REFERENCES projects.projects(organization_id,id);"
+      },
+      {
+        "line": 7,
+        "text": "ALTER TABLE work.tasks ADD CONSTRAINT fk_task_parent FOREIGN KEY (organization_id,parent_task_id) REFERENCES work.tasks(organization_id,id);"
+      },
+      {
+        "line": 8,
+        "text": "CREATE INDEX ix_tasks_parent ON work.tasks(organization_id,parent_task_id) WHERE parent_task_id IS NOT NULL;"
+      }
+    ]
+  },
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+    "lines": [
+      {
+        "line": 91,
+        "text": "CREATE OR REPLACE FUNCTION work.task_project_writable(org uuid, project uuid, actor uuid, permission text) RETURNS boolean LANGUAGE sql STABLE AS $$"
+      },
+      {
+        "line": 92,
+        "text": " SELECT NOT iam.permission_denied(org,actor,permission) AND (project IS NULL OR"
+      },
+      {
+        "line": 93,
+        "text": " (iam.project_allowed(org,project,actor,permission) AND EXISTS(SELECT 1 FROM core.objects WHERE organization_id=org AND id=project AND lifecycle_state='active')));"
+      },
+      {
+        "line": 94,
+        "text": "$$;"
+      },
+      {
+        "line": 95,
+        "text": "CREATE OR REPLACE FUNCTION work.task_visible(org uuid, task uuid, actor uuid) RETURNS boolean LANGUAGE sql STABLE AS $$"
+      },
+      {
+        "line": 96,
+        "text": " SELECT iam.scope_allows(org,actor,task,'task.read') AND NOT iam.scope_denied(org,actor,task,'task.read') AND EXISTS("
+      },
+      {
+        "line": 97,
+        "text": " SELECT 1 FROM work.tasks t JOIN core.objects o ON o.organization_id=t.organization_id AND o.id=t.id"
+      },
+      {
+        "line": 98,
+        "text": " WHERE t.organization_id=org AND t.id=task AND NOT iam.project_denied(org,t.project_id,actor,'task.read') AND"
+      },
+      {
+        "line": 99,
+        "text": " (iam.permission_granted(org,actor,'organization.manage') OR (t.project_id IS NOT NULL AND work.task_project_visible(org,t.project_id,actor) AND iam.project_allowed(org,t.project_id,actor,'task.read'))"
+      },
+      {
+        "line": 100,
+        "text": " OR o.created_by=actor OR t.card_content->>'requesterUserId'=actor::text OR t.card_content->'assigneeIds' ? actor::text OR t.card_content->'watcherIds' ? actor::text));"
+      },
+      {
+        "line": 101,
+        "text": "$$;"
+      },
+      {
+        "line": 102,
+        "text": ""
+      },
+      {
+        "line": 103,
+        "text": "CREATE FUNCTION iam.object_allowed(org uuid, object_id uuid, actor uuid, capability text, administrator boolean DEFAULT false) RETURNS boolean"
+      },
+      {
+        "line": 104,
+        "text": "LANGUAGE sql STABLE AS $$"
+      },
+      {
+        "line": 105,
+        "text": " -- Follow only security-bearing relations towards their parent. UNION terminates cycles."
+      },
+      {
+        "line": 106,
+        "text": " WITH RECURSIVE scopes(id) AS ("
+      },
+      {
+        "line": 107,
+        "text": " SELECT object_id"
+      },
+      {
+        "line": 108,
+        "text": " UNION"
+      },
+      {
+        "line": 109,
+        "text": " SELECT edge.parent FROM scopes s JOIN LATERAL ("
+      },
+      {
+        "line": 110,
+        "text": " SELECT l.source_object_id AS parent FROM core.object_links l WHERE l.organization_id=org AND l.target_object_id=s.id"
+      },
+      {
+        "line": 111,
+        "text": " AND l.link_type IN ('project_file','project_contact','task_file','task_contact','contact_file')"
+      },
+      {
+        "line": 112,
+        "text": " UNION SELECT p.parent_item_id FROM files.catalog_items p WHERE p.organization_id=org AND p.id=s.id AND p.parent_item_id IS NOT NULL"
+      },
+      {
+        "line": 113,
+        "text": " UNION SELECT i.counterparty_object_id FROM crm.interactions i WHERE i.organization_id=org AND i.id=s.id"
+      },
+      {
+        "line": 114,
+        "text": " ) edge ON true"
+      },
+      {
+        "line": 115,
+        "text": " ), attributes AS ("
+      }
+    ]
+  },
+  {
+    "revision": "deb16b3",
+    "path": "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "lines": [
+      {
+        "line": 349,
+        "text": "    private async System.Threading.Tasks.Task<IReadOnlyList<TaskItemViewModel>> LoadRelatedTasksAsync(Guid projectId, CancellationToken cancellationToken)"
+      },
+      {
+        "line": 350,
+        "text": "    {"
+      },
+      {
+        "line": 351,
+        "text": "        if (_tasks is null || !_capabilities.Contains(\"Task.Read\")) return [];"
+      },
+      {
+        "line": 352,
+        "text": "        var result = new List<TaskItemViewModel>(); string? cursor = null; var seen = new HashSet<string>();"
+      },
+      {
+        "line": 353,
+        "text": "        do"
+      },
+      {
+        "line": 354,
+        "text": "        {"
+      },
+      {
+        "line": 355,
+        "text": "            var page = await _tasks.GetTasksAsync(cursor, cancellationToken).ConfigureAwait(true);"
+      },
+      {
+        "line": 356,
+        "text": "            if (page is not DesktopTasksApiResult<DesktopTaskPage>.Succeeded success) return [];"
+      },
+      {
+        "line": 357,
+        "text": "            result.AddRange(success.Value.Items.Where(task => task.Card?.ProjectId == projectId).Select(task => new TaskItemViewModel(task)));"
+      },
+      {
+        "line": 358,
+        "text": "            cursor = success.Value.NextCursor;"
+      },
+      {
+        "line": 359,
+        "text": "        } while (!string.IsNullOrWhiteSpace(cursor) && seen.Add(cursor) && seen.Count <= 200);"
+      },
+      {
+        "line": 360,
+        "text": "        return result;"
+      },
+      {
+        "line": 361,
+        "text": "    }"
+      },
+      {
+        "line": 362,
+        "text": ""
+      },
+      {
+        "line": 363,
+        "text": "    private async System.Threading.Tasks.Task SaveAsync(object? _, CancellationToken cancellationToken)"
+      }
+    ]
+  },
+  {
+    "revision": "eb1044d",
+    "path": "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs",
+    "lines": [
+      {
+        "line": 74,
+        "text": "    private async System.Threading.Tasks.Task LoadRelatedTasksPageAsync(object? _, CancellationToken cancellationToken)"
+      },
+      {
+        "line": 75,
+        "text": "    {"
+      },
+      {
+        "line": 76,
+        "text": "        if (!CanLoadRelatedTasks) return;"
+      },
+      {
+        "line": 77,
+        "text": "        if (_restartRelated) ResetRelatedTasks();"
+      },
+      {
+        "line": 78,
+        "text": "        var item = SelectedItem!;"
+      },
+      {
+        "line": 79,
+        "text": "        var generation = ++_relatedGeneration;"
+      },
+      {
+        "line": 80,
+        "text": "        using var request = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _activation!.Token);"
+      },
+      {
+        "line": 81,
+        "text": "        _relatedRequest = request;"
+      },
+      {
+        "line": 82,
+        "text": "        bool Current() => !request.IsCancellationRequested && generation == _relatedGeneration"
+      },
+      {
+        "line": 83,
+        "text": "            && ReferenceEquals(SelectedItem, item) && IsActive && _sessionAvailable && _networkAvailable"
+      },
+      {
+        "line": 84,
+        "text": "            && CanRead && _capabilities.Contains(\"Task.Read\") && !_disposed;"
+      },
+      {
+        "line": 85,
+        "text": "        RelatedTasksState = ProjectTasksState.Loading;"
+      },
+      {
+        "line": 86,
+        "text": "        try"
+      },
+      {
+        "line": 87,
+        "text": "        {"
+      },
+      {
+        "line": 88,
+        "text": "            var page = await _tasks!.GetTasksAsync(_relatedCursor, request.Token).ConfigureAwait(true);"
+      },
+      {
+        "line": 89,
+        "text": "            if (!Current()) return;"
+      },
+      {
+        "line": 90,
+        "text": "            switch (page)"
+      },
+      {
+        "line": 91,
+        "text": "            {"
+      },
+      {
+        "line": 92,
+        "text": "                case DesktopTasksApiResult<DesktopTaskPage>.Succeeded success:"
+      },
+      {
+        "line": 93,
+        "text": "                    var next = success.Value.NextCursor;"
+      },
+      {
+        "line": 94,
+        "text": "                    // Keep the request cursor unchanged on failure so an explicit retry repeats only that page."
+      },
+      {
+        "line": 95,
+        "text": "                    if (!string.IsNullOrWhiteSpace(next) && (_relatedCursors.Contains(next) || next == _relatedCursor))"
+      },
+      {
+        "line": 96,
+        "text": "                    { _restartRelated = true; RelatedTasksState = ProjectTasksState.Failed; return; }"
+      },
+      {
+        "line": 97,
+        "text": "                    RelatedTasks = RelatedTasks.Concat(success.Value.Items.Where(task => task.Card?.ProjectId == item.Id)"
+      },
+      {
+        "line": 98,
+        "text": "                        .Select(task => new TaskItemViewModel(task))).DistinctBy(task => task.Id).ToArray();"
+      },
+      {
+        "line": 99,
+        "text": "                    if (_relatedCursor is not null) _relatedCursors.Add(_relatedCursor);"
+      },
+      {
+        "line": 100,
+        "text": "                    _relatedCursor = next;"
+      },
+      {
+        "line": 101,
+        "text": "                    RelatedTasksState = string.IsNullOrWhiteSpace(next)"
+      },
+      {
+        "line": 102,
+        "text": "                        ? RelatedTasks.Count == 0 ? ProjectTasksState.Empty : ProjectTasksState.Complete"
+      },
+      {
+        "line": 103,
+        "text": "                        : ProjectTasksState.Partial;"
+      },
+      {
+        "line": 104,
+        "text": "                    break;"
+      },
+      {
+        "line": 105,
+        "text": "                case DesktopTasksApiResult<DesktopTaskPage>.AuthenticationFailure:"
+      }
+    ]
+  }
+]

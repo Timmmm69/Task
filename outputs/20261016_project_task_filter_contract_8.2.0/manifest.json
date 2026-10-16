@@ -1,0 +1,56 @@
+{
+  "version": "8.2.0",
+  "status": "PROPOSED — NOT APPROVED",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "evidence/code-excerpts.json",
+      "size": 20743,
+      "sha256": "0332eb483658207b756bba84d8bb97a8896640d67081cf5dcb325da9c13f11ff"
+    },
+    {
+      "path": "evidence/cursor-baseline.trx",
+      "size": 6998,
+      "sha256": "7c14ee5f286e2650c54e4d2dbadda74d9b85aa2ff3526b3ae400cbbeda260174"
+    },
+    {
+      "path": "evidence/endpoints-baseline.trx",
+      "size": 252275,
+      "sha256": "dc2f44f1f5bb9c60b3772371cbc3624c52530c0bc02d59022d235ce4640d5f48"
+    },
+    {
+      "path": "evidence/source-inventory.json",
+      "size": 9853,
+      "sha256": "1b7496fc369287ec4e997ef44c1279367212d289e872cdcc2ada29e0c27759ff"
+    },
+    {
+      "path": "evidence/stage81-evidence-verification.json",
+      "size": 1776,
+      "sha256": "780d0e8b01c58fec952f0232172cf51156bdf6e3db8ccb0131bf1185a83ffdbc"
+    },
+    {
+      "path": "PROJECT-TASK-FILTER-CONTRACT-PROPOSAL.md",
+      "size": 46846,
+      "sha256": "7c94be9137d5d475b55997928ae252bf939b9637d2ca614b119f3a257b01221b"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 954,
+      "sha256": "36b9be81653afb7b7b72bfaac00753803de9fc6b51a9aec416f50924fc3930d6"
+    },
+    {
+      "path": "validation.json",
+      "size": 1722,
+      "sha256": "7147ca2d158246e865bde1bb4106111422f8f9b5cdf54ebe639dc6969adde2a5"
+    },
+    {
+      "path": "VERSION",
+      "size": 6,
+      "sha256": "f922c99da0270b7f7f991fab950ea9e8989b1cd6dac55ef7d7180c1724095548"
+    }
+  ]
+}

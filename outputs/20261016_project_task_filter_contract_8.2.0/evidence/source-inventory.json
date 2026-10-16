@@ -1,0 +1,225 @@
+[
+  {
+    "path": "AGENTS.md",
+    "sha256": "70433cf464fb739bd7eed6dd8ad4d63ddd7b0ddb3c1b20904576fbb32a6e7963"
+  },
+  {
+    "path": "CANONICAL_BASELINE.md",
+    "sha256": "ac38f070c20a81b16ae5e33ddb341c2580e25fef6057ece476b2a9d23bc8aefa"
+  },
+  {
+    "path": "sources/concept/Task_Concept_Final.txt",
+    "sha256": "54598093ed426b6151440557eac14a59e54c64eacf1d190c1febd3b3463c94ac"
+  },
+  {
+    "path": "sources/stage_1/architecture_organizer.md",
+    "sha256": "309492241dcd63bac970b467e729fb878ae265cca6f592cf43c3bb4ac0cdbe16"
+  },
+  {
+    "path": "sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2_Repacked.zip",
+    "sha256": "7cb8686bf10c3630848c83a42702a28b851cb0cc4d067f061c7fc73d3e75b77c"
+  },
+  {
+    "path": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+    "sha256": "75efc3e83f09fbcc41ae7da68a96f2ec0ebdfc74e61f62615f4da3478afe5019"
+  },
+  {
+    "path": "sources/stage_3_4/Organizer_Stage3_Final_Baseline_3.4.zip",
+    "sha256": "ba32e6554e5bd420e1e1aa67be5b33f678056f26ae34b599a126469ff68d67db"
+  },
+  {
+    "path": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip",
+    "sha256": "6c2447e935dd413488e482f7db3c481c8dc6e53aeb57a07d1df23d3ada85381e"
+  },
+  {
+    "path": "sources/stage_4_1_1/Organizer_Stage4_PRD_Candidate_4.1.1.zip",
+    "sha256": "723e1c665c47d38ae16347085967228ac3dd7ce32cd219692fad2ef4b49c0168"
+  },
+  {
+    "path": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip",
+    "sha256": "f8d092f5951f378d5ceb25a7d476c9e93e7bf158e63434f0e076cd91b0a76fdf"
+  },
+  {
+    "path": "work/stage_4_6_lite/final_baseline/Stage_4_Final_Baseline_Approval.md",
+    "sha256": "c3d19db6e686ac7ab6aa73e3b79f9d9fe6cb45f0ccb5364ace402a16606fb6b5"
+  },
+  {
+    "path": "work/stage_4_6_lite/final_baseline/Stage_4_Final_Baseline_Manifest.md",
+    "sha256": "8a07170c9fb6bf3aa86d7b130704a28b5aafb8461b7373fda17664517520fef2"
+  },
+  {
+    "path": "sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2_Repacked.zip!Organizer_Stage2_Technical_Specification_2.2/Search_Contract.md",
+    "sha256": "3e4458d893ea35f610299e87df7684fdd78f6684e94885d84d32130d5f08e564"
+  },
+  {
+    "path": "sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2_Repacked.zip!Organizer_Stage2_Technical_Specification_2.2/docs/02_api_and_concurrency.md",
+    "sha256": "311e968bb49f995660d3dc60e24390392ba554490568d1fa8c3b0b1b22b465d2"
+  },
+  {
+    "path": "sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2_Repacked.zip!Organizer_Stage2_Technical_Specification_2.2/openapi/openapi.yaml",
+    "sha256": "052738f7bf1b02cab054b92827e17e3ea79eb0c8832c0f5a6e60681e4b363161"
+  },
+  {
+    "path": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip!stage_2_3/Search_Contract.md",
+    "sha256": "3e4458d893ea35f610299e87df7684fdd78f6684e94885d84d32130d5f08e564"
+  },
+  {
+    "path": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip!stage_2_3/docs/02_api_and_concurrency.md",
+    "sha256": "205195e34339de3d3185fc92d8157da4c396e8056b3a75abc68760529d4c8b43"
+  },
+  {
+    "path": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip!stage_2_3/openapi/openapi.yaml",
+    "sha256": "36c15dff5adba0041fcfd79f5a0d203835dac5cdd4ad24122bcd92177c13220d"
+  },
+  {
+    "path": "sources/stage_3_4/Organizer_Stage3_Final_Baseline_3.4.zip!Organizer_Stage3_Final_Baseline_3.4/Stage_3_Screen_Catalog.md",
+    "sha256": "fff1b921c5ddc5065e5f2ea317e9827572fce49e0071c6f630ed227016ef7e3e"
+  },
+  {
+    "path": "sources/stage_3_4/Organizer_Stage3_Final_Baseline_3.4.zip!Organizer_Stage3_Final_Baseline_3.4/Stage_3_UX_Architecture.md",
+    "sha256": "07fe6533bd952d83a4780145ce769608ff63f7a386f4cdf87a99d91c629a0ae2"
+  },
+  {
+    "path": "sources/stage_3_4/Organizer_Stage3_Final_Baseline_3.4.zip!Organizer_Stage3_Final_Baseline_3.4/contract_reference/Search_Contract.md",
+    "sha256": "3e4458d893ea35f610299e87df7684fdd78f6684e94885d84d32130d5f08e564"
+  },
+  {
+    "path": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip!Stage_3_Screen_Catalog_Final_3.5.md",
+    "sha256": "751fd5213e679118b8ee87fbfc7431adf1e65283f0679fbcaac1e3723109806a"
+  },
+  {
+    "path": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip!Stage_3_UX_Architecture_Final_3.5.md",
+    "sha256": "efdeb9006bdcfbed594d20bf3d3e9e451aa578af6105b3213f9dc9075ec78e28"
+  },
+  {
+    "path": "sources/stage_4_1_1/Organizer_Stage4_PRD_Candidate_4.1.1.zip!Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_Module_PRDs.md",
+    "sha256": "af338931a13abd6f54fa5a805da17f674dda82773cc966748b58b6c83fc87ac1"
+  },
+  {
+    "path": "sources/stage_4_1_1/Organizer_Stage4_PRD_Candidate_4.1.1.zip!Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_NFR_Catalog.csv",
+    "sha256": "64a0483490f89e5c4b06071d5f47579b58d238ed3337e4c805e01d13749b4315"
+  },
+  {
+    "path": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip!Stage_4_Module_PRDs_4.5.md",
+    "sha256": "6f96ad8e4abb6ea6f71d4114789b2a12efb21b3fecbee4937d42a169bd08018d"
+  },
+  {
+    "path": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip!Stage_4_NFR_Catalog_4.5.csv",
+    "sha256": "ea936ad6da9ca4aa65ea5fa190bed513775ecd66a597dd375c874306fb812ed1"
+  },
+  {
+    "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+    "sha256": "65a6f34ac853322fc003090c07908f311924d148d366afa0fc7506a376abc7ee",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+    "sha256": "35e4335252926a7cf0875f530225ea9a7e272a8dc5e36ad507f46a2527ef431d",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Api/Security/TaskJwtAuthenticationHandler.cs",
+    "sha256": "580d171eda61444b2ca71d025c01465ae9221c88e33acb47ba0de274f55c604e",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskReadContracts.cs",
+    "sha256": "67a90bc2cedf39bbc6f63a416f2bd7a578cfd306858256810e983ebabc20f0ac",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskReadCursorCodec.cs",
+    "sha256": "3355ba912bf739bb142f0a7a36008e905d3316f92809bb37badbb976a2b7f9b4",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Application/ITaskReadStore.cs",
+    "sha256": "9dc9b4ee09121b573aded0bb95379a5778ae7acacf2e67ee49fb71f2718e766f",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+    "sha256": "56ab3e9826223685ad35c550b7fec021c6a5b5efab551bce1e0332a1441ee3d8",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Domain/TaskCardContent.cs",
+    "sha256": "6c40f9a7940d249e4670c579eea447e62878bceb80db4a26e875fd9ab5e2bba2",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs",
+    "sha256": "80f3cbc11ac0df34038a2443b08adab9cc8cef680245a1094ab48d62d760e2ac",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiSearch.cs",
+    "sha256": "a99031a34a0cb46d15218d7dd10b2f70d00e21c4c6dd2e57527156b4f91f0133",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresSessionRepository.cs",
+    "sha256": "ddcbdba9c07f51b191128c5882f631ec20f84c080368852e03f2cf50a47b94cd",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/001_task_persistence_foundation.sql",
+    "sha256": "ccbaad4ca7c8423421b14adf70b8b1c656620e67dc70a9b9c27e2c45c4c8b8b1",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/011_task_card.sql",
+    "sha256": "43360a41e65627e38aeac917567eb731bf0d04ba2f4147e8ac6b9de613a29d6f",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+    "sha256": "c926aba25698b4f327bf42b798a0555061f68d163b729dd8f59cfbda4622116b",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+    "sha256": "8140a2813db30caa7d825b73d9cdd325afcd0e27f3187511b06b8d9ae60ed27d",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "sha256": "d8a282f1cdfd9065d0af3b825c904e9594a3540b0aec242ca2e17fb89b0c9136",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskReadCursorCodecTests.cs",
+    "sha256": "a4e5b930ba2a8f476515b4d97a2fd76d30f9c67ad682d2911dbfd5f7b9e5cafd",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresTaskReadStoreTests.cs",
+    "sha256": "bd1e1804739b32ade566310dddc04c957dd0efd3d4ae972ea887103ba6301b3f",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskEndpointsTests.cs",
+    "sha256": "122bb3793cd943c1a4f4884768bd5a40cc6897b407efd7076cd75d2a32873b65",
+    "revision": "deb16b3"
+  },
+  {
+    "path": "outputs/20261016_project_related_tasks_8.1.0/validation-report.md",
+    "revision": "eb1044d",
+    "sha256": "71f7777f7e20918380e047939fbc7350434377550ec82ab3343f6591e2847099"
+  },
+  {
+    "path": "outputs/20261016_project_related_tasks_8.1.0/validation.json",
+    "revision": "eb1044d",
+    "sha256": "c92be2496ef883bbf712a6159a5a2fa86228f6b9edfc208eb42e51a09512d4da"
+  },
+  {
+    "path": "outputs/20261016_project_related_tasks_8.1.0/comparison.csv",
+    "revision": "eb1044d",
+    "sha256": "2dc5286fa2ae9660ad9c04cb824eee0060be373616f0f2d22498cb804c515320"
+  },
+  {
+    "path": "outputs/20261016_project_related_tasks_8.1.0/manifest.json",
+    "revision": "eb1044d",
+    "sha256": "b2d63b476c02f50eae16fb83507f36e8df9071c009324e0eb7d9c65593f15668"
+  }
+]

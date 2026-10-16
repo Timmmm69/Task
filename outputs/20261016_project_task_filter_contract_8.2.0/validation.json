@@ -1,0 +1,63 @@
+{
+  "version": "8.2.0",
+  "date": "2026-10-16",
+  "status": "REVIEW_ARTIFACT_VALIDATED",
+  "proposalStatus": "PROPOSED — NOT APPROVED",
+  "baseline": "deb16b3",
+  "stage81": "eb1044d",
+  "tests": [
+    {
+      "file": "evidence/cursor-baseline.trx",
+      "counts": {
+        "total": "4",
+        "executed": "4",
+        "passed": "4",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "scope": "existing baseline, no proposed filter implementation"
+    },
+    {
+      "file": "evidence/endpoints-baseline.trx",
+      "counts": {
+        "total": "166",
+        "executed": "166",
+        "passed": "166",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "scope": "existing baseline, no proposed filter implementation"
+    }
+  ],
+  "documentSections": 15,
+  "localLinksExist": true,
+  "productionSourcesUnchangedAgainstBaseline": true,
+  "stage81ServerAndClientApiUnchanged": true,
+  "databaseValidation": "NOT RUN: no configured test connection; Docker daemon unavailable",
+  "explainAnalyze": "NOT RUN",
+  "proposedFilterImplemented": false,
+  "dashboardChanged": false,
+  "sourcesChanged": false
+}
