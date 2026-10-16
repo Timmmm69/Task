@@ -1,0 +1,31 @@
+{
+  "version": "8.3.0-blocked",
+  "status": "BLOCKED_CONTRACT_APPROVAL",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 10,
+      "sha256": "518bf59a49c016ec19b0e3a01f13893882d3bf1a3cdff584102451d15c626b2e"
+    },
+    {
+      "path": "evidence.json",
+      "size": 6390,
+      "sha256": "585774af1ff0c87f8a80ad818c2bcf29fc310137ee68363d6f49b32b388c20a9"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 7349,
+      "sha256": "2649840a6daa2a6c19e34ab73838bee957e8b7d8f6d789e81f463ff329a334ed"
+    },
+    {
+      "path": "validation.json",
+      "size": 239,
+      "sha256": "928883498eb4144e6604e27aa0de81c3a2cacda6a7f9ce098c37c5913f77c5bd"
+    },
+    {
+      "path": "VERSION",
+      "size": 15,
+      "sha256": "081139dd28a987d78d9c0283e36b49c552e91d865c5ee59ebd9c9c1bbfa439fa"
+    }
+  ]
+}

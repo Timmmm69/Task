@@ -1,0 +1,9 @@
+{
+  "version": "8.3.0-blocked",
+  "status": "BLOCKED_CONTRACT_APPROVAL",
+  "implementationComplete": false,
+  "priorManifests": "PASS",
+  "historicalTrxParsed": 6,
+  "protectedFilesUnchanged": true,
+  "runtimeTestsRerun": false
+}

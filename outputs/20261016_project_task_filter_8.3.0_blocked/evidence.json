@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-16",
+  "branch": "fix/desktop-four-usability-improvements",
+  "head": "5465c4efee3f7aa815be38fcd4ed33b867e85113",
+  "originMain": "deb16b3ec0b400ca74fe2c1a208a9e12206abb5b",
+  "headVsOriginMain": "0\t19",
+  "stage81": "eb1044dae5912184a7c77fa8eb4c315424c824b6",
+  "stage82": "4829e959afe848c3a4d4c876b7870d48cc03de26",
+  "proposalSha256": "7c94be9137d5d475b55997928ae252bf939b9637d2ca614b119f3a257b01221b",
+  "priorPackageChecks": [
+    {
+      "package": "work\\project_related_tasks_8_1\\repo\\outputs\\20261016_project_related_tasks_8.1.0",
+      "verifiedFiles": 25,
+      "hashes": "PASS"
+    },
+    {
+      "package": "outputs\\20261016_project_task_filter_contract_8.2.0",
+      "verifiedFiles": 10,
+      "hashes": "PASS"
+    }
+  ],
+  "historicalTests": [
+    {
+      "file": "work\\project_related_tasks_8_1\\repo\\outputs\\20261016_project_related_tasks_8.1.0\\evidence\\baseline.trx",
+      "counters": {
+        "total": "9",
+        "executed": "9",
+        "passed": "9",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "sha256": "3238d03ad93f282130a389ed5d7562de81b18aa59617b7d72f022b789e8dd437",
+      "execution": "Historical evidence; not rerun in 8.3"
+    },
+    {
+      "file": "work\\project_related_tasks_8_1\\repo\\outputs\\20261016_project_related_tasks_8.1.0\\evidence\\desktop-full.trx",
+      "counters": {
+        "total": "1149",
+        "executed": "1149",
+        "passed": "1149",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "sha256": "0bb43953ad2d2428c89538958f2756dddffee4f740040f07eca0ac6df704734a",
+      "execution": "Historical evidence; not rerun in 8.3"
+    },
+    {
+      "file": "work\\project_related_tasks_8_1\\repo\\outputs\\20261016_project_related_tasks_8.1.0\\evidence\\projects-final.trx",
+      "counters": {
+        "total": "82",
+        "executed": "82",
+        "passed": "82",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "sha256": "b203c2d7bc3ac4e1548caf67d7fcd242b559e67a572f95139b2eafa665c64682",
+      "execution": "Historical evidence; not rerun in 8.3"
+    },
+    {
+      "file": "work\\project_related_tasks_8_1\\repo\\outputs\\20261016_project_related_tasks_8.1.0\\evidence\\related-tasks.trx",
+      "counters": {
+        "total": "28",
+        "executed": "28",
+        "passed": "28",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "sha256": "7d268d849962e3c6455f193952b6c2c7dd495a4fa04ea87a6d39e58d16f235c6",
+      "execution": "Historical evidence; not rerun in 8.3"
+    },
+    {
+      "file": "outputs\\20261016_project_task_filter_contract_8.2.0\\evidence\\cursor-baseline.trx",
+      "counters": {
+        "total": "4",
+        "executed": "4",
+        "passed": "4",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "sha256": "7c14ee5f286e2650c54e4d2dbadda74d9b85aa2ff3526b3ae400cbbeda260174",
+      "execution": "Historical evidence; not rerun in 8.3"
+    },
+    {
+      "file": "outputs\\20261016_project_task_filter_contract_8.2.0\\evidence\\endpoints-baseline.trx",
+      "counters": {
+        "total": "166",
+        "executed": "166",
+        "passed": "166",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "sha256": "dc2f44f1f5bb9c60b3772371cbc3624c52530c0bc02d59022d235ce4640d5f48",
+      "execution": "Historical evidence; not rerun in 8.3"
+    }
+  ],
+  "protectedFilesSha256": {
+    "work/production/src/Task.Api/Tasks/TaskEndpoints.cs": "65a6f34ac853322fc003090c07908f311924d148d366afa0fc7506a376abc7ee",
+    "work/production/src/Task.Application/TaskReadContracts.cs": "b03655167cecb10aba5a2dca00e86ad67b66525f1c789bd0a0d6e3aa65db91e4",
+    "work/production/src/Task.Application/TaskReadCursorCodec.cs": "da15ddbf3c7539c360418e9801f9a9675e99662ff2afbd73a879027d70fbd877",
+    "work/production/src/Task.Application/ITaskReadStore.cs": "4831812b43ead8c7e4456f3afdcee84c41258a416f130ae7b88bf2ebe10878b7",
+    "work/production/src/Task.Infrastructure/Persistence/PostgresTaskReadStore.cs": "80f3cbc11ac0df34038a2443b08adab9cc8cef680245a1094ab48d62d760e2ac",
+    "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs": "8140a2813db30caa7d825b73d9cdd325afcd0e27f3187511b06b8d9ae60ed27d",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs": "d2fb76e5aebf7ce1b4df2b057b8998cd8a9e985bdf9f086bdd070f16e7ae9676",
+    ".project-dashboard/roadmap.json": "9fdca0d9f1a5133ec3b1bb01f62e57a41a985d46adf269ccac662190cf7c0b3f"
+  }
+}

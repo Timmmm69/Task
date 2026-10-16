@@ -1,0 +1,6 @@
+Тестовый запуск для C:\Users\novik\Таск\work\review_stages_8_1_8_3\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:01.76]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\review_stages_8_1_8_3\repo\work\review_stages_8_1_8_3\evidence\focus-isolated.trx
+
+Не пройден!: не пройдено     1, пройдено     0, пропущено     0, всего     1, длительность 1 s. - Task.Desktop.Tests.dll (net10.0)

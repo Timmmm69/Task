@@ -1,0 +1,75 @@
+{
+  "version": "8.3.1-review",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "518bf59a49c016ec19b0e3a01f13893882d3bf1a3cdff584102451d15c626b2e",
+      "size": 10
+    },
+    {
+      "path": "evidence/cursor-review.log",
+      "sha256": "552964729b301b5bd583320e1bf862249dee1fcf5452305f52eb3f29332cf882",
+      "size": 650
+    },
+    {
+      "path": "evidence/cursor-review.trx",
+      "sha256": "e42d6166448008a665e4bfcca016e1de1ce29058fea99b753fe06c43fd9427d6",
+      "size": 7028
+    },
+    {
+      "path": "evidence/desktop-review.log",
+      "sha256": "c2f5ab0113f658a90ae418c24fa7ac7f5f311333d96aacf9ed04913d72cd4f4c",
+      "size": 1764
+    },
+    {
+      "path": "evidence/desktop-review.trx",
+      "sha256": "4c6f0895ead9ad35fa7923b2bdbd32ddff15b8f24eebbaf40d03abc0e15c9960",
+      "size": 1745508
+    },
+    {
+      "path": "evidence/endpoints-review.log",
+      "sha256": "bf7da0007c372d9c038e25a9c74eb2c49bf7be930ef99ffcde7e43d0a87268ca",
+      "size": 5515
+    },
+    {
+      "path": "evidence/endpoints-review.trx",
+      "sha256": "5bf99feb3c92b81cba4f4cfbb1c55b80a8201e6d7103e6bba1af971b1590093f",
+      "size": 252629
+    },
+    {
+      "path": "evidence/focus-baseline.trx",
+      "sha256": "94963c1825bd3869e5bff0986e262a351a8679744d8822b3e4353d366d90398f",
+      "size": 9388
+    },
+    {
+      "path": "evidence/focus-isolated.log",
+      "sha256": "549fa66661a6e4bfc295c383d2bd39901b6047c15228b9f4b770f72eb9bbd7a4",
+      "size": 830
+    },
+    {
+      "path": "evidence/focus-isolated.trx",
+      "sha256": "f067dc5e91053957932d6ea7b13b966eb87c568e325319ee2ef29e7bc97ef552",
+      "size": 9348
+    },
+    {
+      "path": "evidence/solution-review.log",
+      "sha256": "6d2924d809e4869ee26f6f8db2f0585e3fd8eecd3b6aadb6d296fbdb91cee1f6",
+      "size": 152
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "6bcc3e283659194971074f3d3c60a51713024c2753c9d988664afe26b70a3095",
+      "size": 4655
+    },
+    {
+      "path": "validation.json",
+      "sha256": "1192c60747016090e841dde332a3a7072eaddc934ef0fd3a839640cb63594e8d",
+      "size": 3682
+    },
+    {
+      "path": "VERSION",
+      "sha256": "03ef280fb561800adc1b56356f6d8fc81eedd0fd0ee178cb99c74eb7fe91d8cb",
+      "size": 14
+    }
+  ]
+}
