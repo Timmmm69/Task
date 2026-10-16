@@ -239,8 +239,9 @@ public sealed partial class ProjectsViewModelTests
         };
         using var vm = PickerModel(client, Directory(user)); vm.Activate(); await Choose(vm.MemberPicker!, user);
         await vm.AddMemberCommand.ExecuteAsync();
-        Assert.Empty(vm.Members); Assert.Equal(1, vm.SelectedItem!.Source.Version); Assert.NotNull(vm.Message);
-        if (failure == "auth") Assert.False(vm.AddMemberCommand.CanExecute(null));
+        Assert.Empty(vm.Members); Assert.NotNull(vm.Message);
+        if (failure == "auth") { Assert.Null(vm.SelectedItem); Assert.Empty(vm.Items); Assert.False(vm.AddMemberCommand.CanExecute(null)); }
+        else Assert.Equal(1, vm.SelectedItem!.Source.Version);
     }
 
     [Fact]

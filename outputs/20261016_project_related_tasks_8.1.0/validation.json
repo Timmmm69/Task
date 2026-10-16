@@ -1,0 +1,49 @@
+{
+  "version": "8.1.0",
+  "baseCommit": "deb16b3",
+  "branch": "perf/project-related-tasks",
+  "tests": {
+    "baseline.trx": {
+      "total": 9,
+      "executed": 9,
+      "passed": 9,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "related-tasks.trx": {
+      "total": 28,
+      "executed": 28,
+      "passed": 28,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "projects-final.trx": {
+      "total": 82,
+      "executed": 82,
+      "passed": 82,
+      "failed": 0,
+      "notExecuted": 0
+    },
+    "desktop-full.trx": {
+      "total": 1149,
+      "executed": 1149,
+      "passed": 1149,
+      "failed": 0,
+      "notExecuted": 0
+    }
+  },
+  "build": "Release solution PASS (see evidence/build.log)",
+  "finalSourceValidation": "projects-final.trx: all final changes; desktop-full.trx precedes the final session/offline precedence guard and its new regression test",
+  "nativeWpf": "PASS: UIA Invoke, focus, partial/complete, collapse/resume, unload cancellation; PNGs included",
+  "protectedFilesSha256": {
+    "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs": "8140a2813db30caa7d825b73d9cdd325afcd0e27f3187511b06b8d9ae60ed27d",
+    "work/production/src/Task.Api/Tasks/TaskEndpoints.cs": "65a6f34ac853322fc003090c07908f311924d148d366afa0fc7506a376abc7ee"
+  },
+  "forbiddenScopeChanges": [],
+  "limitations": [
+    "No live-server performance measurements",
+    "Full results still require every Task API page",
+    "No new server filters, DTOs, DB schema, permissions, or permanent offline cache",
+    "No full backend/database test suite; server code is unchanged"
+  ]
+}

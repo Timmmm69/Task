@@ -59,6 +59,9 @@ public sealed partial class ProjectsViewModelTests
 
         using var vm = new ProjectsViewModel(client, User, Capabilities, tasks);
         vm.Activate();
+        await vm.CurrentDetailsOperation;
+        Assert.Equal(0, tasks.PageCallCount);
+        await vm.LoadRelatedTasksCommand.ExecuteAsync();
         await WaitUntil(() => vm.State == ProjectsScreenState.Loaded && vm.Members.Count == 1 && vm.RelatedTasks.Count == 1);
 
         Assert.Equal("Проект Альфа", vm.SelectedItem?.Name);
@@ -239,6 +242,7 @@ public sealed partial class ProjectsViewModelTests
         public DesktopProjectResult<DesktopProjectPage> Projects { get; set; } = SuccessPage();
         public DesktopProjectResult<DesktopProjectDto> Project { get; set; } = new DesktopProjectResult<DesktopProjectDto>.NotFound();
         public Exception? ProjectException { get; set; }
+        public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>>>? ProjectHandler { get; set; }
         public DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>> Roles { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([]);
         public DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>> Members { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]);
         public DesktopProjectResult<DesktopProjectDto> Create { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
@@ -261,7 +265,7 @@ public sealed partial class ProjectsViewModelTests
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(string? cursor = null, CancellationToken cancellationToken = default)
         { ProjectPageCalls++; return System.Threading.Tasks.Task.FromResult(Projects); }
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> GetProjectAsync(Guid id, CancellationToken cancellationToken = default) =>
-            ProjectException is null
+            ProjectHandler is not null ? ProjectHandler(id, cancellationToken) : ProjectException is null
                 ? System.Threading.Tasks.Task.FromResult(Project)
                 : System.Threading.Tasks.Task.FromException<DesktopProjectResult<DesktopProjectDto>>(ProjectException);
         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>> GetRolesAsync(CancellationToken cancellationToken = default)

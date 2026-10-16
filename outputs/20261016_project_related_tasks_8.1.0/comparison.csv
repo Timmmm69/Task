@@ -1,0 +1,7 @@
+scenario,fixture_total,project_matches,page_size,baseline_requests,baseline_inspected,new_unopened_requests,new_unopened_inspected,new_first_click_requests,new_first_click_inspected,full_requests,full_inspected,baseline_first_results,new_first_results,baseline_detail_ready,new_detail_ready
+small,20,5,100,1,20,0,0,1,20,1,20,P1,P1,P1,D
+medium,500,10,100,5,500,0,0,1,100,5,500,P5,P1,P5,D
+large,5000,10,100,50,5000,0,0,1,100,50,5000,P50,P1,P50,D
+late,5000,10,100,50,5000,0,0,1,100,50,5000,P50,P50,P50,D
+empty_project,500,0,100,5,500,0,0,1,100,5,500,none,none,P5,D
+forbidden,500,0,100,0,0,0,0,0,0,0,0,none,none,D,D

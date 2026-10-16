@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d38fae4e-a682-477d-a885-1830e2b07aaf" name="novik@TIM 2026-10-16 08:51:14" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-16T08:51:14.4028144+03:00" queuing="2026-10-16T08:51:14.4028147+03:00" start="2026-10-16T08:51:12.6084604+03:00" finish="2026-10-16T08:51:14.4077301+03:00" />
+  <TestSettings name="default" id="245ba863-8642-4e04-af4d-8e28833cef7d">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-16_08_51_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a3050202-bcfa-4b2f-b3d0-f28cc3921b4e" testId="ea073116-9f65-0381-f310-5165f4b7aa99" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;error&quot;)" computerName="TIM" duration="00:00:00.1636717" startTime="2026-10-16T08:51:14.1457116+03:00" endTime="2026-10-16T08:51:14.3137906+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3050202-bcfa-4b2f-b3d0-f28cc3921b4e" />
+    <UnitTestResult executionId="cd3ae2f5-d593-4b76-9c6e-a18ce58bce43" testId="693d457a-34f8-56f3-e707-81edc39d0e55" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 500, matches: 10, late: False)" computerName="TIM" duration="00:00:00.0002028" startTime="2026-10-16T08:51:14.3227799+03:00" endTime="2026-10-16T08:51:14.3229555+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd3ae2f5-d593-4b76-9c6e-a18ce58bce43" />
+    <UnitTestResult executionId="868233da-31d9-4473-ac00-7f760a9e1f5d" testId="376501e6-28c8-d3a7-88ab-0275c0998456" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 20, matches: 5, late: False)" computerName="TIM" duration="00:00:00.0041031" startTime="2026-10-16T08:51:14.3211102+03:00" endTime="2026-10-16T08:51:14.3211311+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="868233da-31d9-4473-ac00-7f760a9e1f5d" />
+    <UnitTestResult executionId="ef1080cd-ae68-4b88-b56c-c4e32a08a3f8" testId="a1926a6d-f43d-ef59-0077-c31898818c60" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 5000, matches: 10, late: False)" computerName="TIM" duration="00:00:00.0018654" startTime="2026-10-16T08:51:14.3212236+03:00" endTime="2026-10-16T08:51:14.3227027+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef1080cd-ae68-4b88-b56c-c4e32a08a3f8" />
+    <UnitTestResult executionId="749fc631-9da7-4e86-b55e-9d6fec503b7c" testId="2a7a0da3-5df1-5594-0e00-a35d520245ef" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;cancel&quot;)" computerName="TIM" duration="00:00:00.0003998" startTime="2026-10-16T08:51:14.3201962+03:00" endTime="2026-10-16T08:51:14.3202450+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="749fc631-9da7-4e86-b55e-9d6fec503b7c" />
+    <UnitTestResult executionId="507504d2-1c04-46fb-8932-f6587a291b3f" testId="cc7ca892-6a25-5ce0-d120-f90e898dc240" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;forbidden&quot;)" computerName="TIM" duration="00:00:00.0000272" startTime="2026-10-16T08:51:14.3206351+03:00" endTime="2026-10-16T08:51:14.3206530+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="507504d2-1c04-46fb-8932-f6587a291b3f" />
+    <UnitTestResult executionId="25c97fd7-f264-484d-b79b-0498df1ceb51" testId="efbf6378-f272-2fdd-93fe-a0db6fba5ac3" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;switch&quot;)" computerName="TIM" duration="00:00:00.0001127" startTime="2026-10-16T08:51:14.3205666+03:00" endTime="2026-10-16T08:51:14.3205881+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25c97fd7-f264-484d-b79b-0498df1ceb51" />
+    <UnitTestResult executionId="4e39a35e-84d4-4485-af0c-f115add7fcf5" testId="e3063b6c-462d-de42-94f4-fde9d468b735" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 500, matches: 0, late: False)" computerName="TIM" duration="00:00:00.0001845" startTime="2026-10-16T08:51:14.3230455+03:00" endTime="2026-10-16T08:51:14.3231364+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e39a35e-84d4-4485-af0c-f115add7fcf5" />
+    <UnitTestResult executionId="514019c2-a3ba-460d-b364-b9f001ccfda8" testId="cb5c370b-5d21-c2e6-7891-482f94fec91a" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 5000, matches: 10, late: True)" computerName="TIM" duration="00:00:00.0022167" startTime="2026-10-16T08:51:14.3211736+03:00" endTime="2026-10-16T08:51:14.3211907+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="514019c2-a3ba-460d-b364-b9f001ccfda8" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 500, matches: 0, late: False)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="e3063b6c-462d-de42-94f4-fde9d468b735">
+      <Execution id="4e39a35e-84d4-4485-af0c-f115add7fcf5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;forbidden&quot;)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="cc7ca892-6a25-5ce0-d120-f90e898dc240">
+      <Execution id="507504d2-1c04-46fb-8932-f6587a291b3f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_AccessSwitchCancellationAndPageFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;cancel&quot;)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="2a7a0da3-5df1-5594-0e00-a35d520245ef">
+      <Execution id="749fc631-9da7-4e86-b55e-9d6fec503b7c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_AccessSwitchCancellationAndPageFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;error&quot;)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="ea073116-9f65-0381-f310-5165f4b7aa99">
+      <Execution id="a3050202-bcfa-4b2f-b3d0-f28cc3921b4e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_AccessSwitchCancellationAndPageFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 5000, matches: 10, late: True)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="cb5c370b-5d21-c2e6-7891-482f94fec91a">
+      <Execution id="514019c2-a3ba-460d-b364-b9f001ccfda8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 5000, matches: 10, late: False)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="a1926a6d-f43d-ef59-0077-c31898818c60">
+      <Execution id="ef1080cd-ae68-4b88-b56c-c4e32a08a3f8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 500, matches: 10, late: False)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="693d457a-34f8-56f3-e707-81edc39d0e55">
+      <Execution id="cd3ae2f5-d593-4b76-9c6e-a18ce58bce43" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_AccessSwitchCancellationAndPageFailure(scenario: &quot;switch&quot;)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="efbf6378-f272-2fdd-93fe-a0db6fba5ac3">
+      <Execution id="25c97fd7-f264-484d-b79b-0498df1ceb51" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_AccessSwitchCancellationAndPageFailure" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd(total: 20, matches: 5, late: False)" storage="c:\users\novik\таск\work\project_related_tasks_8_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="376501e6-28c8-d3a7-88ab-0275c0998456">
+      <Execution id="868233da-31d9-4473-ac00-7f760a9e1f5d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_related_tasks_8_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="Baseline_CatalogWalkBlocksDetailAndPublishesOnlyAtEnd" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ea073116-9f65-0381-f310-5165f4b7aa99" executionId="a3050202-bcfa-4b2f-b3d0-f28cc3921b4e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="693d457a-34f8-56f3-e707-81edc39d0e55" executionId="cd3ae2f5-d593-4b76-9c6e-a18ce58bce43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="376501e6-28c8-d3a7-88ab-0275c0998456" executionId="868233da-31d9-4473-ac00-7f760a9e1f5d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a1926a6d-f43d-ef59-0077-c31898818c60" executionId="ef1080cd-ae68-4b88-b56c-c4e32a08a3f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a7a0da3-5df1-5594-0e00-a35d520245ef" executionId="749fc631-9da7-4e86-b55e-9d6fec503b7c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc7ca892-6a25-5ce0-d120-f90e898dc240" executionId="507504d2-1c04-46fb-8932-f6587a291b3f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="efbf6378-f272-2fdd-93fe-a0db6fba5ac3" executionId="25c97fd7-f264-484d-b79b-0498df1ceb51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3063b6c-462d-de42-94f4-fde9d468b735" executionId="4e39a35e-84d4-4485-af0c-f115add7fcf5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb5c370b-5d21-c2e6-7891-482f94fec91a" executionId="514019c2-a3ba-460d-b364-b9f001ccfda8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.49]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.69]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.71]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.91]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
