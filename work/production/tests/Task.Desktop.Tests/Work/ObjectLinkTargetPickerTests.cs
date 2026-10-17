@@ -29,6 +29,9 @@ public sealed class ObjectLinkTargetPickerTests
     [InlineData("contact", "contact_file", "catalog_item")]
     [InlineData("company", "contact_file", "catalog_item")]
     [InlineData("task", "task_contact", "contact,company")]
+    [InlineData("project", "project_contact", "contact,company")]
+    [InlineData("task", "task_project", "project")]
+    [InlineData("task", "related", "task,project,contact,company,catalog_item,calendar_event,interaction")]
     public async AsyncTask SearchUsesNameAndServerTypes(string source, string link, string expected)
     {
         var hit = Hit(expected.Split(',')[0]);
@@ -68,7 +71,7 @@ public sealed class ObjectLinkTargetPickerTests
         picker.SetContext(source, "task", "task_contact"); Assert.Null(picker.SelectedObjectId); Assert.Empty(picker.Results);
         picker.SetContext(source, "task", "task_file"); await picker.SearchAsync(); picker.Candidate = file; Assert.True(picker.ConfirmSelection());
         picker.SetContext(Guid.NewGuid(), "task", "task_file"); Assert.Null(picker.SelectedObjectId); Assert.Empty(picker.Results);
-        picker.SetContext(source, "task", "related"); Assert.False(picker.CanQuery);
+        picker.SetContext(source, "task", "parent_reference"); Assert.False(picker.CanQuery);
         picker.SetContext(source, "project", "task_file"); Assert.False(picker.CanQuery);
     }
 
@@ -152,6 +155,22 @@ public sealed class ObjectLinkTargetPickerTests
         picker.UpdateAccess(Capabilities.Where(p => p != missing).Append("ObjectLink.Read"));
         picker.SearchText = "План"; await picker.CurrentOperation; await picker.SearchAsync();
         Assert.Equal(0, client.Calls); Assert.Equal(ObjectLinkTargetPickerState.Forbidden, picker.State);
+    }
+
+    [Fact]
+    public async AsyncTask RelatedUsesOnlyReadableTypesAndAllowsCatalogSourceWithUpdatePermission()
+    {
+        var client = new SearchClient { Search = (_, types, _, _) =>
+        {
+            Assert.Equal(new[] { "catalog_item", "employee_profile" }, types);
+            return AsyncTask.FromResult(Page(Hit("employee_profile")));
+        } };
+        using var picker = Picker(client, "catalog_item", "related");
+        picker.UpdateAccess(["Search.Use", "ObjectLink.Create", "FileCatalog.Read", "FileCatalog.Update", "Employee.Read"]);
+        picker.SearchText = "План"; await picker.CurrentOperation;
+        picker.Candidate = Assert.Single(picker.Results); Assert.True(picker.ConfirmSelection());
+        picker.UpdateAccess(["Search.Use", "ObjectLink.Create", "FileCatalog.Read", "Employee.Read"]);
+        Assert.False(picker.CanQuery); Assert.Empty(picker.Results);
     }
 
     [Fact]

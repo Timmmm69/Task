@@ -61,9 +61,27 @@ public sealed class ObjectLinksIntegrationTests
         await vm.AddCommand.ExecuteAsync(); Assert.Equal(8, client.Added!.Value.Version);
     }
     [Theory]
-    [InlineData("task", "task_file,task_contact")][InlineData("project", "project_file")]
-    [InlineData("contact", "contact_file")][InlineData("company", "contact_file")]
-    [InlineData("catalog_item", "")][InlineData("calendar_event", "")][InlineData("interaction", "")][InlineData("unknown", "")]
+    [InlineData("task", "task_project", "project")]
+    [InlineData("project", "project_contact", "contact")]
+    [InlineData("project", "project_contact", "company")]
+    [InlineData("catalog_item", "related", "task")]
+    [InlineData("calendar_event", "related", "employee_profile")]
+    [InlineData("interaction", "related", "catalog_item")]
+    public async AsyncTask AdditionalServerTypesCreateUsingTheConfirmedTarget(string sourceType, string type, string targetType)
+    {
+        var client = new Client { Hit = ObjectLinkTargetPickerTests.Hit(targetType) };
+        using var vm = Model(client); var source = Guid.NewGuid();
+        vm.SetSource(source, 7, sourceType); vm.LinkType = type;
+        vm.UpdateAccess([.. Access, "Calendar.Read", "CalendarEvent.Update", "Interaction.Update", "Employee.Read"]);
+        await Select(vm); Assert.True(vm.AddCommand.CanExecute(null));
+        await vm.AddCommand.ExecuteAsync();
+        Assert.Equal((source, 7L, client.Hit.ObjectId, type), client.Added);
+        Assert.Equal(client.Hit.ObjectId, Assert.Single(vm.Items).TargetObjectId);
+    }
+    [Theory]
+    [InlineData("task", "task_file,task_contact,task_project,related")][InlineData("project", "project_file,project_contact,related")]
+    [InlineData("contact", "contact_file,related")][InlineData("company", "contact_file,related")]
+    [InlineData("catalog_item", "related")][InlineData("calendar_event", "related")][InlineData("interaction", "related")][InlineData("unknown", "")]
     public void SourceMatrixHasNoImpossibleCreation(string source, string types)
     {
         using var vm = Model(new()); vm.SetSource(Guid.NewGuid(), 1, source);
@@ -129,7 +147,8 @@ public sealed class ObjectLinksIntegrationTests
             "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."), _ => new LinkResult.MalformedResponse(),
         };
         client.Write = _ => AsyncTask.FromResult(failure); await vm.AddCommand.ExecuteAsync();
-        Assert.Same(old, Assert.Single(vm.Items)); Assert.DoesNotContain("обновлены", vm.Message); Assert.DoesNotContain("INTERNAL", vm.Message);
+        if (error == "auth") Assert.Empty(vm.Items); else Assert.Same(old, Assert.Single(vm.Items));
+        Assert.DoesNotContain("обновлены", vm.Message); Assert.DoesNotContain("INTERNAL", vm.Message);
         Assert.False(vm.AddCommand.CanExecute(null)); Assert.False(vm.RemoveCommand.CanExecute(null));
         Assert.Null(vm.TargetPicker!.SelectedTarget);
         if (error == "auth") vm.UpdateAccess(Access);

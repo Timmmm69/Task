@@ -9,12 +9,13 @@ public sealed record ObjectLinkTypeChoice(string Value, string Label);
 public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
 {
     private static readonly ObjectLinkTypeChoice[] AllTypes = [new("task_file", "Файл задачи"), new("project_file", "Файл проекта"), new("contact_file", "Файл контакта"), new("task_contact", "Контакт задачи")];
+    private static readonly ObjectLinkTypeChoice[] CorporateTypes = [.. AllTypes, new("project_contact", "Контакт проекта"), new("task_project", "Проект задачи"), new("related", "Связанный объект")];
     private readonly IDesktopObjectLinksClient _client;
     private readonly Func<bool> _canWrite, _canRemove, _canRead;
     private readonly bool _corporate;
     private Guid _source;
     private long _version, _generation;
-    private bool _disposed, _needsRefresh, _sourceActive = true;
+    private bool _disposed, _needsRefresh, _sourceActive = true, _sessionReady = true;
     private string _sourceType = "", _target = "", _type = "task_file", _message = "";
     private IReadOnlyList<DesktopObjectLink> _items = [];
     private DesktopObjectLink? _selected;
@@ -67,15 +68,16 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
             AddCommand.RaiseCanExecuteChanged();
         }
     }
-    public IReadOnlyList<ObjectLinkTypeChoice> LinkTypes => !_corporate ? AllTypes : AllTypes.Where(choice => (_sourceType, choice.Value) is
-        ("task", "task_file" or "task_contact") or ("project", "project_file") or ("contact" or "company", "contact_file")).ToArray();
+    public IReadOnlyList<ObjectLinkTypeChoice> LinkTypes => !_corporate ? AllTypes : CorporateTypes.Where(choice => (_sourceType, choice.Value) is
+        ("task", "task_file" or "task_contact" or "task_project") or ("project", "project_file" or "project_contact") or ("contact" or "company", "contact_file")
+        or ("task" or "project" or "contact" or "company" or "catalog_item" or "calendar_event" or "interaction", "related")).ToArray();
     public string Message { get => _message; private set => SetProperty(ref _message, value); }
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand AddCommand { get; }
     public AsyncCommand RemoveCommand { get; }
     public bool IsBusy => RefreshCommand.IsExecuting || AddCommand.IsExecuting || RemoveCommand.IsExecuting;
     public bool IsMutating => AddCommand.IsExecuting || RemoveCommand.IsExecuting;
-    private bool CanRead => !_disposed && _canRead() && _source != Guid.Empty;
+    private bool CanRead => !_disposed && _sessionReady && _canRead() && _source != Guid.Empty;
     private Guid TargetObjectId => _corporate ? TargetPicker?.SelectedObjectId ?? Guid.Empty : Guid.TryParse(TargetId, out var id) ? id : Guid.Empty;
     private bool CanAdd => CanRead && _canWrite() && _sourceActive && !_needsRefresh && !IsBusy && _version > 0
         && TargetObjectId != Guid.Empty && TargetObjectId != _source
@@ -105,9 +107,11 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
     public void UpdateAccess(IEnumerable<string>? capabilities, bool sessionReady = true, bool online = true)
     {
         if (_disposed) return;
+        _sessionReady = sessionReady;
+        // Capability names do not describe object-level scope. Re-read under the new access context.
         _needsRefresh |= IsMutating;
         Invalidate(); TargetPicker?.UpdateAccess(capabilities, sessionReady, online);
-        if (!_canRead() || !sessionReady) { Items = []; Selected = null; }
+        Items = []; Selected = null;
         NotifyCommands();
     }
     private void Invalidate()
@@ -118,7 +122,12 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task ExecuteOperationAsync(Func<System.Threading.Tasks.Task<DesktopWorkResult<DesktopObjectLinks>>> operation,
         long generation, bool mutation, CancellationToken ct)
     {
-        try { Apply(await operation(), generation, mutation); }
+        try
+        {
+            var result = await operation();
+            ct.ThrowIfCancellationRequested();
+            Apply(result, generation, mutation);
+        }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         { if (mutation) Apply(new DesktopWorkResult<DesktopObjectLinks>.MalformedResponse(), generation, true); }
         catch (Exception) { Apply(new DesktopWorkResult<DesktopObjectLinks>.MalformedResponse(), generation, mutation); }
@@ -147,12 +156,32 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
                 DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable => "Нет подключения к серверу. Обновите связи после восстановления подключения.",
                 _ => "Не удалось подтвердить связи. Обновите связи перед повторной попыткой.",
             };
-            if (result is DesktopWorkResult<DesktopObjectLinks>.AuthenticationFailure) TargetPicker?.UpdateAccess([], sessionReady: false);
+            if (result is DesktopWorkResult<DesktopObjectLinks>.AuthenticationFailure)
+            {
+                _sessionReady = false; Items = []; Selected = null;
+                TargetPicker?.UpdateAccess([], sessionReady: false);
+            }
+            else if (!mutation && result is DesktopWorkResult<DesktopObjectLinks>.Forbidden or DesktopWorkResult<DesktopObjectLinks>.NotFound)
+            {
+                Items = []; Selected = null; _needsRefresh = true;
+                TargetPicker?.UpdateAccess([]);
+            }
             else if (mutation) TargetPicker?.ClearSelection();
         }
         NotifyCommands();
     }
-    private void OnPickerChanged(object? sender, PropertyChangedEventArgs e) => AddCommand.RaiseCanExecuteChanged();
+    private void OnPickerChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_sessionReady && e.PropertyName == nameof(ObjectLinkTargetPickerViewModel.State)
+            && TargetPicker?.State == ObjectLinkTargetPickerState.SessionExpired)
+        {
+            _sessionReady = false; _needsRefresh |= IsMutating;
+            Invalidate(); Items = []; Selected = null;
+            Message = "Сессия завершена. Войдите в систему.";
+            NotifyCommands();
+        }
+        AddCommand.RaiseCanExecuteChanged();
+    }
     private void OnExecutionChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsMutating));

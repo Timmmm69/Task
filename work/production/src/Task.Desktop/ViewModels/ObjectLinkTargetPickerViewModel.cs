@@ -43,19 +43,34 @@ public sealed class ObjectLinkTargetPickerViewModel : ViewModelBase, IDisposable
     {
         ("task", "task_file") or ("project", "project_file") or ("contact" or "company", "contact_file") => ["catalog_item"],
         ("task", "task_contact") => ["contact", "company"],
+        ("project", "project_contact") => ["contact", "company"],
+        ("task", "task_project") => ["project"],
+        ("task" or "project" or "contact" or "company" or "catalog_item" or "calendar_event" or "interaction", "related")
+            => new[] { "task", "project", "contact", "company", "catalog_item", "calendar_event", "interaction", "employee_profile" }
+                .Where(CanReadType).ToArray(),
         _ => [],
     };
     private bool Has(string permission) => _capabilities.Contains(permission);
+    private bool CanReadType(string type) => type switch
+    {
+        "task" => Has("Task.Read"), "project" => Has("Project.Read"),
+        "contact" or "company" or "interaction" => Has("Contact.Read"),
+        "catalog_item" => Has("FileCatalog.Read"), "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
+        "employee_profile" => Has("Employee.Read"), _ => false,
+    };
     private bool HasAccess => Has("Search.Use") && Has("ObjectLink.Create") && _source != Guid.Empty
         && (_sourceType switch
         {
             "task" => Has("Task.Read"),
             "project" => Has("Project.Read") && Has("Project.Update"),
             "contact" or "company" => Has("Contact.Read") && Has("Contact.Update"),
+            "catalog_item" => Has("FileCatalog.Read") && Has("FileCatalog.Update"),
+            "calendar_event" => CanReadType("calendar_event") && Has("CalendarEvent.Update"),
+            "interaction" => Has("Contact.Read") && Has("Interaction.Update"),
             _ => false,
         })
         && AllowedTargetTypes.Count > 0
-        && AllowedTargetTypes.All(type => Has(type == "catalog_item" ? "FileCatalog.Read" : "Contact.Read"));
+        && AllowedTargetTypes.All(CanReadType);
     private bool ValidQuery => SearchText.Trim().Length is >= 2 and <= 200;
     public bool CanQuery => !_disposed && HasAccess && _sessionReady && _online;
     public bool CanConfirm => CanQuery && State is ObjectLinkTargetPickerState.Ready or ObjectLinkTargetPickerState.Selected

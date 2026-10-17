@@ -25,7 +25,7 @@ public sealed partial class WorkHubViewModelTests
         using var hub = new WorkHubViewModel(client, ObjectLinksIntegrationTests.Access.Where(p => p != "ObjectLink.Delete"));
         hub.Activate(WorkHubArea.Contacts); await Eventually(() => hub.Contacts.Count == 1);
         hub.SelectedContact = contact;
-        Assert.Equal("contact", hub.Links!.SourceType); Assert.Equal("contact_file", Assert.Single(hub.Links.LinkTypes).Value);
+        Assert.Equal("contact", hub.Links!.SourceType); Assert.Equal("contact_file", hub.Links.LinkTypes.First().Value);
         await ObjectLinksIntegrationTests.Select(hub.Links);
         await hub.Links.AddCommand.ExecuteAsync();
         Assert.Equal((contact.Id, 3L, client.LinkTransport.Hit.ObjectId, "contact_file"), client.LinkTransport.Added);
@@ -33,13 +33,13 @@ public sealed partial class WorkHubViewModelTests
         var confirmedVersion = hub.SelectedContact!.Version;
         hub.Activate(WorkHubArea.Catalog); await Eventually(() => hub.Catalog.Count == 1);
         hub.SelectedCatalogItem = Assert.Single(hub.CatalogRoots);
-        Assert.Equal("catalog_item", hub.Links.SourceType); Assert.Empty(hub.Links.LinkTypes); Assert.False(hub.Links.ShowPicker);
+        Assert.Equal("catalog_item", hub.Links.SourceType); Assert.Equal("related", Assert.Single(hub.Links.LinkTypes).Value); Assert.True(hub.Links.ShowPicker);
         await hub.Links.RefreshCommand.ExecuteAsync(); Assert.Single(hub.Links.Items);
         hub.SelectedContact = contact; Assert.Equal("catalog_item", hub.Links.SourceType);
         hub.Activate(WorkHubArea.Search);
         var project = ObjectLinkTargetPickerTests.Hit("project") with { Version = 5 };
         hub.SelectedSearchHit = new(project, project.Title, "", "");
-        Assert.Equal("project", hub.Links.SourceType); Assert.Equal("project_file", Assert.Single(hub.Links.LinkTypes).Value);
+        Assert.Equal("project", hub.Links.SourceType); Assert.Equal("project_file", hub.Links.LinkTypes.First().Value);
         await ObjectLinksIntegrationTests.Select(hub.Links); await hub.Links.AddCommand.ExecuteAsync();
         Assert.Equal(project.ObjectId, client.LinkTransport.Added!.Value.Source); Assert.Equal(5, client.LinkTransport.Added!.Value.Version);
         Assert.Equal(client.LinkTransport.Version, hub.SelectedSearchHit.Source.Version);
@@ -86,7 +86,7 @@ public sealed partial class WorkHubViewModelTests
     {
         using var hub = new WorkHubViewModel(new FakeClient(), ["Search.Use", "ObjectLink.Read", permission]);
         hub.Activate(WorkHubArea.Search); var hit = ObjectLinkTargetPickerTests.Hit(type); hub.SelectedSearchHit = new(hit, hit.Title, "", "");
-        Assert.True(hub.Links!.RefreshCommand.CanExecute(null)); Assert.Empty(hub.Links.LinkTypes); Assert.False(hub.Links.AddCommand.CanExecute(null));
+        Assert.True(hub.Links!.RefreshCommand.CanExecute(null)); Assert.Equal("related", Assert.Single(hub.Links.LinkTypes).Value); Assert.False(hub.Links.AddCommand.CanExecute(null));
         Assert.True(await hub.Links.RefreshCommand.ExecuteAsync());
     }
 

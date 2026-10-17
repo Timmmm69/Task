@@ -8,7 +8,7 @@ namespace Task.Desktop.Work;
 public sealed record DesktopObjectLink(Guid Id, Guid SourceObjectId, Guid TargetObjectId, string LinkType, string? RelatedTitle = null)
 {
     public string Title => RelatedTitle ?? TargetObjectId.ToString("D");
-    public string TypeLabel => LinkType switch { "task_file" => "Файл задачи", "project_file" => "Файл проекта", "contact_file" => "Файл контакта", "task_contact" => "Контакт задачи", _ => "Связь" };
+    public string TypeLabel => LinkType switch { "task_file" => "Файл задачи", "project_file" => "Файл проекта", "contact_file" => "Файл контакта", "task_contact" => "Контакт задачи", "project_contact" => "Контакт проекта", "task_project" => "Проект задачи", "related" => "Связанный объект", _ => "Связь" };
 }
 public sealed record DesktopObjectLinks(IReadOnlyList<DesktopObjectLink> Items, long SourceVersion);
 public interface IDesktopObjectLinksClient

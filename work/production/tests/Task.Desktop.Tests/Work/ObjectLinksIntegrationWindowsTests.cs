@@ -54,7 +54,7 @@ public sealed class ObjectLinksIntegrationWindowsTests
                     var pickerView = Assert.Single(Descendants<ObjectLinkTargetPickerView>(view));
                     var search = (TextBox)pickerView.FindName("SearchBox"); var list = (ListBox)pickerView.FindName("ResultsList");
                     Assert.True(pickerView.IsVisible); Assert.False(Descendants<TextBox>(view).Single(box => box != search).IsVisible);
-                    var types = Assert.Single(Descendants<ComboBox>(view)); Assert.Equal(2, types.Items.Count);
+                    var types = Assert.Single(Descendants<ComboBox>(view)); Assert.Equal(4, types.Items.Count);
                     vm.SetSource(Guid.NewGuid(), 3, "project"); Pump(); Assert.Equal("project_file", vm.LinkType); Assert.Equal("project_file", types.SelectedValue);
                     vm.SetSource(source, 7, "task"); Pump(); Assert.Equal("task_file", vm.LinkType);
                     search.Text = "План"; await vm.TargetPicker!.CurrentOperation; Pump(); Assert.Single(list.Items);
@@ -76,7 +76,8 @@ public sealed class ObjectLinksIntegrationWindowsTests
                     Assert.All(Descendants<Button>(view).Where(button => button.IsVisible), button => Assert.True(button.TransformToAncestor(view).TransformBounds(new Rect(button.RenderSize)).Right <= view.ActualWidth + 1));
                     SaveFrame(view, "corporate-links-narrow.png");
                     vm.SetSource(Guid.NewGuid(), 1, "catalog_item"); Pump();
-                    Assert.False(types.IsVisible); Assert.False(add.IsVisible); Assert.False(pickerView.IsVisible);
+                    Assert.True(types.IsVisible); Assert.True(add.IsVisible); Assert.True(pickerView.IsVisible);
+                    Assert.Equal("related", vm.LinkType); Assert.False(add.IsEnabled);
                     Assert.True(Descendants<DataGrid>(view).Single().IsVisible);
                     SaveFrame(view, "corporate-links-catalog-read-only.png"); completion.SetResult();
                 }

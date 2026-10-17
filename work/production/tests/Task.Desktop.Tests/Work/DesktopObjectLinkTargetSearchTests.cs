@@ -17,6 +17,17 @@ public sealed partial class DesktopWorkApiClientTests
         }), ["nextCursor"] = null,
     }.ToJsonString();
 
+    [Theory]
+    [InlineData("project")][InlineData("task")][InlineData("calendar_event")]
+    [InlineData("interaction")][InlineData("employee_profile")]
+    public async AsyncTask TargetSearchSupportsOtherLinkableSearchResources(string type)
+    {
+        await using var fixture = await Fixture.CreateAsync((_, _) => AsyncTask.FromResult(Json(HttpStatusCode.OK, TargetBody(type))));
+        var result = Assert.IsType<PageResult.Succeeded>(await fixture.Client.SearchTargetsAsync("План", [type], null));
+        Assert.Equal(type, Assert.Single(result.Value).ObjectType);
+        Assert.Contains("types=" + type, Assert.Single(fixture.Requests).Uri.Query);
+    }
+
     [Fact]
     public async AsyncTask TargetSearchUsesExistingAuthenticatedApiAndPreservesGlobalSearch()
     {
