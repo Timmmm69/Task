@@ -1,0 +1,30 @@
+[
+  {
+    "path": ".project-dashboard/roadmap.json",
+    "sha256": "76fbbd40334e0b1a76bbf9a057f4768553addfde5c9ec6914bb1d9ce6cb020b2"
+  },
+  {
+    "path": "work/production/docs/USER-MANAGEMENT-API.md",
+    "sha256": "2154f17d1fd80ea4a37632efbaa96fe2c52c70bcbc750ddf6b503f57f731c191"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+    "sha256": "f0f1969a7a8b4bbab887cb01a9c42a6397a978aacd972c1a37c4362f56b631ff"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Administration/DesktopUserManagementApiClient.cs",
+    "sha256": "a3e2b48af65e22a1914b51ce69b14ef71e18d815371a48d44ee1720516460670"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Administration/DesktopUserManagementContracts.cs",
+    "sha256": "068c5dc3b3412fd14d0e93a6310d5c61268a0fd5baceed0e0edb92868e6c327c"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Administration/AdministrationViewModelTests.cs",
+    "sha256": "792cfca64452cd863f702d4e1aed086d2b7776cdaf8df9683af587fd3708b39f"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Administration/DesktopUserManagementApiClientTests.cs",
+    "sha256": "63685c2e8e5e541edfc992d00eed1317f25d6c75ceaf615dd015d3439e44133c"
+  }
+]

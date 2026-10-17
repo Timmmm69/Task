@@ -1,0 +1,7 @@
+dotnet build work/production/Task.sln -c Release
+dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~Administration|FullyQualifiedName~EmployeeDirectoryClientTests|FullyQualifiedName~DesktopProjectsApiClientTests|FullyQualifiedName~DesktopWorkApiClientTests"
+dotnet test work/production/tests/Task.ServiceHosts.Tests/Task.ServiceHosts.Tests.csproj -c Release --no-build
+dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build
+git diff --check
+npm run dashboard:order
+npm run dashboard:validate

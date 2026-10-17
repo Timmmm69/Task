@@ -1,0 +1,187 @@
+{
+  "version": "11.1.0",
+  "base": "2f50889e690d71a2d710ae49d055897d191d655f",
+  "branch": "feature/admin-user-management",
+  "changedFiles": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "76fbbd40334e0b1a76bbf9a057f4768553addfde5c9ec6914bb1d9ce6cb020b2"
+    },
+    {
+      "path": "work/production/docs/USER-MANAGEMENT-API.md",
+      "sha256": "2154f17d1fd80ea4a37632efbaa96fe2c52c70bcbc750ddf6b503f57f731c191"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "sha256": "f0f1969a7a8b4bbab887cb01a9c42a6397a978aacd972c1a37c4362f56b631ff"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopUserManagementApiClient.cs",
+      "sha256": "a3e2b48af65e22a1914b51ce69b14ef71e18d815371a48d44ee1720516460670"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopUserManagementContracts.cs",
+      "sha256": "068c5dc3b3412fd14d0e93a6310d5c61268a0fd5baceed0e0edb92868e6c327c"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Administration/AdministrationViewModelTests.cs",
+      "sha256": "792cfca64452cd863f702d4e1aed086d2b7776cdaf8df9683af587fd3708b39f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Administration/DesktopUserManagementApiClientTests.cs",
+      "sha256": "63685c2e8e5e541edfc992d00eed1317f25d6c75ceaf615dd015d3439e44133c"
+    }
+  ],
+  "files": [
+    {
+      "path": "api-contract.md",
+      "bytes": 5828,
+      "sha256": "2154f17d1fd80ea4a37632efbaa96fe2c52c70bcbc750ddf6b503f57f731c191"
+    },
+    {
+      "path": "evidence/administration.trx",
+      "bytes": 310928,
+      "sha256": "36ba3f7ff014071b4484ddd79b7ce6001405f49cc3b07b425b6cecbf48d7b9fb"
+    },
+    {
+      "path": "evidence/baseline-desktop-all.log",
+      "bytes": 5766,
+      "sha256": "abad793c996a5079e4959383217e84cc5d1c1f2982270c6e274a455ba3cb13a4"
+    },
+    {
+      "path": "evidence/baseline-desktop-all.trx",
+      "bytes": 1974127,
+      "sha256": "ff3cb6528a8419a7813dbfa2f4cd3db2c1e475fc0c72fd70c25bd764258debd9"
+    },
+    {
+      "path": "evidence/baseline-native.log",
+      "bytes": 3075,
+      "sha256": "40cd6dbf63fe95196268a2f84006000f53c8e3d850e1c68dca077ecd399feb11"
+    },
+    {
+      "path": "evidence/baseline-native.trx",
+      "bytes": 3163,
+      "sha256": "960a0b599c20c7008c11778e4b572d60206baba44c846023668b254f6bec78b6"
+    },
+    {
+      "path": "evidence/build.log",
+      "bytes": 4159,
+      "sha256": "845247a7df4824c2002d44c2bbf9f2e0ca5be75adbecd42b9dff45631ef0461b"
+    },
+    {
+      "path": "evidence/changed-native.log",
+      "bytes": 682,
+      "sha256": "0b893458de5ffdde45b97a8d1146e056e60aa6d67184edb6e21e0eacd2ef6ade"
+    },
+    {
+      "path": "evidence/changed-native.trx",
+      "bytes": 3155,
+      "sha256": "5306d06f7563d99b8197e818567972d4acdeafd262ebd38df6cde790b5c2535d"
+    },
+    {
+      "path": "evidence/desktop-all.log",
+      "bytes": 3623,
+      "sha256": "9b2b685e1b6315b138f546b9a561d2167e22b41dc8bcce2d535888313fe12daf"
+    },
+    {
+      "path": "evidence/desktop-all.trx",
+      "bytes": 2052674,
+      "sha256": "dd56aad7cde3e6cad15cf276ccaf555b4205289d4d0203f7229913ffc68d2524"
+    },
+    {
+      "path": "evidence/desktop-confirmation.log",
+      "bytes": 3377,
+      "sha256": "79f482b60ac41c3b7cdcadb40f9ad8699176bfa41dd786a1d0338778d45445c2"
+    },
+    {
+      "path": "evidence/desktop-confirmation.trx",
+      "bytes": 2052202,
+      "sha256": "2807aa4501d2382d3605e1ca6cfb73f1e068680a2821e5c534cfd9b4ccd4d96f"
+    },
+    {
+      "path": "evidence/desktop-final.log",
+      "bytes": 3370,
+      "sha256": "aa54d43e15772bfaed42096d0b3c9bb67d70a98d80e65903ec0dd6a7c8524e2e"
+    },
+    {
+      "path": "evidence/desktop-final.trx",
+      "bytes": 2053842,
+      "sha256": "8eb4365d220dffff7874f8713aca46ff45f789c3b298d4142d05e5fb57af5b8a"
+    },
+    {
+      "path": "evidence/scoped.log",
+      "bytes": 2468,
+      "sha256": "997986398c509c0a9efaad2d8582fb1748bd688c2cf033cd99be0531c903912c"
+    },
+    {
+      "path": "evidence/server-contract.trx",
+      "bytes": 979237,
+      "sha256": "e124cce83a71b95f2163103939516f5a89b749c4486cf33f0e4c83389253787c"
+    },
+    {
+      "path": "report.md",
+      "bytes": 2316,
+      "sha256": "252565d8281c36266dd5a5e781d84336797c8ec4a2a72adc6a0360fa1b099fee"
+    },
+    {
+      "path": "source-scope.json",
+      "bytes": 1243,
+      "sha256": "5604a83d03bba02a54ed19d744fb315971716276c1425de27790553be42955e0"
+    },
+    {
+      "path": "source.patch",
+      "bytes": 80223,
+      "sha256": "ab32527f310a70a37cf8f1770355745f01314a73f4b0e8a7efd30714966551f2"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 139098,
+      "sha256": "76fbbd40334e0b1a76bbf9a057f4768553addfde5c9ec6914bb1d9ce6cb020b2"
+    },
+    {
+      "path": "source/work/production/docs/USER-MANAGEMENT-API.md",
+      "bytes": 5828,
+      "sha256": "2154f17d1fd80ea4a37632efbaa96fe2c52c70bcbc750ddf6b503f57f731c191"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "bytes": 7979,
+      "sha256": "f0f1969a7a8b4bbab887cb01a9c42a6397a978aacd972c1a37c4362f56b631ff"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Administration/DesktopUserManagementApiClient.cs",
+      "bytes": 14527,
+      "sha256": "a3e2b48af65e22a1914b51ce69b14ef71e18d815371a48d44ee1720516460670"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Administration/DesktopUserManagementContracts.cs",
+      "bytes": 4123,
+      "sha256": "068c5dc3b3412fd14d0e93a6310d5c61268a0fd5baceed0e0edb92868e6c327c"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Administration/AdministrationViewModelTests.cs",
+      "bytes": 5142,
+      "sha256": "792cfca64452cd863f702d4e1aed086d2b7776cdaf8df9683af587fd3708b39f"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Administration/DesktopUserManagementApiClientTests.cs",
+      "bytes": 27959,
+      "sha256": "63685c2e8e5e541edfc992d00eed1317f25d6c75ceaf615dd015d3439e44133c"
+    },
+    {
+      "path": "validation-commands.txt",
+      "bytes": 617,
+      "sha256": "be3b99b8c13ed888de08e8efe73fe4ae96fd4d11cb90afb282003da849a13c42"
+    },
+    {
+      "path": "validation-report.json",
+      "bytes": 6488,
+      "sha256": "4eb5e56327e30de1b788f62b9f45d4d30cba73bfe70f833512aa0d6534f656d0"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "cd1c6f8954599978e16a05c72be16dc4c2056e5f2bce9ecda206ab66f3d1e0eb"
+    }
+  ]
+}

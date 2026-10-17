@@ -40,7 +40,7 @@ public sealed record DesktopNetworkResource(Guid Id, long Version, string Name, 
     public override string ToString() => Name;
 }
 
-public interface IDesktopAdministrationApiClient
+public partial interface IDesktopAdministrationApiClient
 {
     global::System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>> GetUsersAsync(CancellationToken cancellationToken = default);
     global::System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopAdminRole>>> GetRolesAsync(CancellationToken cancellationToken = default);
@@ -51,6 +51,7 @@ public sealed partial class DesktopAdministrationApiClient : IDesktopAdministrat
 {
     private readonly DesktopAuthenticatedGetExecutor _executor;
     private readonly string _root;
+    private readonly DesktopConnectivityService? _connectivity;
 
     public DesktopAdministrationApiClient(HttpClient httpClient, Uri serverEndpoint,
         SessionService sessionService, DesktopConnectivityService? connectivity = null)
@@ -58,7 +59,9 @@ public sealed partial class DesktopAdministrationApiClient : IDesktopAdministrat
         ArgumentNullException.ThrowIfNull(httpClient);
         ArgumentNullException.ThrowIfNull(serverEndpoint);
         ArgumentNullException.ThrowIfNull(sessionService);
+        if (!serverEndpoint.IsAbsoluteUri) throw new ArgumentException("The server endpoint must be absolute.", nameof(serverEndpoint));
         _executor = new(httpClient, sessionService, connectivity);
+        _connectivity = connectivity;
         _root = serverEndpoint.AbsoluteUri.TrimEnd('/') + "/api/v1/";
     }
 

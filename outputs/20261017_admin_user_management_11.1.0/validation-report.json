@@ -1,0 +1,233 @@
+{
+  "version": "11.1.0",
+  "date": "2026-10-17",
+  "branch": "feature/admin-user-management",
+  "base": "2f50889e690d71a2d710ae49d055897d191d655f",
+  "status": "SCOPED_PASS_WITH_INHERITED_NATIVE_WPF_FAILURE",
+  "readyForStage11_2": true,
+  "fullDesktopGateGreen": false,
+  "build": {
+    "command": "dotnet build work/production/Task.sln -c Release",
+    "exitCode": 0,
+    "warnings": [
+      "Existing xUnit1031 in DesktopCredentialVaultTests",
+      "Existing xUnit2031 in PersonalPlanningTests"
+    ]
+  },
+  "tests": {
+    "administration.trx": {
+      "total": 196,
+      "executed": 196,
+      "passed": 196,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "server-contract.trx": {
+      "total": 626,
+      "executed": 626,
+      "passed": 626,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "desktop-all.trx": {
+      "total": 1337,
+      "executed": 1337,
+      "passed": 1336,
+      "failed": 1,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "desktop-confirmation.trx": {
+      "total": 1337,
+      "executed": 1337,
+      "passed": 1336,
+      "failed": 1,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "desktop-final.trx": {
+      "total": 1338,
+      "executed": 1338,
+      "passed": 1337,
+      "failed": 1,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "baseline-native.trx": {
+      "total": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "changed-native.trx": {
+      "total": 1,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    },
+    "baseline-desktop-all.trx": {
+      "total": 1279,
+      "executed": 1279,
+      "passed": 1277,
+      "failed": 2,
+      "error": 0,
+      "timeout": 0,
+      "aborted": 0,
+      "inconclusive": 0,
+      "passedButRunAborted": 0,
+      "notRunnable": 0,
+      "notExecuted": 0,
+      "disconnected": 0,
+      "warning": 0,
+      "completed": 0,
+      "inProgress": 0,
+      "pending": 0
+    }
+  },
+  "acceptance": {
+    "AC1": "PASS",
+    "AC2": "PASS",
+    "AC3": "PASS",
+    "AC4": "PASS",
+    "AC5": "PASS",
+    "AC6": "PASS"
+  },
+  "permissions": {
+    "verifiedInServerRoutesAndExistingEndpointTests": [
+      "User.Read",
+      "User.Create",
+      "User.Update",
+      "User.Block"
+    ],
+    "documentedOnlyNoNewClientOperations": [
+      "User.ManageRoles",
+      "User.ResetPassword"
+    ]
+  },
+  "limitations": [
+    "NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow fails in full desktop runs on both the changed branch and unchanged origin/main; passes standalone on both.",
+    "Full desktop gate remains non-green; no unrelated native WPF code was changed.",
+    "Canonical UserPatch includes accountStatus, but the runtime endpoint rejects it; use explicit transitions.",
+    "Canonical UserCreate enum is broader than the normative pending_activation rule; client omits status.",
+    "Only the existing text filter and stable id sort are supported; server page size is 100.",
+    "Legacy administration UI still uses first-page summary; UI adoption is stage 11.2.",
+    "No live deployment, manual UI acceptance or real database mutations were performed."
+  ],
+  "checks": {
+    "noServerOrDatabaseChanges": true,
+    "noUiChanges": true,
+    "noSourcesChanges": true,
+    "existingAuthenticatedExecutor": true,
+    "noNetworkWriteRetries": true,
+    "noDiagnosticPayloadLogging": true,
+    "dashboardOrder": "PASS",
+    "dashboardValidation": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "changedFiles": [
+    {
+      "path": ".project-dashboard/roadmap.json",
+      "sha256": "76fbbd40334e0b1a76bbf9a057f4768553addfde5c9ec6914bb1d9ce6cb020b2"
+    },
+    {
+      "path": "work/production/docs/USER-MANAGEMENT-API.md",
+      "sha256": "2154f17d1fd80ea4a37632efbaa96fe2c52c70bcbc750ddf6b503f57f731c191"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+      "sha256": "f0f1969a7a8b4bbab887cb01a9c42a6397a978aacd972c1a37c4362f56b631ff"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopUserManagementApiClient.cs",
+      "sha256": "a3e2b48af65e22a1914b51ce69b14ef71e18d815371a48d44ee1720516460670"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Administration/DesktopUserManagementContracts.cs",
+      "sha256": "068c5dc3b3412fd14d0e93a6310d5c61268a0fd5baceed0e0edb92868e6c327c"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Administration/AdministrationViewModelTests.cs",
+      "sha256": "792cfca64452cd863f702d4e1aed086d2b7776cdaf8df9683af587fd3708b39f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Administration/DesktopUserManagementApiClientTests.cs",
+      "sha256": "63685c2e8e5e541edfc992d00eed1317f25d6c75ceaf615dd015d3439e44133c"
+    }
+  ]
+}

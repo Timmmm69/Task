@@ -62,6 +62,12 @@ public sealed class AdministrationViewModelTests
 
     private sealed class FakeClient : IDesktopAdministrationApiClient
     {
+        public System.Threading.Tasks.Task<DesktopUserResult<DesktopUserPage>> GetUserPageAsync(DesktopUserQuery query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> GetUserDetailsAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> CreateUserAsync(DesktopUserCreate draft, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> UpdateUserAsync(Guid id, long version, DesktopUserPatch patch, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> TransitionUserAsync(Guid id, long version, DesktopUserTransition transition, string? idempotencyKey = null, string? reason = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
         public int UsersReads { get; private set; }
         public int RolesReads { get; private set; }
 
