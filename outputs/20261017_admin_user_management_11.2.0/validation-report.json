@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-17",
+  "readyForStage11_3Development": true,
+  "build": {
+    "exitCode": 0,
+    "command": "dotnet build work/production/Task.sln -c Release --no-restore"
+  },
+  "version": "11.2.0",
+  "inheritedFailure": {
+    "firstFullRun": "1366/1366 PASS",
+    "fixedInThisScope": false,
+    "baselineEvidence": "outputs/20261017_admin_user_management_11.1.0/validation-report.json",
+    "finalFullRun": "1368 PASS / 1 FAIL",
+    "isolatedResult": "PASS",
+    "test": "TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow",
+    "location": "TaskContextActionsUiTests.cs:62"
+  },
+  "tests": {
+    "administration-release.trx": {
+      "skipped": 0,
+      "failed": 0,
+      "total": 93,
+      "passed": 93
+    },
+    "desktop-release.trx": {
+      "skipped": 0,
+      "failed": 0,
+      "total": 1366,
+      "passed": 1366
+    },
+    "desktop-release-final.trx": {
+      "skipped": 0,
+      "failed": 1,
+      "total": 1369,
+      "passed": 1368
+    },
+    "users-contract.trx": {
+      "skipped": 0,
+      "failed": 0,
+      "total": 11,
+      "passed": 11
+    },
+    "inherited-native-isolated.trx": {
+      "skipped": 0,
+      "failed": 0,
+      "total": 1,
+      "passed": 1
+    }
+  },
+  "nativeWpf": {
+    "transport": "Test double implementing existing typed client interface",
+    "manualLiveCorporateServer": "NOT RUN",
+    "checks": [
+      "real Window",
+      "UIA Invoke/Value",
+      "binding errors",
+      "fixed Save/Cancel footer",
+      "scrolling",
+      "offline/read-only",
+      "create/edit/cancel"
+    ],
+    "viewports": [
+      "1120x900",
+      "800x600"
+    ],
+    "passed": true
+  },
+  "branch": "feature/admin-user-management",
+  "baseline": "4c737b2",
+  "fullDesktopGateGreen": false,
+  "status": "SCOPED_PASS_WITH_INHERITED_NATIVE_WPF_FAILURE",
+  "limitations": [
+    "DUPLICATE_RESOURCE does not identify login vs workEmail; UI identifies both candidate fields",
+    "No permitted named department directory; creation omits departmentId and PATCH preserves it",
+    "Creation returns pending_activation, no password; credential provisioning is a separate dependency",
+    "Version conflicts preserve draft and require explicit cancel/reopen before another update",
+    "No live production account mutations, manual Narrator or physical DPI matrix acceptance"
+  ],
+  "permissions": [
+    "User.Read",
+    "User.Create",
+    "User.Update"
+  ]
+}

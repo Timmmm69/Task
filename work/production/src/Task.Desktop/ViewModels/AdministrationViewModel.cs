@@ -7,7 +7,7 @@ public enum AdministrationArea { Users, Roles, Resources }
 
 public sealed record AdministrationTab(AdministrationArea Area, string Title, string Capability);
 
-public sealed class AdministrationViewModel : ViewModelBase, IDisposable
+public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
 {
     private readonly IDesktopAdministrationApiClient _client;
     private readonly HashSet<string> _capabilities;
@@ -38,7 +38,8 @@ public sealed class AdministrationViewModel : ViewModelBase, IDisposable
             new(AdministrationArea.Users, "Управление доступом", "User.ManageRoles"),
         ];
         _selectedTab = Tabs[0];
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_savingUser && !IsLoading && !IsEditorOpen);
+        InitializeUserCommands();
         RefreshCommand.ExecutionFailed += _ => Message = "Не удалось обновить раздел. Подтверждённые данные не изменены.";
     }
 
@@ -48,8 +49,9 @@ public sealed class AdministrationViewModel : ViewModelBase, IDisposable
         get => _selectedTab;
         set
         {
-            if (!SetProperty(ref _selectedTab, value)) return;
+            if (IsEditorOpen || _savingUser || !SetProperty(ref _selectedTab, value)) return;
             OnPropertyChanged(nameof(IsUsers)); OnPropertyChanged(nameof(IsRoles)); OnPropertyChanged(nameof(IsResources));
+            InvalidateUserDetails();
             NotifyAccess();
             if (_active) _ = RefreshCommand.ExecuteAsync(cancellationToken: _activation?.Token ?? default);
         }
@@ -57,7 +59,7 @@ public sealed class AdministrationViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<DesktopAdminUser> Users { get => _users; private set => SetProperty(ref _users, value); }
     public IReadOnlyList<DesktopAdminRole> Roles { get => _roles; private set => SetProperty(ref _roles, value); }
     public IReadOnlyList<DesktopNetworkResource> Resources { get => _resources; private set => SetProperty(ref _resources, value); }
-    public DesktopAdminUser? SelectedUser { get => _selectedUser; set => SetProperty(ref _selectedUser, value); }
+    public DesktopAdminUser? SelectedUser { get => _selectedUser; set { if (SetProperty(ref _selectedUser, value)) { InvalidateUserDetails(); NotifyUserCommands(); } } }
     public DesktopAdminRole? SelectedRole { get => _selectedRole; set => SetProperty(ref _selectedRole, value); }
     public DesktopNetworkResource? SelectedResource { get => _selectedResource; set => SetProperty(ref _selectedResource, value); }
     public string? Message { get => _message; private set { if (SetProperty(ref _message, value)) OnPropertyChanged(nameof(HasMessage)); } }
@@ -85,9 +87,25 @@ public sealed class AdministrationViewModel : ViewModelBase, IDisposable
         _ = RefreshCommand.ExecuteAsync(cancellationToken: _activation.Token);
     }
 
-    public void Deactivate() { _active = false; _activation?.Cancel(); RefreshCommand.RaiseCanExecuteChanged(); }
-    public void UpdateCapabilities(IEnumerable<string>? capabilities) { _capabilities.Clear(); _capabilities.UnionWith(capabilities ?? []); NotifyAccess(); }
-    public void UpdateSessionState(bool available) { _sessionAvailable = available; if (!available) Message = "Сессия завершена. Выполните вход снова."; NotifyAccess(); }
+    public void Deactivate() { _active = false; ++_accessGeneration; InvalidateUserDetails(); NotifyUserCommands(); _activation?.Cancel(); RefreshCommand.RaiseCanExecuteChanged(); }
+    public void UpdateCapabilities(IEnumerable<string>? capabilities)
+    {
+        var updated = new HashSet<string>(capabilities ?? [], StringComparer.OrdinalIgnoreCase);
+        if (_capabilities.SetEquals(updated)) return;
+        ++_accessGeneration; _capabilities.Clear(); _capabilities.UnionWith(updated); InvalidateUserDetails();
+        if (!_capabilities.Contains("User.Read")) { Users = []; SelectedUser = null; UserEditor = null; _nextUserCursor = null; }
+        NotifyAccess();
+    }
+    public void UpdateSessionState(bool available)
+    {
+        _sessionAvailable = available;
+        if (!available)
+        {
+            ++_accessGeneration; InvalidateUserDetails(); Users = []; SelectedUser = null; UserEditor = null; _nextUserCursor = null;
+            Message = "Сессия завершена. Выполните вход снова.";
+        }
+        NotifyAccess();
+    }
     public void UpdateConnectivity(bool available) { _networkAvailable = available; Message = available ? "Подключение восстановлено. Обновите административные данные." : "Сервер недоступен. Действия администратора заблокированы."; NotifyAccess(); }
 
     private async global::System.Threading.Tasks.Task RefreshAsync(object? _, CancellationToken cancellationToken)
@@ -97,12 +115,12 @@ public sealed class AdministrationViewModel : ViewModelBase, IDisposable
         {
             switch (SelectedTab.Area)
             {
-                case AdministrationArea.Users: Apply(await _client.GetUsersAsync(cancellationToken), value => { Users = value; SelectedUser = value.FirstOrDefault(); }); break;
+                case AdministrationArea.Users: await LoadUserPageAsync(false, cancellationToken); break;
                 case AdministrationArea.Roles: Apply(await _client.GetRolesAsync(cancellationToken), value => { Roles = value; SelectedRole = value.FirstOrDefault(); }); break;
                 case AdministrationArea.Resources: Apply(await _client.GetResourcesAsync(cancellationToken), value => { Resources = value; SelectedResource = value.FirstOrDefault(); }); break;
             }
         }
-        finally { IsLoading = false; }
+        finally { IsLoading = false; NotifyUserCommands(); }
     }
 
     private void Apply<T>(DesktopWorkResult<T> result, Action<T> success)
@@ -122,7 +140,8 @@ public sealed class AdministrationViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(IsLimitedRole));
         OnPropertyChanged(nameof(IsOffline)); OnPropertyChanged(nameof(AccessText));
         RefreshCommand.RaiseCanExecuteChanged();
+        NotifyUserCommands();
     }
 
-    public void Dispose() { _active = false; _activation?.Cancel(); _activation?.Dispose(); RefreshCommand.Dispose(); }
+    public void Dispose() { _active = false; ++_accessGeneration; InvalidateUserDetails(); CreateUserCommand.Dispose(); EditUserCommand.Dispose(); SaveUserCommand.Dispose(); CancelUserCommand.Dispose(); MoreUsersCommand.Dispose(); _activation?.Cancel(); _activation?.Dispose(); RefreshCommand.Dispose(); }
 }

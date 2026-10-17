@@ -62,7 +62,11 @@ public sealed class AdministrationViewModelTests
 
     private sealed class FakeClient : IDesktopAdministrationApiClient
     {
-        public System.Threading.Tasks.Task<DesktopUserResult<DesktopUserPage>> GetUserPageAsync(DesktopUserQuery query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public System.Threading.Tasks.Task<DesktopUserResult<DesktopUserPage>> GetUserPageAsync(DesktopUserQuery query, CancellationToken cancellationToken = default)
+        {
+            UsersReads++;
+            return System.Threading.Tasks.Task.FromResult<DesktopUserResult<DesktopUserPage>>(new DesktopUserResult<DesktopUserPage>.Succeeded(new([new(Guid.NewGuid(), Guid.NewGuid(), 3, "Анна Крылова", "Анна", "Крылова", "anna.k", null, null, "Руководитель", "active")], null, 1)));
+        }
         public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> GetUserDetailsAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> CreateUserAsync(DesktopUserCreate draft, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public System.Threading.Tasks.Task<DesktopUserResult<DesktopManagedUser>> UpdateUserAsync(Guid id, long version, DesktopUserPatch patch, string idempotencyKey, CancellationToken cancellationToken = default) => throw new NotSupportedException();

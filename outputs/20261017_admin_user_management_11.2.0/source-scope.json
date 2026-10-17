@@ -1,0 +1,11 @@
+[
+  "work/production/src/Task.Desktop/ViewModels/AdminUserEditor.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationViewModel.cs",
+  "work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserEditorTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserWindowsTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationViewModelTests.cs",
+  ".project-dashboard/roadmap.json",
+  "work/admin_user_management_11_2/Package-Artifact.ps1"
+]
