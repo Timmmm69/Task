@@ -23,7 +23,7 @@ public sealed partial class DesktopWorkApiClient : IDesktopObjectLinksClient
     public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopObjectLinks>> GetLinksAsync(Guid source, CancellationToken ct = default)
     {
         var result = await _executor.GetAsync(Uri($"objects/{source:D}/links?limit=200"), Correlation(), ct).ConfigureAwait(false);
-        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response) return Failure<DesktopObjectLinks>(result);
+        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response) return LinkFailure(result);
         try
         {
             var node = JsonNode.Parse(response.Body);
@@ -39,11 +39,36 @@ public sealed partial class DesktopWorkApiClient : IDesktopObjectLinksClient
     {
         var result = await SendAsync($"objects/{source:D}/links", HttpMethod.Post,
             new JsonObject { ["sourceObjectId"] = source, ["targetObjectId"] = target, ["linkType"] = type }, version, Key(), ct).ConfigureAwait(false);
-        return result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Created } ? await GetLinksAsync(source, ct).ConfigureAwait(false) : Failure<DesktopObjectLinks>(result);
+        return result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Created } ? await GetLinksAsync(source, ct).ConfigureAwait(false) : LinkFailure(result);
     }
     public async System.Threading.Tasks.Task<DesktopWorkResult<DesktopObjectLinks>> RemoveLinkAsync(Guid source, long version, Guid linkId, CancellationToken ct = default)
     {
         var result = await SendAsync($"objects/{source:D}/links/{linkId:D}", HttpMethod.Delete, new JsonObject(), version, Key(), ct).ConfigureAwait(false);
-        return result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } ? await GetLinksAsync(source, ct).ConfigureAwait(false) : Failure<DesktopObjectLinks>(result);
+        return result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } ? await GetLinksAsync(source, ct).ConfigureAwait(false) : LinkFailure(result);
     }
+    private static DesktopWorkResult<DesktopObjectLinks> LinkFailure(AuthenticatedGetResult result)
+    {
+        if (result is AuthenticatedGetResult.Response response)
+        {
+            var code = ErrorCode(response.Body);
+            if (response.StatusCode == HttpStatusCode.PreconditionFailed || code == "VERSION_CONFLICT")
+                return new DesktopWorkResult<DesktopObjectLinks>.Conflict();
+            if (response.StatusCode == HttpStatusCode.Conflict && code == "CONFLICT")
+                return new DesktopWorkResult<DesktopObjectLinks>.ValidationFailure(ObjectLinkMessages.Duplicate);
+            if (code == "INVALID_STATE_TRANSITION")
+                return new DesktopWorkResult<DesktopObjectLinks>.ValidationFailure(ObjectLinkMessages.InvalidState);
+            if (response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity)
+                return new DesktopWorkResult<DesktopObjectLinks>.ValidationFailure(ObjectLinkMessages.InvalidTarget);
+        }
+        return Failure<DesktopObjectLinks>(result);
+    }
+
+}
+
+
+internal static class ObjectLinkMessages
+{
+    internal const string Duplicate = "Такая связь уже существует. Обновите связи.";
+    internal const string InvalidState = "Состояние объекта не допускает изменение связей. Обновите объект.";
+    internal const string InvalidTarget = "Объект или тип связи недопустим. Повторите выбор активного объекта и обновите связи.";
 }

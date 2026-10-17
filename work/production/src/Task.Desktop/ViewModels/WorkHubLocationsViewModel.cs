@@ -25,6 +25,6 @@ public sealed partial class WorkHubViewModel
         if (!_catalogNodes.TryGetValue(item.Id, out var node) || item.Version < node.Version) return;
         node.UpdateItem(item);
         Catalog = Catalog.Select(i => i.Id == item.Id ? item : i).ToArray();
-        if (SelectedCatalogItem?.Id == item.Id) Links?.SetSource(item.Id, item.Version);
+        if (IsCatalog && SelectedCatalogItem?.Id == item.Id) SetCurrentLinkSource();
     }
 }

@@ -139,6 +139,11 @@
                             <StackPanel Margin="0,0,0,14">
                                 <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="4,0,0,6"/>
                                 <ItemsControl ItemsSource="{Binding Items}"><ItemsControl.ItemTemplate><DataTemplate>
+                                    <DockPanel LastChildFill="True">
+                                    <Button DockPanel.Dock="Right" Content="Связи" Margin="8,0,0,6" VerticalAlignment="Center"
+                                            Command="{Binding DataContext.SelectLinkSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                            Visibility="{Binding DataContext.HasLinks, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                            Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="{Binding Title, StringFormat=Выбрать связи объекта: {0}}"/>
                                     <Button Command="{Binding DataContext.OpenSearchResultCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
                                             Style="{StaticResource Task.Button.Secondary}" HorizontalContentAlignment="Stretch" Padding="12" Margin="0,0,0,6"
                                             AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="Открыть доступный результат">
@@ -152,6 +157,7 @@
                                             <TextBlock Grid.Column="2" Text="Открыть" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Brand.Primary}" Margin="12,0,0,0"/>
                                         </Grid>
                                     </Button>
+                                    </DockPanel>
                                 </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
                             </StackPanel>
                         </DataTemplate></ItemsControl.ItemTemplate>
@@ -289,6 +295,6 @@
             </StackPanel>
             </Grid>
         </ScrollViewer>
-        <Expander Grid.Row="3" Header="Связи выбранного объекта" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/></Expander>
+        <Expander Grid.Row="3" Header="{Binding LinksHeader}" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/></Expander>
     </Grid>
 </UserControl>

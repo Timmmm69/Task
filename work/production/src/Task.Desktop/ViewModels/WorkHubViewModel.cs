@@ -88,8 +88,17 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         _files = files ?? new WindowsFileAccessAdapter();
         _capabilities = new(capabilities ?? [], StringComparer.OrdinalIgnoreCase);
         InitializeReminderCommands();
-        if (!personal && client is IDesktopObjectLinksClient links && Has("ObjectLink.Read"))
-            Links = new(links, () => CanUseServerWrites && Has("ObjectLink.Create") && Has("ObjectLink.Delete"));
+        if (!personal && client is IDesktopObjectLinksClient links)
+        {
+            var picker = client is IDesktopObjectLinkTargetSearchClient search ? new ObjectLinkTargetPickerViewModel(search, _capabilities) : null;
+            Links = new(links, () => CanChangeLinks("ObjectLink.Create"), () => CanChangeLinks("ObjectLink.Delete"),
+                () => _active && _sessionAvailable && _networkAvailable && Has("ObjectLink.Read") && CanReadLinkSource,
+                picker, corporate: true) { ShowTargetId = false };
+            Links.Changed += ApplyLinkVersion;
+        }
+        SelectLinkSourceCommand = new((parameter, _) => { SelectedSearchHit = (DesktopSearchHit)parameter!; return System.Threading.Tasks.Task.CompletedTask; },
+            parameter => _active && _sessionAvailable && IsSearch && Has("ObjectLink.Read") && parameter is DesktopSearchHit hit
+                && SearchResults.Any(row => row.ObjectId == hit.Source.ObjectId && row.Version == hit.Source.Version && row.ObjectType == hit.ObjectType));
         ServerAddress = serverAddress ?? "Сервер компании";
         RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
         InitializePagination();
@@ -149,7 +158,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public ObjectLinksViewModel? Links { get; }
     public bool HasLinks => Links is not null && Has("ObjectLink.Read") && _sessionAvailable && CanReadCurrentArea && (IsCatalog || IsContacts || IsSearch);
     private DesktopContact? _selectedContact;
-    public DesktopContact? SelectedContact { get => _selectedContact; set { SetProperty(ref _selectedContact, value); Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0); } }
+    public DesktopContact? SelectedContact { get => _selectedContact; set { SetProperty(ref _selectedContact, value); SetCurrentLinkSource(); } }
     private string _newItemType = "file_reference";
     public IReadOnlyList<CatalogItemTypeChoice> CatalogItemTypes { get; } = [new("file_reference", "Файл"), new("folder_reference", "Папка на диске"), new("virtual_folder", "Виртуальная папка")];
     public string NewItemType { get => _newItemType; set => SetProperty(ref _newItemType, value); }
@@ -181,7 +190,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             if (!SetProperty(ref _selectedCatalogItem, value)) return;
             if (previous is not null) previous.IsSelected = false;
             if (value is not null) value.IsSelected = true;
-            Links?.SetSource(value?.Id ?? Guid.Empty, value?.Version ?? 0);
+            SetCurrentLinkSource();
             Locations?.SetItem(value?.Item);
             NotifyCatalogSelection();
             NotifyCommands();
@@ -190,7 +199,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 
     public DesktopNotification? SelectedNotification { get => _selectedNotification; set { if (SetProperty(ref _selectedNotification, value)) MarkReadCommand.RaiseCanExecuteChanged(); } }
     public DesktopLifecycleItem? SelectedLifecycleItem { get => _selectedLifecycleItem; set { if (SetProperty(ref _selectedLifecycleItem, value)) RestoreLifecycleItemCommand.RaiseCanExecuteChanged(); } }
-    public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set { SetProperty(ref _selectedSearchHit, value); Links?.SetSource(value?.Source.ObjectId ?? Guid.Empty, value?.Source.Version ?? 0); } }
+    public DesktopSearchHit? SelectedSearchHit { get => _selectedSearchHit; set { SetProperty(ref _selectedSearchHit, value); SetCurrentLinkSource(); } }
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) { OnSearchQueryChanged(); SearchCommand.RaiseCanExecuteChanged(); NotifySearchPresentation(); } } }
     public IReadOnlyList<string> SearchTypeFilters => IsPersonal ? ["Все", "Задачи", "Проекты", "Файлы", "Контакты"] : ["Все", "Задачи", "Проекты", "Файлы", "CRM", "Сотрудники"];
     public string SearchTypeFilter { get => _searchTypeFilter; set { if (SetProperty(ref _searchTypeFilter, value)) NotifySearchPresentation(); } }
@@ -298,12 +307,12 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public AsyncCommand SaveUserSettingsCommand { get; }
     public AsyncCommand SaveNotificationPreferencesCommand { get; }
     public AsyncCommand SaveOrganizationSettingsCommand { get; }
-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, LoadMoreCommand, SearchCommand, CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, SelectCatalogRootCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand, .. _reminderCommands];
+    private IEnumerable<AsyncCommand> Commands => [SelectLinkSourceCommand, RefreshCommand, LoadMoreCommand, SearchCommand, CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, SelectCatalogRootCommand, AddLocationCommand, OpenFileCommand, CreateContactCommand, MarkReadCommand, MarkAllReadCommand, OpenNotificationSourceCommand, OpenSearchResultCommand, RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand, .. _reminderCommands];
 
     internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand,
         SaveReminderCommand, CancelReminderCommand, RestoreReminderCommand, SnoozeReminderCommand, DismissReminderCommand, SnoozeNotificationCommand }
-        .Any(command => command.IsExecuting) || _catalogMutationPending || Locations?.IsMutating == true;
+        .Any(command => command.IsExecuting) || _catalogMutationPending || Locations?.IsMutating == true || Links?.IsMutating == true;
     internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
     {
         Language = UserLanguage,
@@ -344,13 +353,14 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         Interlocked.Increment(ref _activationGeneration);
         ResetListPagination();
         Area = area; _active = true;
+        UpdateLinkAccess(); SetCurrentLinkSource();
         SetFeedback(null, WorkHubFeedbackKind.None);
         _activationRefreshPending = true;
         NotifyCommands();
         TryStartActivationRefresh();
     }
 
-    public void Deactivate() { _active = false; _activationRefreshPending = false; Interlocked.Increment(ref _activationGeneration); _activation?.Cancel(); NotifyCommands(); }
+    public void Deactivate() { _active = false; Links?.SetSource(Guid.Empty, 0); UpdateLinkAccess(); _activationRefreshPending = false; Interlocked.Increment(ref _activationGeneration); _activation?.Cancel(); NotifyCommands(); }
     public void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
         ++_notificationAccessGeneration;
@@ -361,18 +371,19 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
         Locations?.SetItem(null);
         Locations?.SetItem(SelectedCatalogItem?.Item);
-        if (!Has("ObjectLink.Read")) Links?.SetSource(Guid.Empty, 0);
+        UpdateLinkAccess(); SetCurrentLinkSource();
         if (!CanReadNotifications) ApplyBackgroundNotifications([]);
         if (!CanManageCorporateReminders) ClearCorporateReminders();
         OnPropertyChanged(nameof(CanManageCorporateReminders));
         NotificationAccessChanged?.Invoke();
         NotifyCommands();
     }
-    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { ResetListPagination(); ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } NotificationAccessChanged?.Invoke(); NotifyCommands(); }
+    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { ResetListPagination(); ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } UpdateLinkAccess(); SetCurrentLinkSource(); NotificationAccessChanged?.Invoke(); NotifyCommands(); }
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
         _networkAvailable = available;
+        UpdateLinkAccess();
         if (!available)
         {
             ++_searchGeneration;

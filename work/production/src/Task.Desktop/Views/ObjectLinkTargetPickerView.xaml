@@ -36,8 +36,10 @@
     </DataTemplate>
    </ListBox.ItemTemplate>
   </ListBox>
-  <TextBlock Grid.Row="4" Text="{Binding SelectedTarget.Title,StringFormat=Выбран: {0}}" Margin="0,8" TextWrapping="Wrap"
-   AutomationProperties.AutomationId="ObjectLinkTargetSelection"/>
+  <StackPanel Grid.Row="4" Margin="0,8" AutomationProperties.AutomationId="ObjectLinkTargetSelection">
+   <TextBlock Text="{Binding SelectedTarget.Title,StringFormat=Выбран: {0}}" TextWrapping="Wrap"/>
+   <TextBlock Text="{Binding SelectedTarget.TypeLabel}" TextWrapping="Wrap"/>
+  </StackPanel>
   <WrapPanel Grid.Row="5">
    <Button Content="_Выбрать" Command="{Binding ConfirmCommand}" Margin="0,0,8,8" AutomationProperties.Name="Подтвердить объект"/>
    <Button Content="_Очистить" Command="{Binding ClearCommand}" Margin="0,0,8,8" AutomationProperties.Name="Очистить выбор объекта"/>
