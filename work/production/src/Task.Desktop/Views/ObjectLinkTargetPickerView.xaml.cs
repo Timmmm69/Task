@@ -1,5 +1,7 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using Task.Desktop.ViewModels;
 
@@ -13,6 +15,16 @@ public partial class ObjectLinkTargetPickerView : UserControl
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         if (e.OldValue is ObjectLinkTargetPickerViewModel previous) previous.Cancel();
+    }
+    private void OnStatusChanged(object sender, DataTransferEventArgs e)
+    {
+        if (sender is not TextBlock status || !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged)) return;
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.DataBind, () =>
+        {
+            if (IsVisible)
+                (UIElementAutomationPeer.FromElement(status) ?? UIElementAutomationPeer.CreatePeerForElement(status))
+                    ?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
+        });
     }
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {

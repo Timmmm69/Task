@@ -59,6 +59,10 @@ public sealed class ObjectLinkTargetPickerWindowsTests
                     Assert.Equal("План", picker.SearchText); Assert.Equal(2, list.Items.Count);
                     Assert.Equal("Название связанного объекта", new TextBoxAutomationPeer(search).GetName());
                     Assert.Equal("Найденные объекты", new ListBoxAutomationPeer(list).GetName());
+                    var row = (ListBoxItem)list.ItemContainerGenerator.ContainerFromIndex(0);
+                    var peer = UIElementAutomationPeer.CreatePeerForElement(row)!;
+                    Assert.Equal(first.Title + ", " + first.TypeLabel, peer.GetName());
+                    Assert.Contains(first.ObjectId.ToString(), peer.GetHelpText());
                     Assert.True(search.Focus()); Pump(); SendKey(view, Key.Down); Pump();
                     Assert.True(list.IsKeyboardFocusWithin); Assert.Same(first, picker.Candidate);
                     SendKey(view, Key.Enter); Assert.Equal(first.ObjectId, picker.SelectedObjectId);

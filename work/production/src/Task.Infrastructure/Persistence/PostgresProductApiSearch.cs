@@ -9,7 +9,9 @@ internal sealed partial class PostgresProductApiStore
 {
     private ProductApiResponse Search(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
-        ValidateQuery(r, "q types projectIds userIds departments contactIds hasFiles lifecycle from to cursor limit");
+        var linkTargets = r.Route.Operation == "link-targets";
+        if (!r.Permissions.Contains(r.Route.Permission)) throw Error(403, "FORBIDDEN", "Permission is required.");
+        ValidateQuery(r, linkTargets ? "q types cursor limit" : "q types projectIds userIds departments contactIds hasFiles lifecycle from to cursor limit");
         var timer = System.Diagnostics.Stopwatch.StartNew();
         var q = r.Query.GetValueOrDefault("q", "").Trim();
         if (q.Length < (r.Route.Operation == "suggestions" ? 1 : 2) || q.Length > 200) throw Invalid("Invalid search text length.");
@@ -20,8 +22,11 @@ internal sealed partial class PostgresProductApiStore
             if (normalized.TryGetValue(key, out var value)) normalized[key] = string.Join(',', value.Split(',').Select(s => s.Trim()).Distinct().Order());
         r = r with { Query = normalized };
         var types = Values("types");
-        var knownTypes = new[] { "task", "calendar_event", "project", "catalog_item", "file_location", "contact", "company", "interaction", "comment", "employee_profile" };
-        if (types.Length > 10 || types.Any(type => !knownTypes.Contains(type))) throw Invalid("Unknown search type.");
+        var knownTypes = linkTargets
+            ? Resources.Values.Select(resource => resource.Type).ToArray()
+            : new[] { "task", "calendar_event", "project", "catalog_item", "file_location", "contact", "company", "interaction", "comment", "employee_profile" };
+        if (types.Length > knownTypes.Length || types.Any(type => !knownTypes.Contains(type)) || linkTargets && types.Length == 0)
+            throw Invalid("Unknown search type.");
         var states = Values("lifecycle");
         if (states.Any(state => state is not ("active" or "completed"))) throw Invalid("Search lifecycle must be active and/or completed.");
         foreach (var key in new[] { "projectIds", "userIds", "departments", "contactIds" })
@@ -60,12 +65,12 @@ internal sealed partial class PostgresProductApiStore
             args.Add(("fileRead", r.Permissions.Contains("FileCatalog.Read") && r.Permissions.Contains("FileReference.Open")));
             foreach (var resource in Resources.Values)
             {
-                if (resource.Type is "notification" or "network_resource" || !r.Permissions.Contains(resource.ReadPermission) ||
+                if ((!linkTargets && resource.Type is "notification" or "network_resource") || !r.Permissions.Contains(resource.ReadPermission) ||
                     (types.Length > 0 && !types.Contains(resource.Type))) continue;
                 var compatible = resource.Type is "project" or "task" or "calendar_event" or "catalog_item" or "contact" or "company" or "interaction" or "employee_profile";
-                if (!compatible) continue;
+                if (!linkTargets && !compatible) continue;
                 if (hasFiles is not null && resource.Type is "interaction" or "calendar_event" or "employee_profile") continue;
-                var title = resource.Type is "contact" or "employee_profile" ? "p.display_name" : resource.Type == "interaction" ? "p.subject" : resource.Type is "task" or "calendar_event" ? "p.title" : "p.name";
+                var title = resource.Type is "contact" or "employee_profile" ? "p.display_name" : resource.Type == "interaction" ? "p.subject" : resource.Type is "task" or "calendar_event" or "notification" or "inbox_item" ? "p.title" : "p.name";
                 var project = resource.Type == "project" ? "p.id::text" : "to_jsonb(p)->>'project_id'";
                 var date = "COALESCE((to_jsonb(p)->>'start_at_utc')::timestamptz,(to_jsonb(p)->>'deadline_at')::timestamptz,(to_jsonb(p)->>'event_date')::timestamptz,o.updated_at)";
                 var terminal = "COALESCE(to_jsonb(p)->>'status','') IN ('completed','cancelled','inactive')";

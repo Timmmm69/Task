@@ -46,7 +46,7 @@ public sealed class ObjectLinkTargetPickerViewModel : ViewModelBase, IDisposable
         ("project", "project_contact") => ["contact", "company"],
         ("task", "task_project") => ["project"],
         ("task" or "project" or "contact" or "company" or "catalog_item" or "calendar_event" or "interaction", "related")
-            => new[] { "task", "project", "contact", "company", "catalog_item", "calendar_event", "interaction", "employee_profile" }
+            => new[] { "task", "project", "contact", "company", "catalog_item", "calendar_event", "interaction", "employee_profile", "network_resource", "notification", "inbox_item" }
                 .Where(CanReadType).ToArray(),
         _ => [],
     };
@@ -55,10 +55,11 @@ public sealed class ObjectLinkTargetPickerViewModel : ViewModelBase, IDisposable
     {
         "task" => Has("Task.Read"), "project" => Has("Project.Read"),
         "contact" or "company" or "interaction" => Has("Contact.Read"),
-        "catalog_item" => Has("FileCatalog.Read"), "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
+        "catalog_item" or "network_resource" => Has("FileCatalog.Read"), "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
+        "notification" => Has("Notification.ReadOwn"), "inbox_item" => Has("Inbox.ReadOwn"),
         "employee_profile" => Has("Employee.Read"), _ => false,
     };
-    private bool HasAccess => Has("Search.Use") && Has("ObjectLink.Create") && _source != Guid.Empty
+    private bool HasAccess => Has("ObjectLink.Create") && _source != Guid.Empty
         && (_sourceType switch
         {
             "task" => Has("Task.Read"),
@@ -90,7 +91,7 @@ public sealed class ObjectLinkTargetPickerViewModel : ViewModelBase, IDisposable
         ObjectLinkTargetPickerState.Ready => "Выберите объект и подтвердите выбор.",
         ObjectLinkTargetPickerState.Empty => "Объекты не найдены.",
         ObjectLinkTargetPickerState.Selected => "Объект выбран.",
-        ObjectLinkTargetPickerState.Forbidden => "Выбор недоступен: нужны Search.Use, ObjectLink.Create и права чтения объектов и изменения источника.",
+        ObjectLinkTargetPickerState.Forbidden => "Выбор недоступен: нужны права создания связей, чтения объектов и изменения источника.",
         ObjectLinkTargetPickerState.Offline => "Нет подключения к сети. Подключитесь и повторите поиск.",
         ObjectLinkTargetPickerState.SessionExpired => "Сессия завершена. Войдите в систему.",
         ObjectLinkTargetPickerState.ServerUnavailable => "Сервер недоступен. Повторите попытку.",

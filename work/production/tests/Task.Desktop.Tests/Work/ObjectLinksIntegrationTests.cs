@@ -194,7 +194,7 @@ public sealed class ObjectLinksIntegrationTests
     }
 
     [Theory]
-    [InlineData("Search.Use")][InlineData("ObjectLink.Create")][InlineData("Task.Read")][InlineData("FileCatalog.Read")]
+    [InlineData("ObjectLink.Create")][InlineData("Task.Read")][InlineData("FileCatalog.Read")]
     public async AsyncTask RevokedAccessClearsSelectionAndStopsCreation(string permission)
     {
         using var vm = Model(new()); vm.SetSource(Guid.NewGuid(), 7, "task"); await Select(vm);

@@ -113,6 +113,7 @@ public static class ProductApiRoutes
         Extra("GET", "settings/organization", "organization-settings", "get", "Organization.Read");
         Extra("PATCH", "settings/organization", "organization-settings", "patch", "Organization.Update", true, true);
         Extra("GET", "search", "search", "search", "Search.Use");
+        Extra("GET", "object-link-targets", "search", "link-targets", "ObjectLink.Create");
         Extra("GET", "search/suggestions", "search", "suggestions", "Search.Use");
         Extra("GET", "archive", "archive", "list", "History.Read");
         Extra("POST", "archive/{id}/restore", "archive", "unarchive", "Archive.Restore", true);

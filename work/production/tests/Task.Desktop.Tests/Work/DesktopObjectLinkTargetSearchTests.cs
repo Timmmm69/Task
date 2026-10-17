@@ -20,6 +20,7 @@ public sealed partial class DesktopWorkApiClientTests
     [Theory]
     [InlineData("project")][InlineData("task")][InlineData("calendar_event")]
     [InlineData("interaction")][InlineData("employee_profile")]
+    [InlineData("network_resource")][InlineData("notification")][InlineData("inbox_item")]
     public async AsyncTask TargetSearchSupportsOtherLinkableSearchResources(string type)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => AsyncTask.FromResult(Json(HttpStatusCode.OK, TargetBody(type))));
@@ -35,7 +36,7 @@ public sealed partial class DesktopWorkApiClientTests
         var result = await fixture.Client.SearchTargetsAsync("  План & +  ", ["company", "contact"], "snapshot.50");
         Assert.Equal(ItemId, Assert.Single(Assert.IsType<PageResult.Succeeded>(result).Value).ObjectId);
         var request = Assert.Single(fixture.Requests); var query = Uri.UnescapeDataString(request.Uri.Query);
-        Assert.Equal("/api/v1/search", request.Uri.AbsolutePath); Assert.Equal("AT_initial", request.Bearer);
+        Assert.Equal("/api/v1/object-link-targets", request.Uri.AbsolutePath); Assert.Equal("AT_initial", request.Bearer);
         Assert.Contains("q=План & +", query); Assert.Contains("types=company,contact", query);
         Assert.Contains("limit=50", query); Assert.Contains("cursor=snapshot.50", query);
         await fixture.Client.SearchAsync("План");

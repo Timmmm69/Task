@@ -156,13 +156,13 @@ public sealed partial class ProductEndpointsTests
     { Content = new StringContent(body, Encoding.UTF8, "application/json") };
 
 #pragma warning disable ASPDEPR004 // Match the established service-host TestServer harness.
-    private static TestServer Server(RecordingStore store, bool permitted = true) => new(new WebHostBuilder()
+    private static TestServer Server(RecordingStore store, bool permitted = true, string? deniedPermission = null) => new(new WebHostBuilder()
         .ConfigureServices(services =>
         {
             services.AddRouting();
             services.AddLogging();
             services.AddSingleton<IProductApiStore>(store);
-            services.AddSingleton<IAuthorizationPolicyStore>(new Policy(permitted));
+            services.AddSingleton<IAuthorizationPolicyStore>(new Policy(permitted, deniedPermission));
             services.AddSingleton<PermissionDecisionService>();
             services.AddTaskPermissionAuthorization();
             services.AddSingleton<IAuthorizationMiddlewareResultHandler, TestAuthorizationResultHandler>();
@@ -187,11 +187,11 @@ public sealed partial class ProductEndpointsTests
         public ProductApiResponse Execute(ProductApiRequest request)
         { LastRequest = request; if (failure is not null) throw failure; return Reply ?? new(new JsonObject { ["name"] = "saved" }, Version: 2); }
     }
-    private sealed class Policy(bool allowed) : IAuthorizationPolicyStore
+    private sealed class Policy(bool allowed, string? deniedPermission) : IAuthorizationPolicyStore
     {
         public Task<Guid?> GetUserOrgAsync(Guid userId, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult<Guid?>(Organization);
         public Task<IReadOnlyList<PolicyGrantRow>> GetUserGrantsAsync(Guid orgId, Guid userId, string permissionCode, CancellationToken cancellationToken = default) =>
-            System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyGrantRow>>(allowed ? [new(true)] : []);
+            System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyGrantRow>>(allowed && permissionCode != deniedPermission ? [new(true)] : []);
         public Task<IReadOnlyList<PolicyDenyRow>> GetUserDeniesAsync(Guid orgId, Guid userId, string permissionCode, CancellationToken cancellationToken = default) =>
             System.Threading.Tasks.Task.FromResult<IReadOnlyList<PolicyDenyRow>>([]);
     }

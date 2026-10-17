@@ -27,6 +27,9 @@ public sealed record DesktopSearchResult(Guid ObjectId, string ObjectType, strin
         "company" => "Компания",
         "employee_profile" => "Сотрудник",
         "interaction" => "Взаимодействие",
+        "network_resource" => "Сетевой ресурс",
+        "notification" => "Уведомление",
+        "inbox_item" => "Входящее",
         _ => "Объект",
     };
 

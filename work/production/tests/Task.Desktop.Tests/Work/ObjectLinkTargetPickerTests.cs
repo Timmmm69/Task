@@ -31,7 +31,7 @@ public sealed class ObjectLinkTargetPickerTests
     [InlineData("task", "task_contact", "contact,company")]
     [InlineData("project", "project_contact", "contact,company")]
     [InlineData("task", "task_project", "project")]
-    [InlineData("task", "related", "task,project,contact,company,catalog_item,calendar_event,interaction")]
+    [InlineData("task", "related", "task,project,contact,company,catalog_item,calendar_event,interaction,network_resource")]
     public async AsyncTask SearchUsesNameAndServerTypes(string source, string link, string expected)
     {
         var hit = Hit(expected.Split(',')[0]);
@@ -145,7 +145,6 @@ public sealed class ObjectLinkTargetPickerTests
     }
 
     [Theory]
-    [InlineData("Search.Use")]
     [InlineData("ObjectLink.Create")]
     [InlineData("FileCatalog.Read")]
     [InlineData("Task.Read")]
@@ -162,7 +161,7 @@ public sealed class ObjectLinkTargetPickerTests
     {
         var client = new SearchClient { Search = (_, types, _, _) =>
         {
-            Assert.Equal(new[] { "catalog_item", "employee_profile" }, types);
+            Assert.Equal(new[] { "catalog_item", "employee_profile", "network_resource" }, types);
             return AsyncTask.FromResult(Page(Hit("employee_profile")));
         } };
         using var picker = Picker(client, "catalog_item", "related");
@@ -171,6 +170,22 @@ public sealed class ObjectLinkTargetPickerTests
         picker.Candidate = Assert.Single(picker.Results); Assert.True(picker.ConfirmSelection());
         picker.UpdateAccess(["Search.Use", "ObjectLink.Create", "FileCatalog.Read", "Employee.Read"]);
         Assert.False(picker.CanQuery); Assert.Empty(picker.Results);
+    }
+
+    [Fact]
+    public async AsyncTask RelatedCanSelectEveryNewTypeWithoutGlobalSearchPermission()
+    {
+        var hits = new[] { Hit("network_resource"), Hit("notification"), Hit("inbox_item") };
+        var client = new SearchClient { Search = (_, _, _, _) => AsyncTask.FromResult(Page(hits)) };
+        using var picker = Picker(client, "task", "related");
+        picker.UpdateAccess(Capabilities.Where(p => p != "Search.Use").Concat(["Notification.ReadOwn", "Inbox.ReadOwn"]));
+        picker.SearchText = "План"; await picker.CurrentOperation;
+        Assert.True(picker.CanQuery); Assert.Equal(3, picker.Results.Count);
+        foreach (var hit in hits) { picker.Candidate = hit; Assert.True(picker.ConfirmSelection()); }
+        picker.UpdateAccess(Capabilities.Where(p => p != "Search.Use"));
+        Assert.DoesNotContain("notification", picker.AllowedTargetTypes);
+        Assert.DoesNotContain("inbox_item", picker.AllowedTargetTypes);
+        Assert.Null(picker.SelectedTarget);
     }
 
     [Fact]

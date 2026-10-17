@@ -17,13 +17,22 @@
     IsEnabled="{Binding CanQuery}" Style="{DynamicResource Task.Input.Text}"
     AutomationProperties.Name="Название связанного объекта" AutomationProperties.AutomationId="ObjectLinkTargetSearch"/>
   </DockPanel>
-  <TextBlock Grid.Row="2" Text="{Binding StatusText}" TextWrapping="Wrap" Margin="0,8"
+  <TextBlock Grid.Row="2" Text="{Binding StatusText,NotifyOnTargetUpdated=True}" TargetUpdated="OnStatusChanged" TextWrapping="Wrap" Margin="0,8"
    AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ObjectLinkTargetStatus"/>
   <ListBox Grid.Row="3" x:Name="ResultsList" MinHeight="100" MaxHeight="320"
    ItemsSource="{Binding Results}" SelectedItem="{Binding Candidate}" IsEnabled="{Binding CanQuery}"
    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
    AutomationProperties.Name="Найденные объекты" AutomationProperties.AutomationId="ObjectLinkTargetResults">
+   <ListBox.ItemContainerStyle>
+    <Style TargetType="ListBoxItem">
+     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+     <Setter Property="AutomationProperties.Name">
+      <Setter.Value><MultiBinding StringFormat="{}{0}, {1}"><Binding Path="Title"/><Binding Path="TypeLabel"/></MultiBinding></Setter.Value>
+     </Setter>
+     <Setter Property="AutomationProperties.HelpText" Value="{Binding ObjectId,StringFormat=ID: {0}}"/>
+    </Style>
+   </ListBox.ItemContainerStyle>
    <ListBox.ItemTemplate>
     <DataTemplate>
      <StackPanel Margin="4">
