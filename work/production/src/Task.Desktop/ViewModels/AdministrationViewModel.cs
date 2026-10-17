@@ -38,8 +38,8 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
             new(AdministrationArea.Users, "Управление доступом", "User.ManageRoles"),
         ];
         _selectedTab = Tabs[0];
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_savingUser && !IsLoading && !IsEditorOpen);
-        InitializeUserCommands();
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_savingUser && !IsLoading && !IsEditorOpen && !IsTransitionOpen && !_transitionBusy);
+        InitializeUserCommands(); InitializeTransitionCommands();
         RefreshCommand.ExecutionFailed += _ => Message = "Не удалось обновить раздел. Подтверждённые данные не изменены.";
     }
 
@@ -49,7 +49,7 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         get => _selectedTab;
         set
         {
-            if (IsEditorOpen || _savingUser || !SetProperty(ref _selectedTab, value)) return;
+            if (IsEditorOpen || IsTransitionOpen || _transitionBusy || _savingUser || !SetProperty(ref _selectedTab, value)) return;
             OnPropertyChanged(nameof(IsUsers)); OnPropertyChanged(nameof(IsRoles)); OnPropertyChanged(nameof(IsResources));
             InvalidateUserDetails();
             NotifyAccess();
@@ -59,7 +59,7 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<DesktopAdminUser> Users { get => _users; private set => SetProperty(ref _users, value); }
     public IReadOnlyList<DesktopAdminRole> Roles { get => _roles; private set => SetProperty(ref _roles, value); }
     public IReadOnlyList<DesktopNetworkResource> Resources { get => _resources; private set => SetProperty(ref _resources, value); }
-    public DesktopAdminUser? SelectedUser { get => _selectedUser; set { if (SetProperty(ref _selectedUser, value)) { InvalidateUserDetails(); NotifyUserCommands(); } } }
+    public DesktopAdminUser? SelectedUser { get => _selectedUser; set { if ((value is null || !_transitionBusy && !IsTransitionOpen) && SetProperty(ref _selectedUser, value)) { InvalidateUserDetails(); NotifyUserCommands(); } } }
     public DesktopAdminRole? SelectedRole { get => _selectedRole; set => SetProperty(ref _selectedRole, value); }
     public DesktopNetworkResource? SelectedResource { get => _selectedResource; set => SetProperty(ref _selectedResource, value); }
     public string? Message { get => _message; private set { if (SetProperty(ref _message, value)) OnPropertyChanged(nameof(HasMessage)); } }
@@ -106,7 +106,15 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         }
         NotifyAccess();
     }
-    public void UpdateConnectivity(bool available) { _networkAvailable = available; Message = available ? "Подключение восстановлено. Обновите административные данные." : "Сервер недоступен. Действия администратора заблокированы."; NotifyAccess(); }
+    public void UpdateConnectivity(bool available)
+    {
+        _networkAvailable = available;
+        Message = IsTransitionOpen && _transitionUncertain
+            ? available ? "Подключение восстановлено. Результат ещё не подтверждён. Проверьте исходный запрос или отмените действие и обновите запись."
+                : "Сервер недоступен. Результат ещё не подтверждён; офлайн-очередь не создаётся. После восстановления связи можно проверить исходный запрос."
+            : available ? "Подключение восстановлено. Обновите административные данные." : "Сервер недоступен. Действия администратора заблокированы.";
+        NotifyAccess();
+    }
 
     private async global::System.Threading.Tasks.Task RefreshAsync(object? _, CancellationToken cancellationToken)
     {
@@ -143,5 +151,5 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         NotifyUserCommands();
     }
 
-    public void Dispose() { _active = false; ++_accessGeneration; InvalidateUserDetails(); CreateUserCommand.Dispose(); EditUserCommand.Dispose(); SaveUserCommand.Dispose(); CancelUserCommand.Dispose(); MoreUsersCommand.Dispose(); _activation?.Cancel(); _activation?.Dispose(); RefreshCommand.Dispose(); }
+    public void Dispose() { _active = false; ++_accessGeneration; InvalidateUserDetails(); BeginUserTransitionCommand.Dispose(); ConfirmUserTransitionCommand.Dispose(); CancelUserTransitionCommand.Dispose(); CreateUserCommand.Dispose(); EditUserCommand.Dispose(); SaveUserCommand.Dispose(); CancelUserCommand.Dispose(); MoreUsersCommand.Dispose(); _activation?.Cancel(); _activation?.Dispose(); RefreshCommand.Dispose(); }
 }

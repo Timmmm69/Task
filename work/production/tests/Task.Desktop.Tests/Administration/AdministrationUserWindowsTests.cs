@@ -83,6 +83,39 @@ public sealed class AdministrationUserWindowsTests
                     vm.UpdateCapabilities(["User.Read"]); Pump();
                     Assert.False(Find<Button>("AdminCreateUserButton").IsEnabled); Assert.False(Find<Button>("AdminEditUserButton").IsEnabled);
                     Save(view, "read-only.png");
+                    foreach (var (status, buttonId) in new[] { ("pending_activation", "AdminActivateButton"),
+                        ("active", "AdminBlockButton"), ("blocked", "AdminUnblockButton"),
+                        ("active", "AdminDeactivateButton"), ("deactivated", "AdminReactivateButton") })
+                    {
+                        var lifecycleClient = new AdministrationUserTransitionTests.Client(status);
+                        using var lifecycle = AdministrationUserTransitionTests.Vm(lifecycleClient);
+                        view.DataContext = lifecycle; Pump(); Invoke(buttonId);
+                        Assert.True(Find<Border>("AdminTransitionConfirmation").IsVisible);
+                        Assert.Contains(lifecycleClient.User.DisplayName, lifecycle.TransitionTitle);
+                        Invoke("AdminCancelTransitionButton"); Assert.Empty(lifecycleClient.Calls);
+                        Invoke(buttonId);
+                        if (lifecycle.TransitionRequiresReason)
+                        {
+                            Invoke("AdminConfirmTransitionButton"); Assert.Empty(lifecycleClient.Calls);
+                            Enter("AdminTransitionReason", "Проверка состояния");
+                        }
+                        window.Width = 1120; window.Height = 900; Pump();
+                        foreach (var scroll in Descendants<ScrollViewer>(view)) scroll.ScrollToTop(); Pump();
+                        Save(view, buttonId + "-wide.png");
+                        window.Width = 800; window.Height = 600; Pump();
+                        foreach (var scroll in Descendants<ScrollViewer>(view)) scroll.ScrollToBottom(); Pump();
+                        var confirm = Find<Button>("AdminConfirmTransitionButton");
+                        var bounds = confirm.TransformToAncestor(view).TransformBounds(new Rect(confirm.RenderSize));
+                        Assert.True(bounds.Top >= 0 && bounds.Bottom <= view.ActualHeight + 1);
+                        Save(view, buttonId + "-confirmation.png");
+                        lifecycle.UpdateConnectivity(false); Pump(); Assert.False(confirm.IsEnabled);
+                        lifecycle.UpdateConnectivity(true); Pump(); Invoke("AdminConfirmTransitionButton");
+                        Assert.Single(lifecycleClient.Calls); Assert.False(lifecycle.IsTransitionOpen);
+                        Assert.Equal(20, lifecycle.SelectedUser!.Version);
+                        lifecycle.UpdateCapabilities(["User.Read"]); Pump();
+                        Assert.False(Find<Button>("AdminBlockButton").IsVisible);
+                        Assert.False(Find<Button>("AdminDeactivateButton").IsVisible);
+                    }
                     Assert.DoesNotContain("System.Windows.Data Error", bindingErrors.ToString());
                     await AsyncTask.CompletedTask; done.SetResult();
                 }

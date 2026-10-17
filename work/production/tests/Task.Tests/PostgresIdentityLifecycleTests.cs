@@ -10,6 +10,65 @@ namespace Task.Tests;
 public sealed class PostgresIdentityLifecycleTests
 {
     [RequiresPostgresFact]
+    public async global::System.Threading.Tasks.Task EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation()
+    {
+        using var db = new Database();
+        var store = new PostgresUserAccountCommandStore(db.RuntimeSource);
+        foreach (var status in Enum.GetValues<UserAccountStatus>())
+        foreach (var action in Enum.GetValues<UserAccountTransition>())
+        {
+            var targetId = Guid.NewGuid(); db.SeedUser(targetId);
+            var stored = status switch { UserAccountStatus.PendingActivation => "pending",
+                UserAccountStatus.Active => "active", UserAccountStatus.Blocked => "blocked", _ => "deactivated" };
+            db.Sql("UPDATE iam.user_accounts SET account_status=$2 WHERE id=$1", targetId, stored);
+            var allowed = action switch
+            {
+                UserAccountTransition.Activate => status == UserAccountStatus.PendingActivation,
+                UserAccountTransition.Block => status is UserAccountStatus.Active or UserAccountStatus.Blocked,
+                UserAccountTransition.Unblock => status is UserAccountStatus.Blocked or UserAccountStatus.Active,
+                UserAccountTransition.Deactivate => status != UserAccountStatus.Deactivated,
+                UserAccountTransition.Reactivate => status is UserAccountStatus.Deactivated or UserAccountStatus.Active,
+                _ => false,
+            };
+            var context = db.Context("user." + action.ToString().ToLowerInvariant());
+            var result = await store.TransitionAsync(context, targetId, 1, action, "Lifecycle verification");
+            Assert.Equal(allowed ? IdentityCommandDisposition.Executed : IdentityCommandDisposition.InvalidStateTransition, result.Disposition);
+            if (!allowed) continue;
+            var target = action == UserAccountTransition.Block ? UserAccountStatus.Blocked
+                : action == UserAccountTransition.Deactivate ? UserAccountStatus.Deactivated : UserAccountStatus.Active;
+            Assert.Equal(target, result.User!.AccountStatus);
+            Assert.Equal(status == target ? 1 : 2, result.User.Version);
+            var auditCount = db.Count("governance.audit_entries", targetId);
+            var repeated = await store.TransitionAsync(context, targetId, 1, action, "Lifecycle verification");
+            Assert.Equal(IdentityCommandDisposition.Replayed, repeated.Disposition);
+            Assert.Equal(result.User, repeated.User);
+            Assert.Equal(auditCount, db.Count("governance.audit_entries", targetId));
+        }
+    }
+
+    [RequiresPostgresFact]
+    public async global::System.Threading.Tasks.Task LastActiveAdministratorCannotBeBlockedOrDeactivated()
+    {
+        using var db = new Database();
+        var role = Guid.NewGuid();
+        db.Sql("INSERT INTO iam.roles(id,organization_id,code,display_name) VALUES($1,$2,'lifecycle_admin','Lifecycle admin')", role, db.Organization);
+        db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'organization.manage','grant')", role);
+        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, role);
+        db.Sql("UPDATE iam.user_accounts SET account_status='active' WHERE id=$1", db.User);
+        var session = db.SeedSession(db.User);
+        var store = new PostgresUserAccountCommandStore(db.RuntimeSource);
+        foreach (var action in new[] { UserAccountTransition.Block, UserAccountTransition.Deactivate })
+        {
+            var result = await store.TransitionAsync(db.Context("user." + action.ToString().ToLowerInvariant()), db.User, 1, action, "Guard verification");
+            Assert.Equal(IdentityCommandDisposition.InvalidStateTransition, result.Disposition);
+            Assert.False(db.Bool("SELECT revoked_at IS NOT NULL FROM iam.sessions WHERE id=$1", session));
+            var user = await new PostgresUserAccountReadStore(db.RuntimeSource).GetByIdAsync(db.Organization, db.User);
+            Assert.Equal(UserAccountStatus.Active, user!.AccountStatus); Assert.Equal(1, user.Version);
+            Assert.Equal(0, db.Count("governance.audit_entries", db.User));
+        }
+    }
+
+    [RequiresPostgresFact]
     public async global::System.Threading.Tasks.Task UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials()
     {
         using var db = new Database();
@@ -119,7 +178,7 @@ public sealed class PostgresIdentityLifecycleTests
             builder.Username = name + "_role"; builder.Password = "isolated-test-only";
             RuntimeSource = NpgsqlDataSource.Create(builder.ConnectionString);
         }
-        private void SeedUser(Guid user)
+        public void SeedUser(Guid user)
         {
             var profile = Guid.NewGuid();
             Sql("INSERT INTO core.objects(id,organization_id,object_type,created_by,updated_by,created_at,updated_at) VALUES($1,$3,'employee_profile',$2,$2,clock_timestamp(),clock_timestamp()),($2,$3,'user_account',$2,$2,clock_timestamp(),clock_timestamp())", profile, user, Organization);

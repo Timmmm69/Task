@@ -1,0 +1,84 @@
+{
+  "version": "11.3.0",
+  "branch": "feature/admin-user-management",
+  "baseline": "ec39281",
+  "implementation": "implemented",
+  "targeted_gate": "passed",
+  "overall_desktop_gate": "not_green",
+  "tests": {
+    "administration": {
+      "total": 139,
+      "skipped": 0,
+      "evidence": "evidence/administration-release-final.trx",
+      "passed": 139,
+      "failed": 0
+    },
+    "api": {
+      "total": 631,
+      "skipped": 0,
+      "evidence": "evidence/api-release.trx",
+      "passed": 631,
+      "failed": 0
+    },
+    "identity_postgres": {
+      "total": 242,
+      "skipped": 0,
+      "evidence": "evidence/identity-postgres-release.trx",
+      "passed": 242,
+      "failed": 0
+    },
+    "desktop_first": {
+      "total": 1411,
+      "skipped": 0,
+      "evidence": "evidence/desktop-release.trx",
+      "passed": 1410,
+      "failed": 1
+    },
+    "desktop_second": {
+      "total": 1415,
+      "skipped": 0,
+      "evidence": "evidence/desktop-release-final.trx",
+      "passed": 1414,
+      "failed": 1
+    },
+    "personal_search_isolated": {
+      "total": 1,
+      "skipped": 0,
+      "evidence": "evidence/personal-search-isolated.trx",
+      "passed": 1,
+      "failed": 0
+    },
+    "inbox_focus_isolated": {
+      "total": 1,
+      "skipped": 0,
+      "evidence": "evidence/inbox-focus-isolated.trx",
+      "passed": 1,
+      "failed": 0
+    }
+  },
+  "release_solution_build": "passed",
+  "native_wpf": "passed, real Windows UIA with fake API",
+  "postgres": "16, isolated loopback runtime, real stores",
+  "live_end_to_end": "not_run",
+  "security": {
+    "last_admin_store_test": "passed",
+    "no_offline_queue": true,
+    "required_reason": true,
+    "permission_checks": true,
+    "expected_version_per_endpoint": true,
+    "no_automatic_412_retry": true,
+    "same_uncertain_request": true,
+    "fresh_details": true,
+    "server_contracts_unchanged": true,
+    "strong_if_match": true
+  },
+  "ready_for_11_4_development": true,
+  "full_product_acceptance": false,
+  "limitations": [
+    "Full desktop second run: InboxZeroUiTests Window.Activate failure; isolated pass.",
+    "First full desktop run: PersonalShellViewModelTests 300ms timing assertion; isolated pass.",
+    "Final UpsertUser selection adjustment checked by 139 administration tests and Release build; full suite not rerun after this small edit.",
+    "Live Corporate WPF/HTTP/PostgreSQL, physical network disconnect, Narrator, mixed DPI not manually verified.",
+    "Concurrent changes to different administrator accounts were not tested; existing server guard unchanged."
+  ]
+}

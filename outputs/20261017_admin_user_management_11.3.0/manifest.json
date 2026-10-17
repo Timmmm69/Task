@@ -1,0 +1,202 @@
+{
+  "version": "11.3.0",
+  "task": "11.3",
+  "base_commit": "ec39281",
+  "files": [
+    {
+      "path": "evidence/administration-release-final.trx",
+      "bytes": 225658,
+      "sha256": "25a427f656da70c380d0c6f8ce577da16dddc436daf0d8566df4edc84570fed3"
+    },
+    {
+      "path": "evidence/api-release.trx",
+      "bytes": 987423,
+      "sha256": "3f894f3e54871d47996d233a27fe73403e2454c2a53c58a2d6aa75e4018dc705"
+    },
+    {
+      "path": "evidence/build-release.log",
+      "bytes": 152,
+      "sha256": "e90d707082c7e95414fb9596f040a0543bc7076774939b8574e42055e6c1a167"
+    },
+    {
+      "path": "evidence/desktop-release-final.trx",
+      "bytes": 2177094,
+      "sha256": "6d922c6ac70e02b067d57d0cc6b161fa9146c07f174d1b2146d16ca032874c16"
+    },
+    {
+      "path": "evidence/desktop-release.trx",
+      "bytes": 2166712,
+      "sha256": "91ec05b721ece3812a5a0ffa8db9fbe8ffff8ea8450326dd4439838c89e5aec8"
+    },
+    {
+      "path": "evidence/identity-postgres-release.trx",
+      "bytes": 353470,
+      "sha256": "356553ad33cec0c72bc9d6efd144d167317220eebd3d778a0624156220ea7940"
+    },
+    {
+      "path": "evidence/identity-postgres.log",
+      "bytes": 1640,
+      "sha256": "a9b8cfba638a9b0309cfa96bccf22ae9181e6bbc3ef22c39d21efeba0532856c"
+    },
+    {
+      "path": "evidence/inbox-focus-isolated.trx",
+      "bytes": 3143,
+      "sha256": "1d443d7e64fd6ec2f4d0a68445ae692173704ecd42b0f824cba5cbb265655357"
+    },
+    {
+      "path": "evidence/personal-search-isolated.trx",
+      "bytes": 3131,
+      "sha256": "3fb1db0955ae11c2b17d97c939c8fb575551c9241302f3045a3b109c7d13dedc"
+    },
+    {
+      "path": "evidence/postgres-runtime.json",
+      "bytes": 112,
+      "sha256": "9abf7b3bd4e7efcd5e7f5b373b5c19fba5dde7f36321084e97eded530f27a48b"
+    },
+    {
+      "path": "evidence/screenshots/AdminActivateButton-confirmation.png",
+      "bytes": 44304,
+      "sha256": "e3a3ff2733d0c822957a179696244d3165fe8169d001189b8cfbc3b2e617c1c4"
+    },
+    {
+      "path": "evidence/screenshots/AdminActivateButton-wide.png",
+      "bytes": 55952,
+      "sha256": "0a6df8364f27e57a1b3babe6cc0131d101bc2c9aaa7bbfaf71018f3d6b286d74"
+    },
+    {
+      "path": "evidence/screenshots/AdminBlockButton-confirmation.png",
+      "bytes": 41993,
+      "sha256": "cbae3da02222c5ee085efd57410003c7d2eef1bad2e7bc1b77f5b1fc7a701f30"
+    },
+    {
+      "path": "evidence/screenshots/AdminBlockButton-wide.png",
+      "bytes": 62615,
+      "sha256": "d8f6788b1991c264ba8aa66ed7dda3dbd7bc224837b0cf4817449a4f582ab30b"
+    },
+    {
+      "path": "evidence/screenshots/AdminDeactivateButton-confirmation.png",
+      "bytes": 41993,
+      "sha256": "cbae3da02222c5ee085efd57410003c7d2eef1bad2e7bc1b77f5b1fc7a701f30"
+    },
+    {
+      "path": "evidence/screenshots/AdminDeactivateButton-wide.png",
+      "bytes": 62378,
+      "sha256": "9ef5bee8d2c08e1ea226e15525ec0b0fb5b0cba24aa77d966aadb17c44a1b0dd"
+    },
+    {
+      "path": "evidence/screenshots/AdminReactivateButton-confirmation.png",
+      "bytes": 47443,
+      "sha256": "642bf72f903d7a6f6e6eadde55e5c8b71ba7e3b3555b87163f7ba6a1e835f177"
+    },
+    {
+      "path": "evidence/screenshots/AdminReactivateButton-wide.png",
+      "bytes": 59799,
+      "sha256": "18c76d4cc58ec64d19f616ef9916b41df8c41317794a696603b22153d467c9ee"
+    },
+    {
+      "path": "evidence/screenshots/AdminUnblockButton-confirmation.png",
+      "bytes": 46551,
+      "sha256": "3c50bb1024ae2e683a4f7e1d5308bef565a6c5d007bdd94242702e5336d7a6a8"
+    },
+    {
+      "path": "evidence/screenshots/AdminUnblockButton-wide.png",
+      "bytes": 58862,
+      "sha256": "26196866f95349bf90721c7aec20d1c2aa0676a9313526ddaeeefd876275c9b3"
+    },
+    {
+      "path": "evidence/screenshots/create-compact.png",
+      "bytes": 39025,
+      "sha256": "a42ef0087880bd0f4257ddf3d3c1b51bb2421cb4fea73863e35c1613d7e382b1"
+    },
+    {
+      "path": "evidence/screenshots/create-wide.png",
+      "bytes": 55948,
+      "sha256": "245f88be2372425657e9b89063abd175276ed44cd5f053abf3247d6370dc51e1"
+    },
+    {
+      "path": "evidence/screenshots/read-only.png",
+      "bytes": 37448,
+      "sha256": "0a9c1c3fb4833a9e1a164f30bca139ee50da0cdc70dcd7780a00164b7380199e"
+    },
+    {
+      "path": "report.md",
+      "bytes": 12505,
+      "sha256": "1d8dccdded3e0bcc492df843c1d0284c0c8e554a4d4aa6f1f5a3cb06a544835d"
+    },
+    {
+      "path": "source-scope.json",
+      "bytes": 774,
+      "sha256": "c5b7f7f8c934494a354481eda64ae7463426dcce04ea2d6ced370cb18d915d6a"
+    },
+    {
+      "path": "source.patch",
+      "bytes": 94189,
+      "sha256": "49b471bda5e72ca617bb34d3f9458b0209a25a0e26139385fc4af5ac4fdcbd47"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 141254,
+      "sha256": "e219fc89b3b4178e2d80b3721d587ae2d98da2846fec58f02bcdc8a43fb793e9"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs",
+      "bytes": 15204,
+      "sha256": "09fef2b53f9511559aa9c8a09964cbff07579189a196eb45293a85b8a58b6fe2"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/AdministrationUserTransitions.cs",
+      "bytes": 12664,
+      "sha256": "6139bc5c99ab52d79a2701de57a5f329a4c626aa1810438bef453346f6cfc20d"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/AdministrationViewModel.cs",
+      "bytes": 10014,
+      "sha256": "fab7de7656b5d3a8c2a0a70825e8022207a51f580c9f3b0f359e0ae050473de4"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+      "bytes": 22858,
+      "sha256": "4a1ec42416069583c1b472511435847d00bd3ea4cfefa305febb01ee8e5c089a"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserTransitionTests.cs",
+      "bytes": 15586,
+      "sha256": "d962101dacbb943f1ddafb01280d32b7ea0c46e3bba2f0c07ce392f48b6ac5de"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserWindowsTests.cs",
+      "bytes": 11031,
+      "sha256": "60a33b75c69ceb4356b2dcd3960483f5f5c7a225afeafab57069b3bbc60fa93c"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/UserEndpointsTests.cs",
+      "bytes": 16677,
+      "sha256": "a6d40d1e94b15e5d89f6ec1c4d1e2a21a3fc3cd61a242c7c0263df9091ce3a5a"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresIdentityLifecycleTests.cs",
+      "bytes": 17290,
+      "sha256": "ce4c475a597911ef2d024471cec0cc0212406be2386a2de4f730d607780349eb"
+    },
+    {
+      "path": "source/work/verification/11_3/Package.ps1",
+      "bytes": 7171,
+      "sha256": "cb5735ccfd960fab7512dc527b88e886b3031c369afcbb61ab4fa33c1e8a98fb"
+    },
+    {
+      "path": "source/work/verification/11_3/Run-Postgres.ps1",
+      "bytes": 2859,
+      "sha256": "72c33b23381bd4b9c3e72d17fb7148dc9c5dd57f10d09deaf9db805fcc8583a6"
+    },
+    {
+      "path": "validation-report.json",
+      "bytes": 2665,
+      "sha256": "d9807defebb60608adfbecec0b18b7c30d4babbccd00de7f5319dad6acfd2bd3"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 8,
+      "sha256": "b6d583f1a1f3ca61eb9b87654a6712bdd4bf2b589e9b891692e06074712018b0"
+    }
+  ]
+}

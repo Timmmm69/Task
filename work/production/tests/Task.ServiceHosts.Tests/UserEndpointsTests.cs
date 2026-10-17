@@ -161,6 +161,35 @@ public sealed partial class TaskEndpointsTests
         Assert.Equal("Temporary-Password-123!", json.RootElement.GetProperty("temporaryPassword").GetString());
     }
 
+    [Theory]
+    [InlineData("activate", UserAccountTransition.Activate, "user.create", true)]
+    [InlineData("block", UserAccountTransition.Block, "user.block", true)]
+    [InlineData("unblock", UserAccountTransition.Unblock, "user.block", false)]
+    [InlineData("deactivate", UserAccountTransition.Deactivate, "user.block", true)]
+    [InlineData("reactivate", UserAccountTransition.Reactivate, "user.block", false)]
+    public async global::System.Threading.Tasks.Task LifecyclePermissionsAndStableRejections(string route, UserAccountTransition transition, string permission, bool body)
+    {
+        foreach (var granted in new[] { false, true })
+        {
+            var commands = new FakeUserAccountCommandStore { NextDisposition = IdentityCommandDisposition.InvalidStateTransition };
+            using var server = CreateServer(null, userReadStore: new FakeUserAccountReadStore(UserProjection), userCommandStore: commands,
+                grantedPermissions: Grant(granted ? permission : "user.read"));
+            using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{UsersUrl}/{TargetUserAccountId:D}/{route}");
+            if (body) request.Content = route == "activate" ? JsonContent.Create(new { expectedVersion = 4 })
+                : JsonContent.Create(new { expectedVersion = 4, reason = "Lifecycle verification" });
+            request.Headers.TryAddWithoutValidation("If-Match", "\"v4\"");
+            if (body) request.Headers.Add("Idempotency-Key", "lifecycle-permission-test");
+            var response = await client.SendAsync(request);
+            if (granted)
+            {
+                await AssertProblemAsync(response, HttpStatusCode.Conflict, "INVALID_STATE_TRANSITION");
+                Assert.Equal(transition, commands.LastTransition);
+            }
+            else { Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode); Assert.Null(commands.LastTransition); }
+        }
+    }
+
     private static IReadOnlySet<string> Grant(params string[] permissions) => new HashSet<string>(permissions, StringComparer.Ordinal);
 
     private sealed class FakeUserAccountReadStore(UserAccountReadProjection? projection) : IUserAccountReadStore

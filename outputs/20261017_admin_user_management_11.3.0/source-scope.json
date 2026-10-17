@@ -1,0 +1,13 @@
+[
+  ".project-dashboard/roadmap.json",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationUserTransitions.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationViewModel.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs",
+  "work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserTransitionTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserWindowsTests.cs",
+  "work/production/tests/Task.ServiceHosts.Tests/UserEndpointsTests.cs",
+  "work/production/tests/Task.Tests/PostgresIdentityLifecycleTests.cs",
+  "work/verification/11_3/Run-Postgres.ps1",
+  "work/verification/11_3/Package.ps1"
+]

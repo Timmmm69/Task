@@ -23,7 +23,7 @@ public sealed partial class AdministrationViewModel
     public bool IsEditorOpen => UserEditor is not null;
     public bool IsUserInspectorVisible => IsUsers && !IsEditorOpen;
     public bool IsUserEditorLoading => _editorLoading;
-    public bool CanSelectUser => !IsEditorOpen && !_savingUser;
+    public bool CanSelectUser => !IsEditorOpen && !_savingUser && !IsTransitionOpen && !_transitionBusy;
     public bool CanEditUserFields => CanWriteUsers && !_savingUser && !_uncertainSave;
     public bool IsSavingUser => _savingUser;
     public bool IsUserListEmpty => IsUsers && !IsLoading && Users.Count == 0 && CanReadCurrentArea && Message is null;
@@ -43,9 +43,9 @@ public sealed partial class AdministrationViewModel
         {
             InvalidateUserDetails(); ResetUserOperation(); UserEditorMessage = null;
             UserEditor = new(); return System.Threading.Tasks.Task.CompletedTask;
-        }, _ => CanAccessUsers && _capabilities.Contains("User.Create") && !IsEditorOpen && !_editorLoading && !IsLoading);
+        }, _ => CanAccessUsers && _capabilities.Contains("User.Create") && !IsEditorOpen && !_editorLoading && !IsLoading && !IsTransitionOpen && !_transitionBusy);
         EditUserCommand = new(OpenUserEditorAsync, _ => CanAccessUsers && _capabilities.Contains("User.Update")
-            && SelectedUser is not null && !IsEditorOpen && !_editorLoading && !IsLoading);
+            && SelectedUser is not null && !IsEditorOpen && !_editorLoading && !IsLoading && !IsTransitionOpen && !_transitionBusy);
         SaveUserCommand = new(SaveUserAsync, _ => UserEditor is not null && CanWriteUsers && !_versionConflict && !_savingUser);
         CancelUserCommand = new((_, _) =>
         {
@@ -54,7 +54,7 @@ public sealed partial class AdministrationViewModel
             return System.Threading.Tasks.Task.CompletedTask;
         }, _ => !_savingUser && (IsEditorOpen || _editorLoading));
         MoreUsersCommand = new(async (_, ct) => await LoadUserPageAsync(true, ct),
-            _ => CanAccessUsers && HasMoreUsers && !IsLoading && !IsEditorOpen);
+            _ => CanAccessUsers && HasMoreUsers && !IsLoading && !IsEditorOpen && !IsTransitionOpen && !_transitionBusy);
         foreach (var command in new[] { CreateUserCommand, EditUserCommand, SaveUserCommand, MoreUsersCommand })
             command.ExecutionFailed += _ =>
             {
@@ -65,7 +65,7 @@ public sealed partial class AdministrationViewModel
 
     private void InvalidateUserDetails()
     {
-        ++_userGeneration; _userDetails?.Cancel(); _userDetails?.Dispose(); _userDetails = null;
+        ClearTransition(); ++_userGeneration; _userDetails?.Cancel(); _userDetails?.Dispose(); _userDetails = null;
         _editorLoading = false; OnPropertyChanged(nameof(IsUserEditorLoading));
     }
 
@@ -153,7 +153,9 @@ public sealed partial class AdministrationViewModel
     {
         var item = Summary(user);
         Users = Users.Where(u => u.Id != user.Id).Append(item).OrderBy(u => u.Id).ToArray();
-        SelectedUser = item;
+        // A lifecycle receipt updates the locked selection without cancelling its confirmation.
+        if (_transitionBusy) { _selectedUser = item; OnPropertyChanged(nameof(SelectedUser)); NotifyUserCommands(); }
+        else SelectedUser = item;
     }
 
     private async System.Threading.Tasks.Task LoadUserPageAsync(bool append, CancellationToken ct, DesktopManagedUser? saved = null)
@@ -216,6 +218,6 @@ public sealed partial class AdministrationViewModel
             OnPropertyChanged(name);
         CreateUserCommand?.RaiseCanExecuteChanged(); EditUserCommand?.RaiseCanExecuteChanged();
         SaveUserCommand?.RaiseCanExecuteChanged(); CancelUserCommand?.RaiseCanExecuteChanged(); MoreUsersCommand?.RaiseCanExecuteChanged();
-        RefreshCommand.RaiseCanExecuteChanged();
+        RefreshCommand.RaiseCanExecuteChanged(); NotifyTransitionCommands();
     }
 }
