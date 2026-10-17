@@ -1,0 +1,51 @@
+{
+  "version": "10.3.1",
+  "date": "2026-10-17",
+  "source_commit": "402483b57d8daca5c7c9efbf1c59dd339ff03388",
+  "branch": "feature/object-link-target-picker",
+  "publication_authorized_by_user": true,
+  "full_acceptance_passed": false,
+  "manual_acceptance_status": "OPEN_NOT_PASSED",
+  "manual_acceptance_checklist": "work/production/docs/OBJECT-LINKS-MANUAL-ACCEPTANCE.md",
+  "tests": {
+    "desktop": {
+      "total": 1279,
+      "executed": 1279,
+      "passed": 1279,
+      "failed": 0,
+      "skipped": 0
+    },
+    "api": {
+      "total": 626,
+      "executed": 626,
+      "passed": 626,
+      "failed": 0,
+      "skipped": 0
+    },
+    "domain_postgres": {
+      "total": 863,
+      "executed": 863,
+      "passed": 863,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "release_solution_build": {
+    "passed": true,
+    "errors": 0,
+    "warnings": 11
+  },
+  "previous_limitations_fixed": [
+    "All 11 related target resource types",
+    "Discovery without Search.Use under ObjectLink.Create",
+    "Complete existing-links cursor traversal"
+  ],
+  "independent_security_review": "ACCEPT; no concrete permissions, tenant/own-scope or global-search regression found",
+  "manual_unverified": [
+    "Installed Desktop against live Corporate API",
+    "Physical keyboard and audible Narrator",
+    "Physical mixed-DPI monitor movement"
+  ],
+  "deployment_requirement": "Deploy API and Desktop together; new picker uses /api/v1/object-link-targets",
+  "historical_report": "outputs/20261017_object_link_picker_review_10.3.0/validation-report.json"
+}

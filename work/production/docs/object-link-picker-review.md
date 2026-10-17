@@ -1,5 +1,10 @@
 # Object Link Picker — независимая проверка 10.3.0
 
+> Исторический отчёт до `402483b`: ограничения discovery/Search.Use/200 links
+> исправлены последующим коммитом. Текущий открытый пункт —
+> [ручная приёмка установленного клиента, Narrator и mixed-DPI](OBJECT-LINKS-MANUAL-ACCEPTANCE.md).
+> Публикация в main не означает её прохождение.
+
 Дата: 2026-10-17. Ветка: `feature/object-link-target-picker`.
 База проверки: `736a306` (10.1), `5587a49` (10.2), `origin/main=57fa015` после fetch.
 Серверный контракт: `PostgresProductApiLinks.cs`, `PostgresProductApiSearch.cs`,

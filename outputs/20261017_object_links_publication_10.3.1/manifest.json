@@ -1,0 +1,47 @@
+{
+  "product": "Task",
+  "version": "10.3.1",
+  "source_commit": "402483b57d8daca5c7c9efbf1c59dd339ff03388",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "78e4788369a3d6ad8763219cf8dcc961960e1db4a3696cbb097f4584b296793a",
+      "bytes": 38
+    },
+    {
+      "path": "evidence/api.trx",
+      "sha256": "798028dff6eb8666d846ccf022a45f106d85b6c723fda3837bd4e46bf6059394",
+      "bytes": 984245
+    },
+    {
+      "path": "evidence/build.log",
+      "sha256": "19c4e7c21319603ef2e76d5f78eb7139485e92e97dc8d1ea024c76b97edc0146",
+      "bytes": 12069
+    },
+    {
+      "path": "evidence/desktop.trx",
+      "sha256": "d3d616a87c04c4162372d0641faba358963ae06c29bd68ef599555a40939332c",
+      "bytes": 1962331
+    },
+    {
+      "path": "evidence/domain-postgres.trx",
+      "sha256": "f0ebb4e4f32c74d33ddd5e369259780ae7f2b274ec2a3450509876e01e2376da",
+      "bytes": 1233620
+    },
+    {
+      "path": "evidence/postgres-runtime.json",
+      "sha256": "323a3c66f200960c90639b0d5fb4d906119e79ca511ea30f137b493fb8d1a83a",
+      "bytes": 127
+    },
+    {
+      "path": "validation-report.json",
+      "sha256": "191ccee01677dec48273628956c465057ba6c67592600912b96a47158b0d9aaf",
+      "bytes": 1559
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "1797468f765b5f86bc59b4710ead8a62319e18bd4ab89a734d0cf81feb4d74c9",
+      "bytes": 1260
+    }
+  ]
+}
