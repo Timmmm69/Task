@@ -1,0 +1,168 @@
+{
+  "version": "10.3.0",
+  "date": "2026-10-17",
+  "branch": "feature/object-link-target-picker",
+  "source_commit": "bdfb23cf7603b30db47ff345a7700aeebff7bb3f",
+  "baseline_10_1": "736a306",
+  "baseline_10_2": "5587a49",
+  "origin_main": "57fa015",
+  "changed_files": [
+    "work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs",
+    "work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs",
+    "work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksAccessRegressionTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs",
+    "work/production/tests/Task.Tests/PostgresObjectLinkPickerContractTests.cs"
+  ],
+  "stages": {
+    "10.1": {
+      "commit": "736a306",
+      "files": [
+        ".project-dashboard/roadmap.json",
+        "work/production/docs/object-link-target-picker.md",
+        "work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs",
+        "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml",
+        "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml.cs",
+        "work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerWindowsTests.cs"
+      ]
+    },
+    "10.2": {
+      "commit": "5587a49",
+      "files": [
+        ".project-dashboard/roadmap.json",
+        "work/production/docs/object-links-integration.md",
+        "work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs",
+        "work/production/src/Task.Desktop/ViewModels/WorkHubLocationsViewModel.cs",
+        "work/production/src/Task.Desktop/ViewModels/WorkHubObjectLinks.cs",
+        "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+        "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml",
+        "work/production/src/Task.Desktop/Views/ObjectLinksView.xaml",
+        "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+        "work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinksIntegrationTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs"
+      ]
+    },
+    "10.3": {
+      "commit": "bdfb23cf7603b30db47ff345a7700aeebff7bb3f",
+      "files": [
+        "work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs",
+        "work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs",
+        "work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs",
+        "work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksAccessRegressionTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs",
+        "work/production/tests/Task.Tests/PostgresObjectLinkPickerContractTests.cs"
+      ]
+    }
+  },
+  "status": "REVIEWABLE_WITH_ACCEPTANCE_LIMITATIONS",
+  "full_acceptance": false,
+  "full_gate_green": false,
+  "build": {
+    "configuration": "Release",
+    "solution": "work/production/Task.sln",
+    "passed": true,
+    "errors": 0
+  },
+  "tests": {
+    "desktop": {
+      "total": 1271,
+      "executed": 1271,
+      "passed": 1270,
+      "failed": 1,
+      "notExecuted": 0,
+      "skipped": 0
+    },
+    "scoped": {
+      "total": 142,
+      "executed": 142,
+      "passed": 142,
+      "failed": 0,
+      "notExecuted": 0,
+      "skipped": 0
+    },
+    "domain_postgres": {
+      "total": 860,
+      "executed": 860,
+      "passed": 860,
+      "failed": 0,
+      "notExecuted": 0,
+      "skipped": 0
+    },
+    "api": {
+      "total": 623,
+      "executed": 623,
+      "passed": 623,
+      "failed": 0,
+      "notExecuted": 0,
+      "skipped": 0
+    },
+    "inherited_ui_baseline": {
+      "total": 1,
+      "executed": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "skipped": 0
+    },
+    "original_cache_defect": {
+      "total": 3,
+      "executed": 3,
+      "passed": 0,
+      "failed": 3,
+      "notExecuted": 0,
+      "skipped": 0
+    },
+    "explicit_no_database_skip": {
+      "total": 2,
+      "executed": 0,
+      "passed": 0,
+      "failed": 0,
+      "notExecuted": 0,
+      "skipped": 2
+    }
+  },
+  "real_postgresql": {
+    "version": 16,
+    "isolated": true,
+    "loopback_only": true,
+    "full_suite": true
+  },
+  "native_wpf": {
+    "executed": true,
+    "real_windows": true,
+    "mocked_api": true,
+    "screenshots_inspected": true,
+    "physical_keyboard_tab_and_narrator": false,
+    "installed_client_live_server": false
+  },
+  "blockers": [
+    "Full Desktop gate: inherited TaskContextActionsUiTests Window.Activate assertion at line 62; reproduced at 5587a49.",
+    "related targets network_resource, notification, inbox_item are accepted by Links but unavailable through Search; full related discovery coverage remains incomplete."
+  ],
+  "limitations": [
+    "Search.Use is required; no q-list fallback.",
+    "Existing links adapter still rejects hasMore beyond 200 rows.",
+    "No live installed Corporate client/account acceptance, Narrator, physical keyboard or mixed-DPI certification."
+  ],
+  "permissions_weakened": false,
+  "server_rules_changed": false,
+  "database_or_openapi_changed": false,
+  "independent_final_review": "ACCEPT; no introduced production regression identified; related discovery limitation retained explicitly"
+}

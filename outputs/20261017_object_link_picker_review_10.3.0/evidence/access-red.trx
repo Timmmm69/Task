@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e6ac6423-e6fc-4634-b9cb-3b35cbf637df" name="novik@TIM 2026-10-17 13:21:42" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-17T13:21:42.3536107+03:00" queuing="2026-10-17T13:21:42.3536110+03:00" start="2026-10-17T13:21:41.5280994+03:00" finish="2026-10-17T13:21:42.3578294+03:00" />
+  <TestSettings name="default" id="198165a9-c334-4623-b93b-ce78b716ab31">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-17_13_21_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3b6955fd-0022-4d6e-a92b-c8e6a513dbd4" testId="42a08dd6-5131-7ab0-6fd5-39bd3e064ddf" testName="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(mutation: True)" computerName="TIM" duration="00:00:00.0056839" startTime="2026-10-17T13:21:42.2791639+03:00" endTime="2026-10-17T13:21:42.2792105+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b6955fd-0022-4d6e-a92b-c8e6a513dbd4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [DesktopObjectLink { Id = 417f3c80-22e0-4055-b5cc-f422ac9fc1b2, SourceObjectId = 4339c911-1f1b-4234-9361-070acb2c7dff, TargetObjectId = 2a5af285-44b7-41a6-9874-8171d3f96a6a, LinkType = task_file, RelatedTitle = , Title = 2a5af285-44b7-41a6-9874-8171d3f96a6a, TypeLabel = Файл задачи }]</Message>
+          <StackTrace>   at Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(Boolean mutation) in C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksAccessRegressionTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7ec4ba86-7c05-4492-8a85-1d6cebadfcd8" testId="57262b54-c439-f919-efe0-47ca2baac7ef" testName="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged" computerName="TIM" duration="00:00:00.0108803" startTime="2026-10-17T13:21:42.2486176+03:00" endTime="2026-10-17T13:21:42.2694641+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ec4ba86-7c05-4492-8a85-1d6cebadfcd8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [DesktopObjectLink { Id = bfb6e32c-c5e0-44a3-906f-0391b9b09448, SourceObjectId = 0d50dd1c-ca42-4818-bb0b-6e8cd21cff03, TargetObjectId = 3b0cc7ca-322e-4aca-9dc8-266df379b4e5, LinkType = task_file, RelatedTitle = , Title = 3b0cc7ca-322e-4aca-9dc8-266df379b4e5, TypeLabel = Файл задачи }]</Message>
+          <StackTrace>   at Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged() in C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksAccessRegressionTests.cs:line 50&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="975409c8-a9a0-4896-840a-07e83461822c" testId="37c10b92-d560-6f60-7e86-9c9b24abdf90" testName="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(mutation: False)" computerName="TIM" duration="00:00:00.0002288" startTime="2026-10-17T13:21:42.2797703+03:00" endTime="2026-10-17T13:21:42.2797935+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="975409c8-a9a0-4896-840a-07e83461822c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: [DesktopObjectLink { Id = e72932e8-144e-4ec9-a87c-5f8d2c9a9c01, SourceObjectId = f8135c49-240d-4103-b5a9-6b8da681c5a6, TargetObjectId = fbba4369-4daf-4271-b1fb-27173c4ac382, LinkType = task_file, RelatedTitle = , Title = fbba4369-4daf-4271-b1fb-27173c4ac382, TypeLabel = Файл задачи }]</Message>
+          <StackTrace>   at Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(Boolean mutation) in C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksAccessRegressionTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged" storage="c:\users\novik\таск\work\object_link_target_picker_10_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="57262b54-c439-f919-efe0-47ca2baac7ef">
+      <Execution id="7ec4ba86-7c05-4492-8a85-1d6cebadfcd8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests" name="ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(mutation: False)" storage="c:\users\novik\таск\work\object_link_target_picker_10_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="37c10b92-d560-6f60-7e86-9c9b24abdf90">
+      <Execution id="975409c8-a9a0-4896-840a-07e83461822c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests" name="AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(mutation: True)" storage="c:\users\novik\таск\work\object_link_target_picker_10_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="42a08dd6-5131-7ab0-6fd5-39bd3e064ddf">
+      <Execution id="3b6955fd-0022-4d6e-a92b-c8e6a513dbd4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests" name="AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="42a08dd6-5131-7ab0-6fd5-39bd3e064ddf" executionId="3b6955fd-0022-4d6e-a92b-c8e6a513dbd4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57262b54-c439-f919-efe0-47ca2baac7ef" executionId="7ec4ba86-7c05-4492-8a85-1d6cebadfcd8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="37c10b92-d560-6f60-7e86-9c9b24abdf90" executionId="975409c8-a9a0-4896-840a-07e83461822c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.21]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.23]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.27]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.27]       Collection: [DesktopObjectLink { Id = bfb6e32c-c5e0-44a3-906f-0391b9b09448, SourceObjectId = 0d50dd1c-ca42-4818-bb0b-6e8cd21cff03, TargetObjectId = 3b0cc7ca-322e-4aca-9dc8-266df379b4e5, LinkType = task_file, RelatedTitle = , Title = 3b0cc7ca-322e-4aca-9dc8-266df379b4e5, TypeLabel = Файл задачи }]&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksAccessRegressionTests.cs(50,0): at Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged()&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.27]       Collection: [DesktopObjectLink { Id = 417f3c80-22e0-4055-b5cc-f422ac9fc1b2, SourceObjectId = 4339c911-1f1b-4234-9361-070acb2c7dff, TargetObjectId = 2a5af285-44b7-41a6-9874-8171d3f96a6a, LinkType = task_file, RelatedTitle = , Title = 2a5af285-44b7-41a6-9874-8171d3f96a6a, TypeLabel = Файл задачи }]&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksAccessRegressionTests.cs(31,0): at Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(Boolean mutation)&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.27]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.27]       Collection: [DesktopObjectLink { Id = e72932e8-144e-4ec9-a87c-5f8d2c9a9c01, SourceObjectId = f8135c49-240d-4103-b5a9-6b8da681c5a6, TargetObjectId = fbba4369-4daf-4271-b1fb-27173c4ac382, LinkType = task_file, RelatedTitle = , Title = fbba4369-4daf-4271-b1fb-27173c4ac382, TypeLabel = Файл задачи }]&#xD;
+[xUnit.net 00:00:00.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.27]         C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksAccessRegressionTests.cs(31,0): at Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(Boolean mutation)&#xD;
+[xUnit.net 00:00:00.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.28]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-17T13:21:42.2717553+03:00">
+        <Text>[xUnit.net 00:00:00.26]     Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-17T13:21:42.2795629+03:00">
+        <Text>[xUnit.net 00:00:00.27]     Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(mutation: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-17T13:21:42.2799862+03:00">
+        <Text>[xUnit.net 00:00:00.27]     Task.Desktop.Tests.Work.ObjectLinksAccessRegressionTests.AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(mutation: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

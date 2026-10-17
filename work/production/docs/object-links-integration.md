@@ -1,5 +1,7 @@
 # Corporate object links — task 10.2 / version 10.2.0
 
+Historical stage 10.2 receipt. The [10.3 review](object-link-picker-review.md) supersedes the four-type matrix and records additional session/cache/cancellation fixes and current acceptance limits.
+
 Baseline: `736a306e2ca16820f40c1f9fb82fb5ef4cc69ad7` (stage 10.1).
 Branch: `feature/object-link-target-picker`. No API, OpenAPI, database, permission vocabulary or business-status changes.
 

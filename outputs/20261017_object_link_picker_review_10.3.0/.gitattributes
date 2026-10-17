@@ -1,0 +1,3 @@
+* -text
+evidence/** -diff -whitespace
+*.patch -diff -whitespace

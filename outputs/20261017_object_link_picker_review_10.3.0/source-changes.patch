@@ -1,0 +1,543 @@
+commit bdfb23cf7603b30db47ff345a7700aeebff7bb3f
+Author:     Timmmm69 <novikovt83@gmail.com>
+AuthorDate: Sat Oct 17 16:35:01 2026 +0300
+Commit:     Timmmm69 <novikovt83@gmail.com>
+CommitDate: Sat Oct 17 16:35:01 2026 +0300
+
+    fix(desktop): harden object link picker access and align link types
+
+diff --git a/work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs
+index 92b0da1..93eb8ef 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs
+@@ -43,19 +43,34 @@ public sealed class ObjectLinkTargetPickerViewModel : ViewModelBase, IDisposable
+     {
+         ("task", "task_file") or ("project", "project_file") or ("contact" or "company", "contact_file") => ["catalog_item"],
+         ("task", "task_contact") => ["contact", "company"],
++        ("project", "project_contact") => ["contact", "company"],
++        ("task", "task_project") => ["project"],
++        ("task" or "project" or "contact" or "company" or "catalog_item" or "calendar_event" or "interaction", "related")
++            => new[] { "task", "project", "contact", "company", "catalog_item", "calendar_event", "interaction", "employee_profile" }
++                .Where(CanReadType).ToArray(),
+         _ => [],
+     };
+     private bool Has(string permission) => _capabilities.Contains(permission);
++    private bool CanReadType(string type) => type switch
++    {
++        "task" => Has("Task.Read"), "project" => Has("Project.Read"),
++        "contact" or "company" or "interaction" => Has("Contact.Read"),
++        "catalog_item" => Has("FileCatalog.Read"), "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
++        "employee_profile" => Has("Employee.Read"), _ => false,
++    };
+     private bool HasAccess => Has("Search.Use") && Has("ObjectLink.Create") && _source != Guid.Empty
+         && (_sourceType switch
+         {
+             "task" => Has("Task.Read"),
+             "project" => Has("Project.Read") && Has("Project.Update"),
+             "contact" or "company" => Has("Contact.Read") && Has("Contact.Update"),
++            "catalog_item" => Has("FileCatalog.Read") && Has("FileCatalog.Update"),
++            "calendar_event" => CanReadType("calendar_event") && Has("CalendarEvent.Update"),
++            "interaction" => Has("Contact.Read") && Has("Interaction.Update"),
+             _ => false,
+         })
+         && AllowedTargetTypes.Count > 0
+-        && AllowedTargetTypes.All(type => Has(type == "catalog_item" ? "FileCatalog.Read" : "Contact.Read"));
++        && AllowedTargetTypes.All(CanReadType);
+     private bool ValidQuery => SearchText.Trim().Length is >= 2 and <= 200;
+     public bool CanQuery => !_disposed && HasAccess && _sessionReady && _online;
+     public bool CanConfirm => CanQuery && State is ObjectLinkTargetPickerState.Ready or ObjectLinkTargetPickerState.Selected
+diff --git a/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs
+index 75c269e..eaa8fb2 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs
+@@ -9,12 +9,13 @@ public sealed record ObjectLinkTypeChoice(string Value, string Label);
+ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+ {
+     private static readonly ObjectLinkTypeChoice[] AllTypes = [new("task_file", "Файл задачи"), new("project_file", "Файл проекта"), new("contact_file", "Файл контакта"), new("task_contact", "Контакт задачи")];
++    private static readonly ObjectLinkTypeChoice[] CorporateTypes = [.. AllTypes, new("project_contact", "Контакт проекта"), new("task_project", "Проект задачи"), new("related", "Связанный объект")];
+     private readonly IDesktopObjectLinksClient _client;
+     private readonly Func<bool> _canWrite, _canRemove, _canRead;
+     private readonly bool _corporate;
+     private Guid _source;
+     private long _version, _generation;
+-    private bool _disposed, _needsRefresh, _sourceActive = true;
++    private bool _disposed, _needsRefresh, _sourceActive = true, _sessionReady = true;
+     private string _sourceType = "", _target = "", _type = "task_file", _message = "";
+     private IReadOnlyList<DesktopObjectLink> _items = [];
+     private DesktopObjectLink? _selected;
+@@ -67,15 +68,16 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+             AddCommand.RaiseCanExecuteChanged();
+         }
+     }
+-    public IReadOnlyList<ObjectLinkTypeChoice> LinkTypes => !_corporate ? AllTypes : AllTypes.Where(choice => (_sourceType, choice.Value) is
+-        ("task", "task_file" or "task_contact") or ("project", "project_file") or ("contact" or "company", "contact_file")).ToArray();
++    public IReadOnlyList<ObjectLinkTypeChoice> LinkTypes => !_corporate ? AllTypes : CorporateTypes.Where(choice => (_sourceType, choice.Value) is
++        ("task", "task_file" or "task_contact" or "task_project") or ("project", "project_file" or "project_contact") or ("contact" or "company", "contact_file")
++        or ("task" or "project" or "contact" or "company" or "catalog_item" or "calendar_event" or "interaction", "related")).ToArray();
+     public string Message { get => _message; private set => SetProperty(ref _message, value); }
+     public AsyncCommand RefreshCommand { get; }
+     public AsyncCommand AddCommand { get; }
+     public AsyncCommand RemoveCommand { get; }
+     public bool IsBusy => RefreshCommand.IsExecuting || AddCommand.IsExecuting || RemoveCommand.IsExecuting;
+     public bool IsMutating => AddCommand.IsExecuting || RemoveCommand.IsExecuting;
+-    private bool CanRead => !_disposed && _canRead() && _source != Guid.Empty;
++    private bool CanRead => !_disposed && _sessionReady && _canRead() && _source != Guid.Empty;
+     private Guid TargetObjectId => _corporate ? TargetPicker?.SelectedObjectId ?? Guid.Empty : Guid.TryParse(TargetId, out var id) ? id : Guid.Empty;
+     private bool CanAdd => CanRead && _canWrite() && _sourceActive && !_needsRefresh && !IsBusy && _version > 0
+         && TargetObjectId != Guid.Empty && TargetObjectId != _source
+@@ -105,9 +107,11 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+     public void UpdateAccess(IEnumerable<string>? capabilities, bool sessionReady = true, bool online = true)
+     {
+         if (_disposed) return;
++        _sessionReady = sessionReady;
++        // Capability names do not describe object-level scope. Re-read under the new access context.
+         _needsRefresh |= IsMutating;
+         Invalidate(); TargetPicker?.UpdateAccess(capabilities, sessionReady, online);
+-        if (!_canRead() || !sessionReady) { Items = []; Selected = null; }
++        Items = []; Selected = null;
+         NotifyCommands();
+     }
+     private void Invalidate()
+@@ -118,7 +122,12 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+     private async System.Threading.Tasks.Task ExecuteOperationAsync(Func<System.Threading.Tasks.Task<DesktopWorkResult<DesktopObjectLinks>>> operation,
+         long generation, bool mutation, CancellationToken ct)
+     {
+-        try { Apply(await operation(), generation, mutation); }
++        try
++        {
++            var result = await operation();
++            ct.ThrowIfCancellationRequested();
++            Apply(result, generation, mutation);
++        }
+         catch (OperationCanceledException) when (ct.IsCancellationRequested)
+         { if (mutation) Apply(new DesktopWorkResult<DesktopObjectLinks>.MalformedResponse(), generation, true); }
+         catch (Exception) { Apply(new DesktopWorkResult<DesktopObjectLinks>.MalformedResponse(), generation, mutation); }
+@@ -147,12 +156,32 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+                 DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable => "Нет подключения к серверу. Обновите связи после восстановления подключения.",
+                 _ => "Не удалось подтвердить связи. Обновите связи перед повторной попыткой.",
+             };
+-            if (result is DesktopWorkResult<DesktopObjectLinks>.AuthenticationFailure) TargetPicker?.UpdateAccess([], sessionReady: false);
++            if (result is DesktopWorkResult<DesktopObjectLinks>.AuthenticationFailure)
++            {
++                _sessionReady = false; Items = []; Selected = null;
++                TargetPicker?.UpdateAccess([], sessionReady: false);
++            }
++            else if (!mutation && result is DesktopWorkResult<DesktopObjectLinks>.Forbidden or DesktopWorkResult<DesktopObjectLinks>.NotFound)
++            {
++                Items = []; Selected = null; _needsRefresh = true;
++                TargetPicker?.UpdateAccess([]);
++            }
+             else if (mutation) TargetPicker?.ClearSelection();
+         }
+         NotifyCommands();
+     }
+-    private void OnPickerChanged(object? sender, PropertyChangedEventArgs e) => AddCommand.RaiseCanExecuteChanged();
++    private void OnPickerChanged(object? sender, PropertyChangedEventArgs e)
++    {
++        if (_sessionReady && e.PropertyName == nameof(ObjectLinkTargetPickerViewModel.State)
++            && TargetPicker?.State == ObjectLinkTargetPickerState.SessionExpired)
++        {
++            _sessionReady = false; _needsRefresh |= IsMutating;
++            Invalidate(); Items = []; Selected = null;
++            Message = "Сессия завершена. Войдите в систему.";
++            NotifyCommands();
++        }
++        AddCommand.RaiseCanExecuteChanged();
++    }
+     private void OnExecutionChanged(object? sender, EventArgs e)
+     {
+         OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsMutating));
+diff --git a/work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs b/work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs
+index 8219796..70f67bb 100644
+--- a/work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs
++++ b/work/production/src/Task.Desktop/Work/DesktopObjectLinkTargetSearch.cs
+@@ -15,8 +15,8 @@ public sealed partial class DesktopWorkApiClient : IDesktopObjectLinkTargetSearc
+         string query, IReadOnlyCollection<string> types, string? cursor, CancellationToken cancellationToken = default)
+     {
+         query = query?.Trim() ?? "";
+-        if (query.Length is < 2 or > 200 || types is null || types.Count is < 1 or > 3
+-            || types.Any(type => type is not ("catalog_item" or "contact" or "company"))
++        if (query.Length is < 2 or > 200 || types is null || types.Count is < 1 or > 8
++            || types.Any(type => type is not ("catalog_item" or "contact" or "company" or "task" or "project" or "calendar_event" or "interaction" or "employee_profile"))
+             || cursor is not null && (string.IsNullOrWhiteSpace(cursor) || cursor.Length > 256))
+             return new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ValidationFailure("Проверьте условия поиска.");
+         var allowed = types.ToHashSet(StringComparer.Ordinal);
+diff --git a/work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs b/work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs
+index 3356518..8a154da 100644
+--- a/work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs
++++ b/work/production/src/Task.Desktop/Work/DesktopObjectLinks.cs
+@@ -8,7 +8,7 @@ namespace Task.Desktop.Work;
+ public sealed record DesktopObjectLink(Guid Id, Guid SourceObjectId, Guid TargetObjectId, string LinkType, string? RelatedTitle = null)
+ {
+     public string Title => RelatedTitle ?? TargetObjectId.ToString("D");
+-    public string TypeLabel => LinkType switch { "task_file" => "Файл задачи", "project_file" => "Файл проекта", "contact_file" => "Файл контакта", "task_contact" => "Контакт задачи", _ => "Связь" };
++    public string TypeLabel => LinkType switch { "task_file" => "Файл задачи", "project_file" => "Файл проекта", "contact_file" => "Файл контакта", "task_contact" => "Контакт задачи", "project_contact" => "Контакт проекта", "task_project" => "Проект задачи", "related" => "Связанный объект", _ => "Связь" };
+ }
+ public sealed record DesktopObjectLinks(IReadOnlyList<DesktopObjectLink> Items, long SourceVersion);
+ public interface IDesktopObjectLinksClient
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs b/work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs
+index 3be833d..3d25024 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs
+@@ -17,6 +17,17 @@ public sealed partial class DesktopWorkApiClientTests
+         }), ["nextCursor"] = null,
+     }.ToJsonString();
+ 
++    [Theory]
++    [InlineData("project")][InlineData("task")][InlineData("calendar_event")]
++    [InlineData("interaction")][InlineData("employee_profile")]
++    public async AsyncTask TargetSearchSupportsOtherLinkableSearchResources(string type)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => AsyncTask.FromResult(Json(HttpStatusCode.OK, TargetBody(type))));
++        var result = Assert.IsType<PageResult.Succeeded>(await fixture.Client.SearchTargetsAsync("План", [type], null));
++        Assert.Equal(type, Assert.Single(result.Value).ObjectType);
++        Assert.Contains("types=" + type, Assert.Single(fixture.Requests).Uri.Query);
++    }
++
+     [Fact]
+     public async AsyncTask TargetSearchUsesExistingAuthenticatedApiAndPreservesGlobalSearch()
+     {
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs
+index 7b3fc5b..e5f26a6 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs
+@@ -29,6 +29,9 @@ public sealed class ObjectLinkTargetPickerTests
+     [InlineData("contact", "contact_file", "catalog_item")]
+     [InlineData("company", "contact_file", "catalog_item")]
+     [InlineData("task", "task_contact", "contact,company")]
++    [InlineData("project", "project_contact", "contact,company")]
++    [InlineData("task", "task_project", "project")]
++    [InlineData("task", "related", "task,project,contact,company,catalog_item,calendar_event,interaction")]
+     public async AsyncTask SearchUsesNameAndServerTypes(string source, string link, string expected)
+     {
+         var hit = Hit(expected.Split(',')[0]);
+@@ -68,7 +71,7 @@ public sealed class ObjectLinkTargetPickerTests
+         picker.SetContext(source, "task", "task_contact"); Assert.Null(picker.SelectedObjectId); Assert.Empty(picker.Results);
+         picker.SetContext(source, "task", "task_file"); await picker.SearchAsync(); picker.Candidate = file; Assert.True(picker.ConfirmSelection());
+         picker.SetContext(Guid.NewGuid(), "task", "task_file"); Assert.Null(picker.SelectedObjectId); Assert.Empty(picker.Results);
+-        picker.SetContext(source, "task", "related"); Assert.False(picker.CanQuery);
++        picker.SetContext(source, "task", "parent_reference"); Assert.False(picker.CanQuery);
+         picker.SetContext(source, "project", "task_file"); Assert.False(picker.CanQuery);
+     }
+ 
+@@ -154,6 +157,22 @@ public sealed class ObjectLinkTargetPickerTests
+         Assert.Equal(0, client.Calls); Assert.Equal(ObjectLinkTargetPickerState.Forbidden, picker.State);
+     }
+ 
++    [Fact]
++    public async AsyncTask RelatedUsesOnlyReadableTypesAndAllowsCatalogSourceWithUpdatePermission()
++    {
++        var client = new SearchClient { Search = (_, types, _, _) =>
++        {
++            Assert.Equal(new[] { "catalog_item", "employee_profile" }, types);
++            return AsyncTask.FromResult(Page(Hit("employee_profile")));
++        } };
++        using var picker = Picker(client, "catalog_item", "related");
++        picker.UpdateAccess(["Search.Use", "ObjectLink.Create", "FileCatalog.Read", "FileCatalog.Update", "Employee.Read"]);
++        picker.SearchText = "План"; await picker.CurrentOperation;
++        picker.Candidate = Assert.Single(picker.Results); Assert.True(picker.ConfirmSelection());
++        picker.UpdateAccess(["Search.Use", "ObjectLink.Create", "FileCatalog.Read", "Employee.Read"]);
++        Assert.False(picker.CanQuery); Assert.Empty(picker.Results);
++    }
++
+     [Fact]
+     public async AsyncTask ScopeChangeEvenWithSameCapabilitiesAndLogoutClearAllData()
+     {
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksAccessRegressionTests.cs b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksAccessRegressionTests.cs
+new file mode 100644
+index 0000000..6d4868b
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksAccessRegressionTests.cs
+@@ -0,0 +1,111 @@
++using Task.Desktop.ViewModels;
++using AsyncTask = System.Threading.Tasks.Task;
++using LinkResult = Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopObjectLinks>;
++
++namespace Task.Desktop.Tests.Work;
++
++public sealed class ObjectLinksAccessRegressionTests
++{
++    [Theory]
++    [InlineData(false)][InlineData(true)]
++    public async AsyncTask CancelledNonCooperativeOperationCannotPublishSuccess(bool mutation)
++    {
++        var client = new ObjectLinksIntegrationTests.Client();
++        using var vm = ObjectLinksIntegrationTests.Model(client);
++        var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
++        var pending = new System.Threading.Tasks.TaskCompletionSource<LinkResult>();
++        AsyncCommand command;
++        if (mutation)
++        {
++            await ObjectLinksIntegrationTests.Select(vm);
++            client.Write = _ => pending.Task; command = vm.AddCommand;
++        }
++        else { client.Read = _ => pending.Task; command = vm.RefreshCommand; }
++        var operation = command.ExecuteAsync(); command.Cancel();
++        pending.SetResult(new LinkResult.Succeeded(new([new(Guid.NewGuid(), source, Guid.NewGuid(), "task_file")], 8)));
++        await operation; Assert.Empty(vm.Items); Assert.DoesNotContain("обновлены", vm.Message);
++        if (mutation) Assert.False(vm.AddCommand.CanExecute(null));
++    }
++
++    [Theory]
++    [InlineData(false)][InlineData(true)]
++    public async AsyncTask InvisibleSourceReadRemovesCachedRelationsAndConfirmedTarget(bool disappeared)
++    {
++        var client = new ObjectLinksIntegrationTests.Client();
++        using var vm = ObjectLinksIntegrationTests.Model(client);
++        var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
++        client.Rows = [new(Guid.NewGuid(), source, Guid.NewGuid(), "task_file")];
++        await vm.RefreshCommand.ExecuteAsync(); await ObjectLinksIntegrationTests.Select(vm);
++        client.Read = _ => AsyncTask.FromResult<LinkResult>(disappeared ? new LinkResult.NotFound() : new LinkResult.Forbidden());
++        await vm.RefreshCommand.ExecuteAsync();
++        Assert.Empty(vm.Items); Assert.Null(vm.Selected); Assert.Null(vm.TargetPicker!.SelectedTarget);
++        Assert.False(vm.AddCommand.CanExecute(null)); Assert.False(vm.RemoveCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async AsyncTask SearchSessionExpiryAlsoInvalidatesLinksAndPendingRead()
++    {
++        var client = new ObjectLinksIntegrationTests.Client();
++        using var vm = ObjectLinksIntegrationTests.Model(client);
++        var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
++        client.Rows = [new(Guid.NewGuid(), source, Guid.NewGuid(), "task_file")];
++        await vm.RefreshCommand.ExecuteAsync();
++        var pending = new System.Threading.Tasks.TaskCompletionSource<LinkResult>();
++        client.Read = _ => pending.Task;
++        var read = vm.RefreshCommand.ExecuteAsync();
++        client.Search = _ => AsyncTask.FromResult<Task.Desktop.Work.DesktopWorkResult<IReadOnlyList<Task.Desktop.Work.DesktopSearchResult>>>(
++            new Task.Desktop.Work.DesktopWorkResult<IReadOnlyList<Task.Desktop.Work.DesktopSearchResult>>.AuthenticationFailure());
++        vm.TargetPicker!.SearchText = "План"; await vm.TargetPicker.CurrentOperation;
++        pending.SetResult(new LinkResult.Succeeded(new(client.Rows, 7))); await read;
++        Assert.Empty(vm.Items); Assert.Null(vm.Selected);
++        Assert.False(vm.RefreshCommand.CanExecute(null)); Assert.False(vm.RemoveCommand.CanExecute(null));
++        Assert.Contains("Сессия", vm.Message);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async AsyncTask AuthenticationFailureClearsRowsAndDisablesEveryCommandUntilSessionRestored(bool mutation)
++    {
++        var client = new ObjectLinksIntegrationTests.Client();
++        using var vm = ObjectLinksIntegrationTests.Model(client);
++        var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
++        client.Rows = [new(Guid.NewGuid(), source, Guid.NewGuid(), "task_file")];
++        await vm.RefreshCommand.ExecuteAsync();
++        Assert.Single(vm.Items);
++        if (mutation)
++        {
++            await ObjectLinksIntegrationTests.Select(vm);
++            client.Write = _ => AsyncTask.FromResult<LinkResult>(new LinkResult.AuthenticationFailure());
++            await vm.AddCommand.ExecuteAsync();
++        }
++        else
++        {
++            client.Read = _ => AsyncTask.FromResult<LinkResult>(new LinkResult.AuthenticationFailure());
++            await vm.RefreshCommand.ExecuteAsync();
++        }
++        Assert.Empty(vm.Items); Assert.Null(vm.Selected);
++        Assert.False(vm.RefreshCommand.CanExecute(null));
++        Assert.False(vm.RemoveCommand.CanExecute(null));
++        Assert.False(vm.AddCommand.CanExecute(null));
++        Assert.False(vm.TargetPicker!.CanQuery);
++        client.Read = null;
++        vm.UpdateAccess(ObjectLinksIntegrationTests.Access);
++        Assert.True(await vm.RefreshCommand.ExecuteAsync()); Assert.Single(vm.Items);
++    }
++
++    [Fact]
++    public async AsyncTask ScopeRefreshClearsCachedRowsEvenWhenCapabilityNamesAreUnchanged()
++    {
++        var client = new ObjectLinksIntegrationTests.Client();
++        using var vm = ObjectLinksIntegrationTests.Model(client);
++        var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
++        client.Rows = [new(Guid.NewGuid(), source, Guid.NewGuid(), "task_file")];
++        await vm.RefreshCommand.ExecuteAsync();
++        vm.UpdateAccess(ObjectLinksIntegrationTests.Access);
++        Assert.Empty(vm.Items); Assert.Null(vm.Selected);
++        Assert.False(vm.RemoveCommand.CanExecute(null));
++        Assert.True(await vm.RefreshCommand.ExecuteAsync());
++        Assert.Single(vm.Items);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs
+index 4196a42..0690878 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs
+@@ -61,9 +61,27 @@ public sealed class ObjectLinksIntegrationTests
+         await vm.AddCommand.ExecuteAsync(); Assert.Equal(8, client.Added!.Value.Version);
+     }
+     [Theory]
+-    [InlineData("task", "task_file,task_contact")][InlineData("project", "project_file")]
+-    [InlineData("contact", "contact_file")][InlineData("company", "contact_file")]
+-    [InlineData("catalog_item", "")][InlineData("calendar_event", "")][InlineData("interaction", "")][InlineData("unknown", "")]
++    [InlineData("task", "task_project", "project")]
++    [InlineData("project", "project_contact", "contact")]
++    [InlineData("project", "project_contact", "company")]
++    [InlineData("catalog_item", "related", "task")]
++    [InlineData("calendar_event", "related", "employee_profile")]
++    [InlineData("interaction", "related", "catalog_item")]
++    public async AsyncTask AdditionalServerTypesCreateUsingTheConfirmedTarget(string sourceType, string type, string targetType)
++    {
++        var client = new Client { Hit = ObjectLinkTargetPickerTests.Hit(targetType) };
++        using var vm = Model(client); var source = Guid.NewGuid();
++        vm.SetSource(source, 7, sourceType); vm.LinkType = type;
++        vm.UpdateAccess([.. Access, "Calendar.Read", "CalendarEvent.Update", "Interaction.Update", "Employee.Read"]);
++        await Select(vm); Assert.True(vm.AddCommand.CanExecute(null));
++        await vm.AddCommand.ExecuteAsync();
++        Assert.Equal((source, 7L, client.Hit.ObjectId, type), client.Added);
++        Assert.Equal(client.Hit.ObjectId, Assert.Single(vm.Items).TargetObjectId);
++    }
++    [Theory]
++    [InlineData("task", "task_file,task_contact,task_project,related")][InlineData("project", "project_file,project_contact,related")]
++    [InlineData("contact", "contact_file,related")][InlineData("company", "contact_file,related")]
++    [InlineData("catalog_item", "related")][InlineData("calendar_event", "related")][InlineData("interaction", "related")][InlineData("unknown", "")]
+     public void SourceMatrixHasNoImpossibleCreation(string source, string types)
+     {
+         using var vm = Model(new()); vm.SetSource(Guid.NewGuid(), 1, source);
+@@ -129,7 +147,8 @@ public sealed class ObjectLinksIntegrationTests
+             "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."), _ => new LinkResult.MalformedResponse(),
+         };
+         client.Write = _ => AsyncTask.FromResult(failure); await vm.AddCommand.ExecuteAsync();
+-        Assert.Same(old, Assert.Single(vm.Items)); Assert.DoesNotContain("обновлены", vm.Message); Assert.DoesNotContain("INTERNAL", vm.Message);
++        if (error == "auth") Assert.Empty(vm.Items); else Assert.Same(old, Assert.Single(vm.Items));
++        Assert.DoesNotContain("обновлены", vm.Message); Assert.DoesNotContain("INTERNAL", vm.Message);
+         Assert.False(vm.AddCommand.CanExecute(null)); Assert.False(vm.RemoveCommand.CanExecute(null));
+         Assert.Null(vm.TargetPicker!.SelectedTarget);
+         if (error == "auth") vm.UpdateAccess(Access);
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs
+index c50783e..35e937a 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs
+@@ -54,7 +54,7 @@ public sealed class ObjectLinksIntegrationWindowsTests
+                     var pickerView = Assert.Single(Descendants<ObjectLinkTargetPickerView>(view));
+                     var search = (TextBox)pickerView.FindName("SearchBox"); var list = (ListBox)pickerView.FindName("ResultsList");
+                     Assert.True(pickerView.IsVisible); Assert.False(Descendants<TextBox>(view).Single(box => box != search).IsVisible);
+-                    var types = Assert.Single(Descendants<ComboBox>(view)); Assert.Equal(2, types.Items.Count);
++                    var types = Assert.Single(Descendants<ComboBox>(view)); Assert.Equal(4, types.Items.Count);
+                     vm.SetSource(Guid.NewGuid(), 3, "project"); Pump(); Assert.Equal("project_file", vm.LinkType); Assert.Equal("project_file", types.SelectedValue);
+                     vm.SetSource(source, 7, "task"); Pump(); Assert.Equal("task_file", vm.LinkType);
+                     search.Text = "План"; await vm.TargetPicker!.CurrentOperation; Pump(); Assert.Single(list.Items);
+@@ -76,7 +76,8 @@ public sealed class ObjectLinksIntegrationWindowsTests
+                     Assert.All(Descendants<Button>(view).Where(button => button.IsVisible), button => Assert.True(button.TransformToAncestor(view).TransformBounds(new Rect(button.RenderSize)).Right <= view.ActualWidth + 1));
+                     SaveFrame(view, "corporate-links-narrow.png");
+                     vm.SetSource(Guid.NewGuid(), 1, "catalog_item"); Pump();
+-                    Assert.False(types.IsVisible); Assert.False(add.IsVisible); Assert.False(pickerView.IsVisible);
++                    Assert.True(types.IsVisible); Assert.True(add.IsVisible); Assert.True(pickerView.IsVisible);
++                    Assert.Equal("related", vm.LinkType); Assert.False(add.IsEnabled);
+                     Assert.True(Descendants<DataGrid>(view).Single().IsVisible);
+                     SaveFrame(view, "corporate-links-catalog-read-only.png"); completion.SetResult();
+                 }
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs b/work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs
+index 50bcae6..3b309b3 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs
+@@ -25,7 +25,7 @@ public sealed partial class WorkHubViewModelTests
+         using var hub = new WorkHubViewModel(client, ObjectLinksIntegrationTests.Access.Where(p => p != "ObjectLink.Delete"));
+         hub.Activate(WorkHubArea.Contacts); await Eventually(() => hub.Contacts.Count == 1);
+         hub.SelectedContact = contact;
+-        Assert.Equal("contact", hub.Links!.SourceType); Assert.Equal("contact_file", Assert.Single(hub.Links.LinkTypes).Value);
++        Assert.Equal("contact", hub.Links!.SourceType); Assert.Equal("contact_file", hub.Links.LinkTypes.First().Value);
+         await ObjectLinksIntegrationTests.Select(hub.Links);
+         await hub.Links.AddCommand.ExecuteAsync();
+         Assert.Equal((contact.Id, 3L, client.LinkTransport.Hit.ObjectId, "contact_file"), client.LinkTransport.Added);
+@@ -33,13 +33,13 @@ public sealed partial class WorkHubViewModelTests
+         var confirmedVersion = hub.SelectedContact!.Version;
+         hub.Activate(WorkHubArea.Catalog); await Eventually(() => hub.Catalog.Count == 1);
+         hub.SelectedCatalogItem = Assert.Single(hub.CatalogRoots);
+-        Assert.Equal("catalog_item", hub.Links.SourceType); Assert.Empty(hub.Links.LinkTypes); Assert.False(hub.Links.ShowPicker);
++        Assert.Equal("catalog_item", hub.Links.SourceType); Assert.Equal("related", Assert.Single(hub.Links.LinkTypes).Value); Assert.True(hub.Links.ShowPicker);
+         await hub.Links.RefreshCommand.ExecuteAsync(); Assert.Single(hub.Links.Items);
+         hub.SelectedContact = contact; Assert.Equal("catalog_item", hub.Links.SourceType);
+         hub.Activate(WorkHubArea.Search);
+         var project = ObjectLinkTargetPickerTests.Hit("project") with { Version = 5 };
+         hub.SelectedSearchHit = new(project, project.Title, "", "");
+-        Assert.Equal("project", hub.Links.SourceType); Assert.Equal("project_file", Assert.Single(hub.Links.LinkTypes).Value);
++        Assert.Equal("project", hub.Links.SourceType); Assert.Equal("project_file", hub.Links.LinkTypes.First().Value);
+         await ObjectLinksIntegrationTests.Select(hub.Links); await hub.Links.AddCommand.ExecuteAsync();
+         Assert.Equal(project.ObjectId, client.LinkTransport.Added!.Value.Source); Assert.Equal(5, client.LinkTransport.Added!.Value.Version);
+         Assert.Equal(client.LinkTransport.Version, hub.SelectedSearchHit.Source.Version);
+@@ -86,7 +86,7 @@ public sealed partial class WorkHubViewModelTests
+     {
+         using var hub = new WorkHubViewModel(new FakeClient(), ["Search.Use", "ObjectLink.Read", permission]);
+         hub.Activate(WorkHubArea.Search); var hit = ObjectLinkTargetPickerTests.Hit(type); hub.SelectedSearchHit = new(hit, hit.Title, "", "");
+-        Assert.True(hub.Links!.RefreshCommand.CanExecute(null)); Assert.Empty(hub.Links.LinkTypes); Assert.False(hub.Links.AddCommand.CanExecute(null));
++        Assert.True(hub.Links!.RefreshCommand.CanExecute(null)); Assert.Equal("related", Assert.Single(hub.Links.LinkTypes).Value); Assert.False(hub.Links.AddCommand.CanExecute(null));
+         Assert.True(await hub.Links.RefreshCommand.ExecuteAsync());
+     }
+ 
+diff --git a/work/production/tests/Task.Tests/PostgresObjectLinkPickerContractTests.cs b/work/production/tests/Task.Tests/PostgresObjectLinkPickerContractTests.cs
+new file mode 100644
+index 0000000..d9dad20
+--- /dev/null
++++ b/work/production/tests/Task.Tests/PostgresObjectLinkPickerContractTests.cs
+@@ -0,0 +1,69 @@
++using System.Text.Json.Nodes;
++using Task.Application.ProductData;
++using Task.Domain;
++
++namespace Task.Tests;
++
++public sealed partial class PostgresProductApiTests
++{
++    [RequiresPostgresFact]
++    public void ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions()
++    {
++        using var db = Database.Create()!;
++        var source = Id(db.Call("contacts", "create", "{\"firstName\":\"Picker\",\"displayName\":\"Picker source\"}"));
++        var target = Id(db.Call("catalog-items", "create", "{\"name\":\"Picker target\",\"itemType\":\"file_reference\"}"));
++        ProductApiResponse Add(Guid id, int version, Guid destination, string[]? permissions = null) => db.Call("objects", "link-add",
++            new JsonObject { ["sourceObjectId"] = id, ["targetObjectId"] = destination, ["linkType"] = "contact_file" }.ToJsonString(), id, version, permissions: permissions);
++        var createOnly = new[] { "ObjectLink.Create", "Contact.Read", "Contact.Update", "FileCatalog.Read", "FileCatalog.Update" };
++        var deleteOnly = new[] { "ObjectLink.Delete", "Contact.Read", "Contact.Update", "FileCatalog.Read" };
++        var link = Add(source, 1, target, createOnly);
++        Assert.Equal(201, link.Status);
++        Assert.Equal(409, Assert.Throws<ProductApiException>(() => Add(source, 2, target)).Status);
++        Assert.Equal(200, db.Call("objects", "link-remove", id: source, version: 2, child: Id(link), permissions: deleteOnly).Status);
++        var next = Add(source, 3, target, createOnly);
++        Assert.Equal(201, next.Status);
++        Assert.Equal(412, Assert.Throws<ProductApiException>(() => db.Call("objects", "link-remove", id: source, version: 3, child: Id(next), permissions: deleteOnly)).Status);
++        Assert.Equal(404, Assert.Throws<ProductApiException>(() => Add(source, 4, Guid.NewGuid())).Status);
++        Assert.Equal(404, Assert.Throws<ProductApiException>(() => Add(Guid.NewGuid(), 1, target)).Status);
++        db.Call("catalog-items", "archive", id: target, version: 1);
++        Assert.Equal(422, Assert.Throws<ProductApiException>(() => Add(source, 4, target)).Status);
++        db.Call("archive", "unarchive", id: target, version: 2);
++        db.Call("catalog-items", "trash", id: target, version: 3);
++        Assert.Equal(422, Assert.Throws<ProductApiException>(() => Add(source, 4, target)).Status);
++        db.Call("contacts", "trash", id: source, version: 4);
++        Assert.Equal(409, Assert.Throws<ProductApiException>(() => Add(source, 5, target)).Status);
++    }
++
++    [RequiresPostgresFact]
++    public void ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely()
++    {
++        using var db = Database.Create(); if (db is null) return;
++
++        var file = db.Call("catalog-items", "create", "{\"name\":\"Picker file\",\"itemType\":\"file_reference\"}");
++        var project = db.Call("projects", "create", new JsonObject { ["name"] = "Picker project", ["ownerUserId"] = db.User }.ToJsonString());
++        var contact = db.Call("contacts", "create", "{\"firstName\":\"Picker\",\"displayName\":\"Picker contact\"}");
++        var secondContact = db.Call("contacts", "create", "{\"firstName\":\"Target\",\"displayName\":\"Target contact\"}");
++        var task = TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Picker task", DateTimeOffset.UtcNow);
++        db.Runtime.CreateTaskStore().Add(task);
++
++        ProductApiResponse Add(Guid source, int version, Guid target, string type, string? key = null) => db.Call("objects", "link-add",
++            new JsonObject { ["sourceObjectId"] = source, ["targetObjectId"] = target, ["linkType"] = type }.ToJsonString(), source, version, key: key);
++
++        Assert.Equal(201, Add(task.Metadata.Id, 1, Id(file), "task_file").Status);
++        Assert.Equal(201, Add(task.Metadata.Id, 2, Id(contact), "task_contact").Status);
++        Assert.Equal(201, Add(task.Metadata.Id, 3, Id(project), "task_project").Status);
++        Assert.Equal(201, Add(Id(project), 1, Id(file), "project_file").Status);
++        Assert.Equal(201, Add(Id(project), 2, Id(contact), "project_contact").Status);
++        Assert.Equal(201, Add(Id(contact), 1, Id(file), "contact_file").Status);
++
++        var first = Add(Id(contact), 2, Id(secondContact), "related", "picker-related-001");
++        var replay = Add(Id(contact), 2, Id(secondContact), "related", "picker-related-001");
++        Assert.Equal(201, first.Status); Assert.True(JsonNode.DeepEquals(first.Body, replay.Body)); Assert.True(replay.WasReplayed);
++        Assert.Equal("IDEMPOTENCY_KEY_REUSED", Assert.Throws<ProductApiException>(() =>
++            Add(Id(contact), 2, Id(project), "related", "picker-related-001")).Code);
++
++        Assert.Equal(422, Assert.Throws<ProductApiException>(() => Add(task.Metadata.Id, 4, task.Metadata.Id, "related")).Status);
++        Assert.Equal(422, Assert.Throws<ProductApiException>(() => Add(Id(project), 3, Id(file), "parent_reference")).Status);
++        Assert.Equal(422, Assert.Throws<ProductApiException>(() => Add(Id(project), 3, Id(contact), "task_contact")).Status);
++    }
++}

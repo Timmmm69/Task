@@ -1,6 +1,8 @@
 # Object Link Target Picker — task 10.1 / package 10.1.0
 
 Baseline: `57fa0159fe63e734649d6f4473c5240a5815f70e` (`origin/main`, 2026-10-17).
+Historical stage 10.1 receipt. The current integrated implementation and seven-type matrix are described in [the 10.3 review](object-link-picker-review.md); the four-type scope below records the original stage.
+
 Branch: `feature/object-link-target-picker`. Implementation is Corporate-only and is not mounted in ObjectLinksView.
 
 ## Component contract

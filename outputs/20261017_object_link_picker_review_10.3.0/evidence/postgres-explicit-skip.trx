@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7567d7ec-fb7e-4d74-bc1a-dbbd0f872fd8" name="novik@TIM 2026-10-17 16:33:37" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-17T16:33:37.2443485+03:00" queuing="2026-10-17T16:33:37.2443487+03:00" start="2026-10-17T16:33:36.3068942+03:00" finish="2026-10-17T16:33:37.2500318+03:00" />
+  <TestSettings name="default" id="5daf046a-2de7-4930-91b8-c8dfac14c98a">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-17_16_33_37" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c64ac04e-e63a-4ff6-8567-58002d421242" testId="8765fe7e-d276-ad14-2af2-bcc7f7fdb1aa" testName="Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-17T16:33:37.1705834+03:00" endTime="2026-10-17T16:33:37.1706100+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c64ac04e-e63a-4ff6-8567-58002d421242">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="87d50b89-2b2c-4e47-8bef-8c63fe42b661" testId="bb4ffc85-9be7-b842-52a5-0b3ff4c630fd" testName="Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-17T16:33:37.1629475+03:00" endTime="2026-10-17T16:33:37.1640237+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87d50b89-2b2c-4e47-8bef-8c63fe42b661">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" storage="c:\users\novik\таск\work\object_link_target_picker_10_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8765fe7e-d276-ad14-2af2-bcc7f7fdb1aa">
+      <Execution id="c64ac04e-e63a-4ff6-8567-58002d421242" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" storage="c:\users\novik\таск\work\object_link_target_picker_10_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="bb4ffc85-9be7-b842-52a5-0b3ff4c630fd">
+      <Execution id="87d50b89-2b2c-4e47-8bef-8c63fe42b661" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\object_link_target_picker_10_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8765fe7e-d276-ad14-2af2-bcc7f7fdb1aa" executionId="c64ac04e-e63a-4ff6-8567-58002d421242" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bb4ffc85-9be7-b842-52a5-0b3ff4c630fd" executionId="87d50b89-2b2c-4e47-8bef-8c63fe42b661" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="0" passed="0" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.13]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:00.16]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:00.17]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:00.17]   Finished:    Task.Tests&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" пропущен в тестовом запуске.&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-17T16:33:37.1649981+03:00">
+        <Text>[xUnit.net 00:00:00.16]     Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-17T16:33:37.1708438+03:00">
+        <Text>[xUnit.net 00:00:00.17]     Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [SKIP]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
