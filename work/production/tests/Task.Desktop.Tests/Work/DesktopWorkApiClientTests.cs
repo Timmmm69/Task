@@ -162,13 +162,15 @@ public sealed partial class DesktopWorkApiClientTests
         public Task.Desktop.TaskApi.DesktopInboxApiClient Inbox { get; }
         public DesktopWorkApiClient Client { get; }
         public List<CapturedRequest> Requests { get; }
-        public static async System.Threading.Tasks.Task<Fixture> CreateAsync(Func<HttpRequestMessage, CancellationToken, System.Threading.Tasks.Task<HttpResponseMessage>> responder)
+        public static async System.Threading.Tasks.Task<Fixture> CreateAsync(Func<HttpRequestMessage, CancellationToken, System.Threading.Tasks.Task<HttpResponseMessage>> responder,
+            Func<HttpResponseMessage>? refreshResponse = null)
         {
             var directory = Path.Combine(Path.GetTempPath(), "TaskWorkClientTests", Guid.NewGuid().ToString("N"));
             var auth = new HttpClient(new Handler((request, _) => System.Threading.Tasks.Task.FromResult(request.RequestUri!.AbsolutePath switch
             {
                 "/api/v1/auth/login" => Json(HttpStatusCode.OK, $$"""{"accessToken":"AT_initial","accessExpiresAt":"{{DateTimeOffset.UtcNow.AddHours(1):O}}","refreshToken":"RT_initial","refreshExpiresAt":"{{DateTimeOffset.UtcNow.AddDays(1):O}}","sessionId":"{{SessionId:D}}"}"""),
                 "/api/v1/auth/session" => Json(HttpStatusCode.OK, $$"""{"userId":"{{UserId:D}}","sessionId":"{{SessionId:D}}","organizationId":"{{OrganizationId:D}}","credentialVersion":1,"authorizationScopeVersion":1,"mustChangePassword":false}"""),
+                "/api/v1/auth/refresh" => refreshResponse?.Invoke() ?? Json(HttpStatusCode.NotFound, "{}"),
                 _ => Json(HttpStatusCode.NotFound, "{}")
             })));
             var session = new SessionService(new DesktopAuthApiClient(auth, "https://task.example.test"), new DesktopCredentialVault(directory), "test", ClientPlatform.Windows, "1.0.0");
