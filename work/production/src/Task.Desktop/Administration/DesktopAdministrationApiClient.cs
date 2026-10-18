@@ -27,7 +27,7 @@ public sealed record DesktopAdminRole(Guid Id, string Code, string Name, bool Is
     public string KindLabel => IsSystem ? "Системная роль" : "Настраиваемая роль";
     public string PermissionSummary => Permissions.Count == 0
         ? "Разрешения не опубликованы"
-        : string.Join(" · ", Permissions.Take(4));
+        : string.Join(" · ", Permissions);
 }
 
 public sealed record DesktopNetworkResource(Guid Id, long Version, string Name, string? RootPath,
@@ -132,8 +132,14 @@ public sealed partial class DesktopAdministrationApiClient : IDesktopAdministrat
     private static IReadOnlyList<string> ReadPermissions(JsonNode node)
     {
         if (node["permissions"] is not JsonArray array) return [];
-        return array.Select(item => item?["code"]?.GetValue<string>())
-            .Where(code => !string.IsNullOrWhiteSpace(code)).Cast<string>().ToArray();
+        return array.Select(item => (Code: item?["code"]?.GetValue<string>(), Effect: item?["effect"]?.GetValue<string>()))
+            .Where(permission => !string.IsNullOrWhiteSpace(permission.Code))
+            .Select(permission => permission.Effect switch
+            {
+                "grant" => permission.Code!,
+                "deny" => permission.Code + " (запрет)",
+                _ => permission.Code + " (действие не подтверждено)",
+            }).ToArray();
     }
 
     private static string? Text(JsonNode node, string name) => node[name]?.GetValue<string>();

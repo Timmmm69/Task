@@ -3,7 +3,7 @@ using Task.Desktop.Work;
 
 namespace Task.Desktop.ViewModels;
 
-public enum AdministrationArea { Users, Roles, Resources }
+public enum AdministrationArea { Users, Roles, Resources, Access }
 
 public sealed record AdministrationTab(AdministrationArea Area, string Title, string Capability);
 
@@ -21,6 +21,7 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
     private DesktopNetworkResource? _selectedResource;
     private string? _message;
     private bool _active;
+    private bool _disposed;
     private bool _sessionAvailable = true;
     private bool _networkAvailable = true;
     private bool _isLoading;
@@ -35,10 +36,10 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
             new(AdministrationArea.Users, "Пользователи", "User.Read"),
             new(AdministrationArea.Roles, "Роли и права", "Role.Read"),
             new(AdministrationArea.Resources, "Сетевые ресурсы", "FileCatalog.Read"),
-            new(AdministrationArea.Users, "Управление доступом", "User.ManageRoles"),
+            new(AdministrationArea.Access, "Управление доступом", "User.ManageRoles"),
         ];
         _selectedTab = Tabs[0];
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_savingUser && !IsLoading && !IsEditorOpen && !IsTransitionOpen && !_transitionBusy);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !IsAccessManagement && !_savingUser && !IsLoading && !IsEditorOpen && !IsTransitionOpen && !_transitionBusy);
         InitializeUserCommands(); InitializeTransitionCommands();
         RefreshCommand.ExecutionFailed += _ => Message = "Не удалось обновить раздел. Подтверждённые данные не изменены.";
     }
@@ -50,7 +51,8 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         set
         {
             if (IsEditorOpen || IsTransitionOpen || _transitionBusy || _savingUser || !SetProperty(ref _selectedTab, value)) return;
-            OnPropertyChanged(nameof(IsUsers)); OnPropertyChanged(nameof(IsRoles)); OnPropertyChanged(nameof(IsResources));
+            OnPropertyChanged(nameof(IsUsers)); OnPropertyChanged(nameof(IsRoles)); OnPropertyChanged(nameof(IsResources)); OnPropertyChanged(nameof(IsAccessManagement));
+            _lastRefresh = null; OnPropertyChanged(nameof(LastSuccessfulRefreshText));
             InvalidateUserDetails();
             NotifyAccess();
             if (_active) _ = RefreshCommand.ExecuteAsync(cancellationToken: _activation?.Token ?? default);
@@ -68,7 +70,9 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
     public bool IsUsers => SelectedTab.Area == AdministrationArea.Users;
     public bool IsRoles => SelectedTab.Area == AdministrationArea.Roles;
     public bool IsResources => SelectedTab.Area == AdministrationArea.Resources;
-    public bool CanReadCurrentArea => _capabilities.Contains(SelectedTab.Capability);
+    public bool IsAccessManagement => SelectedTab.Area == AdministrationArea.Access;
+    public string RoleAssignmentLimitation => "Изменение назначений ролей недоступно: действующий API не позволяет получить полный набор текущих назначений сотрудника. Замена без этих данных может удалить существующие права. Ограничение OQ-ADMIN-ROLES-READ. Каталог определений находится в разделе «Роли и права» при наличии права на его чтение.";
+    public bool CanReadCurrentArea => _sessionAvailable && _capabilities.Contains(SelectedTab.Capability);
     public bool IsLimitedRole => !CanReadCurrentArea;
     public bool IsOffline => !_networkAvailable;
     public string AccessText => !_networkAvailable
@@ -81,6 +85,7 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
 
     public void Activate()
     {
+        if (_disposed) return;
         _activation?.Cancel(); _activation?.Dispose(); _activation = new();
         _active = true;
         NotifyAccess();
@@ -94,6 +99,8 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         if (_capabilities.SetEquals(updated)) return;
         ++_accessGeneration; _capabilities.Clear(); _capabilities.UnionWith(updated); InvalidateUserDetails();
         if (!_capabilities.Contains("User.Read")) { Users = []; SelectedUser = null; UserEditor = null; _nextUserCursor = null; }
+        if (!_capabilities.Contains("Role.Read")) { Roles = []; SelectedRole = null; }
+        if (!_capabilities.Contains("FileCatalog.Read")) { Resources = []; SelectedResource = null; }
         NotifyAccess();
     }
     public void UpdateSessionState(bool available)
@@ -102,6 +109,7 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         if (!available)
         {
             ++_accessGeneration; InvalidateUserDetails(); Users = []; SelectedUser = null; UserEditor = null; _nextUserCursor = null;
+            Roles = []; SelectedRole = null; Resources = []; SelectedResource = null;
             Message = "Сессия завершена. Выполните вход снова.";
         }
         NotifyAccess();
@@ -121,23 +129,41 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         Message = null; IsLoading = true;
         try
         {
-            switch (SelectedTab.Area)
+            // A tab can change while a read is in flight. Discard its receipt, then
+            // load the latest selected tab through the same serialized command.
+            AdministrationTab area;
+            do
             {
-                case AdministrationArea.Users: await LoadUserPageAsync(false, cancellationToken); break;
-                case AdministrationArea.Roles: Apply(await _client.GetRolesAsync(cancellationToken), value => { Roles = value; SelectedRole = value.FirstOrDefault(); }); break;
-                case AdministrationArea.Resources: Apply(await _client.GetResourcesAsync(cancellationToken), value => { Resources = value; SelectedResource = value.FirstOrDefault(); }); break;
+                area = SelectedTab;
+                var access = _accessGeneration;
+                if (!_active || !CanReadCurrentArea || !_networkAvailable || IsAccessManagement) break;
+                bool Current() => !cancellationToken.IsCancellationRequested && _active && _sessionAvailable
+                    && access == _accessGeneration && SelectedTab == area && CanReadCurrentArea;
+                switch (area.Area)
+                {
+                    case AdministrationArea.Users: await LoadUserPageAsync(false, cancellationToken); break;
+                    case AdministrationArea.Roles:
+                        var roles = await _client.GetRolesAsync(cancellationToken);
+                        if (Current()) Apply(roles, value => { Roles = value; SelectedRole = value.FirstOrDefault(); }, () => { Roles = []; SelectedRole = null; });
+                        break;
+                    case AdministrationArea.Resources:
+                        var resources = await _client.GetResourcesAsync(cancellationToken);
+                        if (Current()) Apply(resources, value => { Resources = value; SelectedResource = value.FirstOrDefault(); }, () => { Resources = []; SelectedResource = null; });
+                        break;
+                }
             }
+            while (!cancellationToken.IsCancellationRequested && area != SelectedTab);
         }
         finally { IsLoading = false; NotifyUserCommands(); }
     }
 
-    private void Apply<T>(DesktopWorkResult<T> result, Action<T> success)
+    private void Apply<T>(DesktopWorkResult<T> result, Action<T> success, Action clear)
     {
         switch (result)
         {
             case DesktopWorkResult<T>.Succeeded ok: success(ok.Value); _lastRefresh = DateTimeOffset.UtcNow; OnPropertyChanged(nameof(LastSuccessfulRefreshText)); break;
-            case DesktopWorkResult<T>.Forbidden: Message = "Область доступа изменилась. Защищённые административные данные не показаны."; break;
-            case DesktopWorkResult<T>.AuthenticationFailure: Message = "Сессия завершена. Выполните вход снова."; break;
+            case DesktopWorkResult<T>.Forbidden: clear(); Message = "Область доступа изменилась. Защищённые административные данные не показаны."; break;
+            case DesktopWorkResult<T>.AuthenticationFailure: UpdateSessionState(false); break;
             case DesktopWorkResult<T>.ServerUnavailable: UpdateConnectivity(false); break;
             default: Message = "Сервер вернул неподтверждённые данные. Они не отображены."; break;
         }
@@ -151,5 +177,12 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
         NotifyUserCommands();
     }
 
-    public void Dispose() { _active = false; ++_accessGeneration; InvalidateUserDetails(); BeginUserTransitionCommand.Dispose(); ConfirmUserTransitionCommand.Dispose(); CancelUserTransitionCommand.Dispose(); CreateUserCommand.Dispose(); EditUserCommand.Dispose(); SaveUserCommand.Dispose(); CancelUserCommand.Dispose(); MoreUsersCommand.Dispose(); _activation?.Cancel(); _activation?.Dispose(); RefreshCommand.Dispose(); }
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true; _active = false; ++_accessGeneration; InvalidateUserDetails();
+        BeginUserTransitionCommand.Dispose(); ConfirmUserTransitionCommand.Dispose(); CancelUserTransitionCommand.Dispose();
+        CreateUserCommand.Dispose(); EditUserCommand.Dispose(); SaveUserCommand.Dispose(); CancelUserCommand.Dispose();
+        MoreUsersCommand.Dispose(); SearchUsersCommand.Dispose(); _activation?.Cancel(); _activation?.Dispose(); RefreshCommand.Dispose();
+    }
 }

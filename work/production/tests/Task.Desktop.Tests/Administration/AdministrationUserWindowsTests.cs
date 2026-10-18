@@ -62,6 +62,8 @@ public sealed class AdministrationUserWindowsTests
                         ((IValueProvider)new TextBoxAutomationPeer(box).GetPattern(PatternInterface.Value)).SetValue(text); Pump();
                     }
                     Assert.Single(Find<ListBox>("AdminUsersList").Items);
+                    Enter("AdminUserSearch", "Анна"); Invoke("AdminSearchUsersButton");
+                    Assert.Equal("Анна", client.LastQuery!.Filter);
                     Invoke("AdminCreateUserButton");
                     Enter("AdminFirstName", "Ирина"); Enter("AdminLastName", "Смирнова"); Enter("AdminLogin", "irina.s");
                     Enter("AdminWorkEmail", "irina@example.test"); Enter("AdminJobTitle", "Инженер");
@@ -116,6 +118,19 @@ public sealed class AdministrationUserWindowsTests
                         Assert.False(Find<Button>("AdminBlockButton").IsVisible);
                         Assert.False(Find<Button>("AdminDeactivateButton").IsVisible);
                     }
+                    using var access = new Task.Desktop.ViewModels.AdministrationViewModel(client, ["User.ManageRoles"]);
+                    access.SelectedTab = access.Tabs.Single(t => t.Area == Task.Desktop.ViewModels.AdministrationArea.Access);
+                    var reads = client.PageReads; access.Activate(); view.DataContext = access;
+                    window.Width = 1120; window.Height = 900; Pump();
+                    Assert.True(Find<Border>("AdminRoleAssignmentsUnavailable").IsVisible);
+                    Assert.False(Find<ListBox>("AdminUsersList").IsVisible);
+                    Assert.False(Find<Button>("AdminCreateUserButton").IsVisible);
+                    Assert.False(Find<Button>("AdminRefreshButton").IsEnabled);
+                    Assert.Equal(reads, client.PageReads); Save(view, "role-assignments-blocked-wide.png");
+                    window.Width = 800; window.Height = 600; Pump(); Save(view, "role-assignments-blocked-compact.png");
+                    access.UpdateCapabilities([]); Pump();
+                    Assert.False(Find<Border>("AdminRoleAssignmentsUnavailable").IsVisible);
+                    Assert.True(Find<Border>("AdministrationLimitedRoleState").IsVisible);
                     Assert.DoesNotContain("System.Windows.Data Error", bindingErrors.ToString());
                     await AsyncTask.CompletedTask; done.SetResult();
                 }

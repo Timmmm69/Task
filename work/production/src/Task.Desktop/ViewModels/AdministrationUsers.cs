@@ -12,12 +12,16 @@ public sealed partial class AdministrationViewModel
     private DesktopUserCreate? _pendingCreate;
     private DesktopUserPatch? _pendingPatch;
     private string? _nextUserCursor;
+    private string? _userSearchText, _appliedUserFilter;
 
     public AsyncCommand CreateUserCommand { get; private set; } = null!;
     public AsyncCommand EditUserCommand { get; private set; } = null!;
     public AsyncCommand SaveUserCommand { get; private set; } = null!;
     public AsyncCommand CancelUserCommand { get; private set; } = null!;
     public AsyncCommand MoreUsersCommand { get; private set; } = null!;
+    public AsyncCommand SearchUsersCommand { get; private set; } = null!;
+    public string? UserSearchText { get => _userSearchText; set => SetProperty(ref _userSearchText, value); }
+    public bool CanSearchUsers => CanAccessUsers && !IsLoading && !IsEditorOpen && !_editorLoading && !_savingUser && !IsTransitionOpen && !_transitionBusy;
     public AdminUserEditor? UserEditor { get => _userEditor; private set { SetProperty(ref _userEditor, value); NotifyUserCommands(); } }
     public string? UserEditorMessage { get => _userEditorMessage; private set => SetProperty(ref _userEditorMessage, value); }
     public bool IsEditorOpen => UserEditor is not null;
@@ -55,7 +59,14 @@ public sealed partial class AdministrationViewModel
         }, _ => !_savingUser && (IsEditorOpen || _editorLoading));
         MoreUsersCommand = new(async (_, ct) => await LoadUserPageAsync(true, ct),
             _ => CanAccessUsers && HasMoreUsers && !IsLoading && !IsEditorOpen && !IsTransitionOpen && !_transitionBusy);
-        foreach (var command in new[] { CreateUserCommand, EditUserCommand, SaveUserCommand, MoreUsersCommand })
+        SearchUsersCommand = new(async (_, ct) =>
+        {
+            if (UserSearchText?.Length > 2000) { Message = "Поисковый запрос должен содержать не более 2000 символов."; return; }
+            _appliedUserFilter = string.IsNullOrWhiteSpace(UserSearchText) ? null : UserSearchText.Trim();
+            _nextUserCursor = null; Message = null;
+            await LoadUserPageAsync(false, ct);
+        }, _ => CanSearchUsers);
+        foreach (var command in new[] { CreateUserCommand, EditUserCommand, SaveUserCommand, MoreUsersCommand, SearchUsersCommand })
             command.ExecutionFailed += _ =>
             {
                 UserEditorMessage = "Не удалось выполнить операцию. Ввод сохранён; подтверждённые данные не изменены.";
@@ -87,7 +98,7 @@ public sealed partial class AdministrationViewModel
             {
                 ResetUserOperation(); UserEditor = new(ok.Value);
             }
-            else { SetUserFailure(result); Message = UserEditorMessage; }
+            else { InvalidateDeniedUserRead(result); SetUserFailure(result); Message = UserEditorMessage; }
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
         finally
@@ -160,14 +171,15 @@ public sealed partial class AdministrationViewModel
 
     private async System.Threading.Tasks.Task LoadUserPageAsync(bool append, CancellationToken ct, DesktopManagedUser? saved = null)
     {
+        if (!CanAccessUsers) return;
         var access = _accessGeneration;
         var area = SelectedTab;
         var selected = saved?.Id ?? SelectedUser?.Id;
         IsLoading = true; NotifyUserCommands();
         try
         {
-            var result = await _client.GetUserPageAsync(new(Cursor: append ? _nextUserCursor : null), ct);
-            if (ct.IsCancellationRequested || access != _accessGeneration || SelectedTab != area || !_active) return;
+            var result = await _client.GetUserPageAsync(new(Filter: _appliedUserFilter, Cursor: append ? _nextUserCursor : null), ct);
+            if (ct.IsCancellationRequested || access != _accessGeneration || SelectedTab != area || !CanAccessUsers) return;
             if (result is DesktopUserResult<DesktopUserPage>.Succeeded ok)
             {
                 Users = (append ? Users.Concat(ok.Value.Items.Select(Summary)) : ok.Value.Items.Select(Summary)).DistinctBy(u => u.Id).ToArray();
@@ -178,14 +190,17 @@ public sealed partial class AdministrationViewModel
             }
             else
             {
-                if (result is DesktopUserResult<DesktopUserPage>.Forbidden)
-                {
-                    Users = []; SelectedUser = null; _nextUserCursor = null;
-                }
+                InvalidateDeniedUserRead(result);
                 SetUserFailure(result); Message = UserEditorMessage;
             }
         }
         finally { IsLoading = false; NotifyUserCommands(); }
+    }
+
+    private void InvalidateDeniedUserRead<T>(DesktopUserResult<T> result)
+    {
+        if (result is DesktopUserResult<T>.Forbidden)
+            UpdateCapabilities(_capabilities.Where(code => !string.Equals(code, "User.Read", StringComparison.OrdinalIgnoreCase)).ToArray());
     }
 
     private void SetUserFailure<T>(DesktopUserResult<T> result)
@@ -214,10 +229,11 @@ public sealed partial class AdministrationViewModel
     private void NotifyUserCommands()
     {
         foreach (var name in new[] { nameof(IsEditorOpen), nameof(IsUserInspectorVisible), nameof(CanSelectUser),
-            nameof(CanEditUserFields), nameof(IsUserEditorLoading), nameof(IsSavingUser), nameof(IsUserListEmpty), nameof(HasMoreUsers), nameof(UserWriteAccessText) })
+            nameof(CanEditUserFields), nameof(IsUserEditorLoading), nameof(IsSavingUser), nameof(IsUserListEmpty), nameof(HasMoreUsers), nameof(UserWriteAccessText), nameof(CanSearchUsers) })
             OnPropertyChanged(name);
         CreateUserCommand?.RaiseCanExecuteChanged(); EditUserCommand?.RaiseCanExecuteChanged();
         SaveUserCommand?.RaiseCanExecuteChanged(); CancelUserCommand?.RaiseCanExecuteChanged(); MoreUsersCommand?.RaiseCanExecuteChanged();
+        SearchUsersCommand?.RaiseCanExecuteChanged();
         RefreshCommand.RaiseCanExecuteChanged(); NotifyTransitionCommands();
     }
 }

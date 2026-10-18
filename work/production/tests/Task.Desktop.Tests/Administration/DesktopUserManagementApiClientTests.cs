@@ -354,6 +354,19 @@ public sealed class DesktopUserManagementApiClientTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task RoleDefinitionsKeepAllPublishedEffectsWithoutTreatingThemAsAssignments()
+    {
+        var role = $$"""{"items":[{"id":"{{Guid.NewGuid():D}}","code":"reader","displayName":"Reader","isSystem":true,"permissions":[{"code":"User.Read","effect":"grant"},{"code":"User.Update","effect":"deny"},{"code":"Task.Read","effect":"grant"},{"code":"Project.Read","effect":"grant"},{"code":"Role.Read","effect":"grant"}]}]}""";
+        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, role)));
+        var definitions = Assert.IsType<DesktopWorkResult<IReadOnlyList<DesktopAdminRole>>.Succeeded>(await fixture.Client.GetRolesAsync()).Value;
+        var definition = Assert.Single(definitions);
+        Assert.Equal(5, definition.Permissions.Count);
+        Assert.Contains("User.Update (запрет)", definition.PermissionSummary);
+        Assert.Contains("Role.Read", definition.PermissionSummary);
+        Assert.Equal(HttpMethod.Get, Assert.Single(fixture.Requests).Method);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task LegacyAdministrationReadsRemainCompatible()
     {
         var responses = new Queue<HttpResponseMessage>([

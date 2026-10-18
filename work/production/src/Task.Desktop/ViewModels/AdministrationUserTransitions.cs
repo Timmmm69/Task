@@ -89,7 +89,7 @@ public sealed partial class AdministrationViewModel
                 _transitionKey = Guid.NewGuid().ToString("D");
                 Message = null;
             }
-            else TransitionFailure(result);
+            else { InvalidateDeniedUserRead(result); TransitionFailure(result); }
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { Message = "Действие отменено."; }
         catch (Exception error) when (error is not OutOfMemoryException)

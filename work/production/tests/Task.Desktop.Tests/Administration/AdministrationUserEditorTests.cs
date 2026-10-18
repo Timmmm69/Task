@@ -165,6 +165,13 @@ public sealed class AdministrationUserEditorTests
         await vm.EditUserCommand.ExecuteAsync(); Assert.Null(vm.UserEditor);
         Assert.NotNull(vm.Message); Assert.Empty(client.Updates);
         client.DetailFailure = null; vm.UpdateConnectivity(true);
+        if (status == 403)
+        {
+            // Connectivity recovery cannot restore a server-denied User.Read grant.
+            Assert.Empty(vm.Users); Assert.False(await vm.EditUserCommand.ExecuteAsync());
+            vm.UpdateCapabilities(["User.Read", "User.Create", "User.Update"]);
+            await vm.RefreshCommand.ExecuteAsync();
+        }
         await vm.EditUserCommand.ExecuteAsync(); Assert.NotNull(vm.UserEditor);
     }
 
