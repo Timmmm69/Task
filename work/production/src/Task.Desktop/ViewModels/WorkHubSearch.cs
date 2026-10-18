@@ -67,7 +67,7 @@ public sealed partial class WorkHubViewModel
                 _listCursor = page.NextCursor;
                 if (_listCursor is not null) _listCursors.Add(_listCursor);
                 NotifyPagination();
-                if (SelectedContact is not null) { SetFeedback(null, WorkHubFeedbackKind.None); return; }
+                if (SelectedContact is not null) { await ContactSelectionTask; if (Current()) SetFeedback(null, WorkHubFeedbackKind.None); return; }
                 cursor = page.NextCursor;
                 if (cursor is null || !cursors.Add(cursor)) break;
             }

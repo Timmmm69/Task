@@ -83,6 +83,8 @@ internal static class ModeSwitchGuard
             Add("Путь файла", () => !string.IsNullOrEmpty(work.NewItemPath), () => work.HasRunningMutation, work.AddLocationCommand);
             Add("Контакт", () => !string.IsNullOrEmpty(work.NewContactFirstName + work.NewContactLastName + work.NewContactDisplayName),
                 () => work.HasRunningMutation, work.CreateContactCommand);
+            if (work.ContactCard is { } contactCard)
+                Add("Карточка контакта", () => contactCard.IsEditing, () => work.HasRunningMutation, contactCard.SaveCommand);
             Add("Настройки профиля", () => work.HasProfileDraft, () => work.HasRunningMutation, work.SaveUserSettingsCommand);
             Add("Настройки уведомлений", () => work.HasNotificationDraft, () => work.HasRunningMutation, work.SaveNotificationPreferencesCommand);
             Add("Корпоративное напоминание", () => work.HasReminderDraft, () => work.HasRunningMutation, work.SaveReminderCommand);

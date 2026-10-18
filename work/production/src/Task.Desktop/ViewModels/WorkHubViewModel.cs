@@ -125,6 +125,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         SaveOrganizationSettingsCommand = new(SaveOrganizationSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateOrganization && _organizationSettings is not null);
         PropertyChanged += OnSettingsValueChanged;
         InitializeLocations();
+        InitializeContactCard();
         foreach (var command in Commands) command.ExecutionFailed += OnUnexpectedFailure;
         RefreshCommand.CanExecuteChanged += OnRefreshCanExecuteChanged;
     }
@@ -158,7 +159,17 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public ObjectLinksViewModel? Links { get; }
     public bool HasLinks => Links is not null && Has("ObjectLink.Read") && _sessionAvailable && CanReadCurrentArea && (IsCatalog || IsContacts || IsSearch);
     private DesktopContact? _selectedContact;
-    public DesktopContact? SelectedContact { get => _selectedContact; set { SetProperty(ref _selectedContact, value); SetCurrentLinkSource(); } }
+    private bool _updatingContacts;
+    public DesktopContact? SelectedContact
+    {
+        get => _selectedContact;
+        set
+        {
+            if (_updatingContacts || !SetProperty(ref _selectedContact, value)) return;
+            if (ContactCard is not null) ContactSelectionTask = ContactCard.SelectAsync(value?.Id);
+            SetCurrentLinkSource();
+        }
+    }
     private string _newItemType = "file_reference";
     public IReadOnlyList<CatalogItemTypeChoice> CatalogItemTypes { get; } = [new("file_reference", "Файл"), new("folder_reference", "Папка на диске"), new("virtual_folder", "Виртуальная папка")];
     public string NewItemType { get => _newItemType; set => SetProperty(ref _newItemType, value); }
@@ -173,8 +184,13 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         get => _contacts;
         private set
         {
-            if (SetProperty(ref _contacts, value) && SelectedContact is { } selected)
-                SelectedContact = value.FirstOrDefault(contact => contact.Id == selected.Id && contact.LifecycleState == "active");
+            var selectedId = SelectedContact?.Id;
+            // WPF clears SelectedItem synchronously when ItemsSource changes.
+            _updatingContacts = true;
+            try { SetProperty(ref _contacts, value); }
+            finally { _updatingContacts = false; }
+            SelectedContact = value.FirstOrDefault(contact => contact.Id == selectedId && contact.LifecycleState == "active");
+            OnPropertyChanged(nameof(SelectedContact));
         }
     }
     public IReadOnlyList<DesktopSearchResult> SearchResults { get => _searchResults; private set { if (SetProperty(ref _searchResults, value)) NotifySearchPresentation(); } }
@@ -312,7 +328,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand,
         SaveReminderCommand, CancelReminderCommand, RestoreReminderCommand, SnoozeReminderCommand, DismissReminderCommand, SnoozeNotificationCommand }
-        .Any(command => command.IsExecuting) || _catalogMutationPending || Locations?.IsMutating == true || Links?.IsMutating == true;
+        .Any(command => command.IsExecuting) || ContactCard?.IsSaving == true || _catalogMutationPending || Locations?.IsMutating == true || Links?.IsMutating == true;
     internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
     {
         Language = UserLanguage,
@@ -369,6 +385,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         InvalidateSearch();
         _capabilities.Clear();
         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
+        if (Has("Contact.Read")) ContactCard?.InvalidateScope();
+        else InvalidateContactScope();
         Locations?.SetItem(null);
         Locations?.SetItem(SelectedCatalogItem?.Item);
         UpdateLinkAccess(); SetCurrentLinkSource();
@@ -378,7 +396,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         NotificationAccessChanged?.Invoke();
         NotifyCommands();
     }
-    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { ResetListPagination(); ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } UpdateLinkAccess(); SetCurrentLinkSource(); NotificationAccessChanged?.Invoke(); NotifyCommands(); }
+    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { InvalidateContactScope(); ResetListPagination(); ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } UpdateLinkAccess(); SetCurrentLinkSource(); NotificationAccessChanged?.Invoke(); NotifyCommands(); }
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
@@ -742,7 +760,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
-    public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
+    public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); ContactCard?.Dispose(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

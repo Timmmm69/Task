@@ -49,8 +49,13 @@ public sealed partial class WorkHubViewModel
             {
                 var result = await _client.GetContactsAsync(append ? _listCursor : null, linked.Token);
                 if (!Current()) return;
-                ApplyListPage(result, append, values => Contacts = values,
+                var selectedBeforeRefresh = SelectedContact;
+                ApplyListPage(result, append, values => Contacts = !append && values.Count > 0 && selectedBeforeRefresh is { } previous
+                    && values.All(item => item.Id != previous.Id) ? [.. values, previous] : values,
                     Contacts, item => item.Id);
+                if (!append && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded
+                    && ContactCard is { IsEditing: false, IsLoading: false, IsSaving: false } card && SelectedContact is { } selected)
+                    await card.LoadAsync(selected.Id, linked.Token);
             }
             else
             {

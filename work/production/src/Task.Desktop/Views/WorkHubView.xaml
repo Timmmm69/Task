@@ -98,14 +98,52 @@
         <Grid Grid.Row="2" Visibility="{Binding IsContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8"><ListBox ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" BorderThickness="0" AutomationProperties.Name="{Binding ContactsListName}" AutomationProperties.AutomationId="ContactsList"><ListBox.ItemTemplate><DataTemplate><StackPanel Margin="8"><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/><TextBlock Text="{Binding Notes}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox></Border>
-            <StackPanel Grid.Column="2">
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
+                <ContentControl Content="{Binding ContactCard}">
+                    <ContentControl.ContentTemplate><DataTemplate>
+                        <StackPanel Margin="0,0,0,20" AutomationProperties.AutomationId="ContactCard">
+                            <TextBlock Text="Карточка контакта" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                            <TextBlock Text="Выберите контакт в списке для просмотра." Margin="0,8" TextWrapping="Wrap">
+                                <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding HasDetails}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                            </TextBlock>
+                            <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                            <TextBlock Text="{Binding Message}" Margin="0,8" TextWrapping="Wrap" AutomationProperties.AutomationId="ContactCardMessage"/>
+                            <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                <TextBlock Text="{Binding Details.Contact.DisplayName}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock Text="Имя" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Contact.FirstName}"/>
+                                <TextBlock Text="Фамилия" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Contact.LastName}"/>
+                                <TextBlock Text="Отчество" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.MiddleName}"/>
+                                <TextBlock Text="Бизнес-статус" Margin="0,8,0,2"/><TextBlock Text="{Binding StatusLabel}"/>
+                                <TextBlock Text="Заметки" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Contact.Notes}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <WrapPanel Margin="0,10,0,0">
+                                <Button Content="Редактировать" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="EditContactButton"/>
+                                <Button Content="Обновить карточку" Command="{Binding ReloadCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
+                            </WrapPanel>
+                            <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12,0,0">
+                                <StackPanel IsEnabled="{Binding CanChangeDraft}">
+                                    <TextBlock Text="Имя"/><TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Имя контакта"/>
+                                    <TextBlock Text="Фамилия" Margin="0,8,0,0"/><TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}"/>
+                                    <TextBlock Text="Отчество" Margin="0,8,0,0"/><TextBox Text="{Binding MiddleName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}"/>
+                                    <TextBlock Text="Отображаемое имя" Margin="0,8,0,0"/><TextBox Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" Style="{StaticResource Task.Input.Text}"/>
+                                    <TextBlock Text="Бизнес-статус" Margin="0,8,0,0"/><ComboBox ItemsSource="{Binding StatusChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Status}"/>
+                                    <TextBlock Text="Заметки" Margin="0,8,0,0"/><TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" MaxHeight="180" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}"/>
+                                </StackPanel>
+                                <WrapPanel Margin="0,12,0,0">
+                                    <Button Content="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="SaveContactButton"/>
+                                    <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate></ContentControl.ContentTemplate>
+                </ContentControl>
                 <TextBlock Text="Новый контакт" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
                 <TextBlock Text="Имя" Margin="0,12,0,4"/><TextBox Text="{Binding NewContactFirstName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactFirstNameTextBox"/>
                 <TextBlock Text="Фамилия" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactLastName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/>
                 <TextBlock Text="Отображаемое имя" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactDisplayName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactDisplayNameTextBox"/>
                 <Button Content="Создать контакт" Command="{Binding CreateContactCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,12,0,0" AutomationProperties.AutomationId="CreateContactButton"/>
                 <TextBlock Text="Созданный контакт доступен для связей объектов и поиска." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
-            </StackPanel>
+            </StackPanel></ScrollViewer>
         </Grid>
 
         <Grid Grid.Row="2" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
