@@ -1,0 +1,4 @@
+tests/
+native/
+native-final/
+*.log

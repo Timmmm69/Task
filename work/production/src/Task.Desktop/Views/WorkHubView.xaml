@@ -134,6 +134,7 @@
                                     <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
                                 </WrapPanel>
                             </StackPanel>
+                            <views:ContactRelationsView/>
                         </StackPanel>
                     </DataTemplate></ContentControl.ContentTemplate>
                 </ContentControl>

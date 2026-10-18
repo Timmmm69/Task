@@ -47,7 +47,7 @@ public sealed class ContactCardWindowsTests
                 try
                 {
                     var contact = new DesktopContact(Guid.NewGuid(), 2, "Анна Иванова", "Анна", "Иванова", "Корпоративный контакт", "active", "active");
-                    var client = new WorkHubViewModelTests.FakeClient { Contacts = [contact], ContactDetailHandler = (_, _) =>
+                    var client = new WorkHubViewModelTests.FakeClient { Contacts = [contact], RelationState = new(contact, "Петровна"), ContactDetailHandler = (_, _) =>
                         System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, "Петровна"))) };
                     using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update", "Contact.Create"]);
                     hub.Activate(WorkHubArea.Contacts);
@@ -66,9 +66,26 @@ public sealed class ContactCardWindowsTests
                     Assert.True(bounds.Top >= 0 && bounds.Bottom <= view.ActualHeight + 1); Save(view, "contact-edit-compact.png");
                     Invoke(save); Pump(); Assert.Equal("Мария", hub.ContactCard.Details!.Contact.FirstName);
                     Assert.False(hub.ContactCard.IsEditing); Assert.Equal(3, hub.SelectedContact!.Version);
+                    Invoke(Find<Button>(view, "AddContactChannel")); Pump(); Assert.True(hub.ContactCard.HasChannelDraft);
+                    var channelValue = Descendants<TextBox>(view).Single(x => x.IsVisible && AutomationProperties.GetName(x) == "Значение канала");
+                    channelValue.Text = "+375 00 0000000"; channelValue.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+                    var relationSave = Find<Button>(view, "SaveContactRelation"); relationSave.BringIntoView(); Pump(); Save(view, "contact-channel-compact.png");
+                    Invoke(relationSave); Pump(); Assert.Single(hub.ContactCard.Channels); Assert.Equal(4, hub.SelectedContact!.Version);
+                    Invoke(Find<Button>(view, "AddContactAddress")); Pump(); Assert.True(hub.ContactCard.HasAddressDraft);
+                    var addressValue = Descendants<TextBox>(view).Single(x => x.IsVisible && AutomationProperties.GetName(x) == "Полный адрес");
+                    addressValue.Text = "Минск"; addressValue.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+                    relationSave.BringIntoView(); Pump();
+                    var relationBounds = relationSave.TransformToAncestor(view).TransformBounds(new Rect(relationSave.RenderSize));
+                    Assert.True(relationBounds.Top >= 0 && relationBounds.Bottom <= view.ActualHeight + 1);
+                    Save(view, "contact-address-compact.png"); Invoke(relationSave); Pump();
+                    Assert.Single(hub.ContactCard.Addresses); Assert.Equal(5, hub.SelectedContact!.Version);
+                    await hub.ContactCard.RemoveChannelCommand.ExecuteAsync(hub.ContactCard.Channels[0]); Pump();
+                    Assert.True(hub.ContactCard.IsConfirmingChannelDelete); await hub.ContactCard.ConfirmChannelDeleteCommand.ExecuteAsync(); Pump();
+                    Assert.Empty(hub.ContactCard.Channels); Assert.Equal(6, hub.SelectedContact!.Version);
                     hub.UpdateCapabilities(["Contact.Read"]); await hub.RefreshCommand.ExecuteAsync();
                     list.SelectedItem = hub.Contacts.Single(); await hub.ContactSelectionTask;
                     Pump(); Assert.False(Find<Button>(view, "EditContactButton").IsEnabled);
+                    Assert.False(Find<Button>(view, "AddContactChannel").IsEnabled); Assert.False(Find<Button>(view, "AddContactAddress").IsEnabled);
                     window.Width = 1100; window.Height = 1000; Pump();
                     foreach (var scroll in Descendants<ScrollViewer>(view)) scroll.ScrollToTop(); Pump(); Save(view, "contact-readonly.png");
                     Assert.DoesNotContain("System.Windows.Data Error", errors.ToString());

@@ -6,7 +6,11 @@ using Task.Desktop.Security;
 namespace Task.Desktop.Work;
 
 // Corporate detail projection only. Personal contacts keep their existing model.
-public sealed record DesktopContactDetails(DesktopContact Contact, string? MiddleName);
+public sealed record DesktopContactDetails(DesktopContact Contact, string? MiddleName)
+{
+    public IReadOnlyList<DesktopContactChannel> Channels { get; init; } = [];
+    public IReadOnlyList<DesktopContactAddress> Addresses { get; init; } = [];
+}
 
 public interface IDesktopContactDetailsClient
 {
@@ -35,6 +39,10 @@ public sealed partial class DesktopWorkApiClient : IDesktopContactDetailsClient
         var result = await SendAsync($"contacts/{contact.Id:D}", System.Net.Http.HttpMethod.Patch, body,
             contact.Version, null, cancellationToken).ConfigureAwait(false);
         var confirmed = ReadContactDetails(result, contact.Id);
+        // Parent PATCH does not enrich relations. Its CAS guarantees this snapshot was
+        // unchanged when the parent edit committed; only child writes change these lists.
+        if (confirmed is DesktopWorkResult<DesktopContactDetails>.Succeeded parent && parent.Value.Contact.Version > contact.Version)
+            return new DesktopWorkResult<DesktopContactDetails>.Succeeded(parent.Value with { Channels = details.Channels, Addresses = details.Addresses }, parent.Value.Contact.Version);
         return confirmed is DesktopWorkResult<DesktopContactDetails>.Succeeded saved && saved.Value.Contact.Version <= contact.Version
             ? new DesktopWorkResult<DesktopContactDetails>.MalformedResponse() : confirmed;
     }
@@ -59,7 +67,10 @@ public sealed partial class DesktopWorkApiClient : IDesktopContactDetailsClient
                 || contact.Id != id || contact.Version > int.MaxValue || response.EntityTag != $"\"v{contact.Version}\""
                 || Text(node, "status") is not ("active" or "inactive") || Text(node, "lifecycleState") is null)
                 return new DesktopWorkResult<DesktopContactDetails>.MalformedResponse();
-            return new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, Text(node, "middleName")), contact.Version);
+            return new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, Text(node, "middleName"))
+            {
+                Channels = ReadChannels(node["channels"]), Addresses = ReadAddresses(node["addresses"])
+            }, contact.Version);
         }
         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException)
         { return new DesktopWorkResult<DesktopContactDetails>.MalformedResponse(); }

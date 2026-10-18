@@ -54,7 +54,7 @@ public sealed partial class WorkHubViewModel
                     && values.All(item => item.Id != previous.Id) ? [.. values, previous] : values,
                     Contacts, item => item.Id);
                 if (!append && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded
-                    && ContactCard is { IsEditing: false, IsLoading: false, IsSaving: false } card && SelectedContact is { } selected)
+                    && ContactCard is { IsEditing: false, HasRelationDraft: false, IsLoading: false, IsSaving: false } card && SelectedContact is { } selected)
                     await card.LoadAsync(selected.Id, linked.Token);
             }
             else

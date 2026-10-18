@@ -4,7 +4,7 @@ namespace Task.Desktop.ViewModels;
 
 public sealed record ContactStatusChoice(string Value, string Label);
 
-public sealed class ContactCardViewModel : ViewModelBase, IDisposable
+public sealed partial class ContactCardViewModel : ViewModelBase, IDisposable
 {
     private readonly IDesktopContactDetailsClient _client;
     private readonly Func<bool> _canRead, _canRequest, _canWrite;
@@ -19,24 +19,25 @@ public sealed class ContactCardViewModel : ViewModelBase, IDisposable
     public ContactCardViewModel(IDesktopContactDetailsClient client, Func<bool> canRead, Func<bool> canRequest, Func<bool> canWrite)
     {
         _client = client; _canRead = canRead; _canRequest = canRequest; _canWrite = canWrite;
+        InitializeRelations();
         EditCommand = new((_, _) => { FillDraft(); IsEditing = true; Message = null; return System.Threading.Tasks.Task.CompletedTask; },
-            _ => CanEdit && !IsEditing);
+            _ => CanEdit && !IsEditing && !HasRelationDraft);
         CancelCommand = new((_, _) => { FillDraft(); IsEditing = false; Message = _conflict ? "Обновите карточку перед повторным редактированием." : null; return System.Threading.Tasks.Task.CompletedTask; },
             _ => IsEditing && !IsSaving);
         SaveCommand = new(SaveAsync, _ => CanEdit && IsEditing && !_conflict);
-        ReloadCommand = new((_, ct) => LoadAsync(_id, ct), _ => _id is not null && _canRequest() && !IsEditing && !IsLoading && !IsSaving);
+        ReloadCommand = new((_, ct) => LoadAsync(_id, ct), _ => _id is not null && _canRequest() && !IsEditing && !HasRelationDraft && !IsLoading && !IsSaving);
         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить действие. Изменения формы сохранены; повторите запрос.";
-        SaveCommand.CanExecuteChanged += (_, _) => { OnPropertyChanged(nameof(IsSaving)); OnPropertyChanged(nameof(CanChangeDraft)); CancelCommand.RaiseCanExecuteChanged(); EditCommand.RaiseCanExecuteChanged(); ReloadCommand.RaiseCanExecuteChanged(); };
+        SaveCommand.CanExecuteChanged += (_, _) => { OnPropertyChanged(nameof(IsSaving)); OnPropertyChanged(nameof(CanChangeDraft)); CancelCommand.RaiseCanExecuteChanged(); EditCommand.RaiseCanExecuteChanged(); ReloadCommand.RaiseCanExecuteChanged(); foreach (var command in RelationCommands) command.RaiseCanExecuteChanged(); };
     }
 
     public event Action<DesktopContact>? Saved;
-    public DesktopContactDetails? Details { get => _details; private set { SetProperty(ref _details, value); OnPropertyChanged(nameof(HasDetails)); OnPropertyChanged(nameof(StatusLabel)); } }
+    public DesktopContactDetails? Details { get => _details; private set { SetProperty(ref _details, value); OnPropertyChanged(nameof(HasDetails)); OnPropertyChanged(nameof(StatusLabel)); NotifyRelations(); } }
     public bool HasDetails => Details is not null;
     public bool IsLoading { get => _loading; private set { SetProperty(ref _loading, value); NotifyCommands(); } }
     public bool IsEditing { get => _editing; private set { SetProperty(ref _editing, value); OnPropertyChanged(nameof(CanChangeDraft)); NotifyCommands(); } }
-    public bool IsSaving => SaveCommand.IsExecuting;
+    public bool IsSaving => SaveCommand.IsExecuting || _relationBusy;
     public bool CanChangeDraft => IsEditing && !IsSaving;
-    public bool CanEdit => !_disposed && _canWrite() && _canRequest() && Details?.Contact.LifecycleState == "active" && !IsLoading && !_writeDenied && !_conflict;
+    public bool CanEdit => !_disposed && _canWrite() && _canRequest() && Details?.Contact.LifecycleState == "active" && !IsLoading && !_relationBusy && !_writeDenied && !_conflict;
     public string StatusLabel => Details?.Contact.Status == "inactive" ? "Неактивный" : "Активный";
     public string? Message { get => _message; private set => SetProperty(ref _message, value); }
     public string FirstName { get => _firstName; set => SetProperty(ref _firstName, value); }
@@ -50,13 +51,13 @@ public sealed class ContactCardViewModel : ViewModelBase, IDisposable
     public AsyncCommand CancelCommand { get; }
     public AsyncCommand SaveCommand { get; }
     public AsyncCommand ReloadCommand { get; }
-    private IEnumerable<AsyncCommand> Commands => [EditCommand, CancelCommand, SaveCommand, ReloadCommand];
+    private IEnumerable<AsyncCommand> Commands => new[] { EditCommand, CancelCommand, SaveCommand, ReloadCommand }.Concat(RelationCommands);
 
     public async System.Threading.Tasks.Task SelectAsync(Guid? id)
     {
         if (_id == id) return; // List refresh must not replace an unsaved draft.
         _id = id;
-        IsEditing = false; Details = null; ClearDraft(); _conflict = _writeDenied = false;
+        IsEditing = false; Details = null; ClearDraft(); ClearRelationDraft(); _conflict = _writeDenied = false;
         await LoadAsync(id);
     }
 
@@ -88,10 +89,11 @@ public sealed class ContactCardViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task SaveAsync(object? _, CancellationToken ct)
     {
         if (Details is not { } original) return;
-        var draft = new DesktopContactDetails(original.Contact with
+        var draft = original with
         {
-            FirstName = FirstName, LastName = LastName, DisplayName = DisplayName, Notes = Notes, Status = Status
-        }, MiddleName);
+            Contact = original.Contact with { FirstName = FirstName, LastName = LastName, DisplayName = DisplayName, Notes = Notes, Status = Status },
+            MiddleName = MiddleName
+        };
         if (DesktopWorkApiClient.ValidateContact(draft) is { } error) { Message = error; return; }
         var generation = _generation;
         using var request = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -137,16 +139,16 @@ public sealed class ContactCardViewModel : ViewModelBase, IDisposable
     {
         if (!_canRead())
         {
-            CancelRequest(); Details = null; IsEditing = false; ClearDraft();
+            CancelRequest(); Details = null; IsEditing = false; ClearDraft(); ClearRelationDraft();
             Message = "Нет доступа к карточке. Проверьте права и сессию.";
         }
-        else if (!_canRequest() || (!_canWrite() && IsSaving)) CancelRequest();
+        else if (!_canRequest() || (!_canWrite() && IsSaving)) { if (IsSaving) _conflict = true; CancelRequest(); }
         NotifyCommands();
     }
 
     public void InvalidateScope()
     {
-        CancelRequest(); Details = null; IsEditing = false; ClearDraft();
+        CancelRequest(); Details = null; IsEditing = false; ClearDraft(); ClearRelationDraft();
         Message = "Права доступа изменились. Обновите карточку.";
         NotifyCommands();
     }
@@ -160,6 +162,6 @@ public sealed class ContactCardViewModel : ViewModelBase, IDisposable
         DisplayName = d.Contact.DisplayName; Notes = d.Contact.Notes ?? ""; Status = d.Contact.Status;
     }
     private void ClearDraft() { FirstName = LastName = MiddleName = DisplayName = Notes = ""; Status = "active"; }
-    private void NotifyCommands() { OnPropertyChanged(nameof(CanEdit)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanChangeRelationDraft)); OnPropertyChanged(nameof(RelationAccessMessage)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     public void Dispose() { _disposed = true; CancelRequest(); foreach (var command in Commands) command.Dispose(); }
 }
