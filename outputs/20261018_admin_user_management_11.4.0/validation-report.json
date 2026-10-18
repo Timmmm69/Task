@@ -1,0 +1,127 @@
+{
+  "version": "11.4.0",
+  "date": "2026-10-18",
+  "branch": "feature/admin-user-management",
+  "base_commit": "1f42e49",
+  "implementation_commit": "780bf72112158f93f405e49ab315453e1d3df783",
+  "task_11_status": "partial_blocked",
+  "blockers": [
+    "OQ-ADMIN-ROLES-READ"
+  ],
+  "role_replacement_ui_enabled": false,
+  "server_contracts_changed": false,
+  "release_solution_build": "passed",
+  "dashboard_order_and_validation": "passed",
+  "tests": {
+    "administration": {
+      "total": 160,
+      "passed": 160,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/administration-final.trx"
+    },
+    "postgres_scoped": {
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/postgres-scoped.trx"
+    },
+    "domain_postgres": {
+      "total": 875,
+      "passed": 875,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/Task.Tests.trx"
+    },
+    "api": {
+      "total": 631,
+      "passed": 631,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/Task.ServiceHosts.Tests.trx"
+    },
+    "desktop_first": {
+      "total": 1436,
+      "passed": 1434,
+      "failed": 2,
+      "skipped": 0,
+      "failures": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow",
+        "Task.Desktop.Tests.TaskScreen.InboxZeroUiTests.NativeWpf_ZeroFocusKeyboardSemanticsMotionAndExternalChanges"
+      ],
+      "evidence": "evidence/Task.Desktop.Tests.trx"
+    },
+    "desktop_confirmation": {
+      "total": 1436,
+      "passed": 1435,
+      "failed": 1,
+      "skipped": 0,
+      "failures": [
+        "Task.Desktop.Tests.Personal.PersonalShellViewModelTests.Palette_UsesExistingPersonalSearchAndNavigation"
+      ],
+      "evidence": "evidence/desktop-confirmation.trx"
+    },
+    "baseline_desktop_1f42e49": {
+      "total": 1415,
+      "passed": 1415,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/baseline-desktop.trx"
+    },
+    "inbox_isolated": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/inbox-isolated.trx"
+    },
+    "context_isolated": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/task-context-isolated.trx"
+    },
+    "personal_search_isolated": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/personal-search-isolated.trx"
+    },
+    "desktop_serial": {
+      "total": 1436,
+      "passed": 1436,
+      "failed": 0,
+      "skipped": 0,
+      "failures": [],
+      "evidence": "evidence/desktop-serial.trx"
+    }
+  },
+  "latest_desktop_gate": "passed_serial",
+  "initial_desktop_gate": "failed: two native focus tests; retained, isolated passes",
+  "baseline_comparison": "1f42e49 full desktop passed; inheritance of first-run failures not proven",
+  "native_wpf": "automated real Windows UIA, fake API, 1120x900 and 800x600; screenshots inspected",
+  "postgres": "real PostgreSQL 16, isolated loopback runtime, test databases/runtime roles",
+  "manual_windows_acceptance": "not_run",
+  "live_wpf_http_postgres_end_to_end": "not_run",
+  "full_product_acceptance": false,
+  "pr_readiness": "safe-scope draft with open OQ; not completion of task 11",
+  "remaining": [
+    "authoritative versioned role assignments read contract",
+    "UserRole normative/live response mismatch",
+    "credential delivery and department picker",
+    "role/resource catalog first-page limit 200",
+    "manual live Corporate/Narrator/mixed-DPI acceptance",
+    "physical offline and live two-administrator race not run"
+  ]
+}

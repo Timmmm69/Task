@@ -1,0 +1,17 @@
+[
+  ".project-dashboard/roadmap.json",
+  "work/production/src/Task.Desktop/Administration/DesktopAdministrationApiClient.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationUserTransitions.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs",
+  "work/production/src/Task.Desktop/ViewModels/AdministrationViewModel.cs",
+  "work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationAccessTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserEditorTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Administration/AdministrationUserWindowsTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Administration/DesktopUserManagementApiClientTests.cs",
+  "work/production/tests/Task.Tests/PostgresAdministrationRoleTests.cs",
+  "work/production/docs/ADMINISTRATION-FINAL-REVIEW-11.4.md",
+  "work/verification/11_4/Run-Gate.ps1",
+  "work/verification/11_4/Package.py",
+  "work/verification/11_4/desktop-serial.runsettings"
+]

@@ -35,12 +35,14 @@ try {
     '{"postgres":"16","configured":true,"loopback_only":true,"executed":true}' | Set-Content (Join-Path $PSScriptRoot 'postgres-runtime.json')
     Check 'build' @('build', 'work/production/Task.sln', '-c', 'Release', '--no-restore', '-v', 'minimal')
     $filter = 'FullyQualifiedName~Administration_|FullyQualifiedName~Authorization_|FullyQualifiedName~PostgresIdentityLifecycle'
-    $args = @('test','work/production/tests/Task.Tests/Task.Tests.csproj','-c','Release','--no-build','--no-restore','--logger','trx;LogFileName=postgres-scoped.trx','--results-directory',$PSScriptRoot,'--filter',$filter)
-    Check 'postgres-scoped' $args
+    $testArguments = @('test','work/production/tests/Task.Tests/Task.Tests.csproj','-c','Release','--no-build','--no-restore','--logger','trx;LogFileName=postgres-scoped.trx','--results-directory',$PSScriptRoot,'--filter',$filter)
+    Check 'postgres-scoped' $testArguments
     if ($Full) {
-        foreach ($project in @('Task.Tests','Task.ServiceHosts.Tests','Task.Desktop.Tests')) {
+        foreach ($project in @('Task.Tests','Task.ServiceHosts.Tests')) {
             Check $project @('test',"work/production/tests/$project/$project.csproj",'-c','Release','--no-build','--no-restore','--logger',"trx;LogFileName=$project.trx",'--results-directory',$PSScriptRoot)
         }
+        # WPF focus and keyboard tests share the interactive desktop across collections.
+        Check 'desktop-serial' @('test','work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj','-c','Release','--no-build','--no-restore','--settings',(Join-Path $PSScriptRoot 'desktop-serial.runsettings'),'--logger','trx;LogFileName=desktop-serial.trx','--results-directory',$PSScriptRoot)
     }
 }
 finally {
