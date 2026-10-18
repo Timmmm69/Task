@@ -50,6 +50,24 @@ public sealed partial class WorkHubViewModel
                 var result = await _client.GetContactsAsync(append ? _listCursor : null, linked.Token);
                 if (!Current()) return;
                 var selectedBeforeRefresh = SelectedContact;
+                if (!append && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded page
+                    && selectedBeforeRefresh is { } outsidePage && page.Value.All(item => item.Id != outsidePage.Id)
+                    && !IsPersonal && _client is IDesktopContactDetailsClient detailsClient)
+                {
+                    // A missing row may be on a later page or may have lost object access.
+                    // Preserve drafts only after an independent, current scope check.
+                    var visible = await detailsClient.GetContactAsync(outsidePage.Id, linked.Token);
+                    if (!Current() || SelectedContact?.Id != outsidePage.Id) return;
+                    if (visible is DesktopWorkResult<DesktopContactDetails>.Succeeded { Value.Contact.LifecycleState: "active" } allowed)
+                        selectedBeforeRefresh = allowed.Value.Contact;
+                    else if (visible is DesktopWorkResult<DesktopContactDetails>.AuthenticationFailure)
+                    { UpdateSessionState(false); return; }
+                    else if (visible is DesktopWorkResult<DesktopContactDetails>.Forbidden or DesktopWorkResult<DesktopContactDetails>.NotFound
+                        or DesktopWorkResult<DesktopContactDetails>.Succeeded)
+                        selectedBeforeRefresh = null;
+                    else
+                    { SetFeedback("Не удалось подтвердить доступ к выбранному контакту. Повторите обновление.", WorkHubFeedbackKind.Warning); return; }
+                }
                 ApplyListPage(result, append, values => Contacts = !append && values.Count > 0 && selectedBeforeRefresh is { } previous
                     && values.All(item => item.Id != previous.Id) ? [.. values, previous] : values,
                     Contacts, item => item.Id);

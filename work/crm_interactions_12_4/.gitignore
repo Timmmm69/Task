@@ -2,3 +2,4 @@ evidence/
 postgres-*/
 *.py
 !package.py
+!publication.py

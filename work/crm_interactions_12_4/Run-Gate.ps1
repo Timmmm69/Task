@@ -22,7 +22,7 @@ try {
  $env:TASK_INTERACTIONS_EVIDENCE = Join-Path $gateEvidence 'ui-interactions'
  $env:TASK_COMPANY_CARD_EVIDENCE = Join-Path $gateEvidence 'ui-companies'
  $env:TASK_CONTACT_CARD_EVIDENCE = Join-Path $gateEvidence 'ui-contacts'
- & dotnet test work/production/Task.sln -c Release --no-restore -v minimal --logger trx --results-directory $gateEvidence *> (Join-Path $gateEvidence 'tests.log')
+ & dotnet test work/production/Task.sln -c Release --no-restore -v minimal -m:1 --logger trx --results-directory $gateEvidence *> (Join-Path $gateEvidence 'tests.log')
  $gateExit = $LASTEXITCODE
  Get-Content (Join-Path $gateEvidence 'tests.log') | Select-Object -Last 60
  if ($gateExit -ne 0) { throw "Release gate failed: $gateExit" }
