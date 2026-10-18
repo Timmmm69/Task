@@ -52,9 +52,12 @@ public sealed class AdminUserEditor : ViewModelBase
         var user = Original ?? throw new InvalidOperationException("A new account has no patch baseline.");
         return new()
         {
-            FirstName = Changed(FirstName, user.FirstName), LastName = Changed(LastName, user.LastName),
-            DisplayName = Changed(DisplayName, user.DisplayName), Login = Changed(Login, user.Login),
-            WorkEmail = ChangedNullable(Nullable(WorkEmail), user.WorkEmail), JobTitle = ChangedNullable(Nullable(JobTitle), user.JobTitle),
+            FirstName = Changed(FirstName, user.FirstName),
+            LastName = Changed(LastName, user.LastName),
+            DisplayName = Changed(DisplayName, user.DisplayName),
+            Login = Changed(Login, user.Login),
+            WorkEmail = ChangedNullable(Nullable(WorkEmail), user.WorkEmail),
+            JobTitle = ChangedNullable(Nullable(JobTitle), user.JobTitle),
         };
     }
     private static OptionalUserField<string> Changed(string? current, string? original) => new(current != original, current);

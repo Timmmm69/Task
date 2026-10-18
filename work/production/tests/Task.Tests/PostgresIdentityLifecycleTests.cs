@@ -15,35 +15,40 @@ public sealed class PostgresIdentityLifecycleTests
         using var db = new Database();
         var store = new PostgresUserAccountCommandStore(db.RuntimeSource);
         foreach (var status in Enum.GetValues<UserAccountStatus>())
-        foreach (var action in Enum.GetValues<UserAccountTransition>())
-        {
-            var targetId = Guid.NewGuid(); db.SeedUser(targetId);
-            var stored = status switch { UserAccountStatus.PendingActivation => "pending",
-                UserAccountStatus.Active => "active", UserAccountStatus.Blocked => "blocked", _ => "deactivated" };
-            db.Sql("UPDATE iam.user_accounts SET account_status=$2 WHERE id=$1", targetId, stored);
-            var allowed = action switch
+            foreach (var action in Enum.GetValues<UserAccountTransition>())
             {
-                UserAccountTransition.Activate => status == UserAccountStatus.PendingActivation,
-                UserAccountTransition.Block => status is UserAccountStatus.Active or UserAccountStatus.Blocked,
-                UserAccountTransition.Unblock => status is UserAccountStatus.Blocked or UserAccountStatus.Active,
-                UserAccountTransition.Deactivate => status != UserAccountStatus.Deactivated,
-                UserAccountTransition.Reactivate => status is UserAccountStatus.Deactivated or UserAccountStatus.Active,
-                _ => false,
-            };
-            var context = db.Context("user." + action.ToString().ToLowerInvariant());
-            var result = await store.TransitionAsync(context, targetId, 1, action, "Lifecycle verification");
-            Assert.Equal(allowed ? IdentityCommandDisposition.Executed : IdentityCommandDisposition.InvalidStateTransition, result.Disposition);
-            if (!allowed) continue;
-            var target = action == UserAccountTransition.Block ? UserAccountStatus.Blocked
-                : action == UserAccountTransition.Deactivate ? UserAccountStatus.Deactivated : UserAccountStatus.Active;
-            Assert.Equal(target, result.User!.AccountStatus);
-            Assert.Equal(status == target ? 1 : 2, result.User.Version);
-            var auditCount = db.Count("governance.audit_entries", targetId);
-            var repeated = await store.TransitionAsync(context, targetId, 1, action, "Lifecycle verification");
-            Assert.Equal(IdentityCommandDisposition.Replayed, repeated.Disposition);
-            Assert.Equal(result.User, repeated.User);
-            Assert.Equal(auditCount, db.Count("governance.audit_entries", targetId));
-        }
+                var targetId = Guid.NewGuid(); db.SeedUser(targetId);
+                var stored = status switch
+                {
+                    UserAccountStatus.PendingActivation => "pending",
+                    UserAccountStatus.Active => "active",
+                    UserAccountStatus.Blocked => "blocked",
+                    _ => "deactivated"
+                };
+                db.Sql("UPDATE iam.user_accounts SET account_status=$2 WHERE id=$1", targetId, stored);
+                var allowed = action switch
+                {
+                    UserAccountTransition.Activate => status == UserAccountStatus.PendingActivation,
+                    UserAccountTransition.Block => status is UserAccountStatus.Active or UserAccountStatus.Blocked,
+                    UserAccountTransition.Unblock => status is UserAccountStatus.Blocked or UserAccountStatus.Active,
+                    UserAccountTransition.Deactivate => status != UserAccountStatus.Deactivated,
+                    UserAccountTransition.Reactivate => status is UserAccountStatus.Deactivated or UserAccountStatus.Active,
+                    _ => false,
+                };
+                var context = db.Context("user." + action.ToString().ToLowerInvariant());
+                var result = await store.TransitionAsync(context, targetId, 1, action, "Lifecycle verification");
+                Assert.Equal(allowed ? IdentityCommandDisposition.Executed : IdentityCommandDisposition.InvalidStateTransition, result.Disposition);
+                if (!allowed) continue;
+                var target = action == UserAccountTransition.Block ? UserAccountStatus.Blocked
+                    : action == UserAccountTransition.Deactivate ? UserAccountStatus.Deactivated : UserAccountStatus.Active;
+                Assert.Equal(target, result.User!.AccountStatus);
+                Assert.Equal(status == target ? 1 : 2, result.User.Version);
+                var auditCount = db.Count("governance.audit_entries", targetId);
+                var repeated = await store.TransitionAsync(context, targetId, 1, action, "Lifecycle verification");
+                Assert.Equal(IdentityCommandDisposition.Replayed, repeated.Disposition);
+                Assert.Equal(result.User, repeated.User);
+                Assert.Equal(auditCount, db.Count("governance.audit_entries", targetId));
+            }
     }
 
     [RequiresPostgresFact]

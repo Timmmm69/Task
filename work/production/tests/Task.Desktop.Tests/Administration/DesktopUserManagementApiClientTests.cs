@@ -86,8 +86,12 @@ public sealed class DesktopUserManagementApiClientTests
             "anna@example.test", UserId, "Руководитель"), Key));
         Ok(await fixture.Client.UpdateUserAsync(UserId, 6, new()
         {
-            DisplayName = new(true, "Отображение"), FirstName = new(true, "Анна"), LastName = new(true, "Крылова"),
-            Login = new(true, "anna.k"), WorkEmail = new(true, "anna@example.test"), DepartmentId = new(true, UserId),
+            DisplayName = new(true, "Отображение"),
+            FirstName = new(true, "Анна"),
+            LastName = new(true, "Крылова"),
+            Login = new(true, "anna.k"),
+            WorkEmail = new(true, "anna@example.test"),
+            DepartmentId = new(true, UserId),
             JobTitle = new(true, "Руководитель"),
         }, Key));
         var created = JsonNode.Parse(fixture.Requests[0].Body)!.AsObject();
@@ -108,8 +112,13 @@ public sealed class DesktopUserManagementApiClientTests
     public async System.Threading.Tasks.Task PatchOmitsUnchangedFieldsAndExplicitlyClearsNullableFields()
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(UserResponse()));
-        var patch = new DesktopUserPatch { DisplayName = new(true, "Изменено"), WorkEmail = new(true, null),
-            DepartmentId = new(true, null), JobTitle = new(true, null) };
+        var patch = new DesktopUserPatch
+        {
+            DisplayName = new(true, "Изменено"),
+            WorkEmail = new(true, null),
+            DepartmentId = new(true, null),
+            JobTitle = new(true, null)
+        };
         var result = Ok(await fixture.Client.UpdateUserAsync(UserId, 6, patch, Key));
         var request = fixture.Requests.Single();
         Assert.Equal(HttpMethod.Patch, request.Method);

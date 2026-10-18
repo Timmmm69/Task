@@ -8,7 +8,10 @@ namespace Task.Desktop.Tests.Administration;
 public sealed class AdministrationUserEditorTests
 {
     [Theory]
-    [InlineData(false, false)] [InlineData(true, false)] [InlineData(false, true)] [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
     public void IndependentWritePermissions(bool create, bool update)
     {
         using var vm = Vm(new(), create, update);
@@ -115,7 +118,8 @@ public sealed class AdministrationUserEditorTests
     }
 
     [Theory]
-    [InlineData("login")] [InlineData("email")]
+    [InlineData("login")]
+    [InlineData("email")]
     public async AsyncTask DuplicateLoginAndEmailRetainDraftAndRecover(string field)
     {
         var client = new Client { Failure = new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "DUPLICATE_RESOURCE" } };
@@ -158,7 +162,11 @@ public sealed class AdministrationUserEditorTests
     }
 
     [Theory]
-    [InlineData(403)] [InlineData(404)] [InlineData(422)] [InlineData(503)] [InlineData(500)]
+    [InlineData(403)]
+    [InlineData(404)]
+    [InlineData(422)]
+    [InlineData(503)]
+    [InlineData(500)]
     public async AsyncTask FailedDetailReadDoesNotOpenOrLocallyConfirmEditor(int status)
     {
         var client = new Client { DetailFailure = Failure(status) }; using var vm = Vm(client);
@@ -287,9 +295,11 @@ public sealed class AdministrationUserEditorTests
     internal static void Fill(AdminUserEditor editor) { editor.FirstName = "Анна"; editor.LastName = "Крылова"; editor.Login = "anna.k"; }
     private static DesktopUserResult<DesktopManagedUser> Failure(int code) => code switch
     {
-        403 => new DesktopUserResult<DesktopManagedUser>.Forbidden(), 404 => new DesktopUserResult<DesktopManagedUser>.NotFound(),
+        403 => new DesktopUserResult<DesktopManagedUser>.Forbidden(),
+        404 => new DesktopUserResult<DesktopManagedUser>.NotFound(),
         422 => new DesktopUserResult<DesktopManagedUser>.ValidationFailure("ignored"),
-        503 => new DesktopUserResult<DesktopManagedUser>.ServerUnavailable(), _ => new DesktopUserResult<DesktopManagedUser>.MalformedResponse(),
+        503 => new DesktopUserResult<DesktopManagedUser>.ServerUnavailable(),
+        _ => new DesktopUserResult<DesktopManagedUser>.MalformedResponse(),
     };
 
     internal sealed class Client : IDesktopAdministrationApiClient

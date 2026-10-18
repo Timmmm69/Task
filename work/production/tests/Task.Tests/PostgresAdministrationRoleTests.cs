@@ -5,9 +5,18 @@ using Task.Infrastructure.Postgres;
 
 namespace Task.Tests;
 
+public sealed class RequiresPostgresTheoryAttribute : TheoryAttribute
+{
+    public RequiresPostgresTheoryAttribute()
+    {
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(TaskCreateCommandTests.ConnectionEnvironmentVariable)))
+            Skip = $"Set {TaskCreateCommandTests.ConnectionEnvironmentVariable} to execute the real PostgreSQL role gate.";
+    }
+}
+
 public sealed partial class PostgresProductApiTests
 {
-    [Theory]
+    [RequiresPostgresTheory]
     [InlineData("foreign-user", 404)]
     [InlineData("foreign-role", 422)]
     [InlineData("foreign-department", 422)]
@@ -48,7 +57,7 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal(0, db.Count("governance.audit_entries"));
     }
 
-    [Fact]
+    [RequiresPostgresFact]
     public async System.Threading.Tasks.Task Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce()
     {
         using var db = Database.Create(); Assert.NotNull(db);

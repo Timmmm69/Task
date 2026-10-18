@@ -44,7 +44,8 @@ public sealed partial class DesktopAdministrationApiClient
                     || page.NextCursor.Length > 2000 || page.NextCursor == query.Cursor || page.Items.Length == 0))
                 return new DesktopUserResult<DesktopUserPage>.MalformedResponse();
             return new DesktopUserResult<DesktopUserPage>.Succeeded(new(
-                Array.AsReadOnly(page.Items), page.NextCursor, page.Total)) { CorrelationId = response.CorrelationId };
+                Array.AsReadOnly(page.Items), page.NextCursor, page.Total))
+            { CorrelationId = response.CorrelationId };
         }
         catch (JsonException) { return new DesktopUserResult<DesktopUserPage>.MalformedResponse(); }
     }
@@ -147,7 +148,8 @@ public sealed partial class DesktopAdministrationApiClient
                 || response.IdempotencyReplayed is not (null or "true" or "false"))
                 return new DesktopUserResult<DesktopManagedUser>.MalformedResponse();
             return new DesktopUserResult<DesktopManagedUser>.Succeeded(user, user.Version,
-                response.IdempotencyReplayed == "true") { CorrelationId = response.CorrelationId };
+                response.IdempotencyReplayed == "true")
+            { CorrelationId = response.CorrelationId };
         }
         catch (JsonException) { return new DesktopUserResult<DesktopManagedUser>.MalformedResponse(); }
     }
@@ -209,8 +211,13 @@ public sealed partial class DesktopAdministrationApiClient
             if (code is not null && (code.Length is 0 or > 100 || !code.All(c => c is >= 'A' and <= 'Z' or >= '0' and <= '9' or '_'))) code = null;
             int? retry = problem?["retryAfterSeconds"] is JsonValue retryValue && retryValue.TryGetValue<int>(out var parsedRetry) ? parsedRetry : null;
             bool? retryable = problem?["retryable"] is JsonValue retryableValue && retryableValue.TryGetValue<bool>(out var parsedRetryable) ? parsedRetryable : null;
-            return failure with { ErrorCode = code, CorrelationId = response.CorrelationId,
-                Retryable = retryable, RetryAfterSeconds = retry >= 0 ? retry : null };
+            return failure with
+            {
+                ErrorCode = code,
+                CorrelationId = response.CorrelationId,
+                Retryable = retryable,
+                RetryAfterSeconds = retry >= 0 ? retry : null
+            };
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or FormatException)
         { return failure with { CorrelationId = response.CorrelationId }; }

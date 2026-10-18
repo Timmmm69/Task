@@ -45,9 +45,12 @@ public sealed partial class AdministrationViewModel
     private static bool RequiresReason(DesktopUserTransition action) => action is DesktopUserTransition.Block or DesktopUserTransition.Deactivate;
     private static string ActionLabel(DesktopUserTransition action) => action switch
     {
-        DesktopUserTransition.Activate => "Активировать", DesktopUserTransition.Block => "Заблокировать",
-        DesktopUserTransition.Unblock => "Разблокировать", DesktopUserTransition.Deactivate => "Деактивировать",
-        DesktopUserTransition.Reactivate => "Восстановить учётную запись", _ => "Неизвестное действие",
+        DesktopUserTransition.Activate => "Активировать",
+        DesktopUserTransition.Block => "Заблокировать",
+        DesktopUserTransition.Unblock => "Разблокировать",
+        DesktopUserTransition.Deactivate => "Деактивировать",
+        DesktopUserTransition.Reactivate => "Восстановить учётную запись",
+        _ => "Неизвестное действие",
     };
     private bool ShowTransition(DesktopUserTransition action) => IsUsers && !IsEditorOpen && !IsTransitionOpen
         && SelectedUser is { } user && _capabilities.Contains("User.Read") && _capabilities.Contains(Permission(action))

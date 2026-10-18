@@ -64,8 +64,10 @@ public sealed class AdministrationUserTransitionTests
     }
 
     [Theory]
-    [InlineData(DesktopUserTransition.Block, null)] [InlineData(DesktopUserTransition.Block, " ")]
-    [InlineData(DesktopUserTransition.Deactivate, null)] [InlineData(DesktopUserTransition.Deactivate, "\t")]
+    [InlineData(DesktopUserTransition.Block, null)]
+    [InlineData(DesktopUserTransition.Block, " ")]
+    [InlineData(DesktopUserTransition.Deactivate, null)]
+    [InlineData(DesktopUserTransition.Deactivate, "\t")]
     public async AsyncTask RequiredReasonNeverSendsInvalidRequest(DesktopUserTransition action, string? reason)
     {
         var client = new Client(); using var vm = Vm(client); await vm.BeginUserTransitionCommand.ExecuteAsync(action);
@@ -82,14 +84,17 @@ public sealed class AdministrationUserTransitionTests
     [InlineData("invalid-key", "Ключ")]
     public async AsyncTask RejectionsKeepStateAndRequireNewConfirmation(string kind, string text)
     {
-        var client = new Client { Failure = kind switch
+        var client = new Client
         {
-            "version" => new DesktopUserResult<DesktopManagedUser>.VersionConflict { ErrorCode = "VERSION_CONFLICT" },
-            "last-admin" => new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "INVALID_STATE_TRANSITION" },
-            "forbidden" => new DesktopUserResult<DesktopManagedUser>.Forbidden(),
-            "not-found" => new DesktopUserResult<DesktopManagedUser>.NotFound(),
-            _ => new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "IDEMPOTENCY_KEY_REUSED" },
-        }};
+            Failure = kind switch
+            {
+                "version" => new DesktopUserResult<DesktopManagedUser>.VersionConflict { ErrorCode = "VERSION_CONFLICT" },
+                "last-admin" => new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "INVALID_STATE_TRANSITION" },
+                "forbidden" => new DesktopUserResult<DesktopManagedUser>.Forbidden(),
+                "not-found" => new DesktopUserResult<DesktopManagedUser>.NotFound(),
+                _ => new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "IDEMPOTENCY_KEY_REUSED" },
+            }
+        };
         using var vm = Vm(client); await OpenBlock(vm); await vm.ConfirmUserTransitionCommand.ExecuteAsync();
         Assert.Equal("active", vm.SelectedUser!.AccountStatus); Assert.Equal(19, vm.SelectedUser.Version);
         Assert.Contains(text, vm.Message); Assert.False(await vm.ConfirmUserTransitionCommand.ExecuteAsync());
@@ -100,15 +105,21 @@ public sealed class AdministrationUserTransitionTests
     }
 
     [Theory]
-    [InlineData("offline")] [InlineData("processing")] [InlineData("malformed")] [InlineData("cancelled")]
+    [InlineData("offline")]
+    [InlineData("processing")]
+    [InlineData("malformed")]
+    [InlineData("cancelled")]
     public async AsyncTask ExplicitRetryKeepsOriginalVersionReasonAndKey(string kind)
     {
-        var client = new Client { Failure = kind switch
+        var client = new Client
         {
-            "offline" => new DesktopUserResult<DesktopManagedUser>.ServerUnavailable(),
-            "processing" => new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "REQUEST_IN_PROGRESS" },
-            _ => new DesktopUserResult<DesktopManagedUser>.MalformedResponse(),
-        }};
+            Failure = kind switch
+            {
+                "offline" => new DesktopUserResult<DesktopManagedUser>.ServerUnavailable(),
+                "processing" => new DesktopUserResult<DesktopManagedUser>.Conflict { ErrorCode = "REQUEST_IN_PROGRESS" },
+                _ => new DesktopUserResult<DesktopManagedUser>.MalformedResponse(),
+            }
+        };
         using var vm = Vm(client); await OpenBlock(vm);
         if (kind == "cancelled") client.ThrowCancellation = true;
         await vm.ConfirmUserTransitionCommand.ExecuteAsync();
@@ -141,7 +152,8 @@ public sealed class AdministrationUserTransitionTests
     }
 
     [Theory]
-    [InlineData(false)] [InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async AsyncTask LateResponsesAfterAccessLossDoNotRestoreData(bool mutation)
     {
         var client = new Client(); using var vm = Vm(client);
@@ -166,16 +178,22 @@ public sealed class AdministrationUserTransitionTests
     }
 
     [Theory]
-    [InlineData("forbidden")] [InlineData("not-found")] [InlineData("offline")] [InlineData("session")]
+    [InlineData("forbidden")]
+    [InlineData("not-found")]
+    [InlineData("offline")]
+    [InlineData("session")]
     public async AsyncTask DetailFailuresCannotOpenConfirmationOrSendMutation(string failure)
     {
-        var client = new Client { DetailFailure = failure switch
+        var client = new Client
         {
-            "forbidden" => new DesktopUserResult<DesktopManagedUser>.Forbidden(),
-            "not-found" => new DesktopUserResult<DesktopManagedUser>.NotFound(),
-            "offline" => new DesktopUserResult<DesktopManagedUser>.ServerUnavailable(),
-            _ => new DesktopUserResult<DesktopManagedUser>.AuthenticationFailure(),
-        }};
+            DetailFailure = failure switch
+            {
+                "forbidden" => new DesktopUserResult<DesktopManagedUser>.Forbidden(),
+                "not-found" => new DesktopUserResult<DesktopManagedUser>.NotFound(),
+                "offline" => new DesktopUserResult<DesktopManagedUser>.ServerUnavailable(),
+                _ => new DesktopUserResult<DesktopManagedUser>.AuthenticationFailure(),
+            }
+        };
         using var vm = Vm(client); await vm.BeginUserTransitionCommand.ExecuteAsync(DesktopUserTransition.Block);
         Assert.False(vm.IsTransitionOpen); Assert.False(await vm.ConfirmUserTransitionCommand.ExecuteAsync());
         Assert.Empty(client.Calls); Assert.NotNull(vm.Message);
