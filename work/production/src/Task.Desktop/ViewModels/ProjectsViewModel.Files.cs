@@ -2,6 +2,7 @@ namespace Task.Desktop.ViewModels;
 
 public sealed partial class ProjectsViewModel
 {
+    private readonly ProjectObjectLinksState _projectLinks = new();
     public ProjectFilesViewModel? Files { get; }
     private bool _filesExpanded;
     public System.Threading.Tasks.Task OpenFilesSectionAsync()
@@ -32,8 +33,8 @@ public sealed partial class ProjectsViewModel
     public System.Threading.Tasks.Task CurrentFilesOperation { get; private set; } = System.Threading.Tasks.Task.CompletedTask;
     private void ConfigureFiles() => Files?.SetContext(_projectConfirmed ? SelectedItem?.Source : null, _capabilities,
         IsActive && _sessionAvailable && CanRead, _networkAvailable, CanUpdate);
-    private void FilesSessionExpired() => UpdateSessionState(false);
-    private void FilesVersionConfirmed(Guid id, long version)
+    private void LinksSessionExpired() => UpdateSessionState(false);
+    private void LinksVersionConfirmed(Guid id, long version)
     {
         if (SelectedItem is not { } item || item.Id != id) return;
         item.ConfirmVersion(version);

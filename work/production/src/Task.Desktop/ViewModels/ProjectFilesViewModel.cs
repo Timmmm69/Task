@@ -22,7 +22,8 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
     private readonly IFileAccessAdapter _files;
     private HashSet<string> _capabilities = new(StringComparer.OrdinalIgnoreCase);
     private DesktopProjectDto? _project;
-    private long _generation, _version;
+    private long _generation;
+    private ProjectObjectLinksState _linkState = new();
     private bool _ready, _online, _writable, _snapshot, _disposed, _choosing;
     private IReadOnlyList<ProjectFileItem> _items = [];
     private ProjectFileItem? _selected;
@@ -42,8 +43,8 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
             && !Items.Any(row => row.Link.TargetObjectId == target.ObjectId));
         RemoveCommand = new((_, ct) =>
         {
-            var source = _project!.Id; var version = _version; var link = Selected!.Link.Id;
-            return RunAsync(() => _links.RemoveLinkAsync(source, version, link, ct), true, ct);
+            var source = _project!.Id; var link = Selected!.Link.Id;
+            return RemoveAsync(source, link, ct);
         },
             _ => CanMutate("ObjectLink.Delete") && ConfirmedSelection);
         NavigateCommand = new((_, ct) => UseTargetAsync(false, ct), _ => CanUse && !IsBusy && _snapshot && ConfirmedSelection && Selected!.CanNavigate);
@@ -51,6 +52,12 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
             && Selected!.CanOpen && Has("FileReference.Open"));
         foreach (var command in Commands) command.CanExecuteChanged += ExecutionChanged;
         Picker.PropertyChanged += PickerChanged;
+        _linkState.Changed += NotifyCommands;
+    }
+
+    internal void UseLinkState(ProjectObjectLinksState state)
+    {
+        _linkState.Changed -= NotifyCommands; _linkState = state; _linkState.Changed += NotifyCommands;
     }
 
     public ProjectDetailSectionViewModel Section { get; } = new("files");
@@ -72,7 +79,7 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
     private bool ConfirmedSelection => Selected is { } row && Items.Any(item => ReferenceEquals(item, row))
         && row.Link.SourceObjectId == _project?.Id && row.Link.LinkType == "project_file";
     private bool CanMutate(string permission) => CanUse && _writable && _project?.LifecycleState == "active"
-        && Has("Project.Update") && Has(permission) && _snapshot && _version > 0 && !IsBusy;
+        && Has("Project.Update") && Has(permission) && _snapshot && _linkState.Version > 0 && !IsBusy && !_linkState.IsMutating;
     private bool Has(string permission) => _capabilities.Contains(permission);
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand ChooseCommand { get; }
@@ -89,9 +96,9 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
         if (_project?.Id == project?.Id && _project?.OrganizationId == project?.OrganizationId
             && _project?.LifecycleState == project?.LifecycleState && _ready == ready && _online == online
             && _writable == writable && _capabilities.SetEquals(caps))
-        { _project = project; return; }
+        { _project = project; _linkState.SetContext(project); NotifyCommands(); return; }
         Invalidate(); _project = project; _capabilities = caps; _ready = ready; _online = online; _writable = writable;
-        _version = project?.Version ?? 0;
+        _linkState.SetContext(project);
         Section.SetContext(project?.Id, project?.OrganizationId, CanRead, online);
         Picker.SetContext(project?.Id ?? Guid.Empty, "project", "project_file");
         Picker.UpdateAccess(writable && project?.LifecycleState == "active" ? caps : caps.Where(code => code != "ObjectLink.Create"), ready, online);
@@ -112,7 +119,10 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
 
     private async AsyncTask AddAsync(object? _, CancellationToken ct)
     {
-        var generation = _generation; var source = _project!.Id; var version = _version;
+        var generation = _generation; var source = _project!.Id;
+        using var mutation = _linkState.BeginMutation(source);
+        if (mutation is null) return;
+        var version = _linkState.Version;
         var target = Picker.SelectedObjectId!.Value;
         try
         {
@@ -128,6 +138,14 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
         catch (Exception) { if (Current(generation, ct)) Fail(new DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable()); }
     }
 
+    private async AsyncTask RemoveAsync(Guid source, Guid link, CancellationToken ct)
+    {
+        using var mutation = _linkState.BeginMutation(source);
+        if (mutation is null) return;
+        var version = _linkState.Version;
+        await RunAsync(() => _links.RemoveLinkAsync(source, version, link, ct), true, ct);
+    }
+
     private async AsyncTask RunAsync(Func<System.Threading.Tasks.Task<DesktopWorkResult<DesktopObjectLinks>>> operation, bool mutation, CancellationToken ct)
     {
         var generation = _generation; var source = _project!.Id;
@@ -138,6 +156,8 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
             var result = await operation();
             if (!Current(generation, ct)) return;
             if (result is not DesktopWorkResult<DesktopObjectLinks>.Succeeded success) { Fail(result); return; }
+            if (!_linkState.Confirm(source, success.Value.SourceVersion)) { Fail(new DesktopWorkResult<DesktopObjectLinks>.Conflict()); return; }
+            VersionConfirmed?.Invoke(source, _linkState.Version);
             // The API returns incoming relations too; only owned outgoing project_file links belong here.
             var rows = new List<ProjectFileItem>();
             foreach (var link in success.Value.Items.Where(link => link.SourceObjectId == source && link.LinkType == "project_file"))
@@ -149,13 +169,13 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
                     && read.Value.LifecycleState == "active" ? read.Value : null;
                 rows.Add(new(link, item));
             }
-            Items = rows; _version = success.Value.SourceVersion; _snapshot = true;
+            if (success.Value.SourceVersion < _linkState.Version) { Fail(new DesktopWorkResult<DesktopObjectLinks>.Conflict()); return; }
+            Items = rows; _snapshot = true;
             Selected = Items.FirstOrDefault();
             Section.SetState(rows.Any(row => row.Catalog is null) ? ProjectSectionState.PartialAccess
                 : rows.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
             Message = mutation ? "Связи подтверждены сервером. Файлы и объекты каталога не изменены." : "";
             if (mutation) { Choosing = false; Picker.ClearSelection(); }
-            VersionConfirmed?.Invoke(source, _version);
         }
         catch (OperationCanceledException) when (request.IsCancellationRequested) { }
         catch (Exception) { if (Current(generation, ct)) Fail(new DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable()); }
@@ -209,7 +229,7 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
         }, false);
         Message = result switch
         {
-            DesktopWorkResult<DesktopObjectLinks>.Conflict => "Версия проекта изменилась. Обновите файлы перед повторной попыткой.",
+            DesktopWorkResult<DesktopObjectLinks>.Conflict => ProjectObjectLinksState.ConflictMessage,
             DesktopWorkResult<DesktopObjectLinks>.ValidationFailure v when v.Message == ObjectLinkMessages.Duplicate => v.Message,
             DesktopWorkResult<DesktopObjectLinks>.ValidationFailure => "Состояние объекта не допускает связь. Обновите проект и файлы.",
             DesktopWorkResult<DesktopObjectLinks>.Forbidden => "Нет доступа к связям или выбранным объектам.",
@@ -241,7 +261,7 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        _disposed = true; Invalidate(); Picker.PropertyChanged -= PickerChanged; Picker.Dispose();
+        _disposed = true; Invalidate(); _linkState.Changed -= NotifyCommands; Picker.PropertyChanged -= PickerChanged; Picker.Dispose();
         foreach (var command in Commands) { command.CanExecuteChanged -= ExecutionChanged; command.Dispose(); }
     }
 }

@@ -322,7 +322,9 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             tasksClient, new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
             new ProjectFilesViewModel(workClient, workClient,
-                new ObjectLinkTargetPickerViewModel(workClient, sessionService.CurrentSessionMetadata?.Capabilities), workClient.ResolveLocationAsync));
+                new ObjectLinkTargetPickerViewModel(workClient, sessionService.CurrentSessionMetadata?.Capabilities), workClient.ResolveLocationAsync),
+            new ProjectContactsViewModel(workClient, workClient,
+                new ObjectLinkTargetPickerViewModel(workClient, sessionService.CurrentSessionMetadata?.Capabilities)));
         var workHub = new WorkHubViewModel(
             workClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),

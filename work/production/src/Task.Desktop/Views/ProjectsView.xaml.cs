@@ -24,5 +24,14 @@ public partial class ProjectsView : UserControl
     {
         if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CloseFilesSection();
     }
+    private async void ContactsExpanded(object sender, RoutedEventArgs args)
+    {
+        if (ReferenceEquals(sender, args.OriginalSource) && DataContext is ProjectsViewModel projects)
+            await projects.OpenContactsSectionAsync();
+    }
+    private void ContactsCollapsed(object sender, RoutedEventArgs args)
+    {
+        if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CloseContactsSection();
+    }
     private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelDetailSections();
 }

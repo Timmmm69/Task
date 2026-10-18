@@ -33,7 +33,8 @@ public sealed class ProjectDetailSectionViewModel : ViewModelBase
         ProjectSectionState.Loaded => "Данные подтверждены сервером.",
         ProjectSectionState.Empty => "Доступных данных нет.",
         ProjectSectionState.Forbidden => "Нет доступа к разделу.",
-        ProjectSectionState.Offline => "Нет соединения. Подтверждённые данные доступны для просмотра.",
+        ProjectSectionState.Offline => HasConfirmedData ? "Нет соединения. Подтверждённые данные доступны для просмотра."
+            : "Нет соединения. Подключитесь и обновите раздел.",
         ProjectSectionState.ServerUnavailable => "Сервер недоступен. Повторите загрузку раздела.",
         ProjectSectionState.Error => "Не удалось загрузить раздел. Повторите попытку.",
         ProjectSectionState.PartialAccess => "Часть сведений недоступна.",

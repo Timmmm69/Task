@@ -161,19 +161,27 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public ProjectsViewModel(IDesktopProjectsApiClient client, Guid currentUserId,
-        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null)
+        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null, ProjectContactsViewModel? contacts = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         if (currentUserId == Guid.Empty) throw new ArgumentException("Current user id must not be empty.", nameof(currentUserId));
         _currentUserId = currentUserId; _tasks = tasks;
         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
         _directory = directory;
-        Files = files;
+        Files = files; Contacts = contacts;
+        files?.UseLinkState(_projectLinks);
+        contacts?.UseLinkState(_projectLinks);
+        if (contacts is not null)
+        {
+            ContactsSection = contacts.Section;
+            contacts.VersionConfirmed += LinksVersionConfirmed;
+            contacts.SessionExpired += LinksSessionExpired;
+        }
         if (files is not null)
         {
             FilesSection = files.Section;
-            files.VersionConfirmed += FilesVersionConfirmed;
-            files.SessionExpired += FilesSessionExpired;
+            files.VersionConfirmed += LinksVersionConfirmed;
+            files.SessionExpired += LinksSessionExpired;
         }
         LoadRelatedTasksCommand = new(LoadRelatedTasksPageAsync, _ => CanLoadRelatedTasks);
         ReloadMembersCommand = new((_, ct) => SelectedItem is { } item ? LoadMembersSectionAsync(item, ct) : System.Threading.Tasks.Task.CompletedTask,
@@ -382,7 +390,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
                 }
                 item.Replace(project.Value); _projectConfirmed = true;
                 OverviewSection.SetState(ProjectSectionState.Loaded, true);
-                ConfigureFiles();
+                ConfigureFiles(); ConfigureContacts();
+                if (_contactsExpanded && Contacts is not null) _ = StartContactsLoad();
                 if (_filesExpanded && Files is not null) _ = StartFilesLoad();
             }
             else
@@ -536,7 +545,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     }
     private void NotifyCommands()
     {
-        ConfigureFiles();
+        ConfigureFiles(); ConfigureContacts();
         NotifyRelatedTasks(); ReloadMembersCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanUpdate));
         OnPropertyChanged(nameof(CanArchive)); OnPropertyChanged(nameof(CanManageMembers)); OnPropertyChanged(nameof(AccessText));
@@ -551,7 +560,11 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         LoadRelatedTasksCommand.Dispose(); ReloadMembersCommand.Dispose();
         if (Files is not null)
         {
-            Files.VersionConfirmed -= FilesVersionConfirmed; Files.SessionExpired -= FilesSessionExpired; Files.Dispose();
+            Files.VersionConfirmed -= LinksVersionConfirmed; Files.SessionExpired -= LinksSessionExpired; Files.Dispose();
+        }
+        if (Contacts is not null)
+        {
+            Contacts.VersionConfirmed -= LinksVersionConfirmed; Contacts.SessionExpired -= LinksSessionExpired; Contacts.Dispose();
         }
         MemberPicker?.Dispose(); Editor?.Dispose();
         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.Dispose();

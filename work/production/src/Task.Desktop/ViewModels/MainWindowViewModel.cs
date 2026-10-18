@@ -72,6 +72,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             Projects.PropertyChanged += OnProjectsPropertyChanged;
             if (Projects.Files is { } files) files.OpenObjectRequested += OpenWorkObject;
+            if (Projects.Contacts is { } contacts) contacts.OpenObjectRequested += OpenWorkObject;
         }
         if (WorkHub is not null)
         {
@@ -407,6 +408,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             Projects.PropertyChanged -= OnProjectsPropertyChanged;
             if (Projects.Files is { } files) files.OpenObjectRequested -= OpenWorkObject;
+            if (Projects.Contacts is { } contacts) contacts.OpenObjectRequested -= OpenWorkObject;
         }
         if (WorkHub is not null)
         {

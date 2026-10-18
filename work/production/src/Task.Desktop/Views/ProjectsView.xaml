@@ -120,6 +120,12 @@
                         <views:ProjectFilesView DataContext="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
                     </Expander>
 
+                    <Expander Header="Контакты и компании" IsExpanded="False" Expanded="ContactsExpanded" Collapsed="ContactsCollapsed"
+                              AutomationProperties.AutomationId="ProjectContactsSection" Margin="0,0,0,14">
+                        <Expander.Style><Style TargetType="Expander"><Style.Triggers><DataTrigger Binding="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Expander.Style>
+                        <views:ProjectContactsView DataContext="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
+                    </Expander>
+
                     <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True" Collapsed="RelatedTasksCollapsed">
                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
                         <TextBlock Text="{Binding RelatedTasksStatusText}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectRelatedTasksStatus"/>
