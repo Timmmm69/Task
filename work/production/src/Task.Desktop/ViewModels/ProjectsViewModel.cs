@@ -33,6 +33,12 @@ public sealed class ProjectItemViewModel : ViewModelBase
         OnPropertyChanged(nameof(StatusText)); OnPropertyChanged(nameof(DatesText));
         SetPeopleNames(null, null);
     }
+    internal void ConfirmVersion(long version)
+    {
+        if (version <= Source.Version) return;
+        Source = Source with { Version = version };
+        OnPropertyChanged(nameof(Source));
+    }
     public static string LocalizeStatus(DesktopProjectStatus status) => status switch
     { DesktopProjectStatus.Planning => "Планируется", DesktopProjectStatus.Active => "Активный", DesktopProjectStatus.Paused => "Приостановлен", DesktopProjectStatus.Completed => "Завершён", _ => status.ToString() };
 }
@@ -155,13 +161,20 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     private bool _disposed;
 
     public ProjectsViewModel(IDesktopProjectsApiClient client, Guid currentUserId,
-        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null)
+        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         if (currentUserId == Guid.Empty) throw new ArgumentException("Current user id must not be empty.", nameof(currentUserId));
         _currentUserId = currentUserId; _tasks = tasks;
         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
         _directory = directory;
+        Files = files;
+        if (files is not null)
+        {
+            FilesSection = files.Section;
+            files.VersionConfirmed += FilesVersionConfirmed;
+            files.SessionExpired += FilesSessionExpired;
+        }
         LoadRelatedTasksCommand = new(LoadRelatedTasksPageAsync, _ => CanLoadRelatedTasks);
         ReloadMembersCommand = new((_, ct) => SelectedItem is { } item ? LoadMembersSectionAsync(item, ct) : System.Threading.Tasks.Task.CompletedTask,
             _ => IsActive && _sessionAvailable && _networkAvailable && CanReadMembers && _projectConfirmed
@@ -369,6 +382,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
                 }
                 item.Replace(project.Value); _projectConfirmed = true;
                 OverviewSection.SetState(ProjectSectionState.Loaded, true);
+                ConfigureFiles();
+                if (_filesExpanded && Files is not null) _ = StartFilesLoad();
             }
             else
             {
@@ -521,6 +536,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     }
     private void NotifyCommands()
     {
+        ConfigureFiles();
         NotifyRelatedTasks(); ReloadMembersCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanUpdate));
         OnPropertyChanged(nameof(CanArchive)); OnPropertyChanged(nameof(CanManageMembers)); OnPropertyChanged(nameof(AccessText));
@@ -533,6 +549,10 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     {
         if (_disposed) return; _disposed = true; Deactivate();
         LoadRelatedTasksCommand.Dispose(); ReloadMembersCommand.Dispose();
+        if (Files is not null)
+        {
+            Files.VersionConfirmed -= FilesVersionConfirmed; Files.SessionExpired -= FilesSessionExpired; Files.Dispose();
+        }
         MemberPicker?.Dispose(); Editor?.Dispose();
         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.Dispose();
     }

@@ -23,14 +23,16 @@ public sealed partial class ProjectsViewModel
 
     private void SetDetailContext()
     {
-        foreach (var section in DetailSections)
+        foreach (var section in DetailSections.Where(section => Files is null || section != FilesSection))
             section.SetContext(SelectedItem?.Id, SelectedItem?.Source.OrganizationId,
                 _sessionAvailable && CanRead && (section != MembersSection || CanReadMembers)
                 && (section != TasksSection || _capabilities.Contains("Task.Read") && _tasks is not null), _networkAvailable);
+        ConfigureFiles();
     }
 
     public void CancelDetailSections()
     {
+        Files?.Invalidate();
         foreach (var section in DetailSections) section.Cancel();
         _detailRequest?.Cancel(); CancelRelatedTasks(); IsDetailLoading = false;
         ReloadMembersCommand.RaiseCanExecuteChanged();

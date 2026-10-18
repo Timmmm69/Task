@@ -108,8 +108,10 @@ public sealed partial class DesktopWorkApiClientTests
         Assert.Contains("trashRetentionDays", fixture.Requests[9].Body);
     }
 
-    [Fact]
-    public async System.Threading.Tasks.Task ObjectLinksUseExistingRoutesEtagAndKeys()
+    [Theory]
+    [InlineData("task_file")]
+    [InlineData("project_file")]
+    public async System.Threading.Tasks.Task ObjectLinksUseExistingRoutesEtagAndKeys(string linkType)
     {
         var source = Guid.NewGuid(); var target = Guid.NewGuid(); var link = Guid.NewGuid(); var version = 1; var present = false;
         await using var fixture = await Fixture.CreateAsync((request, _) =>
@@ -117,13 +119,14 @@ public sealed partial class DesktopWorkApiClientTests
             if (request.Method == HttpMethod.Post) { version++; present = true; return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.Created, "{}")); }
             if (request.Method == HttpMethod.Delete) { version++; present = false; return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, "{}")); }
             var response = Json(HttpStatusCode.OK, present
-                ? $$"""{"items":[{"id":"{{link}}","sourceObjectId":"{{source}}","targetObjectId":"{{target}}","linkType":"task_file"}],"hasMore":false}"""
+                ? $$"""{"items":[{"id":"{{link}}","sourceObjectId":"{{source}}","targetObjectId":"{{target}}","linkType":"{{linkType}}"}],"hasMore":false}"""
                 : "{\"items\":[],\"hasMore\":false}");
             response.Headers.ETag = new($"\"v{version}\""); return System.Threading.Tasks.Task.FromResult(response);
         });
         Assert.Empty(Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.GetLinksAsync(source)).Value.Items);
-        var added = Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.AddLinkAsync(source, 1, target, "task_file")).Value;
+        var added = Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.AddLinkAsync(source, 1, target, linkType)).Value;
         Assert.Equal(2, added.SourceVersion); Assert.Equal(link, Assert.Single(added.Items).Id);
+        Assert.Equal(linkType, added.Items[0].LinkType); Assert.Contains(linkType, fixture.Requests[1].Body);
         Assert.Empty(Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.RemoveLinkAsync(source, 2, link)).Value.Items);
         Assert.Equal($"/api/v1/objects/{source:D}/links", fixture.Requests[1].Uri.AbsolutePath);
         Assert.Equal($"/api/v1/objects/{source:D}/links/{link:D}", fixture.Requests[3].Uri.AbsolutePath);
