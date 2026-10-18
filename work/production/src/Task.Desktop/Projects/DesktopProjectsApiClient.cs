@@ -71,7 +71,7 @@ public interface IDesktopProjectsApiClient
         Guid projectId, long projectVersion, Guid userId, CancellationToken cancellationToken = default);
 }
 
-public sealed class DesktopProjectsApiClient : IDesktopProjectsApiClient
+public sealed partial class DesktopProjectsApiClient : IDesktopProjectsApiClient, IDesktopProjectHistoryApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private readonly DesktopAuthenticatedGetExecutor _executor;

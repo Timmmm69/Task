@@ -126,6 +126,28 @@
                         <views:ProjectContactsView DataContext="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
                     </Expander>
 
+                    <Expander Header="История" Expanded="HistoryExpanded" Collapsed="HistoryCollapsed"
+                              AutomationProperties.AutomationId="ProjectHistorySection" Margin="0,0,0,14">
+                        <Expander.Style><Style TargetType="Expander"><Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers><DataTrigger Binding="{Binding DataContext.CanReadHistory, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+                        </Style></Expander.Style>
+                        <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
+                            <TextBlock Text="{Binding HistorySection.StatusText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+                            <TextBlock Text="Сервер сообщает названия полей без прежних и новых значений." TextWrapping="Wrap" Margin="0,4,0,8"/>
+                            <Button Content="Обновить историю" Style="{StaticResource Task.Button.Secondary}" Command="{Binding RefreshHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="RefreshProjectHistory"/>
+                            <ListBox ItemsSource="{Binding History}" AutomationProperties.Name="История выбранного проекта" MaxHeight="420" Margin="0,8">
+                                <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="6">
+                                    <TextBlock Text="{Binding DateText}"/>
+                                    <TextBlock Text="{Binding ActionText}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding VersionText}"/>
+                                    <TextBlock Text="{Binding AuthorText}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding FieldsText}" TextWrapping="Wrap"/>
+                                </StackPanel></DataTemplate></ListBox.ItemTemplate>
+                            </ListBox>
+                            <Button Content="Загрузить ещё события" Style="{StaticResource Task.Button.Secondary}" Command="{Binding MoreHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoreProjectHistory"/>
+                        </StackPanel>
+                    </Expander>
+
                     <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True" Collapsed="RelatedTasksCollapsed">
                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
                         <TextBlock Text="{Binding RelatedTasksStatusText}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectRelatedTasksStatus"/>

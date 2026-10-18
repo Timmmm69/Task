@@ -169,6 +169,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
         _directory = directory;
         Files = files; Contacts = contacts;
+        InitializeHistory();
         files?.UseLinkState(_projectLinks);
         contacts?.UseLinkState(_projectLinks);
         if (contacts is not null)
@@ -391,6 +392,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
                 item.Replace(project.Value); _projectConfirmed = true;
                 OverviewSection.SetState(ProjectSectionState.Loaded, true);
                 ConfigureFiles(); ConfigureContacts();
+                NotifyHistory();
+                if (_historyExpanded && CanLoadHistory) _ = StartHistoryLoad(true);
                 if (_contactsExpanded && Contacts is not null) _ = StartContactsLoad();
                 if (_filesExpanded && Files is not null) _ = StartFilesLoad();
             }
@@ -545,7 +548,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     }
     private void NotifyCommands()
     {
-        ConfigureFiles(); ConfigureContacts();
+        ConfigureFiles(); ConfigureContacts(); NotifyHistory();
         NotifyRelatedTasks(); ReloadMembersCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanUpdate));
         OnPropertyChanged(nameof(CanArchive)); OnPropertyChanged(nameof(CanManageMembers)); OnPropertyChanged(nameof(AccessText));
@@ -558,6 +561,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     {
         if (_disposed) return; _disposed = true; Deactivate();
         LoadRelatedTasksCommand.Dispose(); ReloadMembersCommand.Dispose();
+        RefreshHistoryCommand.Dispose(); MoreHistoryCommand.Dispose();
         if (Files is not null)
         {
             Files.VersionConfirmed -= LinksVersionConfirmed; Files.SessionExpired -= LinksSessionExpired; Files.Dispose();

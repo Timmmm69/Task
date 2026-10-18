@@ -7,7 +7,7 @@ using Task.Desktop.Security;
 
 namespace Task.Desktop.Tests.Projects;
 
-public sealed class DesktopProjectsApiClientTests
+public sealed partial class DesktopProjectsApiClientTests
 {
     private static readonly Guid SessionId = Guid.NewGuid();
     private static readonly Guid OrganizationId = Guid.NewGuid();

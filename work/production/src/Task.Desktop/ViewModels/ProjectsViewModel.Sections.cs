@@ -10,7 +10,7 @@ public sealed partial class ProjectsViewModel
     // Integration slots: no UI or requests until a real loader and its access policy are connected.
     public ProjectDetailSectionViewModel FilesSection { get; } = new("files", false);
     public ProjectDetailSectionViewModel ContactsSection { get; } = new("contacts", false);
-    public ProjectDetailSectionViewModel HistorySection { get; } = new("history", false);
+    public ProjectDetailSectionViewModel HistorySection { get; } = new("history");
     public IReadOnlyList<ProjectDetailSectionViewModel> DetailSections =>
         [OverviewSection, MembersSection, TasksSection, FilesSection, ContactsSection, HistorySection];
     public AsyncCommand ReloadMembersCommand { get; private set; } = null!;
@@ -26,13 +26,14 @@ public sealed partial class ProjectsViewModel
         foreach (var section in DetailSections.Where(section => (Files is null || section != FilesSection) && (Contacts is null || section != ContactsSection)))
             section.SetContext(SelectedItem?.Id, SelectedItem?.Source.OrganizationId,
                 _sessionAvailable && CanRead && (section != MembersSection || CanReadMembers)
+                && (section != HistorySection || CanReadHistory)
                 && (section != TasksSection || _capabilities.Contains("Task.Read") && _tasks is not null), _networkAvailable);
         ConfigureFiles(); ConfigureContacts();
     }
 
     public void CancelDetailSections()
     {
-        Files?.Invalidate(); Contacts?.Invalidate();
+        Files?.Invalidate(); Contacts?.Invalidate(); ResetHistory();
         foreach (var section in DetailSections) section.Cancel();
         _detailRequest?.Cancel(); CancelRelatedTasks(); IsDetailLoading = false;
         ReloadMembersCommand.RaiseCanExecuteChanged();

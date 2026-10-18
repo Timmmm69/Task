@@ -120,7 +120,7 @@ public sealed partial class ProjectsViewModelTests
         Assert.False(vm.EditProjectCommand.CanExecute(null));
         Assert.False(vm.AddMemberCommand.CanExecute(null));
         Assert.False(await vm.ReloadMembersCommand.ExecuteAsync());
-        foreach (var section in new[] { vm.FilesSection, vm.ContactsSection, vm.HistorySection })
+        foreach (var section in new[] { vm.FilesSection, vm.ContactsSection })
         {
             Assert.False(section.IsConnected); Assert.False(section.CanRead);
             Assert.Equal(ProjectSectionState.NotLoaded, section.State);

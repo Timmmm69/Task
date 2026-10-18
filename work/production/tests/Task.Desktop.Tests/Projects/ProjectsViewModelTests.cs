@@ -238,8 +238,15 @@ public sealed partial class ProjectsViewModelTests
         while (!predicate()) await System.Threading.Tasks.Task.Delay(10, cancellation.Token);
     }
 
-    private sealed class FakeProjectsClient : IDesktopProjectsApiClient
+    private sealed class FakeProjectsClient : IDesktopProjectsApiClient, IDesktopProjectHistoryApiClient
     {
+        public Func<Guid, int, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectHistoryPage>>>? HistoryHandler { get; set; }
+        public List<(Guid Id, int Page)> HistoryCalls { get; } = [];
+        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectHistoryPage>> GetHistoryAsync(Guid projectId, int page, int limit = 50, CancellationToken cancellationToken = default)
+        {
+            HistoryCalls.Add((projectId, page));
+            return HistoryHandler?.Invoke(projectId, page, cancellationToken) ?? System.Threading.Tasks.Task.FromResult<DesktopProjectResult<DesktopProjectHistoryPage>>(new DesktopProjectResult<DesktopProjectHistoryPage>.Succeeded(new([])));
+        }
         public DesktopProjectResult<DesktopProjectPage> Projects { get; set; } = SuccessPage();
         public DesktopProjectResult<DesktopProjectDto> Project { get; set; } = new DesktopProjectResult<DesktopProjectDto>.NotFound();
         public Exception? ProjectException { get; set; }
