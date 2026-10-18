@@ -44,6 +44,26 @@ public sealed partial class WorkHubViewModel
                 }
             }
         }
+        else if (type == "interaction" && _client is IDesktopInteractionsClient interactions)
+        {
+            if (!Has("Contact.Read")) return;
+            var result = await interactions.GetInteractionAsync(id, token);
+            if (!Current()) return;
+            if (result is not DesktopWorkResult<DesktopInteraction>.Succeeded found)
+            { SetFeedback("Взаимодействие больше не доступно.", WorkHubFeedbackKind.Warning); return; }
+            var target = await interactions.GetInteractionCounterpartyAsync(found.Value.CounterpartyObjectId, "contact", token);
+            if (!Current()) return;
+            if (target is DesktopWorkResult<InteractionCounterparty>.NotFound or DesktopWorkResult<InteractionCounterparty>.Forbidden)
+                target = await interactions.GetInteractionCounterpartyAsync(found.Value.CounterpartyObjectId, "company", token);
+            if (!Current()) return;
+            if (target is not DesktopWorkResult<InteractionCounterparty>.Succeeded visible)
+            { SetFeedback("Контрагент больше не доступен.", WorkHubFeedbackKind.Warning); return; }
+            openGeneration = _searchObjectGeneration + 1;
+            await OpenSearchObjectAsync(visible.Value.Type, visible.Value.Id);
+            if (!Current()) return;
+            var card = visible.Value.Type == "contact" ? ContactInteractions : CompanyInteractions;
+            if (card?.Counterparty?.Id == visible.Value.Id) await card.OpenAsync(id, token);
+        }
         else if (type == "company")
         {
             if (!Has("Contact.Read") || Companies is null) { SetFeedback("Недостаточно прав для открытия компании.", WorkHubFeedbackKind.Warning); return; }
@@ -55,30 +75,35 @@ public sealed partial class WorkHubViewModel
             SetCompanySurface(false);
             SelectedContact = null;
             if (!Has("Contact.Read")) { SetFeedback("Недостаточно прав для открытия контакта.", WorkHubFeedbackKind.Warning); return; }
-            string? cursor = null;
-            var cursors = new HashSet<string>(StringComparer.Ordinal);
-            var contacts = new List<DesktopContact>();
-            for (var pageNumber = 0; pageNumber < 500; pageNumber++)
+            if (IsPersonal)
             {
-                var result = await _client.GetContactsAsync(cursor, token);
-                if (!Current() || !Has("Contact.Read")) return;
-                if (result is not DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded page)
-                {
-                    if (result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Forbidden or DesktopWorkResult<IReadOnlyList<DesktopContact>>.AuthenticationFailure)
-                        Contacts = [];
-                    Apply(result, _ => { }); return;
-                }
-                contacts.AddRange(page.Value);
-                Contacts = contacts.DistinctBy(contact => contact.Id).ToArray();
-                SelectedContact = Contacts.FirstOrDefault(contact => contact.Id == id && contact.LifecycleState == "active");
-                _listCursor = page.NextCursor;
-                if (_listCursor is not null) _listCursors.Add(_listCursor);
-                NotifyPagination();
-                if (SelectedContact is not null) { await ContactSelectionTask; if (Current()) SetFeedback(null, WorkHubFeedbackKind.None); return; }
-                cursor = page.NextCursor;
-                if (cursor is null || !cursors.Add(cursor)) break;
+                var local = await _client.GetContactsAsync(token);
+                if (!Current()) return;
+                Apply(local, value => Contacts = value);
+                SelectedContact = Contacts.FirstOrDefault(c => c.Id == id && c.LifecycleState == "active");
+                if (SelectedContact is null) SetFeedback("Контакт больше не доступен. Обновите результаты поиска.", WorkHubFeedbackKind.Warning);
+                return;
             }
-            SetFeedback("Контакт больше не доступен. Обновите результаты поиска.", WorkHubFeedbackKind.Warning);
+            if (_client is IDesktopContactDetailsClient detailsClient)
+            {
+                var result = await detailsClient.GetContactAsync(id, token);
+                if (!Current() || !Has("Contact.Read")) return;
+                if (result is DesktopWorkResult<DesktopContactDetails>.Succeeded { Value.Contact.LifecycleState: "active" } found)
+                {
+                    Contacts = Contacts.Where(c => c.Id != id).Append(found.Value.Contact).ToArray();
+                    SelectedContact = found.Value.Contact;
+                    await ContactSelectionTask;
+                    if (Current()) SetFeedback(null, WorkHubFeedbackKind.None);
+                }
+                else
+                {
+                    if (result is DesktopWorkResult<DesktopContactDetails>.Forbidden or DesktopWorkResult<DesktopContactDetails>.NotFound or DesktopWorkResult<DesktopContactDetails>.AuthenticationFailure)
+                        Contacts = Contacts.Where(c => c.Id != id).ToArray();
+                    SetFeedback(result is DesktopWorkResult<DesktopContactDetails>.Forbidden ? "Недостаточно прав для открытия контакта."
+                        : "Контакт больше не доступен. Обновите результаты поиска.", WorkHubFeedbackKind.Warning);
+                }
+            }
+
         }
     }
 

@@ -1,0 +1,43 @@
+<UserControl x:Class="Task.Desktop.Views.InteractionsView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ AutomationProperties.AutomationId="InteractionsWorkspace" AutomationProperties.Name="Взаимодействия CRM">
+ <StackPanel Margin="0,20,0,12" Visibility="{Binding HasCounterparty, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+  <TextBlock Text="Взаимодействия" FontSize="20" FontWeight="SemiBold"/>
+  <TextBlock Text="{Binding Counterparty.Name}" FontWeight="SemiBold" Margin="0,8"/>
+  <TextBlock Text="Просмотр совпадений в одной странице API, до 50 записей. Полная история по контрагенту недоступна: сервер не поддерживает такой фильтр. Следующая страница заменяет текущую." TextWrapping="Wrap"/>
+  <WrapPanel Margin="0,8"><Button Content="Обновить просмотр" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}"/>
+   <Button Content="Следующая страница API" Command="{Binding MoreCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/>
+   <Button Content="Новое взаимодействие" Command="{Binding NewCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="NewInteractionButton"/>
+  </WrapPanel>
+  <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsBusy, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+  <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="InteractionMessage"/>
+  <ItemsControl ItemsSource="{Binding Items}"><ItemsControl.ItemTemplate><DataTemplate>
+   <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Text.Secondary}" Padding="0,8"><StackPanel>
+    <TextBlock Text="{Binding DateLabel}"/><TextBlock Text="{Binding TypeLabel}"/>
+    <Button Content="{Binding Subject}" HorizontalContentAlignment="Left" Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/>
+   </StackPanel></Border>
+  </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12">
+   <TextBlock Text="{Binding Details.Subject}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
+   <TextBlock Text="{Binding Details.TypeLabel}"/><TextBlock Text="{Binding Details.DateLabel}"/>
+   <TextBlock Text="Детали" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Details}" TextWrapping="Wrap"/>
+   <TextBlock Text="Следующий шаг" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.NextStep}" TextWrapping="Wrap"/>
+   <TextBlock Text="{Binding Details.DueLabel}"/>
+   <TextBlock Text="Доступные участники" FontWeight="SemiBold" Margin="0,8,0,2"/>
+   <ItemsControl ItemsSource="{Binding Participants}"/>
+   <Button Content="Редактировать взаимодействие" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8"/>
+  </StackPanel>
+  <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+   <StackPanel IsEnabled="{Binding CanChangeDraft}">
+    <TextBlock Text="Тип"/><ComboBox ItemsSource="{Binding TypeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Type}"/>
+    <TextBlock Text="Дата и время (ГГГГ-ММ-ДД ЧЧ:ММ ±ЧЧ:ММ)" Margin="0,8,0,2"/><TextBox Text="{Binding OccurredAt, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Дата взаимодействия"/>
+    <TextBlock Text="Тема" Margin="0,8,0,2"/><TextBox Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="InteractionSubject" AutomationProperties.Name="Тема взаимодействия"/>
+    <TextBlock Text="Детали" Margin="0,8,0,2"/><TextBox Text="{Binding DetailText, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" MaxHeight="160" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}"/>
+    <TextBlock Text="Следующий шаг (не создаёт задачу или напоминание)" Margin="0,8,0,2"/><TextBox Text="{Binding NextStep, UpdateSourceTrigger=PropertyChanged}" MaxLength="5000" TextWrapping="Wrap" Style="{StaticResource Task.Input.Text}"/>
+    <TextBlock Text="Срок следующего шага (необязательно, тот же формат)" Margin="0,8,0,2"/><TextBox Text="{Binding DueAt, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/>
+   </StackPanel>
+   <WrapPanel Margin="0,12"><Button Content="Сохранить взаимодействие" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="SaveInteractionButton"/>
+    <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/></WrapPanel>
+  </StackPanel>
+ </StackPanel>
+</UserControl>

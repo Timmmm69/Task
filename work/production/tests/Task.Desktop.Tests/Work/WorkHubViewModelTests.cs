@@ -15,9 +15,9 @@ public sealed partial class WorkHubViewModelTests
         await hub.OpenSearchObjectAsync("catalog_item", FakeClient.ItemId);
         Assert.Equal(FakeClient.ItemId, hub.SelectedCatalogItem?.Id);
         hub.Activate(WorkHubArea.Contacts);
-        var calls = client.ContactCallCount;
+        var calls = client.ContactDetailCalls;
         await hub.OpenSearchObjectAsync("contact", contact.Id);
-        Assert.True(client.ContactCallCount > calls);
+        Assert.True(client.ContactDetailCalls > calls);
         Assert.Equal(contact.Id, hub.SelectedContact?.Id);
     }
     [Fact]

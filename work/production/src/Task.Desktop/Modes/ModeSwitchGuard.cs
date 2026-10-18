@@ -84,7 +84,16 @@ internal static class ModeSwitchGuard
             Add("Контакт", () => !string.IsNullOrEmpty(work.NewContactFirstName + work.NewContactLastName + work.NewContactDisplayName),
                 () => work.HasRunningMutation, work.CreateContactCommand);
             if (work.ContactCard is { } contactCard)
+            {
                 Add("Карточка контакта", () => contactCard.IsEditing, () => work.HasRunningMutation, contactCard.SaveCommand);
+                Add("Канал или адрес контакта", () => contactCard.HasEditableRelationDraft, () => work.HasRunningMutation, contactCard.SaveRelationCommand);
+                Add("Удаление канала контакта", () => contactCard.IsConfirmingChannelDelete, () => work.HasRunningMutation, null);
+            }
+            if (work.Companies is { } companies)
+                Add("Карточка компании", () => companies.IsEditing, () => work.HasRunningMutation, companies.SaveCommand);
+            foreach (var interactions in new[] { work.ContactInteractions, work.CompanyInteractions })
+                if (interactions is not null)
+                    Add("Взаимодействие", () => interactions.IsEditing, () => interactions.IsMutating, interactions.SaveCommand);
             Add("Настройки профиля", () => work.HasProfileDraft, () => work.HasRunningMutation, work.SaveUserSettingsCommand);
             Add("Настройки уведомлений", () => work.HasNotificationDraft, () => work.HasRunningMutation, work.SaveNotificationPreferencesCommand);
             Add("Корпоративное напоминание", () => work.HasReminderDraft, () => work.HasRunningMutation, work.SaveReminderCommand);

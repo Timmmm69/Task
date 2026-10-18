@@ -41,6 +41,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить запрос. Результат записи не подтверждён; обновите карточку.";
     }
 
+    public InteractionsViewModel? Interactions { get; internal set; }
     public event Func<Guid, System.Threading.Tasks.Task>? OpenContactRequested;
     public IReadOnlyList<DesktopCompany> Items
     {

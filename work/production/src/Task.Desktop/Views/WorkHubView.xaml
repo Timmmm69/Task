@@ -145,6 +145,7 @@
                         </StackPanel>
                     </DataTemplate></ContentControl.ContentTemplate>
                 </ContentControl>
+                <views:InteractionsView DataContext="{Binding ContactInteractions}"/>
                 <TextBlock Text="Новый контакт" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
                 <TextBlock Text="Имя" Margin="0,12,0,4"/><TextBox Text="{Binding NewContactFirstName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactFirstNameTextBox"/>
                 <TextBlock Text="Фамилия" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactLastName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/>

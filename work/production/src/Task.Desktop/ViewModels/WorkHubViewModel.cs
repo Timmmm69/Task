@@ -127,6 +127,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         InitializeLocations();
         InitializeContactCard();
         InitializeCompanies();
+        InitializeInteractions();
         foreach (var command in Commands) command.ExecutionFailed += OnUnexpectedFailure;
         RefreshCommand.CanExecuteChanged += OnRefreshCanExecuteChanged;
     }
@@ -329,7 +330,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     internal bool HasRunningMutation => new[] { CreateCatalogItemCommand, CreateCatalogFolderCommand, MoveCatalogItemCommand, AddLocationCommand, CreateContactCommand,
         RestoreLifecycleItemCommand, SaveUserSettingsCommand, SaveNotificationPreferencesCommand, SaveOrganizationSettingsCommand,
         SaveReminderCommand, CancelReminderCommand, RestoreReminderCommand, SnoozeReminderCommand, DismissReminderCommand, SnoozeNotificationCommand }
-        .Any(command => command.IsExecuting) || Companies?.IsBusy == true || ContactCard?.IsSaving == true || _catalogMutationPending || Locations?.IsMutating == true || Links?.IsMutating == true;
+        .Any(command => command.IsExecuting) || ContactInteractions?.IsMutating == true || CompanyInteractions?.IsMutating == true || Companies?.IsBusy == true || ContactCard?.IsSaving == true || _catalogMutationPending || Locations?.IsMutating == true || Links?.IsMutating == true;
     internal bool HasProfileDraft => _userSettings is not null && _userSettings != (_userSettings with
     {
         Language = UserLanguage,
@@ -763,7 +764,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
-    public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); Companies?.Dispose(); ShowCompaniesCommand.Dispose(); ShowContactsCommand.Dispose(); ContactCard?.Dispose(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
+    public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); ContactInteractions?.Dispose(); CompanyInteractions?.Dispose(); Companies?.Dispose(); ShowCompaniesCommand.Dispose(); ShowContactsCommand.Dispose(); ContactCard?.Dispose(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

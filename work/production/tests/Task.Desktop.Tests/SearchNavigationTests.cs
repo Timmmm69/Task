@@ -15,7 +15,7 @@ public sealed class SearchNavigationTests
     [InlineData("contact", "contacts")]
     [InlineData("company", "contacts")]
     [InlineData("employee_profile", null)]
-    [InlineData("interaction", null)]
+    [InlineData("interaction", "contacts")]
     [InlineData("comment", null)]
     [InlineData("future_type", null)]
     public async System.Threading.Tasks.Task SearchRoutesUseObjectIdentityAndExplicitFallback(string type, string? route)
@@ -23,8 +23,12 @@ public sealed class SearchNavigationTests
         var parent = Guid.NewGuid();
         var id = type is "file_location" or "catalog_item" ? FakeClient.ItemId : Guid.NewGuid();
         var hit = new DesktopSearchResult(id, type, "Object", type == "file_location" ? FakeClient.ItemId : parent, 1, DateTimeOffset.UtcNow);
+        var interactionApi = new Work.InteractionsViewModelTests.Client();
+        interactionApi.Target = new(id, "contact", "Contact");
+        interactionApi.Values = [interactionApi.Record() with { Id = id }];
         var client = new FakeClient
         {
+            InteractionApi = interactionApi,
             SearchHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(
                 new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([hit])),
             Contacts = [new(id, 1, "Contact", "Contact", null, null, "active", "active")],
@@ -43,6 +47,7 @@ public sealed class SearchNavigationTests
             Assert.Equal(route, shell.SelectedSection?.Route);
             if (type == "contact") Assert.Equal(id, hub.SelectedContact?.Id);
             if (type == "company") Assert.Equal(id, hub.Companies?.Details?.Id);
+            if (type == "interaction") Assert.Equal(id, hub.ContactInteractions?.Details?.Id);
             if (route == "catalog") Assert.Equal(id, hub.SelectedCatalogItem?.Id);
         }
         else Assert.Contains("нет экрана", shell.SessionMessage);
