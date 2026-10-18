@@ -1,0 +1,290 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-18",
+  "reviewed_source_commit": "6bc072d9c2e3c33bbf7f0c1fd51dd665bf829d09",
+  "origin_main_before_publication": "2f50889e690d71a2d710ae49d055897d191d655f",
+  "branch": "feature/admin-user-management",
+  "release_solution_build": "passed",
+  "tests": {
+    "postgres_scoped": {
+      "total": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "evidence/postgres-scoped.trx"
+    },
+    "domain_postgres": {
+      "total": 875,
+      "passed": 875,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "evidence/Task.Tests.trx"
+    },
+    "api": {
+      "total": 631,
+      "passed": 631,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "evidence/Task.ServiceHosts.Tests.trx"
+    },
+    "desktop_serial": {
+      "total": 1436,
+      "passed": 1436,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "evidence/desktop-serial.trx",
+      "administration_passed": 160
+    }
+  },
+  "ci_without_postgres_solution": {
+    "novik_TIM_2026-10-18_13_08_17_net10.0.trx": {
+      "total": 867,
+      "passed": 848,
+      "failed": 0,
+      "skipped": 19,
+      "evidence": "evidence/ci-no-postgres/novik_TIM_2026-10-18_13_08_17_net10.0.trx"
+    },
+    "novik_TIM_2026-10-18_13_08_19_net10.0.trx": {
+      "total": 631,
+      "passed": 631,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "evidence/ci-no-postgres/novik_TIM_2026-10-18_13_08_19_net10.0.trx"
+    },
+    "novik_TIM_2026-10-18_13_08_21_net10.0.trx": {
+      "total": 1436,
+      "passed": 1436,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "evidence/ci-no-postgres/novik_TIM_2026-10-18_13_08_21_net10.0.trx"
+    }
+  },
+  "unique_full_suite_total": 2942,
+  "remaining_stage_code_findings": [],
+  "prior_package_integrity": [
+    {
+      "version": "11.1.0",
+      "entries": 30,
+      "failures": []
+    },
+    {
+      "version": "11.2.0",
+      "entries": 23,
+      "failures": []
+    },
+    {
+      "version": "11.3.0",
+      "entries": 39,
+      "failures": []
+    },
+    {
+      "version": "11.4.0",
+      "entries": 59,
+      "failures": []
+    }
+  ],
+  "resolved_findings": [
+    "new PostgreSQL role tests failed Windows cheap CI without DB configuration",
+    "default desktop test execution needed shared Windows focus serialization",
+    "whitespace errors in stage files"
+  ],
+  "whole_solution_format": {
+    "whole_solution_format": "existing_baseline_failures",
+    "affected_files": 37,
+    "all_match_origin_main": true,
+    "stage_files_format": "passed",
+    "files": [
+      {
+        "path": "work/production/src/Task.Desktop/ViewModels/ObjectLinkTargetPickerViewModel.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/src/Task.Desktop/ViewModels/TaskEditorViewModel.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/src/Task.Desktop/ViewModels/TaskSorting.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/src/Task.Desktop/ViewModels/WorkHubObjectLinks.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/src/Task.Desktop/ViewModels/WorkHubSettingsPresentation.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiStore.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarEmployeePickerTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarPickerWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Employees/EmployeeDirectoryClientTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectPickerWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/SettingsWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/TaskFilteringWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Tasks/InboxRetargetTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskFilteringTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskSortingTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Today/TodayPlanningTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Today/TodayPlanningWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopInboxWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinkTargetSearchTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopObjectLinksIntegrationTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopSettingsPresentationTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopWorkPaginationTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksAccessRegressionTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/WorkHubNavigationTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/WorkHubObjectLinksTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      },
+      {
+        "path": "work/production/tests/Task.Desktop.Tests/Work/WorkHubPaginationTests.cs",
+        "changed_in_stages": false,
+        "matches_origin_main": true
+      }
+    ]
+  },
+  "server_and_normative_contracts_changed": false,
+  "decision": "ready_for_authorized_fast_forward_to_main",
+  "role_assignments": "disabled; OQ-ADMIN-ROLES-READ remains open",
+  "manual_live_windows_acceptance": "not_run",
+  "desktop_default_runner": "xunit.runner.json copied to output; serial collections for CI and local runs",
+  "production_behavior_changed_in_this_review": false
+}

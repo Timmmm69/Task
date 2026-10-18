@@ -1,0 +1,171 @@
+{
+  "version": "1.0.0",
+  "reviewed_source_commit": "6bc072d9c2e3c33bbf7f0c1fd51dd665bf829d09",
+  "files": [
+    {
+      "path": "evidence/baseline-format-findings.json",
+      "bytes": 6776,
+      "sha256": "eae044db871c700ea998be5586d847bfa275562679beec021c87ea65dfd70f50"
+    },
+    {
+      "path": "evidence/boundaries.log",
+      "bytes": 986,
+      "sha256": "a48e1297d824aed11453a56aa335427b83792a9444ab11741f7348c3a408d070"
+    },
+    {
+      "path": "evidence/build.log",
+      "bytes": 1923,
+      "sha256": "71cdf7a3ad32c315b5ddf2985e6b29623b96d9f6a9c533df1a7580510fce41ce"
+    },
+    {
+      "path": "evidence/ci-no-postgres/novik_TIM_2026-10-18_13_08_17_net10.0.trx",
+      "bytes": 1252803,
+      "sha256": "692a3c7940f6f91cb2ae82736e71e7017a0d59e6de739af00b9666c8c0f6a850"
+    },
+    {
+      "path": "evidence/ci-no-postgres/novik_TIM_2026-10-18_13_08_19_net10.0.trx",
+      "bytes": 987423,
+      "sha256": "1e11931175fe70d221c7ef4bcc0d06d02243b7257d5a08a41bf8144e5299fada"
+    },
+    {
+      "path": "evidence/ci-no-postgres/novik_TIM_2026-10-18_13_08_21_net10.0.trx",
+      "bytes": 2204628,
+      "sha256": "f24e75d572f31a1da81709af3f88b3418af4ea5ff144858bfc9706da51251e14"
+    },
+    {
+      "path": "evidence/ci-no-postgres-after.log",
+      "bytes": 1827,
+      "sha256": "7a781cc5b0889cb0c530ed51a67e94947903f76e4f7ccf8f5b087e631d5ec1d9"
+    },
+    {
+      "path": "evidence/ci-no-postgres-after.trx",
+      "bytes": 6118,
+      "sha256": "3a959e37fc7ae6a207ed5da56b2e520f8fc2c15826fa43c3f4cf0713653e34c8"
+    },
+    {
+      "path": "evidence/ci-no-postgres-before.log",
+      "bytes": 10479,
+      "sha256": "8b9a7fb1dcfd11d25d464b540123aa206182d6c91d68515d61389878e2763ca5"
+    },
+    {
+      "path": "evidence/ci-no-postgres-before.trx",
+      "bytes": 34637,
+      "sha256": "96efb1ece1f8c28000aab4cc01dc2412078977935dd6fd94d1a7da8584bb8df3"
+    },
+    {
+      "path": "evidence/ci-no-postgres-solution.log",
+      "bytes": 14641,
+      "sha256": "6e209b6462eb6a4c1d43e89aec1d50772f959cfcd8175dd5d952bcecad0df7fc"
+    },
+    {
+      "path": "evidence/desktop-serial.log",
+      "bytes": 865,
+      "sha256": "6337079f2bf6bf9cc922353b0d5cb57a08d802b601a84c722f6187e1a0012092"
+    },
+    {
+      "path": "evidence/desktop-serial.trx",
+      "bytes": 2204628,
+      "sha256": "0b0b554e369c871ac668a7b0c43b0286391b94567e5619490e9266ffb34e2a49"
+    },
+    {
+      "path": "evidence/format-final.log",
+      "bytes": 134603,
+      "sha256": "ea9a86110999a7c7c48daa052d6f46034f33dc78f6b95e09c6234270e3c21c92"
+    },
+    {
+      "path": "evidence/format-scoped-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/postgres-runtime.json",
+      "bytes": 74,
+      "sha256": "2c7c60960a829174bae14409f1a934a859e2f4c23c296359c29d951390c475fb"
+    },
+    {
+      "path": "evidence/postgres-scoped.log",
+      "bytes": 831,
+      "sha256": "6e5ea9bcd95e64c5066a3b324e5c302453e382fa4ae2c174c04ca61573f54942"
+    },
+    {
+      "path": "evidence/postgres-scoped.trx",
+      "bytes": 32607,
+      "sha256": "034e3f4c516fbe5a04b064f91848200315f3bcd07a5d61608f740b2b92bc0260"
+    },
+    {
+      "path": "evidence/prior-package-verification.json",
+      "bytes": 313,
+      "sha256": "755badfdb111434c45207a15d8927c03e4e35a07229d4d273b9b8601a0a89185"
+    },
+    {
+      "path": "evidence/publication-gate.log",
+      "bytes": 4544,
+      "sha256": "540400c8cebbb25c1bf0df6229cfe789ca075b3d473df80ae7f9ff12f1d618c2"
+    },
+    {
+      "path": "evidence/Task.ServiceHosts.Tests.log",
+      "bytes": 886,
+      "sha256": "080308a9b7a9fe287b7289c6ca8086bb78a9f529c9a0a0766d4d5ff004b3feb0"
+    },
+    {
+      "path": "evidence/Task.ServiceHosts.Tests.trx",
+      "bytes": 987423,
+      "sha256": "6804911a5f0d240236adcd3cf81bd134edbab7f58e8d1050bde41a3db69e1b8e"
+    },
+    {
+      "path": "evidence/Task.Tests.log",
+      "bytes": 824,
+      "sha256": "10daeb1e5df909f19871b221be6a2770d138de5d09659826c0a98356d4994a52"
+    },
+    {
+      "path": "evidence/Task.Tests.trx",
+      "bytes": 1244839,
+      "sha256": "7078e8914886fa61bb47fe0153db4bbc4bde72ce823a6e9a293dfa741d3aac90"
+    },
+    {
+      "path": "report.md",
+      "bytes": 4255,
+      "sha256": "e38757d23a2813580a71e1c4dd295b743090ebf4a24b45408a6b943c90b4a461"
+    },
+    {
+      "path": "source/desktop-serial.runsettings",
+      "bytes": 232,
+      "sha256": "1bcbcc909b72347f3b948097c45f6fd1e14db4e682f89764e200986626e296dc"
+    },
+    {
+      "path": "source/Review-Publication.py",
+      "bytes": 11565,
+      "sha256": "f578226844a4d9cec17efa342ccf1a920d266ac8a9edc724df65aff1bd6c5cc4"
+    },
+    {
+      "path": "source/Run-Gate.ps1",
+      "bytes": 3991,
+      "sha256": "847cacacc58e19f1771817c2fbfcd74aa0e04021adba7e2af3dcc8b55d03c3be"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj",
+      "bytes": 1100,
+      "sha256": "e9e13a482d991d14d1527e6ce205cfedc2b42f589ef374b457074d71e2f3064c"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/xunit.runner.json",
+      "bytes": 69,
+      "sha256": "ebeeae03ee3082c11aeb2729d9d0c4bd489a1c86a2a45078c63016c3da3bb66c"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresAdministrationRoleTests.cs",
+      "bytes": 6637,
+      "sha256": "fb65e4971d89140d0cce6d953396c7d998c6d23697c0e0e80f408117a22db293"
+    },
+    {
+      "path": "validation-report.json",
+      "bytes": 10026,
+      "sha256": "594ce1da41ac2b828358c47387a383860ebb33819aaa6195b6626b16109901b8"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}
