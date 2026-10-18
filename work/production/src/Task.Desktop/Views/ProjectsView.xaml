@@ -44,6 +44,11 @@
             <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel DataContext="{Binding SelectedItem}">
                     <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
+                    <Expander Header="Основные сведения" state:ViewState.Section="projects/v1/overview" IsExpanded="True"
+                              AutomationProperties.AutomationId="ProjectOverviewSection">
+                    <StackPanel Margin="0,10,0,0">
+                    <TextBlock Text="{Binding DataContext.OverviewSection.StatusText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                               TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"/>
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <StackPanel>
@@ -64,8 +69,15 @@
                         <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12"><StackPanel><TextBlock Text="Руководитель" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding ManagerText}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
                     </UniformGrid>
 
-                    <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Margin="0,0,0,14">
+                    </StackPanel>
+                    </Expander>
+
+                    <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Collapsed="MembersCollapsed" AutomationProperties.AutomationId="ProjectMembersSection" Margin="0,0,0,14">
                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
+                            <TextBlock Text="{Binding MembersSection.StatusText}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                       AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectMembersStatus"/>
+                            <Button Content="Обновить участников" Command="{Binding ReloadMembersCommand}" HorizontalAlignment="Left"
+                                    Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,10" AutomationProperties.AutomationId="ReloadProjectMembers"/>
                             <ContentControl Content="{Binding MemberPicker}" IsEnabled="{Binding CanManageMembers}" Margin="0,0,0,10">
                                 <ContentControl.Style><Style TargetType="ContentControl"><Style.Triggers><DataTrigger Binding="{Binding UsesEmployeePicker}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ContentControl.Style>
                                 <ContentControl.ContentTemplate><DataTemplate><views:EmployeePickerView/></DataTemplate></ContentControl.ContentTemplate>

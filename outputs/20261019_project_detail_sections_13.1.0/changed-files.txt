@@ -1,0 +1,14 @@
+.project-dashboard/roadmap.json
+work/production/docs/PROJECT-DETAIL-SECTIONS-13.1.md
+work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs
+work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs
+work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs
+work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs
+work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+work/production/src/Task.Desktop/Views/ProjectsView.xaml
+work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
+work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs

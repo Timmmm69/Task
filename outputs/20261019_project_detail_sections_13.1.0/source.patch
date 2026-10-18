@@ -1,0 +1,1020 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index d6b4d5e..df835fd 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -186,10 +186,11 @@
+         "outputs/20260909_prod04_projects_members_1.0.0/validation-report.md",
+         "outputs/20261015_project_employee_picker_5_2_1.0.0/validation-report.md",
+         "outputs/20261015_employee_picker_final_review_1.0.1/validation-report.md",
+-        "outputs/20261016_project_related_tasks_8.1.0/validation-report.md"
++        "outputs/20261016_project_related_tasks_8.1.0/validation-report.md",
++        "outputs/20261019_project_detail_sections_13.1.0/validation-report.md"
+       ],
+-      "note": "Production Windows vertical slice подключён к серверным API: проекты, статусы, сроки, роли и активные участники, связанные задачи, create/update/archive и membership commands. UI применяет только authoritative responses, учитывает capabilities, ETag/idempotency и безопасные ошибки. Source gate подтверждён; live PostgreSQL/customer deployment и native UIA walkthrough остаются deployment acceptance. 2026-10-15: Этап 5.2 подключает общий Employee Picker к участникам и необязательному руководителю проектов; имена через разрешённый User.Read, повторная проверка активности, защита от дублей и устаревших ответов, существующие DTO/If-Match/idempotency. Реальные WPF-формы и негативные сценарии проверены. Без User.Read сохранён UUID-сценарий; полный role coverage требует отдельного решения по permissions. Progress/status не повышены. 2026-10-15: Финальный review 5.1–5.3: исправлен live-grant User.Read в открытой форме руководителя, с preselect сохранённого назначения и нулём запросов без права. Release build, 959 desktop, 259 endpoint и 233 domain/real PostgreSQL checks PASS; 206 scoped PASS. Native WPF regression пройдена; прежний нестабильный Window.Activate отмечен в истории receipts. Готово к публикации этапов в main; permission/API ограничения сохраняются, progress/status не повышены. 2026-10-16: Этап 8.1 отделяет связанные задачи от загрузки карточки: одна cursor-страница по явной команде, partial/complete/empty, cancellation и session guards, retry/dedupe/cursor cycle detection. Без обращения к задачам 0 запросов вместо 1/5/50 в детерминированных фикстурах; полный обход не ускорен. Baseline 9, полный desktop 1149, финальный Projects/ViewState 82 PASS; native WPF и Release solution build PASS. API/DTO/БД/permissions сохранены. Локальная ветка perf/project-related-tasks, main не изменён; progress/status не повышены.",
+-      "updated_at": "2026-10-16",
++      "note": "Production Windows vertical slice подключён к серверным API: проекты, статусы, сроки, роли и активные участники, связанные задачи, create/update/archive и membership commands. UI применяет только authoritative responses, учитывает capabilities, ETag/idempotency и безопасные ошибки. Source gate подтверждён; live PostgreSQL/customer deployment и native UIA walkthrough остаются deployment acceptance. 2026-10-15: Этап 5.2 подключает общий Employee Picker к участникам и необязательному руководителю проектов; имена через разрешённый User.Read, повторная проверка активности, защита от дублей и устаревших ответов, существующие DTO/If-Match/idempotency. Реальные WPF-формы и негативные сценарии проверены. Без User.Read сохранён UUID-сценарий; полный role coverage требует отдельного решения по permissions. Progress/status не повышены. 2026-10-15: Финальный review 5.1–5.3: исправлен live-grant User.Read в открытой форме руководителя, с preselect сохранённого назначения и нулём запросов без права. Release build, 959 desktop, 259 endpoint и 233 domain/real PostgreSQL checks PASS; 206 scoped PASS. Native WPF regression пройдена; прежний нестабильный Window.Activate отмечен в истории receipts. Готово к публикации этапов в main; permission/API ограничения сохраняются, progress/status не повышены. 2026-10-16: Этап 8.1 отделяет связанные задачи от загрузки карточки: одна cursor-страница по явной команде, partial/complete/empty, cancellation и session guards, retry/dedupe/cursor cycle detection. Без обращения к задачам 0 запросов вместо 1/5/50 в детерминированных фикстурах; полный обход не ускорен. Baseline 9, полный desktop 1149, финальный Projects/ViewState 82 PASS; native WPF и Release solution build PASS. API/DTO/БД/permissions сохранены. Локальная ветка perf/project-related-tasks, main не изменён; progress/status не повышены. 2026-10-19: Этап 13.1 — расширена существующая карточка проекта: Expander основных сведений, независимые состояния/повтор участников, контекст шести разделов, отмена и защита поздних ответов при смене проекта/организации/прав/сессии. Задачи остаются явными и постраничными; файлы/контакты/история — неподключённые точки интеграции без декоративного UI и запросов. Финальный общий desktop 1621 PASS / 0 FAIL / 0 SKIP; native WPF focus/traversal/expand-collapse, сохранение раскрытия и Release solution build PASS. Исходные сбои baseline CLR и промежуточного debounce сохранены в evidence. Live Corporate API, NAS, Narrator и physical mixed-DPI не проверялись. Реализация в feature/project-detail-sections, в main не опубликована; progress/status сохранены.",
++      "updated_at": "2026-10-19",
+       "priority": 3,
+       "dependencies": [
+         "DATA-04",
+diff --git a/work/production/docs/PROJECT-DETAIL-SECTIONS-13.1.md b/work/production/docs/PROJECT-DETAIL-SECTIONS-13.1.md
+new file mode 100644
+index 0000000..28d432d
+--- /dev/null
++++ b/work/production/docs/PROJECT-DETAIL-SECTIONS-13.1.md
+@@ -0,0 +1,112 @@
++# Этап 13.1 — разделы существующей карточки проекта
++
++Версия: 13.1.0. База: `dcbaca2`, актуальный `origin/main` на начало работы 2026-10-19.
++Ветка: `feature/project-detail-sections`. Исходная рабочая копия оставлена без изменений;
++реализация выполнена в `work/project_detail_sections_13_1/repo`.
++
++## Исходное поведение и сохранённые функции
++
++| Сценарий | До изменений | После изменений |
++|---|---|---|
++| Список | Project.Read, cursor-обход, серверный порядок | Сохранён; отказ чтения списка очищает карточку |
++| Выбор | GET выбранного проекта, CancellationToken и identity guard | Сохранён; проверяется также OrganizationId ответа |
++| Карточка | Сводка, два Expander | Добавлен Expander основных сведений; существующие компоненты сохранены |
++| Редактирование | Тот же editor, UUID/picker, PATCH/If-Match, сохранение черновика при 412 | Сохранено; поздняя запись повторно проверяет доступ |
++| Архивирование | Только Completed, серверное подтверждение | Сохранено; ответ старой карточки не меняет новую |
++| Участники | GET только при Project.ManageMembers, mutations и серверная версия | Тот же API; отдельная загрузка/ошибка/повтор, изоляция 403 |
++| Employee Picker | User.Read, UUID fallback, проверка активности перед записью | Сохранён; сбой необязательных имён не ломает обзор |
++| Задачи | Явная команда, одна cursor-страница, проверка ProjectId | Алгоритм сохранён; больше не ждёт загрузку участников |
++| Создание задачи | MainWindowViewModel.AddProjectTaskCommand и обычный Task editor | Привязка команды сохранена; проверяется существующими TaskContextActions tests |
++| Ошибки/offline | Запрет записи, подтверждённые данные только в памяти, очистка при logout | Сохранено; состояния участников отделены от состояния экрана |
++
++Baseline-проверки до правок: 85 PASS / 1 FAIL. Сбой существующего native ViewState
++теста — авария дочернего CLR при остановке testhost; исходный TRX сохранён.
++Фактические результаты после изменений и все промежуточные неуспехи находятся в validation-report.
++
++## Компоненты
++
++- `ProjectDetailSectionViewModel`: контекст ProjectId/OrganizationId, CanRead, HasConfirmedData,
++  состояния и безопасный текст, один принадлежащий разделу запрос. BeginRequest отменяет
++  предыдущий запрос; IsCurrent проверяет владельца запроса, token и проект; FinishRequest
++  освобождает ссылку, фактический async-владелец выполняет Dispose.
++- `ProjectsViewModel.Sections.cs`: шесть владельцев состояния, смена контекста, общая отмена,
++  загрузка участников и их ролей через существующий IDesktopProjectsApiClient.
++- `ProjectsViewModel.cs`: прежний orchestration и команды. IsDetailLoading относится к
++  подтверждению обзора. CurrentDetailsOperation оставлен совместимым: ожидает также
++  первоначальную загрузку участников/имён; UI не обязан ждать эту операцию для задач.
++- `ProjectsViewModel.RelatedTasks.cs`: прежние cursor/request/generation правила;
++  TasksSection отображает существующий ProjectTasksState без второго загрузчика.
++- `ProjectsView.xaml`: основные сведения, участники и задачи — обычные WPF Expander.
++  Существующие ключи preferences сохранены; добавлен `projects/v1/overview` в allowlist.
++  Persistence хранит только раскрытие; идентификаторы проектов и данные не записываются.
++- FilesSection, ContactsSection, HistorySection: изолированные неподключённые точки расширения
++  с актуальным контекстом. IsConnected/CanRead=false; состояния NotLoaded, без запросов и
++  без декоративных UI-заглушек. Это не реализованные разделы файлов/CRM/истории.
++
++## Состояния и доступ
++
++| Состояние | Правило |
++|---|---|
++| NotLoaded | Запрос не выполнялся; также неподключённый функциональный раздел |
++| Loading | Выполняется текущий запрос только данного раздела |
++| Loaded | Подтверждённый ответ с доступными данными |
++| Empty | Только успешный полный пустой ответ; ошибки не превращаются в пустоту |
++| Forbidden | Нет capability, либо сервер отказал в чтении раздела; защищённые данные очищаются |
++| Offline | Сеть отключена; ранее подтверждённые данные в текущем контексте остаются read-only |
++| ServerUnavailable | Ошибка транспорта/API; подтверждённые данные текущего раздела сохраняются |
++| Error | Некорректный ответ или иная ошибка; безопасный текст без содержимого исключения |
++| PartialAccess | Роли/имена недоступны при доступном составе участников; у задач также неполная страница поиска |
++| Cancelled | Прерванная загрузка; поздний результат не публикуется |
++
++Обзор требует Project.Read. Чтение участников требует Project.Read и Project.ManageMembers:
++именно такая policy действует у GET `/projects/{id}/members`, несмотря на write-only описание
++в старом UX baseline SCR-064. Имена отдельно требуют User.Read; отсутствие права не запускает
++User API. Задачи требуют Project.Read, Task.Read и существующий typed Tasks client.
++Записи дополнительно требуют активную сессию/экран, online и соответствующую существующую
++capability. Никаких permissions, маршрутов, DTO или бизнес-статусов не добавлено.
++
++403 состава участников очищает только состав; не запрещает чтение/редактирование обзора
++или задачи. Terminal authentication failure завершает всю сессию. Отзыв права чтения,
++закрытие карточки, смена ProjectId/OrganizationId очищают контекст и защищённые данные.
++Сворачивание участников отменяет только их запрос; сворачивание задач — только их поиск.
++Unload, Deactivate, Dispose, logout и offline отменяют текущие запросы всей карточки.
++Проверка identity/token действует и для транспорта, который игнорирует CancellationToken.
++
++Участники первоначально загружаются автоматически после обзора, как раньше; при повторе
++используется отдельная команда. Задачи по-прежнему загружаются только явно и постранично.
++Неподключённые разделы не создают сетевую нагрузку. Подтверждённые результаты не кэшируются
++между сессиями или организациями. Постоянного offline-кэша и очереди записей нет.
++
++## Источники и границы
++
++Проверены концепция Task, раздел 3.13 архитектуры, доступный распакованный контракт 2.2,
++архив UX 3.4 (SCR-060–072/state matrix), PRD candidate 4.1.1 и production route policies.
++Точное имя ZIP 2.2 из AGENTS.md отсутствует в Git-базе; имеются распакованный каталог и
++`Organizer_Stage2_Technical_Specification_2.2_Repacked.zip`. Sources не изменялись.
++В production API есть история проекта, но её интеграция исключена заданием этапа.
++Project comments endpoint в ProductApiRoutes отсутствует; комментарии не добавлялись.
++Алгоритм поиска связанных задач, серверные object scopes и SQL не изменены.
++
++## Следующий этап: связанные файлы
++
++1. Подтвердить link type, source/target read policies и поля существующих Object Links /
++   Catalog API. Отдельно проверить FileReference.Open для открытия расположения;
++   FileCatalog.Read сам по себе не даёт права на путь. Не придумывать ProjectFiles API.
++2. Подключить FilesSection с IsConnected=true и отдельным вычислением CanRead из
++   фактического контракта. Включить эту policy в SetDetailContext, не наследовать доступ
++   к файлам только от Project.Read. До проверки capability запрос не отправлять.
++3. Добавить file-owned ViewModel/partial loader с существующим injected API client.
++   Копировать lifecycle LoadMembersSectionAsync: BeginRequest/using, snapshot контекста,
++   IsCurrent после каждого await и непосредственно перед публикацией, FinishRequest.
++   Данные файлов держать в file-owned коллекции, очищать на смене контекста/прав/сессии.
++4. Реальный Expander и стабильный allowlisted ViewState key добавлять вместе с реальным
++   содержимым. Загружать по явной команде или первому разрешённому раскрытию; не запускать
++   тяжёлую загрузку всех связей при восстановлении preferences.
++5. Отдельно моделировать недоступный target/path и частичный доступ. Forbidden не считать
++   Empty; auth failure завершает сессию; ошибки раздела не меняют состояние обзора.
++6. Проверить смену A→B→A, одинаковый project id в разных организациях, поздний ответ,
++   logout/revoke, offline/reconnect, pagination, независимые ошибки, клавиатуру и сохранение
++   раскрытия. После этого повторить профильные Projects/ObjectLinks/Catalog tests и build.
++
++Live Corporate API, ручная работа с NAS, Narrator и физическая mixed-DPI матрица не входят
++в подтверждённые результаты этого этапа; см. validation-report для фактически выполненных gates.
+diff --git a/work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs b/work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs
+index 7e9f252..9a09e33 100644
+--- a/work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs
++++ b/work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs
+@@ -29,7 +29,7 @@ internal static class ViewStateKeys
+     internal static readonly HashSet<string> SortFields = ["TypeLabel", "Title"];
+     internal static readonly HashSet<string> Sections =
+     [
+-        "main/v1/inspector", "inbox/v1/inspector", "projects/v1/members", "projects/v1/tasks",
++        "main/v1/inspector", "inbox/v1/inspector", "projects/v1/members", "projects/v1/tasks", "projects/v1/overview",
+         "today/v1/queue", "today/v1/inspector", "work/v1/links",
+         "task/v1/checklist", "task/v1/subtasks", "task/v1/files", "task/v1/predecessors",
+         "task/v1/comments", "task/v1/history", "task-editor/v1/planning",
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs
+new file mode 100644
+index 0000000..bd8064d
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs
+@@ -0,0 +1,86 @@
++namespace Task.Desktop.ViewModels;
++
++public enum ProjectSectionState
++{
++    NotLoaded, Loading, Loaded, Empty, Forbidden, Offline, ServerUnavailable, Error, PartialAccess, Cancelled
++}
++
++/// <summary>Session-local section context and request lifetime; never persists business data.</summary>
++public sealed class ProjectDetailSectionViewModel : ViewModelBase
++{
++    private CancellationTokenSource? _request;
++    private Guid? _projectId;
++    private Guid? _organizationId;
++    private ProjectSectionState _state;
++    private bool _canRead;
++    private bool _hasConfirmedData;
++    private string? _message;
++
++    internal ProjectDetailSectionViewModel(string key, bool isConnected = true)
++    { Key = key; IsConnected = isConnected; }
++
++    public string Key { get; }
++    public bool IsConnected { get; }
++    public Guid? ProjectId => _projectId;
++    public Guid? OrganizationId => _organizationId;
++    public bool CanRead => _canRead;
++    public bool HasConfirmedData => _hasConfirmedData;
++    public ProjectSectionState State => _state;
++    public bool IsLoading => State == ProjectSectionState.Loading;
++    public string StatusText => _message ?? State switch
++    {
++        ProjectSectionState.Loading => "Загрузка раздела…",
++        ProjectSectionState.Loaded => "Данные подтверждены сервером.",
++        ProjectSectionState.Empty => "Доступных данных нет.",
++        ProjectSectionState.Forbidden => "Нет доступа к разделу.",
++        ProjectSectionState.Offline => "Нет соединения. Подтверждённые данные доступны для просмотра.",
++        ProjectSectionState.ServerUnavailable => "Сервер недоступен. Повторите загрузку раздела.",
++        ProjectSectionState.Error => "Не удалось загрузить раздел. Повторите попытку.",
++        ProjectSectionState.PartialAccess => "Часть сведений недоступна.",
++        ProjectSectionState.Cancelled => "Загрузка остановлена.",
++        _ => "Раздел ещё не загружен."
++    };
++
++    internal void SetContext(Guid? projectId, Guid? organizationId, bool canRead, bool online)
++    {
++        Cancel();
++        _projectId = projectId; _organizationId = organizationId; _canRead = IsConnected && canRead;
++        OnPropertyChanged(nameof(ProjectId)); OnPropertyChanged(nameof(OrganizationId)); OnPropertyChanged(nameof(CanRead));
++        SetState(!IsConnected || projectId is null ? ProjectSectionState.NotLoaded
++            : !CanRead ? ProjectSectionState.Forbidden : !online ? ProjectSectionState.Offline : ProjectSectionState.NotLoaded, false);
++    }
++
++    internal CancellationTokenSource BeginRequest(CancellationToken token)
++    {
++        Cancel();
++        if (!CanRead || ProjectId is null) throw new InvalidOperationException("Section context is not readable.");
++        _request = CancellationTokenSource.CreateLinkedTokenSource(token);
++        SetState(ProjectSectionState.Loading);
++        return _request;
++    }
++
++    internal bool IsCurrent(CancellationTokenSource request, Guid projectId) =>
++        ReferenceEquals(_request, request) && !request.IsCancellationRequested && CanRead && ProjectId == projectId;
++
++    internal void FinishRequest(CancellationTokenSource request)
++    {
++        if (!ReferenceEquals(_request, request)) return;
++        _request = null;
++        if (IsLoading) SetState(ProjectSectionState.Cancelled);
++    }
++
++    internal void Cancel()
++    {
++        var request = _request; _request = null;
++        request?.Cancel(); // The request owner disposes after its async operation exits.
++        if (IsLoading) SetState(ProjectSectionState.Cancelled);
++    }
++
++    internal void SetState(ProjectSectionState state, bool? hasConfirmedData = null, string? message = null)
++    {
++        _state = state; _message = message;
++        if (hasConfirmedData.HasValue) _hasConfirmedData = hasConfirmedData.Value;
++        OnPropertyChanged(nameof(State)); OnPropertyChanged(nameof(IsLoading));
++        OnPropertyChanged(nameof(HasConfirmedData)); OnPropertyChanged(nameof(StatusText));
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs
+index c2dd081..0a081f8 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs
+@@ -80,7 +80,7 @@ public sealed partial class ProjectsViewModel
+         : "Каталог недоступен без User.Read. Укажите UUID активной учётной записи; сервер проверит доступ. Полный переход на выбор по имени требует решения по правам.";
+     public Guid? NewMemberAccountId => UsesEmployeePicker ? MemberPicker?.SelectedUserAccountId
+         : Guid.TryParse(NewMemberUserId.Trim(), out var id) && id != Guid.Empty ? id : null;
+-    private bool CanAddMember => CanManageMembers && !IsDetailLoading && _membersConfirmed
++    private bool CanAddMember => CanManageMembers && !IsDetailLoading && !MembersSection.IsLoading && _membersConfirmed
+         && SelectedItem is not null && NewMemberRole is not null && NewMemberAccountId is { } id
+         && !Members.Any(member => member.UserAccountId == id)
+         && (!UsesEmployeePicker || MemberPicker?.State == EmployeePickerState.Ready);
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs
+index 64ae70b..b83c736 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs
+@@ -48,6 +48,19 @@ public sealed partial class ProjectsViewModel
+ 
+     private void NotifyRelatedTasks()
+     {
++        TasksSection.SetState(RelatedTasksState switch
++        {
++            ProjectTasksState.Loading => ProjectSectionState.Loading,
++            ProjectTasksState.Complete => ProjectSectionState.Loaded,
++            ProjectTasksState.Empty => ProjectSectionState.Empty,
++            ProjectTasksState.Forbidden or ProjectTasksState.SessionEnded => ProjectSectionState.Forbidden,
++            ProjectTasksState.Offline => ProjectSectionState.Offline,
++            ProjectTasksState.ServerUnavailable => ProjectSectionState.ServerUnavailable,
++            ProjectTasksState.Partial => ProjectSectionState.PartialAccess,
++            ProjectTasksState.Cancelled => ProjectSectionState.Cancelled,
++            ProjectTasksState.Failed => ProjectSectionState.Error,
++            _ => ProjectSectionState.NotLoaded
++        }, RelatedTasks.Count > 0 || RelatedTasksState == ProjectTasksState.Empty, RelatedTasksStatusText);
+         OnPropertyChanged(nameof(IsRelatedTasksLoading));
+         OnPropertyChanged(nameof(RelatedTasksStatusText));
+         OnPropertyChanged(nameof(RelatedTasksActionText));
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+new file mode 100644
+index 0000000..059e418
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+@@ -0,0 +1,92 @@
++using Task.Desktop.Projects;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed partial class ProjectsViewModel
++{
++    public ProjectDetailSectionViewModel OverviewSection { get; } = new("overview");
++    public ProjectDetailSectionViewModel MembersSection { get; } = new("members");
++    public ProjectDetailSectionViewModel TasksSection { get; } = new("tasks");
++    // Integration slots: no UI or requests until a real loader and its access policy are connected.
++    public ProjectDetailSectionViewModel FilesSection { get; } = new("files", false);
++    public ProjectDetailSectionViewModel ContactsSection { get; } = new("contacts", false);
++    public ProjectDetailSectionViewModel HistorySection { get; } = new("history", false);
++    public IReadOnlyList<ProjectDetailSectionViewModel> DetailSections =>
++        [OverviewSection, MembersSection, TasksSection, FilesSection, ContactsSection, HistorySection];
++    public AsyncCommand ReloadMembersCommand { get; private set; } = null!;
++    private bool CanReadMembers => CanRead && _capabilities.Contains("Project.ManageMembers");
++
++    public void CancelMembersSection()
++    {
++        MembersSection.Cancel(); NotifyCommands();
++    }
++
++    private void SetDetailContext()
++    {
++        foreach (var section in DetailSections)
++            section.SetContext(SelectedItem?.Id, SelectedItem?.Source.OrganizationId,
++                _sessionAvailable && CanRead && (section != MembersSection || CanReadMembers)
++                && (section != TasksSection || _capabilities.Contains("Task.Read") && _tasks is not null), _networkAvailable);
++    }
++
++    public void CancelDetailSections()
++    {
++        foreach (var section in DetailSections) section.Cancel();
++        _detailRequest?.Cancel(); CancelRelatedTasks(); IsDetailLoading = false;
++        ReloadMembersCommand.RaiseCanExecuteChanged();
++    }
++
++    private async System.Threading.Tasks.Task LoadMembersSectionAsync(ProjectItemViewModel item, CancellationToken token)
++    {
++        if (!IsActive || !_sessionAvailable || !_networkAvailable || !CanReadMembers || !_projectConfirmed
++            || !ReferenceEquals(SelectedItem, item)) return;
++        using var request = MembersSection.BeginRequest(token);
++        bool Current() => MembersSection.IsCurrent(request, item.Id) && ReferenceEquals(SelectedItem, item)
++            && IsActive && _sessionAvailable && _networkAvailable && CanReadMembers && !_disposed;
++        ReloadMembersCommand.RaiseCanExecuteChanged();
++        try
++        {
++            // Role failures belong to this section; overview and task paging remain usable.
++            var roles = await _client.GetRolesAsync(request.Token);
++            if (!Current()) return;
++            if (roles is DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.AuthenticationFailure)
++            { UpdateSessionState(false); return; }
++            Roles = roles is DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded catalog ? catalog.Value : [];
++            var result = await _client.GetMembersAsync(item.Id, request.Token);
++            if (!Current()) return;
++            switch (result)
++            {
++                case DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded success:
++                    Members = success.Value.Select(member => new ProjectMemberItemViewModel(member, Roles)).ToArray();
++                    _membersConfirmed = true;
++                    MembersSection.SetState(roles is not DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded
++                        ? ProjectSectionState.PartialAccess : Members.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
++                    try
++                    {
++                        await ResolvePeopleAsync(item, request.Token);
++                        if (Current() && _directoryForbidden)
++                            MembersSection.SetState(ProjectSectionState.PartialAccess, message: "Участники загружены. Нет доступа к именам сотрудников (User.Read).");
++                    }
++                    catch (OperationCanceledException) when (request.IsCancellationRequested) { }
++                    catch (Exception) { if (Current()) MembersSection.SetState(ProjectSectionState.PartialAccess, message: "Участники загружены. Имена сотрудников временно недоступны."); }
++                    break;
++                case DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.AuthenticationFailure:
++                    UpdateSessionState(false); break;
++                case DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Forbidden:
++                case DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.NotFound:
++                    Members = []; _membersConfirmed = false;
++                    MembersSection.SetState(ProjectSectionState.Forbidden, false); break;
++                case DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.ServerUnavailable:
++                    MembersSection.SetState(ProjectSectionState.ServerUnavailable); break;
++                default: MembersSection.SetState(ProjectSectionState.Error); break;
++            }
++        }
++        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
++        catch (Exception) { if (Current()) MembersSection.SetState(ProjectSectionState.Error); }
++        finally
++        {
++            MembersSection.FinishRequest(request);
++            NotifyCommands(); ReloadMembersCommand.RaiseCanExecuteChanged();
++        }
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+index b1c7ea2..5654578 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+@@ -163,6 +163,9 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
+         _directory = directory;
+         LoadRelatedTasksCommand = new(LoadRelatedTasksPageAsync, _ => CanLoadRelatedTasks);
++        ReloadMembersCommand = new((_, ct) => SelectedItem is { } item ? LoadMembersSectionAsync(item, ct) : System.Threading.Tasks.Task.CompletedTask,
++            _ => IsActive && _sessionAvailable && _networkAvailable && CanReadMembers && _projectConfirmed
++                && SelectedItem is not null && !MembersSection.IsLoading && !IsDetailLoading);
+         RefreshCommand = new(RefreshAsync, _ => IsActive && _sessionAvailable && CanRead);
+         NewProjectCommand = new((_, ct) => OpenEditorAsync(null, ct), _ => CanCreate);
+         EditProjectCommand = new((_, ct) => OpenEditorAsync(SelectedItem?.Source, ct), _ => CanUpdate && SelectedItem is not null);
+@@ -170,27 +173,27 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         CancelEditorCommand = new((_, _) => { Editor = null; return System.Threading.Tasks.Task.CompletedTask; });
+         ArchiveProjectCommand = new(ArchiveAsync, _ => CanArchive && SelectedItem?.Source.Status == DesktopProjectStatus.Completed);
+         AddMemberCommand = new(AddMemberAsync, _ => CanAddMember);
+-        ChangeMemberRoleCommand = new(ChangeMemberRoleAsync, parameter => CanManageMembers && parameter is ProjectMemberItemViewModel { SelectedRole: not null });
+-        RemoveMemberCommand = new(RemoveMemberAsync, parameter => CanManageMembers && parameter is ProjectMemberItemViewModel member && member.UserAccountId != SelectedItem?.Source.OwnerUserId);
++        ChangeMemberRoleCommand = new(ChangeMemberRoleAsync, parameter => CanManageMembers && !MembersSection.IsLoading && parameter is ProjectMemberItemViewModel { SelectedRole: not null } roleMember && Members.Contains(roleMember));
++        RemoveMemberCommand = new(RemoveMemberAsync, parameter => CanManageMembers && !MembersSection.IsLoading && parameter is ProjectMemberItemViewModel member && Members.Contains(member) && member.UserAccountId != SelectedItem?.Source.OwnerUserId);
+     }
+ 
+     public IReadOnlyList<ProjectItemViewModel> Items { get => _items; private set { if (SetProperty(ref _items, value)) OnPropertyChanged(nameof(HasItems)); } }
+     public bool HasItems => Items.Count > 0;
+     public IReadOnlyList<ProjectMemberItemViewModel> Members { get => _members; private set => SetProperty(ref _members, value); }
+     public IReadOnlyList<TaskItemViewModel> RelatedTasks { get => _relatedTasks; private set { if (SetProperty(ref _relatedTasks, value)) NotifyRelatedTasks(); } }
+-    public IReadOnlyList<DesktopProjectRoleDto> Roles { get => _roles; private set { if (SetProperty(ref _roles, value) && NewMemberRole is null) NewMemberRole = value.FirstOrDefault(); } }
++    public IReadOnlyList<DesktopProjectRoleDto> Roles { get => _roles; private set { if (SetProperty(ref _roles, value)) NewMemberRole = value.FirstOrDefault(role => role.Id == NewMemberRole?.Id) ?? value.FirstOrDefault(); } }
+     public ProjectItemViewModel? SelectedItem
+     {
+         get => _selectedItem;
+         set
+         {
+             if (!SetProperty(ref _selectedItem, value)) return;
+-            _detailRequest?.Cancel(); _projectConfirmed = false;
++            CancelDetailSections(); _projectConfirmed = false;
+             ResetPeople(); _membersConfirmed = false; Members = []; ResetRelatedTasks();
+-            IsDetailLoading = false; NotifyCommands();
+-            if (value is not null && IsActive && _sessionAvailable && CanRead)
++            SetDetailContext(); IsDetailLoading = false; NotifyCommands();
++            if (value is not null && IsActive && _sessionAvailable && _networkAvailable && CanRead)
+             {
+-                var request = CancellationTokenSource.CreateLinkedTokenSource(_activation!.Token);
++                var request = OverviewSection.BeginRequest(_activation!.Token);
+                 _detailRequest = request;
+                 CurrentDetailsOperation = LoadSelectedDetailsAsync(value, request);
+             }
+@@ -234,7 +237,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     public void Deactivate()
+     {
+         if (!IsActive) return;
+-        CancelRelatedTasks(); _detailRequest?.Cancel();
++        CancelDetailSections();
+         IsActive = false; IsDetailLoading = false; _activation?.Cancel(); _activation?.Dispose(); _activation = null; NotifyCommands();
+         ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, false, _networkAvailable);
+     }
+@@ -262,8 +265,14 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         _capabilities.Clear();
+         foreach (var capability in capabilities ?? []) _capabilities.Add(capability);
+         ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, _sessionAvailable, _networkAvailable);
++        CancelDetailSections();
+         ResetRelatedTasks();
+-        if (!CanRead) { _detailRequest?.Cancel(); Items = []; SelectedItem = null; Members = []; }
++        if (!CanRead) { Items = []; SelectedItem = null; Members = []; Roles = []; }
++        if (!CanReadMembers) { Members = []; _membersConfirmed = false; }
++        SetDetailContext();
++        if (_projectConfirmed) OverviewSection.SetState(_networkAvailable ? ProjectSectionState.Loaded : ProjectSectionState.Offline, true);
++        if (CanReadMembers && _membersConfirmed)
++            MembersSection.SetState(!_networkAvailable ? ProjectSectionState.Offline : Members.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
+         NotifyCommands();
+     }
+ 
+@@ -275,7 +284,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         if (!available)
+         {
+             _activation?.Cancel(); _detailRequest?.Cancel(); RefreshCommand.Cancel();
+-            Items = []; SelectedItem = null; Members = []; ResetRelatedTasks();
++            Items = []; SelectedItem = null; Members = []; Roles = []; ResetRelatedTasks();
+             State = ProjectsScreenState.SessionEnded;
+             Message = "Сессия завершена. Черновик проекта сохранён в форме.";
+         }
+@@ -288,7 +297,13 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     {
+         if (_networkAvailable == available) return;
+         _networkAvailable = available;
+-        if (!available) { CancelRelatedTasks(); RelatedTasksState = _sessionAvailable ? ProjectTasksState.Offline : ProjectTasksState.SessionEnded; }
++        if (!available)
++        {
++            CancelDetailSections();
++            foreach (var section in DetailSections.Where(section => section.IsConnected && section.CanRead))
++                section.SetState(ProjectSectionState.Offline);
++            RelatedTasksState = _sessionAvailable ? ProjectTasksState.Offline : ProjectTasksState.SessionEnded;
++        }
+         ResetPeople(); Editor?.UpdatePeopleAccess(_capabilities, _sessionAvailable, available);
+         if (!available && Editor is not null)
+             Editor.SetError("Сервер недоступен. Черновик сохранён в форме и не будет отправлен автоматически.");
+@@ -298,12 +313,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     private async System.Threading.Tasks.Task RefreshAsync(object? _, CancellationToken cancellationToken)
+     {
+         State = ProjectsScreenState.Loading; Message = null;
+-        var rolesTask = _client.GetRolesAsync(cancellationToken);
+-        var projectsTask = _client.GetProjectsAsync(cancellationToken: cancellationToken);
+-        await System.Threading.Tasks.Task.WhenAll(rolesTask, projectsTask).ConfigureAwait(true);
++        var result = await _client.GetProjectsAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
+         if (cancellationToken.IsCancellationRequested || !IsActive || !_sessionAvailable || !CanRead) return;
+-        if (rolesTask.Result is DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded roles) Roles = roles.Value;
+-        var result = projectsTask.Result;
+         if (result is DesktopProjectResult<DesktopProjectPage>.Succeeded success)
+         {
+             var projects = success.Value.Items.ToList(); var cursor = success.Value.NextCursor; var seen = new HashSet<string>();
+@@ -322,7 +333,12 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+             Message = Items.Count == 0 ? "Активных проектов нет." : null;
+             SelectedItem = Items.FirstOrDefault(item => item.Id == selectedId) ?? Items.FirstOrDefault();
+         }
+-        else ApplyFailure(result);
++        else
++        {
++            ApplyFailure(result);
++            if (result is DesktopProjectResult<DesktopProjectPage>.Forbidden)
++            { Items = []; SelectedItem = null; Members = []; Roles = []; }
++        }
+     }
+ 
+     private async System.Threading.Tasks.Task LoadSelectedDetailsAsync(ProjectItemViewModel item, CancellationTokenSource request)
+@@ -330,7 +346,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         using (request)
+         {
+             try { await LoadDetailsAsync(item, request.Token); }
+-            finally { if (ReferenceEquals(_detailRequest, request)) _detailRequest = null; }
++            finally { OverviewSection.FinishRequest(request); if (ReferenceEquals(_detailRequest, request)) _detailRequest = null; }
+         }
+     }
+ 
+@@ -343,20 +359,36 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         {
+             var projectResult = await _client.GetProjectAsync(item.Id, cancellationToken).ConfigureAwait(true);
+             if (!Current()) return;
+-            if (projectResult is DesktopProjectResult<DesktopProjectDto>.Succeeded project) { item.Replace(project.Value); _projectConfirmed = true; }
+-            else { ApplyFailure(projectResult); return; }
+-
+-            if (CanManageMembers)
++            if (projectResult is DesktopProjectResult<DesktopProjectDto>.Succeeded project)
++            {
++                if (project.Value.Id != item.Id || project.Value.OrganizationId != item.Source.OrganizationId)
++                {
++                    OverviewSection.SetState(ProjectSectionState.Error, false);
++                    State = ProjectsScreenState.Failed; Message = "Не удалось подтвердить контекст проекта.";
++                    return;
++                }
++                item.Replace(project.Value); _projectConfirmed = true;
++                OverviewSection.SetState(ProjectSectionState.Loaded, true);
++            }
++            else
++            {
++                OverviewSection.SetState(projectResult is DesktopProjectResult<DesktopProjectDto>.ServerUnavailable
++                    ? ProjectSectionState.ServerUnavailable : ProjectSectionState.Error);
++                ApplyFailure(projectResult);
++                if (projectResult is DesktopProjectResult<DesktopProjectDto>.Forbidden or DesktopProjectResult<DesktopProjectDto>.NotFound)
++                { Items = Items.Where(candidate => candidate.Id != item.Id).ToArray(); SelectedItem = null; }
++                return;
++            }
++            // Related sections must not hold overview loading or block the existing task command.
++            IsDetailLoading = false;
++            ReloadMembersCommand.RaiseCanExecuteChanged();
++            if (CanReadMembers) await LoadMembersSectionAsync(item, cancellationToken);
++            else
+             {
+-                var memberResult = await _client.GetMembersAsync(item.Id, cancellationToken).ConfigureAwait(true);
+-                if (!Current()) return;
+-                Members = memberResult is DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded members
+-                    ? members.Value.Select(member => new ProjectMemberItemViewModel(member, Roles)).ToArray() : [];
+-                _membersConfirmed = memberResult is DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded;
+-                if (!_membersConfirmed) ApplyFailure(memberResult);
++                try { await ResolvePeopleAsync(item, cancellationToken); }
++                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
++                catch (Exception) { /* Optional names never invalidate confirmed project data. */ }
+             }
+-            else Members = [];
+-            await ResolvePeopleAsync(item, cancellationToken);
+         }
+         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
+         catch (Exception)
+@@ -365,8 +397,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+             {
+                 State = ProjectsScreenState.Failed;
+                 Message = "Не удалось загрузить сведения о проекте. Повторите обновление.";
+-                Members = [];
+-                RelatedTasks = [];
++                OverviewSection.SetState(ProjectSectionState.Error);
+             }
+         }
+         finally { if (Current()) IsDetailLoading = false; }
+@@ -385,7 +416,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         DesktopProjectResult<DesktopProjectDto> result = editor.Source is null
+             ? await _client.CreateProjectAsync(draft, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true)
+             : await _client.UpdateProjectAsync(editor.Source.Id, editor.Source.Version, draft, cancellationToken).ConfigureAwait(true);
+-        if (!ReferenceEquals(Editor, editor) || !_sessionAvailable || !IsActive) return;
++        if (!ReferenceEquals(Editor, editor) || !_sessionAvailable || !IsActive
++            || !(editor.Source is null ? CanCreate : CanUpdate)) return;
+         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
+         {
+             Upsert(success.Value); Editor = null; Message = "Проект сохранён сервером.";
+@@ -395,6 +427,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         else if (result is DesktopProjectResult<DesktopProjectDto>.VersionConflict)
+         {
+             var latest = await _client.GetProjectAsync(editor.Source!.Id, cancellationToken).ConfigureAwait(true);
++            if (!ReferenceEquals(Editor, editor) || !CanUpdate || !IsActive) return;
+             if (latest is DesktopProjectResult<DesktopProjectDto>.Succeeded current)
+             {
+                 editor.RebaseSource(current.Value);
+@@ -414,6 +447,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     {
+         var item = SelectedItem; if (item is null) return;
+         var result = await _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
++        if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanArchive || !IsActive) return;
+         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded) { Items = Items.Where(candidate => candidate.Id != item.Id).ToArray(); SelectedItem = Items.FirstOrDefault(); State = Items.Count == 0 ? ProjectsScreenState.Empty : ProjectsScreenState.Loaded; Message = "Завершённый проект перемещён в архив."; }
+         else ApplyFailure(result);
+     }
+@@ -442,6 +476,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     {
+         var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel { SelectedRole: not null } member) return;
+         var result = await _client.ChangeMemberRoleAsync(item.Id, item.Source.Version, member.UserAccountId, member.SelectedRole.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
++        if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
+         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)
+         { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Роль участника изменена."; }
+         else ApplyFailure(result);
+@@ -451,6 +486,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     {
+         var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member) return;
+         var result = await _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken).ConfigureAwait(true);
++        if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
+         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
+         { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник удалён из проекта."; }
+         else ApplyFailure(result);
+@@ -458,10 +494,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+ 
+     private async System.Threading.Tasks.Task ReloadMembersAsync(ProjectItemViewModel item, CancellationToken cancellationToken)
+     {
+-        var result = await _client.GetMembersAsync(item.Id, cancellationToken).ConfigureAwait(true);
+-        if (ReferenceEquals(SelectedItem, item) && result is DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded success)
+-        { _membersConfirmed = true; Members = success.Value.Select(member => new ProjectMemberItemViewModel(member, Roles)).ToArray(); await ResolvePeopleAsync(item, cancellationToken); AddMemberCommand.RaiseCanExecuteChanged(); if (_sessionAvailable && ReferenceEquals(SelectedItem, item)) Message = "Список участников обновлён сервером."; }
+-        else if (ReferenceEquals(SelectedItem, item)) { _membersConfirmed = false; Members = []; ApplyFailure(result); }
++        await LoadMembersSectionAsync(item, cancellationToken);
+     }
+ 
+     private void AdvanceVersion(ProjectItemViewModel item, long? version)
+@@ -488,7 +521,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     }
+     private void NotifyCommands()
+     {
+-        NotifyRelatedTasks();
++        NotifyRelatedTasks(); ReloadMembersCommand?.RaiseCanExecuteChanged();
+         OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanUpdate));
+         OnPropertyChanged(nameof(CanArchive)); OnPropertyChanged(nameof(CanManageMembers)); OnPropertyChanged(nameof(AccessText));
+         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.RaiseCanExecuteChanged();
+@@ -499,7 +532,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     public void Dispose()
+     {
+         if (_disposed) return; _disposed = true; Deactivate();
+-        LoadRelatedTasksCommand.Dispose();
++        LoadRelatedTasksCommand.Dispose(); ReloadMembersCommand.Dispose();
+         MemberPicker?.Dispose(); Editor?.Dispose();
+         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.Dispose();
+     }
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+index 50e845c..3a820d8 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+@@ -44,6 +44,11 @@
+             <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                 <StackPanel DataContext="{Binding SelectedItem}">
+                     <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
++                    <Expander Header="Основные сведения" state:ViewState.Section="projects/v1/overview" IsExpanded="True"
++                              AutomationProperties.AutomationId="ProjectOverviewSection">
++                    <StackPanel Margin="0,10,0,0">
++                    <TextBlock Text="{Binding DataContext.OverviewSection.StatusText, RelativeSource={RelativeSource AncestorType=UserControl}}"
++                               TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"/>
+                     <Grid>
+                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                         <StackPanel>
+@@ -64,8 +69,15 @@
+                         <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12"><StackPanel><TextBlock Text="Руководитель" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding ManagerText}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,0"/></StackPanel></Border>
+                     </UniformGrid>
+ 
+-                    <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Margin="0,0,0,14">
++                    </StackPanel>
++                    </Expander>
++
++                    <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Collapsed="MembersCollapsed" AutomationProperties.AutomationId="ProjectMembersSection" Margin="0,0,0,14">
+                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
++                            <TextBlock Text="{Binding MembersSection.StatusText}" TextWrapping="Wrap" Margin="0,0,0,8"
++                                       AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectMembersStatus"/>
++                            <Button Content="Обновить участников" Command="{Binding ReloadMembersCommand}" HorizontalAlignment="Left"
++                                    Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,10" AutomationProperties.AutomationId="ReloadProjectMembers"/>
+                             <ContentControl Content="{Binding MemberPicker}" IsEnabled="{Binding CanManageMembers}" Margin="0,0,0,10">
+                                 <ContentControl.Style><Style TargetType="ContentControl"><Style.Triggers><DataTrigger Binding="{Binding UsesEmployeePicker}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ContentControl.Style>
+                                 <ContentControl.ContentTemplate><DataTemplate><views:EmployeePickerView/></DataTemplate></ContentControl.ContentTemplate>
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs b/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+index 2bac97a..f783861 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+@@ -11,5 +11,9 @@ public partial class ProjectsView : UserControl
+     {
+         if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CancelRelatedTasks();
+     }
+-    private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelRelatedTasks();
++    private void MembersCollapsed(object sender, RoutedEventArgs args)
++    {
++        if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CancelMembersSection();
++    }
++    private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelDetailSections();
+ }
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+new file mode 100644
+index 0000000..93e79bf
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+@@ -0,0 +1,247 @@
++using System.IO;
++using Task.Desktop.Projects;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Tests.TaskScreen;
++using AsyncTask = System.Threading.Tasks.Task;
++using MembersResult = Task.Desktop.Projects.DesktopProjectResult<System.Collections.Generic.IReadOnlyList<Task.Desktop.Projects.DesktopProjectMemberDto>>;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class ProjectsViewModelTests
++{
++    private static FakeProjectsClient SectionClient() => new()
++    {
++        Projects = SuccessPage(Project()),
++        ProjectHandler = (id, _) => AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(
++            new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Id = id })),
++        Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]),
++        Members = new MembersResult.Succeeded([new(ProjectId, User, RoleId, "active", 1, null, null)])
++    };
++
++    [Fact]
++    public async AsyncTask Sections_MembersLoadingNeverBlocksOverviewTasksOrExistingCommands()
++    {
++        var gate = new System.Threading.Tasks.TaskCompletionSource<MembersResult>();
++        var client = SectionClient(); client.MembersHandler = (_, _) => gate.Task;
++        var tasks = new TasksViewModelTests.FakeTasksApiClient();
++        using var vm = new ProjectsViewModel(client, User, Capabilities, tasks);
++        vm.Activate();
++        Assert.Equal(ProjectSectionState.Loaded, vm.OverviewSection.State);
++        Assert.Equal(ProjectSectionState.Loading, vm.MembersSection.State);
++        Assert.False(vm.IsDetailLoading);
++        Assert.True(vm.EditProjectCommand.CanExecute(null));
++        Assert.True(vm.NewProjectCommand.CanExecute(null));
++        Assert.True(vm.LoadRelatedTasksCommand.CanExecute(null));
++        Assert.Equal(0, tasks.PageCallCount);
++        gate.SetResult(new MembersResult.Forbidden()); await vm.CurrentDetailsOperation;
++        Assert.Equal(ProjectSectionState.Forbidden, vm.MembersSection.State);
++        Assert.Equal(ProjectSectionState.Loaded, vm.OverviewSection.State);
++        Assert.Equal(ProjectsScreenState.Loaded, vm.State);
++        Assert.True(vm.CanUpdate);
++        Assert.True(vm.LoadRelatedTasksCommand.CanExecute(null));
++    }
++
++    [Theory]
++    [InlineData("forbidden", ProjectSectionState.Forbidden)]
++    [InlineData("notfound", ProjectSectionState.Forbidden)]
++    [InlineData("unavailable", ProjectSectionState.ServerUnavailable)]
++    [InlineData("malformed", ProjectSectionState.Error)]
++    [InlineData("exception", ProjectSectionState.Error)]
++    public async AsyncTask Sections_MemberFailuresAreLocalAndNeverEmpty(string failure, ProjectSectionState expected)
++    {
++        var client = SectionClient();
++        client.MembersHandler = (_, _) => failure == "exception" ? AsyncTask.FromException<MembersResult>(new IOException("sensitive"))
++            : AsyncTask.FromResult<MembersResult>(failure switch
++            {
++                "forbidden" => new MembersResult.Forbidden(), "notfound" => new MembersResult.NotFound(),
++                "unavailable" => new MembersResult.ServerUnavailable(), _ => new MembersResult.MalformedResponse()
++            });
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Equal(expected, vm.MembersSection.State);
++        Assert.DoesNotContain("sensitive", vm.MembersSection.StatusText);
++        Assert.Equal(ProjectSectionState.Loaded, vm.OverviewSection.State);
++        Assert.Equal(ProjectsScreenState.Loaded, vm.State);
++        Assert.NotNull(vm.SelectedItem);
++        Assert.True(vm.ReloadMembersCommand.CanExecute(null));
++    }
++
++    [Theory]
++    [InlineData("switch")]
++    [InlineData("return")]
++    [InlineData("permission")]
++    [InlineData("session")]
++    [InlineData("deactivate")]
++    [InlineData("close")]
++    [InlineData("collapse")]
++    [InlineData("offline")]
++    public async AsyncTask Sections_CancelAndRejectLateMembersEvenWhenTransportIgnoresCancellation(string transition)
++    {
++        var client = SectionClient();
++        var second = Project() with { Id = Guid.NewGuid(), Name = "Второй" };
++        client.Projects = SuccessPage(Project(), second);
++        client.ProjectHandler = (id, _) => AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(
++            new DesktopProjectResult<DesktopProjectDto>.Succeeded(id == second.Id ? second : Project()));
++        var gate = new System.Threading.Tasks.TaskCompletionSource<MembersResult>();
++        CancellationToken token = default;
++        client.MembersHandler = (_, ct) => { token = ct; return gate.Task; };
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); var old = vm.CurrentDetailsOperation;
++        client.MembersHandler = (id, _) => AsyncTask.FromResult<MembersResult>(new MembersResult.Succeeded([]));
++        switch (transition)
++        {
++            case "switch": vm.SelectedItem = vm.Items[1]; break;
++            case "return": var first = vm.Items[0]; vm.SelectedItem = vm.Items[1]; vm.SelectedItem = first; break;
++            case "permission": vm.UpdateCapabilities(["Project.Read", "Task.Read"]); break;
++            case "session": vm.UpdateSessionState(false); break;
++            case "deactivate": vm.Deactivate(); break;
++            case "close": vm.SelectedItem = null; break;
++            case "collapse": vm.CancelMembersSection(); break;
++            case "offline": vm.UpdateConnectivity(false); break;
++        }
++        Assert.True(token.IsCancellationRequested);
++        gate.SetResult(client.Members); await old;
++        Assert.Empty(vm.Members);
++        Assert.NotEqual(ProjectSectionState.Loading, vm.MembersSection.State);
++        Assert.All(vm.DetailSections, section => Assert.Equal(vm.SelectedItem?.Id, section.ProjectId));
++        Assert.All(vm.DetailSections, section => Assert.Equal(vm.SelectedItem?.Source.OrganizationId, section.OrganizationId));
++        if (transition == "switch") Assert.Equal(second.Name, vm.SelectedItem?.Name);
++        if (transition == "permission") Assert.Equal(ProjectSectionState.Forbidden, vm.MembersSection.State);
++    }
++
++    [Fact]
++    public async AsyncTask Sections_ReadOnlyAndUnconnectedSlotsNeverRequestForbiddenData()
++    {
++        var client = SectionClient();
++        using var vm = new ProjectsViewModel(client, User, ["Project.Read", "Task.Read"]);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Equal(0, client.MemberCalls); Assert.Equal(0, client.RoleCalls);
++        Assert.Equal(ProjectSectionState.Forbidden, vm.MembersSection.State);
++        Assert.False(vm.EditProjectCommand.CanExecute(null));
++        Assert.False(vm.AddMemberCommand.CanExecute(null));
++        Assert.False(await vm.ReloadMembersCommand.ExecuteAsync());
++        foreach (var section in new[] { vm.FilesSection, vm.ContactsSection, vm.HistorySection })
++        {
++            Assert.False(section.IsConnected); Assert.False(section.CanRead);
++            Assert.Equal(ProjectSectionState.NotLoaded, section.State);
++            Assert.False(section.HasConfirmedData);
++        }
++        vm.UpdateCapabilities([]);
++        Assert.Null(vm.SelectedItem); Assert.Empty(vm.Members);
++    }
++
++    [Fact]
++    public async AsyncTask Sections_OfflineAndUnavailableRetainConfirmedMembersButRevocationClearsThem()
++    {
++        var client = SectionClient();
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Single(vm.Members);
++        client.Members = new MembersResult.ServerUnavailable();
++        await vm.ReloadMembersCommand.ExecuteAsync();
++        Assert.Equal(ProjectSectionState.ServerUnavailable, vm.MembersSection.State);
++        Assert.True(vm.MembersSection.HasConfirmedData); Assert.Single(vm.Members);
++        vm.UpdateConnectivity(false);
++        Assert.Equal(ProjectSectionState.Offline, vm.MembersSection.State);
++        Assert.Single(vm.Members); Assert.False(vm.CanUpdate);
++        Assert.False(await vm.ReloadMembersCommand.ExecuteAsync());
++        vm.UpdateConnectivity(true);
++        Assert.Single(vm.Members);
++        vm.UpdateCapabilities(["Project.Read"]);
++        Assert.Empty(vm.Members); Assert.False(vm.MembersSection.HasConfirmedData);
++        Assert.Equal(ProjectSectionState.Forbidden, vm.MembersSection.State);
++        Assert.Equal(ProjectSectionState.Loaded, vm.OverviewSection.State);
++    }
++
++    [Fact]
++    public async AsyncTask Sections_RoleFailureGivesPartialAccessAndExplicitRetryRecovers()
++    {
++        var client = SectionClient();
++        client.Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.ServerUnavailable();
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Equal(ProjectSectionState.PartialAccess, vm.MembersSection.State);
++        Assert.Single(vm.Members);
++        client.Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]);
++        await vm.ReloadMembersCommand.ExecuteAsync();
++        Assert.Equal(ProjectSectionState.Loaded, vm.MembersSection.State);
++        Assert.Equal("Редактор", vm.Members.Single().RoleText);
++        vm.UpdateSessionState(false);
++        Assert.Empty(vm.Members); Assert.False(vm.MembersSection.HasConfirmedData);
++    }
++
++    [Fact]
++    public async AsyncTask Sections_OrganizationChangeClearsAllContextsAndRejectsLateSameIdResponse()
++    {
++        var client = SectionClient();
++        var gate = new System.Threading.Tasks.TaskCompletionSource<MembersResult>();
++        client.MembersHandler = (_, _) => gate.Task;
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); var old = vm.CurrentDetailsOperation;
++        var replacement = Project() with { OrganizationId = Guid.NewGuid(), Name = "Другой контекст" };
++        client.ProjectHandler = (_, _) => AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(
++            new DesktopProjectResult<DesktopProjectDto>.Succeeded(replacement));
++        client.MembersHandler = (_, _) => AsyncTask.FromResult<MembersResult>(new MembersResult.Succeeded([]));
++        vm.SelectedItem = new ProjectItemViewModel(replacement);
++        await vm.CurrentDetailsOperation;
++        gate.SetResult(client.Members); await old;
++        Assert.Empty(vm.Members);
++        Assert.Equal(replacement.Name, vm.SelectedItem.Name);
++        Assert.All(vm.DetailSections, section => Assert.Equal(replacement.OrganizationId, section.OrganizationId));
++    }
++
++    [Fact]
++    public async AsyncTask Sections_RevocationDuringRoleLoadNeverRequestsMembersAndListDenialClearsCard()
++    {
++        var client = SectionClient();
++        var gate = new System.Threading.Tasks.TaskCompletionSource<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>>();
++        CancellationToken token = default;
++        client.RolesHandler = ct => { token = ct; return gate.Task; };
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); var pending = vm.CurrentDetailsOperation;
++        vm.UpdateCapabilities(["Project.Read"]);
++        Assert.True(token.IsCancellationRequested);
++        gate.SetResult(client.Roles); await pending;
++        Assert.Equal(0, client.MemberCalls);
++        Assert.Equal(ProjectSectionState.Forbidden, vm.MembersSection.State);
++        client.Projects = new DesktopProjectResult<DesktopProjectPage>.Forbidden();
++        await vm.RefreshCommand.ExecuteAsync();
++        Assert.Empty(vm.Items); Assert.Null(vm.SelectedItem); Assert.Empty(vm.Members);
++    }
++
++    [Fact]
++    public async AsyncTask Sections_ExistingArchiveActionStillRequiresCompletedProjectAndUsesServerResponse()
++    {
++        var client = SectionClient();
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.False(vm.ArchiveProjectCommand.CanExecute(null));
++        var completed = Project() with { Status = DesktopProjectStatus.Completed, ActualEndAt = DateTimeOffset.UtcNow };
++        client.ProjectHandler = (_, _) => AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(
++            new DesktopProjectResult<DesktopProjectDto>.Succeeded(completed));
++        client.Archive = new DesktopProjectResult<DesktopProjectDto>.Succeeded(completed with { LifecycleState = "archived" });
++        await vm.RefreshCommand.ExecuteAsync(); await vm.CurrentDetailsOperation;
++        Assert.True(vm.ArchiveProjectCommand.CanExecute(null));
++        Assert.True(await vm.ArchiveProjectCommand.ExecuteAsync());
++        Assert.Empty(vm.Items); Assert.Null(vm.SelectedItem);
++        Assert.Equal(ProjectsScreenState.Empty, vm.State);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async AsyncTask Sections_ServerRevocationClearsConfirmedMembersAndAuthEndsEntireSession(bool authentication)
++    {
++        var client = SectionClient();
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Single(vm.Members);
++        client.Members = authentication ? new MembersResult.AuthenticationFailure() : new MembersResult.Forbidden();
++        await vm.ReloadMembersCommand.ExecuteAsync();
++        Assert.Empty(vm.Members); Assert.False(vm.MembersSection.HasConfirmedData);
++        if (authentication)
++        { Assert.Null(vm.SelectedItem); Assert.Empty(vm.Items); Assert.Equal(ProjectsScreenState.SessionEnded, vm.State); }
++        else
++        { Assert.NotNull(vm.SelectedItem); Assert.Equal(ProjectSectionState.Loaded, vm.OverviewSection.State); Assert.True(vm.CanUpdate); }
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
+index f5bbc8c..cae2590 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
+@@ -46,6 +46,16 @@ public sealed partial class ProjectsViewModelTests
+                     var view = new ProjectsView { DataContext = vm };
+                     window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Related tasks test" };
+                     window.Show(); PumpProject();
++                    foreach (var expander in ProjectDescendants<Expander>(view).ToArray())
++                    {
++                        expander.BringIntoView(); PumpProject();
++                        Assert.True(expander.Focus());
++                        var peer = new ExpanderAutomationPeer(expander);
++                        var provider = (IExpandCollapseProvider)peer.GetPattern(PatternInterface.ExpandCollapse);
++                        provider.Collapse(); PumpProject(); Assert.False(expander.IsExpanded);
++                        provider.Expand(); PumpProject(); Assert.True(expander.IsExpanded);
++                        Assert.True(expander.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)));
++                    }
+                     var section = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "Связанные задачи"));
+                     section.IsExpanded = true; PumpProject();
+                     Assert.Equal(0, tasks.PageCallCount); // Expanded/restored state never starts a catalog walk.
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+index 57abc96..c2a6979 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+@@ -78,7 +78,8 @@ public sealed partial class ProjectsViewModelTests
+         {
+             Projects = SuccessPage(),
+             Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]),
+-            Create = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Name = "Новый проект" })
++            Create = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Name = "Новый проект" }),
++            Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Name = "Новый проект" })
+         };
+         using var vm = new ProjectsViewModel(client, User, Capabilities);
+         vm.Activate();
+@@ -245,6 +246,8 @@ public sealed partial class ProjectsViewModelTests
+         public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>>>? ProjectHandler { get; set; }
+         public DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>> Roles { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([]);
+         public DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>> Members { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]);
++        public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>>>? MembersHandler { get; set; }
++        public Func<CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>>>? RolesHandler { get; set; }
+         public DesktopProjectResult<DesktopProjectDto> Create { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
+         public DesktopProjectResult<DesktopProjectDto> Update { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
+         public DesktopProjectResult<DesktopProjectDto> Archive { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
+@@ -269,9 +272,9 @@ public sealed partial class ProjectsViewModelTests
+                 ? System.Threading.Tasks.Task.FromResult(Project)
+                 : System.Threading.Tasks.Task.FromException<DesktopProjectResult<DesktopProjectDto>>(ProjectException);
+         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>> GetRolesAsync(CancellationToken cancellationToken = default)
+-        { RoleCalls++; return System.Threading.Tasks.Task.FromResult(Roles); }
++        { RoleCalls++; return RolesHandler?.Invoke(cancellationToken) ?? System.Threading.Tasks.Task.FromResult(Roles); }
+         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>> GetMembersAsync(Guid projectId, CancellationToken cancellationToken = default)
+-        { MemberCalls++; return System.Threading.Tasks.Task.FromResult(Members); }
++        { MemberCalls++; return MembersHandler?.Invoke(projectId, cancellationToken) ?? System.Threading.Tasks.Task.FromResult(Members); }
+         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> CreateProjectAsync(DesktopProjectDraft draft, string idempotencyKey, CancellationToken cancellationToken = default)
+         { CreateCalls++; LastDraft = draft; return System.Threading.Tasks.Task.FromResult(Create); }
+         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> UpdateProjectAsync(Guid id, long version, DesktopProjectDraft draft, CancellationToken cancellationToken = default)
+diff --git a/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs b/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs
+index 37c3d46..fb7cc8f 100644
+--- a/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs
+@@ -20,6 +20,7 @@ public sealed class ViewStateStoreTests : IDisposable
+             store.SetWidth("work-links/v1/type", 155.5, 60, 500);
+             store.SetExpanded("today/v1/queue", false);
+             store.SetExpanded("projects/v1/tasks", true);
++            store.SetExpanded("projects/v1/overview", false);
+             store.SetSort("work-links/v1", new("Title", true));
+             await store.FlushAsync();
+             var text = await File.ReadAllTextAsync(store.FilePath);
+@@ -30,6 +31,7 @@ public sealed class ViewStateStoreTests : IDisposable
+         Assert.Equal(155.5, restarted.Width("work-links/v1/type", 60, 500));
+         Assert.False(restarted.Expanded("today/v1/queue"));
+         Assert.True(restarted.Expanded("projects/v1/tasks"));
++        Assert.False(restarted.Expanded("projects/v1/overview"));
+         Assert.Equal(new ViewSort("Title", true), restarted.Sort("work-links/v1"));
+     }
+ 

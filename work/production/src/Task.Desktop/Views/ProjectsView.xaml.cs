@@ -11,5 +11,9 @@ public partial class ProjectsView : UserControl
     {
         if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CancelRelatedTasks();
     }
-    private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelRelatedTasks();
+    private void MembersCollapsed(object sender, RoutedEventArgs args)
+    {
+        if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CancelMembersSection();
+    }
+    private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelDetailSections();
 }

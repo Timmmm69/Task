@@ -78,7 +78,8 @@ public sealed partial class ProjectsViewModelTests
         {
             Projects = SuccessPage(),
             Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]),
-            Create = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Name = "Новый проект" })
+            Create = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Name = "Новый проект" }),
+            Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Name = "Новый проект" })
         };
         using var vm = new ProjectsViewModel(client, User, Capabilities);
         vm.Activate();
@@ -245,6 +246,8 @@ public sealed partial class ProjectsViewModelTests
         public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>>>? ProjectHandler { get; set; }
         public DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>> Roles { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([]);
         public DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>> Members { get; set; } = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]);
+        public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>>>? MembersHandler { get; set; }
+        public Func<CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>>>? RolesHandler { get; set; }
         public DesktopProjectResult<DesktopProjectDto> Create { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
         public DesktopProjectResult<DesktopProjectDto> Update { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
         public DesktopProjectResult<DesktopProjectDto> Archive { get; set; } = new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable();
@@ -269,9 +272,9 @@ public sealed partial class ProjectsViewModelTests
                 ? System.Threading.Tasks.Task.FromResult(Project)
                 : System.Threading.Tasks.Task.FromException<DesktopProjectResult<DesktopProjectDto>>(ProjectException);
         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>> GetRolesAsync(CancellationToken cancellationToken = default)
-        { RoleCalls++; return System.Threading.Tasks.Task.FromResult(Roles); }
+        { RoleCalls++; return RolesHandler?.Invoke(cancellationToken) ?? System.Threading.Tasks.Task.FromResult(Roles); }
         public System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>> GetMembersAsync(Guid projectId, CancellationToken cancellationToken = default)
-        { MemberCalls++; return System.Threading.Tasks.Task.FromResult(Members); }
+        { MemberCalls++; return MembersHandler?.Invoke(projectId, cancellationToken) ?? System.Threading.Tasks.Task.FromResult(Members); }
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> CreateProjectAsync(DesktopProjectDraft draft, string idempotencyKey, CancellationToken cancellationToken = default)
         { CreateCalls++; LastDraft = draft; return System.Threading.Tasks.Task.FromResult(Create); }
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> UpdateProjectAsync(Guid id, long version, DesktopProjectDraft draft, CancellationToken cancellationToken = default)

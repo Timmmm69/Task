@@ -46,6 +46,16 @@ public sealed partial class ProjectsViewModelTests
                     var view = new ProjectsView { DataContext = vm };
                     window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Related tasks test" };
                     window.Show(); PumpProject();
+                    foreach (var expander in ProjectDescendants<Expander>(view).ToArray())
+                    {
+                        expander.BringIntoView(); PumpProject();
+                        Assert.True(expander.Focus());
+                        var peer = new ExpanderAutomationPeer(expander);
+                        var provider = (IExpandCollapseProvider)peer.GetPattern(PatternInterface.ExpandCollapse);
+                        provider.Collapse(); PumpProject(); Assert.False(expander.IsExpanded);
+                        provider.Expand(); PumpProject(); Assert.True(expander.IsExpanded);
+                        Assert.True(expander.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)));
+                    }
                     var section = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "Связанные задачи"));
                     section.IsExpanded = true; PumpProject();
                     Assert.Equal(0, tasks.PageCallCount); // Expanded/restored state never starts a catalog walk.

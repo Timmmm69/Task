@@ -20,6 +20,7 @@ public sealed class ViewStateStoreTests : IDisposable
             store.SetWidth("work-links/v1/type", 155.5, 60, 500);
             store.SetExpanded("today/v1/queue", false);
             store.SetExpanded("projects/v1/tasks", true);
+            store.SetExpanded("projects/v1/overview", false);
             store.SetSort("work-links/v1", new("Title", true));
             await store.FlushAsync();
             var text = await File.ReadAllTextAsync(store.FilePath);
@@ -30,6 +31,7 @@ public sealed class ViewStateStoreTests : IDisposable
         Assert.Equal(155.5, restarted.Width("work-links/v1/type", 60, 500));
         Assert.False(restarted.Expanded("today/v1/queue"));
         Assert.True(restarted.Expanded("projects/v1/tasks"));
+        Assert.False(restarted.Expanded("projects/v1/overview"));
         Assert.Equal(new ViewSort("Title", true), restarted.Sort("work-links/v1"));
     }
 

@@ -80,7 +80,7 @@ public sealed partial class ProjectsViewModel
         : "Каталог недоступен без User.Read. Укажите UUID активной учётной записи; сервер проверит доступ. Полный переход на выбор по имени требует решения по правам.";
     public Guid? NewMemberAccountId => UsesEmployeePicker ? MemberPicker?.SelectedUserAccountId
         : Guid.TryParse(NewMemberUserId.Trim(), out var id) && id != Guid.Empty ? id : null;
-    private bool CanAddMember => CanManageMembers && !IsDetailLoading && _membersConfirmed
+    private bool CanAddMember => CanManageMembers && !IsDetailLoading && !MembersSection.IsLoading && _membersConfirmed
         && SelectedItem is not null && NewMemberRole is not null && NewMemberAccountId is { } id
         && !Members.Any(member => member.UserAccountId == id)
         && (!UsesEmployeePicker || MemberPicker?.State == EmployeePickerState.Ready);

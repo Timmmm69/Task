@@ -1,0 +1,86 @@
+{
+  "version": "13.1.0",
+  "date": "2026-10-19",
+  "branch": "feature/project-detail-sections",
+  "base": "dcbaca241868f2afb4e6506473b8957ab72aa8b3",
+  "releaseSolutionBuild": "PASS; 0 errors; 11 existing compiler/analyzer warnings",
+  "tests": {
+    "baseline.trx": {
+      "total": 86,
+      "passed": 85,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.ViewStateTests.ViewStateUiTests.NativeWpf_RestartResizeSortPermissionsAndSubscriptionLifetime"
+      ]
+    },
+    "desktop-confirmation.trx": {
+      "total": 1621,
+      "passed": 1621,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    "desktop-final.trx": {
+      "total": 1619,
+      "passed": 1618,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.CommandPaletteTests.Debounce_SearchesOnlyLatestValidQuery_PreservesServerRanking"
+      ]
+    },
+    "projects-first.trx": {
+      "total": 72,
+      "passed": 71,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.Projects.ProjectsViewModelTests.CreateUsesCurrentUserAndAppliesAuthoritativeResponse"
+      ]
+    },
+    "sections-final-targeted.trx": {
+      "total": 115,
+      "passed": 115,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    "sections-targeted.trx": {
+      "total": 103,
+      "passed": 102,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.Projects.ProjectsViewModelTests.Sections_CancelAndRejectLateMembersEvenWhenTransportIgnoresCancellation(transition: \"switch\")"
+      ]
+    }
+  },
+  "nativeWpf": "PASS: focus, Next traversal, ExpandCollapse provider, existing picker/edit/task flow, screenshot inspection",
+  "viewState": "PASS: overview expansion round-trip and existing store/native tests",
+  "dashboard": "PASS: order + validate; only PROD-04 evidence/note/date; progress/status unchanged",
+  "scope": [
+    ".project-dashboard/roadmap.json",
+    "work/production/docs/PROJECT-DETAIL-SECTIONS-13.1.md",
+    "work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+    "work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs"
+  ],
+  "notRun": [
+    "Live Corporate API walkthrough",
+    "NAS/file-content integration (out of stage scope)",
+    "Narrator",
+    "Physical mixed-DPI hardware matrix",
+    "PostgreSQL tests (server/schema unchanged)"
+  ],
+  "publication": "Separate local feature-branch commit; no push or main merge requested"
+}

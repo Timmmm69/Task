@@ -48,6 +48,19 @@ public sealed partial class ProjectsViewModel
 
     private void NotifyRelatedTasks()
     {
+        TasksSection.SetState(RelatedTasksState switch
+        {
+            ProjectTasksState.Loading => ProjectSectionState.Loading,
+            ProjectTasksState.Complete => ProjectSectionState.Loaded,
+            ProjectTasksState.Empty => ProjectSectionState.Empty,
+            ProjectTasksState.Forbidden or ProjectTasksState.SessionEnded => ProjectSectionState.Forbidden,
+            ProjectTasksState.Offline => ProjectSectionState.Offline,
+            ProjectTasksState.ServerUnavailable => ProjectSectionState.ServerUnavailable,
+            ProjectTasksState.Partial => ProjectSectionState.PartialAccess,
+            ProjectTasksState.Cancelled => ProjectSectionState.Cancelled,
+            ProjectTasksState.Failed => ProjectSectionState.Error,
+            _ => ProjectSectionState.NotLoaded
+        }, RelatedTasks.Count > 0 || RelatedTasksState == ProjectTasksState.Empty, RelatedTasksStatusText);
         OnPropertyChanged(nameof(IsRelatedTasksLoading));
         OnPropertyChanged(nameof(RelatedTasksStatusText));
         OnPropertyChanged(nameof(RelatedTasksActionText));

@@ -1,0 +1,186 @@
+{
+  "version": "13.1.0",
+  "base": "dcbaca241868f2afb4e6506473b8957ab72aa8b3",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "path": "changed-files.txt",
+      "size": 966,
+      "sha256": "e6a105afc2c3b6f1fcef5736a943404772f7453ae05b8cb560665e8aa83f2eb0"
+    },
+    {
+      "path": "evidence/baseline.trx",
+      "size": 138866,
+      "sha256": "94604c8bd25af07a2ebb5a134c729e00a1343eb3911f45eeff9f7fdb9528d5e6"
+    },
+    {
+      "path": "evidence/build-release.log",
+      "size": 15129,
+      "sha256": "78afeff67094da473963a0ddbaae530b98933ac149a6713f6cead9172c0c5a5e"
+    },
+    {
+      "path": "evidence/desktop-confirmation.trx",
+      "size": 2493639,
+      "sha256": "afc28384929dc98ce53e202bae3f13cd06c8b896b66e9aea2ef822adcbcca436"
+    },
+    {
+      "path": "evidence/desktop-final.trx",
+      "size": 2492014,
+      "sha256": "dc62fe9bfb482439b9b3363334e0daba08f95b4bab428dfc924a7ec67c06b816"
+    },
+    {
+      "path": "evidence/projects-first.trx",
+      "size": 114854,
+      "sha256": "2997e7630827d87ffe5b46a7f459ee20371f212909c4a9e9d7737e4635fa8232"
+    },
+    {
+      "path": "evidence/screenshots/project-live-user-read-grant.png",
+      "size": 73903,
+      "sha256": "12e61a6d3ffbef9c8d1ed41ad9b77d4f22e89444c0c0b72b2cca97a1bd5e9ab4"
+    },
+    {
+      "path": "evidence/screenshots/project-manager-narrow.png",
+      "size": 78574,
+      "sha256": "f436f586b69c731644a7ed0f5e9e1051334350e969d44defdd3790b54ab9681f"
+    },
+    {
+      "path": "evidence/screenshots/project-manager-picker.png",
+      "size": 87089,
+      "sha256": "69f6bf40f32d2e40b0c678a16af21caca045968a1644c86e98cc249780c033d1"
+    },
+    {
+      "path": "evidence/screenshots/project-manager-save.png",
+      "size": 80473,
+      "sha256": "6c36a912b7fc9b81b5846d38518ff16c28c2d84b8754683418c0833d15461f1f"
+    },
+    {
+      "path": "evidence/screenshots/project-member-picker.png",
+      "size": 61085,
+      "sha256": "215ca539f31aac29b54ec3ad3d3a5df50e784d3078a46fbcacbb22b3d647f74f"
+    },
+    {
+      "path": "evidence/screenshots/project-uuid-fallback.png",
+      "size": 62993,
+      "sha256": "d222d54a14172db090d4eb597279df6598f147fe61b00ca460a0a0c1590bb7c1"
+    },
+    {
+      "path": "evidence/screenshots/related-tasks-complete.png",
+      "size": 66239,
+      "sha256": "84edbedb207ec50c44e1b9d4634ef6fefeccbe234d9ebe56c40019711a8fde8b"
+    },
+    {
+      "path": "evidence/screenshots/related-tasks-partial.png",
+      "size": 66604,
+      "sha256": "158ada9392e97404f0f765ffafcee135f8ba5c55de4efaa30ea7cc2bb55e696e"
+    },
+    {
+      "path": "evidence/sections-final-targeted.trx",
+      "size": 180573,
+      "sha256": "b8fe58e6e9a1bc562238f16d390207ebf2f56971ea459e9be3d1ce0944ed6ffd"
+    },
+    {
+      "path": "evidence/sections-targeted.trx",
+      "size": 163708,
+      "sha256": "e5a73360df66da158597b4827515a5df58008d2f2d165e8510a1edba4b772581"
+    },
+    {
+      "path": "implementation-and-next-stage.md",
+      "size": 12790,
+      "sha256": "65a7c21ccf0fe2471b1350ec979ad0f6644371f4dc4117eeea8ce573fe83576d"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 151834,
+      "sha256": "b0410cb190be3de415663b56090404491287bcdbaa27dd2822e9a4c0b76911a6"
+    },
+    {
+      "path": "source/work/production/docs/PROJECT-DETAIL-SECTIONS-13.1.md",
+      "size": 12790,
+      "sha256": "65a7c21ccf0fe2471b1350ec979ad0f6644371f4dc4117eeea8ce573fe83576d"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Infrastructure/ViewStateStore.cs",
+      "size": 10982,
+      "sha256": "8c5c1bea2813986c086d0cecfe50087235b2dad397a89ac4bc47da2814d40720"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs",
+      "size": 4200,
+      "sha256": "cb441cec462abffddfacae60b5a18598bfaca5558a552c5c65c3697cdd268413"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "size": 36784,
+      "sha256": "0258308287217dacd003fc43794e81b280b0f1d08e9aeb787b8a3d9a31ce052a"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Employees.cs",
+      "size": 9687,
+      "sha256": "d197f2488ce2fa70f264a7f3388a7d10c70a3eba04ddee418fce9ca577b98ee2"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.RelatedTasks.cs",
+      "size": 9036,
+      "sha256": "d577859df28cca3cc28349f940351c67d6279f5bef4b1cfc9b65ae60eb14869b"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+      "size": 5594,
+      "sha256": "0a51a6cdae75f54b9081d06032b3f0c18ca23cac6e17f92e74f9a49b07150463"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "size": 19465,
+      "sha256": "23f9a0c67bab193776185e0d0339894047ac8d472055771326466d59814b4206"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+      "size": 778,
+      "sha256": "f6eb48aea3b33f913a62e942de15d406ef1b40d5509808a7379b2b95b03c46aa"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs",
+      "size": 13741,
+      "sha256": "108dbd53161bd766bdab0309bbc3271d28d322f95015fb690d8b53c14601b67e"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs",
+      "size": 7176,
+      "sha256": "28d1acf000b47851b2d471acd71f9a9ecdb3050573dfbfecc1561113e7548657"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "size": 18012,
+      "sha256": "2049a43b600edcb68a253437c5d1b637ed141d8fefeaa39645974a49704a98ec"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/ViewState/ViewStateStoreTests.cs",
+      "size": 8649,
+      "sha256": "66e77144b204d06a4e709d292c2aa80e01c02f5a0325696d54b8cb4f3018ac20"
+    },
+    {
+      "path": "source.patch",
+      "size": 81210,
+      "sha256": "13ae4d5b3b32fd99f5ca274c1d2d169c2783dfdccdb69a609f836a42da076492"
+    },
+    {
+      "path": "validation-report.json",
+      "size": 3412,
+      "sha256": "7f83851ee8f18f12d893f9d1bbc6d630080b790b6dfc66cc00efe54766287b44"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 5143,
+      "sha256": "34d34abd48d209746aac788cc07aa9c29ec3116a9e91a9d315d217011752faf3"
+    },
+    {
+      "path": "version.txt",
+      "size": 8,
+      "sha256": "90e2c28d8a04924f85940917e2e6a1aa8143e4215bb0ea02f164fe83be6e0cb3"
+    }
+  ]
+}

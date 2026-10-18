@@ -29,7 +29,7 @@ internal static class ViewStateKeys
     internal static readonly HashSet<string> SortFields = ["TypeLabel", "Title"];
     internal static readonly HashSet<string> Sections =
     [
-        "main/v1/inspector", "inbox/v1/inspector", "projects/v1/members", "projects/v1/tasks",
+        "main/v1/inspector", "inbox/v1/inspector", "projects/v1/members", "projects/v1/tasks", "projects/v1/overview",
         "today/v1/queue", "today/v1/inspector", "work/v1/links",
         "task/v1/checklist", "task/v1/subtasks", "task/v1/files", "task/v1/predecessors",
         "task/v1/comments", "task/v1/history", "task-editor/v1/planning",
