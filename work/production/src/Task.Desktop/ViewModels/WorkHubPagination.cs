@@ -11,7 +11,7 @@ public sealed partial class WorkHubViewModel
     private long _listGeneration;
     public AsyncCommand LoadMoreCommand { get; private set; } = null!;
     public bool HasMoreResults => (_paletteSearchActive || IsSearch) ? _searchCursor is not null
-        : Area is WorkHubArea.Contacts or WorkHubArea.Archive or WorkHubArea.Trash && _listCursor is not null;
+        : (Area != WorkHubArea.Contacts || !ShowCompanies) && Area is WorkHubArea.Contacts or WorkHubArea.Archive or WorkHubArea.Trash && _listCursor is not null;
 
     private void InitializePagination() => LoadMoreCommand = new(async (_, ct) =>
     {

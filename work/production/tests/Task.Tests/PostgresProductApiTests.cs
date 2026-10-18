@@ -137,6 +137,25 @@ public sealed partial class PostgresProductApiTests
         Assert.Single(db.Call("catalog-items", "locations", id: Id(item)).Body!.AsArray());
     }
 
+    [RequiresPostgresFact]
+    public void ProductApi_CompanyContactUnlinkRequiresVisibleContact()
+    {
+        using var db = Database.Create(); Assert.NotNull(db);
+        var company = db.Call("companies", "create", "{\"name\":\"Scoped company\"}");
+        var contact = db.Call("contacts", "create", "{\"firstName\":\"Private\",\"displayName\":\"Private contact\"}",
+            user: db.OtherUser, session: db.OtherSession);
+        var companyId = Id(company); var contactId = Id(contact);
+        db.Call("companies", "contact-link", $$"""{"companyId":"{{companyId}}","contactId":"{{contactId}}"}""", companyId, 1);
+
+        var error = Assert.Throws<ProductApiException>(() => db.Call("companies", "contact-unlink", "{}", companyId, 2,
+            child: contactId, admin: false, permissions: ["Contact.Read", "Contact.Update"]));
+
+        Assert.Equal(422, error.Status);
+        Assert.Equal("VALIDATION_FAILED", error.Code);
+        Assert.Equal(1, db.Count("crm.company_contacts"));
+        Assert.Equal(2, db.Call("companies", "get", id: companyId).Version);
+    }
+
     private static Guid Id(ProductApiResponse response) => response.Body!["id"]!.Deserialize<Guid>();
 
     [Fact]

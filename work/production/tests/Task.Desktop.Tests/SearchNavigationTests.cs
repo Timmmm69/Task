@@ -13,7 +13,7 @@ public sealed class SearchNavigationTests
     [InlineData("catalog_item", "catalog")]
     [InlineData("file_location", "catalog")]
     [InlineData("contact", "contacts")]
-    [InlineData("company", null)]
+    [InlineData("company", "contacts")]
     [InlineData("employee_profile", null)]
     [InlineData("interaction", null)]
     [InlineData("comment", null)]
@@ -27,7 +27,8 @@ public sealed class SearchNavigationTests
         {
             SearchHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(
                 new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([hit])),
-            Contacts = [new(id, 1, "Contact", "Contact", null, null, "active", "active")]
+            Contacts = [new(id, 1, "Contact", "Contact", null, null, "active", "active")],
+            CompanyApi = new(new DesktopCompany(id, 1, "Company"))
         };
         using var hub = new WorkHubViewModel(client, ["Search.Use", "Contact.Read", "FileCatalog.Read"]);
         using var shell = new MainWindowViewModel(null, null, workHub: hub);
@@ -40,7 +41,8 @@ public sealed class SearchNavigationTests
         if (route is not null)
         {
             Assert.Equal(route, shell.SelectedSection?.Route);
-            if (route == "contacts") Assert.Equal(id, hub.SelectedContact?.Id);
+            if (type == "contact") Assert.Equal(id, hub.SelectedContact?.Id);
+            if (type == "company") Assert.Equal(id, hub.Companies?.Details?.Id);
             if (route == "catalog") Assert.Equal(id, hub.SelectedCatalogItem?.Id);
         }
         else Assert.Contains("нет экрана", shell.SessionMessage);

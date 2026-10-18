@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="Task.Desktop.Views.CompaniesView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ AutomationProperties.Name="Компании" AutomationProperties.AutomationId="CompaniesWorkspace">
+ <Grid>
+  <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+  <DockPanel>
+   <StackPanel DockPanel.Dock="Top">
+    <TextBlock Text="Поиск компаний"/><TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Поиск компаний"/>
+    <WrapPanel Margin="0,8"><Button Content="Найти / обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}"/><Button Content="Новая компания" Command="{Binding NewCommand}" Style="{StaticResource Task.Button.Secondary}"/></WrapPanel>
+    <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsLoadingList, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+    <TextBlock Text="Доступных компаний по запросу нет. Измените поиск или создайте компанию." TextWrapping="Wrap" Margin="0,8" Visibility="{Binding IsEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+   </StackPanel>
+   <Button DockPanel.Dock="Bottom" Content="Загрузить ещё компании" Command="{Binding MoreCommand}" Style="{StaticResource Task.Button.Secondary}" Visibility="{Binding HasMore, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+   <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedCompany}" AutomationProperties.Name="Список компаний" AutomationProperties.AutomationId="CompaniesList"><ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}" TextWrapping="Wrap" Margin="6"/></DataTemplate></ListBox.ItemTemplate></ListBox>
+  </DockPanel>
+  <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
+   <TextBlock Text="Карточка компании" FontSize="20" FontWeight="SemiBold"/>
+   <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsLoadingCard, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+   <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="CompanyMessage"/>
+   <WrapPanel><Button Content="Редактировать" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}"/><Button Content="Обновить карточку" Command="{Binding ReloadCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/></WrapPanel>
+   <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Название" Margin="0,8,0,2" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.Name}" TextWrapping="Wrap"/>
+<TextBlock Text="Юридическое название" Margin="0,8,0,2" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.LegalName}" TextWrapping="Wrap"/>
+<TextBlock Text="Отрасль" Margin="0,8,0,2" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.Industry}" TextWrapping="Wrap"/>
+<TextBlock Text="Сайт" Margin="0,8,0,2" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.Website}" TextWrapping="Wrap"/>
+<TextBlock Text="Налоговый идентификатор" Margin="0,8,0,2" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.TaxIdentifier}" TextWrapping="Wrap"/>
+<TextBlock Text="Заметки" Margin="0,8,0,2" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.Notes}" TextWrapping="Wrap"/>
+    <TextBlock Text="Бизнес-статус" FontWeight="SemiBold" Margin="0,8,0,2"/><ComboBox ItemsSource="{Binding StatusChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Details.Status, Mode=OneWay}" IsEnabled="False"/>
+   </StackPanel>
+   <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+    <StackPanel IsEnabled="{Binding CanChangeDraft}"><TextBlock Text="Название" Margin="0,8,0,2"/><TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Название компании" />
+<TextBlock Text="Юридическое название" Margin="0,8,0,2"/><TextBox Text="{Binding LegalName, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Юридическое название компании" />
+<TextBlock Text="Отрасль" Margin="0,8,0,2"/><TextBox Text="{Binding Industry, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Отрасль компании" />
+<TextBlock Text="Сайт" Margin="0,8,0,2"/><TextBox Text="{Binding Website, UpdateSourceTrigger=PropertyChanged}" MaxLength="2048" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Сайт компании" />
+<TextBlock Text="Налоговый идентификатор" Margin="0,8,0,2"/><TextBox Text="{Binding TaxIdentifier, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Налоговый идентификатор компании" />
+<TextBlock Text="Заметки" Margin="0,8,0,2"/><TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Заметки компании" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" MaxHeight="160" VerticalScrollBarVisibility="Auto"/>
+     <TextBlock Text="Бизнес-статус" Margin="0,8,0,2"/><ComboBox ItemsSource="{Binding StatusChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Status}"/>
+    </StackPanel>
+    <WrapPanel Margin="0,12"><Button Content="Сохранить компанию" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="SaveCompanyButton"/><Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/></WrapPanel>
+   </StackPanel>
+   <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,18,0,0">
+    <TextBlock Text="Контактные лица" FontSize="18" FontWeight="SemiBold"/>
+    <TextBlock Text="Отображаются только доступные контакты. Открытие использует существующую карточку контакта; возврат — кнопка «Компании»." TextWrapping="Wrap" Margin="0,8"/>
+    <ItemsControl ItemsSource="{Binding RelatedContacts}" AutomationProperties.AutomationId="CompanyContacts"><ItemsControl.ItemTemplate><DataTemplate>
+     <Border BorderBrush="{DynamicResource Task.Brush.Text.Secondary}" BorderThickness="0,0,0,1" Padding="0,8"><StackPanel>
+      <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/><TextBlock Text="{Binding JobTitle}"/><TextBlock Text="{Binding DepartmentName}"/>
+      <TextBlock Text="{Binding PrimaryLabel}"/><TextBlock Text="{Binding ValidFrom, StringFormat=Начало: {0}}"/><TextBlock Text="{Binding ValidTo, StringFormat=Окончание: {0}}"/>
+      <WrapPanel><Button Content="Открыть контакт" Command="{Binding DataContext.OpenContactCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/>
+       <Button Content="Удалить связь" Command="{Binding DataContext.UnlinkContactCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/></WrapPanel>
+     </StackPanel></Border>
+    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <StackPanel IsEnabled="{Binding CanChangeLinks}" Margin="0,14">
+     <TextBlock Text="Добавить существующий контакт" FontWeight="SemiBold"/>
+     <TextBox Text="{Binding ContactQuery, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Имя контактного лица"/>
+     <WrapPanel Margin="0,8"><Button Content="Найти контакт" Command="{Binding SearchContactsCommand}" Style="{StaticResource Task.Button.Secondary}"/><Button Content="Ещё контакты" Command="{Binding MoreContactsCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/></WrapPanel>
+     <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsSearchingContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+     <ListBox ItemsSource="{Binding ContactCandidates}" SelectedItem="{Binding SelectedCandidate}" DisplayMemberPath="DisplayName" MaxHeight="150" AutomationProperties.Name="Доступные контакты"/>
+     <TextBlock Text="Должность" Margin="0,8,0,2"/><TextBox Text="{Binding JobTitle, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}"/>
+     <TextBlock Text="Подразделение" Margin="0,8,0,2"/><TextBox Text="{Binding DepartmentName, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}"/>
+     <CheckBox Content="Основной контакт" IsChecked="{Binding IsPrimary}" Margin="0,8"/>
+     <TextBlock Text="Начало связи (ГГГГ-ММ-ДД, необязательно)"/><TextBox Text="{Binding ValidFrom, UpdateSourceTrigger=PropertyChanged}" MaxLength="10" Style="{StaticResource Task.Input.Text}"/>
+     <TextBlock Text="Окончание связи (ГГГГ-ММ-ДД, необязательно)" Margin="0,8,0,2"/><TextBox Text="{Binding ValidTo, UpdateSourceTrigger=PropertyChanged}" MaxLength="10" Style="{StaticResource Task.Input.Text}"/>
+     <Button Content="Добавить связь" Command="{Binding LinkContactCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,12"/>
+    </StackPanel>
+   </StackPanel>
+  </StackPanel></ScrollViewer>
+ </Grid>
+</UserControl>

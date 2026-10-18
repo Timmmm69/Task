@@ -95,7 +95,14 @@
             </StackPanel></ScrollViewer>
         </Grid>
 
-        <Grid Grid.Row="2" Visibility="{Binding IsContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+        <DockPanel Grid.Row="2" Visibility="{Binding IsContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,12" Visibility="{Binding HasCompanies, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <Button Content="Контакты" Command="{Binding ShowContactsCommand}" Style="{StaticResource Task.Button.Secondary}"/>
+                <Button Content="Компании" Command="{Binding ShowCompaniesCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/>
+            </WrapPanel>
+            <Grid>
+            <views:CompaniesView DataContext="{Binding Companies}" Visibility="{Binding DataContext.ShowCompanies, RelativeSource={RelativeSource AncestorType=views:WorkHubView}, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+        <Grid Visibility="{Binding ShowContactPeople, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8"><ListBox ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" BorderThickness="0" AutomationProperties.Name="{Binding ContactsListName}" AutomationProperties.AutomationId="ContactsList"><ListBox.ItemTemplate><DataTemplate><StackPanel Margin="8"><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/><TextBlock Text="{Binding Notes}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox></Border>
             <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
@@ -146,6 +153,8 @@
                 <TextBlock Text="Созданный контакт доступен для связей объектов и поиска." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
             </StackPanel></ScrollViewer>
         </Grid>
+            </Grid>
+        </DockPanel>
 
         <Grid Grid.Row="2" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
               AutomationProperties.Name="Канонический глобальный поиск" AutomationProperties.AutomationId="SearchSurface">

@@ -11,7 +11,7 @@ public sealed partial class WorkHubViewModel
     {
         if (IsPersonal || _client is not IDesktopContactDetailsClient client) return;
         ContactCard = new(client, () => !_disposed && _sessionAvailable && Has("Contact.Read"),
-            () => !_disposed && _active && IsContacts && _sessionAvailable && _networkAvailable && Has("Contact.Read"),
+            () => !_disposed && _active && IsContacts && !ShowCompanies && _sessionAvailable && _networkAvailable && Has("Contact.Read"),
             () => Has("Contact.Update"));
         ContactCard.Saved += contact =>
         {

@@ -551,7 +551,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             {
                 "task" => "tasks",
                 "project" => "projects",
-                "contact" => "contacts",
+                "contact" or "company" => "contacts",
                 "catalog_item" or "file_location" => "catalog",
                 "calendar_event" => "calendar",
                 "notification" => "notifications",

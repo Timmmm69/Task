@@ -44,8 +44,15 @@ public sealed partial class WorkHubViewModel
                 }
             }
         }
+        else if (type == "company")
+        {
+            if (!Has("Contact.Read") || Companies is null) { SetFeedback("Недостаточно прав для открытия компании.", WorkHubFeedbackKind.Warning); return; }
+            SetCompanySurface(true);
+            await Companies.OpenAsync(id);
+        }
         else if (type == "contact")
         {
+            SetCompanySurface(false);
             SelectedContact = null;
             if (!Has("Contact.Read")) { SetFeedback("Недостаточно прав для открытия контакта.", WorkHubFeedbackKind.Warning); return; }
             string? cursor = null;

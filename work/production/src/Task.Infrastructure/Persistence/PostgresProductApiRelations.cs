@@ -163,6 +163,7 @@ internal sealed partial class PostgresProductApiStore
             if (operation == "contact-unlink")
             {
                 ValidateFields(body, "");
+                RequireVisibleActiveContact(c, t, r, r.ChildId!.Value);
                 if (Run(c, t, "DELETE FROM crm.company_contacts WHERE organization_id=@org AND company_id=@id AND contact_id=@child;", r,
                     ("id", r.Id), ("child", r.ChildId)) != 1) throw Error(404, "OBJECT_NOT_VISIBLE", "Relationship is not visible.");
                 return null;
@@ -170,8 +171,7 @@ internal sealed partial class PostgresProductApiStore
             ValidateFields(body, "contactId companyId jobTitle departmentName isPrimary validFrom validTo");
             CheckParent(body, "companyId", r.Id!.Value);
             var contactId = GuidValue(body, "contactId");
-            if (One(c, t, "SELECT jsonb_build_object('id',id) FROM core.objects WHERE organization_id=@org AND id=@contact AND object_type='contact' AND lifecycle_state='active' AND iam.object_allowed(@org,id,@user,'contact.read',@admin);", r,
-                ("contact", contactId)) is null) throw Invalid("The contact must be active in this organization.");
+            RequireVisibleActiveContact(c, t, r, contactId);
             body["organizationId"] = r.OrganizationId; body["companyId"] = r.Id;
             Insert(c, t, r, "crm.company_contacts", body);
             return body;
@@ -204,6 +204,12 @@ internal sealed partial class PostgresProductApiStore
             Insert(c, t, r, table, body);
         }
         return One(c, t, $"SELECT to_jsonb(p) FROM {table} p WHERE organization_id=@org AND id=@child;", r, ("child", id));
+    }
+
+    private static void RequireVisibleActiveContact(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, Guid contactId)
+    {
+        if (One(c, t, "SELECT jsonb_build_object('id',id) FROM core.objects WHERE organization_id=@org AND id=@contact AND object_type='contact' AND lifecycle_state='active' AND iam.object_allowed(@org,id,@user,'contact.read',@admin);", r,
+            ("contact", contactId)) is null) throw Invalid("The contact must be active in this organization.");
     }
 
     private ProductApiResponse Locations(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, JsonObject current)
