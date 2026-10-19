@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a5b45a12-6974-450d-aa3a-95c34dd5a74e" name="novik@TIM 2026-10-19 01:33:57" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-19T01:33:57.0256559+03:00" queuing="2026-10-19T01:33:57.0256562+03:00" start="2026-10-19T01:33:56.0765791+03:00" finish="2026-10-19T01:34:03.3410028+03:00" />
+  <TestSettings name="default" id="bd9450ba-c795-4b42-b719-5f3fc6692bcb">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-19_01_33_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8b76dea1-35eb-4a0c-b815-e25d96f2d954" testId="3e5592da-2918-7672-8ae1-44ba0c7f1abb" testName="Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions" computerName="TIM" duration="00:00:01.3595510" startTime="2026-10-19T01:33:59.2708846+03:00" endTime="2026-10-19T01:34:00.6301000+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b76dea1-35eb-4a0c-b815-e25d96f2d954" />
+    <UnitTestResult executionId="cad114a2-4cf2-45a2-9d42-3a881ac44e3d" testId="63ee16ce-8f29-c044-99ae-815145b519c1" testName="Task.Tests.TaskQueryServiceTests.GetById_ProjectsRenamedTaskFields" computerName="TIM" duration="00:00:00.0004153" startTime="2026-10-19T01:33:56.9834491+03:00" endTime="2026-10-19T01:33:56.9834666+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cad114a2-4cf2-45a2-9d42-3a881ac44e3d" />
+    <UnitTestResult executionId="dd1faae1-07ff-4d99-8135-1960b509834d" testId="961df341-1b2e-d4e3-def7-56749e543f0d" testName="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsAttendeeCollectionsInStoredOrder" computerName="TIM" duration="00:00:00.0154467" startTime="2026-10-19T01:33:56.9554086+03:00" endTime="2026-10-19T01:33:56.9833331+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd1faae1-07ff-4d99-8135-1960b509834d" />
+    <UnitTestResult executionId="c5d01713-7ecb-41db-8b0a-cd4319aad7c6" testId="e237efed-0d53-7def-d729-ae3871632c93" testName="Task.Tests.TaskQueryServiceTests.GetById_ProjectsCancelledTaskFields" computerName="TIM" duration="00:00:00.0005036" startTime="2026-10-19T01:33:56.9832202+03:00" endTime="2026-10-19T01:33:56.9832481+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5d01713-7ecb-41db-8b0a-cd4319aad7c6" />
+    <UnitTestResult executionId="f5efecee-4667-4c4a-935a-911193aeaec6" testId="e60a9656-3862-178e-1e81-d646003610db" testName="Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" computerName="TIM" duration="00:00:02.6316744" startTime="2026-10-19T01:34:00.6310304+03:00" endTime="2026-10-19T01:34:03.2620201+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5efecee-4667-4c4a-935a-911193aeaec6" />
+    <UnitTestResult executionId="71d6c743-6ba6-432a-b8aa-79fb3ffb14c1" testId="f893b846-ba53-0264-702c-6ff772f5221c" testName="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsCancelledAndTrashedEventState" computerName="TIM" duration="00:00:00.0027129" startTime="2026-10-19T01:33:56.9833845+03:00" endTime="2026-10-19T01:33:57.0026346+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71d6c743-6ba6-432a-b8aa-79fb3ffb14c1" />
+    <UnitTestResult executionId="b0b31e81-1db6-4100-9d42-350310b6e25c" testId="175affbe-7228-7759-17fb-efe1a258ba42" testName="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsEveryScalarFieldAndTiming" computerName="TIM" duration="00:00:00.0003868" startTime="2026-10-19T01:33:57.0027742+03:00" endTime="2026-10-19T01:33:57.0027924+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0b31e81-1db6-4100-9d42-350310b6e25c" />
+    <UnitTestResult executionId="a3e96fad-b919-46d9-9a2c-380c408bacea" testId="fdf0129b-e35b-26f3-b168-5f55a6c75480" testName="Task.Tests.TaskQueryServiceTests.GetById_ProjectsTrashedTaskFields" computerName="TIM" duration="00:00:00.0003614" startTime="2026-10-19T01:33:56.9835084+03:00" endTime="2026-10-19T01:33:56.9835255+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3e96fad-b919-46d9-9a2c-380c408bacea" />
+    <UnitTestResult executionId="446cc4e0-384e-4794-a6cf-9fb5d6349570" testId="f4f0277d-2fbd-b6ce-b175-fd984db21e97" testName="Task.Tests.TaskQueryServiceTests.GetById_ProjectsCompletedTaskFields" computerName="TIM" duration="00:00:00.0030358" startTime="2026-10-19T01:33:56.9833098+03:00" endTime="2026-10-19T01:33:56.9834036+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="446cc4e0-384e-4794-a6cf-9fb5d6349570" />
+    <UnitTestResult executionId="654f397d-f301-4924-b68b-8c5edf5740c0" testId="c995c569-e6f3-c5a8-ee13-b684407542ed" testName="Task.Tests.TaskQueryServiceTests.GetById_ProjectsArchivedTaskFields" computerName="TIM" duration="00:00:00.0122373" startTime="2026-10-19T01:33:56.9553807+03:00" endTime="2026-10-19T01:33:56.9826343+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="654f397d-f301-4924-b68b-8c5edf5740c0" />
+    <UnitTestResult executionId="8f972ef4-5506-4189-878a-92517743cd66" testId="3265ef2a-6fd4-bdf5-b040-b1a8dc2041c5" testName="Task.Tests.TaskQueryServiceTests.GetById_ProjectsNewTaskFieldsExactly" computerName="TIM" duration="00:00:00.0002931" startTime="2026-10-19T01:33:57.0023222+03:00" endTime="2026-10-19T01:33:57.0023667+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f972ef4-5506-4189-878a-92517743cd66" />
+    <UnitTestResult executionId="15aee2e1-bdbf-4f87-a755-c604ed3e7889" testId="661635e0-8192-cf0f-d5f2-0c62db9ee56e" testName="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsAllDayEventWithoutInstants" computerName="TIM" duration="00:00:00.0015460" startTime="2026-10-19T01:33:57.0027053+03:00" endTime="2026-10-19T01:33:57.0027254+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="15aee2e1-bdbf-4f87-a755-c604ed3e7889" />
+    <UnitTestResult executionId="e849f608-d2ed-4e28-b24e-683075dde590" testId="6c10dc2d-6501-9beb-f4ce-e446a7592980" testName="Task.Tests.ScheduleQueryServiceTests.GetSchedule_Throws_WhenProjectsContainsEmptyIdentifier" computerName="TIM" duration="00:00:00.0056131" startTime="2026-10-19T01:33:56.9554217+03:00" endTime="2026-10-19T01:33:56.9671161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e849f608-d2ed-4e28-b24e-683075dde590" />
+    <UnitTestResult executionId="99de877c-cbea-4619-872a-1e4881a41258" testId="0be4cce9-4412-f2dc-01b1-b541ca060f5a" testName="Task.Tests.PostgresProductApiTests.Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin" computerName="TIM" duration="00:00:02.3108195" startTime="2026-10-19T01:33:56.9542784+03:00" endTime="2026-10-19T01:33:59.2704511+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99de877c-cbea-4619-872a-1e4881a41258" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.TaskQueryServiceTests.GetById_ProjectsCompletedTaskFields" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="f4f0277d-2fbd-b6ce-b175-fd984db21e97">
+      <Execution id="446cc4e0-384e-4794-a6cf-9fb5d6349570" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskQueryServiceTests" name="GetById_ProjectsCompletedTaskFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskQueryServiceTests.GetById_ProjectsCancelledTaskFields" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="e237efed-0d53-7def-d729-ae3871632c93">
+      <Execution id="c5d01713-7ecb-41db-8b0a-cd4319aad7c6" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskQueryServiceTests" name="GetById_ProjectsCancelledTaskFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsAttendeeCollectionsInStoredOrder" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="961df341-1b2e-d4e3-def7-56749e543f0d">
+      <Execution id="dd1faae1-07ff-4d99-8135-1960b509834d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Calendar.CalendarEventQueryServiceTests" name="GetById_ProjectsAttendeeCollectionsInStoredOrder" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskQueryServiceTests.GetById_ProjectsTrashedTaskFields" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="fdf0129b-e35b-26f3-b168-5f55a6c75480">
+      <Execution id="a3e96fad-b919-46d9-9a2c-380c408bacea" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskQueryServiceTests" name="GetById_ProjectsTrashedTaskFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.ScheduleQueryServiceTests.GetSchedule_Throws_WhenProjectsContainsEmptyIdentifier" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="6c10dc2d-6501-9beb-f4ce-e446a7592980">
+      <Execution id="e849f608-d2ed-4e28-b24e-683075dde590" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.ScheduleQueryServiceTests" name="GetSchedule_Throws_WhenProjectsContainsEmptyIdentifier" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsEveryScalarFieldAndTiming" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="175affbe-7228-7759-17fb-efe1a258ba42">
+      <Execution id="b0b31e81-1db6-4100-9d42-350310b6e25c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Calendar.CalendarEventQueryServiceTests" name="GetById_ProjectsEveryScalarFieldAndTiming" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsAllDayEventWithoutInstants" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="661635e0-8192-cf0f-d5f2-0c62db9ee56e">
+      <Execution id="15aee2e1-bdbf-4f87-a755-c604ed3e7889" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Calendar.CalendarEventQueryServiceTests" name="GetById_ProjectsAllDayEventWithoutInstants" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskQueryServiceTests.GetById_ProjectsNewTaskFieldsExactly" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="3265ef2a-6fd4-bdf5-b040-b1a8dc2041c5">
+      <Execution id="8f972ef4-5506-4189-878a-92517743cd66" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskQueryServiceTests" name="GetById_ProjectsNewTaskFieldsExactly" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0be4cce9-4412-f2dc-01b1-b541ca060f5a">
+      <Execution id="99de877c-cbea-4619-872a-1e4881a41258" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.Calendar.CalendarEventQueryServiceTests.GetById_ProjectsCancelledAndTrashedEventState" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="f893b846-ba53-0264-702c-6ff772f5221c">
+      <Execution id="71d6c743-6ba6-432a-b8aa-79fb3ffb14c1" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.Calendar.CalendarEventQueryServiceTests" name="GetById_ProjectsCancelledAndTrashedEventState" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskQueryServiceTests.GetById_ProjectsArchivedTaskFields" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="c995c569-e6f3-c5a8-ee13-b684407542ed">
+      <Execution id="654f397d-f301-4924-b68b-8c5edf5740c0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskQueryServiceTests" name="GetById_ProjectsArchivedTaskFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.TaskQueryServiceTests.GetById_ProjectsRenamedTaskFields" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="63ee16ce-8f29-c044-99ae-815145b519c1">
+      <Execution id="cad114a2-4cf2-45a2-9d42-3a881ac44e3d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.TaskQueryServiceTests" name="GetById_ProjectsRenamedTaskFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="e60a9656-3862-178e-1e81-d646003610db">
+      <Execution id="f5efecee-4667-4c4a-935a-911193aeaec6" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="3e5592da-2918-7672-8ae1-44ba0c7f1abb">
+      <Execution id="8b76dea1-35eb-4a0c-b815-e25d96f2d954" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProjectHistory_CurrentContractPagingVisibilityAndPermissions" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3e5592da-2918-7672-8ae1-44ba0c7f1abb" executionId="8b76dea1-35eb-4a0c-b815-e25d96f2d954" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63ee16ce-8f29-c044-99ae-815145b519c1" executionId="cad114a2-4cf2-45a2-9d42-3a881ac44e3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="961df341-1b2e-d4e3-def7-56749e543f0d" executionId="dd1faae1-07ff-4d99-8135-1960b509834d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e237efed-0d53-7def-d729-ae3871632c93" executionId="c5d01713-7ecb-41db-8b0a-cd4319aad7c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e60a9656-3862-178e-1e81-d646003610db" executionId="f5efecee-4667-4c4a-935a-911193aeaec6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f893b846-ba53-0264-702c-6ff772f5221c" executionId="71d6c743-6ba6-432a-b8aa-79fb3ffb14c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="175affbe-7228-7759-17fb-efe1a258ba42" executionId="b0b31e81-1db6-4100-9d42-350310b6e25c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdf0129b-e35b-26f3-b168-5f55a6c75480" executionId="a3e96fad-b919-46d9-9a2c-380c408bacea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f4f0277d-2fbd-b6ce-b175-fd984db21e97" executionId="446cc4e0-384e-4794-a6cf-9fb5d6349570" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c995c569-e6f3-c5a8-ee13-b684407542ed" executionId="654f397d-f301-4924-b68b-8c5edf5740c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3265ef2a-6fd4-bdf5-b040-b1a8dc2041c5" executionId="8f972ef4-5506-4189-878a-92517743cd66" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="661635e0-8192-cf0f-d5f2-0c62db9ee56e" executionId="15aee2e1-bdbf-4f87-a755-c604ed3e7889" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c10dc2d-6501-9beb-f4ce-e446a7592980" executionId="e849f608-d2ed-4e28-b24e-683075dde590" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0be4cce9-4412-f2dc-01b1-b541ca060f5a" executionId="99de877c-cbea-4619-872a-1e4881a41258" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="14" executed="14" passed="14" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.18]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:06.55]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

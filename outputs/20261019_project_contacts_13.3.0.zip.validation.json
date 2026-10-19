@@ -1,0 +1,22 @@
+{
+  "version": "13.3.0",
+  "sourceCommit": "d5afec2f4c43c3ee3e9601ad7c5a9246d8c177ea",
+  "validated": true,
+  "manifestFileCount": 47,
+  "archiveEntryCount": 49,
+  "sourceFiles": 21,
+  "sha256": "4a643cfc8194d83942502678ffd0a98036ecd7638e96e1180ba325219e24c82c",
+  "manifestSha256": "90aaa6020ece113c5a0c7e19c2b6f3e982ff79cb862c48040c36af408948ca97",
+  "zipCRC": true,
+  "zipEntriesMatchManifestAndChecksums": true,
+  "fileHashesVerified": true,
+  "solutionReleaseBuild": "PASS",
+  "desktopPassed": 1750,
+  "desktopFailed": 0,
+  "desktopSkipped": 0,
+  "endpointPassed": 254,
+  "stage13_3NewTests": 70,
+  "initialDesktopFailed": 1,
+  "focusIsolatedRecheckPassed": 1,
+  "liveCorporateApiPostgresTested": false
+}

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d23a5dfa-ebc9-4bd4-a2d2-7b168eac54f4" name="novik@TIM 2026-10-19 01:12:32" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-19T01:12:32.3890100+03:00" queuing="2026-10-19T01:12:32.3890104+03:00" start="2026-10-19T01:12:29.5627843+03:00" finish="2026-10-19T01:12:32.3963564+03:00" />
+  <TestSettings name="default" id="7f2525c9-1851-43c8-8c32-54c8b254ff6c">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-19_01_12_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b026e691-7a1b-4207-9575-61b0d11252a9" testId="0c18fe25-0a69-978b-34e0-bbdb6cd6819c" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion(type: &quot;company&quot;)" computerName="TIM" duration="00:00:00.0070615" startTime="2026-10-19T01:12:32.2917669+03:00" endTime="2026-10-19T01:12:32.2989801+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b026e691-7a1b-4207-9575-61b0d11252a9" />
+    <UnitTestResult executionId="41fb0068-d88c-4a2f-8d5f-0a7b76eada65" testId="ecf02ae9-019b-6a74-75fe-4b0374401b03" testName="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion(type: &quot;contact&quot;)" computerName="TIM" duration="00:00:00.1278198" startTime="2026-10-19T01:12:32.1625409+03:00" endTime="2026-10-19T01:12:32.2909823+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41fb0068-d88c-4a2f-8d5f-0a7b76eada65" />
+    <UnitTestResult executionId="48bcb6aa-5b6a-4abc-8287-e172773fbb9e" testId="0aa0efce-cc38-f52b-fdd9-93c16e28611a" testName="Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates" computerName="TIM" duration="00:00:01.7661903" startTime="2026-10-19T01:12:30.3770614+03:00" endTime="2026-10-19T01:12:32.1514858+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48bcb6aa-5b6a-4abc-8287-e172773fbb9e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion(type: &quot;company&quot;)" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="0c18fe25-0a69-978b-34e0-bbdb6cd6819c">
+      <Execution id="b026e691-7a1b-4207-9575-61b0d11252a9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.DesktopWorkApiClientTests.ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion(type: &quot;contact&quot;)" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="ecf02ae9-019b-6a74-75fe-4b0374401b03">
+      <Execution id="41fb0068-d88c-4a2f-8d5f-0a7b76eada65" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.DesktopWorkApiClientTests" name="ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="0aa0efce-cc38-f52b-fdd9-93c16e28611a">
+      <Execution id="48bcb6aa-5b6a-4abc-8287-e172773fbb9e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Projects.ProjectsViewModelTests" name="NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0c18fe25-0a69-978b-34e0-bbdb6cd6819c" executionId="b026e691-7a1b-4207-9575-61b0d11252a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ecf02ae9-019b-6a74-75fe-4b0374401b03" executionId="41fb0068-d88c-4a2f-8d5f-0a7b76eada65" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0aa0efce-cc38-f52b-fdd9-93c16e28611a" executionId="48bcb6aa-5b6a-4abc-8287-e172773fbb9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:02.22]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

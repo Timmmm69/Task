@@ -1,0 +1,29 @@
+{
+  "version": "13.2.0",
+  "commit": "4accd66ff90a586cc38a6e428297862871e8b1cc",
+  "branch": "feature/project-detail-sections",
+  "base": "283bcd4c3298d763c54f3a060ba714dee33a5629",
+  "originMain": "dcbaca241868f2afb4e6506473b8957ab72aa8b3",
+  "publishedToMain": false,
+  "files": [
+    ".project-dashboard/roadmap.json",
+    "work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Files.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/Views/ProjectFilesView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectFilesView.xaml.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesIntegrationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ProjectFilesTransportTests.cs",
+    "work/project_files_13_2/implementation.md",
+    "work/project_files_13_2/validation-report.md"
+  ]
+}

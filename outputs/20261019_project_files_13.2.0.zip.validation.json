@@ -1,0 +1,20 @@
+{
+  "version": "13.2.0",
+  "sourceCommit": "4accd66ff90a586cc38a6e428297862871e8b1cc",
+  "validated": true,
+  "manifestFileCount": 52,
+  "archiveEntryCount": 54,
+  "sourceFiles": 19,
+  "sha256": "65fabc67abf1ba05a4861412860e806970d8017a13f2786dbc826f4153e6eeb4",
+  "manifestSha256": "6b292749ea6e6b6f3d16127229d84738524a429d155eee28e497e3cdb35fb26e",
+  "zipCRC": true,
+  "zipEntriesMatchManifestAndChecksums": true,
+  "fileHashesVerified": true,
+  "build": "PASS",
+  "desktopPassed": 1680,
+  "desktopFailed": 0,
+  "desktopSkipped": 0,
+  "endpointPassed": 1,
+  "nativeFinalPassed": 1,
+  "liveCorporateApiNasTested": false
+}

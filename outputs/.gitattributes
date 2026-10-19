@@ -12,3 +12,9 @@
 
 # Preserve manifest-covered Task 6 verification receipts on Windows checkouts.
 /20261016_today_quick_actions_final_review_1.0.1/** text eol=lf
+
+# Preserve manifest-covered project-detail packages byte for byte.
+/20261019_project_files_13.2.0/** binary
+/20261019_project_contacts_13.3.0/** binary
+/20261019_project_history_13.4.0/** binary
+/20261019_project_detail_publication_13.4.1/** binary

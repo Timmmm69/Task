@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="07461d77-416b-4fb2-9eb7-971688ccadf8" name="novik@TIM 2026-10-19 01:33:57" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-19T01:33:57.1452229+03:00" queuing="2026-10-19T01:33:57.1452234+03:00" start="2026-10-19T01:33:56.0765792+03:00" finish="2026-10-19T01:33:57.1518874+03:00" />
+  <TestSettings name="default" id="e957572a-a8cb-4bc0-b644-f71c0d8b2241">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-19_01_33_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0cedc1e6-88f3-4e98-b851-ef58941eb875" testId="433c2c9b-059a-d83c-eef4-f7adc1548aa2" testName="Task.ServiceHosts.Tests.ProductEndpointsTests.ProjectHistory_PreservesCanonicalResponseAndPaging" computerName="TIM" duration="00:00:00.0781024" startTime="2026-10-19T01:33:56.9836847+03:00" endTime="2026-10-19T01:33:57.0620161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0cedc1e6-88f3-4e98-b851-ef58941eb875" />
+    <UnitTestResult executionId="7a6699d5-2a02-4998-9d1e-6e6c021bd539" testId="c4968b74-bd7f-2d04-b095-363f862554ca" testName="Task.ServiceHosts.Tests.AuthSessionEndpointsTests.LoginAttempts_WithoutFilters_ProjectsOnlyLoginEvents" computerName="TIM" duration="00:00:00.1917742" startTime="2026-10-19T01:33:56.6979196+03:00" endTime="2026-10-19T01:33:56.8940492+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7a6699d5-2a02-4998-9d1e-6e6c021bd539" />
+    <UnitTestResult executionId="5a0d6f8f-8e0a-4b0e-a741-3e538051e48a" testId="1fe2405e-cca0-f4aa-749a-874a3c5495d8" testName="Task.ServiceHosts.Tests.ProductEndpointsTests.ProjectHistory_RequiresBothCapabilitiesBeforeStore(denied: &quot;history.read&quot;)" computerName="TIM" duration="00:00:00.1487825" startTime="2026-10-19T01:33:56.6990187+03:00" endTime="2026-10-19T01:33:56.8541971+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5a0d6f8f-8e0a-4b0e-a741-3e538051e48a" />
+    <UnitTestResult executionId="41e18d8b-4135-4ff7-9676-baa56c19d26d" testId="fc22c763-5214-0080-10df-12a0a123cfc9" testName="Task.ServiceHosts.Tests.ProductEndpointsTests.ProjectHistory_RequiresBothCapabilitiesBeforeStore(denied: &quot;project.read&quot;)" computerName="TIM" duration="00:00:00.1279137" startTime="2026-10-19T01:33:56.8611247+03:00" endTime="2026-10-19T01:33:56.9834171+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41e18d8b-4135-4ff7-9676-baa56c19d26d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.ServiceHosts.Tests.ProductEndpointsTests.ProjectHistory_RequiresBothCapabilitiesBeforeStore(denied: &quot;project.read&quot;)" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="fc22c763-5214-0080-10df-12a0a123cfc9">
+      <Execution id="41e18d8b-4135-4ff7-9676-baa56c19d26d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.ProductEndpointsTests" name="ProjectHistory_RequiresBothCapabilitiesBeforeStore" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.ProductEndpointsTests.ProjectHistory_RequiresBothCapabilitiesBeforeStore(denied: &quot;history.read&quot;)" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="1fe2405e-cca0-f4aa-749a-874a3c5495d8">
+      <Execution id="5a0d6f8f-8e0a-4b0e-a741-3e538051e48a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.ProductEndpointsTests" name="ProjectHistory_RequiresBothCapabilitiesBeforeStore" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.ProductEndpointsTests.ProjectHistory_PreservesCanonicalResponseAndPaging" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="433c2c9b-059a-d83c-eef4-f7adc1548aa2">
+      <Execution id="0cedc1e6-88f3-4e98-b851-ef58941eb875" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.ProductEndpointsTests" name="ProjectHistory_PreservesCanonicalResponseAndPaging" />
+    </UnitTest>
+    <UnitTest name="Task.ServiceHosts.Tests.AuthSessionEndpointsTests.LoginAttempts_WithoutFilters_ProjectsOnlyLoginEvents" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.servicehosts.tests\bin\release\net10.0\task.servicehosts.tests.dll" id="c4968b74-bd7f-2d04-b095-363f862554ca">
+      <Execution id="7a6699d5-2a02-4998-9d1e-6e6c021bd539" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.ServiceHosts.Tests.AuthSessionEndpointsTests" name="LoginAttempts_WithoutFilters_ProjectsOnlyLoginEvents" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="433c2c9b-059a-d83c-eef4-f7adc1548aa2" executionId="0cedc1e6-88f3-4e98-b851-ef58941eb875" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4968b74-bd7f-2d04-b095-363f862554ca" executionId="7a6699d5-2a02-4998-9d1e-6e6c021bd539" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1fe2405e-cca0-f4aa-749a-874a3c5495d8" executionId="5a0d6f8f-8e0a-4b0e-a741-3e538051e48a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc22c763-5214-0080-10df-12a0a123cfc9" executionId="41e18d8b-4135-4ff7-9676-baa56c19d26d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.17]   Starting:    Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:00.55]   Finished:    Task.ServiceHosts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

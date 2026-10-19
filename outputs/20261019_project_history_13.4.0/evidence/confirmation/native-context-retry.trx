@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="750cea99-6183-4fa0-8964-e7a32078936f" name="novik@TIM 2026-10-19 01:33:12" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-19T01:33:12.7402511+03:00" queuing="2026-10-19T01:33:12.7402515+03:00" start="2026-10-19T01:33:10.1466160+03:00" finish="2026-10-19T01:33:12.7468873+03:00" />
+  <TestSettings name="default" id="8e0c2fb5-de4e-45fe-8fad-e518010fa7c5">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-19_01_33_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="db6d9ae9-8758-4cab-a0bd-a24ff94c24d1" testId="cf01f7a5-7cc3-a148-6544-6758b61d039d" testName="Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" computerName="TIM" duration="00:00:01.6952030" startTime="2026-10-19T01:33:10.9159897+03:00" endTime="2026-10-19T01:33:12.6293481+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db6d9ae9-8758-4cab-a0bd-a24ff94c24d1">
+      <Output>
+        <ErrorInfo>
+          <Message>ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)&#xD;
+&#xD;
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.&#xD;
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [647 ms]&#xD;
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:&#xD;
+   Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False&#xD;
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:&#xD;
+     at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.&lt;&gt;c__DisplayClass0_1.&lt;&lt;NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow&gt;b__1&gt;d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 62&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\ðóð░Ðüð║\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 140&#xD;
+   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\ðóð░Ðüð║\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 141&#xD;
+--- End of stack trace from previous location ---&#xD;
+&#xD;
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 661 ms. - Task.Desktop.Tests.dll (net10.0)&#xD;
+[xUnit.net 00:00:00.94]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]&#xD;
+</Message>
+          <StackTrace>   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 34&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" storage="c:\users\novik\таск\work\project_detail_sections_13_1\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="cf01f7a5-7cc3-a148-6544-6758b61d039d">
+      <Execution id="db6d9ae9-8758-4cab-a0bd-a24ff94c24d1" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests" name="NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cf01f7a5-7cc3-a148-6544-6758b61d039d" executionId="db6d9ae9-8758-4cab-a0bd-a24ff94c24d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.16]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.32]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.33]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:02.07]       ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)&#xD;
+[xUnit.net 00:00:02.07]       &#xD;
+[xUnit.net 00:00:02.07]       ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.&#xD;
+[xUnit.net 00:00:02.07]         ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [647 ms]&#xD;
+[xUnit.net 00:00:02.07]         ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:&#xD;
+[xUnit.net 00:00:02.07]          Assert.True() Failure&#xD;
+[xUnit.net 00:00:02.07]       Expected: True&#xD;
+[xUnit.net 00:00:02.07]       Actual:   False&#xD;
+[xUnit.net 00:00:02.07]         ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:&#xD;
+[xUnit.net 00:00:02.07]            at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.&lt;&gt;c__DisplayClass0_1.&lt;&lt;NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow&gt;b__1&gt;d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 62&#xD;
+[xUnit.net 00:00:02.07]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.07]          at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\ðóð░Ðüð║\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 140&#xD;
+[xUnit.net 00:00:02.07]          at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\Users\novik\ðóð░Ðüð║\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs:line 141&#xD;
+[xUnit.net 00:00:02.07]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.07]       &#xD;
+[xUnit.net 00:00:02.07]       ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 661 ms. - Task.Desktop.Tests.dll (net10.0)&#xD;
+[xUnit.net 00:00:02.07]       [xUnit.net 00:00:00.94]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]&#xD;
+[xUnit.net 00:00:02.07]       &#xD;
+[xUnit.net 00:00:02.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.07]         C:\Users\novik\Таск\work\project_detail_sections_13_1\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskContextActionsUiTests.cs(34,0): at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow()&#xD;
+[xUnit.net 00:00:02.07]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.09]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-19T01:33:12.6322632+03:00">
+        <Text>[xUnit.net 00:00:02.07]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

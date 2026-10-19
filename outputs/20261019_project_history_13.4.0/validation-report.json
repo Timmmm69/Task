@@ -1,0 +1,131 @@
+{
+  "version": "13.4.0",
+  "date": "2026-10-19",
+  "branch": "feature/project-detail-sections",
+  "sourceCommit": "63babc167a98dd3f0a4dd49fcd1766fc1719227c",
+  "originMain": "dcbaca241868f2afb4e6506473b8957ab72aa8b3",
+  "releaseSolutionBuild": "PASS",
+  "finalTargetedPassed": 268,
+  "finalTargetedFailed": 0,
+  "fullGate": "NOT GREEN: corrected new test failure verified by targeted rerun; existing native Window.Activate failure confirmed on baseline",
+  "comments": "BLOCKED: ISSUE-13.4-COMMENTS (generic normative model exists, production project implementation absent)",
+  "nativeProjectWpf": "PASS; screenshots inspected",
+  "manualLiveServerUi": "NOT RUN; no native desktop control available",
+  "independentReview": "Completed read-only; concrete null-payload defect fixed; no unresolved concrete source defects found",
+  "dashboard": "order and validate PASS; only PROD-04 evidence/note/time changed; progress/status unchanged",
+  "runs": [
+    {
+      "file": "evidence/baseline/native-context-baseline.trx",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    },
+    {
+      "file": "evidence/confirmation/native-context-retry.trx",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    },
+    {
+      "file": "evidence/final-targeted/novik_TIM_2026-10-19_01_33_57_net10.0.trx",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    {
+      "file": "evidence/final-targeted/novik_TIM_2026-10-19_01_33_57_net10.0[1].trx",
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    {
+      "file": "evidence/final-targeted/novik_TIM_2026-10-19_01_33_57_net10.0[2].trx",
+      "total": 250,
+      "passed": 250,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    {
+      "file": "evidence/history.trx",
+      "total": 33,
+      "passed": 33,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    {
+      "file": "evidence/projects.trx",
+      "total": 247,
+      "passed": 246,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.Projects.DesktopProjectsApiClientTests.History_StrictPayloadValidation(body: \"{\\\"items\\\":[null]}\")"
+      ]
+    },
+    {
+      "file": "evidence/release/novik_TIM_2026-10-19_01_30_03_net10.0.trx",
+      "total": 644,
+      "passed": 644,
+      "failed": 0,
+      "notExecuted": 0,
+      "failures": []
+    },
+    {
+      "file": "evidence/release/novik_TIM_2026-10-19_01_30_03_net10.0[1].trx",
+      "total": 880,
+      "passed": 879,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions"
+      ]
+    },
+    {
+      "file": "evidence/release/novik_TIM_2026-10-19_01_30_04_net10.0.trx",
+      "total": 1781,
+      "passed": 1780,
+      "failed": 1,
+      "notExecuted": 0,
+      "failures": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    }
+  ],
+  "files": [
+    ".project-dashboard/roadmap.json",
+    "work/production/docs/PROJECT-DETAIL-ACCEPTANCE-13.4.md",
+    "work/production/src/Task.Desktop/Projects/DesktopProjectHistoryApiClient.cs",
+    "work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.History.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectHistoryApiClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+    "work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs",
+    "work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs",
+    "work/project_history_13_4/Run-Gate.ps1"
+  ],
+  "readyForPrReview": true,
+  "unconditionalFinalAcceptance": false,
+  "published": false
+}

@@ -1,0 +1,1146 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index df835fd..b0af7ac 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -187,9 +187,10 @@
+         "outputs/20261015_project_employee_picker_5_2_1.0.0/validation-report.md",
+         "outputs/20261015_employee_picker_final_review_1.0.1/validation-report.md",
+         "outputs/20261016_project_related_tasks_8.1.0/validation-report.md",
+-        "outputs/20261019_project_detail_sections_13.1.0/validation-report.md"
++        "outputs/20261019_project_detail_sections_13.1.0/validation-report.md",
++        "outputs/20261019_project_files_13.2.0/validation-report.md"
+       ],
+-      "note": "Production Windows vertical slice подключён к серверным API: проекты, статусы, сроки, роли и активные участники, связанные задачи, create/update/archive и membership commands. UI применяет только authoritative responses, учитывает capabilities, ETag/idempotency и безопасные ошибки. Source gate подтверждён; live PostgreSQL/customer deployment и native UIA walkthrough остаются deployment acceptance. 2026-10-15: Этап 5.2 подключает общий Employee Picker к участникам и необязательному руководителю проектов; имена через разрешённый User.Read, повторная проверка активности, защита от дублей и устаревших ответов, существующие DTO/If-Match/idempotency. Реальные WPF-формы и негативные сценарии проверены. Без User.Read сохранён UUID-сценарий; полный role coverage требует отдельного решения по permissions. Progress/status не повышены. 2026-10-15: Финальный review 5.1–5.3: исправлен live-grant User.Read в открытой форме руководителя, с preselect сохранённого назначения и нулём запросов без права. Release build, 959 desktop, 259 endpoint и 233 domain/real PostgreSQL checks PASS; 206 scoped PASS. Native WPF regression пройдена; прежний нестабильный Window.Activate отмечен в истории receipts. Готово к публикации этапов в main; permission/API ограничения сохраняются, progress/status не повышены. 2026-10-16: Этап 8.1 отделяет связанные задачи от загрузки карточки: одна cursor-страница по явной команде, partial/complete/empty, cancellation и session guards, retry/dedupe/cursor cycle detection. Без обращения к задачам 0 запросов вместо 1/5/50 в детерминированных фикстурах; полный обход не ускорен. Baseline 9, полный desktop 1149, финальный Projects/ViewState 82 PASS; native WPF и Release solution build PASS. API/DTO/БД/permissions сохранены. Локальная ветка perf/project-related-tasks, main не изменён; progress/status не повышены. 2026-10-19: Этап 13.1 — расширена существующая карточка проекта: Expander основных сведений, независимые состояния/повтор участников, контекст шести разделов, отмена и защита поздних ответов при смене проекта/организации/прав/сессии. Задачи остаются явными и постраничными; файлы/контакты/история — неподключённые точки интеграции без декоративного UI и запросов. Финальный общий desktop 1621 PASS / 0 FAIL / 0 SKIP; native WPF focus/traversal/expand-collapse, сохранение раскрытия и Release solution build PASS. Исходные сбои baseline CLR и промежуточного debounce сохранены в evidence. Live Corporate API, NAS, Narrator и physical mixed-DPI не проверялись. Реализация в feature/project-detail-sections, в main не опубликована; progress/status сохранены.",
++      "note": "Production Windows vertical slice подключён к серверным API: проекты, статусы, сроки, роли и активные участники, связанные задачи, create/update/archive и membership commands. UI применяет только authoritative responses, учитывает capabilities, ETag/idempotency и безопасные ошибки. Source gate подтверждён; live PostgreSQL/customer deployment и native UIA walkthrough остаются deployment acceptance. 2026-10-15: Этап 5.2 подключает общий Employee Picker к участникам и необязательному руководителю проектов; имена через разрешённый User.Read, повторная проверка активности, защита от дублей и устаревших ответов, существующие DTO/If-Match/idempotency. Реальные WPF-формы и негативные сценарии проверены. Без User.Read сохранён UUID-сценарий; полный role coverage требует отдельного решения по permissions. Progress/status не повышены. 2026-10-15: Финальный review 5.1–5.3: исправлен live-grant User.Read в открытой форме руководителя, с preselect сохранённого назначения и нулём запросов без права. Release build, 959 desktop, 259 endpoint и 233 domain/real PostgreSQL checks PASS; 206 scoped PASS. Native WPF regression пройдена; прежний нестабильный Window.Activate отмечен в истории receipts. Готово к публикации этапов в main; permission/API ограничения сохраняются, progress/status не повышены. 2026-10-16: Этап 8.1 отделяет связанные задачи от загрузки карточки: одна cursor-страница по явной команде, partial/complete/empty, cancellation и session guards, retry/dedupe/cursor cycle detection. Без обращения к задачам 0 запросов вместо 1/5/50 в детерминированных фикстурах; полный обход не ускорен. Baseline 9, полный desktop 1149, финальный Projects/ViewState 82 PASS; native WPF и Release solution build PASS. API/DTO/БД/permissions сохранены. Локальная ветка perf/project-related-tasks, main не изменён; progress/status не повышены. 2026-10-19: Этап 13.1 — расширена существующая карточка проекта: Expander основных сведений, независимые состояния/повтор участников, контекст шести разделов, отмена и защита поздних ответов при смене проекта/организации/прав/сессии. Задачи остаются явными и постраничными; файлы/контакты/история — неподключённые точки интеграции без декоративного UI и запросов. Финальный общий desktop 1621 PASS / 0 FAIL / 0 SKIP; native WPF focus/traversal/expand-collapse, сохранение раскрытия и Release solution build PASS. Исходные сбои baseline CLR и промежуточного debounce сохранены в evidence. Live Corporate API, NAS, Narrator и physical mixed-DPI не проверялись. Реализация в feature/project-detail-sections, в main не опубликована; progress/status сохранены. 2026-10-19: Этап 13.2 — подключён раздел файлов проекта: только исходящие project_file, полная пагинация Object Links, разрешённые названия/типы через GET catalog-items/{id}, общий Target Picker, подтверждённые create/delete, ETag и защита контекста. Удаление касается только связи. Открытие через resolve-location и существующий WindowsFileAccessAdapter; пути не отображаются. Release solution build PASS (0 ошибок), полный desktop 1680 PASS / 0 FAIL / 0 SKIP, endpoint picker 1 PASS; native WPF раздел/фокус/picker проверены. Live Corporate API/NAS и ручная приёмка остаются отдельной проверкой. Коммит в feature/project-detail-sections, в main не опубликован; progress/status сохранены.",
+       "updated_at": "2026-10-19",
+       "priority": 3,
+       "dependencies": [
+diff --git a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+index dd7c8de..a3cd1b8 100644
+--- a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
++++ b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+@@ -320,7 +320,9 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
+             new DesktopProjectsApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
+             sessionService.CurrentSessionMetadata!.UserId,
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+-            tasksClient, new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity));
++            tasksClient, new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
++            new ProjectFilesViewModel(workClient, workClient,
++                new ObjectLinkTargetPickerViewModel(workClient, sessionService.CurrentSessionMetadata?.Capabilities), workClient.ResolveLocationAsync));
+         var workHub = new WorkHubViewModel(
+             workClient,
+             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
+diff --git a/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs b/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
+index 0695b6d..f354844 100644
+--- a/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs
+@@ -71,6 +71,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+         if (Projects is not null)
+         {
+             Projects.PropertyChanged += OnProjectsPropertyChanged;
++            if (Projects.Files is { } files) files.OpenObjectRequested += OpenWorkObject;
+         }
+         if (WorkHub is not null)
+         {
+@@ -405,6 +406,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
+         if (Projects is not null)
+         {
+             Projects.PropertyChanged -= OnProjectsPropertyChanged;
++            if (Projects.Files is { } files) files.OpenObjectRequested -= OpenWorkObject;
+         }
+         if (WorkHub is not null)
+         {
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs
+new file mode 100644
+index 0000000..0a39b5d
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs
+@@ -0,0 +1,247 @@
++using System.ComponentModel;
++using Task.Desktop.Projects;
++using Task.Desktop.Work;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed record ProjectFileItem(DesktopObjectLink Link, DesktopCatalogItem? Catalog)
++{
++    public string Title => Catalog?.Name ?? "Объект каталога недоступен";
++    public string TypeLabel => Catalog?.ItemTypeLabel ?? "Объект каталога";
++    public bool CanNavigate => Catalog is { LifecycleState: "active" };
++    public bool CanOpen => CanNavigate && Catalog?.ItemType is "file_reference" or "folder_reference";
++}
++
++/// <summary>Confirmed project_file snapshot. Paths are resolved only at the user's open action.</summary>
++public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
++{
++    private readonly IDesktopObjectLinksClient _links;
++    private readonly IDesktopFileLocationsClient _catalog;
++    private readonly Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>>> _resolve;
++    private readonly IFileAccessAdapter _files;
++    private HashSet<string> _capabilities = new(StringComparer.OrdinalIgnoreCase);
++    private DesktopProjectDto? _project;
++    private long _generation, _version;
++    private bool _ready, _online, _writable, _snapshot, _disposed, _choosing;
++    private IReadOnlyList<ProjectFileItem> _items = [];
++    private ProjectFileItem? _selected;
++    private string _message = "";
++
++    public ProjectFilesViewModel(IDesktopObjectLinksClient links, IDesktopFileLocationsClient catalog,
++        ObjectLinkTargetPickerViewModel picker,
++        Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>>> resolve,
++        IFileAccessAdapter? files = null)
++    {
++        _links = links; _catalog = catalog; Picker = picker; _resolve = resolve;
++        _files = files ?? new WindowsFileAccessAdapter();
++        RefreshCommand = new((_, ct) => RunAsync(() => _links.GetLinksAsync(_project!.Id, ct), false, ct), _ => CanUse && !IsBusy);
++        ChooseCommand = new((_, _) => { Choosing = true; return AsyncTask.CompletedTask; }, _ => CanMutate("ObjectLink.Create"));
++        AddCommand = new(AddAsync, _ => CanMutate("ObjectLink.Create") && Picker.State == ObjectLinkTargetPickerState.Selected
++            && Picker.CanQuery && Picker.SelectedTarget is { ObjectType: "catalog_item" } target && target.ObjectId != _project?.Id
++            && !Items.Any(row => row.Link.TargetObjectId == target.ObjectId));
++        RemoveCommand = new((_, ct) =>
++        {
++            var source = _project!.Id; var version = _version; var link = Selected!.Link.Id;
++            return RunAsync(() => _links.RemoveLinkAsync(source, version, link, ct), true, ct);
++        },
++            _ => CanMutate("ObjectLink.Delete") && ConfirmedSelection);
++        NavigateCommand = new((_, ct) => UseTargetAsync(false, ct), _ => CanUse && !IsBusy && _snapshot && ConfirmedSelection && Selected!.CanNavigate);
++        OpenCommand = new((_, ct) => UseTargetAsync(true, ct), _ => CanUse && !IsBusy && _snapshot && ConfirmedSelection
++            && Selected!.CanOpen && Has("FileReference.Open"));
++        foreach (var command in Commands) command.CanExecuteChanged += ExecutionChanged;
++        Picker.PropertyChanged += PickerChanged;
++    }
++
++    public ProjectDetailSectionViewModel Section { get; } = new("files");
++    public ObjectLinkTargetPickerViewModel Picker { get; }
++    public event Action<Guid, long>? VersionConfirmed;
++    public event Action<string, Guid>? OpenObjectRequested;
++    public event Action? SessionExpired;
++    public IReadOnlyList<ProjectFileItem> Items { get => _items; private set => SetProperty(ref _items, value); }
++    public ProjectFileItem? Selected
++    {
++        get => _selected;
++        set { if (ReferenceEquals(_selected, value)) return; _selected = value; OnPropertyChanged(); NotifyCommands(); }
++    }
++    public string Message { get => _message; private set => SetProperty(ref _message, value); }
++    public bool Choosing { get => _choosing; private set => SetProperty(ref _choosing, value); }
++    public bool IsBusy => Commands.Any(command => command.IsExecuting);
++    public bool CanRead => _ready && Has("Project.Read") && Has("FileCatalog.Read") && Has("ObjectLink.Read");
++    private bool CanUse => !_disposed && CanRead && _online && _project is not null;
++    private bool ConfirmedSelection => Selected is { } row && Items.Any(item => ReferenceEquals(item, row))
++        && row.Link.SourceObjectId == _project?.Id && row.Link.LinkType == "project_file";
++    private bool CanMutate(string permission) => CanUse && _writable && _project?.LifecycleState == "active"
++        && Has("Project.Update") && Has(permission) && _snapshot && _version > 0 && !IsBusy;
++    private bool Has(string permission) => _capabilities.Contains(permission);
++    public AsyncCommand RefreshCommand { get; }
++    public AsyncCommand ChooseCommand { get; }
++    public AsyncCommand AddCommand { get; }
++    public AsyncCommand RemoveCommand { get; }
++    public AsyncCommand NavigateCommand { get; }
++    public AsyncCommand OpenCommand { get; }
++    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, ChooseCommand, AddCommand, RemoveCommand, NavigateCommand, OpenCommand];
++
++    public void SetContext(DesktopProjectDto? project, IEnumerable<string> capabilities, bool ready, bool online, bool writable)
++    {
++        if (_disposed) return;
++        var caps = capabilities.ToHashSet(StringComparer.OrdinalIgnoreCase);
++        if (_project?.Id == project?.Id && _project?.OrganizationId == project?.OrganizationId
++            && _project?.LifecycleState == project?.LifecycleState && _ready == ready && _online == online
++            && _writable == writable && _capabilities.SetEquals(caps))
++        { _project = project; return; }
++        Invalidate(); _project = project; _capabilities = caps; _ready = ready; _online = online; _writable = writable;
++        _version = project?.Version ?? 0;
++        Section.SetContext(project?.Id, project?.OrganizationId, CanRead, online);
++        Picker.SetContext(project?.Id ?? Guid.Empty, "project", "project_file");
++        Picker.UpdateAccess(writable && project?.LifecycleState == "active" ? caps : caps.Where(code => code != "ObjectLink.Create"), ready, online);
++        NotifyCommands();
++    }
++
++    // Also called for unchanged capability names: object/project scopes can have changed.
++    public void Invalidate()
++    {
++        ++_generation; _snapshot = false;
++        foreach (var command in Commands) command.Cancel();
++        Section.Cancel();
++        if (_project is not null) Section.SetState(ProjectSectionState.Cancelled, false);
++        Picker.Cancel(); Items = []; Selected = null; Choosing = false; Message = "";
++    }
++
++    private bool Current(long generation, CancellationToken ct) => generation == _generation && !ct.IsCancellationRequested && CanUse;
++
++    private async AsyncTask AddAsync(object? _, CancellationToken ct)
++    {
++        var generation = _generation; var source = _project!.Id; var version = _version;
++        var target = Picker.SelectedObjectId!.Value;
++        try
++        {
++            // Revalidate metadata, type and lifecycle; the POST enforces target update and project/object scope.
++            var result = await _catalog.GetCatalogItemAsync(target, ct);
++            if (!Current(generation, ct)) return;
++            if (result is not DesktopWorkResult<DesktopCatalogItem>.Succeeded { Value.LifecycleState: "active" } item
++                || item.Value.Id != target || item.Value.ItemType is not ("file_reference" or "folder_reference" or "virtual_folder"))
++            { TargetFailure(result); return; }
++            await RunAsync(() => _links.AddLinkAsync(source, version, target, "project_file", ct), true, ct);
++        }
++        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
++        catch (Exception) { if (Current(generation, ct)) Fail(new DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable()); }
++    }
++
++    private async AsyncTask RunAsync(Func<System.Threading.Tasks.Task<DesktopWorkResult<DesktopObjectLinks>>> operation, bool mutation, CancellationToken ct)
++    {
++        var generation = _generation; var source = _project!.Id;
++        using var request = Section.BeginRequest(ct);
++        _snapshot = false; Selected = null;
++        try
++        {
++            var result = await operation();
++            if (!Current(generation, ct)) return;
++            if (result is not DesktopWorkResult<DesktopObjectLinks>.Succeeded success) { Fail(result); return; }
++            // The API returns incoming relations too; only owned outgoing project_file links belong here.
++            var rows = new List<ProjectFileItem>();
++            foreach (var link in success.Value.Items.Where(link => link.SourceObjectId == source && link.LinkType == "project_file"))
++            {
++                var metadata = await _catalog.GetCatalogItemAsync(link.TargetObjectId, request.Token);
++                if (!Current(generation, request.Token)) return;
++                if (metadata is DesktopWorkResult<DesktopCatalogItem>.AuthenticationFailure) { Expire(); return; }
++                var item = metadata is DesktopWorkResult<DesktopCatalogItem>.Succeeded read && read.Value.Id == link.TargetObjectId
++                    && read.Value.LifecycleState == "active" ? read.Value : null;
++                rows.Add(new(link, item));
++            }
++            Items = rows; _version = success.Value.SourceVersion; _snapshot = true;
++            Selected = Items.FirstOrDefault();
++            Section.SetState(rows.Any(row => row.Catalog is null) ? ProjectSectionState.PartialAccess
++                : rows.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
++            Message = mutation ? "Связи подтверждены сервером. Файлы и объекты каталога не изменены." : "";
++            if (mutation) { Choosing = false; Picker.ClearSelection(); }
++            VersionConfirmed?.Invoke(source, _version);
++        }
++        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
++        catch (Exception) { if (Current(generation, ct)) Fail(new DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable()); }
++        finally { Section.FinishRequest(request); NotifyCommands(); }
++    }
++
++    private async AsyncTask UseTargetAsync(bool open, CancellationToken ct)
++    {
++        var generation = _generation; var row = Selected!; var id = row.Link.TargetObjectId;
++        try
++        {
++            var result = await _catalog.GetCatalogItemAsync(id, ct);
++            if (!Current(generation, ct)) return;
++            if (result is not DesktopWorkResult<DesktopCatalogItem>.Succeeded { Value.LifecycleState: "active" } item || item.Value.Id != id)
++            { TargetFailure(result); return; }
++            if (!open) { OpenObjectRequested?.Invoke("catalog_item", id); return; }
++            if (item.Value.ItemType is not ("file_reference" or "folder_reference")) { Message = "У объекта нет файлового расположения."; return; }
++            var resolved = await _resolve(id, ct);
++            if (!Current(generation, ct) || !Has("FileReference.Open")) return;
++            if (resolved is DesktopWorkResult<DesktopFileLocation?>.AuthenticationFailure) { Expire(); return; }
++            if (resolved is DesktopWorkResult<DesktopFileLocation?>.Succeeded location)
++                Message = location.Value is { CanOpenOnDevice: true, IsEnabled: true, RawPath: { Length: > 0 } path }
++                    ? _files.Open(path).Message : "На этом компьютере нет доступного расположения файла.";
++            else Message = resolved is DesktopWorkResult<DesktopFileLocation?>.Forbidden ? "Нет доступа к открытию файла."
++                : "Не удалось подтвердить расположение файла. Проверьте подключение и повторите попытку.";
++        }
++        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
++        catch (Exception) { if (Current(generation, ct)) Message = "Не удалось открыть объект. Проверьте подключение и повторите попытку."; }
++    }
++
++    private void TargetFailure(DesktopWorkResult<DesktopCatalogItem> result)
++    {
++        if (result is DesktopWorkResult<DesktopCatalogItem>.AuthenticationFailure) { Expire(); return; }
++        Picker.ClearSelection();
++        // Remove previously resolved names after denied/not-found revalidation.
++        Items = Items.Select(row => row with { Catalog = null }).ToArray(); Selected = null;
++        Section.SetState(ProjectSectionState.PartialAccess);
++        Message = "Объект каталога недоступен. Обновите файлы и повторите выбор.";
++    }
++
++    private void Fail(DesktopWorkResult<DesktopObjectLinks> result)
++    {
++        _snapshot = false; Picker.ClearSelection();
++        if (result is DesktopWorkResult<DesktopObjectLinks>.AuthenticationFailure) { Expire(); return; }
++        Items = []; Selected = null;
++        Section.SetState(result switch
++        {
++            DesktopWorkResult<DesktopObjectLinks>.Forbidden or DesktopWorkResult<DesktopObjectLinks>.NotFound => ProjectSectionState.Forbidden,
++            DesktopWorkResult<DesktopObjectLinks>.ServerUnavailable => ProjectSectionState.ServerUnavailable,
++            _ => ProjectSectionState.Error,
++        }, false);
++        Message = result switch
++        {
++            DesktopWorkResult<DesktopObjectLinks>.Conflict => "Версия проекта изменилась. Обновите файлы перед повторной попыткой.",
++            DesktopWorkResult<DesktopObjectLinks>.ValidationFailure v when v.Message == ObjectLinkMessages.Duplicate => v.Message,
++            DesktopWorkResult<DesktopObjectLinks>.ValidationFailure => "Состояние объекта не допускает связь. Обновите проект и файлы.",
++            DesktopWorkResult<DesktopObjectLinks>.Forbidden => "Нет доступа к связям или выбранным объектам.",
++            DesktopWorkResult<DesktopObjectLinks>.NotFound => "Проект, объект или связь больше недоступны.",
++            _ => "Связи не подтверждены. Обновите файлы перед повторной попыткой.",
++        };
++    }
++
++    private void Expire()
++    {
++        _ready = false; Invalidate(); Picker.UpdateAccess([], false);
++        Section.SetState(ProjectSectionState.Forbidden, false); Message = "Сессия завершена. Выполните вход снова.";
++        SessionExpired?.Invoke();
++    }
++    private void PickerChanged(object? sender, PropertyChangedEventArgs e)
++    {
++        if (_ready && Picker.State == ObjectLinkTargetPickerState.SessionExpired) Expire();
++        NotifyCommands();
++    }
++    private bool _notifying;
++    private void ExecutionChanged(object? sender, EventArgs e) { OnPropertyChanged(nameof(IsBusy)); NotifyCommands(); }
++    private void NotifyCommands()
++    {
++        if (_notifying) return;
++        _notifying = true;
++        try { foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
++        finally { _notifying = false; }
++    }
++    public void Dispose()
++    {
++        if (_disposed) return;
++        _disposed = true; Invalidate(); Picker.PropertyChanged -= PickerChanged; Picker.Dispose();
++        foreach (var command in Commands) { command.CanExecuteChanged -= ExecutionChanged; command.Dispose(); }
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Files.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Files.cs
+new file mode 100644
+index 0000000..98d5a35
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Files.cs
+@@ -0,0 +1,43 @@
++namespace Task.Desktop.ViewModels;
++
++public sealed partial class ProjectsViewModel
++{
++    public ProjectFilesViewModel? Files { get; }
++    private bool _filesExpanded;
++    public System.Threading.Tasks.Task OpenFilesSectionAsync()
++    {
++        _filesExpanded = true;
++        ConfigureFiles();
++        return StartFilesLoad();
++    }
++    private System.Threading.Tasks.Task StartFilesLoad()
++    {
++        var previous = CurrentFilesOperation;
++        var item = SelectedItem;
++        var token = _activation?.Token ?? default;
++        return CurrentFilesOperation = LoadAfterPreviousAsync();
++        async System.Threading.Tasks.Task LoadAfterPreviousAsync()
++        {
++            // AsyncCommand serializes requests. Reconcile the new selection after an old transport finishes.
++            await previous;
++            if (!token.IsCancellationRequested && _filesExpanded && _projectConfirmed && ReferenceEquals(SelectedItem, item)
++                && IsActive && Files is not null) await Files.RefreshCommand.ExecuteAsync(cancellationToken: token);
++        }
++    }
++    public void CloseFilesSection()
++    {
++        _filesExpanded = false;
++        Files?.Invalidate();
++    }
++    public System.Threading.Tasks.Task CurrentFilesOperation { get; private set; } = System.Threading.Tasks.Task.CompletedTask;
++    private void ConfigureFiles() => Files?.SetContext(_projectConfirmed ? SelectedItem?.Source : null, _capabilities,
++        IsActive && _sessionAvailable && CanRead, _networkAvailable, CanUpdate);
++    private void FilesSessionExpired() => UpdateSessionState(false);
++    private void FilesVersionConfirmed(Guid id, long version)
++    {
++        if (SelectedItem is not { } item || item.Id != id) return;
++        item.ConfirmVersion(version);
++        // Existing editor drafts must retain their captured version and detect concurrent changes.
++        NotifyCommands();
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+index 059e418..ef7c443 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+@@ -23,14 +23,16 @@ public sealed partial class ProjectsViewModel
+ 
+     private void SetDetailContext()
+     {
+-        foreach (var section in DetailSections)
++        foreach (var section in DetailSections.Where(section => Files is null || section != FilesSection))
+             section.SetContext(SelectedItem?.Id, SelectedItem?.Source.OrganizationId,
+                 _sessionAvailable && CanRead && (section != MembersSection || CanReadMembers)
+                 && (section != TasksSection || _capabilities.Contains("Task.Read") && _tasks is not null), _networkAvailable);
++        ConfigureFiles();
+     }
+ 
+     public void CancelDetailSections()
+     {
++        Files?.Invalidate();
+         foreach (var section in DetailSections) section.Cancel();
+         _detailRequest?.Cancel(); CancelRelatedTasks(); IsDetailLoading = false;
+         ReloadMembersCommand.RaiseCanExecuteChanged();
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+index 5654578..2d5824c 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+@@ -33,6 +33,12 @@ public sealed class ProjectItemViewModel : ViewModelBase
+         OnPropertyChanged(nameof(StatusText)); OnPropertyChanged(nameof(DatesText));
+         SetPeopleNames(null, null);
+     }
++    internal void ConfirmVersion(long version)
++    {
++        if (version <= Source.Version) return;
++        Source = Source with { Version = version };
++        OnPropertyChanged(nameof(Source));
++    }
+     public static string LocalizeStatus(DesktopProjectStatus status) => status switch
+     { DesktopProjectStatus.Planning => "Планируется", DesktopProjectStatus.Active => "Активный", DesktopProjectStatus.Paused => "Приостановлен", DesktopProjectStatus.Completed => "Завершён", _ => status.ToString() };
+ }
+@@ -155,13 +161,20 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     private bool _disposed;
+ 
+     public ProjectsViewModel(IDesktopProjectsApiClient client, Guid currentUserId,
+-        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null)
++        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null)
+     {
+         _client = client ?? throw new ArgumentNullException(nameof(client));
+         if (currentUserId == Guid.Empty) throw new ArgumentException("Current user id must not be empty.", nameof(currentUserId));
+         _currentUserId = currentUserId; _tasks = tasks;
+         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
+         _directory = directory;
++        Files = files;
++        if (files is not null)
++        {
++            FilesSection = files.Section;
++            files.VersionConfirmed += FilesVersionConfirmed;
++            files.SessionExpired += FilesSessionExpired;
++        }
+         LoadRelatedTasksCommand = new(LoadRelatedTasksPageAsync, _ => CanLoadRelatedTasks);
+         ReloadMembersCommand = new((_, ct) => SelectedItem is { } item ? LoadMembersSectionAsync(item, ct) : System.Threading.Tasks.Task.CompletedTask,
+             _ => IsActive && _sessionAvailable && _networkAvailable && CanReadMembers && _projectConfirmed
+@@ -369,6 +382,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+                 }
+                 item.Replace(project.Value); _projectConfirmed = true;
+                 OverviewSection.SetState(ProjectSectionState.Loaded, true);
++                ConfigureFiles();
++                if (_filesExpanded && Files is not null) _ = StartFilesLoad();
+             }
+             else
+             {
+@@ -521,6 +536,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     }
+     private void NotifyCommands()
+     {
++        ConfigureFiles();
+         NotifyRelatedTasks(); ReloadMembersCommand?.RaiseCanExecuteChanged();
+         OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanUpdate));
+         OnPropertyChanged(nameof(CanArchive)); OnPropertyChanged(nameof(CanManageMembers)); OnPropertyChanged(nameof(AccessText));
+@@ -533,6 +549,10 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     {
+         if (_disposed) return; _disposed = true; Deactivate();
+         LoadRelatedTasksCommand.Dispose(); ReloadMembersCommand.Dispose();
++        if (Files is not null)
++        {
++            Files.VersionConfirmed -= FilesVersionConfirmed; Files.SessionExpired -= FilesSessionExpired; Files.Dispose();
++        }
+         MemberPicker?.Dispose(); Editor?.Dispose();
+         foreach (var command in new[] { RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelEditorCommand, ArchiveProjectCommand, AddMemberCommand, ChangeMemberRoleCommand, RemoveMemberCommand }) command.Dispose();
+     }
+diff --git a/work/production/src/Task.Desktop/Views/ProjectFilesView.xaml b/work/production/src/Task.Desktop/Views/ProjectFilesView.xaml
+new file mode 100644
+index 0000000..8ff4d99
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Views/ProjectFilesView.xaml
+@@ -0,0 +1,36 @@
++<UserControl x:Class="Task.Desktop.Views.ProjectFilesView"
++ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
++ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++ xmlns:views="clr-namespace:Task.Desktop.Views"
++ AutomationProperties.Name="Файлы проекта" KeyboardNavigation.TabNavigation="Continue">
++ <StackPanel>
++  <TextBlock Text="{Binding Section.StatusText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectFilesStatus"/>
++  <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
++  <WrapPanel Margin="0,0,0,8">
++   <Button Content="Обновить файлы" Command="{Binding RefreshCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
++   <Button Content="Связать файл" Command="{Binding ChooseCommand}" Style="{DynamicResource Task.Button.Primary}" Margin="0,0,0,8" AutomationProperties.AutomationId="ProjectChooseFile"/>
++  </WrapPanel>
++  <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" MaxHeight="300"
++           AutomationProperties.Name="Связанные объекты каталога" AutomationProperties.AutomationId="ProjectFilesList"
++           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
++   <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
++    <Setter Property="AutomationProperties.Name"><Setter.Value><MultiBinding StringFormat="{}{0}, {1}"><Binding Path="Title"/><Binding Path="TypeLabel"/></MultiBinding></Setter.Value></Setter>
++   </Style></ListBox.ItemContainerStyle>
++   <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="4">
++    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
++    <TextBlock Text="{Binding TypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
++   </StackPanel></DataTemplate></ListBox.ItemTemplate>
++  </ListBox>
++  <WrapPanel Margin="0,8,0,0">
++   <Button Content="В каталоге" Command="{Binding NavigateCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
++   <Button Content="Открыть файл" Command="{Binding OpenCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
++   <Button Content="Убрать связь" Command="{Binding RemoveCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,0,8"
++           ToolTip="Удаляется только связь с проектом. Файл и объект каталога сохраняются."/>
++  </WrapPanel>
++  <StackPanel Margin="0,8,0,0">
++   <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Choosing}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
++   <ContentControl Content="{Binding Picker}"><ContentControl.ContentTemplate><DataTemplate><views:ObjectLinkTargetPickerView/></DataTemplate></ContentControl.ContentTemplate></ContentControl>
++   <Button Content="Подтвердить привязку" Command="{Binding AddCommand}" Style="{DynamicResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
++  </StackPanel>
++ </StackPanel>
++</UserControl>
+diff --git a/work/production/src/Task.Desktop/Views/ProjectFilesView.xaml.cs b/work/production/src/Task.Desktop/Views/ProjectFilesView.xaml.cs
+new file mode 100644
+index 0000000..9c8f993
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Views/ProjectFilesView.xaml.cs
+@@ -0,0 +1,8 @@
++using System.Windows.Controls;
++
++namespace Task.Desktop.Views;
++
++public partial class ProjectFilesView : UserControl
++{
++    public ProjectFilesView() => InitializeComponent();
++}
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+index 3a820d8..22d0a19 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+@@ -114,6 +114,12 @@
+                         </StackPanel>
+                     </Expander>
+ 
++                    <Expander Header="Файлы" IsExpanded="False" Expanded="FilesExpanded" Collapsed="FilesCollapsed"
++                              AutomationProperties.AutomationId="ProjectFilesSection" Margin="0,0,0,14">
++                        <Expander.Style><Style TargetType="Expander"><Style.Triggers><DataTrigger Binding="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Expander.Style>
++                        <views:ProjectFilesView DataContext="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
++                    </Expander>
++
+                     <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True" Collapsed="RelatedTasksCollapsed">
+                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
+                         <TextBlock Text="{Binding RelatedTasksStatusText}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectRelatedTasksStatus"/>
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs b/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+index f783861..6a259d4 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+@@ -15,5 +15,14 @@ public partial class ProjectsView : UserControl
+     {
+         if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CancelMembersSection();
+     }
++    private async void FilesExpanded(object sender, RoutedEventArgs args)
++    {
++        if (ReferenceEquals(sender, args.OriginalSource) && DataContext is ProjectsViewModel projects)
++            await projects.OpenFilesSectionAsync();
++    }
++    private void FilesCollapsed(object sender, RoutedEventArgs args)
++    {
++        if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CloseFilesSection();
++    }
+     private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelDetailSections();
+ }
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesIntegrationTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesIntegrationTests.cs
+new file mode 100644
+index 0000000..fa895c2
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesIntegrationTests.cs
+@@ -0,0 +1,62 @@
++using Task.Desktop.Projects;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Work;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class ProjectsViewModelTests
++{
++    [Fact]
++    public async AsyncTask FilesHost_LoadsOnOpen_PropagatesConfirmedVersionWithoutOverwritingEditorDraft()
++    {
++        var client = SectionClient(); var work = new ProjectFilesTests.Client();
++        var files = ProjectFilesTests.Create(work, Project());
++        using var vm = new ProjectsViewModel(client, User, ProjectFilesTests.Caps, files: files);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Equal(0, work.ReadCalls);
++        vm.SelectedItem!.SetPeopleNames("Владелец", "Руководитель");
++        await vm.EditProjectCommand.ExecuteAsync(); var capturedVersion = vm.Editor!.Source!.Version;
++        vm.Editor.Name = "Несохранённый черновик";
++        await vm.OpenFilesSectionAsync(); await ProjectFilesTests.SelectTarget(files);
++        work.Rows.Add(work.Link(ProjectId));
++        work.Write = () => AsyncTask.FromResult<DesktopWorkResult<DesktopObjectLinks>>(new DesktopWorkResult<DesktopObjectLinks>.Succeeded(new(work.Rows.ToArray(), 19)));
++        await files.AddCommand.ExecuteAsync();
++        Assert.Equal("Владелец", vm.SelectedItem!.OwnerText);
++        Assert.Equal(19, vm.SelectedItem!.Source.Version); Assert.Equal(capturedVersion, vm.Editor.Source.Version);
++        Assert.Equal("Несохранённый черновик", vm.Editor.Name); Assert.Same(files.Section, vm.FilesSection);
++    }
++
++    [Theory]
++    [InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("deactivate")][InlineData("close")][InlineData("switch")]
++    public async AsyncTask FilesHost_RejectsLateResponsesOnHostContextChanges(string transition)
++    {
++        var client = SectionClient(); var work = new ProjectFilesTests.Client();
++        var gate = new System.Threading.Tasks.TaskCompletionSource<DesktopWorkResult<DesktopObjectLinks>>();
++        using var vm = new ProjectsViewModel(client, User, ProjectFilesTests.Caps, files: ProjectFilesTests.Create(work, Project()));
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        work.Read = (_, _) => gate.Task;
++        var loading = vm.OpenFilesSectionAsync();
++        switch (transition)
++        {
++            case "scope": vm.UpdateCapabilities(ProjectFilesTests.Caps); break;
++            case "session": vm.UpdateSessionState(false); break;
++            case "offline": vm.UpdateConnectivity(false); break;
++            case "deactivate": vm.Deactivate(); break;
++            case "close": vm.SelectedItem = null; break;
++            case "switch": vm.SelectedItem = new ProjectItemViewModel(Project() with { Id = Guid.NewGuid() }); break;
++        }
++        gate.SetResult(new DesktopWorkResult<DesktopObjectLinks>.Succeeded(new([work.Link(ProjectId)], 5)));
++        await loading; Assert.Empty(vm.Files!.Items); Assert.Equal(0, work.MetadataCalls);
++    }
++
++    [Fact]
++    public async AsyncTask FilesHost_ProjectForbiddenNeverReadsLinks()
++    {
++        var client = SectionClient(); client.ProjectHandler = (_, _) => AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(new DesktopProjectResult<DesktopProjectDto>.Forbidden());
++        var work = new ProjectFilesTests.Client();
++        using var vm = new ProjectsViewModel(client, User, ProjectFilesTests.Caps, files: ProjectFilesTests.Create(work, Project()));
++        vm.Activate(); await vm.CurrentDetailsOperation; await vm.OpenFilesSectionAsync();
++        Assert.Null(vm.SelectedItem); Assert.Equal(0, work.ReadCalls);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesTests.cs
+new file mode 100644
+index 0000000..606d8c0
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesTests.cs
+@@ -0,0 +1,283 @@
++using Task.Desktop.Administration;
++using Task.Desktop.Projects;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Work;
++using AsyncTask = System.Threading.Tasks.Task;
++using LinkResult = Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopObjectLinks>;
++using CatalogResult = Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopCatalogItem>;
++using LocationResult = Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopFileLocation?>;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed class ProjectFilesTests
++{
++    internal static readonly string[] Caps = ["Project.Read", "Project.Update", "FileCatalog.Read", "ObjectLink.Read", "ObjectLink.Create", "ObjectLink.Delete", "FileReference.Open"];
++    internal static DesktopProjectDto Project() => new(Guid.NewGuid(), Guid.NewGuid(), 5, "Проект", null, Guid.NewGuid(), null,
++        DesktopProjectStatus.Active, null, null, null, null, null, "active");
++    internal static ProjectFilesViewModel Create(Client client, DesktopProjectDto project, string[]? caps = null, IFileAccessAdapter? adapter = null)
++    {
++        var vm = new ProjectFilesViewModel(client, client, new(client, caps ?? Caps, TimeSpan.Zero), client.Resolve, adapter);
++        vm.SetContext(project, caps ?? Caps, true, true, true); return vm;
++    }
++
++    [Fact]
++    public async AsyncTask LoadsOnlyOutgoingProjectFiles_ResolvesAllowedMetadata_AndConfirmsVersion()
++    {
++        var project = Project(); var client = new Client();
++        client.Rows.AddRange([client.Link(project.Id), client.Link(project.Id) with { LinkType = "related" }, client.Link(Guid.NewGuid()) with { TargetObjectId = project.Id }]);
++        using var vm = Create(client, project); long version = 0;
++        vm.VersionConfirmed += (_, v) => version = v;
++        await vm.RefreshCommand.ExecuteAsync();
++        var row = Assert.Single(vm.Items); Assert.Equal("Договор", row.Title); Assert.Equal("Файл", row.TypeLabel);
++        Assert.Equal(1, client.MetadataCalls); Assert.Equal(5, version);
++        Assert.Equal(ProjectSectionState.Loaded, vm.Section.State);
++    }
++
++    [Theory]
++    [InlineData("Project.Read")][InlineData("FileCatalog.Read")][InlineData("ObjectLink.Read")]
++    public async AsyncTask MissingReadPermissionMakesNoRequests(string denied)
++    {
++        var client = new Client(); using var vm = Create(client, Project(), Caps.Where(p => p != denied).ToArray());
++        Assert.False(await vm.RefreshCommand.ExecuteAsync()); Assert.Equal(0, client.ReadCalls); Assert.Equal(0, client.MetadataCalls);
++        Assert.Equal(ProjectSectionState.Forbidden, vm.Section.State);
++    }
++
++    [Theory]
++    [InlineData("ObjectLink.Create")][InlineData("ObjectLink.Delete")][InlineData("Project.Update")]
++    public async AsyncTask MissingWritePermissionDisablesOnlyApplicableWrites(string denied)
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        using var vm = Create(client, project, Caps.Where(p => p != denied).ToArray()); await vm.RefreshCommand.ExecuteAsync();
++        Assert.Equal(denied is not ("ObjectLink.Create" or "Project.Update"), vm.ChooseCommand.CanExecute(null));
++        Assert.Equal(denied is not ("ObjectLink.Delete" or "Project.Update"), vm.RemoveCommand.CanExecute(null));
++        Assert.True(vm.NavigateCommand.CanExecute(null));
++    }
++
++    [Theory]
++    [InlineData("forbidden")][InlineData("notfound")][InlineData("trashed")][InlineData("offline")]
++    public async AsyncTask UnavailableMetadataHasNeutralNameAndNoOpenOrNavigation(string fault)
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        client.Metadata = (_, _) => AsyncTask.FromResult<CatalogResult>(fault switch
++        { "forbidden" => new CatalogResult.Forbidden(), "notfound" => new CatalogResult.NotFound(), "offline" => new CatalogResult.ServerUnavailable(),
++            _ => new CatalogResult.Succeeded(client.Item with { LifecycleState = "trashed" }) });
++        using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync();
++        Assert.Equal("Объект каталога недоступен", Assert.Single(vm.Items).Title);
++        Assert.False(vm.OpenCommand.CanExecute(null)); Assert.False(vm.NavigateCommand.CanExecute(null));
++        Assert.Equal(ProjectSectionState.PartialAccess, vm.Section.State);
++        Assert.True(vm.RemoveCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async AsyncTask EmptyIsOnlyReportedAfterSuccessfulRead()
++    {
++        var client = new Client(); using var vm = Create(client, Project());
++        client.Read = (_, _) => AsyncTask.FromResult<LinkResult>(new LinkResult.ServerUnavailable());
++        await vm.RefreshCommand.ExecuteAsync(); Assert.Equal(ProjectSectionState.ServerUnavailable, vm.Section.State);
++        client.Read = null; await vm.RefreshCommand.ExecuteAsync(); Assert.Equal(ProjectSectionState.Empty, vm.Section.State);
++    }
++
++    internal static async AsyncTask SelectTarget(ProjectFilesViewModel vm)
++    {
++        await vm.ChooseCommand.ExecuteAsync(); vm.Picker.SearchText = "Договор"; await vm.Picker.CurrentOperation;
++        vm.Picker.Candidate = Assert.Single(vm.Picker.Results); Assert.True(vm.Picker.ConfirmSelection());
++    }
++
++    [Fact]
++    public async AsyncTask AddWaitsForServerReadback_UsesProjectFileAndSnapshotVersion()
++    {
++        var project = Project(); var client = new Client(); using var vm = Create(client, project);
++        await vm.RefreshCommand.ExecuteAsync(); await SelectTarget(vm);
++        var gate = new System.Threading.Tasks.TaskCompletionSource<LinkResult>();
++        client.Write = () => gate.Task;
++        var operation = vm.AddCommand.ExecuteAsync();
++        Assert.Empty(vm.Items); Assert.Equal(1, client.AddCalls); Assert.Equal((project.Id, 5L, client.Item.Id, "project_file"), client.LastAdd);
++        client.Rows.Add(client.Link(project.Id)); gate.SetResult(new LinkResult.Succeeded(new(client.Rows.ToArray(), 6)));
++        await operation; Assert.Single(vm.Items); Assert.False(vm.Choosing); Assert.False(vm.AddCommand.CanExecute(null));
++    }
++
++    [Fact]
++    public async AsyncTask DuplicateAndSelfTargetNeverPost()
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync(); await SelectTarget(vm);
++        Assert.False(await vm.AddCommand.ExecuteAsync()); Assert.Equal(0, client.AddCalls);
++        client.Item = client.Item with { Id = project.Id }; vm.Picker.ClearSelection();
++        vm.Picker.SearchText = "Договор"; await vm.Picker.CurrentOperation;
++        vm.Picker.Candidate = vm.Picker.Results.FirstOrDefault(); Assert.False(vm.Picker.ConfirmSelection());
++    }
++
++    [Fact]
++    public async AsyncTask DeleteUsesConfirmedLinkIdAndNeverDeletesCatalogObject()
++    {
++        var project = Project(); var client = new Client(); var link = client.Link(project.Id); client.Rows.Add(link);
++        using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync();
++        vm.Selected = new(link, client.Item); Assert.False(vm.RemoveCommand.CanExecute(null));
++        vm.Selected = vm.Items[0]; await vm.RemoveCommand.ExecuteAsync();
++        Assert.Equal((project.Id, 5L, link.Id), client.LastRemove); Assert.Empty(vm.Items);
++        Assert.NotNull(client.Item); Assert.Equal(ProjectSectionState.Empty, vm.Section.State);
++    }
++
++    [Theory]
++    [InlineData("conflict")][InlineData("duplicate")][InlineData("forbidden")][InlineData("notfound")][InlineData("offline")][InlineData("malformed")]
++    public async AsyncTask MutationFailuresRequireRefreshAndNeverClaimSuccess(string failure)
++    {
++        var project = Project(); var client = new Client(); using var vm = Create(client, project);
++        await vm.RefreshCommand.ExecuteAsync(); await SelectTarget(vm);
++        client.Write = () => AsyncTask.FromResult<LinkResult>(failure switch
++        { "conflict" => new LinkResult.Conflict(), "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."),
++            "forbidden" => new LinkResult.Forbidden(), "notfound" => new LinkResult.NotFound(), "offline" => new LinkResult.ServerUnavailable(), _ => new LinkResult.MalformedResponse() });
++        await vm.AddCommand.ExecuteAsync(); Assert.Empty(vm.Items); Assert.False(vm.ChooseCommand.CanExecute(null));
++        Assert.False(vm.Section.HasConfirmedData); Assert.DoesNotContain("подтверждены сервером", vm.Message);
++        Assert.True(vm.RefreshCommand.CanExecute(null));
++        if (failure == "conflict") Assert.Contains("Версия", vm.Message);
++        if (failure == "duplicate") Assert.Contains("существует", vm.Message);
++    }
++
++    [Theory]
++    [InlineData("archived")][InlineData("trashed")]
++    public async AsyncTask InactiveProjectAllowsReadingButDisablesAllWrites(string state)
++    {
++        var project = Project() with { LifecycleState = state }; var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync();
++        Assert.Single(vm.Items); Assert.False(vm.ChooseCommand.CanExecute(null)); Assert.False(vm.RemoveCommand.CanExecute(null)); Assert.False(vm.Picker.CanQuery);
++    }
++
++    [Theory]
++    [InlineData("switch")][InlineData("organization")][InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("collapse")][InlineData("dispose")]
++    public async AsyncTask LateLoadNeverLeaksAcrossContextTransitions(string transition)
++    {
++        var project = Project(); var client = new Client(); var gate = new System.Threading.Tasks.TaskCompletionSource<LinkResult>();
++        client.Read = (_, _) => gate.Task; using var vm = Create(client, project);
++        var operation = vm.RefreshCommand.ExecuteAsync();
++        switch (transition)
++        {
++            case "switch": vm.SetContext(Project(), Caps, true, true, true); break;
++            case "organization": vm.SetContext(project with { OrganizationId = Guid.NewGuid() }, Caps, true, true, true); break;
++            case "scope": vm.Invalidate(); vm.SetContext(project, Caps, true, true, true); break;
++            case "session": vm.SetContext(project, Caps, false, true, true); break;
++            case "offline": vm.SetContext(project, Caps, true, false, false); break;
++            case "collapse": vm.Invalidate(); break;
++            case "dispose": vm.Dispose(); break;
++        }
++        gate.SetResult(new LinkResult.Succeeded(new([client.Link(project.Id)], 5))); await operation;
++        Assert.Empty(vm.Items); Assert.Equal(0, client.MetadataCalls); Assert.False(vm.Section.HasConfirmedData);
++    }
++
++    [Theory]
++    [InlineData("none")][InlineData("hidden")][InlineData("other-device")][InlineData("disabled")][InlineData("offline")][InlineData("forbidden")]
++    public async AsyncTask UnconfirmedOrUnavailablePathIsNeverPassedToWindows(string state)
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id)); var files = new Files();
++        client.Location = state switch
++        {
++            "none" => new LocationResult.Succeeded(null), "offline" => new LocationResult.ServerUnavailable(), "forbidden" => new LocationResult.Forbidden(),
++            _ => new LocationResult.Succeeded(new(Guid.NewGuid(), 1, "local_path", state == "hidden" ? null : @"C:\private\file.txt", state != "other-device", IsEnabled: state != "disabled"))
++        };
++        using var vm = Create(client, project, adapter: files); await vm.RefreshCommand.ExecuteAsync(); await vm.OpenCommand.ExecuteAsync();
++        Assert.Equal(0, files.Calls); Assert.DoesNotContain("private", vm.Message);
++    }
++
++    [Theory]
++    [InlineData(FileOpenStatus.NotFound)][InlineData(FileOpenStatus.AccessDenied)][InlineData(FileOpenStatus.Opened)]
++    public async AsyncTask AllowedResolutionUsesExistingFileAdapterAndItsAvailabilityResult(FileOpenStatus status)
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id)); var files = new Files { Status = status };
++        using var vm = Create(client, project, adapter: files); await vm.RefreshCommand.ExecuteAsync(); await vm.OpenCommand.ExecuteAsync();
++        Assert.Equal(1, files.Calls); Assert.Equal("adapter-result", vm.Message);
++        Assert.Equal(1, client.ResolveCalls); Assert.Equal(2, client.MetadataCalls);
++    }
++
++    [Fact]
++    public async AsyncTask NoOpenPermissionDoesNotResolvePath_NavigationStillUsesCatalog()
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        using var vm = Create(client, project, Caps.Where(p => p != "FileReference.Open").ToArray()); await vm.RefreshCommand.ExecuteAsync();
++        Assert.False(await vm.OpenCommand.ExecuteAsync()); Assert.Equal(0, client.ResolveCalls);
++        Guid navigated = default; vm.OpenObjectRequested += (type, id) => { Assert.Equal("catalog_item", type); navigated = id; };
++        await vm.NavigateCommand.ExecuteAsync(); Assert.Equal(client.Item.Id, navigated);
++    }
++
++    [Theory]
++    [InlineData("switch")][InlineData("session")][InlineData("permission")]
++    public async AsyncTask LatePathResolutionCannotLaunchAfterContextChanges(string transition)
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id)); var files = new Files();
++        var gate = new System.Threading.Tasks.TaskCompletionSource<LocationResult>();
++        client.ResolveHandler = (_, _) => gate.Task;
++        using var vm = Create(client, project, adapter: files); await vm.RefreshCommand.ExecuteAsync();
++        var pending = vm.OpenCommand.ExecuteAsync();
++        vm.SetContext(transition == "switch" ? Project() : project, transition == "permission" ? [] : Caps,
++            transition != "session", true, true);
++        gate.SetResult(client.Location); await pending; Assert.Equal(0, files.Calls);
++    }
++
++    [Fact]
++    public async AsyncTask TargetRevokedBetweenListingAndOpenScrubsNameAndNeverResolves()
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync();
++        client.Metadata = (_, _) => AsyncTask.FromResult<CatalogResult>(new CatalogResult.Forbidden());
++        await vm.OpenCommand.ExecuteAsync(); Assert.Equal(0, client.ResolveCalls);
++        Assert.Equal("Объект каталога недоступен", Assert.Single(vm.Items).Title);
++    }
++
++    [Theory]
++    [InlineData("wrong-type")][InlineData("trashed")][InlineData("forbidden")]
++    public async AsyncTask TargetRevalidatedBeforePost(string fault)
++    {
++        var project = Project(); var client = new Client(); using var vm = Create(client, project);
++        await vm.RefreshCommand.ExecuteAsync(); await SelectTarget(vm);
++        client.Metadata = (_, _) => AsyncTask.FromResult<CatalogResult>(fault == "forbidden" ? new CatalogResult.Forbidden()
++            : new CatalogResult.Succeeded(client.Item with { ItemType = fault == "wrong-type" ? "contact" : "file_reference", LifecycleState = fault == "trashed" ? "trashed" : "active" }));
++        await vm.AddCommand.ExecuteAsync(); Assert.Equal(0, client.AddCalls);
++    }
++
++    [Fact]
++    public async AsyncTask AuthenticationFailureClearsDataAndNotifiesHost()
++    {
++        var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
++        using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync();
++        var expired = false; vm.SessionExpired += () => expired = true;
++        client.Read = (_, _) => AsyncTask.FromResult<LinkResult>(new LinkResult.AuthenticationFailure());
++        await vm.RefreshCommand.ExecuteAsync(); Assert.True(expired); Assert.Empty(vm.Items);
++        Assert.False(vm.RefreshCommand.CanExecute(null)); Assert.False(vm.Picker.CanQuery);
++    }
++
++    internal sealed class Files : IFileAccessAdapter
++    {
++        public int Calls; public FileOpenStatus Status = FileOpenStatus.Opened;
++        public FileOpenResult Open(string path) { Calls++; return new(Status, "adapter-result"); }
++    }
++    internal sealed class Client : IDesktopObjectLinksClient, IDesktopFileLocationsClient, IDesktopObjectLinkTargetSearchClient
++    {
++        public DesktopCatalogItem Item = new(Guid.NewGuid(), 1, "Договор", "file_reference", null, ".txt", "active");
++        public List<DesktopObjectLink> Rows = [];
++        public int ReadCalls, MetadataCalls, AddCalls, ResolveCalls;
++        public (Guid, long, Guid, string) LastAdd;
++        public (Guid, long, Guid) LastRemove;
++        public Func<Guid, CancellationToken, System.Threading.Tasks.Task<LinkResult>>? Read;
++        public Func<Guid, CancellationToken, System.Threading.Tasks.Task<CatalogResult>>? Metadata;
++        public Func<System.Threading.Tasks.Task<LinkResult>>? Write;
++        public Func<Guid, CancellationToken, System.Threading.Tasks.Task<LocationResult>>? ResolveHandler;
++        public LocationResult Location = new LocationResult.Succeeded(new(Guid.NewGuid(), 1, "local_path", @"C:\allowed\file.txt", true));
++        public DesktopObjectLink Link(Guid source) => new(Guid.NewGuid(), source, Item.Id, "project_file");
++        public System.Threading.Tasks.Task<LinkResult> GetLinksAsync(Guid source, CancellationToken ct = default)
++        { ReadCalls++; return Read?.Invoke(source, ct) ?? AsyncTask.FromResult<LinkResult>(new LinkResult.Succeeded(new(Rows.ToArray(), 5))); }
++        public System.Threading.Tasks.Task<LinkResult> AddLinkAsync(Guid source, long version, Guid target, string type, CancellationToken ct = default)
++        { AddCalls++; LastAdd = (source, version, target, type); return Write?.Invoke() ?? AsyncTask.FromResult<LinkResult>(new LinkResult.Conflict()); }
++        public System.Threading.Tasks.Task<LinkResult> RemoveLinkAsync(Guid source, long version, Guid linkId, CancellationToken ct = default)
++        { LastRemove = (source, version, linkId); Rows.RemoveAll(row => row.Id == linkId); return AsyncTask.FromResult<LinkResult>(new LinkResult.Succeeded(new(Rows.ToArray(), 6))); }
++        public System.Threading.Tasks.Task<CatalogResult> GetCatalogItemAsync(Guid id, CancellationToken ct = default)
++        { MetadataCalls++; return Metadata?.Invoke(id, ct) ?? AsyncTask.FromResult<CatalogResult>(new CatalogResult.Succeeded(Item with { Id = id })); }
++        public System.Threading.Tasks.Task<LocationResult> Resolve(Guid id, CancellationToken ct)
++        { ResolveCalls++; return ResolveHandler?.Invoke(id, ct) ?? AsyncTask.FromResult(Location); }
++        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchTargetsAsync(string query, IReadOnlyCollection<string> types, string? cursor, CancellationToken cancellationToken = default)
++            => AsyncTask.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([new(Item.Id, "catalog_item", Item.Name, null, 1, DateTimeOffset.UtcNow)]));
++        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopFileLocation>>> GetLocationsAsync(Guid id, CancellationToken ct = default) => throw new NotSupportedException();
++        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNetworkResource>>> GetNetworkResourcesAsync(CancellationToken ct = default) => throw new NotSupportedException();
++        public System.Threading.Tasks.Task<DesktopWorkResult<bool>> CreateLocationAsync(Guid id, long version, DesktopLocationDraft draft, CancellationToken ct = default) => throw new NotSupportedException();
++        public System.Threading.Tasks.Task<DesktopWorkResult<bool>> PatchLocationAsync(Guid id, long version, Guid locationId, DesktopLocationDraft draft, CancellationToken ct = default) => throw new NotSupportedException();
++        public System.Threading.Tasks.Task<DesktopWorkResult<bool>> DeleteLocationAsync(Guid id, long version, Guid locationId, CancellationToken ct = default) => throw new NotSupportedException();
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesWindowsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesWindowsTests.cs
+new file mode 100644
+index 0000000..4c07053
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectFilesWindowsTests.cs
+@@ -0,0 +1,79 @@
++using System.Diagnostics;
++using System.Windows;
++using System.Windows.Automation.Peers;
++using System.Windows.Automation.Provider;
++using System.Windows.Controls;
++using System.Windows.Threading;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Views;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class ProjectsViewModelTests
++{
++    [Fact]
++    public async AsyncTask NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_PROJECT_FILES_PROBE") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden,
++                RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ProjectsViewModelTests).Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(ProjectsViewModelTests).FullName + "." + nameof(NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates));
++            start.Environment["TASK_PROJECT_FILES_PROBE"] = "1";
++            using var child = Process.Start(start)!; var output = child.StandardOutput.ReadToEndAsync(); var error = child.StandardError.ReadToEndAsync();
++            try { await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(50)); Assert.True(child.ExitCode == 0, await output + await error); }
++            finally { if (!child.HasExited) child.Kill(entireProcessTree: true); }
++            return;
++        }
++        var done = new System.Threading.Tasks.TaskCompletionSource(System.Threading.Tasks.TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
++            app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext());
++            app.Dispatcher.BeginInvoke(async () =>
++            {
++                Window? window = null;
++                try
++                {
++                    var work = new ProjectFilesTests.Client(); work.Item = work.Item with { Description = @"C:\private\description.txt" }; work.Rows.Add(work.Link(ProjectId));
++                    var files = ProjectFilesTests.Create(work, Project());
++                    using var vm = new ProjectsViewModel(SectionClient(), User, ProjectFilesTests.Caps, files: files);
++                    vm.Activate(); await vm.CurrentDetailsOperation;
++                    var view = new ProjectsView { DataContext = vm };
++                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Project files test" };
++                    window.Show(); PumpProject();
++                    var expander = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "Файлы"));
++                    Assert.True(expander.IsVisible); Assert.Equal(0, work.ReadCalls);
++                    var provider = (IExpandCollapseProvider)new ExpanderAutomationPeer(expander).GetPattern(PatternInterface.ExpandCollapse);
++                    provider.Expand(); await vm.CurrentFilesOperation; PumpProject();
++                    expander.BringIntoView(); PumpProject(); Assert.True(expander.Focus());
++                    var list = ProjectDescendants<ListBox>(expander).Single(); Assert.Single(list.Items);
++                    var container = (ListBoxItem)list.ItemContainerGenerator.ContainerFromIndex(0);
++                    Assert.Equal("Договор, Файл", System.Windows.Automation.AutomationProperties.GetName(container));
++                    Assert.Contains(ProjectDescendants<TextBlock>(expander), block => block.Text == "Договор");
++                    var open = ProjectDescendants<Button>(expander).Single(button => Equals(button.Content, "Открыть файл"));
++                    Assert.True(open.IsEnabled); open.BringIntoView(); PumpProject(); Assert.True(open.Focus());
++                    Assert.True(open.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)));
++                    SaveProjectFrame(view, "project-files-loaded.png");
++                    await files.ChooseCommand.ExecuteAsync(); PumpProject();
++                    Assert.Contains(ProjectDescendants<ObjectLinkTargetPickerView>(expander), picker => picker.IsVisible && ReferenceEquals(picker.DataContext, files.Picker));
++                    ProjectDescendants<ObjectLinkTargetPickerView>(expander).Single().BringIntoView(); PumpProject();
++                    SaveProjectFrame(view, "project-files-picker.png");
++                    vm.UpdateCapabilities(ProjectFilesTests.Caps.Where(code => code != "FileReference.Open")); await files.RefreshCommand.ExecuteAsync(); PumpProject();
++                    Assert.False(open.IsEnabled);
++                    provider.Collapse(); PumpProject(); Assert.Empty(files.Items);
++                    provider.Expand(); await vm.CurrentFilesOperation; PumpProject(); Assert.Single(files.Items);
++                    done.SetResult();
++                }
++                catch (Exception e) { done.SetException(e); }
++                finally { window?.Close(); app.Shutdown(); }
++            });
++            app.Run();
++        });
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        await done.Task.WaitAsync(TimeSpan.FromSeconds(45)); thread.Join();
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
+index cae2590..ca230d6 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectRelatedTasksWindowsTests.cs
+@@ -46,7 +46,7 @@ public sealed partial class ProjectsViewModelTests
+                     var view = new ProjectsView { DataContext = vm };
+                     window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Related tasks test" };
+                     window.Show(); PumpProject();
+-                    foreach (var expander in ProjectDescendants<Expander>(view).ToArray())
++                    foreach (var expander in ProjectDescendants<Expander>(view).Where(expander => expander.IsVisible).ToArray())
+                     {
+                         expander.BringIntoView(); PumpProject();
+                         Assert.True(expander.Focus());
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs
+index e89b0ed..2afafa5 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/DesktopWorkApiClientTests.cs
+@@ -108,8 +108,10 @@ public sealed partial class DesktopWorkApiClientTests
+         Assert.Contains("trashRetentionDays", fixture.Requests[9].Body);
+     }
+ 
+-    [Fact]
+-    public async System.Threading.Tasks.Task ObjectLinksUseExistingRoutesEtagAndKeys()
++    [Theory]
++    [InlineData("task_file")]
++    [InlineData("project_file")]
++    public async System.Threading.Tasks.Task ObjectLinksUseExistingRoutesEtagAndKeys(string linkType)
+     {
+         var source = Guid.NewGuid(); var target = Guid.NewGuid(); var link = Guid.NewGuid(); var version = 1; var present = false;
+         await using var fixture = await Fixture.CreateAsync((request, _) =>
+@@ -117,13 +119,14 @@ public sealed partial class DesktopWorkApiClientTests
+             if (request.Method == HttpMethod.Post) { version++; present = true; return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.Created, "{}")); }
+             if (request.Method == HttpMethod.Delete) { version++; present = false; return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, "{}")); }
+             var response = Json(HttpStatusCode.OK, present
+-                ? $$"""{"items":[{"id":"{{link}}","sourceObjectId":"{{source}}","targetObjectId":"{{target}}","linkType":"task_file"}],"hasMore":false}"""
++                ? $$"""{"items":[{"id":"{{link}}","sourceObjectId":"{{source}}","targetObjectId":"{{target}}","linkType":"{{linkType}}"}],"hasMore":false}"""
+                 : "{\"items\":[],\"hasMore\":false}");
+             response.Headers.ETag = new($"\"v{version}\""); return System.Threading.Tasks.Task.FromResult(response);
+         });
+         Assert.Empty(Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.GetLinksAsync(source)).Value.Items);
+-        var added = Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.AddLinkAsync(source, 1, target, "task_file")).Value;
++        var added = Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.AddLinkAsync(source, 1, target, linkType)).Value;
+         Assert.Equal(2, added.SourceVersion); Assert.Equal(link, Assert.Single(added.Items).Id);
++        Assert.Equal(linkType, added.Items[0].LinkType); Assert.Contains(linkType, fixture.Requests[1].Body);
+         Assert.Empty(Assert.IsType<DesktopWorkResult<DesktopObjectLinks>.Succeeded>(await fixture.Client.RemoveLinkAsync(source, 2, link)).Value.Items);
+         Assert.Equal($"/api/v1/objects/{source:D}/links", fixture.Requests[1].Uri.AbsolutePath);
+         Assert.Equal($"/api/v1/objects/{source:D}/links/{link:D}", fixture.Requests[3].Uri.AbsolutePath);
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/ProjectFilesTransportTests.cs b/work/production/tests/Task.Desktop.Tests/Work/ProjectFilesTransportTests.cs
+new file mode 100644
+index 0000000..cf54b1c
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Work/ProjectFilesTransportTests.cs
+@@ -0,0 +1,41 @@
++using System.Net;
++using System.Text.Json.Nodes;
++using Task.Desktop.Tests.Projects;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Work;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.Tests.Work;
++
++public sealed partial class DesktopWorkApiClientTests
++{
++    [Fact]
++    public async AsyncTask ProjectFilesSectionConsumesAllLinkPagesAndResolvesNamesThroughCatalogGet()
++    {
++        var project = ProjectFilesTests.Project(); var pages = 0; var catalogReads = 0;
++        await using var fixture = await Fixture.CreateAsync((request, _) =>
++        {
++            if (request.RequestUri!.AbsolutePath.EndsWith("/links"))
++            {
++                pages++;
++                if (pages == 2) Assert.Contains("cursor=next", request.RequestUri.Query);
++                var rows = Enumerable.Range(0, pages == 1 ? 200 : 1).Select(_ => (JsonNode)new JsonObject
++                {
++                    ["id"] = Guid.NewGuid(), ["sourceObjectId"] = project.Id,
++                    ["targetObjectId"] = Guid.NewGuid(), ["linkType"] = "project_file"
++                }).ToArray();
++                var response = Json(HttpStatusCode.OK, new JsonObject { ["items"] = new JsonArray(rows), ["hasMore"] = pages == 1, ["nextCursor"] = pages == 1 ? "next" : null }.ToJsonString());
++                response.Headers.ETag = new("\"v7\""); return AsyncTask.FromResult(response);
++            }
++            Assert.Contains("/catalog-items/", request.RequestUri.AbsolutePath); catalogReads++;
++            var id = Guid.Parse(request.RequestUri.Segments[^1]);
++            return AsyncTask.FromResult(Json(HttpStatusCode.OK, $$"""{"id":"{{id}}","version":1,"name":"Catalog {{catalogReads}}","itemType":"file_reference","lifecycleState":"active"}"""));
++        });
++        using var vm = new ProjectFilesViewModel(fixture.Client, fixture.Client, new(fixture.Client, ProjectFilesTests.Caps), fixture.Client.ResolveLocationAsync);
++        vm.SetContext(project, ProjectFilesTests.Caps, true, true, true);
++        await vm.RefreshCommand.ExecuteAsync();
++        Assert.Equal(2, pages); Assert.Equal(201, catalogReads); Assert.Equal(201, vm.Items.Count);
++        Assert.All(vm.Items, row => Assert.StartsWith("Catalog ", row.Title));
++        Assert.Equal(ProjectSectionState.Loaded, vm.Section.State);
++    }
++}
+diff --git a/work/project_files_13_2/implementation.md b/work/project_files_13_2/implementation.md
+new file mode 100644
+index 0000000..27391ef
+--- /dev/null
++++ b/work/project_files_13_2/implementation.md
+@@ -0,0 +1,35 @@
++# Этап 13.2 — файлы проекта
++
++Версия: 13.2.0. Дата: 2026-10-19. Ветка: feature/project-detail-sections.
++База: 283bcd4 (реализованный и проверенный этап 13.1 поверх origin/main dcbaca2).
++Изменение относится к категории H: permissions, версии и асинхронный контекст; реализовано Codex самостоятельно.
++
++## Реализация
++
++ProjectFilesViewModel владеет подтверждённым снимком исходящих project_file выбранного проекта. Подключение через необязательный параметр ProjectsViewModel сохраняет существующие сценарии и тестовые hosts без файлового клиента. CorporateApplicationContext передаёт существующий DesktopWorkApiClient. Раздел загружается при раскрытии; подтверждение обзора проекта обязательно. Переход A→B отменяет старый контекст; поздние ответы не применяются. Раскрытый раздел повторно загружается для нового проекта после завершения старой команды. Collapse/unload/deactivate, смена организации/прав, logout и offline очищают снимок и отменяют операции. Данные файлов не сохраняются на диск.
++
++Используется существующая реализация Object Link Target Picker: поиск доступного catalog_item по имени, подтверждение выбора, затем отдельное подтверждение привязки. UUID вручную не вводится. Тип связи фиксирован project_file. Перед POST проверяются полученные через каталог ID, тип и active lifecycle цели; сервер дополнительно проверяет object-level FileCatalog.Update и права на проект. Повторное создание одинаковой связи блокируется по подтверждённому снимку; конкурентный дубликат обрабатывается по ответу сервера. Самоссылка и неподходящий тип не отправляются.
++
++Удаление принимает только выбранный экземпляр строки из текущего снимка, с исходным проектом и project_file. DELETE использует ID связи, а не ID объекта каталога. Никаких операций удаления/перемещения физического файла или объекта каталога нет. После успешной записи существующий клиент выполняет read-back; только после него и получения метаданных применяется новый снимок. При неясном результате, конфликте или ошибке запись блокируется до обновления. Подтверждённая версия обновляет карточку без потери имён сотрудников; версия открытого editor draft не перебазируется, чтобы сохранить обнаружение конфликта.
++
++Названия и типы получаются отдельными разрешёнными GET catalog-items/{id}; поле названия в Object Links API не предполагается. При 403/404/trashed/ошибке метаданных отображается нейтральная строка, открытие/навигация отключены. Частичный доступ и ошибка получения связей отличаются от успешного пустого результата. Все страницы связей загружает существующий DesktopObjectLinks client; частичный набор страниц не подтверждается.
++
++Переход в каталог использует существующий маршрут shell OpenWorkObjectAsync. Перед переходом или открытием цель повторно читается. Путь запрашивается только по явной команде открытия, при FileReference.Open, через resolve-location. Необходимы CanOpenOnDevice, включённое расположение и непустой RawPath; затем WindowsFileAccessAdapter проверяет реальную доступность/допустимость пути. Путь из сохранённых метаданных не считается доказательством доступности. Пути не показываются в UI; AutomationProperties.Name строки содержит только название и тип, без record.ToString и дополнительных полей DTO.
++
++## API и permissions
++
++- GET /api/v1/projects/{id}: Project.Read, подтверждение конкретного проекта/организации.
++- GET /api/v1/objects/{id}/links: ObjectLink.Read + применимые права и object/project visibility; существующий cursor/limit/ETag контракт.
++- GET /api/v1/catalog-items/{id}: FileCatalog.Read + серверная область доступа, без запроса расположений.
++- GET /api/v1/object-link-targets: ObjectLink.Create + чтение допустимых типов; существующий picker, без fallback на общий каталог.
++- POST /api/v1/objects/{id}/links: ObjectLink.Create, Project.Update, object/project checks и проверка FileCatalog.Update на цели. Body sourceObjectId/targetObjectId/linkType=project_file неизменён.
++- DELETE /api/v1/objects/{id}/links/{childId}: ObjectLink.Delete и Project.Update с object/project checks. childId — ID связи.
++- POST /api/v1/catalog-items/{id}/resolve-location: FileReference.Open и серверные проверки каталога/пользователя/устройства/ресурса.
++
++Глобальные capabilities используются для предварительного отключения действий; разрешение на конкретный объект окончательно устанавливает сервер. Проверки сервера изучены в PostgresProductApiLinks.cs, CheckLinkWrite/CheckObjectAction/CheckProjectWrite. ETag/If-Match, idempotency/correlation и обработка ошибок остаются существующими. Новые permissions, API, DTO сервера, БД и зависимости не добавлены.
++
++## Проверка и ограничения
++
++Итоги и история запусков: validation-report.md. Полный desktop 1680 PASS; профильный набор 293 PASS; endpoint picker 1 PASS. Реальная WPF-проверка: раскрытие, фокус/traversal, названия/типы, общий picker, права открытия, collapse/reload; PNG сохранены и визуально проверены. Транспортная проверка проходит 201 project_file через две страницы и отдельные разрешённые GET имён; существующие регрессии клиента покрывают 451 связь, смену версии/повтор курсора/ошибку дальней страницы. POST/DELETE тест параметризован для task_file и project_file с проверкой маршрутов, If-Match и idempotency.
++
++Live Corporate API, реальный PostgreSQL с данными заказчика, физический NAS/UNC, устройство другого сотрудника и ручной Narrator не проверялись. Недоступность устройства/сети/файла проверена детерминированными клиентскими fixtures и регрессиями существующего адаптера. Схема/сервер не менялись. Названия разрешаются отдельным GET на каждый связанный объект, последовательным обходом; batch API и новый кэш не создавались. В main этап не опубликован. Следующий функциональный этап можно выполнять на этой feature-ветке; интеграция в main и live приёмка остаются отдельными действиями.
+diff --git a/work/project_files_13_2/validation-report.md b/work/project_files_13_2/validation-report.md
+new file mode 100644
+index 0000000..bed3b59
+--- /dev/null
++++ b/work/project_files_13_2/validation-report.md
+@@ -0,0 +1,28 @@
++# Проверка этапа 13.2
++
++Версия **13.2.0**, дата **2026-10-19**, ветка `feature/project-detail-sections`.
++База этапа: `283bcd4` (13.1). Повторный fetch подтвердил `origin/main` = `dcbaca2`; ветка содержит 13.1 и новый коммит 13.2. Push/merge не выполнялись.
++
++| Проверка | Результат |
++|---|---|
++| Release build всего work/production/Task.sln | PASS, 0 ошибок; первый прогон 11 существующих предупреждений, финальный incremental 0 |
++| Полный desktop gate desktop-final.trx | 1680 PASS / 0 FAIL / 0 SKIP |
++| Профильный files/projects/links/catalog gate files-targeted-final.trx | 293 PASS / 0 FAIL / 0 SKIP |
++| Endpoint LinkPickerUsesCreatePermission... | 1 PASS / 0 FAIL |
++| Финальная проверка WPF UIA имени строки files-accessibility-final.trx | 1 PASS / 0 FAIL |
++| dashboard:order, dashboard:validate | PASS; progress/status сохранены, изменён только PROD-04 |
++| git diff --check | PASS |
++
++Полный desktop gate включает окончательный production-код и проверку 201 файловой связи через две cursor-страницы. После него добавлено только явное доступное имя строки в XAML (название + тип), соответствующая native проверка и удалён неиспользуемый using; финальный WPF-прогон и повторная Release-сборка подтверждают это изменение. Дальнейшие изменения — документация/dashboard/пакет.
++
++Проверены загрузка, фильтр исходящих project_file, разрешение названий через API, пагинация, подтверждённые add/delete без удаления каталога, дубликат, self-link, неверный тип/trashed цели, отсутствие каждого применимого read/write capability, серверные 403/404, конфликт версии, потеря сети и недоступные метаданные. Ошибка чтения не становится Empty. Нельзя удалить строку вне подтверждённого снимка. Устаревшее разрешение пути после смены проекта/прав/сессии не вызывает Windows. Неподтверждённые/скрытые/отключённые/чужие расположения не передаются адаптеру. Существующий адаптер проверяет физическую доступность; его безопасные статусы и регрессии сохранены.
++
++Host tests подтверждают отсутствие чтения связей до раскрытия и подтверждения обзора, отмену/отклонение поздних ответов при смене проекта/организации/прав/сессии/offline/deactivate/close, сохранение имён сотрудников и версии открытого draft при обновлении версии карточки. Native WPF тесты проверяют действительный ProjectsView: Expander, фокус/traversal, список, команды, общий picker, потерю права открытия, collapse/reload. PNG project-files-loaded.png и project-files-picker.png сохранены; оба визуально проверены.
++
++История сохранена в evidence: files-initial — 37 PASS / 3 FAIL (исправлены picker session state архивного проекта и строгая идентичность выбранной строки); files-targeted — 274 PASS / 1 FAIL (старый native тест фокусировал скрытый неподключённый раздел, теперь проверяет только видимые Expander); files-integration — 50 PASS. Первый endpoint-фильтр по имени файла не выбрал тестов; это не PASS и не использовано как доказательство, затем запущен фактический метод, 1 PASS. Исходные TRX сохранены.
++
++Live Corporate API/NAS/другое физическое устройство, customer PostgreSQL и ручной Narrator не проверены. Область server/API/БД не менялась. Серверные object/project-level checks изучены в существующей реализации; клиентские fixtures не выдаются за live проверку. Постоянного offline-кэша, загрузки физических файлов и очереди записей нет.
++
++Изменённые файлы перечислены в changed-files.txt; контракт и ограничения — implementation.md. Manifest содержит размер и SHA-256 каждого файла пакета; ZIP имеет отдельный SHA-256, повторная проверка включает состав и содержимое архива. Исходная грязная рабочая копия и sources/ не изменены.
++
++Готовность: реализация и автоматизированные проверки этапа 13.2 завершены; следующий этап доступен в feature-ветке. Публикация в main и live приёмка не заявлены.

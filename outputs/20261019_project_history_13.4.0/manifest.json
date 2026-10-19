@@ -1,0 +1,371 @@
+{
+  "version": "13.4.0",
+  "sourceCommit": "63babc167a98dd3f0a4dd49fcd1766fc1719227c",
+  "files": [
+    {
+      "path": "changed-files.txt",
+      "size": 1242,
+      "sha256": "61be2d0d5441ca22e728301ce89e8cb21014f8d96b5e38cafe3e4d7a8bbb97b1"
+    },
+    {
+      "path": "evidence/baseline/native-context-baseline.trx",
+      "size": 9768,
+      "sha256": "02eb3930e2bb6714ccaeea34b6e9fdd46aa81e997fac7de5138163a29d7c61f7"
+    },
+    {
+      "path": "evidence/confirmation/native-context-retry.trx",
+      "size": 9418,
+      "sha256": "ddc1b0d441f842b99507944f3ba03427274fe6dbcd321f2e8fe430798d7a2868"
+    },
+    {
+      "path": "evidence/final-targeted/build.log",
+      "size": 19072,
+      "sha256": "b6e626feefe715c39cbb2ba816a29b6552f6c742117bfb4bfea68a102dc47166"
+    },
+    {
+      "path": "evidence/final-targeted/novik_TIM_2026-10-19_01_33_57_net10.0.trx",
+      "size": 7744,
+      "sha256": "b20b85f71de8fc7bde43ba3e82280865f1d6bde9e896509fab0fc01e6ecbfae1"
+    },
+    {
+      "path": "evidence/final-targeted/novik_TIM_2026-10-19_01_33_57_net10.0[1].trx",
+      "size": 21089,
+      "sha256": "ad571bc09f76081de05639b7eb3ee549d7fe980833acd76fbe3edaa718a9008d"
+    },
+    {
+      "path": "evidence/final-targeted/novik_TIM_2026-10-19_01_33_57_net10.0[2].trx",
+      "size": 389238,
+      "sha256": "01cf03b285d98f3df45e0e6ccfffef17655fc7d37ca62359d792f74860c89c8d"
+    },
+    {
+      "path": "evidence/final-targeted/postgres-error.log",
+      "size": 2309,
+      "sha256": "b530d194431217c696a87026a6e9c3af1a8f523da6ed74e4a5b959a66b5a7b58"
+    },
+    {
+      "path": "evidence/final-targeted/postgres-init.log",
+      "size": 2038,
+      "sha256": "48c185ba11cf54631c42b90f1d34d8c97e95a739032053dc0fe09c0c68159b90"
+    },
+    {
+      "path": "evidence/final-targeted/postgres.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-contacts-loaded.png",
+      "size": 70712,
+      "sha256": "62132a2eb4f18ac90cefdeff8a11cb06f2349494be5d6678f8f3fb950f9764f7"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-contacts-picker.png",
+      "size": 55178,
+      "sha256": "032b12d6da0036a1ae8e2f2b553082597fc65ff4ada19b3e249b246fc4eb2184"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-files-loaded.png",
+      "size": 69776,
+      "sha256": "f9e66e70b2f2ffae11c31258aa3a643659a9d83b647a631aefe519f4edf28145"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-files-picker.png",
+      "size": 55669,
+      "sha256": "83535610c3a143be9d2eb9aaec45f674dc90d10de26efc2ca7f7e43422a4deee"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-history-loaded.png",
+      "size": 81239,
+      "sha256": "f34a10f15efc19dc3c45f2c633f15626602c589f263334ed4373931b9670fbf3"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-history-revoked.png",
+      "size": 64901,
+      "sha256": "9d4ac68c65b75791cf752c320504aecd4f11f446254aa84876608f981249bc87"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-live-user-read-grant.png",
+      "size": 73903,
+      "sha256": "12e61a6d3ffbef9c8d1ed41ad9b77d4f22e89444c0c0b72b2cca97a1bd5e9ab4"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-manager-narrow.png",
+      "size": 78574,
+      "sha256": "f436f586b69c731644a7ed0f5e9e1051334350e969d44defdd3790b54ab9681f"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-manager-picker.png",
+      "size": 87089,
+      "sha256": "69f6bf40f32d2e40b0c678a16af21caca045968a1644c86e98cc249780c033d1"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-manager-save.png",
+      "size": 80473,
+      "sha256": "6c36a912b7fc9b81b5846d38518ff16c28c2d84b8754683418c0833d15461f1f"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-member-picker.png",
+      "size": 61085,
+      "sha256": "215ca539f31aac29b54ec3ad3d3a5df50e784d3078a46fbcacbb22b3d647f74f"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/project-uuid-fallback.png",
+      "size": 62993,
+      "sha256": "d222d54a14172db090d4eb597279df6598f147fe61b00ca460a0a0c1590bb7c1"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/related-tasks-complete.png",
+      "size": 66342,
+      "sha256": "808f75d7df76ffa8072085583aa215712b63caad2ebcb0f2c3c61f5367e5f8e7"
+    },
+    {
+      "path": "evidence/final-targeted/screenshots/related-tasks-partial.png",
+      "size": 66706,
+      "sha256": "2a251dae5f1e69a25a1769a00a937c9527658f6f5f40409a8771394cfe064aeb"
+    },
+    {
+      "path": "evidence/final-targeted/tests.log",
+      "size": 3440,
+      "sha256": "66897d5662c2f58f810005a27b78da8394b5ff5a4db3d766e703a77ef8c1fbb1"
+    },
+    {
+      "path": "evidence/history.trx",
+      "size": 52372,
+      "sha256": "0c5102ec53a7bd7549804840b1ad19055512363220446237b35efae2717fa151"
+    },
+    {
+      "path": "evidence/projects.trx",
+      "size": 387084,
+      "sha256": "d2619982a534c9d00a4f263608ecc7fda337fbe6e9274c4eed5d68bca6b1452d"
+    },
+    {
+      "path": "evidence/release/build.log",
+      "size": 196,
+      "sha256": "4b6f3c1b02bcda55ce855f76884afbb10c5b6ceb4796990b35ce1b669f01a958"
+    },
+    {
+      "path": "evidence/release/novik_TIM_2026-10-19_01_30_03_net10.0.trx",
+      "size": 1011393,
+      "sha256": "d446268b8c764d9e0bb4a1e3f8779af3a6ba1f87e7ebcbfd9a4fe18ab4b38558"
+    },
+    {
+      "path": "evidence/release/novik_TIM_2026-10-19_01_30_03_net10.0[1].trx",
+      "size": 1257703,
+      "sha256": "67046dd3032e255ab4930e41ea06e0daaa8a9f879217011ea84ccabc89524066"
+    },
+    {
+      "path": "evidence/release/novik_TIM_2026-10-19_01_30_04_net10.0.trx",
+      "size": 2747152,
+      "sha256": "5f3990fb5d89648c75ff113745582cd5dbeb2116368e0763507ba0939223919f"
+    },
+    {
+      "path": "evidence/release/postgres-error.log",
+      "size": 53045,
+      "sha256": "21d976873f36cc3f4586539c54988ddf43fee86ebb37ef83fad992deefb2618d"
+    },
+    {
+      "path": "evidence/release/postgres-init.log",
+      "size": 2038,
+      "sha256": "51e2a4d20cd775f4f7f5dc9dc86fcc5e2ea8c48131b67ccb6df10ebd5ade765c"
+    },
+    {
+      "path": "evidence/release/postgres.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/release/screenshots/project-contacts-loaded.png",
+      "size": 70712,
+      "sha256": "62132a2eb4f18ac90cefdeff8a11cb06f2349494be5d6678f8f3fb950f9764f7"
+    },
+    {
+      "path": "evidence/release/screenshots/project-contacts-picker.png",
+      "size": 55178,
+      "sha256": "032b12d6da0036a1ae8e2f2b553082597fc65ff4ada19b3e249b246fc4eb2184"
+    },
+    {
+      "path": "evidence/release/screenshots/project-files-loaded.png",
+      "size": 69776,
+      "sha256": "f9e66e70b2f2ffae11c31258aa3a643659a9d83b647a631aefe519f4edf28145"
+    },
+    {
+      "path": "evidence/release/screenshots/project-files-picker.png",
+      "size": 55669,
+      "sha256": "83535610c3a143be9d2eb9aaec45f674dc90d10de26efc2ca7f7e43422a4deee"
+    },
+    {
+      "path": "evidence/release/screenshots/project-history-loaded.png",
+      "size": 76615,
+      "sha256": "101ab1e9a9a089824b92f2e6b861ae93805dc23ac37c6b9ec0054a5082047d22"
+    },
+    {
+      "path": "evidence/release/screenshots/project-history-revoked.png",
+      "size": 64901,
+      "sha256": "9d4ac68c65b75791cf752c320504aecd4f11f446254aa84876608f981249bc87"
+    },
+    {
+      "path": "evidence/release/screenshots/project-live-user-read-grant.png",
+      "size": 73903,
+      "sha256": "12e61a6d3ffbef9c8d1ed41ad9b77d4f22e89444c0c0b72b2cca97a1bd5e9ab4"
+    },
+    {
+      "path": "evidence/release/screenshots/project-manager-narrow.png",
+      "size": 78574,
+      "sha256": "f436f586b69c731644a7ed0f5e9e1051334350e969d44defdd3790b54ab9681f"
+    },
+    {
+      "path": "evidence/release/screenshots/project-manager-picker.png",
+      "size": 87089,
+      "sha256": "69f6bf40f32d2e40b0c678a16af21caca045968a1644c86e98cc249780c033d1"
+    },
+    {
+      "path": "evidence/release/screenshots/project-manager-save.png",
+      "size": 80473,
+      "sha256": "6c36a912b7fc9b81b5846d38518ff16c28c2d84b8754683418c0833d15461f1f"
+    },
+    {
+      "path": "evidence/release/screenshots/project-member-picker.png",
+      "size": 61085,
+      "sha256": "215ca539f31aac29b54ec3ad3d3a5df50e784d3078a46fbcacbb22b3d647f74f"
+    },
+    {
+      "path": "evidence/release/screenshots/project-uuid-fallback.png",
+      "size": 62993,
+      "sha256": "d222d54a14172db090d4eb597279df6598f147fe61b00ca460a0a0c1590bb7c1"
+    },
+    {
+      "path": "evidence/release/screenshots/related-tasks-complete.png",
+      "size": 66342,
+      "sha256": "808f75d7df76ffa8072085583aa215712b63caad2ebcb0f2c3c61f5367e5f8e7"
+    },
+    {
+      "path": "evidence/release/screenshots/related-tasks-partial.png",
+      "size": 66706,
+      "sha256": "2a251dae5f1e69a25a1769a00a937c9527658f6f5f40409a8771394cfe064aeb"
+    },
+    {
+      "path": "evidence/release/tests.log",
+      "size": 4846,
+      "sha256": "d9df8774fb21a8d2a91ba2bdf676e2e96caf9dc5f75407d4b26ef776610151dd"
+    },
+    {
+      "path": "pr-description.md",
+      "size": 1068,
+      "sha256": "d1554d4bfe6a1c53e1ba49447ae12b96b8ced459ea6a1b817d879a06ffa34edc"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "size": 154565,
+      "sha256": "705bb7477b362b965ab9d68b29caefb3922f1002f40f7da67d6eadace09548b7"
+    },
+    {
+      "path": "source/work/production/docs/PROJECT-DETAIL-ACCEPTANCE-13.4.md",
+      "size": 18663,
+      "sha256": "eeb798254202fb306f7b6ff4ae8d71924136a1e67b83f73f58c147f696fb2516"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Projects/DesktopProjectHistoryApiClient.cs",
+      "size": 2837,
+      "sha256": "ffd51b74b4762bc448c119482eb2e6b845333af535a80b914fb339637b665ad8"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs",
+      "size": 24342,
+      "sha256": "ebed099603325ee551d4966143ed007cd8ac6e172c4c4e639dd9436244e178c9"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "size": 37961,
+      "sha256": "66ae9d62d22054356bf1616c3bae2b660a66388a7f85ad26e245029781e42c86"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.History.cs",
+      "size": 8318,
+      "sha256": "f398c1e475ca1b52ae12041d04e008ca1b769e10a4499314f4abd5bd84206b71"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+      "size": 5881,
+      "sha256": "ff109b0366174b118c0f291541b655e585cc8f104617940fb71062f180de3227"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "size": 23413,
+      "sha256": "5b3b2a508a492692c1f230a52c6ffef0c62479e21a09667a396d91e4a5f47b11"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+      "size": 2090,
+      "sha256": "cfe59575f648d15e99aa69078dffafbaad22ff50ed540a5d9918a18516450808"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectHistoryApiClientTests.cs",
+      "size": 2698,
+      "sha256": "0fdc9d7ac808a096b6ed8368f76d1cbd700c38f495d8ad12d546c8592a58bf5a"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs",
+      "size": 8876,
+      "sha256": "29f3b82a4e1b9d530790b64a43b6a5ad06ca7f5b8cb978cb8e1fa3750b88a2d8"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs",
+      "size": 13722,
+      "sha256": "55739d70a6c9f7456a951d894229796f687acfa31db8be171cc8a2eef998bf1a"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryTests.cs",
+      "size": 9149,
+      "sha256": "e329477926dda04e9bf01c7633263b9c7d0f0225d3e022332f6d48e304b0056b"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryWindowsTests.cs",
+      "size": 5344,
+      "sha256": "155b5dac7ca25370baa05c50eb4338a743c7a06d68a48ed7de0193dbba0830ec"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "size": 18492,
+      "sha256": "b523772f39247b776ad3dad99e432035182574d78511e024d650ac896a5fb354"
+    },
+    {
+      "path": "source/work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs",
+      "size": 1880,
+      "sha256": "3092c026af88d0d54b0de83fbffd09c9e0d330c23fc73c475e1cce41c5d2f480"
+    },
+    {
+      "path": "source/work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs",
+      "size": 2067,
+      "sha256": "bc4d1580dcbb9572a9501e37c0b5f1e8e628b2159a94561869cc3687f4648093"
+    },
+    {
+      "path": "source/work/project_history_13_4/Run-Gate.ps1",
+      "size": 2562,
+      "sha256": "efad364ba2a9be681a5352dfd5fddeee0084d20effba71b1ae02aeafefadde21"
+    },
+    {
+      "path": "source-commit.txt",
+      "size": 42,
+      "sha256": "7fbaddd7d811f72fa8c085af88615f58025133b6f2abb2c07b4bbd749a30e9e7"
+    },
+    {
+      "path": "source.patch",
+      "size": 83415,
+      "sha256": "8447ca6d69a733a9e64fb070608289e175dfecc31f9684daca3cb4fdf5ccd7ac"
+    },
+    {
+      "path": "validation-report.json",
+      "size": 5041,
+      "sha256": "029032e5e23a5750024fb41bb01fd5d08d0e46832ca09a506719284a4b786aa7"
+    },
+    {
+      "path": "validation-report.md",
+      "size": 18681,
+      "sha256": "ffaf91948103b15822e43f6c51c162840d44b67330de7f1c343a34b5c5287e87"
+    },
+    {
+      "path": "version.txt",
+      "size": 8,
+      "sha256": "e7ad5c587fcc721ba826343c92f66fb1c1ae873542eaed2badb335498396f329"
+    }
+  ]
+}

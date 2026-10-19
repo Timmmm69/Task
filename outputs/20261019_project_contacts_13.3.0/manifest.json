@@ -1,0 +1,241 @@
+{
+  "version": "13.3.0",
+  "sourceCommit": "d5afec2f4c43c3ee3e9601ad7c5a9246d8c177ea",
+  "files": [
+    {
+      "path": "changed-files.txt",
+      "bytes": 1423,
+      "sha256": "c3e2cb9427d9d8476be6a97f1514bf72df48b6619a3bae3d0f91204f3f17c1db"
+    },
+    {
+      "path": "evidence/build-solution.log",
+      "bytes": 2108,
+      "sha256": "e1d06b73a113244f1cbbde73dd6e880c4562d41b2ba759dc704eeb938993925c"
+    },
+    {
+      "path": "evidence/build.log",
+      "bytes": 788,
+      "sha256": "261546e66e716fcbf0704d11d389e540e7a1ee33a51a00ce9193ff5f651440c2"
+    },
+    {
+      "path": "evidence/contacts-initial.trx",
+      "bytes": 158727,
+      "sha256": "2e7a76c2ece60fea0984d50f3416b365879fdd88af9754bcbb00cc9d179548b9"
+    },
+    {
+      "path": "evidence/contacts-integration.trx",
+      "bytes": 20512,
+      "sha256": "541fd090a277b7ac13bd6846bcec9adc7a9ab1907d3551d71ff26796fef12838"
+    },
+    {
+      "path": "evidence/contacts-native-transport.trx",
+      "bytes": 6380,
+      "sha256": "d72bb00f5008b952bd57f67adb3e6c2bfc4182d270d98c40bcca0fe85687ce47"
+    },
+    {
+      "path": "evidence/desktop-focus-recheck.trx",
+      "bytes": 3159,
+      "sha256": "df3700f271d72a8f669ab82402a9b539f22f7902ac0b8ff1c8282a1b837bc6f3"
+    },
+    {
+      "path": "evidence/desktop-release-final.trx",
+      "bytes": 2693190,
+      "sha256": "fd6c413b55613383065eefe8b3222e45c83f5da41c2bc1b711ac29aa401e4dd3"
+    },
+    {
+      "path": "evidence/desktop-release.trx",
+      "bytes": 2699449,
+      "sha256": "1354349744f31984f9f1b20ebd174ebdb069053c6ad40940af6ae3fd9b937dfc"
+    },
+    {
+      "path": "evidence/product-endpoints-release.trx",
+      "bytes": 416718,
+      "sha256": "8282c81ef4b0d16e65f9a9f0ddeade1a882d88792481f83a38714fab8d94f8ea"
+    },
+    {
+      "path": "evidence/screenshots/project-contacts-loaded.png",
+      "bytes": 70712,
+      "sha256": "62132a2eb4f18ac90cefdeff8a11cb06f2349494be5d6678f8f3fb950f9764f7"
+    },
+    {
+      "path": "evidence/screenshots/project-contacts-picker.png",
+      "bytes": 55247,
+      "sha256": "f5ace257f20ef60da7c064c96b72a29c6cea937f920c5e61cf441030bc1636c6"
+    },
+    {
+      "path": "evidence/tests-desktop-final.log",
+      "bytes": 706,
+      "sha256": "229244dd69223e8298ca69ae4e854ee26a1458adc87e26602441a0a876cef029"
+    },
+    {
+      "path": "evidence/tests-desktop.log",
+      "bytes": 5327,
+      "sha256": "610ee431a4820d6c5928eebf784e9c07a5e0120a8dfdd903f51efd0a6d66f328"
+    },
+    {
+      "path": "evidence/tests-endpoints.log",
+      "bytes": 7133,
+      "sha256": "dff4015932bf5dadb2f654d44a6fb1f0ec54dba6d239c17f5a2ad7cb63cf36ae"
+    },
+    {
+      "path": "evidence/tests-focus-recheck.log",
+      "bytes": 701,
+      "sha256": "3d8c6907902f2ff08accbae1b7f62891bb3c39e661322729d328448e8bc6923b"
+    },
+    {
+      "path": "evidence/tests-initial.log",
+      "bytes": 2476,
+      "sha256": "39cbce8743323869f11ee0a4a3042448611f751cd0583f462cd8d0e58b400bd1"
+    },
+    {
+      "path": "evidence/tests-integration.log",
+      "bytes": 2480,
+      "sha256": "7e8851e6c99d67dbf17e6c5a08d17ef1a6e0992d57f05dec3265b64acfe44e74"
+    },
+    {
+      "path": "evidence/tests-native-transport.log",
+      "bytes": 2482,
+      "sha256": "3c137d25cd44fb686983d00d3ff702e383f1b1f766595c42a45a218911ba4798"
+    },
+    {
+      "path": "implementation.md",
+      "bytes": 8982,
+      "sha256": "babff03785c31fa7dc24d2be0f6ba8a23e1e3144905fdb79f18eb8e0c04ba830"
+    },
+    {
+      "path": "package.py",
+      "bytes": 4890,
+      "sha256": "5be6176585388f9ab2dce164d59de1c5bb80df4f7b9292a426de2381c788f5fd"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 153800,
+      "sha256": "8304434c4c22aeb24fad2447d9c09af89ab846bb90196bea8aa51617139440ab"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+      "bytes": 18290,
+      "sha256": "de3c8c3c34953ac0fa73b49b534236d56a52f3c0dc4fa9ca6d69988ec300d349"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+      "bytes": 31434,
+      "sha256": "987675a2cc12aee828389a55a14378cd0f113ab34eb8c98278c094810cec02a3"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectContactsViewModel.cs",
+      "bytes": 16645,
+      "sha256": "cdb7e217904859dd28964aca161589a2f5e87a4489c6a61549e31caddad48eca"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs",
+      "bytes": 4323,
+      "sha256": "dac3c5a6ec48a1d6422d17a794090a7e0b40dac4b8bc70c70d220a052f31b5bc"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs",
+      "bytes": 16983,
+      "sha256": "1c333f5e74e25c5858a16309a9cebbc5aa2596e5390d8253726c6d4d7cedcd88"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectObjectLinksState.cs",
+      "bytes": 1778,
+      "sha256": "04f6ed8f7dba6c22ac0628f3f9fa8f2182be953122b23461e5b958ee84827a55"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Contacts.cs",
+      "bytes": 1593,
+      "sha256": "c4a2a0b16f7054af62481232c0dfe1fe3b53a063fb166dd2b1c56e9370c13612"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "bytes": 38299,
+      "sha256": "501bc05dcddaf9c6a2b8e133526131ac3dac3138c4d883ee5540edb38519cfc1"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Files.cs",
+      "bytes": 1987,
+      "sha256": "111647ff5b0cd5fdbddf6c8993d5ba57c25c1e1a310b1d3118b6406596126c37"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+      "bytes": 5901,
+      "sha256": "07cca3b2488fd2bad2f889edb8b1abe0189de7219c7eab3d08859502157b3be2"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectContactsView.xaml",
+      "bytes": 3293,
+      "sha256": "bcd734db6cfe6cbbf0d87ef9b6ef0216bcadbae4ffe53d0c5b6d72f3a10ca7d6"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectContactsView.xaml.cs",
+      "bytes": 189,
+      "sha256": "58f5b0bef3030ec0d07bef97912f9f97c2b2b1115602d03ea22a043a69d91922"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "bytes": 21009,
+      "sha256": "8bc677a33d03606ee1d9be3fa528439011feef9fe06304374c246313ba7d2499"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+      "bytes": 1682,
+      "sha256": "809e47f9f64c6e9f3ffee0ed6cb2b448da545d2b01872775454692e728bd58e9"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectContactsIntegrationTests.cs",
+      "bytes": 8940,
+      "sha256": "7d6c3de012354705f433df1d1dafc6143d2568f3962b220e4ffafcf3da0e6657"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectContactsTests.cs",
+      "bytes": 21890,
+      "sha256": "0d044ce1d253173217576e47ed0b5e07c73eb08a0303bd7bc99460a360722747"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Projects/ProjectContactsWindowsTests.cs",
+      "bytes": 5844,
+      "sha256": "ed02553aa9d2dcc75a7f0f6ee109e267db051e4ca9ba3633fcdfaf488e21ff3b"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Work/ProjectContactsTransportTests.cs",
+      "bytes": 3554,
+      "sha256": "f465475021743733ea3411ef66a6b5175f41ed01eb73a2cde38022661c61c9fa"
+    },
+    {
+      "path": "source/work/project_contacts_13_3/implementation.md",
+      "bytes": 8982,
+      "sha256": "babff03785c31fa7dc24d2be0f6ba8a23e1e3144905fdb79f18eb8e0c04ba830"
+    },
+    {
+      "path": "source/work/project_contacts_13_3/validation-report.md",
+      "bytes": 7352,
+      "sha256": "fa2e7c86a1681cfee7f2b0309c9eb5ec89faf17591166ddf37c0fb73bcc003e0"
+    },
+    {
+      "path": "source-receipt.json",
+      "bytes": 1928,
+      "sha256": "202f3f8b4645dc8392e871eb796e1f0e8fc5953107a8c31c284082bc77a18bfc"
+    },
+    {
+      "path": "source.patch",
+      "bytes": 118433,
+      "sha256": "a95514ce7eeaef26914ffa5bbc5b00f7c7468394bb6068aa4864bd709a1d3a03"
+    },
+    {
+      "path": "test-summary.json",
+      "bytes": 10519,
+      "sha256": "ada4bd64141ac58ce52118ed93ea2291d7e29ae31f1421d1fc7481c01b8ee136"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 7352,
+      "sha256": "fa2e7c86a1681cfee7f2b0309c9eb5ec89faf17591166ddf37c0fb73bcc003e0"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 8,
+      "sha256": "b31a7e05b008f94c55e05da186ccb817b5f3e4187eb3abca5a05fb87fcae41c2"
+    }
+  ]
+}

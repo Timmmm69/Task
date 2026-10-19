@@ -1,0 +1,32 @@
+{
+  "version": "13.3.0",
+  "commit": "d5afec2f4c43c3ee3e9601ad7c5a9246d8c177ea",
+  "base": "4accd66ff90a586cc38a6e428297862871e8b1cc",
+  "branch": "feature/project-detail-sections",
+  "originMain": "dcbaca241868f2afb4e6506473b8957ab72aa8b3",
+  "publishedToMain": false,
+  "sourceFilesMatchCommitWithNormalizedLineEndings": true,
+  "files": [
+    ".project-dashboard/roadmap.json",
+    "work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs",
+    "work/production/src/Task.Desktop/ViewModels/MainWindowViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectContactsViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectDetailSectionViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectObjectLinksState.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Contacts.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Files.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+    "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+    "work/production/src/Task.Desktop/Views/ProjectContactsView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectContactsView.xaml.cs",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+    "work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectContactsIntegrationTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectContactsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Projects/ProjectContactsWindowsTests.cs",
+    "work/production/tests/Task.Desktop.Tests/Work/ProjectContactsTransportTests.cs",
+    "work/project_contacts_13_3/implementation.md",
+    "work/project_contacts_13_3/validation-report.md"
+  ]
+}

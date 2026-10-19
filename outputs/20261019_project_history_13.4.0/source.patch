@@ -1,0 +1,966 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index ba486f2..47ef931 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -189,10 +189,11 @@
+         "outputs/20261016_project_related_tasks_8.1.0/validation-report.md",
+         "outputs/20261019_project_detail_sections_13.1.0/validation-report.md",
+         "outputs/20261019_project_files_13.2.0/validation-report.md",
+-        "outputs/20261019_project_contacts_13.3.0/validation-report.md"
++        "outputs/20261019_project_contacts_13.3.0/validation-report.md",
++        "outputs/20261019_project_history_13.4.0/validation-report.md"
+       ],
+-      "note": "Production Windows vertical slice подключён к серверным API: проекты, статусы, сроки, роли и активные участники, связанные задачи, create/update/archive и membership commands. UI применяет только authoritative responses, учитывает capabilities, ETag/idempotency и безопасные ошибки. Source gate подтверждён; live PostgreSQL/customer deployment и native UIA walkthrough остаются deployment acceptance. 2026-10-15: Этап 5.2 подключает общий Employee Picker к участникам и необязательному руководителю проектов; имена через разрешённый User.Read, повторная проверка активности, защита от дублей и устаревших ответов, существующие DTO/If-Match/idempotency. Реальные WPF-формы и негативные сценарии проверены. Без User.Read сохранён UUID-сценарий; полный role coverage требует отдельного решения по permissions. Progress/status не повышены. 2026-10-15: Финальный review 5.1–5.3: исправлен live-grant User.Read в открытой форме руководителя, с preselect сохранённого назначения и нулём запросов без права. Release build, 959 desktop, 259 endpoint и 233 domain/real PostgreSQL checks PASS; 206 scoped PASS. Native WPF regression пройдена; прежний нестабильный Window.Activate отмечен в истории receipts. Готово к публикации этапов в main; permission/API ограничения сохраняются, progress/status не повышены. 2026-10-16: Этап 8.1 отделяет связанные задачи от загрузки карточки: одна cursor-страница по явной команде, partial/complete/empty, cancellation и session guards, retry/dedupe/cursor cycle detection. Без обращения к задачам 0 запросов вместо 1/5/50 в детерминированных фикстурах; полный обход не ускорен. Baseline 9, полный desktop 1149, финальный Projects/ViewState 82 PASS; native WPF и Release solution build PASS. API/DTO/БД/permissions сохранены. Локальная ветка perf/project-related-tasks, main не изменён; progress/status не повышены. 2026-10-19: Этап 13.1 — расширена существующая карточка проекта: Expander основных сведений, независимые состояния/повтор участников, контекст шести разделов, отмена и защита поздних ответов при смене проекта/организации/прав/сессии. Задачи остаются явными и постраничными; файлы/контакты/история — неподключённые точки интеграции без декоративного UI и запросов. Финальный общий desktop 1621 PASS / 0 FAIL / 0 SKIP; native WPF focus/traversal/expand-collapse, сохранение раскрытия и Release solution build PASS. Исходные сбои baseline CLR и промежуточного debounce сохранены в evidence. Live Corporate API, NAS, Narrator и physical mixed-DPI не проверялись. Реализация в feature/project-detail-sections, в main не опубликована; progress/status сохранены. 2026-10-19: Этап 13.2 — подключён раздел файлов проекта: только исходящие project_file, полная пагинация Object Links, разрешённые названия/типы через GET catalog-items/{id}, общий Target Picker, подтверждённые create/delete, ETag и защита контекста. Удаление касается только связи. Открытие через resolve-location и существующий WindowsFileAccessAdapter; пути не отображаются. Release solution build PASS (0 ошибок), полный desktop 1680 PASS / 0 FAIL / 0 SKIP, endpoint picker 1 PASS; native WPF раздел/фокус/picker проверены. Live Corporate API/NAS и ручная приёмка остаются отдельной проверкой. Коммит в feature/project-detail-sections, в main не опубликован; progress/status сохранены. 2026-10-19: Этап 13.3 — раздел контактов и компаний проекта использует project_contact, существующий Target Picker, разрешённые имена через GET contacts/companies, навигацию в текущие CRM-карточки и удаление только связи. Общая версия и блокировка одновременных изменений согласуют разделы файлов и CRM; серверные project/object permissions сохраняются. Подробные результаты Release/WPF/API проверок и ограничений зафиксированы в validation-report. Ветка feature/project-detail-sections, в main не опубликовано; progress/status сохранены.",
+-      "updated_at": "2026-10-19",
++      "note": "Production Windows vertical slice подключён к серверным API: проекты, статусы, сроки, роли и активные участники, связанные задачи, create/update/archive и membership commands. UI применяет только authoritative responses, учитывает capabilities, ETag/idempotency и безопасные ошибки. Source gate подтверждён; live PostgreSQL/customer deployment и native UIA walkthrough остаются deployment acceptance. 2026-10-15: Этап 5.2 подключает общий Employee Picker к участникам и необязательному руководителю проектов; имена через разрешённый User.Read, повторная проверка активности, защита от дублей и устаревших ответов, существующие DTO/If-Match/idempotency. Реальные WPF-формы и негативные сценарии проверены. Без User.Read сохранён UUID-сценарий; полный role coverage требует отдельного решения по permissions. Progress/status не повышены. 2026-10-15: Финальный review 5.1–5.3: исправлен live-grant User.Read в открытой форме руководителя, с preselect сохранённого назначения и нулём запросов без права. Release build, 959 desktop, 259 endpoint и 233 domain/real PostgreSQL checks PASS; 206 scoped PASS. Native WPF regression пройдена; прежний нестабильный Window.Activate отмечен в истории receipts. Готово к публикации этапов в main; permission/API ограничения сохраняются, progress/status не повышены. 2026-10-16: Этап 8.1 отделяет связанные задачи от загрузки карточки: одна cursor-страница по явной команде, partial/complete/empty, cancellation и session guards, retry/dedupe/cursor cycle detection. Без обращения к задачам 0 запросов вместо 1/5/50 в детерминированных фикстурах; полный обход не ускорен. Baseline 9, полный desktop 1149, финальный Projects/ViewState 82 PASS; native WPF и Release solution build PASS. API/DTO/БД/permissions сохранены. Локальная ветка perf/project-related-tasks, main не изменён; progress/status не повышены. 2026-10-19: Этап 13.1 — расширена существующая карточка проекта: Expander основных сведений, независимые состояния/повтор участников, контекст шести разделов, отмена и защита поздних ответов при смене проекта/организации/прав/сессии. Задачи остаются явными и постраничными; файлы/контакты/история — неподключённые точки интеграции без декоративного UI и запросов. Финальный общий desktop 1621 PASS / 0 FAIL / 0 SKIP; native WPF focus/traversal/expand-collapse, сохранение раскрытия и Release solution build PASS. Исходные сбои baseline CLR и промежуточного debounce сохранены в evidence. Live Corporate API, NAS, Narrator и physical mixed-DPI не проверялись. Реализация в feature/project-detail-sections, в main не опубликована; progress/status сохранены. 2026-10-19: Этап 13.2 — подключён раздел файлов проекта: только исходящие project_file, полная пагинация Object Links, разрешённые названия/типы через GET catalog-items/{id}, общий Target Picker, подтверждённые create/delete, ETag и защита контекста. Удаление касается только связи. Открытие через resolve-location и существующий WindowsFileAccessAdapter; пути не отображаются. Release solution build PASS (0 ошибок), полный desktop 1680 PASS / 0 FAIL / 0 SKIP, endpoint picker 1 PASS; native WPF раздел/фокус/picker проверены. Live Corporate API/NAS и ручная приёмка остаются отдельной проверкой. Коммит в feature/project-detail-sections, в main не опубликован; progress/status сохранены. 2026-10-19: Этап 13.3 — раздел контактов и компаний проекта использует project_contact, существующий Target Picker, разрешённые имена через GET contacts/companies, навигацию в текущие CRM-карточки и удаление только связи. Общая версия и блокировка одновременных изменений согласуют разделы файлов и CRM; серверные project/object permissions сохраняются. Подробные результаты Release/WPF/API проверок и ограничений зафиксированы в validation-report. Ветка feature/project-detail-sections, в main не опубликовано; progress/status сохранены. 2026-10-19: этап 13.4 — read-only история выбранного проекта, paging/dedup, Project.Read + History.Read, optional User.Read, cancellation и отдельные ошибки. Итоговый targeted gate 268 PASS; полный прогон выявил существующий отказ Window.Activate(), воспроизведённый на d5afec2. ISSUE-13.4-COMMENTS: нормативная generic comments модель не реализована production API для проекта. Ручной live-server walkthrough не выполнен; полная приёмка не объявлена. Progress/status не повышены.",
++      "updated_at": "2026-10-19T01:35:56+03:00",
+       "priority": 3,
+       "dependencies": [
+         "DATA-04",
+diff --git a/work/production/docs/PROJECT-DETAIL-ACCEPTANCE-13.4.md b/work/production/docs/PROJECT-DETAIL-ACCEPTANCE-13.4.md
+new file mode 100644
+index 0000000..b05c14f
+--- /dev/null
++++ b/work/production/docs/PROJECT-DETAIL-ACCEPTANCE-13.4.md
+@@ -0,0 +1,148 @@
++# Карточка проекта — приёмка 13.1–13.4
++
++Дата: 2026-10-19. Версия пакета: 13.4.0. Ветка: `feature/project-detail-sections`.
++База этапа: `d5afec2`; общая база расширения: `dcbaca2` (актуальный origin/main при начале работы).
++
++История реализована и целевые проверки прошли. Полная финальная приёмка остаётся открытой:
++нет работающего production-контракта проектных комментариев; один ранее существующий
++нативный тест не может активировать окно в текущей Windows-сессии. Он воспроизведён на
++неизменённом `d5afec2`. Live-server ручной walkthrough не выполнялся.
++
++| Этап | Статус | Реализовано | Тесты текущего прогона | Коммит |
++|---|---|---|---|---|
++| 13.1 Структура | Реализован; регрессия проверена | Независимые состояния и жизненные циклы разделов, обзор/участники/задачи | Входит в 250 PASS Projects; полный desktop: 1780 PASS, 1 существующий FAIL | `283bcd4` |
++| 13.2 Файлы | Реализован; автоматическая регрессия проверена | Каталог, Object Links, разрешённое открытие файла, optimistic locking | ProjectFiles unit/integration/native и transport/file-policy проверки запущены | `4accd66` |
++| 13.3 Контакты | Реализован; автоматическая регрессия проверена | Контакты/компании, привязка/удаление, навигация, контроль доступа | ProjectContacts unit/integration/native и transport/API проверки запущены | `d5afec2` |
++| 13.4 История | Реализована; общая приёмка с ограничениями | Чтение, пагинация, авторы, права, cancellation, безопасные состояния | Итоговый targeted gate: 250 desktop + 14 domain/Postgres + 4 HTTP = 268 PASS | Отдельный `feat(desktop): add project history and final acceptance evidence`; точный SHA в пакете `source-commit.txt` |
++
++## Реализация истории
++
++- Раздел запрашивается при раскрытии, только после подтверждения выбранного проекта.
++- `Project.Read` + `History.Read` обязательны; без них раздел скрыт и запросов нет.
++- Единственный источник — `GET /api/v1/projects/{id}/history?limit=50&page=N`.
++- Показаны локальная дата/время с UTC offset, действие, версия и `changedFields`.
++  Распознанные действия имеют русские подписи; неизвестный тип сохраняет серверное название.
++  Старые и новые значения не моделируются и не выдумываются.
++- Имя автора разрешается только через существующий `GET /users/{id}`, при `User.Read`.
++  Нет права, имени, доступного пользователя или каталога — нейтральная подпись без UUID.
++  При серверном 403 каталога очищаются также имена на уже загруженных страницах.
++- Следующая страница добавляется с дедупликацией по event ID. Ошибка страницы сохраняет
++  предыдущие события и номер страницы для retry. Короткая страница завершает загрузку;
++  ровно полная последняя страница требует ещё одного пустого запроса, поскольку total/hasMore нет.
++- Смена проекта/организации, отзыв прав, logout, collapse, unload, deactivate, dispose и offline
++  отменяют запросы. Проверка владельца запроса и identity выбранной карточки отвергает поздние
++  ответы, даже если транспорт игнорирует cancellation. Старые строки очищаются.
++- Empty выставляется только после успешного пустого ответа. Ошибки и 403/404 имеют отдельное
++  безопасное состояние и не ломают обзор, задачи, файлы или контакты. 401 завершает сессию.
++- Постоянного кэша, очереди записей, параллельного журнала и обращений к admin audit нет.
++
++Клиентские records являются проекциями существующего ответа, а не новыми серверными DTO.
++Сервер, миграции, нормативный OpenAPI, permissions и бизнес-правила не изменены.
++
++## ISSUE-13.4-COMMENTS — production-контракт не доведён до проекта
++
++Проверка не ограничивалась поиском `/projects/{id}/comments`:
++
++| Уровень | Обнаружено | Недостающая часть |
++|---|---|---|
++| Концепция и архитектура | Комментарии и история доступных объектов; неизменяемая история и текущий read scope | Новые бизнес-правила не требуются и не добавлялись |
++| Нормативный контракт 2.2 | `GET/POST /objects/{objectId}/comments`, операции чтения/изменения/удаления/restore/versions; Comment/CommentPage, Comment.Read/Create и lifecycle/version policy | Полноценная production-реализация этого контракта для project target |
++| UX 3.4 | SCR-067 — комментарии проекта; SCR-068 — история; объектные комментарии SCR-035 | Наличие UX не делает production endpoint доступным |
++| PRD candidate 4.1.1 | История проекта FR-239, read-scope/security acceptance; общие comments requirements | Не заменяет отсутствующий серверный маршрут |
++| Production routes | `POST /tasks/{id}/comments`, `Comment.Create`, versioned + idempotent; чтение task workspace содержит комментарии задачи | Нет read/create project comments или generic object comments маршрутов |
++| Production storage/DTO | `work.task_comments` и task-only операция; нормативные общие модели существуют отдельно | Нет production project/generic comment DTO + операций и lifecycle/version enforcement для проекта |
++
++Нельзя утверждать, что нормативного контракта комментариев вообще нет. Блокер — именно
++разрыв между существующей общей нормативной моделью и исполняемым production API.
++Для закрытия необходим отдельный согласованный backend-инкремент generic object comments
++с project/object-level authorization, чтением, записью, версиями и lifecycle по нормативу.
++В этом этапе endpoints/БД не добавлялись. Нет формы, вкладки-заглушки, task comments proxy
++или хранения комментариев в Description/History/Links. История этим блокером не блокируется.
++
++## Проверки и фактические результаты
++
++| Запуск | Результат | Назначение |
++|---|---|---|
++| Первый Projects Debug | 246 PASS / 1 FAIL / 0 SKIP | Найден null event в некорректном payload, исправлен до итогового gate |
++| History Debug после исправления | 33 PASS / 0 FAIL / 0 SKIP | Unit, client и native history |
++| Полная Release-сборка решения | PASS | Все проекты; предупреждения сохранены в build.log |
++| Полный Release Task.ServiceHosts.Tests | 644 PASS / 0 FAIL / 0 SKIP | HTTP policies, Project API, Object Links, каталог, контакты и существующие endpoints |
++| Полный Release Task.Tests на изолированном PostgreSQL 16 | 879 PASS / 1 FAIL / 0 SKIP | В том числе существующие permissions, links, file catalog и CRM; единственный FAIL — ошибочное ожидание в новом history тесте |
++| Полный Release Task.Desktop.Tests | 1780 PASS / 1 FAIL / 0 SKIP | Все desktop unit/integration и доступные native WPF тесты; один существующий foreground activation failure |
++| Повтор native TaskContextActions на текущем коде | 0 PASS / 1 FAIL | `company.Activate()` вернул false, строка 62 |
++| Тот же native тест на чистом исходном `d5afec2` | 0 PASS / 1 FAIL | Та же строка и причина; подтверждено, что сбой существовал до 13.4 |
++| Итоговая Release-сборка + targeted gate после всех исправлений | 268 PASS / 0 FAIL / 0 SKIP | 250 Projects desktop, 14 ProjectHistory/Projects domain/Postgres, 4 ProjectHistory HTTP |
++
++Исправление теста: глобальные `Project.Read`/`History.Read` проверяются HTTP-слоем, а не
++подстановкой списка capabilities в trusted store fixture. Добавлены HTTP-тесты обоих запретов
++до вызова store. Postgres-тест отдельно проверяет реальные события, paging и object visibility.
++Невалидный page возвращает фактический server status 422. Сервер не изменялся ради тестов.
++
++Полный набор после последней правки повторно целиком не запускался: изменённые сценарии и
++исправленные тесты покрыты итоговым targeted gate. Общий gate не объявляется полностью зелёным.
++Первый запуск DB harness был остановлен initdb из-за кириллицы в пути; test runtime перенесён
++в ASCII temp. Первый полный запуск также прерван PowerShell обработкой native stderr;
++исправлен harness, фактический полный запуск приведён в таблице. Изолированный PostgreSQL остановлен.
++
++## Регрессионная матрица и security review
++
++| Область | Проверено автоматически / по коду | Оставшееся ограничение |
++|---|---|---|
++| Обзор | Выбор, имя/описание/статус/даты, owner/manager, редактор, save/conflict/archive | Ручной live API walkthrough не выполнен |
++| Участники | Employee Picker, add/role/remove, permissions, версии, owner invariant, directory denial | Физическая пользовательская сессия отдельно не принималась |
++| Задачи | Paging, cancel, stale responses, Task API failures, контекст создания | Существующий native task-create тест упирается в отказ Windows foreground activation |
++| Файлы | Просмотр, link/unlink, directory grants/resolution, недоступные пути, раздельные metadata и OS storage | Реальные NAS/ACL/network failures не воспроизводились вручную |
++| Контакты/компании | Read/link/unlink/navigation, target revalidation, partial access, имена скрытых целей | Live CRM walkthrough не выполнен |
++| История | AC-1–AC-7: lazy read, page dedup/retry, права, stale response, независимая ошибка, fields-only, empty | Snapshot paging сервером не предоставлен |
++| Общие переходы | Selection/organization switch, offline/reconnect, read-only, logout, revoke, reopen, async disposal | Реальная смена аккаунта проверяется существующим scope/session lifecycle, без ручного end-to-end входа |
++| Keyboard/WPF | Реальные Window/Dispatcher/ExpandCollapse provider, focus/Next, list rows, collapse/reopen, reconnect button state, capability visibility | Ручной Narrator, физические DPI/HC и ручной запуск production с live server не выполнены |
++
++Независимый read-only review `dcbaca2..d5afec2` проверил разделы 13.1–13.3 и не нашёл
++конкретных P1/P2. Отдельный review 13.4 подтвердил null-payload дефект и его исправление;
++ошибочное замечание о reconnect было отозвано после проверки уже существующего NotifyHistory
++в NotifyCommands. После исправлений конкретных нерешённых дефектов в diff не выявлено.
++Review сам по себе не считается запуском тестов.
++
++Security: только разрешённые существующие маршруты; object scope остаётся на сервере;
++имена целей читаются только через соответствующий read API. If-Match и idempotency прежних
++мутаций сохранены, optimistic updates без подтверждения нет. История read-only, поэтому
++не посылает If-Match/idempotency. Source changes не добавляют пути, shell-команды или audit API.
++Файловые пути открываются существующим проверенным resolver; raw path не переносится в историю.
++Очистка на capability/session/organization transitions проверена. Параметры аккаунта/организации
++не меняются внутри одного VM; существующий host создаёт/закрывает соответствующий session scope.
++
++## Windows UI и ограничения приёмки
++
++Windows доступна. Нативные WPF-тесты проектов выполнены, в том числе новая история;
++сохранены скриншоты, визуально проверены loaded/revoked состояния. Это automated UI fixture,
++а не ручной обход работающего production приложения с живым сервером. Такой ручной обход
++не выполнен: в этой сессии нет доступного native desktop control. Нельзя заменять его PASS
++нативного fixture-теста. Foreground-отказ существующего теста остаётся отдельным UI gate issue.
++
++Технические риски: offset paging при новых событиях между запросами не даёт server snapshot;
++повторы подавляются по ID, для актуального начала есть refresh, но абсолютная полнота при
++конкурентных изменениях не гарантируется контрактом. Имена optional, поэтому directory failure
++может оставить нейтральную подпись. Различие исторической нормативной HistoryEntry модели
++и действующего production response не исправлялось: используется проверенный runtime response
++в границах задания, без изменения источников.
++
++Ветка подготовлена для PR/review: отдельный source commit, список файлов, отчёт, manifest и
++SHA-256 в outputs. Не опубликована и не слита в main. Готовность к безусловной финальной
++приёмке/merge не заявляется до решения comments gap и проверки оставшегося UI gate.
++
++
++## Изменённые файлы и review scope
++
++- `DesktopProjectsApiClient.cs` — существующий клиент реализует дополнительный read-only history interface.
++- `DesktopProjectHistoryApiClient.cs` — HTTP history, клиентские проекции, bounds/payload validation.
++- `ProjectsViewModel.History.cs` — paging/state/author resolution/request lifetime и presentation rows.
++- `ProjectsViewModel.cs`, `ProjectsViewModel.Sections.cs` — интеграция контекста и lifecycle.
++- `ProjectsView.xaml`, `ProjectsView.xaml.cs` — capability-aware Expander и команды.
++- `DesktopProjectHistoryApiClientTests.cs`, `DesktopProjectsApiClientTests.cs` — клиентские transport/validation tests.
++- `ProjectHistoryTests.cs`, `ProjectHistoryWindowsTests.cs`, `ProjectsViewModelTests.cs`,
++  `ProjectDetailSectionsTests.cs` — unit fixtures, state transitions, paging, native WPF.
++- `PostgresProjectHistoryTests.cs`, `ProjectHistoryEndpointsTests.cs` — реальный PostgreSQL и HTTP policy/response.
++- Этот отчёт, `.project-dashboard/roadmap.json` (только PROD-04 evidence/note/time) и
++  `work/project_history_13_4/Run-Gate.ps1` — проверяемая документация и воспроизводимый gate.
++
++Полный перечень путей находится в `changed-files.txt` итогового пакета.
+diff --git a/work/production/src/Task.Desktop/Projects/DesktopProjectHistoryApiClient.cs b/work/production/src/Task.Desktop/Projects/DesktopProjectHistoryApiClient.cs
+new file mode 100644
+index 0000000..7549a92
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Projects/DesktopProjectHistoryApiClient.cs
+@@ -0,0 +1,48 @@
++﻿using System.Net;
++using System.Text.Json;
++using Task.Desktop.Security;
++
++namespace Task.Desktop.Projects;
++
++// Client projections of the existing history response; no server contract changes.
++public sealed record DesktopProjectHistoryEvent(Guid Id, string Action, long Version,
++    Guid? ActorUserId, DateTimeOffset OccurredAt, IReadOnlyList<string> ChangedFields);
++public sealed record DesktopProjectHistoryPage(IReadOnlyList<DesktopProjectHistoryEvent> Items);
++
++public interface IDesktopProjectHistoryApiClient
++{
++    System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectHistoryPage>> GetHistoryAsync(
++        Guid projectId, int page, int limit = 50, CancellationToken cancellationToken = default);
++}
++
++public sealed partial class DesktopProjectsApiClient
++{
++    public async System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectHistoryPage>> GetHistoryAsync(
++        Guid projectId, int page, int limit = 50, CancellationToken cancellationToken = default)
++    {
++        RequireId(projectId, nameof(projectId));
++        if (page is < 1 or > 10000) throw new ArgumentOutOfRangeException(nameof(page));
++        if (limit is < 1 or > 200) throw new ArgumentOutOfRangeException(nameof(limit));
++        var uri = new Uri($"{_projectsUri.AbsoluteUri}/{projectId:D}/history?limit={limit}&page={page}");
++        var result = await _executor.GetAsync(uri, NewCorrelation(), cancellationToken).ConfigureAwait(false);
++        if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response)
++            return Failure<DesktopProjectHistoryPage>(result);
++        try
++        {
++            var payload = JsonSerializer.Deserialize<HistoryPayload>(response.Body, JsonOptions);
++            if (payload?.Items is null || payload.Items.Count > limit || payload.Items.Any(e =>
++                e is null || e.Id == Guid.Empty || string.IsNullOrWhiteSpace(e.Action) || e.Version < 1
++                || e.ActorUserId == Guid.Empty || e.OccurredAt == default || e.ChangedFields is null
++                || e.ChangedFields.Any(string.IsNullOrWhiteSpace)))
++                return new DesktopProjectResult<DesktopProjectHistoryPage>.MalformedResponse();
++            return new DesktopProjectResult<DesktopProjectHistoryPage>.Succeeded(new(payload.Items.Select(e =>
++                new DesktopProjectHistoryEvent(e.Id, e.Action!, e.Version, e.ActorUserId, e.OccurredAt,
++                    Array.AsReadOnly(e.ChangedFields!))).ToArray()));
++        }
++        catch (JsonException) { return new DesktopProjectResult<DesktopProjectHistoryPage>.MalformedResponse(); }
++    }
++
++    private sealed record HistoryPayload(List<HistoryEventPayload>? Items);
++    private sealed record HistoryEventPayload(Guid Id, string? Action, long Version, Guid? ActorUserId,
++        DateTimeOffset OccurredAt, string[]? ChangedFields);
++}
+diff --git a/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs b/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs
+index c1ac209..5f49492 100644
+--- a/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs
++++ b/work/production/src/Task.Desktop/Projects/DesktopProjectsApiClient.cs
+@@ -71,7 +71,7 @@ public interface IDesktopProjectsApiClient
+         Guid projectId, long projectVersion, Guid userId, CancellationToken cancellationToken = default);
+ }
+ 
+-public sealed class DesktopProjectsApiClient : IDesktopProjectsApiClient
++public sealed partial class DesktopProjectsApiClient : IDesktopProjectsApiClient, IDesktopProjectHistoryApiClient
+ {
+     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+     private readonly DesktopAuthenticatedGetExecutor _executor;
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.History.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.History.cs
+new file mode 100644
+index 0000000..9ffe36d
+--- /dev/null
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.History.cs
+@@ -0,0 +1,143 @@
++using Task.Desktop.Administration;
++using Task.Desktop.Projects;
++using Task.Desktop.Work;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.ViewModels;
++
++public sealed record ProjectHistoryItemViewModel(DesktopProjectHistoryEvent Source, string AuthorText)
++{
++    public Guid Id => Source.Id;
++    public string DateText => Source.OccurredAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss zzz");
++    public string ActionText => Source.Action switch
++    {
++        "project.create" => "Проект создан",
++        "project.patch" => "Изменены сведения проекта",
++        "project.archive" => "Проект архивирован",
++        "project.unarchive" => "Проект возвращён из архива",
++        "project.member-add" => "Добавлен участник",
++        "project.member-role" => "Изменена роль участника",
++        "project.member-remove" => "Удалён участник",
++        "project.link-add" => "Добавлена связь",
++        "project.link-remove" => "Удалена связь",
++        _ => Source.Action
++    };
++    public string VersionText => $"Версия {Source.Version}";
++    public string FieldsText => Source.ChangedFields.Count == 0 ? "Изменённые поля не указаны."
++        : "Изменённые поля: " + string.Join(", ", Source.ChangedFields);
++}
++
++public sealed partial class ProjectsViewModel
++{
++    private const int HistoryPageSize = 50;
++    private bool _historyExpanded;
++    private int _historyNextPage = 1;
++    private bool _historyHasMore;
++    private IReadOnlyList<ProjectHistoryItemViewModel> _history = [];
++    public IReadOnlyList<ProjectHistoryItemViewModel> History
++    { get => _history; private set => SetProperty(ref _history, value); }
++    public bool CanReadHistory => CanRead && _capabilities.Contains("History.Read")
++        && _sessionAvailable && _client is IDesktopProjectHistoryApiClient;
++    private bool CanLoadHistory => CanReadHistory && _projectConfirmed && SelectedItem is not null
++        && IsActive && _networkAvailable && !_disposed && !HistorySection.IsLoading;
++    public AsyncCommand RefreshHistoryCommand { get; private set; } = null!;
++    public AsyncCommand MoreHistoryCommand { get; private set; } = null!;
++    public AsyncTask CurrentHistoryOperation { get; private set; } = AsyncTask.CompletedTask;
++
++    private void InitializeHistory()
++    {
++        RefreshHistoryCommand = new((_, token) => StartHistoryLoad(true, token), _ => CanLoadHistory);
++        MoreHistoryCommand = new((_, token) => StartHistoryLoad(false, token), _ => CanLoadHistory && _historyHasMore);
++    }
++
++    public AsyncTask OpenHistorySectionAsync()
++    {
++        _historyExpanded = true;
++        return CanLoadHistory && !HistorySection.HasConfirmedData ? StartHistoryLoad(true) : AsyncTask.CompletedTask;
++    }
++
++    public void CloseHistorySection()
++    { _historyExpanded = false; ResetHistory(); }
++
++    private void ResetHistory()
++    {
++        HistorySection.Cancel(); History = []; _historyNextPage = 1; _historyHasMore = false;
++        HistorySection.SetState(ProjectSectionState.NotLoaded, false);
++        NotifyHistory();
++    }
++
++    private void NotifyHistory()
++    {
++        OnPropertyChanged(nameof(CanReadHistory));
++        RefreshHistoryCommand?.RaiseCanExecuteChanged(); MoreHistoryCommand?.RaiseCanExecuteChanged();
++    }
++
++    private AsyncTask StartHistoryLoad(bool refresh, CancellationToken token = default) =>
++        CurrentHistoryOperation = LoadHistoryAsync(refresh, token);
++
++    private async AsyncTask LoadHistoryAsync(bool refresh, CancellationToken token)
++    {
++        if (!CanLoadHistory || _client is not IDesktopProjectHistoryApiClient client || SelectedItem is not { } item) return;
++        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(token, _activation!.Token);
++        using var request = HistorySection.BeginRequest(lifetime.Token);
++        bool Current() => HistorySection.IsCurrent(request, item.Id) && ReferenceEquals(SelectedItem, item)
++            && CanReadHistory && IsActive && _networkAvailable && !_disposed;
++        var page = refresh ? 1 : _historyNextPage;
++        if (refresh) { History = []; _historyHasMore = false; HistorySection.SetState(ProjectSectionState.Loading, false); }
++        NotifyHistory();
++        try
++        {
++            var result = await client.GetHistoryAsync(item.Id, page, HistoryPageSize, request.Token);
++            if (!Current()) return;
++            switch (result)
++            {
++                case DesktopProjectResult<DesktopProjectHistoryPage>.Succeeded success:
++                    var rows = success.Value.Items.Select(e => new ProjectHistoryItemViewModel(e, "Автор не указан или недоступен")).ToArray();
++                    // Names are optional and fetched only through User.Read; never infer them from IDs.
++                    if (_directory is not null && _capabilities.Contains("User.Read") && !_directoryForbidden)
++                    {
++                        foreach (var actor in rows.Select(e => e.Source.ActorUserId).OfType<Guid>().Distinct())
++                        {
++                            try
++                            {
++                                var user = await _directory.GetUserAsync(actor, request.Token);
++                                if (!Current()) return;
++                                if (user is DesktopWorkResult<DesktopAdminUser>.AuthenticationFailure)
++                                { UpdateSessionState(false); return; }
++                                if (user is DesktopWorkResult<DesktopAdminUser>.Forbidden)
++                                {
++                                    _directoryForbidden = true; ResetPeople();
++                                    Editor?.UpdatePeopleAccess([], _sessionAvailable, _networkAvailable);
++                                    History = History.Select(e => e with { AuthorText = "Автор не указан или недоступен" }).ToArray();
++                                    rows = rows.Select(e => e with { AuthorText = "Автор не указан или недоступен" }).ToArray();
++                                    break;
++                                }
++                                if (user is DesktopWorkResult<DesktopAdminUser>.Succeeded name && name.Value.Id == actor)
++                                    rows = rows.Select(e => e.Source.ActorUserId == actor ? e with { AuthorText = name.Value.DisplayName } : e).ToArray();
++                            }
++                            catch (OperationCanceledException) when (request.IsCancellationRequested) { throw; }
++                            catch (Exception) { /* Optional directory failure keeps neutral author text. */ }
++                        }
++                    }
++                    if (!Current()) return;
++                    History = (refresh ? rows : History.Concat(rows)).DistinctBy(e => e.Id).ToArray();
++                    _historyNextPage = page + 1;
++                    _historyHasMore = success.Value.Items.Count == HistoryPageSize && page < 10000;
++                    HistorySection.SetState(History.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
++                    break;
++                case DesktopProjectResult<DesktopProjectHistoryPage>.AuthenticationFailure:
++                    UpdateSessionState(false); break;
++                case DesktopProjectResult<DesktopProjectHistoryPage>.Forbidden:
++                case DesktopProjectResult<DesktopProjectHistoryPage>.NotFound:
++                    History = []; _historyHasMore = false;
++                    HistorySection.SetState(ProjectSectionState.Forbidden, false); break;
++                case DesktopProjectResult<DesktopProjectHistoryPage>.ServerUnavailable:
++                    HistorySection.SetState(ProjectSectionState.ServerUnavailable); break;
++                default: HistorySection.SetState(ProjectSectionState.Error); break;
++            }
++        }
++        catch (OperationCanceledException) when (request.IsCancellationRequested) { }
++        catch (Exception) { if (Current()) HistorySection.SetState(ProjectSectionState.Error); }
++        finally { HistorySection.FinishRequest(request); NotifyHistory(); }
++    }
++}
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+index f21b5a6..713aef6 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+@@ -10,7 +10,7 @@ public sealed partial class ProjectsViewModel
+     // Integration slots: no UI or requests until a real loader and its access policy are connected.
+     public ProjectDetailSectionViewModel FilesSection { get; } = new("files", false);
+     public ProjectDetailSectionViewModel ContactsSection { get; } = new("contacts", false);
+-    public ProjectDetailSectionViewModel HistorySection { get; } = new("history", false);
++    public ProjectDetailSectionViewModel HistorySection { get; } = new("history");
+     public IReadOnlyList<ProjectDetailSectionViewModel> DetailSections =>
+         [OverviewSection, MembersSection, TasksSection, FilesSection, ContactsSection, HistorySection];
+     public AsyncCommand ReloadMembersCommand { get; private set; } = null!;
+@@ -26,13 +26,14 @@ public sealed partial class ProjectsViewModel
+         foreach (var section in DetailSections.Where(section => (Files is null || section != FilesSection) && (Contacts is null || section != ContactsSection)))
+             section.SetContext(SelectedItem?.Id, SelectedItem?.Source.OrganizationId,
+                 _sessionAvailable && CanRead && (section != MembersSection || CanReadMembers)
++                && (section != HistorySection || CanReadHistory)
+                 && (section != TasksSection || _capabilities.Contains("Task.Read") && _tasks is not null), _networkAvailable);
+         ConfigureFiles(); ConfigureContacts();
+     }
+ 
+     public void CancelDetailSections()
+     {
+-        Files?.Invalidate(); Contacts?.Invalidate();
++        Files?.Invalidate(); Contacts?.Invalidate(); ResetHistory();
+         foreach (var section in DetailSections) section.Cancel();
+         _detailRequest?.Cancel(); CancelRelatedTasks(); IsDetailLoading = false;
+         ReloadMembersCommand.RaiseCanExecuteChanged();
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+index 23568cb..5e7126b 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+@@ -169,6 +169,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
+         _directory = directory;
+         Files = files; Contacts = contacts;
++        InitializeHistory();
+         files?.UseLinkState(_projectLinks);
+         contacts?.UseLinkState(_projectLinks);
+         if (contacts is not null)
+@@ -391,6 +392,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+                 item.Replace(project.Value); _projectConfirmed = true;
+                 OverviewSection.SetState(ProjectSectionState.Loaded, true);
+                 ConfigureFiles(); ConfigureContacts();
++                NotifyHistory();
++                if (_historyExpanded && CanLoadHistory) _ = StartHistoryLoad(true);
+                 if (_contactsExpanded && Contacts is not null) _ = StartContactsLoad();
+                 if (_filesExpanded && Files is not null) _ = StartFilesLoad();
+             }
+@@ -545,7 +548,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     }
+     private void NotifyCommands()
+     {
+-        ConfigureFiles(); ConfigureContacts();
++        ConfigureFiles(); ConfigureContacts(); NotifyHistory();
+         NotifyRelatedTasks(); ReloadMembersCommand?.RaiseCanExecuteChanged();
+         OnPropertyChanged(nameof(IsActive)); OnPropertyChanged(nameof(CanCreate)); OnPropertyChanged(nameof(CanUpdate));
+         OnPropertyChanged(nameof(CanArchive)); OnPropertyChanged(nameof(CanManageMembers)); OnPropertyChanged(nameof(AccessText));
+@@ -558,6 +561,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     {
+         if (_disposed) return; _disposed = true; Deactivate();
+         LoadRelatedTasksCommand.Dispose(); ReloadMembersCommand.Dispose();
++        RefreshHistoryCommand.Dispose(); MoreHistoryCommand.Dispose();
+         if (Files is not null)
+         {
+             Files.VersionConfirmed -= LinksVersionConfirmed; Files.SessionExpired -= LinksSessionExpired; Files.Dispose();
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+index 1754b98..7c7fc38 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+@@ -126,6 +126,28 @@
+                         <views:ProjectContactsView DataContext="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
+                     </Expander>
+ 
++                    <Expander Header="История" Expanded="HistoryExpanded" Collapsed="HistoryCollapsed"
++                              AutomationProperties.AutomationId="ProjectHistorySection" Margin="0,0,0,14">
++                        <Expander.Style><Style TargetType="Expander"><Setter Property="Visibility" Value="Collapsed"/>
++                            <Style.Triggers><DataTrigger Binding="{Binding DataContext.CanReadHistory, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
++                        </Style></Expander.Style>
++                        <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
++                            <TextBlock Text="{Binding HistorySection.StatusText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
++                            <TextBlock Text="Сервер сообщает названия полей без прежних и новых значений." TextWrapping="Wrap" Margin="0,4,0,8"/>
++                            <Button Content="Обновить историю" Style="{StaticResource Task.Button.Secondary}" Command="{Binding RefreshHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="RefreshProjectHistory"/>
++                            <ListBox ItemsSource="{Binding History}" AutomationProperties.Name="История выбранного проекта" MaxHeight="420" Margin="0,8">
++                                <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="6">
++                                    <TextBlock Text="{Binding DateText}"/>
++                                    <TextBlock Text="{Binding ActionText}" FontWeight="SemiBold" TextWrapping="Wrap"/>
++                                    <TextBlock Text="{Binding VersionText}"/>
++                                    <TextBlock Text="{Binding AuthorText}" TextWrapping="Wrap"/>
++                                    <TextBlock Text="{Binding FieldsText}" TextWrapping="Wrap"/>
++                                </StackPanel></DataTemplate></ListBox.ItemTemplate>
++                            </ListBox>
++                            <Button Content="Загрузить ещё события" Style="{StaticResource Task.Button.Secondary}" Command="{Binding MoreHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoreProjectHistory"/>
++                        </StackPanel>
++                    </Expander>
++
+                     <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True" Collapsed="RelatedTasksCollapsed">
+                         <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
+                         <TextBlock Text="{Binding RelatedTasksStatusText}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectRelatedTasksStatus"/>
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs b/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+index 2141aa7..a78a442 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml.cs
+@@ -33,5 +33,14 @@ public partial class ProjectsView : UserControl
+     {
+         if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CloseContactsSection();
+     }
++    private async void HistoryExpanded(object sender, RoutedEventArgs args)
++    {
++        if (ReferenceEquals(sender, args.OriginalSource) && DataContext is ProjectsViewModel projects)
++            await projects.OpenHistorySectionAsync();
++    }
++    private void HistoryCollapsed(object sender, RoutedEventArgs args)
++    {
++        if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CloseHistorySection();
++    }
+     private void ProjectsUnloaded(object sender, RoutedEventArgs args) => (DataContext as ProjectsViewModel)?.CancelDetailSections();
+ }
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectHistoryApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectHistoryApiClientTests.cs
+new file mode 100644
+index 0000000..d1effea
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectHistoryApiClientTests.cs
+@@ -0,0 +1,47 @@
++using System.Net;
++using Task.Desktop.Projects;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class DesktopProjectsApiClientTests
++{
++    [Theory]
++    [InlineData("{}")]
++    [InlineData("{\"items\":null}")]
++    [InlineData("{\"items\":[{}]}")]
++    [InlineData("{\"items\":[null]}")]
++    [InlineData("not json")]
++    public async System.Threading.Tasks.Task History_StrictPayloadValidation(string body)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, body)));
++        Assert.IsType<DesktopProjectResult<DesktopProjectHistoryPage>.MalformedResponse>(await fixture.Client.GetHistoryAsync(ProjectId, 1));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task History_CanonicalAuthenticatedReadAndFieldsOnly()
++    {
++        var eventId = Guid.NewGuid();
++        var body = $$"""{"items":[{"id":"{{eventId}}","action":"project.patch","version":3,"actorUserId":null,"occurredAt":"2026-10-19T10:00:00Z","changedFields":["name"]}]}""";
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, body)));
++        var page = Assert.IsType<DesktopProjectResult<DesktopProjectHistoryPage>.Succeeded>(await fixture.Client.GetHistoryAsync(ProjectId, 2));
++        var row = Assert.Single(page.Value.Items); Assert.Equal(eventId, row.Id); Assert.Equal(3, row.Version);
++        Assert.Null(row.ActorUserId); Assert.Equal(new[] { "name" }, row.ChangedFields);
++        var request = Assert.Single(fixture.Requests);
++        Assert.Equal($"/api/v1/projects/{ProjectId:D}/history?limit=50&page=2", request.Uri.PathAndQuery);
++        Assert.Equal("AT_initial", request.Bearer); Assert.Null(request.IfMatch); Assert.Null(request.IdempotencyKey);
++        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => fixture.Client.GetHistoryAsync(ProjectId, 0));
++        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => fixture.Client.GetHistoryAsync(ProjectId, 10001));
++        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => fixture.Client.GetHistoryAsync(ProjectId, 1, 201));
++        Assert.Single(fixture.Requests);
++    }
++
++    [Theory]
++    [InlineData(403, "Forbidden")]
++    [InlineData(404, "NotFound")]
++    [InlineData(503, "ServerUnavailable")]
++    public async System.Threading.Tasks.Task History_MapsReadFailures(int status, string expected)
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json((HttpStatusCode)status, "{}")));
++        Assert.Equal(expected, (await fixture.Client.GetHistoryAsync(ProjectId, 1)).GetType().Name);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs
+index c389601..6ea0949 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/DesktopProjectsApiClientTests.cs
+@@ -7,7 +7,7 @@ using Task.Desktop.Security;
+ 
+ namespace Task.Desktop.Tests.Projects;
+ 
+-public sealed class DesktopProjectsApiClientTests
++public sealed partial class DesktopProjectsApiClientTests
+ {
+     private static readonly Guid SessionId = Guid.NewGuid();
+     private static readonly Guid OrganizationId = Guid.NewGuid();
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+index 93e79bf..1aa22f3 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+@@ -120,7 +120,7 @@ public sealed partial class ProjectsViewModelTests
+         Assert.False(vm.EditProjectCommand.CanExecute(null));
+         Assert.False(vm.AddMemberCommand.CanExecute(null));
+         Assert.False(await vm.ReloadMembersCommand.ExecuteAsync());
+-        foreach (var section in new[] { vm.FilesSection, vm.ContactsSection, vm.HistorySection })
++        foreach (var section in new[] { vm.FilesSection, vm.ContactsSection })
+         {
+             Assert.False(section.IsConnected); Assert.False(section.CanRead);
+             Assert.Equal(ProjectSectionState.NotLoaded, section.State);
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryTests.cs
+new file mode 100644
+index 0000000..b7baaf0
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryTests.cs
+@@ -0,0 +1,147 @@
++using System.IO;
++using Task.Desktop.Projects;
++using Task.Desktop.ViewModels;
++using AsyncTask = System.Threading.Tasks.Task;
++using Result = Task.Desktop.Projects.DesktopProjectResult<Task.Desktop.Projects.DesktopProjectHistoryPage>;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class ProjectsViewModelTests
++{
++    private static readonly string[] HistoryCaps = ["Project.Read", "History.Read"];
++    private static DesktopProjectHistoryEvent HistoryEvent() => new(Guid.NewGuid(), "project.patch", 2,
++        User, DateTimeOffset.Parse("2026-10-19T12:30:00Z"), ["name", "description"]);
++    private static Result HistoryPage(params DesktopProjectHistoryEvent[] rows) => new Result.Succeeded(new(rows));
++
++    [Fact]
++    public async AsyncTask History_LazySelectedPagingDeduplicatesAndRefreshes()
++    {
++        var client = SectionClient();
++        var rows = Enumerable.Range(0, 50).Select(_ => HistoryEvent()).ToArray();
++        client.HistoryHandler = (_, page, _) => AsyncTask.FromResult(page == 1 ? HistoryPage(rows) : HistoryPage(rows[0], HistoryEvent()));
++        using var vm = new ProjectsViewModel(client, User, HistoryCaps);
++        vm.Activate(); await vm.CurrentDetailsOperation;
++        Assert.Empty(client.HistoryCalls);
++        await vm.OpenHistorySectionAsync();
++        Assert.Equal(50, vm.History.Count); Assert.Equal(ProjectSectionState.Loaded, vm.HistorySection.State);
++        Assert.True(vm.MoreHistoryCommand.CanExecute(null));
++        await vm.MoreHistoryCommand.ExecuteAsync();
++        Assert.Equal(51, vm.History.Count); Assert.False(vm.MoreHistoryCommand.CanExecute(null));
++        Assert.Equal(new[] { (ProjectId, 1), (ProjectId, 2) }, client.HistoryCalls);
++        Assert.All(vm.History, e => { Assert.Contains("Версия 2", e.VersionText); Assert.Contains("name, description", e.FieldsText); Assert.Contains("Автор", e.AuthorText); });
++        await vm.RefreshHistoryCommand.ExecuteAsync(); Assert.Equal(50, vm.History.Count);
++        vm.CloseHistorySection(); Assert.Empty(vm.History);
++        await vm.OpenHistorySectionAsync(); Assert.Equal(50, vm.History.Count);
++    }
++
++    [Theory]
++    [InlineData("Project.Read")]
++    [InlineData("History.Read")]
++    public async AsyncTask History_BothCapabilitiesRequired(string capability)
++    {
++        var client = SectionClient(); using var vm = new ProjectsViewModel(client, User, [capability]);
++        vm.Activate(); await vm.CurrentDetailsOperation; await vm.OpenHistorySectionAsync();
++        Assert.Empty(client.HistoryCalls); Assert.False(vm.CanReadHistory);
++        Assert.False(await vm.RefreshHistoryCommand.ExecuteAsync()); Assert.Empty(vm.History);
++    }
++
++    [Theory]
++    [InlineData("switch")]
++    [InlineData("return")]
++    [InlineData("organization")]
++    [InlineData("permission")]
++    [InlineData("session")]
++    [InlineData("deactivate")]
++    [InlineData("dispose")]
++    [InlineData("collapse")]
++    [InlineData("close")]
++    [InlineData("offline")]
++    public async AsyncTask History_RejectsLateResponsesAndClearsContext(string transition)
++    {
++        var client = SectionClient();
++        var gate = new System.Threading.Tasks.TaskCompletionSource<Result>(); CancellationToken token = default;
++        client.HistoryHandler = (_, _, ct) => { token = ct; return gate.Task; };
++        using var vm = new ProjectsViewModel(client, User, HistoryCaps); vm.Activate(); await vm.CurrentDetailsOperation;
++        var old = vm.OpenHistorySectionAsync();
++        client.HistoryHandler = (_, _, _) => AsyncTask.FromResult(HistoryPage());
++        var original = vm.SelectedItem;
++        switch (transition)
++        {
++            case "switch": vm.SelectedItem = new ProjectItemViewModel(Project() with { Id = Guid.NewGuid() }); break;
++            case "organization": vm.SelectedItem = new ProjectItemViewModel(Project() with { OrganizationId = Guid.NewGuid() }); break;
++            case "return": vm.SelectedItem = null; vm.SelectedItem = original; break;
++            case "permission": vm.UpdateCapabilities(["Project.Read"]); break;
++            case "session": vm.UpdateSessionState(false); break;
++            case "deactivate": vm.Deactivate(); break;
++            case "dispose": vm.Dispose(); break;
++            case "collapse": vm.CloseHistorySection(); break;
++            case "close": vm.SelectedItem = null; break;
++            case "offline": vm.UpdateConnectivity(false); break;
++        }
++        Assert.True(token.IsCancellationRequested);
++        gate.SetResult(HistoryPage(HistoryEvent())); await old;
++        Assert.Empty(vm.History); Assert.NotEqual(ProjectSectionState.Loading, vm.HistorySection.State);
++    }
++
++    [Theory]
++    [InlineData("empty", ProjectSectionState.Empty)]
++    [InlineData("forbidden", ProjectSectionState.Forbidden)]
++    [InlineData("notfound", ProjectSectionState.Forbidden)]
++    [InlineData("unavailable", ProjectSectionState.ServerUnavailable)]
++    [InlineData("malformed", ProjectSectionState.Error)]
++    [InlineData("exception", ProjectSectionState.Error)]
++    public async AsyncTask History_SafeIndependentStatesAndRecovery(string mode, ProjectSectionState state)
++    {
++        var client = SectionClient();
++        client.HistoryHandler = (_, _, _) => mode == "exception" ? AsyncTask.FromException<Result>(new IOException("secret path"))
++            : AsyncTask.FromResult<Result>(mode switch {
++                "empty" => HistoryPage(), "forbidden" => new Result.Forbidden(), "notfound" => new Result.NotFound(),
++                "unavailable" => new Result.ServerUnavailable(), _ => new Result.MalformedResponse() });
++        using var vm = new ProjectsViewModel(client, User, HistoryCaps); vm.Activate(); await vm.CurrentDetailsOperation;
++        await vm.OpenHistorySectionAsync();
++        Assert.Equal(state, vm.HistorySection.State); Assert.Empty(vm.History);
++        Assert.DoesNotContain("secret", vm.HistorySection.StatusText);
++        Assert.Equal(ProjectSectionState.Loaded, vm.OverviewSection.State); Assert.NotNull(vm.SelectedItem);
++        client.HistoryHandler = (_, _, _) => AsyncTask.FromResult(HistoryPage(HistoryEvent()));
++        await vm.RefreshHistoryCommand.ExecuteAsync(); Assert.Single(vm.History);
++        vm.UpdateConnectivity(false); Assert.Empty(vm.History); Assert.False(vm.RefreshHistoryCommand.CanExecute(null));
++        vm.UpdateConnectivity(true); await vm.RefreshHistoryCommand.ExecuteAsync(); Assert.Single(vm.History);
++        vm.UpdateSessionState(false); Assert.Empty(vm.History); Assert.False(vm.CanReadHistory);
++    }
++    [Fact]
++    public async AsyncTask History_NamesRequireUserReadAndForbiddenDirectoryScrubsEarlierPages()
++    {
++        var client = SectionClient(); var employee = Employee(User);
++        var directory = Directory(employee);
++        client.HistoryHandler = (_, page, _) => AsyncTask.FromResult(HistoryPage(
++            Enumerable.Range(0, page == 1 ? 50 : 1).Select(_ => HistoryEvent()).ToArray()));
++        using var vm = new ProjectsViewModel(client, User, HistoryCaps, directory: directory);
++        vm.Activate(); await vm.CurrentDetailsOperation; await vm.OpenHistorySectionAsync();
++        Assert.Equal(0, directory.GetCalls); Assert.All(vm.History, e => Assert.Contains("недоступен", e.AuthorText));
++        vm.UpdateCapabilities(HistoryCaps.Append("User.Read")); await vm.RefreshHistoryCommand.ExecuteAsync();
++        Assert.All(vm.History, e => Assert.Equal(employee.DisplayName, e.AuthorText));
++        directory.Get = (_, _) => AsyncTask.FromResult<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Administration.DesktopAdminUser>>(
++            new Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Administration.DesktopAdminUser>.Forbidden());
++        await vm.MoreHistoryCommand.ExecuteAsync();
++        Assert.All(vm.History, e => Assert.Contains("недоступен", e.AuthorText));
++        vm.UpdateCapabilities(HistoryCaps); Assert.Empty(vm.History);
++    }
++
++    [Fact]
++    public async AsyncTask History_FailedNextPageRetriesSamePageWithoutLosingConfirmedEvents()
++    {
++        var client = SectionClient(); var failed = true;
++        client.HistoryHandler = (_, page, _) => AsyncTask.FromResult(page == 1
++            ? HistoryPage(Enumerable.Range(0, 50).Select(_ => HistoryEvent()).ToArray())
++            : failed ? new Result.ServerUnavailable() : HistoryPage(HistoryEvent()));
++        using var vm = new ProjectsViewModel(client, User, HistoryCaps); vm.Activate(); await vm.CurrentDetailsOperation;
++        await vm.OpenHistorySectionAsync(); await vm.MoreHistoryCommand.ExecuteAsync();
++        Assert.Equal(50, vm.History.Count); Assert.Equal(ProjectSectionState.ServerUnavailable, vm.HistorySection.State);
++        failed = false; await vm.MoreHistoryCommand.ExecuteAsync(); Assert.Equal(51, vm.History.Count);
++        Assert.Equal(new[] { 1, 2, 2 }, client.HistoryCalls.Select(c => c.Page));
++        int notifications = 0; vm.RefreshHistoryCommand.CanExecuteChanged += (_, _) => notifications++;
++        vm.UpdateConnectivity(false); var before = notifications;
++        vm.UpdateConnectivity(true); Assert.True(notifications > before); Assert.True(vm.RefreshHistoryCommand.CanExecute(null));
++    }
++
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryWindowsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryWindowsTests.cs
+new file mode 100644
+index 0000000..1689e01
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectHistoryWindowsTests.cs
+@@ -0,0 +1,77 @@
++﻿using System.Diagnostics;
++using System.Windows;
++using System.Windows.Automation.Peers;
++using System.Windows.Automation.Provider;
++using System.Windows.Controls;
++using System.Windows.Threading;
++using Task.Desktop.ViewModels;
++using Task.Desktop.Views;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class ProjectsViewModelTests
++{
++    [Fact]
++    public async AsyncTask NativeProjectHistory_PagingReconnectRevocationAndKeyboard()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_PROJECT_HISTORY_PROBE") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden,
++                RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ProjectsViewModelTests).Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(ProjectsViewModelTests).FullName + "." + nameof(NativeProjectHistory_PagingReconnectRevocationAndKeyboard));
++            start.Environment["TASK_PROJECT_HISTORY_PROBE"] = "1";
++            using var child = Process.Start(start)!; var output = child.StandardOutput.ReadToEndAsync(); var error = child.StandardError.ReadToEndAsync();
++            try { await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(50)); Assert.True(child.ExitCode == 0, await output + await error); }
++            finally { if (!child.HasExited) child.Kill(entireProcessTree: true); }
++            return;
++        }
++        var done = new System.Threading.Tasks.TaskCompletionSource(System.Threading.Tasks.TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
++            app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext());
++            app.Dispatcher.BeginInvoke(async () =>
++            {
++                Window? window = null;
++                try
++                {
++                    var client = SectionClient();
++                    client.HistoryHandler = (_, page, _) => AsyncTask.FromResult(HistoryPage(
++                        Enumerable.Range(0, page == 1 ? 50 : 1).Select(_ => HistoryEvent()).ToArray()));
++                    using var vm = new ProjectsViewModel(client, User, HistoryCaps);
++                    vm.Activate(); await vm.CurrentDetailsOperation;
++                    var view = new ProjectsView { DataContext = vm };
++                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Project history test" };
++                    window.Show(); PumpProject();
++                    var expander = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "История"));
++                    Assert.True(expander.IsVisible); Assert.Empty(client.HistoryCalls);
++                    var provider = (IExpandCollapseProvider)new ExpanderAutomationPeer(expander).GetPattern(PatternInterface.ExpandCollapse);
++                    provider.Expand(); await vm.CurrentHistoryOperation; PumpProject();
++                    expander.BringIntoView(); PumpProject(); Assert.True(expander.Focus());
++                    var list = ProjectDescendants<ListBox>(expander).Single(); Assert.Equal(50, list.Items.Count);
++                    var refresh = ProjectDescendants<Button>(expander).Single(b => Equals(b.Content, "Обновить историю"));
++                    Assert.True(refresh.IsEnabled); refresh.BringIntoView(); PumpProject(); Assert.True(refresh.Focus());
++                    Assert.True(refresh.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)));
++                    SaveProjectFrame(view, "project-history-loaded.png");
++                    await vm.MoreHistoryCommand.ExecuteAsync(); PumpProject(); Assert.Equal(51, list.Items.Count);
++                    vm.UpdateConnectivity(false); PumpProject(); Assert.False(refresh.IsEnabled); Assert.Empty(vm.History);
++                    vm.UpdateConnectivity(true); PumpProject(); Assert.True(refresh.IsEnabled);
++                    await vm.RefreshHistoryCommand.ExecuteAsync(); PumpProject(); Assert.Equal(50, list.Items.Count);
++                    provider.Collapse(); PumpProject(); Assert.Empty(vm.History);
++                    provider.Expand(); await vm.CurrentHistoryOperation; PumpProject(); Assert.Equal(50, list.Items.Count);
++                    vm.UpdateCapabilities(["Project.Read"]); PumpProject(); Assert.False(expander.IsVisible); Assert.Empty(vm.History);
++                    SaveProjectFrame(view, "project-history-revoked.png");
++                    done.SetResult();
++                }
++                catch (Exception e) { done.SetException(e); }
++                finally { window?.Close(); app.Shutdown(); }
++            });
++            app.Run();
++        });
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        await done.Task.WaitAsync(TimeSpan.FromSeconds(45)); thread.Join();
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+index c2a6979..2fa199a 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+@@ -238,8 +238,15 @@ public sealed partial class ProjectsViewModelTests
+         while (!predicate()) await System.Threading.Tasks.Task.Delay(10, cancellation.Token);
+     }
+ 
+-    private sealed class FakeProjectsClient : IDesktopProjectsApiClient
++    private sealed class FakeProjectsClient : IDesktopProjectsApiClient, IDesktopProjectHistoryApiClient
+     {
++        public Func<Guid, int, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectHistoryPage>>>? HistoryHandler { get; set; }
++        public List<(Guid Id, int Page)> HistoryCalls { get; } = [];
++        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectHistoryPage>> GetHistoryAsync(Guid projectId, int page, int limit = 50, CancellationToken cancellationToken = default)
++        {
++            HistoryCalls.Add((projectId, page));
++            return HistoryHandler?.Invoke(projectId, page, cancellationToken) ?? System.Threading.Tasks.Task.FromResult<DesktopProjectResult<DesktopProjectHistoryPage>>(new DesktopProjectResult<DesktopProjectHistoryPage>.Succeeded(new([])));
++        }
+         public DesktopProjectResult<DesktopProjectPage> Projects { get; set; } = SuccessPage();
+         public DesktopProjectResult<DesktopProjectDto> Project { get; set; } = new DesktopProjectResult<DesktopProjectDto>.NotFound();
+         public Exception? ProjectException { get; set; }
+diff --git a/work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs b/work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs
+new file mode 100644
+index 0000000..9078f70
+--- /dev/null
++++ b/work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs
+@@ -0,0 +1,34 @@
++using System.Net;
++using System.Text.Json.Nodes;
++using Task.Application.ProductData;
++
++namespace Task.ServiceHosts.Tests;
++
++public sealed partial class ProductEndpointsTests
++{
++    [Theory]
++    [InlineData("history.read")]
++    [InlineData("project.read")]
++    public async System.Threading.Tasks.Task ProjectHistory_RequiresBothCapabilitiesBeforeStore(string denied)
++    {
++        var store = new RecordingStore(); using var server = Server(store, deniedPermission: denied);
++        using var client = server.CreateClient();
++        using var response = await client.SendAsync(Request("GET", $"/api/v1/projects/{ObjectId}/history?limit=50&page=1", "{}"));
++        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode); Assert.Null(store.LastRequest);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task ProjectHistory_PreservesCanonicalResponseAndPaging()
++    {
++        var body = new JsonObject { ["items"] = new JsonArray(new JsonObject {
++            ["id"] = Guid.NewGuid(), ["action"] = "project.patch", ["version"] = 2,
++            ["actorUserId"] = User, ["occurredAt"] = "2026-10-19T12:30:00Z", ["changedFields"] = new JsonArray("name") }) };
++        var store = new RecordingStore { Reply = new ProductApiResponse(body) };
++        using var server = Server(store); using var client = server.CreateClient();
++        using var response = await client.SendAsync(Request("GET", $"/api/v1/projects/{ObjectId}/history?limit=50&page=2", "{}"));
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        Assert.True(JsonNode.DeepEquals(body, JsonNode.Parse(await response.Content.ReadAsStringAsync())));
++        Assert.Equal(ObjectId, store.LastRequest!.Id); Assert.Equal("2", store.LastRequest.Query["page"]);
++        Assert.Contains("History.Read", store.LastRequest.Permissions); Assert.Contains("Project.Read", store.LastRequest.Permissions);
++    }
++}
+diff --git a/work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs b/work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs
+new file mode 100644
+index 0000000..44c0ec0
+--- /dev/null
++++ b/work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs
+@@ -0,0 +1,33 @@
++using Task.Application.ProductData;
++
++namespace Task.Tests;
++
++public sealed partial class PostgresProductApiTests
++{
++    [Fact]
++    public void ProjectHistory_CurrentContractPagingVisibilityAndPermissions()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var project = db.Call("projects", "create", $$"""{"name":"History project","ownerUserId":"{{db.User}}"}""");
++        var id = Id(project);
++        db.Call("projects", "patch", "{\"name\":\"Renamed\"}", id, 1);
++        var first = db.Call("projects", "history", id: id, query: new() { ["limit"] = "1", ["page"] = "1" });
++        var second = db.Call("projects", "history", id: id, query: new() { ["limit"] = "1", ["page"] = "2" });
++        var row = Assert.Single(first.Body!["items"]!.AsArray())!;
++        Assert.NotEqual(row["id"]!.ToString(), Assert.Single(second.Body!["items"]!.AsArray())!["id"]!.ToString());
++        Assert.Equal(2, row["version"]!.GetValue<int>()); Assert.Equal(db.User.ToString(), row["actorUserId"]!.ToString());
++        Assert.Equal("project.patch", row["action"]!.ToString()); Assert.NotNull(row["occurredAt"]);
++        Assert.Contains(row["changedFields"]!.AsArray(), f => f!.ToString() == "name");
++        Assert.Null(row["oldValues"]); Assert.Null(row["newValues"]);
++        Assert.Empty(db.Call("projects", "history", id: id, query: new() { ["limit"] = "1", ["page"] = "3" }).Body!["items"]!.AsArray());
++        Assert.Equal(404, Assert.Throws<ProductApiException>(() => db.Call("projects", "history", id: id, user: db.OtherUser, admin: false)).Status);
++        Assert.Equal(422, Assert.Throws<ProductApiException>(() => db.Call("projects", "history", id: id, query: new() { ["page"] = "0" })).Status);
++    }
++
++    [Fact]
++    public void ProjectComments_RuntimeContractIsMissingDespiteGenericNormativeCommentModel()
++    {
++        Assert.Contains(ProductApiRoutes.All, r => r.Path == "/api/v1/tasks/{id}/comments" && r.Method == "POST");
++        Assert.DoesNotContain(ProductApiRoutes.All, r => r.Path.Contains("comments") && r.Resource != "tasks");
++    }
++}
+diff --git a/work/project_history_13_4/Run-Gate.ps1 b/work/project_history_13_4/Run-Gate.ps1
+new file mode 100644
+index 0000000..da6b7aa
+--- /dev/null
++++ b/work/project_history_13_4/Run-Gate.ps1
+@@ -0,0 +1,37 @@
++﻿param([string]$Filter = '', [string]$Receipt = 'release')
++$ErrorActionPreference = 'Stop'
++$root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
++$evidence = Join-Path $PSScriptRoot ('results/' + $Receipt)
++[IO.Directory]::CreateDirectory($evidence) | Out-Null
++$runtime = Join-Path $env:TEMP ('task-history13-4-postgres-' + [guid]::NewGuid().ToString('N'))
++$pg = 'C:/Program Files/PostgreSQL/16/bin'
++$listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, 0)
++$listener.Start(); $port = ([Net.IPEndPoint]$listener.LocalEndpoint).Port; $listener.Stop()
++try {
++    & "$pg/initdb.exe" -D $runtime -U postgres --auth=trust --encoding=UTF8 --locale=C *> (Join-Path $evidence 'postgres-init.log')
++    if ($LASTEXITCODE -ne 0) { throw 'Isolated PostgreSQL initialization failed' }
++    Start-Process -FilePath "$pg/postgres.exe" -ArgumentList "-D `"$runtime`" -h 127.0.0.1 -p $port" -WindowStyle Hidden -RedirectStandardOutput (Join-Path $evidence 'postgres.log') -RedirectStandardError (Join-Path $evidence 'postgres-error.log')
++    $ready = $false
++    for ($attempt = 0; $attempt -lt 50; $attempt++) {
++        & "$pg/pg_isready.exe" -h 127.0.0.1 -p $port -U postgres *> $null
++        if ($LASTEXITCODE -eq 0) { $ready = $true; break }
++        Start-Sleep -Milliseconds 200
++    }
++    if (-not $ready) { throw 'Isolated PostgreSQL did not start' }
++    $env:TASK_POSTGRES_TEST_ADMIN_CONNECTION = "Host=127.0.0.1;Port=$port;Database=postgres;Username=postgres;Pooling=false"
++    $env:TASK_PROJECT_PICKER_EVIDENCE = Join-Path $evidence 'screenshots'
++    & dotnet build (Join-Path $root 'work/production/Task.sln') -c Release --no-restore -v quiet *> (Join-Path $evidence 'build.log')
++    if ($LASTEXITCODE -ne 0) { Get-Content (Join-Path $evidence 'build.log') -Tail 25; throw 'Build failed' }
++    Write-Output 'Release solution build PASS; isolated PostgreSQL 16 running.'
++    $ErrorActionPreference = 'Continue'
++    $filterArgs = @()
++    if ($Filter) { $filterArgs = @('--filter', $Filter) }
++    & dotnet test (Join-Path $root 'work/production/Task.sln') -c Release --no-build --no-restore @filterArgs --logger trx --results-directory $evidence -v quiet *> (Join-Path $evidence 'tests.log')
++    $result = $LASTEXITCODE
++    $ErrorActionPreference = 'Stop'
++    Get-Content (Join-Path $evidence 'tests.log') -Tail 65
++    if ($result -ne 0) { throw 'Release solution gate failed; inspect tests.log and TRX' }
++}
++finally {
++    if (Test-Path -LiteralPath (Join-Path $runtime 'postmaster.pid')) { & "$pg/pg_ctl.exe" -D $runtime -m fast -w stop | Out-Null }
++}
