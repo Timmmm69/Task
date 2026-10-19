@@ -107,7 +107,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
             if (result is DesktopWorkResult<IReadOnlyList<DesktopCompany>>.Succeeded page)
             {
                 var previous = SelectedCompany;
-                var items = (append ? Items.Concat(page.Value) : page.Value).DistinctBy(c => c.Id).ToArray();
+                var items = (append ? Items.Concat(page.Value) : page.Value).Where(c => c.LifecycleState == "active").DistinctBy(c => c.Id).ToArray();
                 // A selected record can be outside this server page. Recheck its object scope before retaining it.
                 if (!append && previous is not null && !items.Any(c => c.Id == previous.Id))
                 {
@@ -115,8 +115,8 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
                     if (!CanRequest || request.IsCancellationRequested || generation != _listGeneration) return;
                     if (selection == _selectionGeneration)
                     {
-                        if (visible is DesktopWorkResult<DesktopCompany>.Succeeded available) items = [.. items, available.Value];
-                        else if (visible is DesktopWorkResult<DesktopCompany>.Forbidden or DesktopWorkResult<DesktopCompany>.NotFound or DesktopWorkResult<DesktopCompany>.AuthenticationFailure)
+                        if (visible is DesktopWorkResult<DesktopCompany>.Succeeded { Value.LifecycleState: "active" } available) items = [.. items, available.Value];
+                        else if (visible is DesktopWorkResult<DesktopCompany>.Succeeded or DesktopWorkResult<DesktopCompany>.Forbidden or DesktopWorkResult<DesktopCompany>.NotFound or DesktopWorkResult<DesktopCompany>.AuthenticationFailure)
                             await SelectAsync(null);
                         else { Message = "Не удалось подтвердить доступность выбранной компании. Повторите обновление."; return; }
                     }
@@ -171,6 +171,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
             if (!Current(generation, request.Token)) return;
             if (result is DesktopWorkResult<DesktopCompany>.Succeeded success)
             {
+                if (!ConfirmActiveCompany(success.Value)) return;
                 Details = success.Value; _blocked = false; FillDraft(Details); ClearPicker();
                 await LoadRelatedAsync(success.Value, generation, request.Token);
             }
@@ -195,6 +196,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
             if (!Current(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
             if (result is DesktopWorkResult<DesktopCompany>.Succeeded success)
             {
+                if (!ConfirmActiveCompany(success.Value)) return;
                 Details = success.Value; _selected = success.Value; OnPropertyChanged(nameof(SelectedCompany));
                 Items = [success.Value, .. Items.Where(c => c.Id != success.Value.Id)];
                 _pendingCreate = null; _createKey = null; IsEditing = IsCreating = false; FillDraft(Details);
@@ -203,7 +205,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
                 var confirmed = await _client.GetCompanyAsync(success.Value.Id, request.Token);
                 if (!Current(generation, request.Token)) return;
                 if (confirmed is DesktopWorkResult<DesktopCompany>.Succeeded refreshed)
-                { Details = refreshed.Value; await LoadRelatedAsync(refreshed.Value, generation, request.Token); }
+                { if (!ConfirmActiveCompany(refreshed.Value)) return; Details = refreshed.Value; await LoadRelatedAsync(refreshed.Value, generation, request.Token); }
                 else { RelatedContacts = []; ShowFailure(confirmed); }
             }
             else { if (create && result is DesktopWorkResult<DesktopCompany>.ValidationFailure) _pendingCreate = null; ShowFailure(result); }
@@ -213,6 +215,17 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
         catch (Exception)
         { if (generation == _selectionGeneration) { _blocked = !create; Message = "Результат сохранения не подтверждён. Ввод сохранён. Обновите карточку; повтор создания использует прежний ключ."; } }
         finally { if (generation == _selectionGeneration) _detailRequest = null; IsBusy = false; }
+    }
+
+    private bool ConfirmActiveCompany(DesktopCompany company)
+    {
+        if (company.LifecycleState == "active") return true;
+        CancelDetail(); ClearLinkDraft(); Details = null; RelatedContacts = [];
+        IsEditing = IsCreating = false; _pendingCreate = null; _createKey = null; _blocked = true;
+        FillDraft(null); Items = Items.Where(c => c.Id != company.Id).ToArray();
+        _selected = null; OnPropertyChanged(nameof(SelectedCompany));
+        Message = "Компания больше не доступна в активном списке. Обновите список.";
+        return false;
     }
 
     private void ShowFailure(DesktopWorkResult<DesktopCompany> result)

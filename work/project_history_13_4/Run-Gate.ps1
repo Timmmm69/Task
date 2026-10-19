@@ -26,7 +26,7 @@ try {
     $ErrorActionPreference = 'Continue'
     $filterArgs = @()
     if ($Filter) { $filterArgs = @('--filter', $Filter) }
-    & dotnet test (Join-Path $root 'work/production/Task.sln') -c Release --no-build --no-restore @filterArgs --logger trx --results-directory $evidence -v quiet *> (Join-Path $evidence 'tests.log')
+    & dotnet test (Join-Path $root 'work/production/Task.sln') -c Release --no-build --no-restore -m:1 @filterArgs --logger trx --results-directory $evidence -v quiet *> (Join-Path $evidence 'tests.log')
     $result = $LASTEXITCODE
     $ErrorActionPreference = 'Stop'
     Get-Content (Join-Path $evidence 'tests.log') -Tail 65

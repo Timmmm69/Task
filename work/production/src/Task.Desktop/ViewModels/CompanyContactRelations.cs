@@ -118,6 +118,7 @@ public sealed partial class CompaniesViewModel
             if (!Current(generation, request.Token) || !_canUpdate()) return;
             if (result is DesktopWorkResult<DesktopCompany>.Succeeded saved)
             {
+                if (!ConfirmActiveCompany(saved.Value)) return;
                 Details = saved.Value; FillDraft(Details); ClearPicker(); JobTitle = DepartmentName = ValidFrom = ValidTo = ""; IsPrimary = false;
                 Items = Items.Select(c => c.Id == saved.Value.Id ? saved.Value : c).ToArray();
                 await LoadRelatedAsync(saved.Value, generation, request.Token);
