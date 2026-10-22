@@ -631,7 +631,7 @@
                                         <Condition Binding="{Binding IsExpanded, ElementName=TaskInspectorExpander}" Value="True" />
                                         <Condition Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1320}" Value="False" />
                                     </MultiDataTrigger.Conditions>
-                                    <Setter Property="MinHeight" Value="280" />
+                                    <Setter Property="MinHeight" Value="360" />
                                 </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>

@@ -177,7 +177,11 @@ public partial class MainWindow : Window
                         || !TaskDetailsArea.IsVisible || !TaskDetailsArea.IsKeyboardFocusWithin) return;
                     // The originating action may disappear after a status/filter change.
                     if (origin.IsVisible && origin.IsEnabled) { origin.BringIntoView(); origin.Focus(); }
-                    else TasksList.Focus();
+                    else
+                    {
+                        if (TasksList.SelectedItem is { } selected) TasksList.ScrollIntoView(selected);
+                        TasksList.Focus();
+                    }
                 });
             }
         }
