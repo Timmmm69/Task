@@ -1,0 +1,7 @@
+{
+  "loopbackOnly": true,
+  "postgres": "16",
+  "isolated": true,
+  "filter": "NativeWpf_ReturnActionConfirmationFocusAndServerResult|TaskReturn_Audit_ConcurrentCardSave|RealPostgres_CreateIsAtomicDurableAndReadable|RealPostgres_PatchIsAtomicDurableAndConcurrencySafe|Return_BlockedAccount",
+  "exitCode": 1
+}

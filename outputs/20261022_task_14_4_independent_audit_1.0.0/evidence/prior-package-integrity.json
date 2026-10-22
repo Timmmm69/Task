@@ -1,0 +1,215 @@
+[
+  {
+    "package": "20261022_task_14_2_server_return_1.0.0",
+    "checksums": [
+      {
+        "path": ".gitattributes",
+        "ok": true
+      },
+      {
+        "path": "changed-files.json",
+        "ok": true
+      },
+      {
+        "path": "contract-audit/Task_14_1_Status_Return_Contract_Audit.md",
+        "ok": true
+      },
+      {
+        "path": "evidence/desktop-regression.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/desktop-regression.trx",
+        "ok": true
+      },
+      {
+        "path": "evidence/domain-pg16-return.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/domain-pg16-return.trx",
+        "ok": true
+      },
+      {
+        "path": "evidence/return-final-pg16.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/return-final-pg16.trx",
+        "ok": true
+      },
+      {
+        "path": "evidence/server-build.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/server-return.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/server-return.trx",
+        "ok": true
+      },
+      {
+        "path": "evidence/shared-rules-regression.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/shared-rules-regression.trx",
+        "ok": true
+      },
+      {
+        "path": "evidence/test-summary.json",
+        "ok": true
+      },
+      {
+        "path": "implementation.patch",
+        "ok": true
+      },
+      {
+        "path": "manifest.json",
+        "ok": true
+      },
+      {
+        "path": "validation-report.md",
+        "ok": true
+      },
+      {
+        "path": "VERSION",
+        "ok": true
+      }
+    ],
+    "source_overlay": []
+  },
+  {
+    "package": "20261022_task_14_3_wpf_return_1.0.0",
+    "checksums": [
+      {
+        "path": ".gitattributes",
+        "ok": true
+      },
+      {
+        "path": "changed-files.json",
+        "ok": true
+      },
+      {
+        "path": "evidence/compact-800x600-limitation.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/desktop-build.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/final-desktop.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/final-desktop.trx",
+        "ok": true
+      },
+      {
+        "path": "evidence/native/return-confirmation-1100x900.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/native/return-confirmation-800x600.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/native/return-confirmation-800x800.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/native/return-success-1100x900.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/native/return-success-800x600.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/native/return-success-800x800.png",
+        "ok": true
+      },
+      {
+        "path": "evidence/server-return.log",
+        "ok": true
+      },
+      {
+        "path": "evidence/server-return.trx",
+        "ok": true
+      },
+      {
+        "path": "implementation.patch",
+        "ok": true
+      },
+      {
+        "path": "manifest.json",
+        "ok": true
+      },
+      {
+        "path": "source/.project-dashboard/roadmap.json",
+        "ok": true
+      },
+      {
+        "path": "source/work/production/src/Task.Desktop/MainWindow.xaml",
+        "ok": true
+      },
+      {
+        "path": "source/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+        "ok": true
+      },
+      {
+        "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+        "ok": true
+      },
+      {
+        "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+        "ok": true
+      },
+      {
+        "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+        "ok": true
+      },
+      {
+        "path": "test-summary.json",
+        "ok": true
+      },
+      {
+        "path": "validation-report.md",
+        "ok": true
+      },
+      {
+        "path": "VERSION",
+        "ok": true
+      }
+    ],
+    "source_overlay": [
+      {
+        "path": ".project-dashboard\\roadmap.json",
+        "matches_commit_source": false
+      },
+      {
+        "path": "work\\production\\tests\\Task.Desktop.Tests\\Tasks\\DesktopTasksApiClientTests.cs",
+        "matches_commit_source": false
+      },
+      {
+        "path": "work\\production\\tests\\Task.Desktop.Tests\\Tasks\\TaskReturnTests.cs",
+        "matches_commit_source": false
+      },
+      {
+        "path": "work\\production\\tests\\Task.Desktop.Tests\\Tasks\\TaskReturnUiTests.cs",
+        "matches_commit_source": false
+      },
+      {
+        "path": "work\\production\\src\\Task.Desktop\\MainWindow.xaml",
+        "matches_commit_source": true
+      },
+      {
+        "path": "work\\production\\src\\Task.Desktop\\ViewModels\\TasksViewModel.cs",
+        "matches_commit_source": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,317 @@
+[
+  {
+    "file": "baseline-ui-recheck/baseline-ui.trx",
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+    ],
+    "receipt": "baseline-ui-recheck"
+  },
+  {
+    "file": "compact-viewport-final/novik_TIM_2026-10-22_17_35_42_net10.0.trx",
+    "total": 50,
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "compact-viewport-final"
+  },
+  {
+    "file": "compact-viewport-final/novik_TIM_2026-10-22_17_35_46_net10.0.trx",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "compact-viewport-final"
+  },
+  {
+    "file": "compact-viewport-final/novik_TIM_2026-10-22_17_35_53_net10.0.trx",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "compact-viewport-final"
+  },
+  {
+    "file": "defect-repro/novik_TIM_2026-10-22_13_46_27_net10.0.trx",
+    "total": 2,
+    "passed": 0,
+    "failed": 2,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: False)",
+      "Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: True)"
+    ],
+    "receipt": "defect-repro"
+  },
+  {
+    "file": "defect-repro/novik_TIM_2026-10-22_13_46_31_net10.0.trx",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "defect-repro"
+  },
+  {
+    "file": "defect-repro/novik_TIM_2026-10-22_13_46_35_net10.0.trx",
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult"
+    ],
+    "receipt": "defect-repro"
+  },
+  {
+    "file": "desktop-final/desktop-final.trx",
+    "total": 1822,
+    "passed": 1821,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+    ],
+    "receipt": "desktop-final"
+  },
+  {
+    "file": "final-acceptance/novik_TIM_2026-10-22_17_53_43_net10.0.trx",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "final-acceptance"
+  },
+  {
+    "file": "final-acceptance/novik_TIM_2026-10-22_17_54_24_net10.0.trx",
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "final-acceptance"
+  },
+  {
+    "file": "final-acceptance/novik_TIM_2026-10-22_17_54_30_net10.0.trx",
+    "total": 152,
+    "passed": 152,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "final-acceptance"
+  },
+  {
+    "file": "final-gate/novik_TIM_2026-10-22_13_55_21_net10.0.trx",
+    "total": 904,
+    "passed": 901,
+    "failed": 3,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus",
+      "Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe",
+      "Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable"
+    ],
+    "receipt": "final-gate"
+  },
+  {
+    "file": "final-gate/novik_TIM_2026-10-22_13_58_26_net10.0.trx",
+    "total": 667,
+    "passed": 667,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "final-gate"
+  },
+  {
+    "file": "final-gate/novik_TIM_2026-10-22_13_58_45_net10.0.trx",
+    "total": 1820,
+    "passed": 1819,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+    ],
+    "receipt": "final-gate"
+  },
+  {
+    "file": "final-targeted/novik_TIM_2026-10-22_17_45_48_net10.0.trx",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "final-targeted"
+  },
+  {
+    "file": "final-targeted/novik_TIM_2026-10-22_17_46_24_net10.0.trx",
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "final-targeted"
+  },
+  {
+    "file": "final-targeted/novik_TIM_2026-10-22_17_46_26_net10.0.trx",
+    "total": 152,
+    "passed": 151,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+    ],
+    "receipt": "final-targeted"
+  },
+  {
+    "file": "fixed-targeted/novik_TIM_2026-10-22_13_50_46_net10.0.trx",
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "fixed-targeted"
+  },
+  {
+    "file": "fixed-targeted/novik_TIM_2026-10-22_13_51_22_net10.0.trx",
+    "total": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "fixed-targeted"
+  },
+  {
+    "file": "fixed-targeted/novik_TIM_2026-10-22_13_51_28_net10.0.trx",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "fixed-targeted"
+  },
+  {
+    "file": "layout-diagnostics/novik_TIM_2026-10-22_17_31_32_net10.0.trx",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "layout-diagnostics"
+  },
+  {
+    "file": "layout-diagnostics/novik_TIM_2026-10-22_17_31_34_net10.0.trx",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "layout-diagnostics"
+  },
+  {
+    "file": "layout-diagnostics/novik_TIM_2026-10-22_17_31_39_net10.0.trx",
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult"
+    ],
+    "receipt": "layout-diagnostics"
+  },
+  {
+    "file": "layout-fixed-and-regression/novik_TIM_2026-10-22_17_29_01_net10.0.trx",
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "layout-fixed-and-regression"
+  },
+  {
+    "file": "layout-fixed-and-regression/novik_TIM_2026-10-22_17_29_02_net10.0.trx",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "layout-fixed-and-regression"
+  },
+  {
+    "file": "layout-fixed-and-regression/novik_TIM_2026-10-22_17_29_04_net10.0.trx",
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult"
+    ],
+    "receipt": "layout-fixed-and-regression"
+  },
+  {
+    "file": "layout-repro-and-regression/novik_TIM_2026-10-22_17_27_39_net10.0.trx",
+    "total": 3,
+    "passed": 2,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe"
+    ],
+    "receipt": "layout-repro-and-regression"
+  },
+  {
+    "file": "layout-repro-and-regression/novik_TIM_2026-10-22_17_27_41_net10.0.trx",
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "layout-repro-and-regression"
+  },
+  {
+    "file": "layout-repro-and-regression/novik_TIM_2026-10-22_17_27_43_net10.0.trx",
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult"
+    ],
+    "receipt": "layout-repro-and-regression"
+  },
+  {
+    "file": "verified-release/novik_TIM_2026-10-22_17_36_27_net10.0.trx",
+    "total": 905,
+    "passed": 905,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "verified-release"
+  },
+  {
+    "file": "verified-release/novik_TIM_2026-10-22_17_39_50_net10.0.trx",
+    "total": 669,
+    "passed": 669,
+    "failed": 0,
+    "skipped": 0,
+    "failed_tests": [],
+    "receipt": "verified-release"
+  },
+  {
+    "file": "verified-release/novik_TIM_2026-10-22_17_40_07_net10.0.trx",
+    "total": 1821,
+    "passed": 1820,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+    ],
+    "receipt": "verified-release"
+  }
+]

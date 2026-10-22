@@ -1,0 +1,16 @@
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:04.08]     Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\layout-repro-and-regression\novik_TIM_2026-10-22_17_27_39_net10.0.trx
+
+Не пройден!: не пройдено     1, пройдено     2, пропущено     0, всего     3, длительность 2 s. - Task.Tests.dll (net10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\layout-repro-and-regression\novik_TIM_2026-10-22_17_27_41_net10.0.trx
+
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:04.36]     Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\layout-repro-and-regression\novik_TIM_2026-10-22_17_27_43_net10.0.trx
+
+Не пройден!: не пройдено     1, пройдено     1, пропущено     0, всего     2, длительность 3 s. - Task.Desktop.Tests.dll (net10.0)

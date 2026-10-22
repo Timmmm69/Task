@@ -1,0 +1,7 @@
+{
+  "isolated": true,
+  "filter": "TodayViewModelTests|TaskReturn|Return_|ReturnTask_|TaskWrite_CreateAndPatch|NativeWpf_ReturnAction|NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow",
+  "postgres": "16",
+  "exitCode": 1,
+  "loopbackOnly": true
+}

@@ -1,0 +1,1913 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index 3d4238d..90e8a7b 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -300,10 +300,12 @@
+         "outputs/20261008_inbox_zero_1.0.1/validation-report.md",
+         "outputs/20261008_view_state_1.0.0/VALIDATION_REPORT.md: device-local view state; 711 desktop + 163 server-list PASS; native resize/sort/permissions/lifetime and isolation verified; live-server manual and physical mixed-DPI NOT RUN.",
+         "outputs/20261016_task_filtering_7.1.0/validation-report.md: four typed local filters, project IDs, deadline/DST boundaries, partial-result wording; 986 Release desktop tests PASS in split runs; native WPF 800x480 and 1200x900 PASS.",
+-        "outputs/20261016_task_filtering_sorting_7.2.0/validation-report.md: eight local sort orders, stable ID selection, version-aware pagination; Release desktop 1119 PASS, API 174 PASS; native WPF 125/150/200% layout equivalents and measured 10k-row sorting."
++        "outputs/20261016_task_filtering_sorting_7.2.0/validation-report.md: eight local sort orders, stable ID selection, version-aware pagination; Release desktop 1119 PASS, API 174 PASS; native WPF 125/150/200% layout equivalents and measured 10k-row sorting.",
++        "outputs/20261022_task_14_3_wpf_return_1.0.0/validation-report.md: review -> in_progress, version/idempotency, 166 desktop and 60 server PASS; native WPF 1100x900/800x800. Compact 800x600 inspector clipping remains open.",
++        "outputs/20261022_task_14_4_independent_audit_1.0.0/Task_14_Final_Independent_Audit.md"
+       ],
+-      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458. 2026-10-05: Personal task CRUD, shared statuses, schedule/deadline, один уровень подзадач, Inbox и checklist работают в отдельной SQLite БД. Проверены транзакции, версии, миграция, rollback, zero corporate requests и 7 задач в WPF после двух перезапусков; итоговый gate 1795 PASS / 4 SKIP. Полная системная сетевая изоляция отдельно не подтверждена. 2026-10-06: Personal tasks могут ссылаться на локальные проекты; recurring materialization использует Domain generator и existing DST helper, persisted identity и scoped overrides. Restart и Local/UTC consistency подтверждены. 2026-10-08: Inbox Zero 1.0.1: полный cursor snapshot, total/completeness guards, confirmed conversion refresh, distinct offline/error/loading, 120 ms/reduced-motion и focus/UIA. Release build PASS; Desktop 696 PASS / 0 FAIL / 0 SKIP, native WPF PASS. В Desktop нет realtime transport: используется 15-second polling existing API; нет Inbox filter/delete command. Live multi-client и ручное прослушивание screen reader отдельно не проверены. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-16: Этап 7.1 — корпоративные фильтры статуса, проекта, приоритета и срока работают совместно; просрочка отделена от статуса, одинаковые названия проектов различаются по ID, пагинация сохраняется. Release: 985 тестов PASS плюс 1 существующий native focus test PASS отдельно; новый WPF gate проверил keyboard, bindings, selection и 800x480. Progress/status сохранены; сортировка остаётся этапом 7.2. 2026-10-16: Этап 7.2 — восемь локальных сортировок объединены с фильтрами. Выделение/карточка и сортировка сохраняются, страницы дедуплицируются по ID с защитой новой версии, частичная выборка обозначена явно. Windows WPF: минимальное окно, клавиатура и DPI equivalents проверены; 10k строк измерены. API/DB/permissions не изменены. Progress/status сохранены.",
+-      "updated_at": "2026-10-16T03:40:00+03:00",
++      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458. 2026-10-05: Personal task CRUD, shared statuses, schedule/deadline, один уровень подзадач, Inbox и checklist работают в отдельной SQLite БД. Проверены транзакции, версии, миграция, rollback, zero corporate requests и 7 задач в WPF после двух перезапусков; итоговый gate 1795 PASS / 4 SKIP. Полная системная сетевая изоляция отдельно не подтверждена. 2026-10-06: Personal tasks могут ссылаться на локальные проекты; recurring materialization использует Domain generator и existing DST helper, persisted identity и scoped overrides. Restart и Local/UTC consistency подтверждены. 2026-10-08: Inbox Zero 1.0.1: полный cursor snapshot, total/completeness guards, confirmed conversion refresh, distinct offline/error/loading, 120 ms/reduced-motion и focus/UIA. Release build PASS; Desktop 696 PASS / 0 FAIL / 0 SKIP, native WPF PASS. В Desktop нет realtime transport: используется 15-second polling existing API; нет Inbox filter/delete command. Live multi-client и ручное прослушивание screen reader отдельно не проверены. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-16: Этап 7.1 — корпоративные фильтры статуса, проекта, приоритета и срока работают совместно; просрочка отделена от статуса, одинаковые названия проектов различаются по ID, пагинация сохраняется. Release: 985 тестов PASS плюс 1 существующий native focus test PASS отдельно; новый WPF gate проверил keyboard, bindings, selection и 800x480. Progress/status сохранены; сортировка остаётся этапом 7.2. 2026-10-16: Этап 7.2 — восемь локальных сортировок объединены с фильтрами. Выделение/карточка и сортировка сохраняются, страницы дедуплицируются по ID с защитой новой версии, частичная выборка обозначена явно. Windows WPF: минимальное окно, клавиатура и DPI equivalents проверены; 10k строк измерены. API/DB/permissions не изменены. Progress/status сохранены. 2026-10-22: Этап 14.3 — отдельное действие «Вернуть на доработку» через existing transition с Task.ChangeStatus, reason=null, версией и ключом идемпотентности. Серверный baseline 1077445; 166 desktop и 60 server PASS. WPF 1100×900 и 800×800 проверен. В 800×600 выявлено существующее обрезание инспектора; live network end-to-end и screen reader не проверены. Progress/status сохранены, финальный аудит открыт. 2026-10-22: Аудит 14.4: исправлены потеря фокуса и clipping подтверждения в 800×600/800×480; отдельный возврат с подтверждением согласован в Tasks и Today. Реальный native WPF и HTTP retry проверены. Остались раскрытые ограничения live LAN/multi-client, screen reader и старого foreground-sensitive UI gate; progress/status не повышены.",
++      "updated_at": "2026-10-22T17:47:07+03:00",
+       "priority": 3,
+       "dependencies": [
+         "PROD-01"
+@@ -470,10 +472,12 @@
+       "progress": 100,
+       "evidence": [
+         "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+-        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128"
++        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128",
++        "outputs/20261022_task_14_2_server_return_1.0.0/validation-report.md: review -> in_progress, HTTP matrix, PostgreSQL 16 atomicity/replay/scope/history/audit",
++        "outputs/20261022_task_14_4_independent_audit_1.0.0/Task_14_Final_Independent_Audit.md"
+       ],
+-      "note": "Базовый task API vertical slice подтверждён.",
+-      "updated_at": "2026-08-30T16:20:00+03:00",
++      "note": "Базовый task API vertical slice подтверждён. 2026-10-22: по утверждённому исправлению 14.2 добавлен review → in_progress через существующий transition endpoint. Проверены права, версии, атомарность, replay, история и аудит на PostgreSQL 16; DTO, миграции и уведомления не изменены. Progress/status сохранены. 2026-10-22: Аудит 14.4: закрыт session-revocation race перед execute/replay; проверяются device/account, credential/scope versions и существующие 401/423. Возврат отделён от Domain.Start; 905 Domain/PostgreSQL и 669 HTTP/server тестов PASS. Общий history/OpenAPI drift остаётся отдельным ограничением; progress/status не повышены.",
++      "updated_at": "2026-10-22T17:47:07+03:00",
+       "priority": 4,
+       "dependencies": [
+         "DATA-02"
+diff --git a/work/production/docs/task-14-2-return-contract-decision.md b/work/production/docs/task-14-2-return-contract-decision.md
+new file mode 100644
+index 0000000..0bb706b
+--- /dev/null
++++ b/work/production/docs/task-14-2-return-contract-decision.md
+@@ -0,0 +1,34 @@
++# Task 14.2 — approved server return contract
++
++Version: 1.0.0. Approved: 2026-10-22 (Europe/Minsk).
++
++## Approval and precedence
++
++Task 14.1 audit reported CONTRACT_CHANGE_REQUIRED (OQ-14.1-01): the
++canonical state machine permits `review -> in_progress`, whereas
++`outputs/20260826_task_write_vertical_slice_specs_1.0.0/04_SERVER_TASK_TRANSITION.md:33`
++explicitly rejects it. After Codex described the exact correction and the
++blocking condition, the user instructed: «Теперь действитвуй».
++This records approval of that narrow correction. It supersedes only the
++`review -> in_progress` prohibition in the implementation specification;
++the historical specification and audit remain unchanged.
++
++## Implementation contract
++
++- Permit `review -> in_progress` through the existing
++  `POST /api/v1/tasks/{id}/transition`, with `targetStatus: "in_progress"`.
++- Keep `Task.ChangeStatus` (`task.changestatus`), role/object/tenant scope,
++  session validation, lifecycle restrictions, If-Match, stable error codes,
++  durable idempotency and transactional concurrency checks.
++- Increment the version once and write the existing `task.change_status`
++  audit, `TaskStatusChanged` event/history projection and realtime outbox
++  atomically with the task and idempotent response.
++- Reason remains optional under the existing request schema; do not introduce
++  reason storage, a comment prerequisite, new DTOs, fields or migrations.
++- Do not add return notifications. Preserve the current notification projector.
++- Preserve every other allowed/forbidden transition and completion rule.
++- No WPF source or UI changes; a dedicated return UI is a later task.
++
++The approval resolves OQ-14.1-01 for this server increment. Other audit gaps
++(history DTO alignment, terminal recovery, reason display, notifications and
++reviewer identity policy) remain outside its scope.
+diff --git a/work/production/src/Task.Api/Tasks/TaskEndpoints.cs b/work/production/src/Task.Api/Tasks/TaskEndpoints.cs
+index 765a31a..c19f453 100644
+--- a/work/production/src/Task.Api/Tasks/TaskEndpoints.cs
++++ b/work/production/src/Task.Api/Tasks/TaskEndpoints.cs
+@@ -201,6 +201,10 @@ internal static partial class TaskEndpoints
+                     aggregate.Metadata.Id));
+             return await WriteCommandResultAsync(context, await service.ExecuteAsync(command, cancellationToken));
+         }
++        catch (TaskWriteSessionException exception)
++        {
++            return await WriteSessionRejectedAsync(context, exception.State);
++        }
+         catch (OperationCanceledException)
+         {
+             throw;
+@@ -702,6 +706,10 @@ internal static partial class TaskEndpoints
+                 context,
+                 await service.ExecuteAsync(preparation.Command, cancellationToken));
+         }
++        catch (TaskWriteSessionException exception)
++        {
++            return await WriteSessionRejectedAsync(context, exception.State);
++        }
+         catch (TaskUpdateConflictException conflict)
+         {
+             return await WriteProblemAsync(
+@@ -901,6 +909,10 @@ internal static partial class TaskEndpoints
+                     aggregate.Metadata.Id));
+             return await WriteCommandResultAsync(context, await service.ExecuteAsync(command, cancellationToken));
+         }
++        catch (TaskWriteSessionException exception)
++        {
++            return await WriteSessionRejectedAsync(context, exception.State);
++        }
+         catch (TaskStatusTransitionConflictException conflict)
+         {
+             return await WriteProblemAsync(
+@@ -938,6 +950,13 @@ internal static partial class TaskEndpoints
+         }
+     }
+ 
++    private static Task<IResult> WriteSessionRejectedAsync(HttpContext context, SessionRequestState state) => state switch
++    {
++        SessionRequestState.SessionRevoked => WriteProblemAsync(context, 401, "SESSION_REVOKED", "The session was revoked.", false),
++        SessionRequestState.AccountBlocked => WriteProblemAsync(context, 423, "ACCOUNT_BLOCKED", "The account is blocked.", false),
++        _ => WriteProblemAsync(context, 401, "SESSION_EXPIRED", "The session has expired.", true),
++    };
++
+     private static readonly HashSet<string> AllowedTransitionProperties = new(StringComparer.Ordinal)
+     {
+         "targetStatus", "reason",
+diff --git a/work/production/src/Task.Application/TaskCreateCommandService.cs b/work/production/src/Task.Application/TaskCreateCommandService.cs
+index 02d508b..f2ac04b 100644
+--- a/work/production/src/Task.Application/TaskCreateCommandService.cs
++++ b/work/production/src/Task.Application/TaskCreateCommandService.cs
+@@ -92,7 +92,11 @@ public sealed class TaskCreateCommandService
+                     TaskSchedule.Create(model.StartAtUtc, model.DeadlineAtUtc), model.Content);
+                 return new TaskWriteMutationResult(aggregate, createHttpResult(aggregate));
+             })
+-        { RevalidatePermissions = true };
++        {
++            RevalidatePermissions = true,
++            ExpectedCredentialVersion = context.CredentialVersion,
++            ExpectedAuthorizationScopeVersion = context.AuthorizationScopeVersion,
++        };
+     }
+ 
+     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(
+diff --git a/work/production/src/Task.Application/TaskUpdateCommandService.cs b/work/production/src/Task.Application/TaskUpdateCommandService.cs
+index 641c64d..c70c859 100644
+--- a/work/production/src/Task.Application/TaskUpdateCommandService.cs
++++ b/work/production/src/Task.Application/TaskUpdateCommandService.cs
+@@ -101,7 +101,11 @@ public sealed class TaskUpdateCommandService
+                     model.DeadlineAt, currentTask.Content.Apply(model.CardPatch));
+                 return new TaskWriteMutationResult(updated, createHttpResult(updated), changedFields);
+             })
+-        { RevalidatePermissions = true };
++        {
++            RevalidatePermissions = true,
++            ExpectedCredentialVersion = context.CredentialVersion,
++            ExpectedAuthorizationScopeVersion = context.AuthorizationScopeVersion,
++        };
+ 
+         return new TaskUpdatePreparation(command);
+     }
+@@ -337,7 +341,11 @@ public sealed class TaskStatusTransitionCommandService
+                 });
+                 return new TaskWriteMutationResult(updated, createHttpResult(updated), SafePayloadJson: payload);
+             })
+-        { RevalidatePermissions = true };
++        {
++            RevalidatePermissions = true,
++            ExpectedCredentialVersion = context.CredentialVersion,
++            ExpectedAuthorizationScopeVersion = context.AuthorizationScopeVersion,
++        };
+     }
+ 
+     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(
+@@ -352,6 +360,7 @@ public sealed class TaskStatusTransitionCommandService
+         DateTimeOffset now) => (task.WorkStatus, target) switch
+         {
+             (TaskWorkStatus.New, TaskWorkStatus.InProgress) => task.Start(actorId, now),
++            (TaskWorkStatus.Review, TaskWorkStatus.InProgress) => task.ReturnForRework(actorId, now),
+             (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => task.SubmitForReview(actorId, now),
+             (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review, TaskWorkStatus.Completed) =>
+                 task.Complete(actorId, now),
+diff --git a/work/production/src/Task.Application/TaskWriteCommand.cs b/work/production/src/Task.Application/TaskWriteCommand.cs
+index bd0f573..8f463a7 100644
+--- a/work/production/src/Task.Application/TaskWriteCommand.cs
++++ b/work/production/src/Task.Application/TaskWriteCommand.cs
+@@ -1,5 +1,6 @@
+ using System.Security.Cryptography;
+ using System.Text.Json;
++using Task.Application.Security;
+ using Task.Domain;
+ 
+ namespace Task.Application;
+@@ -88,6 +89,14 @@ public sealed class TaskWriteCommand
+     /// <summary>Aggregate mutation invoked only after idempotency acquisition.</summary>
+     public TaskWriteMutation Mutation { get; }
+     public bool RevalidatePermissions { get; init; }
++    public long? ExpectedCredentialVersion { get; init; }
++    public long? ExpectedAuthorizationScopeVersion { get; init; }
++}
++
++/// <summary>The authenticated session became invalid before the write transaction.</summary>
++public sealed class TaskWriteSessionException(SessionRequestState state) : Exception("The task write session is no longer active.")
++{
++    public SessionRequestState State { get; } = state;
+ }
+ 
+ /// <summary>Changes a loaded Task and produces the HTTP result to persist before commit.</summary>
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml b/work/production/src/Task.Desktop/MainWindow.xaml
+index 7a7cd84..0c37d35 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml
++++ b/work/production/src/Task.Desktop/MainWindow.xaml
+@@ -614,14 +614,25 @@
+                     </StackPanel>
+                 </Border>
+ 
+-                <Grid Grid.Row="3">
++                <ScrollViewer x:Name="TasksContentViewport" Grid.Row="3"
++                              Visibility="{Binding HasItems, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
++                              VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
++                <Grid x:Name="TasksContentGrid" Height="{Binding ViewportHeight, ElementName=TasksContentViewport}">
+                     <Grid.Style>
+                         <Style TargetType="Grid">
+                             <Setter Property="Visibility" Value="Collapsed" />
++                            <Setter Property="MinHeight" Value="0" />
+                             <Style.Triggers>
+                                 <DataTrigger Binding="{Binding HasItems}" Value="True">
+                                     <Setter Property="Visibility" Value="Visible" />
+                                 </DataTrigger>
++                                <MultiDataTrigger>
++                                    <MultiDataTrigger.Conditions>
++                                        <Condition Binding="{Binding IsExpanded, ElementName=TaskInspectorExpander}" Value="True" />
++                                        <Condition Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1320}" Value="False" />
++                                    </MultiDataTrigger.Conditions>
++                                    <Setter Property="MinHeight" Value="360" />
++                                </MultiDataTrigger>
+                             </Style.Triggers>
+                         </Style>
+                     </Grid.Style>
+@@ -898,6 +909,11 @@
+                                                     AutomationProperties.Name="Начать задачу" AutomationProperties.AutomationId="StartTaskButton" Margin="0,0,8,8">
+                                                 <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding DataContext.Tasks.CanStart, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Button.Style>
+                                             </Button>
++                                            <Button Content="Вернуть на доработку" CommandParameter="InProgress"
++                                                    Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
++                                                    AutomationProperties.Name="Вернуть на доработку" AutomationProperties.AutomationId="ReturnForReworkButton" Margin="0,0,8,8">
++                                                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding DataContext.Tasks.CanReturnForRework, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Button.Style>
++                                            </Button>
+                                             <Button Content="На проверку" CommandParameter="Review"
+                                                     Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     AutomationProperties.Name="Отправить задачу на проверку" AutomationProperties.AutomationId="ReviewTaskButton" Margin="0,0,8,8">
+@@ -924,16 +940,18 @@
+                                             </Border.Style>
+                                             <StackPanel>
+                                                 <TextBlock Text="{Binding DataContext.Tasks.PendingTransitionText, RelativeSource={RelativeSource AncestorType=Window}}" FontWeight="SemiBold" TextWrapping="Wrap" />
+-                                                <TextBlock Text="Причина (необязательно)" Margin="0,10,0,4" />
+-                                                <TextBox Text="{Binding DataContext.Tasks.TransitionReason, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
+-                                                         MaxLength="2000" AcceptsReturn="True" MinHeight="64"
+-                                                         Style="{StaticResource Task.Input.Text}"
+-                                                         AutomationProperties.Name="Причина смены статуса" AutomationProperties.AutomationId="TransitionReasonTextBox" />
+-                                                <TextBlock Text="{Binding DataContext.Tasks.TransitionReasonError, RelativeSource={RelativeSource AncestorType=Window}}"
+-                                                           Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
+-                                                           AutomationProperties.LiveSetting="Assertive" />
++                                                <StackPanel Visibility="{Binding DataContext.Tasks.ShowTransitionReason, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
++                                                    <TextBlock Text="Причина (необязательно)" Margin="0,10,0,4" />
++                                                    <TextBox Text="{Binding DataContext.Tasks.TransitionReason, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
++                                                             MaxLength="2000" AcceptsReturn="True" MinHeight="64"
++                                                             Style="{StaticResource Task.Input.Text}"
++                                                             AutomationProperties.Name="Причина смены статуса" AutomationProperties.AutomationId="TransitionReasonTextBox" />
++                                                    <TextBlock Text="{Binding DataContext.Tasks.TransitionReasonError, RelativeSource={RelativeSource AncestorType=Window}}"
++                                                               Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
++                                                               AutomationProperties.LiveSetting="Assertive" />
++                                                </StackPanel>
+                                                 <WrapPanel Margin="0,10,0,0">
+-                                                    <Button Content="Подтвердить" Style="{StaticResource Task.Button.Primary}"
++                                                    <Button Content="{Binding DataContext.Tasks.TransitionConfirmationLabel, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Primary}"
+                                                             Command="{Binding DataContext.Tasks.ConfirmTransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                             AutomationProperties.Name="Подтвердить смену статуса" AutomationProperties.AutomationId="ConfirmTransitionButton" Margin="0,0,8,0" />
+                                                     <Button Content="Назад" Style="{StaticResource Task.Button.Secondary}"
+@@ -949,6 +967,7 @@
+                         </Border>
+                     </Expander>
+                 </Grid>
++                </ScrollViewer>
+ 
+                 <Border Grid.Row="3"
+                         AutomationProperties.Name="По выбранным фильтрам задач нет">
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml.cs b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+index e8e9095..90fa4a0 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml.cs
++++ b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+@@ -16,6 +16,7 @@ public partial class MainWindow : Window
+     private bool _modeTransitionClose;
+     public event Action? SwitchModeRequested;
+     private FrameworkElement? _overlayReturnFocus;
++    private FrameworkElement? _transitionReturnFocus;
+     private readonly Dictionary<Guid, IInputElement?> _completionReturnFocus = [];
+     private readonly MainWindowViewModel _viewModel;
+ 
+@@ -154,8 +155,41 @@ public partial class MainWindow : Window
+ 
+     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
+     {
++        if (e.PropertyName == nameof(TasksViewModel.IsTransitionConfirmationVisible)
++            && sender is TasksViewModel tasks)
++        {
++            if (tasks.IsTransitionConfirmationVisible && TaskDetailsArea.IsKeyboardFocusWithin)
++            {
++                _transitionReturnFocus = Keyboard.FocusedElement as FrameworkElement;
++                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
++                {
++                    if (tasks.IsActive && tasks.IsTransitionConfirmationVisible
++                        && TaskDetailsArea.IsVisible && TaskDetailsArea.IsKeyboardFocusWithin)
++                        FocusAutomationTarget(TaskDetailsArea, "ConfirmTransitionButton");
++                });
++            }
++            else if (!tasks.IsTransitionConfirmationVisible && _transitionReturnFocus is { } origin)
++            {
++                _transitionReturnFocus = null;
++                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
++                {
++                    if (!tasks.IsActive || tasks.IsTransitionConfirmationVisible || tasks.Editor is not null
++                        || !TaskDetailsArea.IsVisible || !TaskDetailsArea.IsKeyboardFocusWithin) return;
++                    // The originating action may disappear after a status/filter change.
++                    if (origin.IsVisible && origin.IsEnabled) { origin.BringIntoView(); origin.Focus(); }
++                    else
++                    {
++                        if (TasksList.SelectedItem is { } selected) TasksList.ScrollIntoView(selected);
++                        TasksList.Focus();
++                    }
++                });
++            }
++        }
+         if (e.PropertyName == nameof(TasksViewModel.IsActive) && sender is TasksViewModel { IsActive: false })
++        {
+             _completionReturnFocus.Clear();
++            _transitionReturnFocus = null;
++        }
+         if (e.PropertyName == nameof(TasksViewModel.Editor) && sender is TasksViewModel { Editor: null })
+             Dispatcher.BeginInvoke(DispatcherPriority.Input, () => { if (TasksList.IsVisible && TasksList.IsEnabled) TasksList.Focus(); });
+         if (e.PropertyName != nameof(TasksViewModel.Editor)
+@@ -279,8 +313,12 @@ public partial class MainWindow : Window
+         () => FocusAutomationTarget(ContentRegion, "InboxCaptureTextBox"));
+     private static bool FocusAutomationTarget(DependencyObject root, string id)
+     {
+-        if (root is UIElement element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == id)
++        if (root is FrameworkElement element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == id)
++        {
++            if (!element.IsVisible || !element.IsEnabled) return false;
++            element.BringIntoView();
+             return element.Focus();
++        }
+         for (var index = 0; index < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); index++)
+             if (FocusAutomationTarget(System.Windows.Media.VisualTreeHelper.GetChild(root, index), id)) return true;
+         return false;
+diff --git a/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs b/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs
+index 74c501d..b0e9bcd 100644
+--- a/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs
++++ b/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs
+@@ -372,6 +372,8 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
+                     : new DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse(),
+             AuthenticatedGetResult.AuthenticationFailure =>
+                 new DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure(),
++            AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Locked } =>
++                new DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure(),
+             AuthenticatedGetResult.ServerUnavailable =>
+                 new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable(),
+             AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Forbidden } =>
+@@ -592,6 +594,8 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
+         {
+             AuthenticatedGetResult.AuthenticationFailure =>
+                 new DesktopTasksApiResult<T>.AuthenticationFailure(),
++            AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Locked } =>
++                new DesktopTasksApiResult<T>.AuthenticationFailure(),
+             AuthenticatedGetResult.ServerUnavailable =>
+                 new DesktopTasksApiResult<T>.ServerUnavailable(),
+             AuthenticatedGetResult.MalformedResponse =>
+diff --git a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+index 7c0ceac..cf47ae4 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+@@ -398,8 +398,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             CanBeginTransition);
+         ConfirmTransitionCommand = new AsyncCommand(
+             async (_, token) => await ConfirmTransitionAsync(token).ConfigureAwait(true),
+-            _ => CanChangeStatus && PendingTransition.HasValue && _transitionRetryAvailable
+-                && !IsMutationBusy && TransitionReason.Length <= 2000);
++            _ => CanConfirmTransition);
+         CancelTransitionCommand = new AsyncCommand(
+             (_, _) => { ClearTransition(); return global::System.Threading.Tasks.Task.CompletedTask; },
+             _ => PendingTransition.HasValue && !IsMutationBusy);
+@@ -603,7 +602,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         : "Создать задачу";
+     public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled }
+         && (SelectedDetails?.Id != SelectedItem.Id || SelectedDetails.Source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)) && !IsMutationBusy;
+-    public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
++    public bool CanStart => SelectedItem?.Source.Status == DesktopTaskStatus.New
++        && CanTransitionTo(DesktopTaskStatus.InProgress);
++    public bool CanReturnForRework => SelectedItem?.Source.Status == DesktopTaskStatus.Review
++        && CanTransitionTo(DesktopTaskStatus.InProgress);
+     public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
+     public bool CanComplete => CanTransitionTo(DesktopTaskStatus.Completed);
+     public bool CanCancel => CanTransitionTo(DesktopTaskStatus.Cancelled);
+@@ -617,14 +619,23 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             {
+                 OnPropertyChanged(nameof(IsTransitionConfirmationVisible));
+                 OnPropertyChanged(nameof(PendingTransitionText));
++                OnPropertyChanged(nameof(IsReturnForReworkConfirmation));
++                OnPropertyChanged(nameof(ShowTransitionReason));
++                OnPropertyChanged(nameof(TransitionConfirmationLabel));
+                 NotifyMutationState();
+             }
+         }
+     }
+ 
+     public bool IsTransitionConfirmationVisible => PendingTransition.HasValue;
++    public bool IsReturnForReworkConfirmation => PendingTransition == DesktopTaskStatus.InProgress
++        && SelectedItem?.Source.Status == DesktopTaskStatus.Review;
++    public bool ShowTransitionReason => !IsReturnForReworkConfirmation;
++    public string TransitionConfirmationLabel => IsMutationBusy ? "Сохранение…"
++        : IsReturnForReworkConfirmation ? "Вернуть" : "Подтвердить";
+     public string PendingTransitionText => PendingTransition switch
+     {
++        DesktopTaskStatus.InProgress when IsReturnForReworkConfirmation => "Вернуть задачу на доработку?",
+         DesktopTaskStatus.InProgress => "Начать задачу?",
+         DesktopTaskStatus.Review => "Отправить задачу на проверку?",
+         DesktopTaskStatus.Completed => "Завершить задачу? Это терминальное действие.",
+@@ -892,7 +903,13 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             {
+                 Editor.SetStatus("Сервер недоступен. Черновик сохранён в форме и не будет отправлен автоматически.");
+             }
+-            if (PendingTransition.HasValue) ClearTransition();
++            // Preserve an uncertain command for an explicit retry with the same key/version.
++            // Reconnection never sends it automatically.
++            if (PendingTransition.HasValue)
++            {
++                ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите после подключения.";
++                Announcement = ScreenMessage;
++            }
+         }
+         NotifyMutationState();
+     }
+@@ -1555,8 +1572,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+     {
+         var selected = SelectedItem;
+         var target = PendingTransition;
+-        if (selected is null || !target.HasValue || !CanChangeStatus
+-            || !IsAllowedTransition(selected.Source.Status, target.Value)
++        if (selected is null || !target.HasValue || !CanConfirmTransition
+             || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+         {
+             return;
+@@ -1564,15 +1580,17 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+ 
+         var command = _pendingTransitionCommand ??= new DesktopTransitionTaskCommand(
+             selected.Id,
+-            selected.Source.Version,
++            (SelectedDetails?.Id == selected.Id ? SelectedDetails.Source.Version : selected.Source.Version),
+             target.Value,
+-            string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
++            IsReturnForReworkConfirmation || string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
+         var generation = Interlocked.Increment(ref _mutationGeneration);
+         _mutationCancellation?.Dispose();
+         _mutationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+             cancellationToken,
+             _activationCancellation?.Token ?? CancellationToken.None);
+         IsMutationBusy = true;
++        ScreenMessage = null;
++        Announcement = "Смена статуса сохраняется на сервере…";
+         try
+         {
+             var result = await _client.TransitionTaskAsync(command, _mutationCancellation.Token).ConfigureAwait(true);
+@@ -1610,17 +1628,36 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                     NotifyMutationState();
+                     break;
+                 case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
++                    ClearTransition();
+                     State = TasksScreenState.SessionEnded;
+                     ScreenMessage = "Сессия завершена. Выполните вход снова.";
+                     break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse:
+                 case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
+-                    ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите позже.";
++                    ScreenMessage = "Сервер недоступен или ответ не подтверждён. Повторите смену статуса позже.";
++                    break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.NotFound:
++                    ClearTransition();
++                    SelectedDetails = null;
++                    DetailsState = TaskDetailsState.NotFound;
++                    DetailMessage = ScreenMessage = "Задача удалена или недоступна. Обновите список.";
++                    break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition:
++                    ClearTransition();
++                    SelectedDetails = null;
++                    DetailsState = TaskDetailsState.Error;
++                    DetailMessage = ScreenMessage = "Состояние задачи изменилось. Обновите список и повторите действие.";
++                    break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
++                    ScreenMessage = validation.Message;
++                    ClearTransition();
+                     break;
+                 default:
+                     ScreenMessage = "Не удалось изменить статус задачи.";
+                     ClearTransition();
+                     break;
+             }
++            if (ScreenMessage is not null) Announcement = ScreenMessage;
+         }
+         catch (OperationCanceledException) when (_mutationCancellation.IsCancellationRequested)
+         {
+@@ -1632,17 +1669,31 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         }
+     }
+ 
++    private bool CanChangeSelectedTaskStatus => IsActive && CanChangeStatus && !IsBusy
++        && !IsMutationBusy && Editor is null && Workspace?.IsBusy != true
++        && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment)
++        && SelectedItem is not null;
++
++    private bool HasCurrentReviewDetails => DetailsState == TaskDetailsState.Loaded
++        && SelectedDetails?.Id == SelectedItem?.Id && SelectedDetails?.Source.Status == DesktopTaskStatus.Review;
++
++    private bool CanConfirmTransition => CanChangeSelectedTaskStatus && PendingTransition is { } target
++        && _transitionRetryAvailable && TransitionReason.Length <= 2000
++        && (SelectedItem!.Source.Status != DesktopTaskStatus.Review || target != DesktopTaskStatus.InProgress || HasCurrentReviewDetails)
++        && IsAllowedTransition(SelectedItem.Source.Status, target);
++
+     private bool CanBeginTransition(object? parameter) =>
+         TryReadStatus(parameter, out var status) && CanTransitionTo(status);
+ 
+     private bool CanTransitionTo(DesktopTaskStatus target)
+     {
+-        if (!IsActive || !CanChangeStatus || IsMutationBusy || PendingTransition.HasValue || SelectedItem is null)
++        if (!CanChangeSelectedTaskStatus || PendingTransition.HasValue)
+         {
+             return false;
+         }
+ 
+-        var current = SelectedItem.Source.Status;
++        var current = SelectedItem!.Source.Status;
++        if (current == DesktopTaskStatus.Review && target == DesktopTaskStatus.InProgress && !HasCurrentReviewDetails) return false;
+         if (current is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) return false;
+         return IsAllowedTransition(current, target);
+     }
+@@ -1753,6 +1804,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         OpenSavedTaskCommand?.RaiseCanExecuteChanged();
+         OnPropertyChanged(nameof(CanEdit));
+         OnPropertyChanged(nameof(CanStart));
++        OnPropertyChanged(nameof(CanReturnForRework));
++        OnPropertyChanged(nameof(TransitionConfirmationLabel));
+         OnPropertyChanged(nameof(CanSubmitForReview));
+         OnPropertyChanged(nameof(CanComplete));
+         OnPropertyChanged(nameof(CanCancel));
+diff --git a/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs b/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs
+index 3d4933b..73836bf 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs
+@@ -26,12 +26,17 @@ public sealed partial class TodayViewModel
+     public bool IsActionBusy => _isActionBusy;
+     public bool NeedsTaskReload => ShowTaskActions && (SelectedTask is null
+         || _tasksNeedingReload.Contains(SelectedItem!.Id));
+-    public bool CanStart => CanShowTransition(DesktopTaskStatus.InProgress);
++    public bool CanStart => SelectedTask?.Status == DesktopTaskStatus.New && CanShowTransition(DesktopTaskStatus.InProgress);
++    public bool CanReturnForRework => SelectedTask?.Status == DesktopTaskStatus.Review && CanShowTransition(DesktopTaskStatus.InProgress);
+     public bool CanSubmitForReview => CanShowTransition(DesktopTaskStatus.Review);
+     public bool CanComplete => CanShowTransition(DesktopTaskStatus.Completed);
+     public bool CanCancel => CanShowTransition(DesktopTaskStatus.Cancelled);
+     public bool IsTransitionConfirmationVisible => _confirmation?.Id == SelectedItem?.Id && _confirmation is not null;
+-    public string PendingTransitionText => _confirmation?.TargetStatus == DesktopTaskStatus.Completed
++    private bool IsReturnForReworkConfirmation => _confirmation?.TargetStatus == DesktopTaskStatus.InProgress
++        && SelectedTask?.Status == DesktopTaskStatus.Review;
++    public string TransitionConfirmationLabel => IsReturnForReworkConfirmation ? "Вернуть" : "Подтвердить";
++    public string PendingTransitionText => IsReturnForReworkConfirmation ? "Вернуть задачу на доработку?"
++        : _confirmation?.TargetStatus == DesktopTaskStatus.Completed
+         ? "Завершить задачу? Действие нельзя отменить."
+         : "Отменить задачу? Действие нельзя отменить.";
+     public string? ActionMessage { get => _actionMessage; private set => SetProperty(ref _actionMessage, value); }
+@@ -62,7 +67,8 @@ public sealed partial class TodayViewModel
+             var command = _unconfirmedCommands.GetValueOrDefault(task.Id)
+                 ?? new DesktopTransitionTaskCommand(task.Id, task.Version, target);
+             ActionMessage = null;
+-            if (target is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)
++            if (target is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled
++                || task.Status == DesktopTaskStatus.Review && target == DesktopTaskStatus.InProgress)
+             {
+                 _confirmation = command;
+                 NotifyQuickActions();
+@@ -101,9 +107,9 @@ public sealed partial class TodayViewModel
+     private void NotifyQuickActions()
+     {
+         NotifyPlanning();
+-        foreach (var property in new[] { nameof(ShowTaskActions), nameof(NeedsTaskReload), nameof(CanStart),
++        foreach (var property in new[] { nameof(ShowTaskActions), nameof(NeedsTaskReload), nameof(CanStart), nameof(CanReturnForRework),
+             nameof(CanSubmitForReview), nameof(CanComplete), nameof(CanCancel),
+-            nameof(IsTransitionConfirmationVisible), nameof(PendingTransitionText) }) OnPropertyChanged(property);
++            nameof(IsTransitionConfirmationVisible), nameof(PendingTransitionText), nameof(TransitionConfirmationLabel) }) OnPropertyChanged(property);
+         TransitionCommand?.RaiseCanExecuteChanged();
+         ConfirmTransitionCommand?.RaiseCanExecuteChanged();
+         CancelTransitionCommand?.RaiseCanExecuteChanged();
+diff --git a/work/production/src/Task.Desktop/Views/TodayView.xaml b/work/production/src/Task.Desktop/Views/TodayView.xaml
+index d70f7e9..48d6656 100644
+--- a/work/production/src/Task.Desktop/Views/TodayView.xaml
++++ b/work/production/src/Task.Desktop/Views/TodayView.xaml
+@@ -588,6 +588,10 @@
+                                             Visibility="{Binding CanStart, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                             Command="{Binding TransitionCommand}" CommandParameter="InProgress"
+                                             AutomationProperties.Name="Начать работу" AutomationProperties.AutomationId="TodayStartButton" />
++                                    <Button Content="Вернуть на доработку" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"
++                                            Visibility="{Binding CanReturnForRework, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
++                                            Command="{Binding TransitionCommand}" CommandParameter="InProgress"
++                                            AutomationProperties.Name="Вернуть на доработку" AutomationProperties.AutomationId="TodayReturnForReworkButton" />
+                                     <Button Content="Отправить на проверку" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"
+                                             Visibility="{Binding CanSubmitForReview, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                             Command="{Binding TransitionCommand}" CommandParameter="Review"
+@@ -604,7 +608,7 @@
+                                 <StackPanel Visibility="{Binding IsTransitionConfirmationVisible, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                     <TextBlock Text="{Binding PendingTransitionText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+                                     <WrapPanel Margin="0,8,0,0">
+-                                        <Button x:Name="TodayConfirmTransitionButton" Content="Подтвердить" Command="{Binding ConfirmTransitionCommand}"
++                                        <Button x:Name="TodayConfirmTransitionButton" Content="{Binding TransitionConfirmationLabel}" Command="{Binding ConfirmTransitionCommand}"
+                                                 Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"
+                                                 AutomationProperties.Name="Подтвердить изменение статуса" AutomationProperties.AutomationId="TodayConfirmTransitionButton" />
+                                         <Button Content="Вернуться" Command="{Binding CancelTransitionCommand}"
+diff --git a/work/production/src/Task.Domain/TaskAggregate.cs b/work/production/src/Task.Domain/TaskAggregate.cs
+index fb1d771..2422743 100644
+--- a/work/production/src/Task.Domain/TaskAggregate.cs
++++ b/work/production/src/Task.Domain/TaskAggregate.cs
+@@ -139,7 +139,7 @@ public sealed class TaskAggregate
+     public TaskAggregate Start(Guid actorId, DateTimeOffset occurredAtUtc)
+     {
+         EnsureActive("An archived or trashed task must be restored before it can be started.");
+-        if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.InProgress))
++        if (WorkStatus != TaskWorkStatus.New)
+         {
+             throw new InvalidOperationException("Only a new task can be started.");
+         }
+@@ -154,6 +154,24 @@ public sealed class TaskAggregate
+             Schedule, Content);
+     }
+ 
++    public TaskAggregate ReturnForRework(Guid actorId, DateTimeOffset occurredAtUtc)
++    {
++        EnsureActive("An archived or trashed task must be restored before it can be returned for rework.");
++        if (WorkStatus != TaskWorkStatus.Review)
++        {
++            throw new InvalidOperationException("Only a task under review can be returned for rework.");
++        }
++
++        return new TaskAggregate(
++            Metadata.RecordVisibleChange(actorId, occurredAtUtc),
++            Title,
++            TaskWorkStatus.InProgress,
++            CompletedAtUtc,
++            CompletedBy,
++            Priority,
++            Schedule, Content);
++    }
++
+     public TaskAggregate SubmitForReview(Guid actorId, DateTimeOffset occurredAtUtc)
+     {
+         EnsureActive("An archived or trashed task must be restored before it can be submitted for review.");
+diff --git a/work/production/src/Task.Domain/TaskRules.cs b/work/production/src/Task.Domain/TaskRules.cs
+index 10722ff..09454a9 100644
+--- a/work/production/src/Task.Domain/TaskRules.cs
++++ b/work/production/src/Task.Domain/TaskRules.cs
+@@ -26,7 +26,7 @@ public static class TaskRules
+ 
+     public static bool CanTransition(TaskWorkStatus current, TaskWorkStatus target) => (current, target) switch
+     {
+-        (TaskWorkStatus.New, TaskWorkStatus.InProgress) => true,
++        (TaskWorkStatus.New or TaskWorkStatus.Review, TaskWorkStatus.InProgress) => true,
+         (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => true,
+         (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review,
+             TaskWorkStatus.Completed or TaskWorkStatus.Cancelled) => true,
+diff --git a/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs b/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs
+index 425aeef..a1b3263 100644
+--- a/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs
++++ b/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs
+@@ -2,6 +2,7 @@ using System.Text.Json;
+ using Npgsql;
+ using NpgsqlTypes;
+ using Task.Application;
++using Task.Application.Security;
+ 
+ namespace Task.Infrastructure.Persistence;
+ 
+@@ -36,6 +37,9 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
+         {
+             using (var scopeLock = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtextextended('task-product-api:' || $1::text,0));", connection, transaction))
+             { scopeLock.Parameters.AddWithValue(command.OrganizationId); await scopeLock.ExecuteNonQueryAsync(cancellationToken); }
++            // A request can wait here after HTTP authentication. Recheck before any
++            // idempotency result, including replay, and lock the session until commit.
++            await ValidateActorSessionAsync(connection, transaction, command, cancellationToken);
+             if (command.RevalidatePermissions)
+             {
+                 using var access = new NpgsqlCommand("SELECT iam.permission_available($1,$2,$3);", connection, transaction);
+@@ -91,7 +95,6 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
+                 throw new InvalidOperationException("PostgreSQL returned an unknown idempotency disposition.");
+             }
+ 
+-            await ValidateActorSessionAsync(connection, transaction, command, cancellationToken);
+             cancellationToken.ThrowIfCancellationRequested();
+ 
+             var current = PostgresTaskAggregateStore.Get(
+@@ -314,21 +317,40 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
+ 
+         await using var check = new NpgsqlCommand(
+             """
+-            SELECT EXISTS (
+-                SELECT 1
+-                FROM iam.sessions
+-                WHERE id = $1 AND organization_id = $2 AND user_account_id = $3
+-            );
++            SELECT CASE
++                WHEN s.revoked_at IS NOT NULL THEN 'revoked'
++                WHEN s.idle_expires_at <= clock_timestamp()
++                    OR s.absolute_expires_at <= clock_timestamp() THEN 'expired'
++                WHEN d.revoked_at IS NOT NULL THEN 'revoked'
++                WHEN ua.account_status <> 'active' THEN 'blocked'
++                WHEN ua.must_change_password AND ua.temporary_password_expires_at <= clock_timestamp() THEN 'expired'
++                WHEN $4::bigint IS NOT NULL AND ua.credential_version <> $4 THEN 'version_mismatch'
++                WHEN $5::bigint IS NOT NULL AND (av.version IS NULL OR av.version <> $5) THEN 'version_mismatch'
++                ELSE 'active'
++            END
++            FROM iam.sessions s
++            JOIN iam.user_accounts ua ON ua.id=s.user_account_id AND ua.organization_id=s.organization_id
++            LEFT JOIN iam.devices d ON d.id=s.device_id AND d.organization_id=s.organization_id
++            LEFT JOIN iam.authorization_scope_versions av ON av.user_account_id=ua.id
++            WHERE s.id=$1 AND s.organization_id=$2 AND s.user_account_id=$3
++            FOR SHARE OF s, ua;
+             """,
+             connection,
+             transaction);
+         check.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.ActorSessionId.Value });
+         check.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.OrganizationId });
+         check.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.ActorUserId });
+-        if (!(bool)(await check.ExecuteScalarAsync(cancellationToken) ?? false))
++        check.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Bigint, Value = (object?)command.ExpectedCredentialVersion ?? DBNull.Value });
++        check.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Bigint, Value = (object?)command.ExpectedAuthorizationScopeVersion ?? DBNull.Value });
++        var state = await check.ExecuteScalarAsync(cancellationToken) switch
+         {
+-            throw new InvalidOperationException("Actor session is outside the command tenant or user scope.");
+-        }
++            "active" => SessionRequestState.Active,
++            "revoked" => SessionRequestState.SessionRevoked,
++            "blocked" => SessionRequestState.AccountBlocked,
++            "version_mismatch" => SessionRequestState.VersionMismatch,
++            _ => SessionRequestState.SessionExpired,
++        };
++        if (state != SessionRequestState.Active) throw new TaskWriteSessionException(state);
+     }
+ 
+     private static async global::System.Threading.Tasks.Task AppendAuditAsync(
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
+index dd597ec..f03ae7f 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
+@@ -361,8 +361,10 @@ public sealed class DesktopTasksApiClientTests
+         Assert.Equal(1, fixture.RefreshRequests);
+     }
+ 
+-    [Fact]
+-    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata()
++    [Theory]
++    [InlineData(DesktopTaskStatus.Completed, "  done  ", "{\"targetStatus\":\"completed\",\"reason\":\"done\"}")]
++    [InlineData(DesktopTaskStatus.InProgress, null, "{\"targetStatus\":\"in_progress\",\"reason\":null}")]
++    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata(DesktopTaskStatus target, string? reason, string expectedTransitionBody)
+     {
+         var responses = new Queue<HttpResponseMessage>(
+         [
+@@ -380,7 +382,7 @@ public sealed class DesktopTasksApiClientTests
+             DesktopTaskField<DesktopTaskPriority>.From(DesktopTaskPriority.Critical),
+             DesktopTaskField<DateTimeOffset?>.From(null),
+             DesktopTaskField<DateTimeOffset?>.From(DateTimeOffset.Parse("2026-08-28T10:00:00Z")));
+-        var transition = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.Completed, "  done  ");
++        var transition = new DesktopTransitionTaskCommand(TaskId, 6, target, reason);
+ 
+         var created = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
+             await fixture.Client.CreateTaskAsync(create));
+@@ -402,7 +404,9 @@ public sealed class DesktopTasksApiClientTests
+         Assert.Equal("\"v6\"", requests[1].IfMatch);
+         Assert.Equal("{\"title\":\"Updated\",\"priority\":\"critical\",\"startAtUtc\":null,\"deadlineAt\":\"2026-08-28T10:00:00Z\"}", requests[1].Body);
+         Assert.Equal($"/api/v1/tasks/{TaskId:D}/transition", requests[2].Uri.AbsolutePath);
+-        Assert.Equal("{\"targetStatus\":\"completed\",\"reason\":\"done\"}", requests[2].Body);
++        Assert.Equal(expectedTransitionBody, requests[2].Body);
++        Assert.Equal(HttpMethod.Post, requests[2].Method);
++        Assert.Equal("\"v6\"", requests[2].IfMatch);
+         Assert.All(requests, request => Assert.True(Guid.TryParseExact(request.IdempotencyKey, "D", out _)));
+         Assert.All(requests, request => Assert.Equal("application/json", request.ContentType));
+         Assert.All(requests, request => Assert.Equal("utf-8", request.CharSet));
+@@ -411,6 +415,50 @@ public sealed class DesktopTasksApiClientTests
+         Assert.Equal(3, requests.Select(request => request.IdempotencyKey).Distinct().Count());
+     }
+ 
++    [Fact]
++    public async global::System.Threading.Tasks.Task Return_BlockedAccountEndsWriteAccess()
++    {
++        await using var fixture = await Fixture.CreateAsync((_, _) =>
++            global::System.Threading.Tasks.Task.FromResult(ProblemResponse(HttpStatusCode.Locked, "ACCOUNT_BLOCKED")));
++        var command = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.InProgress, null);
++        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure>(await fixture.Client.TransitionTaskAsync(command));
++        Assert.Single(fixture.TaskRequests);
++        Assert.Equal(0, fixture.RefreshRequests);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async global::System.Threading.Tasks.Task Return_RetryPreservesVersionBodyAndIdempotencyKey(bool expiredSession)
++    {
++        var attempt = 0;
++        await using var fixture = await Fixture.CreateAsync((_, _) =>
++        {
++            if (++attempt == 1)
++            {
++                if (!expiredSession) throw new HttpRequestException("Connection lost after request was sent.");
++                return global::System.Threading.Tasks.Task.FromResult(ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED"));
++            }
++            return global::System.Threading.Tasks.Task.FromResult(WriteSuccess(HttpStatusCode.OK, replayed: true));
++        });
++        var command = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.InProgress, null);
++        var result = await fixture.Client.TransitionTaskAsync(command);
++        if (!expiredSession)
++        {
++            Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable>(result);
++            Assert.Single(fixture.TaskRequests);
++            result = await fixture.Client.TransitionTaskAsync(command);
++        }
++        Assert.True(Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(result).WasReplayed);
++        var requests = fixture.TaskRequests.ToArray();
++        Assert.Equal(2, requests.Length);
++        Assert.All(requests, r => Assert.Equal("\"v6\"", r.IfMatch));
++        Assert.All(requests, r => Assert.Equal(command.IdempotencyKey, r.IdempotencyKey));
++        Assert.Equal(requests[0].BodyBytes, requests[1].BodyBytes);
++        Assert.Equal("{\"targetStatus\":\"in_progress\",\"reason\":null}", requests[0].Body);
++        Assert.Equal(expiredSession ? 1 : 0, fixture.RefreshRequests);
++    }
++
+     [Fact]
+     public async global::System.Threading.Tasks.Task Write401_ReusesBodyHeadersAndKey_ForExactlyOneRetry()
+     {
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs
+new file mode 100644
+index 0000000..2ffb319
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs
+@@ -0,0 +1,258 @@
++using System.Net.Http;
++using System.Text.Json.Nodes;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed partial class TasksViewModelTests
++{
++    [Theory]
++    [InlineData(DesktopTaskStatus.New, false, true)]
++    [InlineData(DesktopTaskStatus.InProgress, false, false)]
++    [InlineData(DesktopTaskStatus.Review, true, false)]
++    [InlineData(DesktopTaskStatus.Completed, false, false)]
++    [InlineData(DesktopTaskStatus.Cancelled, false, false)]
++    public async System.Threading.Tasks.Task Return_EligibilityUsesStatusAndLoadedDetails(DesktopTaskStatus status, bool canReturn, bool canStart)
++    {
++        var source = CreateTask(status: status);
++        var client = new ReturnClient(source);
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        Assert.Equal(canReturn, vm.CanReturnForRework);
++        Assert.Equal(canStart, vm.CanStart);
++        vm.SelectedItem = null;
++        Assert.False(vm.CanReturnForRework);
++    }
++
++    [Theory]
++    [InlineData("permission")]
++    [InlineData("readonly")]
++    [InlineData("offline")]
++    [InlineData("editor")]
++    [InlineData("comment")]
++    [InlineData("notfound")]
++    public async System.Threading.Tasks.Task Return_AccessGuardsBlockSending(string guard)
++    {
++        var client = new ReturnClient(CreateTask(status: DesktopTaskStatus.Review));
++        if (guard == "notfound") client.Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.NotFound();
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        switch (guard)
++        {
++            case "permission": vm.UpdateCapabilities(["Task.Read", "Task.Update"]); break;
++            case "readonly": vm.UpdateSessionState(false); break;
++            case "offline": vm.UpdateConnectivity(false); break;
++            case "editor": await vm.EditTaskCommand.ExecuteAsync(); break;
++            case "comment": vm.Workspace!.Comment = "Несохранённый текст"; break;
++        }
++        Assert.False(vm.CanReturnForRework);
++        Assert.False(await vm.TransitionCommand.ExecuteAsync("InProgress"));
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Equal(0, client.Inner.TransitionCallCount);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_WaitsForServerSingleFlightAndRefreshesCardListHistory()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review) with { Version = 7 };
++        var returned = source with { Status = DesktopTaskStatus.InProgress, Version = 8 };
++        var client = new ReturnClient(source);
++        var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++        client.Inner.TransitionHandler = _ => release.Task;
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        var reads = client.WorkspaceReads;
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        Assert.Equal("Вернуть задачу на доработку?", vm.PendingTransitionText);
++        Assert.Equal("Вернуть", vm.TransitionConfirmationLabel);
++        Assert.False(vm.ShowTransitionReason);
++        var request = vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.True(vm.IsMutationBusy);
++        Assert.Equal("Сохранение…", vm.TransitionConfirmationLabel);
++        Assert.False(await vm.ConfirmTransitionCommand.ExecuteAsync());
++        Assert.False(vm.CanReturnForRework);
++        Assert.Equal(DesktopTaskStatus.Review, vm.SelectedDetails!.Source.Status);
++        Assert.Equal(7, client.Inner.LastTransition!.ExpectedVersion);
++        Assert.Equal(DesktopTaskStatus.InProgress, client.Inner.LastTransition.TargetStatus);
++        Assert.Null(client.Inner.LastTransition.Reason);
++        release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(returned, 8, false));
++        await request;
++        Assert.Equal(1, client.Inner.TransitionCallCount);
++        Assert.Equal(returned, Assert.Single(vm.Items).Source);
++        Assert.Equal(returned, vm.SelectedDetails!.Source);
++        Assert.True(client.WorkspaceReads > reads);
++        Assert.Single(vm.Workspace!.History);
++        Assert.Contains("В работе", vm.Announcement);
++        Assert.Null(vm.PendingTransition);
++        Assert.False(vm.CanStart);
++    }
++
++    [Theory]
++    [InlineData("forbidden")]
++    [InlineData("session")]
++    [InlineData("notfound")]
++    [InlineData("invalid")]
++    [InlineData("validation")]
++    [InlineData("server")]
++    public async System.Threading.Tasks.Task Return_FailureNeverAppliesUnconfirmedStatus(string error)
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        client.Inner.TransitionResult = error switch
++        {
++            "forbidden" => new DesktopTaskWriteResult<DesktopTaskDto>.Forbidden(),
++            "session" => new DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure(),
++            "notfound" => new DesktopTaskWriteResult<DesktopTaskDto>.NotFound(),
++            "invalid" => new DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition(),
++            "validation" => new DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure("Проверьте данные", new Dictionary<string, IReadOnlyList<string>>()),
++            _ => new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable(),
++        };
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Equal(source, Assert.Single(vm.Items).Source);
++        Assert.False(string.IsNullOrWhiteSpace(vm.ScreenMessage));
++        Assert.Equal(vm.ScreenMessage, vm.Announcement);
++        if (error is "forbidden" or "session" or "notfound" or "invalid") Assert.False(vm.CanReturnForRework);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_ConflictOffersExistingReloadWithoutOverwriting()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        client.Inner.TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict();
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.True(vm.Editor!.HasConflict);
++        Assert.True(vm.ReloadConflictCommand.CanExecute(null));
++        Assert.Equal(source, vm.SelectedItem!.Source);
++        var latest = source with { Version = 3, Status = DesktopTaskStatus.Completed };
++        client.Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(latest);
++        await vm.ReloadConflictCommand.ExecuteAsync();
++        Assert.Equal(latest, vm.SelectedDetails!.Source);
++        Assert.False(vm.CanReturnForRework);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_UncertainResultRetriesOriginalIntentAfterReconnect()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        var command = client.Inner.LastTransition;
++        vm.UpdateConnectivity(false);
++        Assert.False(vm.ConfirmTransitionCommand.CanExecute(null));
++        vm.UpdateConnectivity(true);
++        Assert.Equal(1, client.Inner.TransitionCallCount);
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Same(command, client.Inner.LastTransition);
++        Assert.Equal(2, client.Inner.TransitionCallCount);
++        Assert.Equal(source, vm.SelectedDetails!.Source);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task Return_ClosingOrChangingSelectionIgnoresLateResponse(bool deactivate)
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++        client.Inner.TransitionHandler = _ => release.Task; // Simulate a response after cancellation.
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        var request = vm.ConfirmTransitionCommand.ExecuteAsync();
++        if (deactivate) vm.Deactivate(); else vm.SelectedItem = null;
++        release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { Version = 2, Status = DesktopTaskStatus.InProgress }, 2, false));
++        await request;
++        Assert.Equal(source, Assert.Single(vm.Items).Source);
++        Assert.False(vm.IsMutationBusy);
++    }
++
++    internal sealed class ReturnClient : IDesktopTasksApiClient, IDesktopTaskWorkspaceClient
++    {
++        public FakeTasksApiClient Inner { get; } = new();
++        public int WorkspaceReads { get; private set; }
++        public bool FailWorkspace { get; set; }
++        public ReturnClient(DesktopTaskDto source, params DesktopTaskDto[] additional)
++        {
++            Inner.EnqueuePage(SucceededPage([source, .. additional]));
++            Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(source);
++        }
++        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) => Inner.GetTasksAsync(cursor, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(Guid id, CancellationToken cancellationToken = default) => Inner.GetTaskByIdAsync(id, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(DesktopCreateTaskCommand command, CancellationToken cancellationToken = default) => Inner.CreateTaskAsync(command, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default) => Inner.PatchTaskAsync(command, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync(DesktopTransitionTaskCommand command, CancellationToken cancellationToken = default) => Inner.TransitionTaskAsync(command, cancellationToken);
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetOptionsAsync(string query, CancellationToken token) => System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(new JsonObject(), 0, null));
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetWorkspaceAsync(Guid id, CancellationToken token)
++        {
++            WorkspaceReads++;
++            if (FailWorkspace) return System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(null, 0, "History unavailable"));
++            var body = new JsonObject { ["historyVisible"] = true };
++            if (Inner.TransitionCallCount > 0) body["history"] = new JsonArray(new JsonObject { ["id"] = Guid.NewGuid().ToString(), ["occurredAt"] = DateTimeOffset.UtcNow.ToString("O"), ["action"] = "TaskStatusChanged" });
++            return System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(body, 1, null));
++        }
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> WriteWorkspaceAsync(Guid id, long version, string path, HttpMethod method, JsonObject body, string key, CancellationToken token) => throw new InvalidOperationException("Return must use the transition API.");
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task Return_ReviewFilterRemovesReturnedRowWithoutStaleSelection(bool remainingRow)
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var other = source with { Id = Guid.NewGuid(), Title = "Другая задача" };
++        var returned = source with { Status = DesktopTaskStatus.InProgress, Version = source.Version + 1 };
++        var client = new ReturnClient(source, remainingRow ? [other] : []);
++        client.Inner.TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(returned, returned.Version, false);
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        vm.SelectedStatusFilter = DesktopTaskStatus.Review;
++        vm.SelectedItem = vm.Items.Single(i => i.Id == source.Id);
++        await WaitForAsync(() => vm.SelectedDetails?.Id == source.Id);
++        client.Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(other);
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.DoesNotContain(vm.Items, i => i.Id == source.Id);
++        if (remainingRow)
++        {
++            Assert.Equal(other.Id, vm.SelectedItem!.Id);
++            await WaitForAsync(() => vm.SelectedDetails?.Id == other.Id);
++        }
++        else
++        {
++            Assert.Null(vm.SelectedItem);
++            Assert.Null(vm.SelectedDetails);
++        }
++        vm.SelectedStatusFilter = null;
++        Assert.Equal(returned, vm.Items.Single(i => i.Id == source.Id).Source);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_HistoryRefreshFailureDoesNotUndoServerSuccess()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var returned = source with { Status = DesktopTaskStatus.InProgress, Version = source.Version + 1 };
++        var client = new ReturnClient(source);
++        client.Inner.TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(returned, returned.Version, false);
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        client.FailWorkspace = true;
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Equal(returned, vm.SelectedDetails!.Source);
++        Assert.Equal(returned, Assert.Single(vm.Items).Source);
++        Assert.Equal("History unavailable", vm.Workspace!.Message);
++        Assert.Null(vm.PendingTransition);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs
+new file mode 100644
+index 0000000..194e0e0
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs
+@@ -0,0 +1,157 @@
++using System.Diagnostics;
++using System.IO;
++using System.Windows;
++using System.Windows.Automation;
++using System.Windows.Automation.Peers;
++using System.Windows.Automation.Provider;
++using System.Windows.Controls;
++using System.Windows.Input;
++using System.Windows.Media;
++using System.Windows.Media.Imaging;
++using System.Windows.Threading;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed class TaskReturnUiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task NativeWpf_ReturnActionConfirmationFocusAndServerResult()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_RETURN_UI_CHILD") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWpf_ReturnActionConfirmationFocusAndServerResult));
++            start.Environment["TASK_RETURN_UI_CHILD"] = "1";
++            using var process = Process.Start(start)!;
++            var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
++            try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(55)); Assert.True(process.ExitCode == 0, await stdout + await stderr); }
++            finally { if (!process.HasExited) process.Kill(true); }
++            return;
++        }
++        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var dispatcher = Dispatcher.CurrentDispatcher;
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
++            dispatcher.BeginInvoke(async () =>
++            {
++                MainWindow? window = null;
++                try
++                {
++                    var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
++                    app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
++                    app.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
++                    foreach (var name in new[] { "IconKeyToGeometryConverter", "ShellNavigationWidthConverter", "WindowWidthAtLeastConverter", "ResponsiveGridLengthConverter", "TimelineLaneMarginConverter", "CalendarLaneWidthConverter", "CalendarLaneLeftConverter" })
++                        app.Resources["Task." + name] = Activator.CreateInstance(typeof(MainWindow).Assembly.GetType("Task.Desktop.Converters." + name)!);
++                    var source = ActionTasksClient.Source("Результат на проверке") with { Status = DesktopTaskStatus.Review, Version = 7 };
++                    var client = new TasksViewModelTests.ReturnClient(source);
++                    using var tasks = new TasksViewModel(client, ["Task.Read", "Task.ChangeStatus"]);
++                    using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
++                    shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks"); await tasks.ActivateAsync();
++                    window = new MainWindow(shell) { Left = 20, Top = 20, Width = 1100, Height = 900, ShowInTaskbar = false };
++                    window.Show(); window.Activate();
++                    ((Expander)window.FindName("TaskInspectorExpander")).IsExpanded = true;
++                    await Drain(window);
++                    var button = Find<Button>(window, "ReturnForReworkButton");
++                    Assert.True(button.IsVisible); Assert.True(button.IsEnabled); Assert.True(button.IsTabStop);
++                    Assert.Equal("Вернуть на доработку", AutomationProperties.GetName(button));
++                    Assert.False(Find<Button>(window, "StartTaskButton").IsVisible);
++                    button.BringIntoView(); Assert.True(button.Focus()); Assert.True(button.IsKeyboardFocused);
++                    Assert.NotNull(button.FocusVisualStyle);
++                    ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke(); await Drain(window);
++                    var confirm = Find<Button>(window, "ConfirmTransitionButton");
++                    Assert.Equal("Вернуть", confirm.Content);
++                    Assert.False(Find<TextBox>(window, "TransitionReasonTextBox").IsVisible);
++                    Assert.Same(confirm, Keyboard.FocusedElement);
++                    Assert.True(confirm.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
++                    Assert.Equal("Назад", Assert.IsType<Button>(Keyboard.FocusedElement).Content);
++                    ((IInvokeProvider)new ButtonAutomationPeer((Button)Keyboard.FocusedElement).GetPattern(PatternInterface.Invoke)).Invoke();
++                    await Drain(window);
++                    Assert.Same(button, Keyboard.FocusedElement);
++                    Assert.Equal(0, client.Inner.TransitionCallCount);
++                    var complete = Find<Button>(window, "CompleteTaskButton");
++                    Assert.True(complete.Focus());
++                    ((IInvokeProvider)new ButtonAutomationPeer(complete).GetPattern(PatternInterface.Invoke)).Invoke();
++                    await Drain(window);
++                    Assert.Same(confirm, Keyboard.FocusedElement);
++                    Assert.True(confirm.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
++                    ((IInvokeProvider)new ButtonAutomationPeer((Button)Keyboard.FocusedElement).GetPattern(PatternInterface.Invoke)).Invoke();
++                    await Drain(window);
++                    Assert.Same(complete, Keyboard.FocusedElement);
++                    Assert.True(button.Focus());
++                    ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
++                    await Drain(window);
++                    Assert.Same(confirm, Keyboard.FocusedElement);
++                    await Capture(window, "return-confirmation");
++                    var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++                    client.Inner.TransitionHandler = _ => release.Task;
++                    ((IInvokeProvider)new ButtonAutomationPeer(confirm).GetPattern(PatternInterface.Invoke)).Invoke(); await Drain(window);
++                    Assert.False(confirm.IsEnabled); Assert.Equal("Сохранение…", confirm.Content);
++                    Assert.Equal(DesktopTaskStatus.Review, tasks.SelectedDetails!.Source.Status);
++                    release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { Status = DesktopTaskStatus.InProgress, Version = 8 }, 8, false));
++                    await Drain(window);
++                    Assert.Equal(DesktopTaskStatus.InProgress, tasks.SelectedDetails!.Source.Status);
++                    Assert.False(button.IsVisible);
++                    Assert.Equal(AutomationLiveSetting.Assertive, AutomationProperties.GetLiveSetting(Find<TextBlock>(window, "TasksAnnouncement")));
++                    await Capture(window, "return-success");
++                    done.SetResult();
++                }
++                catch (Exception error) { done.SetException(error); }
++                finally { window?.CloseAfterModeSwitch(); dispatcher.InvokeShutdown(); }
++            });
++            Dispatcher.Run();
++        });
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        await done.Task.WaitAsync(TimeSpan.FromSeconds(45));
++        Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5))));
++    }
++    private static async System.Threading.Tasks.Task Drain(Window window) { await Dispatcher.Yield(DispatcherPriority.Background); window.UpdateLayout(); await System.Threading.Tasks.Task.Delay(100); }
++    private static T Find<T>(DependencyObject root, string id) where T : FrameworkElement => Descendants<T>(root).Single(x => AutomationProperties.GetAutomationId(x) == id);
++    private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
++    {
++        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) { var child = VisualTreeHelper.GetChild(root, i); if (child is T match) yield return match; foreach (var nested in Descendants<T>(child)) yield return nested; }
++    }
++    private static async System.Threading.Tasks.Task Capture(Window window, string name)
++    {
++        var path = Environment.GetEnvironmentVariable("TASK_RETURN_EVIDENCE"); if (string.IsNullOrEmpty(path)) return;
++        Directory.CreateDirectory(path);
++        foreach (var size in new[] { (1100d, 900d), (800d, 800d), (800d, 600d), (800d, 480d) })
++        {
++            window.Width = size.Item1; window.Height = size.Item2; await Drain(window);
++            if (name == "return-confirmation")
++            {
++                var confirm = Find<Button>(window, "ConfirmTransitionButton");
++                confirm.Focus(); confirm.BringIntoView();
++            }
++            else (Keyboard.FocusedElement as FrameworkElement)?.BringIntoView();
++            await Drain(window);
++            var visual = (FrameworkElement)VisualTreeHelper.GetChild(window, 0);
++            var bitmap = new RenderTargetBitmap((int)visual.ActualWidth, (int)visual.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual);
++            var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
++            using var file = File.Create(Path.Combine(path, $"{name}-{size.Item1}x{size.Item2}.png")); encoder.Save(file);
++            if (name == "return-confirmation")
++            {
++                var confirm = Find<Button>(window, "ConfirmTransitionButton");
++                var bounds = confirm.TransformToAncestor(window).TransformBounds(new Rect(confirm.RenderSize));
++                var inspector = (Expander)window.FindName("TaskInspectorExpander");
++                var scroll = (ScrollViewer)window.FindName("TaskDetailsArea");
++                File.WriteAllText(Path.Combine(path, $"layout-{size.Item1}x{size.Item2}.json"), System.Text.Json.JsonSerializer.Serialize(new
++                {
++                    contentHeight = ((Grid)window.FindName("TasksContentGrid")).ActualHeight,
++                    inspectorHeight = inspector.ActualHeight, inspector.MaxHeight,
++                    scrollHeight = scroll.ActualHeight, scroll.ViewportHeight, scroll.ExtentHeight, scroll.VerticalOffset,
++                    confirmationBounds = bounds.ToString(System.Globalization.CultureInfo.InvariantCulture),
++                }));
++                foreach (var point in new[] { new Point(bounds.Left + 3, bounds.Top + 3), new Point(bounds.Right - 3, bounds.Bottom - 3) })
++                {
++                    var hit = window.InputHitTest(point) as DependencyObject;
++                    Assert.True(ReferenceEquals(hit, confirm) || hit is not null && confirm.IsAncestorOf(hit),
++                        $"Confirmation is clipped at {size}: {bounds}; hit={hit?.GetType().Name ?? "null"}");
++                }
++            }
++        }
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs b/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs
+index 81177ef..b03ee47 100644
+--- a/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs
+@@ -10,6 +10,7 @@ public sealed partial class TodayViewModelTests
+     public static IEnumerable<object[]> QuickTransitions()
+     {
+         var allowed = new[] { (DesktopTaskStatus.New, DesktopTaskStatus.InProgress),
++            (DesktopTaskStatus.Review, DesktopTaskStatus.InProgress),
+             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Review),
+             (DesktopTaskStatus.New, DesktopTaskStatus.Completed), (DesktopTaskStatus.New, DesktopTaskStatus.Cancelled),
+             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Completed), (DesktopTaskStatus.InProgress, DesktopTaskStatus.Cancelled),
+@@ -19,6 +20,30 @@ public sealed partial class TodayViewModelTests
+             yield return [from, to, allowed.Contains((from, to))];
+     }
+ 
++    [Fact]
++    public async AsyncTask QuickActions_ReturnIsSeparateFromStartAndRequiresConfirmation()
++    {
++        var task = QuickTask() with { Status = DesktopTaskStatus.Review };
++        var client = new QuickClient(task);
++        using var vm = QuickVm(client);
++        await vm.ActivateAsync();
++        Assert.False(vm.CanStart);
++        Assert.True(vm.CanReturnForRework);
++        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
++        Assert.Empty(client.Commands);
++        Assert.Equal("Вернуть задачу на доработку?", vm.PendingTransitionText);
++        Assert.Equal("Вернуть", vm.TransitionConfirmationLabel);
++        await vm.CancelTransitionCommand.ExecuteAsync();
++        Assert.Empty(client.Commands);
++        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        var sent = Assert.Single(client.Commands);
++        Assert.Null(sent.Reason);
++        Assert.Equal(task.Version, sent.ExpectedVersion);
++        Assert.False(vm.CanReturnForRework);
++        Assert.False(vm.CanStart);
++    }
++
+     [Theory]
+     [MemberData(nameof(QuickTransitions))]
+     public async AsyncTask QuickActions_ObeyAllCanonicalTransitions(DesktopTaskStatus from, DesktopTaskStatus to, bool allowed)
+@@ -30,7 +55,8 @@ public sealed partial class TodayViewModelTests
+         Assert.Equal(allowed, vm.TransitionCommand.CanExecute(to));
+         Assert.Equal(allowed, await vm.TransitionCommand.ExecuteAsync(to));
+         if (!allowed) { Assert.Empty(client.Commands); return; }
+-        if (to is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)
++        if (to is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled
++            || from == DesktopTaskStatus.Review && to == DesktopTaskStatus.InProgress)
+         {
+             Assert.Empty(client.Commands);
+             Assert.True(vm.IsTransitionConfirmationVisible);
+diff --git a/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs b/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs
+new file mode 100644
+index 0000000..31229e8
+--- /dev/null
++++ b/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs
+@@ -0,0 +1,142 @@
++using System.Net;
++using Task.Application;
++using Task.Application.Security;
++using Task.Domain;
++
++namespace Task.ServiceHosts.Tests;
++
++public sealed partial class TaskEndpointsTests
++{
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task TaskWrite_CreateAndPatchHandleSessionRevokedDuringWrite(bool patch)
++    {
++        var original = TaskInStatus(TaskWorkStatus.Review);
++        var executor = new FakeUpdateExecutor
++        { Current = original, Throw = new TaskWriteSessionException(SessionRequestState.SessionRevoked) };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
++        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
++        using var request = new HttpRequestMessage(patch ? HttpMethod.Patch : HttpMethod.Post,
++            patch ? $"/api/v1/tasks/{original.Metadata.Id:D}" : "/api/v1/tasks")
++        { Content = new StringContent("{\"title\":\"Session guard\"}", System.Text.Encoding.UTF8, "application/json") };
++        request.Headers.Add("Idempotency-Key", "audit-session-guard-01");
++        if (patch) request.Headers.TryAddWithoutValidation("If-Match", "\"v7\"");
++        await AssertProblemAsync(await client.SendAsync(request), HttpStatusCode.Unauthorized, "SESSION_REVOKED");
++        Assert.Same(original, executor.Current);
++        Assert.Equal(0, executor.MutationCalls);
++    }
++
++    [Theory]
++    [InlineData(SessionRequestState.SessionRevoked, 401, "SESSION_REVOKED")]
++    [InlineData(SessionRequestState.SessionExpired, 401, "SESSION_EXPIRED")]
++    [InlineData(SessionRequestState.VersionMismatch, 401, "SESSION_EXPIRED")]
++    [InlineData(SessionRequestState.AccountBlocked, 423, "ACCOUNT_BLOCKED")]
++    public async System.Threading.Tasks.Task ReturnTask_SessionInvalidatedAfterAuthentication(
++        SessionRequestState state, int expectedStatus, string code)
++    {
++        var original = TaskInStatus(TaskWorkStatus.Review);
++        var executor = new FakeUpdateExecutor { Current = original, Throw = new TaskWriteSessionException(state) };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
++        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7), (HttpStatusCode)expectedStatus, code);
++        Assert.Same(original, executor.Current);
++        Assert.Equal(0, executor.MutationCalls);
++    }
++
++    [Theory]
++    [InlineData("{\"targetStatus\":\"in_progress\"}")]
++    [InlineData("{\"targetStatus\":\"in_progress\",\"reason\":null}")]
++    [InlineData("{\"targetStatus\":\"in_progress\",\"reason\":\"Please revise\"}")]
++    public async System.Threading.Tasks.Task ReturnTask_OptionalReasonAndExactReplay(string body)
++    {
++        var original = TaskInStatus(TaskWorkStatus.Review);
++        var executor = new FakeUpdateExecutor { Current = original };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
++        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
++
++        var first = await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7, body: body);
++        var replay = await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7, body: body);
++
++        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
++        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
++        Assert.Equal("\"v8\"", first.Headers.ETag?.Tag);
++        Assert.Equal(first.Headers.ETag, replay.Headers.ETag);
++        Assert.Equal(await first.Content.ReadAsStringAsync(), await replay.Content.ReadAsStringAsync());
++        Assert.Equal("true", replay.Headers.GetValues("Idempotency-Replayed").Single());
++        Assert.Equal(TaskWorkStatus.InProgress, executor.Current!.WorkStatus);
++        Assert.Equal(8, executor.Current.Metadata.Version);
++        Assert.Equal(1, executor.MutationCalls);
++        Assert.Equal(1, executor.CompletedCount);
++
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7,
++            body: """{"targetStatus":"in_progress","reason":"Changed intent"}"""),
++            HttpStatusCode.Conflict, "IDEMPOTENCY_KEY_REUSED");
++        Assert.Equal(1, executor.MutationCalls);
++    }
++
++    [Theory]
++    [InlineData(null, "return-header-01", 428, "PRECONDITION_REQUIRED")]
++    [InlineData("W/\"v7\"", "return-header-01", 400, "VALIDATION_FAILED")]
++    [InlineData("\"v7\"", null, 400, "VALIDATION_FAILED")]
++    [InlineData("\"v7\"", "short", 400, "VALIDATION_FAILED")]
++    public async System.Threading.Tasks.Task ReturnTask_RequiresVersionAndIdempotencyHeaders(
++        string? ifMatch, string? key, int status, string code)
++    {
++        var original = TaskInStatus(TaskWorkStatus.Review);
++        var executor = new FakeUpdateExecutor { Current = original };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
++        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7,
++            ifMatch: ifMatch, idempotencyKey: key), (HttpStatusCode)status, code);
++        Assert.Same(original, executor.Current);
++        Assert.Equal(0, executor.MutationCalls);
++    }
++
++    [Theory]
++    [InlineData("denied", HttpStatusCode.Forbidden, "FORBIDDEN")]
++    [InlineData("stale", HttpStatusCode.PreconditionFailed, "VERSION_CONFLICT")]
++    [InlineData("foreign", HttpStatusCode.NotFound, "OBJECT_NOT_VISIBLE")]
++    [InlineData("missing", HttpStatusCode.NotFound, "OBJECT_NOT_VISIBLE")]
++    [InlineData("archived", HttpStatusCode.Conflict, "OBJECT_ARCHIVED")]
++    [InlineData("trashed", HttpStatusCode.Conflict, "OBJECT_DELETED")]
++    [InlineData("revoked", HttpStatusCode.Unauthorized, "SESSION_REVOKED")]
++    [InlineData("expired", HttpStatusCode.Unauthorized, "SESSION_EXPIRED")]
++    [InlineData("anonymous", HttpStatusCode.Unauthorized, "AUTHENTICATION_REQUIRED")]
++    public async System.Threading.Tasks.Task ReturnTask_RejectedWithoutMutation(
++        string scenario, HttpStatusCode expectedStatus, string expectedCode)
++    {
++        var original = scenario switch
++        {
++            "archived" => ArchivedTask(),
++            "trashed" => TrashedTask(),
++            _ => TaskInStatus(TaskWorkStatus.Review),
++        };
++        var executor = new FakeUpdateExecutor { Current = scenario == "missing" ? null : original };
++        var sessionState = scenario switch
++        {
++            "revoked" => SessionRequestState.SessionRevoked,
++            "expired" => SessionRequestState.SessionExpired,
++            _ => SessionRequestState.Active,
++        };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            sessionState: sessionState,
++            tokenOrganizationId: scenario == "foreign" ? ForeignOrganizationId : null,
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original),
++            grantTaskWrite: scenario != "denied");
++        using var client = scenario == "anonymous" ? server.CreateClient() :
++            await CreateAuthenticatedClientAsync(server, scenario == "foreign" ? ForeignOrganizationId : OrganizationId);
++
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress,
++            scenario == "stale" ? original.Metadata.Version - 1 : original.Metadata.Version),
++            expectedStatus, expectedCode);
++
++        Assert.Equal(0, executor.MutationCalls);
++        Assert.Equal(0, executor.CompletedCount);
++        Assert.Same(scenario == "missing" ? null : original, executor.Current);
++    }
++}
+diff --git a/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs b/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs
+index 5f6f1c5..833da7c 100644
+--- a/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs
++++ b/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs
+@@ -15,6 +15,7 @@ public sealed partial class TaskEndpointsTests
+     public static TheoryData<TaskWorkStatus, TaskWorkStatus> AllowedTransitions => new()
+     {
+         { TaskWorkStatus.New, TaskWorkStatus.InProgress },
++        { TaskWorkStatus.Review, TaskWorkStatus.InProgress },
+         { TaskWorkStatus.InProgress, TaskWorkStatus.Review },
+         { TaskWorkStatus.New, TaskWorkStatus.Completed },
+         { TaskWorkStatus.InProgress, TaskWorkStatus.Completed },
+diff --git a/work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs b/work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs
+index 0dd5a53..61c0de8 100644
+--- a/work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs
++++ b/work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs
+@@ -32,7 +32,8 @@ public sealed partial class PostgresProductApiTests
+     {
+         using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
+         var service = new TaskCreateCommandService(db.ApiRuntime.CreateTaskWriteCommandExecutor());
+-        var context = new AuthenticatedRequestContext(db.User, db.Session, db.Organization, 1, 1, Guid.NewGuid().ToString(), "deadline-test");
++        var scopeVersion = ScalarReturn<long>(db, "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", db.User);
++        var context = new AuthenticatedRequestContext(db.User, db.Session, db.Organization, 1, scopeVersion, Guid.NewGuid().ToString(), "deadline-test");
+         var command = service.CreateCommand(context, "automatic-create-001", "{\"title\":\"Автоматически\"}",
+             new("Автоматически", TaskPriority.Normal, true, null, DateTimeOffset.UtcNow.AddMinutes(10)),
+             t => new(201, new Dictionary<string, string>(), JsonSerializer.Serialize(new { id = t.Metadata.Id, version = t.Metadata.Version }), t.Metadata.Id));
+diff --git a/work/production/tests/Task.Tests/PostgresTaskReturnAuditTests.cs b/work/production/tests/Task.Tests/PostgresTaskReturnAuditTests.cs
+new file mode 100644
+index 0000000..bfc99ec
+--- /dev/null
++++ b/work/production/tests/Task.Tests/PostgresTaskReturnAuditTests.cs
+@@ -0,0 +1,109 @@
++using Task.Application;
++using Task.Application.Security;
++using Task.Domain;
++
++namespace Task.Tests;
++
++public sealed partial class PostgresProductApiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        var command = ReturnCommand(db, task);
++        await db.ApiRuntime.CreateTaskWriteCommandExecutor().ExecuteAsync(command);
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Equal(task.Title, current.Title);
++        Assert.Equal(task.Priority, current.Priority);
++        Assert.Equal(task.Schedule, current.Schedule);
++        Assert.Equal(task.Content.ToJson(), current.Content.ToJson());
++        Assert.Null(current.CompletedAtUtc);
++        Assert.Null(current.CompletedBy);
++        var read = db.ApiRuntime.CreateTaskReadStore();
++        var page = await read.GetPageAsync(new(db.Organization, db.User, command.ExpectedAuthorizationScopeVersion!.Value));
++        var row = Assert.Single(page.Items);
++        Assert.Equal(TaskWorkStatus.InProgress, row.Status);
++        Assert.Equal(4, row.Version);
++        var detail = await read.GetVisibleByIdAsync(db.Organization, task.Metadata.Id, db.User);
++        Assert.NotNull(detail);
++        Assert.Equal(row.Id, detail.Id);
++        Assert.Equal(row.Status, detail.Status);
++        Assert.Equal(row.Version, detail.Version);
++        var search = db.Call("search", "search", query: new() { ["q"] = "Return under review", ["types"] = "task" });
++        Assert.Equal(task.Metadata.Id, Guid.Parse(Assert.Single(search.Body!["items"]!.AsArray())!["objectId"]!.ToString()));
++        Assert.Empty(db.Call("search", "search", user: db.OtherUser, session: db.OtherSession, admin: false,
++            permissions: ["Search.Use", "Task.Read"], query: new() { ["q"] = "Return under review", ["types"] = "task" }).Body!["items"]!.AsArray());
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_manager"));
++        var executor = db.ApiRuntime.CreateTaskWriteCommandExecutor();
++        var context = new AuthenticatedRequestContext(db.User, db.Session, db.Organization, 1,
++            ScalarReturn<long>(db, "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", db.User),
++            Guid.NewGuid().ToString("D"), "audit-save");
++        var patch = new TaskUpdateCommandService(executor).CreateCommand(context, "audit-save-01",
++            "{\"title\":\"Edited concurrently\"}", task.Metadata.Id, task.Metadata.Version,
++            new TaskUpdateModel("Edited concurrently", null, default, default),
++            updated => new TaskWriteHttpResult(200, new Dictionary<string, string>(), "{}", updated.Metadata.Id)).Command;
++        var errors = await System.Threading.Tasks.Task.WhenAll(
++            Record.ExceptionAsync(() => executor.ExecuteAsync(ReturnCommand(db, task))),
++            Record.ExceptionAsync(() => executor.ExecuteAsync(patch)));
++        Assert.Single(errors, e => e is null);
++        Assert.IsType<TaskLifecycleConcurrencyException>(Assert.Single(errors, e => e is not null));
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Equal(4, current.Metadata.Version);
++        Assert.True(current.WorkStatus == TaskWorkStatus.InProgress && current.Title == task.Title
++            || current.WorkStatus == TaskWorkStatus.Review && current.Title == "Edited concurrently");
++        foreach (var table in new[] { "governance.audit_entries", "governance.domain_events", "governance.outbox_messages", "iam.idempotency_records" })
++            Assert.Equal(1, db.Count(table));
++    }
++
++    [Theory]
++    [InlineData("revoked", false, SessionRequestState.SessionRevoked)]
++    [InlineData("revoked", true, SessionRequestState.SessionRevoked)]
++    [InlineData("idle", false, SessionRequestState.SessionExpired)]
++    [InlineData("idle", true, SessionRequestState.SessionExpired)]
++    [InlineData("absolute", false, SessionRequestState.SessionExpired)]
++    [InlineData("absolute", true, SessionRequestState.SessionExpired)]
++    [InlineData("device", false, SessionRequestState.SessionRevoked)]
++    [InlineData("device", true, SessionRequestState.SessionRevoked)]
++    [InlineData("credentials", false, SessionRequestState.VersionMismatch)]
++    [InlineData("credentials", true, SessionRequestState.VersionMismatch)]
++    [InlineData("scope", false, SessionRequestState.VersionMismatch)]
++    [InlineData("scope", true, SessionRequestState.VersionMismatch)]
++    [InlineData("blocked", false, SessionRequestState.AccountBlocked)]
++    [InlineData("blocked", true, SessionRequestState.AccountBlocked)]
++    public async System.Threading.Tasks.Task TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(
++        string scenario, bool replay, SessionRequestState expectedState)
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        var command = ReturnCommand(db, task);
++        var executor = db.ApiRuntime.CreateTaskWriteCommandExecutor();
++        if (replay) await executor.ExecuteAsync(command);
++
++        // Authentication already succeeded when the command was constructed.
++        switch (scenario)
++        {
++            case "revoked": db.Sql("UPDATE iam.sessions SET revoked_at=clock_timestamp(),revoke_reason='audit' WHERE id=$1", db.Session); break;
++            case "idle": db.Sql("UPDATE iam.sessions SET idle_expires_at=clock_timestamp()-interval '1 second' WHERE id=$1", db.Session); break;
++            case "absolute": db.Sql("UPDATE iam.sessions SET idle_expires_at=clock_timestamp()-interval '2 seconds',absolute_expires_at=clock_timestamp()-interval '1 second' WHERE id=$1", db.Session); break;
++            case "device": db.Sql("UPDATE iam.devices SET revoked_at=clock_timestamp() WHERE id=$1", db.DeviceFor(db.Session)); break;
++            case "credentials": db.Sql("UPDATE iam.user_accounts SET credential_version=credential_version+1 WHERE id=$1", db.User); break;
++            case "scope": db.Sql("UPDATE iam.authorization_scope_versions SET version=version+1 WHERE user_account_id=$1", db.User); break;
++            case "blocked": db.Sql("UPDATE iam.user_accounts SET account_status='blocked' WHERE id=$1", db.User); break;
++        }
++        var error = await Assert.ThrowsAsync<TaskWriteSessionException>(() => executor.ExecuteAsync(command));
++        Assert.Equal(expectedState, error.State);
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Equal(replay ? TaskWorkStatus.InProgress : TaskWorkStatus.Review, current.WorkStatus);
++        Assert.Equal(replay ? 4 : 3, current.Metadata.Version);
++        foreach (var table in new[] { "governance.audit_entries", "governance.domain_events", "governance.outbox_messages", "iam.idempotency_records" })
++            Assert.Equal(replay ? 1 : 0, db.Count(table));
++    }
++}
+diff --git a/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs b/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs
+new file mode 100644
+index 0000000..3605c1d
+--- /dev/null
++++ b/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs
+@@ -0,0 +1,185 @@
++using System.Text.Json;
++using Npgsql;
++using Task.Application;
++using Task.Application.Security;
++using Task.Domain;
++
++namespace Task.Tests;
++
++public sealed partial class PostgresProductApiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        var command = ReturnCommand(db, task);
++        var executor = db.ApiRuntime.CreateTaskWriteCommandExecutor();
++
++        var results = await System.Threading.Tasks.Task.WhenAll(
++            executor.ExecuteAsync(command), executor.ExecuteAsync(command));
++
++        Assert.Single(results, r => r.Disposition == TaskWriteCommandDisposition.Executed);
++        Assert.Single(results, r => r.Disposition == TaskWriteCommandDisposition.Replayed);
++        Assert.Equal(results[0].HttpResult!.BodyJson, results[1].HttpResult!.BodyJson);
++        Assert.Equal("\"v4\"", results[0].HttpResult!.Headers["ETag"]);
++        AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
++        using var payload = JsonDocument.Parse(ScalarReturn<string>(db,
++            "SELECT payload::text FROM governance.domain_events WHERE aggregate_id=$1", task.Metadata.Id));
++        Assert.Equal("review", payload.RootElement.GetProperty("fromStatus").GetString());
++        Assert.Equal("in_progress", payload.RootElement.GetProperty("targetStatus").GetString());
++        Assert.Equal(4, payload.RootElement.GetProperty("aggregateVersion").GetInt32());
++        Assert.Equal(db.User, payload.RootElement.GetProperty("actorId").GetGuid());
++        Assert.Equal(command.CorrelationId, payload.RootElement.GetProperty("correlationId").GetGuid());
++        Assert.False(payload.RootElement.TryGetProperty("reason", out _));
++        Assert.Equal(command.CorrelationId, ScalarReturn<Guid>(db,
++            "SELECT correlation_id FROM governance.audit_entries WHERE object_id=$1", task.Metadata.Id));
++        Assert.Equal("task.change_status", ScalarReturn<string>(db,
++            "SELECT action_code FROM governance.audit_entries WHERE object_id=$1", task.Metadata.Id));
++        var history = db.Call("tasks", "history", id: task.Metadata.Id).Body!["items"]!.AsArray();
++        var entry = Assert.Single(history)!;
++        Assert.Equal("TaskStatusChanged", entry["action"]!.GetValue<string>());
++        Assert.Equal(4, entry["version"]!.GetValue<int>());
++        Assert.Equal(db.User, entry["actorUserId"]!.GetValue<Guid>());
++        Assert.Equal("status", Assert.Single(entry["changedFields"]!.AsArray())!.GetValue<string>());
++        Assert.Equal(0, db.Count("notify.notifications"));
++
++        Assert.Equal(TaskWriteCommandDisposition.IdempotencyKeyReused,
++            (await executor.ExecuteAsync(ReturnCommand(db, task, target: TaskWorkStatus.Completed))).Disposition);
++        AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
++
++        // Replay also rechecks effective permissions and does not append side effects.
++        db.Sql("DELETE FROM iam.user_roles WHERE user_account_id=$1", db.User);
++        await Assert.ThrowsAsync<TaskWriteSessionException>(() => executor.ExecuteAsync(command));
++        await Assert.ThrowsAsync<KeyNotFoundException>(() => executor.ExecuteAsync(ReturnCommand(db, task)));
++        AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        var executor = db.ApiRuntime.CreateTaskWriteCommandExecutor();
++        var first = executor.ExecuteAsync(ReturnCommand(db, task, key: "return-concurrent-01"));
++        var second = executor.ExecuteAsync(ReturnCommand(db, task,
++            target: TaskWorkStatus.Completed, key: "complete-concurrent-01"));
++        var errors = await System.Threading.Tasks.Task.WhenAll(
++            Record.ExceptionAsync(async () => { await first; }),
++            Record.ExceptionAsync(async () => { await second; }));
++        Assert.Single(errors, e => e is null);
++        Assert.IsType<TaskLifecycleConcurrencyException>(Assert.Single(errors, e => e is not null));
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Contains(current.WorkStatus, new[] { TaskWorkStatus.InProgress, TaskWorkStatus.Completed });
++        AssertReturnEffects(db, task, current.WorkStatus);
++        await Assert.ThrowsAsync<TaskLifecycleConcurrencyException>(() =>
++            executor.ExecuteAsync(ReturnCommand(db, task, key: "return-stale-01")));
++        AssertReturnEffects(db, task, current.WorkStatus);
++    }
++
++    [Theory]
++    [InlineData("observer")]
++    [InlineData("outsider")]
++    [InlineData("watcher")]
++    [InlineData("explicit-deny")]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_PermissionAndObjectScope(string scenario)
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        if (scenario == "observer")
++        {
++            db.Sql("DELETE FROM iam.user_roles WHERE user_account_id=$1", db.User);
++            db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_observer"));
++        }
++        if (scenario == "explicit-deny")
++        {
++            db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'task.changestatus','deny')", db.Role("system_observer"));
++            db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_observer"));
++        }
++        if (scenario is "outsider" or "watcher")
++            db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.OtherUser, db.Role("system_employee"));
++        if (scenario == "watcher")
++        {
++            db.Sql("UPDATE work.tasks SET card_content=jsonb_set(card_content,'{watcherIds}',jsonb_build_array($2::text)) WHERE id=$1",
++                task.Metadata.Id, db.OtherUser.ToString("D"));
++            Assert.NotNull(await db.Runtime.CreateTaskReadStore().GetVisibleByIdAsync(db.Organization, task.Metadata.Id, db.OtherUser));
++        }
++        var command = ReturnCommand(db, task, otherActor: scenario is "outsider" or "watcher");
++        await Assert.ThrowsAsync<KeyNotFoundException>(() => db.ApiRuntime.CreateTaskWriteCommandExecutor().ExecuteAsync(command));
++        Assert.Equal(TaskWorkStatus.Review, db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!.WorkStatus);
++        Assert.Equal(0, db.Count("governance.audit_entries"));
++        Assert.Equal(0, db.Count("governance.domain_events"));
++        Assert.Equal(0, db.Count("governance.outbox_messages"));
++        Assert.Equal(0, db.Count("iam.idempotency_records"));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        db.Sql("""
++            INSERT INTO governance.domain_events(id,organization_id,aggregate_id,aggregate_type,
++                aggregate_version,event_type,actor_user_id,correlation_id,operation_id,idempotency_key,payload)
++            VALUES($1,$2,$3,'task',4,'TaskStatusChanged',$4,$5,'seed.return.conflict','seed-return-conflict','{}'::jsonb)
++            """, Guid.NewGuid(), db.Organization, task.Metadata.Id, db.User, Guid.NewGuid());
++
++        var error = await Assert.ThrowsAsync<PostgresException>(() =>
++            db.ApiRuntime.CreateTaskWriteCommandExecutor().ExecuteAsync(ReturnCommand(db, task)));
++
++        Assert.Equal(PostgresErrorCodes.UniqueViolation, error.SqlState);
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Equal(TaskWorkStatus.Review, current.WorkStatus);
++        Assert.Equal(3, current.Metadata.Version);
++        Assert.Equal(0, db.Count("governance.audit_entries"));
++        Assert.Equal(1, db.Count("governance.domain_events"));
++        Assert.Equal(0, db.Count("governance.outbox_messages"));
++        Assert.Equal(0, db.Count("iam.idempotency_records"));
++    }
++
++    private static TaskAggregate SeedReturnTask(Database db)
++    {
++        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_employee"));
++        var now = DateTimeOffset.UtcNow.AddMinutes(-1);
++        var store = db.Runtime.CreateTaskStore();
++        var task = TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Return under review", now);
++        store.Add(task);
++        task = task.Start(db.User, now.AddSeconds(1)); store.Save(task, 1);
++        task = task.SubmitForReview(db.User, now.AddSeconds(2)); store.Save(task, 2);
++        return task;
++    }
++
++    private static TaskWriteCommand ReturnCommand(Database db, TaskAggregate task,
++        TaskWorkStatus target = TaskWorkStatus.InProgress, string key = "return-command-01", bool otherActor = false)
++    {
++        var actor = otherActor ? db.OtherUser : db.User;
++        var scopeVersion = ScalarReturn<long>(db,
++            "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", actor);
++        var context = new AuthenticatedRequestContext(actor,
++            otherActor ? db.OtherSession : db.Session, db.Organization, 1, scopeVersion, Guid.NewGuid().ToString("D"), "task142");
++        var targetValue = target == TaskWorkStatus.InProgress ? "in_progress" : "completed";
++        return new TaskStatusTransitionCommandService(db.ApiRuntime.CreateTaskWriteCommandExecutor())
++            .CreateCommand(context, key, JsonSerializer.Serialize(new { targetStatus = targetValue }),
++                task.Metadata.Id, task.Metadata.Version, target, updated => new TaskWriteHttpResult(200,
++                    new Dictionary<string, string> { ["ETag"] = $"\"v{updated.Metadata.Version}\"" },
++                    JsonSerializer.Serialize(new { status = targetValue, version = updated.Metadata.Version }), task.Metadata.Id));
++    }
++
++    private static void AssertReturnEffects(Database db, TaskAggregate original, TaskWorkStatus status)
++    {
++        var current = db.Runtime.CreateTaskStore().Get(original.Metadata.Id, db.Organization)!;
++        Assert.Equal(status, current.WorkStatus);
++        Assert.Equal(4, current.Metadata.Version);
++        Assert.Equal(1, db.Count("governance.audit_entries"));
++        Assert.Equal(1, db.Count("governance.domain_events"));
++        Assert.Equal(1, db.Count("governance.outbox_messages"));
++        Assert.Equal(1, db.Count("iam.idempotency_records"));
++    }
++
++    private static T ScalarReturn<T>(Database db, string sql, Guid id)
++    {
++        using var command = db.Source.CreateCommand(sql);
++        command.Parameters.AddWithValue(id);
++        return (T)command.ExecuteScalar()!;
++    }
++}
+diff --git a/work/production/tests/Task.Tests/TaskAggregateTests.cs b/work/production/tests/Task.Tests/TaskAggregateTests.cs
+index a7820ae..28e5f27 100644
+--- a/work/production/tests/Task.Tests/TaskAggregateTests.cs
++++ b/work/production/tests/Task.Tests/TaskAggregateTests.cs
+@@ -106,7 +106,7 @@ public sealed class TaskAggregateTests
+     }
+ 
+     [Fact]
+-    public void Start_ThrowsFromAnyNonNewStatus()
++    public void Start_ThrowsFromInProgressAndTerminalStatuses()
+     {
+         var inProgress = NewTask().Start(CreatorId, CreatedAt.AddMinutes(1));
+         var completed = NewTask().Complete(CreatorId, CreatedAt.AddMinutes(1));
+@@ -117,6 +117,46 @@ public sealed class TaskAggregateTests
+         Assert.Throws<InvalidOperationException>(() => cancelled.Start(EditorId, CreatedAt.AddMinutes(2)));
+     }
+ 
++    [Fact]
++    public void ReturnForRework_ReturnsReviewToInProgressPreservingTaskContent()
++    {
++        var reviewed = NewTask()
++            .ChangePriority(CreatorId, TaskPriority.High, CreatedAt.AddMinutes(1))
++            .Reschedule(CreatorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(2))
++            .Start(CreatorId, CreatedAt.AddMinutes(3))
++            .SubmitForReview(CreatorId, CreatedAt.AddMinutes(4));
++
++        Assert.Throws<InvalidOperationException>(() => reviewed.Start(EditorId, CreatedAt.AddMinutes(5)));
++        var returned = reviewed.ReturnForRework(EditorId, CreatedAt.AddMinutes(5));
++
++        Assert.Equal(TaskWorkStatus.InProgress, returned.WorkStatus);
++        Assert.Equal(TaskWorkStatus.Review, reviewed.WorkStatus);
++        Assert.Equal(reviewed.Metadata.Version + 1, returned.Metadata.Version);
++        Assert.Equal(EditorId, returned.Metadata.UpdatedBy);
++        Assert.Equal(CreatedAt.AddMinutes(5), returned.Metadata.UpdatedAtUtc);
++        Assert.Equal(reviewed.Title, returned.Title);
++        Assert.Equal(reviewed.Priority, returned.Priority);
++        Assert.Equal(reviewed.Schedule, returned.Schedule);
++        Assert.Equal(reviewed.Content, returned.Content);
++        Assert.Null(returned.CompletedAtUtc);
++        Assert.Null(returned.CompletedBy);
++        Assert.Equal(TaskWorkStatus.Review,
++            returned.SubmitForReview(EditorId, CreatedAt.AddMinutes(6)).WorkStatus);
++    }
++
++    [Fact]
++    public void ReturnForRework_RejectsNonReviewAndInactiveTasks()
++    {
++        var task = NewTask();
++        var started = task.Start(CreatorId, CreatedAt.AddMinutes(1));
++        var completed = started.Complete(CreatorId, CreatedAt.AddMinutes(2));
++        var cancelled = task.Cancel(CreatorId, CreatedAt.AddMinutes(2));
++        foreach (var invalid in new[] { task, started, completed, cancelled,
++            completed.Archive(CreatorId, CreatedAt.AddMinutes(3)),
++            cancelled.MoveToTrash(CreatorId, CreatedAt.AddMinutes(3)) })
++            Assert.Throws<InvalidOperationException>(() => invalid.ReturnForRework(EditorId, CreatedAt.AddMinutes(4)));
++    }
++
+     [Fact]
+     public void SubmitForReview_MovesInProgressToReview()
+     {
+@@ -616,4 +656,4 @@ public sealed class TaskAggregateTests
+ 
+     private static TaskAggregate NewTask() =>
+         TaskAggregate.Create(TaskId, OrganizationId, CreatorId, "Implement login screen", CreatedAt);
+-}
+\ No newline at end of file
++}
+diff --git a/work/production/tests/Task.Tests/TaskCreateCommandTests.cs b/work/production/tests/Task.Tests/TaskCreateCommandTests.cs
+index 129c58f..625e062 100644
+--- a/work/production/tests/Task.Tests/TaskCreateCommandTests.cs
++++ b/work/production/tests/Task.Tests/TaskCreateCommandTests.cs
+@@ -111,7 +111,10 @@ public sealed class TaskCreateCommandTests
+             var executor = new PostgresTaskWriteCommandExecutor(dataSource);
+             var service = new TaskCreateCommandService(executor);
+             var taskId = Guid.NewGuid();
+-            var context = CreateContext(organizationId, actorUserId, sessionId);
++            await using var scopeQuery = dataSource.CreateCommand("SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1");
++            scopeQuery.Parameters.AddWithValue(actorUserId);
++            var scopeVersion = (long)(await scopeQuery.ExecuteScalarAsync())!;
++            var context = new AuthenticatedRequestContext(actorUserId, sessionId, organizationId, 1, scopeVersion, Guid.NewGuid().ToString("D"), "trace");
+             var model = new TaskCreateModel("Create gate", TaskPriority.High, true, Now, Now.AddHours(3));
+             var command = service.CreateCommand(
+                 context,
+diff --git a/work/production/tests/Task.Tests/TaskUpdateTests.cs b/work/production/tests/Task.Tests/TaskUpdateTests.cs
+index 6bb6100..b9ec699 100644
+--- a/work/production/tests/Task.Tests/TaskUpdateTests.cs
++++ b/work/production/tests/Task.Tests/TaskUpdateTests.cs
+@@ -419,7 +419,9 @@ public sealed class TaskUpdateTests
+             var createService = new TaskCreateCommandService(executor);
+             var updateService = new TaskUpdateCommandService(executor);
+             var taskId = Guid.NewGuid();
+-            var context = Context(organizationId, actorUserId, sessionId);
++            var scopeVersion = await ScalarAsync<long>(dataSource,
++                "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", actorUserId);
++            var context = new AuthenticatedRequestContext(actorUserId, sessionId, organizationId, 1, scopeVersion, Guid.NewGuid().ToString("D"), "trace");
+             var createdAt = new DateTimeOffset(2026, 8, 26, 10, 0, 0, TimeSpan.Zero);
+ 
+             var createCommand = createService.CreateCommand(
+@@ -528,8 +530,12 @@ public sealed class TaskUpdateTests
+             Assert.Equal(TaskWriteCommandDisposition.IdempotencyKeyReused, (await updateService.ExecuteAsync(reused.Command)).Disposition);
+             await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
+ 
++            using (var foreignGrant = dataSource.CreateCommand("INSERT INTO iam.user_roles(user_account_id,role_id) SELECT $1,id FROM iam.roles WHERE organization_id=$2 AND code='system_employee';"))
++            { foreignGrant.Parameters.AddWithValue(otherUserId); foreignGrant.Parameters.AddWithValue(otherOrganizationId); await foreignGrant.ExecuteNonQueryAsync(); }
++            var foreignScopeVersion = await ScalarAsync<long>(dataSource,
++                "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", otherUserId);
+             var foreign = updateService.CreateCommand(
+-                Context(otherOrganizationId, otherUserId, otherSessionId),
++                new AuthenticatedRequestContext(otherUserId, otherSessionId, otherOrganizationId, 1, foreignScopeVersion, Guid.NewGuid().ToString("D"), "trace"),
+                 "patch-pg-key-04",
+                 """{"title":"Foreign"}""",
+                 taskId,

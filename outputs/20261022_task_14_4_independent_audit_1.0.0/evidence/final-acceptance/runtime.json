@@ -1,0 +1,7 @@
+{
+  "loopbackOnly": true,
+  "isolated": true,
+  "filter": "TaskReturn|Return_|ReturnTask_|TaskWrite_CreateAndPatch|TodayViewModelTests|TaskFiltering|NativeWpf_ReturnAction",
+  "exitCode": 0,
+  "postgres": "16"
+}

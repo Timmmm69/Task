@@ -1,0 +1,6 @@
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:26.68]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\desktop-final\desktop-final.trx
+
+Не пройден!: не пройдено     1, пройдено  1821, пропущено     0, всего  1822, длительность 1 m 30 s. - Task.Desktop.Tests.dll (net10.0)

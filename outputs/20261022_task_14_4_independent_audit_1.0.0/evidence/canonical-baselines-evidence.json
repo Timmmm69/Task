@@ -1,0 +1,38 @@
+[
+  {
+    "path": "sources/stage_3_4/Organizer_Stage3_Final_Baseline_3.4.zip",
+    "sha256": "ba32e6554e5bd420e1e1aa67be5b33f678056f26ae34b599a126469ff68d67db",
+    "matches": []
+  },
+  {
+    "path": "sources/stage_4_1_1/Organizer_Stage4_PRD_Candidate_4.1.1.zip",
+    "sha256": "723e1c665c47d38ae16347085967228ac3dd7ce32cd219692fad2ef4b49c0168",
+    "matches": [
+      {
+        "entry": "Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_Business_Rules_Catalog.csv",
+        "line": 36,
+        "text": "BR-035,MOD-005,Review → completed и review → in_progress выполняются только разрешёнными transition.,\"§11, §27.1.5–16, §29, §33; Stage 3.4\",,AC-035"
+      },
+      {
+        "entry": "Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_Module_PRDs.md",
+        "line": 1116,
+        "text": "| FR-250 | Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | Администратор, руководитель, сотрудник, наблюдатель по capabilities. | Соответствующее desktop-состояние или команда | Приложение запущено; capabilities и connection state известны | Поведение выполнено без создания неподдерживаемой server operation. | SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034 | FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033 | Desktop-only; использует существующие read/command API при необходимости | Существующие DTO; новых полей не вводится | Capability-driven; server recheck для команд | FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT | Stage 3.4 UX Architecture/Decision Log |"
+      },
+      {
+        "entry": "Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_Module_PRDs.md",
+        "line": 1126,
+        "text": "| BR-035 | Review → completed и review → in_progress выполняются только разрешёнными transition. | §11, §27.1.5–16, §29, §33; Stage 3.4 | AC-035 |"
+      },
+      {
+        "entry": "Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_Module_PRDs.md",
+        "line": 1225,
+        "text": "| AC-035 | BR-035 | Проверить бизнес-правило: Review → completed и review → in_progress выполняются только разрешёнными transition. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.4 |"
+      },
+      {
+        "entry": "Organizer_Stage4_PRD_Candidate_4.1.1/Stage_4_Module_PRDs.md",
+        "line": 1330,
+        "text": "| AC-1412 | FR-250 | Desktop behavior: Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | High | Desktop/UI | Stage 3.4 UX Architecture |"
+      }
+    ]
+  }
+]

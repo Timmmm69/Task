@@ -1,0 +1,38 @@
+[
+  {
+    "path": ".project-dashboard/roadmap.json",
+    "semantic_text_matches_e9b08b6": true,
+    "overlay_sha256": "9709b7f03f35e44571cf2c38e7457b1668996cb514eda5d0ef76c3ea60b5aec5",
+    "commit_blob_sha256": "9709b7f03f35e44571cf2c38e7457b1668996cb514eda5d0ef76c3ea60b5aec5"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+    "semantic_text_matches_e9b08b6": true,
+    "overlay_sha256": "3a3d510dce4be35cf9b638acb36ea2148906b76b749b039f34dc28ce535dfd88",
+    "commit_blob_sha256": "75c123c6103d72aeffbaa3692b6c5007a03c42a9f3eefdc8a3797ba62f5664fc"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+    "semantic_text_matches_e9b08b6": true,
+    "overlay_sha256": "0f7723d04902488de42ba28db59efdf05a990aa66bda580d4c76e5fdeff14357",
+    "commit_blob_sha256": "0f7723d04902488de42ba28db59efdf05a990aa66bda580d4c76e5fdeff14357"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+    "semantic_text_matches_e9b08b6": true,
+    "overlay_sha256": "a27d7bb0e6298abe4b1a9d91af777b584e2456fa212f9df5e2a9383a933d9d0c",
+    "commit_blob_sha256": "18b9f279633546777be3114a44618fed5ff3f65c0cd2264e5860482aa379aeb5"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+    "semantic_text_matches_e9b08b6": true,
+    "overlay_sha256": "d4ace8282a131cf8fe3588cd192003dfd931ad6fbeb34f8468b63dd4541dedd2",
+    "commit_blob_sha256": "a90924e6f39553117fe97761497f14838ce6494a0272ed56d3ea8636de647527"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+    "semantic_text_matches_e9b08b6": true,
+    "overlay_sha256": "6fc047d75000ffcc5c513c87849a2ed1fc39494cbddd0ff0131bd083fb0e7762",
+    "commit_blob_sha256": "d29859ff714c09bff8773a1501c759e0d9ee5fec61cad40ae783c6ea36379559"
+  }
+]

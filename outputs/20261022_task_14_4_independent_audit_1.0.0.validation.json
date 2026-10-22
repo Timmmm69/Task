@@ -1,0 +1,30 @@
+{
+  "package": "20261022_task_14_4_independent_audit_1.0.0",
+  "version": "1.0.0",
+  "result": "PASS_WITH_LIMITATIONS",
+  "artifact_integrity": "PASS",
+  "source_commit": "18a763d50b6a600743259eaca75dd98b62225c23",
+  "full_desktop_source_commit": "89d41421eb668244b72e67f2306959fdc8ef2fa2",
+  "files": 153,
+  "manifest_payloads": 151,
+  "sha256_entries": 152,
+  "zip_sha256": "a294e1e20d845e81907d81b631f38d257f3fc76f9d30e4721cf238fb940e4228",
+  "zip_crc": "PASS",
+  "source_overlays_match_commit": "PASS",
+  "all_13_report_sections": true,
+  "no_placeholders": true,
+  "baseline_patch_check": "PASS",
+  "cumulative_reverse_patch_check": "PASS",
+  "full_tests": {
+    "passed": 3395,
+    "failed": 1,
+    "skipped": 0
+  },
+  "final_acceptance": {
+    "passed": 197,
+    "failed": 0,
+    "skipped": 0
+  },
+  "ready_for_draft_pr": true,
+  "merge_recommended": false
+}

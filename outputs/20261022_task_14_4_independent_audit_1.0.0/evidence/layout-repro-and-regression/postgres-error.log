@@ -1,0 +1,44 @@
+2026-10-22 14:27:18.676 GMT [14196] LOG:  starting PostgreSQL 16.14, compiled by Visual C++ build 1944, 64-bit
+2026-10-22 14:27:18.677 GMT [14196] LOG:  listening on IPv4 address "127.0.0.1", port 54561
+2026-10-22 14:27:18.713 GMT [34640] LOG:  database system was shut down at 2026-10-22 14:27:15 GMT
+2026-10-22 14:27:18.732 GMT [14196] LOG:  database system is ready to accept connections
+2026-10-22 14:27:38.180 GMT [47380] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-22 14:27:38.180 GMT [47380] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-22 14:27:38.180 GMT [47380] STATEMENT:  SELECT disposition,
+	       stored_record_id,
+	       stored_response_status,
+	       stored_response_headers::text,
+	       stored_response_body::text,
+	       stored_resource_id,
+	       retry_after_seconds
+	FROM iam.acquire_idempotency_record($1, $2, $3, $4, $5, $6, $7, $8, $9);
+2026-10-22 14:27:38.290 GMT [26332] ERROR:  duplicate key value violates unique constraint "uq_domain_event_aggregate_version"
+2026-10-22 14:27:38.290 GMT [26332] DETAIL:  Key (organization_id, aggregate_id, aggregate_version, event_type)=(84b4fbd3-7c0d-4baa-9b2f-8fe1495102d5, aadcf9ba-c4e5-4610-859a-7c49f404fbba, 1, TaskCreated) already exists.
+2026-10-22 14:27:38.290 GMT [26332] STATEMENT:  INSERT INTO governance.domain_events (
+	    id, organization_id, aggregate_id, aggregate_type, aggregate_version,
+	    event_type, actor_user_id, correlation_id, operation_id, idempotency_key,
+	    changed_fields, payload)
+	VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, $10, $11);
+2026-10-22 14:27:38.435 GMT [17668] LOG:  checkpoint starting: immediate force wait
+2026-10-22 14:27:38.745 GMT [21864] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-22 14:27:38.745 GMT [21864] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-22 14:27:38.745 GMT [21864] STATEMENT:  SELECT disposition,
+	       stored_record_id,
+	       stored_response_status,
+	       stored_response_headers::text,
+	       stored_response_body::text,
+	       stored_resource_id,
+	       retry_after_seconds
+	FROM iam.acquire_idempotency_record($1, $2, $3, $4, $5, $6, $7, $8, $9);
+2026-10-22 14:27:38.774 GMT [17668] LOG:  checkpoint complete: wrote 1860 buffers (11.4%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.129 s, sync=0.199 s, total=0.339 s; sync files=616, longest=0.002 s, average=0.001 s; distance=21838 kB, estimate=21838 kB; lsn=0/2ACCBB0, redo lsn=0/2ACAE58
+2026-10-22 14:27:38.783 GMT [17668] LOG:  checkpoint starting: immediate force wait
+2026-10-22 14:27:38.827 GMT [17668] LOG:  checkpoint complete: wrote 8 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.022 s, sync=0.006 s, total=0.044 s; sync files=8, longest=0.002 s, average=0.001 s; distance=7 kB, estimate=19654 kB; lsn=0/2ACCC68, redo lsn=0/2ACCC28
+2026-10-22 14:27:38.953 GMT [17668] LOG:  checkpoint starting: immediate force wait
+2026-10-22 14:27:38.962 GMT [17668] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.003 s, total=0.010 s; sync files=4, longest=0.001 s, average=0.001 s; distance=4 kB, estimate=17689 kB; lsn=0/2ACDE78, redo lsn=0/2ACDE40
+2026-10-22 14:27:47.119 GMT [14196] LOG:  received fast shutdown request
+2026-10-22 14:27:47.120 GMT [14196] LOG:  aborting any active transactions
+2026-10-22 14:27:47.124 GMT [14196] LOG:  background worker "logical replication launcher" (PID 17340) exited with exit code 1
+2026-10-22 14:27:47.125 GMT [17668] LOG:  shutting down
+2026-10-22 14:27:47.125 GMT [17668] LOG:  checkpoint starting: shutdown immediate
+2026-10-22 14:27:47.137 GMT [17668] LOG:  checkpoint complete: wrote 1 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.012 s; sync files=1, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=15920 kB; lsn=0/2ACDF80, redo lsn=0/2ACDF80
+2026-10-22 14:27:47.147 GMT [14196] LOG:  database system is shut down

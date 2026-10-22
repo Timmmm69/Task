@@ -1,0 +1,94 @@
+[
+  {
+    "path": ".project-dashboard/roadmap.json",
+    "git_blob_sha256": "efa5f4318693c139d6f0b2fba2d85b535dab4ce6111d8a3a0b644ddd22340849"
+  },
+  {
+    "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+    "git_blob_sha256": "2f83fbf48640addc6c665158ff2c6994750748b7ed397ee918265cc0f22e0911"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskCreateCommandService.cs",
+    "git_blob_sha256": "52cf7664e43eee4899c899d8e1afa05752eb363cdb5245817b21b0813a1ff1a0"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+    "git_blob_sha256": "1210e11b3fc782a22195b249621cc4a08dafb80e913c7b1971a13481d68cc77a"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskWriteCommand.cs",
+    "git_blob_sha256": "76e88d6eb618f805896761ed0e413b3429ce885c221a79b476e55a30e4238c75"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+    "git_blob_sha256": "a0192d8ad81876b645630116a17b57f17f987c669da73aabbe55b049534f0307"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+    "git_blob_sha256": "85ef27f079aaf5721dc28578620260d9c222f9cf748c99cfadfee7658e473520"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+    "git_blob_sha256": "4baad9f50a4fa318d15910bb25bb553912851c57d6b896b117478b3ec1c93806"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs",
+    "git_blob_sha256": "fba26117039653e63314a2170fab81402da18068c01d29e2fa5053c2a7a2b730"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Views/TodayView.xaml",
+    "git_blob_sha256": "915bbd93636f4621c39008c386403abce03436577f2a0b3691c63470f2667e45"
+  },
+  {
+    "path": "work/production/src/Task.Domain/TaskAggregate.cs",
+    "git_blob_sha256": "29444f0e76d8eb1035678aa1ba4e6090e245496bd76a61bd970ae5487213189d"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+    "git_blob_sha256": "9a097be1d01871f520f010384c0c3fe3a757b4b33e631295da0bbea62ed928b7"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+    "git_blob_sha256": "169489ecc2d0abf89117ef36bf11fbddadb803476ff9ff44397a5affdb3267a3"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+    "git_blob_sha256": "e16b325340efc150c6108427e1aa5a407eac5fc1c7e3523c6d7e1c6b7a76e21f"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+    "git_blob_sha256": "a9a7cfb14fd938750c339c27aa83eb93341e0d0919d36e790858451b64d0f8af"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs",
+    "git_blob_sha256": "ab8837920a01e16a471ffb96ccbfa6654a8ea4538388dccd2337c21b3d95c9ad"
+  },
+  {
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs",
+    "git_blob_sha256": "91448960d4b531b0ff70d3bc40c48d5b9cb9ed0eaf6da41c264b07920d8ecaab"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs",
+    "git_blob_sha256": "feebd4211ee9e678e4036d3f983236a8a35232eb3816df46bc95dd524a6b9e48"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresTaskReturnAuditTests.cs",
+    "git_blob_sha256": "e09c7fbb0600f4b97bf5626b1ce05cdb077e8b5df9dd706746a218753e791eb5"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresTaskReturnTests.cs",
+    "git_blob_sha256": "e6e072fd95477c63e2389568ec2b51bdf4e8e5f81569c5567466267f31ea2b07"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskAggregateTests.cs",
+    "git_blob_sha256": "9ba3ff2edc7ce79e27c6929391b95e202958df880ff1ceec55f1fee3b06a00df"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskCreateCommandTests.cs",
+    "git_blob_sha256": "bf750d9efd921422f492fb471ba0925bc88410bcf23bcfe8cc9882348aaaac87"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskUpdateTests.cs",
+    "git_blob_sha256": "316e189fe87a27596fb49f7d52da6dc9b2429baf8b0aa5a2457667a023f69199"
+  }
+]

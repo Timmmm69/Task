@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6ef10062-f6b7-4968-8234-fc73ed4ad026" name="novik@TIM 2026-10-22 13:46:27" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T13:46:27.9171023+03:00" queuing="2026-10-22T13:46:27.9171028+03:00" start="2026-10-22T13:46:23.8895722+03:00" finish="2026-10-22T13:46:29.3965871+03:00" />
+  <TestSettings name="default" id="d3491ee7-e091-4b05-9249-111991571702">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-22_13_46_27" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="8176fad6-9c4e-435f-9a6d-dc7e586e0788" testId="ee271727-ec4f-3ce8-4b10-9dc0d8169d22" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: False)" computerName="TIM" duration="00:00:01.7765179" startTime="2026-10-22T13:46:26.1178007+03:00" endTime="2026-10-22T13:46:27.8923048+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8176fad6-9c4e-435f-9a6d-dc7e586e0788">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(Boolean replay) in C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="39c628b6-859a-42e8-9eba-80d5ff412b01" testId="7dd671c9-13f6-98bf-5190-f8439c75e6bc" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: True)" computerName="TIM" duration="00:00:01.4552154" startTime="2026-10-22T13:46:27.9044388+03:00" endTime="2026-10-22T13:46:29.3490414+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39c628b6-859a-42e8-9eba-80d5ff412b01">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(Boolean replay) in C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: True)" storage="c:\users\novik\таск\work\status_return_14_4\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="7dd671c9-13f6-98bf-5190-f8439c75e6bc">
+      <Execution id="39c628b6-859a-42e8-9eba-80d5ff412b01" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: False)" storage="c:\users\novik\таск\work\status_return_14_4\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="ee271727-ec4f-3ce8-4b10-9dc0d8169d22">
+      <Execution id="8176fad6-9c4e-435f-9a6d-dc7e586e0788" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ee271727-ec4f-3ce8-4b10-9dc0d8169d22" executionId="8176fad6-9c4e-435f-9a6d-dc7e586e0788" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7dd671c9-13f6-98bf-5190-f8439c75e6bc" executionId="39c628b6-859a-42e8-9eba-80d5ff412b01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:01.11]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:01.19]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:01.21]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:03.01]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:03.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.01]         C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs(23,0): at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(Boolean replay)&#xD;
+[xUnit.net 00:00:03.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.47]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:04.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.47]         C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs(23,0): at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(Boolean replay)&#xD;
+[xUnit.net 00:00:04.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.47]   Finished:    Task.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-22T13:46:27.8941099+03:00">
+        <Text>[xUnit.net 00:00:03.01]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-22T13:46:29.3498742+03:00">
+        <Text>[xUnit.net 00:00:04.47]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

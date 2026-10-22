@@ -1,0 +1,15 @@
+2026-10-22 10:46:20.030 GMT [52900] LOG:  starting PostgreSQL 16.14, compiled by Visual C++ build 1944, 64-bit
+2026-10-22 10:46:20.031 GMT [52900] LOG:  listening on IPv4 address "127.0.0.1", port 59556
+2026-10-22 10:46:20.070 GMT [52384] LOG:  database system was shut down at 2026-10-22 10:46:17 GMT
+2026-10-22 10:46:20.094 GMT [52900] LOG:  database system is ready to accept connections
+2026-10-22 10:46:27.765 GMT [7184] LOG:  checkpoint starting: immediate force wait
+2026-10-22 10:46:27.810 GMT [7184] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 1 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.004 s, total=0.045 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7293 kB, estimate=7293 kB; lsn=0/1C96E30, redo lsn=0/1C96DF8
+2026-10-22 10:46:29.270 GMT [7184] LOG:  checkpoint starting: immediate force wait
+2026-10-22 10:46:29.282 GMT [7184] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.003 s, total=0.013 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7302 kB, estimate=7302 kB; lsn=0/23B88B0, redo lsn=0/23B8878
+2026-10-22 10:46:35.733 GMT [52900] LOG:  received fast shutdown request
+2026-10-22 10:46:35.734 GMT [52900] LOG:  aborting any active transactions
+2026-10-22 10:46:35.737 GMT [52900] LOG:  background worker "logical replication launcher" (PID 12596) exited with exit code 1
+2026-10-22 10:46:35.738 GMT [7184] LOG:  shutting down
+2026-10-22 10:46:35.739 GMT [7184] LOG:  checkpoint starting: shutdown immediate
+2026-10-22 10:46:35.748 GMT [7184] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.003 s, total=0.010 s; sync files=4, longest=0.002 s, average=0.001 s; distance=2 kB, estimate=6572 kB; lsn=0/23B9380, redo lsn=0/23B9380
+2026-10-22 10:46:35.756 GMT [52900] LOG:  database system is shut down

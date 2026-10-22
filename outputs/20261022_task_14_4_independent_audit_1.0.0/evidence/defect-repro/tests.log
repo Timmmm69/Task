@@ -1,0 +1,17 @@
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:03.01]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: False) [FAIL]
+[xUnit.net 00:00:04.47]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_RevokedSessionCannotExecuteOrReplay(replay: True) [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\defect-repro\novik_TIM_2026-10-22_13_46_27_net10.0.trx
+
+Не пройден!: не пройдено     2, пройдено     0, пропущено     0, всего     2, длительность 3 s. - Task.Tests.dll (net10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\defect-repro\novik_TIM_2026-10-22_13_46_31_net10.0.trx
+
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:02.81]     Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\defect-repro\novik_TIM_2026-10-22_13_46_35_net10.0.trx
+
+Не пройден!: не пройдено     1, пройдено     0, пропущено     0, всего     1, длительность 2 s. - Task.Desktop.Tests.dll (net10.0)

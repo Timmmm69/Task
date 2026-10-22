@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8a551508-9d58-466d-b9b1-f3969db4afda" name="novik@TIM 2026-10-22 13:46:31" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T13:46:31.6848983+03:00" queuing="2026-10-22T13:46:31.6848986+03:00" start="2026-10-22T13:46:29.5859301+03:00" finish="2026-10-22T13:46:31.6852111+03:00" />
+  <TestSettings name="default" id="ef30acac-d737-4fe7-8555-64e8323b7f2f">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-22_13_46_31" />
+  </TestSettings>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="0" executed="0" passed="0" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:01.23]   Discovering: Task.ServiceHosts.Tests&#xD;
+[xUnit.net 00:00:01.33]   Discovered:  Task.ServiceHosts.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-22T13:46:31.6325734+03:00">
+        <Text>Нет тестов, соответствующих указанному фильтру тестовых случаев "TaskReturn_Audit_RevokedSession|NativeWpf_ReturnActionConfirmationFocusAndServerResult" в C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

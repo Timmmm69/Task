@@ -1,0 +1,368 @@
+[
+  {
+    "source": "sources/concept/Task_Concept_Final.txt",
+    "sha256": "54598093ed426b6151440557eac14a59e54c64eacf1d190c1febd3b3463c94ac",
+    "matches": [
+      {
+        "line": 182,
+        "text": "видеть назначенные ему задачи;\nсоздавать задачи в доступных проектах;\nизменять статус своих задач;\nприкреплять ссылки на файлы;\nоставлять комментарии;\nработать с доступными контактами."
+      },
+      {
+        "line": 305,
+        "text": "дата создания;\nдата завершения.\n11.2. Статусы\nБазовые статусы:\nновая;\nзапланирована;"
+      },
+      {
+        "line": 603,
+        "text": "приглашение в проект;\nзавершение задачи;\nзадача отправлена на проверку.\n17.2. Системные уведомления\nУведомления должны появляться поверх других окон операционной системы, если это разрешено настройками Windows.\nПриложение должно иметь возможность работать в фоне."
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_1/architecture_organizer.md",
+    "sha256": "972211eaae8e0686fbbeef5320397234da115bb3bd257415972044669d00aee5",
+    "matches": [
+      {
+        "line": 60,
+        "text": "5. **Soft delete first.** Пользовательские сущности сначала перемещаются в корзину или архив; физическое удаление выполняется отдельным процессом по политике хранения.\n6. **Audit is append-only.** История не редактируется обычными пользователями и не каскадно удаляется вместе с объектом.\n7. **Optimistic concurrency.** Сервер не применяет слепой last-write-wins при конфликте версий.\n8. **Local cache is disposable.** Потеря локального кэша не должна приводить к потере общих данных.\n9. **No hidden file operations.** Приложение не перемещает и не удаляет физические файлы автоматически.\n10. **Future-ready boundaries.** В каждой общей сущности предусматривается `organization_id`, хотя в первой версии организация одна."
+      },
+      {
+        "line": 73,
+        "text": "| 1 | В перечне сущностей есть и «Пользователь», и «Сотрудник», но различие не определено | дублирование профиля и прав | `UserAccount` отвечает за вход и безопасность; `EmployeeProfile` — за ФИО, должность, отдел и рабочие данные. Связь 1:1, профиль может существовать до активации учётной записи |\n| 2 | Во «Входящих» есть заметки, идеи и ссылки, но отдельной сущности нет | попытка хранить всё как задачу | вводится техническая сущность `InboxItem`, которая позже преобразуется в задачу, заметку каталога, URL или удаляется |\n| 3 | Указано «последняя подтверждённая версия сохраняется», но одновременно требуется предупреждение о конфликте | потеря изменений второго пользователя | используется optimistic locking. При несовпадении версии сервер возвращает конфликт и не перезаписывает данные молча |\n| 4 | При потере сервера изменения «либо блокируются, либо сохраняются локально», затем для MVP разрешён read-only | неоднозначная реализация | в MVP общие изменения блокируются. Разрешены просмотр кэша, локальные уведомления и открытие доступных файлов |\n| 5 | Есть «Календарное событие», но детально описаны почти только задачи | размытая модель календаря | вводится отдельный `CalendarEvent` для встреч и событий без статуса исполнения. В UI задачи и события представлены общей проекцией `ScheduleItem` |\n| 6 | Каталог содержит текстовые заметки, но отдельной сущности нет | смешение файла и текста | `CatalogItem` имеет тип: virtual_folder, file_reference, folder_reference, web_link, text_note |"
+      },
+      {
+        "line": 1559,
+        "text": "```\n\nКлиент может показывать optimistic UI только для обратимых узких команд, но обязан откатить отображение при ошибке. Для создания/редактирования карточки лучше показывать состояние «Сохранение» и считать объект созданным после server response.\n\n## 8.10. Конфликт изменений\n"
+      },
+      {
+        "line": 1924,
+        "text": "### Изменение\n\n- optimistic concurrency;\n- каждое значимое поле отражается в audit;\n- смена assignee создаёт notification;\n- deadline change пересчитывает overdue projection и reminders."
+      },
+      {
+        "line": 2080,
+        "text": "8. Linked files загружаются как metadata only.\n\n## 12.3. Изменение статуса\n\n1. Пользователь нажимает новый статус.\n2. Client проверяет advertised capability, но это только UX."
+      },
+      {
+        "line": 3067,
+        "text": "3. Файлы не дублируются и не проходят через application server.\n4. Права приложения и Windows ACL разделены корректно.\n5. Optimistic concurrency предотвращает молчаливое перезаписывание.\n6. Change feed + outbox + realtime дают надёжность без зависимости от WebSocket.\n7. Локальный read-cache поддерживает приемлемую работу при кратком отказе сервера.\n8. Архитектура допускает web/mobile/cloud без переноса бизнес-логики из desktop."
+      },
+      {
+        "line": 3278,
+        "text": "4. ADR-004: Online-only writes in MVP.\n5. ADR-005: Incremental sync via change sequence.\n6. ADR-006: Optimistic concurrency, no blind last-write-wins.\n7. ADR-007: File metadata and multiple scoped locations.\n8. ADR-008: Hybrid RBAC/ReBAC/ABAC authorization.\n9. ADR-009: Outbox for post-commit effects."
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2/docs/01_core_domain_and_data.md",
+    "sha256": "ca8ff6f6ef81cfc2720c032adacd4dc17e26f42aa7d7d203edaa47aabbf05ad5",
+    "matches": [
+      {
+        "line": 361,
+        "text": "  paused --> active\n  active --> completed\n  completed --> archived\n  paused --> archived\n  planning --> archived\n  archived --> active: unarchive + validation"
+      },
+      {
+        "line": 369,
+        "text": "stateDiagram-v2\n  [*] --> new\n  new --> in_progress\n  in_progress --> review\n  review --> in_progress: returned\n  review --> completed"
+      },
+      {
+        "line": 370,
+        "text": "  [*] --> new\n  new --> in_progress\n  in_progress --> review\n  review --> in_progress: returned\n  review --> completed\n  new --> cancelled"
+      },
+      {
+        "line": 371,
+        "text": "  new --> in_progress\n  in_progress --> review\n  review --> in_progress: returned\n  review --> completed\n  new --> cancelled\n  in_progress --> cancelled"
+      },
+      {
+        "line": 372,
+        "text": "  in_progress --> review\n  review --> in_progress: returned\n  review --> completed\n  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled"
+      },
+      {
+        "line": 373,
+        "text": "  review --> in_progress: returned\n  review --> completed\n  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission"
+      },
+      {
+        "line": 374,
+        "text": "  review --> completed\n  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow"
+      },
+      {
+        "line": 375,
+        "text": "  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow\n```"
+      },
+      {
+        "line": 376,
+        "text": "  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow\n```\nПросрочка не состояние: `deadline_at < now AND status NOT IN (completed,cancelled)`."
+      },
+      {
+        "line": 377,
+        "text": "  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow\n```\nПросрочка не состояние: `deadline_at < now AND status NOT IN (completed,cancelled)`.\n"
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/docs/01_core_domain_and_data.md",
+    "sha256": "a912e89a5cf6cad39cdc1bafb3ef7008ecbd18d143955aad223a69e3b2855258",
+    "matches": [
+      {
+        "line": 361,
+        "text": "  paused --> active\n  active --> completed\n  completed --> archived\n  paused --> archived\n  planning --> archived\n  archived --> active: unarchive + validation"
+      },
+      {
+        "line": 369,
+        "text": "stateDiagram-v2\n  [*] --> new\n  new --> in_progress\n  in_progress --> review\n  review --> in_progress: returned\n  review --> completed"
+      },
+      {
+        "line": 370,
+        "text": "  [*] --> new\n  new --> in_progress\n  in_progress --> review\n  review --> in_progress: returned\n  review --> completed\n  new --> cancelled"
+      },
+      {
+        "line": 371,
+        "text": "  new --> in_progress\n  in_progress --> review\n  review --> in_progress: returned\n  review --> completed\n  new --> cancelled\n  in_progress --> cancelled"
+      },
+      {
+        "line": 372,
+        "text": "  in_progress --> review\n  review --> in_progress: returned\n  review --> completed\n  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled"
+      },
+      {
+        "line": 373,
+        "text": "  review --> in_progress: returned\n  review --> completed\n  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission"
+      },
+      {
+        "line": 374,
+        "text": "  review --> completed\n  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow"
+      },
+      {
+        "line": 375,
+        "text": "  new --> cancelled\n  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow\n```"
+      },
+      {
+        "line": 376,
+        "text": "  in_progress --> cancelled\n  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow\n```\nПросрочка не состояние: `deadline_at < now AND status NOT IN (completed,cancelled)`."
+      },
+      {
+        "line": 377,
+        "text": "  review --> cancelled\n  completed --> in_progress: reopen with permission\n  cancelled --> new: restore workflow\n```\nПросрочка не состояние: `deadline_at < now AND status NOT IN (completed,cancelled)`.\n"
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/catalogs/permissions.csv",
+    "sha256": "0227011c8843bf646be102dbbf00a028757592fc106503cb1d388f37d4179671",
+    "matches": [
+      {
+        "line": 14,
+        "text": "CalendarEvent.Respond,CalendarEvent,Respond,Ответ участника на приглашение,False\nCalendarEvent.Update,CalendarEvent,Update,Изменение календарного события,False\nComment.Create,Comment,Create,Добавление комментария,False\nComment.DeleteOwnOrModerate,Comment,Delete,Удаление своего комментария; модерация отдельно,False\nComment.Moderate,Comment,Moderate,Модерация и восстановление комментариев,True\nComment.Read,Comment,Read,Просмотр комментариев доступного объекта,False"
+      },
+      {
+        "line": 37,
+        "text": "FileLocation.ReadSensitivePath,FileLocation,ReadSensitivePath,Просмотр полного физического пути чужого устройства,True\nFileReference.Open,FileReference,Open,Получение разрешённых путей для открытия,False\nHistory.Read,History,Read,Просмотр истории доступного объекта,False\nInbox.ManageOwn,Inbox,ManageOwn,Управление собственными входящими,False\nInbox.ReadOwn,Inbox,ReadOwn,Просмотр собственных входящих,False\nInteraction.Create,Interaction,Create,Добавление взаимодействия,False"
+      },
+      {
+        "line": 76,
+        "text": "Task.Archive,Task,Archive,Архивирование задачи,False\nTask.Assign,Task,Assign,Назначение исполнителей,False\nTask.ChangeStatus,Task,ChangeStatus,Изменение статуса задачи,False\nTask.Create,Task,Create,Создание задачи,False\nTask.Delete,Task,Delete,Помещение задачи в корзину,False\nTask.ManageRecurrence,Task,ManageRecurrence,Изменение серии повторений,False"
+      },
+      {
+        "line": 81,
+        "text": "Task.ManageRecurrence,Task,ManageRecurrence,Изменение серии повторений,False\nTask.ManageWatchers,Task,ManageWatchers,Управление наблюдателями задачи,False\nTask.Read,Task,Read,Просмотр задач по области доступа,False\nTask.Restore,Task,Restore,Восстановление задачи,False\nTask.Update,Task,Update,Редактирование задачи,False\nTrash.Purge,Trash,Purge,Физическая очистка метаданных после retention,True"
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/catalogs/errors.csv",
+    "sha256": "0e0170cbfd9b93ada80fe93e8d4daf8685daf054a1b9cb0f56c51a29f4b6e82e",
+    "matches": [
+      {
+        "line": 9,
+        "text": "ACCOUNT_BLOCKED,423,Учётная запись заблокирована,Account status blocked,False,Обратиться к администратору,Security audit mandatory\nACCOUNT_LOCKED_TEMPORARILY,423,Временная блокировка входа,Brute-force threshold,True,Показать retryAfter,Security audit\nSESSION_EXPIRED,401,Сессия истекла,Session/token expired,True,Refresh or login,Security audit\nSESSION_REVOKED,401,Сессия отозвана,Server session inactive,False,Очистить secure storage,Security audit\nREFRESH_TOKEN_REUSE,401,Сессия завершена из-за риска,Rotated token reused,False,Повторный вход,Critical security audit\nFORBIDDEN,403,Нет права на действие,Policy denied,False,Скрыть/запретить действие,Authorization deny audit for sensitive actions"
+      },
+      {
+        "line": 10,
+        "text": "ACCOUNT_LOCKED_TEMPORARILY,423,Временная блокировка входа,Brute-force threshold,True,Показать retryAfter,Security audit\nSESSION_EXPIRED,401,Сессия истекла,Session/token expired,True,Refresh or login,Security audit\nSESSION_REVOKED,401,Сессия отозвана,Server session inactive,False,Очистить secure storage,Security audit\nREFRESH_TOKEN_REUSE,401,Сессия завершена из-за риска,Rotated token reused,False,Повторный вход,Critical security audit\nFORBIDDEN,403,Нет права на действие,Policy denied,False,Скрыть/запретить действие,Authorization deny audit for sensitive actions\nOBJECT_NOT_VISIBLE,404,Объект не найден,Not found or hidden by BOLA policy,False,Не раскрывать существование,Security audit sampled"
+      },
+      {
+        "line": 14,
+        "text": "FORBIDDEN,403,Нет права на действие,Policy denied,False,Скрыть/запретить действие,Authorization deny audit for sensitive actions\nOBJECT_NOT_VISIBLE,404,Объект не найден,Not found or hidden by BOLA policy,False,Не раскрывать существование,Security audit sampled\nVERSION_CONFLICT,409,Объект изменён другим пользователем,If-Match != current version,True,Показать diff/обновить,Conflict audit\nPRECONDITION_REQUIRED,428,Нужна версия объекта,If-Match missing for versioned write,False,Обновить карточку,Warning\nINVALID_STATE_TRANSITION,409,Переход состояния запрещён,State machine rejected transition,False,Показать допустимые действия,Domain audit\nOBJECT_DELETED,409,Объект находится в корзине,Write against trashed object,False,Предложить восстановление при наличии права,Domain audit"
+      },
+      {
+        "line": 15,
+        "text": "OBJECT_NOT_VISIBLE,404,Объект не найден,Not found or hidden by BOLA policy,False,Не раскрывать существование,Security audit sampled\nVERSION_CONFLICT,409,Объект изменён другим пользователем,If-Match != current version,True,Показать diff/обновить,Conflict audit\nPRECONDITION_REQUIRED,428,Нужна версия объекта,If-Match missing for versioned write,False,Обновить карточку,Warning\nINVALID_STATE_TRANSITION,409,Переход состояния запрещён,State machine rejected transition,False,Показать допустимые действия,Domain audit\nOBJECT_DELETED,409,Объект находится в корзине,Write against trashed object,False,Предложить восстановление при наличии права,Domain audit\nOBJECT_ARCHIVED,409,Архивный объект доступен только для чтения,Write against archived object,False,Вернуть из архива,Domain audit"
+      },
+      {
+        "line": 16,
+        "text": "VERSION_CONFLICT,409,Объект изменён другим пользователем,If-Match != current version,True,Показать diff/обновить,Conflict audit\nPRECONDITION_REQUIRED,428,Нужна версия объекта,If-Match missing for versioned write,False,Обновить карточку,Warning\nINVALID_STATE_TRANSITION,409,Переход состояния запрещён,State machine rejected transition,False,Показать допустимые действия,Domain audit\nOBJECT_DELETED,409,Объект находится в корзине,Write against trashed object,False,Предложить восстановление при наличии права,Domain audit\nOBJECT_ARCHIVED,409,Архивный объект доступен только для чтения,Write against archived object,False,Вернуть из архива,Domain audit\nDUPLICATE_RESOURCE,409,Такой объект/связь уже существует,Unique constraint mapped,False,Открыть существующий объект,Warning"
+      },
+      {
+        "line": 17,
+        "text": "PRECONDITION_REQUIRED,428,Нужна версия объекта,If-Match missing for versioned write,False,Обновить карточку,Warning\nINVALID_STATE_TRANSITION,409,Переход состояния запрещён,State machine rejected transition,False,Показать допустимые действия,Domain audit\nOBJECT_DELETED,409,Объект находится в корзине,Write against trashed object,False,Предложить восстановление при наличии права,Domain audit\nOBJECT_ARCHIVED,409,Архивный объект доступен только для чтения,Write against archived object,False,Вернуть из архива,Domain audit\nDUPLICATE_RESOURCE,409,Такой объект/связь уже существует,Unique constraint mapped,False,Открыть существующий объект,Warning\nDEPENDENCY_CYCLE,422,Зависимость создаёт цикл,Graph cycle check,False,Убрать связь,Domain audit"
+      },
+      {
+        "line": 18,
+        "text": "INVALID_STATE_TRANSITION,409,Переход состояния запрещён,State machine rejected transition,False,Показать допустимые действия,Domain audit\nOBJECT_DELETED,409,Объект находится в корзине,Write against trashed object,False,Предложить восстановление при наличии права,Domain audit\nOBJECT_ARCHIVED,409,Архивный объект доступен только для чтения,Write against archived object,False,Вернуть из архива,Domain audit\nDUPLICATE_RESOURCE,409,Такой объект/связь уже существует,Unique constraint mapped,False,Открыть существующий объект,Warning\nDEPENDENCY_CYCLE,422,Зависимость создаёт цикл,Graph cycle check,False,Убрать связь,Domain audit\nSUBTASK_DEPTH_EXCEEDED,422,Допустим один уровень подзадач,Parent already has parent,False,Создать рядом,Warning"
+      },
+      {
+        "line": 36,
+        "text": "SEARCH_CURSOR_EXPIRED,410,Снимок поиска больше недоступен,Search index snapshot or authorization-scope version expired,True,Повторить поиск с первой страницы,Operational log\nSYNC_SCOPE_CHANGED,409,Права изменились,Client scope version stale,True,Purge affected cache and bootstrap,Authorization audit\nIDEMPOTENCY_KEY_REUSED,409,Ключ использован с другим запросом,Request hash mismatch,False,Создать новый ключ,Security/operational log\nRATE_LIMITED,429,Слишком много запросов,Rate policy exceeded,True,Повторить после Retry-After,Rate log\nTIMEOUT,504,Операция не завершилась вовремя,Server/dependency timeout,True,Повторить безопасный запрос,Error log\nDATABASE_UNAVAILABLE,503,База данных недоступна,Connection/readiness failure,True,Режим просмотра кэша,Critical alert"
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/openapi/openapi.yaml",
+    "sha256": "36c15dff5adba0041fcfd79f5a0d203835dac5cdd4ad24122bcd92177c13220d",
+    "matches": [
+      {
+        "line": 5,
+        "text": "info:\n  title: Organizer Local Server API\n  version: 1.2.0-stage2.3\n  license:\n    name: Proprietary\n    url: https://organizer.company.local/legal/license"
+      },
+      {
+        "line": 20046,
+        "text": "      - VALIDATION_FAILED\n      - VERSION_CONFLICT\n  /api/v1/tasks/{id}/transition:\n    post:\n      tags:\n      - tasks"
+      },
+      {
+        "line": 27512,
+        "text": "      - sortOrder\n      - expectedParentVersion\n    TaskTransitionRequest:\n      type: object\n      additionalProperties: false\n      properties:"
+      },
+      {
+        "line": 27959,
+        "text": "      - outcome\n      - correlationId\n    HistoryEntry:\n      type: object\n      additionalProperties: false\n      properties:"
+      }
+    ]
+  },
+  {
+    "source": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip::Stage_3_User_Flows_Final_3.5.md",
+    "sha256": "f42d71068c871443de9a6f6efc119b5e15be92f009c4d47d27d68c82566b69a1",
+    "matches": [
+      {
+        "line": 28,
+        "text": "| FLOW-006 | Назначение исполнителя | Task editor with permission | Task.Assign | PUT /tasks/{id}/assignees | Authoritative assignment |\n| FLOW-007 | Завершение задачи | Assignee/Manager/Admin with capability | Task.ChangeStatus | POST /tasks/{id}/transition; notification action | Business completion, active lifecycle |\n| FLOW-008 | Изменение статуса | Allowed editor | Task.ChangeStatus | POST /tasks/{id}/transition | Status changed without overwriting fields |\n| FLOW-009 | Создание подзадачи | Task editor | Task.Create/Task.Update | POST /tasks | One-level child Task |\n| FLOW-010 | Повторяющаяся задача | Allowed editor | Task.ManageRecurrence | POST /recurrence-series; POST preview | Active series + deterministic occurrences |\n| FLOW-011 | Изменить один occurrence | Allowed editor | Task.ManageRecurrence | POST /recurrence-series/{id}/apply-change | Single occurrence safely diverged |"
+      },
+      {
+        "line": 149,
+        "text": "- Validation → focus field\n- Timeout → same-key safe retry/read\n- Offline → save disabled, no queue\n\n## FLOW-005. Быстрое создание задачи\n"
+      },
+      {
+        "line": 187,
+        "text": "2. Load eligible scoped users\n3. Choose assignees/primary\n4. PUT with If-Match\n5. Refresh history/capabilities\n\n### Альтернативные и негативные пути"
+      },
+      {
+        "line": 215,
+        "text": "\n- Already completed → refresh current\n- Review required → only review transition\n- Conflict → current allowed actions\n\n## FLOW-008. Изменение статуса"
+      },
+      {
+        "line": 218,
+        "text": "- Conflict → current allowed actions\n\n## FLOW-008. Изменение статуса\n\n**Роли:** Allowed editor  \n**Предусловия:** Allowed transition  "
+      },
+      {
+        "line": 238,
+        "text": "- Stale capability → server deny and refresh\n- Concurrent state → show current transitions\n- Offline → disabled\n\n## FLOW-009. Создание подзадачи\n"
+      },
+      {
+        "line": 350,
+        "text": "- Duplicate → open/rename\n- Inactive owner → validation\n- Offline → disabled\n\n## FLOW-014. Добавление участника\n"
+      },
+      {
+        "line": 436,
+        "text": "2. Choose path via native picker\n3. Choose replace/add alternative\n4. Validate path + If-Match\n5. Probe and update history/ranking\n\n### Альтернативные и негативные пути"
+      },
+      {
+        "line": 488,
+        "text": "\n- Zero → refine\n- Offline → partial cache banner\n- Target becomes hidden → neutral unavailable\n\n## FLOW-020. Действие из notification"
+      },
+      {
+        "line": 550,
+        "text": "2. UI показывает level, inclusive min/max, `displayToken`, non-color preview и read-only metadata.\n3. Клиент проверяет 0–100, order, contiguity и overlap.\n4. Save отправляет полный массив через PUT с `If-Match` и новым `Idempotency-Key`.\n5. Reset подтверждает defaults 0–24/25–49/50–74/75–100 и вызывает POST `/reset` с теми же concurrency headers.\n6. Успех атомарно заменяет draft ответом/ETag; presentation всех notifications обновляется, semantic urgency неизменна.\n"
+      },
+      {
+        "line": 559,
+        "text": "- Нет `System.Configure` → read-only с объяснением; server `FORBIDDEN` authoritative.\n- `VERSION_CONFLICT` → `STATE-014`: preserve draft, load current, compare/reapply/discard.\n- Нет `If-Match` → `STATE-025`: GET current, no blind retry.\n- Server unavailable → cached read-only, Retry, без offline write queue.\n- Старый client 2.2 использует встроенный mapping.\n- Target changed → current state"
+      },
+      {
+        "line": 560,
+        "text": "- `VERSION_CONFLICT` → `STATE-014`: preserve draft, load current, compare/reapply/discard.\n- Нет `If-Match` → `STATE-025`: GET current, no blind retry.\n- Server unavailable → cached read-only, Retry, без offline write queue.\n- Старый client 2.2 использует встроенный mapping.\n- Target changed → current state\n- Offline → read-only open, no queue"
+      },
+      {
+        "line": 563,
+        "text": "- Старый client 2.2 использует встроенный mapping.\n- Target changed → current state\n- Offline → read-only open, no queue\n\n## FLOW-021. Snooze reminder\n"
+      },
+      {
+        "line": 585,
+        "text": "- Invalid/past time → correct\n- Already dismissed/expired → current state\n- Offline → no server snooze; local toast may close only locally\n\n## FLOW-022. Потеря сервера\n"
+      },
+      {
+        "line": 652,
+        "text": "- Cursor expired → bootstrap\n- Scope changed → purge first\n- No offline write conflicts because queue absent\n- Target unavailable → neutral state\n\n## FLOW-025. Optimistic conflict"
+      },
+      {
+        "line": 658,
+        "text": "\n**Роли:** Any editor  \n**Предусловия:** Stale If-Match  \n**Permission:** `Original command permission`  \n**API:** `Target GET + original command`  \n**Состояния/ошибки:** VERSION_CONFLICT; OBJECT_DELETED; OBJECT_ARCHIVED; INVALID_STATE_TRANSITION  "
+      },
+      {
+        "line": 670,
+        "text": "3. Compare base/server/local\n4. User reloads/manual resolves/reapplies\n5. Retry with new If-Match\n\n### Альтернативные и негативные пути\n"
+      },
+      {
+        "line": 831,
+        "text": "\n- Keyboard reschedule dialog\n- Offline → disabled\n- Date-only dropped on timeline gains explicit start/duration\n\n## FLOW-033. Массовая смена статуса"
+      },
+      {
+        "line": 982,
+        "text": "\n- CalendarEvent create/edit uses all-day/date-time fields exactly as DTO defines.\n- Drag/resize is a narrow PATCH with If-Match. UI performs visual rollback on 412 and opens conflict compare.\n- Overlap remains a warning; server validation may reject invalid time ordering, not overlap itself.\n\n### FLOW-017 / FLOW-036. FileLocation"
+      }
+    ]
+  },
+  {
+    "source": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip::Stage_4_Business_Rules_Catalog_4.5.csv",
+    "sha256": "5ed213df1dde2050e8cc06c6bfe3c2a591ae84781e8915f525d4f78fbe1a35ff",
+    "matches": [
+      {
+        "line": 36,
+        "text": "BR-033,MOD-005,Полный editor сохраняется явно; узкие команды отправляются отдельно.,\"§11, §27.1.5–16, §29, §33; Stage 3.5\",FR-031;FR-033;FR-036;FR-038;FR-040;FR-248,AC-033 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-033.\nBR-034,MOD-005,Переходы определяет сервер; клиент не формирует их из названия роли.,\"§11, §27.1.5–16, §29, §33; Stage 3.5\",FR-028;FR-038;FR-250,AC-034 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-034.\nBR-035,MOD-005,Review → completed и review → in_progress выполняются только разрешёнными transition.,\"§11, §27.1.5–16, §29, §33; Stage 3.5\",FR-038;FR-250,AC-035 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-035.\nBR-036,MOD-006,Подзадача является Task с parentTaskId.,\"§11.4–11.5, §27.1.9–10; Stage 3.5\",FR-050;FR-051,AC-036 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-036.\nBR-037,MOD-006,Глубина вложенности ограничена одним уровнем.,\"§11.4–11.5, §27.1.9–10; Stage 3.5\",FR-051;FR-251,AC-037 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-037.\nBR-038,MOD-006,Checklist item не имеет самостоятельного lifecycle вне родительского Task.,\"§11.4–11.5, §27.1.9–10; Stage 3.5\",FR-041;FR-042;FR-043;FR-044;FR-045;FR-046;FR-047;FR-048;FR-049,AC-038 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-038."
+      }
+    ]
+  },
+  {
+    "source": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip::Stage_4_Module_PRDs_4.5.md",
+    "sha256": "6f96ad8e4abb6ea6f71d4114789b2a12efb21b3fecbee4937d42a169bd08018d",
+    "matches": [
+      {
+        "line": 1116,
+        "text": "| FR-248 | Полный редактор Task должен сохранять draft только по явной команде и сохранять его в памяти при recoverable error. | Администратор, руководитель, сотрудник, наблюдатель по capabilities. | Соответствующее desktop-состояние или команда | Приложение запущено; capabilities и connection state известны | Поведение выполнено без создания неподдерживаемой server operation. | SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034 | FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033 | Desktop-only; использует существующие read/command API при необходимости | Существующие DTO; новых полей не вводится | Capability-driven; server recheck для команд | FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT | Stage 3.5 UX Architecture/Decision Log |\n| FR-249 | Task list должен поддерживать представления по датам, проектам, исполнителям, статусам и приоритетам без client-side обхода permissions. | Администратор, руководитель, сотрудник, наблюдатель по capabilities. | Соответствующее desktop-состояние или команда | Приложение запущено; capabilities и connection state известны | Поведение выполнено без создания неподдерживаемой server operation. | SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034 | FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033 | Desktop-only; использует существующие read/command API при необходимости | Существующие DTO; новых полей не вводится | Capability-driven; server recheck для команд | FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT | Stage 3.5 UX Architecture/Decision Log |\n| FR-250 | Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | Администратор, руководитель, сотрудник, наблюдатель по capabilities. | Соответствующее desktop-состояние или команда | Приложение запущено; capabilities и connection state известны | Поведение выполнено без создания неподдерживаемой server operation. | SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034 | FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033 | Desktop-only; использует существующие read/command API при необходимости | Существующие DTO; новых полей не вводится | Capability-driven; server recheck для команд | FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT | Stage 3.5 UX Architecture/Decision Log |\n\n## E. Бизнес-правила\n"
+      },
+      {
+        "line": 1126,
+        "text": "| BR-033 | Полный editor сохраняется явно; узкие команды отправляются отдельно. | §11, §27.1.5–16, §29, §33; Stage 3.5 | AC-033 |\n| BR-034 | Переходы определяет сервер; клиент не формирует их из названия роли. | §11, §27.1.5–16, §29, §33; Stage 3.5 | AC-034 |\n| BR-035 | Review → completed и review → in_progress выполняются только разрешёнными transition. | §11, §27.1.5–16, §29, §33; Stage 3.5 | AC-035 |\n\n## F. Поля и валидация\n"
+      },
+      {
+        "line": 1225,
+        "text": "| AC-033 | BR-033 | Проверить бизнес-правило: Полный editor сохраняется явно; узкие команды отправляются отдельно. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.5 |\n| AC-034 | BR-034 | Проверить бизнес-правило: Переходы определяет сервер; клиент не формирует их из названия роли. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.5 |\n| AC-035 | BR-035 | Проверить бизнес-правило: Review → completed и review → in_progress выполняются только разрешёнными transition. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.5 |\n| AC-201 | FR-026 | Happy path: Список задачу | High | Contract/integration | OpenAPI `GET_api_v1_tasks`; Stage_3_Field_Traceability_Final_3.5.csv |\n| AC-202 | FR-026 | [Forbidden (Stage 3.5 State Matrix)/ObjectUnavailable (Stage 3.5 State Matrix)] Permission denied: Список задачу не выполняется и данные не раскрываются | Critical | Security/authorization | OpenAPI `GET_api_v1_tasks`; Stage_3_Field_Traceability_Final_3.5.csv |\n| AC-203 | FR-026 | [Authentication/session error handling (Stage 3.5 error/UI rule)/Authentication/session error handling (Stage 3.5 error/UI rule)/Device-revocation error handling (Stage 3.5 error/UI rule)] Session/device interruption: операция прекращается без сохранения неподтверждённого состояния | Critical | Security/session | OpenAPI `GET_api_v1_tasks`; Stage_3_Field_Traceability_Final_3.5.csv |"
+      },
+      {
+        "line": 1330,
+        "text": "| AC-1410 | FR-249 | Desktop behavior: Task list должен поддерживать представления по датам, проектам, исполнителям, статусам и приоритетам без client-side обхода permissions. | High | Desktop/UI | Stage 3.5 UX Architecture |\n| AC-1411 | FR-249 | Security: недоступные данные/действия не раскрываются через локальное состояние | Critical | Security/UI | DEC-004/030/032 |\n| AC-1412 | FR-250 | Desktop behavior: Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | High | Desktop/UI | Stage 3.5 UX Architecture |\n| AC-1467 | DATA-005 | [STATE-007] Field contract: TaskCreate.title respects type/required/nullable/limits/PATCH semantics | High | Boundary/contract UI | dto_field_catalog.csv:TaskCreate.title; openapi.yaml operation POST_api_v1_tasks |\n| AC-1468 | DATA-005 | [STATE-007] Field contract: TaskAssigneesReplace.assigneeIds respects type/required/nullable/limits/PATCH semantics | High | Boundary/contract UI | dto_field_catalog.csv:TaskAssigneesReplace.assigneeIds; openapi.yaml operation PUT_api_v1_tasks_id_assignees |\n| AC-1469 | DATA-005 | [STATE-007] Field contract: TaskWatchersReplace.watcherIds respects type/required/nullable/limits/PATCH semantics | High | Boundary/contract UI | dto_field_catalog.csv:TaskWatchersReplace.watcherIds; openapi.yaml operation PUT_api_v1_tasks_id_watchers |"
+      },
+      {
+        "line": 6978,
+        "text": "| AC-1964 | PERM-005 | FR-248 | MOD-005 | Permission denial for FR-248 |\n| AC-1965 | PERM-005 | FR-249 | MOD-005 | Permission denial for FR-249 |\n| AC-1966 | PERM-005 | FR-250 | MOD-005 | Permission denial for FR-250 |\n| AC-1833 | PERM-006 | FR-041 | MOD-006 | Permission denial for FR-041 |\n| AC-1967 | PERM-006 | FR-042 | MOD-006 | Permission denial for FR-042 |\n| AC-1968 | PERM-006 | FR-043 | MOD-006 | Permission denial for FR-043 |"
+      },
+      {
+        "line": 7257,
+        "text": "| AC-2222 | ERR-005 | FR-248 | MOD-005 | Stable error handling for FR-248 |\n| AC-2223 | ERR-005 | FR-249 | MOD-005 | Stable error handling for FR-249 |\n| AC-2224 | ERR-005 | FR-250 | MOD-005 | Stable error handling for FR-250 |\n| AC-1854 | ERR-006 | FR-041 | MOD-006 | Stable error handling for FR-041 |\n| AC-2225 | ERR-006 | FR-042 | MOD-006 | Stable error handling for FR-042 |\n| AC-2226 | ERR-006 | FR-043 | MOD-006 | Stable error handling for FR-043 |"
+      },
+      {
+        "line": 7536,
+        "text": "| AC-2480 | SYNC-005 | FR-248 | MOD-005 | Read outage behavior for FR-248 |\n| AC-2481 | SYNC-005 | FR-249 | MOD-005 | Read outage behavior for FR-249 |\n| AC-2482 | SYNC-005 | FR-250 | MOD-005 | Read outage behavior for FR-250 |\n| AC-1875 | SYNC-006 | FR-041 | MOD-006 | Read outage behavior for FR-041 |\n| AC-2483 | SYNC-006 | FR-042 | MOD-006 | Command outage behavior for FR-042 |\n| AC-2484 | SYNC-006 | FR-043 | MOD-006 | Command outage behavior for FR-043 |"
+      },
+      {
+        "line": 7815,
+        "text": "| AC-2738 | AUDIT-005 | FR-248 | MOD-005 | Audit evidence for FR-248 |\n| AC-2739 | AUDIT-005 | FR-249 | MOD-005 | Audit evidence for FR-249 |\n| AC-2740 | AUDIT-005 | FR-250 | MOD-005 | Audit evidence for FR-250 |\n| AC-1896 | AUDIT-006 | FR-041 | MOD-006 | Audit evidence for FR-041 |\n| AC-2741 | AUDIT-006 | FR-042 | MOD-006 | Audit evidence for FR-042 |\n| AC-2742 | AUDIT-006 | FR-043 | MOD-006 | Audit evidence for FR-043 |"
+      }
+    ]
+  },
+  {
+    "source": "work/stage_4_6_lite/final_baseline/Stage_4_Final_Baseline_Approval.md",
+    "sha256": "c3d19db6e686ac7ab6aa73e3b79f9d9fe6cb45f0ccb5364ace402a16606fb6b5",
+    "matches": [
+      {
+        "line": 3,
+        "text": "# Stage 4 Final Baseline Approval\n\nApproved: Stage 4.5 + Stage 4.6 Lite PASS."
+      }
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "loopbackOnly": true,
+  "filter": "TaskReturn_Audit_RevokedSession|NativeWpf_ReturnActionConfirmationFocusAndServerResult",
+  "postgres": "16",
+  "isolated": true,
+  "exitCode": 1
+}

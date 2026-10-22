@@ -1,0 +1,6 @@
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\baseline\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:03.42]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\baseline-ui-recheck\baseline-ui.trx
+
+Не пройден!: не пройдено     1, пройдено     0, пропущено     0, всего     1, длительность 2 s. - Task.Desktop.Tests.dll (net10.0)

@@ -1,0 +1,16 @@
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\verified-release\novik_TIM_2026-10-22_17_36_27_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   905, пропущено     0, всего   905, длительность 3 m 21 s. - Task.Tests.dll (net10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\verified-release\novik_TIM_2026-10-22_17_39_50_net10.0.trx
+
+Пройден!   : не пройдено     0, пройдено   669, пропущено     0, всего   669, длительность 15 s. - Task.ServiceHosts.Tests.dll (net10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:01:31.32]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_4\evidence\verified-release\novik_TIM_2026-10-22_17_40_07_net10.0.trx
+
+Не пройден!: не пройдено     1, пройдено  1820, пропущено     0, всего  1821, длительность 1 m 33 s. - Task.Desktop.Tests.dll (net10.0)

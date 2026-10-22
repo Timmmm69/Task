@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c4bf2372-dc89-400a-9072-2963a04a28e5" name="novik@TIM 2026-10-22 13:46:35" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T13:46:35.5982292+03:00" queuing="2026-10-22T13:46:35.5982294+03:00" start="2026-10-22T13:46:31.8879489+03:00" finish="2026-10-22T13:46:35.6018248+03:00" />
+  <TestSettings name="default" id="1812c6f5-6ff2-4f69-b340-e901df2d99fc">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-22_13_46_35" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5e84e0f7-0cc0-4ee5-a7b8-0aab287beac5" testId="1584f5e8-40e2-2ab9-dd48-fff828f722ef" testName="Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult" computerName="TIM" duration="00:00:02.0977853" startTime="2026-10-22T13:46:33.3945141+03:00" endTime="2026-10-22T13:46:35.5064329+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e84e0f7-0cc0-4ee5-a7b8-0aab287beac5">
+      <Output>
+        <ErrorInfo>
+          <Message>ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)&#xD;
+&#xD;
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.&#xD;
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [930 ms]&#xD;
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:&#xD;
+   Assert.Same() Failure: Values are not the same instance&#xD;
+Expected: System.Windows.Controls.Button: ðÆðÁÐÇð¢ÐâÐéÐî&#xD;
+Actual:   System.Windows.Controls.ScrollViewer&#xD;
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:&#xD;
+     at Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.&lt;&gt;c__DisplayClass0_1.&lt;&lt;NativeWpf_ReturnActionConfirmationFocusAndServerResult&gt;b__1&gt;d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskReturnUiTests.cs:line 68&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult() in C:\Users\novik\ðóð░Ðüð║\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskReturnUiTests.cs:line 91&#xD;
+--- End of stack trace from previous location ---&#xD;
+&#xD;
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 945 ms. - Task.Desktop.Tests.dll (net10.0)&#xD;
+[xUnit.net 00:00:01.23]     Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [FAIL]&#xD;
+</Message>
+          <StackTrace>   at Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult() in C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskReturnUiTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult" storage="c:\users\novik\таск\work\status_return_14_4\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="1584f5e8-40e2-2ab9-dd48-fff828f722ef">
+      <Execution id="5e84e0f7-0cc0-4ee5-a7b8-0aab287beac5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskScreen.TaskReturnUiTests" name="NativeWpf_ReturnActionConfirmationFocusAndServerResult" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1584f5e8-40e2-2ab9-dd48-fff828f722ef" executionId="5e84e0f7-0cc0-4ee5-a7b8-0aab287beac5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.43]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.66]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.68]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:02.81]       ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)&#xD;
+[xUnit.net 00:00:02.81]       &#xD;
+[xUnit.net 00:00:02.81]       ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.&#xD;
+[xUnit.net 00:00:02.81]         ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [930 ms]&#xD;
+[xUnit.net 00:00:02.81]         ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:&#xD;
+[xUnit.net 00:00:02.81]          Assert.Same() Failure: Values are not the same instance&#xD;
+[xUnit.net 00:00:02.81]       Expected: System.Windows.Controls.Button: ðÆðÁÐÇð¢ÐâÐéÐî&#xD;
+[xUnit.net 00:00:02.81]       Actual:   System.Windows.Controls.ScrollViewer&#xD;
+[xUnit.net 00:00:02.81]         ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:&#xD;
+[xUnit.net 00:00:02.81]            at Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.&lt;&gt;c__DisplayClass0_1.&lt;&lt;NativeWpf_ReturnActionConfirmationFocusAndServerResult&gt;b__1&gt;d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskReturnUiTests.cs:line 68&#xD;
+[xUnit.net 00:00:02.81]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.81]          at Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult() in C:\Users\novik\ðóð░Ðüð║\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskReturnUiTests.cs:line 91&#xD;
+[xUnit.net 00:00:02.81]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.81]       &#xD;
+[xUnit.net 00:00:02.81]       ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 945 ms. - Task.Desktop.Tests.dll (net10.0)&#xD;
+[xUnit.net 00:00:02.81]       [xUnit.net 00:00:01.23]     Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [FAIL]&#xD;
+[xUnit.net 00:00:02.81]       &#xD;
+[xUnit.net 00:00:02.81]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.81]         C:\Users\novik\Таск\work\status_return_14_4\repo\work\production\tests\Task.Desktop.Tests\Tasks\TaskReturnUiTests.cs(30,0): at Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult()&#xD;
+[xUnit.net 00:00:02.81]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.82]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-22T13:46:35.5083312+03:00">
+        <Text>[xUnit.net 00:00:02.81]     Task.Desktop.Tests.TaskScreen.TaskReturnUiTests.NativeWpf_ReturnActionConfirmationFocusAndServerResult [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,89 @@
+{
+  "overall": "PASS_WITH_LIMITATIONS",
+  "code_commit": "18a763d50b6a600743259eaca75dd98b62225c23",
+  "full_desktop_source_commit": "89d41421eb668244b72e67f2306959fdc8ef2fa2",
+  "last_acceptance_source_commit": "18a763d50b6a600743259eaca75dd98b62225c23",
+  "full_suites": [
+    {
+      "file": "verified-release/novik_TIM_2026-10-22_17_36_27_net10.0.trx",
+      "total": 905,
+      "passed": 905,
+      "failed": 0,
+      "skipped": 0,
+      "failed_tests": []
+    },
+    {
+      "file": "verified-release/novik_TIM_2026-10-22_17_39_50_net10.0.trx",
+      "total": 669,
+      "passed": 669,
+      "failed": 0,
+      "skipped": 0,
+      "failed_tests": []
+    },
+    {
+      "file": "desktop-final/desktop-final.trx",
+      "total": 1822,
+      "passed": 1821,
+      "failed": 1,
+      "skipped": 0,
+      "failed_tests": [
+        "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+      ]
+    }
+  ],
+  "full_passed": 3395,
+  "full_failed": 1,
+  "full_skipped": 0,
+  "last_acceptance": [
+    {
+      "file": "final-acceptance/novik_TIM_2026-10-22_17_53_43_net10.0.trx",
+      "total": 23,
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "failed_tests": []
+    },
+    {
+      "file": "final-acceptance/novik_TIM_2026-10-22_17_54_24_net10.0.trx",
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "failed_tests": []
+    },
+    {
+      "file": "final-acceptance/novik_TIM_2026-10-22_17_54_30_net10.0.trx",
+      "total": 152,
+      "passed": 152,
+      "failed": 0,
+      "skipped": 0,
+      "failed_tests": []
+    }
+  ],
+  "baseline_foreground_failure": {
+    "file": "baseline-ui-recheck/baseline-ui.trx",
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "failed_tests": [
+      "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow"
+    ]
+  },
+  "fixed_defects": [
+    "SEC-14.4-01",
+    "UI-14.4-02",
+    "UI-14.4-03",
+    "UI-14.4-04",
+    "DOM-14.4-05",
+    "UI-14.4-06"
+  ],
+  "open_limitations": [
+    "API-14.4-07",
+    "DOC-14.4-08",
+    "foreground-native-gate",
+    "live-LAN-and-screen-reader-not-run"
+  ],
+  "ready_for_draft_pr": true,
+  "merge_recommended": false
+}
