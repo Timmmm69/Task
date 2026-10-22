@@ -41,9 +41,51 @@ public sealed partial class TaskEndpointsTests
         using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
             writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
         using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
-        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7), (HttpStatusCode)expectedStatus, code);
+        using var response = await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7);
+        await CaptureReturnProblemAsync(response, state.ToString());
+        await AssertProblemAsync(response, (HttpStatusCode)expectedStatus, code);
         Assert.Same(original, executor.Current);
         Assert.Equal(0, executor.MutationCalls);
+    }
+
+    [Theory]
+    [InlineData(false, 409, "IDEMPOTENCY_REQUEST_IN_PROGRESS")]
+    [InlineData(true, 503, "INTERNAL_ERROR")]
+    public async System.Threading.Tasks.Task ReturnTask_RetryableFailuresMatchPublishedContract(bool unavailable, int status, string code)
+    {
+        var original = TaskInStatus(TaskWorkStatus.Review);
+        var executor = new FakeUpdateExecutor
+        {
+            Current = original,
+            NextDisposition = unavailable ? null : TaskWriteCommandDisposition.RequestInProgress,
+            Throw = unavailable ? new InvalidOperationException("Private storage details") : null,
+        };
+        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
+            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var response = await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7);
+        if (!unavailable)
+        {
+            Assert.True(response.Headers.RetryAfter?.Delta > TimeSpan.Zero);
+        }
+        await CaptureReturnProblemAsync(response, code);
+        Assert.DoesNotContain("Private storage details", await response.Content.ReadAsStringAsync());
+        await AssertProblemAsync(response, (HttpStatusCode)status, code);
+        Assert.Equal(0, executor.MutationCalls);
+        Assert.Same(original, executor.Current);
+    }
+
+    private static async System.Threading.Tasks.Task CaptureReturnProblemAsync(HttpResponseMessage response, string scenario)
+    {
+        if (Environment.GetEnvironmentVariable("TASK_RETURN_CONTRACT_EVIDENCE") is not { Length: > 0 } evidence) return;
+        Directory.CreateDirectory(evidence);
+        var envelope = new System.Text.Json.Nodes.JsonObject
+        {
+            ["status"] = (int)response.StatusCode,
+            ["retryAfterSeconds"] = response.Headers.RetryAfter?.Delta?.TotalSeconds,
+            ["body"] = System.Text.Json.Nodes.JsonNode.Parse(await response.Content.ReadAsStringAsync()),
+        };
+        File.WriteAllText(Path.Combine(evidence, $"transition-error-{scenario}.json"), envelope.ToJsonString());
     }
 
     [Theory]

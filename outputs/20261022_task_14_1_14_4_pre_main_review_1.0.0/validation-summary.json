@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-22",
+  "baseline": "fa504bc01584547afc50398ba6c1735391c4173c",
+  "reviewed_commit": "0491410dd2607874de731b9d36abedd949966922",
+  "gate_passed": false,
+  "push_performed": false,
+  "source_changes_during_review": false,
+  "suites": [
+    {
+      "trx": "novik_TIM_2026-10-22_18_14_55_net10.0.trx",
+      "total": 905,
+      "passed": 905,
+      "failed": 0,
+      "not_executed": 0,
+      "failures": []
+    },
+    {
+      "trx": "novik_TIM_2026-10-22_18_18_20_net10.0.trx",
+      "total": 669,
+      "passed": 669,
+      "failed": 0,
+      "not_executed": 0,
+      "failures": []
+    },
+    {
+      "trx": "novik_TIM_2026-10-22_18_18_39_net10.0.trx",
+      "total": 1822,
+      "passed": 1821,
+      "failed": 1,
+      "not_executed": 0,
+      "failures": [
+        {
+          "test": "Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow",
+          "outcome": "Failed",
+          "message": "ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)\r\n\r\nð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.\r\n  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [1 s]\r\n  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:\r\n   Assert.True() Failure\r\nExpected: True\r\nActual:   False\r\n  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:\r\n     at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.<>c__DisplayClass0_1.<<NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow>b__1>d.MoveNext() in C:\\Users\\novik\\ðóð░Ðüð║\\work\\status_return_14_4\\repo\\work\\production\\tests\\Task.Desktop.Tests\\Tasks\\TaskContextActionsUiTests.cs:line 62\r\n--- End of stack trace from previous location ---\r\n   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\\Users\\novik\\ðóð░Ðüð║\\work\\status_return_14_4\\repo\\work\\production\\tests\\Task.Desktop.Tests\\Tasks\\TaskContextActionsUiTests.cs:line 140\r\n   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\\Users\\novik\\ðóð░Ðüð║\\work\\status_return_14_4\\repo\\work\\production\\tests\\Task.Desktop.Tests\\Tasks\\TaskContextActionsUiTests.cs:line 141\r\n--- End of stack trace from previous location ---\r\n\r\nðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 1 s. - Task.Desktop.Tests.dll (net10.0)\r\n[xUnit.net 00:00:01.30]     Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow [FAIL]\r\n",
+          "stack": "   at Task.Desktop.Tests.TaskScreen.TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow() in C:\\Users\\novik\\Таск\\work\\status_return_14_4\\repo\\work\\production\\tests\\Task.Desktop.Tests\\Tasks\\TaskContextActionsUiTests.cs:line 34\r\n--- End of stack trace from previous location ---"
+        }
+      ]
+    }
+  ],
+  "desktop_independent_review": "No actionable defects; read-only source review, tests run by primary reviewer.",
+  "existing_limitations": [
+    "HistoryEntry DTO / normative OpenAPI drift (API-14.4-07)",
+    "Error catalog / OpenAPI discrepancies (DOC-14.4-08)",
+    "Live LAN/multi-client and screen reader acceptance not performed."
+  ]
+}

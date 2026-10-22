@@ -86,7 +86,8 @@ public sealed class DesktopTasksApiClientTests
             await restarted.Ready;
             Assert.Null(restarted.Sort("tasks/v1"));
             Assert.NotNull(restarted.Sort("work-links/v1"));
-            var secondId = Guid.NewGuid();
+            // Default local ordering breaks equal update timestamps by ID; keep page order deterministic.
+            var secondId = Guid.Parse("019fb732-ad08-7de1-b27d-c86bae8a2940");
             await using var fixture = await Fixture.CreateAsync((request, _) =>
             {
                 var next = request.RequestUri!.Query.Contains("cursor=", StringComparison.Ordinal);

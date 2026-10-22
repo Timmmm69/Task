@@ -179,6 +179,8 @@ public sealed class TaskApiSecurityFoundationTests
         Assert.Equal(correlationId, root.GetProperty("correlationId").GetString());
         Assert.Equal("trace-test", root.GetProperty("traceId").GetString());
         Assert.True(root.GetProperty("retryable").GetBoolean());
+        Assert.Equal(JsonValueKind.Array, root.GetProperty("fieldErrors").ValueKind);
+        Assert.Empty(root.GetProperty("fieldErrors").EnumerateArray());
         Assert.DoesNotContain("exception", root.GetRawText(), StringComparison.OrdinalIgnoreCase);
     }
 

@@ -33,6 +33,7 @@ internal static class TaskApiProblemResponse
         problem.Extensions["correlationId"] = GetCorrelationId(context);
         problem.Extensions["traceId"] = context.TraceIdentifier;
         problem.Extensions["retryable"] = retryable;
+        problem.Extensions["fieldErrors"] = Array.Empty<object>();
         if (retryAfterSeconds.HasValue)
         {
             problem.Extensions["retryAfterSeconds"] = retryAfterSeconds.Value;

@@ -1,0 +1,66 @@
+{
+  "package": "Task_14_1_Status_Return_Contract_Audit",
+  "version": "1.0.0",
+  "date": "2026-10-22",
+  "repository": "Timmmm69/Task",
+  "baselineCommit": "fa504bc01584547afc50398ba6c1735391c4173c",
+  "status": "CONTRACT_CHANGE_REQUIRED",
+  "productionChanged": false,
+  "tests": [
+    {
+      "file": "evidence/status-transition.trx",
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "evidence/domain-permissions.trx",
+      "passed": 76,
+      "failed": 0,
+      "skipped": 1
+    },
+    {
+      "file": "evidence/desktop-status.trx",
+      "passed": 132,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "evidence/desktop-status.trx",
+      "bytes": 198050,
+      "sha256": "9659b0579144e75db625a68dbd6602b4efde6b4ecb39fb7947c05db9864a51d9"
+    },
+    {
+      "path": "evidence/domain-permissions.trx",
+      "bytes": 106980,
+      "sha256": "3ecdf5af4e569662ad257e5dc0bf074909d6bc888827291842137fd343d29519"
+    },
+    {
+      "path": "evidence/status-transition.trx",
+      "bytes": 67500,
+      "sha256": "88818b574f0dff9da30cab763d49fb6a5acaa926a145b7266ae353a2efa99c1e"
+    },
+    {
+      "path": "source-evidence.json",
+      "bytes": 58292,
+      "sha256": "2ff7a6103ac31c6294c6c6db8ea713fa78c751ae80fdcb31c83ef2fbdb3ef1e0"
+    },
+    {
+      "path": "Task_14_1_Status_Return_Contract_Audit.md",
+      "bytes": 46605,
+      "sha256": "058c10121db609d1c761787aec6ae6e6472f0cbf825fa1be8a07305db796446f"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 3336,
+      "sha256": "a9a1068512d19fa8e472c933dd5e1002e8b17c4fbd97a571e04187f6dc05e431"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

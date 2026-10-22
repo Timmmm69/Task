@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -30,6 +31,7 @@ public sealed class TaskContextActionsUiTests
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow));
             start.Environment["TASK_CONTEXT_UI_CHILD"] = "1";
             using var process = Process.Start(start)!;
+            _ = AllowSetForegroundWindow((uint)process.Id);
             var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
             try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(75)); Assert.True(process.ExitCode == 0, await stdout + await stderr); }
             finally { if (!process.HasExited) process.Kill(true); }
@@ -59,7 +61,9 @@ public sealed class TaskContextActionsUiTests
                     using var projects = new ProjectsViewModel(projectClient, projectClient.Project.OwnerUserId, ["Project.Read"]);
                     using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks, projects: projects);
                     shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks"); await tasks.ActivateAsync();
-                    company = new MainWindow(shell) { Left = 20, Top = 20, ShowInTaskbar = false }; company.Show(); Assert.True(company.Activate()); await Drain(company);
+                    company = new MainWindow(shell) { Left = 20, Top = 20, ShowInTaskbar = false };
+                    await ShowAndActivateForegroundAsync(company);
+                    await Drain(company);
                     var list = Find<ListBox>(company, "TasksList");
                     await TaskContextActionsTests.Until(() => tasks.Workspace?.IsBusy != true);
                     var row = (ListBoxItem)list.ItemContainerGenerator.ContainerFromItem(tasks.Items.Single(x => x.Id == second.Id));
@@ -73,7 +77,7 @@ public sealed class TaskContextActionsUiTests
                     var nestedList = new ListBox(); nestedList.Items.Add(nestedRow); var testWindow = new Window { Content = nestedList, Width = 300, Height = 200, ShowInTaskbar = false };
                     testWindow.Show(); testWindow.UpdateLayout(); Assert.Null(TaskRowAction.ResolveRow(nestedList, nestedButton)); Assert.Null(TaskRowAction.ResolveRow(nestedList, check)); testWindow.Close();
                     // Closing the auxiliary window posts foreground restoration asynchronously.
-                    await Drain(company); await TaskContextActionsTests.Until(() => company.Activate()); await DoubleClick(text);
+                    await Drain(company); await ShowAndActivateForegroundAsync(company); await DoubleClick(text);
                     await TaskContextActionsTests.Until(() => tasks.Editor is not null); await Drain(company);
                     Assert.Equal(second.Id, tasks.Editor!.SourceId); Assert.True(Find<TextBox>(company, "TaskTitleTextBox").IsKeyboardFocused);
                     await tasks.DiscardEditorCommand.ExecuteAsync(); await Drain(company); Assert.True(list.IsKeyboardFocused);
@@ -103,7 +107,9 @@ public sealed class TaskContextActionsUiTests
                     using var model = new PersonalApplicationModel(root);
                     var localProject = model.Store.SaveProject(new(Guid.Empty, 0, "Личный проект", null, DesktopProjectStatus.Active, null, null));
                     model.Planning!.Refresh(); model.Planning.SelectedProject = model.Planning.Projects.Single();
-                    personal = new PersonalWindow(model) { Left = 20, Top = 20, ShowInTaskbar = false }; personal.Show(); Assert.True(personal.Activate()); await Drain(personal);
+                    personal = new PersonalWindow(model) { Left = 20, Top = 20, ShowInTaskbar = false };
+                    await ShowAndActivateForegroundAsync(personal);
+                    await Drain(personal);
                     var localShell = (PersonalShellViewModel)personal.DataContext;
                     localShell.SelectedSection = localShell.Sections.Single(s => s.Route == "projects"); await Drain(personal);
                     Assert.True(Find<Button>(personal, "PersonalProjectAddTask").IsEnabled); await Capture(personal, "personal-project");
@@ -150,6 +156,45 @@ public sealed class TaskContextActionsUiTests
         mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
         await System.Threading.Tasks.Task.Delay(100);
     }
+    private static async System.Threading.Tasks.Task ShowAndActivateForegroundAsync(Window window)
+    {
+        window.Show();
+        var handle = new WindowInteropHelper(window).Handle;
+        for (var attempt = 0; attempt < 8; attempt++)
+        {
+            if (TryActivateForeground(window, handle)) return;
+            await System.Threading.Tasks.Task.Delay(75);
+        }
+
+        Assert.Fail("Unable to activate the native WPF test window in the foreground.");
+    }
+
+    private static bool TryActivateForeground(Window window, IntPtr handle)
+    {
+        window.Activate();
+        BringWindowToTop(handle);
+        SetForegroundWindow(handle);
+        if (window.IsActive && GetForegroundWindow() == handle) return true;
+
+        var foreground = GetForegroundWindow();
+        if (foreground == IntPtr.Zero) return false;
+        var currentThread = GetCurrentThreadId();
+        var foregroundThread = GetWindowThreadProcessId(foreground, out _);
+        if (foregroundThread == 0 || foregroundThread == currentThread) return false;
+
+        if (!AttachThreadInput(currentThread, foregroundThread, true)) return false;
+        try
+        {
+            BringWindowToTop(handle);
+            SetForegroundWindow(handle);
+            window.Activate();
+            return window.IsActive && GetForegroundWindow() == handle;
+        }
+        finally
+        {
+            AttachThreadInput(currentThread, foregroundThread, false);
+        }
+    }
     private static async System.Threading.Tasks.Task Capture(Window window, string name)
     {
         var path = Environment.GetEnvironmentVariable("TASK_CONTEXT_EVIDENCE"); if (string.IsNullOrEmpty(path)) return;
@@ -174,4 +219,11 @@ public sealed class TaskContextActionsUiTests
     [DllImport("user32.dll")] private static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
     [DllImport("user32.dll")] private static extern bool SetCursorPos(int x, int y);
     [DllImport("user32.dll")] private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+    [DllImport("user32.dll", SetLastError = true)] private static extern bool AllowSetForegroundWindow(uint processId);
+    [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr handle);
+    [DllImport("user32.dll")] private static extern bool BringWindowToTop(IntPtr handle);
+    [DllImport("user32.dll")] private static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr handle, out uint processId);
+    [DllImport("user32.dll", SetLastError = true)] private static extern bool AttachThreadInput(uint attachThread, uint attachToThread, bool attach);
+    [DllImport("kernel32.dll")] private static extern uint GetCurrentThreadId();
 }

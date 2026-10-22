@@ -22,6 +22,8 @@ public sealed partial class ProductEndpointsTests
     {
         var body = new JsonObject { ["items"] = new JsonArray(new JsonObject {
             ["id"] = Guid.NewGuid(), ["action"] = "project.patch", ["version"] = 2,
+            ["objectId"] = ObjectId, ["objectVersion"] = 2, ["changeType"] = "updated",
+            ["changedAt"] = "2026-10-19T12:30:00Z", ["correlationId"] = Guid.NewGuid(),
             ["actorUserId"] = User, ["occurredAt"] = "2026-10-19T12:30:00Z", ["changedFields"] = new JsonArray("name") }) };
         var store = new RecordingStore { Reply = new ProductApiResponse(body) };
         using var server = Server(store); using var client = server.CreateClient();

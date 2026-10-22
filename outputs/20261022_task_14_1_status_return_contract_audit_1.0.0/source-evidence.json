@@ -1,0 +1,1185 @@
+{
+  "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+  "archives": [
+    {
+      "path": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "sha256": "75efc3e83f09fbcc41ae7da68a96f2ec0ebdfc74e61f62615f4da3478afe5019",
+      "sidecar_match": true
+    },
+    {
+      "path": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip",
+      "sha256": "6c2447e935dd413488e482f7db3c481c8dc6e53aeb57a07d1df23d3ada85381e",
+      "sidecar_match": true
+    },
+    {
+      "path": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip",
+      "sha256": "f8d092f5951f378d5ceb25a7d476c9e93e7bf158e63434f0e076cd91b0a76fdf",
+      "sidecar_match": true
+    }
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "location": "sources/concept/Task_Concept_Final.txt",
+      "sha256": "54598093ed426b6151440557eac14a59e54c64eacf1d190c1febd3b3463c94ac",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/concept/Task_Concept_Final.txt",
+      "evidence": [
+        {
+          "pattern": "11.2. Статусы",
+          "line": 305,
+          "text": "11.2. Статусы"
+        },
+        {
+          "pattern": "изменять статус своих задач",
+          "line": 182,
+          "text": "изменять статус своих задач;"
+        },
+        {
+          "pattern": "задача отправлена на проверку",
+          "line": 603,
+          "text": "задача отправлена на проверку."
+        },
+        {
+          "pattern": "истори",
+          "line": 51,
+          "text": "вести историю действий;"
+        },
+        {
+          "pattern": "истори",
+          "line": 86,
+          "text": "хранения истории изменений;"
+        },
+        {
+          "pattern": "истори",
+          "line": 132,
+          "text": "История изменений."
+        },
+        {
+          "pattern": "истори",
+          "line": 156,
+          "text": "видеть историю доступных объектов."
+        },
+        {
+          "pattern": "истори",
+          "line": 176,
+          "text": "видеть историю изменений;"
+        },
+        {
+          "pattern": "истори",
+          "line": 302,
+          "text": "история изменений;"
+        },
+        {
+          "pattern": "истори",
+          "line": 419,
+          "text": "история действий."
+        },
+        {
+          "pattern": "истори",
+          "line": 562,
+          "text": "историю взаимодействия."
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "location": "sources/stage_1/architecture_organizer.md",
+      "sha256": "972211eaae8e0686fbbeef5320397234da115bb3bd257415972044669d00aee5",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_1/architecture_organizer.md",
+      "evidence": [
+        {
+          "pattern": "12.3. Изменение статуса",
+          "line": 2080,
+          "text": "## 12.3. Изменение статуса"
+        },
+        {
+          "pattern": "право изменить статус",
+          "line": 1850,
+          "text": "Пользователь может иметь право изменить статус, но не исполнителя или проект. Поэтому update API не принимает универсальный JSON patch без policy mapping. Используются специализированные команды или field authorization map."
+        },
+        {
+          "pattern": "completed_at",
+          "line": 1931,
+          "text": "- сохраняется completed_at и completed_by;"
+        },
+        {
+          "pattern": "completed_at",
+          "line": 2086,
+          "text": "5. При переходе в completed фиксирует completed_at."
+        },
+        {
+          "pattern": "При 409 UI",
+          "line": 2092,
+          "text": "11. При 409 UI загружает актуальный статус и предлагает повторить допустимое действие."
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "location": "sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2/docs/01_core_domain_and_data.md",
+      "sha256": "ca8ff6f6ef81cfc2720c032adacd4dc17e26f42aa7d7d203edaa47aabbf05ad5",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_2_2/Organizer_Stage2_Technical_Specification_2.2/docs/01_core_domain_and_data.md",
+      "evidence": [
+        {
+          "pattern": "review --> in_progress",
+          "line": 371,
+          "text": "  review --> in_progress: returned"
+        },
+        {
+          "pattern": "completed --> in_progress",
+          "line": 376,
+          "text": "  completed --> in_progress: reopen with permission"
+        },
+        {
+          "pattern": "cancelled --> new",
+          "line": 377,
+          "text": "  cancelled --> new: restore workflow"
+        },
+        {
+          "pattern": "Каждый transition",
+          "line": 428,
+          "text": "Каждый transition выполняет: policy check → expected version → invariant check → state/timestamps → history/audit/domain-event/outbox → commit. Change feed строится после commit идемпотентным projector. Запрещённый переход возвращает `409 INVALID_STATE_TRANSITION`."
+        }
+      ]
+    },
+    {
+      "id": "S04-domain",
+      "location": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/docs/01_core_domain_and_data.md",
+      "sha256": "a912e89a5cf6cad39cdc1bafb3ef7008ecbd18d143955aad223a69e3b2855258",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "evidence": [
+        {
+          "pattern": "review --> in_progress",
+          "line": 371,
+          "text": "  review --> in_progress: returned"
+        },
+        {
+          "pattern": "review --> completed",
+          "line": 372,
+          "text": "  review --> completed"
+        },
+        {
+          "pattern": "completed --> in_progress",
+          "line": 376,
+          "text": "  completed --> in_progress: reopen with permission"
+        },
+        {
+          "pattern": "cancelled --> new",
+          "line": 377,
+          "text": "  cancelled --> new: restore workflow"
+        },
+        {
+          "pattern": "Каждый transition",
+          "line": 428,
+          "text": "Каждый transition выполняет: policy check → expected version → invariant check → state/timestamps → history/audit/domain-event/outbox → commit. Change feed строится после commit идемпотентным projector. Запрещённый переход возвращает `409 INVALID_STATE_TRANSITION`."
+        }
+      ]
+    },
+    {
+      "id": "S04-concurrency",
+      "location": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/docs/06_stage_2_1_normative_corrections.md",
+      "sha256": "9f6000c7eab64f7a529b9d5ddbfd51beb1b4ec99f957bb02dbb9b2dea1cc4a0a",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "evidence": [
+        {
+          "pattern": "idempotency_records",
+          "line": 78,
+          "text": "`iam.idempotency_records` хранит scope `(organization_id, user_account_id, operation_id, idempotency_key)`, SHA-256 нормализованного request, состояние, lease и сериализованный HTTP result."
+        },
+        {
+          "pattern": "412",
+          "line": 100,
+          "text": "- stale ETag корневого агрегата → `412 PRECONDITION_FAILED`;"
+        },
+        {
+          "pattern": "одним commit",
+          "line": 88,
+          "text": "7. бизнес-записи, audit, history, domain event, outbox и completed idempotency response фиксируются одним commit;"
+        }
+      ]
+    },
+    {
+      "id": "S04-permissions",
+      "location": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/catalogs/permissions.csv",
+      "sha256": "0227011c8843bf646be102dbbf00a028757592fc106503cb1d388f37d4179671",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "evidence": [
+        {
+          "pattern": "Task.ChangeStatus",
+          "line": 76,
+          "text": "Task.ChangeStatus,Task,ChangeStatus,Изменение статуса задачи,False"
+        },
+        {
+          "pattern": "Task.Read,",
+          "line": 81,
+          "text": "Task.Read,Task,Read,Просмотр задач по области доступа,False"
+        },
+        {
+          "pattern": "Comment.Create",
+          "line": 14,
+          "text": "Comment.Create,Comment,Create,Добавление комментария,False"
+        },
+        {
+          "pattern": "History.Read",
+          "line": 37,
+          "text": "History.Read,History,Read,Просмотр истории доступного объекта,False"
+        }
+      ]
+    },
+    {
+      "id": "S04-events",
+      "location": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/catalogs/events.csv",
+      "sha256": "df1e1381ba109fc7a7e5561e1db8fd8b287a4155674e346b0a05cccf86539848",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "evidence": [
+        {
+          "pattern": "^TaskStatusChanged,",
+          "line": 159,
+          "text": "TaskStatusChanged,tasks,\"eventId, organizationId, aggregateId, aggregateType, aggregateVersion, occurredAt, actorId, correlationId, changedFields/minimal metadata\",after DB commit via outbox,at-least-once,yes; eventId/inbox unique,90 days domain / 30 days delivered outbox,change-feed projector; audit/history; notification/search/realtime as applicable"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "location": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip::stage_2_3/openapi/openapi.yaml",
+      "sha256": "36c15dff5adba0041fcfd79f5a0d203835dac5cdd4ad24122bcd92177c13220d",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "evidence": [
+        {
+          "pattern": "version: 1.2.0-stage2.3",
+          "line": 5,
+          "text": "  version: 1.2.0-stage2.3"
+        },
+        {
+          "pattern": "^  /api/v1/tasks/\\{id\\}/transition:",
+          "line": 20046,
+          "text": "  /api/v1/tasks/{id}/transition:"
+        },
+        {
+          "pattern": "^    TaskTransitionRequest:",
+          "line": 27512,
+          "text": "    TaskTransitionRequest:"
+        },
+        {
+          "pattern": "^    HistoryEntry:",
+          "line": 27959,
+          "text": "    HistoryEntry:"
+        },
+        {
+          "pattern": "^    CommentCreate:",
+          "line": 30199,
+          "text": "    CommentCreate:"
+        },
+        {
+          "pattern": "^    IdempotencyKey:",
+          "line": 23268,
+          "text": "    IdempotencyKey:"
+        },
+        {
+          "pattern": "^    IfMatch:",
+          "line": 23288,
+          "text": "    IfMatch:"
+        }
+      ]
+    },
+    {
+      "id": "S06-flows",
+      "location": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip::Stage_3_User_Flows_Final_3.5.md",
+      "sha256": "f42d71068c871443de9a6f6efc119b5e15be92f009c4d47d27d68c82566b69a1",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip",
+      "evidence": [
+        {
+          "pattern": "## FLOW-008",
+          "line": 218,
+          "text": "## FLOW-008. Изменение статуса"
+        },
+        {
+          "pattern": "Choose target/reason",
+          "line": 230,
+          "text": "2. Choose target/reason if required"
+        },
+        {
+          "pattern": "Refresh row/card/history",
+          "line": 232,
+          "text": "4. Refresh row/card/history"
+        },
+        {
+          "pattern": "Review required",
+          "line": 215,
+          "text": "- Review required → only review transition"
+        }
+      ]
+    },
+    {
+      "id": "S06-delta",
+      "location": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip::Stage_3_Contract_Delta_3.5.md",
+      "sha256": "3b05ad7249e195cb15971f461591b7a7d12bc7aac14bc202c6caba8282d0710c",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip",
+      "evidence": [
+        {
+          "pattern": "Статус:",
+          "line": 3,
+          "text": "**Статус:** нормативный targeted update  "
+        },
+        {
+          "pattern": "Статус:",
+          "line": 56,
+          "text": "- Статус: `new`, `in_progress`, `review`, `completed`, `cancelled`. Просрочка вычисляется и не является enum value."
+        },
+        {
+          "pattern": "Concurrency:",
+          "line": 22,
+          "text": "5. **Concurrency:** versioned writes используют ETag/If-Match; missing → 428 `PRECONDITION_REQUIRED`, stale → 412 `VERSION_CONFLICT`, domain conflict → 409."
+        },
+        {
+          "pattern": "Permissions:",
+          "line": 24,
+          "text": "7. **Permissions:** control availability строится по capability, но действие всегда повторно проверяет сервер."
+        }
+      ]
+    },
+    {
+      "id": "S07-approval",
+      "location": "work/stage_4_6_lite/final_baseline/Stage_4_Final_Baseline_Approval.md",
+      "sha256": "c3d19db6e686ac7ab6aa73e3b79f9d9fe6cb45f0ccb5364ace402a16606fb6b5",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/stage_4_6_lite/final_baseline/Stage_4_Final_Baseline_Approval.md",
+      "evidence": [
+        {
+          "pattern": "Approved:",
+          "line": 3,
+          "text": "Approved: Stage 4.5 + Stage 4.6 Lite PASS."
+        }
+      ]
+    },
+    {
+      "id": "S07-rules",
+      "location": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip::Stage_4_Business_Rules_Catalog_4.5.csv",
+      "sha256": "5ed213df1dde2050e8cc06c6bfe3c2a591ae84781e8915f525d4f78fbe1a35ff",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip",
+      "evidence": [
+        {
+          "pattern": "BR-035",
+          "line": 36,
+          "text": "BR-035,MOD-005,Review → completed и review → in_progress выполняются только разрешёнными transition.,\"§11, §27.1.5–16, §29, §33; Stage 3.5\",FR-038;FR-250,AC-035 Related FR evidence: curated_rule_to_existing_fr_semantic_match; confidence=High; verification AC=AC-035."
+        }
+      ]
+    },
+    {
+      "id": "S07-module",
+      "location": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip::Stage_4_Module_PRDs_4.5.md",
+      "sha256": "6f96ad8e4abb6ea6f71d4114789b2a12efb21b3fecbee4937d42a169bd08018d",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip",
+      "evidence": [
+        {
+          "pattern": "FR-250",
+          "line": 1116,
+          "text": "| FR-250 | Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | Администратор, руководитель, сотрудник, наблюдатель по capabilities. | Соответствующее desktop-состояние или команда | Приложение запущено; capabilities и connection state известны | Поведение выполнено без создания неподдерживаемой server operation. | SCR-020;SCR-021;SCR-022;SCR-023;SCR-024;SCR-025;SCR-029;SCR-030;SCR-031;SCR-032;SCR-034 | FLOW-004;FLOW-005;FLOW-006;FLOW-007;FLOW-008;FLOW-025;FLOW-033 | Desktop-only; использует существующие read/command API при необходимости | Существующие DTO; новых полей не вводится | Capability-driven; server recheck для команд | FORBIDDEN;SESSION_EXPIRED;DATABASE_UNAVAILABLE;VERSION_CONFLICT | Stage 3.5 UX Architecture/Decision Log |"
+        },
+        {
+          "pattern": "FR-250",
+          "line": 1330,
+          "text": "| AC-1412 | FR-250 | Desktop behavior: Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | High | Desktop/UI | Stage 3.5 UX Architecture |"
+        },
+        {
+          "pattern": "FR-250",
+          "line": 6978,
+          "text": "| AC-1966 | PERM-005 | FR-250 | MOD-005 | Permission denial for FR-250 |"
+        },
+        {
+          "pattern": "FR-250",
+          "line": 7257,
+          "text": "| AC-2224 | ERR-005 | FR-250 | MOD-005 | Stable error handling for FR-250 |"
+        },
+        {
+          "pattern": "FR-250",
+          "line": 7536,
+          "text": "| AC-2482 | SYNC-005 | FR-250 | MOD-005 | Read outage behavior for FR-250 |"
+        },
+        {
+          "pattern": "FR-250",
+          "line": 7815,
+          "text": "| AC-2740 | AUDIT-005 | FR-250 | MOD-005 | Audit evidence for FR-250 |"
+        },
+        {
+          "pattern": "AC-1412",
+          "line": 1330,
+          "text": "| AC-1412 | FR-250 | Desktop behavior: Review workflow должен показывать только server-allowed переходы: отправить на проверку, принять, вернуть в работу. | High | Desktop/UI | Stage 3.5 UX Architecture |"
+        },
+        {
+          "pattern": "BR-035",
+          "line": 1126,
+          "text": "| BR-035 | Review → completed и review → in_progress выполняются только разрешёнными transition. | §11, §27.1.5–16, §29, §33; Stage 3.5 | AC-035 |"
+        },
+        {
+          "pattern": "BR-035",
+          "line": 1225,
+          "text": "| AC-035 | BR-035 | Проверить бизнес-правило: Review → completed и review → in_progress выполняются только разрешёнными transition. | High | Integration/domain | §11, §27.1.5–16, §29, §33; Stage 3.5 |"
+        }
+      ]
+    },
+    {
+      "id": "S07-decisions",
+      "location": "work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip::Stage_4_Decision_Log_4.5.md",
+      "sha256": "fb901b73f4952dce4943fd3e2ab89b3b60ace26cb04ee4b61bc4532dc1e5ec8f",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/stage_4_6_lite/final_baseline/Organizer_Stage4_PRD_Candidate_4.5.zip",
+      "evidence": [
+        {
+          "pattern": "Accepted",
+          "line": 7,
+          "text": "| DEC-043 | MOD identifiers are assigned MOD-001…MOD-021 in the order approved by Stage 4.0. | Stable Stage 4 modular traceability. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 8,
+          "text": "| DEC-044 | Each normative OpenAPI operation maps to exactly one API-backed FR. | Proves operation coverage without changing contracts. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 9,
+          "text": "| DEC-045 | Desktop-only FR may reference existing APIs but cannot introduce a new operation or field. | Separates product behavior from contract change. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 10,
+          "text": "| DEC-046 | Stage_3_Field_Traceability_Final_3.5.csv is the normative source for UX-relevant fields; module PRD shows selected user/UX fields only. | Avoids copying all 1322 fields. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 11,
+          "text": "| DEC-047 | Acceptance catalog contains operation-level scenarios; module text includes Gherkin for critical operations and cross-cutting failures. | Balances testability and document size. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 12,
+          "text": "| DEC-048 | Stage 4 candidate remains Candidate until independent audit; open contract gaps are OQ, not invented behavior. | Required by Stage 4 process. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 13,
+          "text": "| DEC-049 | Product analytics is limited to surface usage and command outcome metadata; no free text, paths, PII or external platform is assumed. | Privacy and MVP discipline. | Accepted |"
+        },
+        {
+          "pattern": "Accepted",
+          "line": 14,
+          "text": "| DEC-050 | `Initial (Stage 3.5 State Matrix)…024` восстановлены из опубликованного реестра Этапа 3.0; `STATE-025…031` сохранены из 3.4; новые `Authentication/session error handling (Stage 3.5 error/UI rule)…039` назначены только уникальным security/operations semantics. | Закрывает документационный разрыв без изменения продукта и без переиспользования ID. | Accepted in 4.1.1 |"
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "location": "outputs/20260826_task_write_vertical_slice_specs_1.0.0/04_SERVER_TASK_TRANSITION.md",
+      "sha256": "3090c0797d214b388dec222ef18cd6f5735ab602bb790757b8287837608d364c",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/outputs/20260826_task_write_vertical_slice_specs_1.0.0/04_SERVER_TASK_TRANSITION.md",
+      "evidence": [
+        {
+          "pattern": "review → in_progress",
+          "line": 33,
+          "text": "Нельзя придумывать reopening или возвращение к `new`: transitions из `completed`/`cancelled`, `review → in_progress`, same-state переход и любые другие комбинации возвращают `409 INVALID_STATE_TRANSITION`. Archive/trash/restore остаются отдельными endpoints и не реализуются здесь."
+        },
+        {
+          "pattern": "reason.*необязателен",
+          "line": 20,
+          "text": "`targetStatus` обязателен и допускает `new`, `in_progress`, `review`, `completed`, `cancelled`. `reason` необязателен, null либо строка после trim не длиннее 2000; reason может попасть только в redacted audit/event metadata согласно проектному паттерну, но не должен отображаться как поддерживаемое persisted task field. Unknown properties отклоняются."
+        },
+        {
+          "pattern": "Payload фиксирует",
+          "line": 52,
+          "text": "Успех в одной foundation transaction создаёт aggregate mutation, audit action `task.change_status`, domain event `TaskStatusChanged`, outbox и completed replay response. Payload фиксирует task id, from status, target status, aggregate version, correlation id и actor id; секретов и exception details нет. Любая ошибка откатывает всё. Повтор не создаёт новый event. Concurrent stale transitions дают ровно одного победителя."
+        }
+      ]
+    },
+    {
+      "id": "S08-scope",
+      "location": "outputs/20260826_task_write_vertical_slice_specs_1.0.0/README.md",
+      "sha256": "e8bd2180f04cb2944504ad44939aee7632ba8d5b567df4c7666267ccb3e1ef11",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/outputs/20260826_task_write_vertical_slice_specs_1.0.0/README.md",
+      "evidence": [
+        {
+          "pattern": "Граница вертикального среза",
+          "line": 23,
+          "text": "## Граница вертикального среза"
+        },
+        {
+          "pattern": "поддерживаемой production",
+          "line": 25,
+          "text": "Этот комплект реализует запись только для уже поддерживаемой production-моделью части задачи: заголовок, приоритет, начало, срок и статус. Он не должен притворяться полной реализацией всей Stage 2.2 схемы `TaskCreate`/`TaskPatch`. Поля project, parent task, description, requester, counterparties, assignees, watchers, recurrence и planned local schedule остаются отдельными будущими increments. Неподдерживаемые входные поля нельзя молча игнорировать."
+        }
+      ]
+    },
+    {
+      "id": "S09",
+      "location": "work/production/docs/SEC-02-authorization.md",
+      "sha256": "dfac19021b1fdad42a522ed19b035b1cc0b6c6c838bba9e039a4c466521ffec2",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/docs/SEC-02-authorization.md",
+      "evidence": [
+        {
+          "pattern": "system_employee",
+          "line": 13,
+          "text": "| system_employee | Создание задач, изменение статуса собственных/назначенных задач, комментарии, доступные контакты и ссылки | Свои/назначенные объекты и доступные проекты; нет управления ролями и чужими задачами |"
+        },
+        {
+          "pattern": "system_observer",
+          "line": 14,
+          "text": "| system_observer | Чтение доступных проектов, задач, файлов и комментариев | Только доступные объекты; нет бизнес-команд записи |"
+        },
+        {
+          "pattern": "Команда повторно проверяет",
+          "line": 23,
+          "text": "4. Команда повторно проверяет права на объект в транзакции. Product API и task commands перечитывают capabilities после общего блокирования транзакций организации. Назначения и watchers требуют отдельных прав."
+        }
+      ]
+    },
+    {
+      "id": "S09-card",
+      "location": "work/production/docs/task-card-workflow.md",
+      "sha256": "3dbb0555380b77e2a112835cda214cad0b7ab37f7be099ea114d0f18a14ae2e7",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/docs/task-card-workflow.md",
+      "evidence": [
+        {
+          "pattern": "Начать",
+          "line": 13,
+          "text": "Use **Начать → На проверку → Завершить** (or a permitted direct terminal transition). Completion time is persisted. A completed/cancelled task cannot have its fields, checklist, dependencies or file links changed. Comments remain available with `Comment.Create`. Lists of comments/history show the latest 200 entries. Choice lists show at most 200 results and report when the user should narrow the search."
+        },
+        {
+          "pattern": "Comments remain",
+          "line": 13,
+          "text": "Use **Начать → На проверку → Завершить** (or a permitted direct terminal transition). Completion time is persisted. A completed/cancelled task cannot have its fields, checklist, dependencies or file links changed. Comments remain available with `Comment.Create`. Lists of comments/history show the latest 200 entries. Choice lists show at most 200 results and report when the user should narrow the search."
+        },
+        {
+          "pattern": "If-Match",
+          "line": 33,
+          "text": "Files use the existing `/objects/{id}/links` routes with `linkType: task_file`. Child mutations use the parent task's `If-Match: \"vN\"` and an `Idempotency-Key`. Every successful mutation increments the task version once and commits its data, audit entry, domain event, outbox entry and durable idempotency result in one transaction. Core task writes and workspace writes share the tenant advisory lock to serialize relation/version changes."
+        }
+      ]
+    },
+    {
+      "id": "C01",
+      "location": "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "sha256": "606c3c026d29058e744f89a14e92ac7f149abcf6617d6e2d25d10f9ee15381e7",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "evidence": [
+        {
+          "pattern": "OperationId = \"POST_api_v1_tasks_id_transition\"",
+          "line": 279,
+          "text": "    public const string OperationId = \"POST_api_v1_tasks_id_transition\";"
+        },
+        {
+          "pattern": "private static TaskAggregate ApplyTransition",
+          "line": 348,
+          "text": "    private static TaskAggregate ApplyTransition("
+        },
+        {
+          "pattern": "fromStatus =",
+          "line": 332,
+          "text": "                    fromStatus = ToContractValue(existing.WorkStatus),"
+        },
+        {
+          "pattern": "RevalidatePermissions = true",
+          "line": 104,
+          "text": "        { RevalidatePermissions = true };"
+        },
+        {
+          "pattern": "RevalidatePermissions = true",
+          "line": 340,
+          "text": "        { RevalidatePermissions = true };"
+        }
+      ]
+    },
+    {
+      "id": "C02",
+      "location": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+      "sha256": "65a6f34ac853322fc003090c07908f311924d148d366afa0fc7506a376abc7ee",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+      "evidence": [
+        {
+          "pattern": "MapPost\\(TaskTransitionRoute",
+          "line": 40,
+          "text": "        app.MapPost(TaskTransitionRoute, TransitionTaskAsync)"
+        },
+        {
+          "pattern": "TryParseTransitionRequest",
+          "line": 873,
+          "text": "        if (!TryParseTransitionRequest(body, out var targetStatus, out var parseError))"
+        },
+        {
+          "pattern": "TryParseTransitionRequest",
+          "line": 946,
+          "text": "    private static bool TryParseTransitionRequest("
+        },
+        {
+          "pattern": "reason must not exceed",
+          "line": 1003,
+          "text": "                        error = PatchValidationFailed(StatusCodes.Status422UnprocessableEntity, \"reason must not exceed 2000 characters.\");"
+        },
+        {
+          "pattern": "IDEMPOTENCY_REQUEST_IN_PROGRESS",
+          "line": 576,
+          "text": "                    \"IDEMPOTENCY_REQUEST_IN_PROGRESS\","
+        },
+        {
+          "pattern": "internal sealed record TaskResponse",
+          "line": 1258,
+          "text": "    internal sealed record TaskResponse("
+        }
+      ]
+    },
+    {
+      "id": "C03",
+      "location": "work/production/src/Task.Domain/TaskRules.cs",
+      "sha256": "0e4aa562ffa3627d78722013df0cdd4b33203e4628efd86d4321528d856f8d43",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Domain/TaskRules.cs",
+      "evidence": [
+        {
+          "pattern": "public static bool CanTransition",
+          "line": 27,
+          "text": "    public static bool CanTransition(TaskWorkStatus current, TaskWorkStatus target) => (current, target) switch"
+        }
+      ]
+    },
+    {
+      "id": "C04",
+      "location": "work/production/src/Task.Domain/TaskAggregate.cs",
+      "sha256": "2d57a1633ca51a4eb046df969466f9d9b6ca3f5de8192311011d23c13c36bf49",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Domain/TaskAggregate.cs",
+      "evidence": [
+        {
+          "pattern": "public TaskAggregate Start",
+          "line": 139,
+          "text": "    public TaskAggregate Start(Guid actorId, DateTimeOffset occurredAtUtc)"
+        },
+        {
+          "pattern": "public TaskAggregate SubmitForReview",
+          "line": 157,
+          "text": "    public TaskAggregate SubmitForReview(Guid actorId, DateTimeOffset occurredAtUtc)"
+        }
+      ]
+    },
+    {
+      "id": "C05",
+      "location": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "sha256": "e70c7073d6f331a6c65b6de56fe0f040852c45290185b9cf7182e9831827fe8e",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "evidence": [
+        {
+          "pattern": "permission_available",
+          "line": 41,
+          "text": "                using var access = new NpgsqlCommand(\"SELECT iam.permission_available($1,$2,$3);\", connection, transaction);"
+        },
+        {
+          "pattern": "permission_available",
+          "line": 132,
+          "text": "                using var preferenceAccess = new NpgsqlCommand(\"SELECT iam.permission_available($1,$2,'reminder.manageown');\", connection, transaction);"
+        },
+        {
+          "pattern": "permission_available",
+          "line": 152,
+          "text": "                    using var fieldAccess = new NpgsqlCommand(\"SELECT iam.permission_available($1,$2,$3);\", connection, transaction);"
+        },
+        {
+          "pattern": "EnsureAction",
+          "line": 72,
+          "text": "                    PostgresTaskCardValidation.EnsureAction(connection, transaction, replayedTask, command.ActorUserId, command.AuditAction == \"task.change_status\" ? \"task.changestatus\" : \"task.update\");"
+        },
+        {
+          "pattern": "EnsureAction",
+          "line": 126,
+          "text": "            if (current is not null) PostgresTaskCardValidation.EnsureAction(connection, transaction, current, command.ActorUserId,"
+        },
+        {
+          "pattern": "EnsureAction",
+          "line": 150,
+          "text": "                    PostgresTaskCardValidation.EnsureAction(connection, transaction, current, command.ActorUserId, permission);"
+        },
+        {
+          "pattern": "AppendEventAndOutboxAsync",
+          "line": 198,
+          "text": "                await AppendEventAndOutboxAsync("
+        },
+        {
+          "pattern": "AppendEventAndOutboxAsync",
+          "line": 366,
+          "text": "    private static async global::System.Threading.Tasks.Task AppendEventAndOutboxAsync("
+        },
+        {
+          "pattern": "PostgresEventNotifications.Command",
+          "line": 415,
+          "text": "        await using var notifications = PostgresEventNotifications.Command(connection, transaction, eventId);"
+        }
+      ]
+    },
+    {
+      "id": "C06",
+      "location": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+      "sha256": "2a3980ccea4995057c1681d292b278f74247e23990fbe5aa40f8c72f70d96055",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Infrastructure/Persistence/PostgresTaskCardValidation.cs",
+      "evidence": [
+        {
+          "pattern": "EnsureVisible",
+          "line": 8,
+          "text": "    public static void EnsureVisible(NpgsqlConnection connection, NpgsqlTransaction? transaction, TaskAggregate task, Guid actor)"
+        },
+        {
+          "pattern": "EnsureVisible",
+          "line": 70,
+          "text": "            EnsureVisible(connection, transaction, parent, actor);"
+        },
+        {
+          "pattern": "EnsureAction",
+          "line": 17,
+          "text": "    public static void EnsureAction(NpgsqlConnection connection, NpgsqlTransaction transaction, TaskAggregate task, Guid actor, string permission)"
+        }
+      ]
+    },
+    {
+      "id": "C07",
+      "location": "work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "sha256": "35e4335252926a7cf0875f530225ea9a7e272a8dc5e36ad507f46a2527ef431d",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Api/Security/TaskPermissionAuthorization.cs",
+      "evidence": [
+        {
+          "pattern": "TaskChangeStatusBackingPermissionCode =",
+          "line": 85,
+          "text": "    public const string TaskChangeStatusBackingPermissionCode = \"task.changestatus\";"
+        },
+        {
+          "pattern": "TaskReadBackingPermissionCode =",
+          "line": 71,
+          "text": "    public const string TaskReadBackingPermissionCode = \"task.read\";"
+        }
+      ]
+    },
+    {
+      "id": "C08",
+      "location": "work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+      "sha256": "c926aba25698b4f327bf42b798a0555061f68d163b729dd8f59cfbda4622116b",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Infrastructure/Persistence/Migrations/013_object_authorization.sql",
+      "evidence": [
+        {
+          "pattern": "CREATE OR REPLACE FUNCTION work.task_visible",
+          "line": 95,
+          "text": "CREATE OR REPLACE FUNCTION work.task_visible(org uuid, task uuid, actor uuid) RETURNS boolean LANGUAGE sql STABLE AS $$"
+        },
+        {
+          "pattern": "CREATE FUNCTION iam.object_allowed",
+          "line": 103,
+          "text": "CREATE FUNCTION iam.object_allowed(org uuid, object_id uuid, actor uuid, capability text, administrator boolean DEFAULT false) RETURNS boolean"
+        },
+        {
+          "pattern": "'task.changestatus','objectlink.create'",
+          "line": 133,
+          "text": " OR (iam.capability_code(capability) IN ('task.changestatus','objectlink.create') AND (a.created_by=actor OR a.card_content->'assigneeIds' ? actor::text)))) OR"
+        },
+        {
+          "pattern": "system_employee",
+          "line": 150,
+          "text": "SELECT role,code FROM (VALUES ('system_manager'),('system_employee'),('system_observer')) roles(role)"
+        },
+        {
+          "pattern": "system_employee",
+          "line": 154,
+          "text": "SELECT role,code FROM (VALUES ('system_manager'),('system_employee')) roles(role)"
+        },
+        {
+          "pattern": "system_employee",
+          "line": 164,
+          "text": " FOREACH template IN ARRAY ARRAY['system_manager','system_employee','system_observer'] LOOP"
+        },
+        {
+          "pattern": "system_employee",
+          "line": 169,
+          "text": "  VALUES(gen_random_uuid(),org,template,CASE template WHEN 'system_manager' THEN 'Руководитель' WHEN 'system_employee' THEN 'Сотрудник' ELSE 'Наблюдатель' END,true)"
+        }
+      ]
+    },
+    {
+      "id": "C09",
+      "location": "work/production/src/Task.Infrastructure/Persistence/PostgresEventNotifications.cs",
+      "sha256": "a5ba821c9817d4683fd8db2dfa8f71bebbf1c9f009f7f7746e7fcaa38b3c4884",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Infrastructure/Persistence/PostgresEventNotifications.cs",
+      "evidence": [
+        {
+          "pattern": "TaskStatusChanged.*completed",
+          "line": 19,
+          "text": "                        WHEN e.event_type='TaskStatusChanged' AND task.status='completed' THEN 'task.completed'"
+        },
+        {
+          "pattern": "TaskStatusChanged.*review",
+          "line": 20,
+          "text": "                        WHEN e.event_type='TaskStatusChanged' AND task.status='review' THEN 'task.review'"
+        },
+        {
+          "pattern": "notice_type IS NOT NULL",
+          "line": 39,
+          "text": "                WHERE s.notice_type IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "id": "C10",
+      "location": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "sha256": "ce2422ecd25566499c6419a723630a11e76b656fbe0d30433b7a1151d67482a4",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "evidence": [
+        {
+          "pattern": "operation == \"history\"",
+          "line": 14,
+          "text": "        if (operation == \"history\")"
+        },
+        {
+          "pattern": "actorUserId",
+          "line": 18,
+          "text": "            var rows = Many(c, t, \"SELECT jsonb_build_object('id',id,'action',event_type,'version',aggregate_version,'actorUserId',actor_user_id,'occurredAt',occurred_at,'changedFields',changed_fields) \" +"
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "location": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "sha256": "82be1abd8c2a8b5c3a394cb3bf5db43d39ee3fad9fe81a85bb8873d6b1ca5c6a",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiTaskWorkspace.cs",
+      "evidence": [
+        {
+          "pattern": "historyVisible",
+          "line": 62,
+          "text": "                [\"historyVisible\"] = r.Permissions.Contains(\"History.Read\")"
+        },
+        {
+          "pattern": "case \"task-comment-add\"",
+          "line": 84,
+          "text": "            case \"task-comment-add\":"
+        },
+        {
+          "pattern": "RequiredTaskText\\(r.Body, \"body\", 50000\\)",
+          "line": 86,
+          "text": "                Run(c, t, \"INSERT INTO work.task_comments(id,organization_id,task_id,body,author_user_id) VALUES(@child,@org,@id,@body,@user);\", r, (\"child\", id), (\"id\", r.Id), (\"body\", RequiredTaskText(r.Body, \"body\", 50000))); break;"
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "location": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "sha256": "6271da006d9be14bae2b82dc96d4f29b0d13c1f5d77eb0052c28d71510930fcb",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "evidence": [
+        {
+          "pattern": "public bool CanChangeStatus",
+          "line": 590,
+          "text": "    public bool CanChangeStatus => CanWrite(\"Task.ChangeStatus\");"
+        },
+        {
+          "pattern": "internal static bool IsAllowedTransition",
+          "line": 1650,
+          "text": "    internal static bool IsAllowedTransition(DesktopTaskStatus current, DesktopTaskStatus target) =>"
+        },
+        {
+          "pattern": "DesktopTaskStatus.InProgress =>",
+          "line": 135,
+          "text": "        DesktopTaskStatus.InProgress => \"В работе\","
+        },
+        {
+          "pattern": "DesktopTaskStatus.InProgress =>",
+          "line": 154,
+          "text": "        DesktopTaskStatus.InProgress => \"Task.Icon.Status.InProgress\","
+        },
+        {
+          "pattern": "DesktopTaskStatus.InProgress =>",
+          "line": 163,
+          "text": "        DesktopTaskStatus.InProgress => TaskVisualTone.Brand,"
+        },
+        {
+          "pattern": "DesktopTaskStatus.InProgress =>",
+          "line": 628,
+          "text": "        DesktopTaskStatus.InProgress => \"Начать задачу?\","
+        },
+        {
+          "pattern": "VersionConflict:",
+          "line": 1468,
+          "text": "            case DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict:"
+        },
+        {
+          "pattern": "VersionConflict:",
+          "line": 1590,
+          "text": "                case DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict:"
+        },
+        {
+          "pattern": "IDesktopTasksApiClient",
+          "line": 281,
+          "text": "/// <see cref=\"IDesktopTasksApiClient\"/>; the view model only coordinates presentation."
+        },
+        {
+          "pattern": "IDesktopTasksApiClient",
+          "line": 285,
+          "text": "    private readonly IDesktopTasksApiClient _client;"
+        },
+        {
+          "pattern": "IDesktopTasksApiClient",
+          "line": 335,
+          "text": "        IDesktopTasksApiClient client,"
+        }
+      ]
+    },
+    {
+      "id": "C13",
+      "location": "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+      "sha256": "8140a2813db30caa7d825b73d9cdd325afcd0e27f3187511b06b8d9ae60ed27d",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+      "evidence": [
+        {
+          "pattern": "record DesktopTransitionTaskCommand",
+          "line": 109,
+          "text": "public sealed record DesktopTransitionTaskCommand"
+        },
+        {
+          "pattern": "TransitionTaskAsync",
+          "line": 154,
+          "text": "    global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync("
+        },
+        {
+          "pattern": "TransitionTaskAsync",
+          "line": 324,
+          "text": "    public async global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync("
+        },
+        {
+          "pattern": "reason = command.Reason",
+          "line": 329,
+          "text": "        var reason = command.Reason?.Trim();"
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "location": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "sha256": "c413823e3528d617590f88c57283896910a6f221ff1f1e8bfcddfb7476686aad",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Desktop/MainWindow.xaml",
+      "evidence": [
+        {
+          "pattern": "Content=\"Начать\"",
+          "line": 896,
+          "text": "                                            <Button Content=\"Начать\" CommandParameter=\"InProgress\""
+        },
+        {
+          "pattern": "Content=\"На проверку\"",
+          "line": 901,
+          "text": "                                            <Button Content=\"На проверку\" CommandParameter=\"Review\""
+        },
+        {
+          "pattern": "Причина \\(необязательно\\)",
+          "line": 927,
+          "text": "                                                <TextBlock Text=\"Причина (необязательно)\" Margin=\"0,10,0,4\" />"
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "location": "work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "sha256": "df06b932b0a1b81002f64feb636a56d02d987bc6aa81e512b6120847597aa8ec",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/src/Task.Application/ProductData/ProductApiContracts.cs",
+      "evidence": [
+        {
+          "pattern": "tasks/\\{id\\}/comments",
+          "line": 69,
+          "text": "        Extra(\"POST\", \"tasks/{id}/comments\", \"tasks\", \"task-comment-add\", \"Comment.Create\", true, true);"
+        },
+        {
+          "pattern": "tasks/\\{id\\}/history",
+          "line": 65,
+          "text": "        Extra(\"GET\", \"tasks/{id}/history\", \"tasks\", \"history\", \"History.Read\");"
+        }
+      ]
+    },
+    {
+      "id": "T01",
+      "location": "work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs",
+      "sha256": "30204b556351a7aadb9a9bf12e9b12d94cd2db4a09a6b9f46f36f6f1c2833c42",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs",
+      "evidence": [
+        {
+          "pattern": "AllowedTransitions =>",
+          "line": 15,
+          "text": "    public static TheoryData<TaskWorkStatus, TaskWorkStatus> AllowedTransitions => new()"
+        },
+        {
+          "pattern": "ForbiddenTransitions",
+          "line": 27,
+          "text": "    public static TheoryData<TaskWorkStatus, TaskWorkStatus> ForbiddenTransitions"
+        },
+        {
+          "pattern": "ForbiddenTransitions",
+          "line": 95,
+          "text": "    [MemberData(nameof(ForbiddenTransitions))]"
+        },
+        {
+          "pattern": "TransitionTask_AllOtherTransitionsReturn409",
+          "line": 96,
+          "text": "    public async global::System.Threading.Tasks.Task TransitionTask_AllOtherTransitionsReturn409("
+        },
+        {
+          "pattern": "TryGetProperty\\(\"reason\"",
+          "line": 86,
+          "text": "        Assert.False(payload.RootElement.TryGetProperty(\"reason\", out _));"
+        },
+        {
+          "pattern": "TransitionTask_ReplaysAndRejectsKeyReuse",
+          "line": 197,
+          "text": "    public async global::System.Threading.Tasks.Task TransitionTask_ReplaysAndRejectsKeyReuse()"
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "location": "work/production/tests/Task.Tests/PostgresTaskWriteCommandExecutorTests.cs",
+      "sha256": "e486f188e2e78f0cdbea6b472c4552db8247828a34dd9c2360edb08e5ce8874c",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/tests/Task.Tests/PostgresTaskWriteCommandExecutorTests.cs",
+      "evidence": [
+        {
+          "pattern": "rollbackTransition",
+          "line": 157,
+          "text": "            var rollbackTransitionTaskId = Guid.NewGuid();"
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 165,
+          "text": "                    rollbackTransitionTaskId,"
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 171,
+          "text": "                rollbackTransitionTaskId,"
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 174,
+          "text": "            var rollbackTransition = CreateTransitionCommand("
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 177,
+          "text": "                rollbackTransitionTaskId,"
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 182,
+          "text": "                (await Assert.ThrowsAsync<PostgresException>(() => executor.ExecuteAsync(rollbackTransition))).SqlState);"
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 187,
+          "text": "                rollbackTransitionTaskId));"
+        },
+        {
+          "pattern": "rollbackTransition",
+          "line": 192,
+          "text": "                rollbackTransition.OperationId,"
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 126,
+          "text": "            var sameTransitionTaskId = Guid.NewGuid();"
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 134,
+          "text": "                    sameTransitionTaskId,"
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 137,
+          "text": "            var sameTransition = CreateTransitionCommand("
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 140,
+          "text": "                sameTransitionTaskId,"
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 145,
+          "text": "                executor.ExecuteAsync(sameTransition),"
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 146,
+          "text": "                executor.ExecuteAsync(sameTransition));"
+        },
+        {
+          "pattern": "sameTransition",
+          "line": 153,
+          "text": "                sameTransitionTaskId,"
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "location": "work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs",
+      "sha256": "3a7c0778bd9e1d4825e4a7644d4de54c60bb464019971115796776218f3c8c1e",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/tests/Task.Desktop.Tests/Tasks/TasksViewModelTests.cs",
+      "evidence": [
+        {
+          "pattern": "Transition_Success",
+          "line": 437,
+          "text": "    public async global::System.Threading.Tasks.Task Transition_Success_UsesSelectedVersionAndServerResponse()"
+        },
+        {
+          "pattern": "TransitionRevoke",
+          "line": 650,
+          "text": "    public async global::System.Threading.Tasks.Task TransitionRevoke_CancelsPendingConfirmationAndBlocksApiCall()"
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "location": "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "sha256": "87262aada2be5e6bab06ce350cadcfdd5d5c7e2da80f0940e9620f10d78bd69c",
+      "commit": "fa504bc01584547afc50398ba6c1735391c4173c",
+      "url": "https://github.com/Timmmm69/Task/blob/fa504bc01584547afc50398ba6c1735391c4173c/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "evidence": [
+        {
+          "pattern": "targetStatus",
+          "line": 405,
+          "text": "        Assert.Equal(\"{\\\"targetStatus\\\":\\\"completed\\\",\\\"reason\\\":\\\"done\\\"}\", requests[2].Body);"
+        },
+        {
+          "pattern": "InvalidTransition",
+          "line": 538,
+          "text": "        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition>(await Send());"
+        }
+      ]
+    }
+  ]
+}

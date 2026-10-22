@@ -17,6 +17,11 @@ public sealed partial class PostgresProductApiTests
         Assert.NotEqual(row["id"]!.ToString(), Assert.Single(second.Body!["items"]!.AsArray())!["id"]!.ToString());
         Assert.Equal(2, row["version"]!.GetValue<int>()); Assert.Equal(db.User.ToString(), row["actorUserId"]!.ToString());
         Assert.Equal("project.patch", row["action"]!.ToString()); Assert.NotNull(row["occurredAt"]);
+        Assert.Equal(id, row["objectId"]!.GetValue<Guid>());
+        Assert.Equal(2, row["objectVersion"]!.GetValue<int>());
+        Assert.Equal("updated", row["changeType"]!.ToString());
+        Assert.NotEqual(Guid.Empty, row["correlationId"]!.GetValue<Guid>());
+        Assert.Equal(DateTimeOffset.Parse(row["occurredAt"]!.ToString()), DateTimeOffset.Parse(row["changedAt"]!.ToString()));
         Assert.Contains(row["changedFields"]!.AsArray(), f => f!.ToString() == "name");
         Assert.Null(row["oldValues"]); Assert.Null(row["newValues"]);
         Assert.Empty(db.Call("projects", "history", id: id, query: new() { ["limit"] = "1", ["page"] = "3" }).Body!["items"]!.AsArray());

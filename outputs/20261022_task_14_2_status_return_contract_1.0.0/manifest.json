@@ -1,0 +1,46 @@
+{
+  "package": "Task_14_2_Status_Return_Implementation_Contract",
+  "version": "1.0.0",
+  "date": "2026-10-22",
+  "baselineCommit": "fa504bc01584547afc50398ba6c1735391c4173c",
+  "status": "READY",
+  "productionChanged": false,
+  "implementationVerified": false,
+  "decision": "DEC-14-RETURN-001",
+  "inputs": [
+    {
+      "path": "outputs/20261022_task_14_1_status_return_contract_audit_1.0.0/Task_14_1_Status_Return_Contract_Audit.md",
+      "sha256": "058c10121db609d1c761787aec6ae6e6472f0cbf825fa1be8a07305db796446f"
+    },
+    {
+      "path": "outputs/20261022_task_14_1_status_return_contract_audit_1.0.0/source-evidence.json",
+      "sha256": "2ff7a6103ac31c6294c6c6db8ea713fa78c751ae80fdcb31c83ef2fbdb3ef1e0"
+    },
+    {
+      "path": "outputs/20261022_task_14_1_status_return_contract_audit_1.0.0/manifest.json",
+      "sha256": "8b6c6f6b2b9799573c53b832c9dbb3dd2951fc2299bf43d7ca8a76a8b5b39fe1"
+    }
+  ],
+  "files": [
+    {
+      "path": "Task_14_1_Resolution_Addendum.md",
+      "bytes": 2528,
+      "sha256": "b7a1b0d6862fb34834452f032b168f43f3843958b98691c76ce8f063c33ddfb0"
+    },
+    {
+      "path": "Task_14_2_Status_Return_Implementation_Contract.md",
+      "bytes": 20410,
+      "sha256": "23283baf2bfa755fdf324a96de8e95ddd5acdabab199aa683ee6886edf4b0e25"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 1794,
+      "sha256": "2cec93a61ebb8d8927a9cd8aa8b51b9d489084ed43983187ace30a5b1beb4292"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

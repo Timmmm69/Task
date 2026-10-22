@@ -18,3 +18,7 @@
 /20261019_project_contacts_13.3.0/** binary
 /20261019_project_history_13.4.0/** binary
 /20261019_project_detail_publication_13.4.1/** binary
+
+# Preserve the manifests and original Task 14 input packages byte for byte.
+/20261022_task_14_1_status_return_contract_audit_1.0.0/** binary
+/20261022_task_14_2_status_return_contract_1.0.0/** binary

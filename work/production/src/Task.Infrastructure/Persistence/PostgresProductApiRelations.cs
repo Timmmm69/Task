@@ -15,8 +15,26 @@ internal sealed partial class PostgresProductApiStore
         {
             ValidateQuery(r, "limit page");
             var limit = QueryInt(r, "limit", 50, 1, 200);
-            var rows = Many(c, t, "SELECT jsonb_build_object('id',id,'action',event_type,'version',aggregate_version,'actorUserId',actor_user_id,'occurredAt',occurred_at,'changedFields',changed_fields) " +
-                "FROM governance.domain_events WHERE organization_id=@org AND aggregate_id=@id ORDER BY occurred_at DESC,id LIMIT @limit OFFSET @offset;", r,
+            // Canonical HistoryEntry fields plus the existing desktop aliases.
+            // Publish only metadata: event payloads may contain private object data.
+            var rows = Many(c, t, """
+                SELECT jsonb_build_object(
+                    'id',id,'objectId',aggregate_id,'objectVersion',aggregate_version,
+                    'changedAt',to_char(occurred_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),
+                    'changeType',CASE
+                        WHEN event_type ~ '(Created$|\.create$)' THEN 'created'
+                        WHEN event_type ~ '(Unarchived$|Restored$|\.(unarchive|restore)$)' THEN 'restored'
+                        WHEN event_type ~ '(Archived$|\.archive$)' THEN 'archived'
+                        WHEN event_type ~ '(Trashed$|MovedToTrash$|\.trash$)' THEN 'trashed'
+                        WHEN event_type ~ '(Purged$|\.purge$)' THEN 'purged'
+                        WHEN event_type ~ '(StatusChanged$|\.transition$)'
+                            OR changed_fields && ARRAY['status','workStatus'] THEN 'state_changed'
+                        ELSE 'updated' END,
+                    'correlationId',correlation_id,'changedFields',changed_fields,
+                    'action',event_type,'version',aggregate_version,'actorUserId',actor_user_id,'occurredAt',occurred_at)
+                FROM governance.domain_events WHERE organization_id=@org AND aggregate_id=@id
+                ORDER BY occurred_at DESC,id LIMIT @limit OFFSET @offset;
+                """, r,
                 ("id", r.Id), ("limit", limit), ("offset", (QueryInt(r, "page", 1, 1, 10000) - 1) * limit));
             return new(new JsonObject { ["items"] = new JsonArray(rows.ToArray<JsonNode?>()) });
         }

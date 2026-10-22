@@ -32,3 +32,8 @@ the historical specification and audit remain unchanged.
 The approval resolves OQ-14.1-01 for this server increment. Other audit gaps
 (history DTO alignment, terminal recovery, reason display, notifications and
 reviewer identity policy) remain outside its scope.
+
+The final pre-main correction DEC-14-CONTRACT-002 is recorded in
+[task-14-final-contract-corrections.md](task-14-final-contract-corrections.md).
+It resolves the reported HistoryEntry/error-contract drift with the existing
+WPF fields preserved and a reproducible derived runtime OpenAPI.

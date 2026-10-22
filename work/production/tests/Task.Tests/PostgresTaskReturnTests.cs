@@ -39,6 +39,19 @@ public sealed partial class PostgresProductApiTests
         var history = db.Call("tasks", "history", id: task.Metadata.Id).Body!["items"]!.AsArray();
         var entry = Assert.Single(history)!;
         Assert.Equal("TaskStatusChanged", entry["action"]!.GetValue<string>());
+        Assert.Equal(task.Metadata.Id, entry["objectId"]!.GetValue<Guid>());
+        Assert.Equal(4, entry["objectVersion"]!.GetValue<int>());
+        Assert.Equal("state_changed", entry["changeType"]!.GetValue<string>());
+        Assert.Equal(command.CorrelationId, entry["correlationId"]!.GetValue<Guid>());
+        Assert.Equal(DateTimeOffset.Parse(entry["occurredAt"]!.ToString()),
+            DateTimeOffset.Parse(entry["changedAt"]!.ToString()));
+        Assert.EndsWith("Z", entry["changedAt"]!.ToString());
+        if (Environment.GetEnvironmentVariable("TASK_RETURN_CONTRACT_EVIDENCE") is { Length: > 0 } evidence)
+        {
+            Directory.CreateDirectory(evidence);
+            File.WriteAllText(Path.Combine(evidence, "task-return-history.json"),
+                db.Call("tasks", "history", id: task.Metadata.Id).Body!.ToJsonString());
+        }
         Assert.Equal(4, entry["version"]!.GetValue<int>());
         Assert.Equal(db.User, entry["actorUserId"]!.GetValue<Guid>());
         Assert.Equal("status", Assert.Single(entry["changedFields"]!.AsArray())!.GetValue<string>());
