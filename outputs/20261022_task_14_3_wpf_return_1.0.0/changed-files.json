@@ -1,0 +1,8 @@
+[
+  "work/production/src/Task.Desktop/MainWindow.xaml",
+  "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+  "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+  "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+  ".project-dashboard/roadmap.json"
+]

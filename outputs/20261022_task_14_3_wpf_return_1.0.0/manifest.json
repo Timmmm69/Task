@@ -1,0 +1,128 @@
+{
+  "version": "1.0.0",
+  "server_base": "10774455af70c2a0d5c586bd6f5af26bbbc0a695",
+  "branch": "codex/status-return-14-3",
+  "status": "READY_FOR_FINAL_AUDIT_WITH_LIMITATIONS",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 15,
+      "sha256": "50b8945a29c1090ea744b8f1b761eb4af6136f91203cf5850bc9a915270532eb"
+    },
+    {
+      "path": "changed-files.json",
+      "bytes": 395,
+      "sha256": "c9aa746ff533c23c036a937c2d27fbf6c79faf4d4f85a4f4f3cf476d99387962"
+    },
+    {
+      "path": "evidence/compact-800x600-limitation.png",
+      "bytes": 53528,
+      "sha256": "657ec6b9f98cf9fd0768d5eb7a4acb76414b261c6cb9d6cbc681adb3bd6034c6"
+    },
+    {
+      "path": "evidence/desktop-build.log",
+      "bytes": 595,
+      "sha256": "ddbebc00d1aa997c599d1b814dc14e604d13d85cd315441baf79ad6f6e15bca1"
+    },
+    {
+      "path": "evidence/final-desktop.log",
+      "bytes": 2533,
+      "sha256": "521622a44ac3e81a6e7c4fa74ef8488a45a5dcecc9d58f7e5199bad00cf194a5"
+    },
+    {
+      "path": "evidence/final-desktop.trx",
+      "bytes": 249836,
+      "sha256": "56917eaacf1a368ba36715fa6843a1ba8cdc1b07694ecc0cbcea61ce321b3199"
+    },
+    {
+      "path": "evidence/native/return-confirmation-1100x900.png",
+      "bytes": 106539,
+      "sha256": "ceafe04d77ba66143aa3e05caf59e3772e61e817416b4754cff3433a2d573118"
+    },
+    {
+      "path": "evidence/native/return-confirmation-800x600.png",
+      "bytes": 53528,
+      "sha256": "657ec6b9f98cf9fd0768d5eb7a4acb76414b261c6cb9d6cbc681adb3bd6034c6"
+    },
+    {
+      "path": "evidence/native/return-confirmation-800x800.png",
+      "bytes": 66276,
+      "sha256": "b776971bbc1e737bb3dad0606645f4a0ec390321381efd3fefbb3b960beb3634"
+    },
+    {
+      "path": "evidence/native/return-success-1100x900.png",
+      "bytes": 112745,
+      "sha256": "10f9f6ad9c14bd73764cefa8cf1fae8fe625a19dec6d2b0568a89235503f4867"
+    },
+    {
+      "path": "evidence/native/return-success-800x600.png",
+      "bytes": 53432,
+      "sha256": "2780bce085dc6badb17178328274665e67b2cc5b7139549242bddc02564e39e6"
+    },
+    {
+      "path": "evidence/native/return-success-800x800.png",
+      "bytes": 68483,
+      "sha256": "3dd5b31515034e380532eddcb6489263b95b472562c93abd1c29de9aad934221"
+    },
+    {
+      "path": "evidence/server-return.log",
+      "bytes": 7799,
+      "sha256": "f228129246b46d8d35b6d201debe17aed6a070b31c35aee13de10c39c196163b"
+    },
+    {
+      "path": "evidence/server-return.trx",
+      "bytes": 93531,
+      "sha256": "a5f14ece77cf565deb119e492ae07a7f9d751ab569b4a75351b78740aa29796c"
+    },
+    {
+      "path": "implementation.patch",
+      "bytes": 50425,
+      "sha256": "520b8e376b6e5b0f5c2563384e37e6d7f29fa55ce34a24b19595868d982b73d1"
+    },
+    {
+      "path": "source/.project-dashboard/roadmap.json",
+      "bytes": 156786,
+      "sha256": "9709b7f03f35e44571cf2c38e7457b1668996cb514eda5d0ef76c3ea60b5aec5"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 117667,
+      "sha256": "d4ace8282a131cf8fe3588cd192003dfd931ad6fbeb34f8468b63dd4541dedd2"
+    },
+    {
+      "path": "source/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "bytes": 91388,
+      "sha256": "6fc047d75000ffcc5c513c87849a2ed1fc39494cbddd0ff0131bd083fb0e7762"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "bytes": 45235,
+      "sha256": "3a3d510dce4be35cf9b638acb36ea2148906b76b749b039f34dc28ce535dfd88"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+      "bytes": 11755,
+      "sha256": "0f7723d04902488de42ba28db59efdf05a990aa66bda580d4c76e5fdeff14357"
+    },
+    {
+      "path": "source/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+      "bytes": 8755,
+      "sha256": "a27d7bb0e6298abe4b1a9d91af777b584e2456fa212f9df5e2a9383a933d9d0c"
+    },
+    {
+      "path": "test-summary.json",
+      "bytes": 808,
+      "sha256": "59bacfe0f56ee1445e969224c6ac69a721e146640a68338557873e1c456b118a"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 10348,
+      "sha256": "e0acc35783669be87fcab2b4154560c36e938f773293213c1cf9dbb99b84fb3e"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

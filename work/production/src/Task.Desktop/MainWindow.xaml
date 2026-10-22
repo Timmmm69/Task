@@ -898,6 +898,11 @@
                                                     AutomationProperties.Name="Начать задачу" AutomationProperties.AutomationId="StartTaskButton" Margin="0,0,8,8">
                                                 <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding DataContext.Tasks.CanStart, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Button.Style>
                                             </Button>
+                                            <Button Content="Вернуть на доработку" CommandParameter="InProgress"
+                                                    Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    AutomationProperties.Name="Вернуть на доработку" AutomationProperties.AutomationId="ReturnForReworkButton" Margin="0,0,8,8">
+                                                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding DataContext.Tasks.CanReturnForRework, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Button.Style>
+                                            </Button>
                                             <Button Content="На проверку" CommandParameter="Review"
                                                     Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     AutomationProperties.Name="Отправить задачу на проверку" AutomationProperties.AutomationId="ReviewTaskButton" Margin="0,0,8,8">
@@ -924,16 +929,18 @@
                                             </Border.Style>
                                             <StackPanel>
                                                 <TextBlock Text="{Binding DataContext.Tasks.PendingTransitionText, RelativeSource={RelativeSource AncestorType=Window}}" FontWeight="SemiBold" TextWrapping="Wrap" />
-                                                <TextBlock Text="Причина (необязательно)" Margin="0,10,0,4" />
-                                                <TextBox Text="{Binding DataContext.Tasks.TransitionReason, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
-                                                         MaxLength="2000" AcceptsReturn="True" MinHeight="64"
-                                                         Style="{StaticResource Task.Input.Text}"
-                                                         AutomationProperties.Name="Причина смены статуса" AutomationProperties.AutomationId="TransitionReasonTextBox" />
-                                                <TextBlock Text="{Binding DataContext.Tasks.TransitionReasonError, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                           Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
-                                                           AutomationProperties.LiveSetting="Assertive" />
+                                                <StackPanel Visibility="{Binding DataContext.Tasks.ShowTransitionReason, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                                    <TextBlock Text="Причина (необязательно)" Margin="0,10,0,4" />
+                                                    <TextBox Text="{Binding DataContext.Tasks.TransitionReason, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
+                                                             MaxLength="2000" AcceptsReturn="True" MinHeight="64"
+                                                             Style="{StaticResource Task.Input.Text}"
+                                                             AutomationProperties.Name="Причина смены статуса" AutomationProperties.AutomationId="TransitionReasonTextBox" />
+                                                    <TextBlock Text="{Binding DataContext.Tasks.TransitionReasonError, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                               Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
+                                                               AutomationProperties.LiveSetting="Assertive" />
+                                                </StackPanel>
                                                 <WrapPanel Margin="0,10,0,0">
-                                                    <Button Content="Подтвердить" Style="{StaticResource Task.Button.Primary}"
+                                                    <Button Content="{Binding DataContext.Tasks.TransitionConfirmationLabel, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Primary}"
                                                             Command="{Binding DataContext.Tasks.ConfirmTransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             AutomationProperties.Name="Подтвердить смену статуса" AutomationProperties.AutomationId="ConfirmTransitionButton" Margin="0,0,8,0" />
                                                     <Button Content="Назад" Style="{StaticResource Task.Button.Secondary}"

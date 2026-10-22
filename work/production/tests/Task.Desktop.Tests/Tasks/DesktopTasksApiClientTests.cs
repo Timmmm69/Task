@@ -361,8 +361,10 @@ public sealed class DesktopTasksApiClientTests
         Assert.Equal(1, fixture.RefreshRequests);
     }
 
-    [Fact]
-    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata()
+    [Theory]
+    [InlineData(DesktopTaskStatus.Completed, "  done  ", "{\"targetStatus\":\"completed\",\"reason\":\"done\"}")]
+    [InlineData(DesktopTaskStatus.InProgress, null, "{\"targetStatus\":\"in_progress\",\"reason\":null}")]
+    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata(DesktopTaskStatus target, string? reason, string expectedTransitionBody)
     {
         var responses = new Queue<HttpResponseMessage>(
         [
@@ -380,7 +382,7 @@ public sealed class DesktopTasksApiClientTests
             DesktopTaskField<DesktopTaskPriority>.From(DesktopTaskPriority.Critical),
             DesktopTaskField<DateTimeOffset?>.From(null),
             DesktopTaskField<DateTimeOffset?>.From(DateTimeOffset.Parse("2026-08-28T10:00:00Z")));
-        var transition = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.Completed, "  done  ");
+        var transition = new DesktopTransitionTaskCommand(TaskId, 6, target, reason);
 
         var created = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
             await fixture.Client.CreateTaskAsync(create));
@@ -402,7 +404,9 @@ public sealed class DesktopTasksApiClientTests
         Assert.Equal("\"v6\"", requests[1].IfMatch);
         Assert.Equal("{\"title\":\"Updated\",\"priority\":\"critical\",\"startAtUtc\":null,\"deadlineAt\":\"2026-08-28T10:00:00Z\"}", requests[1].Body);
         Assert.Equal($"/api/v1/tasks/{TaskId:D}/transition", requests[2].Uri.AbsolutePath);
-        Assert.Equal("{\"targetStatus\":\"completed\",\"reason\":\"done\"}", requests[2].Body);
+        Assert.Equal(expectedTransitionBody, requests[2].Body);
+        Assert.Equal(HttpMethod.Post, requests[2].Method);
+        Assert.Equal("\"v6\"", requests[2].IfMatch);
         Assert.All(requests, request => Assert.True(Guid.TryParseExact(request.IdempotencyKey, "D", out _)));
         Assert.All(requests, request => Assert.Equal("application/json", request.ContentType));
         Assert.All(requests, request => Assert.Equal("utf-8", request.CharSet));

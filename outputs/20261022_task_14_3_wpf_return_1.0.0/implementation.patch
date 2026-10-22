@@ -1,0 +1,613 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index 89bfbfb..00d1acb 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -300,10 +300,11 @@
+         "outputs/20261008_inbox_zero_1.0.1/validation-report.md",
+         "outputs/20261008_view_state_1.0.0/VALIDATION_REPORT.md: device-local view state; 711 desktop + 163 server-list PASS; native resize/sort/permissions/lifetime and isolation verified; live-server manual and physical mixed-DPI NOT RUN.",
+         "outputs/20261016_task_filtering_7.1.0/validation-report.md: four typed local filters, project IDs, deadline/DST boundaries, partial-result wording; 986 Release desktop tests PASS in split runs; native WPF 800x480 and 1200x900 PASS.",
+-        "outputs/20261016_task_filtering_sorting_7.2.0/validation-report.md: eight local sort orders, stable ID selection, version-aware pagination; Release desktop 1119 PASS, API 174 PASS; native WPF 125/150/200% layout equivalents and measured 10k-row sorting."
++        "outputs/20261016_task_filtering_sorting_7.2.0/validation-report.md: eight local sort orders, stable ID selection, version-aware pagination; Release desktop 1119 PASS, API 174 PASS; native WPF 125/150/200% layout equivalents and measured 10k-row sorting.",
++        "outputs/20261022_task_14_3_wpf_return_1.0.0/validation-report.md: review -> in_progress, version/idempotency, 166 desktop and 60 server PASS; native WPF 1100x900/800x800. Compact 800x600 inspector clipping remains open."
+       ],
+-      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458. 2026-10-05: Personal task CRUD, shared statuses, schedule/deadline, один уровень подзадач, Inbox и checklist работают в отдельной SQLite БД. Проверены транзакции, версии, миграция, rollback, zero corporate requests и 7 задач в WPF после двух перезапусков; итоговый gate 1795 PASS / 4 SKIP. Полная системная сетевая изоляция отдельно не подтверждена. 2026-10-06: Personal tasks могут ссылаться на локальные проекты; recurring materialization использует Domain generator и existing DST helper, persisted identity и scoped overrides. Restart и Local/UTC consistency подтверждены. 2026-10-08: Inbox Zero 1.0.1: полный cursor snapshot, total/completeness guards, confirmed conversion refresh, distinct offline/error/loading, 120 ms/reduced-motion и focus/UIA. Release build PASS; Desktop 696 PASS / 0 FAIL / 0 SKIP, native WPF PASS. В Desktop нет realtime transport: используется 15-second polling existing API; нет Inbox filter/delete command. Live multi-client и ручное прослушивание screen reader отдельно не проверены. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-16: Этап 7.1 — корпоративные фильтры статуса, проекта, приоритета и срока работают совместно; просрочка отделена от статуса, одинаковые названия проектов различаются по ID, пагинация сохраняется. Release: 985 тестов PASS плюс 1 существующий native focus test PASS отдельно; новый WPF gate проверил keyboard, bindings, selection и 800x480. Progress/status сохранены; сортировка остаётся этапом 7.2. 2026-10-16: Этап 7.2 — восемь локальных сортировок объединены с фильтрами. Выделение/карточка и сортировка сохраняются, страницы дедуплицируются по ID с защитой новой версии, частичная выборка обозначена явно. Windows WPF: минимальное окно, клавиатура и DPI equivalents проверены; 10k строк измерены. API/DB/permissions не изменены. Progress/status сохранены.",
+-      "updated_at": "2026-10-16T03:40:00+03:00",
++      "note": "Расширенная карточка, участники, связи, чек-лист, комментарии и полный lifecycle проверены через PostgreSQL, HTTPS API и WPF; финальный gate 1458/1458. 2026-10-05: Personal task CRUD, shared statuses, schedule/deadline, один уровень подзадач, Inbox и checklist работают в отдельной SQLite БД. Проверены транзакции, версии, миграция, rollback, zero corporate requests и 7 задач в WPF после двух перезапусков; итоговый gate 1795 PASS / 4 SKIP. Полная системная сетевая изоляция отдельно не подтверждена. 2026-10-06: Personal tasks могут ссылаться на локальные проекты; recurring materialization использует Domain generator и existing DST helper, persisted identity и scoped overrides. Restart и Local/UTC consistency подтверждены. 2026-10-08: Inbox Zero 1.0.1: полный cursor snapshot, total/completeness guards, confirmed conversion refresh, distinct offline/error/loading, 120 ms/reduced-motion и focus/UIA. Release build PASS; Desktop 696 PASS / 0 FAIL / 0 SKIP, native WPF PASS. В Desktop нет realtime transport: используется 15-second polling existing API; нет Inbox filter/delete command. Live multi-client и ручное прослушивание screen reader отдельно не проверены. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-16: Этап 7.1 — корпоративные фильтры статуса, проекта, приоритета и срока работают совместно; просрочка отделена от статуса, одинаковые названия проектов различаются по ID, пагинация сохраняется. Release: 985 тестов PASS плюс 1 существующий native focus test PASS отдельно; новый WPF gate проверил keyboard, bindings, selection и 800x480. Progress/status сохранены; сортировка остаётся этапом 7.2. 2026-10-16: Этап 7.2 — восемь локальных сортировок объединены с фильтрами. Выделение/карточка и сортировка сохраняются, страницы дедуплицируются по ID с защитой новой версии, частичная выборка обозначена явно. Windows WPF: минимальное окно, клавиатура и DPI equivalents проверены; 10k строк измерены. API/DB/permissions не изменены. Progress/status сохранены. 2026-10-22: Этап 14.3 — отдельное действие «Вернуть на доработку» через existing transition с Task.ChangeStatus, reason=null, версией и ключом идемпотентности. Серверный baseline 1077445; 166 desktop и 60 server PASS. WPF 1100×900 и 800×800 проверен. В 800×600 выявлено существующее обрезание инспектора; live network end-to-end и screen reader не проверены. Progress/status сохранены, финальный аудит открыт.",
++      "updated_at": "2026-10-22T13:35:00+03:00",
+       "priority": 3,
+       "dependencies": [
+         "PROD-01"
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml b/work/production/src/Task.Desktop/MainWindow.xaml
+index 7a7cd84..91e8414 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml
++++ b/work/production/src/Task.Desktop/MainWindow.xaml
+@@ -898,6 +898,11 @@
+                                                     AutomationProperties.Name="Начать задачу" AutomationProperties.AutomationId="StartTaskButton" Margin="0,0,8,8">
+                                                 <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding DataContext.Tasks.CanStart, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Button.Style>
+                                             </Button>
++                                            <Button Content="Вернуть на доработку" CommandParameter="InProgress"
++                                                    Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
++                                                    AutomationProperties.Name="Вернуть на доработку" AutomationProperties.AutomationId="ReturnForReworkButton" Margin="0,0,8,8">
++                                                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding DataContext.Tasks.CanReturnForRework, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Button.Style>
++                                            </Button>
+                                             <Button Content="На проверку" CommandParameter="Review"
+                                                     Command="{Binding DataContext.Tasks.TransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                     AutomationProperties.Name="Отправить задачу на проверку" AutomationProperties.AutomationId="ReviewTaskButton" Margin="0,0,8,8">
+@@ -924,16 +929,18 @@
+                                             </Border.Style>
+                                             <StackPanel>
+                                                 <TextBlock Text="{Binding DataContext.Tasks.PendingTransitionText, RelativeSource={RelativeSource AncestorType=Window}}" FontWeight="SemiBold" TextWrapping="Wrap" />
+-                                                <TextBlock Text="Причина (необязательно)" Margin="0,10,0,4" />
+-                                                <TextBox Text="{Binding DataContext.Tasks.TransitionReason, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
+-                                                         MaxLength="2000" AcceptsReturn="True" MinHeight="64"
+-                                                         Style="{StaticResource Task.Input.Text}"
+-                                                         AutomationProperties.Name="Причина смены статуса" AutomationProperties.AutomationId="TransitionReasonTextBox" />
+-                                                <TextBlock Text="{Binding DataContext.Tasks.TransitionReasonError, RelativeSource={RelativeSource AncestorType=Window}}"
+-                                                           Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
+-                                                           AutomationProperties.LiveSetting="Assertive" />
++                                                <StackPanel Visibility="{Binding DataContext.Tasks.ShowTransitionReason, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
++                                                    <TextBlock Text="Причина (необязательно)" Margin="0,10,0,4" />
++                                                    <TextBox Text="{Binding DataContext.Tasks.TransitionReason, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
++                                                             MaxLength="2000" AcceptsReturn="True" MinHeight="64"
++                                                             Style="{StaticResource Task.Input.Text}"
++                                                             AutomationProperties.Name="Причина смены статуса" AutomationProperties.AutomationId="TransitionReasonTextBox" />
++                                                    <TextBlock Text="{Binding DataContext.Tasks.TransitionReasonError, RelativeSource={RelativeSource AncestorType=Window}}"
++                                                               Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
++                                                               AutomationProperties.LiveSetting="Assertive" />
++                                                </StackPanel>
+                                                 <WrapPanel Margin="0,10,0,0">
+-                                                    <Button Content="Подтвердить" Style="{StaticResource Task.Button.Primary}"
++                                                    <Button Content="{Binding DataContext.Tasks.TransitionConfirmationLabel, RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Primary}"
+                                                             Command="{Binding DataContext.Tasks.ConfirmTransitionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                             AutomationProperties.Name="Подтвердить смену статуса" AutomationProperties.AutomationId="ConfirmTransitionButton" Margin="0,0,8,0" />
+                                                     <Button Content="Назад" Style="{StaticResource Task.Button.Secondary}"
+diff --git a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+index 7c0ceac..cf47ae4 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+@@ -398,8 +398,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             CanBeginTransition);
+         ConfirmTransitionCommand = new AsyncCommand(
+             async (_, token) => await ConfirmTransitionAsync(token).ConfigureAwait(true),
+-            _ => CanChangeStatus && PendingTransition.HasValue && _transitionRetryAvailable
+-                && !IsMutationBusy && TransitionReason.Length <= 2000);
++            _ => CanConfirmTransition);
+         CancelTransitionCommand = new AsyncCommand(
+             (_, _) => { ClearTransition(); return global::System.Threading.Tasks.Task.CompletedTask; },
+             _ => PendingTransition.HasValue && !IsMutationBusy);
+@@ -603,7 +602,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         : "Создать задачу";
+     public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled }
+         && (SelectedDetails?.Id != SelectedItem.Id || SelectedDetails.Source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)) && !IsMutationBusy;
+-    public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
++    public bool CanStart => SelectedItem?.Source.Status == DesktopTaskStatus.New
++        && CanTransitionTo(DesktopTaskStatus.InProgress);
++    public bool CanReturnForRework => SelectedItem?.Source.Status == DesktopTaskStatus.Review
++        && CanTransitionTo(DesktopTaskStatus.InProgress);
+     public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
+     public bool CanComplete => CanTransitionTo(DesktopTaskStatus.Completed);
+     public bool CanCancel => CanTransitionTo(DesktopTaskStatus.Cancelled);
+@@ -617,14 +619,23 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             {
+                 OnPropertyChanged(nameof(IsTransitionConfirmationVisible));
+                 OnPropertyChanged(nameof(PendingTransitionText));
++                OnPropertyChanged(nameof(IsReturnForReworkConfirmation));
++                OnPropertyChanged(nameof(ShowTransitionReason));
++                OnPropertyChanged(nameof(TransitionConfirmationLabel));
+                 NotifyMutationState();
+             }
+         }
+     }
+ 
+     public bool IsTransitionConfirmationVisible => PendingTransition.HasValue;
++    public bool IsReturnForReworkConfirmation => PendingTransition == DesktopTaskStatus.InProgress
++        && SelectedItem?.Source.Status == DesktopTaskStatus.Review;
++    public bool ShowTransitionReason => !IsReturnForReworkConfirmation;
++    public string TransitionConfirmationLabel => IsMutationBusy ? "Сохранение…"
++        : IsReturnForReworkConfirmation ? "Вернуть" : "Подтвердить";
+     public string PendingTransitionText => PendingTransition switch
+     {
++        DesktopTaskStatus.InProgress when IsReturnForReworkConfirmation => "Вернуть задачу на доработку?",
+         DesktopTaskStatus.InProgress => "Начать задачу?",
+         DesktopTaskStatus.Review => "Отправить задачу на проверку?",
+         DesktopTaskStatus.Completed => "Завершить задачу? Это терминальное действие.",
+@@ -892,7 +903,13 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+             {
+                 Editor.SetStatus("Сервер недоступен. Черновик сохранён в форме и не будет отправлен автоматически.");
+             }
+-            if (PendingTransition.HasValue) ClearTransition();
++            // Preserve an uncertain command for an explicit retry with the same key/version.
++            // Reconnection never sends it automatically.
++            if (PendingTransition.HasValue)
++            {
++                ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите после подключения.";
++                Announcement = ScreenMessage;
++            }
+         }
+         NotifyMutationState();
+     }
+@@ -1555,8 +1572,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+     {
+         var selected = SelectedItem;
+         var target = PendingTransition;
+-        if (selected is null || !target.HasValue || !CanChangeStatus
+-            || !IsAllowedTransition(selected.Source.Status, target.Value)
++        if (selected is null || !target.HasValue || !CanConfirmTransition
+             || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
+         {
+             return;
+@@ -1564,15 +1580,17 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+ 
+         var command = _pendingTransitionCommand ??= new DesktopTransitionTaskCommand(
+             selected.Id,
+-            selected.Source.Version,
++            (SelectedDetails?.Id == selected.Id ? SelectedDetails.Source.Version : selected.Source.Version),
+             target.Value,
+-            string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
++            IsReturnForReworkConfirmation || string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
+         var generation = Interlocked.Increment(ref _mutationGeneration);
+         _mutationCancellation?.Dispose();
+         _mutationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+             cancellationToken,
+             _activationCancellation?.Token ?? CancellationToken.None);
+         IsMutationBusy = true;
++        ScreenMessage = null;
++        Announcement = "Смена статуса сохраняется на сервере…";
+         try
+         {
+             var result = await _client.TransitionTaskAsync(command, _mutationCancellation.Token).ConfigureAwait(true);
+@@ -1610,17 +1628,36 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                     NotifyMutationState();
+                     break;
+                 case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
++                    ClearTransition();
+                     State = TasksScreenState.SessionEnded;
+                     ScreenMessage = "Сессия завершена. Выполните вход снова.";
+                     break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse:
+                 case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
+-                    ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите позже.";
++                    ScreenMessage = "Сервер недоступен или ответ не подтверждён. Повторите смену статуса позже.";
++                    break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.NotFound:
++                    ClearTransition();
++                    SelectedDetails = null;
++                    DetailsState = TaskDetailsState.NotFound;
++                    DetailMessage = ScreenMessage = "Задача удалена или недоступна. Обновите список.";
++                    break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition:
++                    ClearTransition();
++                    SelectedDetails = null;
++                    DetailsState = TaskDetailsState.Error;
++                    DetailMessage = ScreenMessage = "Состояние задачи изменилось. Обновите список и повторите действие.";
++                    break;
++                case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
++                    ScreenMessage = validation.Message;
++                    ClearTransition();
+                     break;
+                 default:
+                     ScreenMessage = "Не удалось изменить статус задачи.";
+                     ClearTransition();
+                     break;
+             }
++            if (ScreenMessage is not null) Announcement = ScreenMessage;
+         }
+         catch (OperationCanceledException) when (_mutationCancellation.IsCancellationRequested)
+         {
+@@ -1632,17 +1669,31 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         }
+     }
+ 
++    private bool CanChangeSelectedTaskStatus => IsActive && CanChangeStatus && !IsBusy
++        && !IsMutationBusy && Editor is null && Workspace?.IsBusy != true
++        && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment)
++        && SelectedItem is not null;
++
++    private bool HasCurrentReviewDetails => DetailsState == TaskDetailsState.Loaded
++        && SelectedDetails?.Id == SelectedItem?.Id && SelectedDetails?.Source.Status == DesktopTaskStatus.Review;
++
++    private bool CanConfirmTransition => CanChangeSelectedTaskStatus && PendingTransition is { } target
++        && _transitionRetryAvailable && TransitionReason.Length <= 2000
++        && (SelectedItem!.Source.Status != DesktopTaskStatus.Review || target != DesktopTaskStatus.InProgress || HasCurrentReviewDetails)
++        && IsAllowedTransition(SelectedItem.Source.Status, target);
++
+     private bool CanBeginTransition(object? parameter) =>
+         TryReadStatus(parameter, out var status) && CanTransitionTo(status);
+ 
+     private bool CanTransitionTo(DesktopTaskStatus target)
+     {
+-        if (!IsActive || !CanChangeStatus || IsMutationBusy || PendingTransition.HasValue || SelectedItem is null)
++        if (!CanChangeSelectedTaskStatus || PendingTransition.HasValue)
+         {
+             return false;
+         }
+ 
+-        var current = SelectedItem.Source.Status;
++        var current = SelectedItem!.Source.Status;
++        if (current == DesktopTaskStatus.Review && target == DesktopTaskStatus.InProgress && !HasCurrentReviewDetails) return false;
+         if (current is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) return false;
+         return IsAllowedTransition(current, target);
+     }
+@@ -1753,6 +1804,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+         OpenSavedTaskCommand?.RaiseCanExecuteChanged();
+         OnPropertyChanged(nameof(CanEdit));
+         OnPropertyChanged(nameof(CanStart));
++        OnPropertyChanged(nameof(CanReturnForRework));
++        OnPropertyChanged(nameof(TransitionConfirmationLabel));
+         OnPropertyChanged(nameof(CanSubmitForReview));
+         OnPropertyChanged(nameof(CanComplete));
+         OnPropertyChanged(nameof(CanCancel));
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
+index dd597ec..98a1f18 100644
+--- a/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs
+@@ -361,8 +361,10 @@ public sealed class DesktopTasksApiClientTests
+         Assert.Equal(1, fixture.RefreshRequests);
+     }
+ 
+-    [Fact]
+-    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata()
++    [Theory]
++    [InlineData(DesktopTaskStatus.Completed, "  done  ", "{\"targetStatus\":\"completed\",\"reason\":\"done\"}")]
++    [InlineData(DesktopTaskStatus.InProgress, null, "{\"targetStatus\":\"in_progress\",\"reason\":null}")]
++    public async global::System.Threading.Tasks.Task Writes_SendCanonicalContracts_AndReturnValidatedMetadata(DesktopTaskStatus target, string? reason, string expectedTransitionBody)
+     {
+         var responses = new Queue<HttpResponseMessage>(
+         [
+@@ -380,7 +382,7 @@ public sealed class DesktopTasksApiClientTests
+             DesktopTaskField<DesktopTaskPriority>.From(DesktopTaskPriority.Critical),
+             DesktopTaskField<DateTimeOffset?>.From(null),
+             DesktopTaskField<DateTimeOffset?>.From(DateTimeOffset.Parse("2026-08-28T10:00:00Z")));
+-        var transition = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.Completed, "  done  ");
++        var transition = new DesktopTransitionTaskCommand(TaskId, 6, target, reason);
+ 
+         var created = Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(
+             await fixture.Client.CreateTaskAsync(create));
+@@ -402,7 +404,9 @@ public sealed class DesktopTasksApiClientTests
+         Assert.Equal("\"v6\"", requests[1].IfMatch);
+         Assert.Equal("{\"title\":\"Updated\",\"priority\":\"critical\",\"startAtUtc\":null,\"deadlineAt\":\"2026-08-28T10:00:00Z\"}", requests[1].Body);
+         Assert.Equal($"/api/v1/tasks/{TaskId:D}/transition", requests[2].Uri.AbsolutePath);
+-        Assert.Equal("{\"targetStatus\":\"completed\",\"reason\":\"done\"}", requests[2].Body);
++        Assert.Equal(expectedTransitionBody, requests[2].Body);
++        Assert.Equal(HttpMethod.Post, requests[2].Method);
++        Assert.Equal("\"v6\"", requests[2].IfMatch);
+         Assert.All(requests, request => Assert.True(Guid.TryParseExact(request.IdempotencyKey, "D", out _)));
+         Assert.All(requests, request => Assert.Equal("application/json", request.ContentType));
+         Assert.All(requests, request => Assert.Equal("utf-8", request.CharSet));
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs
+new file mode 100644
+index 0000000..ea59f05
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs
+@@ -0,0 +1,205 @@
++using System.Net.Http;
++using System.Text.Json.Nodes;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed partial class TasksViewModelTests
++{
++    [Theory]
++    [InlineData(DesktopTaskStatus.New, false, true)]
++    [InlineData(DesktopTaskStatus.InProgress, false, false)]
++    [InlineData(DesktopTaskStatus.Review, true, false)]
++    [InlineData(DesktopTaskStatus.Completed, false, false)]
++    [InlineData(DesktopTaskStatus.Cancelled, false, false)]
++    public async System.Threading.Tasks.Task Return_EligibilityUsesStatusAndLoadedDetails(DesktopTaskStatus status, bool canReturn, bool canStart)
++    {
++        var source = CreateTask(status: status);
++        var client = new ReturnClient(source);
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        Assert.Equal(canReturn, vm.CanReturnForRework);
++        Assert.Equal(canStart, vm.CanStart);
++        vm.SelectedItem = null;
++        Assert.False(vm.CanReturnForRework);
++    }
++
++    [Theory]
++    [InlineData("permission")]
++    [InlineData("readonly")]
++    [InlineData("offline")]
++    [InlineData("editor")]
++    [InlineData("comment")]
++    [InlineData("notfound")]
++    public async System.Threading.Tasks.Task Return_AccessGuardsBlockSending(string guard)
++    {
++        var client = new ReturnClient(CreateTask(status: DesktopTaskStatus.Review));
++        if (guard == "notfound") client.Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.NotFound();
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        switch (guard)
++        {
++            case "permission": vm.UpdateCapabilities(["Task.Read", "Task.Update"]); break;
++            case "readonly": vm.UpdateSessionState(false); break;
++            case "offline": vm.UpdateConnectivity(false); break;
++            case "editor": await vm.EditTaskCommand.ExecuteAsync(); break;
++            case "comment": vm.Workspace!.Comment = "Несохранённый текст"; break;
++        }
++        Assert.False(vm.CanReturnForRework);
++        Assert.False(await vm.TransitionCommand.ExecuteAsync("InProgress"));
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Equal(0, client.Inner.TransitionCallCount);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_WaitsForServerSingleFlightAndRefreshesCardListHistory()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review) with { Version = 7 };
++        var returned = source with { Status = DesktopTaskStatus.InProgress, Version = 8 };
++        var client = new ReturnClient(source);
++        var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++        client.Inner.TransitionHandler = _ => release.Task;
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        var reads = client.WorkspaceReads;
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        Assert.Equal("Вернуть задачу на доработку?", vm.PendingTransitionText);
++        Assert.Equal("Вернуть", vm.TransitionConfirmationLabel);
++        Assert.False(vm.ShowTransitionReason);
++        var request = vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.True(vm.IsMutationBusy);
++        Assert.Equal("Сохранение…", vm.TransitionConfirmationLabel);
++        Assert.False(await vm.ConfirmTransitionCommand.ExecuteAsync());
++        Assert.False(vm.CanReturnForRework);
++        Assert.Equal(DesktopTaskStatus.Review, vm.SelectedDetails!.Source.Status);
++        Assert.Equal(7, client.Inner.LastTransition!.ExpectedVersion);
++        Assert.Equal(DesktopTaskStatus.InProgress, client.Inner.LastTransition.TargetStatus);
++        Assert.Null(client.Inner.LastTransition.Reason);
++        release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(returned, 8, false));
++        await request;
++        Assert.Equal(1, client.Inner.TransitionCallCount);
++        Assert.Equal(returned, Assert.Single(vm.Items).Source);
++        Assert.Equal(returned, vm.SelectedDetails!.Source);
++        Assert.True(client.WorkspaceReads > reads);
++        Assert.Single(vm.Workspace!.History);
++        Assert.Contains("В работе", vm.Announcement);
++        Assert.Null(vm.PendingTransition);
++        Assert.False(vm.CanStart);
++    }
++
++    [Theory]
++    [InlineData("forbidden")]
++    [InlineData("session")]
++    [InlineData("notfound")]
++    [InlineData("invalid")]
++    [InlineData("validation")]
++    [InlineData("server")]
++    public async System.Threading.Tasks.Task Return_FailureNeverAppliesUnconfirmedStatus(string error)
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        client.Inner.TransitionResult = error switch
++        {
++            "forbidden" => new DesktopTaskWriteResult<DesktopTaskDto>.Forbidden(),
++            "session" => new DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure(),
++            "notfound" => new DesktopTaskWriteResult<DesktopTaskDto>.NotFound(),
++            "invalid" => new DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition(),
++            "validation" => new DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure("Проверьте данные", new Dictionary<string, IReadOnlyList<string>>()),
++            _ => new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable(),
++        };
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Equal(source, Assert.Single(vm.Items).Source);
++        Assert.False(string.IsNullOrWhiteSpace(vm.ScreenMessage));
++        Assert.Equal(vm.ScreenMessage, vm.Announcement);
++        if (error is "forbidden" or "session" or "notfound" or "invalid") Assert.False(vm.CanReturnForRework);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_ConflictOffersExistingReloadWithoutOverwriting()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        client.Inner.TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict();
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.True(vm.Editor!.HasConflict);
++        Assert.True(vm.ReloadConflictCommand.CanExecute(null));
++        Assert.Equal(source, vm.SelectedItem!.Source);
++        var latest = source with { Version = 3, Status = DesktopTaskStatus.Completed };
++        client.Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(latest);
++        await vm.ReloadConflictCommand.ExecuteAsync();
++        Assert.Equal(latest, vm.SelectedDetails!.Source);
++        Assert.False(vm.CanReturnForRework);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task Return_UncertainResultRetriesOriginalIntentAfterReconnect()
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        var command = client.Inner.LastTransition;
++        vm.UpdateConnectivity(false);
++        Assert.False(vm.ConfirmTransitionCommand.CanExecute(null));
++        vm.UpdateConnectivity(true);
++        Assert.Equal(1, client.Inner.TransitionCallCount);
++        await vm.ConfirmTransitionCommand.ExecuteAsync();
++        Assert.Same(command, client.Inner.LastTransition);
++        Assert.Equal(2, client.Inner.TransitionCallCount);
++        Assert.Equal(source, vm.SelectedDetails!.Source);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task Return_ClosingOrChangingSelectionIgnoresLateResponse(bool deactivate)
++    {
++        var source = CreateTask(status: DesktopTaskStatus.Review);
++        var client = new ReturnClient(source);
++        var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++        client.Inner.TransitionHandler = _ => release.Task; // Simulate a response after cancellation.
++        using var vm = new TasksViewModel(client, WriteCapabilities);
++        await vm.ActivateAsync();
++        await vm.TransitionCommand.ExecuteAsync("InProgress");
++        var request = vm.ConfirmTransitionCommand.ExecuteAsync();
++        if (deactivate) vm.Deactivate(); else vm.SelectedItem = null;
++        release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { Version = 2, Status = DesktopTaskStatus.InProgress }, 2, false));
++        await request;
++        Assert.Equal(source, Assert.Single(vm.Items).Source);
++        Assert.False(vm.IsMutationBusy);
++    }
++
++    internal sealed class ReturnClient : IDesktopTasksApiClient, IDesktopTaskWorkspaceClient
++    {
++        public FakeTasksApiClient Inner { get; } = new();
++        public int WorkspaceReads { get; private set; }
++        public ReturnClient(DesktopTaskDto source)
++        {
++            Inner.EnqueuePage(SucceededPage([source]));
++            Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(source);
++        }
++        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) => Inner.GetTasksAsync(cursor, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(Guid id, CancellationToken cancellationToken = default) => Inner.GetTaskByIdAsync(id, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(DesktopCreateTaskCommand command, CancellationToken cancellationToken = default) => Inner.CreateTaskAsync(command, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default) => Inner.PatchTaskAsync(command, cancellationToken);
++        public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync(DesktopTransitionTaskCommand command, CancellationToken cancellationToken = default) => Inner.TransitionTaskAsync(command, cancellationToken);
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetOptionsAsync(string query, CancellationToken token) => System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(new JsonObject(), 0, null));
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetWorkspaceAsync(Guid id, CancellationToken token)
++        {
++            WorkspaceReads++;
++            var body = new JsonObject { ["historyVisible"] = true };
++            if (Inner.TransitionCallCount > 0) body["history"] = new JsonArray(new JsonObject { ["id"] = Guid.NewGuid().ToString(), ["occurredAt"] = DateTimeOffset.UtcNow.ToString("O"), ["action"] = "TaskStatusChanged" });
++            return System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(body, 1, null));
++        }
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> WriteWorkspaceAsync(Guid id, long version, string path, HttpMethod method, JsonObject body, string key, CancellationToken token) => throw new InvalidOperationException("Return must use the transition API.");
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs
+new file mode 100644
+index 0000000..c9631ef
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs
+@@ -0,0 +1,120 @@
++using System.Diagnostics;
++using System.IO;
++using System.Windows;
++using System.Windows.Automation;
++using System.Windows.Automation.Peers;
++using System.Windows.Automation.Provider;
++using System.Windows.Controls;
++using System.Windows.Input;
++using System.Windows.Media;
++using System.Windows.Media.Imaging;
++using System.Windows.Threading;
++using Task.Desktop.TaskApi;
++using Task.Desktop.ViewModels;
++
++namespace Task.Desktop.Tests.TaskScreen;
++
++public sealed class TaskReturnUiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task NativeWpf_ReturnActionConfirmationFocusAndServerResult()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_RETURN_UI_CHILD") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWpf_ReturnActionConfirmationFocusAndServerResult));
++            start.Environment["TASK_RETURN_UI_CHILD"] = "1";
++            using var process = Process.Start(start)!;
++            var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
++            try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(55)); Assert.True(process.ExitCode == 0, await stdout + await stderr); }
++            finally { if (!process.HasExited) process.Kill(true); }
++            return;
++        }
++        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var dispatcher = Dispatcher.CurrentDispatcher;
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
++            dispatcher.BeginInvoke(async () =>
++            {
++                MainWindow? window = null;
++                try
++                {
++                    var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
++                    app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
++                    app.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
++                    foreach (var name in new[] { "IconKeyToGeometryConverter", "ShellNavigationWidthConverter", "WindowWidthAtLeastConverter", "ResponsiveGridLengthConverter", "TimelineLaneMarginConverter", "CalendarLaneWidthConverter", "CalendarLaneLeftConverter" })
++                        app.Resources["Task." + name] = Activator.CreateInstance(typeof(MainWindow).Assembly.GetType("Task.Desktop.Converters." + name)!);
++                    var source = ActionTasksClient.Source("Результат на проверке") with { Status = DesktopTaskStatus.Review, Version = 7 };
++                    var client = new TasksViewModelTests.ReturnClient(source);
++                    using var tasks = new TasksViewModel(client, ["Task.Read", "Task.ChangeStatus"]);
++                    using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
++                    shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks"); await tasks.ActivateAsync();
++                    window = new MainWindow(shell) { Left = 20, Top = 20, Width = 1100, Height = 900, ShowInTaskbar = false };
++                    window.Show(); window.Activate();
++                    ((Expander)window.FindName("TaskInspectorExpander")).IsExpanded = true;
++                    await Drain(window);
++                    var button = Find<Button>(window, "ReturnForReworkButton");
++                    Assert.True(button.IsVisible); Assert.True(button.IsEnabled); Assert.True(button.IsTabStop);
++                    Assert.Equal("Вернуть на доработку", AutomationProperties.GetName(button));
++                    Assert.False(Find<Button>(window, "StartTaskButton").IsVisible);
++                    button.BringIntoView(); Assert.True(button.Focus()); Assert.True(button.IsKeyboardFocused);
++                    Assert.NotNull(button.FocusVisualStyle);
++                    ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke(); await Drain(window);
++                    var confirm = Find<Button>(window, "ConfirmTransitionButton");
++                    Assert.Equal("Вернуть", confirm.Content);
++                    Assert.False(Find<TextBox>(window, "TransitionReasonTextBox").IsVisible);
++                    confirm.BringIntoView(); Assert.True(confirm.Focus());
++                    Assert.True(confirm.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
++                    Assert.Equal("Назад", Assert.IsType<Button>(Keyboard.FocusedElement).Content);
++                    await Capture(window, "return-confirmation");
++                    var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++                    client.Inner.TransitionHandler = _ => release.Task;
++                    ((IInvokeProvider)new ButtonAutomationPeer(confirm).GetPattern(PatternInterface.Invoke)).Invoke(); await Drain(window);
++                    Assert.False(confirm.IsEnabled); Assert.Equal("Сохранение…", confirm.Content);
++                    Assert.Equal(DesktopTaskStatus.Review, tasks.SelectedDetails!.Source.Status);
++                    release.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { Status = DesktopTaskStatus.InProgress, Version = 8 }, 8, false));
++                    await Drain(window);
++                    Assert.Equal(DesktopTaskStatus.InProgress, tasks.SelectedDetails!.Source.Status);
++                    Assert.False(button.IsVisible);
++                    Assert.Equal(AutomationLiveSetting.Assertive, AutomationProperties.GetLiveSetting(Find<TextBlock>(window, "TasksAnnouncement")));
++                    await Capture(window, "return-success");
++                    done.SetResult();
++                }
++                catch (Exception error) { done.SetException(error); }
++                finally { window?.CloseAfterModeSwitch(); dispatcher.InvokeShutdown(); }
++            });
++            Dispatcher.Run();
++        });
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        await done.Task.WaitAsync(TimeSpan.FromSeconds(45));
++        Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5))));
++    }
++    private static async System.Threading.Tasks.Task Drain(Window window) { await Dispatcher.Yield(DispatcherPriority.Background); window.UpdateLayout(); await System.Threading.Tasks.Task.Delay(100); }
++    private static T Find<T>(DependencyObject root, string id) where T : FrameworkElement => Descendants<T>(root).Single(x => AutomationProperties.GetAutomationId(x) == id);
++    private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
++    {
++        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) { var child = VisualTreeHelper.GetChild(root, i); if (child is T match) yield return match; foreach (var nested in Descendants<T>(child)) yield return nested; }
++    }
++    private static async System.Threading.Tasks.Task Capture(Window window, string name)
++    {
++        var path = Environment.GetEnvironmentVariable("TASK_RETURN_EVIDENCE"); if (string.IsNullOrEmpty(path)) return;
++        Directory.CreateDirectory(path);
++        foreach (var size in new[] { (1100d, 900d), (800d, 800d), (800d, 600d) })
++        {
++            window.Width = size.Item1; window.Height = size.Item2; await Drain(window);
++            if (name == "return-confirmation")
++            {
++                var confirm = Find<Button>(window, "ConfirmTransitionButton");
++                confirm.Focus(); confirm.BringIntoView();
++            }
++            else (Keyboard.FocusedElement as FrameworkElement)?.BringIntoView();
++            await Drain(window);
++            var visual = (FrameworkElement)VisualTreeHelper.GetChild(window, 0);
++            var bitmap = new RenderTargetBitmap((int)visual.ActualWidth, (int)visual.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual);
++            var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
++            using var file = File.Create(Path.Combine(path, $"{name}-{size.Item1}x{size.Item2}.png")); encoder.Save(file);
++        }
++    }
++}

@@ -398,8 +398,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             CanBeginTransition);
         ConfirmTransitionCommand = new AsyncCommand(
             async (_, token) => await ConfirmTransitionAsync(token).ConfigureAwait(true),
-            _ => CanChangeStatus && PendingTransition.HasValue && _transitionRetryAvailable
-                && !IsMutationBusy && TransitionReason.Length <= 2000);
+            _ => CanConfirmTransition);
         CancelTransitionCommand = new AsyncCommand(
             (_, _) => { ClearTransition(); return global::System.Threading.Tasks.Task.CompletedTask; },
             _ => PendingTransition.HasValue && !IsMutationBusy);
@@ -603,7 +602,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         : "Создать задачу";
     public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled }
         && (SelectedDetails?.Id != SelectedItem.Id || SelectedDetails.Source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)) && !IsMutationBusy;
-    public bool CanStart => CanTransitionTo(DesktopTaskStatus.InProgress);
+    public bool CanStart => SelectedItem?.Source.Status == DesktopTaskStatus.New
+        && CanTransitionTo(DesktopTaskStatus.InProgress);
+    public bool CanReturnForRework => SelectedItem?.Source.Status == DesktopTaskStatus.Review
+        && CanTransitionTo(DesktopTaskStatus.InProgress);
     public bool CanSubmitForReview => CanTransitionTo(DesktopTaskStatus.Review);
     public bool CanComplete => CanTransitionTo(DesktopTaskStatus.Completed);
     public bool CanCancel => CanTransitionTo(DesktopTaskStatus.Cancelled);
@@ -617,14 +619,23 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             {
                 OnPropertyChanged(nameof(IsTransitionConfirmationVisible));
                 OnPropertyChanged(nameof(PendingTransitionText));
+                OnPropertyChanged(nameof(IsReturnForReworkConfirmation));
+                OnPropertyChanged(nameof(ShowTransitionReason));
+                OnPropertyChanged(nameof(TransitionConfirmationLabel));
                 NotifyMutationState();
             }
         }
     }
 
     public bool IsTransitionConfirmationVisible => PendingTransition.HasValue;
+    public bool IsReturnForReworkConfirmation => PendingTransition == DesktopTaskStatus.InProgress
+        && SelectedItem?.Source.Status == DesktopTaskStatus.Review;
+    public bool ShowTransitionReason => !IsReturnForReworkConfirmation;
+    public string TransitionConfirmationLabel => IsMutationBusy ? "Сохранение…"
+        : IsReturnForReworkConfirmation ? "Вернуть" : "Подтвердить";
     public string PendingTransitionText => PendingTransition switch
     {
+        DesktopTaskStatus.InProgress when IsReturnForReworkConfirmation => "Вернуть задачу на доработку?",
         DesktopTaskStatus.InProgress => "Начать задачу?",
         DesktopTaskStatus.Review => "Отправить задачу на проверку?",
         DesktopTaskStatus.Completed => "Завершить задачу? Это терминальное действие.",
@@ -892,7 +903,13 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             {
                 Editor.SetStatus("Сервер недоступен. Черновик сохранён в форме и не будет отправлен автоматически.");
             }
-            if (PendingTransition.HasValue) ClearTransition();
+            // Preserve an uncertain command for an explicit retry with the same key/version.
+            // Reconnection never sends it automatically.
+            if (PendingTransition.HasValue)
+            {
+                ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите после подключения.";
+                Announcement = ScreenMessage;
+            }
         }
         NotifyMutationState();
     }
@@ -1555,8 +1572,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     {
         var selected = SelectedItem;
         var target = PendingTransition;
-        if (selected is null || !target.HasValue || !CanChangeStatus
-            || !IsAllowedTransition(selected.Source.Status, target.Value)
+        if (selected is null || !target.HasValue || !CanConfirmTransition
             || !await _mutationGate.WaitAsync(0, cancellationToken).ConfigureAwait(true))
         {
             return;
@@ -1564,15 +1580,17 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
         var command = _pendingTransitionCommand ??= new DesktopTransitionTaskCommand(
             selected.Id,
-            selected.Source.Version,
+            (SelectedDetails?.Id == selected.Id ? SelectedDetails.Source.Version : selected.Source.Version),
             target.Value,
-            string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
+            IsReturnForReworkConfirmation || string.IsNullOrWhiteSpace(TransitionReason) ? null : TransitionReason.Trim());
         var generation = Interlocked.Increment(ref _mutationGeneration);
         _mutationCancellation?.Dispose();
         _mutationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
             _activationCancellation?.Token ?? CancellationToken.None);
         IsMutationBusy = true;
+        ScreenMessage = null;
+        Announcement = "Смена статуса сохраняется на сервере…";
         try
         {
             var result = await _client.TransitionTaskAsync(command, _mutationCancellation.Token).ConfigureAwait(true);
@@ -1610,17 +1628,36 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                     NotifyMutationState();
                     break;
                 case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
+                    ClearTransition();
                     State = TasksScreenState.SessionEnded;
                     ScreenMessage = "Сессия завершена. Выполните вход снова.";
                     break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse:
                 case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
-                    ScreenMessage = "Сервер недоступен. Смена статуса не подтверждена; повторите позже.";
+                    ScreenMessage = "Сервер недоступен или ответ не подтверждён. Повторите смену статуса позже.";
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.NotFound:
+                    ClearTransition();
+                    SelectedDetails = null;
+                    DetailsState = TaskDetailsState.NotFound;
+                    DetailMessage = ScreenMessage = "Задача удалена или недоступна. Обновите список.";
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.InvalidTransition:
+                    ClearTransition();
+                    SelectedDetails = null;
+                    DetailsState = TaskDetailsState.Error;
+                    DetailMessage = ScreenMessage = "Состояние задачи изменилось. Обновите список и повторите действие.";
+                    break;
+                case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
+                    ScreenMessage = validation.Message;
+                    ClearTransition();
                     break;
                 default:
                     ScreenMessage = "Не удалось изменить статус задачи.";
                     ClearTransition();
                     break;
             }
+            if (ScreenMessage is not null) Announcement = ScreenMessage;
         }
         catch (OperationCanceledException) when (_mutationCancellation.IsCancellationRequested)
         {
@@ -1632,17 +1669,31 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private bool CanChangeSelectedTaskStatus => IsActive && CanChangeStatus && !IsBusy
+        && !IsMutationBusy && Editor is null && Workspace?.IsBusy != true
+        && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment)
+        && SelectedItem is not null;
+
+    private bool HasCurrentReviewDetails => DetailsState == TaskDetailsState.Loaded
+        && SelectedDetails?.Id == SelectedItem?.Id && SelectedDetails?.Source.Status == DesktopTaskStatus.Review;
+
+    private bool CanConfirmTransition => CanChangeSelectedTaskStatus && PendingTransition is { } target
+        && _transitionRetryAvailable && TransitionReason.Length <= 2000
+        && (SelectedItem!.Source.Status != DesktopTaskStatus.Review || target != DesktopTaskStatus.InProgress || HasCurrentReviewDetails)
+        && IsAllowedTransition(SelectedItem.Source.Status, target);
+
     private bool CanBeginTransition(object? parameter) =>
         TryReadStatus(parameter, out var status) && CanTransitionTo(status);
 
     private bool CanTransitionTo(DesktopTaskStatus target)
     {
-        if (!IsActive || !CanChangeStatus || IsMutationBusy || PendingTransition.HasValue || SelectedItem is null)
+        if (!CanChangeSelectedTaskStatus || PendingTransition.HasValue)
         {
             return false;
         }
 
-        var current = SelectedItem.Source.Status;
+        var current = SelectedItem!.Source.Status;
+        if (current == DesktopTaskStatus.Review && target == DesktopTaskStatus.InProgress && !HasCurrentReviewDetails) return false;
         if (current is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) return false;
         return IsAllowedTransition(current, target);
     }
@@ -1753,6 +1804,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         OpenSavedTaskCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(CanEdit));
         OnPropertyChanged(nameof(CanStart));
+        OnPropertyChanged(nameof(CanReturnForRework));
+        OnPropertyChanged(nameof(TransitionConfirmationLabel));
         OnPropertyChanged(nameof(CanSubmitForReview));
         OnPropertyChanged(nameof(CanComplete));
         OnPropertyChanged(nameof(CanCancel));
