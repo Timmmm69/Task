@@ -1,0 +1,492 @@
+{
+  "package": "20261022_task_14_1_14_4_publication_1.0.0",
+  "version": "1.0.0",
+  "sourceCommit": "ea1e435480a726ca0e32264158de9e873857b79a",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 10,
+      "sha256": "518bf59a49c016ec19b0e3a01f13893882d3bf1a3cdff584102451d15c626b2e"
+    },
+    {
+      "path": "contract/contract-validation.json",
+      "bytes": 1226,
+      "sha256": "ad932ae409d39c17ccd1a7ebd36a00543a56840387dd1e2d9fb9177dc583a370"
+    },
+    {
+      "path": "contract/openapi.json",
+      "bytes": 1386896,
+      "sha256": "12347950fd4fd92b3207fc8825fede2d0ff801be47658bd65b85cbd9759ff2c6"
+    },
+    {
+      "path": "contract/task-transition-errors.csv",
+      "bytes": 1051,
+      "sha256": "7c6c2b302b26b78a5474ee32e86606facf43255bc717cc894d1c7fa78fdf5857"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-project.create.json",
+      "bytes": 414,
+      "sha256": "7428842d24273c3def89ab3c99b0c186c75e096b400c8ece6972ad12c7415bfd"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-project.patch.json",
+      "bytes": 413,
+      "sha256": "e6b632e905fa2b24bf2943554e377bfbea8d51a472276fa67c790db38e665f2a"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-project.purge.json",
+      "bytes": 412,
+      "sha256": "801cb5773ec32d5d766c4cee5ec1e749ba1869da952ebc4d973af9a8b7612681"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-project.unarchive.json",
+      "bytes": 417,
+      "sha256": "0b4611d68f1bf4506924ee6866599165b9407f1c91b2088ac760c39f5d917f64"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-TaskArchived.json",
+      "bytes": 413,
+      "sha256": "50f5c95b2686bc70cc8e384d18f6bfcb704a2b6230a2fdc5968695f8d4d32899"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-TaskCreated.json",
+      "bytes": 411,
+      "sha256": "f2a0f4d0d2eb86d2ae4f57145e2fba8110ba7e6682d6f9c4d6916af2722ba9a6"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-TaskMovedToTrash.json",
+      "bytes": 416,
+      "sha256": "a0e477a97a837cf67c3537e0477a8bc05771d3d27ef99356a0c0f47f9cca4e4c"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-TaskRestored.json",
+      "bytes": 412,
+      "sha256": "86b94eecded72b5f3f3b4f73e6abba2402223c12b611cbc3e38b5ddd5adf3f0d"
+    },
+    {
+      "path": "evidence/contract-samples/project-history-TaskStatusChanged.json",
+      "bytes": 423,
+      "sha256": "4b91432556058526b6964b09856c483508ff1c7a58ef79e7f4696bf20d6f8c97"
+    },
+    {
+      "path": "evidence/contract-samples/task-return-history.json",
+      "bytes": 425,
+      "sha256": "539f4e21a897d043b7290417fa352b4b672863375ad6361ab01059832028ff65"
+    },
+    {
+      "path": "evidence/contract-samples/transition-error-AccountBlocked.json",
+      "bytes": 287,
+      "sha256": "6fc2e81e235486d4d1559deee4e1943a79a183fe865d2236480e99163efbeb54"
+    },
+    {
+      "path": "evidence/contract-samples/transition-error-IDEMPOTENCY_REQUEST_IN_PROGRESS.json",
+      "bytes": 373,
+      "sha256": "b71072ab417f1642193323a0a94c37c66c263a006fc98a75a4234c17e3330888"
+    },
+    {
+      "path": "evidence/contract-samples/transition-error-INTERNAL_ERROR.json",
+      "bytes": 306,
+      "sha256": "11e7c76ab9e23e29a027eaa7c63223925fcd0252d67d276c17fc2c69860eb866"
+    },
+    {
+      "path": "evidence/contract-samples/transition-error-SessionExpired.json",
+      "bytes": 287,
+      "sha256": "5c65b4f3bbae1f3e99266edf90c53e656d68dbe09ae8352a480b643a3fd872cf"
+    },
+    {
+      "path": "evidence/contract-samples/transition-error-SessionRevoked.json",
+      "bytes": 288,
+      "sha256": "6f3e43046512e2ebb2a902e984601bc88b9a9f846d7ee986e49b877024ee612a"
+    },
+    {
+      "path": "evidence/contract-samples/transition-error-VersionMismatch.json",
+      "bytes": 287,
+      "sha256": "0c422849f2a38b44740ecb51b697c8407a7eb24a0ca61993f347370fe32a9df2"
+    },
+    {
+      "path": "evidence/desktop-final-recheck/novik_TIM_2026-10-22_18_56_57_net10.0.trx",
+      "bytes": 2768173,
+      "sha256": "67b9762905dde15cd9ac220e6e3645afcf0540a046260fde00af555cada51fdf"
+    },
+    {
+      "path": "evidence/desktop-final-recheck/tests.log",
+      "bytes": 692,
+      "sha256": "196b8b8b1369fbc2cefdae8797a509e06b107ab53a118edd4d2af201414d2ae5"
+    },
+    {
+      "path": "evidence/http-final-recheck/build.log",
+      "bytes": 11541,
+      "sha256": "494d7db4f4c3a323b1aa1449d27b785dac5cc3687ef2763c162ac8cc908d32d6"
+    },
+    {
+      "path": "evidence/http-final-recheck/novik_TIM_2026-10-22_18_56_29_net10.0.trx",
+      "bytes": 1849,
+      "sha256": "400c0552eb0b045aa1a49039e267913b008e6e4b5da7220a54ad53b384fecd0b"
+    },
+    {
+      "path": "evidence/http-final-recheck/novik_TIM_2026-10-22_18_56_30_net10.0.trx",
+      "bytes": 1041706,
+      "sha256": "b1d1494fe0167fff57f24c31f77a45ebdfdd202476033f0822375c36480af723"
+    },
+    {
+      "path": "evidence/http-final-recheck/novik_TIM_2026-10-22_18_56_57_net10.0.trx",
+      "bytes": 1889,
+      "sha256": "9c39bd298aca13ee89dbccfc9ae77305107dd03ed1a0e1a1ee0da367e2c45e73"
+    },
+    {
+      "path": "evidence/http-final-recheck/postgres-error.log",
+      "bytes": 1168,
+      "sha256": "db17800717392a0d33da293f64c5cd9749f051b1a5edd8c5acfd85116588661c"
+    },
+    {
+      "path": "evidence/http-final-recheck/postgres-init.log",
+      "bytes": 1038,
+      "sha256": "e0c371a1be7e13d1cccb5f65b5e8f398dc2390e124eb6f85a8d99ac902a8905a"
+    },
+    {
+      "path": "evidence/http-final-recheck/postgres-stop.log",
+      "bytes": 58,
+      "sha256": "3589d2bd01f8295cc7c9ec3f5e07625fcd347ccb6f33f2d80edafe5f5217c1fb"
+    },
+    {
+      "path": "evidence/http-final-recheck/postgres.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/http-final-recheck/runtime.json",
+      "bytes": 149,
+      "sha256": "65615df71458a851118413599241164cd9c3b334c58de80ad035e80d35037f84"
+    },
+    {
+      "path": "evidence/http-final-recheck/tests.log",
+      "bytes": 1670,
+      "sha256": "dd2d9f99a6d4567f85caa6986bd115fde5bafde79a1f86cb83c4420ca7e3e8d8"
+    },
+    {
+      "path": "evidence/original-full-gate/build.log",
+      "bytes": 9698,
+      "sha256": "8d3e601cb6d0555e070eb2c9bae43b9f5b180ec9622d857d133372bc48afe887"
+    },
+    {
+      "path": "evidence/original-full-gate/native/layout-1100x900.json",
+      "bytes": 279,
+      "sha256": "fe111290a6a34c18902602dd9773bc41aabbab8f2f64f39a51fdd7185188d1a9"
+    },
+    {
+      "path": "evidence/original-full-gate/native/layout-800x480.json",
+      "bytes": 252,
+      "sha256": "51ffcfd35505ecda39dc9d009cc73fc008284d73eff37ad6817689011da9a051"
+    },
+    {
+      "path": "evidence/original-full-gate/native/layout-800x600.json",
+      "bytes": 252,
+      "sha256": "efabeaea8f1c33b5ca8009e42baffc0762881520bf166c310f32dc91496c9b97"
+    },
+    {
+      "path": "evidence/original-full-gate/native/layout-800x800.json",
+      "bytes": 251,
+      "sha256": "6684fcb9c67f4c9077a8964351b00e57ffb39b0d43546178cfcc76af5ef9eabb"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-confirmation-1100x900.png",
+      "bytes": 109447,
+      "sha256": "882c246459790bf9391f02fee1dbafd726e03ab56608f4331b36d8075505189a"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-confirmation-800x480.png",
+      "bytes": 49013,
+      "sha256": "bcaef74ac0c8492eb76cffc6ab5e9e76a604a21dc505c635f34f4c5d32aa7592"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-confirmation-800x600.png",
+      "bytes": 53539,
+      "sha256": "64c91b1d34c9bdf5387c99b534e0b4122acff939dce8ec4f0e70ee82823b6113"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-confirmation-800x800.png",
+      "bytes": 72224,
+      "sha256": "01020444c650e7151b80e1a70833ae5cc48686f7bc945f33f9b1d127ea80151e"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-success-1100x900.png",
+      "bytes": 112308,
+      "sha256": "66ebb9a23fbfbc5c6e0dc8566b21f871360a234e827ea606f8939a9221775a18"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-success-800x480.png",
+      "bytes": 55349,
+      "sha256": "b6e5190d9dab430209ab1149d210658e8fe56f9d49230f9f2ace36299ebb586a"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-success-800x600.png",
+      "bytes": 59395,
+      "sha256": "fdc4c254b5a9790e64246c1c5498417080cec29bea104e7a6afd576b009bf623"
+    },
+    {
+      "path": "evidence/original-full-gate/native/return-success-800x800.png",
+      "bytes": 71503,
+      "sha256": "bbd6096c9864eafcd05760020fca238b4d6d82f7b240b231da1969cac47436af"
+    },
+    {
+      "path": "evidence/original-full-gate/novik_TIM_2026-10-22_18_49_11_net10.0.trx",
+      "bytes": 1288613,
+      "sha256": "ec86375e1e629fa22291e804ece07dd57a65047b01e1b556e3b001daea61d9b0"
+    },
+    {
+      "path": "evidence/original-full-gate/novik_TIM_2026-10-22_18_52_46_net10.0.trx",
+      "bytes": 1041706,
+      "sha256": "8e8c426f0114307d76750429d2168c9f86699f70f6ada40a01cd79c962843d8f"
+    },
+    {
+      "path": "evidence/original-full-gate/novik_TIM_2026-10-22_18_53_20_net10.0.trx",
+      "bytes": 2772403,
+      "sha256": "3ce2d4336d3fa25415aff82ffbdbc61b2edff2b4437de3e1f023588f78a71185"
+    },
+    {
+      "path": "evidence/original-full-gate/postgres-error.log",
+      "bytes": 64636,
+      "sha256": "5e7b77a0f25d62dea19c289ce14fd6fb5ed3e12e0e54f9c64ac5d2a4c3d4deb2"
+    },
+    {
+      "path": "evidence/original-full-gate/postgres-init.log",
+      "bytes": 1035,
+      "sha256": "22749db50f9f3da2fc1289300147d7ae4fda6373f6647bfc6f362c4f9ff3721f"
+    },
+    {
+      "path": "evidence/original-full-gate/postgres-stop.log",
+      "bytes": 58,
+      "sha256": "3589d2bd01f8295cc7c9ec3f5e07625fcd347ccb6f33f2d80edafe5f5217c1fb"
+    },
+    {
+      "path": "evidence/original-full-gate/postgres.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/original-full-gate/runtime.json",
+      "bytes": 107,
+      "sha256": "a74c5e4386b9ba4b3b8218caaafa220cf82b7cdba736df1a82ae86472086c4b7"
+    },
+    {
+      "path": "evidence/original-full-gate/tests.log",
+      "bytes": 2191,
+      "sha256": "3dfbe6758a9e1bc1a184c082bdfc7bb48e3b4b3f26128d09b280f8eb01ccdb31"
+    },
+    {
+      "path": "evidence/package-checks.json",
+      "bytes": 838,
+      "sha256": "097e96acafbb45f9123a21fd1640bbddbb5c40845c9c7baf39acc30c969f0ee0"
+    },
+    {
+      "path": "source-files.json",
+      "bytes": 6805,
+      "sha256": "cf7fe89f4ca91d78c6283b6bf957f041c35923a6e5b80d84861dd1df7ba634b1"
+    },
+    {
+      "path": "source-overlay/.project-dashboard/roadmap.json",
+      "bytes": 159183,
+      "sha256": "67bc91650287f6b8af82965ba39306d93b07ea731a28ef507693daaa4e950a36"
+    },
+    {
+      "path": "source-overlay/work/production/docs/task-14-2-return-contract-decision.md",
+      "bytes": 2151,
+      "sha256": "81078a9218b6d320155c62e7013168cb172999a3cbd056dcd6726d29e3bdbebc"
+    },
+    {
+      "path": "source-overlay/work/production/docs/task-14-final-contract-corrections.md",
+      "bytes": 3473,
+      "sha256": "c609658c0e9be16425644762a784b95e993f75bcf1789fbcefca4c9b95e8b068"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Api/Security/TaskApiProblemResponse.cs",
+      "bytes": 2967,
+      "sha256": "544c8fb8d5d3f073e49e32a3944ad659dc642a9ce3f9fb77d258b004f6e052fa"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+      "bytes": 49883,
+      "sha256": "2f83fbf48640addc6c665158ff2c6994750748b7ed397ee918265cc0f22e0911"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Application/TaskCreateCommandService.cs",
+      "bytes": 4603,
+      "sha256": "52cf7664e43eee4899c899d8e1afa05752eb363cdb5245817b21b0813a1ff1a0"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Application/TaskUpdateCommandService.cs",
+      "bytes": 15951,
+      "sha256": "1210e11b3fc782a22195b249621cc4a08dafb80e913c7b1971a13481d68cc77a"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Application/TaskWriteCommand.cs",
+      "bytes": 10087,
+      "sha256": "76e88d6eb618f805896761ed0e413b3429ce885c221a79b476e55a30e4238c75"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/MainWindow.xaml",
+      "bytes": 117470,
+      "sha256": "a0192d8ad81876b645630116a17b57f17f987c669da73aabbe55b049534f0307"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "bytes": 17231,
+      "sha256": "85ef27f079aaf5721dc28578620260d9c222f9cf748c99cfadfee7658e473520"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+      "bytes": 32085,
+      "sha256": "4baad9f50a4fa318d15910bb25bb553912851c57d6b896b117478b3ec1c93806"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+      "bytes": 89413,
+      "sha256": "d29859ff714c09bff8773a1501c759e0d9ee5fec61cad40ae783c6ea36379559"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs",
+      "bytes": 17393,
+      "sha256": "fba26117039653e63314a2170fab81402da18068c01d29e2fa5053c2a7a2b730"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Desktop/Views/TodayView.xaml",
+      "bytes": 55340,
+      "sha256": "915bbd93636f4621c39008c386403abce03436577f2a0b3691c63470f2667e45"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Domain/TaskAggregate.cs",
+      "bytes": 15110,
+      "sha256": "29444f0e76d8eb1035678aa1ba4e6090e245496bd76a61bd970ae5487213189d"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Domain/TaskRules.cs",
+      "bytes": 1560,
+      "sha256": "0770eced31ccc8373df0714f4e6ca7ce27107b01f101cf0f5c9265f943265476"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+      "bytes": 23934,
+      "sha256": "60bb926d52443aa3564679b8bfad6ef0679d3d1a30b8b2aa75bb2a788ee4d101"
+    },
+    {
+      "path": "source-overlay/work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+      "bytes": 33893,
+      "sha256": "9a097be1d01871f520f010384c0c3fe3a757b4b33e631295da0bbea62ed928b7"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+      "bytes": 46991,
+      "sha256": "6c2816c68a96a8923da8a7e8739a6878afe6125060c9195bc1dd9e7c730d4291"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Tasks/TaskContextActionsUiTests.cs",
+      "bytes": 19446,
+      "sha256": "70b4ae0913d50d2ae07233be0097c4d3ce3076f766c63f0eb8574ceaed8c843f"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+      "bytes": 14632,
+      "sha256": "e16b325340efc150c6108427e1aa5a407eac5fc1c7e3523c6d7e1c6b7a76e21f"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+      "bytes": 11446,
+      "sha256": "a9a7cfb14fd938750c339c27aa83eb93341e0d0919d36e790858451b64d0f8af"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs",
+      "bytes": 24641,
+      "sha256": "ab8837920a01e16a471ffb96ccbfa6654a8ea4538388dccd2337c21b3d95c9ad"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs",
+      "bytes": 2056,
+      "sha256": "776b4de5edce36c95341666682129a9ccb7945cbdc50f69bd082e0076c93bf95"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.ServiceHosts.Tests/TaskApiSecurityFoundationTests.cs",
+      "bytes": 8935,
+      "sha256": "89ed24f9b969afaa4683d4a540b5057a3aa3a5d301846170c8437ca88ece5caf"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs",
+      "bytes": 10381,
+      "sha256": "a4dba80ca1c4bda34887afff083a9aadf5cce7548acb3d3031b47b3b878736e4"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs",
+      "bytes": 14583,
+      "sha256": "cdc140e4aac41657b5b5de548889aeac61782bec3c0f9def720f5b9ff4a2c3ad"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs",
+      "bytes": 16975,
+      "sha256": "feebd4211ee9e678e4036d3f983236a8a35232eb3816df46bc95dd524a6b9e48"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresHistoryContractTests.cs",
+      "bytes": 2404,
+      "sha256": "2e1293bcbedf04999c9afa818178d1c14fd6aaff532de0bc9799db5422157d24"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs",
+      "bytes": 2460,
+      "sha256": "cdaf2faed9f3f85aea73a203a2e66053b62951a7096bd7352b1f72209fd028c9"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresTaskReturnAuditTests.cs",
+      "bytes": 7284,
+      "sha256": "e09c7fbb0600f4b97bf5626b1ce05cdb077e8b5df9dd706746a218753e791eb5"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs",
+      "bytes": 11803,
+      "sha256": "f246dc1a3f5ade95f30103041d580d57ff478642b8b531a3cd6dc7744a2a2da7"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/TaskAggregateTests.cs",
+      "bytes": 28263,
+      "sha256": "9ba3ff2edc7ce79e27c6929391b95e202958df880ff1ceec55f1fee3b06a00df"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/TaskCreateCommandTests.cs",
+      "bytes": 20193,
+      "sha256": "bf750d9efd921422f492fb471ba0925bc88410bcf23bcfe8cc9882348aaaac87"
+    },
+    {
+      "path": "source-overlay/work/production/tests/Task.Tests/TaskUpdateTests.cs",
+      "bytes": 41296,
+      "sha256": "316e189fe87a27596fb49f7d52da6dc9b2429baf8b0aa5a2457667a023f69199"
+    },
+    {
+      "path": "source-overlay/work/production/verification/Build-Task14Contract.py",
+      "bytes": 7905,
+      "sha256": "7dc352fa8dc344c6f6697df04941d8c4511016a1d8816ff682b99c1dd0072d7f"
+    },
+    {
+      "path": "source-overlay/work/production/verification/Build-Task14Publication.py",
+      "bytes": 10499,
+      "sha256": "0d57b8584cbf11baebc63c314fd2f043c28499a20671863661b260bee4bd73d1"
+    },
+    {
+      "path": "source-overlay/work/production/verification/Verify-Task14Packages.py",
+      "bytes": 3090,
+      "sha256": "b4e5b7250b88c93521ce340be06e9f17eca2fd8ea746a16d7a6bd9704ca7810b"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 4588,
+      "sha256": "e1c8824dd3946ad76483094d04d03e0a3ce22be453ba663e4fa896c5036f2848"
+    },
+    {
+      "path": "validation-summary.json",
+      "bytes": 2292,
+      "sha256": "8557e272403bcdcc524ba5f789a7ccb6132b2e5e006a84b2c9bff8594e67981f"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

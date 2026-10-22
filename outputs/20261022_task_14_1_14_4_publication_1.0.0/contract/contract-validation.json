@@ -1,0 +1,40 @@
+{
+  "baseOpenApiSha256": "36c15dff5adba0041fcfd79f5a0d203835dac5cdd4ad24122bcd92177c13220d",
+  "canonicalRequiredFieldsPreserved": [
+    "id",
+    "objectId",
+    "objectVersion",
+    "changedAt",
+    "changeType",
+    "changedFields",
+    "correlationId"
+  ],
+  "legacyFieldsDeclared": [
+    "action",
+    "version",
+    "occurredAt",
+    "actorUserId"
+  ],
+  "samples": [
+    "project-history-project.create.json",
+    "project-history-project.patch.json",
+    "project-history-project.purge.json",
+    "project-history-project.unarchive.json",
+    "project-history-TaskArchived.json",
+    "project-history-TaskCreated.json",
+    "project-history-TaskMovedToTrash.json",
+    "project-history-TaskRestored.json",
+    "project-history-TaskStatusChanged.json",
+    "task-return-history.json",
+    "transition-error-AccountBlocked.json",
+    "transition-error-IDEMPOTENCY_REQUEST_IN_PROGRESS.json",
+    "transition-error-INTERNAL_ERROR.json",
+    "transition-error-SessionExpired.json",
+    "transition-error-SessionRevoked.json",
+    "transition-error-VersionMismatch.json"
+  ],
+  "historySamples": 10,
+  "errorSamples": 6,
+  "missingRequiredFieldNegativeChecks": 70,
+  "passed": true
+}

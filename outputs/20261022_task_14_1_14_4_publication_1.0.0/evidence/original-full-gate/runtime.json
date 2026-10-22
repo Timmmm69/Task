@@ -1,0 +1,7 @@
+{
+  "isolated": true,
+  "filter": "",
+  "postgres": "16",
+  "exitCode": 1,
+  "loopbackOnly": true
+}

@@ -1,0 +1,31 @@
+{
+  "packages": [
+    {
+      "package": "20261022_task_14_1_status_return_contract_audit_1.0.0",
+      "sha256_entries_checked": 8,
+      "manifest_entries_checked": 7
+    },
+    {
+      "package": "20261022_task_14_2_status_return_contract_1.0.0",
+      "sha256_entries_checked": 5,
+      "manifest_entries_checked": 4
+    },
+    {
+      "package": "20261022_task_14_2_server_return_1.0.0",
+      "sha256_entries_checked": 19,
+      "manifest_entries_checked": 18
+    },
+    {
+      "package": "20261022_task_14_3_wpf_return_1.0.0",
+      "sha256_entries_checked": 25,
+      "manifest_entries_checked": 24
+    },
+    {
+      "package": "20261022_task_14_4_independent_audit_1.0.0",
+      "sha256_entries_checked": 152,
+      "manifest_entries_checked": 151
+    }
+  ],
+  "failures": [],
+  "passed": true
+}

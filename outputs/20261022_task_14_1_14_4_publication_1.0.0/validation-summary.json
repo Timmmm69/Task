@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "result": "PASS",
+  "sourceCommit": "ea1e435480a726ca0e32264158de9e873857b79a",
+  "originMainBeforePublication": "fa504bc01584547afc50398ba6c1735391c4173c",
+  "fullSuites": [
+    {
+      "trx": "novik_TIM_2026-10-22_18_49_11_net10.0.trx",
+      "total": 914,
+      "passed": 914,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.tests.dll"
+    },
+    {
+      "trx": "novik_TIM_2026-10-22_18_56_30_net10.0.trx",
+      "total": 671,
+      "passed": 671,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.servicehosts.tests.dll"
+    },
+    {
+      "trx": "novik_TIM_2026-10-22_18_56_57_net10.0.trx",
+      "total": 1822,
+      "passed": 1822,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.desktop.tests.dll"
+    }
+  ],
+  "fullPassed": 3407,
+  "fullFailed": 0,
+  "fullSkipped": 0,
+  "finalHttpRecheck": [
+    {
+      "trx": "novik_TIM_2026-10-22_18_56_30_net10.0.trx",
+      "total": 671,
+      "passed": 671,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.servicehosts.tests.dll"
+    }
+  ],
+  "originalPackageChecksPassed": true,
+  "contractSamplesValidated": true,
+  "originalFullGate": [
+    {
+      "trx": "novik_TIM_2026-10-22_18_49_11_net10.0.trx",
+      "total": 914,
+      "passed": 914,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.tests.dll"
+    },
+    {
+      "trx": "novik_TIM_2026-10-22_18_52_46_net10.0.trx",
+      "total": 671,
+      "passed": 671,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.servicehosts.tests.dll"
+    },
+    {
+      "trx": "novik_TIM_2026-10-22_18_53_20_net10.0.trx",
+      "total": 1822,
+      "passed": 1821,
+      "failed": 1,
+      "notExecuted": 0,
+      "assembly": "task.desktop.tests.dll"
+    }
+  ],
+  "finalDesktopRecheck": [
+    {
+      "trx": "novik_TIM_2026-10-22_18_56_57_net10.0.trx",
+      "total": 1822,
+      "passed": 1822,
+      "failed": 0,
+      "notExecuted": 0,
+      "assembly": "task.desktop.tests.dll"
+    }
+  ],
+  "sourcesUnchanged": true,
+  "readyForMain": true,
+  "manualAcceptanceNotRun": [
+    "live company LAN/multi-client",
+    "screen reader",
+    "physical mixed-DPI/multi-monitor"
+  ]
+}

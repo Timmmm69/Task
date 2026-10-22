@@ -1,0 +1,154 @@
+[
+  {
+    "path": ".project-dashboard/roadmap.json",
+    "gitBlobSha256": "67bc91650287f6b8af82965ba39306d93b07ea731a28ef507693daaa4e950a36"
+  },
+  {
+    "path": "work/production/docs/task-14-2-return-contract-decision.md",
+    "gitBlobSha256": "81078a9218b6d320155c62e7013168cb172999a3cbd056dcd6726d29e3bdbebc"
+  },
+  {
+    "path": "work/production/docs/task-14-final-contract-corrections.md",
+    "gitBlobSha256": "c609658c0e9be16425644762a784b95e993f75bcf1789fbcefca4c9b95e8b068"
+  },
+  {
+    "path": "work/production/src/Task.Api/Security/TaskApiProblemResponse.cs",
+    "gitBlobSha256": "544c8fb8d5d3f073e49e32a3944ad659dc642a9ce3f9fb77d258b004f6e052fa"
+  },
+  {
+    "path": "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+    "gitBlobSha256": "2f83fbf48640addc6c665158ff2c6994750748b7ed397ee918265cc0f22e0911"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskCreateCommandService.cs",
+    "gitBlobSha256": "52cf7664e43eee4899c899d8e1afa05752eb363cdb5245817b21b0813a1ff1a0"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskUpdateCommandService.cs",
+    "gitBlobSha256": "1210e11b3fc782a22195b249621cc4a08dafb80e913c7b1971a13481d68cc77a"
+  },
+  {
+    "path": "work/production/src/Task.Application/TaskWriteCommand.cs",
+    "gitBlobSha256": "76e88d6eb618f805896761ed0e413b3429ce885c221a79b476e55a30e4238c75"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+    "gitBlobSha256": "a0192d8ad81876b645630116a17b57f17f987c669da73aabbe55b049534f0307"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+    "gitBlobSha256": "85ef27f079aaf5721dc28578620260d9c222f9cf748c99cfadfee7658e473520"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Tasks/DesktopTasksApiClient.cs",
+    "gitBlobSha256": "4baad9f50a4fa318d15910bb25bb553912851c57d6b896b117478b3ec1c93806"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs",
+    "gitBlobSha256": "d29859ff714c09bff8773a1501c759e0d9ee5fec61cad40ae783c6ea36379559"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs",
+    "gitBlobSha256": "fba26117039653e63314a2170fab81402da18068c01d29e2fa5053c2a7a2b730"
+  },
+  {
+    "path": "work/production/src/Task.Desktop/Views/TodayView.xaml",
+    "gitBlobSha256": "915bbd93636f4621c39008c386403abce03436577f2a0b3691c63470f2667e45"
+  },
+  {
+    "path": "work/production/src/Task.Domain/TaskAggregate.cs",
+    "gitBlobSha256": "29444f0e76d8eb1035678aa1ba4e6090e245496bd76a61bd970ae5487213189d"
+  },
+  {
+    "path": "work/production/src/Task.Domain/TaskRules.cs",
+    "gitBlobSha256": "0770eced31ccc8373df0714f4e6ca7ce27107b01f101cf0f5c9265f943265476"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresProductApiRelations.cs",
+    "gitBlobSha256": "60bb926d52443aa3564679b8bfad6ef0679d3d1a30b8b2aa75bb2a788ee4d101"
+  },
+  {
+    "path": "work/production/src/Task.Infrastructure/Persistence/PostgresTaskWriteCommandExecutor.cs",
+    "gitBlobSha256": "9a097be1d01871f520f010384c0c3fe3a757b4b33e631295da0bbea62ed928b7"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/DesktopTasksApiClientTests.cs",
+    "gitBlobSha256": "6c2816c68a96a8923da8a7e8739a6878afe6125060c9195bc1dd9e7c730d4291"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskContextActionsUiTests.cs",
+    "gitBlobSha256": "70b4ae0913d50d2ae07233be0097c4d3ce3076f766c63f0eb8574ceaed8c843f"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnTests.cs",
+    "gitBlobSha256": "e16b325340efc150c6108427e1aa5a407eac5fc1c7e3523c6d7e1c6b7a76e21f"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskReturnUiTests.cs",
+    "gitBlobSha256": "a9a7cfb14fd938750c339c27aa83eb93341e0d0919d36e790858451b64d0f8af"
+  },
+  {
+    "path": "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs",
+    "gitBlobSha256": "ab8837920a01e16a471ffb96ccbfa6654a8ea4538388dccd2337c21b3d95c9ad"
+  },
+  {
+    "path": "work/production/tests/Task.ServiceHosts.Tests/ProjectHistoryEndpointsTests.cs",
+    "gitBlobSha256": "776b4de5edce36c95341666682129a9ccb7945cbdc50f69bd082e0076c93bf95"
+  },
+  {
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskApiSecurityFoundationTests.cs",
+    "gitBlobSha256": "89ed24f9b969afaa4683d4a540b5057a3aa3a5d301846170c8437ca88ece5caf"
+  },
+  {
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs",
+    "gitBlobSha256": "a4dba80ca1c4bda34887afff083a9aadf5cce7548acb3d3031b47b3b878736e4"
+  },
+  {
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs",
+    "gitBlobSha256": "cdc140e4aac41657b5b5de548889aeac61782bec3c0f9def720f5b9ff4a2c3ad"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresAutomaticDeadlineReminderTests.cs",
+    "gitBlobSha256": "feebd4211ee9e678e4036d3f983236a8a35232eb3816df46bc95dd524a6b9e48"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresHistoryContractTests.cs",
+    "gitBlobSha256": "2e1293bcbedf04999c9afa818178d1c14fd6aaff532de0bc9799db5422157d24"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresProjectHistoryTests.cs",
+    "gitBlobSha256": "cdaf2faed9f3f85aea73a203a2e66053b62951a7096bd7352b1f72209fd028c9"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresTaskReturnAuditTests.cs",
+    "gitBlobSha256": "e09c7fbb0600f4b97bf5626b1ce05cdb077e8b5df9dd706746a218753e791eb5"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/PostgresTaskReturnTests.cs",
+    "gitBlobSha256": "f246dc1a3f5ade95f30103041d580d57ff478642b8b531a3cd6dc7744a2a2da7"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskAggregateTests.cs",
+    "gitBlobSha256": "9ba3ff2edc7ce79e27c6929391b95e202958df880ff1ceec55f1fee3b06a00df"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskCreateCommandTests.cs",
+    "gitBlobSha256": "bf750d9efd921422f492fb471ba0925bc88410bcf23bcfe8cc9882348aaaac87"
+  },
+  {
+    "path": "work/production/tests/Task.Tests/TaskUpdateTests.cs",
+    "gitBlobSha256": "316e189fe87a27596fb49f7d52da6dc9b2429baf8b0aa5a2457667a023f69199"
+  },
+  {
+    "path": "work/production/verification/Build-Task14Contract.py",
+    "gitBlobSha256": "7dc352fa8dc344c6f6697df04941d8c4511016a1d8816ff682b99c1dd0072d7f"
+  },
+  {
+    "path": "work/production/verification/Build-Task14Publication.py",
+    "gitBlobSha256": "0d57b8584cbf11baebc63c314fd2f043c28499a20671863661b260bee4bd73d1"
+  },
+  {
+    "path": "work/production/verification/Verify-Task14Packages.py",
+    "gitBlobSha256": "b4e5b7250b88c93521ce340be06e9f17eca2fd8ea746a16d7a6bd9704ca7810b"
+  }
+]
