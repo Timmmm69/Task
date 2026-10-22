@@ -1,0 +1,10 @@
+  Task.Domain -> C:\Users\novik\Таск\work\status_return_14_2\repo\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\status_return_14_2\repo\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Infrastructure -> C:\Users\novik\Таск\work\status_return_14_2\repo\work\production\src\Task.Infrastructure\bin\Release\net10.0\Task.Infrastructure.dll
+  Task.Api -> C:\Users\novik\Таск\work\status_return_14_2\repo\work\production\src\Task.Api\bin\Release\net10.0\Task.Api.dll
+
+Сборка успешно завершена.
+    Предупреждений: 0
+    Ошибок: 0
+
+Прошло времени 00:00:01.54

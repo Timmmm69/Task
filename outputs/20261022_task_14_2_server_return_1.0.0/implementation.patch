@@ -1,0 +1,470 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index 3d4238d..89bfbfb 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -470,10 +470,11 @@
+       "progress": 100,
+       "evidence": [
+         "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
+-        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128"
++        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128",
++        "outputs/20261022_task_14_2_server_return_1.0.0/validation-report.md: review -> in_progress, HTTP matrix, PostgreSQL 16 atomicity/replay/scope/history/audit"
+       ],
+-      "note": "Базовый task API vertical slice подтверждён.",
+-      "updated_at": "2026-08-30T16:20:00+03:00",
++      "note": "Базовый task API vertical slice подтверждён. 2026-10-22: по утверждённому исправлению 14.2 добавлен review → in_progress через существующий transition endpoint. Проверены права, версии, атомарность, replay, история и аудит на PostgreSQL 16; DTO, миграции и уведомления не изменены. Progress/status сохранены.",
++      "updated_at": "2026-10-22T13:08:11+03:00",
+       "priority": 4,
+       "dependencies": [
+         "DATA-02"
+diff --git a/work/production/docs/task-14-2-return-contract-decision.md b/work/production/docs/task-14-2-return-contract-decision.md
+new file mode 100644
+index 0000000..0bb706b
+--- /dev/null
++++ b/work/production/docs/task-14-2-return-contract-decision.md
+@@ -0,0 +1,34 @@
++# Task 14.2 — approved server return contract
++
++Version: 1.0.0. Approved: 2026-10-22 (Europe/Minsk).
++
++## Approval and precedence
++
++Task 14.1 audit reported CONTRACT_CHANGE_REQUIRED (OQ-14.1-01): the
++canonical state machine permits `review -> in_progress`, whereas
++`outputs/20260826_task_write_vertical_slice_specs_1.0.0/04_SERVER_TASK_TRANSITION.md:33`
++explicitly rejects it. After Codex described the exact correction and the
++blocking condition, the user instructed: «Теперь действитвуй».
++This records approval of that narrow correction. It supersedes only the
++`review -> in_progress` prohibition in the implementation specification;
++the historical specification and audit remain unchanged.
++
++## Implementation contract
++
++- Permit `review -> in_progress` through the existing
++  `POST /api/v1/tasks/{id}/transition`, with `targetStatus: "in_progress"`.
++- Keep `Task.ChangeStatus` (`task.changestatus`), role/object/tenant scope,
++  session validation, lifecycle restrictions, If-Match, stable error codes,
++  durable idempotency and transactional concurrency checks.
++- Increment the version once and write the existing `task.change_status`
++  audit, `TaskStatusChanged` event/history projection and realtime outbox
++  atomically with the task and idempotent response.
++- Reason remains optional under the existing request schema; do not introduce
++  reason storage, a comment prerequisite, new DTOs, fields or migrations.
++- Do not add return notifications. Preserve the current notification projector.
++- Preserve every other allowed/forbidden transition and completion rule.
++- No WPF source or UI changes; a dedicated return UI is a later task.
++
++The approval resolves OQ-14.1-01 for this server increment. Other audit gaps
++(history DTO alignment, terminal recovery, reason display, notifications and
++reviewer identity policy) remain outside its scope.
+diff --git a/work/production/src/Task.Application/TaskUpdateCommandService.cs b/work/production/src/Task.Application/TaskUpdateCommandService.cs
+index 641c64d..d2319e4 100644
+--- a/work/production/src/Task.Application/TaskUpdateCommandService.cs
++++ b/work/production/src/Task.Application/TaskUpdateCommandService.cs
+@@ -351,7 +351,7 @@ public sealed class TaskStatusTransitionCommandService
+         Guid actorId,
+         DateTimeOffset now) => (task.WorkStatus, target) switch
+         {
+-            (TaskWorkStatus.New, TaskWorkStatus.InProgress) => task.Start(actorId, now),
++            (TaskWorkStatus.New or TaskWorkStatus.Review, TaskWorkStatus.InProgress) => task.Start(actorId, now),
+             (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => task.SubmitForReview(actorId, now),
+             (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review, TaskWorkStatus.Completed) =>
+                 task.Complete(actorId, now),
+diff --git a/work/production/src/Task.Domain/TaskAggregate.cs b/work/production/src/Task.Domain/TaskAggregate.cs
+index fb1d771..cc30b66 100644
+--- a/work/production/src/Task.Domain/TaskAggregate.cs
++++ b/work/production/src/Task.Domain/TaskAggregate.cs
+@@ -141,7 +141,7 @@ public sealed class TaskAggregate
+         EnsureActive("An archived or trashed task must be restored before it can be started.");
+         if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.InProgress))
+         {
+-            throw new InvalidOperationException("Only a new task can be started.");
++            throw new InvalidOperationException("Only a new task or a task under review can move to in progress.");
+         }
+ 
+         return new TaskAggregate(
+diff --git a/work/production/src/Task.Domain/TaskRules.cs b/work/production/src/Task.Domain/TaskRules.cs
+index 10722ff..09454a9 100644
+--- a/work/production/src/Task.Domain/TaskRules.cs
++++ b/work/production/src/Task.Domain/TaskRules.cs
+@@ -26,7 +26,7 @@ public static class TaskRules
+ 
+     public static bool CanTransition(TaskWorkStatus current, TaskWorkStatus target) => (current, target) switch
+     {
+-        (TaskWorkStatus.New, TaskWorkStatus.InProgress) => true,
++        (TaskWorkStatus.New or TaskWorkStatus.Review, TaskWorkStatus.InProgress) => true,
+         (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => true,
+         (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review,
+             TaskWorkStatus.Completed or TaskWorkStatus.Cancelled) => true,
+diff --git a/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs b/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs
+index 81177ef..9a5e3c0 100644
+--- a/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs
+@@ -10,6 +10,7 @@ public sealed partial class TodayViewModelTests
+     public static IEnumerable<object[]> QuickTransitions()
+     {
+         var allowed = new[] { (DesktopTaskStatus.New, DesktopTaskStatus.InProgress),
++            (DesktopTaskStatus.Review, DesktopTaskStatus.InProgress),
+             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Review),
+             (DesktopTaskStatus.New, DesktopTaskStatus.Completed), (DesktopTaskStatus.New, DesktopTaskStatus.Cancelled),
+             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Completed), (DesktopTaskStatus.InProgress, DesktopTaskStatus.Cancelled),
+diff --git a/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs b/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs
+new file mode 100644
+index 0000000..0f8d841
+--- /dev/null
++++ b/work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs
+@@ -0,0 +1,102 @@
++using System.Net;
++using Task.Application.Security;
++using Task.Domain;
++
++namespace Task.ServiceHosts.Tests;
++
++public sealed partial class TaskEndpointsTests
++{
++    [Theory]
++    [InlineData("{\"targetStatus\":\"in_progress\"}")]
++    [InlineData("{\"targetStatus\":\"in_progress\",\"reason\":null}")]
++    [InlineData("{\"targetStatus\":\"in_progress\",\"reason\":\"Please revise\"}")]
++    public async System.Threading.Tasks.Task ReturnTask_OptionalReasonAndExactReplay(string body)
++    {
++        var original = TaskInStatus(TaskWorkStatus.Review);
++        var executor = new FakeUpdateExecutor { Current = original };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
++        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
++
++        var first = await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7, body: body);
++        var replay = await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7, body: body);
++
++        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
++        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
++        Assert.Equal("\"v8\"", first.Headers.ETag?.Tag);
++        Assert.Equal(first.Headers.ETag, replay.Headers.ETag);
++        Assert.Equal(await first.Content.ReadAsStringAsync(), await replay.Content.ReadAsStringAsync());
++        Assert.Equal("true", replay.Headers.GetValues("Idempotency-Replayed").Single());
++        Assert.Equal(TaskWorkStatus.InProgress, executor.Current!.WorkStatus);
++        Assert.Equal(8, executor.Current.Metadata.Version);
++        Assert.Equal(1, executor.MutationCalls);
++        Assert.Equal(1, executor.CompletedCount);
++
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7,
++            body: """{"targetStatus":"in_progress","reason":"Changed intent"}"""),
++            HttpStatusCode.Conflict, "IDEMPOTENCY_KEY_REUSED");
++        Assert.Equal(1, executor.MutationCalls);
++    }
++
++    [Theory]
++    [InlineData(null, "return-header-01", 428, "PRECONDITION_REQUIRED")]
++    [InlineData("W/\"v7\"", "return-header-01", 400, "VALIDATION_FAILED")]
++    [InlineData("\"v7\"", null, 400, "VALIDATION_FAILED")]
++    [InlineData("\"v7\"", "short", 400, "VALIDATION_FAILED")]
++    public async System.Threading.Tasks.Task ReturnTask_RequiresVersionAndIdempotencyHeaders(
++        string? ifMatch, string? key, int status, string code)
++    {
++        var original = TaskInStatus(TaskWorkStatus.Review);
++        var executor = new FakeUpdateExecutor { Current = original };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
++        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7,
++            ifMatch: ifMatch, idempotencyKey: key), (HttpStatusCode)status, code);
++        Assert.Same(original, executor.Current);
++        Assert.Equal(0, executor.MutationCalls);
++    }
++
++    [Theory]
++    [InlineData("denied", HttpStatusCode.Forbidden, "FORBIDDEN")]
++    [InlineData("stale", HttpStatusCode.PreconditionFailed, "VERSION_CONFLICT")]
++    [InlineData("foreign", HttpStatusCode.NotFound, "OBJECT_NOT_VISIBLE")]
++    [InlineData("missing", HttpStatusCode.NotFound, "OBJECT_NOT_VISIBLE")]
++    [InlineData("archived", HttpStatusCode.Conflict, "OBJECT_ARCHIVED")]
++    [InlineData("trashed", HttpStatusCode.Conflict, "OBJECT_DELETED")]
++    [InlineData("revoked", HttpStatusCode.Unauthorized, "SESSION_REVOKED")]
++    [InlineData("expired", HttpStatusCode.Unauthorized, "SESSION_EXPIRED")]
++    [InlineData("anonymous", HttpStatusCode.Unauthorized, "AUTHENTICATION_REQUIRED")]
++    public async System.Threading.Tasks.Task ReturnTask_RejectedWithoutMutation(
++        string scenario, HttpStatusCode expectedStatus, string expectedCode)
++    {
++        var original = scenario switch
++        {
++            "archived" => ArchivedTask(),
++            "trashed" => TrashedTask(),
++            _ => TaskInStatus(TaskWorkStatus.Review),
++        };
++        var executor = new FakeUpdateExecutor { Current = scenario == "missing" ? null : original };
++        var sessionState = scenario switch
++        {
++            "revoked" => SessionRequestState.SessionRevoked,
++            "expired" => SessionRequestState.SessionExpired,
++            _ => SessionRequestState.Active,
++        };
++        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
++            sessionState: sessionState,
++            tokenOrganizationId: scenario == "foreign" ? ForeignOrganizationId : null,
++            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original),
++            grantTaskWrite: scenario != "denied");
++        using var client = scenario == "anonymous" ? server.CreateClient() :
++            await CreateAuthenticatedClientAsync(server, scenario == "foreign" ? ForeignOrganizationId : OrganizationId);
++
++        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress,
++            scenario == "stale" ? original.Metadata.Version - 1 : original.Metadata.Version),
++            expectedStatus, expectedCode);
++
++        Assert.Equal(0, executor.MutationCalls);
++        Assert.Equal(0, executor.CompletedCount);
++        Assert.Same(scenario == "missing" ? null : original, executor.Current);
++    }
++}
+diff --git a/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs b/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs
+index 5f6f1c5..833da7c 100644
+--- a/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs
++++ b/work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs
+@@ -15,6 +15,7 @@ public sealed partial class TaskEndpointsTests
+     public static TheoryData<TaskWorkStatus, TaskWorkStatus> AllowedTransitions => new()
+     {
+         { TaskWorkStatus.New, TaskWorkStatus.InProgress },
++        { TaskWorkStatus.Review, TaskWorkStatus.InProgress },
+         { TaskWorkStatus.InProgress, TaskWorkStatus.Review },
+         { TaskWorkStatus.New, TaskWorkStatus.Completed },
+         { TaskWorkStatus.InProgress, TaskWorkStatus.Completed },
+diff --git a/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs b/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs
+new file mode 100644
+index 0000000..7f2977a
+--- /dev/null
++++ b/work/production/tests/Task.Tests/PostgresTaskReturnTests.cs
+@@ -0,0 +1,181 @@
++using System.Text.Json;
++using Npgsql;
++using Task.Application;
++using Task.Application.Security;
++using Task.Domain;
++
++namespace Task.Tests;
++
++public sealed partial class PostgresProductApiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        var command = ReturnCommand(db, task);
++        var executor = db.ApiRuntime.CreateTaskWriteCommandExecutor();
++
++        var results = await System.Threading.Tasks.Task.WhenAll(
++            executor.ExecuteAsync(command), executor.ExecuteAsync(command));
++
++        Assert.Single(results, r => r.Disposition == TaskWriteCommandDisposition.Executed);
++        Assert.Single(results, r => r.Disposition == TaskWriteCommandDisposition.Replayed);
++        Assert.Equal(results[0].HttpResult!.BodyJson, results[1].HttpResult!.BodyJson);
++        Assert.Equal("\"v4\"", results[0].HttpResult!.Headers["ETag"]);
++        AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
++        using var payload = JsonDocument.Parse(ScalarReturn<string>(db,
++            "SELECT payload::text FROM governance.domain_events WHERE aggregate_id=$1", task.Metadata.Id));
++        Assert.Equal("review", payload.RootElement.GetProperty("fromStatus").GetString());
++        Assert.Equal("in_progress", payload.RootElement.GetProperty("targetStatus").GetString());
++        Assert.Equal(4, payload.RootElement.GetProperty("aggregateVersion").GetInt32());
++        Assert.Equal(db.User, payload.RootElement.GetProperty("actorId").GetGuid());
++        Assert.Equal(command.CorrelationId, payload.RootElement.GetProperty("correlationId").GetGuid());
++        Assert.False(payload.RootElement.TryGetProperty("reason", out _));
++        Assert.Equal(command.CorrelationId, ScalarReturn<Guid>(db,
++            "SELECT correlation_id FROM governance.audit_entries WHERE object_id=$1", task.Metadata.Id));
++        Assert.Equal("task.change_status", ScalarReturn<string>(db,
++            "SELECT action_code FROM governance.audit_entries WHERE object_id=$1", task.Metadata.Id));
++        var history = db.Call("tasks", "history", id: task.Metadata.Id).Body!["items"]!.AsArray();
++        var entry = Assert.Single(history)!;
++        Assert.Equal("TaskStatusChanged", entry["action"]!.GetValue<string>());
++        Assert.Equal(4, entry["version"]!.GetValue<int>());
++        Assert.Equal(db.User, entry["actorUserId"]!.GetValue<Guid>());
++        Assert.Equal("status", Assert.Single(entry["changedFields"]!.AsArray())!.GetValue<string>());
++        Assert.Equal(0, db.Count("notify.notifications"));
++
++        Assert.Equal(TaskWriteCommandDisposition.IdempotencyKeyReused,
++            (await executor.ExecuteAsync(ReturnCommand(db, task, target: TaskWorkStatus.Completed))).Disposition);
++        AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
++
++        // Replay also rechecks effective permissions and does not append side effects.
++        db.Sql("DELETE FROM iam.user_roles WHERE user_account_id=$1", db.User);
++        await Assert.ThrowsAsync<KeyNotFoundException>(() => executor.ExecuteAsync(command));
++        AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        var executor = db.ApiRuntime.CreateTaskWriteCommandExecutor();
++        var first = executor.ExecuteAsync(ReturnCommand(db, task, key: "return-concurrent-01"));
++        var second = executor.ExecuteAsync(ReturnCommand(db, task,
++            target: TaskWorkStatus.Completed, key: "complete-concurrent-01"));
++        var errors = await System.Threading.Tasks.Task.WhenAll(
++            Record.ExceptionAsync(async () => { await first; }),
++            Record.ExceptionAsync(async () => { await second; }));
++        Assert.Single(errors, e => e is null);
++        Assert.IsType<TaskLifecycleConcurrencyException>(Assert.Single(errors, e => e is not null));
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Contains(current.WorkStatus, new[] { TaskWorkStatus.InProgress, TaskWorkStatus.Completed });
++        AssertReturnEffects(db, task, current.WorkStatus);
++        await Assert.ThrowsAsync<TaskLifecycleConcurrencyException>(() =>
++            executor.ExecuteAsync(ReturnCommand(db, task, key: "return-stale-01")));
++        AssertReturnEffects(db, task, current.WorkStatus);
++    }
++
++    [Theory]
++    [InlineData("observer")]
++    [InlineData("outsider")]
++    [InlineData("watcher")]
++    [InlineData("explicit-deny")]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_PermissionAndObjectScope(string scenario)
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        if (scenario == "observer")
++        {
++            db.Sql("DELETE FROM iam.user_roles WHERE user_account_id=$1", db.User);
++            db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_observer"));
++        }
++        if (scenario == "explicit-deny")
++        {
++            db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'task.changestatus','deny')", db.Role("system_observer"));
++            db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_observer"));
++        }
++        if (scenario is "outsider" or "watcher")
++            db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.OtherUser, db.Role("system_employee"));
++        if (scenario == "watcher")
++        {
++            db.Sql("UPDATE work.tasks SET card_content=jsonb_set(card_content,'{watcherIds}',jsonb_build_array($2::text)) WHERE id=$1",
++                task.Metadata.Id, db.OtherUser.ToString("D"));
++            Assert.NotNull(await db.Runtime.CreateTaskReadStore().GetVisibleByIdAsync(db.Organization, task.Metadata.Id, db.OtherUser));
++        }
++        var command = ReturnCommand(db, task, otherActor: scenario is "outsider" or "watcher");
++        await Assert.ThrowsAsync<KeyNotFoundException>(() => db.ApiRuntime.CreateTaskWriteCommandExecutor().ExecuteAsync(command));
++        Assert.Equal(TaskWorkStatus.Review, db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!.WorkStatus);
++        Assert.Equal(0, db.Count("governance.audit_entries"));
++        Assert.Equal(0, db.Count("governance.domain_events"));
++        Assert.Equal(0, db.Count("governance.outbox_messages"));
++        Assert.Equal(0, db.Count("iam.idempotency_records"));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency()
++    {
++        using var db = Database.Create(); Assert.NotNull(db);
++        var task = SeedReturnTask(db);
++        db.Sql("""
++            INSERT INTO governance.domain_events(id,organization_id,aggregate_id,aggregate_type,
++                aggregate_version,event_type,actor_user_id,correlation_id,operation_id,idempotency_key,payload)
++            VALUES($1,$2,$3,'task',4,'TaskStatusChanged',$4,$5,'seed.return.conflict','seed-return-conflict','{}'::jsonb)
++            """, Guid.NewGuid(), db.Organization, task.Metadata.Id, db.User, Guid.NewGuid());
++
++        var error = await Assert.ThrowsAsync<PostgresException>(() =>
++            db.ApiRuntime.CreateTaskWriteCommandExecutor().ExecuteAsync(ReturnCommand(db, task)));
++
++        Assert.Equal(PostgresErrorCodes.UniqueViolation, error.SqlState);
++        var current = db.Runtime.CreateTaskStore().Get(task.Metadata.Id, db.Organization)!;
++        Assert.Equal(TaskWorkStatus.Review, current.WorkStatus);
++        Assert.Equal(3, current.Metadata.Version);
++        Assert.Equal(0, db.Count("governance.audit_entries"));
++        Assert.Equal(1, db.Count("governance.domain_events"));
++        Assert.Equal(0, db.Count("governance.outbox_messages"));
++        Assert.Equal(0, db.Count("iam.idempotency_records"));
++    }
++
++    private static TaskAggregate SeedReturnTask(Database db)
++    {
++        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id) VALUES($1,$2)", db.User, db.Role("system_employee"));
++        var now = DateTimeOffset.UtcNow.AddMinutes(-1);
++        var store = db.Runtime.CreateTaskStore();
++        var task = TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Return under review", now);
++        store.Add(task);
++        task = task.Start(db.User, now.AddSeconds(1)); store.Save(task, 1);
++        task = task.SubmitForReview(db.User, now.AddSeconds(2)); store.Save(task, 2);
++        return task;
++    }
++
++    private static TaskWriteCommand ReturnCommand(Database db, TaskAggregate task,
++        TaskWorkStatus target = TaskWorkStatus.InProgress, string key = "return-command-01", bool otherActor = false)
++    {
++        var context = new AuthenticatedRequestContext(otherActor ? db.OtherUser : db.User,
++            otherActor ? db.OtherSession : db.Session, db.Organization, 1, 1, Guid.NewGuid().ToString("D"), "task142");
++        var targetValue = target == TaskWorkStatus.InProgress ? "in_progress" : "completed";
++        return new TaskStatusTransitionCommandService(db.ApiRuntime.CreateTaskWriteCommandExecutor())
++            .CreateCommand(context, key, JsonSerializer.Serialize(new { targetStatus = targetValue }),
++                task.Metadata.Id, task.Metadata.Version, target, updated => new TaskWriteHttpResult(200,
++                    new Dictionary<string, string> { ["ETag"] = $"\"v{updated.Metadata.Version}\"" },
++                    JsonSerializer.Serialize(new { status = targetValue, version = updated.Metadata.Version }), task.Metadata.Id));
++    }
++
++    private static void AssertReturnEffects(Database db, TaskAggregate original, TaskWorkStatus status)
++    {
++        var current = db.Runtime.CreateTaskStore().Get(original.Metadata.Id, db.Organization)!;
++        Assert.Equal(status, current.WorkStatus);
++        Assert.Equal(4, current.Metadata.Version);
++        Assert.Equal(1, db.Count("governance.audit_entries"));
++        Assert.Equal(1, db.Count("governance.domain_events"));
++        Assert.Equal(1, db.Count("governance.outbox_messages"));
++        Assert.Equal(1, db.Count("iam.idempotency_records"));
++    }
++
++    private static T ScalarReturn<T>(Database db, string sql, Guid id)
++    {
++        using var command = db.Source.CreateCommand(sql);
++        command.Parameters.AddWithValue(id);
++        return (T)command.ExecuteScalar()!;
++    }
++}
+diff --git a/work/production/tests/Task.Tests/TaskAggregateTests.cs b/work/production/tests/Task.Tests/TaskAggregateTests.cs
+index a7820ae..47f7db0 100644
+--- a/work/production/tests/Task.Tests/TaskAggregateTests.cs
++++ b/work/production/tests/Task.Tests/TaskAggregateTests.cs
+@@ -106,7 +106,7 @@ public sealed class TaskAggregateTests
+     }
+ 
+     [Fact]
+-    public void Start_ThrowsFromAnyNonNewStatus()
++    public void Start_ThrowsFromInProgressAndTerminalStatuses()
+     {
+         var inProgress = NewTask().Start(CreatorId, CreatedAt.AddMinutes(1));
+         var completed = NewTask().Complete(CreatorId, CreatedAt.AddMinutes(1));
+@@ -117,6 +117,32 @@ public sealed class TaskAggregateTests
+         Assert.Throws<InvalidOperationException>(() => cancelled.Start(EditorId, CreatedAt.AddMinutes(2)));
+     }
+ 
++    [Fact]
++    public void Start_ReturnsReviewToInProgressPreservingTaskContent()
++    {
++        var reviewed = NewTask()
++            .ChangePriority(CreatorId, TaskPriority.High, CreatedAt.AddMinutes(1))
++            .Reschedule(CreatorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(2))
++            .Start(CreatorId, CreatedAt.AddMinutes(3))
++            .SubmitForReview(CreatorId, CreatedAt.AddMinutes(4));
++
++        var returned = reviewed.Start(EditorId, CreatedAt.AddMinutes(5));
++
++        Assert.Equal(TaskWorkStatus.InProgress, returned.WorkStatus);
++        Assert.Equal(TaskWorkStatus.Review, reviewed.WorkStatus);
++        Assert.Equal(reviewed.Metadata.Version + 1, returned.Metadata.Version);
++        Assert.Equal(EditorId, returned.Metadata.UpdatedBy);
++        Assert.Equal(CreatedAt.AddMinutes(5), returned.Metadata.UpdatedAtUtc);
++        Assert.Equal(reviewed.Title, returned.Title);
++        Assert.Equal(reviewed.Priority, returned.Priority);
++        Assert.Equal(reviewed.Schedule, returned.Schedule);
++        Assert.Equal(reviewed.Content, returned.Content);
++        Assert.Null(returned.CompletedAtUtc);
++        Assert.Null(returned.CompletedBy);
++        Assert.Equal(TaskWorkStatus.Review,
++            returned.SubmitForReview(EditorId, CreatedAt.AddMinutes(6)).WorkStatus);
++    }
++
+     [Fact]
+     public void SubmitForReview_MovesInProgressToReview()
+     {
+@@ -616,4 +642,4 @@ public sealed class TaskAggregateTests
+ 
+     private static TaskAggregate NewTask() =>
+         TaskAggregate.Create(TaskId, OrganizationId, CreatorId, "Implement login screen", CreatedAt);
+-}
+\ No newline at end of file
++}

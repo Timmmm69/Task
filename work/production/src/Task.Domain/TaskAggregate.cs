@@ -141,7 +141,7 @@ public sealed class TaskAggregate
         EnsureActive("An archived or trashed task must be restored before it can be started.");
         if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.InProgress))
         {
-            throw new InvalidOperationException("Only a new task can be started.");
+            throw new InvalidOperationException("Only a new task or a task under review can move to in progress.");
         }
 
         return new TaskAggregate(

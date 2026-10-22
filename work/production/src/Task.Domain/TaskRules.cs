@@ -26,7 +26,7 @@ public static class TaskRules
 
     public static bool CanTransition(TaskWorkStatus current, TaskWorkStatus target) => (current, target) switch
     {
-        (TaskWorkStatus.New, TaskWorkStatus.InProgress) => true,
+        (TaskWorkStatus.New or TaskWorkStatus.Review, TaskWorkStatus.InProgress) => true,
         (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => true,
         (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review,
             TaskWorkStatus.Completed or TaskWorkStatus.Cancelled) => true,

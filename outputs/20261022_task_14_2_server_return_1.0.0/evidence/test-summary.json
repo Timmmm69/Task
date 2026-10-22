@@ -1,0 +1,37 @@
+[
+  {
+    "notExecuted": 0,
+    "run": "server-return",
+    "passed": 60,
+    "failed": 0,
+    "total": 60
+  },
+  {
+    "notExecuted": 0,
+    "run": "domain-pg16-return",
+    "passed": 92,
+    "failed": 0,
+    "total": 92
+  },
+  {
+    "notExecuted": 0,
+    "run": "return-final-pg16",
+    "passed": 26,
+    "failed": 0,
+    "total": 26
+  },
+  {
+    "notExecuted": 0,
+    "run": "desktop-regression",
+    "passed": 132,
+    "failed": 0,
+    "total": 132
+  },
+  {
+    "notExecuted": 0,
+    "run": "shared-rules-regression",
+    "passed": 174,
+    "failed": 0,
+    "total": 174
+  }
+]

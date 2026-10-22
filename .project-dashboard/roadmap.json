@@ -470,10 +470,11 @@
       "progress": 100,
       "evidence": [
         "work/production/src/Task.Api/Tasks/TaskEndpoints.cs",
-        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128"
+        "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: endpoint tests 128/128",
+        "outputs/20261022_task_14_2_server_return_1.0.0/validation-report.md: review -> in_progress, HTTP matrix, PostgreSQL 16 atomicity/replay/scope/history/audit"
       ],
-      "note": "Базовый task API vertical slice подтверждён.",
-      "updated_at": "2026-08-30T16:20:00+03:00",
+      "note": "Базовый task API vertical slice подтверждён. 2026-10-22: по утверждённому исправлению 14.2 добавлен review → in_progress через существующий transition endpoint. Проверены права, версии, атомарность, replay, история и аудит на PostgreSQL 16; DTO, миграции и уведомления не изменены. Progress/status сохранены.",
+      "updated_at": "2026-10-22T13:08:11+03:00",
       "priority": 4,
       "dependencies": [
         "DATA-02"

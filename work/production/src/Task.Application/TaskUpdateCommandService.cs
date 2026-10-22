@@ -351,7 +351,7 @@ public sealed class TaskStatusTransitionCommandService
         Guid actorId,
         DateTimeOffset now) => (task.WorkStatus, target) switch
         {
-            (TaskWorkStatus.New, TaskWorkStatus.InProgress) => task.Start(actorId, now),
+            (TaskWorkStatus.New or TaskWorkStatus.Review, TaskWorkStatus.InProgress) => task.Start(actorId, now),
             (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => task.SubmitForReview(actorId, now),
             (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review, TaskWorkStatus.Completed) =>
                 task.Complete(actorId, now),

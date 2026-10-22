@@ -10,6 +10,7 @@ public sealed partial class TodayViewModelTests
     public static IEnumerable<object[]> QuickTransitions()
     {
         var allowed = new[] { (DesktopTaskStatus.New, DesktopTaskStatus.InProgress),
+            (DesktopTaskStatus.Review, DesktopTaskStatus.InProgress),
             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Review),
             (DesktopTaskStatus.New, DesktopTaskStatus.Completed), (DesktopTaskStatus.New, DesktopTaskStatus.Cancelled),
             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Completed), (DesktopTaskStatus.InProgress, DesktopTaskStatus.Cancelled),

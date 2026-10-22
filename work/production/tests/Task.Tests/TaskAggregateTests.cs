@@ -106,7 +106,7 @@ public sealed class TaskAggregateTests
     }
 
     [Fact]
-    public void Start_ThrowsFromAnyNonNewStatus()
+    public void Start_ThrowsFromInProgressAndTerminalStatuses()
     {
         var inProgress = NewTask().Start(CreatorId, CreatedAt.AddMinutes(1));
         var completed = NewTask().Complete(CreatorId, CreatedAt.AddMinutes(1));
@@ -115,6 +115,32 @@ public sealed class TaskAggregateTests
         Assert.Throws<InvalidOperationException>(() => inProgress.Start(EditorId, CreatedAt.AddMinutes(2)));
         Assert.Throws<InvalidOperationException>(() => completed.Start(EditorId, CreatedAt.AddMinutes(2)));
         Assert.Throws<InvalidOperationException>(() => cancelled.Start(EditorId, CreatedAt.AddMinutes(2)));
+    }
+
+    [Fact]
+    public void Start_ReturnsReviewToInProgressPreservingTaskContent()
+    {
+        var reviewed = NewTask()
+            .ChangePriority(CreatorId, TaskPriority.High, CreatedAt.AddMinutes(1))
+            .Reschedule(CreatorId, DeadlineOnlySchedule(), CreatedAt.AddMinutes(2))
+            .Start(CreatorId, CreatedAt.AddMinutes(3))
+            .SubmitForReview(CreatorId, CreatedAt.AddMinutes(4));
+
+        var returned = reviewed.Start(EditorId, CreatedAt.AddMinutes(5));
+
+        Assert.Equal(TaskWorkStatus.InProgress, returned.WorkStatus);
+        Assert.Equal(TaskWorkStatus.Review, reviewed.WorkStatus);
+        Assert.Equal(reviewed.Metadata.Version + 1, returned.Metadata.Version);
+        Assert.Equal(EditorId, returned.Metadata.UpdatedBy);
+        Assert.Equal(CreatedAt.AddMinutes(5), returned.Metadata.UpdatedAtUtc);
+        Assert.Equal(reviewed.Title, returned.Title);
+        Assert.Equal(reviewed.Priority, returned.Priority);
+        Assert.Equal(reviewed.Schedule, returned.Schedule);
+        Assert.Equal(reviewed.Content, returned.Content);
+        Assert.Null(returned.CompletedAtUtc);
+        Assert.Null(returned.CompletedBy);
+        Assert.Equal(TaskWorkStatus.Review,
+            returned.SubmitForReview(EditorId, CreatedAt.AddMinutes(6)).WorkStatus);
     }
 
     [Fact]

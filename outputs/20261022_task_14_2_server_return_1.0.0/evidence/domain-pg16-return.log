@@ -1,0 +1,5 @@
+Тестовый запуск для C:\Users\novik\Таск\work\status_return_14_2\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\status_return_14_2\repo\work\task_14_2_evidence\domain-pg16-return.trx
+
+Пройден!   : не пройдено     0, пройдено    92, пропущено     0, всего    92, длительность 28 s. - Task.Tests.dll (net10.0)

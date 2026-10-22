@@ -1,0 +1,42 @@
+[
+  {
+    "sha256": "97a9c3946a65ef9e6930a5c5af9ca1e45c012f6c65ebf7c55f83d3367edf8b70",
+    "path": ".project-dashboard/roadmap.json"
+  },
+  {
+    "sha256": "20427e042ae9089a1462bb3c2287e4ca06874a82560dab673cdc53002d425a46",
+    "path": "work/production/docs/task-14-2-return-contract-decision.md"
+  },
+  {
+    "sha256": "7fd9b76c16a7ec91711e1ab2bab6030ea89523ce34cf3f12a706b8923a161e47",
+    "path": "work/production/src/Task.Application/TaskUpdateCommandService.cs"
+  },
+  {
+    "sha256": "63292fd4ecb03e357e602af23a440c029b3010b53254899200204b3b31032131",
+    "path": "work/production/src/Task.Domain/TaskAggregate.cs"
+  },
+  {
+    "sha256": "cb52894d46ceb13fe8d776b1ea99a6c9464754b8a098e01f234a21df93bc0088",
+    "path": "work/production/src/Task.Domain/TaskRules.cs"
+  },
+  {
+    "sha256": "2c90282665d8689db168b2bb8947017e40bdeb66fe6ea4ffaf8f027c2535727b",
+    "path": "work/production/tests/Task.Desktop.Tests/Today/TodayQuickActionsTests.cs"
+  },
+  {
+    "sha256": "ad42f6b56b5e4cea2ce6da4043839ed63e33c7f638fe5ffab9cbb9471b6b584e",
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskReturnEndpointsTests.cs"
+  },
+  {
+    "sha256": "3b85b0cd4fd37e21ad2cc5655b9a8a2ae8a4144829eea7034b1c7e203caeea8a",
+    "path": "work/production/tests/Task.ServiceHosts.Tests/TaskTransitionEndpointsTests.cs"
+  },
+  {
+    "sha256": "1cd592dcf3390c5711bf467ee135d61c722f286acec4a296d90af6a31ca0827d",
+    "path": "work/production/tests/Task.Tests/PostgresTaskReturnTests.cs"
+  },
+  {
+    "sha256": "28ab7680b78b1e3e10b16c14238328fea69d231be9caab46fa58edac5480f6ee",
+    "path": "work/production/tests/Task.Tests/TaskAggregateTests.cs"
+  }
+]

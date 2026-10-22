@@ -15,6 +15,7 @@ public sealed partial class TaskEndpointsTests
     public static TheoryData<TaskWorkStatus, TaskWorkStatus> AllowedTransitions => new()
     {
         { TaskWorkStatus.New, TaskWorkStatus.InProgress },
+        { TaskWorkStatus.Review, TaskWorkStatus.InProgress },
         { TaskWorkStatus.InProgress, TaskWorkStatus.Review },
         { TaskWorkStatus.New, TaskWorkStatus.Completed },
         { TaskWorkStatus.InProgress, TaskWorkStatus.Completed },
