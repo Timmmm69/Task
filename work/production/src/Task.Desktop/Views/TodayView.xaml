@@ -588,6 +588,10 @@
                                             Visibility="{Binding CanStart, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
                                             Command="{Binding TransitionCommand}" CommandParameter="InProgress"
                                             AutomationProperties.Name="Начать работу" AutomationProperties.AutomationId="TodayStartButton" />
+                                    <Button Content="Вернуть на доработку" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"
+                                            Visibility="{Binding CanReturnForRework, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                            Command="{Binding TransitionCommand}" CommandParameter="InProgress"
+                                            AutomationProperties.Name="Вернуть на доработку" AutomationProperties.AutomationId="TodayReturnForReworkButton" />
                                     <Button Content="Отправить на проверку" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"
                                             Visibility="{Binding CanSubmitForReview, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
                                             Command="{Binding TransitionCommand}" CommandParameter="Review"
@@ -604,7 +608,7 @@
                                 <StackPanel Visibility="{Binding IsTransitionConfirmationVisible, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                                     <TextBlock Text="{Binding PendingTransitionText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
                                     <WrapPanel Margin="0,8,0,0">
-                                        <Button x:Name="TodayConfirmTransitionButton" Content="Подтвердить" Command="{Binding ConfirmTransitionCommand}"
+                                        <Button x:Name="TodayConfirmTransitionButton" Content="{Binding TransitionConfirmationLabel}" Command="{Binding ConfirmTransitionCommand}"
                                                 Style="{StaticResource Task.Button.Secondary}" Margin="0,0,6,6"
                                                 AutomationProperties.Name="Подтвердить изменение статуса" AutomationProperties.AutomationId="TodayConfirmTransitionButton" />
                                         <Button Content="Вернуться" Command="{Binding CancelTransitionCommand}"

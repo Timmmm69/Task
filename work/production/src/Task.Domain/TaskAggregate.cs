@@ -139,9 +139,27 @@ public sealed class TaskAggregate
     public TaskAggregate Start(Guid actorId, DateTimeOffset occurredAtUtc)
     {
         EnsureActive("An archived or trashed task must be restored before it can be started.");
-        if (!TaskRules.CanTransition(WorkStatus, TaskWorkStatus.InProgress))
+        if (WorkStatus != TaskWorkStatus.New)
         {
-            throw new InvalidOperationException("Only a new task or a task under review can move to in progress.");
+            throw new InvalidOperationException("Only a new task can be started.");
+        }
+
+        return new TaskAggregate(
+            Metadata.RecordVisibleChange(actorId, occurredAtUtc),
+            Title,
+            TaskWorkStatus.InProgress,
+            CompletedAtUtc,
+            CompletedBy,
+            Priority,
+            Schedule, Content);
+    }
+
+    public TaskAggregate ReturnForRework(Guid actorId, DateTimeOffset occurredAtUtc)
+    {
+        EnsureActive("An archived or trashed task must be restored before it can be returned for rework.");
+        if (WorkStatus != TaskWorkStatus.Review)
+        {
+            throw new InvalidOperationException("Only a task under review can be returned for rework.");
         }
 
         return new TaskAggregate(

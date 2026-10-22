@@ -419,7 +419,9 @@ public sealed class TaskUpdateTests
             var createService = new TaskCreateCommandService(executor);
             var updateService = new TaskUpdateCommandService(executor);
             var taskId = Guid.NewGuid();
-            var context = Context(organizationId, actorUserId, sessionId);
+            var scopeVersion = await ScalarAsync<long>(dataSource,
+                "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", actorUserId);
+            var context = new AuthenticatedRequestContext(actorUserId, sessionId, organizationId, 1, scopeVersion, Guid.NewGuid().ToString("D"), "trace");
             var createdAt = new DateTimeOffset(2026, 8, 26, 10, 0, 0, TimeSpan.Zero);
 
             var createCommand = createService.CreateCommand(
@@ -528,8 +530,12 @@ public sealed class TaskUpdateTests
             Assert.Equal(TaskWriteCommandDisposition.IdempotencyKeyReused, (await updateService.ExecuteAsync(reused.Command)).Disposition);
             await AssertUpdateEffectsAsync(dataSource, organizationId, taskId, expected: 1);
 
+            using (var foreignGrant = dataSource.CreateCommand("INSERT INTO iam.user_roles(user_account_id,role_id) SELECT $1,id FROM iam.roles WHERE organization_id=$2 AND code='system_employee';"))
+            { foreignGrant.Parameters.AddWithValue(otherUserId); foreignGrant.Parameters.AddWithValue(otherOrganizationId); await foreignGrant.ExecuteNonQueryAsync(); }
+            var foreignScopeVersion = await ScalarAsync<long>(dataSource,
+                "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", otherUserId);
             var foreign = updateService.CreateCommand(
-                Context(otherOrganizationId, otherUserId, otherSessionId),
+                new AuthenticatedRequestContext(otherUserId, otherSessionId, otherOrganizationId, 1, foreignScopeVersion, Guid.NewGuid().ToString("D"), "trace"),
                 "patch-pg-key-04",
                 """{"title":"Foreign"}""",
                 taskId,

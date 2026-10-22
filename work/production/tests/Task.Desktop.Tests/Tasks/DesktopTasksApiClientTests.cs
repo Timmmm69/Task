@@ -416,6 +416,50 @@ public sealed class DesktopTasksApiClientTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task Return_BlockedAccountEndsWriteAccess()
+    {
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(ProblemResponse(HttpStatusCode.Locked, "ACCOUNT_BLOCKED")));
+        var command = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.InProgress, null);
+        Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure>(await fixture.Client.TransitionTaskAsync(command));
+        Assert.Single(fixture.TaskRequests);
+        Assert.Equal(0, fixture.RefreshRequests);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async global::System.Threading.Tasks.Task Return_RetryPreservesVersionBodyAndIdempotencyKey(bool expiredSession)
+    {
+        var attempt = 0;
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+        {
+            if (++attempt == 1)
+            {
+                if (!expiredSession) throw new HttpRequestException("Connection lost after request was sent.");
+                return global::System.Threading.Tasks.Task.FromResult(ProblemResponse(HttpStatusCode.Unauthorized, "SESSION_EXPIRED"));
+            }
+            return global::System.Threading.Tasks.Task.FromResult(WriteSuccess(HttpStatusCode.OK, replayed: true));
+        });
+        var command = new DesktopTransitionTaskCommand(TaskId, 6, DesktopTaskStatus.InProgress, null);
+        var result = await fixture.Client.TransitionTaskAsync(command);
+        if (!expiredSession)
+        {
+            Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable>(result);
+            Assert.Single(fixture.TaskRequests);
+            result = await fixture.Client.TransitionTaskAsync(command);
+        }
+        Assert.True(Assert.IsType<DesktopTaskWriteResult<DesktopTaskDto>.Succeeded>(result).WasReplayed);
+        var requests = fixture.TaskRequests.ToArray();
+        Assert.Equal(2, requests.Length);
+        Assert.All(requests, r => Assert.Equal("\"v6\"", r.IfMatch));
+        Assert.All(requests, r => Assert.Equal(command.IdempotencyKey, r.IdempotencyKey));
+        Assert.Equal(requests[0].BodyBytes, requests[1].BodyBytes);
+        Assert.Equal("{\"targetStatus\":\"in_progress\",\"reason\":null}", requests[0].Body);
+        Assert.Equal(expiredSession ? 1 : 0, fixture.RefreshRequests);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task Write401_ReusesBodyHeadersAndKey_ForExactlyOneRetry()
     {
         var attempt = 0;

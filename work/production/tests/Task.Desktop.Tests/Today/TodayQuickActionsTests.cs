@@ -20,6 +20,30 @@ public sealed partial class TodayViewModelTests
             yield return [from, to, allowed.Contains((from, to))];
     }
 
+    [Fact]
+    public async AsyncTask QuickActions_ReturnIsSeparateFromStartAndRequiresConfirmation()
+    {
+        var task = QuickTask() with { Status = DesktopTaskStatus.Review };
+        var client = new QuickClient(task);
+        using var vm = QuickVm(client);
+        await vm.ActivateAsync();
+        Assert.False(vm.CanStart);
+        Assert.True(vm.CanReturnForRework);
+        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
+        Assert.Empty(client.Commands);
+        Assert.Equal("Вернуть задачу на доработку?", vm.PendingTransitionText);
+        Assert.Equal("Вернуть", vm.TransitionConfirmationLabel);
+        await vm.CancelTransitionCommand.ExecuteAsync();
+        Assert.Empty(client.Commands);
+        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
+        await vm.ConfirmTransitionCommand.ExecuteAsync();
+        var sent = Assert.Single(client.Commands);
+        Assert.Null(sent.Reason);
+        Assert.Equal(task.Version, sent.ExpectedVersion);
+        Assert.False(vm.CanReturnForRework);
+        Assert.False(vm.CanStart);
+    }
+
     [Theory]
     [MemberData(nameof(QuickTransitions))]
     public async AsyncTask QuickActions_ObeyAllCanonicalTransitions(DesktopTaskStatus from, DesktopTaskStatus to, bool allowed)
@@ -31,7 +55,8 @@ public sealed partial class TodayViewModelTests
         Assert.Equal(allowed, vm.TransitionCommand.CanExecute(to));
         Assert.Equal(allowed, await vm.TransitionCommand.ExecuteAsync(to));
         if (!allowed) { Assert.Empty(client.Commands); return; }
-        if (to is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)
+        if (to is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled
+            || from == DesktopTaskStatus.Review && to == DesktopTaskStatus.InProgress)
         {
             Assert.Empty(client.Commands);
             Assert.True(vm.IsTransitionConfirmationVisible);

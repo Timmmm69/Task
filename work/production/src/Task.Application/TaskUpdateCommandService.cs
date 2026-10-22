@@ -101,7 +101,11 @@ public sealed class TaskUpdateCommandService
                     model.DeadlineAt, currentTask.Content.Apply(model.CardPatch));
                 return new TaskWriteMutationResult(updated, createHttpResult(updated), changedFields);
             })
-        { RevalidatePermissions = true };
+        {
+            RevalidatePermissions = true,
+            ExpectedCredentialVersion = context.CredentialVersion,
+            ExpectedAuthorizationScopeVersion = context.AuthorizationScopeVersion,
+        };
 
         return new TaskUpdatePreparation(command);
     }
@@ -337,7 +341,11 @@ public sealed class TaskStatusTransitionCommandService
                 });
                 return new TaskWriteMutationResult(updated, createHttpResult(updated), SafePayloadJson: payload);
             })
-        { RevalidatePermissions = true };
+        {
+            RevalidatePermissions = true,
+            ExpectedCredentialVersion = context.CredentialVersion,
+            ExpectedAuthorizationScopeVersion = context.AuthorizationScopeVersion,
+        };
     }
 
     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(
@@ -351,7 +359,8 @@ public sealed class TaskStatusTransitionCommandService
         Guid actorId,
         DateTimeOffset now) => (task.WorkStatus, target) switch
         {
-            (TaskWorkStatus.New or TaskWorkStatus.Review, TaskWorkStatus.InProgress) => task.Start(actorId, now),
+            (TaskWorkStatus.New, TaskWorkStatus.InProgress) => task.Start(actorId, now),
+            (TaskWorkStatus.Review, TaskWorkStatus.InProgress) => task.ReturnForRework(actorId, now),
             (TaskWorkStatus.InProgress, TaskWorkStatus.Review) => task.SubmitForReview(actorId, now),
             (TaskWorkStatus.New or TaskWorkStatus.InProgress or TaskWorkStatus.Review, TaskWorkStatus.Completed) =>
                 task.Complete(actorId, now),

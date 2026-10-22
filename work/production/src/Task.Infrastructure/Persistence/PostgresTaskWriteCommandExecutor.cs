@@ -2,6 +2,7 @@ using System.Text.Json;
 using Npgsql;
 using NpgsqlTypes;
 using Task.Application;
+using Task.Application.Security;
 
 namespace Task.Infrastructure.Persistence;
 
@@ -36,6 +37,9 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
         {
             using (var scopeLock = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtextextended('task-product-api:' || $1::text,0));", connection, transaction))
             { scopeLock.Parameters.AddWithValue(command.OrganizationId); await scopeLock.ExecuteNonQueryAsync(cancellationToken); }
+            // A request can wait here after HTTP authentication. Recheck before any
+            // idempotency result, including replay, and lock the session until commit.
+            await ValidateActorSessionAsync(connection, transaction, command, cancellationToken);
             if (command.RevalidatePermissions)
             {
                 using var access = new NpgsqlCommand("SELECT iam.permission_available($1,$2,$3);", connection, transaction);
@@ -91,7 +95,6 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
                 throw new InvalidOperationException("PostgreSQL returned an unknown idempotency disposition.");
             }
 
-            await ValidateActorSessionAsync(connection, transaction, command, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
             var current = PostgresTaskAggregateStore.Get(
@@ -314,21 +317,40 @@ public sealed class PostgresTaskWriteCommandExecutor : ITaskWriteCommandExecutor
 
         await using var check = new NpgsqlCommand(
             """
-            SELECT EXISTS (
-                SELECT 1
-                FROM iam.sessions
-                WHERE id = $1 AND organization_id = $2 AND user_account_id = $3
-            );
+            SELECT CASE
+                WHEN s.revoked_at IS NOT NULL THEN 'revoked'
+                WHEN s.idle_expires_at <= clock_timestamp()
+                    OR s.absolute_expires_at <= clock_timestamp() THEN 'expired'
+                WHEN d.revoked_at IS NOT NULL THEN 'revoked'
+                WHEN ua.account_status <> 'active' THEN 'blocked'
+                WHEN ua.must_change_password AND ua.temporary_password_expires_at <= clock_timestamp() THEN 'expired'
+                WHEN $4::bigint IS NOT NULL AND ua.credential_version <> $4 THEN 'version_mismatch'
+                WHEN $5::bigint IS NOT NULL AND (av.version IS NULL OR av.version <> $5) THEN 'version_mismatch'
+                ELSE 'active'
+            END
+            FROM iam.sessions s
+            JOIN iam.user_accounts ua ON ua.id=s.user_account_id AND ua.organization_id=s.organization_id
+            LEFT JOIN iam.devices d ON d.id=s.device_id AND d.organization_id=s.organization_id
+            LEFT JOIN iam.authorization_scope_versions av ON av.user_account_id=ua.id
+            WHERE s.id=$1 AND s.organization_id=$2 AND s.user_account_id=$3
+            FOR SHARE OF s, ua;
             """,
             connection,
             transaction);
         check.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.ActorSessionId.Value });
         check.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.OrganizationId });
         check.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = command.ActorUserId });
-        if (!(bool)(await check.ExecuteScalarAsync(cancellationToken) ?? false))
+        check.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Bigint, Value = (object?)command.ExpectedCredentialVersion ?? DBNull.Value });
+        check.Parameters.Add(new NpgsqlParameter { NpgsqlDbType = NpgsqlDbType.Bigint, Value = (object?)command.ExpectedAuthorizationScopeVersion ?? DBNull.Value });
+        var state = await check.ExecuteScalarAsync(cancellationToken) switch
         {
-            throw new InvalidOperationException("Actor session is outside the command tenant or user scope.");
-        }
+            "active" => SessionRequestState.Active,
+            "revoked" => SessionRequestState.SessionRevoked,
+            "blocked" => SessionRequestState.AccountBlocked,
+            "version_mismatch" => SessionRequestState.VersionMismatch,
+            _ => SessionRequestState.SessionExpired,
+        };
+        if (state != SessionRequestState.Active) throw new TaskWriteSessionException(state);
     }
 
     private static async global::System.Threading.Tasks.Task AppendAuditAsync(

@@ -1,4 +1,5 @@
 using System.Net;
+using Task.Application;
 using Task.Application.Security;
 using Task.Domain;
 
@@ -6,6 +7,45 @@ namespace Task.ServiceHosts.Tests;
 
 public sealed partial class TaskEndpointsTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async System.Threading.Tasks.Task TaskWrite_CreateAndPatchHandleSessionRevokedDuringWrite(bool patch)
+    {
+        var original = TaskInStatus(TaskWorkStatus.Review);
+        var executor = new FakeUpdateExecutor
+        { Current = original, Throw = new TaskWriteSessionException(SessionRequestState.SessionRevoked) };
+        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
+            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var request = new HttpRequestMessage(patch ? HttpMethod.Patch : HttpMethod.Post,
+            patch ? $"/api/v1/tasks/{original.Metadata.Id:D}" : "/api/v1/tasks")
+        { Content = new StringContent("{\"title\":\"Session guard\"}", System.Text.Encoding.UTF8, "application/json") };
+        request.Headers.Add("Idempotency-Key", "audit-session-guard-01");
+        if (patch) request.Headers.TryAddWithoutValidation("If-Match", "\"v7\"");
+        await AssertProblemAsync(await client.SendAsync(request), HttpStatusCode.Unauthorized, "SESSION_REVOKED");
+        Assert.Same(original, executor.Current);
+        Assert.Equal(0, executor.MutationCalls);
+    }
+
+    [Theory]
+    [InlineData(SessionRequestState.SessionRevoked, 401, "SESSION_REVOKED")]
+    [InlineData(SessionRequestState.SessionExpired, 401, "SESSION_EXPIRED")]
+    [InlineData(SessionRequestState.VersionMismatch, 401, "SESSION_EXPIRED")]
+    [InlineData(SessionRequestState.AccountBlocked, 423, "ACCOUNT_BLOCKED")]
+    public async System.Threading.Tasks.Task ReturnTask_SessionInvalidatedAfterAuthentication(
+        SessionRequestState state, int expectedStatus, string code)
+    {
+        var original = TaskInStatus(TaskWorkStatus.Review);
+        var executor = new FakeUpdateExecutor { Current = original, Throw = new TaskWriteSessionException(state) };
+        using var server = CreateServer(new FakeTaskReadStore(ToProjection(original)),
+            writeExecutor: executor, aggregateStore: new FakeUpdateAggregateStore(original));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        await AssertProblemAsync(await TransitionTaskAsync(client, TaskWorkStatus.InProgress, 7), (HttpStatusCode)expectedStatus, code);
+        Assert.Same(original, executor.Current);
+        Assert.Equal(0, executor.MutationCalls);
+    }
+
     [Theory]
     [InlineData("{\"targetStatus\":\"in_progress\"}")]
     [InlineData("{\"targetStatus\":\"in_progress\",\"reason\":null}")]

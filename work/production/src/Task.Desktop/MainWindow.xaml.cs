@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     private bool _modeTransitionClose;
     public event Action? SwitchModeRequested;
     private FrameworkElement? _overlayReturnFocus;
+    private FrameworkElement? _transitionReturnFocus;
     private readonly Dictionary<Guid, IInputElement?> _completionReturnFocus = [];
     private readonly MainWindowViewModel _viewModel;
 
@@ -154,8 +155,37 @@ public partial class MainWindow : Window
 
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(TasksViewModel.IsTransitionConfirmationVisible)
+            && sender is TasksViewModel tasks)
+        {
+            if (tasks.IsTransitionConfirmationVisible && TaskDetailsArea.IsKeyboardFocusWithin)
+            {
+                _transitionReturnFocus = Keyboard.FocusedElement as FrameworkElement;
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+                {
+                    if (tasks.IsActive && tasks.IsTransitionConfirmationVisible
+                        && TaskDetailsArea.IsVisible && TaskDetailsArea.IsKeyboardFocusWithin)
+                        FocusAutomationTarget(TaskDetailsArea, "ConfirmTransitionButton");
+                });
+            }
+            else if (!tasks.IsTransitionConfirmationVisible && _transitionReturnFocus is { } origin)
+            {
+                _transitionReturnFocus = null;
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+                {
+                    if (!tasks.IsActive || tasks.IsTransitionConfirmationVisible || tasks.Editor is not null
+                        || !TaskDetailsArea.IsVisible || !TaskDetailsArea.IsKeyboardFocusWithin) return;
+                    // The originating action may disappear after a status/filter change.
+                    if (origin.IsVisible && origin.IsEnabled) { origin.BringIntoView(); origin.Focus(); }
+                    else TasksList.Focus();
+                });
+            }
+        }
         if (e.PropertyName == nameof(TasksViewModel.IsActive) && sender is TasksViewModel { IsActive: false })
+        {
             _completionReturnFocus.Clear();
+            _transitionReturnFocus = null;
+        }
         if (e.PropertyName == nameof(TasksViewModel.Editor) && sender is TasksViewModel { Editor: null })
             Dispatcher.BeginInvoke(DispatcherPriority.Input, () => { if (TasksList.IsVisible && TasksList.IsEnabled) TasksList.Focus(); });
         if (e.PropertyName != nameof(TasksViewModel.Editor)
@@ -279,8 +309,12 @@ public partial class MainWindow : Window
         () => FocusAutomationTarget(ContentRegion, "InboxCaptureTextBox"));
     private static bool FocusAutomationTarget(DependencyObject root, string id)
     {
-        if (root is UIElement element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == id)
+        if (root is FrameworkElement element && System.Windows.Automation.AutomationProperties.GetAutomationId(element) == id)
+        {
+            if (!element.IsVisible || !element.IsEnabled) return false;
+            element.BringIntoView();
             return element.Focus();
+        }
         for (var index = 0; index < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); index++)
             if (FocusAutomationTarget(System.Windows.Media.VisualTreeHelper.GetChild(root, index), id)) return true;
         return false;

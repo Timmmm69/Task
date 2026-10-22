@@ -26,12 +26,17 @@ public sealed partial class TodayViewModel
     public bool IsActionBusy => _isActionBusy;
     public bool NeedsTaskReload => ShowTaskActions && (SelectedTask is null
         || _tasksNeedingReload.Contains(SelectedItem!.Id));
-    public bool CanStart => CanShowTransition(DesktopTaskStatus.InProgress);
+    public bool CanStart => SelectedTask?.Status == DesktopTaskStatus.New && CanShowTransition(DesktopTaskStatus.InProgress);
+    public bool CanReturnForRework => SelectedTask?.Status == DesktopTaskStatus.Review && CanShowTransition(DesktopTaskStatus.InProgress);
     public bool CanSubmitForReview => CanShowTransition(DesktopTaskStatus.Review);
     public bool CanComplete => CanShowTransition(DesktopTaskStatus.Completed);
     public bool CanCancel => CanShowTransition(DesktopTaskStatus.Cancelled);
     public bool IsTransitionConfirmationVisible => _confirmation?.Id == SelectedItem?.Id && _confirmation is not null;
-    public string PendingTransitionText => _confirmation?.TargetStatus == DesktopTaskStatus.Completed
+    private bool IsReturnForReworkConfirmation => _confirmation?.TargetStatus == DesktopTaskStatus.InProgress
+        && SelectedTask?.Status == DesktopTaskStatus.Review;
+    public string TransitionConfirmationLabel => IsReturnForReworkConfirmation ? "Вернуть" : "Подтвердить";
+    public string PendingTransitionText => IsReturnForReworkConfirmation ? "Вернуть задачу на доработку?"
+        : _confirmation?.TargetStatus == DesktopTaskStatus.Completed
         ? "Завершить задачу? Действие нельзя отменить."
         : "Отменить задачу? Действие нельзя отменить.";
     public string? ActionMessage { get => _actionMessage; private set => SetProperty(ref _actionMessage, value); }
@@ -62,7 +67,8 @@ public sealed partial class TodayViewModel
             var command = _unconfirmedCommands.GetValueOrDefault(task.Id)
                 ?? new DesktopTransitionTaskCommand(task.Id, task.Version, target);
             ActionMessage = null;
-            if (target is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)
+            if (target is DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled
+                || task.Status == DesktopTaskStatus.Review && target == DesktopTaskStatus.InProgress)
             {
                 _confirmation = command;
                 NotifyQuickActions();
@@ -101,9 +107,9 @@ public sealed partial class TodayViewModel
     private void NotifyQuickActions()
     {
         NotifyPlanning();
-        foreach (var property in new[] { nameof(ShowTaskActions), nameof(NeedsTaskReload), nameof(CanStart),
+        foreach (var property in new[] { nameof(ShowTaskActions), nameof(NeedsTaskReload), nameof(CanStart), nameof(CanReturnForRework),
             nameof(CanSubmitForReview), nameof(CanComplete), nameof(CanCancel),
-            nameof(IsTransitionConfirmationVisible), nameof(PendingTransitionText) }) OnPropertyChanged(property);
+            nameof(IsTransitionConfirmationVisible), nameof(PendingTransitionText), nameof(TransitionConfirmationLabel) }) OnPropertyChanged(property);
         TransitionCommand?.RaiseCanExecuteChanged();
         ConfirmTransitionCommand?.RaiseCanExecuteChanged();
         CancelTransitionCommand?.RaiseCanExecuteChanged();

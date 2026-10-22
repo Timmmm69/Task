@@ -614,14 +614,25 @@
                     </StackPanel>
                 </Border>
 
-                <Grid Grid.Row="3">
+                <ScrollViewer x:Name="TasksContentViewport" Grid.Row="3"
+                              Visibility="{Binding HasItems, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                              VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid x:Name="TasksContentGrid" Height="{Binding ViewportHeight, ElementName=TasksContentViewport}">
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="MinHeight" Value="0" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding HasItems}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsExpanded, ElementName=TaskInspectorExpander}" Value="True" />
+                                        <Condition Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1320}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="MinHeight" Value="280" />
+                                </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
@@ -956,6 +967,7 @@
                         </Border>
                     </Expander>
                 </Grid>
+                </ScrollViewer>
 
                 <Border Grid.Row="3"
                         AutomationProperties.Name="По выбранным фильтрам задач нет">

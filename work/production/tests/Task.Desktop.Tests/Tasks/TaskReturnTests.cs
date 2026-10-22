@@ -182,9 +182,10 @@ public sealed partial class TasksViewModelTests
     {
         public FakeTasksApiClient Inner { get; } = new();
         public int WorkspaceReads { get; private set; }
-        public ReturnClient(DesktopTaskDto source)
+        public bool FailWorkspace { get; set; }
+        public ReturnClient(DesktopTaskDto source, params DesktopTaskDto[] additional)
         {
-            Inner.EnqueuePage(SucceededPage([source]));
+            Inner.EnqueuePage(SucceededPage([source, .. additional]));
             Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(source);
         }
         public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) => Inner.GetTasksAsync(cursor, cancellationToken);
@@ -196,10 +197,62 @@ public sealed partial class TasksViewModelTests
         public System.Threading.Tasks.Task<TaskWorkspaceResult> GetWorkspaceAsync(Guid id, CancellationToken token)
         {
             WorkspaceReads++;
+            if (FailWorkspace) return System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(null, 0, "History unavailable"));
             var body = new JsonObject { ["historyVisible"] = true };
             if (Inner.TransitionCallCount > 0) body["history"] = new JsonArray(new JsonObject { ["id"] = Guid.NewGuid().ToString(), ["occurredAt"] = DateTimeOffset.UtcNow.ToString("O"), ["action"] = "TaskStatusChanged" });
             return System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(body, 1, null));
         }
         public System.Threading.Tasks.Task<TaskWorkspaceResult> WriteWorkspaceAsync(Guid id, long version, string path, HttpMethod method, JsonObject body, string key, CancellationToken token) => throw new InvalidOperationException("Return must use the transition API.");
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async System.Threading.Tasks.Task Return_ReviewFilterRemovesReturnedRowWithoutStaleSelection(bool remainingRow)
+    {
+        var source = CreateTask(status: DesktopTaskStatus.Review);
+        var other = source with { Id = Guid.NewGuid(), Title = "Другая задача" };
+        var returned = source with { Status = DesktopTaskStatus.InProgress, Version = source.Version + 1 };
+        var client = new ReturnClient(source, remainingRow ? [other] : []);
+        client.Inner.TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(returned, returned.Version, false);
+        using var vm = new TasksViewModel(client, WriteCapabilities);
+        await vm.ActivateAsync();
+        vm.SelectedStatusFilter = DesktopTaskStatus.Review;
+        vm.SelectedItem = vm.Items.Single(i => i.Id == source.Id);
+        await WaitForAsync(() => vm.SelectedDetails?.Id == source.Id);
+        client.Inner.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(other);
+        await vm.TransitionCommand.ExecuteAsync("InProgress");
+        await vm.ConfirmTransitionCommand.ExecuteAsync();
+        Assert.DoesNotContain(vm.Items, i => i.Id == source.Id);
+        if (remainingRow)
+        {
+            Assert.Equal(other.Id, vm.SelectedItem!.Id);
+            await WaitForAsync(() => vm.SelectedDetails?.Id == other.Id);
+        }
+        else
+        {
+            Assert.Null(vm.SelectedItem);
+            Assert.Null(vm.SelectedDetails);
+        }
+        vm.SelectedStatusFilter = null;
+        Assert.Equal(returned, vm.Items.Single(i => i.Id == source.Id).Source);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task Return_HistoryRefreshFailureDoesNotUndoServerSuccess()
+    {
+        var source = CreateTask(status: DesktopTaskStatus.Review);
+        var returned = source with { Status = DesktopTaskStatus.InProgress, Version = source.Version + 1 };
+        var client = new ReturnClient(source);
+        client.Inner.TransitionResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(returned, returned.Version, false);
+        using var vm = new TasksViewModel(client, WriteCapabilities);
+        await vm.ActivateAsync();
+        client.FailWorkspace = true;
+        await vm.TransitionCommand.ExecuteAsync("InProgress");
+        await vm.ConfirmTransitionCommand.ExecuteAsync();
+        Assert.Equal(returned, vm.SelectedDetails!.Source);
+        Assert.Equal(returned, Assert.Single(vm.Items).Source);
+        Assert.Equal("History unavailable", vm.Workspace!.Message);
+        Assert.Null(vm.PendingTransition);
     }
 }

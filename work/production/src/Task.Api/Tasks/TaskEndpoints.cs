@@ -201,6 +201,10 @@ internal static partial class TaskEndpoints
                     aggregate.Metadata.Id));
             return await WriteCommandResultAsync(context, await service.ExecuteAsync(command, cancellationToken));
         }
+        catch (TaskWriteSessionException exception)
+        {
+            return await WriteSessionRejectedAsync(context, exception.State);
+        }
         catch (OperationCanceledException)
         {
             throw;
@@ -702,6 +706,10 @@ internal static partial class TaskEndpoints
                 context,
                 await service.ExecuteAsync(preparation.Command, cancellationToken));
         }
+        catch (TaskWriteSessionException exception)
+        {
+            return await WriteSessionRejectedAsync(context, exception.State);
+        }
         catch (TaskUpdateConflictException conflict)
         {
             return await WriteProblemAsync(
@@ -901,6 +909,10 @@ internal static partial class TaskEndpoints
                     aggregate.Metadata.Id));
             return await WriteCommandResultAsync(context, await service.ExecuteAsync(command, cancellationToken));
         }
+        catch (TaskWriteSessionException exception)
+        {
+            return await WriteSessionRejectedAsync(context, exception.State);
+        }
         catch (TaskStatusTransitionConflictException conflict)
         {
             return await WriteProblemAsync(
@@ -937,6 +949,13 @@ internal static partial class TaskEndpoints
                 retryable: true);
         }
     }
+
+    private static Task<IResult> WriteSessionRejectedAsync(HttpContext context, SessionRequestState state) => state switch
+    {
+        SessionRequestState.SessionRevoked => WriteProblemAsync(context, 401, "SESSION_REVOKED", "The session was revoked.", false),
+        SessionRequestState.AccountBlocked => WriteProblemAsync(context, 423, "ACCOUNT_BLOCKED", "The account is blocked.", false),
+        _ => WriteProblemAsync(context, 401, "SESSION_EXPIRED", "The session has expired.", true),
+    };
 
     private static readonly HashSet<string> AllowedTransitionProperties = new(StringComparer.Ordinal)
     {

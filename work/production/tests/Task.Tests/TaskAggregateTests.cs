@@ -118,7 +118,7 @@ public sealed class TaskAggregateTests
     }
 
     [Fact]
-    public void Start_ReturnsReviewToInProgressPreservingTaskContent()
+    public void ReturnForRework_ReturnsReviewToInProgressPreservingTaskContent()
     {
         var reviewed = NewTask()
             .ChangePriority(CreatorId, TaskPriority.High, CreatedAt.AddMinutes(1))
@@ -126,7 +126,8 @@ public sealed class TaskAggregateTests
             .Start(CreatorId, CreatedAt.AddMinutes(3))
             .SubmitForReview(CreatorId, CreatedAt.AddMinutes(4));
 
-        var returned = reviewed.Start(EditorId, CreatedAt.AddMinutes(5));
+        Assert.Throws<InvalidOperationException>(() => reviewed.Start(EditorId, CreatedAt.AddMinutes(5)));
+        var returned = reviewed.ReturnForRework(EditorId, CreatedAt.AddMinutes(5));
 
         Assert.Equal(TaskWorkStatus.InProgress, returned.WorkStatus);
         Assert.Equal(TaskWorkStatus.Review, reviewed.WorkStatus);
@@ -141,6 +142,19 @@ public sealed class TaskAggregateTests
         Assert.Null(returned.CompletedBy);
         Assert.Equal(TaskWorkStatus.Review,
             returned.SubmitForReview(EditorId, CreatedAt.AddMinutes(6)).WorkStatus);
+    }
+
+    [Fact]
+    public void ReturnForRework_RejectsNonReviewAndInactiveTasks()
+    {
+        var task = NewTask();
+        var started = task.Start(CreatorId, CreatedAt.AddMinutes(1));
+        var completed = started.Complete(CreatorId, CreatedAt.AddMinutes(2));
+        var cancelled = task.Cancel(CreatorId, CreatedAt.AddMinutes(2));
+        foreach (var invalid in new[] { task, started, completed, cancelled,
+            completed.Archive(CreatorId, CreatedAt.AddMinutes(3)),
+            cancelled.MoveToTrash(CreatorId, CreatedAt.AddMinutes(3)) })
+            Assert.Throws<InvalidOperationException>(() => invalid.ReturnForRework(EditorId, CreatedAt.AddMinutes(4)));
     }
 
     [Fact]

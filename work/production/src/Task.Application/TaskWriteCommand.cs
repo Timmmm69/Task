@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using Task.Application.Security;
 using Task.Domain;
 
 namespace Task.Application;
@@ -88,6 +89,14 @@ public sealed class TaskWriteCommand
     /// <summary>Aggregate mutation invoked only after idempotency acquisition.</summary>
     public TaskWriteMutation Mutation { get; }
     public bool RevalidatePermissions { get; init; }
+    public long? ExpectedCredentialVersion { get; init; }
+    public long? ExpectedAuthorizationScopeVersion { get; init; }
+}
+
+/// <summary>The authenticated session became invalid before the write transaction.</summary>
+public sealed class TaskWriteSessionException(SessionRequestState state) : Exception("The task write session is no longer active.")
+{
+    public SessionRequestState State { get; } = state;
 }
 
 /// <summary>Changes a loaded Task and produces the HTTP result to persist before commit.</summary>

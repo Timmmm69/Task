@@ -372,6 +372,8 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
                     : new DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse(),
             AuthenticatedGetResult.AuthenticationFailure =>
                 new DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure(),
+            AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Locked } =>
+                new DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure(),
             AuthenticatedGetResult.ServerUnavailable =>
                 new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable(),
             AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Forbidden } =>
@@ -591,6 +593,8 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
         where T : class => result switch
         {
             AuthenticatedGetResult.AuthenticationFailure =>
+                new DesktopTasksApiResult<T>.AuthenticationFailure(),
+            AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Locked } =>
                 new DesktopTasksApiResult<T>.AuthenticationFailure(),
             AuthenticatedGetResult.ServerUnavailable =>
                 new DesktopTasksApiResult<T>.ServerUnavailable(),

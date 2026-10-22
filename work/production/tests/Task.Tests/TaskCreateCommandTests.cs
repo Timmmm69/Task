@@ -111,7 +111,10 @@ public sealed class TaskCreateCommandTests
             var executor = new PostgresTaskWriteCommandExecutor(dataSource);
             var service = new TaskCreateCommandService(executor);
             var taskId = Guid.NewGuid();
-            var context = CreateContext(organizationId, actorUserId, sessionId);
+            await using var scopeQuery = dataSource.CreateCommand("SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1");
+            scopeQuery.Parameters.AddWithValue(actorUserId);
+            var scopeVersion = (long)(await scopeQuery.ExecuteScalarAsync())!;
+            var context = new AuthenticatedRequestContext(actorUserId, sessionId, organizationId, 1, scopeVersion, Guid.NewGuid().ToString("D"), "trace");
             var model = new TaskCreateModel("Create gate", TaskPriority.High, true, Now, Now.AddHours(3));
             var command = service.CreateCommand(
                 context,

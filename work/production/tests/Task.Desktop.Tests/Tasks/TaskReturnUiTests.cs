@@ -65,9 +65,26 @@ public sealed class TaskReturnUiTests
                     var confirm = Find<Button>(window, "ConfirmTransitionButton");
                     Assert.Equal("Вернуть", confirm.Content);
                     Assert.False(Find<TextBox>(window, "TransitionReasonTextBox").IsVisible);
-                    confirm.BringIntoView(); Assert.True(confirm.Focus());
+                    Assert.Same(confirm, Keyboard.FocusedElement);
                     Assert.True(confirm.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
                     Assert.Equal("Назад", Assert.IsType<Button>(Keyboard.FocusedElement).Content);
+                    ((IInvokeProvider)new ButtonAutomationPeer((Button)Keyboard.FocusedElement).GetPattern(PatternInterface.Invoke)).Invoke();
+                    await Drain(window);
+                    Assert.Same(button, Keyboard.FocusedElement);
+                    Assert.Equal(0, client.Inner.TransitionCallCount);
+                    var complete = Find<Button>(window, "CompleteTaskButton");
+                    Assert.True(complete.Focus());
+                    ((IInvokeProvider)new ButtonAutomationPeer(complete).GetPattern(PatternInterface.Invoke)).Invoke();
+                    await Drain(window);
+                    Assert.Same(confirm, Keyboard.FocusedElement);
+                    Assert.True(confirm.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
+                    ((IInvokeProvider)new ButtonAutomationPeer((Button)Keyboard.FocusedElement).GetPattern(PatternInterface.Invoke)).Invoke();
+                    await Drain(window);
+                    Assert.Same(complete, Keyboard.FocusedElement);
+                    Assert.True(button.Focus());
+                    ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)).Invoke();
+                    await Drain(window);
+                    Assert.Same(confirm, Keyboard.FocusedElement);
                     await Capture(window, "return-confirmation");
                     var release = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
                     client.Inner.TransitionHandler = _ => release.Task;
@@ -101,7 +118,7 @@ public sealed class TaskReturnUiTests
     {
         var path = Environment.GetEnvironmentVariable("TASK_RETURN_EVIDENCE"); if (string.IsNullOrEmpty(path)) return;
         Directory.CreateDirectory(path);
-        foreach (var size in new[] { (1100d, 900d), (800d, 800d), (800d, 600d) })
+        foreach (var size in new[] { (1100d, 900d), (800d, 800d), (800d, 600d), (800d, 480d) })
         {
             window.Width = size.Item1; window.Height = size.Item2; await Drain(window);
             if (name == "return-confirmation")
@@ -115,6 +132,26 @@ public sealed class TaskReturnUiTests
             var bitmap = new RenderTargetBitmap((int)visual.ActualWidth, (int)visual.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual);
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
             using var file = File.Create(Path.Combine(path, $"{name}-{size.Item1}x{size.Item2}.png")); encoder.Save(file);
+            if (name == "return-confirmation")
+            {
+                var confirm = Find<Button>(window, "ConfirmTransitionButton");
+                var bounds = confirm.TransformToAncestor(window).TransformBounds(new Rect(confirm.RenderSize));
+                var inspector = (Expander)window.FindName("TaskInspectorExpander");
+                var scroll = (ScrollViewer)window.FindName("TaskDetailsArea");
+                File.WriteAllText(Path.Combine(path, $"layout-{size.Item1}x{size.Item2}.json"), System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    contentHeight = ((Grid)window.FindName("TasksContentGrid")).ActualHeight,
+                    inspectorHeight = inspector.ActualHeight, inspector.MaxHeight,
+                    scrollHeight = scroll.ActualHeight, scroll.ViewportHeight, scroll.ExtentHeight, scroll.VerticalOffset,
+                    confirmationBounds = bounds.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                }));
+                foreach (var point in new[] { new Point(bounds.Left + 3, bounds.Top + 3), new Point(bounds.Right - 3, bounds.Bottom - 3) })
+                {
+                    var hit = window.InputHitTest(point) as DependencyObject;
+                    Assert.True(ReferenceEquals(hit, confirm) || hit is not null && confirm.IsAncestorOf(hit),
+                        $"Confirmation is clipped at {size}: {bounds}; hit={hit?.GetType().Name ?? "null"}");
+                }
+            }
         }
     }
 }

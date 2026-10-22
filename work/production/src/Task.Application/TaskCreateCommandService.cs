@@ -92,7 +92,11 @@ public sealed class TaskCreateCommandService
                     TaskSchedule.Create(model.StartAtUtc, model.DeadlineAtUtc), model.Content);
                 return new TaskWriteMutationResult(aggregate, createHttpResult(aggregate));
             })
-        { RevalidatePermissions = true };
+        {
+            RevalidatePermissions = true,
+            ExpectedCredentialVersion = context.CredentialVersion,
+            ExpectedAuthorizationScopeVersion = context.AuthorizationScopeVersion,
+        };
     }
 
     public global::System.Threading.Tasks.Task<TaskWriteCommandExecutionResult> ExecuteAsync(

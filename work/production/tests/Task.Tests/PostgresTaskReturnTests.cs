@@ -50,7 +50,8 @@ public sealed partial class PostgresProductApiTests
 
         // Replay also rechecks effective permissions and does not append side effects.
         db.Sql("DELETE FROM iam.user_roles WHERE user_account_id=$1", db.User);
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => executor.ExecuteAsync(command));
+        await Assert.ThrowsAsync<TaskWriteSessionException>(() => executor.ExecuteAsync(command));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => executor.ExecuteAsync(ReturnCommand(db, task)));
         AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
     }
 
@@ -151,8 +152,11 @@ public sealed partial class PostgresProductApiTests
     private static TaskWriteCommand ReturnCommand(Database db, TaskAggregate task,
         TaskWorkStatus target = TaskWorkStatus.InProgress, string key = "return-command-01", bool otherActor = false)
     {
-        var context = new AuthenticatedRequestContext(otherActor ? db.OtherUser : db.User,
-            otherActor ? db.OtherSession : db.Session, db.Organization, 1, 1, Guid.NewGuid().ToString("D"), "task142");
+        var actor = otherActor ? db.OtherUser : db.User;
+        var scopeVersion = ScalarReturn<long>(db,
+            "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", actor);
+        var context = new AuthenticatedRequestContext(actor,
+            otherActor ? db.OtherSession : db.Session, db.Organization, 1, scopeVersion, Guid.NewGuid().ToString("D"), "task142");
         var targetValue = target == TaskWorkStatus.InProgress ? "in_progress" : "completed";
         return new TaskStatusTransitionCommandService(db.ApiRuntime.CreateTaskWriteCommandExecutor())
             .CreateCommand(context, key, JsonSerializer.Serialize(new { targetStatus = targetValue }),

@@ -32,7 +32,8 @@ public sealed partial class PostgresProductApiTests
     {
         using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
         var service = new TaskCreateCommandService(db.ApiRuntime.CreateTaskWriteCommandExecutor());
-        var context = new AuthenticatedRequestContext(db.User, db.Session, db.Organization, 1, 1, Guid.NewGuid().ToString(), "deadline-test");
+        var scopeVersion = ScalarReturn<long>(db, "SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=$1", db.User);
+        var context = new AuthenticatedRequestContext(db.User, db.Session, db.Organization, 1, scopeVersion, Guid.NewGuid().ToString(), "deadline-test");
         var command = service.CreateCommand(context, "automatic-create-001", "{\"title\":\"Автоматически\"}",
             new("Автоматически", TaskPriority.Normal, true, null, DateTimeOffset.UtcNow.AddMinutes(10)),
             t => new(201, new Dictionary<string, string>(), JsonSerializer.Serialize(new { id = t.Metadata.Id, version = t.Metadata.Version }), t.Metadata.Id));
