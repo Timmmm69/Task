@@ -16,8 +16,14 @@ public sealed class CorporateCloseUiTests
     {
         if (Environment.GetEnvironmentVariable("TASK_CORPORATE_CLOSE_CHILD") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush));
             start.Environment["TASK_CORPORATE_CLOSE_CHILD"] = "1";
