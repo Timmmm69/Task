@@ -8,6 +8,9 @@ namespace Task.Desktop.ViewModels;
 /// <summary>Location metadata only. No physical file operations or offline writes.</summary>
 public sealed class FileLocationsViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private readonly IDesktopFileLocationsClient _client;
     private readonly Func<bool> _canRead, _canWrite;
     private CancellationTokenSource? _selectionCancellation;
@@ -210,7 +213,7 @@ public sealed class FileLocationsViewModel : ViewModelBase, IDisposable
         IsMutating = true;
         try
         {
-            var result = await mutation(id, _parentVersion, ct);
+            var result = await _closeOperations.TrackAsync(() => mutation(id, _parentVersion, ct));
             if (!Current(id, generation)) return;
             if (result is DesktopWorkResult<bool>.Succeeded success)
             {

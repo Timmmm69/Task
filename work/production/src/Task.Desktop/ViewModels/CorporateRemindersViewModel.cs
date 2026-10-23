@@ -101,7 +101,7 @@ public sealed partial class WorkHubViewModel
         if (trigger == "absolute") { if (!TryLocalReminderInstant(ReminderAbsolute, out var value)) return; absolute = value; }
         if (trigger.StartsWith("before_", StringComparison.Ordinal) && ReminderOffset is < 0 or > 525600) { SetFeedback("Отступ должен быть от 0 до 525600 минут.", WorkHubFeedbackKind.Warning); return; }
         var generation = _notificationAccessGeneration;
-        var result = await api.SaveReminderAsync(target.Value, trigger, trigger.StartsWith("before_", StringComparison.Ordinal) ? ReminderOffset : null, absolute, SelectedCorporateReminder, ct);
+        var result = await _closeOperations.TrackAsync(() => api.SaveReminderAsync(target.Value, trigger, trigger.StartsWith("before_", StringComparison.Ordinal) ? ReminderOffset : null, absolute, SelectedCorporateReminder, ct));
         if (!ReminderResponseCurrent(generation, ct)) return;
         Apply(result, value => { SelectedCorporateReminder = value; SetFeedback("Напоминание сохранено на сервере.", WorkHubFeedbackKind.Success); });
         if (result is DesktopWorkResult<DesktopReminder>.Succeeded) await RefreshRemindersAsync(ct);
@@ -137,9 +137,9 @@ public sealed partial class WorkHubViewModel
         var generation = _notificationAccessGeneration;
         var result = action switch
         {
-            "cancel" => await api.CancelReminderAsync(item, ct),
-            "restore" => await api.RestoreReminderAsync(item, ct),
-            _ when item.CurrentOccurrence is { } x => await api.ActOnReminderAsync(item.Id, x.Version, until, ct),
+            "cancel" => await _closeOperations.TrackAsync(() => api.CancelReminderAsync(item, ct)),
+            "restore" => await _closeOperations.TrackAsync(() => api.RestoreReminderAsync(item, ct)),
+            _ when item.CurrentOccurrence is { } x => await _closeOperations.TrackAsync(() => api.ActOnReminderAsync(item.Id, x.Version, until, ct)),
             _ => new DesktopWorkResult<bool>.ValidationFailure("Срабатывание недоступно. Обновите список.")
         };
         if (!ReminderResponseCurrent(generation, ct)) return;

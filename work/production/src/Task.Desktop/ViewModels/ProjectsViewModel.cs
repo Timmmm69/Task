@@ -136,6 +136,9 @@ public sealed partial class ProjectEditorViewModel : ViewModelBase, IDisposable
 
 public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private readonly IDesktopProjectsApiClient _client;
     private readonly IDesktopTasksApiClient? _tasks;
     private readonly Guid _currentUserId;
@@ -441,8 +444,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
             if (!editor.TryBuild(out draft)) return;
         }
         DesktopProjectResult<DesktopProjectDto> result = editor.Source is null
-            ? await _client.CreateProjectAsync(draft, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true)
-            : await _client.UpdateProjectAsync(editor.Source.Id, editor.Source.Version, draft, cancellationToken).ConfigureAwait(true);
+            ? await _closeOperations.TrackAsync(() => _client.CreateProjectAsync(draft, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true)
+            : await _closeOperations.TrackAsync(() => _client.UpdateProjectAsync(editor.Source.Id, editor.Source.Version, draft, cancellationToken)).ConfigureAwait(true);
         if (!ReferenceEquals(Editor, editor) || !_sessionAvailable || !IsActive
             || !(editor.Source is null ? CanCreate : CanUpdate)) return;
         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
@@ -473,7 +476,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task ArchiveAsync(object? _, CancellationToken cancellationToken)
     {
         var item = SelectedItem; if (item is null) return;
-        var result = await _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
+        var result = await _closeOperations.TrackAsync(() => _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanArchive || !IsActive) return;
         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded) { Items = Items.Where(candidate => candidate.Id != item.Id).ToArray(); SelectedItem = Items.FirstOrDefault(); State = Items.Count == 0 ? ProjectsScreenState.Empty : ProjectsScreenState.Loaded; Message = "Завершённый проект перемещён в архив."; }
         else ApplyFailure(result);
@@ -492,7 +495,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
             if (picker.SelectedUserAccountId != user) { Message = picker.StatusText; return; }
         }
         if (!CanAddMember) return;
-        var result = await _client.AddMemberAsync(item.Id, item.Source.Version, user.Value, role.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
+        var result = await _closeOperations.TrackAsync(() => _client.AddMemberAsync(item.Id, item.Source.Version, user.Value, role.Id, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
         if (generation != _peopleGeneration || !ReferenceEquals(SelectedItem, item) || !_sessionAvailable) return;
         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)
         { AdvanceVersion(item, success.EntityVersion); NewMemberUserId = string.Empty; ResetPeople(); await ReloadMembersAsync(item, cancellationToken); }
@@ -502,7 +505,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task ChangeMemberRoleAsync(object? parameter, CancellationToken cancellationToken)
     {
         var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel { SelectedRole: not null } member) return;
-        var result = await _client.ChangeMemberRoleAsync(item.Id, item.Source.Version, member.UserAccountId, member.SelectedRole.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
+        var result = await _closeOperations.TrackAsync(() => _client.ChangeMemberRoleAsync(item.Id, item.Source.Version, member.UserAccountId, member.SelectedRole.Id, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)
         { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Роль участника изменена."; }
@@ -512,7 +515,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task RemoveMemberAsync(object? parameter, CancellationToken cancellationToken)
     {
         var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member) return;
-        var result = await _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken).ConfigureAwait(true);
+        var result = await _closeOperations.TrackAsync(() => _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken)).ConfigureAwait(true);
         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
         { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник удалён из проекта."; }

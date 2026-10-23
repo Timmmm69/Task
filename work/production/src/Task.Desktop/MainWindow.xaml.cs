@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.ComponentModel;
 using Task.Desktop.ViewModels;
+using Task.Desktop.Modes;
 
 namespace Task.Desktop;
 
@@ -44,57 +45,93 @@ public partial class MainWindow : Window
         }
     }
 
+    private bool _closeApproved;
+    private bool _closingInProgress;
+    internal Func<IReadOnlyList<string>, bool>? ConfirmCloseOverride { get; set; }
+    internal Action? OperationPendingOverride { get; set; }
+    internal Func<bool>? TrayAvailableOverride { get; set; }
+
     protected override void OnClosing(CancelEventArgs e)
     {
-        if (_modeTransitionClose || Infrastructure.ViewState.IsCompletingClose(this))
+        _closingInProgress = true;
+        try { CloseCore(e); }
+        finally { _closingInProgress = false; }
+    }
+
+    private void CloseCore(CancelEventArgs e)
+    {
+        // Mandatory authentication teardown and an already prepared mode switch
+        // must not retain access to the old context through a user confirmation.
+        if (_authenticationTransitionClose || _modeTransitionClose)
         {
             base.OnClosing(e);
             return;
         }
-        var viewModel = DataContext as MainWindowViewModel;
-        var editor = viewModel?.Tasks?.Editor;
-        var hasCalendarEditor = viewModel?.Calendar?.Editor is not null;
-        var hasProjectEditor = viewModel?.Projects?.Editor is not null;
-        if (ShouldCancelClose(
-            _authenticationTransitionClose,
-            editor?.HasUnsavedChanges == true || hasCalendarEditor || hasProjectEditor,
-            () =>
+        if (!_explicitExit && !_closeApproved && (TrayAvailableOverride?.Invoke() ?? _tray?.IsAvailable == true))
         {
-            var message = editor?.IsBusy == true
-                ? "Сохранение ещё выполняется. Закрытие отменит ожидание ответа. Закрыть Task?"
-                : hasCalendarEditor
-                    ? "Форма события календаря открыта. Закрыть Task без сохранения?"
-                    : hasProjectEditor
-                        ? "Форма проекта открыта. Закрыть Task без сохранения?"
-                    : "В форме задачи есть несохранённые изменения. Закрыть Task без сохранения?";
-            return MessageBox.Show(message, "Несохранённые изменения", MessageBoxButton.YesNo,
-                MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
-        }))
+            e.Cancel = true;
+            Hide();
+            base.OnClosing(e);
+            return;
+        }
+        var canClose = CorporateCloseGuard.CanClose(
+            () => _authenticationTransitionClose || _modeTransitionClose ? [] : ModeSwitchGuard.Inspect(_viewModel), _closeApproved,
+            ConfirmCloseOverride ?? ConfirmDiscardOnClose, OperationPendingOverride ?? ShowPendingOperation);
+        // A modal dialog pumps messages. A mandatory transition raised inside it
+        // joins this close rather than recursively calling WPF's Close().
+        if (_authenticationTransitionClose || _modeTransitionClose)
         {
+            base.OnClosing(e);
+            return;
+        }
+        if (!canClose)
+        {
+            _closeApproved = false;
             _explicitExit = false;
+            if (Infrastructure.ViewState.IsCompletingClose(this)) IsEnabled = true;
             e.Cancel = true;
             return;
         }
-
-        if (!_authenticationTransitionClose && !_explicitExit && _tray?.IsAvailable == true)
-        {
-            e.Cancel = true; Hide();
-        }
+        _closeApproved = true;
         base.OnClosing(e);
+        // ViewState cancels once to flush local UI preferences and calls Close again.
+        // Other cancellation must not authorize a later, unrelated user close.
+        if (e.Cancel && (!Infrastructure.ViewState.IsClosePending(this)
+            || Infrastructure.ViewState.IsCompletingClose(this)))
+        {
+            _closeApproved = false;
+            _explicitExit = false;
+            if (Infrastructure.ViewState.IsCompletingClose(this)) IsEnabled = true;
+        }
+    }
+
+    private bool ConfirmDiscardOnClose(IReadOnlyList<string> names) => MessageBox.Show(this,
+        $"Несохранённые изменения ({names.Count}):\n• {string.Join("\n• ", names)}\n\nПри выходе эти данные будут потеряны. Выйти без сохранения?",
+        "Несохранённые изменения", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
+
+    private void ShowPendingOperation() => MessageBox.Show(this,
+        "Результат операции ещё не подтверждён. Дождитесь ответа сервера или проверьте исходный запрос в открытой форме, затем повторите выход.",
+        "Выход из Task", MessageBoxButton.OK, MessageBoxImage.Information);
+
+    internal void RequestExit()
+    {
+        if (_closingInProgress) return;
+        _explicitExit = true;
+        Close();
     }
 
     internal void CloseForAuthenticationTransition()
     {
         StopNotificationDelivery();
         _authenticationTransitionClose = true;
-        Close();
+        if (!_closingInProgress) Close();
     }
 
     internal void CloseAfterModeSwitch()
     {
         StopNotificationDelivery();
         _modeTransitionClose = true;
-        Close();
+        if (!_closingInProgress) Close();
     }
 
     private void OnSwitchMode(object sender, RoutedEventArgs e) => SwitchModeRequested?.Invoke();

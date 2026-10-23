@@ -198,6 +198,13 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private static bool IsUnconfirmed(DesktopTaskWriteResult<DesktopTaskDto> result) => result is
+        DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable or DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse
+        or DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress;
+
+    private bool _unconfirmedCapture, _unconfirmedConversion;
+    internal bool HasUnconfirmedMutation => _unconfirmedCapture || _unconfirmedConversion;
+
     public bool IsBusy
     {
         get => _isBusy;
@@ -464,7 +471,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
                 if (!HasItems) State = InboxScreenState.Error;
                 return;
             }
+            var previousUnknownCapture = _unconfirmedCapture;
+            _unconfirmedCapture = true;
             var result = await _client.CreateTaskAsync(command, cancellationToken).ConfigureAwait(true);
+            _unconfirmedCapture = previousUnknownCapture || IsUnconfirmed(result);
             if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
             {
                 var item = new InboxItemViewModel(success.Value);
@@ -533,8 +543,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         editor.IsBusy = true;
         try
         {
+            _unconfirmedConversion = true;
             var result = UsesInboxContract ? await SaveCanonicalConversionAsync(editor, cancellationToken).ConfigureAwait(true)
                 : await _client.PatchTaskAsync(command!, cancellationToken).ConfigureAwait(true);
+            _unconfirmedConversion = IsUnconfirmed(result);
             if (!ReferenceEquals(Conversion, editor)) return;
             switch (result)
             {
@@ -650,6 +662,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         _conversionTarget = null;
         _conversionInboxId = null;
         _conversionPatch = null;
+        _unconfirmedConversion = false;
     }
 
     private void OnConversionPropertyChanged(object? sender, PropertyChangedEventArgs e)

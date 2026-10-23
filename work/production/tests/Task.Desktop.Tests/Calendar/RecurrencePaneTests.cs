@@ -70,6 +70,23 @@ public sealed class RecurrencePaneTests
         pane.Dispose();
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async global::System.Threading.Tasks.Task OnlyUnknownRecurrenceFailureBlocksClose(bool unknown)
+    {
+        var client = new FakeClient(call => global::System.Threading.Tasks.Task.FromResult<DesktopCalendarResult<JsonElement>>(
+            call.Method == HttpMethod.Post && call.Path.Length == 0
+                ? unknown ? new DesktopCalendarResult<JsonElement>.ServerUnavailable()
+                    : new DesktopCalendarResult<JsonElement>.ValidationFailure("Проверьте поля")
+                : Succeeded(ListJson())));
+        using var pane = CreatePane(client);
+        pane.SetAccess(["Recurrence.Read", "Recurrence.Manage"], active: true);
+        await pane.OpenCommand.ExecuteAsync(); await pane.NewCommand.ExecuteAsync(); pane.Editor.Title = "Черновик";
+        await pane.SaveCommand.ExecuteAsync();
+        Assert.Equal(unknown, pane.HasUnconfirmedMutation); Assert.Equal("Черновик", pane.Editor.Title);
+    }
+
     [Fact]
     public void SourceWorkdays_RoundTripRetainsWeekdays()
     {

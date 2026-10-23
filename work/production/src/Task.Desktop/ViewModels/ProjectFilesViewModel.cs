@@ -16,6 +16,9 @@ public sealed record ProjectFileItem(DesktopObjectLink Link, DesktopCatalogItem?
 /// <summary>Confirmed project_file snapshot. Paths are resolved only at the user's open action.</summary>
 public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private readonly IDesktopObjectLinksClient _links;
     private readonly IDesktopFileLocationsClient _catalog;
     private readonly Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>>> _resolve;
@@ -153,7 +156,7 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
         _snapshot = false; Selected = null;
         try
         {
-            var result = await operation();
+            var result = mutation ? await _closeOperations.TrackAsync(operation) : await operation();
             if (!Current(generation, ct)) return;
             if (result is not DesktopWorkResult<DesktopObjectLinks>.Succeeded success) { Fail(result); return; }
             if (!_linkState.Confirm(source, success.Value.SourceVersion)) { Fail(new DesktopWorkResult<DesktopObjectLinks>.Conflict()); return; }

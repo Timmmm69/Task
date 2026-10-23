@@ -5,6 +5,8 @@ namespace Task.Desktop.ViewModels;
 
 public sealed class InteractionsViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+
     private readonly IDesktopInteractionsClient _client;
     private readonly Func<bool> _canRead, _canRequest, _canCreate, _canUpdate;
     private CancellationTokenSource? _request;
@@ -49,6 +51,7 @@ public sealed class InteractionsViewModel : ViewModelBase, IDisposable
     public bool HasDetails => Details is not null;
     public IReadOnlyList<string> Participants { get => _participants; private set => SetProperty(ref _participants, value); }
     public bool IsMutating => SaveCommand.IsExecuting;
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
     public bool IsEditing { get => _editing; private set { SetProperty(ref _editing, value); Notify(); } }
     public bool CanChangeDraft => IsEditing && !IsBusy && _pendingCreate is null;
@@ -169,7 +172,7 @@ public sealed class InteractionsViewModel : ViewModelBase, IDisposable
         try
         {
             if (!await ConfirmCounterpartyAsync(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
-            var result = await _client.SaveInteractionAsync(create ? _pendingCreate! : _draftUpdate!, create ? _key : null, request.Token);
+            var result = await _closeOperations.TrackAsync(() => _client.SaveInteractionAsync(create ? _pendingCreate! : _draftUpdate!, create ? _key : null, request.Token));
             if (!Current(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
             if (result is DesktopWorkResult<DesktopInteraction>.Succeeded saved)
             {

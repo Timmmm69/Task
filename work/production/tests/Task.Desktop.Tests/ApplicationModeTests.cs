@@ -199,6 +199,8 @@ public sealed class ApplicationModeTests : IDisposable
         Assert.False(await ModeSwitchGuard.PrepareAsync(editors, () => true, (_, _) =>
         { promptCount++; return ModeSwitchDecision.Cancel; }));
         Assert.Equal(1, promptCount);
+        Assert.False(CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), false,
+            names => { Assert.NotEmpty(names); return false; }, () => throw new Exception("Unexpected pending write")));
     }
 
     public void Dispose() { if (Directory.Exists(_directory)) Directory.Delete(_directory, recursive: true); }

@@ -82,9 +82,9 @@ public sealed partial class ContactCardViewModel
         try
         {
             var id = original.Contact.Id; var version = original.Contact.Version;
-            var result = channel is not null ? await client.SaveChannelAsync(id, version, channel, request.Token)
-                : address is not null ? await client.AddAddressAsync(id, version, address, request.Token)
-                : await client.DeleteChannelAsync(id, version, _deleteChannel!.Id, request.Token);
+            var result = channel is not null ? await _closeOperations.TrackAsync(() => client.SaveChannelAsync(id, version, channel, request.Token))
+                : address is not null ? await _closeOperations.TrackAsync(() => client.AddAddressAsync(id, version, address, request.Token))
+                : await _closeOperations.TrackAsync(() => client.DeleteChannelAsync(id, version, _deleteChannel!.Id, request.Token));
             if (!Current(generation, request.Token) || !_canWrite()) return;
             if (result is DesktopWorkResult<DesktopContactDetails>.Succeeded success
                 && success.Value.Contact.Id == id && success.Value.Contact.Version > version)

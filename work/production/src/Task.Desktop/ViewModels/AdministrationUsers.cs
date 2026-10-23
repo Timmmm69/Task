@@ -29,6 +29,8 @@ public sealed partial class AdministrationViewModel
     public bool IsUserEditorLoading => _editorLoading;
     public bool CanSelectUser => !IsEditorOpen && !_savingUser && !IsTransitionOpen && !_transitionBusy;
     public bool CanEditUserFields => CanWriteUsers && !_savingUser && !_uncertainSave;
+    internal bool HasUnconfirmedMutation => _uncertainSave || _transitionUncertain;
+
     public bool IsSavingUser => _savingUser;
     public bool IsUserListEmpty => IsUsers && !IsLoading && Users.Count == 0 && CanReadCurrentArea && Message is null;
     public bool HasMoreUsers => _nextUserCursor is not null;

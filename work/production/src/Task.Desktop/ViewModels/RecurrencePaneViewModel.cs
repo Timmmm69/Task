@@ -53,6 +53,7 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
     public event Action? AccessLost;
     internal long SuccessfulSaveRevision { get; private set; }
     public bool IsOpen { get => _isOpen; private set => SetProperty(ref _isOpen, value); }
+    internal bool HasUnconfirmedMutation => _attemptKey is not null;
     public bool IsBusy { get => _isBusy; private set { if (SetProperty(ref _isBusy, value)) { OnPropertyChanged(nameof(CanInteract)); RaiseCommands(); } } }
     public bool CanInteract => !IsBusy;
     public bool CanManage => _canManage;
@@ -114,6 +115,9 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
         if (write && !_canManage) return null;
         var generation = _generation;
         var result = await _client.ExecuteAsync(command, _lifetime.Token);
+        if (!_personal && write && result is not (DesktopCalendarResult<DesktopRecurrenceReply>.ServerUnavailable
+            or DesktopCalendarResult<DesktopRecurrenceReply>.MalformedResponse))
+        { _attemptIdentity = null; _attemptKey = null; }
         if (generation != _generation || !IsOpen || !_canRead) return null;
         if (result is DesktopCalendarResult<DesktopRecurrenceReply>.Succeeded success)
         { if (write) { _attemptIdentity = null; _attemptKey = null; } return success.Value; }

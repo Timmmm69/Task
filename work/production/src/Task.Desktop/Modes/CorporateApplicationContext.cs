@@ -46,9 +46,9 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
     public async global::System.Threading.Tasks.Task<bool> PrepareSwitchAsync()
     {
         if (_mainWindow?.DataContext is not MainWindowViewModel shell) return true;
-        if (ModeSwitchGuard.Inspect(shell).Any(editor => editor.IsBusy()))
+        if (ModeSwitchGuard.HasPendingOperations(ModeSwitchGuard.Inspect(shell)))
         {
-            MessageBox.Show(_mainWindow, "Дождитесь завершения текущей операции и повторите переключение.",
+            MessageBox.Show(_mainWindow, "Результат операции ещё не подтверждён. Дождитесь завершения или проверьте исходный запрос, затем повторите переключение.",
                 "Смена режима Task", MessageBoxButton.OK, MessageBoxImage.Information);
             return false;
         }

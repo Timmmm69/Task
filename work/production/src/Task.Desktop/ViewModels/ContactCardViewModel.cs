@@ -6,6 +6,9 @@ public sealed record ContactStatusChoice(string Value, string Label);
 
 public sealed partial class ContactCardViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private readonly IDesktopContactDetailsClient _client;
     private readonly Func<bool> _canRead, _canRequest, _canWrite;
     private CancellationTokenSource? _request;
@@ -101,7 +104,7 @@ public sealed partial class ContactCardViewModel : ViewModelBase, IDisposable
         Message = null;
         try
         {
-            var result = await _client.UpdateContactAsync(draft, request.Token);
+            var result = await _closeOperations.TrackAsync(() => _client.UpdateContactAsync(draft, request.Token));
             if (!Current(generation, request.Token) || !_canWrite()) return;
             if (result is DesktopWorkResult<DesktopContactDetails>.Succeeded success)
             {

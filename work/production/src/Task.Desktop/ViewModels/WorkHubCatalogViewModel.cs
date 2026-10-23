@@ -113,7 +113,7 @@ public sealed partial class WorkHubViewModel
         NotifyCommands();
         try
         {
-            var result = await _client.CreateCatalogItemAsync(NewItemName, type, null, CreationParentId, ct);
+            var result = await _closeOperations.TrackAsync(() => _client.CreateCatalogItemAsync(NewItemName, type, null, CreationParentId, ct));
             if (result is DesktopWorkResult<DesktopCatalogItem>.Succeeded success)
             {
                 _catalogSnapshotCurrent = false;
@@ -138,7 +138,7 @@ public sealed partial class WorkHubViewModel
         NotifyCommands();
         try
         {
-            var result = await _client.MoveCatalogItemAsync(item.Id, item.Version, request.ParentId, ct);
+            var result = await _closeOperations.TrackAsync(() => _client.MoveCatalogItemAsync(item.Id, item.Version, request.ParentId, ct));
             if (result is DesktopWorkResult<DesktopCatalogItem>.Succeeded success)
             {
                 _catalogSnapshotCurrent = false;

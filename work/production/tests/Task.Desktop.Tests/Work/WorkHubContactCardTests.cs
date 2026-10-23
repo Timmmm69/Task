@@ -74,6 +74,7 @@ public sealed partial class WorkHubViewModelTests
     internal sealed partial class FakeClient : IDesktopContactDetailsClient
     {
         public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopContactDetails>>>? ContactDetailHandler { get; init; }
+        public DesktopWorkResult<DesktopContactDetails>? ContactWriteResult { get; init; }
         public int ContactDetailCalls { get; private set; }
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopContactDetails>> GetContactAsync(Guid id, CancellationToken cancellationToken = default)
         {
@@ -82,6 +83,6 @@ public sealed partial class WorkHubViewModelTests
                 Contacts.FirstOrDefault(c => c.Id == id) is { } contact ? new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, null)) : new DesktopWorkResult<DesktopContactDetails>.NotFound());
         }
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopContactDetails>> UpdateContactAsync(DesktopContactDetails details, CancellationToken cancellationToken = default) =>
-            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(details with { Contact = details.Contact with { Version = details.Contact.Version + 1 } }));
+            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(ContactWriteResult ?? new DesktopWorkResult<DesktopContactDetails>.Succeeded(details with { Contact = details.Contact with { Version = details.Contact.Version + 1 } }));
     }
 }

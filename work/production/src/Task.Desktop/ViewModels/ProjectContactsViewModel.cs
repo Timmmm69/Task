@@ -16,6 +16,9 @@ public sealed record ProjectContactItem(DesktopObjectLink Link, ProjectContactTa
 /// <summary>Only authorized names are retained; CRM detail cards belong to the existing workspace.</summary>
 public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private readonly IDesktopObjectLinksClient _links;
     private readonly IDesktopCompaniesClient _crm;
     private HashSet<string> _capabilities = new(StringComparer.OrdinalIgnoreCase);
@@ -143,7 +146,7 @@ public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
         _snapshot = false; Selected = null;
         try
         {
-            var result = await operation();
+            var result = mutation ? await _closeOperations.TrackAsync(operation) : await operation();
             if (!Current(generation, ct)) return;
             if (result is not DesktopWorkResult<DesktopObjectLinks>.Succeeded success) { Fail(result); return; }
             if (!_linkState.Confirm(source, success.Value.SourceVersion)) { Fail(new DesktopWorkResult<DesktopObjectLinks>.Conflict()); return; }

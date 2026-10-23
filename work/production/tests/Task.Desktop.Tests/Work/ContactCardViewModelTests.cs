@@ -52,6 +52,7 @@ public sealed class ContactCardViewModelTests
         await vm.SelectAsync(original.Contact.Id); await vm.EditCommand.ExecuteAsync(); vm.Notes = "Несохранённый ввод";
         await vm.SaveCommand.ExecuteAsync();
         Assert.True(vm.IsEditing); Assert.Equal("Несохранённый ввод", vm.Notes);
+        Assert.Equal(failure is "offline" or "malformed", vm.HasUnconfirmedMutation);
         Assert.DoesNotContain("Изменения контакта сохранены", vm.Message);
         if (failure is "412" or "403" or "404") Assert.False(vm.SaveCommand.CanExecute(null));
         if (failure == "412")

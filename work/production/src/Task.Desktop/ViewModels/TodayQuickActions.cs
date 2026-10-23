@@ -23,6 +23,8 @@ public sealed partial class TodayViewModel
         ? _taskSnapshots.GetValueOrDefault(item.Id) : null;
 
     public bool ShowTaskActions => SelectedIsTask && CanReadTasks && _tasksClient is not null;
+    internal bool HasUnconfirmedMutation => _unconfirmedCommands.Count > 0 || _planningRetries.Count > 0;
+
     public bool IsActionBusy => _isActionBusy;
     public bool NeedsTaskReload => ShowTaskActions && (SelectedTask is null
         || _tasksNeedingReload.Contains(SelectedItem!.Id));

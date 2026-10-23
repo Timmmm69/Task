@@ -8,6 +8,9 @@ public sealed record ObjectLinkTypeChoice(string Value, string Label);
 /// <summary>Confirmed relations; Corporate uses the stage 10.1 picker, Personal keeps local TargetId.</summary>
 public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private static readonly ObjectLinkTypeChoice[] AllTypes = [new("task_file", "Файл задачи"), new("project_file", "Файл проекта"), new("contact_file", "Файл контакта"), new("task_contact", "Контакт задачи")];
     private static readonly ObjectLinkTypeChoice[] CorporateTypes = [.. AllTypes, new("project_contact", "Контакт проекта"), new("task_project", "Проект задачи"), new("related", "Связанный объект")];
     private readonly IDesktopObjectLinksClient _client;
@@ -124,7 +127,7 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
     {
         try
         {
-            var result = await operation();
+            var result = mutation ? await _closeOperations.TrackAsync(operation) : await operation();
             ct.ThrowIfCancellationRequested();
             Apply(result, generation, mutation);
         }

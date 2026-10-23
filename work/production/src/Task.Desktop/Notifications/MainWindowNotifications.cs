@@ -22,7 +22,7 @@ public partial class MainWindow
         _notificationClient = client;
         SourceInitialized += (_, _) =>
         {
-            _tray = new(this, () => { _explicitExit = true; Close(); }, "Task · Corporate · работает в фоне");
+            _tray = new(this, RequestExit, "Task · Corporate · работает в фоне");
             _toast = new(Dispatcher, ActivateCorporateNotification);
             try
             {

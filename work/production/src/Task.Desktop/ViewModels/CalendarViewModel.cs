@@ -378,6 +378,9 @@ public sealed partial class CalendarEventEditorViewModel : ViewModelBase
 
 public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private const double TimelineHourHeight = 69d;
     private readonly IDesktopCalendarApiClient _client;
     private readonly Task.Desktop.Administration.IDesktopEmployeeDirectory? _employeeDirectory;
@@ -797,8 +800,8 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
                 || !(editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update"))) return;
             if (!editor.TryBuild(_timeZone, out var command)) return;
             result = editor.Source is null
-            ? await _client.CreateEventAsync(command, token)
-            : await _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token);
+            ? await _closeOperations.TrackAsync(() => _client.CreateEventAsync(command, token))
+            : await _closeOperations.TrackAsync(() => _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token));
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { return; }
         finally { _saving = false; editor.IsSaving = false; OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsSaving)); RaiseCommands(); }

@@ -36,6 +36,7 @@ public sealed class TaskWorkspaceViewModel : ViewModelBase
         AddDependencyCommand = new AsyncCommand(async (_, _) => { if (Dependency?.Id is { } id) await Write("dependencies", HttpMethod.Post, new() { ["predecessorId"] = id }); }, _ => CanEdit && Dependency?.Id is not null);
         RemoveDependencyCommand = new AsyncCommand(async (p, _) => { if (p is TaskWorkspaceItem i) await Write($"dependencies/{i.Id:D}", HttpMethod.Delete, new()); }, _ => CanEdit);
     }
+    internal bool HasUnconfirmedMutation => _keys.Count > 0;
     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
     public bool CanEdit => _allowsWrites && _loaded && !IsBusy && _source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) && _capabilities.Contains("Task.Update");
     public bool CanComment => _allowsWrites && _loaded && !IsBusy && _capabilities.Contains("Comment.Create");

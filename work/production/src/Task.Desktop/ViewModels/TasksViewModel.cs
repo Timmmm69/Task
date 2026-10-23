@@ -548,6 +548,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     public bool HasEditor => Editor is not null;
 
+    internal bool HasUnconfirmedMutation => _pendingEditorCommand is not null || _pendingTransitionCommand is not null;
+
     public bool IsMutationBusy
     {
         get => _isMutationBusy;
@@ -1497,16 +1499,19 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 _pendingEditorRevision = -1;
                 break;
             case DesktopTaskWriteResult<DesktopTaskDto>.Forbidden:
+                _pendingEditorCommand = null;
                 _writePermissionChanged = true;
                 editor.SetStatus("Права изменились. Данные формы сохранены, но запись сейчас недоступна.");
                 ScreenMessage = "Права на изменение задач были отозваны. Доступен только просмотр.";
                 NotifyMutationState();
                 break;
             case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
+                _pendingEditorCommand = null;
                 State = TasksScreenState.SessionEnded;
                 ScreenMessage = "Сессия завершена. Выполните вход снова.";
                 editor.SetStatus("Сессия завершена. Данные формы не отправлены повторно.");
                 break;
+            case DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse:
             case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
                 editor.SetStatus("Сервер недоступен. Данные формы сохранены; повторите попытку.");
                 break;

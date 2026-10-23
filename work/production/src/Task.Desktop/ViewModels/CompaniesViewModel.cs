@@ -4,6 +4,8 @@ namespace Task.Desktop.ViewModels;
 
 public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+
     private readonly IDesktopCompaniesClient _client;
     private readonly Func<bool> _canRead, _canRequest, _canCreate, _canUpdate;
     private CancellationTokenSource? _listRequest, _detailRequest, _pickerRequest;
@@ -67,6 +69,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
     public bool IsLoadingCard { get => _loadingCard; private set { SetProperty(ref _loadingCard, value); Notify(); } }
     public bool IsEditing { get => _editing; private set { SetProperty(ref _editing, value); Notify(); } }
     public bool IsCreating { get => _creating; private set { SetProperty(ref _creating, value); Notify(); } }
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
     public bool CanChangeDraft => IsEditing && !IsBusy && _pendingCreate is null;
     private bool CanRequest => !_disposed && _canRead() && _canRequest();
@@ -192,7 +195,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
         using var request = CancellationTokenSource.CreateLinkedTokenSource(ct); _detailRequest = request; IsBusy = true; Message = null;
         try
         {
-            var result = await _client.SaveCompanyAsync(draft, create ? _createKey : null, request.Token);
+            var result = await _closeOperations.TrackAsync(() => _client.SaveCompanyAsync(draft, create ? _createKey : null, request.Token));
             if (!Current(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
             if (result is DesktopWorkResult<DesktopCompany>.Succeeded success)
             {

@@ -32,6 +32,8 @@ public static class ViewState
     public static string? GetColumnId(DependencyObject target) => (string?)target.GetValue(ColumnIdProperty);
     private static readonly DependencyProperty AdapterProperty = DependencyProperty.RegisterAttached("Adapter", typeof(Adapter), typeof(ViewState));
     private static readonly DependencyProperty ClosingProperty = DependencyProperty.RegisterAttached("Closing", typeof(bool), typeof(ViewState), new PropertyMetadata(false));
+    internal static bool IsClosePending(Window window) => (bool)window.GetValue(ClosePendingProperty);
+    private static readonly DependencyProperty ClosePendingProperty = DependencyProperty.RegisterAttached("ClosePending", typeof(bool), typeof(ViewState), new PropertyMetadata(false));
     internal static bool IsCompletingClose(Window window) => (bool)window.GetValue(ClosingProperty);
 
     public static void Attach(Window window, ViewStateStore store)
@@ -44,10 +46,18 @@ public static class ViewState
             args.Cancel = true;
             if (saving) return;
             saving = true;
+            window.SetValue(ClosePendingProperty, true);
             window.IsEnabled = false;
             await store.DisposeAsync(); // Worker I/O finishes before process shutdown.
-            window.SetValue(ClosingProperty, true);
-            window.Close();
+            void CompleteClose()
+            {
+                window.SetValue(ClosingProperty, true);
+                window.Close();
+            }
+            // DisposeAsync may complete synchronously when no preferences changed.
+            // Corporate Close must run after the current WPF Closing event unwinds.
+            if (window is MainWindow) _ = window.Dispatcher.BeginInvoke((Action)CompleteClose);
+            else CompleteClose();
         }
         void Closed(object? sender, EventArgs args)
         {

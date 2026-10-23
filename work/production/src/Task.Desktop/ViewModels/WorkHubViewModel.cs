@@ -22,6 +22,9 @@ public sealed record CatalogItemTypeChoice(string Value, string Label)
 
 public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 {
+    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
+    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+
     private readonly IDesktopWorkApiClient _client;
     private readonly IFileAccessAdapter _files;
     private readonly HashSet<string> _capabilities;
@@ -504,7 +507,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         NotifyCommands();
         try
         {
-            var result = await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct);
+            var result = await _closeOperations.TrackAsync(() => _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct));
             if (result is DesktopWorkResult<bool>.Succeeded)
             {
                 _catalogSnapshotCurrent = false;
@@ -527,7 +530,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     }
     private async System.Threading.Tasks.Task CreateContactAsync(object? _, CancellationToken ct)
     {
-        Apply(await _client.CreateContactAsync(NewContactFirstName, NewContactLastName, NewContactDisplayName, ct), value =>
+        Apply(await _closeOperations.TrackAsync(() => _client.CreateContactAsync(NewContactFirstName, NewContactLastName, NewContactDisplayName, ct)), value =>
         { Contacts = [value, .. Contacts]; NewContactFirstName = NewContactLastName = NewContactDisplayName = string.Empty; SetFeedback("Контакт создан и доступен для связей с работой.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task MarkReadAsync(object? parameter, CancellationToken ct)
@@ -544,8 +547,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     {
         var item = parameter as DesktopLifecycleItem ?? SelectedLifecycleItem; if (item is null) return;
         var result = IsArchive
-            ? await _client.RestoreArchiveAsync(item.ObjectId, item.Version, ct)
-            : await _client.RestoreTrashAsync(item.ObjectId, item.Version, ct);
+            ? await _closeOperations.TrackAsync(() => _client.RestoreArchiveAsync(item.ObjectId, item.Version, ct))
+            : await _closeOperations.TrackAsync(() => _client.RestoreTrashAsync(item.ObjectId, item.Version, ct));
         Apply(result, _ =>
         {
             LifecycleItems = LifecycleItems.Where(candidate => candidate.ObjectId != item.ObjectId).ToArray();
@@ -563,7 +566,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             MissingFileBehavior is not ("show_actions" or "keep_inactive" or "prompt_relink"))
         { SetFeedback("Проверьте формат времени и допустимые значения настроек.", WorkHubFeedbackKind.Warning); return; }
         var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = NormalizeTime(UserWorkdayStart), WorkdayEnd = NormalizeTime(UserWorkdayEnd), DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, DateOnlyReminderTime = NormalizeTime(DateOnlyReminderTime), AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
-        Apply(await _client.UpdateUserSettingsAsync(draft, ct), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
+        Apply(await _closeOperations.TrackAsync(() => _client.UpdateUserSettingsAsync(draft, ct)), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveNotificationPreferencesAsync(object? _, CancellationToken ct)
     {
@@ -571,7 +574,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (NotificationSettingsError is { } error) { SetFeedback(error, WorkHubFeedbackKind.Warning); return; }
         if (DefaultSnoozeMinutes is < 1 or > 10080) { SetFeedback("Отсрочка должна быть от 1 до 10080 минут.", WorkHubFeedbackKind.Warning); return; }
         var draft = _notificationPreferences with { Enabled = NotificationsEnabled, DesktopEnabled = DesktopNotificationsEnabled, SoundEnabled = NotificationSoundEnabled, DefaultSnoozeMinutes = DefaultSnoozeMinutes, QuietHoursStart = string.IsNullOrWhiteSpace(QuietHoursStart) ? null : NormalizeTime(QuietHoursStart), QuietHoursEnd = string.IsNullOrWhiteSpace(QuietHoursEnd) ? null : NormalizeTime(QuietHoursEnd), QuietHoursTimeZone = string.IsNullOrWhiteSpace(QuietHoursTimeZone) ? null : QuietHoursTimeZone };
-        Apply(await _client.UpdateNotificationPreferencesAsync(draft, ct), value => { LoadNotificationPreferences(value); SetFeedback("Настройки уведомлений сохранены.", WorkHubFeedbackKind.Success); });
+        Apply(await _closeOperations.TrackAsync(() => _client.UpdateNotificationPreferencesAsync(draft, ct)), value => { LoadNotificationPreferences(value); SetFeedback("Настройки уведомлений сохранены.", WorkHubFeedbackKind.Success); });
     }
     private async System.Threading.Tasks.Task SaveOrganizationSettingsAsync(object? _, CancellationToken ct)
     {
@@ -579,7 +582,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (TrashRetentionDays < 1 || HistoryRetentionDays < 1 || ChangeFeedRetentionDays < 1 || RecurrenceHorizonDays < 1)
         { SetFeedback("Сроки хранения и горизонт повторений должны быть положительными.", WorkHubFeedbackKind.Warning); return; }
         var draft = _organizationSettings with { TrashRetentionDays = TrashRetentionDays, HistoryRetentionDays = HistoryRetentionDays, ChangeFeedRetentionDays = ChangeFeedRetentionDays, RecurrenceHorizonDays = RecurrenceHorizonDays };
-        Apply(await _client.UpdateOrganizationSettingsAsync(draft, ct), value => { LoadOrganizationSettings(value); SetFeedback("Настройки организации сохранены.", WorkHubFeedbackKind.Success); });
+        Apply(await _closeOperations.TrackAsync(() => _client.UpdateOrganizationSettingsAsync(draft, ct)), value => { LoadOrganizationSettings(value); SetFeedback("Настройки организации сохранены.", WorkHubFeedbackKind.Success); });
     }
     private System.Threading.Tasks.Task OpenSearchResultAsync(object? parameter, CancellationToken _)
     {
