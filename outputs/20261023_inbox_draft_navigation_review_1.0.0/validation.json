@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "base_commit": "d71b270ed744e719ff66d5fec3b8b47ae41fc609",
+  "source_commit": "5ad85210d13eea557728ddc8a2abda1cd9c30388",
+  "verdict": "APPROVED FOR MAIN",
+  "actionable_findings": 0,
+  "independent_review": "Независимый read-only review коммита 5ad8521: actionable findings нет. Проверены InboxViewModel, SelectedSection, ModeSwitchGuard и AsyncCommand; сохранение состояния, блокировка второго редактора, pending write и очистка при завершении сессии корректны. Проверяющий не запускал тесты, сборку и UI; эти проверки выполнены основным агентом.",
+  "desktop_gate": {
+    "skipped": 0,
+    "passed": 1831,
+    "failed": 0
+  },
+  "release_build": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "diff_check": "PASS",
+  "source_patch_reverse_check": "PASS",
+  "dashboard_order": "PASS",
+  "dashboard_validation": "PASS",
+  "dashboard_progress_changed": false,
+  "native_ui_walkthrough": "NOT RUN",
+  "source_files": [
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs",
+      "sha256": "0e4065db69edc8a66c6fe2405e98880c809667e4ffb4ace08d66d12012444ba0"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/InboxDraftNavigationTests.cs",
+      "sha256": "717dcbbf224f275df8f06436576f796565a018da3bad28913768e4bbf1e011e1"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/InboxViewModelTests.cs",
+      "sha256": "27f79a4ea8ee57487e591077c4fb5bacc7dead16917e405810b2e5003db9dcf8"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/DesktopInboxConversionTests.cs",
+      "sha256": "c1f97f5ffe5436fa0ae49db258a4c1a96212146ad53e7d5675331d92d7167dc5"
+    }
+  ]
+}
