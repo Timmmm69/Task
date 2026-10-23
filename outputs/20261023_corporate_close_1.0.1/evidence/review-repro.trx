@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f80cb2b0-7e80-47fb-a4f1-45958fb13795" name="novik@TIM 2026-10-23 19:45:41" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-23T19:45:41.2555092+03:00" queuing="2026-10-23T19:45:41.2555095+03:00" start="2026-10-23T19:45:37.0097551+03:00" finish="2026-10-23T19:45:41.2594894+03:00" />
+  <TestSettings name="default" id="944309fd-595b-4828-b4d9-e346dd2a9dad">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-23_19_45_41" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="4de01239-0d36-4ecb-9bf3-8b9ea563268a" testId="a1cdaa03-334d-c3bc-564e-fb65a1f72041" testName="Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush" computerName="TIM" duration="00:00:02.5700812" startTime="2026-10-23T19:45:38.5622829+03:00" endTime="2026-10-23T19:45:41.1473800+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4de01239-0d36-4ecb-9bf3-8b9ea563268a">
+      <Output>
+        <ErrorInfo>
+          <Message>ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)&#xD;
+&#xD;
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.&#xD;
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [1 s]&#xD;
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:&#xD;
+   System.InvalidOperationException : ðÆð¥ ð▓ÐÇðÁð╝ÐÅ ðÀð░ð║ÐÇÐïÐéð©ÐÅ ð¥ð║ð¢ð░ ð¢ðÁð╗ÐîðÀÐÅ ÐâÐüÐéð░ð¢ð¥ð▓ð©ÐéÐî ð┤ð╗ÐÅ Visibility ðÀð¢ð░ÐçðÁð¢ð©ðÁ Visible ð©ð╗ð© ð▓ÐïðÀð▓ð░ÐéÐî Show, ShowDialog, Close ð©ð╗ð© WindowInteropHelper.EnsureHandle.&#xD;
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:&#xD;
+     at System.Windows.Window.VerifyNotClosing()&#xD;
+   at System.Windows.Window.InternalClose(Boolean shutdown, Boolean ignoreCancel)&#xD;
+   at Task.Desktop.MainWindow.CloseAfterModeSwitch() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 111&#xD;
+   at Task.Desktop.Tests.CorporateCloseUiTests.&lt;&gt;c__DisplayClass0_4.&lt;NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush&gt;b__13(IReadOnlyList`1 _) in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 105&#xD;
+   at Task.Desktop.Modes.CorporateCloseGuard.CanClose(Func`1 inspect, Boolean alreadyApproved, Func`2 confirm, Action operationPending) in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\Modes\CorporateCloseGuard.cs:line 12&#xD;
+   at Task.Desktop.MainWindow.OnClosing(CancelEventArgs e) in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 69&#xD;
+   at System.Windows.Window.WmClose()&#xD;
+   at System.Windows.Window.WindowFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean&amp; handled)&#xD;
+   at System.Windows.Interop.HwndSource.PublicHooksFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean&amp; handled)&#xD;
+   at MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean&amp; handled)&#xD;
+   at MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)&#xD;
+   at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)&#xD;
+   at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)&#xD;
+   at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(DispatcherPriority priority, TimeSpan timeout, Delegate method, Object args, Int32 numArgs)&#xD;
+   at System.Windows.Threading.Dispatcher.Invoke(DispatcherPriority priority, Delegate method, Object arg)&#xD;
+   at MS.Win32.HwndSubclass.SubclassWndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam)&#xD;
+   at MS.Win32.UnsafeNativeMethods.UnsafeSendMessage(IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam)&#xD;
+   at System.Windows.Window.InternalClose(Boolean shutdown, Boolean ignoreCancel)&#xD;
+   at Task.Desktop.MainWindow.RequestExit() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 97&#xD;
+   at Task.Desktop.Tests.CorporateCloseUiTests.&lt;&gt;c__DisplayClass0_1.&lt;&lt;NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush&gt;b__1&gt;d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 108&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 124&#xD;
+--- End of stack trace from previous location ---&#xD;
+&#xD;
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 1 s. - Task.Desktop.Tests.dll (net10.0)&#xD;
+[xUnit.net 00:00:01.56]     Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [FAIL]&#xD;
+</Message>
+          <StackTrace>   at Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush() in C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 26&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush" storage="c:\users\novik\таск\work\corporate_close\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="a1cdaa03-334d-c3bc-564e-fb65a1f72041">
+      <Execution id="4de01239-0d36-4ecb-9bf3-8b9ea563268a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CorporateCloseUiTests" name="NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a1cdaa03-334d-c3bc-564e-fb65a1f72041" executionId="4de01239-0d36-4ecb-9bf3-8b9ea563268a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.50]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.73]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.75]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:03.35]       ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)&#xD;
+[xUnit.net 00:00:03.35]       &#xD;
+[xUnit.net 00:00:03.35]       ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.&#xD;
+[xUnit.net 00:00:03.35]         ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [1 s]&#xD;
+[xUnit.net 00:00:03.35]         ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:&#xD;
+[xUnit.net 00:00:03.35]          System.InvalidOperationException : ðÆð¥ ð▓ÐÇðÁð╝ÐÅ ðÀð░ð║ÐÇÐïÐéð©ÐÅ ð¥ð║ð¢ð░ ð¢ðÁð╗ÐîðÀÐÅ ÐâÐüÐéð░ð¢ð¥ð▓ð©ÐéÐî ð┤ð╗ÐÅ Visibility ðÀð¢ð░ÐçðÁð¢ð©ðÁ Visible ð©ð╗ð© ð▓ÐïðÀð▓ð░ÐéÐî Show, ShowDialog, Close ð©ð╗ð© WindowInteropHelper.EnsureHandle.&#xD;
+[xUnit.net 00:00:03.36]         ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:&#xD;
+[xUnit.net 00:00:03.36]            at System.Windows.Window.VerifyNotClosing()&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Window.InternalClose(Boolean shutdown, Boolean ignoreCancel)&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.MainWindow.CloseAfterModeSwitch() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 111&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.Tests.CorporateCloseUiTests.&lt;&gt;c__DisplayClass0_4.&lt;NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush&gt;b__13(IReadOnlyList`1 _) in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 105&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.Modes.CorporateCloseGuard.CanClose(Func`1 inspect, Boolean alreadyApproved, Func`2 confirm, Action operationPending) in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\Modes\CorporateCloseGuard.cs:line 12&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.MainWindow.OnClosing(CancelEventArgs e) in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 69&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Window.WmClose()&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Window.WindowFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean&amp; handled)&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Interop.HwndSource.PublicHooksFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean&amp; handled)&#xD;
+[xUnit.net 00:00:03.36]          at MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean&amp; handled)&#xD;
+[xUnit.net 00:00:03.36]          at MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(DispatcherPriority priority, TimeSpan timeout, Delegate method, Object args, Int32 numArgs)&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Threading.Dispatcher.Invoke(DispatcherPriority priority, Delegate method, Object arg)&#xD;
+[xUnit.net 00:00:03.36]          at MS.Win32.HwndSubclass.SubclassWndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam)&#xD;
+[xUnit.net 00:00:03.36]          at MS.Win32.UnsafeNativeMethods.UnsafeSendMessage(IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam)&#xD;
+[xUnit.net 00:00:03.36]          at System.Windows.Window.InternalClose(Boolean shutdown, Boolean ignoreCancel)&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.MainWindow.RequestExit() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 97&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.Tests.CorporateCloseUiTests.&lt;&gt;c__DisplayClass0_1.&lt;&lt;NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush&gt;b__1&gt;d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 108&#xD;
+[xUnit.net 00:00:03.36]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.36]          at Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush() in C:\Users\novik\ðóð░Ðüð║\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 124&#xD;
+[xUnit.net 00:00:03.36]       --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.36]       &#xD;
+[xUnit.net 00:00:03.36]       ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 1 s. - Task.Desktop.Tests.dll (net10.0)&#xD;
+[xUnit.net 00:00:03.36]       [xUnit.net 00:00:01.56]     Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [FAIL]&#xD;
+[xUnit.net 00:00:03.36]       &#xD;
+[xUnit.net 00:00:03.36]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.36]         C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs(26,0): at Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush()&#xD;
+[xUnit.net 00:00:03.36]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.39]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-23T19:45:41.1494578+03:00">
+        <Text>[xUnit.net 00:00:03.35]     Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,27 @@
+{
+  "sourceCommit": "f7a9d2c930d229f537e683615c5489fe60a37d12",
+  "base": "a505972de237b77d1271d4cb7c61a8abc21218f1",
+  "originMain": "f7a9d2c930d229f537e683615c5489fe60a37d12",
+  "sources": [
+    {
+      "path": "CANONICAL_BASELINE.md",
+      "sha256": "97fa6b51cc27a30f650c895fe7f6e9e0e36777b2a97e3f94c13c386d16e029ce"
+    },
+    {
+      "path": "sources/concept/Task_Concept_Final.txt",
+      "sha256": "54598093ed426b6151440557eac14a59e54c64eacf1d190c1febd3b3463c94ac"
+    },
+    {
+      "path": "sources/stage_1/architecture_organizer.md",
+      "sha256": "972211eaae8e0686fbbeef5320397234da115bb3bd257415972044669d00aee5"
+    },
+    {
+      "path": "sources/stage_2_3/Organizer_Stage2_Technical_Specification_2.3_Final.zip",
+      "sha256": "75efc3e83f09fbcc41ae7da68a96f2ec0ebdfc74e61f62615f4da3478afe5019"
+    },
+    {
+      "path": "sources/stage_3_5/Organizer_Stage3_Final_Baseline_3.5.zip",
+      "sha256": "6c2447e935dd413488e482f7db3c481c8dc6e53aeb57a07d1df23d3ada85381e"
+    }
+  ]
+}

@@ -1,0 +1,1468 @@
+diff --git a/.project-dashboard/roadmap.json b/.project-dashboard/roadmap.json
+index 1203035..74e9247 100644
+--- a/.project-dashboard/roadmap.json
++++ b/.project-dashboard/roadmap.json
+@@ -425,10 +425,11 @@
+         "outputs/20261008_view_state_1.0.0/VALIDATION_REPORT.md: device-local view state; 711 desktop + 163 server-list PASS; native resize/sort/permissions/lifetime and isolation verified; live-server manual and physical mixed-DPI NOT RUN.",
+         "outputs/20261010_task_ux_journey_1.0.0/validation-report.md: eight journey improvements; 747 unique desktop tests and 47 native WPF checks PASS; Release build and shell contract PASS; 800x480 keyboard/day access verified.",
+         "outputs/20261010_task_ux_five_1.0.0/validation-report.md: calendar/Today/Tomorrow, form keyboard, pinned corporate footer, confirmed checklist checkbox, Personal terminal filter; 756 desktop tests PASS, native WPF keyboard/screenshots and Release build PASS.",
+-        "outputs/20261010_task_context_actions_1.0.0/validation-report.md: Task UX 6–8, double-click, create from project, add subtask in Personal/Corporate; 771 desktop tests, native WPF mouse/keyboard/screenshots, PostgreSQL relations, Release build. Existing boundary-script framework mismatch recorded."
++        "outputs/20261010_task_context_actions_1.0.0/validation-report.md: Task UX 6–8, double-click, create from project, add subtask in Personal/Corporate; 771 desktop tests, native WPF mouse/keyboard/screenshots, PostgreSQL relations, Release build. Existing boundary-script framework mismatch recorded.",
++        "outputs/20261023_corporate_close_1.0.1/validation-report.md: corporate close protection, shared draft inspection, pending writes, tray and native WPF lifecycle regression."
+       ],
+-      "note": "Нативный WPF Release повторно проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, точный viewport 1200×900, UIA Value/Invoke/Selection/Scroll и полный Tab/F6 cycle — PASS. Responsive shell ниже 900 DIP переходит в icon-only navigation и не обрезает header на 200%. Физическая mixed-DPI топология остаётся deployment smoke. 2026-10-06: Personal приведён к существующей оболочке и компонентам Corporate: единая боковая навигация, списки, карточки, редакторы и настройки резервных копий/фона. Native 1200×820 и 800×480: 24 раздела/размера, видимые основные действия и реальный конфликт с сохранением черновика; 497 desktop PASS / 0 SKIP. Это локальное UX-подтверждение; полная готовность приложения и следующие этапы не объявлены. Позднейшее обновление 2026-10-06: Accepted Personal UX inputs unchanged; exact ZIP native smoke/restart/replacement PASS on developer Windows. Clean Windows, physical offline, visible popup and full current DPI matrix are not accepted. 2026-10-08: Command Palette 1.0.0 расширяет существующий global search popup: Ctrl+K, локальные capability-aware команды, общий Search API с debounce/cancellation, очистка scope, offline navigation/read-only, keyboard/focus restore и virtualization. Полный Release gate: 1980 PASS / 0 SKIP / 0 FAIL / 0 NOT RUN на PostgreSQL 16. WPF keyboard и 200% equivalent bounds проверены; системные HC selection colors/outline проверены, ручной Narrator и аппаратная DPI/HC матрица этим пакетом не подтверждаются. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись. 2026-10-10: реализованы пять улучшений форм Task: календарь и быстрые дни, Enter/Ctrl+Enter, закреплённые кнопки корпоративной задачи, checkbox с подтверждённым состоянием, фильтр завершённых/отменённых Personal (по умолчанию выключен). Проверены ошибки, черновики, минимальные окна и системный фокус. Progress/status не повышались. 2026-10-10: реализованы задачи UX 6–8: двойной щелчок по задаче, создание из проекта, создание подзадачи. Обычная форма, защита черновиков и прав, сохранение выбранных связей при поздней загрузке. Progress/status не повышались.",
+-      "updated_at": "2026-10-10T11:11:23.840Z",
++      "note": "Нативный WPF Release повторно проверен на Windows 10.0.26200.0: фактический DPI 150%, логические эквиваленты 100/125/150/200%, точный viewport 1200×900, UIA Value/Invoke/Selection/Scroll и полный Tab/F6 cycle — PASS. Responsive shell ниже 900 DIP переходит в icon-only navigation и не обрезает header на 200%. Физическая mixed-DPI топология остаётся deployment smoke. 2026-10-06: Personal приведён к существующей оболочке и компонентам Corporate: единая боковая навигация, списки, карточки, редакторы и настройки резервных копий/фона. Native 1200×820 и 800×480: 24 раздела/размера, видимые основные действия и реальный конфликт с сохранением черновика; 497 desktop PASS / 0 SKIP. Это локальное UX-подтверждение; полная готовность приложения и следующие этапы не объявлены. Позднейшее обновление 2026-10-06: Accepted Personal UX inputs unchanged; exact ZIP native smoke/restart/replacement PASS on developer Windows. Clean Windows, physical offline, visible popup and full current DPI matrix are not accepted. 2026-10-08: Command Palette 1.0.0 расширяет существующий global search popup: Ctrl+K, локальные capability-aware команды, общий Search API с debounce/cancellation, очистка scope, offline navigation/read-only, keyboard/focus restore и virtualization. Полный Release gate: 1980 PASS / 0 SKIP / 0 FAIL / 0 NOT RUN на PostgreSQL 16. WPF keyboard и 200% equivalent bounds проверены; системные HC selection colors/outline проверены, ручной Narrator и аппаратная DPI/HC матрица этим пакетом не подтверждаются. 2026-10-08: локально реализованы user/device/authority-scoped UI preferences schema v1: DIP ширины таблиц связей, их primary sort, стабильные секции Today/Projects/Tasks/Personal. Backend API не изменён; cursor lists сохраняют canonical server order. Release build, 711 desktop и 163 server-list теста PASS. Ручной live-server list и physical mixed-DPI walkthrough NOT RUN; полный requested manual gate не закрыт. Progress/status не повышены. 2026-10-10: реализованы восемь согласованных упрощений пользовательского пути в Personal и Corporate; названия, подсказки, поля даты, пустые состояния и результат сохранения. Проверены фильтры, черновики, отозванные write capabilities при сохранённом Task.Read, клавиатура и минимальное окно. Progress/status не повышались; серверные контракты и бизнес-правила не менялись. 2026-10-10: реализованы пять улучшений форм Task: календарь и быстрые дни, Enter/Ctrl+Enter, закреплённые кнопки корпоративной задачи, checkbox с подтверждённым состоянием, фильтр завершённых/отменённых Personal (по умолчанию выключен). Проверены ошибки, черновики, минимальные окна и системный фокус. Progress/status не повышались. 2026-10-10: реализованы задачи UX 6–8: двойной щелчок по задаче, создание из проекта, создание подзадачи. Обычная форма, защита черновиков и прав, сохранение выбранных связей при поздней загрузке. Progress/status не повышались. 2026-10-23: защита корпоративного выхода переиспользует общий Inspect, сохраняет черновики при отмене и блокирует неподтверждённые операции; скрытие в трей и технические переходы проверены WPF-тестом. Progress/status не повышались. Проверка перед main: исправлены reentrant Close при техническом переходе, лишняя блокировка после определённого отказа, отключённое окно после отмены финального Close и снятие защиты старого неизвестного capture новым запросом. Дополнительно устранены повторный Close при синхронном завершении flush и разблокировка владельца смены режима при отмене выхода.",
++      "updated_at": "2026-10-23T19:52:56+03:00",
+       "priority": 3,
+       "dependencies": [
+         "DESK-03"
+diff --git a/work/production/src/Task.Desktop/Infrastructure/ClosePendingOperations.cs b/work/production/src/Task.Desktop/Infrastructure/ClosePendingOperations.cs
+new file mode 100644
+index 0000000..9ca8964
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Infrastructure/ClosePendingOperations.cs
+@@ -0,0 +1,41 @@
++using Task.Desktop.Work;
++using Task.Desktop.Calendar;
++using Task.Desktop.Projects;
++
++namespace Task.Desktop.Infrastructure;
++
++/// <summary>Per-view-model receipts only; never stores, retries, or cancels a request.</summary>
++internal sealed class ClosePendingOperations
++{
++    private readonly object _gate = new();
++    private int _active;
++    private bool _unknown;
++    internal bool HasPending { get { lock (_gate) return _active > 0 || _unknown; } }
++
++    internal global::System.Threading.Tasks.Task<DesktopWorkResult<T>> TrackAsync<T>(
++        Func<global::System.Threading.Tasks.Task<DesktopWorkResult<T>>> send) =>
++        TrackAsync(send, result => result is DesktopWorkResult<T>.ServerUnavailable or DesktopWorkResult<T>.MalformedResponse);
++
++    internal global::System.Threading.Tasks.Task<DesktopCalendarResult<T>> TrackAsync<T>(
++        Func<global::System.Threading.Tasks.Task<DesktopCalendarResult<T>>> send) =>
++        TrackAsync(send, result => result is DesktopCalendarResult<T>.ServerUnavailable or DesktopCalendarResult<T>.MalformedResponse);
++
++    internal global::System.Threading.Tasks.Task<DesktopProjectResult<T>> TrackAsync<T>(
++        Func<global::System.Threading.Tasks.Task<DesktopProjectResult<T>>> send) where T : class =>
++        TrackAsync(send, result => result is DesktopProjectResult<T>.ServerUnavailable or DesktopProjectResult<T>.MalformedResponse);
++
++    private async global::System.Threading.Tasks.Task<T> TrackAsync<T>(Func<global::System.Threading.Tasks.Task<T>> send, Func<T, bool> unknown)
++    {
++        lock (_gate) _active++;
++        try
++        {
++            var result = await send();
++            if (unknown(result)) { lock (_gate) _unknown = true; }
++            return result;
++        }
++        catch { lock (_gate) _unknown = true; throw; }
++        finally { lock (_gate) _active--; }
++        // These APIs do not expose an exact retained request identity to the owner.
++        // A later successful write cannot prove the outcome of the previous request.
++    }
++}
+diff --git a/work/production/src/Task.Desktop/Infrastructure/ViewState.cs b/work/production/src/Task.Desktop/Infrastructure/ViewState.cs
+index 16e1c0f..fd350f7 100644
+--- a/work/production/src/Task.Desktop/Infrastructure/ViewState.cs
++++ b/work/production/src/Task.Desktop/Infrastructure/ViewState.cs
+@@ -32,6 +32,8 @@ public static class ViewState
+     public static string? GetColumnId(DependencyObject target) => (string?)target.GetValue(ColumnIdProperty);
+     private static readonly DependencyProperty AdapterProperty = DependencyProperty.RegisterAttached("Adapter", typeof(Adapter), typeof(ViewState));
+     private static readonly DependencyProperty ClosingProperty = DependencyProperty.RegisterAttached("Closing", typeof(bool), typeof(ViewState), new PropertyMetadata(false));
++    internal static bool IsClosePending(Window window) => (bool)window.GetValue(ClosePendingProperty);
++    private static readonly DependencyProperty ClosePendingProperty = DependencyProperty.RegisterAttached("ClosePending", typeof(bool), typeof(ViewState), new PropertyMetadata(false));
+     internal static bool IsCompletingClose(Window window) => (bool)window.GetValue(ClosingProperty);
+ 
+     public static void Attach(Window window, ViewStateStore store)
+@@ -44,10 +46,18 @@ public static class ViewState
+             args.Cancel = true;
+             if (saving) return;
+             saving = true;
++            window.SetValue(ClosePendingProperty, true);
+             window.IsEnabled = false;
+             await store.DisposeAsync(); // Worker I/O finishes before process shutdown.
+-            window.SetValue(ClosingProperty, true);
+-            window.Close();
++            void CompleteClose()
++            {
++                window.SetValue(ClosingProperty, true);
++                window.Close();
++            }
++            // DisposeAsync may complete synchronously when no preferences changed.
++            // Corporate Close must run after the current WPF Closing event unwinds.
++            if (window is MainWindow) _ = window.Dispatcher.BeginInvoke((Action)CompleteClose);
++            else CompleteClose();
+         }
+         void Closed(object? sender, EventArgs args)
+         {
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml.cs b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+index 90fa4a0..548951d 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml.cs
++++ b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+@@ -4,6 +4,7 @@ using System.Windows.Input;
+ using System.Windows.Threading;
+ using System.ComponentModel;
+ using Task.Desktop.ViewModels;
++using Task.Desktop.Modes;
+ 
+ namespace Task.Desktop;
+ 
+@@ -44,57 +45,93 @@ public partial class MainWindow : Window
+         }
+     }
+ 
++    private bool _closeApproved;
++    private bool _closingInProgress;
++    internal Func<IReadOnlyList<string>, bool>? ConfirmCloseOverride { get; set; }
++    internal Action? OperationPendingOverride { get; set; }
++    internal Func<bool>? TrayAvailableOverride { get; set; }
++
+     protected override void OnClosing(CancelEventArgs e)
+     {
+-        if (_modeTransitionClose || Infrastructure.ViewState.IsCompletingClose(this))
++        _closingInProgress = true;
++        try { CloseCore(e); }
++        finally { _closingInProgress = false; }
++    }
++
++    private void CloseCore(CancelEventArgs e)
++    {
++        // Mandatory authentication teardown and an already prepared mode switch
++        // must not retain access to the old context through a user confirmation.
++        if (_authenticationTransitionClose || _modeTransitionClose)
++        {
++            base.OnClosing(e);
++            return;
++        }
++        if (!_explicitExit && !_closeApproved && (TrayAvailableOverride?.Invoke() ?? _tray?.IsAvailable == true))
+         {
++            e.Cancel = true;
++            Hide();
+             base.OnClosing(e);
+             return;
+         }
+-        var viewModel = DataContext as MainWindowViewModel;
+-        var editor = viewModel?.Tasks?.Editor;
+-        var hasCalendarEditor = viewModel?.Calendar?.Editor is not null;
+-        var hasProjectEditor = viewModel?.Projects?.Editor is not null;
+-        if (ShouldCancelClose(
+-            _authenticationTransitionClose,
+-            editor?.HasUnsavedChanges == true || hasCalendarEditor || hasProjectEditor,
+-            () =>
++        var canClose = CorporateCloseGuard.CanClose(
++            () => _authenticationTransitionClose || _modeTransitionClose ? [] : ModeSwitchGuard.Inspect(_viewModel), _closeApproved,
++            ConfirmCloseOverride ?? ConfirmDiscardOnClose, OperationPendingOverride ?? ShowPendingOperation);
++        // A modal dialog pumps messages. A mandatory transition raised inside it
++        // joins this close rather than recursively calling WPF's Close().
++        if (_authenticationTransitionClose || _modeTransitionClose)
+         {
+-            var message = editor?.IsBusy == true
+-                ? "Сохранение ещё выполняется. Закрытие отменит ожидание ответа. Закрыть Task?"
+-                : hasCalendarEditor
+-                    ? "Форма события календаря открыта. Закрыть Task без сохранения?"
+-                    : hasProjectEditor
+-                        ? "Форма проекта открыта. Закрыть Task без сохранения?"
+-                    : "В форме задачи есть несохранённые изменения. Закрыть Task без сохранения?";
+-            return MessageBox.Show(message, "Несохранённые изменения", MessageBoxButton.YesNo,
+-                MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
+-        }))
++            base.OnClosing(e);
++            return;
++        }
++        if (!canClose)
+         {
++            _closeApproved = false;
+             _explicitExit = false;
++            if (Infrastructure.ViewState.IsCompletingClose(this)) IsEnabled = true;
+             e.Cancel = true;
+             return;
+         }
+-
+-        if (!_authenticationTransitionClose && !_explicitExit && _tray?.IsAvailable == true)
++        _closeApproved = true;
++        base.OnClosing(e);
++        // ViewState cancels once to flush local UI preferences and calls Close again.
++        // Other cancellation must not authorize a later, unrelated user close.
++        if (e.Cancel && (!Infrastructure.ViewState.IsClosePending(this)
++            || Infrastructure.ViewState.IsCompletingClose(this)))
+         {
+-            e.Cancel = true; Hide();
++            _closeApproved = false;
++            _explicitExit = false;
++            if (Infrastructure.ViewState.IsCompletingClose(this)) IsEnabled = true;
+         }
+-        base.OnClosing(e);
++    }
++
++    private bool ConfirmDiscardOnClose(IReadOnlyList<string> names) => MessageBox.Show(this,
++        $"Несохранённые изменения ({names.Count}):\n• {string.Join("\n• ", names)}\n\nПри выходе эти данные будут потеряны. Выйти без сохранения?",
++        "Несохранённые изменения", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
++
++    private void ShowPendingOperation() => MessageBox.Show(this,
++        "Результат операции ещё не подтверждён. Дождитесь ответа сервера или проверьте исходный запрос в открытой форме, затем повторите выход.",
++        "Выход из Task", MessageBoxButton.OK, MessageBoxImage.Information);
++
++    internal void RequestExit()
++    {
++        if (_closingInProgress) return;
++        _explicitExit = true;
++        Close();
+     }
+ 
+     internal void CloseForAuthenticationTransition()
+     {
+         StopNotificationDelivery();
+         _authenticationTransitionClose = true;
+-        Close();
++        if (!_closingInProgress) Close();
+     }
+ 
+     internal void CloseAfterModeSwitch()
+     {
+         StopNotificationDelivery();
+         _modeTransitionClose = true;
+-        Close();
++        if (!_closingInProgress) Close();
+     }
+ 
+     private void OnSwitchMode(object sender, RoutedEventArgs e) => SwitchModeRequested?.Invoke();
+diff --git a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+index 368d7b4..25e0097 100644
+--- a/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
++++ b/work/production/src/Task.Desktop/Modes/CorporateApplicationContext.cs
+@@ -46,9 +46,9 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
+     public async global::System.Threading.Tasks.Task<bool> PrepareSwitchAsync()
+     {
+         if (_mainWindow?.DataContext is not MainWindowViewModel shell) return true;
+-        if (ModeSwitchGuard.Inspect(shell).Any(editor => editor.IsBusy()))
++        if (ModeSwitchGuard.HasPendingOperations(ModeSwitchGuard.Inspect(shell)))
+         {
+-            MessageBox.Show(_mainWindow, "Дождитесь завершения текущей операции и повторите переключение.",
++            MessageBox.Show(_mainWindow, "Результат операции ещё не подтверждён. Дождитесь завершения или проверьте исходный запрос, затем повторите переключение.",
+                 "Смена режима Task", MessageBoxButton.OK, MessageBoxImage.Information);
+             return false;
+         }
+diff --git a/work/production/src/Task.Desktop/Modes/CorporateCloseGuard.cs b/work/production/src/Task.Desktop/Modes/CorporateCloseGuard.cs
+new file mode 100644
+index 0000000..f18b224
+--- /dev/null
++++ b/work/production/src/Task.Desktop/Modes/CorporateCloseGuard.cs
+@@ -0,0 +1,17 @@
++namespace Task.Desktop.Modes;
++
++/// <summary>Read-only exit policy. Discard is committed only by closing the context.</summary>
++internal static class CorporateCloseGuard
++{
++    internal static bool CanClose(Func<IReadOnlyList<ModeSwitchEditor>> inspect,
++        bool alreadyApproved, Func<IReadOnlyList<string>, bool> confirm, Action operationPending)
++    {
++        bool Pending() => ModeSwitchGuard.HasPendingOperations(inspect());
++        if (Pending()) { operationPending(); return false; }
++        var names = inspect().Where(editor => editor.HasState()).Select(editor => editor.Name).ToArray();
++        if (!alreadyApproved && names.Length > 0 && !confirm(names)) return false;
++        // A modal confirmation pumps the dispatcher: an operation may have started meanwhile.
++        if (Pending()) { operationPending(); return false; }
++        return true;
++    }
++}
+diff --git a/work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs b/work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs
+index a4eb66a..8c283fc 100644
+--- a/work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs
++++ b/work/production/src/Task.Desktop/Modes/ModeSwitchGuard.cs
+@@ -6,23 +6,26 @@ internal enum ModeSwitchDecision { Save, Discard, Cancel }
+ 
+ internal sealed record ModeSwitchEditor(
+     string Name, Func<bool> HasState, Func<bool> IsBusy, AsyncCommand? Save, Func<bool>? IsSaved = null,
+-    object? SaveParameter = null);
++    object? SaveParameter = null, Func<bool>? HasUnconfirmedOperation = null);
+ 
+ internal static class ModeSwitchGuard
+ {
++    internal static bool HasPendingOperations(IReadOnlyList<ModeSwitchEditor> editors) =>
++        editors.Any(editor => editor.IsBusy() || editor.HasUnconfirmedOperation?.Invoke() == true);
++
+     public static async global::System.Threading.Tasks.Task<bool> PrepareAsync(
+         IReadOnlyList<ModeSwitchEditor> editors, Func<bool> canWrite,
+         Func<IReadOnlyList<string>, bool, ModeSwitchDecision> choose)
+     {
+         // Never abandon a write whose server outcome is still unknown.
+-        if (editors.Any(editor => editor.IsBusy())) return false;
++        if (HasPendingOperations(editors)) return false;
+         var pending = editors.Where(editor => editor.HasState()).ToArray();
+         if (pending.Length == 0) return true;
+         var canSave = canWrite() && pending.All(editor => editor.Save?.CanExecute(editor.SaveParameter) == true);
+         var decision = choose(pending.Select(editor => editor.Name).ToArray(), canSave);
+         if (decision == ModeSwitchDecision.Cancel) return false;
+         // Discard is committed by disposing the old context, after preference persistence.
+-        if (decision == ModeSwitchDecision.Discard) return !editors.Any(editor => editor.IsBusy());
++        if (decision == ModeSwitchDecision.Discard) return !HasPendingOperations(editors);
+         if (!canSave) return false;
+         foreach (var editor in pending)
+         {
+@@ -31,69 +34,92 @@ internal static class ModeSwitchGuard
+             // ICommand completion is not proof of a successful server write.
+             if (!(editor.IsSaved?.Invoke() ?? !editor.HasState())) return false;
+         }
+-        return !editors.Any(editor => editor.IsBusy() || editor.HasState());
++        return !HasPendingOperations(editors) && !editors.Any(editor => editor.HasState());
+     }
+ 
+     public static IReadOnlyList<ModeSwitchEditor> Inspect(MainWindowViewModel shell)
+     {
+         var editors = new List<ModeSwitchEditor>();
+         void Add(string name, Func<bool> state, Func<bool> busy, AsyncCommand? save,
+-            Func<bool>? saved = null, object? parameter = null) =>
+-            editors.Add(new(name, state, busy, save, saved, parameter));
++            Func<bool>? saved = null, object? parameter = null, Func<bool>? unconfirmed = null) =>
++            editors.Add(new(name, state, busy, save, saved, parameter, unconfirmed));
+         if (shell.Tasks is { } tasks)
+         {
+-            Add("Задача", () => tasks.Editor is not null, () => tasks.IsMutationBusy, tasks.SaveEditorCommand);
++            Add("Задача", () => tasks.Editor is not null, () => tasks.IsMutationBusy, tasks.SaveEditorCommand, unconfirmed: () => tasks.HasUnconfirmedMutation);
+             Add("Изменение статуса задачи", () => tasks.PendingTransition.HasValue,
+                 () => tasks.ConfirmTransitionCommand.IsExecuting, tasks.ConfirmTransitionCommand);
+             if (tasks.Workspace is { } workspace)
+             {
+-                Add("Комментарий задачи", () => !string.IsNullOrEmpty(workspace.Comment), () => workspace.IsBusy, workspace.AddCommentCommand);
++                Add("Комментарий задачи", () => !string.IsNullOrEmpty(workspace.Comment), () => workspace.IsBusy, workspace.AddCommentCommand, unconfirmed: () => workspace.HasUnconfirmedMutation);
+                 Add("Чек-лист задачи", () => !string.IsNullOrEmpty(workspace.CheckText), () => workspace.IsBusy, workspace.AddCheckCommand);
+                 // Selections for explicit link actions are drafts, not an instruction to create a link.
+                 Add("Связи задачи", () => workspace.File is not null || workspace.Dependency is not null, () => workspace.IsBusy, null);
+             }
+         }
++        if (shell.Today is { } today)
++        {
++            Add("Планирование задачи на сегодня", () => today.Planning?.HasChanges == true,
++                () => today.IsActionBusy, null, unconfirmed: () => today.HasUnconfirmedMutation);
++            Add("Изменение статуса в разделе «Сегодня»", () => today.IsTransitionConfirmationVisible,
++                () => today.IsActionBusy, null);
++        }
++        if (shell.Administration is { } admin)
++        {
++            Add("Карточка сотрудника", () => admin.IsEditorOpen,
++                () => admin.IsSavingUser, admin.SaveUserCommand, unconfirmed: () => admin.HasUnconfirmedMutation);
++            Add("Действие с учётной записью", () => admin.IsTransitionOpen,
++                () => admin.ConfirmUserTransitionCommand.IsExecuting, null);
++        }
+         if (shell.Calendar is { } calendar)
+         {
+-            Add("Событие календаря", () => calendar.Editor is not null, () => calendar.IsSaving, calendar.SaveEventCommand);
++            Add("Событие календаря", () => calendar.Editor is not null, () => calendar.IsSaving, calendar.SaveEventCommand, unconfirmed: () => calendar.HasUnconfirmedMutation);
+             if (calendar.Recurrence is { } recurrence)
+             {
+                 var revision = recurrence.SuccessfulSaveRevision;
+                 Add("Повторения", () => recurrence.IsOpen && recurrence.SuccessfulSaveRevision == revision,
+                     () => recurrence.IsBusy, recurrence.SaveCommand,
+-                    () => recurrence.SuccessfulSaveRevision > revision);
++                    () => recurrence.SuccessfulSaveRevision > revision, unconfirmed: () => recurrence.HasUnconfirmedMutation);
+             }
+         }
+         if (shell.Projects is { } projects)
+         {
+-            Add("Проект", () => projects.Editor is not null, () => projects.SaveProjectCommand.IsExecuting, projects.SaveProjectCommand);
++            Add("Проект", () => projects.Editor is not null, () => projects.SaveProjectCommand.IsExecuting, projects.SaveProjectCommand, unconfirmed: () => projects.HasUnconfirmedMutation);
+             Add("Новый участник проекта", () => !string.IsNullOrEmpty(projects.NewMemberUserId),
+                 () => projects.AddMemberCommand.IsExecuting, projects.AddMemberCommand);
+             Add("Роли участников проекта", () => projects.Members.Any(member => member.SelectedRole is { } role && role.Id != member.Source.ProjectRoleId),
+                 () => projects.ChangeMemberRoleCommand.IsExecuting || projects.RemoveMemberCommand.IsExecuting || projects.ArchiveProjectCommand.IsExecuting, null);
+         }
++        if (shell.Projects?.Files is { } files)
++            Add("Связь проекта с файлом", () => files.Choosing, () => files.AddCommand.IsExecuting || files.RemoveCommand.IsExecuting, null, unconfirmed: () => files.HasUnconfirmedMutation);
++        if (shell.Projects?.Contacts is { } contacts)
++            Add("Связь проекта с контактом", () => contacts.Choosing, () => contacts.AddCommand.IsExecuting || contacts.RemoveCommand.IsExecuting, null, unconfirmed: () => contacts.HasUnconfirmedMutation);
+         if (shell.Inbox is { } inbox)
+         {
+-            Add("Преобразование входящей задачи", () => inbox.Conversion is not null, () => inbox.IsBusy, inbox.SaveConversionCommand);
++            Add("Преобразование входящей задачи", () => inbox.Conversion is not null, () => inbox.IsBusy, inbox.SaveConversionCommand, unconfirmed: () => inbox.HasUnconfirmedMutation);
+             Add("Новая входящая задача", () => !string.IsNullOrEmpty(inbox.CaptureText), () => inbox.CaptureCommand.IsExecuting, inbox.CaptureCommand);
+         }
+         if (shell.WorkHub is { } work)
+         {
+-            Add("Запись каталога", () => !string.IsNullOrEmpty(work.NewItemName), () => work.HasRunningMutation, work.CreateCatalogItemCommand);
++            Add("Запись каталога", () => !string.IsNullOrEmpty(work.NewItemName), () => work.HasRunningMutation, work.CreateCatalogItemCommand, unconfirmed: () => work.HasUnconfirmedMutation);
+             Add("Путь файла", () => !string.IsNullOrEmpty(work.NewItemPath), () => work.HasRunningMutation, work.AddLocationCommand);
+             Add("Контакт", () => !string.IsNullOrEmpty(work.NewContactFirstName + work.NewContactLastName + work.NewContactDisplayName),
+                 () => work.HasRunningMutation, work.CreateContactCommand);
+             if (work.ContactCard is { } contactCard)
+             {
+-                Add("Карточка контакта", () => contactCard.IsEditing, () => work.HasRunningMutation, contactCard.SaveCommand);
++                Add("Карточка контакта", () => contactCard.IsEditing, () => work.HasRunningMutation, contactCard.SaveCommand, unconfirmed: () => contactCard.HasUnconfirmedMutation);
+                 Add("Канал или адрес контакта", () => contactCard.HasEditableRelationDraft, () => work.HasRunningMutation, contactCard.SaveRelationCommand);
+                 Add("Удаление канала контакта", () => contactCard.IsConfirmingChannelDelete, () => work.HasRunningMutation, null);
+             }
+             if (work.Companies is { } companies)
+-                Add("Карточка компании", () => companies.IsEditing, () => work.HasRunningMutation, companies.SaveCommand);
++                Add("Карточка компании", () => companies.IsEditing, () => work.HasRunningMutation, companies.SaveCommand, unconfirmed: () => companies.HasUnconfirmedMutation);
+             foreach (var interactions in new[] { work.ContactInteractions, work.CompanyInteractions })
+                 if (interactions is not null)
+-                    Add("Взаимодействие", () => interactions.IsEditing, () => interactions.IsMutating, interactions.SaveCommand);
++                    Add("Взаимодействие", () => interactions.IsEditing, () => interactions.IsMutating, interactions.SaveCommand, unconfirmed: () => interactions.HasUnconfirmedMutation);
++            if (work.Locations is { } locations)
++                Add("Расположение файла", () => locations.EditorVisible || locations.ShowDeleteConfirmation, () => locations.IsMutating, null, unconfirmed: () => locations.HasUnconfirmedMutation);
++            if (work.Links is { } links)
++                Add("Связи объекта", () => !string.IsNullOrEmpty(links.TargetId) || links.TargetPicker?.SelectedTarget is not null,
++                    () => links.IsMutating, null, unconfirmed: () => links.HasUnconfirmedMutation);
+             Add("Настройки профиля", () => work.HasProfileDraft, () => work.HasRunningMutation, work.SaveUserSettingsCommand);
+             Add("Настройки уведомлений", () => work.HasNotificationDraft, () => work.HasRunningMutation, work.SaveNotificationPreferencesCommand);
+             Add("Корпоративное напоминание", () => work.HasReminderDraft, () => work.HasRunningMutation, work.SaveReminderCommand);
+diff --git a/work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs b/work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs
+index e7071b8..21bc46b 100644
+--- a/work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs
++++ b/work/production/src/Task.Desktop/Notifications/MainWindowNotifications.cs
+@@ -22,7 +22,7 @@ public partial class MainWindow
+         _notificationClient = client;
+         SourceInitialized += (_, _) =>
+         {
+-            _tray = new(this, () => { _explicitExit = true; Close(); }, "Task · Corporate · работает в фоне");
++            _tray = new(this, RequestExit, "Task · Corporate · работает в фоне");
+             _toast = new(Dispatcher, ActivateCorporateNotification);
+             try
+             {
+diff --git a/work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs b/work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs
+index 71f8f37..2143ef0 100644
+--- a/work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs
++++ b/work/production/src/Task.Desktop/ViewModels/AdministrationUsers.cs
+@@ -29,6 +29,8 @@ public sealed partial class AdministrationViewModel
+     public bool IsUserEditorLoading => _editorLoading;
+     public bool CanSelectUser => !IsEditorOpen && !_savingUser && !IsTransitionOpen && !_transitionBusy;
+     public bool CanEditUserFields => CanWriteUsers && !_savingUser && !_uncertainSave;
++    internal bool HasUnconfirmedMutation => _uncertainSave || _transitionUncertain;
++
+     public bool IsSavingUser => _savingUser;
+     public bool IsUserListEmpty => IsUsers && !IsLoading && Users.Count == 0 && CanReadCurrentArea && Message is null;
+     public bool HasMoreUsers => _nextUserCursor is not null;
+diff --git a/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs b/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs
+index 4334685..c4eb848 100644
+--- a/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/CalendarViewModel.cs
+@@ -378,6 +378,9 @@ public sealed partial class CalendarEventEditorViewModel : ViewModelBase
+ 
+ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private const double TimelineHourHeight = 69d;
+     private readonly IDesktopCalendarApiClient _client;
+     private readonly Task.Desktop.Administration.IDesktopEmployeeDirectory? _employeeDirectory;
+@@ -797,8 +800,8 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
+                 || !(editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update"))) return;
+             if (!editor.TryBuild(_timeZone, out var command)) return;
+             result = editor.Source is null
+-            ? await _client.CreateEventAsync(command, token)
+-            : await _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token);
++            ? await _closeOperations.TrackAsync(() => _client.CreateEventAsync(command, token))
++            : await _closeOperations.TrackAsync(() => _client.UpdateEventAsync(editor.Source.Id, editor.Source.Version, command, token));
+         }
+         catch (OperationCanceledException) when (token.IsCancellationRequested) { return; }
+         finally { _saving = false; editor.IsSaving = false; OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsSaving)); RaiseCommands(); }
+diff --git a/work/production/src/Task.Desktop/ViewModels/CompaniesViewModel.cs b/work/production/src/Task.Desktop/ViewModels/CompaniesViewModel.cs
+index 999008e..6df39af 100644
+--- a/work/production/src/Task.Desktop/ViewModels/CompaniesViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/CompaniesViewModel.cs
+@@ -4,6 +4,8 @@ namespace Task.Desktop.ViewModels;
+ 
+ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++
+     private readonly IDesktopCompaniesClient _client;
+     private readonly Func<bool> _canRead, _canRequest, _canCreate, _canUpdate;
+     private CancellationTokenSource? _listRequest, _detailRequest, _pickerRequest;
+@@ -67,6 +69,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
+     public bool IsLoadingCard { get => _loadingCard; private set { SetProperty(ref _loadingCard, value); Notify(); } }
+     public bool IsEditing { get => _editing; private set { SetProperty(ref _editing, value); Notify(); } }
+     public bool IsCreating { get => _creating; private set { SetProperty(ref _creating, value); Notify(); } }
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
+     public bool CanChangeDraft => IsEditing && !IsBusy && _pendingCreate is null;
+     private bool CanRequest => !_disposed && _canRead() && _canRequest();
+@@ -192,7 +195,7 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
+         using var request = CancellationTokenSource.CreateLinkedTokenSource(ct); _detailRequest = request; IsBusy = true; Message = null;
+         try
+         {
+-            var result = await _client.SaveCompanyAsync(draft, create ? _createKey : null, request.Token);
++            var result = await _closeOperations.TrackAsync(() => _client.SaveCompanyAsync(draft, create ? _createKey : null, request.Token));
+             if (!Current(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
+             if (result is DesktopWorkResult<DesktopCompany>.Succeeded success)
+             {
+diff --git a/work/production/src/Task.Desktop/ViewModels/ContactCardRelations.cs b/work/production/src/Task.Desktop/ViewModels/ContactCardRelations.cs
+index e0b2cb8..52e2cb3 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ContactCardRelations.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ContactCardRelations.cs
+@@ -82,9 +82,9 @@ public sealed partial class ContactCardViewModel
+         try
+         {
+             var id = original.Contact.Id; var version = original.Contact.Version;
+-            var result = channel is not null ? await client.SaveChannelAsync(id, version, channel, request.Token)
+-                : address is not null ? await client.AddAddressAsync(id, version, address, request.Token)
+-                : await client.DeleteChannelAsync(id, version, _deleteChannel!.Id, request.Token);
++            var result = channel is not null ? await _closeOperations.TrackAsync(() => client.SaveChannelAsync(id, version, channel, request.Token))
++                : address is not null ? await _closeOperations.TrackAsync(() => client.AddAddressAsync(id, version, address, request.Token))
++                : await _closeOperations.TrackAsync(() => client.DeleteChannelAsync(id, version, _deleteChannel!.Id, request.Token));
+             if (!Current(generation, request.Token) || !_canWrite()) return;
+             if (result is DesktopWorkResult<DesktopContactDetails>.Succeeded success
+                 && success.Value.Contact.Id == id && success.Value.Contact.Version > version)
+diff --git a/work/production/src/Task.Desktop/ViewModels/ContactCardViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ContactCardViewModel.cs
+index 92b2e77..86b2f55 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ContactCardViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ContactCardViewModel.cs
+@@ -6,6 +6,9 @@ public sealed record ContactStatusChoice(string Value, string Label);
+ 
+ public sealed partial class ContactCardViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private readonly IDesktopContactDetailsClient _client;
+     private readonly Func<bool> _canRead, _canRequest, _canWrite;
+     private CancellationTokenSource? _request;
+@@ -101,7 +104,7 @@ public sealed partial class ContactCardViewModel : ViewModelBase, IDisposable
+         Message = null;
+         try
+         {
+-            var result = await _client.UpdateContactAsync(draft, request.Token);
++            var result = await _closeOperations.TrackAsync(() => _client.UpdateContactAsync(draft, request.Token));
+             if (!Current(generation, request.Token) || !_canWrite()) return;
+             if (result is DesktopWorkResult<DesktopContactDetails>.Succeeded success)
+             {
+diff --git a/work/production/src/Task.Desktop/ViewModels/CorporateRemindersViewModel.cs b/work/production/src/Task.Desktop/ViewModels/CorporateRemindersViewModel.cs
+index d8370a4..4c64331 100644
+--- a/work/production/src/Task.Desktop/ViewModels/CorporateRemindersViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/CorporateRemindersViewModel.cs
+@@ -101,7 +101,7 @@ public sealed partial class WorkHubViewModel
+         if (trigger == "absolute") { if (!TryLocalReminderInstant(ReminderAbsolute, out var value)) return; absolute = value; }
+         if (trigger.StartsWith("before_", StringComparison.Ordinal) && ReminderOffset is < 0 or > 525600) { SetFeedback("Отступ должен быть от 0 до 525600 минут.", WorkHubFeedbackKind.Warning); return; }
+         var generation = _notificationAccessGeneration;
+-        var result = await api.SaveReminderAsync(target.Value, trigger, trigger.StartsWith("before_", StringComparison.Ordinal) ? ReminderOffset : null, absolute, SelectedCorporateReminder, ct);
++        var result = await _closeOperations.TrackAsync(() => api.SaveReminderAsync(target.Value, trigger, trigger.StartsWith("before_", StringComparison.Ordinal) ? ReminderOffset : null, absolute, SelectedCorporateReminder, ct));
+         if (!ReminderResponseCurrent(generation, ct)) return;
+         Apply(result, value => { SelectedCorporateReminder = value; SetFeedback("Напоминание сохранено на сервере.", WorkHubFeedbackKind.Success); });
+         if (result is DesktopWorkResult<DesktopReminder>.Succeeded) await RefreshRemindersAsync(ct);
+@@ -137,9 +137,9 @@ public sealed partial class WorkHubViewModel
+         var generation = _notificationAccessGeneration;
+         var result = action switch
+         {
+-            "cancel" => await api.CancelReminderAsync(item, ct),
+-            "restore" => await api.RestoreReminderAsync(item, ct),
+-            _ when item.CurrentOccurrence is { } x => await api.ActOnReminderAsync(item.Id, x.Version, until, ct),
++            "cancel" => await _closeOperations.TrackAsync(() => api.CancelReminderAsync(item, ct)),
++            "restore" => await _closeOperations.TrackAsync(() => api.RestoreReminderAsync(item, ct)),
++            _ when item.CurrentOccurrence is { } x => await _closeOperations.TrackAsync(() => api.ActOnReminderAsync(item.Id, x.Version, until, ct)),
+             _ => new DesktopWorkResult<bool>.ValidationFailure("Срабатывание недоступно. Обновите список.")
+         };
+         if (!ReminderResponseCurrent(generation, ct)) return;
+diff --git a/work/production/src/Task.Desktop/ViewModels/FileLocationsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/FileLocationsViewModel.cs
+index bb9f780..61640a1 100644
+--- a/work/production/src/Task.Desktop/ViewModels/FileLocationsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/FileLocationsViewModel.cs
+@@ -8,6 +8,9 @@ namespace Task.Desktop.ViewModels;
+ /// <summary>Location metadata only. No physical file operations or offline writes.</summary>
+ public sealed class FileLocationsViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private readonly IDesktopFileLocationsClient _client;
+     private readonly Func<bool> _canRead, _canWrite;
+     private CancellationTokenSource? _selectionCancellation;
+@@ -210,7 +213,7 @@ public sealed class FileLocationsViewModel : ViewModelBase, IDisposable
+         IsMutating = true;
+         try
+         {
+-            var result = await mutation(id, _parentVersion, ct);
++            var result = await _closeOperations.TrackAsync(() => mutation(id, _parentVersion, ct));
+             if (!Current(id, generation)) return;
+             if (result is DesktopWorkResult<bool>.Succeeded success)
+             {
+diff --git a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+index c902ec0..5684809 100644
+--- a/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/InboxViewModel.cs
+@@ -198,6 +198,13 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+         }
+     }
+ 
++    private static bool IsUnconfirmed(DesktopTaskWriteResult<DesktopTaskDto> result) => result is
++        DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable or DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse
++        or DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress;
++
++    private bool _unconfirmedCapture, _unconfirmedConversion;
++    internal bool HasUnconfirmedMutation => _unconfirmedCapture || _unconfirmedConversion;
++
+     public bool IsBusy
+     {
+         get => _isBusy;
+@@ -464,7 +471,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+                 if (!HasItems) State = InboxScreenState.Error;
+                 return;
+             }
++            var previousUnknownCapture = _unconfirmedCapture;
++            _unconfirmedCapture = true;
+             var result = await _client.CreateTaskAsync(command, cancellationToken).ConfigureAwait(true);
++            _unconfirmedCapture = previousUnknownCapture || IsUnconfirmed(result);
+             if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
+             {
+                 var item = new InboxItemViewModel(success.Value);
+@@ -533,8 +543,10 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+         editor.IsBusy = true;
+         try
+         {
++            _unconfirmedConversion = true;
+             var result = UsesInboxContract ? await SaveCanonicalConversionAsync(editor, cancellationToken).ConfigureAwait(true)
+                 : await _client.PatchTaskAsync(command!, cancellationToken).ConfigureAwait(true);
++            _unconfirmedConversion = IsUnconfirmed(result);
+             if (!ReferenceEquals(Conversion, editor)) return;
+             switch (result)
+             {
+@@ -650,6 +662,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
+         _conversionTarget = null;
+         _conversionInboxId = null;
+         _conversionPatch = null;
++        _unconfirmedConversion = false;
+     }
+ 
+     private void OnConversionPropertyChanged(object? sender, PropertyChangedEventArgs e)
+diff --git a/work/production/src/Task.Desktop/ViewModels/InteractionsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/InteractionsViewModel.cs
+index 274b2eb..20d0548 100644
+--- a/work/production/src/Task.Desktop/ViewModels/InteractionsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/InteractionsViewModel.cs
+@@ -5,6 +5,8 @@ namespace Task.Desktop.ViewModels;
+ 
+ public sealed class InteractionsViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++
+     private readonly IDesktopInteractionsClient _client;
+     private readonly Func<bool> _canRead, _canRequest, _canCreate, _canUpdate;
+     private CancellationTokenSource? _request;
+@@ -49,6 +51,7 @@ public sealed class InteractionsViewModel : ViewModelBase, IDisposable
+     public bool HasDetails => Details is not null;
+     public IReadOnlyList<string> Participants { get => _participants; private set => SetProperty(ref _participants, value); }
+     public bool IsMutating => SaveCommand.IsExecuting;
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
+     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
+     public bool IsEditing { get => _editing; private set { SetProperty(ref _editing, value); Notify(); } }
+     public bool CanChangeDraft => IsEditing && !IsBusy && _pendingCreate is null;
+@@ -169,7 +172,7 @@ public sealed class InteractionsViewModel : ViewModelBase, IDisposable
+         try
+         {
+             if (!await ConfirmCounterpartyAsync(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
+-            var result = await _client.SaveInteractionAsync(create ? _pendingCreate! : _draftUpdate!, create ? _key : null, request.Token);
++            var result = await _closeOperations.TrackAsync(() => _client.SaveInteractionAsync(create ? _pendingCreate! : _draftUpdate!, create ? _key : null, request.Token));
+             if (!Current(generation, request.Token) || !(create ? _canCreate() : _canUpdate())) return;
+             if (result is DesktopWorkResult<DesktopInteraction>.Succeeded saved)
+             {
+diff --git a/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs
+index eaa8fb2..6a2c06b 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ObjectLinksViewModel.cs
+@@ -8,6 +8,9 @@ public sealed record ObjectLinkTypeChoice(string Value, string Label);
+ /// <summary>Confirmed relations; Corporate uses the stage 10.1 picker, Personal keeps local TargetId.</summary>
+ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private static readonly ObjectLinkTypeChoice[] AllTypes = [new("task_file", "Файл задачи"), new("project_file", "Файл проекта"), new("contact_file", "Файл контакта"), new("task_contact", "Контакт задачи")];
+     private static readonly ObjectLinkTypeChoice[] CorporateTypes = [.. AllTypes, new("project_contact", "Контакт проекта"), new("task_project", "Проект задачи"), new("related", "Связанный объект")];
+     private readonly IDesktopObjectLinksClient _client;
+@@ -124,7 +127,7 @@ public sealed class ObjectLinksViewModel : ViewModelBase, IDisposable
+     {
+         try
+         {
+-            var result = await operation();
++            var result = mutation ? await _closeOperations.TrackAsync(operation) : await operation();
+             ct.ThrowIfCancellationRequested();
+             Apply(result, generation, mutation);
+         }
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectContactsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectContactsViewModel.cs
+index e4095a6..e1159ab 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectContactsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectContactsViewModel.cs
+@@ -16,6 +16,9 @@ public sealed record ProjectContactItem(DesktopObjectLink Link, ProjectContactTa
+ /// <summary>Only authorized names are retained; CRM detail cards belong to the existing workspace.</summary>
+ public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private readonly IDesktopObjectLinksClient _links;
+     private readonly IDesktopCompaniesClient _crm;
+     private HashSet<string> _capabilities = new(StringComparer.OrdinalIgnoreCase);
+@@ -143,7 +146,7 @@ public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
+         _snapshot = false; Selected = null;
+         try
+         {
+-            var result = await operation();
++            var result = mutation ? await _closeOperations.TrackAsync(operation) : await operation();
+             if (!Current(generation, ct)) return;
+             if (result is not DesktopWorkResult<DesktopObjectLinks>.Succeeded success) { Fail(result); return; }
+             if (!_linkState.Confirm(source, success.Value.SourceVersion)) { Fail(new DesktopWorkResult<DesktopObjectLinks>.Conflict()); return; }
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs
+index b586fbe..b500b40 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectFilesViewModel.cs
+@@ -16,6 +16,9 @@ public sealed record ProjectFileItem(DesktopObjectLink Link, DesktopCatalogItem?
+ /// <summary>Confirmed project_file snapshot. Paths are resolved only at the user's open action.</summary>
+ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private readonly IDesktopObjectLinksClient _links;
+     private readonly IDesktopFileLocationsClient _catalog;
+     private readonly Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopFileLocation?>>> _resolve;
+@@ -153,7 +156,7 @@ public sealed class ProjectFilesViewModel : ViewModelBase, IDisposable
+         _snapshot = false; Selected = null;
+         try
+         {
+-            var result = await operation();
++            var result = mutation ? await _closeOperations.TrackAsync(operation) : await operation();
+             if (!Current(generation, ct)) return;
+             if (result is not DesktopWorkResult<DesktopObjectLinks>.Succeeded success) { Fail(result); return; }
+             if (!_linkState.Confirm(source, success.Value.SourceVersion)) { Fail(new DesktopWorkResult<DesktopObjectLinks>.Conflict()); return; }
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+index 5e7126b..de9b0b3 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+@@ -136,6 +136,9 @@ public sealed partial class ProjectEditorViewModel : ViewModelBase, IDisposable
+ 
+ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private readonly IDesktopProjectsApiClient _client;
+     private readonly IDesktopTasksApiClient? _tasks;
+     private readonly Guid _currentUserId;
+@@ -441,8 +444,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+             if (!editor.TryBuild(out draft)) return;
+         }
+         DesktopProjectResult<DesktopProjectDto> result = editor.Source is null
+-            ? await _client.CreateProjectAsync(draft, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true)
+-            : await _client.UpdateProjectAsync(editor.Source.Id, editor.Source.Version, draft, cancellationToken).ConfigureAwait(true);
++            ? await _closeOperations.TrackAsync(() => _client.CreateProjectAsync(draft, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true)
++            : await _closeOperations.TrackAsync(() => _client.UpdateProjectAsync(editor.Source.Id, editor.Source.Version, draft, cancellationToken)).ConfigureAwait(true);
+         if (!ReferenceEquals(Editor, editor) || !_sessionAvailable || !IsActive
+             || !(editor.Source is null ? CanCreate : CanUpdate)) return;
+         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
+@@ -473,7 +476,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     private async System.Threading.Tasks.Task ArchiveAsync(object? _, CancellationToken cancellationToken)
+     {
+         var item = SelectedItem; if (item is null) return;
+-        var result = await _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
++        var result = await _closeOperations.TrackAsync(() => _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
+         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanArchive || !IsActive) return;
+         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded) { Items = Items.Where(candidate => candidate.Id != item.Id).ToArray(); SelectedItem = Items.FirstOrDefault(); State = Items.Count == 0 ? ProjectsScreenState.Empty : ProjectsScreenState.Loaded; Message = "Завершённый проект перемещён в архив."; }
+         else ApplyFailure(result);
+@@ -492,7 +495,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+             if (picker.SelectedUserAccountId != user) { Message = picker.StatusText; return; }
+         }
+         if (!CanAddMember) return;
+-        var result = await _client.AddMemberAsync(item.Id, item.Source.Version, user.Value, role.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
++        var result = await _closeOperations.TrackAsync(() => _client.AddMemberAsync(item.Id, item.Source.Version, user.Value, role.Id, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
+         if (generation != _peopleGeneration || !ReferenceEquals(SelectedItem, item) || !_sessionAvailable) return;
+         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)
+         { AdvanceVersion(item, success.EntityVersion); NewMemberUserId = string.Empty; ResetPeople(); await ReloadMembersAsync(item, cancellationToken); }
+@@ -502,7 +505,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     private async System.Threading.Tasks.Task ChangeMemberRoleAsync(object? parameter, CancellationToken cancellationToken)
+     {
+         var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel { SelectedRole: not null } member) return;
+-        var result = await _client.ChangeMemberRoleAsync(item.Id, item.Source.Version, member.UserAccountId, member.SelectedRole.Id, Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(true);
++        var result = await _closeOperations.TrackAsync(() => _client.ChangeMemberRoleAsync(item.Id, item.Source.Version, member.UserAccountId, member.SelectedRole.Id, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
+         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
+         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)
+         { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Роль участника изменена."; }
+@@ -512,7 +515,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+     private async System.Threading.Tasks.Task RemoveMemberAsync(object? parameter, CancellationToken cancellationToken)
+     {
+         var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member) return;
+-        var result = await _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken).ConfigureAwait(true);
++        var result = await _closeOperations.TrackAsync(() => _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken)).ConfigureAwait(true);
+         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
+         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
+         { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник удалён из проекта."; }
+diff --git a/work/production/src/Task.Desktop/ViewModels/RecurrencePaneViewModel.cs b/work/production/src/Task.Desktop/ViewModels/RecurrencePaneViewModel.cs
+index 38adfb4..10f480b 100644
+--- a/work/production/src/Task.Desktop/ViewModels/RecurrencePaneViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/RecurrencePaneViewModel.cs
+@@ -53,6 +53,7 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
+     public event Action? AccessLost;
+     internal long SuccessfulSaveRevision { get; private set; }
+     public bool IsOpen { get => _isOpen; private set => SetProperty(ref _isOpen, value); }
++    internal bool HasUnconfirmedMutation => _attemptKey is not null;
+     public bool IsBusy { get => _isBusy; private set { if (SetProperty(ref _isBusy, value)) { OnPropertyChanged(nameof(CanInteract)); RaiseCommands(); } } }
+     public bool CanInteract => !IsBusy;
+     public bool CanManage => _canManage;
+@@ -114,6 +115,9 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
+         if (write && !_canManage) return null;
+         var generation = _generation;
+         var result = await _client.ExecuteAsync(command, _lifetime.Token);
++        if (!_personal && write && result is not (DesktopCalendarResult<DesktopRecurrenceReply>.ServerUnavailable
++            or DesktopCalendarResult<DesktopRecurrenceReply>.MalformedResponse))
++        { _attemptIdentity = null; _attemptKey = null; }
+         if (generation != _generation || !IsOpen || !_canRead) return null;
+         if (result is DesktopCalendarResult<DesktopRecurrenceReply>.Succeeded success)
+         { if (write) { _attemptIdentity = null; _attemptKey = null; } return success.Value; }
+diff --git a/work/production/src/Task.Desktop/ViewModels/TaskWorkspaceViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TaskWorkspaceViewModel.cs
+index d3035e9..8aae5a0 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TaskWorkspaceViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TaskWorkspaceViewModel.cs
+@@ -36,6 +36,7 @@ public sealed class TaskWorkspaceViewModel : ViewModelBase
+         AddDependencyCommand = new AsyncCommand(async (_, _) => { if (Dependency?.Id is { } id) await Write("dependencies", HttpMethod.Post, new() { ["predecessorId"] = id }); }, _ => CanEdit && Dependency?.Id is not null);
+         RemoveDependencyCommand = new AsyncCommand(async (p, _) => { if (p is TaskWorkspaceItem i) await Write($"dependencies/{i.Id:D}", HttpMethod.Delete, new()); }, _ => CanEdit);
+     }
++    internal bool HasUnconfirmedMutation => _keys.Count > 0;
+     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
+     public bool CanEdit => _allowsWrites && _loaded && !IsBusy && _source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled) && _capabilities.Contains("Task.Update");
+     public bool CanComment => _allowsWrites && _loaded && !IsBusy && _capabilities.Contains("Comment.Create");
+diff --git a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+index cf47ae4..2b15216 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TasksViewModel.cs
+@@ -548,6 +548,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+ 
+     public bool HasEditor => Editor is not null;
+ 
++    internal bool HasUnconfirmedMutation => _pendingEditorCommand is not null || _pendingTransitionCommand is not null;
++
+     public bool IsMutationBusy
+     {
+         get => _isMutationBusy;
+@@ -1497,16 +1499,19 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
+                 _pendingEditorRevision = -1;
+                 break;
+             case DesktopTaskWriteResult<DesktopTaskDto>.Forbidden:
++                _pendingEditorCommand = null;
+                 _writePermissionChanged = true;
+                 editor.SetStatus("Права изменились. Данные формы сохранены, но запись сейчас недоступна.");
+                 ScreenMessage = "Права на изменение задач были отозваны. Доступен только просмотр.";
+                 NotifyMutationState();
+                 break;
+             case DesktopTaskWriteResult<DesktopTaskDto>.AuthenticationFailure:
++                _pendingEditorCommand = null;
+                 State = TasksScreenState.SessionEnded;
+                 ScreenMessage = "Сессия завершена. Выполните вход снова.";
+                 editor.SetStatus("Сессия завершена. Данные формы не отправлены повторно.");
+                 break;
++            case DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse:
+             case DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable:
+                 editor.SetStatus("Сервер недоступен. Данные формы сохранены; повторите попытку.");
+                 break;
+diff --git a/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs b/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs
+index 73836bf..40a854e 100644
+--- a/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs
++++ b/work/production/src/Task.Desktop/ViewModels/TodayQuickActions.cs
+@@ -23,6 +23,8 @@ public sealed partial class TodayViewModel
+         ? _taskSnapshots.GetValueOrDefault(item.Id) : null;
+ 
+     public bool ShowTaskActions => SelectedIsTask && CanReadTasks && _tasksClient is not null;
++    internal bool HasUnconfirmedMutation => _unconfirmedCommands.Count > 0 || _planningRetries.Count > 0;
++
+     public bool IsActionBusy => _isActionBusy;
+     public bool NeedsTaskReload => ShowTaskActions && (SelectedTask is null
+         || _tasksNeedingReload.Contains(SelectedItem!.Id));
+diff --git a/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs b/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs
+index aa9f7aa..5afd625 100644
+--- a/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs
+@@ -113,7 +113,7 @@ public sealed partial class WorkHubViewModel
+         NotifyCommands();
+         try
+         {
+-            var result = await _client.CreateCatalogItemAsync(NewItemName, type, null, CreationParentId, ct);
++            var result = await _closeOperations.TrackAsync(() => _client.CreateCatalogItemAsync(NewItemName, type, null, CreationParentId, ct));
+             if (result is DesktopWorkResult<DesktopCatalogItem>.Succeeded success)
+             {
+                 _catalogSnapshotCurrent = false;
+@@ -138,7 +138,7 @@ public sealed partial class WorkHubViewModel
+         NotifyCommands();
+         try
+         {
+-            var result = await _client.MoveCatalogItemAsync(item.Id, item.Version, request.ParentId, ct);
++            var result = await _closeOperations.TrackAsync(() => _client.MoveCatalogItemAsync(item.Id, item.Version, request.ParentId, ct));
+             if (result is DesktopWorkResult<DesktopCatalogItem>.Succeeded success)
+             {
+                 _catalogSnapshotCurrent = false;
+diff --git a/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs b/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs
+index 37792f9..9a71483 100644
+--- a/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs
+@@ -22,6 +22,9 @@ public sealed record CatalogItemTypeChoice(string Value, string Label)
+ 
+ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+ {
++    private readonly Infrastructure.ClosePendingOperations _closeOperations = new();
++    internal bool HasUnconfirmedMutation => _closeOperations.HasPending;
++
+     private readonly IDesktopWorkApiClient _client;
+     private readonly IFileAccessAdapter _files;
+     private readonly HashSet<string> _capabilities;
+@@ -504,7 +507,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+         NotifyCommands();
+         try
+         {
+-            var result = await _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct);
++            var result = await _closeOperations.TrackAsync(() => _client.AddLocationAsync(item.Id, item.Version, NewItemPath, ct));
+             if (result is DesktopWorkResult<bool>.Succeeded)
+             {
+                 _catalogSnapshotCurrent = false;
+@@ -527,7 +530,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+     }
+     private async System.Threading.Tasks.Task CreateContactAsync(object? _, CancellationToken ct)
+     {
+-        Apply(await _client.CreateContactAsync(NewContactFirstName, NewContactLastName, NewContactDisplayName, ct), value =>
++        Apply(await _closeOperations.TrackAsync(() => _client.CreateContactAsync(NewContactFirstName, NewContactLastName, NewContactDisplayName, ct)), value =>
+         { Contacts = [value, .. Contacts]; NewContactFirstName = NewContactLastName = NewContactDisplayName = string.Empty; SetFeedback("Контакт создан и доступен для связей с работой.", WorkHubFeedbackKind.Success); });
+     }
+     private async System.Threading.Tasks.Task MarkReadAsync(object? parameter, CancellationToken ct)
+@@ -544,8 +547,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+     {
+         var item = parameter as DesktopLifecycleItem ?? SelectedLifecycleItem; if (item is null) return;
+         var result = IsArchive
+-            ? await _client.RestoreArchiveAsync(item.ObjectId, item.Version, ct)
+-            : await _client.RestoreTrashAsync(item.ObjectId, item.Version, ct);
++            ? await _closeOperations.TrackAsync(() => _client.RestoreArchiveAsync(item.ObjectId, item.Version, ct))
++            : await _closeOperations.TrackAsync(() => _client.RestoreTrashAsync(item.ObjectId, item.Version, ct));
+         Apply(result, _ =>
+         {
+             LifecycleItems = LifecycleItems.Where(candidate => candidate.ObjectId != item.ObjectId).ToArray();
+@@ -563,7 +566,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+             MissingFileBehavior is not ("show_actions" or "keep_inactive" or "prompt_relink"))
+         { SetFeedback("Проверьте формат времени и допустимые значения настроек.", WorkHubFeedbackKind.Warning); return; }
+         var draft = _userSettings with { Language = UserLanguage.Trim(), FirstDayOfWeek = FirstDayOfWeek, TimeFormat = UserTimeFormat, WorkdayStart = NormalizeTime(UserWorkdayStart), WorkdayEnd = NormalizeTime(UserWorkdayEnd), DefaultTaskDurationMinutes = DefaultTaskDurationMinutes, DefaultReminderOffsetMinutes = DefaultReminderOffsetMinutes, DateOnlyReminderTime = NormalizeTime(DateOnlyReminderTime), AutostartEnabled = AutostartEnabled, AllowLocalPaths = AllowLocalPaths, ConfirmCatalogDelete = ConfirmCatalogDelete, MissingFileBehavior = MissingFileBehavior };
+-        Apply(await _client.UpdateUserSettingsAsync(draft, ct), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
++        Apply(await _closeOperations.TrackAsync(() => _client.UpdateUserSettingsAsync(draft, ct)), value => { LoadUserSettings(value); SetFeedback(IsPersonal ? "Настройки сохранены на этом компьютере." : "Личные настройки сохранены на сервере.", WorkHubFeedbackKind.Success); });
+     }
+     private async System.Threading.Tasks.Task SaveNotificationPreferencesAsync(object? _, CancellationToken ct)
+     {
+@@ -571,7 +574,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+         if (NotificationSettingsError is { } error) { SetFeedback(error, WorkHubFeedbackKind.Warning); return; }
+         if (DefaultSnoozeMinutes is < 1 or > 10080) { SetFeedback("Отсрочка должна быть от 1 до 10080 минут.", WorkHubFeedbackKind.Warning); return; }
+         var draft = _notificationPreferences with { Enabled = NotificationsEnabled, DesktopEnabled = DesktopNotificationsEnabled, SoundEnabled = NotificationSoundEnabled, DefaultSnoozeMinutes = DefaultSnoozeMinutes, QuietHoursStart = string.IsNullOrWhiteSpace(QuietHoursStart) ? null : NormalizeTime(QuietHoursStart), QuietHoursEnd = string.IsNullOrWhiteSpace(QuietHoursEnd) ? null : NormalizeTime(QuietHoursEnd), QuietHoursTimeZone = string.IsNullOrWhiteSpace(QuietHoursTimeZone) ? null : QuietHoursTimeZone };
+-        Apply(await _client.UpdateNotificationPreferencesAsync(draft, ct), value => { LoadNotificationPreferences(value); SetFeedback("Настройки уведомлений сохранены.", WorkHubFeedbackKind.Success); });
++        Apply(await _closeOperations.TrackAsync(() => _client.UpdateNotificationPreferencesAsync(draft, ct)), value => { LoadNotificationPreferences(value); SetFeedback("Настройки уведомлений сохранены.", WorkHubFeedbackKind.Success); });
+     }
+     private async System.Threading.Tasks.Task SaveOrganizationSettingsAsync(object? _, CancellationToken ct)
+     {
+@@ -579,7 +582,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
+         if (TrashRetentionDays < 1 || HistoryRetentionDays < 1 || ChangeFeedRetentionDays < 1 || RecurrenceHorizonDays < 1)
+         { SetFeedback("Сроки хранения и горизонт повторений должны быть положительными.", WorkHubFeedbackKind.Warning); return; }
+         var draft = _organizationSettings with { TrashRetentionDays = TrashRetentionDays, HistoryRetentionDays = HistoryRetentionDays, ChangeFeedRetentionDays = ChangeFeedRetentionDays, RecurrenceHorizonDays = RecurrenceHorizonDays };
+-        Apply(await _client.UpdateOrganizationSettingsAsync(draft, ct), value => { LoadOrganizationSettings(value); SetFeedback("Настройки организации сохранены.", WorkHubFeedbackKind.Success); });
++        Apply(await _closeOperations.TrackAsync(() => _client.UpdateOrganizationSettingsAsync(draft, ct)), value => { LoadOrganizationSettings(value); SetFeedback("Настройки организации сохранены.", WorkHubFeedbackKind.Success); });
+     }
+     private System.Threading.Tasks.Task OpenSearchResultAsync(object? parameter, CancellationToken _)
+     {
+diff --git a/work/production/tests/Task.Desktop.Tests/ApplicationModeTests.cs b/work/production/tests/Task.Desktop.Tests/ApplicationModeTests.cs
+index bfd88aa..4b8944d 100644
+--- a/work/production/tests/Task.Desktop.Tests/ApplicationModeTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/ApplicationModeTests.cs
+@@ -199,6 +199,8 @@ public sealed class ApplicationModeTests : IDisposable
+         Assert.False(await ModeSwitchGuard.PrepareAsync(editors, () => true, (_, _) =>
+         { promptCount++; return ModeSwitchDecision.Cancel; }));
+         Assert.Equal(1, promptCount);
++        Assert.False(CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), false,
++            names => { Assert.NotEmpty(names); return false; }, () => throw new Exception("Unexpected pending write")));
+     }
+ 
+     public void Dispose() { if (Directory.Exists(_directory)) Directory.Delete(_directory, recursive: true); }
+diff --git a/work/production/tests/Task.Desktop.Tests/Calendar/RecurrencePaneTests.cs b/work/production/tests/Task.Desktop.Tests/Calendar/RecurrencePaneTests.cs
+index 7faf42d..eb9be60 100644
+--- a/work/production/tests/Task.Desktop.Tests/Calendar/RecurrencePaneTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Calendar/RecurrencePaneTests.cs
+@@ -70,6 +70,23 @@ public sealed class RecurrencePaneTests
+         pane.Dispose();
+     }
+ 
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async global::System.Threading.Tasks.Task OnlyUnknownRecurrenceFailureBlocksClose(bool unknown)
++    {
++        var client = new FakeClient(call => global::System.Threading.Tasks.Task.FromResult<DesktopCalendarResult<JsonElement>>(
++            call.Method == HttpMethod.Post && call.Path.Length == 0
++                ? unknown ? new DesktopCalendarResult<JsonElement>.ServerUnavailable()
++                    : new DesktopCalendarResult<JsonElement>.ValidationFailure("Проверьте поля")
++                : Succeeded(ListJson())));
++        using var pane = CreatePane(client);
++        pane.SetAccess(["Recurrence.Read", "Recurrence.Manage"], active: true);
++        await pane.OpenCommand.ExecuteAsync(); await pane.NewCommand.ExecuteAsync(); pane.Editor.Title = "Черновик";
++        await pane.SaveCommand.ExecuteAsync();
++        Assert.Equal(unknown, pane.HasUnconfirmedMutation); Assert.Equal("Черновик", pane.Editor.Title);
++    }
++
+     [Fact]
+     public void SourceWorkdays_RoundTripRetainsWeekdays()
+     {
+diff --git a/work/production/tests/Task.Desktop.Tests/ClosePendingOperationsTests.cs b/work/production/tests/Task.Desktop.Tests/ClosePendingOperationsTests.cs
+new file mode 100644
+index 0000000..e90cb6f
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/ClosePendingOperationsTests.cs
+@@ -0,0 +1,53 @@
++using Task.Desktop.Infrastructure;
++using Task.Desktop.Work;
++using Task.Desktop.Calendar;
++using Task.Desktop.Projects;
++
++namespace Task.Desktop.Tests;
++
++public sealed class ClosePendingOperationsTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task ActiveAndAmbiguousRequestsCannotBeClearedByAnotherSuccess()
++    {
++        var receipt = new ClosePendingOperations();
++        var wait = new TaskCompletionSource<DesktopWorkResult<bool>>();
++        var operation = receipt.TrackAsync(() => wait.Task);
++        Assert.True(receipt.HasPending);
++        await receipt.TrackAsync(() => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<bool>>(new DesktopWorkResult<bool>.Succeeded(true)));
++        Assert.True(receipt.HasPending); // Another request cannot release an in-flight request.
++        wait.SetResult(new DesktopWorkResult<bool>.ServerUnavailable()); await operation;
++        Assert.True(receipt.HasPending);
++        await receipt.TrackAsync(() => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<bool>>(new DesktopWorkResult<bool>.Succeeded(true)));
++        Assert.True(receipt.HasPending); // Its identity does not prove the earlier outcome.
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task DefinitiveFailureReleasesReceiptWithoutChangingResult()
++    {
++        var receipt = new ClosePendingOperations();
++        var failure = new DesktopWorkResult<bool>.ValidationFailure("Ошибка поля");
++        Assert.Same(failure, await receipt.TrackAsync(() => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<bool>>(failure)));
++        Assert.False(receipt.HasPending);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CancellationOrExceptionRetainsUnknownOutcome()
++    {
++        var receipt = new ClosePendingOperations();
++        await Assert.ThrowsAsync<OperationCanceledException>(() => receipt.TrackAsync<bool>(
++            () => System.Threading.Tasks.Task.FromException<DesktopWorkResult<bool>>(new OperationCanceledException())));
++        Assert.True(receipt.HasPending);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CalendarAndProjectMalformedRepliesRetainReceipt()
++    {
++        var calendar = new ClosePendingOperations();
++        await calendar.TrackAsync(() => System.Threading.Tasks.Task.FromResult<DesktopCalendarResult<bool>>(new DesktopCalendarResult<bool>.MalformedResponse()));
++        Assert.True(calendar.HasPending);
++        var projects = new ClosePendingOperations();
++        await projects.TrackAsync(() => System.Threading.Tasks.Task.FromResult<DesktopProjectResult<object>>(new DesktopProjectResult<object>.MalformedResponse()));
++        Assert.True(projects.HasPending);
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/CorporateCloseGuardTests.cs b/work/production/tests/Task.Desktop.Tests/CorporateCloseGuardTests.cs
+new file mode 100644
+index 0000000..56dc4a3
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/CorporateCloseGuardTests.cs
+@@ -0,0 +1,212 @@
++using Task.Desktop.Modes;
++using Task.Desktop.ViewModels;
++using Task.Desktop.TaskApi;
++using Task.Desktop.Tests.TaskScreen;
++using Task.Desktop.Tests.Work;
++using static Task.Desktop.Tests.TaskScreen.InboxViewModelTests;
++
++namespace Task.Desktop.Tests;
++
++public sealed class CorporateCloseGuardTests
++{
++    [Fact]
++    public void CleanExit_DoesNotPrompt()
++    {
++        using var shell = new MainWindowViewModel();
++        Assert.True(Check(shell, _ => throw new Exception("Unexpected confirmation")));
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task InactiveSections_AllDraftsArePreservedAndNeverSaved(bool confirm)
++    {
++        var client = new FakeInboxClient { PageResult = Page(CreateTask("Входящая")) };
++        using var inbox = new InboxViewModel(client, Capabilities);
++        using var tasks = new TasksViewModel(client, Capabilities);
++        using var hub = new WorkHubViewModel(new WorkHubViewModelTests.FakeClient(), []);
++        using var shell = new MainWindowViewModel(null, null, tasks, inbox: inbox, workHub: hub);
++        await tasks.ActivateAsync(); await tasks.NewTaskCommand.ExecuteAsync();
++        tasks.Editor!.Title = "Задача";
++        await inbox.ActivateAsync(); await inbox.ConvertCommand.ExecuteAsync();
++        var conversion = inbox.Conversion!; conversion.Title = "Преобразование";
++        inbox.CaptureText = "Новая входящая"; hub.NewContactFirstName = "Контакт";
++        var section = shell.SelectedSection;
++        for (var attempt = 0; attempt < 2; attempt++)
++            Assert.Equal(confirm, Check(shell, names =>
++            {
++                Assert.Contains("Задача", names); Assert.Contains("Преобразование входящей задачи", names);
++                Assert.Contains("Новая входящая задача", names); Assert.Contains("Контакт", names);
++                return confirm;
++            }));
++        Assert.Same(section, shell.SelectedSection); Assert.Same(conversion, inbox.Conversion);
++        Assert.Equal("Преобразование", conversion.Title); Assert.Equal("Задача", tasks.Editor.Title);
++        Assert.Equal("Новая входящая", inbox.CaptureText); Assert.Equal("Контакт", hub.NewContactFirstName);
++        Assert.Equal(0, client.PatchCalls); Assert.Null(client.LastCreate);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task PendingAndUnknownWrite_CannotBeDiscardedEvenAfterApproval(bool success)
++    {
++        var source = CreateTask("Запись");
++        var pending = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++        var client = new FakeInboxClient { PageResult = Page(source), PendingPatch = pending };
++        using var inbox = new InboxViewModel(client, Capabilities);
++        using var shell = new MainWindowViewModel(null, null, inbox: inbox);
++        await inbox.ActivateAsync(); await inbox.ConvertCommand.ExecuteAsync();
++        var editor = inbox.Conversion!; editor.Card.Description = "Черновик";
++        var save = inbox.SaveConversionCommand.ExecuteAsync();
++        var command = client.LastPatch; var blocks = 0;
++        bool Attempt() => CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), true,
++            _ => throw new Exception("Must not offer discard"), () => blocks++);
++        Assert.False(Attempt()); Assert.Equal(1, blocks);
++        Assert.Same(editor, inbox.Conversion); Assert.False(client.PatchCancellationToken.IsCancellationRequested);
++        pending.SetResult(success ? new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source with { Version = 2 }, 2, false)
++            : new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable());
++        await save;
++        if (success) Assert.True(Attempt());
++        else
++        {
++            inbox.UpdateConnectivity(false); inbox.UpdateCapabilities(["Task.Read"]);
++            Assert.False(Attempt()); Assert.Same(editor, inbox.Conversion);
++            Assert.Same(command, client.LastPatch); Assert.Equal("Черновик", editor.Card.Description);
++        }
++        Assert.Equal(1, client.PatchCalls);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task AnotherCaptureSuccessCannotResolvePreviousUnknownCapture()
++    {
++        var client = new FakeInboxClient { PageResult = Page() };
++        using var inbox = new InboxViewModel(client, Capabilities);
++        using var shell = new MainWindowViewModel(null, null, inbox: inbox);
++        await inbox.ActivateAsync(); inbox.CaptureText = "Первый запрос";
++        Assert.True(await inbox.CaptureCommand.ExecuteAsync()); Assert.True(inbox.HasUnconfirmedMutation);
++        await inbox.RefreshCommand.ExecuteAsync();
++        var source = CreateTask("Второй запрос");
++        client.CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source, source.Version, false);
++        inbox.CaptureText = "Второй запрос";
++        Assert.True(await inbox.CaptureCommand.ExecuteAsync()); Assert.Empty(inbox.CaptureText);
++        Assert.True(inbox.HasUnconfirmedMutation);
++        Assert.False(CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), true,
++            _ => throw new Exception("The original request is still unknown"), () => { }));
++    }
++
++    [Fact]
++    public void OperationStartedInsideConfirmation_IsRechecked()
++    {
++        var busy = false; var blocked = false;
++        ModeSwitchEditor[] editors = [new("Комментарий", () => true, () => busy, null)];
++        Assert.False(CorporateCloseGuard.CanClose(() => editors, false, _ => { busy = true; return true; }, () => blocked = true));
++        Assert.True(blocked);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard()
++    {
++        var client = new TasksViewModelTests.FakeTasksApiClient { CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Forbidden() };
++        client.EnqueuePage(Page());
++        using var tasks = new TasksViewModel(client, ["Task.Read", "Task.Create"]);
++        using var shell = new MainWindowViewModel(null, null, tasks);
++        await tasks.ActivateAsync(); await tasks.NewTaskCommand.ExecuteAsync(); tasks.Editor!.Title = "Черновик";
++        await tasks.SaveEditorCommand.ExecuteAsync();
++        var prompts = 0;
++        Assert.True(Check(shell, _ => { prompts++; return true; }));
++        Assert.Equal(1, prompts); Assert.Equal("Черновик", tasks.Editor.Title);
++        Assert.Equal(1, client.CreateCallCount);
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task MalformedTaskReply_PreservesOriginalCommandUntilDefinitiveRetry()
++    {
++        var source = CreateTask("Задача");
++        var client = new TasksViewModelTests.FakeTasksApiClient { CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse() };
++        client.EnqueuePage(Page());
++        using var tasks = new TasksViewModel(client, ["Task.Read", "Task.Create"]);
++        using var shell = new MainWindowViewModel(null, null, tasks);
++        await tasks.ActivateAsync(); await tasks.NewTaskCommand.ExecuteAsync(); tasks.Editor!.Title = "Задача";
++        await tasks.SaveEditorCommand.ExecuteAsync();
++        Assert.False(CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), true,
++            _ => throw new Exception("Unknown task result"), () => { }));
++        Assert.Equal(1, client.CreateCallCount);
++        client.CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(source, source.Version, false);
++        await tasks.SaveEditorCommand.ExecuteAsync();
++        Assert.Equal(2, client.CreateCallCount); Assert.Same(client.CreateCommands[0], client.CreateCommands[1]);
++        Assert.True(Check(shell, _ => throw new Exception("Successfully saved editor must be closed")));
++    }
++
++    [Fact]
++    public async System.Threading.Tasks.Task CommentChecklistAndLinkDrafts_AreInspectedTogether()
++    {
++        var source = CreateTask("Задача");
++        var client = new WorkspaceClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(source) };
++        client.EnqueuePage(Page(source));
++        using var tasks = new TasksViewModel(client, ["Task.Read", "Task.Update", "Comment.Create"]);
++        using var shell = new MainWindowViewModel(null, null, tasks);
++        await tasks.ActivateAsync(); await tasks.OpenByIdAsync(source.Id);
++        var workspace = Assert.IsType<TaskWorkspaceViewModel>(tasks.Workspace);
++        workspace.Comment = "Комментарий"; workspace.CheckText = "Пункт";
++        workspace.File = new TaskChoice(Guid.NewGuid(), "Файл");
++        Assert.False(Check(shell, names =>
++        {
++            Assert.Contains("Комментарий задачи", names); Assert.Contains("Чек-лист задачи", names);
++            Assert.Contains("Связи задачи", names); return false;
++        }));
++        Assert.Same(workspace, tasks.Workspace); Assert.Equal("Комментарий", workspace.Comment);
++        Assert.Equal("Пункт", workspace.CheckText); Assert.NotNull(workspace.File); Assert.Equal(0, client.Writes);
++        client.FailWrite = true;
++        await workspace.AddCommentCommand.ExecuteAsync();
++        var blocked = false;
++        Assert.False(CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), true,
++            _ => throw new Exception("Unconfirmed comment must not be discarded"), () => blocked = true));
++        Assert.True(blocked); Assert.Equal("Комментарий", workspace.Comment); Assert.Equal(1, client.Writes);
++    }
++
++    private sealed class WorkspaceClient : TasksViewModelTests.FakeTasksApiClient, IDesktopTaskWorkspaceClient
++    {
++        public int Writes { get; private set; }
++        public bool FailWrite { get; set; }
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetOptionsAsync(string query, CancellationToken token) =>
++            System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(new System.Text.Json.Nodes.JsonObject(), 1, null));
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> GetWorkspaceAsync(Guid id, CancellationToken token) => GetOptionsAsync("", token);
++        public System.Threading.Tasks.Task<TaskWorkspaceResult> WriteWorkspaceAsync(Guid id, long version, string path,
++            System.Net.Http.HttpMethod method, System.Text.Json.Nodes.JsonObject body, string key, CancellationToken token)
++        {
++            Writes++;
++            return FailWrite ? System.Threading.Tasks.Task.FromResult(new TaskWorkspaceResult(null, version, "Нет ответа сервера"))
++                : GetOptionsAsync("", token);
++        }
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async System.Threading.Tasks.Task UnconfirmedContactWrite_BlocksCloseAfterCommandCompletion(bool malformed)
++    {
++        var contact = new Task.Desktop.Work.DesktopContact(Guid.NewGuid(), 1, "Анна", "Анна", null, null, "active", "active");
++        var client = new WorkHubViewModelTests.FakeClient
++        {
++            Contacts = [contact],
++            ContactWriteResult = malformed
++                ? new Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopContactDetails>.MalformedResponse()
++                : new Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopContactDetails>.ServerUnavailable()
++        };
++        using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update"]);
++        hub.Activate(WorkHubArea.Contacts); hub.SelectedContact = contact; await hub.ContactSelectionTask;
++        var card = hub.ContactCard!; await card.EditCommand.ExecuteAsync(); card.Notes = "Черновик";
++        await card.SaveCommand.ExecuteAsync(); Assert.False(card.IsSaving);
++        using var shell = new MainWindowViewModel(null, null, workHub: hub);
++        var blocked = false;
++        Assert.False(CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), true,
++            _ => throw new Exception("Unconfirmed write cannot be discarded"), () => blocked = true));
++        Assert.True(blocked); Assert.True(card.IsEditing); Assert.Equal("Черновик", card.Notes);
++        Assert.False(await ModeSwitchGuard.PrepareAsync(ModeSwitchGuard.Inspect(shell), () => true,
++            (_, _) => throw new Exception("Mode switch must not bypass unresolved operation")));
++    }
++
++    internal static bool Check(MainWindowViewModel shell, Func<IReadOnlyList<string>, bool> confirm) =>
++        CorporateCloseGuard.CanClose(() => ModeSwitchGuard.Inspect(shell), false, confirm,
++            () => throw new Exception("Unexpected pending operation"));
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/CorporateCloseUiTests.cs b/work/production/tests/Task.Desktop.Tests/CorporateCloseUiTests.cs
+new file mode 100644
+index 0000000..010fa9f
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/CorporateCloseUiTests.cs
+@@ -0,0 +1,152 @@
++using System.Diagnostics;
++using System.IO;
++using System.Windows;
++using System.Windows.Threading;
++using Task.Desktop.Infrastructure;
++using Task.Desktop.ViewModels;
++using Task.Desktop.TaskApi;
++using static Task.Desktop.Tests.TaskScreen.InboxViewModelTests;
++
++namespace Task.Desktop.Tests;
++
++public sealed class CorporateCloseUiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_CORPORATE_CLOSE_CHILD") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
++                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush));
++            start.Environment["TASK_CORPORATE_CLOSE_CHILD"] = "1";
++            using var process = Process.Start(start)!;
++            var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
++            try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(55)); Assert.True(process.ExitCode == 0, await stdout + await stderr); }
++            finally { if (!process.HasExited) process.Kill(true); }
++            return;
++        }
++        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var dispatcher = Dispatcher.CurrentDispatcher;
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
++            dispatcher.BeginInvoke(async () =>
++            {
++                MainWindow? window = null;
++                var root = Path.Combine(Path.GetTempPath(), "Task-corporate-close", Guid.NewGuid().ToString("N"));
++                try
++                {
++                    var app = new App(); app.InitializeComponent(); app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
++                    var source = CreateTask("Запись");
++                    var pending = new TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>();
++                    var client = new FakeInboxClient { PageResult = Page(source), PendingPatch = pending };
++                    using var inbox = new InboxViewModel(client, Capabilities);
++                    using var shell = new MainWindowViewModel(null, null, inbox: inbox);
++                    await inbox.ActivateAsync(); await inbox.ConvertCommand.ExecuteAsync();
++                    var editor = inbox.Conversion!; editor.Card.Description = "Не потерять"; inbox.CaptureText = "Новая запись";
++                    var section = shell.SelectedSection;
++                    window = new MainWindow(shell) { ShowInTaskbar = false };
++                    var closed = false; var confirmations = 0; var blocks = 0; var accept = false;
++                    var closeCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++                    window.Closed += (_, _) => { closed = true; closeCompletion.TrySetResult(); };
++                    window.ConfirmCloseOverride = names => { confirmations++; Assert.Equal(2, names.Count); return accept; };
++                    window.OperationPendingOverride = () => blocks++;
++                    window.TrayAvailableOverride = () => true;
++                    window.Show();
++                    window.Close(); // X hides the window; no confirmation and no disposal.
++                    Assert.False(window.IsVisible); Assert.False(closed); Assert.Equal(0, confirmations);
++                    Assert.Same(editor, inbox.Conversion);
++                    window.Show();
++                    window.RequestExit(); // Tray exit can be cancelled.
++                    Assert.False(closed); Assert.True(window.IsVisible); Assert.Equal(1, confirmations);
++                    Assert.Same(section, shell.SelectedSection); Assert.Equal("Не потерять", editor.Card.Description);
++                    inbox.UpdateConnectivity(false); inbox.UpdateCapabilities(["Task.Read"]);
++                    window.RequestExit(); Assert.False(closed); Assert.Equal(2, confirmations);
++                    Assert.Same(editor, inbox.Conversion); Assert.Equal("Новая запись", inbox.CaptureText);
++                    inbox.UpdateConnectivity(true); inbox.UpdateCapabilities(Capabilities);
++                    await inbox.RefreshCommand.ExecuteAsync();
++                    Assert.True(inbox.CanSaveConversion);
++                    var save = inbox.SaveConversionCommand.ExecuteAsync();
++                    accept = true; window.RequestExit();
++                    Assert.False(closed); Assert.Equal(1, blocks); Assert.Equal(2, confirmations);
++                    Assert.Same(editor, inbox.Conversion); Assert.False(client.PatchCancellationToken.IsCancellationRequested);
++                    pending.SetResult(new DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict()); await save;
++                    Assert.True(editor.HasConflict);
++                    accept = false; window.RequestExit(); Assert.False(closed); Assert.True(editor.HasConflict);
++                    Assert.Equal("Не потерять", editor.Card.Description);
++                    var writes = client.PatchCalls;
++                    // The actual async preference flush must close without asking twice.
++                    var store = new ViewStateStore(root, "server/org", Guid.NewGuid(), "device"); await store.Ready;
++                    ViewState.Attach(window, store);
++                    window.ConfirmCloseOverride = names => { confirmations++; return true; };
++                    var before = confirmations; window.RequestExit();
++                    await closeCompletion.Task.WaitAsync(TimeSpan.FromSeconds(15));
++                    Assert.True(closed); Assert.Equal(before + 1, confirmations); Assert.Equal(writes, client.PatchCalls); Assert.Null(client.LastCreate);
++                    window = null;
++                    // A later Closing subscriber can cancel the final preference-flush close.
++                    window = new MainWindow(shell) { ShowInTaskbar = false };
++                    var cancelledCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++                    var cancelOnce = true; var repeatedPrompts = 0; var finallyClosed = false;
++                    window.ConfirmCloseOverride = _ => { repeatedPrompts++; return true; };
++                    var cancelStore = new ViewStateStore(root + "-cancelled", "server/org", Guid.NewGuid(), "device"); await cancelStore.Ready;
++                    ViewState.Attach(window, cancelStore);
++                    window.Closing += (_, args) =>
++                    {
++                        if (ViewState.IsCompletingClose(window!) && cancelOnce)
++                        { cancelOnce = false; args.Cancel = true; cancelledCompletion.TrySetResult(); }
++                    };
++                    window.Closed += (_, _) => finallyClosed = true;
++                    window.Show(); window.RequestExit();
++                    await cancelledCompletion.Task.WaitAsync(TimeSpan.FromSeconds(15));
++                    await Dispatcher.Yield(DispatcherPriority.Background);
++                    Assert.False(finallyClosed); Assert.True(window.IsEnabled);
++                    window.RequestExit(); Assert.True(finallyClosed); Assert.Equal(2, repeatedPrompts); window = null;
++                    // The security and mode transition paths bypass user cancellation.
++                    foreach (var authentication in new[] { false, true })
++                    {
++                        window = new MainWindow(shell) { ShowInTaskbar = false };
++                        window.ConfirmCloseOverride = _ => throw new Exception("No second prompt on technical close");
++                        window.TrayAvailableOverride = () => true;
++                        var technicalClosed = false; window.Closed += (_, _) => technicalClosed = true; window.Show();
++                        if (authentication) window.CloseForAuthenticationTransition(); else window.CloseAfterModeSwitch();
++                        Assert.True(technicalClosed); window = null;
++                    }
++                    // Authentication may change while a modal confirmation pumps messages.
++                    foreach (var authentication in new[] { false, true })
++                    {
++                        window = new MainWindow(shell) { ShowInTaskbar = false };
++                        var reentrantClosed = false; window.Closed += (_, _) => reentrantClosed = true;
++                        window.ConfirmCloseOverride = _ =>
++                        {
++                            window.RequestExit(); // Repeated tray exit must not recurse either.
++                            if (authentication) window.CloseForAuthenticationTransition(); else window.CloseAfterModeSwitch();
++                            return false;
++                        };
++                        window.Show(); window.RequestExit();
++                        Assert.True(reentrantClosed); window = null;
++                    }
++                    // Cancelling tray exit must not unlock a mode-switch-disabled owner.
++                    window = new MainWindow(shell) { ShowInTaskbar = false };
++                    window.ConfirmCloseOverride = _ => false;
++                    window.Show(); window.IsEnabled = false; window.RequestExit();
++                    Assert.False(window.IsEnabled);
++                    window.CloseAfterModeSwitch(); window = null;
++                    using var clean = new MainWindowViewModel();
++                    window = new MainWindow(clean) { ShowInTaskbar = false };
++                    window.ConfirmCloseOverride = _ => throw new Exception("Clean exit must not prompt");
++                    var cleanClosed = false; window.Closed += (_, _) => cleanClosed = true; window.Show(); window.Close();
++                    Assert.True(cleanClosed); window = null;
++                    done.SetResult();
++                }
++                catch (Exception error) { done.SetException(error); }
++                finally { window?.CloseForAuthenticationTransition(); dispatcher.InvokeShutdown(); }
++            });
++            Dispatcher.Run();
++        });
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        await done.Task.WaitAsync(TimeSpan.FromSeconds(45));
++        Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5))));
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/ContactCardViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Work/ContactCardViewModelTests.cs
+index 9f1c805..8857612 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/ContactCardViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/ContactCardViewModelTests.cs
+@@ -52,6 +52,7 @@ public sealed class ContactCardViewModelTests
+         await vm.SelectAsync(original.Contact.Id); await vm.EditCommand.ExecuteAsync(); vm.Notes = "Несохранённый ввод";
+         await vm.SaveCommand.ExecuteAsync();
+         Assert.True(vm.IsEditing); Assert.Equal("Несохранённый ввод", vm.Notes);
++        Assert.Equal(failure is "offline" or "malformed", vm.HasUnconfirmedMutation);
+         Assert.DoesNotContain("Изменения контакта сохранены", vm.Message);
+         if (failure is "412" or "403" or "404") Assert.False(vm.SaveCommand.CanExecute(null));
+         if (failure == "412")
+diff --git a/work/production/tests/Task.Desktop.Tests/Work/WorkHubContactCardTests.cs b/work/production/tests/Task.Desktop.Tests/Work/WorkHubContactCardTests.cs
+index 2aed9c9..2c39501 100644
+--- a/work/production/tests/Task.Desktop.Tests/Work/WorkHubContactCardTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Work/WorkHubContactCardTests.cs
+@@ -74,6 +74,7 @@ public sealed partial class WorkHubViewModelTests
+     internal sealed partial class FakeClient : IDesktopContactDetailsClient
+     {
+         public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<DesktopContactDetails>>>? ContactDetailHandler { get; init; }
++        public DesktopWorkResult<DesktopContactDetails>? ContactWriteResult { get; init; }
+         public int ContactDetailCalls { get; private set; }
+         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopContactDetails>> GetContactAsync(Guid id, CancellationToken cancellationToken = default)
+         {
+@@ -82,6 +83,6 @@ public sealed partial class WorkHubViewModelTests
+                 Contacts.FirstOrDefault(c => c.Id == id) is { } contact ? new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, null)) : new DesktopWorkResult<DesktopContactDetails>.NotFound());
+         }
+         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopContactDetails>> UpdateContactAsync(DesktopContactDetails details, CancellationToken cancellationToken = default) =>
+-            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(details with { Contact = details.Contact with { Version = details.Contact.Version + 1 } }));
++            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(ContactWriteResult ?? new DesktopWorkResult<DesktopContactDetails>.Succeeded(details with { Contact = details.Contact with { Version = details.Contact.Version + 1 } }));
+     }
+ }

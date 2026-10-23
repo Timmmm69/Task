@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="837f42c8-219c-4eb0-be6e-daa52d72f338" name="novik@TIM 2026-10-23 19:47:40" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-23T19:47:40.0051822+03:00" queuing="2026-10-23T19:47:40.0051824+03:00" start="2026-10-23T19:47:39.0274151+03:00" finish="2026-10-23T19:47:40.0089073+03:00" />
+  <TestSettings name="default" id="d784d11e-3a0a-4a11-8729-f4daa28eabcc">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-23_19_47_40" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="dbc4fcfa-9565-455d-ac46-b4e4e8ac339c" testId="396771e5-85f7-0776-6f81-af5988adf385" testName="Task.Desktop.Tests.CorporateCloseGuardTests.DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard" computerName="TIM" duration="00:00:00.0466540" startTime="2026-10-23T19:47:39.8451879+03:00" endTime="2026-10-23T19:47:39.9181025+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dbc4fcfa-9565-455d-ac46-b4e4e8ac339c">
+      <Output>
+        <ErrorInfo>
+          <Message>System.Exception : Unexpected pending operation</Message>
+          <StackTrace>   at Task.Desktop.Tests.CorporateCloseGuardTests.&lt;&gt;c.&lt;Check&gt;b__9_1() in C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseGuardTests.cs:line 193&#xD;
+   at Task.Desktop.Modes.CorporateCloseGuard.CanClose(Func`1 inspect, Boolean alreadyApproved, Func`2 confirm, Action operationPending) in C:\Users\novik\Таск\work\corporate_close\repo\work\production\src\Task.Desktop\Modes\CorporateCloseGuard.cs:line 10&#xD;
+   at Task.Desktop.Tests.CorporateCloseGuardTests.Check(MainWindowViewModel shell, Func`2 confirm) in C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseGuardTests.cs:line 192&#xD;
+   at Task.Desktop.Tests.CorporateCloseGuardTests.DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard() in C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseGuardTests.cs:line 98&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.CorporateCloseGuardTests.DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard" storage="c:\users\novik\таск\work\corporate_close\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="396771e5-85f7-0776-6f81-af5988adf385">
+      <Execution id="dbc4fcfa-9565-455d-ac46-b4e4e8ac339c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CorporateCloseGuardTests" name="DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="396771e5-85f7-0776-6f81-af5988adf385" executionId="dbc4fcfa-9565-455d-ac46-b4e4e8ac339c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.10]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.39]       System.Exception : Unexpected pending operation&#xD;
+[xUnit.net 00:00:00.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseGuardTests.cs(193,0): at Task.Desktop.Tests.CorporateCloseGuardTests.&lt;&gt;c.&lt;Check&gt;b__9_1()&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\novik\Таск\work\corporate_close\repo\work\production\src\Task.Desktop\Modes\CorporateCloseGuard.cs(10,0): at Task.Desktop.Modes.CorporateCloseGuard.CanClose(Func`1 inspect, Boolean alreadyApproved, Func`2 confirm, Action operationPending)&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseGuardTests.cs(192,0): at Task.Desktop.Tests.CorporateCloseGuardTests.Check(MainWindowViewModel shell, Func`2 confirm)&#xD;
+[xUnit.net 00:00:00.39]         C:\Users\novik\Таск\work\corporate_close\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseGuardTests.cs(98,0): at Task.Desktop.Tests.CorporateCloseGuardTests.DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard()&#xD;
+[xUnit.net 00:00:00.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.40]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Error" timestamp="2026-10-23T19:47:39.9198786+03:00">
+        <Text>[xUnit.net 00:00:00.39]     Task.Desktop.Tests.CorporateCloseGuardTests.DefinitiveForbiddenTaskReply_DoesNotBlockExplicitDiscard [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
