@@ -18,9 +18,9 @@
 
 Release-сборка Task.Desktop: PASS, ошибок 0, предупреждений 0. Сборка тестового проекта выполнялась командами dotnet test. Точные команды и счётчики: validation.json.
 
-- projects: total=301, passed=301, failed=0, skipped=0. Failures: 
+- projects: total=301, passed=301, failed=0, skipped=0. Failures:
 - desktop: total=1901, passed=1900, failed=1, skipped=0. Failures: Task.Desktop.Tests.CommandPaletteTests.Debounce_SearchesOnlyLatestValidQuery_PreservesServerRanking
-- debounce-recheck: total=1, passed=1, failed=0, skipped=0. Failures: 
+- debounce-recheck: total=1, passed=1, failed=0, skipped=0. Failures:
 
 Projects включает regression tests отмены, правильных аргументов, недоступных действий, смены контекста, серверных ошибок, повторного входа и native WPF. TRX сохранены локально в work/project_action_confirmations/validation.
 

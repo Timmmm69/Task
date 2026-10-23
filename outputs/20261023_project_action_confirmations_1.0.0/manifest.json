@@ -38,11 +38,11 @@
   "artifacts": [
     {
       "path": "changes.patch",
-      "sha256": "d693b8daa831880d12edda1fe62dbdbcba1378f072c3bf542bc98cde7f8ec130"
+      "sha256": "25ab54d6f7a324c66f2b13ff19ea98b22a4ba033527653447b7ff116f66fdbcc"
     },
     {
       "path": "REPORT.md",
-      "sha256": "455feffc169f333eb6db5086735ffa06d6477fd7612adf7a9e8511c59d7e38ff"
+      "sha256": "d6a4b54b8d766e02d09177399f94b2bc586b6cb7e0660fdb1c0a69d6e1333741"
     },
     {
       "path": "validation.json",
