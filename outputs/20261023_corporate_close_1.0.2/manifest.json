@@ -1,0 +1,12 @@
+{
+  "version": "1.0.2",
+  "kind": "validation-addendum",
+  "sourceCommit": "21dc25370dabf31b3716f0420b574415896fd550",
+  "files": {
+    ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    "formatting.patch": "29fd8db7c902b423070cce41b1d54b8b46f2abd6dfd64c2fe4947e378fdfe26b",
+    "review-formatting.trx": "8a1ff44aacbc412e1b347f93110845adab039152916903be4e33818106bedcca",
+    "validation-report.md": "2fe513db6b1b5c1a3491861f0ae1ec031d8c59a9a1a96c15ae32bca2f0313dd5",
+    "VERSION": "9fd28642d3aca191e5c7fc2383cfd6fabb2aac8743f029dabb8989ac584e31bc"
+  }
+}
