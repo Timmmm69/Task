@@ -103,7 +103,7 @@
                                                       Style="{StaticResource Task.Input.Combo}" Margin="8,0" AutomationProperties.Name="Роль участника"/>
                                             <Button Grid.Column="2" Content="Сохранить роль" Margin="0,0,8,0" Style="{StaticResource Task.Button.Secondary}"
                                                     Command="{Binding DataContext.ChangeMemberRoleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                            <Button Grid.Column="3" Content="Удалить" Style="{StaticResource Task.Button.Secondary}"
+                                            <Button Grid.Column="3" Content="Исключить" Style="{StaticResource Task.Button.Secondary}"
                                                     Command="{Binding DataContext.RemoveMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
                                         </Grid>
                                     </DataTemplate>
