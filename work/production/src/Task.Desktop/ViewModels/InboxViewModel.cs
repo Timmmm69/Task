@@ -147,6 +147,8 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
             if (_conversion is not null) _conversion.PropertyChanged += OnConversionPropertyChanged;
             OnPropertyChanged();
             OnPropertyChanged(nameof(HasConversion));
+            OnPropertyChanged(nameof(CanConvert));
+            ConvertCommand.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(CanSaveConversion));
             SaveConversionCommand.RaiseCanExecuteChanged();
             CancelConversionCommand.RaiseCanExecuteChanged();
@@ -333,7 +335,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         IsActive = false;
         Interlocked.Increment(ref _activationGeneration);
         _activationCancellation?.Cancel();
-        CloseConversion();
+        // Navigation stops list loading, but the editor and retry state belong to the session.
     }
 
     private async global::System.Threading.Tasks.Task RefreshAsync(CancellationToken cancellationToken)
@@ -639,7 +641,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private bool CanConvertItem(InboxItemViewModel? item) => item is not null && IsActive && !IsBusy && !IsRefreshing && !IsReadOnly
+    private bool CanConvertItem(InboxItemViewModel? item) => Conversion is null && item is not null && IsActive && !IsBusy && !IsRefreshing && !IsReadOnly
         && CanManageInbox && (UsesInboxContract || InboxItemViewModel.IsCaptureOnly(item.Source));
 
     private void CloseConversion()

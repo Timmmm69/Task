@@ -46,6 +46,10 @@ public sealed partial class DesktopWorkApiClientTests
         using var model = new InboxViewModel(fixture.Inbox, ["Inbox.ReadOwn", "Inbox.ManageOwn", "Task.Read", "Task.Update"]);
         await model.ActivateAsync(); await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
         if (deadline) model.Conversion!.DeadlineText = "21.10.2026 14:30";
+        var editor = model.Conversion;
+        model.Deactivate();
+        await model.ActivateAsync();
+        Assert.Same(editor, model.Conversion);
         Assert.True(model.CanSaveConversion);
         await model.SaveConversionCommand.ExecuteAsync();
         Assert.Null(model.Conversion); Assert.True(model.ShowInboxZero);
@@ -89,6 +93,13 @@ public sealed partial class DesktopWorkApiClientTests
         if (loseTaskPatch) editor.Title = "Edited title";
         await model.SaveConversionCommand.ExecuteAsync();
         Assert.Same(editor, model.Conversion);
+        var revision = editor.Revision;
+        var version = editor.SourceVersion;
+        model.Deactivate();
+        await model.ActivateAsync();
+        Assert.Same(editor, model.Conversion);
+        Assert.Equal(revision, editor.Revision);
+        Assert.Equal(version, editor.SourceVersion);
         model.UpdateConnectivity(true);
         await model.SaveConversionCommand.ExecuteAsync();
         Assert.Null(model.Conversion); Assert.True(model.ShowInboxZero);

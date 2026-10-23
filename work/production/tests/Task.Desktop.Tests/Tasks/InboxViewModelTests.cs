@@ -435,6 +435,7 @@ public sealed class InboxViewModelTests
         public DesktopCreateTaskCommand? LastCreate { get; private set; }
         public DesktopPatchTaskCommand? LastPatch { get; private set; }
         public int PatchCalls { get; private set; }
+        public CancellationToken PatchCancellationToken { get; private set; }
         public TaskCompletionSource<DesktopTaskWriteResult<DesktopTaskDto>>? PendingPatch { get; init; }
         public Func<string?, CancellationToken, global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>>? Read { get; set; }
 
@@ -453,6 +454,7 @@ public sealed class InboxViewModelTests
         public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default)
         {
             LastPatch = command;
+            PatchCancellationToken = cancellationToken;
             PatchCalls++;
             if (PendingPatch is { } pending) return pending.Task;
             if (PatchResult is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
