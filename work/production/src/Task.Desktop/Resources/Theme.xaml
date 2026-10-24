@@ -8,6 +8,7 @@
         <ResourceDictionary Source="Controls.Buttons.xaml" />
         <ResourceDictionary Source="Controls.Navigation.xaml" />
         <ResourceDictionary Source="Controls.Data.xaml" />
+        <ResourceDictionary Source="Controls.Calendar.xaml" />
         <ResourceDictionary Source="Controls.States.xaml" />
         <ResourceDictionary Source="Controls.Shell.xaml" />
     </ResourceDictionary.MergedDictionaries>
