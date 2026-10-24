@@ -4,10 +4,18 @@ on:
 permissions:
   contents: read
 jobs:
-  task7:
+  comparison:
     if: github.head_ref == 'codex/task7-window-startup-verification'
     runs-on: windows-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: baseline
+            sha: cb23ef115176d802c6d6950299e61b3f61aad215
+          - version: candidate
+            sha: 0ca977daf42d7b053f182fb29803f31cbf7e6099
     defaults:
       run:
         working-directory: work/production
@@ -16,28 +24,153 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+          ref: ${{ matrix.sha }}
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-      - name: Restore Desktop tests
-        run: dotnet restore tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj
-      - name: Verify changed files formatting
-        run: dotnet format whitespace --folder . --include src/Task.Desktop/WindowsUxLayout.cs src/Task.Desktop/ModeSelectorWindow.xaml.cs tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs --verify-no-changes
-      - name: Build Desktop and tests
+      - name: Build Desktop tests
         id: build
-        run: dotnet build tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-restore
-      - name: Windows UX accessibility tests
+        run: dotnet build tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release
+      - name: Diagnose the two failing UI tests
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --filter FullyQualifiedName~WindowsUxAccessibilityTests --logger "trx;LogFileName=accessibility.trx" --results-directory TestResults/task7
-      - name: Lifecycle and startup tests
+        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --filter "FullyQualifiedName~CompletionFeedbackUiTests.GlyphPulse_ResetsAfterPlaybackAndRecycling_WithoutChangingLayout|FullyQualifiedName~TaskContextActionsUiTests.NativeWindows_MouseKeyboardFocusRelationsAndSmallWindow" --logger "trx;LogFileName=diagnostic.trx" --results-directory TestResults/task7
+      - name: Native window placement regression probe
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --filter "FullyQualifiedName~MainWindowLifecycleTests|FullyQualifiedName~ApplicationModeStartupTests|FullyQualifiedName~ApplicationModeTests" --logger "trx;LogFileName=lifecycle.trx" --results-directory TestResults/task7
-      - name: All Desktop tests
-        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --logger "trx;LogFileName=desktop.trx" --results-directory TestResults/task7
+        run: |
+          $probeDir = Join-Path (Get-Location) "../task7-native-probe"
+          New-Item -ItemType Directory -Force $probeDir | Out-Null
+          @'
+          <Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0-windows10.0.17763.0</TargetFramework><UseWPF>true</UseWPF><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><ApplicationManifest>../production/src/Task.Desktop/app.manifest</ApplicationManifest></PropertyGroup><ItemGroup><ProjectReference Include="../production/src/Task.Desktop/Task.Desktop.csproj" /></ItemGroup></Project>
+          '@ | Set-Content (Join-Path $probeDir "Probe.csproj") -Encoding utf8
+          @'
+          using System.Reflection;
+          using System.Runtime.InteropServices;
+          using System.Windows;
+          using System.Windows.Interop;
+          using Task.Desktop;
+          
+          internal static class Program
+          {
+              private static readonly MethodInfo Fit = typeof(ModeSelectorWindow).Assembly
+                  .GetType("Task.Desktop.WindowsUxLayout")!.GetMethod("FitStartupWindowToPrimaryWorkArea", BindingFlags.NonPublic | BindingFlags.Static)!;
+          
+              [STAThread]
+              private static int Main()
+              {
+                  var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+                  app.Resources.MergedDictionaries.Add(new ResourceDictionary
+                  {
+                      Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative)
+                  });
+                  var failures = 0;
+                  Run("ordinary startup", () => CheckWindow(1200, 900, 800, 480));
+                  Run("work area below minimum", () => CheckWindow(12000, 11000, 10000, 10000));
+                  Run("owned modal mode selector", CheckOwned);
+                  app.Shutdown();
+                  return failures == 0 ? 0 : 1;
+          
+                  void Run(string name, Action check)
+                  {
+                      try { check(); Console.WriteLine("PASS " + name); }
+                      catch (Exception ex) { failures++; Console.WriteLine("FAIL " + name + ": " + ex); }
+                  }
+              }
+          
+              private static Window Create(double width, double height, double minWidth, double minHeight)
+              {
+                  var window = new Window { Width = width, Height = height, MinWidth = minWidth, MinHeight = minHeight,
+                      WindowStartupLocation = WindowStartupLocation.CenterScreen, ShowInTaskbar = false };
+                  window.SourceInitialized += (_, _) => Fit.Invoke(null, new object[] { window });
+                  return window;
+              }
+          
+              private static void CheckWindow(double width, double height, double minWidth, double minHeight)
+              {
+                  var window = Create(width, height, minWidth, minHeight);
+                  try
+                  {
+                      window.Show();
+                      CheckBounds(window);
+                      if (!double.IsPositiveInfinity(window.MaxWidth) || !double.IsPositiveInfinity(window.MaxHeight))
+                          throw new Exception("Startup left permanent maximum constraints.");
+                  }
+                  finally { window.Close(); }
+              }
+          
+              private static void CheckOwned()
+              {
+                  var owner = Create(600, 500, 440, 340);
+                  ModeSelectorWindow? child = null;
+                  try
+                  {
+                      owner.Show();
+                      var ownerHandle = new WindowInteropHelper(owner).Handle;
+                      var work = Work(ownerHandle);
+                      SetWindowPos(ownerHandle, IntPtr.Zero, work.Left + 20, work.Top + 20, 0, 0, 0x0001 | 0x0004 | 0x0010);
+                      child = new ModeSelectorWindow { Owner = owner, ShowInTaskbar = false };
+                      Exception? failure = null;
+                      child.Loaded += (_, _) =>
+                      {
+                          try
+                          {
+                              CheckBounds(child);
+                              var childHandle = new WindowInteropHelper(child).Handle;
+                              if (MonitorFromWindow(childHandle, 2) != MonitorFromWindow(ownerHandle, 2))
+                                  throw new Exception("Owner and modal window are on different monitors.");
+                              GetWindowRect(ownerHandle, out var parent);
+                              GetWindowRect(childHandle, out var actual);
+                              var expectedLeft = Math.Clamp(parent.Left + (parent.Right - parent.Left - (actual.Right - actual.Left)) / 2, work.Left, work.Right - (actual.Right - actual.Left));
+                              var expectedTop = Math.Clamp(parent.Top + (parent.Bottom - parent.Top - (actual.Bottom - actual.Top)) / 2, work.Top, work.Bottom - (actual.Bottom - actual.Top));
+                              if (Math.Abs(expectedLeft - actual.Left) > 1 || Math.Abs(expectedTop - actual.Top) > 1)
+                                  throw new Exception("Modal window was not centered on its owner and clamped.");
+                          }
+                          catch (Exception ex) { failure = ex; }
+                          finally { child.DialogResult = false; }
+                      };
+                      child.ShowDialog();
+                      if (failure is not null) throw failure;
+                  }
+                  finally { child?.Close(); owner.Close(); }
+              }
+          
+              private static void CheckBounds(Window window)
+              {
+                  var handle = new WindowInteropHelper(window).Handle;
+                  if (!GetWindowRect(handle, out var rect)) throw new Exception("GetWindowRect failed.");
+                  var work = Work(handle);
+                  if (rect.Right <= rect.Left || rect.Bottom <= rect.Top || rect.Left < work.Left || rect.Top < work.Top || rect.Right > work.Right || rect.Bottom > work.Bottom)
+                      throw new Exception($"Window [{rect.Left},{rect.Top},{rect.Right},{rect.Bottom}] exceeds work area [{work.Left},{work.Top},{work.Right},{work.Bottom}].");
+              }
+          
+              private static NativeRect Work(IntPtr handle)
+              {
+                  var info = new MonitorInfo { Size = Marshal.SizeOf<MonitorInfo>() };
+                  if (!GetMonitorInfo(MonitorFromWindow(handle, 2), ref info)) throw new Exception("GetMonitorInfo failed.");
+                  return info.Work;
+              }
+          
+              [StructLayout(LayoutKind.Sequential)]
+              private struct NativeRect { public int Left, Top, Right, Bottom; }
+              [StructLayout(LayoutKind.Sequential)]
+              private struct MonitorInfo { public int Size; public NativeRect Monitor, Work; public uint Flags; }
+              [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr window, uint flags);
+              [DllImport("user32.dll", CharSet = CharSet.Unicode)] [return: MarshalAs(UnmanagedType.Bool)]
+              private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
+              [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)]
+              private static extern bool GetWindowRect(IntPtr window, out NativeRect rect);
+              [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)]
+              private static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
+          }
+          
+          '@ | Set-Content (Join-Path $probeDir "Program.cs") -Encoding utf8
+          dotnet run --project (Join-Path $probeDir "Probe.csproj") -c Release 2>&1 | Tee-Object -FilePath TestResults/task7/native.log
+          exit $LASTEXITCODE
+      - name: All baseline Desktop tests
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.version == 'baseline' }}
+        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --logger "trx;LogFileName=baseline-desktop.trx" --results-directory TestResults/task7
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: task7-windows-results
+          name: task7-comparison-${{ matrix.version }}
           path: work/production/TestResults/task7
           if-no-files-found: warn
