@@ -1073,6 +1073,8 @@
 
                             <TextBlock Text="{Binding SimilarNotice}" TextWrapping="Wrap" Margin="0,0,0,8"
                                        AutomationProperties.Name="Основа новой задачи" AutomationProperties.LiveSetting="Polite" />
+                            <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+                            <TextBlock Text="Основное" Style="{StaticResource Task.Card.Heading}" />
                             <TextBlock Text="Название (обязательно)" FontWeight="SemiBold" Margin="0,0,0,5" />
                             <TextBox x:Name="TaskTitleTextBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                      MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="20"
@@ -1087,7 +1089,7 @@
 
                             <TextBlock Text="Приоритет (обычный по умолчанию)" FontWeight="SemiBold" Margin="0,0,0,5" />
                             <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}"
-                                      DisplayMemberPath="Text" Style="{StaticResource Task.Input.Combo}" TabIndex="21"
+                                      DisplayMemberPath="Text" Style="{StaticResource Task.Card.Combo}" TabIndex="21"
                                       AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="TaskPriorityComboBox" />
                             <TextBlock Text="{Binding PriorityError}"
                                        Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
@@ -1095,6 +1097,9 @@
                                        AutomationProperties.Name="Ошибка приоритета задачи"
                                        AutomationProperties.LiveSetting="Assertive" />
 
+                            </StackPanel></Border>
+                            <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+                            <TextBlock Text="Сроки и напоминание" Style="{StaticResource Task.Card.Heading}" />
                             <TextBlock Text="Запланировать на день (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
                             <TextBox Text="{Binding Card.Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="22"
@@ -1127,13 +1132,14 @@
                                        AutomationProperties.LiveSetting="Assertive" />
 
                             <StackPanel Margin="0,8,0,12">
- <TextBlock Text="Напомнить"/>
- <ComboBox ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
- <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Width="100" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
+ <TextBlock Text="Напомнить" FontWeight="SemiBold" Margin="0,0,0,6"/>
+ <ComboBox Style="{StaticResource Task.Card.Combo}" ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
+ <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Style="{StaticResource Task.Input.Text}" Margin="0,8,0,0" Width="100" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
  <TextBlock Text="{Binding ReminderPreview}" TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite"/>
  <TextBlock Text="{Binding ReminderRecipientHint}" TextWrapping="Wrap" FontSize="12"/>
 </StackPanel>
-                            <views:TaskCardEditorView DataContext="{Binding Card}" Margin="0,16,0,0" />
+                            </StackPanel></Border>
+                            <views:TaskCardEditorView DataContext="{Binding Card}" />
 
                             <TextBlock Text="{Binding CardError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
                             <Border Margin="0,16,0,0">
