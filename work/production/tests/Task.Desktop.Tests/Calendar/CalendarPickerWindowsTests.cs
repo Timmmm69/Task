@@ -49,6 +49,27 @@ public sealed partial class CalendarEmployeePickerTests
                     var view = new CalendarView { DataContext = vm };
                     window = new Window { Content = view, Width = 1120, Height = 900, Title = "Task · Calendar Picker test" };
                     window.Show(); window.Activate(); Pump();
+                    // Exercise the custom DatePicker template through its native WPF parts.
+                    var datePicker = Descendants<DatePicker>(view).Single(p =>
+                        System.Windows.Automation.AutomationProperties.GetName(p) == "Дата события");
+                    datePicker.BringIntoView(); Pump(); datePicker.ApplyTemplate();
+                    Assert.IsType<System.Windows.Controls.Primitives.DatePickerTextBox>(datePicker.Template.FindName("PART_TextBox", datePicker));
+                    var calendarButton = Assert.IsType<Button>(datePicker.Template.FindName("PART_Button", datePicker));
+                    calendarButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump();
+                    var popup = Assert.IsType<System.Windows.Controls.Primitives.Popup>(datePicker.Template.FindName("PART_Popup", datePicker));
+                    Assert.True(popup.IsOpen);
+                    var originalDate = vm.Editor.Date;
+                    var calendar = Assert.IsType<System.Windows.Controls.Calendar>(popup.Child);
+                    calendar.SelectedDate = originalDate!.Value.AddDays(1); Pump();
+                    Assert.Equal(originalDate.Value.AddDays(1), vm.Editor.Date);
+                    popup.IsOpen = false; vm.Editor.Date = originalDate; Pump();
+                    var allDay = Descendants<CheckBox>(view).Single(c =>
+                        System.Windows.Automation.AutomationProperties.GetName(c) == "Событие на весь день");
+                    var startTime = Descendants<TextBox>(view).Single(t =>
+                        System.Windows.Automation.AutomationProperties.GetName(t) == "Время начала");
+                    var originalTime = vm.Editor.StartTime;
+                    allDay.IsChecked = true; Pump(); Assert.True(vm.Editor.IsAllDay); Assert.False(startTime.IsEnabled);
+                    allDay.IsChecked = false; Pump(); Assert.True(startTime.IsEnabled); Assert.Equal(originalTime, startTime.Text);
                     var picker = Descendants<EmployeePickerView>(view).Single(v => v.IsVisible);
                     Assert.Same(vm.Editor.AttendeePicker, picker.DataContext);
                     vm.Editor.IsSaving = true; Pump();

@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "base": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "sha256": "83dc961746bd616d699ed02829a14c74cb090edfa91f0ea02e5202e5decfbdc7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Calendar.Forms.xaml",
+      "sha256": "6fac5272b2bec45c2b1f3b3506bfea47e29eeca580e6946338ce01eb30359944"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarPickerWindowsTests.cs",
+      "sha256": "4de08022b189d6c019ff295cf155ed42fb4cdc23357b52f80c37fc101af88007"
+    },
+    {
+      "path": "outputs/20261024_calendar_event_forms_1.0.0/VALIDATION.md",
+      "sha256": "9cf7ed1558099a3dbd59be145936c6184bda84f35b6c495cd22433df023bcd6e"
+    },
+    {
+      "path": "outputs/20261024_calendar_event_forms_1.0.0/build.log",
+      "sha256": "de9e42ca7639abc66bf6a48c2f212b3b171f2983ef5de22545e5990d0d58dc72"
+    },
+    {
+      "path": "outputs/20261024_calendar_event_forms_1.0.0/static-checks.log",
+      "sha256": "e64752755cf46d40e9d16f2b7e3ab84851b4d60df83d7adb35f647d9b103c101"
+    },
+    {
+      "path": "outputs/20261024_calendar_event_forms_1.0.0/tests.log",
+      "sha256": "67914e35ebd6aa38adbe14ccf905d73f2dcac96f5e43b19e8efb15ce9b6d9c31"
+    },
+    {
+      "path": "outputs/20261024_calendar_event_forms_1.0.0/verify_xaml.py",
+      "sha256": "0f29f173c358ca88aa44396742ab8c6eb6e7e9079e87c030540a2acecba994a7"
+    }
+  ]
+}
