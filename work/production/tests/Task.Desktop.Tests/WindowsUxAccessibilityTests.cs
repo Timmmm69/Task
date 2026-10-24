@@ -108,28 +108,31 @@ public sealed class WindowsUxAccessibilityTests
     public void StartupBounds_FitPhysicalWorkAreaIncludingTaskbarAndDpi(double width, double height, double dpi)
     {
         // Reserve a taskbar at the top; include negative and nonzero desktop origins.
-        foreach (var left in new[] { -1920d, 0, 2560 })
-        foreach (var (desired, minimum) in new[]
+        var windows = new[]
         {
             (new Size(1120, 700), new Size(800, 480)),
             (new Size(1200, 900), new Size(800, 480)),
             (new Size(580, 480), new Size(440, 340)),
-        })
+        };
+        foreach (var left in new[] { -1920d, 0, 2560 })
         {
-            var work = new Rect(left, 40, width, height - 40);
-            var available = new Size(work.Width * 96 / dpi, work.Height * 96 / dpi);
-            var size = WindowsUxLayout.CalculateStartupSize(desired, minimum, available);
-            Assert.InRange(size.Width, Math.Min(minimum.Width, available.Width), available.Width);
-            Assert.InRange(size.Height, Math.Min(minimum.Height, available.Height), available.Height);
-            Assert.True(size.Width > 0 && size.Height > 0);
-            Assert.Equal(Math.Min(desired.Width, available.Width), size.Width, 8);
-            Assert.Equal(Math.Min(desired.Height, available.Height), size.Height, 8);
-            var bounds = WindowsUxLayout.CalculateStartupBounds(desired, minimum, work, dpi);
-            AssertInside(work, bounds);
-            Assert.InRange(Math.Abs(bounds.Width - size.Width * dpi / 96), 0, 1);
-            Assert.InRange(Math.Abs(bounds.Height - size.Height * dpi / 96), 0, 1);
-            Assert.Equal(Math.Floor(work.Left + (work.Width - bounds.Width) / 2), bounds.Left);
-            Assert.Equal(Math.Floor(work.Top + (work.Height - bounds.Height) / 2), bounds.Top);
+            foreach (var (desired, minimum) in windows)
+            {
+                var work = new Rect(left, 40, width, height - 40);
+                var available = new Size(work.Width * 96 / dpi, work.Height * 96 / dpi);
+                var size = WindowsUxLayout.CalculateStartupSize(desired, minimum, available);
+                Assert.InRange(size.Width, Math.Min(minimum.Width, available.Width), available.Width);
+                Assert.InRange(size.Height, Math.Min(minimum.Height, available.Height), available.Height);
+                Assert.True(size.Width > 0 && size.Height > 0);
+                Assert.Equal(Math.Min(desired.Width, available.Width), size.Width, 8);
+                Assert.Equal(Math.Min(desired.Height, available.Height), size.Height, 8);
+                var bounds = WindowsUxLayout.CalculateStartupBounds(desired, minimum, work, dpi);
+                AssertInside(work, bounds);
+                Assert.InRange(Math.Abs(bounds.Width - size.Width * dpi / 96), 0, 1);
+                Assert.InRange(Math.Abs(bounds.Height - size.Height * dpi / 96), 0, 1);
+                Assert.Equal(Math.Floor(work.Left + (work.Width - bounds.Width) / 2), bounds.Left);
+                Assert.Equal(Math.Floor(work.Top + (work.Height - bounds.Height) / 2), bounds.Top);
+            }
         }
     }
 
