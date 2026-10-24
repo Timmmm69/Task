@@ -96,6 +96,133 @@ public sealed class WindowsUxAccessibilityTests
         }
     }
 
+    [Theory]
+    [InlineData(1920, 1080, 96)]
+    [InlineData(1920, 1080, 120)]
+    [InlineData(1920, 1080, 144)]
+    [InlineData(1920, 1080, 192)]
+    [InlineData(1366, 768, 144)]
+    [InlineData(1366, 768, 192)]
+    [InlineData(1280, 720, 144)]
+    [InlineData(640, 400, 96)]
+    public void StartupBounds_FitPhysicalWorkAreaIncludingTaskbarAndDpi(double width, double height, double dpi)
+    {
+        // Reserve a taskbar at the top; include negative and nonzero desktop origins.
+        var windows = new[]
+        {
+            (new Size(1120, 700), new Size(800, 480)),
+            (new Size(1200, 900), new Size(800, 480)),
+            (new Size(580, 480), new Size(440, 340)),
+        };
+        foreach (var left in new[] { -1920d, 0, 2560 })
+        {
+            foreach (var (desired, minimum) in windows)
+            {
+                var work = new Rect(left, 40, width, height - 40);
+                var available = new Size(work.Width * 96 / dpi, work.Height * 96 / dpi);
+                var size = WindowsUxLayout.CalculateStartupSize(desired, minimum, available);
+                Assert.InRange(size.Width, Math.Min(minimum.Width, available.Width), available.Width);
+                Assert.InRange(size.Height, Math.Min(minimum.Height, available.Height), available.Height);
+                Assert.True(size.Width > 0 && size.Height > 0);
+                Assert.Equal(Math.Min(desired.Width, available.Width), size.Width, 8);
+                Assert.Equal(Math.Min(desired.Height, available.Height), size.Height, 8);
+                var bounds = WindowsUxLayout.CalculateStartupBounds(desired, minimum, work, dpi);
+                AssertInside(work, bounds);
+                Assert.InRange(Math.Abs(bounds.Width - size.Width * dpi / 96), 0, 1);
+                Assert.InRange(Math.Abs(bounds.Height - size.Height * dpi / 96), 0, 1);
+                Assert.Equal(Math.Floor(work.Left + (work.Width - bounds.Width) / 2), bounds.Left);
+                Assert.Equal(Math.Floor(work.Top + (work.Height - bounds.Height) / 2), bounds.Top);
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData(-1920, -800, -2100, -900)]
+    [InlineData(2560, 80, 3900, 700)]
+    public void StartupBounds_CentersOnOwnerAndClampsToOwnersWorkArea(double left, double top, double ownerLeft, double ownerTop)
+    {
+        var work = new Rect(left, top, 1600, 860);
+        var owner = new Rect(ownerLeft, ownerTop, 900, 700);
+        var bounds = WindowsUxLayout.CalculateStartupBounds(new Size(580, 480), new Size(440, 340), work, 144, owner);
+        AssertInside(work, bounds);
+        Assert.Equal(870, bounds.Width);
+        Assert.Equal(720, bounds.Height);
+        Assert.Equal(Math.Clamp(Math.Floor(owner.Left + (owner.Width - 870) / 2), work.Left, work.Right - 870), bounds.Left);
+        Assert.Equal(Math.Clamp(Math.Floor(owner.Top + (owner.Height - 720) / 2), work.Top, work.Bottom - 720), bounds.Top);
+    }
+
+    [Theory]
+    [InlineData(1600, 1000, 1120, 700)]
+    [InlineData(1000, 600, 1000, 600)]
+    [InlineData(683, 364, 683, 364)]
+    [InlineData(600, 800, 600, 700)]
+    public void StartupSizing_OnlyRelaxesMinimumOnAxesThatDoNotFit(double width, double height, double expectedWidth, double expectedHeight)
+    {
+        Assert.Equal(new Size(expectedWidth, expectedHeight), WindowsUxLayout.CalculateStartupSize(
+            new Size(1120, 700), new Size(800, 480), new Size(width, height)));
+        Assert.Equal(new Size(800, 480), WindowsUxLayout.CalculateStartupSize(
+            new Size(400, 300), new Size(800, 480), new Size(1600, 1000)));
+    }
+
+    [Fact]
+    public void WorkAreaConstraints_RestoreMinimumOnLargerMonitorAndNeverPinMaximum()
+    {
+        Exception? error = null;
+        var thread = new Thread(() =>
+        {
+            Window? window = null;
+            try
+            {
+                window = new Window { MinWidth = 800, MinHeight = 480 };
+                var minimum = new Size(window.MinWidth, window.MinHeight);
+                WindowsUxLayout.ApplyWorkAreaMinimum(window, minimum, new Size(683, 364));
+                Assert.Equal(683, window.MinWidth);
+                Assert.Equal(364, window.MinHeight);
+                Assert.Equal(double.PositiveInfinity, window.MaxWidth);
+                Assert.Equal(double.PositiveInfinity, window.MaxHeight);
+                WindowsUxLayout.ApplyWorkAreaMinimum(window, minimum, new Size(2560, 1400));
+                Assert.Equal(800, window.MinWidth);
+                Assert.Equal(480, window.MinHeight);
+                window.Width = 2000;
+                window.Height = 1200;
+                Assert.Equal(2000, window.Width);
+                Assert.Equal(1200, window.Height);
+                window.MaxWidth = 2200;
+                WindowsUxLayout.ApplyWorkAreaMinimum(window, minimum, new Size(683, 364));
+                Assert.Equal(2200, window.MaxWidth);
+            }
+            catch (Exception exception) { error = exception; }
+            finally { window?.Close(); }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert.True(thread.Join(TimeSpan.FromSeconds(10)), "Window constraint test timed out.");
+        Assert.Null(error);
+    }
+
+    [Fact]
+    public void StartupFitting_IsConnectedToAllFiveWindowsWithoutPrimaryMonitorCaps()
+    {
+        foreach (var name in new[] { "MainWindow", "PersonalWindow", "AuthWindow", "BootstrapWindow", "ModeSelectorWindow" })
+        {
+            var code = File.ReadAllText(ProjectFile("src", "Task.Desktop", name + ".xaml.cs"));
+            Assert.Contains("SourceInitialized +=", code);
+            Assert.Contains("WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this)", code);
+        }
+        var helper = File.ReadAllText(ProjectFile("src", "Task.Desktop", "WindowsUxLayout.cs"));
+        Assert.DoesNotContain("window.MaxWidth =", helper);
+        Assert.DoesNotContain("window.MaxHeight =", helper);
+        Assert.DoesNotContain("SystemParameters.WorkArea", helper);
+    }
+
+    private static void AssertInside(Rect work, Rect bounds)
+    {
+        Assert.True(bounds.Width > 0 && bounds.Height > 0);
+        Assert.InRange(bounds.Width, 0, work.Width);
+        Assert.InRange(bounds.Height, 0, work.Height);
+        Assert.True(work.Contains(bounds), $"{bounds} must fit inside {work}");
+    }
+
     [Fact]
     public void WindowContracts_FitAtTwoHundredPercentAndExposeKeyboardHelp()
     {
