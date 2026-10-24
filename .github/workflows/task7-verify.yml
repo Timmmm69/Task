@@ -1,0 +1,43 @@
+name: Task 7 Windows verification
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  task7:
+    if: github.head_ref == 'codex/task7-window-startup-verification'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: work/production
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore Desktop tests
+        run: dotnet restore tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj
+      - name: Verify changed files formatting
+        run: dotnet format whitespace --folder . --include src/Task.Desktop/WindowsUxLayout.cs src/Task.Desktop/ModeSelectorWindow.xaml.cs tests/Task.Desktop.Tests/WindowsUxAccessibilityTests.cs --verify-no-changes
+      - name: Build Desktop and tests
+        id: build
+        run: dotnet build tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-restore
+      - name: Windows UX accessibility tests
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --filter FullyQualifiedName~WindowsUxAccessibilityTests --logger "trx;LogFileName=accessibility.trx" --results-directory TestResults/task7
+      - name: Lifecycle and startup tests
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --filter "FullyQualifiedName~MainWindowLifecycleTests|FullyQualifiedName~ApplicationModeStartupTests|FullyQualifiedName~ApplicationModeTests" --logger "trx;LogFileName=lifecycle.trx" --results-directory TestResults/task7
+      - name: All Desktop tests
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: dotnet test tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj -c Release --no-build --no-restore --logger "trx;LogFileName=desktop.trx" --results-directory TestResults/task7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: task7-windows-results
+          path: work/production/TestResults/task7
+          if-no-files-found: warn
