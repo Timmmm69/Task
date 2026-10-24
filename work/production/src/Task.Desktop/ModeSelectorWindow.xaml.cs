@@ -6,7 +6,11 @@ namespace Task.Desktop;
 public partial class ModeSelectorWindow : Window
 {
     public ApplicationMode? SelectedMode { get; private set; }
-    public ModeSelectorWindow() => InitializeComponent();
+    public ModeSelectorWindow()
+    {
+        InitializeComponent();
+        SourceInitialized += (_, _) => WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
+    }
     private void OnPersonal(object sender, RoutedEventArgs e) => Select(ApplicationMode.Personal);
     private void OnCorporate(object sender, RoutedEventArgs e) => Select(ApplicationMode.Corporate);
     private void Select(ApplicationMode mode) { SelectedMode = mode; DialogResult = true; }
