@@ -1,0 +1,14 @@
+PASS: original commands, bound values, access gates, validation constraints, events and automation IDs preserved
+PASS: explicit DataContext ancestry preserved
+PASS: XML and property assignment checks
+PASS: all 52 resource references resolve in view, theme or App.xaml
+PASS: unique automation IDs
+PASS: explicit control styling: TextBox 29
+PASS: explicit control styling: ComboBox 12
+PASS: explicit control styling: Button 36
+PASS: explicit control styling: CheckBox 6
+PASS: explicit control styling: Expander 3
+PASS: explicit control styling: ListBox 6
+PASS: git diff --check
+NOT RUN: WPF rendering, keyboard, high contrast, resize and scaling checks require Windows
+PASS: split proportions and distinct narrow-screen rows
