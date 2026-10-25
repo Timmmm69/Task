@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "base_commit": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "files": [
+    {
+      "path": "WorkHubView.xaml",
+      "sha256": "3a7f743b208e87bbe5865518867ae626b435961f3b1bff9644d7bb080e5368ef"
+    },
+    {
+      "path": "build.txt",
+      "sha256": "655d7deaee0d82c06d37e15f8c6c57beb2ceb0054fe2a1d13653cc62a3e0ccea"
+    },
+    {
+      "path": "changes.patch",
+      "sha256": "da845862b045696dff0a6192cac1fd53560d0972c35b64a123a84bc21f2195fb"
+    },
+    {
+      "path": "static-validation.txt",
+      "sha256": "1447b4364214e468ccdd099ceb2bea2b44604f69a901ba10321137b9386a1321"
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "c540aefd0ad4eafd5d27a9f31c22790a2c435858211a0396e61af0be4a3e5afc"
+    },
+    {
+      "path": "verify_contract.py",
+      "sha256": "54f22cbf06b57bc01d32a5bf5895d0de4cce6c9c9ab72638c3a1f680c2d3907b"
+    }
+  ]
+}

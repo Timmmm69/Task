@@ -1,0 +1,10 @@
+PASS explicit styles: TextBox (29)
+PASS explicit styles: ComboBox (12)
+PASS explicit styles: Button (36)
+PASS explicit styles: CheckBox (6)
+PASS explicit styles: Expander (2)
+PASS explicit styles: ListBox (6)
+PASS resource references: 41
+PASS original commands, bindings, event handlers, visibility/access gates and automation IDs preserved
+PASS XML and duplicate property checks
+PASS git diff --check
