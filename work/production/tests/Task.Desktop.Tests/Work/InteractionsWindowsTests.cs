@@ -21,8 +21,14 @@ public sealed class InteractionsWindowsTests
     {
         if (Environment.GetEnvironmentVariable("TASK_INTERACTIONS_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeInteractionsCreateEditConflictAndCompactLayout));
             start.Environment["TASK_INTERACTIONS_PROBE"] = "1";
@@ -52,6 +58,9 @@ public sealed class InteractionsWindowsTests
                     var scroll = new ScrollViewer { Content = view, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
                     window = new Window { Content = scroll, Width = 1100, Height = 1000, ShowInTaskbar = false, ShowActivated = false, Title = "Task — взаимодействия CRM" };
                     window.Show(); Pump();
+                    var detailRegion = (FrameworkElement)view.FindName("DetailRegion");
+                    Assert.Equal(1, Grid.GetColumn(detailRegion));
+                    Assert.Equal(0, Grid.GetRow(detailRegion));
                     await vm.RefreshCommand.ExecuteAsync(); await vm.OpenAsync(value.Id); Pump(); Save(scroll, "interaction-view.png");
                     Assert.Equal(value.Id, vm.Details?.Id);
                     await vm.EditCommand.ExecuteAsync(); Pump();
@@ -66,6 +75,9 @@ public sealed class InteractionsWindowsTests
                     var field = Find<TextBox>(view, "InteractionSubject"); field.Text = "Изменённая тема";
                     field.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
                     window.Width = 800; window.Height = 600; Pump();
+                    Assert.Equal(0, Grid.GetColumn(detailRegion));
+                    Assert.Equal(1, Grid.GetRow(detailRegion));
+                    Assert.False(Find<Border>(view, "InteractionDetailsPanel").IsVisible);
                     var save = Find<Button>(view, "SaveInteractionButton"); save.BringIntoView(); Pump();
                     var bounds = save.TransformToAncestor(scroll).TransformBounds(new Rect(save.RenderSize));
                     Assert.True(bounds.Top >= 0 && bounds.Bottom <= scroll.ActualHeight + 1); Save(scroll, "interaction-edit-compact.png");
@@ -106,7 +118,7 @@ public sealed class InteractionsWindowsTests
         Directory.CreateDirectory(directory); view.UpdateLayout();
         var drawing = new DrawingVisual();
         using (var context = drawing.RenderOpen()) context.DrawRectangle(new VisualBrush(view)
-            { ViewboxUnits = BrushMappingMode.Absolute, Viewbox = new Rect((Point)VisualTreeHelper.GetOffset(view), view.RenderSize), Stretch = Stretch.Fill }, null, new Rect(view.RenderSize));
+        { ViewboxUnits = BrushMappingMode.Absolute, Viewbox = new Rect((Point)VisualTreeHelper.GetOffset(view), view.RenderSize), Stretch = Stretch.Fill }, null, new Rect(view.RenderSize));
         var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(drawing);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         using var file = File.Create(Path.Combine(directory, name)); encoder.Save(file);

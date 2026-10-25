@@ -1,0 +1,22 @@
+{
+  "version": "1.1.0",
+  "parent": "24ff7d466b2570d2b84c3ec5dec62b2034927356",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/InteractionsView.xaml",
+      "sha256": "6310db9f054f035cf63ef2fb323280c660489258210dc4e04e2de2eb7855013c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/InteractionsView.xaml.cs",
+      "sha256": "804afaff279e9f32377fcf13c10ea34bb7e9c0337790c966d0d7899d3af185bb"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/InteractionsWindowsTests.cs",
+      "sha256": "d164fe655fc884e30079e5a89ef3fb9ab82eb1c9f8347f1f61d7d2deb75375f2"
+    },
+    {
+      "path": "outputs/20261025_interactions_design_1.1.0/validation-report.md",
+      "sha256": "966138eab3a6f4d12e29fb11ffa5f3ec96fa09519f3c08a47d1aae09d321399c"
+    }
+  ]
+}
