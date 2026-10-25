@@ -1,0 +1,15 @@
+{
+  "name": "projects-visual-consistency",
+  "version": "1.0.0",
+  "base_commit": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "sha256": "cc00408563214e81d378f22afd0e7a6f56ab94c52e01c16f1ba21e380b3c2f53"
+    },
+    {
+      "path": "outputs/20261025_projects_visual_1.0.0/validation-report.md",
+      "sha256": "a0acde7f7dd39a7860a04917b21763e5880863c336e86ffc481e220c3954eab3"
+    }
+  ]
+}
