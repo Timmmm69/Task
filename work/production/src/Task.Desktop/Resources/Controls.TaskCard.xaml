@@ -2,15 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Explicit keys keep the task-card refresh local to this workflow. -->
     <Style x:Key="Task.Card.Group" TargetType="Border">
-        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}" />
+        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
-        <Setter Property="CornerRadius" Value="10" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="16" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="0,0,0,20" />
         <Setter Property="Margin" Value="0,0,0,16" />
     </Style>
     <Style x:Key="Task.Card.Heading" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Section}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Margin" Value="0,0,0,12" />
         <Setter Property="TextWrapping" Value="Wrap" />
@@ -103,11 +103,53 @@
         </ControlTemplate></Setter.Value></Setter>
     </Style>
     <Style x:Key="Task.Card.Section" TargetType="Expander">
-        <Setter Property="Margin" Value="0,0,0,12" />
-        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}" />
+        <Setter Property="Margin" Value="0,12,0,0" />
+        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
+        <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="12" />
+        <Setter Property="BorderThickness" Value="0,1,0,0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template"><Setter.Value>
+            <ControlTemplate TargetType="Expander">
+                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <StackPanel>
+                        <ToggleButton x:Name="HeaderToggle" Content="{TemplateBinding Header}"
+                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      HorizontalContentAlignment="Stretch"
+                                      FocusVisualStyle="{StaticResource Task.FocusVisualStyle}"
+                                      IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                            <ToggleButton.Template><ControlTemplate TargetType="ToggleButton">
+                                <Border x:Name="HeaderSurface" Padding="0,14" Background="Transparent">
+                                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="24" /></Grid.ColumnDefinitions>
+                                        <ContentPresenter VerticalAlignment="Center" RecognizesAccessKey="True" TextElement.FontWeight="SemiBold" />
+                                        <Path x:Name="Chevron" Grid.Column="1" Data="M 0 0 L 4 4 L 8 0"
+                                              Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5" />
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="HeaderSurface" Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}" /></Trigger>
+                                    <Trigger Property="IsChecked" Value="True"><Setter TargetName="Chevron" Property="RenderTransform"><Setter.Value><RotateTransform Angle="180" /></Setter.Value></Setter></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate></ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter x:Name="SectionContent" Visibility="Collapsed" Margin="0,0,0,16"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                    </StackPanel>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsExpanded" Value="True"><Setter TargetName="SectionContent" Property="Visibility" Value="Visible" /></Trigger>
+                    <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5" /></Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Setter.Value></Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

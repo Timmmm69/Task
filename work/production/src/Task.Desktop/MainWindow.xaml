@@ -820,7 +820,7 @@
                                                    FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
                                                    TextWrapping="Wrap" Margin="0,0,0,16"
                                                    ToolTip="{Binding Title}" />
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                                        <WrapPanel Margin="0,0,0,18">
                                             <Border Style="{StaticResource Task.Semantic.StatusPill}" Margin="0,0,14,0">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
@@ -837,12 +837,19 @@
                                                 <TextBlock Text="{Binding PriorityText}" Margin="6,0,0,0"
                                                            VerticalAlignment="Center" />
                                             </StackPanel>
-                                        </StackPanel>
-                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8,0,8" />
+                                        </WrapPanel>
+                                        <Border Style="{StaticResource Task.Card.Group}">
+                                            <StackPanel>
+                                                <TextBlock Text="О задаче" Style="{StaticResource Task.Card.Heading}" />
+<TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8,0,8" />
                                         <TextBlock Text="{Binding PlanningText}" TextWrapping="Wrap" />
                                         <TextBlock Text="{Binding CompletedText}" TextWrapping="Wrap" />
                                         <TextBlock Text="{Binding RecurrenceText}" TextWrapping="Wrap" />
-                                        <UniformGrid Columns="2">
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+                                            <TextBlock Text="Сроки и сведения" Style="{StaticResource Task.Card.Heading}" />
+                                            <UniformGrid Columns="2">
                                             <StackPanel Margin="0,0,12,14">
                                                 <TextBlock Text="Начало" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                 <TextBlock Text="{Binding StartText}" Style="{StaticResource Task.Inspector.FactValue}" />
@@ -868,7 +875,7 @@
                                                 <TextBlock Text="Исполнитель" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                 <TextBlock Text="{Binding AssigneeText}" Style="{StaticResource Task.Inspector.FactValue}" />
                                             </StackPanel>
-                                        </UniformGrid>
+                                        </UniformGrid></StackPanel></Border>
                                         <Button Content="Изменить"
                                                 Command="{Binding DataContext.Tasks.EditTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 Margin="0,2,0,10"
@@ -1059,10 +1066,9 @@
                             <Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
                         </Style>
                     </Border.Style>
-                    <Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,18">
+                    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Margin="0,0,0,16">
+                            <Grid Margin="0,0,0,16">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Heading}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
                                            FontWeight="{DynamicResource Task.Font.Weight.Semibold}" VerticalAlignment="Center" />
@@ -1070,6 +1076,10 @@
                                         Command="{Binding DataContext.Tasks.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         AutomationProperties.Name="Закрыть форму задачи" />
                             </Grid>
+                    </Border>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+
 
                             <TextBlock Text="{Binding SimilarNotice}" TextWrapping="Wrap" Margin="0,0,0,8"
                                        AutomationProperties.Name="Основа новой задачи" AutomationProperties.LiveSetting="Polite" />
@@ -1177,7 +1187,7 @@
 
                         </StackPanel>
                     </ScrollViewer>
-                    <StackPanel Grid.Row="1"><TextBlock Text="Ctrl+Enter — сохранить" Margin="0,8,0,0"/>                            <WrapPanel Margin="0,18,0,0">
+                    <StackPanel Grid.Row="2" Margin="0,12,0,0"><TextBlock Text="Ctrl+Enter — сохранить" FontSize="{DynamicResource Task.Font.Size.Metadata}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,8,0,0"/>                            <WrapPanel Margin="0,18,0,0">
                                 <Button Content="{Binding SubmitText}" Style="{StaticResource Task.Button.Primary}"
                                         MinWidth="116" Margin="0,0,8,8" TabIndex="40"
                                         Command="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"

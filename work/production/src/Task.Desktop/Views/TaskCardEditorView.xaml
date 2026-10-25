@@ -6,7 +6,7 @@
         <DataTemplate x:Key="Task.Card.PersonName"><TextBlock Text="{Binding}" TextWrapping="Wrap" /></DataTemplate>
         <Style x:Key="Task.Editor.Label" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
-            <Setter Property="Margin" Value="0,0,0,5" />
+            <Setter Property="Margin" Value="0,0,0,6" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
         <Style x:Key="Task.Editor.Hint" TargetType="TextBlock">
@@ -48,14 +48,14 @@
 
         </StackPanel></Border>
         <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
-        <TextBlock Text="Участники" Style="{StaticResource Task.Card.Heading}" />
-        <TextBlock Text="Исполнители (необязательно)" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
-        <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <TextBlock Text="Участники" Style="{StaticResource Task.Card.Heading}" />\n        <TextBlock Text="Выберите сотрудников, которые будут выполнять задачу." Style="{StaticResource Task.Editor.Hint}" Margin="0,0,0,12" />
+        <TextBlock Text="Исполнители (необязательно)" Style="{StaticResource Task.Editor.Label}" />
+        <ScrollViewer MaxHeight="160" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding Assignees}" IsEnabled="{Binding CanAssign}">
                 <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox Style="{StaticResource Task.Card.Check}" Content="{Binding Name}" ContentTemplate="{StaticResource Task.Card.PersonName}" IsChecked="{Binding Selected}" Margin="0,4,16,4"
+                        <CheckBox Style="{StaticResource Task.Card.Check}" Content="{Binding Name}" ContentTemplate="{StaticResource Task.Card.PersonName}" IsChecked="{Binding Selected}" Margin="0,2,0,2"
                                   MinHeight="32" VerticalContentAlignment="Center" AutomationProperties.Name="{Binding Name}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -98,7 +98,7 @@
                 <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <ItemsControl ItemsSource="{Binding Watchers}" IsEnabled="{Binding CanWatch}">
                         <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate><DataTemplate><CheckBox Style="{StaticResource Task.Card.Check}" Content="{Binding Name}" ContentTemplate="{StaticResource Task.Card.PersonName}" IsChecked="{Binding Selected}" Margin="0,4,16,4" MinHeight="32" VerticalContentAlignment="Center" /></DataTemplate></ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemTemplate><DataTemplate><CheckBox Style="{StaticResource Task.Card.Check}" Content="{Binding Name}" ContentTemplate="{StaticResource Task.Card.PersonName}" IsChecked="{Binding Selected}" Margin="0,2,0,2" MinHeight="32" VerticalContentAlignment="Center" /></DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
 
