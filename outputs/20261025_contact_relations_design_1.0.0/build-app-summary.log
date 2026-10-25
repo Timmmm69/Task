@@ -1,0 +1,12 @@
+CopyFilesToOutputDirectory:
+  Copying file from "/workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/obj/Release/Task.Desktop.dll" to "/workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.dll".
+  Copying reference assembly from "obj/Release/refint/Task.Desktop.dll" to "/workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/obj/Release/ref/Task.Desktop.dll".
+  Task.Desktop -> /workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.dll
+  Copying file from "/workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/obj/Release/Task.Desktop.pdb" to "/workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.pdb".
+Done Building Project "/workspace/scratch/224b0ad13b11/Task/work/production/src/Task.Desktop/Task.Desktop.csproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:15.08
