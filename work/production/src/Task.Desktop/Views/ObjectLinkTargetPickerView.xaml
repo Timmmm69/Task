@@ -2,9 +2,9 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  AutomationProperties.Name="Выбор связанного объекта" KeyboardNavigation.TabNavigation="Continue"
- Background="{DynamicResource Task.Brush.Surface.Base}" Foreground="{DynamicResource Task.Brush.Text.Primary}"
+ UseLayoutRounding="True" SnapsToDevicePixels="True" Background="{DynamicResource Task.Brush.Surface.Base}" Foreground="{DynamicResource Task.Brush.Text.Primary}"
  Unloaded="OnUnloaded" DataContextChanged="OnDataContextChanged" PreviewKeyDown="OnPreviewKeyDown">
- <Grid Background="{DynamicResource Task.Brush.Surface.Subtle}">
+ <Grid>
   <Grid.RowDefinitions>
    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
    <RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
@@ -19,7 +19,7 @@
   </DockPanel>
   <TextBlock Grid.Row="2" Text="{Binding StatusText,NotifyOnTargetUpdated=True}" TargetUpdated="OnStatusChanged" TextWrapping="Wrap" Margin="0,8"
    AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ObjectLinkTargetStatus"/>
-  <ListBox Grid.Row="3" x:Name="ResultsList" MinHeight="100" MaxHeight="240" Style="{StaticResource Task.DataList}"
+  <ListBox Grid.Row="3" x:Name="ResultsList" MinHeight="130" MaxHeight="240" Style="{StaticResource Task.DataList}"
    ItemsSource="{Binding Results}" SelectedItem="{Binding Candidate}" IsEnabled="{Binding CanQuery}"
    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -38,7 +38,7 @@
     <DataTemplate>
      <StackPanel>
       <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-      <Border Style="{StaticResource Task.Semantic.StatusPill}" Margin="0,6,0,4"><TextBlock Text="{Binding TypeLabel}" FontSize="{DynamicResource Task.Font.Size.Metadata}"/></Border>
+      <TextBlock Text="{Binding TypeLabel}" Margin="0,3,0,6" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}"/>
       <TextBlock Text="{Binding UpdatedAt,StringFormat=Обновлён: {0:dd.MM.yyyy HH:mm zzz}}" TextWrapping="Wrap" FontSize="{DynamicResource Task.Font.Size.Metadata}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
       <TextBlock Text="{Binding ObjectId,StringFormat=ID: {0}}" TextWrapping="Wrap" FontSize="{DynamicResource Task.Font.Size.Metadata}"
        Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
@@ -46,13 +46,21 @@
     </DataTemplate>
    </ListBox.ItemTemplate>
   </ListBox>
-  <Border Grid.Row="4" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,12"
+  <Border Grid.Row="4" BorderThickness="3,0,0,0" Padding="12" Margin="0,12"
    AutomationProperties.AutomationId="ObjectLinkTargetSelection">
    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
-    <Style.Triggers><DataTrigger Binding="{Binding SelectedTarget}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers>
+    <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}"/>
+    <Style.Triggers>
+     <DataTrigger Binding="{Binding SelectedTarget}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+     <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+     </DataTrigger>
+    </Style.Triggers>
    </Style></Border.Style>
    <StackPanel>
-    <TextBlock Text="Объект для новой связи" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}" Margin="0,0,0,4"/>
+    <TextBlock Text="Подтверждённый выбор" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}" Margin="0,0,0,4"/>
     <TextBlock Text="{Binding SelectedTarget.Title,StringFormat=Выбран: {0}}" FontWeight="SemiBold" TextWrapping="Wrap"/>
     <TextBlock Text="{Binding SelectedTarget.TypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap"/>
    </StackPanel>
