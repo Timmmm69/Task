@@ -1,0 +1,88 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:api="clr-namespace:Task.Desktop.TaskApi">
+    <!-- TodayView composition: flat panes, compact toolbar and section rails, 21px inspector titles. -->
+    <Style x:Key="Personal.Pane" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+    </Style>
+    <Style x:Key="Personal.Toolbar" TargetType="Border" BasedOn="{StaticResource Personal.Pane}">
+        <Setter Property="MinHeight" Value="68"/>
+        <Setter Property="Padding" Value="20,12"/>
+    </Style>
+    <Style x:Key="Personal.SectionHeader" TargetType="Border" BasedOn="{StaticResource Personal.Pane}">
+        <Setter Property="MinHeight" Value="49"/>
+        <Setter Property="Padding" Value="20,10"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    </Style>
+    <Style x:Key="Personal.SectionTitle" TargetType="TextBlock" BasedOn="{StaticResource Task.State.Title}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="AutomationProperties.HeadingLevel" Value="Level2"/>
+    </Style>
+    <Style x:Key="Personal.DetailTitle" TargetType="TextBlock" BasedOn="{StaticResource Task.State.Title}">
+        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.DetailTitle}"/>
+    </Style>
+    <Style x:Key="Personal.Metadata" TargetType="TextBlock" BasedOn="{StaticResource Task.State.Body}">
+        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Metadata}"/>
+    </Style>
+    <Style x:Key="Personal.LeadingIcon" TargetType="Path">
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Stretch" Value="Uniform"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="Margin" Value="0,2,12,0"/>
+        <Setter Property="Fill" Value="{DynamicResource Task.Brush.Text.Secondary}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.WorkspaceList" TargetType="ListBox" BasedOn="{StaticResource Task.DataList}">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="6,6,12,6"/>
+    </Style>
+    <Style x:Key="Personal.WorkspaceItem" TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+        <Setter Property="Margin" Value="0,0,0,4"/>
+        <Setter Property="Padding" Value="10,12"/>
+    </Style>
+    <Style x:Key="Personal.DetailColumn" TargetType="ColumnDefinition">
+        <Setter Property="Width" Value="*"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=1100}" Value="False">
+                <Setter Property="Width" Value="0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.DetailRow" TargetType="RowDefinition">
+        <Setter Property="Height" Value="0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=1100}" Value="False">
+                <Setter Property="Height" Value="*"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.DetailPane" TargetType="Border" BasedOn="{StaticResource Personal.Pane}">
+        <Setter Property="Grid.Column" Value="1"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=1100}" Value="False">
+                <Setter Property="Grid.Column" Value="0"/>
+                <Setter Property="Grid.Row" Value="1"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.TaskStatusIcon" TargetType="Path" BasedOn="{StaticResource Personal.LeadingIcon}">
+        <Setter Property="Data" Value="{StaticResource Task.Icon.Status.New}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source.Status}" Value="{x:Static api:DesktopTaskStatus.InProgress}">
+                <Setter Property="Data" Value="{StaticResource Task.Icon.Status.InProgress}"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source.Status}" Value="{x:Static api:DesktopTaskStatus.Review}">
+                <Setter Property="Data" Value="{StaticResource Task.Icon.Status.Review}"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source.Status}" Value="{x:Static api:DesktopTaskStatus.Completed}">
+                <Setter Property="Data" Value="{StaticResource Task.Icon.Status.Completed}"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source.Status}" Value="{x:Static api:DesktopTaskStatus.Cancelled}">
+                <Setter Property="Data" Value="{StaticResource Task.Icon.Status.Cancelled}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
