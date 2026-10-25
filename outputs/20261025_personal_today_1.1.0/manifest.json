@@ -1,0 +1,34 @@
+{
+  "version": "1.1.0",
+  "source_commit": "569c59de5a3ddb2b33e70b1fbad8488e0c2c7ce0",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+      "sha256": "81403b3ce41b5cb86665d660910ee8a675f781e6ad7dde464e8eb5212e7bec75"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "sha256": "be3a673da303bfa76dc1606eada694a782652629184336911b14695c219e9b88"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+      "sha256": "ba52df7aa0486469dcc857f2f2ffc754528a11c5ef2059fd48e0bcca05c8e0e6"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "sha256": "2d09aee340d7ecdec06cf040253f7604ce2ce47227e87267a2721c58c64dede6"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Workspace.xaml",
+      "sha256": "6532d003ed271319a2660fceb9aea2f1e66f99f9e2d2c4d83e98306249e5207f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkspaceLayoutWindowsTests.cs",
+      "sha256": "f06d3351d555cef4da8a249732fe90489ce7ec35176dc2afd7b1e54dbafdbcd8"
+    },
+    {
+      "path": "outputs/20261025_personal_today_1.1.0/validation.md",
+      "sha256": "bc89439d2880261604d8cea195131efe3f9f337828e8c1f124d57353c320fec5"
+    }
+  ]
+}
