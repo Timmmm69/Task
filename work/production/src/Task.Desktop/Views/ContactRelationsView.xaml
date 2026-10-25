@@ -1,97 +1,187 @@
-<UserControl x:Class="Task.Desktop.Views.ContactRelationsView"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- AutomationProperties.Name="Контактные связи" KeyboardNavigation.TabNavigation="Continue">
- <UserControl.Resources>
-  <ResourceDictionary>
-   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="/Task.Desktop;component/Resources/Controls.ContactRelations.xaml"/>
-   </ResourceDictionary.MergedDictionaries>
-  </ResourceDictionary>
- </UserControl.Resources>
- <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,20,0,0">
-  <TextBlock Text="Контактные связи" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap"/>
-  <TextBlock Text="Способы связи и адреса контакта" Style="{StaticResource Task.Contact.Hint}"/>
-  <TextBlock Text="{Binding RelationAccessMessage}" AutomationProperties.LiveSetting="Polite">
-   <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Task.Contact.Hint}"><Style.Triggers>
-    <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger>
-   </Style.Triggers></Style></TextBlock.Style>
-  </TextBlock>
-  <ProgressBar IsIndeterminate="True" Height="3" Margin="0,0,0,12" AutomationProperties.Name="Сохранение контактных связей" Visibility="{Binding IsSaving, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-
-  <Border Style="{StaticResource Task.Contact.Group}"><StackPanel>
-   <TextBlock Text="Способы связи" Style="{StaticResource Task.Contact.Heading}"/>
-   <TextBlock Text="Способы связи пока не добавлены." Style="{StaticResource Task.Contact.Hint}" Visibility="{Binding ChannelsEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-   <ItemsControl ItemsSource="{Binding Channels}" AutomationProperties.AutomationId="ContactChannels">
-    <ItemsControl.ItemTemplate><DataTemplate>
-     <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8"><StackPanel>
-      <WrapPanel><TextBlock Text="{Binding TypeLabel}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding PrimaryLabel}" Style="{StaticResource Task.Contact.Hint}" Margin="8,0,0,0"/></WrapPanel>
-      <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Margin="0,6,0,0"/>
-      <TextBlock Text="{Binding Label}" Style="{StaticResource Task.Contact.Hint}"/>
-      <WrapPanel>
-       <Button Content="Изменить канал" Command="{Binding DataContext.EditChannelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,4,8,0" Style="{StaticResource Task.Button.Secondary}"/>
-       <Button Content="Удалить канал" Command="{Binding DataContext.RemoveChannelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,4,0,0" Style="{StaticResource Task.Button.Secondary}"/>
-      </WrapPanel>
-     </StackPanel></Border>
-    </DataTemplate></ItemsControl.ItemTemplate>
-   </ItemsControl>
-   <Button Content="Добавить канал" Command="{Binding AddChannelCommand}" HorizontalAlignment="Left" Margin="0,4,0,0" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="AddContactChannel"/>
-   <StackPanel Visibility="{Binding HasChannelDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" IsEnabled="{Binding CanChangeRelationDraft}" Margin="0,16,0,0">
-    <TextBlock Text="Канал связи" FontWeight="SemiBold"/>
-    <TextBlock Text="Тип канала" Style="{StaticResource Task.Contact.Label}"/>
-    <ComboBox ItemsSource="{Binding ChannelTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ChannelDraft.Type}" Style="{StaticResource Task.Contact.Combo}" AutomationProperties.Name="Тип канала"/>
-    <TextBlock Text="Значение" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding ChannelDraft.Value, UpdateSourceTrigger=PropertyChanged}" MaxLength="1000" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Значение канала"/>
-    <TextBlock Text="Телефон, электронная почта или другое значение выбранного типа." Style="{StaticResource Task.Contact.Hint}"/>
-    <TextBlock Text="Подпись (необязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding ChannelDraft.Label, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Подпись канала"/>
-    <CheckBox Content="Основной канал" IsChecked="{Binding ChannelDraft.IsPrimary}" Style="{StaticResource Task.Contact.Check}" Margin="0,12,0,0"/>
-   </StackPanel>
-   <Border Visibility="{Binding IsConfirmingChannelDelete, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Surface.Base}" BorderThickness="2" CornerRadius="6" Padding="12" Margin="0,16,0,0">
-    <StackPanel>
-     <TextBlock Text="Удалить этот способ связи?" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive"/>
-     <TextBlock Text="Канал будет удалён из карточки контакта после подтверждения." Style="{StaticResource Task.Contact.Hint}"/>
-     <Button Content="Подтвердить удаление" Command="{Binding ConfirmChannelDeleteCommand}" HorizontalAlignment="Left" Style="{StaticResource Task.Button.Secondary}"/>
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Task.Desktop.Views.ContactRelationsView" AutomationProperties.Name="Контактные связи" KeyboardNavigation.TabNavigation="Continue" UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Task.Desktop;component/Resources/Controls.ContactRelations.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,20,0,0">
+        <Border Style="{StaticResource Task.Contact.Group}" Padding="20,14,20,18">
+            <StackPanel>
+                <TextBlock Text="Контактные связи" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap" />
+                <TextBlock Text="Способы связи и адреса контакта" Style="{StaticResource Task.Contact.Hint}" />
+                <WrapPanel Margin="0,8,0,0">
+                    <Border Style="{StaticResource Task.Contact.Badge}">
+                        <TextBlock Text="{Binding Channels.Count, StringFormat='Каналы: {0}'}" />
+                    </Border>
+                    <Border Style="{StaticResource Task.Contact.Badge}">
+                        <TextBlock Text="{Binding Addresses.Count, StringFormat='Адреса: {0}'}" />
+                    </Border>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Border Margin="20,12">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelationAccessMessage}" Value="">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <TextBlock Text="{Binding RelationAccessMessage}" AutomationProperties.LiveSetting="Polite">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Contact.Hint}">
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Border>
+        <ProgressBar IsIndeterminate="True" Margin="0,0,0,12" AutomationProperties.Name="Сохранение контактных связей" Visibility="{Binding IsSaving, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Progress.Indeterminate}" />
+        <Border Style="{StaticResource Task.Contact.Group}">
+            <StackPanel>
+                <Border Style="{StaticResource Task.Contact.SectionHeader}">
+                    <TextBlock Style="{StaticResource Task.Contact.Heading}">
+                        <Run Text="Способы связи (" />
+                        <Run Text="{Binding Channels.Count, Mode=OneWay}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                </Border>
+                <StackPanel Style="{StaticResource Task.Contact.Empty}" Visibility="{Binding ChannelsEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <Path Data="{StaticResource Task.Icon.Contacts}" Width="25" Height="25" Stretch="Uniform" HorizontalAlignment="Center" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <TextBlock Text="Способы связи пока не добавлены." FontWeight="SemiBold" TextAlignment="Center" Margin="0,8,0,0" />
+                    <TextBlock Text="Добавьте телефон, почту или другой канал связи." Style="{StaticResource Task.Contact.Hint}" TextAlignment="Center" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Channels}" AutomationProperties.AutomationId="ContactChannels">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Task.Contact.Row}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Path Data="{StaticResource Task.Icon.Contacts}" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Margin="0,3,0,0" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <WrapPanel>
+                                            <TextBlock Text="{Binding TypeLabel}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding PrimaryLabel}" Style="{StaticResource Task.Contact.Hint}" Margin="8,0,0,0" />
+                                        </WrapPanel>
+                                        <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Margin="0,6,0,0" />
+                                        <TextBlock Text="{Binding Label}" Style="{StaticResource Task.Contact.Hint}" />
+                                        <WrapPanel>
+                                            <Button Content="Изменить канал" Command="{Binding DataContext.EditChannelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,4,8,0" Style="{StaticResource Task.Button.Secondary}" />
+                                            <Button Content="Удалить канал" Command="{Binding DataContext.RemoveChannelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,4,0,0" Style="{StaticResource Task.Button.Secondary}" />
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Content="Добавить канал" Command="{Binding AddChannelCommand}" HorizontalAlignment="Left" Margin="20,12,20,16" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="AddContactChannel" />
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Task.Contact.Group}">
+            <StackPanel>
+                <Border Style="{StaticResource Task.Contact.SectionHeader}">
+                    <TextBlock Style="{StaticResource Task.Contact.Heading}">
+                        <Run Text="Адреса (" />
+                        <Run Text="{Binding Addresses.Count, Mode=OneWay}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                </Border>
+                <StackPanel Style="{StaticResource Task.Contact.Empty}" Visibility="{Binding AddressesEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <Path Data="{StaticResource Task.Icon.Catalog}" Width="25" Height="25" Stretch="Uniform" HorizontalAlignment="Center" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <TextBlock Text="Адреса пока не добавлены." FontWeight="SemiBold" TextAlignment="Center" Margin="0,8,0,0" />
+                    <TextBlock Text="Добавьте рабочий, домашний или другой адрес." Style="{StaticResource Task.Contact.Hint}" TextAlignment="Center" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding Addresses}" AutomationProperties.AutomationId="ContactAddresses">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Task.Contact.Row}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Path Data="{StaticResource Task.Icon.Catalog}" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Margin="0,3,0,0" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <WrapPanel>
+                                            <TextBlock Text="{Binding TypeLabel}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding PrimaryLabel}" Style="{StaticResource Task.Contact.Hint}" Margin="8,0,0,0" />
+                                        </WrapPanel>
+                                        <TextBlock Text="{Binding FormattedAddress}" TextWrapping="Wrap" Margin="0,6,0,0" />
+                                        <TextBlock Text="{Binding Parts}" Style="{StaticResource Task.Contact.Hint}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Content="Добавить адрес" Command="{Binding AddAddressCommand}" HorizontalAlignment="Left" Margin="20,12,20,16" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="AddContactAddress" />
+            </StackPanel>
+        </Border>
+        <Border Style="{StaticResource Task.Contact.Group}" Visibility="{Binding HasRelationDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" IsVisibleChanged="OnRelationEditorVisibilityChanged" AutomationProperties.Name="Редактирование контактных связей">
+            <StackPanel>
+                <Border Style="{StaticResource Task.Contact.SectionHeader}">
+                    <TextBlock Text="Детали и действия" Style="{StaticResource Task.Contact.Heading}" />
+                </Border>
+                <StackPanel Margin="20,14,20,18">
+                    <StackPanel Visibility="{Binding HasChannelDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" IsEnabled="{Binding CanChangeRelationDraft}" Margin="0">
+                        <TextBlock Text="Канал связи" FontWeight="SemiBold" />
+                        <TextBlock Text="Тип канала" Style="{StaticResource Task.Contact.Label}" />
+                        <ComboBox ItemsSource="{Binding ChannelTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ChannelDraft.Type}" Style="{StaticResource Task.Contact.Combo}" AutomationProperties.Name="Тип канала" />
+                        <TextBlock Text="Значение" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding ChannelDraft.Value, UpdateSourceTrigger=PropertyChanged}" MaxLength="1000" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Значение канала" />
+                        <TextBlock Text="Телефон, электронная почта или другое значение выбранного типа." Style="{StaticResource Task.Contact.Hint}" />
+                        <TextBlock Text="Подпись (необязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding ChannelDraft.Label, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Подпись канала" />
+                        <CheckBox Content="Основной канал" IsChecked="{Binding ChannelDraft.IsPrimary}" Style="{StaticResource Task.Contact.Check}" Margin="0,12,0,0" />
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding HasAddressDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" IsEnabled="{Binding CanChangeRelationDraft}" Margin="0">
+                        <TextBlock Text="Новый адрес" FontWeight="SemiBold" />
+                        <TextBlock Text="Тип адреса" Style="{StaticResource Task.Contact.Label}" />
+                        <ComboBox ItemsSource="{Binding AddressTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AddressDraft.Type}" Style="{StaticResource Task.Contact.Combo}" AutomationProperties.Name="Тип адреса" />
+                        <TextBlock Text="Полный адрес (обязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding AddressDraft.Value, UpdateSourceTrigger=PropertyChanged}" MaxLength="1000" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="80" MaxHeight="120" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Полный адрес" />
+                        <TextBlock Text="Дополнительные поля адреса можно оставить пустыми." Style="{StaticResource Task.Contact.Hint}" />
+                        <TextBlock Text="Код страны (2 символа, необязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding AddressDraft.Country, UpdateSourceTrigger=PropertyChanged}" MaxLength="2" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Код страны" />
+                        <TextBlock Text="Регион (необязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding AddressDraft.Region, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Регион" />
+                        <TextBlock Text="Город (необязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding AddressDraft.City, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Город" />
+                        <TextBlock Text="Улица (необязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding AddressDraft.Street, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Улица" />
+                        <TextBlock Text="Индекс (необязательно)" Style="{StaticResource Task.Contact.Label}" />
+                        <TextBox Text="{Binding AddressDraft.Postal, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Индекс" />
+                        <CheckBox Content="Основной адрес" IsChecked="{Binding AddressDraft.IsPrimary}" Style="{StaticResource Task.Contact.Check}" Margin="0,12,0,0" />
+                    </StackPanel>
+                    <Border Visibility="{Binding IsConfirmingChannelDelete, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Surface.Base}" BorderThickness="2" CornerRadius="6" Padding="12" Margin="0">
+                        <StackPanel>
+                            <TextBlock Text="Удалить этот способ связи?" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
+                            <TextBlock Text="Канал будет удалён из карточки контакта после подтверждения." Style="{StaticResource Task.Contact.Hint}" />
+                            <Button Content="Подтвердить удаление" Command="{Binding ConfirmChannelDeleteCommand}" HorizontalAlignment="Left" Style="{StaticResource Task.Button.Secondary}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Task.Contact.Row}" Padding="0,14,0,0" BorderThickness="0,1,0,0" Margin="0,16,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Действия" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,8" />
+                            <WrapPanel Visibility="{Binding HasRelationDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,0,0,8">
+                                <Button Content="{Binding RelationSaveLabel}" Command="{Binding SaveRelationCommand}" Visibility="{Binding HasEditableRelationDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,8" AutomationProperties.AutomationId="SaveContactRelation" />
+                                <Button Content="Отмена" Command="{Binding CancelRelationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </Border>
     </StackPanel>
-   </Border>
-  </StackPanel></Border>
-
-  <Border Style="{StaticResource Task.Contact.Group}"><StackPanel>
-   <TextBlock Text="Адреса" Style="{StaticResource Task.Contact.Heading}"/>
-   <TextBlock Text="Адреса пока не добавлены." Style="{StaticResource Task.Contact.Hint}" Visibility="{Binding AddressesEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-   <ItemsControl ItemsSource="{Binding Addresses}" AutomationProperties.AutomationId="ContactAddresses">
-    <ItemsControl.ItemTemplate><DataTemplate>
-     <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8"><StackPanel>
-      <WrapPanel><TextBlock Text="{Binding TypeLabel}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding PrimaryLabel}" Style="{StaticResource Task.Contact.Hint}" Margin="8,0,0,0"/></WrapPanel>
-      <TextBlock Text="{Binding FormattedAddress}" TextWrapping="Wrap" Margin="0,6,0,0"/>
-      <TextBlock Text="{Binding Parts}" Style="{StaticResource Task.Contact.Hint}"/>
-     </StackPanel></Border>
-    </DataTemplate></ItemsControl.ItemTemplate>
-   </ItemsControl>
-   <Button Content="Добавить адрес" Command="{Binding AddAddressCommand}" HorizontalAlignment="Left" Margin="0,4,0,0" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="AddContactAddress"/>
-   <StackPanel Visibility="{Binding HasAddressDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" IsEnabled="{Binding CanChangeRelationDraft}" Margin="0,16,0,0">
-    <TextBlock Text="Новый адрес" FontWeight="SemiBold"/>
-    <TextBlock Text="Тип адреса" Style="{StaticResource Task.Contact.Label}"/>
-    <ComboBox ItemsSource="{Binding AddressTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding AddressDraft.Type}" Style="{StaticResource Task.Contact.Combo}" AutomationProperties.Name="Тип адреса"/>
-    <TextBlock Text="Полный адрес (обязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding AddressDraft.Value, UpdateSourceTrigger=PropertyChanged}" MaxLength="1000" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="80" MaxHeight="120" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Полный адрес"/>
-    <TextBlock Text="Дополнительные поля адреса можно оставить пустыми." Style="{StaticResource Task.Contact.Hint}"/>
-    <TextBlock Text="Код страны (2 символа, необязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding AddressDraft.Country, UpdateSourceTrigger=PropertyChanged}" MaxLength="2" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Код страны"/>
-    <TextBlock Text="Регион (необязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding AddressDraft.Region, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Регион"/>
-    <TextBlock Text="Город (необязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding AddressDraft.City, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Город"/>
-    <TextBlock Text="Улица (необязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding AddressDraft.Street, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Улица"/>
-    <TextBlock Text="Индекс (необязательно)" Style="{StaticResource Task.Contact.Label}"/>
-    <TextBox Text="{Binding AddressDraft.Postal, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Индекс"/>
-    <CheckBox Content="Основной адрес" IsChecked="{Binding AddressDraft.IsPrimary}" Style="{StaticResource Task.Contact.Check}" Margin="0,12,0,0"/>
-   </StackPanel>
-  </StackPanel></Border>
-  <WrapPanel Visibility="{Binding HasRelationDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,0,0,8">
-   <Button Content="{Binding RelationSaveLabel}" Command="{Binding SaveRelationCommand}" Visibility="{Binding HasEditableRelationDraft, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,8" AutomationProperties.AutomationId="SaveContactRelation"/>
-   <Button Content="Отмена" Command="{Binding CancelRelationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8"/>
-  </WrapPanel>
- </StackPanel>
 </UserControl>
