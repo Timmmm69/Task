@@ -55,6 +55,14 @@ public sealed class InteractionsWindowsTests
                     await vm.RefreshCommand.ExecuteAsync(); await vm.OpenAsync(value.Id); Pump(); Save(scroll, "interaction-view.png");
                     Assert.Equal(value.Id, vm.Details?.Id);
                     await vm.EditCommand.ExecuteAsync(); Pump();
+                    var type = Find<ComboBox>(view, "InteractionType");
+                    Assert.Equal(6, type.Items.Count);
+                    var dropdown = (IExpandCollapseProvider)new ComboBoxAutomationPeer(type).GetPattern(PatternInterface.ExpandCollapse)!;
+                    dropdown.Expand(); Pump(); Assert.True(type.IsDropDownOpen);
+                    type.SelectedValue = "meeting";
+                    type.GetBindingExpression(ComboBox.SelectedValueProperty)!.UpdateSource();
+                    dropdown.Collapse(); Pump(); Assert.False(type.IsDropDownOpen);
+                    Assert.Equal("meeting", vm.Type);
                     var field = Find<TextBox>(view, "InteractionSubject"); field.Text = "Изменённая тема";
                     field.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
                     window.Width = 800; window.Height = 600; Pump();
@@ -62,6 +70,7 @@ public sealed class InteractionsWindowsTests
                     var bounds = save.TransformToAncestor(scroll).TransformBounds(new Rect(save.RenderSize));
                     Assert.True(bounds.Top >= 0 && bounds.Bottom <= scroll.ActualHeight + 1); Save(scroll, "interaction-edit-compact.png");
                     await vm.SaveCommand.ExecuteAsync(); Pump(); Assert.Equal("Изменённая тема", vm.Details?.Subject); Assert.False(vm.IsEditing);
+                    Assert.Equal("meeting", vm.Details?.InteractionType);
                     await vm.EditCommand.ExecuteAsync(); api.Save = _ => new DesktopWorkResult<DesktopInteraction>.Conflict();
                     await vm.SaveCommand.ExecuteAsync(); Pump(); Assert.False(save.IsEnabled); Save(scroll, "interaction-conflict.png");
                     await vm.CancelCommand.ExecuteAsync(); await vm.NewCommand.ExecuteAsync(); vm.Subject = "Новое взаимодействие"; api.Save = null;
