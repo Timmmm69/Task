@@ -1,0 +1,51 @@
+{
+  "name": "files_locations_today",
+  "version": "2.0.0",
+  "baseline": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Files.Controls.xaml",
+      "sha256": "c6853c70aa4e7fdb7c698b1064b3f933debcf7337ccd7fd306725867ba1803a5"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Theme.xaml",
+      "sha256": "87c5f806d6a2ba7e825fb017bb613319015632378f54dab9b5dc36242c8150d6"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/FileLocationsView.xaml",
+      "sha256": "98a84f2b71bf7205294dc0bc6c9447db7c2d5ebeed869c7655f6718a7ce63ef5"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ProjectFilesView.xaml",
+      "sha256": "08a00f6f4ce1ef5cd8e954b4cebe702895f01f424965db6ef8c354df64b38045"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "sha256": "1564b0b1baa9269b05459b31891d6bb04103f50027bd1b96738194d70d285ccd"
+    },
+    {
+      "path": "outputs/20261025_files_locations_today_2.0.0/desktop-build.txt",
+      "sha256": "58e62b89f5561ed9de9c429fde50bf9b5cbfae89548ca1763c6e32c8566f6db6"
+    },
+    {
+      "path": "outputs/20261025_files_locations_today_2.0.0/final-build.txt",
+      "sha256": "ea4b8580169b1a552b1a888b64ed65c78d98f9a357b5e108ce37729c4f356e9a"
+    },
+    {
+      "path": "outputs/20261025_files_locations_today_2.0.0/static-checks.txt",
+      "sha256": "65a95e3136111acf0cfc5b7fddaeb0242517b547f5765a36b06415a6f71117ba"
+    },
+    {
+      "path": "outputs/20261025_files_locations_today_2.0.0/tests-build.txt",
+      "sha256": "e1f8ee6f1c32f7ca426c1ae198cc6074cb8ecc7d32ae4baee018771e678df077"
+    },
+    {
+      "path": "outputs/20261025_files_locations_today_2.0.0/tests-run.txt",
+      "sha256": "f5f5a710a01d8f98bd384cac118420be5117621d6eee4865f925d537c0db0fdf"
+    },
+    {
+      "path": "outputs/20261025_files_locations_today_2.0.0/validation-report.md",
+      "sha256": "61bca44304e4ca55b832bce5cea55cadd7cbdafd8edd5a80cfdf271d34562f5d"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+  Determining projects to restore...
+  Restored /workspace/scratch/2717c5200b49/Task/work/production/src/Task.Domain/Task.Domain.csproj (in 205 ms).
+  Restored /workspace/scratch/2717c5200b49/Task/work/production/src/Task.Application/Task.Application.csproj (in 240 ms).
+  Restored /workspace/scratch/2717c5200b49/Task/work/production/src/Task.Desktop/Task.Desktop.csproj (in 240 ms).
+  Task.Domain -> /workspace/scratch/2717c5200b49/Task/work/production/src/Task.Domain/bin/Release/net10.0/Task.Domain.dll
+  Task.Application -> /workspace/scratch/2717c5200b49/Task/work/production/src/Task.Application/bin/Release/net10.0/Task.Application.dll
+  Task.Desktop -> /workspace/scratch/2717c5200b49/Task/work/production/src/Task.Desktop/bin/Release/net10.0-windows/Task.Desktop.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:16.41

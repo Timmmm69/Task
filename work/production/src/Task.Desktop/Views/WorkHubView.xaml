@@ -50,49 +50,113 @@
             </StackPanel>
         </Border>
 
-        <Grid x:Name="CatalogDropArea" Background="Transparent" AllowDrop="True" PreviewDragOver="ExplorerDragOver" PreviewDrop="ExplorerDrop" DragLeave="ExplorerDragLeave" Grid.Row="2" Visibility="{Binding IsCatalog, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8">
-                <DockPanel>
-                    <Button x:Name="CatalogRootDropButton" DockPanel.Dock="Top" Content="Корень каталога" Command="{Binding SelectCatalogRootCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8" AllowDrop="True" DragOver="CatalogRootDragOver" Drop="CatalogRootDrop" AutomationProperties.AutomationId="CatalogRootButton"/>
-                    <TextBlock DockPanel.Dock="Bottom" Text="Каталог пуст. Создайте папку или запись." TextWrapping="Wrap" Visibility="{Binding IsCatalogEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-                    <TreeView ItemsSource="{Binding CatalogRoots}" BorderThickness="0" SelectedItemChanged="CatalogSelectionChanged"
+        <Grid x:Name="CatalogDropArea" Background="{DynamicResource Task.Brush.Surface.Base}" AllowDrop="True" PreviewDragOver="ExplorerDragOver" PreviewDrop="ExplorerDrop" DragLeave="ExplorerDragLeave" Grid.Row="2" Margin="0"
+              UseLayoutRounding="True" SnapsToDevicePixels="True" Visibility="{Binding IsCatalog, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="34*" MinWidth="220"/><ColumnDefinition Width="66*" MinWidth="320"/></Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Task.Files.Panel}" Padding="0" BorderThickness="0,0,1,0" AutomationProperties.Name="Каталог файлов" AutomationProperties.AutomationId="FilesCatalogRegion">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <Border Style="{StaticResource Task.Files.Header}">
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Path Data="{StaticResource Task.Icon.Catalog}" Style="{StaticResource Task.Files.Icon}"/>
+                            <TextBlock Grid.Column="1" Text="Каталог" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Row="1" Style="{StaticResource Task.Files.Panel}" Padding="12,8">
+                        <Button x:Name="CatalogRootDropButton" Content="Корень каталога" Command="{Binding SelectCatalogRootCommand}" Style="{StaticResource Task.Button.Secondary}"
+                                AllowDrop="True" DragOver="CatalogRootDragOver" Drop="CatalogRootDrop" AutomationProperties.AutomationId="CatalogRootButton"/>
+                    </Border>
+                    <Grid Grid.Row="2">
+                    <TreeView ItemsSource="{Binding CatalogRoots}" BorderThickness="0" Background="Transparent" Padding="8,4" SelectedItemChanged="CatalogSelectionChanged"
                               PreviewMouseLeftButtonDown="CatalogMouseDown" PreviewMouseMove="CatalogMouseMove" AllowDrop="True" DragOver="CatalogDragOver" Drop="CatalogDrop"
                               AutomationProperties.Name="Дерево каталога" AutomationProperties.AutomationId="CatalogList">
-                        <TreeView.ItemContainerStyle><Style TargetType="TreeViewItem">
+                        <TreeView.ItemContainerStyle><Style TargetType="TreeViewItem" BasedOn="{StaticResource Task.Files.TreeItem}">
+                            <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}"/>
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
                             <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
                         </Style></TreeView.ItemContainerStyle>
                         <TreeView.ItemTemplate><HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <StackPanel Orientation="Horizontal" Margin="4"><TextBlock Text="{Binding Icon}" Margin="0,0,6,0"/><StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/><TextBlock Text="{Binding ItemTypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="11"/></StackPanel></StackPanel>
+                            <Grid Margin="10,8" ToolTip="{Binding Name}">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Icon}" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding ItemTypeLabel}" Style="{StaticResource Task.Files.Hint}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/></StackPanel>
+                            </Grid>
                         </HierarchicalDataTemplate></TreeView.ItemTemplate>
                     </TreeView>
-                </DockPanel>
+                        <StackPanel Margin="20,28" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsCatalogEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                            <Path Data="{StaticResource Task.Icon.Catalog}" Style="{StaticResource Task.Files.Icon}" Width="26" Height="26"/>
+                            <TextBlock Text="Каталог пуст" FontWeight="SemiBold" TextAlignment="Center" Margin="0,8,0,0"/>
+                            <TextBlock Text="Добавьте файл или папку справа либо создайте запись вручную." Style="{StaticResource Task.Files.Hint}" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </Border>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
-                <WrapPanel Margin="0,0,0,12"><Button Content="Добавить _файл…" Click="AddPickedFile" IsEnabled="{Binding CanAddCatalogPaths}" AutomationProperties.AutomationId="AddCatalogFilePicker"/><Button Content="Добавить _папку…" Click="AddPickedFolder" IsEnabled="{Binding CanAddCatalogPaths}" AutomationProperties.AutomationId="AddCatalogFolderPicker"/></WrapPanel><TextBlock Text="Новая запись каталога" FontWeight="SemiBold"/><TextBlock Text="{Binding CatalogCreationLocation}" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
-                <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Название записи"/>
-                <ComboBox ItemsSource="{Binding CatalogItemTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NewItemType}" Margin="0,8,0,8" AutomationProperties.AutomationId="CatalogItemType"/><Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
-                <Button Content="Создать папку" Command="{Binding CreateCatalogFolderCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="CreateCatalogFolderButton"/>
-                <Separator Margin="0,18"/>
-                <TextBlock Text="Переместить выбранный элемент в:"/>
-                <ComboBox ItemsSource="{Binding CatalogMoveDestinations}" SelectedItem="{Binding MoveDestination}" DisplayMemberPath="Label" Style="{StaticResource Task.Input.Combo}" Margin="0,6,0,8" AutomationProperties.Name="Папка назначения"/>
-                <Button Content="Переместить в…" Command="{Binding MoveCatalogItemCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoveCatalogItemButton"/>
-                <Separator Margin="0,18"/>
-                <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding SelectedCatalogItem.Description}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-                <Border Visibility="{Binding IsCorporate, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:FileLocationsView DataContext="{Binding Locations}"/></Border>
-                <StackPanel Visibility="{Binding IsPersonal, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-                    <TextBlock Text="{Binding CatalogPathLabel}" Margin="0,14,0,0"/>
-                    <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
-                    <Button Content="Сохранить путь" Command="{Binding AddLocationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"/>
-                </StackPanel>
-                <WrapPanel Margin="0,10,0,0">
-                    <Button Content="Открыть" Command="{Binding OpenFileCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="OpenCatalogFileButton"/>
-                </WrapPanel>
-                <TextBlock Text="{Binding FileBehaviorText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
-            </StackPanel></ScrollViewer>
+            <Grid Grid.Column="1" AutomationProperties.Name="Файл и расположения" AutomationProperties.AutomationId="FilesInspectorRegion">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                <Border Style="{StaticResource Task.Files.Header}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Файл и расположения}" Style="{StaticResource Task.Files.Title}"/>
+                        <TextBlock Text="{Binding SelectedCatalogItem.ItemTypeLabel}" Style="{StaticResource Task.Files.Hint}"/>
+                    </StackPanel>
+                </Border>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <Border Style="{StaticResource Task.Files.Panel}">
+                            <StackPanel>
+                                <WrapPanel Margin="0,0,0,-8">
+                                    <Button Content="Добавить _файл…" Click="AddPickedFile" IsEnabled="{Binding CanAddCatalogPaths}" Style="{StaticResource Task.Files.Action}" AutomationProperties.AutomationId="AddCatalogFilePicker"/>
+                                    <Button Content="Добавить _папку…" Click="AddPickedFolder" IsEnabled="{Binding CanAddCatalogPaths}" Style="{StaticResource Task.Files.Action}" AutomationProperties.AutomationId="AddCatalogFolderPicker"/>
+                                </WrapPanel>
+                                <TextBlock Text="Или перетащите файл или папку из Проводника в каталог." Style="{StaticResource Task.Files.Hint}" Margin="0,12,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Task.Files.Panel}">
+                            <StackPanel>
+                                <StackPanel Margin="20,24" HorizontalAlignment="Center">
+                                    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding SelectedCatalogItem}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
+                                    <Path Data="{StaticResource Task.Icon.Info}" Style="{StaticResource Task.Files.Icon}" Width="26" Height="26"/>
+                                    <TextBlock Text="Выберите файл или папку" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,0"/>
+                                    <TextBlock Text="Пути и действия появятся здесь. Каталог останется слева." Style="{StaticResource Task.Files.Hint}" TextAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding SelectedCatalogItem.Description}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                <Button Content="Открыть" Command="{Binding OpenFileCommand}" Style="{StaticResource Task.Files.PrimaryAction}" HorizontalAlignment="Left" AutomationProperties.AutomationId="OpenCatalogFileButton"/>
+                                <Border Visibility="{Binding IsCorporate, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:FileLocationsView DataContext="{Binding Locations}"/></Border>
+                                <StackPanel Visibility="{Binding IsPersonal, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding CatalogPathLabel}" Style="{StaticResource Task.Files.Label}"/>
+                                    <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Files.Text}" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
+                                    <Button Content="Сохранить путь" Command="{Binding AddLocationCommand}" Style="{StaticResource Task.Files.Action}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding FileBehaviorText}" Style="{StaticResource Task.Files.Hint}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Task.Files.Panel}">
+                            <Expander Header="Новая запись каталога" AutomationProperties.Name="Новая запись каталога" AutomationProperties.AutomationId="FilesCreateSection" HorizontalContentAlignment="Stretch">
+                                <StackPanel Margin="0,12,0,0">
+                                    <TextBlock Text="{Binding CatalogCreationLocation}" Style="{StaticResource Task.Files.Hint}"/>
+                                    <TextBlock Text="Название" Style="{StaticResource Task.Files.Label}"/>
+                                    <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Files.Text}" AutomationProperties.Name="Название записи"/>
+                                    <TextBlock Text="Тип записи" Style="{StaticResource Task.Files.Label}"/>
+                                    <ComboBox ItemsSource="{Binding CatalogItemTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NewItemType}" Style="{StaticResource Task.Files.Combo}" AutomationProperties.Name="Тип записи каталога" AutomationProperties.AutomationId="CatalogItemType"/>
+                                    <WrapPanel Margin="0,16,0,-8">
+                                        <Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Files.PrimaryAction}" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
+                                        <Button Content="Создать папку" Command="{Binding CreateCatalogFolderCommand}" Style="{StaticResource Task.Files.Action}" AutomationProperties.AutomationId="CreateCatalogFolderButton"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+                        <Border Style="{StaticResource Task.Files.Panel}">
+                            <Expander Header="Перемещение" AutomationProperties.Name="Перемещение записи каталога" AutomationProperties.AutomationId="FilesMoveSection" HorizontalContentAlignment="Stretch">
+                                <StackPanel Margin="0,12,0,0">
+                                    <TextBlock Text="Переместить выбранный элемент в:" Style="{StaticResource Task.Files.Label}" Margin="0,0,0,6"/>
+                                    <ComboBox ItemsSource="{Binding CatalogMoveDestinations}" SelectedItem="{Binding MoveDestination}" DisplayMemberPath="Label" Style="{StaticResource Task.Files.Combo}" AutomationProperties.Name="Папка назначения"/>
+                                    <Button Content="Переместить в…" Command="{Binding MoveCatalogItemCommand}" Style="{StaticResource Task.Files.Action}" HorizontalAlignment="Left" Margin="0,12,0,0" AutomationProperties.AutomationId="MoveCatalogItemButton"/>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
         </Grid>
 
         <DockPanel Grid.Row="2" Visibility="{Binding IsContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
