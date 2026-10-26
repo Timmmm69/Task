@@ -20,9 +20,12 @@
    <TextBlock Text="Добавьте подзадачу действием в карточке выше."/>
    <ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
   </StackPanel></Expander>
-  <Border Style="{StaticResource Task.Card.Group}" Margin="0,16,0,0"><StackPanel>\n  <TextBlock Text="Поиск связей" Style="{StaticResource Task.Card.Heading}"/>\n  <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,0,0,6"/>
+  <Border Style="{StaticResource Task.Card.Group}" Margin="0,16,0,0"><StackPanel>
+  <TextBlock Text="Поиск связей" Style="{StaticResource Task.Card.Heading}"/>
+  <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,0,0,6"/>
   <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск файлов и зависимостей"/>
-  <Button Content="Найти связи" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>\n  </StackPanel></Border>
+  <Button Content="Найти связи" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>
+  </StackPanel></Border>
   <Expander Header="Связанные файлы" state:ViewState.Section="task/v1/files"><StackPanel>
    <TextBlock Text="{Binding FilesNotice}"/>
    <ItemsControl ItemsSource="{Binding Files}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать связь" Command="{Binding DataContext.RemoveFileCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>

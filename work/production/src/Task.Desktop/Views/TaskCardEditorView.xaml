@@ -48,7 +48,8 @@
 
         </StackPanel></Border>
         <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
-        <TextBlock Text="Участники" Style="{StaticResource Task.Card.Heading}" />\n        <TextBlock Text="Выберите сотрудников, которые будут выполнять задачу." Style="{StaticResource Task.Editor.Hint}" Margin="0,0,0,12" />
+        <TextBlock Text="Участники" Style="{StaticResource Task.Card.Heading}" />
+        <TextBlock Text="Выберите сотрудников, которые будут выполнять задачу." Style="{StaticResource Task.Editor.Hint}" Margin="0,0,0,12" />
         <TextBlock Text="Исполнители (необязательно)" Style="{StaticResource Task.Editor.Label}" />
         <ScrollViewer MaxHeight="160" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding Assignees}" IsEnabled="{Binding CanAssign}">
