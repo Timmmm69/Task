@@ -4,7 +4,7 @@ namespace Task.Tests;
 
 public sealed partial class PostgresProductApiTests
 {
-    [Fact]
+    [RequiresPostgresFact]
     public void ProjectHistory_CurrentContractPagingVisibilityAndPermissions()
     {
         using var db = Database.Create(); Assert.NotNull(db);
