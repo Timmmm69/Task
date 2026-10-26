@@ -1,0 +1,62 @@
+[
+  {
+    "width": 1241.3333333333333,
+    "manage": true,
+    "stacked": false,
+    "editorWidth": 687.3333333333334,
+    "editorHeight": 655.3333333333334,
+    "previewY": 106,
+    "saveY": 701.3333333333334,
+    "saveEnabled": true
+  },
+  {
+    "width": 901.3333333333334,
+    "manage": true,
+    "stacked": true,
+    "editorWidth": 668.6666666666666,
+    "editorHeight": 375.3333333333333,
+    "previewY": 481.3333333333333,
+    "saveY": 421.3333333333333,
+    "saveEnabled": true
+  },
+  {
+    "width": 701.3333333333334,
+    "manage": true,
+    "stacked": true,
+    "editorWidth": 468.6666666666667,
+    "editorHeight": 375.3333333333333,
+    "previewY": 481.3333333333333,
+    "saveY": 421.3333333333333,
+    "saveEnabled": true
+  },
+  {
+    "width": 1241.3333333333333,
+    "manage": false,
+    "stacked": false,
+    "editorWidth": 687.3333333333334,
+    "editorHeight": 636.6666666666666,
+    "previewY": 124.66666666666666,
+    "saveY": 701.3333333333335,
+    "saveEnabled": false
+  },
+  {
+    "width": 901.3333333333334,
+    "manage": false,
+    "stacked": true,
+    "editorWidth": 668.6666666666666,
+    "editorHeight": 356.6666666666667,
+    "previewY": 481.3333333333333,
+    "saveY": 421.33333333333326,
+    "saveEnabled": false
+  },
+  {
+    "width": 701.3333333333334,
+    "manage": false,
+    "stacked": true,
+    "editorWidth": 468.6666666666667,
+    "editorHeight": 356.6666666666667,
+    "previewY": 481.3333333333333,
+    "saveY": 421.33333333333326,
+    "saveEnabled": false
+  }
+]

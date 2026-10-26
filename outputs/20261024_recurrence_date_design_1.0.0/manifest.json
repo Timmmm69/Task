@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "baseline": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Calendar.xaml",
+      "sha256": "ab01a885e3daa95e8b73b717899d56fa684e4cb81cb3082ea80cd2fbd0e0df7a"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Theme.xaml",
+      "sha256": "d0f8d9f1a2ac06806c82376e66bd3af131a4b413dc751bf05c80f838166c7e08"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/RecurrenceView.xaml",
+      "sha256": "eff943f5cb8ca92e60275f0e841c30bff15c2772fd996e7acc692f07ad9205d0"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskDayPicker.xaml",
+      "sha256": "942835272fe8233d5065b36a00ebe39a588d91532ad2ae268346b89dfde56e86"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarAppearanceTests.cs",
+      "sha256": "1ced1be449bef777ec7650e789a9486114233054ecdfe6291a1b46158499e43f"
+    }
+  ]
+}

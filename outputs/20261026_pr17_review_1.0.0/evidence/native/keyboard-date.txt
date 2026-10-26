@@ -1,0 +1,345 @@
+Window: "Task — личное пространство", App: Task.Desktop.exe.
+	0 окно Task — личное пространство Secondary Actions: Raise ID: PersonalWindow
+		421 окно Secondary Actions: Raise
+			422 календарь
+				423 кнопка Предыдущий период ID: PART_PreviousButton
+					424 текст ‹
+				425 кнопка 2026 ID: PART_HeaderButton
+					426 текст 2026
+				427 кнопка Следующий период ID: PART_NextButton
+					428 текст ›
+				520 Кнопка "Календарь" (selectable) январь 2026 г. Description: четверг, 1 января 2026 г.
+					521 текст янв.
+				522 Кнопка "Календарь" (selectable) февраль 2026 г. Description: воскресенье, 1 февраля 2026 г.
+					523 текст февр.
+				524 Кнопка "Календарь" (selectable) март 2026 г. Description: воскресенье, 1 марта 2026 г.
+					525 текст март
+				526 Кнопка "Календарь" (selectable) апрель 2026 г. Description: среда, 1 апреля 2026 г.
+					527 текст апр.
+				528 Кнопка "Календарь" (selectable) май 2026 г. Description: пятница, 1 мая 2026 г.
+					529 текст май
+				530 Кнопка "Календарь" (selectable) июнь 2026 г. Description: понедельник, 1 июня 2026 г.
+					531 текст июнь
+				532 Кнопка "Календарь" (selectable) июль 2026 г. Description: среда, 1 июля 2026 г.
+					533 текст июль
+				534 Кнопка "Календарь" (selectable) август 2026 г. Description: суббота, 1 августа 2026 г.
+					535 текст авг.
+				536 Кнопка "Календарь" (selectable) сентябрь 2026 г. Description: вторник, 1 сентября 2026 г.
+					537 текст сент.
+				538 Кнопка "Календарь" (selectable) октябрь 2026 г. Description: четверг, 1 октября 2026 г.
+					539 текст окт.
+				540 Кнопка "Календарь" (selectable) ноябрь 2026 г. Description: воскресенье, 1 ноября 2026 г.
+					541 текст нояб.
+				542 Кнопка "Календарь" (selectable) декабрь 2026 г. Description: вторник, 1 декабря 2026 г.
+					543 текст дек.
+		1 название (settable, string) Value: Task — личное пространство
+			2 строка меню Система ID: MenuBar
+				230 элемент меню Система
+			4 кнопка Свернуть
+			5 кнопка Восстановить
+			6 кнопка Закрыть
+		7 список (disabled) Основная навигация Description: Завершите редактирование, чтобы перейти в другой раздел ID: PersonalNavigationList
+			8 элемент списка (selectable, disabled) Сегодня Description: Открыть раздел «Сегодня» ID: Navigation_today
+				9 текст (disabled) Сегодня
+			10 элемент списка (selectable, disabled) Входящие Description: Открыть раздел «Входящие» ID: Navigation_inbox
+				11 текст (disabled) Входящие
+			12 элемент списка (selectable, disabled) Календарь Description: Открыть раздел «Календарь» ID: Navigation_calendar
+				13 текст (disabled) Календарь
+			14 элемент списка (selectable, disabled) Задачи Description: Открыть раздел «Задачи» ID: Navigation_tasks
+				15 текст (disabled) Задачи
+			16 элемент списка (selectable, disabled) Проекты Description: Открыть раздел «Проекты» ID: Navigation_projects
+				17 текст (disabled) Проекты
+			18 элемент списка (selectable, disabled) Каталог Description: Открыть раздел «Каталог» ID: Navigation_catalog
+				19 текст (disabled) Каталог
+			20 элемент списка (selectable, disabled) Контакты Description: Открыть раздел «Контакты» ID: Navigation_contacts
+				21 текст (disabled) Контакты
+			22 элемент списка (selectable, disabled) Поиск Description: Открыть раздел «Поиск» ID: Navigation_search
+				23 текст (disabled) Поиск
+			24 элемент списка (selectable, disabled) Уведомления Description: Открыть раздел «Уведомления» ID: Navigation_notifications
+				25 текст (disabled) Уведомления
+			26 элемент списка (selectable, disabled) Архив Description: Открыть раздел «Архив» ID: Navigation_archive
+				27 текст (disabled) Архив
+			28 элемент списка (selectable, disabled) Корзина Description: Открыть раздел «Корзина» ID: Navigation_trash
+				29 текст (disabled) Корзина
+			30 элемент списка (selectable, disabled) Настройки Description: Открыть раздел «Настройки» ID: Navigation_settings
+				31 текст (disabled) Настройки
+		32 текст Личное
+		33 кнопка Сменить режим Description: Сменить режим ID: SwitchModeButton
+			34 текст Сменить режим
+		35 текст Календарь
+		36 текст Личное расписание
+		37 кнопка (disabled) Поиск по Task Description: Поиск по Task · Ctrl+K
+		38 текст На этом компьютере
+		39 кнопка (disabled) Уведомления Description: Уведомления
+		81 настраиваемый Календарь ID: CalendarScreen
+			82 текст Календарь
+			83 текст 26 окт. — 1 нояб. 2026 ID: CalendarWeekRange
+			84 текст ·
+			85 текст Местное время
+			86 кнопка Режим дня
+				87 текст День
+			88 кнопка (disabled) Режим недели
+				89 текст (disabled) Неделя
+			90 кнопка Режим месяца
+				91 текст Месяц
+			92 кнопка Предыдущий период
+				93 текст Назад
+			94 кнопка Вернуться к текущей дате
+				95 текст Сегодня
+			96 кнопка Следующий период
+				97 текст Вперёд
+			98 управляющий элемент выбора даты (settable, string) Дата календаря Value: 26.10.2026 00:00:00 ID: CalendarDatePicker
+				99 изменить (settable, string) Дата календаря Value: 26.10.2026 ID: PART_TextBox
+					100 текст <Введите текст>
+				101 кнопка Открыть календарь Description: Выбрать дату ID: PART_Button
+			102 кнопка Обновить календарь ID: CalendarRefresh
+			103 кнопка Создать событие календаря ID: CalendarNewEvent
+				104 текст Новое событие
+			105 кнопка Повторяющиеся задачи
+				106 текст Повторения
+			107 кнопка Найти свободное рабочее окно ID: CalendarFindTime
+				108 текст Найти время
+			109 область ID: CalendarHorizontalScroll
+				110 текст Время
+				111 список
+					112 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						113 текст пн
+						114 текст 26
+					115 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						116 текст вт
+						117 текст 27
+					118 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						119 текст ср
+						120 текст 28
+					121 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						122 текст чт
+						123 текст 29
+					124 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						125 текст пт
+						126 текст 30
+					127 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						128 текст сб
+						129 текст 31
+					130 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						131 текст вс
+						132 текст 1
+				133 текст Весь день
+				134 список
+					135 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						136 список
+					137 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						138 список
+					139 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						140 список
+					141 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						142 список
+					143 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						144 список
+					145 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						146 список
+					147 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+						148 список
+				149 область Недельная временная сетка ID: CalendarTimeline
+					150 список
+						151 элемент данных CalendarHourMarker { Label = 00:00, Top = 0 }
+							152 текст 00:00
+						153 элемент данных CalendarHourMarker { Label = 01:00, Top = 69 }
+							154 текст 01:00
+						155 элемент данных CalendarHourMarker { Label = 02:00, Top = 138 }
+							156 текст 02:00
+						157 элемент данных CalendarHourMarker { Label = 03:00, Top = 207 }
+							158 текст 03:00
+						159 элемент данных CalendarHourMarker { Label = 04:00, Top = 276 }
+							160 текст 04:00
+						161 элемент данных CalendarHourMarker { Label = 05:00, Top = 345 }
+							162 текст 05:00
+						163 элемент данных CalendarHourMarker { Label = 06:00, Top = 414 }
+							164 текст 06:00
+						165 элемент данных CalendarHourMarker { Label = 07:00, Top = 483 }
+							166 текст 07:00
+						167 элемент данных CalendarHourMarker { Label = 08:00, Top = 552 }
+							168 текст 08:00
+						169 элемент данных CalendarHourMarker { Label = 09:00, Top = 621 }
+							170 текст 09:00
+						171 элемент данных CalendarHourMarker { Label = 10:00, Top = 690 }
+							172 текст 10:00
+						173 элемент данных CalendarHourMarker { Label = 11:00, Top = 759 }
+							174 текст 11:00
+						175 элемент данных CalendarHourMarker { Label = 12:00, Top = 828 }
+							176 текст 12:00
+						177 элемент данных CalendarHourMarker { Label = 13:00, Top = 897 }
+							178 текст 13:00
+						179 элемент данных CalendarHourMarker { Label = 14:00, Top = 966 }
+							180 текст 14:00
+						181 элемент данных CalendarHourMarker { Label = 15:00, Top = 1035 }
+							182 текст 15:00
+						183 элемент данных CalendarHourMarker { Label = 16:00, Top = 1104 }
+							184 текст 16:00
+						185 элемент данных CalendarHourMarker { Label = 17:00, Top = 1173 }
+							186 текст 17:00
+						187 элемент данных CalendarHourMarker { Label = 18:00, Top = 1242 }
+							188 текст 18:00
+						189 элемент данных CalendarHourMarker { Label = 19:00, Top = 1311 }
+							190 текст 19:00
+						191 элемент данных CalendarHourMarker { Label = 20:00, Top = 1380 }
+							192 текст 20:00
+						193 элемент данных CalendarHourMarker { Label = 21:00, Top = 1449 }
+							194 текст 21:00
+						195 элемент данных CalendarHourMarker { Label = 22:00, Top = 1518 }
+							196 текст 22:00
+						197 элемент данных CalendarHourMarker { Label = 23:00, Top = 1587 }
+							198 текст 23:00
+					199 список
+						200 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							201 список
+								202 элемент данных Task.Desktop.ViewModels.CalendarTimelineItemViewModel
+									203 кнопка Повторяющаяся задача. PR17 проверка повторений. 09:00–10:00. Новая. Обычный приоритет Description: Повторяющаяся задача. PR17 проверка повторений. 09:00–10:00. Новая. Обычный приоритет ID: CalendarTimelineItem
+										204 текст PR17 проверка повторений Description: PR17 проверка повторений
+										205 текст 09:00–10:00
+						206 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							207 список
+						208 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							209 список
+						210 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							211 список
+						212 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							213 список
+						214 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							215 список
+						216 элемент данных Task.Desktop.ViewModels.CalendarDayViewModel
+							217 список
+					218 полоса прокрутки (settable, float) Value: 621 ID: VerticalScrollBar
+						219 кнопка (disabled) ID: PART_LineUpButton
+						220 кнопка (disabled) ID: PageUp
+						221 кнопка (disabled) ID: PageDown
+						222 бегунок (disabled)
+						223 кнопка (disabled) ID: PART_LineDownButton
+			231 настраиваемый Повторяющиеся задачи ID: RecurrenceScreen
+				232 кнопка Закрыть
+					233 текст Закрыть
+				234 текст Повторяющиеся задачи
+				235 текст
+				236 текст Серии задач
+				237 кнопка Новая серия
+					238 текст Новая серия
+				239 кнопка Обновить
+					240 текст Обновить
+				241 список Серии задач
+					242 элемент списка (selectable) PR17 проверка повторений — Активна
+						243 текст PR17 проверка повторений
+						244 текст Активна
+				245 текст Правило серии
+				246 область
+					247 текст Задача
+					248 текст Название задачи
+					249 изменить (settable, string) Название повторяющейся задачи
+					250 текст Описание
+					251 изменить (settable, string) Описание задачи
+					252 текст Правило повторения
+					253 текст Повторять
+					254 поле со списком Частота повторения
+					255 текст Каждые N
+					256 изменить (settable, string) Интервал повторения Value: 1
+					257 текст Дни недели через запятую: 1 — пн, 7 — вс
+					258 изменить (settable, string) Дни недели Value: 1
+					259 текст Дата и время
+					260 текст Начало серии
+					261 управляющий элемент выбора даты (settable, string) Начало серии Value: 27.10.2026 00:00:00
+						262 изменить (settable, string) Начало серии Value: 27.10.2026 ID: PART_TextBox
+							263 текст <Введите текст>
+						264 кнопка Открыть календарь Description: Выбрать дату ID: PART_Button
+						422 календарь
+							423 кнопка Предыдущий период ID: PART_PreviousButton
+								424 текст ‹
+							425 кнопка 2026 ID: PART_HeaderButton
+								426 текст 2026
+							427 кнопка Следующий период ID: PART_NextButton
+								428 текст ›
+							520 Кнопка "Календарь" (selectable) январь 2026 г. Description: четверг, 1 января 2026 г.
+								521 текст янв.
+							522 Кнопка "Календарь" (selectable) февраль 2026 г. Description: воскресенье, 1 февраля 2026 г.
+								523 текст февр.
+							524 Кнопка "Календарь" (selectable) март 2026 г. Description: воскресенье, 1 марта 2026 г.
+								525 текст март
+							526 Кнопка "Календарь" (selectable) апрель 2026 г. Description: среда, 1 апреля 2026 г.
+								527 текст апр.
+							528 Кнопка "Календарь" (selectable) май 2026 г. Description: пятница, 1 мая 2026 г.
+								529 текст май
+							530 Кнопка "Календарь" (selectable) июнь 2026 г. Description: понедельник, 1 июня 2026 г.
+								531 текст июнь
+							532 Кнопка "Календарь" (selectable) июль 2026 г. Description: среда, 1 июля 2026 г.
+								533 текст июль
+							534 Кнопка "Календарь" (selectable) август 2026 г. Description: суббота, 1 августа 2026 г.
+								535 текст авг.
+							536 Кнопка "Календарь" (selectable) сентябрь 2026 г. Description: вторник, 1 сентября 2026 г.
+								537 текст сент.
+							538 Кнопка "Календарь" (selectable) октябрь 2026 г. Description: четверг, 1 октября 2026 г.
+								539 текст окт.
+							540 Кнопка "Календарь" (selectable) ноябрь 2026 г. Description: воскресенье, 1 ноября 2026 г.
+								541 текст нояб.
+							542 Кнопка "Календарь" (selectable) декабрь 2026 г. Description: вторник, 1 декабря 2026 г.
+								543 текст дек.
+					265 флажок Весь день
+						266 текст Весь день
+					267 текст Начало (ЧЧ:ММ)
+					268 изменить (settable, string) Время начала Value: 09:00
+					269 текст Длительность, минут
+					270 изменить (settable, string) Длительность в минутах Value: 60
+					271 текст Часовой пояс: Belarus Standard Time
+					272 текст Окончание и приоритет
+					273 текст Когда завершить серию
+					274 поле со списком Условие окончания
+					275 текст Приоритет
+					276 поле со списком Приоритет
+					277 полоса прокрутки (settable, float) Value: 0 ID: VerticalScrollBar
+						278 кнопка (disabled) ID: PART_LineUpButton
+						279 кнопка (disabled) ID: PageUp
+						280 кнопка (disabled) ID: PageDown
+						281 бегунок (disabled)
+						282 кнопка (disabled) ID: PART_LineDownButton
+				283 кнопка Предпросмотр
+					284 текст Предпросмотр
+				285 кнопка Сохранить правило серии
+					286 текст Сохранить правило серии
+				287 область
+					288 текст Предпросмотр и действия
+					289 текст Предпросмотр и сохранение
+					290 текст Правило применяется ко всей серии. Завершённые и отдельно изменённые задачи сохраняются.
+					291 текст Нажмите «Предпросмотр», чтобы увидеть ближайшие даты повторений.
+					292 текст
+					293 текст Изменить созданные задачи
+					294 текст Выберите задачу и область. Будут применены название, приоритет и длительность из формы.
+					295 поле со списком Экземпляр серии
+					296 текст Область изменения
+					297 поле со списком Область изменения
+					298 кнопка (disabled) Применить к выбранной области
+						299 текст (disabled) Применить к выбранной области
+					300 текст Горизонт расписания
+					301 текст Создать задачи до даты
+					302 управляющий элемент выбора даты (settable, string) Создать задачи до даты Value: 24.01.2027 00:00:00
+						303 изменить (settable, string) Создать задачи до даты Value: 24.01.2027 ID: PART_TextBox
+							304 текст <Введите текст>
+						305 кнопка Открыть календарь Description: Выбрать дату ID: PART_Button
+					306 текст Расширяйте горизонт шагами до одного года. Повторный запрос не создаёт дубликаты.
+					307 кнопка (disabled) Расширить расписание
+						308 текст (disabled) Расширить расписание
+					309 текст Управление серией
+					310 кнопка (disabled) Приостановить
+						311 текст (disabled) Приостановить
+					312 кнопка (disabled) Возобновить
+						313 текст (disabled) Возобновить
+					314 кнопка (disabled) Отменить серию
+						315 текст (disabled) Отменить серию
+					316 полоса прокрутки (settable, float) Value: 0 ID: VerticalScrollBar
+						317 кнопка (disabled) ID: PART_LineUpButton
+						318 кнопка (disabled) ID: PageUp
+						319 кнопка (disabled) ID: PageDown
+						320 бегунок (disabled)
+						321 кнопка (disabled) ID: PART_LineDownButton
+		64 текст Завершите редактирование, чтобы перейти в другой раздел
+
+Selected text: ```
+27.10.2026
+```
+
+Note: Pay special attention to the content selected by the user. If the user asks a question or refers to the content they are looking at on-screen, they might be referring to the selected content (but they might be referring to something else that's visible, too).
