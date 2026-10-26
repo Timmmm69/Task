@@ -154,12 +154,25 @@ public sealed class TaskContextActionsUiTests
     private static async System.Threading.Tasks.Task DoubleClickAt(FrameworkElement target, Point local)
     {
         var window = Window.GetWindow(target)!;
-        await ShowAndActivateForegroundAsync(window); await Drain(window);
+        await ShowAndActivateForegroundAsync(window);
+        target.BringIntoView(); await Drain(window);
         var point = target.PointToScreen(local); Assert.True(SetCursorPos((int)point.X, (int)point.Y));
-        mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
-        await System.Threading.Tasks.Task.Delay(70);
-        mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
-        await System.Threading.Tasks.Task.Delay(100);
+        var list = target as ListBox ?? Ancestor<ListBox>(target);
+        var expectedRow = TaskRowAction.ResolveRow(list, target);
+        var hit = window.InputHitTest(window.PointFromScreen(point)) as DependencyObject;
+        Assert.Same(expectedRow, TaskRowAction.ResolveRow(list, hit));
+        var clickCounts = new List<int>();
+        MouseButtonEventHandler observed = (_, e) => clickCounts.Add(e.ClickCount);
+        window.AddHandler(Mouse.PreviewMouseDownEvent, observed, true);
+        try
+        {
+            mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
+            await System.Threading.Tasks.Task.Delay(70);
+            mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
+            await System.Threading.Tasks.Task.Delay(100);
+            Assert.Contains(2, clickCounts);
+        }
+        finally { window.RemoveHandler(Mouse.PreviewMouseDownEvent, observed); }
     }
     private static async System.Threading.Tasks.Task PressNativeKey(Window window, FrameworkElement target, byte key)
     {
