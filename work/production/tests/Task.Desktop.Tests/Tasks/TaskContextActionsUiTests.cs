@@ -81,7 +81,10 @@ public sealed class TaskContextActionsUiTests
                     await TaskContextActionsTests.Until(() => tasks.Editor is not null); await Drain(company);
                     Assert.Equal(second.Id, tasks.Editor!.SourceId); Assert.True(Find<TextBox>(company, "TaskTitleTextBox").IsKeyboardFocused);
                     await tasks.DiscardEditorCommand.ExecuteAsync(); await Drain(company); Assert.True(list.IsKeyboardFocused);
-                    await DoubleClickAt(list, new Point(30, list.ActualHeight - 15)); await Drain(company); Assert.Null(tasks.Editor);
+                    // The bottom of a compact list may contain a real row; use verified list chrome.
+                    var nonRowPoint = new Point(0.25, list.ActualHeight / 2);
+                    Assert.Null(TaskRowAction.ResolveRow(list, list.InputHitTest(nonRowPoint) as DependencyObject));
+                    await DoubleClickAt(list, nonRowPoint); await Drain(company); Assert.Null(tasks.Editor);
                     // Read-only fallback expands the actual inspector.
                     tasks.UpdateCapabilities(["Task.Read"]); await TaskContextActionsTests.Until(() => tasks.Workspace?.IsBusy != true);
                     await DoubleClick(text); await Drain(company); Assert.Null(tasks.Editor); Assert.True(((Expander)company.FindName("TaskInspectorExpander")).IsExpanded);
@@ -90,7 +93,7 @@ public sealed class TaskContextActionsUiTests
                     await TaskContextActionsTests.Until(() => projects.State == ProjectsScreenState.Loaded && !projects.IsDetailLoading); await Drain(company);
                     var projectAction = Find<Button>(company, "ProjectAddTask"); Assert.True(projectAction.IsEnabled); Assert.True(projectAction.Focus());
                     Assert.Equal("Добавить задачу", projectAction.Content); await Capture(company, "corporate-project");
-                    Assert.True(projectAction.Focus()); keybd_event(13, 0, 0, UIntPtr.Zero); keybd_event(13, 0, 2, UIntPtr.Zero);
+                    await PressNativeKey(company, projectAction, 13);
                     await TaskContextActionsTests.Until(() => tasks.Editor is not null); await Drain(company);
                     Assert.Equal(projectClient.Project.Id, tasks.Editor!.Card.Project!.Id);
                     var projectChoice = Find<ComboBox>(company, "TaskProjectComboBox");
@@ -100,7 +103,7 @@ public sealed class TaskContextActionsUiTests
                     await TaskContextActionsTests.Until(() => tasks.Workspace?.IsBusy != true);
                     ((Expander)company.FindName("TaskInspectorExpander")).IsExpanded = true; await Drain(company);
                     var childAction = Descendants<Button>(company).Single(x => x.IsVisible && AutomationProperties.GetAutomationId(x) is "AddSubtaskButton" or "CompactAddSubtaskButton"); childAction.BringIntoView(); Assert.True(childAction.Focus()); await Capture(company, "corporate-task-card");
-                    keybd_event(32, 0, 0, UIntPtr.Zero); keybd_event(32, 0, 2, UIntPtr.Zero); await TaskContextActionsTests.Until(() => tasks.Editor is not null); await Drain(company);
+                    await PressNativeKey(company, childAction, 32); await TaskContextActionsTests.Until(() => tasks.Editor is not null); await Drain(company);
                     Assert.Equal(tasks.SelectedDetails!.Id, tasks.Editor!.Card.Parent!.Id); await Capture(company, "corporate-subtask-draft");
                     await tasks.DiscardEditorCommand.ExecuteAsync(); await Drain(company); ((MainWindow)company).CloseAfterModeSwitch(); company = null;
 
@@ -113,13 +116,13 @@ public sealed class TaskContextActionsUiTests
                     var localShell = (PersonalShellViewModel)personal.DataContext;
                     localShell.SelectedSection = localShell.Sections.Single(s => s.Route == "projects"); await Drain(personal);
                     Assert.True(Find<Button>(personal, "PersonalProjectAddTask").IsEnabled); await Capture(personal, "personal-project");
-                    Assert.True(Find<Button>(personal, "PersonalProjectAddTask").Focus()); keybd_event(32, 0, 0, UIntPtr.Zero); keybd_event(32, 0, 2, UIntPtr.Zero);
+                    await PressNativeKey(personal, Find<Button>(personal, "PersonalProjectAddTask"), 32);
                     await TaskContextActionsTests.Until(() => model.Tasks!.Editor is not null); await Drain(personal);
                     var local = model.Tasks!; Assert.Equal(localProject.Id, local.Editor!.Card.Project!.Id);
                     Assert.True(Find<TextBox>(personal, "PersonalTaskTitle").IsKeyboardFocused);
                     local.Editor.Title = "Личная задача"; await Capture(personal, "personal-project-draft"); await local.SaveCommand.ExecuteAsync(); await local.OpenSavedTaskCommand.ExecuteAsync(); await Drain(personal);
                     local.DetailsExpanded = true; await Drain(personal); var localChildAction = Find<Button>(personal, "PersonalAddSubtask"); localChildAction.BringIntoView(); Assert.True(localChildAction.Focus()); await Capture(personal, "personal-task-card");
-                    keybd_event(32, 0, 0, UIntPtr.Zero); keybd_event(32, 0, 2, UIntPtr.Zero); await TaskContextActionsTests.Until(() => local.Editor is not null); await Drain(personal); Assert.Equal("Личная задача", local.Editor!.Card.Parent!.Name);
+                    await PressNativeKey(personal, localChildAction, 32); await TaskContextActionsTests.Until(() => local.Editor is not null); await Drain(personal); Assert.Equal("Личная задача", local.Editor!.Card.Parent!.Name);
                     await Capture(personal, "personal-subtask-draft");
                     var planning = Descendants<Expander>(personal).Single(x => x.Header?.ToString() == "Планирование и связи"); planning.IsExpanded = true; await Drain(personal);
                     var parentCombo = Find<ComboBox>(personal, "PersonalParentTask"); parentCombo.BringIntoView(); await Drain(personal);
@@ -150,11 +153,21 @@ public sealed class TaskContextActionsUiTests
     private static async System.Threading.Tasks.Task DoubleClick(FrameworkElement target) => await DoubleClickAt(target, new Point(Math.Min(25, target.ActualWidth / 2), target.ActualHeight / 2));
     private static async System.Threading.Tasks.Task DoubleClickAt(FrameworkElement target, Point local)
     {
+        var window = Window.GetWindow(target)!;
+        await ShowAndActivateForegroundAsync(window); await Drain(window);
         var point = target.PointToScreen(local); Assert.True(SetCursorPos((int)point.X, (int)point.Y));
         mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
         await System.Threading.Tasks.Task.Delay(70);
         mouse_event(2, 0, 0, 0, UIntPtr.Zero); mouse_event(4, 0, 0, 0, UIntPtr.Zero);
         await System.Threading.Tasks.Task.Delay(100);
+    }
+    private static async System.Threading.Tasks.Task PressNativeKey(Window window, FrameworkElement target, byte key)
+    {
+        await ShowAndActivateForegroundAsync(window);
+        target.BringIntoView(); await Drain(window);
+        Assert.True(target.Focus()); Assert.True(target.IsKeyboardFocusWithin);
+        Assert.Equal(new WindowInteropHelper(window).Handle, GetForegroundWindow());
+        keybd_event(key, 0, 0, UIntPtr.Zero); keybd_event(key, 0, 2, UIntPtr.Zero);
     }
     private static async System.Threading.Tasks.Task ShowAndActivateForegroundAsync(Window window)
     {
