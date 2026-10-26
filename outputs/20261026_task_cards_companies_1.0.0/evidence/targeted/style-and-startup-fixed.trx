@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8bbfe2c4-9aba-459d-82fb-4c590d03dd17" name="novik@TIM 2026-10-26 03:53:36" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-26T03:53:36.4585972+03:00" queuing="2026-10-26T03:53:36.4585979+03:00" start="2026-10-26T03:53:32.9604649+03:00" finish="2026-10-26T03:53:44.5097681+03:00" />
+  <TestSettings name="default" id="2de638dc-a69f-4da2-8f2b-53967dce8220">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-26_03_53_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d602132b-9a29-4f01-90a7-fe521d508c4a" testId="a1cdaa03-334d-c3bc-564e-fb65a1f72041" testName="Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush" computerName="TIM" duration="00:00:06.9675779" startTime="2026-10-26T03:53:34.9255912+03:00" endTime="2026-10-26T03:53:41.8969964+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d602132b-9a29-4f01-90a7-fe521d508c4a" />
+    <UnitTestResult executionId="3e16c433-7bef-4845-8660-8f5b14ab0d13" testId="05050bd6-3879-8a1f-cbe2-da5e5f085dba" testName="Task.Desktop.Tests.VisualFoundationTests.MainWindow_LoadsAndMeasuresDirection2Shell" computerName="TIM" duration="00:00:00.7308880" startTime="2026-10-26T03:53:34.1653703+03:00" endTime="2026-10-26T03:53:34.9099146+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e16c433-7bef-4845-8660-8f5b14ab0d13" />
+    <UnitTestResult executionId="adfc3398-c0b1-4f2e-8a18-ee4920e7fb99" testId="b27d96b7-da67-1c78-cc49-51346675cb2e" testName="Task.Desktop.Tests.TaskCardStyleWindowsTests.MaterializedTaskCardStylesKeepContrastAndInteractionAtScaledLayouts" computerName="TIM" duration="00:00:02.4439403" startTime="2026-10-26T03:53:41.9046763+03:00" endTime="2026-10-26T03:53:44.3496068+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adfc3398-c0b1-4f2e-8a18-ee4920e7fb99" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.VisualFoundationTests.MainWindow_LoadsAndMeasuresDirection2Shell" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="05050bd6-3879-8a1f-cbe2-da5e5f085dba">
+      <Execution id="3e16c433-7bef-4845-8660-8f5b14ab0d13" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.VisualFoundationTests" name="MainWindow_LoadsAndMeasuresDirection2Shell" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.TaskCardStyleWindowsTests.MaterializedTaskCardStylesKeepContrastAndInteractionAtScaledLayouts" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="b27d96b7-da67-1c78-cc49-51346675cb2e">
+      <Execution id="adfc3398-c0b1-4f2e-8a18-ee4920e7fb99" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.TaskCardStyleWindowsTests" name="MaterializedTaskCardStylesKeepContrastAndInteractionAtScaledLayouts" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="a1cdaa03-334d-c3bc-564e-fb65a1f72041">
+      <Execution id="d602132b-9a29-4f01-90a7-fe521d508c4a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.CorporateCloseUiTests" name="NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a1cdaa03-334d-c3bc-564e-fb65a1f72041" executionId="d602132b-9a29-4f01-90a7-fe521d508c4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05050bd6-3879-8a1f-cbe2-da5e5f085dba" executionId="3e16c433-7bef-4845-8660-8f5b14ab0d13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b27d96b7-da67-1c78-cc49-51346675cb2e" executionId="adfc3398-c0b1-4f2e-8a18-ee4920e7fb99" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.23]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.49]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.52]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:10.74]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

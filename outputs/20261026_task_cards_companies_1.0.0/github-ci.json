@@ -1,0 +1,108 @@
+{
+  "databaseId": 40296864259,
+  "url": "https://github.com/Timmmm69/Task/actions/runs/40296864259",
+  "headSha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+  "status": "completed",
+  "conclusion": "success",
+  "verification_source": "GitHub current-head check diagnostics",
+  "jobs": [
+    {
+      "id": 121486479271,
+      "name": "Production container package",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121486479271",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 1
+      }
+    },
+    {
+      "id": 121486479220,
+      "name": "Production tests (real PostgreSQL 16)",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121486479220",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 1
+      }
+    },
+    {
+      "id": 121484923763,
+      "name": "Delegation policy",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "skipped",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121484923763",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 0
+      }
+    },
+    {
+      "id": 121484922247,
+      "name": "Delegation subsystem tests",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121484922247",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 1
+      }
+    },
+    {
+      "id": 121484922003,
+      "name": "Delegation policy (not applicable)",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121484922003",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 1
+      }
+    },
+    {
+      "id": 121484921932,
+      "name": "Prototype build and tests",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121484921932",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 1
+      }
+    },
+    {
+      "id": 121484921763,
+      "name": "Production solution (cheap gates)",
+      "head_sha": "751933ad45a1b4323d17eb6a79a4b6ad8e3985fa",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/Timmmm69/Task/actions/runs/40296864259/job/121484921763",
+      "output": {
+        "title": null,
+        "summary": null,
+        "text": null,
+        "annotations_count": 10
+      }
+    }
+  ]
+}
