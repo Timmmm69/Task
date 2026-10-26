@@ -78,8 +78,12 @@ public sealed partial class DesktopWorkApiClient : IDesktopInteractionsClient
             return new DesktopWorkResult<DesktopInteraction>.ValidationFailure("Обновите запись или начните создание заново.");
         var body = new JsonObject
         {
-            ["interactionType"] = value.InteractionType, ["occurredAt"] = Utc(value.OccurredAt), ["subject"] = value.Subject.Trim(),
-            ["details"] = value.Details, ["nextStep"] = value.NextStep, ["nextStepDueAt"] = value.NextStepDueAt is { } due ? Utc(due) : null
+            ["interactionType"] = value.InteractionType,
+            ["occurredAt"] = Utc(value.OccurredAt),
+            ["subject"] = value.Subject.Trim(),
+            ["details"] = value.Details,
+            ["nextStep"] = value.NextStep,
+            ["nextStepDueAt"] = value.NextStepDueAt is { } due ? Utc(due) : null
         };
         if (create)
         {
@@ -116,7 +120,7 @@ public sealed partial class DesktopWorkApiClient : IDesktopInteractionsClient
             || !Guid.TryParse(Text(n, "counterpartyObjectId"), out var target) || Date(n, "occurredAt") is not { } at
             || Text(n, "interactionType") is not { } type || Text(n, "subject") is not { } subject
             || n["participantObjectIds"] is not JsonArray participants || participants.Count > 500
-            || Text(n, "lifecycleState") is not ("active" or "archived" or "trashed") ) return null;
+            || Text(n, "lifecycleState") is not ("active" or "archived" or "trashed")) return null;
         if (n["nextStepDueAt"] is not null && Date(n, "nextStepDueAt") is null) return null;
         var ids = new List<Guid>();
         foreach (var p in participants)

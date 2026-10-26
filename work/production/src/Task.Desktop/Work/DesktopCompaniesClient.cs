@@ -74,9 +74,13 @@ public sealed partial class DesktopWorkApiClient : IDesktopCompaniesClient
             return new DesktopWorkResult<DesktopCompany>.ValidationFailure("Обновите карточку или начните создание заново.");
         var body = new JsonObject
         {
-            ["name"] = company.Name.Trim(), ["legalName"] = NullIfWhiteSpace(company.LegalName),
-            ["industry"] = NullIfWhiteSpace(company.Industry), ["website"] = NullIfWhiteSpace(company.Website),
-            ["taxIdentifier"] = NullIfWhiteSpace(company.TaxIdentifier), ["notes"] = company.Notes, ["status"] = company.Status
+            ["name"] = company.Name.Trim(),
+            ["legalName"] = NullIfWhiteSpace(company.LegalName),
+            ["industry"] = NullIfWhiteSpace(company.Industry),
+            ["website"] = NullIfWhiteSpace(company.Website),
+            ["taxIdentifier"] = NullIfWhiteSpace(company.TaxIdentifier),
+            ["notes"] = company.Notes,
+            ["status"] = company.Status
         };
         var result = ReadCompany(await SendAsync(create ? "companies" : $"companies/{company.Id:D}",
             create ? HttpMethod.Post : HttpMethod.Patch, body, create ? null : company.Version,
@@ -90,9 +94,13 @@ public sealed partial class DesktopWorkApiClient : IDesktopCompaniesClient
         if (ValidateCompanyContact(link) is { } error) return System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopCompany>>(new DesktopWorkResult<DesktopCompany>.ValidationFailure(error));
         return ChangeCompanyContactAsync(id, version, "contacts", HttpMethod.Post, new JsonObject
         {
-            ["companyId"] = id, ["contactId"] = link.ContactId, ["jobTitle"] = NullIfWhiteSpace(link.JobTitle),
-            ["departmentName"] = NullIfWhiteSpace(link.DepartmentName), ["isPrimary"] = link.IsPrimary,
-            ["validFrom"] = link.ValidFrom, ["validTo"] = link.ValidTo
+            ["companyId"] = id,
+            ["contactId"] = link.ContactId,
+            ["jobTitle"] = NullIfWhiteSpace(link.JobTitle),
+            ["departmentName"] = NullIfWhiteSpace(link.DepartmentName),
+            ["isPrimary"] = link.IsPrimary,
+            ["validFrom"] = link.ValidFrom,
+            ["validTo"] = link.ValidTo
         }, key, ct);
     }
 

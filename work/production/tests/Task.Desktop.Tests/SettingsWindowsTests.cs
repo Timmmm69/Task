@@ -22,8 +22,14 @@ public sealed class SettingsWindowsTests
     {
         if (Environment.GetEnvironmentVariable("TASK_FOUR_SETTINGS_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                RedirectStandardOutput = true, RedirectStandardError = true, WindowStyle = ProcessWindowStyle.Hidden };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeSettingsChoicesBindingsKeyboardValidationAndPagination));
             start.Environment["TASK_FOUR_SETTINGS_PROBE"] = "1";
@@ -50,9 +56,13 @@ public sealed class SettingsWindowsTests
                     app.Resources["Task.WindowWidthAtLeastConverter"] = new WindowWidthAtLeastConverter();
                     app.Resources["Task.ResponsiveGridLengthConverter"] = new ResponsiveGridLengthConverter();
                     var calls = 0;
-                    var client = new FakeClient { SearchPageHandler = (_, _, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(
+                    var client = new FakeClient
+                    {
+                        SearchPageHandler = (_, _, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(
                         new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([
-                            new(Guid.NewGuid(), "task", "Результат " + ++calls, null, 1, DateTimeOffset.UtcNow)]) { NextCursor = calls == 1 ? "next" : null }) };
+                            new(Guid.NewGuid(), "task", "Результат " + ++calls, null, 1, DateTimeOffset.UtcNow)])
+                        { NextCursor = calls == 1 ? "next" : null })
+                    };
                     using var hub = new WorkHubViewModel(client, ["Settings.ReadOwn", "Settings.UpdateOwn", "Search.Use"]);
                     hub.Activate(WorkHubArea.Settings);
                     var view = new WorkHubView { DataContext = hub, Background = Brushes.White };

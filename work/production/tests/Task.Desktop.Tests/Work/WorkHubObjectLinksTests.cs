@@ -66,7 +66,8 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Theory]
-    [InlineData("ObjectLink.Create")][InlineData("Contact.Update")]
+    [InlineData("ObjectLink.Create")]
+    [InlineData("Contact.Update")]
     public async AsyncTask LinksEnforceCreateAndObjectWritesIndependentlyFromDelete(string missing)
     {
         var contact = new DesktopContact(Guid.NewGuid(), 3, "Мария", "Мария", null, null, "active", "active");
@@ -80,8 +81,10 @@ public sealed partial class WorkHubViewModelTests
         hub.UpdateSessionState(false); Assert.False(hub.Links.AddCommand.CanExecute(null)); Assert.Empty(hub.Links.Items);
     }
     [Theory]
-    [InlineData("calendar_event", "Task.Read")][InlineData("calendar_event", "Calendar.Read")]
-    [InlineData("interaction", "Contact.Read")][InlineData("catalog_item", "FileCatalog.Read")]
+    [InlineData("calendar_event", "Task.Read")]
+    [InlineData("calendar_event", "Calendar.Read")]
+    [InlineData("interaction", "Contact.Read")]
+    [InlineData("catalog_item", "FileCatalog.Read")]
     public async AsyncTask UnsupportedCreationSourcesRetainPermissionCorrectReadOnlyLinks(string type, string permission)
     {
         using var hub = new WorkHubViewModel(new FakeClient(), ["Search.Use", "ObjectLink.Read", permission]);

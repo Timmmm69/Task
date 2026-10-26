@@ -23,8 +23,14 @@ public sealed class ObjectLinksIntegrationWindowsTests
     {
         if (Environment.GetEnvironmentVariable("TASK_LINK_INTEGRATION_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ObjectLinksIntegrationWindowsTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(ObjectLinksIntegrationWindowsTests).FullName + "." + nameof(EmbeddedPickerKeyboardCreateAndReadOnlyCatalog));
             start.Environment["TASK_LINK_INTEGRATION_PROBE"] = "1";
@@ -89,7 +95,8 @@ public sealed class ObjectLinksIntegrationWindowsTests
     }
     private static void Pump() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
     private static void SendKey(UIElement view, Key key) => view.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
-        PresentationSource.FromVisual(view), 0, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        PresentationSource.FromVisual(view), 0, key)
+    { RoutedEvent = Keyboard.PreviewKeyDownEvent });
     private static IEnumerable<T> Descendants<T>(DependencyObject parent) where T : DependencyObject
     {
         for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)

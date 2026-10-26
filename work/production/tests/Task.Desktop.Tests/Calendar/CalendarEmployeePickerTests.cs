@@ -307,9 +307,13 @@ public sealed partial class CalendarEmployeePickerTests
         public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> CreateEventAsync(DesktopCalendarEventCommand command, CancellationToken cancellationToken)
         { Command = command; return AsyncTask.FromResult<DesktopCalendarResult<DesktopCalendarEvent>>(new DesktopCalendarResult<DesktopCalendarEvent>.Succeeded(Source)); }
         public System.Threading.Tasks.Task<DesktopCalendarResult<DesktopCalendarEvent>> UpdateEventAsync(Guid eventId, long expectedVersion, DesktopCalendarEventCommand command, CancellationToken cancellationToken)
-        { Command = command; ExpectedVersion = expectedVersion; return AsyncTask.FromResult<DesktopCalendarResult<DesktopCalendarEvent>>(Failure switch {
-            "conflict" => new DesktopCalendarResult<DesktopCalendarEvent>.VersionConflict(),
-            "deleted" => new DesktopCalendarResult<DesktopCalendarEvent>.NotFound(),
-            _ => new DesktopCalendarResult<DesktopCalendarEvent>.ServerUnavailable() }); }
+        {
+            Command = command; ExpectedVersion = expectedVersion; return AsyncTask.FromResult<DesktopCalendarResult<DesktopCalendarEvent>>(Failure switch
+            {
+                "conflict" => new DesktopCalendarResult<DesktopCalendarEvent>.VersionConflict(),
+                "deleted" => new DesktopCalendarResult<DesktopCalendarEvent>.NotFound(),
+                _ => new DesktopCalendarResult<DesktopCalendarEvent>.ServerUnavailable()
+            });
+        }
     }
 }

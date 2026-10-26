@@ -21,8 +21,10 @@ public sealed partial class DesktopWorkApiClientTests
                 if (pages == 2) Assert.Contains("cursor=next", request.RequestUri.Query);
                 var rows = Enumerable.Range(0, pages == 1 ? 200 : 1).Select(_ => (JsonNode)new JsonObject
                 {
-                    ["id"] = Guid.NewGuid(), ["sourceObjectId"] = project.Id,
-                    ["targetObjectId"] = Guid.NewGuid(), ["linkType"] = "project_file"
+                    ["id"] = Guid.NewGuid(),
+                    ["sourceObjectId"] = project.Id,
+                    ["targetObjectId"] = Guid.NewGuid(),
+                    ["linkType"] = "project_file"
                 }).ToArray();
                 var response = Json(HttpStatusCode.OK, new JsonObject { ["items"] = new JsonArray(rows), ["hasMore"] = pages == 1, ["nextCursor"] = pages == 1 ? "next" : null }.ToJsonString());
                 response.Headers.ETag = new("\"v7\""); return AsyncTask.FromResult(response);

@@ -28,7 +28,12 @@ public sealed partial class ProjectsViewModelTests
     }
 
     [Theory]
-    [InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("deactivate")][InlineData("close")][InlineData("switch")]
+    [InlineData("scope")]
+    [InlineData("session")]
+    [InlineData("offline")]
+    [InlineData("deactivate")]
+    [InlineData("close")]
+    [InlineData("switch")]
     public async AsyncTask FilesHost_RejectsLateResponsesOnHostContextChanges(string transition)
     {
         var client = SectionClient(); var work = new ProjectFilesTests.Client();

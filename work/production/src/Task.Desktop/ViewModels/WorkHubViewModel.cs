@@ -96,7 +96,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             var picker = client is IDesktopObjectLinkTargetSearchClient search ? new ObjectLinkTargetPickerViewModel(search, _capabilities) : null;
             Links = new(links, () => CanChangeLinks("ObjectLink.Create"), () => CanChangeLinks("ObjectLink.Delete"),
                 () => _active && _sessionAvailable && _networkAvailable && Has("ObjectLink.Read") && CanReadLinkSource,
-                picker, corporate: true) { ShowTargetId = false };
+                picker, corporate: true)
+            { ShowTargetId = false };
             Links.Changed += ApplyLinkVersion;
         }
         SelectLinkSourceCommand = new((parameter, _) => { SelectedSearchHit = (DesktopSearchHit)parameter!; return System.Threading.Tasks.Task.CompletedTask; },

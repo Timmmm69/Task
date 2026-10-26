@@ -11,8 +11,16 @@ public sealed partial class DesktopWorkApiClientTests
     {
         var response = Json(HttpStatusCode.OK, new JsonObject
         {
-            ["id"] = id, ["version"] = version, ["name"] = "Компания", ["legalName"] = "ООО Компания", ["industry"] = "ИТ",
-            ["website"] = "https://example.test", ["taxIdentifier"] = "123", ["notes"] = "Заметки", ["status"] = "inactive", ["lifecycleState"] = "active",
+            ["id"] = id,
+            ["version"] = version,
+            ["name"] = "Компания",
+            ["legalName"] = "ООО Компания",
+            ["industry"] = "ИТ",
+            ["website"] = "https://example.test",
+            ["taxIdentifier"] = "123",
+            ["notes"] = "Заметки",
+            ["status"] = "inactive",
+            ["lifecycleState"] = "active",
             ["contacts"] = links ?? new JsonArray()
         }.ToJsonString());
         if (tag is not null) response.Headers.TryAddWithoutValidation("ETag", tag);
@@ -50,7 +58,10 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(null)][InlineData("W/\"v7\"")][InlineData("\"v8\"")][InlineData("\"v07\"")]
+    [InlineData(null)]
+    [InlineData("W/\"v7\"")]
+    [InlineData("\"v8\"")]
+    [InlineData("\"v07\"")]
     public async System.Threading.Tasks.Task CompanyCardRejectsMissingWeakAndMismatchedTags(string? tag)
     {
         var id = Guid.NewGuid();
@@ -59,15 +70,22 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(403)][InlineData(404)][InlineData(409)][InlineData(412)][InlineData(422)][InlineData(503)]
+    [InlineData(403)]
+    [InlineData(404)]
+    [InlineData(409)]
+    [InlineData(412)]
+    [InlineData(422)]
+    [InlineData(503)]
     public async System.Threading.Tasks.Task CompanyErrorsNeverBecomeSavedRecords(int code)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json((HttpStatusCode)code, "{\"title\":\"sensitive submitted value\"}")));
         var result = await fixture.Client.SaveCompanyAsync(new(Guid.NewGuid(), 7, "Компания"), null);
         Assert.True(code switch
         {
-            403 => result is DesktopWorkResult<DesktopCompany>.Forbidden, 404 => result is DesktopWorkResult<DesktopCompany>.NotFound,
-            409 or 412 => result is DesktopWorkResult<DesktopCompany>.Conflict, 422 => result is DesktopWorkResult<DesktopCompany>.ValidationFailure,
+            403 => result is DesktopWorkResult<DesktopCompany>.Forbidden,
+            404 => result is DesktopWorkResult<DesktopCompany>.NotFound,
+            409 or 412 => result is DesktopWorkResult<DesktopCompany>.Conflict,
+            422 => result is DesktopWorkResult<DesktopCompany>.ValidationFailure,
             _ => result is DesktopWorkResult<DesktopCompany>.ServerUnavailable
         });
         if (result is DesktopWorkResult<DesktopCompany>.ValidationFailure invalid) Assert.DoesNotContain("sensitive", invalid.Message);
@@ -104,7 +122,9 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData("ftp://example.test")][InlineData("https://user:password@example.test")][InlineData("example.test")]
+    [InlineData("ftp://example.test")]
+    [InlineData("https://user:password@example.test")]
+    [InlineData("example.test")]
     public async System.Threading.Tasks.Task CompanyUnsafeWebsiteNeverReachesNetwork(string website)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => throw new InvalidOperationException("No request expected"));

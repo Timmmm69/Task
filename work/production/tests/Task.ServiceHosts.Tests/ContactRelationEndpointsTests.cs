@@ -27,9 +27,13 @@ public sealed partial class ProductEndpointsTests
     }
 
     [Theory]
-    [InlineData("POST", "channels", true, 428)][InlineData("PATCH", "channels/child", true, 428)]
-    [InlineData("DELETE", "channels/child", true, 428)][InlineData("POST", "addresses", true, 428)]
-    [InlineData("POST", "channels", false, 400)][InlineData("PATCH", "channels/child", false, 400)][InlineData("POST", "addresses", false, 400)]
+    [InlineData("POST", "channels", true, 428)]
+    [InlineData("PATCH", "channels/child", true, 428)]
+    [InlineData("DELETE", "channels/child", true, 428)]
+    [InlineData("POST", "addresses", true, 428)]
+    [InlineData("POST", "channels", false, 400)]
+    [InlineData("PATCH", "channels/child", false, 400)]
+    [InlineData("POST", "addresses", false, 400)]
     public async System.Threading.Tasks.Task ContactChildRoutesRejectMissingRequiredHeaders(string method, string path, bool missingVersion, int expected)
     {
         var store = new RecordingStore(); using var server = Server(store); using var client = server.CreateClient();
@@ -40,7 +44,8 @@ public sealed partial class ProductEndpointsTests
     }
 
     [Theory]
-    [InlineData("PATCH")][InlineData("DELETE")]
+    [InlineData("PATCH")]
+    [InlineData("DELETE")]
     public async System.Threading.Tasks.Task AddressUpdateAndDeleteHaveNoRoute(string method)
     {
         var store = new RecordingStore(); using var server = Server(store); using var client = server.CreateClient();

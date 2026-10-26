@@ -20,8 +20,14 @@ public sealed partial class CalendarEmployeePickerTests
     {
         if (Environment.GetEnvironmentVariable("TASK_CALENDAR_PICKER_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(CalendarEmployeePickerTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(CalendarEmployeePickerTests).FullName + "." + nameof(NativeCalendarUsesSharedPickerAndContactFallback));
             start.Environment["TASK_CALENDAR_PICKER_PROBE"] = "1";

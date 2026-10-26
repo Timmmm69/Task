@@ -10,7 +10,8 @@ namespace Task.Desktop.Tests.Work;
 public sealed partial class DesktopWorkApiClientTests
 {
     [Theory]
-    [InlineData("contact")][InlineData("company")]
+    [InlineData("contact")]
+    [InlineData("company")]
     public async AsyncTask ProjectContactsUseExistingGetPostDeleteContractsAndStrongProjectVersion(string type)
     {
         var project = ProjectFilesTests.Project(); var picker = new ProjectContactsTests.Client { TargetType = type };

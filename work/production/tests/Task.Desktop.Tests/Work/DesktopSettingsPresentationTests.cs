@@ -13,7 +13,13 @@ public sealed partial class DesktopWorkApiClientTests
     private const string PreferencesJson = """{"version":1,"enabled":true,"desktopEnabled":true,"soundEnabled":true,"defaultSnoozeMinutes":15,"quietHoursStart":null,"quietHoursEnd":null,"quietHoursTimeZone":null}""";
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)] [InlineData(6)] [InlineData(7)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
     public async System.Threading.Tasks.Task SettingsChoicesRoundTripThroughExistingApiAndReload(int day)
     {
         var stored = JsonNode.Parse(SettingsJson)!;

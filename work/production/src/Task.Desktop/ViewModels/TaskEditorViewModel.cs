@@ -135,8 +135,13 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
         Card.RebaseSource(task.Card);
         JsonArray Choices(IReadOnlyList<TaskChoice> choices) => new(choices.Where(choice => choice.Id.HasValue)
             .Select(choice => (JsonNode)new JsonObject { ["id"] = choice.Id!.Value.ToString("D"), ["name"] = choice.Name }).ToArray());
-        Card.SetOptions(new JsonObject { ["projects"] = Choices(previous.Projects), ["tasks"] = Choices(previous.Tasks),
-            ["people"] = Choices(previous.People), ["counterparties"] = Choices(previous.Counterparties) });
+        Card.SetOptions(new JsonObject
+        {
+            ["projects"] = Choices(previous.Projects),
+            ["tasks"] = Choices(previous.Tasks),
+            ["people"] = Choices(previous.People),
+            ["counterparties"] = Choices(previous.Counterparties)
+        });
         previous.Changed -= Changed; Card.Changed += Changed;
         _suppressChanges = false;
         OnPropertyChanged(nameof(Card));

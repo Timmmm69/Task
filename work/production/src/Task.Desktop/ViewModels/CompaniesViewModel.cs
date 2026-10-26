@@ -251,8 +251,10 @@ public sealed partial class CompaniesViewModel : ViewModelBase, IDisposable
 
     private static string ListFailure<T>(DesktopWorkResult<T> result) => result switch
     {
-        DesktopWorkResult<T>.Forbidden => "Нет доступа к списку.", DesktopWorkResult<T>.AuthenticationFailure => "Сессия завершена. Выполните вход снова.",
-        DesktopWorkResult<T>.ValidationFailure => "Проверьте запрос поиска.", _ => "Не удалось загрузить список. Повторите запрос."
+        DesktopWorkResult<T>.Forbidden => "Нет доступа к списку.",
+        DesktopWorkResult<T>.AuthenticationFailure => "Сессия завершена. Выполните вход снова.",
+        DesktopWorkResult<T>.ValidationFailure => "Проверьте запрос поиска.",
+        _ => "Не удалось загрузить список. Повторите запрос."
     };
     public void UpdateAccess()
     {
