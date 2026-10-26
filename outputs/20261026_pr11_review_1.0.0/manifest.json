@@ -1,18 +1,19 @@
 {
   "version": "1.0.0",
   "scope": "Published review summary; full receipts retained locally at the same outputs path",
+  "encoding": "UTF-8 without BOM; LF",
   "files": [
     {
       "path": "REPORT.md",
-      "sha256": "92cc0d1fd082865dbe304c46c26750b63cef9b4f532e4872b3b336eb7dc2eb56"
+      "sha256": "a20b00b9c6ce6eb567c800a607779ca83c56aa59b0956d2989adafe9afe9d1fd"
     },
     {
       "path": "source-manifest.json",
-      "sha256": "85256a500e56094becb7f83097439fd3b17c71452623f27219986cf69b006b22"
+      "sha256": "60678d46419464a1ed9cf4e668049489d38db2d8683e08b78de9d7c7b70c4348"
     },
     {
       "path": "validation.json",
-      "sha256": "31005b3db3ff461aff80292356fda06ae79ebfae10fbac6d5e2bc39c44b7cd79"
+      "sha256": "794571a749ad549f104f2a2663b8b01dec041bc08f29c2b5fe8e4a7303aeb7ba"
     }
   ]
 }
