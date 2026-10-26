@@ -25,6 +25,7 @@ public sealed class CalendarAppearanceTests
             var days = Assert.IsType<Grid>(item.Template.FindName("PART_MonthView", item));
             var periods = Assert.IsType<Grid>(item.Template.FindName("PART_YearView", item));
             Assert.Equal(42, days.Children.OfType<CalendarDayButton>().Count());
+            Assert.All(days.Children.OfType<CalendarDayButton>(), day => Assert.IsType<Style>(day.FocusVisualStyle));
             Assert.Single(days.Children.OfType<CalendarDayButton>(), day => day.IsSelected);
             Assert.Equal(Visibility.Visible, days.Visibility);
             Assert.Equal(Visibility.Hidden, periods.Visibility);
@@ -41,6 +42,7 @@ public sealed class CalendarAppearanceTests
             Assert.Equal(Visibility.Hidden, days.Visibility);
             Assert.Equal(Visibility.Visible, periods.Visibility);
             Assert.Equal(12, periods.Children.OfType<CalendarButton>().Count());
+            Assert.All(periods.Children.OfType<CalendarButton>(), period => Assert.IsType<Style>(period.FocusVisualStyle));
 
             header.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Layout(calendar);

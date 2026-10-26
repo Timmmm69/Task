@@ -8,7 +8,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Task.FocusVisualStyle}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarDayButton">
@@ -71,7 +71,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Task.FocusVisualStyle}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarButton">
@@ -135,9 +135,9 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="PART_PreviousButton" Content="‹" Width="32" Padding="0" Style="{StaticResource Task.Button.Secondary}" Focusable="False" AutomationProperties.Name="Предыдущий период"/>
-                        <Button x:Name="PART_HeaderButton" Grid.Column="1" Margin="4,0" FontWeight="SemiBold" Style="{StaticResource Task.Button.Secondary}" Focusable="False"/>
-                        <Button x:Name="PART_NextButton" Grid.Column="2" Content="›" Width="32" Padding="0" Style="{StaticResource Task.Button.Secondary}" Focusable="False" AutomationProperties.Name="Следующий период"/>
+                        <Button x:Name="PART_PreviousButton" Content="‹" Width="32" Padding="0" Style="{DynamicResource Task.Button.Secondary}" Focusable="False" AutomationProperties.Name="Предыдущий период"/>
+                        <Button x:Name="PART_HeaderButton" Grid.Column="1" Margin="4,0" FontWeight="SemiBold" Style="{DynamicResource Task.Button.Secondary}" Focusable="False"/>
+                        <Button x:Name="PART_NextButton" Grid.Column="2" Content="›" Width="32" Padding="0" Style="{DynamicResource Task.Button.Secondary}" Focusable="False" AutomationProperties.Name="Следующий период"/>
                         <Grid x:Name="PART_MonthView" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,6,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
@@ -224,7 +224,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource Task.Font.Family}"/>
         <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Body}"/>
         <Setter Property="CalendarStyle" Value="{StaticResource Task.Calendar}"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Task.FocusVisualStyle}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DatePicker">
@@ -236,7 +236,7 @@
                             </Grid.ColumnDefinitions>
                             <!-- Native text box preserves the empty-date watermark and validation. -->
                             <DatePickerTextBox x:Name="PART_TextBox" Margin="{TemplateBinding Padding}" Background="Transparent" BorderThickness="0" Foreground="{TemplateBinding Foreground}" VerticalContentAlignment="Center"/>
-                            <Button x:Name="PART_Button" Grid.Column="1" Style="{StaticResource Task.Button.Secondary}" Margin="2" Padding="6" MinHeight="0" BorderThickness="0" Focusable="False" AutomationProperties.Name="Открыть календарь" ToolTip="Выбрать дату">
+                            <Button x:Name="PART_Button" Grid.Column="1" Style="{DynamicResource Task.Button.Secondary}" Margin="2" Padding="6" MinHeight="0" BorderThickness="0" Focusable="False" AutomationProperties.Name="Открыть календарь" ToolTip="Выбрать дату">
                                 <Path Data="M 2,4 L 14,4 14,14 2,14 Z M 2,7 L 14,7 M 5,2 L 5,5 M 11,2 L 11,5" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.5" Width="16" Height="16"/>
                             </Button>
                             <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" Focusable="False"/>
