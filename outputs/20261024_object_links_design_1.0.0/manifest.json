@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinksView.xaml",
+      "sha256": "1703f94cac87a2601d6d48ef6f46066b3a6e64a64410e9ba029f1bd23aaa6d90"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml",
+      "sha256": "73ab66ecd49b524e50631708063488672abc6419c38b2a51527f3ef02194f028"
+    },
+    {
+      "path": "outputs/20261024_object_links_design_1.0.0/validation-report.md",
+      "sha256": "a046c60a46aa7486ffc9af37d8cc890c55e28587ebcf6da26434a4f162070b85"
+    }
+  ]
+}

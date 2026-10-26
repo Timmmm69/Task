@@ -213,7 +213,7 @@ public sealed partial class ProjectsViewModelTests
     public async AsyncTask Sections_ExistingArchiveActionStillRequiresCompletedProjectAndUsesServerResponse()
     {
         var client = SectionClient();
-        using var vm = new ProjectsViewModel(client, User, Capabilities);
+        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) => true);
         vm.Activate(); await vm.CurrentDetailsOperation;
         Assert.False(vm.ArchiveProjectCommand.CanExecute(null));
         var completed = Project() with { Status = DesktopProjectStatus.Completed, ActualEndAt = DateTimeOffset.UtcNow };

@@ -1,0 +1,444 @@
+diff --git a/work/production/src/Task.Desktop/MainWindow.xaml.cs b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+index 548951d..d0e4647 100644
+--- a/work/production/src/Task.Desktop/MainWindow.xaml.cs
++++ b/work/production/src/Task.Desktop/MainWindow.xaml.cs
+@@ -34,0 +35,3 @@ public partial class MainWindow : Window
++        if (viewModel.Projects is { } projects)
++            projects.ConfirmAction = (title, message, action) =>
++                Personal.PersonalConfirmationDialog.Confirm(this, title, message, action);
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+index 713aef6..d827a3c 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs
+@@ -35,0 +36 @@ public sealed partial class ProjectsViewModel
++        _confirmationGeneration++;
+diff --git a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+index de9b0b3..2c7455b 100644
+--- a/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
++++ b/work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs
+@@ -164,0 +165,2 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
++    private long _confirmationGeneration;
++    internal Func<string, string, string, bool> ConfirmAction { get; set; }
+@@ -167 +169,2 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+-        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null, ProjectContactsViewModel? contacts = null)
++        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null, ProjectContactsViewModel? contacts = null,
++        Func<string, string, string, bool>? confirmAction = null)
+@@ -169,0 +173 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
++        ConfirmAction = confirmAction ?? ((_, _, _) => false);
+@@ -199 +203 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+-        ArchiveProjectCommand = new(ArchiveAsync, _ => CanArchive && SelectedItem?.Source.Status == DesktopProjectStatus.Completed);
++        ArchiveProjectCommand = new(ArchiveAsync, _ => CanArchiveSelectedProject);
+@@ -202 +206 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+-        RemoveMemberCommand = new(RemoveMemberAsync, parameter => CanManageMembers && !MembersSection.IsLoading && parameter is ProjectMemberItemViewModel member && Members.Contains(member) && member.UserAccountId != SelectedItem?.Source.OwnerUserId);
++        RemoveMemberCommand = new(RemoveMemberAsync, CanRemoveMember);
+@@ -478,2 +482,5 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+-        var item = SelectedItem; if (item is null) return;
+-        var result = await _closeOperations.TrackAsync(() => _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
++        var item = SelectedItem; if (item is null || !CanArchiveSelectedProject || cancellationToken.IsCancellationRequested) return;
++        var source = item.Source; var generation = _confirmationGeneration; var peopleGeneration = _peopleGeneration;
++        if (!ConfirmAction("Архивировать проект?", $"Проект „{source.Name}“ будет перемещён в архив.", "Архивировать")) return;
++        if (!ConfirmationIsCurrent(item, source, generation, peopleGeneration, cancellationToken) || !CanArchiveSelectedProject) return;
++        var result = await _closeOperations.TrackAsync(() => _client.ArchiveProjectAsync(source.Id, source.Version, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
+@@ -517,2 +524,9 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+-        var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member) return;
+-        var result = await _closeOperations.TrackAsync(() => _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken)).ConfigureAwait(true);
++        var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member || !CanRemoveMember(member) || cancellationToken.IsCancellationRequested) return;
++        var source = item.Source; var userId = member.UserAccountId;
++        var generation = _confirmationGeneration; var peopleGeneration = _peopleGeneration;
++        // The UUID remains unambiguous even when User.Read does not expose a name.
++        var participant = _capabilities.Contains("User.Read") ? $"{member.UserText} ({userId:D})" : userId.ToString("D");
++        if (!ConfirmAction("Исключить участника из проекта?", $"Участник „{participant}“ будет исключён из проекта „{source.Name}“. Учётная запись сотрудника не удаляется.", "Исключить")) return;
++        if (!ConfirmationIsCurrent(item, source, generation, peopleGeneration, cancellationToken)
++            || member.UserAccountId != userId || !CanRemoveMember(member)) return;
++        var result = await _closeOperations.TrackAsync(() => _client.RemoveMemberAsync(source.Id, source.Version, userId, cancellationToken)).ConfigureAwait(true);
+@@ -521 +535 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
+-        { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник удалён из проекта."; }
++        { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник исключён из проекта."; }
+@@ -529,0 +544,15 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
++    private bool CanArchiveSelectedProject => CanArchive && _projectConfirmed && !IsDetailLoading
++        && OverviewSection.State == ProjectSectionState.Loaded && SelectedItem?.Source.Status == DesktopProjectStatus.Completed;
++
++    private bool CanRemoveMember(object? parameter) => CanManageMembers && _projectConfirmed && _membersConfirmed
++        && !IsDetailLoading && MembersSection.State is ProjectSectionState.Loaded or ProjectSectionState.PartialAccess
++        && parameter is ProjectMemberItemViewModel member && Members.Contains(member)
++        && member.UserAccountId != SelectedItem?.Source.OwnerUserId;
++
++    private bool ConfirmationIsCurrent(ProjectItemViewModel item, DesktopProjectDto source, long generation,
++        long peopleGeneration, CancellationToken cancellationToken) =>
++        !cancellationToken.IsCancellationRequested && !_disposed && IsActive && _sessionAvailable && _networkAvailable
++        && generation == _confirmationGeneration && peopleGeneration == _peopleGeneration
++        && ReferenceEquals(SelectedItem, item) && ReferenceEquals(item.Source, source)
++        && item.Id == source.Id && item.Source.Version == source.Version && _projectConfirmed;
++
+diff --git a/work/production/src/Task.Desktop/Views/ProjectsView.xaml b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+index 7c7fc38..e4e582e 100644
+--- a/work/production/src/Task.Desktop/Views/ProjectsView.xaml
++++ b/work/production/src/Task.Desktop/Views/ProjectsView.xaml
+@@ -106 +106 @@
+-                                            <Button Grid.Column="3" Content="Удалить" Style="{StaticResource Task.Button.Secondary}"
++                                            <Button Grid.Column="3" Content="Исключить" Style="{StaticResource Task.Button.Secondary}"
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectActionConfirmationTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectActionConfirmationTests.cs
+new file mode 100644
+index 0000000..71941ac
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectActionConfirmationTests.cs
+@@ -0,0 +1,236 @@
++using Task.Desktop.Projects;
++using Task.Desktop.ViewModels;
++using AsyncTask = System.Threading.Tasks.Task;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed partial class ProjectsViewModelTests
++{
++    private static readonly Guid Participant = Guid.NewGuid();
++
++    private static FakeProjectsClient ConfirmationClient()
++    {
++        var project = Project() with { Status = DesktopProjectStatus.Completed, Version = 7 };
++        return new FakeProjectsClient
++        {
++            Projects = SuccessPage(project),
++            Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(project),
++            Roles = new DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>.Succeeded([Role()]),
++            Members = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded(
++                [new(ProjectId, Participant, RoleId, "active", 1, null, null)])
++        };
++    }
++
++    private static async AsyncTask Ready(ProjectsViewModel vm)
++    {
++        vm.Activate();
++        await WaitUntil(() => vm.State == ProjectsScreenState.Loaded && !vm.IsDetailLoading && !vm.MembersSection.IsLoading);
++        await vm.CurrentDetailsOperation;
++    }
++
++    private static AsyncCommand ActionCommand(ProjectsViewModel vm, bool archive) => archive ? vm.ArchiveProjectCommand : vm.RemoveMemberCommand;
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async AsyncTask MissingConfirmationHandlerSafelyCancels(bool archive)
++    {
++        var client = ConfirmationClient();
++        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        await Ready(vm);
++        await ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single());
++        Assert.Equal(0, client.ArchiveCalls + client.RemoveCalls);
++    }
++
++    [Fact]
++    public async AsyncTask RemovalConfirmationIncludesAvailableNameAndAccountId()
++    {
++        var client = ConfirmationClient(); var prompts = 0;
++        using var vm = new ProjectsViewModel(client, User, Capabilities.Append("User.Read"), confirmAction: (_, message, _) =>
++        {
++            prompts++; Assert.Contains("Иван Петров", message); Assert.Contains(Participant.ToString("D"), message);
++            return false;
++        });
++        await Ready(vm); vm.Members.Single().SetName("Иван Петров");
++        await vm.RemoveMemberCommand.ExecuteAsync(vm.Members.Single());
++        Assert.Equal(1, prompts); Assert.Equal(0, client.RemoveCalls);
++    }
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async AsyncTask CancelledWhileConfirmingNeverCallsApi(bool archive)
++    {
++        var client = ConfirmationClient(); using var cancellation = new CancellationTokenSource();
++        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) => { cancellation.Cancel(); return true; });
++        await Ready(vm);
++        await ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single(), cancellation.Token);
++        Assert.Equal(0, client.ArchiveCalls + client.RemoveCalls);
++    }
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async AsyncTask ConfirmationCancelPreservesStateAndNeverCallsApi(bool archive)
++    {
++        var client = ConfirmationClient(); var prompts = 0;
++        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (title, message, action) =>
++        {
++            prompts++;
++            Assert.Contains("Проект Альфа", message);
++            Assert.Equal(archive ? "Архивировать" : "Исключить", action);
++            Assert.Equal(archive ? "Архивировать проект?" : "Исключить участника из проекта?", title);
++            if (!archive) { Assert.Contains(Participant.ToString("D"), message); Assert.Contains("не удаляется", message); }
++            Assert.Equal(0, client.ArchiveCalls + client.RemoveCalls);
++            return false;
++        });
++        await Ready(vm);
++        var selected = vm.SelectedItem; var items = vm.Items; var members = vm.Members;
++        await ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single());
++        Assert.Equal(1, prompts); Assert.Equal(0, client.ArchiveCalls + client.RemoveCalls);
++        Assert.Same(items, vm.Items); Assert.Same(selected, vm.SelectedItem); Assert.Same(members, vm.Members);
++        Assert.Equal(7, selected!.Source.Version);
++    }
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async AsyncTask ConfirmationSendsCapturedTargetOnceAndAppliesSuccess(bool archive)
++    {
++        var client = ConfirmationClient(); var prompts = 0; ProjectsViewModel vm = null!;
++        client.Archive = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Version = 8 }, 8);
++        client.Update = client.Archive;
++        vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) =>
++        {
++            prompts++;
++            Assert.False(ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single()).GetAwaiter().GetResult());
++            if (!archive) client.Members = new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.Succeeded([]);
++            return true;
++        });
++        using (vm)
++        {
++            await Ready(vm); var selected = vm.SelectedItem!; var loads = client.MemberCalls;
++            await ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single());
++            Assert.Equal(1, prompts); Assert.Equal(1, client.ArchiveCalls + client.RemoveCalls);
++            Assert.Equal(ProjectId, client.LastAction!.Value.ProjectId); Assert.Equal(7, client.LastAction.Value.Version);
++            Assert.Equal(archive ? (Guid?)null : Participant, client.LastAction.Value.UserId);
++            if (archive) { Assert.Empty(vm.Items); Assert.Null(vm.SelectedItem); Assert.Contains("архив", vm.Message); }
++            else { Assert.Empty(vm.Members); Assert.Equal(8, selected.Source.Version); Assert.Equal(loads + 1, client.MemberCalls); Assert.Contains("исключён", vm.Message); }
++        }
++    }
++
++    [Theory]
++    [InlineData(true, "permission")]
++    [InlineData(false, "permission")]
++    [InlineData(true, "offline")]
++    [InlineData(false, "offline")]
++    [InlineData(true, "session")]
++    [InlineData(false, "session")]
++    [InlineData(true, "status")]
++    [InlineData(false, "owner")]
++    [InlineData(false, "section")]
++    public async AsyncTask UnavailableActionDoesNotEvenAskForConfirmation(bool archive, string reason)
++    {
++        var client = ConfirmationClient(); var prompts = 0;
++        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) => { prompts++; return true; });
++        await Ready(vm); var member = vm.Members.Single();
++        ChangeConfirmationContext(vm, reason);
++        Assert.False(ActionCommand(vm, archive).CanExecute(member));
++        await ActionCommand(vm, archive).ExecuteAsync(member);
++        Assert.Equal(0, prompts); Assert.Equal(0, client.ArchiveCalls + client.RemoveCalls);
++    }
++
++    [Theory]
++    [InlineData(true, "permission")]
++    [InlineData(false, "permission")]
++    [InlineData(true, "offline")]
++    [InlineData(false, "offline")]
++    [InlineData(true, "session")]
++    [InlineData(false, "session")]
++    [InlineData(true, "status")]
++    [InlineData(false, "owner")]
++    [InlineData(false, "section")]
++    [InlineData(true, "selection")]
++    [InlineData(false, "selection")]
++    [InlineData(true, "version")]
++    [InlineData(false, "version")]
++    [InlineData(true, "id")]
++    [InlineData(false, "id")]
++    [InlineData(true, "deactivate")]
++    [InlineData(false, "deactivate")]
++    [InlineData(true, "context")]
++    [InlineData(false, "context")]
++    [InlineData(true, "accessRestored")]
++    [InlineData(false, "accessRestored")]
++    [InlineData(true, "permissionsRestored")]
++    [InlineData(false, "permissionsRestored")]
++    [InlineData(false, "membersReloaded")]
++    public async AsyncTask ChangedContextDuringConfirmationNeverSendsStaleRequest(bool archive, string reason)
++    {
++        var client = ConfirmationClient(); ProjectsViewModel vm = null!;
++        vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) =>
++        {
++            if (reason == "membersReloaded") vm.ReloadMembersCommand.ExecuteAsync().GetAwaiter().GetResult();
++            else ChangeConfirmationContext(vm, reason);
++            return true;
++        });
++        using (vm)
++        {
++            await Ready(vm);
++            await ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single());
++            Assert.Equal(0, client.ArchiveCalls + client.RemoveCalls);
++        }
++    }
++
++    private static void ChangeConfirmationContext(ProjectsViewModel vm, string reason)
++    {
++        var item = vm.SelectedItem!;
++        switch (reason)
++        {
++            case "permission": vm.UpdateCapabilities(["Project.Read"]); break;
++            case "offline": vm.UpdateConnectivity(false); break;
++            case "session": vm.UpdateSessionState(false); break;
++            case "status": item.Replace(item.Source with { Status = DesktopProjectStatus.Active }); break;
++            case "owner": item.Replace(item.Source with { OwnerUserId = Participant }); break;
++            case "section": vm.MembersSection.SetState(ProjectSectionState.ServerUnavailable); break;
++            case "selection": vm.SelectedItem = null; break;
++            case "version": item.Replace(item.Source with { Version = 8 }); break;
++            case "id": item.Replace(item.Source with { Id = Guid.NewGuid() }); break;
++            case "deactivate": vm.Deactivate(); break;
++            case "context": vm.CancelDetailSections(); break;
++            case "accessRestored": vm.UpdateConnectivity(false); vm.UpdateConnectivity(true); break;
++            case "permissionsRestored": vm.UpdateCapabilities(["Project.Read"]); vm.UpdateCapabilities(Capabilities); break;
++            default: throw new ArgumentException(reason);
++        }
++    }
++
++    [Theory]
++    [InlineData(true, "conflict")]
++    [InlineData(false, "conflict")]
++    [InlineData(true, "forbidden")]
++    [InlineData(false, "forbidden")]
++    [InlineData(true, "invalid")]
++    [InlineData(false, "notFound")]
++    [InlineData(true, "unavailable")]
++    [InlineData(false, "unavailable")]
++    public async AsyncTask ServerFailurePreservesDataAndDoesNotReportSuccessOrRetry(bool archive, string error)
++    {
++        var client = ConfirmationClient();
++        DesktopProjectResult<DesktopProjectDto> result = error switch
++        {
++            "conflict" => new DesktopProjectResult<DesktopProjectDto>.VersionConflict(),
++            "forbidden" => new DesktopProjectResult<DesktopProjectDto>.Forbidden(),
++            "invalid" => new DesktopProjectResult<DesktopProjectDto>.InvalidState(),
++            "notFound" => new DesktopProjectResult<DesktopProjectDto>.NotFound(),
++            _ => new DesktopProjectResult<DesktopProjectDto>.ServerUnavailable()
++        };
++        client.Archive = result; client.Update = result;
++        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) => true);
++        await Ready(vm); var selected = vm.SelectedItem; var members = vm.Members;
++        await ActionCommand(vm, archive).ExecuteAsync(vm.Members.Single());
++        Assert.Equal(1, client.ArchiveCalls + client.RemoveCalls);
++        Assert.Same(selected, vm.SelectedItem); Assert.Single(vm.Items); Assert.Same(members, vm.Members);
++        Assert.Equal(7, selected!.Source.Version);
++        Assert.DoesNotContain("перемещён", vm.Message ?? ""); Assert.DoesNotContain("исключён", vm.Message ?? "");
++    }
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectConfirmationUiTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectConfirmationUiTests.cs
+new file mode 100644
+index 0000000..7b971b4
+--- /dev/null
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectConfirmationUiTests.cs
+@@ -0,0 +1,94 @@
++using System.Diagnostics;
++using System.Runtime.InteropServices;
++using System.Windows;
++using System.Windows.Automation.Peers;
++using System.Windows.Automation.Provider;
++using System.Windows.Controls;
++using System.Windows.Input;
++using System.Windows.Interop;
++using System.Windows.Threading;
++using Task.Desktop.Personal;
++
++namespace Task.Desktop.Tests.Projects;
++
++public sealed class ProjectConfirmationUiTests
++{
++    [Fact]
++    public async System.Threading.Tasks.Task NativeWpf_ConfirmationCancelEscapeCloseAndAutomation()
++    {
++        if (Environment.GetEnvironmentVariable("TASK_PROJECT_CONFIRM_CHILD") != "1")
++        {
++            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
++            start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
++            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeWpf_ConfirmationCancelEscapeCloseAndAutomation));
++            start.Environment["TASK_PROJECT_CONFIRM_CHILD"] = "1";
++            using var process = Process.Start(start)!;
++            var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
++            try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(55)); Assert.True(process.ExitCode == 0, await stdout + await stderr); }
++            finally { if (!process.HasExited) process.Kill(true); }
++            return;
++        }
++        var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var thread = new Thread(() =>
++        {
++            var dispatcher = Dispatcher.CurrentDispatcher;
++            SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
++            dispatcher.BeginInvoke(() =>
++            {
++                Window? owner = null;
++                try
++                {
++                    var app = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
++                    app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative) });
++                    owner = new Window { Width = 400, Height = 200, ShowInTaskbar = false }; owner.Show();
++                    foreach (var action in new[] { "Архивировать", "Исключить" })
++                        foreach (var operation in new[] { "cancel", "escape", "close", "confirm" })
++                        {
++                            Exception? callbackError = null; var timedOut = false;
++                            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
++                            timer.Tick += (_, _) => { timedOut = true; foreach (Window dialog in owner.OwnedWindows) dialog.Close(); timer.Stop(); };
++                            timer.Start();
++                            dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, () =>
++                            {
++                                Window? dialog = null;
++                                try
++                                {
++                                    dialog = owner.OwnedWindows.Cast<Window>().Single();
++                                    Assert.Equal(action + "?", dialog.Title);
++                                    var body = Assert.IsType<StackPanel>(dialog.Content);
++                                    var buttons = body.Children.OfType<StackPanel>().Single().Children.OfType<Button>().ToArray();
++                                    var cancel = buttons.Single(button => button.IsCancel);
++                                    var confirm = buttons.Single(button => !button.IsCancel);
++                                    Assert.True(cancel.IsDefault); Assert.False(confirm.IsDefault); Assert.Same(cancel, Keyboard.FocusedElement);
++                                    Assert.Equal("Отмена", new ButtonAutomationPeer(cancel).GetName());
++                                    Assert.Equal(action, new ButtonAutomationPeer(confirm).GetName());
++                                    if (operation == "close") dialog.Close();
++                                    else if (operation == "escape")
++                                    {
++                                        var handle = new WindowInteropHelper(dialog).Handle;
++                                        Assert.True(PostMessage(handle, 0x0100, 0x1B, 0));
++                                        Assert.True(PostMessage(handle, 0x0101, 0x1B, 0));
++                                    }
++                                    else ((IInvokeProvider)new ButtonAutomationPeer(operation == "confirm" ? confirm : cancel).GetPattern(PatternInterface.Invoke)).Invoke();
++                                }
++                                catch (Exception error) { callbackError = error; dialog?.Close(); }
++                            });
++                            var result = PersonalConfirmationDialog.Confirm(owner, action + "?", "Проект „Альфа“ · участник 123", action);
++                            timer.Stop(); Assert.Null(callbackError); Assert.False(timedOut); Assert.Equal(operation == "confirm", result);
++                        }
++                    done.SetResult();
++                }
++                catch (Exception error) { done.SetException(error); }
++                finally { owner?.Close(); dispatcher.InvokeShutdown(); }
++            });
++            Dispatcher.Run();
++        });
++        thread.SetApartmentState(ApartmentState.STA); thread.Start();
++        await done.Task.WaitAsync(TimeSpan.FromSeconds(45));
++        Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5))));
++    }
++
++    [DllImport("user32.dll", SetLastError = true)]
++    [return: MarshalAs(UnmanagedType.Bool)]
++    private static extern bool PostMessage(IntPtr handle, uint message, nuint wParam, nint lParam);
++}
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+index 1aa22f3..ec287ed 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs
+@@ -216 +216 @@ public sealed partial class ProjectsViewModelTests
+-        using var vm = new ProjectsViewModel(client, User, Capabilities);
++        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) => true);
+diff --git a/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs b/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+index 2fa199a..603e47a 100644
+--- a/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
++++ b/work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs
+@@ -273,0 +274,3 @@ public sealed partial class ProjectsViewModelTests
++        public int ArchiveCalls { get; private set; }
++        public int RemoveCalls { get; private set; }
++        public (Guid ProjectId, long Version, Guid? UserId)? LastAction { get; private set; }
+@@ -289 +292,2 @@ public sealed partial class ProjectsViewModelTests
+-        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> ArchiveProjectAsync(Guid id, long version, string idempotencyKey, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult(Archive);
++        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> ArchiveProjectAsync(Guid id, long version, string idempotencyKey, CancellationToken cancellationToken = default)
++        { ArchiveCalls++; LastAction = (id, version, null); return System.Threading.Tasks.Task.FromResult(Archive); }
+@@ -293 +297,2 @@ public sealed partial class ProjectsViewModelTests
+-        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> RemoveMemberAsync(Guid projectId, long projectVersion, Guid userId, CancellationToken cancellationToken = default) => System.Threading.Tasks.Task.FromResult(Update);
++        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> RemoveMemberAsync(Guid projectId, long projectVersion, Guid userId, CancellationToken cancellationToken = default)
++        { RemoveCalls++; LastAction = (projectId, projectVersion, userId); return System.Threading.Tasks.Task.FromResult(Update); }

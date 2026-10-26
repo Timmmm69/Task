@@ -1,258 +1,487 @@
-<UserControl x:Class="Task.Desktop.Views.WorkHubView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views"
-        AutomationProperties.Name="Рабочие данные" AutomationProperties.AutomationId="WorkHubView">
-    <Grid Margin="20">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="0,0,0,14">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views" x:Class="Task.Desktop.Views.WorkHubView" AutomationProperties.Name="Рабочие данные" AutomationProperties.AutomationId="WorkHubView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Task.Desktop;component/Resources/Personal.Hub.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Style="{StaticResource Hub.Personal.Root}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="Auto"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsExpanded, ElementName=LinksExpander}" Value="True"/>
+                                    <Condition Binding="{Binding Visibility, ElementName=LinksExpander}" Value="Visible"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Height" Value="*"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Style="{StaticResource Hub.Personal.Toolbar}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="{Binding AreaTitle}" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding AccessText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
+                <TextBlock Text="{Binding AreaTitle}" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding AccessText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Content="Загрузить ещё" Command="{Binding LoadMoreCommand}" Margin="0,0,8,0"
-                        Visibility="{Binding HasMoreResults, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                        Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubLoadMoreButton"/>
+                <Button Content="Загрузить ещё" Command="{Binding LoadMoreCommand}" Margin="0,0,8,0" Visibility="{Binding HasMoreResults, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubLoadMoreButton"/>
                 <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="WorkHubRefreshButton"/>
             </StackPanel>
         </Grid>
-
-        <Border Grid.Row="1" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12"
-                Visibility="{Binding HasFeedback, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                AutomationProperties.Name="Сообщение раздела" AutomationProperties.AutomationId="WorkHubFeedback"
-                AutomationProperties.LiveSetting="Polite">
-            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Border Grid.Row="1" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12" Visibility="{Binding HasFeedback, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Сообщение раздела" AutomationProperties.AutomationId="WorkHubFeedback" AutomationProperties.LiveSetting="Polite">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <Path Data="{StaticResource Task.Icon.Info}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}"/>
-                <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Center"
-                           AutomationProperties.AutomationId="WorkHubFeedbackText"/>
+                <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.AutomationId="WorkHubFeedbackText"/>
             </Grid>
         </Border>
-
-        <Border Grid.Row="2" Style="{StaticResource Task.State.Panel}" Panel.ZIndex="30"
-                Visibility="{Binding IsLimitedRole, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleState">
+        <Border Grid.Row="2" Style="{StaticResource Task.State.Panel}" Panel.ZIndex="30" Visibility="{Binding IsLimitedRole, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleState">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520">
                 <Path Data="{StaticResource Task.Icon.Lock}" Width="32" Height="32" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
-                <TextBlock Text="Раздел недоступен для текущей роли" Style="{StaticResource Task.State.Title}" Margin="0,12,0,0" TextAlignment="Center"
-                           AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleText"/>
+                <TextBlock Text="Раздел недоступен для текущей роли" Style="{StaticResource Task.State.Title}" Margin="0,12,0,0" TextAlignment="Center" AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleText"/>
                 <TextBlock Text="Названия, совпадения, количество и связи защищённых объектов не раскрываются. Обратитесь к администратору, если доступ нужен для работы." Style="{StaticResource Task.State.Body}" Margin="0,8,0,0" TextAlignment="Center" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
-
-        <Border Grid.Row="2" Background="#EFFFFFFF" Panel.ZIndex="20"
-                Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                AutomationProperties.Name="Загрузка раздела" AutomationProperties.AutomationId="WorkHubLoadingState"
-                AutomationProperties.LiveSetting="Polite">
+        <Border Grid.Row="2" Background="#EFFFFFFF" Panel.ZIndex="20" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Загрузка раздела" AutomationProperties.AutomationId="WorkHubLoadingState" AutomationProperties.LiveSetting="Polite">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ProgressBar IsIndeterminate="True" Width="160" Style="{StaticResource Task.Progress.Indeterminate}"/>
                 <TextBlock Text="{Binding LoadingText}" Margin="0,12,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
-
         <Grid x:Name="CatalogDropArea" Background="Transparent" AllowDrop="True" PreviewDragOver="ExplorerDragOver" PreviewDrop="ExplorerDrop" DragLeave="ExplorerDragLeave" Grid.Row="2" Visibility="{Binding IsCatalog, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Style="{StaticResource Hub.Personal.CatalogMasterColumn}"/>
+                <ColumnDefinition Style="{StaticResource Hub.Personal.CatalogGap}"/>
+                <ColumnDefinition Style="{StaticResource Hub.Personal.CatalogDetailColumn}"/>
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Hub.Personal.CatalogTreePane}">
                 <DockPanel>
                     <Button x:Name="CatalogRootDropButton" DockPanel.Dock="Top" Content="Корень каталога" Command="{Binding SelectCatalogRootCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8" AllowDrop="True" DragOver="CatalogRootDragOver" Drop="CatalogRootDrop" AutomationProperties.AutomationId="CatalogRootButton"/>
                     <TextBlock DockPanel.Dock="Bottom" Text="Каталог пуст. Создайте папку или запись." TextWrapping="Wrap" Visibility="{Binding IsCatalogEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-                    <TreeView ItemsSource="{Binding CatalogRoots}" BorderThickness="0" SelectedItemChanged="CatalogSelectionChanged"
-                              PreviewMouseLeftButtonDown="CatalogMouseDown" PreviewMouseMove="CatalogMouseMove" AllowDrop="True" DragOver="CatalogDragOver" Drop="CatalogDrop"
-                              AutomationProperties.Name="Дерево каталога" AutomationProperties.AutomationId="CatalogList">
-                        <TreeView.ItemContainerStyle><Style TargetType="TreeViewItem">
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                            <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
-                        </Style></TreeView.ItemContainerStyle>
-                        <TreeView.ItemTemplate><HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <StackPanel Orientation="Horizontal" Margin="4"><TextBlock Text="{Binding Icon}" Margin="0,0,6,0"/><StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/><TextBlock Text="{Binding ItemTypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="11"/></StackPanel></StackPanel>
-                        </HierarchicalDataTemplate></TreeView.ItemTemplate>
+                    <TreeView ItemsSource="{Binding CatalogRoots}" BorderThickness="0" SelectedItemChanged="CatalogSelectionChanged" PreviewMouseLeftButtonDown="CatalogMouseDown" PreviewMouseMove="CatalogMouseMove" AllowDrop="True" DragOver="CatalogDragOver" Drop="CatalogDrop" AutomationProperties.Name="Дерево каталога" AutomationProperties.AutomationId="CatalogList" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                                        <Setter Property="Padding" Value="8,10"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal" Margin="4">
+                                    <TextBlock Text="{Binding Icon}" Margin="0,0,6,0"/>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding ItemTypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
                     </TreeView>
                 </DockPanel>
             </Border>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
-                <WrapPanel Margin="0,0,0,12"><Button Content="Добавить _файл…" Click="AddPickedFile" IsEnabled="{Binding CanAddCatalogPaths}" AutomationProperties.AutomationId="AddCatalogFilePicker"/><Button Content="Добавить _папку…" Click="AddPickedFolder" IsEnabled="{Binding CanAddCatalogPaths}" AutomationProperties.AutomationId="AddCatalogFolderPicker"/></WrapPanel><TextBlock Text="Новая запись каталога" FontWeight="SemiBold"/><TextBlock Text="{Binding CatalogCreationLocation}" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
-                <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Название записи"/>
-                <ComboBox ItemsSource="{Binding CatalogItemTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NewItemType}" Margin="0,8,0,8" AutomationProperties.AutomationId="CatalogItemType"/><Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
-                <Button Content="Создать папку" Command="{Binding CreateCatalogFolderCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="CreateCatalogFolderButton"/>
-                <Separator Margin="0,18"/>
-                <TextBlock Text="Переместить выбранный элемент в:"/>
-                <ComboBox ItemsSource="{Binding CatalogMoveDestinations}" SelectedItem="{Binding MoveDestination}" DisplayMemberPath="Label" Style="{StaticResource Task.Input.Combo}" Margin="0,6,0,8" AutomationProperties.Name="Папка назначения"/>
-                <Button Content="Переместить в…" Command="{Binding MoveCatalogItemCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoveCatalogItemButton"/>
-                <Separator Margin="0,18"/>
-                <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding SelectedCatalogItem.Description}" TextWrapping="Wrap" Margin="0,0,0,8"/>
-                <Border Visibility="{Binding IsCorporate, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:FileLocationsView DataContext="{Binding Locations}"/></Border>
-                <StackPanel Visibility="{Binding IsPersonal, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-                    <TextBlock Text="{Binding CatalogPathLabel}" Margin="0,14,0,0"/>
-                    <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,6,0,8" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
-                    <Button Content="Сохранить путь" Command="{Binding AddLocationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"/>
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Style="{StaticResource Hub.Personal.CatalogScroll}">
+                <StackPanel>
+                    <Border Style="{StaticResource Hub.Personal.CatalogCreateCard}">
+                        <StackPanel>
+                            <WrapPanel Margin="0,0,0,12">
+                                <Button Content="Добавить _файл…" Click="AddPickedFile" IsEnabled="{Binding CanAddCatalogPaths}" AutomationProperties.AutomationId="AddCatalogFilePicker"/>
+                                <Button Content="Добавить _папку…" Click="AddPickedFolder" IsEnabled="{Binding CanAddCatalogPaths}" AutomationProperties.AutomationId="AddCatalogFolderPicker"/>
+                            </WrapPanel>
+                            <TextBlock Text="Новая запись каталога" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding CatalogCreationLocation}" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                            <TextBox Text="{Binding NewItemName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" Margin="0,6,0,8" AutomationProperties.Name="Название записи"/>
+                            <ComboBox ItemsSource="{Binding CatalogItemTypes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding NewItemType}" Margin="0,8,0,8" AutomationProperties.AutomationId="CatalogItemType"/>
+                            <Button Content="Создать запись" Command="{Binding CreateCatalogItemCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="CreateCatalogItemButton"/>
+                            <Button Content="Создать папку" Command="{Binding CreateCatalogFolderCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="CreateCatalogFolderButton"/>
+                        </StackPanel>
+                    </Border>
+                    <Separator Margin="0,18" Style="{StaticResource Hub.Personal.CatalogCreateDivider}"/>
+                    <Border Style="{StaticResource Hub.Personal.CatalogMoveCard}">
+                        <StackPanel>
+                            <TextBlock Text="Переместить выбранный элемент в:"/>
+                            <ComboBox ItemsSource="{Binding CatalogMoveDestinations}" SelectedItem="{Binding MoveDestination}" DisplayMemberPath="Label" Style="{StaticResource Hub.Personal.InputCombo}" Margin="0,6,0,8" AutomationProperties.Name="Папка назначения"/>
+                            <Button Content="Переместить в…" Command="{Binding MoveCatalogItemCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoveCatalogItemButton"/>
+                        </StackPanel>
+                    </Border>
+                    <Separator Margin="0,18" Style="{StaticResource Hub.Personal.CatalogMoveDivider}"/>
+                    <Border Style="{StaticResource Hub.Personal.CatalogSelectionCard}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding SelectedCatalogItem.Description}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                            <Border Visibility="{Binding IsCorporate, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                <views:FileLocationsView DataContext="{Binding Locations}"/>
+                            </Border>
+                            <StackPanel Visibility="{Binding IsPersonal, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                <TextBlock Text="{Binding CatalogPathLabel}" Margin="0,14,0,0"/>
+                                <TextBox Text="{Binding NewItemPath, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" Margin="0,6,0,8" AutomationProperties.Name="Путь к файлу" AutomationProperties.AutomationId="CatalogLocationTextBox"/>
+                                <Button Content="Сохранить путь" Command="{Binding AddLocationCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"/>
+                            </StackPanel>
+                            <WrapPanel Margin="0,10,0,0">
+                                <Button Content="Открыть" Command="{Binding OpenFileCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="OpenCatalogFileButton"/>
+                            </WrapPanel>
+                            <TextBlock Text="{Binding FileBehaviorText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-                <WrapPanel Margin="0,10,0,0">
-                    <Button Content="Открыть" Command="{Binding OpenFileCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="OpenCatalogFileButton"/>
-                </WrapPanel>
-                <TextBlock Text="{Binding FileBehaviorText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
-            </StackPanel></ScrollViewer>
+            </ScrollViewer>
         </Grid>
-
         <DockPanel Grid.Row="2" Visibility="{Binding IsContacts, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
             <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,12" Visibility="{Binding HasCompanies, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                 <Button Content="Контакты" Command="{Binding ShowContactsCommand}" Style="{StaticResource Task.Button.Secondary}"/>
                 <Button Content="Компании" Command="{Binding ShowCompaniesCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/>
             </WrapPanel>
             <Grid>
-            <views:CompaniesView DataContext="{Binding Companies}" Visibility="{Binding DataContext.ShowCompanies, RelativeSource={RelativeSource AncestorType=views:WorkHubView}, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-        <Grid Visibility="{Binding ShowContactPeople, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="360"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="8"><ListBox ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" BorderThickness="0" AutomationProperties.Name="{Binding ContactsListName}" AutomationProperties.AutomationId="ContactsList"><ListBox.ItemTemplate><DataTemplate><StackPanel Margin="8"><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/><TextBlock Text="{Binding Notes}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox></Border>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"><StackPanel>
-                <ContentControl Content="{Binding ContactCard}">
-                    <ContentControl.ContentTemplate><DataTemplate>
-                        <StackPanel Margin="0,0,0,20" AutomationProperties.AutomationId="ContactCard">
-                            <TextBlock Text="Карточка контакта" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                            <TextBlock Text="Выберите контакт в списке для просмотра." Margin="0,8" TextWrapping="Wrap">
-                                <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding HasDetails}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
-                            </TextBlock>
-                            <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-                            <TextBlock Text="{Binding Message}" Margin="0,8" TextWrapping="Wrap" AutomationProperties.AutomationId="ContactCardMessage"/>
-                            <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-                                <TextBlock Text="{Binding Details.Contact.DisplayName}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                                <TextBlock Text="Имя" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Contact.FirstName}"/>
-                                <TextBlock Text="Фамилия" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Contact.LastName}"/>
-                                <TextBlock Text="Отчество" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.MiddleName}"/>
-                                <TextBlock Text="Бизнес-статус" Margin="0,8,0,2"/><TextBlock Text="{Binding StatusLabel}"/>
-                                <TextBlock Text="Заметки" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Contact.Notes}" TextWrapping="Wrap"/>
-                            </StackPanel>
-                            <WrapPanel Margin="0,10,0,0">
-                                <Button Content="Редактировать" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="EditContactButton"/>
-                                <Button Content="Обновить карточку" Command="{Binding ReloadCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
-                            </WrapPanel>
-                            <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12,0,0">
-                                <StackPanel IsEnabled="{Binding CanChangeDraft}">
-                                    <TextBlock Text="Имя"/><TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Имя контакта"/>
-                                    <TextBlock Text="Фамилия" Margin="0,8,0,0"/><TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}"/>
-                                    <TextBlock Text="Отчество" Margin="0,8,0,0"/><TextBox Text="{Binding MiddleName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Task.Input.Text}"/>
-                                    <TextBlock Text="Отображаемое имя" Margin="0,8,0,0"/><TextBox Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" Style="{StaticResource Task.Input.Text}"/>
-                                    <TextBlock Text="Бизнес-статус" Margin="0,8,0,0"/><ComboBox ItemsSource="{Binding StatusChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Status}"/>
-                                    <TextBlock Text="Заметки" Margin="0,8,0,0"/><TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" MaxHeight="180" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}"/>
+                <views:CompaniesView DataContext="{Binding Companies}" Visibility="{Binding DataContext.ShowCompanies, RelativeSource={RelativeSource AncestorType=views:WorkHubView}, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                <Grid Visibility="{Binding ShowContactPeople, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Style="{StaticResource Hub.Personal.ContactsMasterColumn}"/>
+                        <ColumnDefinition Style="{StaticResource Hub.Personal.ContactsGap}"/>
+                        <ColumnDefinition Style="{StaticResource Hub.Personal.ContactsDetailColumn}"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Hub.Personal.ContactsPane}">
+                        <ListBox ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" BorderThickness="0" AutomationProperties.Name="{Binding ContactsListName}" AutomationProperties.AutomationId="ContactsList" Style="{StaticResource Hub.Personal.ContactsList}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="8">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Notes}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Style="{StaticResource Hub.Personal.ContactsScroll}" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <ContentControl Content="{Binding ContactCard}">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,20" AutomationProperties.AutomationId="ContactCard">
+                                            <TextBlock Text="Карточка контакта" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Выберите контакт в списке для просмотра." Margin="0,8" TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding HasDetails}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                                            <TextBlock Text="{Binding Message}" Margin="0,8" TextWrapping="Wrap" AutomationProperties.AutomationId="ContactCardMessage"/>
+                                            <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding Details.Contact.DisplayName}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                <TextBlock Text="Имя" Margin="0,8,0,2"/>
+                                                <TextBlock Text="{Binding Details.Contact.FirstName}"/>
+                                                <TextBlock Text="Фамилия" Margin="0,8,0,2"/>
+                                                <TextBlock Text="{Binding Details.Contact.LastName}"/>
+                                                <TextBlock Text="Отчество" Margin="0,8,0,2"/>
+                                                <TextBlock Text="{Binding Details.MiddleName}"/>
+                                                <TextBlock Text="Бизнес-статус" Margin="0,8,0,2"/>
+                                                <TextBlock Text="{Binding StatusLabel}"/>
+                                                <TextBlock Text="Заметки" Margin="0,8,0,2"/>
+                                                <TextBlock Text="{Binding Details.Contact.Notes}" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <WrapPanel Margin="0,10,0,0">
+                                                <Button Content="Редактировать" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="EditContactButton"/>
+                                                <Button Content="Обновить карточку" Command="{Binding ReloadCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
+                                            </WrapPanel>
+                                            <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12,0,0">
+                                                <StackPanel IsEnabled="{Binding CanChangeDraft}">
+                                                    <TextBlock Text="Имя"/>
+                                                    <TextBox Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Hub.Personal.InputText}" AutomationProperties.Name="Имя контакта"/>
+                                                    <TextBlock Text="Фамилия" Margin="0,8,0,0"/>
+                                                    <TextBox Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Hub.Personal.InputText}"/>
+                                                    <TextBlock Text="Отчество" Margin="0,8,0,0"/>
+                                                    <TextBox Text="{Binding MiddleName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Style="{StaticResource Hub.Personal.InputText}"/>
+                                                    <TextBlock Text="Отображаемое имя" Margin="0,8,0,0"/>
+                                                    <TextBox Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" Style="{StaticResource Hub.Personal.InputText}"/>
+                                                    <TextBlock Text="Бизнес-статус" Margin="0,8,0,0"/>
+                                                    <ComboBox ItemsSource="{Binding StatusChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Status}"/>
+                                                    <TextBlock Text="Заметки" Margin="0,8,0,0"/>
+                                                    <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" MaxHeight="180" VerticalScrollBarVisibility="Auto" Style="{StaticResource Hub.Personal.InputText}"/>
+                                                </StackPanel>
+                                                <WrapPanel Margin="0,12,0,0">
+                                                    <Button Content="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="SaveContactButton"/>
+                                                    <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
+                                                </WrapPanel>
+                                            </StackPanel>
+                                            <views:ContactRelationsView/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                            <views:InteractionsView DataContext="{Binding ContactInteractions}"/>
+                            <Border Style="{StaticResource Hub.Personal.ContactCreateCard}">
+                                <StackPanel>
+                                    <TextBlock Text="Новый контакт" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Имя" Margin="0,12,0,4"/>
+                                    <TextBox Text="{Binding NewContactFirstName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" AutomationProperties.AutomationId="ContactFirstNameTextBox"/>
+                                    <TextBlock Text="Фамилия" Margin="0,10,0,4"/>
+                                    <TextBox Text="{Binding NewContactLastName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                    <TextBlock Text="Отображаемое имя" Margin="0,10,0,4"/>
+                                    <TextBox Text="{Binding NewContactDisplayName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" AutomationProperties.AutomationId="ContactDisplayNameTextBox"/>
+                                    <Button Content="Создать контакт" Command="{Binding CreateContactCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,12,0,0" AutomationProperties.AutomationId="CreateContactButton"/>
+                                    <TextBlock Text="Созданный контакт доступен для связей объектов и поиска." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
                                 </StackPanel>
-                                <WrapPanel Margin="0,12,0,0">
-                                    <Button Content="Сохранить" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="SaveContactButton"/>
-                                    <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0,0,0"/>
-                                </WrapPanel>
-                            </StackPanel>
-                            <views:ContactRelationsView/>
+                            </Border>
                         </StackPanel>
-                    </DataTemplate></ContentControl.ContentTemplate>
-                </ContentControl>
-                <views:InteractionsView DataContext="{Binding ContactInteractions}"/>
-                <TextBlock Text="Новый контакт" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                <TextBlock Text="Имя" Margin="0,12,0,4"/><TextBox Text="{Binding NewContactFirstName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactFirstNameTextBox"/>
-                <TextBlock Text="Фамилия" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactLastName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/>
-                <TextBlock Text="Отображаемое имя" Margin="0,10,0,4"/><TextBox Text="{Binding NewContactDisplayName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="ContactDisplayNameTextBox"/>
-                <Button Content="Создать контакт" Command="{Binding CreateContactCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,12,0,0" AutomationProperties.AutomationId="CreateContactButton"/>
-                <TextBlock Text="Созданный контакт доступен для связей объектов и поиска." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,14,0,0"/>
-            </StackPanel></ScrollViewer>
-        </Grid>
+                    </ScrollViewer>
+                </Grid>
             </Grid>
         </DockPanel>
-
-        <Grid Grid.Row="2" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-              AutomationProperties.Name="Канонический глобальный поиск" AutomationProperties.AutomationId="SearchSurface">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Grid Grid.Row="2" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Канонический глобальный поиск" AutomationProperties.AutomationId="SearchSurface" Style="{StaticResource Hub.Personal.SearchSurface}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Grid Margin="0,0,0,12">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,0,8,0" MinHeight="44"
-                         AutomationProperties.Name="Поиск задач, проектов, файлов и людей" AutomationProperties.AutomationId="GlobalSearchTextBox">
-                    <TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding SearchCommand}"/></TextBox.InputBindings>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" Margin="0,0,8,0" MinHeight="44" AutomationProperties.Name="Поиск задач, проектов, файлов и людей" AutomationProperties.AutomationId="GlobalSearchTextBox">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
+                    </TextBox.InputBindings>
                 </TextBox>
                 <Button Grid.Column="1" Content="Найти" Command="{Binding SearchCommand}" Style="{StaticResource Task.Button.Primary}" MinWidth="96" AutomationProperties.AutomationId="GlobalSearchButton"/>
             </Grid>
-            <ListBox Grid.Row="1" ItemsSource="{Binding SearchTypeFilters}" SelectedItem="{Binding SearchTypeFilter}" BorderThickness="0" Background="Transparent"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.DirectionalNavigation="Cycle" AutomationProperties.Name="Тип результата">
-                <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
-                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="0,0,8,8"/><Setter Property="HorizontalContentAlignment" Value="Center"/></Style></ListBox.ItemContainerStyle>
+            <ListBox Grid.Row="1" ItemsSource="{Binding SearchTypeFilters}" SelectedItem="{Binding SearchTypeFilter}" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.DirectionalNavigation="Cycle" AutomationProperties.Name="Тип результата">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="12,6"/>
+                        <Setter Property="Margin" Value="0,0,8,8"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
             <Border Grid.Row="2" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
-                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <Path Data="{StaticResource Task.Icon.Lock}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}"/>
-                    <StackPanel Grid.Column="1"><TextBlock Text="{Binding SearchScopeTitle}" FontWeight="SemiBold"/><TextBlock Text="{Binding SearchScopeText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding SearchScopeTitle}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SearchScopeText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                    </StackPanel>
                 </Grid>
             </Border>
-            <TextBlock Grid.Row="3" Text="{Binding SearchSummaryText}" Margin="0,0,0,10" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                       AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="GlobalSearchSummary"/>
+            <TextBlock Grid.Row="3" Text="{Binding SearchSummaryText}" Margin="0,0,0,10" Foreground="{DynamicResource Task.Brush.Text.Secondary}" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="GlobalSearchSummary"/>
             <Grid Grid.Row="4">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <ItemsControl ItemsSource="{Binding SearchGroups}" AutomationProperties.Name="Сгруппированные результаты поиска" AutomationProperties.AutomationId="GlobalSearchResults">
-                        <ItemsControl.ItemTemplate><DataTemplate>
-                            <StackPanel Margin="0,0,0,14">
-                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="4,0,0,6"/>
-                                <ItemsControl ItemsSource="{Binding Items}"><ItemsControl.ItemTemplate><DataTemplate>
-                                    <DockPanel LastChildFill="True">
-                                    <Button DockPanel.Dock="Right" Content="Связи" Margin="8,0,0,6" VerticalAlignment="Center"
-                                            Command="{Binding DataContext.SelectLinkSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
-                                            Visibility="{Binding DataContext.HasLinks, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                                            Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="{Binding Title, StringFormat=Выбрать связи объекта: {0}}"/>
-                                    <Button Command="{Binding DataContext.OpenSearchResultCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
-                                            Style="{StaticResource Task.Button.Secondary}" HorizontalContentAlignment="Stretch" Padding="12" Margin="0,0,0,6"
-                                            AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="Открыть доступный результат">
-                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="36"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                            <Path Data="{StaticResource Task.Icon.Search}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center"/>
-                                            <StackPanel Grid.Column="1">
-                                                <TextBlock Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"><Run Text="{Binding GroupLabel, Mode=OneWay}"/><Run Text=" · "/><Run Text="{Binding TypeLabel, Mode=OneWay}"/></TextBlock>
-                                                <TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding TitlePrefix, Mode=OneWay}"/><Run Text="{Binding TitleMatch, Mode=OneWay}" FontWeight="Bold" Background="{DynamicResource Task.Brush.Semantic.WarningSoft}"/><Run Text="{Binding TitleSuffix, Mode=OneWay}"/></TextBlock>
-                                                <TextBlock Text="{Binding UpdatedAt, StringFormat=Обновлено {0:g}}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"/>
-                                            </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="Открыть" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Brand.Primary}" Margin="12,0,0,0"/>
-                                        </Grid>
-                                    </Button>
-                                    </DockPanel>
-                                </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-                            </StackPanel>
-                        </DataTemplate></ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,14">
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="4,0,0,6"/>
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <DockPanel LastChildFill="True">
+                                                    <Button DockPanel.Dock="Right" Content="Связи" Margin="8,0,0,6" VerticalAlignment="Center" Command="{Binding DataContext.SelectLinkSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding DataContext.HasLinks, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="{Binding Title, StringFormat=Выбрать связи объекта: {0}}"/>
+                                                    <Button Command="{Binding DataContext.OpenSearchResultCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" HorizontalContentAlignment="Stretch" AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="Открыть доступный результат" Style="{StaticResource Hub.Personal.SearchResult}">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="36"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Path Data="{StaticResource Task.Icon.Search}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center"/>
+                                                            <StackPanel Grid.Column="1">
+                                                                <TextBlock Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12">
+                                                                    <Run Text="{Binding GroupLabel, Mode=OneWay}"/>
+                                                                    <Run Text=" · "/>
+                                                                    <Run Text="{Binding TypeLabel, Mode=OneWay}"/>
+                                                                </TextBlock>
+                                                                <TextBlock TextTrimming="CharacterEllipsis">
+                                                                    <Run Text="{Binding TitlePrefix, Mode=OneWay}"/>
+                                                                    <Run Text="{Binding TitleMatch, Mode=OneWay}" FontWeight="Bold" Background="{DynamicResource Task.Brush.Semantic.WarningSoft}"/>
+                                                                    <Run Text="{Binding TitleSuffix, Mode=OneWay}"/>
+                                                                </TextBlock>
+                                                                <TextBlock Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12" Style="{StaticResource Hub.Personal.SearchDate}"/>
+                                                            </StackPanel>
+                                                            <TextBlock Grid.Column="2" Text="Открыть" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Brand.Primary}" Margin="12,0,0,0"/>
+                                                        </Grid>
+                                                    </Button>
+                                                </DockPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
                 <Border Style="{StaticResource Task.State.Panel}" Visibility="{Binding ShowSearchEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="2" AutomationProperties.Name="Поиск не дал результатов">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440"><Path Data="{StaticResource Task.Icon.Search}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Ничего не найдено" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/><TextBlock Text="Измените запрос или выберите другой тип результата." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0" TextAlignment="Center"/></StackPanel>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
+                        <Path Data="{StaticResource Task.Icon.Search}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                        <TextBlock Text="Ничего не найдено" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/>
+                        <TextBlock Text="Измените запрос или выберите другой тип результата." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0" TextAlignment="Center"/>
+                    </StackPanel>
                 </Border>
             </Grid>
         </Grid>
-
         <Grid Grid.Row="2" Visibility="{Binding IsNotifications, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationsSurface">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-            <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal"><ComboBox ItemsSource="{Binding NotificationFilters}" SelectedItem="{Binding NotificationFilter}" MinWidth="170" Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Фильтр уведомлений"/><TextBlock Text="{Binding UnreadCount, StringFormat=Непрочитано: {0}}" Margin="14,0,0,0" VerticalAlignment="Center"/></StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox ItemsSource="{Binding NotificationFilters}" SelectedItem="{Binding NotificationFilter}" MinWidth="170" Style="{StaticResource Hub.Personal.InputCombo}" AutomationProperties.Name="Фильтр уведомлений"/>
+                    <TextBlock Text="{Binding UnreadCount, StringFormat=Непрочитано: {0}}" Margin="14,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
                 <Button Grid.Column="1" Content="Прочитать все" Command="{Binding MarkAllReadCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="MarkAllNotificationsReadButton"/>
             </Grid>
             <Grid Grid.Row="1">
                 <ListBox ItemsSource="{Binding VisibleNotifications}" SelectedItem="{Binding SelectedNotification}" BorderThickness="0" Background="Transparent" AutomationProperties.Name="Уведомления по срочности" AutomationProperties.AutomationId="NotificationsList">
-                    <ListBox.ItemTemplate><DataTemplate>
-                        <Border Padding="14" Margin="0,0,0,8" CornerRadius="6" BorderThickness="1">
-                            <Border.Style><Style TargetType="Border"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/><Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/><Style.Triggers><DataTrigger Binding="{Binding Severity}" Value="warning"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Warning}"/><Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.WarningSoft}"/></DataTrigger><DataTrigger Binding="{Binding Severity}" Value="critical"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Critical}"/><Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.CriticalSoft}"/></DataTrigger></Style.Triggers></Style></Border.Style>
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                <Ellipse Width="7" Height="7" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Top" Margin="0,6,0,0"><Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding IsUnread}" Value="False"><Setter Property="Visibility" Value="Hidden"/></DataTrigger></Style.Triggers></Style></Ellipse.Style></Ellipse>
-                                <StackPanel Grid.Column="1" Margin="10,0,16,0"><TextBlock><Run Text="{Binding SeverityLabel, Mode=OneWay}" FontWeight="SemiBold"/><Run Text=" · "/><Run Text="{Binding TimeText, Mode=OneWay}"/></TextBlock><TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="16" Margin="0,4,0,0" TextWrapping="Wrap"/><TextBlock Text="{Binding Body}" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel>
-                                <StackPanel Grid.Column="2"><Button Content="Открыть" Command="{Binding DataContext.OpenNotificationSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6"/><Button Content="Прочитано" Command="{Binding DataContext.MarkReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/><Button Content="Отложить" Command="{Binding DataContext.SnoozeNotificationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding CanSnooze,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" Margin="0,6,0,0"/></StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate></ListBox.ItemTemplate>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="14" Margin="0,0,0,8" CornerRadius="6" BorderThickness="1">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                                        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Severity}" Value="warning">
+                                                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Warning}"/>
+                                                <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.WarningSoft}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="critical">
+                                                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Critical}"/>
+                                                <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.CriticalSoft}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse Width="7" Height="7" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Top" Margin="0,6,0,0">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsUnread}" Value="False">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <StackPanel Grid.Column="1" Margin="10,0,16,0">
+                                        <TextBlock>
+                                            <Run Text="{Binding SeverityLabel, Mode=OneWay}" FontWeight="SemiBold"/>
+                                            <Run Text=" · "/>
+                                            <Run Text="{Binding TimeText, Mode=OneWay}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="16" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Body}" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <Button Content="Открыть" Command="{Binding DataContext.OpenNotificationSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6"/>
+                                        <Button Content="Прочитано" Command="{Binding DataContext.MarkReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/>
+                                        <Button Content="Отложить" Command="{Binding DataContext.SnoozeNotificationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding CanSnooze,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" Margin="0,6,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
-                <Border Panel.ZIndex="2"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasVisibleNotifications}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><Path Data="{StaticResource Task.Icon.Notifications}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Новых уведомлений нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/><TextBlock Text="Здесь появятся только разрешённые события." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0"/></StackPanel></Border>
+                <Border Panel.ZIndex="2">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasVisibleNotifications}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Path Data="{StaticResource Task.Icon.Notifications}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                        <TextBlock Text="Новых уведомлений нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/>
+                        <TextBlock Text="Здесь появятся только разрешённые события." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
             </Grid>
             <Expander Grid.Row="2" Header="Мои корпоративные напоминания" Margin="0,12,0,0" Visibility="{Binding CanManageCorporateReminders,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="CorporateRemindersPanel">
                 <ScrollViewer MaxHeight="330" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="0,8">
-                        <WrapPanel><Button Content="Обновить" Command="{Binding RefreshRemindersCommand}"/><Button Content="Новое" Command="{Binding NewReminderCommand}" Margin="8,0"/></WrapPanel>
+                        <WrapPanel>
+                            <Button Content="Обновить" Command="{Binding RefreshRemindersCommand}"/>
+                            <Button Content="Новое" Command="{Binding NewReminderCommand}" Margin="8,0"/>
+                        </WrapPanel>
                         <ListBox ItemsSource="{Binding CorporateReminders}" SelectedItem="{Binding SelectedCorporateReminder}" DisplayMemberPath="DisplayText" MaxHeight="110" Margin="0,8" AutomationProperties.Name="Мои напоминания"/>
                         <TextBlock Text="Задача или событие (при редактировании можно оставить прежний объект)" TextWrapping="Wrap"/>
-                        <WrapPanel><TextBox Text="{Binding ReminderSearch,UpdateSourceTrigger=PropertyChanged}" Width="220" AutomationProperties.Name="Поиск цели напоминания"/><Button Content="Найти" Command="{Binding SearchReminderTargetsCommand}" Margin="8,0"/></WrapPanel>
+                        <WrapPanel>
+                            <TextBox Text="{Binding ReminderSearch,UpdateSourceTrigger=PropertyChanged}" Width="220" AutomationProperties.Name="Поиск цели напоминания"/>
+                            <Button Content="Найти" Command="{Binding SearchReminderTargetsCommand}" Margin="8,0"/>
+                        </WrapPanel>
                         <ComboBox ItemsSource="{Binding ReminderTargets}" SelectedItem="{Binding ReminderTarget}" DisplayMemberPath="Title" Margin="0,6" AutomationProperties.Name="Выбор задачи или события"/>
                         <WrapPanel>
-                            <StackPanel Width="160" Margin="0,0,12,8"><TextBlock Text="Когда напомнить"/><ComboBox ItemsSource="{Binding ReminderTriggers}" SelectedItem="{Binding ReminderTrigger}"/></StackPanel>
-                            <StackPanel Width="150" Margin="0,0,12,8"><TextBlock Text="Отступ, мин (пусто — настройка)" TextWrapping="Wrap"/><TextBox Text="{Binding ReminderOffset,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
-                            <StackPanel Width="200" Margin="0,0,12,8"><TextBlock Text="Дата и время (dd.MM.yyyy HH:mm)"/><TextBox Text="{Binding ReminderAbsolute,UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+                            <StackPanel Width="160" Margin="0,0,12,8">
+                                <TextBlock Text="Когда напомнить"/>
+                                <ComboBox ItemsSource="{Binding ReminderTriggers}" SelectedItem="{Binding ReminderTrigger}"/>
+                            </StackPanel>
+                            <StackPanel Width="150" Margin="0,0,12,8">
+                                <TextBlock Text="Отступ, мин (пусто — настройка)" TextWrapping="Wrap"/>
+                                <TextBox Text="{Binding ReminderOffset,UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Width="200" Margin="0,0,12,8">
+                                <TextBlock Text="Дата и время (dd.MM.yyyy HH:mm)"/>
+                                <TextBox Text="{Binding ReminderAbsolute,UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
                         </WrapPanel>
-                        <WrapPanel><Button Content="Сохранить" Command="{Binding SaveReminderCommand}"/><Button Content="Отменить" Command="{Binding CancelReminderCommand}" Margin="8,0"/><Button Content="Восстановить" Command="{Binding RestoreReminderCommand}"/></WrapPanel>
+                        <WrapPanel>
+                            <Button Content="Сохранить" Command="{Binding SaveReminderCommand}"/>
+                            <Button Content="Отменить" Command="{Binding CancelReminderCommand}" Margin="8,0"/>
+                            <Button Content="Восстановить" Command="{Binding RestoreReminderCommand}"/>
+                        </WrapPanel>
                         <WrapPanel Margin="0,8">
                             <ComboBox ItemsSource="{Binding SnoozePresets}" SelectedItem="{Binding SnoozePreset}" MinWidth="150" AutomationProperties.Name="Время отсрочки"/>
                             <TextBox Text="{Binding SnoozeUntil,UpdateSourceTrigger=PropertyChanged}" Width="170" Margin="8,0" ToolTip="Для собственной отсрочки: dd.MM.yyyy HH:mm"/>
@@ -263,87 +492,312 @@
                 </ScrollViewer>
             </Expander>
         </Grid>
-
-        <Grid Grid.Row="2" Visibility="{Binding IsLifecycle, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Архив и корзина" AutomationProperties.AutomationId="LifecycleSurface">
-            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-            <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Path Data="{StaticResource Task.Icon.Lock}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}"/><StackPanel Grid.Column="1"><TextBlock Text="{Binding ScopeStatusText}" FontWeight="SemiBold"/><TextBlock Text="{Binding LifecycleScopeText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel></Grid></Border>
-            <Grid Grid.Row="1" Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="220"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBox Text="{Binding LifecycleQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,0,10,0" AutomationProperties.Name="Поиск в архиве и корзине" AutomationProperties.AutomationId="LifecycleSearchTextBox"/><ComboBox Grid.Column="1" ItemsSource="{Binding LifecycleTypeFilters}" SelectedItem="{Binding LifecycleTypeFilter}" Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Тип объекта"/><TextBlock Grid.Column="2" Text="{Binding VisibleLifecycleItems.Count, StringFormat={}{0} доступных объектов}" Margin="16,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></Grid>
-            <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
-                <ListBox ItemsSource="{Binding VisibleLifecycleItems}" SelectedItem="{Binding SelectedLifecycleItem}" BorderThickness="0" Background="Transparent" AutomationProperties.Name="Список доступных объектов" AutomationProperties.AutomationId="LifecycleItemsList">
-                    <ListBox.ItemTemplate><DataTemplate><Border Style="{StaticResource Task.Surface.Subtle}" Padding="12" Margin="0,0,0,6"><StackPanel><TextBlock Text="{Binding TypeLabel}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/><TextBlock Text="{Binding ChangedText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12" TextWrapping="Wrap"/></StackPanel></Border></DataTemplate></ListBox.ItemTemplate>
+        <Grid Grid.Row="2" Visibility="{Binding IsLifecycle, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Архив и корзина" AutomationProperties.AutomationId="LifecycleSurface" Style="{StaticResource Hub.Personal.LifecycleSurface}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Path Data="{StaticResource Task.Icon.Lock}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding ScopeStatusText}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding LifecycleScopeText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Grid Grid.Row="1" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding LifecycleQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" Margin="0,0,10,0" AutomationProperties.Name="Поиск в архиве и корзине" AutomationProperties.AutomationId="LifecycleSearchTextBox"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding LifecycleTypeFilters}" SelectedItem="{Binding LifecycleTypeFilter}" Style="{StaticResource Hub.Personal.InputCombo}" AutomationProperties.Name="Тип объекта"/>
+                <TextBlock Grid.Column="2" Text="{Binding VisibleLifecycleItems.Count, StringFormat={}{0} доступных объектов}" Margin="16,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <ListBox ItemsSource="{Binding VisibleLifecycleItems}" SelectedItem="{Binding SelectedLifecycleItem}" BorderThickness="0" AutomationProperties.Name="Список доступных объектов" AutomationProperties.AutomationId="LifecycleItemsList" Style="{StaticResource Hub.Personal.LifecycleList}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Hub.Personal.LifecycleRow}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding TypeLabel}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                                    <TextBlock Text="{Binding ChangedText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
-                <Border Grid.Column="2" Style="{StaticResource Task.Surface.Subtle}" Padding="20" AutomationProperties.Name="Инспектор lifecycle" AutomationProperties.AutomationId="LifecycleInspector">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel DataContext="{Binding SelectedLifecycleItem}"><TextBlock Text="{Binding TypeLabel, TargetNullValue=Выберите объект}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,5,0,0"/><TextBlock Text="{Binding LifecycleLabel}" Margin="0,5,0,16" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,14"><StackPanel><TextBlock Text="Только чтение" FontWeight="SemiBold"/><TextBlock Text="Работы завершены; история и разрешённые связи сохранены." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel></Border><TextBlock Text="{Binding ChangedText}" TextWrapping="Wrap"/><TextBlock Text="{Binding RetentionText}" TextWrapping="Wrap" Margin="0,8,0,16" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><Button Content="Восстановить" Command="{Binding DataContext.RestoreLifecycleItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.Name="Восстановить выбранный объект" AutomationProperties.AutomationId="RestoreLifecycleItemButton"/><TextBlock Text="{Binding DataContext.LifecycleRestoreText,RelativeSource={RelativeSource AncestorType=UserControl}}" TextWrapping="Wrap" Margin="0,10,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"/></StackPanel></ScrollViewer>
+                <Border Grid.Column="2" AutomationProperties.Name="Инспектор lifecycle" AutomationProperties.AutomationId="LifecycleInspector" Style="{StaticResource Hub.Personal.LifecycleInspector}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel DataContext="{Binding SelectedLifecycleItem}">
+                            <TextBlock Text="{Binding TypeLabel, TargetNullValue=Выберите объект}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            <TextBlock Text="{Binding LifecycleLabel}" Margin="0,5,0,16" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                            <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,14">
+                                <StackPanel>
+                                    <TextBlock Text="Только чтение" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Работы завершены; история и разрешённые связи сохранены." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="{Binding ChangedText}" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding RetentionText}" TextWrapping="Wrap" Margin="0,8,0,16" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                            <Button Content="Восстановить" Command="{Binding DataContext.RestoreLifecycleItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" AutomationProperties.Name="Восстановить выбранный объект" AutomationProperties.AutomationId="RestoreLifecycleItemButton"/>
+                            <TextBlock Text="{Binding DataContext.LifecycleRestoreText,RelativeSource={RelativeSource AncestorType=UserControl}}" TextWrapping="Wrap" Margin="0,10,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"/>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Border>
-                <Border Grid.ColumnSpan="3" Panel.ZIndex="3"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding HasVisibleLifecycleItems}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"><Path Data="{StaticResource Task.Icon.Archive}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Доступных объектов нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/><TextBlock Text="{Binding LifecycleEmptyText}" Style="{StaticResource Task.State.Body}" Margin="0,6,0,0" TextAlignment="Center"/></StackPanel></Border>
+                <Border Grid.ColumnSpan="3" Panel.ZIndex="3">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasVisibleLifecycleItems}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Path Data="{StaticResource Task.Icon.Archive}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                        <TextBlock Text="Доступных объектов нет" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/>
+                        <TextBlock Text="{Binding LifecycleEmptyText}" Style="{StaticResource Task.State.Body}" Margin="0,6,0,0" TextAlignment="Center"/>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Grid>
-
         <ScrollViewer Grid.Row="2" Visibility="{Binding IsSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Настройки" AutomationProperties.AutomationId="SettingsView">
             <Grid>
-                <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" ItemsSource="{Binding SettingsSections}" SelectedItem="{Binding SettingsSection}" BorderThickness="1" BorderBrush="{DynamicResource Task.Brush.Border.Default}" Background="{DynamicResource Task.Brush.Surface.Subtle}" Padding="6" VerticalAlignment="Top" AutomationProperties.Name="Разделы настроек" AutomationProperties.AutomationId="SettingsNavigation">
-                    <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="AutomationProperties.Name" Value="{Binding}"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="MinHeight" Value="44"/></Style></ListBox.ItemContainerStyle>
-                    <ListBox.ItemTemplate><DataTemplate><Grid Margin="10,9"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock Text="{Binding}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Grid.Column="1" Text="›" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="8,0,0,0"/></Grid></DataTemplate></ListBox.ItemTemplate>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="230"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ListBox Grid.Column="0" ItemsSource="{Binding SettingsSections}" SelectedItem="{Binding SettingsSection}" BorderBrush="{DynamicResource Task.Brush.Border.Default}" VerticalAlignment="Top" AutomationProperties.Name="Разделы настроек" AutomationProperties.AutomationId="SettingsNavigation" Style="{StaticResource Hub.Personal.SettingsNavigation}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="MinHeight" Value="44"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="10,9">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock Grid.Column="1" Text="›" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="8,0,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
                 </ListBox>
-            <StackPanel Grid.Column="2">
-                <Border Padding="20" Margin="0,0,0,12">
-                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding CanReadSettings}" Value="True"/><Condition Binding="{Binding IsProfileSettings}" Value="True"/></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers></Style></Border.Style>
-                    <StackPanel>
-                        <DockPanel><Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Brand.Soft}" CornerRadius="10" Padding="9,4"><TextBlock Text="Личные" FontSize="11" Foreground="{DynamicResource Task.Brush.Brand.Primary}"/></Border><StackPanel><TextBlock Text="Профиль и рабочий день" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/><TextBlock Text="{Binding SettingsPersistenceText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,12"/></StackPanel></DockPanel>
-                        <WrapPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Язык"/><ComboBox ItemsSource="{Binding LanguageChoices}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding UserLanguage}" IsEditable="False" AutomationProperties.Name="Язык интерфейса" AutomationProperties.AutomationId="SettingsLanguage"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Первый день недели"/><ComboBox ItemsSource="{Binding WeekdayChoices}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FirstDayOfWeek}" IsEditable="False" AutomationProperties.Name="Первый день недели" AutomationProperties.AutomationId="SettingsFirstDay"/><TextBlock Text="Формат времени"/><ComboBox ItemsSource="{Binding TimeFormatChoices}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding UserTimeFormat}" AutomationProperties.Name="Формат времени" AutomationProperties.AutomationId="SettingsTimeFormat"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Начало рабочего дня"/><TextBox Text="{Binding WorkdayStartDisplay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" MaxLength="16" ToolTip="Часы и минуты, например 09:00" AutomationProperties.Name="Начало рабочего дня" AutomationProperties.AutomationId="SettingsWorkdayStart"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Конец рабочего дня"/><TextBox Text="{Binding WorkdayEndDisplay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" MaxLength="16" ToolTip="Часы и минуты, например 09:00" AutomationProperties.Name="Конец рабочего дня" AutomationProperties.AutomationId="SettingsWorkdayEnd"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Длительность задачи, мин"/><TextBox Text="{Binding DefaultTaskDurationMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                            <StackPanel Width="300" Margin="0,0,12,10"><TextBlock Text="Время напоминания для задач со сроком без времени" TextWrapping="Wrap"/><TextBox Text="{Binding ReminderTimeDisplay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" MaxLength="16" ToolTip="Часы и минуты, например 09:00" AutomationProperties.Name="Время напоминания для срока без времени" AutomationProperties.AutomationId="SettingsReminderTime"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Напоминать за, мин"/><TextBox Text="{Binding DefaultReminderOffsetMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                        </WrapPanel>
-                        <CheckBox Content="Запускать Task вместе с Windows" IsChecked="{Binding AutostartEnabled}" Margin="0,4"/>
-                        <CheckBox Content="Разрешать локальные пути" IsChecked="{Binding AllowLocalPaths}" Margin="0,4"/>
-                        <CheckBox Content="Подтверждать удаление записей каталога" IsChecked="{Binding ConfirmCatalogDelete}" Margin="0,4"/>
-                        <StackPanel Width="320" HorizontalAlignment="Left" Margin="0,10,0,0"><TextBlock Text="Если файл недоступен"/><ComboBox SelectedValue="{Binding MissingFileBehavior}" SelectedValuePath="Tag"><ComboBoxItem Content="Показать действия" Tag="show_actions"/><ComboBoxItem Content="Оставить неактивным" Tag="keep_inactive"/><ComboBoxItem Content="Предложить новый путь" Tag="prompt_relink"/></ComboBox></StackPanel>
-                        <TextBlock Text="Время вводится в формате ЧЧ:ММ, например 09:00." Margin="0,10,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
-                        <TextBlock Text="{Binding ProfileSettingsError}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="SettingsProfileError"/>
-                        <Button Content="Сохранить личные настройки" Command="{Binding SaveUserSettingsCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,14,0,0" AutomationProperties.AutomationId="SaveUserSettingsButton"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Padding="20" Margin="0,0,0,12">
-                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding CanReadSettings}" Value="True"/><Condition Binding="{Binding IsNotificationSettings}" Value="True"/></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers></Style></Border.Style>
-                    <StackPanel>
-                        <TextBlock Text="Уведомления" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                        <StackPanel><TextBlock Text="Не беспокоить (часы и минуты; пусто — выключено)"/><WrapPanel><TextBox Text="{Binding QuietStartDisplay, UpdateSourceTrigger=PropertyChanged}" MaxLength="16" ToolTip="Часы и минуты, например 22:00" AutomationProperties.Name="Начало режима Не беспокоить" AutomationProperties.AutomationId="SettingsQuietStart" Width="90"/><TextBox Text="{Binding QuietEndDisplay, UpdateSourceTrigger=PropertyChanged}" MaxLength="16" ToolTip="Часы и минуты, например 22:00" AutomationProperties.Name="Конец режима Не беспокоить" AutomationProperties.AutomationId="SettingsQuietEnd" Width="90" Margin="8,0"/><TextBox Text="{Binding QuietHoursTimeZone, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Часовой пояс режима Не беспокоить" Width="220" ToolTip="Часовой пояс, например Europe/Minsk"/></WrapPanel></StackPanel><CheckBox Content="Получать уведомления" IsChecked="{Binding NotificationsEnabled}" Margin="0,12,0,4"/>
-                        <CheckBox Content="Показывать desktop-уведомления" IsChecked="{Binding DesktopNotificationsEnabled}" Margin="0,4"/>
-                        <TextBlock Text="Закрытие окна оставляет Task в системном трее, если он доступен. Полный выход — через меню значка Task; после выхода уведомления не показываются." TextWrapping="Wrap" Margin="0,6"/>
-                        <CheckBox Content="Воспроизводить звук" IsChecked="{Binding NotificationSoundEnabled}" Margin="0,4"/>
-                        <StackPanel Width="260" HorizontalAlignment="Left" Margin="0,10,0,0"><TextBlock Text="Отсрочка по умолчанию, мин"/><TextBox Text="{Binding DefaultSnoozeMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                        <TextBlock Text="{Binding NotificationSettingsError}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="SettingsNotificationError"/>
-                        <Button Content="Сохранить уведомления" Command="{Binding SaveNotificationPreferencesCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,14,0,0" AutomationProperties.AutomationId="SaveNotificationPreferencesButton"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Padding="20">
-                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsServerSettings}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Border.Style>
-                    <StackPanel>
-                        <DockPanel><Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="10" Padding="9,4"><TextBlock Text="Управляется организацией" FontSize="11"/></Border><StackPanel><TextBlock Text="Подключение и сервер" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/><TextBlock Text="Проверенный HTTPS endpoint и server-managed параметры." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12"/></StackPanel></DockPanel>
-                        <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,14"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="{Binding ServerAddress}" FontWeight="SemiBold"/><TextBlock Text="{Binding SettingsConnectionStatus}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/></StackPanel><TextBlock Grid.Column="1" Text="TLS" Foreground="{DynamicResource Task.Brush.Semantic.Success}" FontWeight="SemiBold" VerticalAlignment="Center"/></Grid></Border>
-                        <Border Background="{DynamicResource Task.Brush.Semantic.WarningSoft}" BorderBrush="{DynamicResource Task.Brush.Semantic.Warning}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,14" Visibility="{Binding IsOffline, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBlock Text="Сервер недоступен. Параметры показаны из последнего подтверждённого состояния; сохранение заблокировано." TextWrapping="Wrap"/></Border>
-                        <TextBlock Text="Настройки организации" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-                        <TextBlock Text="Серверные сроки хранения и горизонт повторений. Изменение доступно только администратору." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-                        <WrapPanel Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Корзина, дней"/><TextBox Text="{Binding TrashRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="История, дней"/><TextBox Text="{Binding HistoryRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Change feed, дней"/><TextBox Text="{Binding ChangeFeedRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                            <StackPanel Width="220" Margin="0,0,12,10"><TextBlock Text="Горизонт повторений, дней"/><TextBox Text="{Binding RecurrenceHorizonDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/></StackPanel>
-                        </WrapPanel>
-                        <Button Content="Сохранить настройки организации" Command="{Binding SaveOrganizationSettingsCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="SaveOrganizationSettingsButton" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
+                <StackPanel Style="{StaticResource Hub.Personal.SettingsBody}">
+                    <Border Padding="20" Margin="0,0,0,12">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding CanReadSettings}" Value="True"/>
+                                            <Condition Binding="{Binding IsProfileSettings}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding IsPersonal}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="CornerRadius" Value="0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <DockPanel>
+                                <Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Brand.Soft}" CornerRadius="10" Padding="9,4">
+                                    <TextBlock Text="Личные" FontSize="11" Foreground="{DynamicResource Task.Brush.Brand.Primary}"/>
+                                </Border>
+                                <StackPanel>
+                                    <TextBlock Text="Профиль и рабочий день" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SettingsPersistenceText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,12"/>
+                                </StackPanel>
+                            </DockPanel>
+                            <WrapPanel>
+                                <StackPanel Width="220" Style="{StaticResource Hub.Personal.LanguageField}">
+                                    <TextBlock Text="Язык"/>
+                                    <ComboBox ItemsSource="{Binding LanguageChoices}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding UserLanguage}" IsEditable="False" AutomationProperties.Name="Язык интерфейса" AutomationProperties.AutomationId="SettingsLanguage"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Style="{StaticResource Hub.Personal.WeekField}">
+                                    <TextBlock Text="Первый день недели"/>
+                                    <ComboBox ItemsSource="{Binding WeekdayChoices}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding FirstDayOfWeek}" IsEditable="False" AutomationProperties.Name="Первый день недели" AutomationProperties.AutomationId="SettingsFirstDay"/>
+                                    <TextBlock Text="Формат времени"/>
+                                    <ComboBox ItemsSource="{Binding TimeFormatChoices}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding UserTimeFormat}" AutomationProperties.Name="Формат времени" AutomationProperties.AutomationId="SettingsTimeFormat"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Style="{StaticResource Hub.Personal.DayStartField}">
+                                    <TextBlock Text="Начало рабочего дня"/>
+                                    <TextBox Text="{Binding WorkdayStartDisplay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" MaxLength="16" ToolTip="Часы и минуты, например 09:00" AutomationProperties.Name="Начало рабочего дня" AutomationProperties.AutomationId="SettingsWorkdayStart"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Style="{StaticResource Hub.Personal.DayEndField}">
+                                    <TextBlock Text="Конец рабочего дня"/>
+                                    <TextBox Text="{Binding WorkdayEndDisplay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" MaxLength="16" ToolTip="Часы и минуты, например 09:00" AutomationProperties.Name="Конец рабочего дня" AutomationProperties.AutomationId="SettingsWorkdayEnd"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Style="{StaticResource Hub.Personal.DurationField}">
+                                    <TextBlock Text="Длительность задачи, мин"/>
+                                    <TextBox Text="{Binding DefaultTaskDurationMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                </StackPanel>
+                                <StackPanel Width="300" Style="{StaticResource Hub.Personal.ReminderTimeField}">
+                                    <TextBlock Text="Время напоминания для задач со сроком без времени" TextWrapping="Wrap"/>
+                                    <TextBox Text="{Binding ReminderTimeDisplay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}" MaxLength="16" ToolTip="Часы и минуты, например 09:00" AutomationProperties.Name="Время напоминания для срока без времени" AutomationProperties.AutomationId="SettingsReminderTime"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Style="{StaticResource Hub.Personal.ReminderOffsetField}">
+                                    <TextBlock Text="Напоминать за, мин"/>
+                                    <TextBox Text="{Binding DefaultReminderOffsetMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                </StackPanel>
+                            </WrapPanel>
+                            <CheckBox Content="Запускать Task вместе с Windows" IsChecked="{Binding AutostartEnabled}" Margin="0,4"/>
+                            <CheckBox Content="Разрешать локальные пути" IsChecked="{Binding AllowLocalPaths}" Margin="0,4"/>
+                            <CheckBox Content="Подтверждать удаление записей каталога" IsChecked="{Binding ConfirmCatalogDelete}" Margin="0,4"/>
+                            <StackPanel Width="320" HorizontalAlignment="Left" Style="{StaticResource Hub.Personal.MissingFileField}">
+                                <TextBlock Text="Если файл недоступен"/>
+                                <ComboBox SelectedValue="{Binding MissingFileBehavior}" SelectedValuePath="Tag">
+                                    <ComboBoxItem Content="Показать действия" Tag="show_actions"/>
+                                    <ComboBoxItem Content="Оставить неактивным" Tag="keep_inactive"/>
+                                    <ComboBoxItem Content="Предложить новый путь" Tag="prompt_relink"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <TextBlock Text="Время вводится в формате ЧЧ:ММ, например 09:00." Margin="0,10,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                            <TextBlock Text="{Binding ProfileSettingsError}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="SettingsProfileError"/>
+                            <Button Content="Сохранить личные настройки" Command="{Binding SaveUserSettingsCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="SaveUserSettingsButton" Style="{StaticResource Hub.Personal.SaveProfile}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Padding="20" Margin="0,0,0,12">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding CanReadSettings}" Value="True"/>
+                                            <Condition Binding="{Binding IsNotificationSettings}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding IsPersonal}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="CornerRadius" Value="0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock Text="Уведомления" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                            <StackPanel>
+                                <TextBlock Text="Не беспокоить (часы и минуты; пусто — выключено)"/>
+                                <WrapPanel>
+                                    <TextBox Text="{Binding QuietStartDisplay, UpdateSourceTrigger=PropertyChanged}" MaxLength="16" ToolTip="Часы и минуты, например 22:00" AutomationProperties.Name="Начало режима Не беспокоить" AutomationProperties.AutomationId="SettingsQuietStart" Width="90"/>
+                                    <TextBox Text="{Binding QuietEndDisplay, UpdateSourceTrigger=PropertyChanged}" MaxLength="16" ToolTip="Часы и минуты, например 22:00" AutomationProperties.Name="Конец режима Не беспокоить" AutomationProperties.AutomationId="SettingsQuietEnd" Width="90" Margin="8,0"/>
+                                    <TextBox Text="{Binding QuietHoursTimeZone, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Часовой пояс режима Не беспокоить" Width="220" ToolTip="Часовой пояс, например Europe/Minsk"/>
+                                </WrapPanel>
+                            </StackPanel>
+                            <CheckBox Content="Получать уведомления" IsChecked="{Binding NotificationsEnabled}" Margin="0,12,0,4"/>
+                            <CheckBox Content="Показывать desktop-уведомления" IsChecked="{Binding DesktopNotificationsEnabled}" Margin="0,4"/>
+                            <TextBlock Text="Закрытие окна оставляет Task в системном трее, если он доступен. Полный выход — через меню значка Task; после выхода уведомления не показываются." TextWrapping="Wrap" Margin="0,6"/>
+                            <CheckBox Content="Воспроизводить звук" IsChecked="{Binding NotificationSoundEnabled}" Margin="0,4"/>
+                            <StackPanel Width="260" HorizontalAlignment="Left" Style="{StaticResource Hub.Personal.SnoozeField}">
+                                <TextBlock Text="Отсрочка по умолчанию, мин"/>
+                                <TextBox Text="{Binding DefaultSnoozeMinutes, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding NotificationSettingsError}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="SettingsNotificationError"/>
+                            <Button Content="Сохранить уведомления" Command="{Binding SaveNotificationPreferencesCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="SaveNotificationPreferencesButton" Style="{StaticResource Hub.Personal.SaveNotifications}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Padding="20">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsServerSettings}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <DockPanel>
+                                <Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="10" Padding="9,4">
+                                    <TextBlock Text="Управляется организацией" FontSize="11"/>
+                                </Border>
+                                <StackPanel>
+                                    <TextBlock Text="Подключение и сервер" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Проверенный HTTPS endpoint и server-managed параметры." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12"/>
+                                </StackPanel>
+                            </DockPanel>
+                            <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding ServerAddress}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding SettingsConnectionStatus}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="TLS" Foreground="{DynamicResource Task.Brush.Semantic.Success}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <Border Background="{DynamicResource Task.Brush.Semantic.WarningSoft}" BorderBrush="{DynamicResource Task.Brush.Semantic.Warning}" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,14" Visibility="{Binding IsOffline, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                <TextBlock Text="Сервер недоступен. Параметры показаны из последнего подтверждённого состояния; сохранение заблокировано." TextWrapping="Wrap"/>
+                            </Border>
+                            <TextBlock Text="Настройки организации" FontSize="{DynamicResource Task.Font.Size.Section}" FontWeight="SemiBold" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                            <TextBlock Text="Серверные сроки хранения и горизонт повторений. Изменение доступно только администратору." Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,12" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                            <WrapPanel Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                <StackPanel Width="220" Margin="0,0,12,10">
+                                    <TextBlock Text="Корзина, дней"/>
+                                    <TextBox Text="{Binding TrashRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Margin="0,0,12,10">
+                                    <TextBlock Text="История, дней"/>
+                                    <TextBox Text="{Binding HistoryRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Margin="0,0,12,10">
+                                    <TextBlock Text="Change feed, дней"/>
+                                    <TextBox Text="{Binding ChangeFeedRetentionDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                </StackPanel>
+                                <StackPanel Width="220" Margin="0,0,12,10">
+                                    <TextBlock Text="Горизонт повторений, дней"/>
+                                    <TextBox Text="{Binding RecurrenceHorizonDays, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Hub.Personal.InputText}"/>
+                                </StackPanel>
+                            </WrapPanel>
+                            <Button Content="Сохранить настройки организации" Command="{Binding SaveOrganizationSettingsCommand}" Style="{StaticResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="SaveOrganizationSettingsButton" Visibility="{Binding CanReadOrganization, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </Grid>
         </ScrollViewer>
-        <Expander Grid.Row="3" Header="{Binding LinksHeader}" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/></Expander>
+        <Expander x:Name="LinksExpander" Grid.Row="3" Header="{Binding LinksHeader}" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/>
+        </Expander>
     </Grid>
 </UserControl>

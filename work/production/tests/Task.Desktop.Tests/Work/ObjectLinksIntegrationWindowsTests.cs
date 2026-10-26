@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
@@ -23,8 +24,14 @@ public sealed class ObjectLinksIntegrationWindowsTests
     {
         if (Environment.GetEnvironmentVariable("TASK_LINK_INTEGRATION_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ObjectLinksIntegrationWindowsTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(ObjectLinksIntegrationWindowsTests).FullName + "." + nameof(EmbeddedPickerKeyboardCreateAndReadOnlyCatalog));
             start.Environment["TASK_LINK_INTEGRATION_PROBE"] = "1";
@@ -63,7 +70,7 @@ public sealed class ObjectLinksIntegrationWindowsTests
                     Assert.Contains(Descendants<TextBlock>(pickerView), block => block.Text == client.Hit.Title || block.Text.Contains("Выбран: " + client.Hit.Title));
                     Assert.Contains(Descendants<TextBlock>(pickerView), block => block.Text == client.Hit.TypeLabel);
                     SaveFrame(view, "corporate-links-selected.png");
-                    var add = Descendants<Button>(view).Single(button => Equals(button.Content, "Связать")); Assert.True(add.IsEnabled);
+                    var add = Descendants<Button>(view).Single(button => AutomationProperties.GetAutomationId(button) == "AddObjectLink"); Assert.True(add.IsEnabled);
                     var pending = new System.Threading.Tasks.TaskCompletionSource<LinkResult>(); client.Write = _ => pending.Task;
                     ((IInvokeProvider)new ButtonAutomationPeer(add).GetPattern(PatternInterface.Invoke)).Invoke(); Pump();
                     Assert.Empty(vm.Items); Assert.True(vm.IsBusy); Assert.False(add.IsEnabled);
@@ -89,7 +96,8 @@ public sealed class ObjectLinksIntegrationWindowsTests
     }
     private static void Pump() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
     private static void SendKey(UIElement view, Key key) => view.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
-        PresentationSource.FromVisual(view), 0, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        PresentationSource.FromVisual(view), 0, key)
+    { RoutedEvent = Keyboard.PreviewKeyDownEvent });
     private static IEnumerable<T> Descendants<T>(DependencyObject parent) where T : DependencyObject
     {
         for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)

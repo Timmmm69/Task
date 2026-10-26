@@ -1,0 +1,18 @@
+{
+  "version": "1.1.0",
+  "reference": "TodayView.xaml / Direction 2",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinksView.xaml",
+      "sha256": "4312386cae4922d6dbd68c0ead9243015abe3533fbbc5a53f51db4a00f246df4"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml",
+      "sha256": "ab56f5fd753a82191f2142084ab8bbd6d13bce9aef53c44f5e8787213569ee17"
+    },
+    {
+      "path": "outputs/20261026_object_links_direction2_1.1.0/validation-report.md",
+      "sha256": "5c0689633b718b1ddf7b2ef210ea37f93c4362f60f3f0c716b63b6d44a44aa8a"
+    }
+  ]
+}

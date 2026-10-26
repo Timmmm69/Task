@@ -24,7 +24,10 @@
                         </StackPanel>
                     </Button>
                 </WrapPanel>
-                <TextBlock Text="{Binding Items.Count,StringFormat=Задачи · {0}}" Style="{StaticResource Personal.SectionTitle}"/>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource Personal.SectionTitle}"><Run Text="{Binding SelectedSection.Title,Mode=OneWay}"/><Run Text=" · "/><Run Text="{Binding Items.Count,Mode=OneWay}"/></TextBlock>
+                    <TextBlock Text="План на день и ближайшие действия" Style="{StaticResource Personal.Metadata}" Margin="0,4,0,0" Visibility="{Binding IsToday,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                </StackPanel>
             </DockPanel>
         </Border>
         <Grid Grid.Row="1" x:Name="SplitWorkspace">
@@ -43,7 +46,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Border Style="{StaticResource Personal.SectionHeader}">
+                    <Border Style="{StaticResource Personal.SectionHeader}" Visibility="{Binding IsTasks,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                         <StackPanel Visibility="{Binding IsTasks,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                             <CheckBox Content="Скрыть завершённые" IsChecked="{Binding HideCompleted}" Margin="0,0,0,8"/>
                             <StackPanel Visibility="{Binding HasHiddenTasks,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
@@ -52,7 +55,7 @@
                             </StackPanel>
                         </StackPanel>
                     </Border>
-                    <Border Style="{StaticResource Task.State.Inline}" Visibility="{Binding IsInbox,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Grid.Row="1" Margin="16,12">
+                    <Border Style="{StaticResource Personal.SectionHeader}" Visibility="{Binding IsInbox,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Grid.Row="1">
                         <StackPanel>
                             <TextBlock Text="Запишите задачу сейчас, детали добавьте позже." Style="{StaticResource Task.State.Body}" Margin="0,0,0,8"/>
                             <TextBlock Text="Enter — записать" Margin="0,0,0,6"/>

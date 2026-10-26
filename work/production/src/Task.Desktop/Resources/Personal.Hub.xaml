@@ -1,0 +1,412 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:views="clr-namespace:Task.Desktop.Views">
+    <!--Every visual override is gated by the WorkHub root IsPersonal, including nested contact and result data contexts.-->
+    <Style TargetType="Grid" x:Key="Hub.Personal.Root">
+        <Setter Property="Margin" Value="20"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Grid" x:Key="Hub.Personal.Toolbar">
+        <Setter Property="Margin" Value="0,0,0,14"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="20,12"/>
+                <Setter Property="MinHeight" Value="44"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.CatalogTreePane" BasedOn="{StaticResource Task.Surface.Subtle}">
+        <Setter Property="Padding" Value="8"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.ContactsPane" BasedOn="{StaticResource Task.Surface.Subtle}">
+        <Setter Property="Padding" Value="8"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.LifecycleRow" BasedOn="{StaticResource Task.Surface.Subtle}">
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Margin" Value="0,0,0,6"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.LifecycleInspector" BasedOn="{StaticResource Task.Surface.Subtle}">
+        <Setter Property="Padding" Value="20"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="20"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ColumnDefinition" x:Key="Hub.Personal.CatalogMasterColumn">
+        <Setter Property="Width" Value="360"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Width" Value="2*"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ColumnDefinition" x:Key="Hub.Personal.CatalogGap">
+        <Setter Property="Width" Value="12"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Width" Value="0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ColumnDefinition" x:Key="Hub.Personal.CatalogDetailColumn">
+        <Setter Property="Width" Value="*"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Width" Value="3*"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ColumnDefinition" x:Key="Hub.Personal.ContactsMasterColumn">
+        <Setter Property="Width" Value="360"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Width" Value="2*"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ColumnDefinition" x:Key="Hub.Personal.ContactsGap">
+        <Setter Property="Width" Value="12"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Width" Value="0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ColumnDefinition" x:Key="Hub.Personal.ContactsDetailColumn">
+        <Setter Property="Width" Value="*"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Width" Value="3*"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ScrollViewer" x:Key="Hub.Personal.CatalogScroll">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ScrollViewer" x:Key="Hub.Personal.ContactsScroll">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.CatalogSelectionCard">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Margin" Value="0,0,0,16"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.CatalogMoveCard">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Margin" Value="0,0,0,16"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.CatalogCreateCard">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Margin" Value="0,0,0,16"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Separator" x:Key="Hub.Personal.CatalogCreateDivider">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Separator" x:Key="Hub.Personal.CatalogMoveDivider">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Border" x:Key="Hub.Personal.ContactCreateCard">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Margin" Value="0,20,0,0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ListBox" x:Key="Hub.Personal.ContactsList">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                                    <Setter Property="Padding" Value="10,12"/>
+                                    <Setter Property="Margin" Value="0,0,0,4"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="MinHeight" Value="56"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ListBox" x:Key="Hub.Personal.LifecycleList">
+        <Setter Property="Background" Value="Transparent"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Padding" Value="8"/>
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                                    <Setter Property="Padding" Value="10,12"/>
+                                    <Setter Property="Margin" Value="0,0,0,4"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="MinHeight" Value="56"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Grid" x:Key="Hub.Personal.SearchSurface">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="20,0,20,20"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Grid" x:Key="Hub.Personal.LifecycleSurface">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="20,0,20,20"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Button" x:Key="Hub.Personal.SearchResult" BasedOn="{StaticResource Task.Button.Secondary}">
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="Margin" Value="0,0,0,6"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Padding" Value="16"/>
+                <Setter Property="Margin" Value="0,0,0,8"/>
+                <Setter Property="MinHeight" Value="80"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="Hub.Personal.SearchDate">
+        <Setter Property="Text" Value="{Binding UpdatedAt, StringFormat=Обновлено {0:g}}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Text" Value="{Binding UpdatedAt.LocalDateTime, StringFormat=Обновлено {0:dd.MM.yyyy HH:mm}}"/>
+                <Setter Property="Margin" Value="0,6,0,0"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ListBox" x:Key="Hub.Personal.SettingsNavigation">
+        <Setter Property="Padding" Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Grid.ColumnSpan" Value="3"/>
+                <Setter Property="Margin" Value="20,0,20,16"/>
+                <Setter Property="Padding" Value="4"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.SettingsBody">
+        <Setter Property="Grid.Column" Value="2"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Grid.Row" Value="1"/>
+                <Setter Property="Grid.Column" Value="0"/>
+                <Setter Property="Grid.ColumnSpan" Value="3"/>
+                <Setter Property="Margin" Value="20,0,20,20"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.LanguageField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.WeekField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.DayStartField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.DayEndField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.DurationField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.ReminderTimeField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.ReminderOffsetField">
+        <Setter Property="Margin" Value="0,0,12,10"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.MissingFileField">
+        <Setter Property="Margin" Value="0,10,0,0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="StackPanel" x:Key="Hub.Personal.SnoozeField">
+        <Setter Property="Margin" Value="0,10,0,0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,8,20,12"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Button" x:Key="Hub.Personal.SaveProfile" BasedOn="{StaticResource Task.Button.Primary}">
+        <Setter Property="Margin" Value="0,14,0,0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,24,0,0"/>
+                <Setter Property="MinHeight" Value="40"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Button" x:Key="Hub.Personal.SaveNotifications" BasedOn="{StaticResource Task.Button.Primary}">
+        <Setter Property="Margin" Value="0,14,0,0"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Margin" Value="0,24,0,0"/>
+                <Setter Property="MinHeight" Value="40"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}" x:Key="Hub.Personal.InputText">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Template" Value="{DynamicResource Personal.Input.Text.Template}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}" x:Key="Hub.Personal.InputCombo">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:WorkHubView}}" Value="True">
+                <Setter Property="Template" Value="{DynamicResource Personal.Input.Combo.Template}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

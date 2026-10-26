@@ -46,9 +46,147 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="Calendar.Input.Text" TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Template" Value="{DynamicResource Personal.Input.Text.Template}" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.Input.Combo" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Template" Value="{DynamicResource Personal.Input.Combo.Template}" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Personal mode uses the same flat workspace rails as Today. Corporate defaults stay intact. -->
+        <Style x:Key="Calendar.Workspace" TargetType="Grid">
+            <Setter Property="Margin" Value="24,14,24,0" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.Header" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Padding" Value="20,14" />
+                    <Setter Property="MinHeight" Value="68" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.HeaderContent" TargetType="Grid">
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Margin" Value="0" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.Title" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.PageTitle}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="FontSize" Value="21" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.ToolbarRail" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Padding" Value="20,10,14,4" />
+                    <Setter Property="MinHeight" Value="68" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.Toolbar" TargetType="WrapPanel">
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Margin" Value="0" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.GridSurface" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{DynamicResource Task.Radius.Window}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="CornerRadius" Value="0" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.InspectorSurface" TargetType="Border" BasedOn="{StaticResource Task.Inspector.Panel}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Padding" Value="20,14" />
+                    <Setter Property="CornerRadius" Value="0" />
+                    <Setter Property="BorderThickness" Value="0,1,0,0" />
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.FormSection" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Padding" Value="16" />
+                    <Setter Property="Margin" Value="0,0,0,12" />
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="CornerRadius" Value="8" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.FormSectionTitle" TargetType="TextBlock">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Margin" Value="0,0,0,12" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.EditorFooter" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Padding" Value="0,14,0,0" />
+                    <Setter Property="BorderThickness" Value="0,1,0,0" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.EditorTimeColumn" TargetType="StackPanel">
+            <Setter Property="Width" Value="145" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Width" Value="136" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.EditorColumn" TargetType="StackPanel">
+            <Setter Property="Width" Value="300" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True">
+                    <Setter Property="Width" Value="280" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
-    <Grid Margin="24,14,24,0">
+    <Grid Style="{StaticResource Calendar.Workspace}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -57,14 +195,15 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,12">
+        <Border Grid.Row="0" Style="{StaticResource Calendar.Header}">
+        <Grid Style="{StaticResource Calendar.HeaderContent}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="Календарь"
-                           FontSize="{DynamicResource Task.Font.Size.PageTitle}"
+                           Style="{StaticResource Calendar.Title}"
                            FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                     <TextBlock Text="{Binding WeekRangeText}" FontSize="{DynamicResource Task.Font.Size.Label}"
@@ -120,7 +259,10 @@
             </StackPanel>
         </Grid>
 
-        <WrapPanel x:Name="CalendarToolbar" Grid.Row="1" Margin="0,0,0,12" VerticalAlignment="Center"
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource Calendar.ToolbarRail}">
+        <WrapPanel x:Name="CalendarToolbar" Style="{StaticResource Calendar.Toolbar}" VerticalAlignment="Center"
                    AutomationProperties.Name="Команды календаря"
                    AutomationProperties.AutomationId="CalendarCommandBar">
             <Button Content="Назад" Command="{Binding PreviousWeekCommand}" Style="{StaticResource Task.Button.Secondary}"
@@ -149,6 +291,7 @@
             <Button Content="Найти время" Command="{Binding FindTimeCommand}" Style="{StaticResource Task.Button.Secondary}"
                     Margin="6,0,0,0" AutomationProperties.Name="Найти свободное рабочее окно" AutomationProperties.AutomationId="CalendarFindTime" />
         </WrapPanel>
+        </Border>
 
         <StackPanel Grid.Row="2">
             <Border Padding="12" Margin="0,0,0,8">
@@ -253,8 +396,7 @@
         </StackPanel>
 
         <Grid Grid.Row="3">
-            <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1"
-                    CornerRadius="{DynamicResource Task.Radius.Window}" ClipToBounds="True"
+            <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" Style="{StaticResource Calendar.GridSurface}" ClipToBounds="True"
                     Background="{DynamicResource Task.Brush.Surface.Base}">
                 <Grid>
                     <ScrollViewer x:Name="CalendarHorizontalScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
@@ -551,12 +693,14 @@
                         </ItemsControl>
                     </ScrollViewer>
 
-                    <Border Background="#F4FFFFFF" Panel.ZIndex="30">
+                    <Border Panel.ZIndex="30">
                         <Border.Style>
                             <Style TargetType="Border">
+                                <Setter Property="Background" Value="#F4FFFFFF" />
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ShowInitialLoading}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" /></DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
@@ -572,12 +716,14 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Background="#F4FFFFFF" Panel.ZIndex="29">
+                    <Border Panel.ZIndex="29">
                         <Border.Style>
                             <Style TargetType="Border">
+                                <Setter Property="Background" Value="#F4FFFFFF" />
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ShowEmptyState}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" /></DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
@@ -599,21 +745,24 @@
         </Grid>
 
         <GroupBox x:Name="CalendarInspector" Grid.Row="4"
-                  Margin="0,12,0,0" MaxHeight="150"
+
                   AutomationProperties.Name="Инспектор выбранного элемента"
                   AutomationProperties.AutomationId="CalendarSelectionInspector">
             <GroupBox.Template>
                 <ControlTemplate TargetType="GroupBox">
-                    <Border Style="{StaticResource Task.Inspector.Panel}">
+                    <Border Style="{StaticResource Calendar.InspectorSurface}">
                         <ContentPresenter />
                     </Border>
                 </ControlTemplate>
             </GroupBox.Template>
             <GroupBox.Style>
                 <Style TargetType="GroupBox">
+                    <Setter Property="Margin" Value="0,12,0,0" />
+                    <Setter Property="MaxHeight" Value="150" />
                     <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding HasSelectedItem}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                        <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType={x:Type views:CalendarView}}}" Value="True"><Setter Property="Margin" Value="0" /><Setter Property="MaxHeight" Value="210" /></DataTrigger>
                     </Style.Triggers>
                 </Style>
             </GroupBox.Style>
@@ -708,21 +857,26 @@
                                 </StackPanel>
                             </Border>
 
+                            <Border Style="{StaticResource Calendar.FormSection}"><StackPanel>
+                            <TextBlock Text="Основное" Style="{StaticResource Calendar.FormSectionTitle}" />
                             <TextBlock Text="Название *" Style="{StaticResource Calendar.FieldLabel}" />
                             <TextBox x:Name="CalendarEditorTitle" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource Task.Input.Text}" Margin="0,0,0,12"
+                                     Style="{StaticResource Calendar.Input.Text}" Margin="0,0,0,12"
                                      IsVisibleChanged="OnEditorTitleIsVisibleChanged"
                                      AutomationProperties.Name="Название события"
                                      AutomationProperties.AutomationId="CalendarEventTitle" />
 
+                            </StackPanel></Border>
+                            <Border Style="{StaticResource Calendar.FormSection}"><StackPanel>
+                            <TextBlock Text="Дата и время" Style="{StaticResource Calendar.FormSectionTitle}" />
                             <WrapPanel>
-                                <StackPanel Width="300" Margin="0,0,12,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorColumn}" Margin="0,0,12,12">
                                     <TextBlock Text="Дата *" Style="{StaticResource Calendar.FieldLabel}" />
                                     <DatePicker SelectedDate="{Binding Date}" Height="40" AutomationProperties.Name="Дата события" />
                                 </StackPanel>
-                                <StackPanel Width="300" Margin="0,0,0,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorColumn}" Margin="0,0,0,12">
                                     <TextBlock Text="Часовой пояс" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding TimeZoneText, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource Task.Input.Text}"
+                                    <TextBox Text="{Binding TimeZoneText, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource Calendar.Input.Text}"
                                              AutomationProperties.Name="Часовой пояс события" AutomationProperties.IsOffscreenBehavior="Onscreen" />
                                 </StackPanel>
                             </WrapPanel>
@@ -731,38 +885,41 @@
                                       AutomationProperties.Name="Событие на весь день" />
 
                             <WrapPanel Margin="0,0,0,2">
-                                <StackPanel Width="145" Margin="0,0,10,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorTimeColumn}" Margin="0,0,10,12">
                                     <TextBlock Text="Начало *" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"
+                                    <TextBox Text="{Binding StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Calendar.Input.Text}"
                                              AutomationProperties.Name="Время начала" />
                                 </StackPanel>
-                                <StackPanel Width="145" Margin="0,0,10,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorTimeColumn}" Margin="0,0,10,12">
                                     <TextBlock Text="Окончание *" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"
+                                    <TextBox Text="{Binding EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Calendar.Input.Text}"
                                              AutomationProperties.Name="Время окончания" />
                                 </StackPanel>
-                                <StackPanel Width="300" Margin="0,0,0,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorColumn}" Margin="0,0,0,12">
                                     <TextBlock Text="Дата окончания" Style="{StaticResource Calendar.FieldLabel}" />
                                     <DatePicker SelectedDate="{Binding EndDate}" Height="40" AutomationProperties.Name="Дата окончания события" />
                                 </StackPanel>
                             </WrapPanel>
 
+                            </StackPanel></Border>
+                            <Border Style="{StaticResource Calendar.FormSection}"><StackPanel>
+                            <TextBlock Text="Детали события" Style="{StaticResource Calendar.FormSectionTitle}" />
                             <WrapPanel>
-                                <StackPanel Width="300" Margin="0,0,12,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorColumn}" Margin="0,0,12,12">
                                     <TextBlock Text="Проект" Style="{StaticResource Calendar.FieldLabel}" />
                                     <TextBox Text="{Binding ProjectId, UpdateSourceTrigger=PropertyChanged}"
                                              ToolTip="Идентификатор доступного проекта; поле можно оставить пустым."
                                              AutomationProperties.Name="Идентификатор проекта">
-                                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+                                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Calendar.Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
                                     </TextBox>
                                     <ComboBox ItemsSource="{Binding ProjectChoices}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name" AutomationProperties.Name="Личный проект события">
-                                        <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
+                                        <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Calendar.Input.Combo}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
                                     </ComboBox>
                                 </StackPanel>
-                                <StackPanel Width="300" Margin="0,0,0,12">
+                                <StackPanel Style="{StaticResource Calendar.EditorColumn}" Margin="0,0,0,12">
                                     <TextBlock Text="Статус" Style="{StaticResource Calendar.FieldLabel}" />
                                     <ComboBox ItemsSource="{Binding StatusOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
-                                              SelectedValue="{Binding Status, Mode=TwoWay}" Style="{StaticResource Task.Input.Combo}"
+                                              SelectedValue="{Binding Status, Mode=TwoWay}" Style="{StaticResource Calendar.Input.Combo}"
                                               AutomationProperties.Name="Статус события" />
                                 </StackPanel>
                             </WrapPanel>
@@ -770,8 +927,10 @@
                             <TextBlock Text="Описание" Style="{StaticResource Calendar.FieldLabel}" />
                             <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"
                                      MinHeight="76" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                                     Style="{StaticResource Task.Input.Text}" Margin="0,0,0,14"
+                                     Style="{StaticResource Calendar.Input.Text}" Margin="0,0,0,14"
                                      AutomationProperties.Name="Описание события" />
+
+                            </StackPanel></Border>
 
                             <StackPanel>
                             <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding AllowAttendees}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
@@ -791,14 +950,14 @@
                                                                Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" />
                                                     <WrapPanel Margin="0,7,0,0">
                                                         <ComboBox Width="150" SelectedValue="{Binding Role}" SelectedValuePath="Tag"
-                                                                  Style="{StaticResource Task.Input.Combo}" Margin="0,0,6,0"
+                                                                  Style="{StaticResource Calendar.Input.Combo}" Margin="0,0,6,0"
                                                                   AutomationProperties.Name="Роль участника">
                                                             <ComboBoxItem Tag="required" Content="Обязательный" />
                                                             <ComboBoxItem Tag="optional" Content="Необязательный" />
                                                             <ComboBoxItem Tag="observer" Content="Наблюдатель" />
                                                         </ComboBox>
                                                         <ComboBox Width="150" SelectedValue="{Binding ResponseStatus}" SelectedValuePath="Tag"
-                                                                  Style="{StaticResource Task.Input.Combo}"
+                                                                  Style="{StaticResource Calendar.Input.Combo}"
                                                                   AutomationProperties.Name="Ответ участника">
                                                             <ComboBoxItem Tag="pending" Content="Ожидается" />
                                                             <ComboBoxItem Tag="accepted" Content="Принят" />
@@ -819,13 +978,13 @@
                             <StackPanel IsEnabled="{Binding CanEditAttendees}">
                                 <ComboBox Width="160" HorizontalAlignment="Left" ItemsSource="{Binding AttendeeKinds}" DisplayMemberPath="Label"
                                           SelectedValue="{Binding IsUserAttendee}" SelectedValuePath="IsUser"
-                                          Style="{StaticResource Task.Input.Combo}" Margin="0,0,0,8"
+                                          Style="{StaticResource Calendar.Input.Combo}" Margin="0,0,0,8"
                                           AutomationProperties.Name="Тип участника" />
                                 <views:EmployeePickerView DataContext="{Binding AttendeePicker}"
                                     Visibility="{Binding DataContext.ShowEmployeePicker, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
                                 <TextBox Text="{Binding AttendeeId, UpdateSourceTrigger=PropertyChanged}"
                                          Visibility="{Binding ShowAttendeeId, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                         Style="{StaticResource Task.Input.Text}"
+                                         Style="{StaticResource Calendar.Input.Text}"
                                          AutomationProperties.AutomationId="CalendarAttendeeId"
                                          AutomationProperties.Name="UUID сотрудника или контакта" />
                                 <TextBlock Text="{Binding AttendeeEntryHint}" TextWrapping="Wrap" Margin="0,6,0,8"
@@ -838,7 +997,8 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Grid Grid.Row="2">
+                    <Border Grid.Row="2" Style="{StaticResource Calendar.EditorFooter}">
+                    <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <ProgressBar Width="72" IsIndeterminate="True">
@@ -871,6 +1031,7 @@
                                     Style="{StaticResource Task.Button.Secondary}" />
                         </WrapPanel>
                     </Grid>
+                    </Border>
                 </Grid>
             </Border>
         </Border>
