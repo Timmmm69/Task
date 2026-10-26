@@ -1,8 +1,13 @@
 {
   "version": "1.0.0",
   "pr": "https://github.com/Timmmm69/Task/pull/17",
-  "reviewed_head": "4eaec568cc28dd6aa1d970cc630c8d83f6921a9e",
+  "reviewed_head": "04b7b3bd6e16ca1a5a2a5906120f01ddbfd8c1fc",
   "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992",
+      "size": 9
+    },
     {
       "path": "evidence/audit.log",
       "sha256": "1097279ada99752114eea918be3b26aa60b58d61975166286d4b29aae0a81fc0",
@@ -200,7 +205,7 @@
     },
     {
       "path": "source-manifest.json",
-      "sha256": "f515bb170a85344aeb035ffcd7bb6a27105b902d7660dc54ba75c20ab668a754",
+      "sha256": "a8adec0cb46a457a01eda2d00714c343607a8291206a3f458aa4416ca6140f9e",
       "size": 1042
     },
     {
@@ -210,7 +215,7 @@
     },
     {
       "path": "validation.json",
-      "sha256": "e4eb48ed61aa596ddf56d43c1db470d24f1fa38ac05507146db6720d99efc885",
+      "sha256": "1d62be81d2a1986c8b3193132932a9ab7c1cae674d38c745cd04702595b54065",
       "size": 2269
     }
   ]
