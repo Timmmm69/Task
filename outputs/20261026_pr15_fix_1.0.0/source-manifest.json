@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "hashPolicy": "UTF-8 without BOM; CRLF normalized to LF",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinksView.xaml",
+      "sha256": "682ce6cb2e35aebc859e0faea6197397371904bf6b285b5f7ae8f7f779b8de77"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml",
+      "sha256": "ab56f5fd753a82191f2142084ab8bbd6d13bce9aef53c44f5e8787213569ee17"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "sha256": "c0aa455001a936cc8812fcc67d92a88523a0094d8a61bc6a3ca030fb5e6d52f8"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksIntegrationWindowsTests.cs",
+      "sha256": "f05df72dde6ef8a8812bb66460c3f29964480de9b77786e11b22e9d4be18a407"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinksLayoutWindowsTests.cs",
+      "sha256": "f0486d8ec95cdd3e9e5546bf10b94440d4c6480efc9705b75f8e6bf1a778f30e"
+    }
+  ]
+}

@@ -3,7 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views"
         AutomationProperties.Name="Рабочие данные" AutomationProperties.AutomationId="WorkHubView">
     <Grid Margin="20">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="Auto"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsExpanded, ElementName=LinksExpander}" Value="True"/>
+                                    <Condition Binding="{Binding Visibility, ElementName=LinksExpander}" Value="Visible"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Height" Value="*"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+        </Grid.RowDefinitions>
         <Grid Grid.Row="0" Margin="0,0,0,14">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
             <StackPanel>
@@ -344,6 +364,6 @@
             </StackPanel>
             </Grid>
         </ScrollViewer>
-        <Expander Grid.Row="3" Header="{Binding LinksHeader}" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/></Expander>
+        <Expander x:Name="LinksExpander" Grid.Row="3" Header="{Binding LinksHeader}" state:ViewState.Section="work/v1/links" Visibility="{Binding HasLinks, Converter={StaticResource Task.BooleanToVisibilityConverter}}"><views:ObjectLinksView state:ViewState.Surface="work-links/v1" DataContext="{Binding Links}"/></Expander>
     </Grid>
 </UserControl>

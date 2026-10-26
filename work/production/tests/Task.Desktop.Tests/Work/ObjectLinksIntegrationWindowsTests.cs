@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
@@ -69,7 +70,7 @@ public sealed class ObjectLinksIntegrationWindowsTests
                     Assert.Contains(Descendants<TextBlock>(pickerView), block => block.Text == client.Hit.Title || block.Text.Contains("Выбран: " + client.Hit.Title));
                     Assert.Contains(Descendants<TextBlock>(pickerView), block => block.Text == client.Hit.TypeLabel);
                     SaveFrame(view, "corporate-links-selected.png");
-                    var add = Descendants<Button>(view).Single(button => Equals(button.Content, "Связать")); Assert.True(add.IsEnabled);
+                    var add = Descendants<Button>(view).Single(button => AutomationProperties.GetAutomationId(button) == "AddObjectLink"); Assert.True(add.IsEnabled);
                     var pending = new System.Threading.Tasks.TaskCompletionSource<LinkResult>(); client.Write = _ => pending.Task;
                     ((IInvokeProvider)new ButtonAutomationPeer(add).GetPattern(PatternInterface.Invoke)).Invoke(); Pump();
                     Assert.Empty(vm.Items); Assert.True(vm.IsBusy); Assert.False(add.IsEnabled);
