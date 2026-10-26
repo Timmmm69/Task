@@ -66,10 +66,14 @@ public sealed partial class DesktopWorkApiClient : IDesktopContactRelationsClien
         if (ValidateAddress(address) is { } error) return System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.ValidationFailure(error));
         return ChangeRelationAsync(contactId, version, "addresses", HttpMethod.Post, new JsonObject
         {
-            ["addressType"] = address.AddressType, ["formattedAddress"] = address.FormattedAddress.Trim(),
-            ["countryCode"] = NullIfWhiteSpace(address.CountryCode), ["region"] = NullIfWhiteSpace(address.Region),
-            ["city"] = NullIfWhiteSpace(address.City), ["street"] = NullIfWhiteSpace(address.Street),
-            ["postalCode"] = NullIfWhiteSpace(address.PostalCode), ["isPrimary"] = address.IsPrimary
+            ["addressType"] = address.AddressType,
+            ["formattedAddress"] = address.FormattedAddress.Trim(),
+            ["countryCode"] = NullIfWhiteSpace(address.CountryCode),
+            ["region"] = NullIfWhiteSpace(address.Region),
+            ["city"] = NullIfWhiteSpace(address.City),
+            ["street"] = NullIfWhiteSpace(address.Street),
+            ["postalCode"] = NullIfWhiteSpace(address.PostalCode),
+            ["isPrimary"] = address.IsPrimary
         }, ct);
     }
 

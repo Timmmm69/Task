@@ -18,8 +18,13 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData("phone")][InlineData("email")][InlineData("telegram")][InlineData("whatsapp")]
-    [InlineData("viber")][InlineData("other_messenger")][InlineData("website")]
+    [InlineData("phone")]
+    [InlineData("email")]
+    [InlineData("telegram")]
+    [InlineData("whatsapp")]
+    [InlineData("viber")]
+    [InlineData("other_messenger")]
+    [InlineData("website")]
     public async System.Threading.Tasks.Task EveryChannelTypeUsesContractAndReloadsConfirmedCollections(string type)
     {
         var id = Guid.NewGuid();
@@ -39,7 +44,8 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(false)][InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async System.Threading.Tasks.Task ChannelPatchAndDeleteUseParentVersionAndReload(bool delete)
     {
         var id = Guid.NewGuid(); var child = Guid.NewGuid();
@@ -61,7 +67,10 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData("work")][InlineData("legal")][InlineData("postal")][InlineData("other")]
+    [InlineData("work")]
+    [InlineData("legal")]
+    [InlineData("postal")]
+    [InlineData("other")]
     public async System.Threading.Tasks.Task AddressPostUsesExactFieldsAndNullableParts(string type)
     {
         var id = Guid.NewGuid();
@@ -76,7 +85,12 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(403)][InlineData(404)][InlineData(409)][InlineData(412)][InlineData(422)][InlineData(503)]
+    [InlineData(403)]
+    [InlineData(404)]
+    [InlineData(409)]
+    [InlineData(412)]
+    [InlineData(422)]
+    [InlineData(503)]
     public async System.Threading.Tasks.Task RelationErrorsNeverExposeServerTitlesOrTriggerReload(int status)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json((HttpStatusCode)status, "{\"title\":\"SECRET_CONTACT_VALUE\"}")));
@@ -99,7 +113,10 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(403)][InlineData(404)][InlineData(422)][InlineData(503)]
+    [InlineData(403)]
+    [InlineData(404)]
+    [InlineData(422)]
+    [InlineData(503)]
     public async System.Threading.Tasks.Task AcceptedMutationWithFailedReloadNeverConfirmsLocalData(int status)
     {
         var id = Guid.NewGuid();
@@ -112,7 +129,11 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(null, 8)][InlineData("W/\"v8\"", 8)][InlineData("\"v7\"", 8)][InlineData("\"v08\"", 8)][InlineData("\"v8\"", 7)]
+    [InlineData(null, 8)]
+    [InlineData("W/\"v8\"", 8)]
+    [InlineData("\"v7\"", 8)]
+    [InlineData("\"v08\"", 8)]
+    [InlineData("\"v8\"", 7)]
     public async System.Threading.Tasks.Task ChildOperationNeedsStrongAdvancedParentAndFreshReload(string? tag, int readVersion)
     {
         var id = Guid.NewGuid();

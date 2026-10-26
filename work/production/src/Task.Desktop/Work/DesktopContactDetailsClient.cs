@@ -32,9 +32,12 @@ public sealed partial class DesktopWorkApiClient : IDesktopContactDetailsClient
         var contact = details.Contact;
         var body = new JsonObject
         {
-            ["firstName"] = contact.FirstName.Trim(), ["lastName"] = NullIfWhiteSpace(contact.LastName),
-            ["middleName"] = NullIfWhiteSpace(details.MiddleName), ["displayName"] = contact.DisplayName.Trim(),
-            ["notes"] = contact.Notes, ["status"] = contact.Status
+            ["firstName"] = contact.FirstName.Trim(),
+            ["lastName"] = NullIfWhiteSpace(contact.LastName),
+            ["middleName"] = NullIfWhiteSpace(details.MiddleName),
+            ["displayName"] = contact.DisplayName.Trim(),
+            ["notes"] = contact.Notes,
+            ["status"] = contact.Status
         };
         var result = await SendAsync($"contacts/{contact.Id:D}", System.Net.Http.HttpMethod.Patch, body,
             contact.Version, null, cancellationToken).ConfigureAwait(false);
@@ -69,7 +72,8 @@ public sealed partial class DesktopWorkApiClient : IDesktopContactDetailsClient
                 return new DesktopWorkResult<DesktopContactDetails>.MalformedResponse();
             return new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, Text(node, "middleName"))
             {
-                Channels = ReadChannels(node["channels"]), Addresses = ReadAddresses(node["addresses"])
+                Channels = ReadChannels(node["channels"]),
+                Addresses = ReadAddresses(node["addresses"])
             }, contact.Version);
         }
         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException)

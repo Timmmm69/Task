@@ -34,7 +34,12 @@ public sealed class ContactCardViewModelTests
     }
 
     [Theory]
-    [InlineData("validation")][InlineData("403")][InlineData("404")][InlineData("412")][InlineData("offline")][InlineData("malformed")]
+    [InlineData("validation")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("412")]
+    [InlineData("offline")]
+    [InlineData("malformed")]
     public async System.Threading.Tasks.Task SaveFailureKeepsDraftAndNeverClaimsSuccess(string failure)
     {
         var original = Contact();
@@ -96,8 +101,11 @@ public sealed class ContactCardViewModelTests
     public async System.Threading.Tasks.Task CancellationAndAuthenticationFailureDoNotProduceSuccess()
     {
         var original = Contact();
-        var api = new Client { Read = (_, _) => System.Threading.Tasks.Task.FromResult(Ok(original)),
-            Write = async (_, ct) => { await System.Threading.Tasks.Task.Delay(Timeout.Infinite, ct); return Ok(original); } };
+        var api = new Client
+        {
+            Read = (_, _) => System.Threading.Tasks.Task.FromResult(Ok(original)),
+            Write = async (_, ct) => { await System.Threading.Tasks.Task.Delay(Timeout.Infinite, ct); return Ok(original); }
+        };
         using var vm = new ContactCardViewModel(api, () => true, () => true, () => true);
         await vm.SelectAsync(original.Contact.Id); await vm.EditCommand.ExecuteAsync(); vm.Notes = "Ввод";
         var saving = vm.SaveCommand.ExecuteAsync(); vm.SaveCommand.Cancel(); await saving;

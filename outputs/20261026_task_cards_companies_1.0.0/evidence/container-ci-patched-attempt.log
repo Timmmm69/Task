@@ -1,0 +1,19 @@
+Production container package	Verify production container package	﻿2026-10-26T08:57:46.4611091Z ##[group]Run ./work/production/verification/Test-ContainerPackaging.ps1 -GitSha c46c757cfb5eaf03ca4c0bfcf83c760c2f6ec5c5 -ImageScanMapPath "/home/runner/work/_temp/task-image-map.json"
+Production container package	Verify production container package	2026-10-26T08:57:46.4612580Z ^[[36;1m./work/production/verification/Test-ContainerPackaging.ps1 -GitSha c46c757cfb5eaf03ca4c0bfcf83c760c2f6ec5c5 -ImageScanMapPath "/home/runner/work/_temp/task-image-map.json"^[[0m
+Production container package	Verify production container package	2026-10-26T08:57:46.4641029Z shell: /usr/bin/pwsh -command ". '{0}'"
+Production container package	Verify production container package	2026-10-26T08:57:46.4641345Z ##[endgroup]
+Production container package	Verify production container package	2026-10-26T08:57:48.0066051Z [ OK ] Docker linux/amd64 engine is available.
+Production container package	Verify production container package	2026-10-26T08:58:33.0333905Z [ OK ] Built task-api.
+Production container package	Verify production container package	2026-10-26T08:58:39.1459747Z [ OK ] Built task-worker.
+Production container package	Verify production container package	2026-10-26T08:58:40.0306386Z [ OK ] Built task-backup-agent.
+Production container package	Verify production container package	2026-10-26T08:58:46.0291490Z [ OK ] Built task-database-migrator.
+Production container package	Verify production container package	2026-10-26T08:58:47.0245700Z [ OK ] Built task-container-validation.
+Production container package	Verify production container package	2026-10-26T08:58:47.5681648Z [ OK ] Task.Api image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-26T08:58:48.0507812Z [ OK ] Task.Worker image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-26T08:58:48.5513911Z [ OK ] Task.BackupAgent image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-26T08:58:49.0345807Z [ OK ] Task.DatabaseMigrator image is non-root, SDK-free, labelled, and contains no credential metadata.
+Production container package	Verify production container package	2026-10-26T08:58:53.8449959Z [ OK ] PostgreSQL 16 is ready.
+Production container package	Verify production container package	2026-10-26T08:59:04.4033496Z [FAIL] Role initialization failed. psql: error: connection to server at "127.0.0.1", port 5432 failed: Connection refused
+Production container package	Verify production container package	2026-10-26T08:59:04.4034504Z 	Is the server running on that host and accepting TCP/IP connections?
+Production container package	Verify production container package	2026-10-26T08:59:04.4035227Z Container packaging verification FAILED; the Docker/PostgreSQL gate is not satisfied.
+Production container package	Verify production container package	2026-10-26T08:59:04.4539364Z ##[error]Process completed with exit code 1.

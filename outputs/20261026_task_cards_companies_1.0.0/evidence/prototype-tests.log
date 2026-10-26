@@ -1,0 +1,41 @@
+
+> stage-5-prototype@0.0.0 test
+> node --test tests/*.test.mjs
+
+✔ canonical CalendarEvent draft contains required contract fields (1.362ms)
+✔ validation returns canonical field paths and keeps the supplied draft immutable (0.3371ms)
+✔ offline and blocking server states never allow a calendar mutation (0.2771ms)
+✔ attendee replacement deduplicates users and contacts without mixing scopes (0.1557ms)
+✔ attendee response accepts only canonical response statuses (0.1403ms)
+✔ overlap guard ignores the edited event and all-day events (0.1708ms)
+✔ browser prototype retains its existing writable baseline (1.1656ms)
+✔ desktop observer fixture is read-only and cannot see Admin (0.3024ms)
+✔ urgencyForMinutes maps elapsed time to overdue (0.8296ms)
+✔ urgencyForMinutes maps time before deadline using default thresholds (0.1299ms)
+✔ urgencyForMinutes respects custom thresholds (0.0883ms)
+✔ urgencyTierForNotification returns null for neutral notifications (0.1869ms)
+✔ urgencyTierForNotification computes tier from deadlineMinutesFromNow at render (0.2246ms)
+✔ default thresholds keep strict ascending order (0.2598ms)
+✔ limited Operations navigation exposes only health and audit (1.1744ms)
+✔ Operations mutations require online, loaded, unblocked non-maintenance state (0.1271ms)
+✔ operation transition changes only the selected server object (0.1441ms)
+✔ audit text search never matches a redacted event (0.1952ms)
+✔ maintenance requires writable state, approval, no active job and exact phrase (0.1238ms)
+✔ serves existing static assets without a fallback (29.3097ms)
+✔ falls back to index.html for an unknown app route (1.2474ms)
+✔ does not turn missing API or write requests into the app shell (0.6134ms)
+✔ emits the files required by Sites packaging (4.0037ms)
+✔ scheduled tasks sort by start time, priority, then original order (2.2106ms)
+✔ untimed tasks sort by priority without changing equal-priority order (0.2161ms)
+✔ deriveAgendaSections splits open tasks and keeps completed separately (1.3704ms)
+✔ computeDayProgress reports empty day as neutral (0.3228ms)
+✔ computeDayProgress reports partial progress with rounded percent (0.372ms)
+✔ computeDayProgress reports 100% when all tasks are done (0.1732ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 202.4645

@@ -1,0 +1,300 @@
+Тестовый запуск для C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:01.62]     Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [SKIP]
+[xUnit.net 00:00:01.62]     Task.Tests.PostgresIdentityLifecycleTests.EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation [SKIP]
+[xUnit.net 00:00:01.62]     Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [SKIP]
+[xUnit.net 00:00:01.62]     Task.Tests.PostgresIdentityLifecycleTests.LastActiveAdministratorCannotBeBlockedOrDeactivated [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.LastActiveAdministratorCannotBeBlockedOrDeactivated [1 ms]
+[xUnit.net 00:00:02.38]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "credentials", replay: False, expectedState: VersionMismatch) [FAIL]
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "revoked", replay: True, expectedState: SessionRevoked) [FAIL]
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "scope", replay: True, expectedState: VersionMismatch) [FAIL]
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "device", replay: False, expectedState: SessionRevoked) [FAIL]
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "absolute", replay: True, expectedState: SessionExpired) [FAIL]
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "idle", replay: True, expectedState: SessionExpired) [FAIL]
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "absolute", replay: False, expectedState: SessionExpired) [FAIL]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "credentials", replay: False, expectedState: VersionMismatch) [1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "revoked", replay: True, expectedState: SessionRevoked) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "scope", replay: True, expectedState: VersionMismatch) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "device", replay: False, expectedState: SessionRevoked) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "absolute", replay: True, expectedState: SessionExpired) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "idle", replay: True, expectedState: SessionExpired) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "absolute", replay: False, expectedState: SessionExpired) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.40]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "scope", replay: False, expectedState: VersionMismatch) [FAIL]
+[xUnit.net 00:00:02.41]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "credentials", replay: True, expectedState: VersionMismatch) [FAIL]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "scope", replay: False, expectedState: VersionMismatch) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "credentials", replay: True, expectedState: VersionMismatch) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.41]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "blocked", replay: False, expectedState: AccountBlocked) [FAIL]
+[xUnit.net 00:00:02.43]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "revoked", replay: False, expectedState: SessionRevoked) [FAIL]
+[xUnit.net 00:00:02.43]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "idle", replay: False, expectedState: SessionExpired) [FAIL]
+[xUnit.net 00:00:02.44]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "device", replay: True, expectedState: SessionRevoked) [FAIL]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "blocked", replay: False, expectedState: AccountBlocked) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "revoked", replay: False, expectedState: SessionRevoked) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "idle", replay: False, expectedState: SessionExpired) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "device", replay: True, expectedState: SessionRevoked) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.44]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "blocked", replay: True, expectedState: AccountBlocked) [FAIL]
+[xUnit.net 00:00:02.44]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.patch", changeType: "updated") [FAIL]
+[xUnit.net 00:00:02.44]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskArchived", changeType: "archived") [FAIL]
+[xUnit.net 00:00:02.44]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskMovedToTrash", changeType: "trashed") [FAIL]
+[xUnit.net 00:00:02.45]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskStatusChanged", changeType: "state_changed") [FAIL]
+[xUnit.net 00:00:02.45]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.create", changeType: "created") [FAIL]
+[xUnit.net 00:00:02.45]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskRestored", changeType: "restored") [FAIL]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(scenario: "blocked", replay: True, expectedState: AccountBlocked) [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay(String scenario, Boolean replay, SessionRequestState expectedState) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 84
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.patch", changeType: "updated") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskArchived", changeType: "archived") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskMovedToTrash", changeType: "trashed") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskStatusChanged", changeType: "state_changed") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.create", changeType: "created") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskRestored", changeType: "restored") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:02.45]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.purge", changeType: "purged") [FAIL]
+[xUnit.net 00:00:02.45]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.unarchive", changeType: "restored") [FAIL]
+[xUnit.net 00:00:02.45]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskCreated", changeType: "created") [FAIL]
+[xUnit.net 00:00:02.46]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [FAIL]
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.purge", changeType: "purged") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "project.unarchive", changeType: "restored") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(eventType: "TaskCreated", changeType: "created") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(String eventType, String changeType) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresHistoryContractTests.cs:line 19
+   at InvokeStub_PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [13 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus() in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 42
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.46]     Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [SKIP]
+[xUnit.net 00:00:02.46]     Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [1 ms]
+  Пропущен Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [1 ms]
+[xUnit.net 00:00:02.47]     Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [1 ms]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [1 ms]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [FAIL]
+[xUnit.net 00:00:02.48]     Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [SKIP]
+  Не пройден Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions() in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresProjectHistoryTests.cs:line 10
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Пропущен Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [1 ms]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "observer") [FAIL]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "explicit-deny") [FAIL]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "outsider") [FAIL]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "watcher") [FAIL]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [SKIP]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "observer") [1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(String scenario) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 100
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "explicit-deny") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(String scenario) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 100
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "outsider") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(String scenario) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 100
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(scenario: "watcher") [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope(String scenario) in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 100
+--- End of stack trace from previous location ---
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [1 ms]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [SKIP]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [SKIP]
+[xUnit.net 00:00:02.48]     Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [SKIP]
+[xUnit.net 00:00:02.49]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [FAIL]
+[xUnit.net 00:00:02.49]     Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [1 ms]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion() in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 74
+--- End of stack trace from previous location ---
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [1 ms]
+[xUnit.net 00:00:02.49]     Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [SKIP]
+[xUnit.net 00:00:02.49]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [FAIL]
+  Пропущен Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [1 ms]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [2 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification() in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 14
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.49]     Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [SKIP]
+[xUnit.net 00:00:02.50]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [FAIL]
+[xUnit.net 00:00:02.50]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [FAIL]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [1 ms]
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [< 1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency() in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnTests.cs:line 132
+--- End of stack trace from previous location ---
+  Не пройден Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [1 ms]
+  Сообщение об ошибке:
+   Assert.NotNull() Failure: Value is null
+  Трассировка стека:
+     at Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent() in C:\Users\novik\Таск\work\pr16_review_20261026\repo\work\production\tests\Task.Tests\PostgresTaskReturnAuditTests.cs:line 12
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.52]     Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [1 ms]
+[xUnit.net 00:00:02.52]     Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [SKIP]
+[xUnit.net 00:00:02.52]     Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [SKIP]
+[xUnit.net 00:00:02.52]     Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [1 ms]
+[xUnit.net 00:00:02.52]     Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [SKIP]
+[xUnit.net 00:00:02.53]     Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [1 ms]
+Файл результатов: C:\Users\novik\Таск\work\pr16_review_20261026\evidence\solution_net10.0_20261026034908.trx
+
+Не пройден!: не пройдено    33, пройдено   851, пропущено    22, всего   906, длительность 4 s. - Task.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\pr16_review_20261026\evidence\solution_net10.0_20261026034927.trx
+
+Пройден!   : не пройдено     0, пройдено   671, пропущено     0, всего   671, длительность 24 s. - Task.ServiceHosts.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\pr16_review_20261026\evidence\solution_net10.0_20261026035102.trx
+
+Пройден!   : не пройдено     0, пройдено  1917, пропущено     0, всего  1917, длительность 2 m. - Task.Desktop.Tests.dll (net10.0)

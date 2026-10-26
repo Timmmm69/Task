@@ -1,0 +1,74 @@
+[
+  {
+    "label": "corporate-new-1120x900",
+    "ActualWidth": 1105.3333333333333,
+    "ActualHeight": 820,
+    "footerBottom": 786.6666666666667,
+    "attendees": true,
+    "column": 1,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "corporate-new-900x700",
+    "ActualWidth": 885.3333333333334,
+    "ActualHeight": 620,
+    "footerBottom": 586.6666666666666,
+    "attendees": true,
+    "column": 0,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "corporate-edit-1120x900",
+    "ActualWidth": 1105.3333333333333,
+    "ActualHeight": 820,
+    "footerBottom": 786.6666666666667,
+    "attendees": true,
+    "column": 1,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "corporate-edit-900x700",
+    "ActualWidth": 885.3333333333334,
+    "ActualHeight": 620,
+    "footerBottom": 586.6666666666666,
+    "attendees": true,
+    "column": 0,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "personal-new-1120x900",
+    "ActualWidth": 1105.3333333333333,
+    "ActualHeight": 820,
+    "footerBottom": 786.6666666666667,
+    "attendees": false,
+    "column": 1,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "personal-new-900x700",
+    "ActualWidth": 885.3333333333334,
+    "ActualHeight": 620,
+    "footerBottom": 586.6666666666666,
+    "attendees": false,
+    "column": 0,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "personal-edit-1120x900",
+    "ActualWidth": 1105.3333333333333,
+    "ActualHeight": 820,
+    "footerBottom": 786.6666666666667,
+    "attendees": false,
+    "column": 1,
+    "nativeDpi": 1.5
+  },
+  {
+    "label": "personal-edit-900x700",
+    "ActualWidth": 885.3333333333334,
+    "ActualHeight": 620,
+    "footerBottom": 586.6666666666666,
+    "attendees": false,
+    "column": 0,
+    "nativeDpi": 1.5
+  }
+]

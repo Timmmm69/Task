@@ -62,7 +62,9 @@ public sealed class InteractionsViewModelTests
     }
 
     [Theory]
-    [InlineData("401")][InlineData("403")][InlineData("404")]
+    [InlineData("401")]
+    [InlineData("403")]
+    [InlineData("404")]
     public async System.Threading.Tasks.Task RelatedObjectDenialClearsAllSensitiveState(string code)
     {
         var api = new Client(); var value = api.Record(); api.Values = [value];

@@ -10,10 +10,13 @@ public sealed partial class WorkHubViewModelTests
     {
         var first = new DesktopContact(Guid.NewGuid(), 1, "Первый", "Первый", null, null, "active", "active");
         var second = first with { Id = Guid.NewGuid(), DisplayName = "Второй" };
-        var client = new FakeClient { ContactPageHandler = (cursor, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopContact>>>(
+        var client = new FakeClient
+        {
+            ContactPageHandler = (cursor, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopContact>>>(
             new DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded(cursor is null ? [first] : [second]) { NextCursor = cursor is null ? "next" : null }),
             ContactDetailHandler = (id, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(
-                new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(id == first.Id ? first : second, "Отчество"))) };
+                new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(id == first.Id ? first : second, "Отчество")))
+        };
         using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update", "Contact.Create"]);
         hub.Activate(WorkHubArea.Contacts); await hub.LoadMoreCommand.ExecuteAsync();
         Assert.Equal(2, hub.Contacts.Count); hub.SelectedContact = second; await hub.ContactSelectionTask;
@@ -42,7 +45,8 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Theory]
-    [InlineData(true)][InlineData(false)]
+    [InlineData(true)]
+    [InlineData(false)]
     public async System.Threading.Tasks.Task SessionOrScopeChangeIgnoresLateContactDetails(bool sessionLoss)
     {
         var contact = new DesktopContact(Guid.NewGuid(), 1, "Private", "Private", null, null, "active", "active");
@@ -61,8 +65,12 @@ public sealed partial class WorkHubViewModelTests
     public async System.Threading.Tasks.Task CancelledModeSwitchPreservesCorporateCardDraft()
     {
         var contact = new DesktopContact(Guid.NewGuid(), 1, "Анна", "Анна", null, null, "active", "active");
-        var client = new FakeClient { Contacts = [contact], ContactDetailHandler = (_, _) =>
-            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, null))) };
+        var client = new FakeClient
+        {
+            Contacts = [contact],
+            ContactDetailHandler = (_, _) =>
+            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, null)))
+        };
         using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update"]);
         hub.Activate(WorkHubArea.Contacts); hub.SelectedContact = contact; await hub.ContactSelectionTask;
         await hub.ContactCard!.EditCommand.ExecuteAsync(); hub.ContactCard.Notes = "Не терять";

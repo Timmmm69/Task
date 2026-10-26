@@ -34,8 +34,11 @@ internal static class TaskSorting
 
     private static int PriorityRank(DesktopTaskPriority priority) => priority switch
     {
-        DesktopTaskPriority.Critical => 0, DesktopTaskPriority.High => 1,
-        DesktopTaskPriority.Normal => 2, DesktopTaskPriority.Low => 3, _ => 4,
+        DesktopTaskPriority.Critical => 0,
+        DesktopTaskPriority.High => 1,
+        DesktopTaskPriority.Normal => 2,
+        DesktopTaskPriority.Low => 3,
+        _ => 4,
     };
 
     private static (int Day, long Instant)? Deadline(DesktopTaskDto task, TimeZoneInfo userZone)

@@ -21,8 +21,14 @@ public sealed class InteractionsWindowsTests
     {
         if (Environment.GetEnvironmentVariable("TASK_INTERACTIONS_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(NativeInteractionsCreateEditConflictAndCompactLayout));
             start.Environment["TASK_INTERACTIONS_PROBE"] = "1";
@@ -97,7 +103,7 @@ public sealed class InteractionsWindowsTests
         Directory.CreateDirectory(directory); view.UpdateLayout();
         var drawing = new DrawingVisual();
         using (var context = drawing.RenderOpen()) context.DrawRectangle(new VisualBrush(view)
-            { ViewboxUnits = BrushMappingMode.Absolute, Viewbox = new Rect((Point)VisualTreeHelper.GetOffset(view), view.RenderSize), Stretch = Stretch.Fill }, null, new Rect(view.RenderSize));
+        { ViewboxUnits = BrushMappingMode.Absolute, Viewbox = new Rect((Point)VisualTreeHelper.GetOffset(view), view.RenderSize), Stretch = Stretch.Fill }, null, new Rect(view.RenderSize));
         var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(drawing);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         using var file = File.Create(Path.Combine(directory, name)); encoder.Save(file);

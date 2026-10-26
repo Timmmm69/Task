@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "review_date": "2026-10-26",
+  "baseline": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "pr_head": "48ee9a0f1fb8d05b102ac4895ef658658ea156b2",
+  "source_findings": [],
+  "release_solution_build": "PASS; 0 errors, 11 existing warnings",
+  "projects": "301/301 PASS, including native WPF confirmation tests",
+  "service_hosts": "671/671 PASS",
+  "domain": "851 passed, 33 failed, 22 skipped; identical failure names on clean origin/main; no PostgreSQL connection configured",
+  "format": "672 WHITESPACE diagnostics; normalized diagnostics exactly equal to clean origin/main",
+  "boundaries": "PASS",
+  "dependency_audit": "PASS",
+  "security_review": "PASS",
+  "tls_contract": "PASS",
+  "desktop_initial": "1916 passed, 1 failed; native mouse/focus test at lines 87 and 81 failed in initial/repeat; isolated final repeat passed",
+  "desktop_final": "1917/1917 PASS; sequential full desktop regression, 0 skipped",
+  "limitations": [
+    "Full CI is not green: inherited formatting gate failure",
+    "Real PostgreSQL and container runtime gates not rerun for this desktop-only PR",
+    "Native mouse/focus test exhibited nondeterminism; original failed receipts retained"
+  ],
+  "decision": "MERGED; no concrete PR source defects found; inherited baseline failures documented",
+  "merge_commit": "285f764ae51736d30defa9171aae531d0bbbb657"
+}

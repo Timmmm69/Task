@@ -8,16 +8,23 @@ public sealed partial class WorkHubViewModel
     public string LinksHeader => "Связи: " + (IsContacts ? SelectedContact?.DisplayName : IsCatalog ? SelectedCatalogItem?.Item.Name : IsSearch ? SelectedSearchHit?.Title : null);
     private bool CanReadLinkSource => Links?.SourceType switch
     {
-        "task" => Has("Task.Read"), "project" => Has("Project.Read"),
-        "contact" or "company" or "interaction" => Has("Contact.Read"), "catalog_item" => Has("FileCatalog.Read"),
-        "calendar_event" => Has("Calendar.Read") || Has("Task.Read"), _ => false,
+        "task" => Has("Task.Read"),
+        "project" => Has("Project.Read"),
+        "contact" or "company" or "interaction" => Has("Contact.Read"),
+        "catalog_item" => Has("FileCatalog.Read"),
+        "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
+        _ => false,
     };
     private bool CanChangeLinks(string permission) => CanUseServerWrites && Has(permission) && CanReadLinkSource
         && (Links?.SourceType switch
         {
-            "task" => true, "project" => Has("Project.Update"), "contact" or "company" => Has("Contact.Update"),
-            "catalog_item" => Has("FileCatalog.Update"), "calendar_event" => Has("CalendarEvent.Update"),
-            "interaction" => Has("Interaction.Update"), _ => false,
+            "task" => true,
+            "project" => Has("Project.Update"),
+            "contact" or "company" => Has("Contact.Update"),
+            "catalog_item" => Has("FileCatalog.Update"),
+            "calendar_event" => Has("CalendarEvent.Update"),
+            "interaction" => Has("Interaction.Update"),
+            _ => false,
         });
     private void UpdateLinkAccess() => Links?.UpdateAccess(_capabilities, _sessionAvailable && _active, _networkAvailable);
     private void SetCurrentLinkSource()

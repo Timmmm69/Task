@@ -23,7 +23,8 @@ public sealed partial class TasksViewModelTests
     public async System.Threading.Tasks.Task Filter_UsesBusinessStatusEvenWhenDisplaySaysOverdue(DesktopTaskStatus status)
     {
         var tasks = Enum.GetValues<DesktopTaskStatus>().Select(value => CreateTask(status: value)
-            with { DeadlineAtUtc = new FilterClock().GetUtcNow().AddDays(-1) }).ToArray();
+            with
+        { DeadlineAtUtc = new FilterClock().GetUtcNow().AddDays(-1) }).ToArray();
         var client = new FakeTasksApiClient();
         client.EnqueuePage(SucceededPage(tasks));
         using var vm = new TasksViewModel(client, filterTimeProvider: new FilterClock());
@@ -76,9 +77,12 @@ public sealed partial class TasksViewModelTests
         var noProject = CreateTask();
         var client = new FilterOptionsClient
         {
-            Options = new JsonObject { ["projects"] = new JsonArray(
+            Options = new JsonObject
+            {
+                ["projects"] = new JsonArray(
                 new JsonObject { ["id"] = firstId.ToString(), ["name"] = "Одинаковый" },
-                new JsonObject { ["id"] = secondId.ToString(), ["name"] = "Одинаковый" }) }
+                new JsonObject { ["id"] = secondId.ToString(), ["name"] = "Одинаковый" })
+            }
         };
         client.EnqueuePage(SucceededPage([first, second, hidden, noProject], "next"));
         client.EnqueuePage(SucceededPage([first]));
@@ -124,14 +128,20 @@ public sealed partial class TasksViewModelTests
     public async System.Threading.Tasks.Task Filter_DeadlinePrecedenceTimezoneMidnightAndNulls()
     {
         var clock = new FilterClock(); // UTC Oct 16, user's calendar Oct 17.
-        var today = CreateTask() with { DeadlineAtUtc = new DateTimeOffset(2026, 10, 16, 21, 0, 0, TimeSpan.Zero),
-            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 11, 1), DeadlineTimeZone = "UTC" } };
+        var today = CreateTask() with
+        {
+            DeadlineAtUtc = new DateTimeOffset(2026, 10, 16, 21, 0, 0, TimeSpan.Zero),
+            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 11, 1), DeadlineTimeZone = "UTC" }
+        };
         var yesterday = CreateTask() with { DeadlineAtUtc = today.DeadlineAtUtc!.Value.AddTicks(-1) };
         var noDeadline = CreateTask() with { DeadlineAtUtc = null };
         var completed = today with { Id = Guid.NewGuid(), Status = DesktopTaskStatus.Completed };
         var cancelled = today with { Id = Guid.NewGuid(), Status = DesktopTaskStatus.Cancelled };
-        var dateOnly = CreateTask() with { DeadlineAtUtc = null,
-            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 10, 16), DeadlineTimeZone = "UTC" } };
+        var dateOnly = CreateTask() with
+        {
+            DeadlineAtUtc = null,
+            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 10, 16), DeadlineTimeZone = "UTC" }
+        };
         var client = new FakeTasksApiClient();
         client.EnqueuePage(SucceededPage([today, yesterday, noDeadline, completed, cancelled, dateOnly]));
         using var vm = new TasksViewModel(client, filterTimeProvider: clock);

@@ -45,12 +45,15 @@ public sealed class EmployeePickerTests
     {
         var user = User(); var failure = true;
         var pending = new System.Threading.Tasks.TaskCompletionSource<DesktopWorkResult<DesktopAdminUser>>();
-        var directory = new Directory { Get = (id, _) =>
+        var directory = new Directory
+        {
+            Get = (id, _) =>
         {
             Assert.Equal(user.Id, id);
             return AsyncTask.FromResult<DesktopWorkResult<DesktopAdminUser>>(failure
                 ? new DesktopWorkResult<DesktopAdminUser>.NotFound() : new DesktopWorkResult<DesktopAdminUser>.Succeeded(user));
-        } };
+        }
+        };
         using var picker = new EmployeePickerViewModel(directory, ["User.Read"]);
         await picker.PreselectAsync(user.Id); Assert.Equal(EmployeePickerState.NotFound, picker.State); Assert.Null(picker.SelectedUserAccountId);
         failure = false; await picker.RetryCommand.ExecuteAsync(); Assert.Equal(user.Id, picker.SelectedUserAccountId);
@@ -64,13 +67,16 @@ public sealed class EmployeePickerTests
     public async AsyncTask EmptyAndPaginationWithDuplicatesAndInactiveOnlyPage()
     {
         var first = User(); var second = User("second"); var step = 0;
-        var directory = new Directory { Search = (_, cursor, _) => AsyncTask.FromResult<DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>>(++step switch
+        var directory = new Directory
         {
-            1 => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([User(status: "blocked")]) { NextCursor = "one" },
-            2 when cursor == "one" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([first]) { NextCursor = "two" },
-            3 when cursor == "two" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([first, second]),
-            _ => throw new InvalidOperationException(),
-        }) };
+            Search = (_, cursor, _) => AsyncTask.FromResult<DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>>(++step switch
+            {
+                1 => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([User(status: "blocked")]) { NextCursor = "one" },
+                2 when cursor == "one" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([first]) { NextCursor = "two" },
+                3 when cursor == "two" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([first, second]),
+                _ => throw new InvalidOperationException(),
+            })
+        };
         using var picker = new EmployeePickerViewModel(directory, ["User.Read"]);
         await picker.SearchAsync(); Assert.Equal(EmployeePickerState.Empty, picker.State); Assert.True(picker.HasMore);
         await picker.LoadMoreAsync(); await picker.LoadMoreAsync(); await picker.LoadMoreAsync();
@@ -83,8 +89,11 @@ public sealed class EmployeePickerTests
     {
         var old = new System.Threading.Tasks.TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>>();
         CancellationToken oldToken = default; var current = User("current");
-        var directory = new Directory { Search = (q, _, token) =>
-        { if (q == "old") { oldToken = token; return old.Task; } return AsyncTask.FromResult(Page(current)); } };
+        var directory = new Directory
+        {
+            Search = (q, _, token) =>
+        { if (q == "old") { oldToken = token; return old.Task; } return AsyncTask.FromResult(Page(current)); }
+        };
         using var picker = new EmployeePickerViewModel(directory, ["User.Read"], debounce: TimeSpan.Zero);
         picker.SearchText = "old"; var pending = picker.CurrentOperation;
         picker.SearchText = "new"; await picker.CurrentOperation;
@@ -150,14 +159,17 @@ public sealed class EmployeePickerTests
     public async AsyncTask FailureIsSafeAndRetryRecovers(string kind, EmployeePickerState state)
     {
         var user = User(); var failure = true;
-        var directory = new Directory { Search = (_, _, _) => AsyncTask.FromResult(failure ? kind switch
+        var directory = new Directory
         {
-            "forbidden" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Forbidden(),
-            "auth" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.AuthenticationFailure(),
-            "unavailable" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.ServerUnavailable(),
-            "missing" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.NotFound(),
-            _ => (DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>)new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.MalformedResponse(),
-        } : Page(user)) };
+            Search = (_, _, _) => AsyncTask.FromResult(failure ? kind switch
+            {
+                "forbidden" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Forbidden(),
+                "auth" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.AuthenticationFailure(),
+                "unavailable" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.ServerUnavailable(),
+                "missing" => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.NotFound(),
+                _ => (DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>)new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.MalformedResponse(),
+            } : Page(user))
+        };
         using var picker = new EmployeePickerViewModel(directory, ["User.Read"]);
         await picker.SearchAsync(); Assert.Equal(state, picker.State); Assert.Empty(picker.Results);
         failure = false; await picker.RetryCommand.ExecuteAsync(); Assert.Same(user, Assert.Single(picker.Results));
@@ -168,12 +180,18 @@ public sealed class EmployeePickerTests
     }
 
     [Theory]
-    [InlineData("blocked")][InlineData("deactivated")][InlineData("pending_activation")][InlineData("unknown")]
+    [InlineData("blocked")]
+    [InlineData("deactivated")]
+    [InlineData("pending_activation")]
+    [InlineData("unknown")]
     public async AsyncTask ActiveOnlyRejectsInvalidAccountsIncludingPreselection(string status)
     {
         var user = User(status: status);
-        var directory = new Directory { Search = (_, _, _) => AsyncTask.FromResult(Page(user)),
-            Get = (_, _) => AsyncTask.FromResult<DesktopWorkResult<DesktopAdminUser>>(new DesktopWorkResult<DesktopAdminUser>.Succeeded(user)) };
+        var directory = new Directory
+        {
+            Search = (_, _, _) => AsyncTask.FromResult(Page(user)),
+            Get = (_, _) => AsyncTask.FromResult<DesktopWorkResult<DesktopAdminUser>>(new DesktopWorkResult<DesktopAdminUser>.Succeeded(user))
+        };
         using var picker = new EmployeePickerViewModel(directory, ["User.Read"]);
         await picker.SearchAsync(); Assert.Empty(picker.Results);
         picker.Candidate = user; Assert.False(picker.ConfirmSelection());
@@ -186,7 +204,9 @@ public sealed class EmployeePickerTests
     public async AsyncTask RepeatedCursorStopsAndFailedNextPageRetriesSameCursor()
     {
         var first = User(); var count = 0; var cursors = new List<string?>();
-        var directory = new Directory { Search = (_, cursor, _) =>
+        var directory = new Directory
+        {
+            Search = (_, cursor, _) =>
         {
             cursors.Add(cursor);
             return AsyncTask.FromResult<DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>>(++count switch
@@ -195,7 +215,8 @@ public sealed class EmployeePickerTests
                 2 => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.ServerUnavailable(),
                 _ => new DesktopWorkResult<IReadOnlyList<DesktopAdminUser>>.Succeeded([User()]) { NextCursor = "next" },
             });
-        } };
+        }
+        };
         using var picker = new EmployeePickerViewModel(directory, ["User.Read"]);
         await picker.SearchAsync(); await picker.LoadMoreAsync();
         picker.Candidate = first; Assert.False(picker.CanConfirm);

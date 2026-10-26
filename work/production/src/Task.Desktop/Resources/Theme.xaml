@@ -6,6 +6,7 @@
         <ResourceDictionary Source="Tokens.Spacing.xaml" />
         <ResourceDictionary Source="Icons.xaml" />
         <ResourceDictionary Source="Controls.Buttons.xaml" />
+        <ResourceDictionary Source="Controls.TaskCard.xaml" />
         <ResourceDictionary Source="Controls.Navigation.xaml" />
         <ResourceDictionary Source="Controls.Data.xaml" />
         <ResourceDictionary Source="Controls.Calendar.xaml" />

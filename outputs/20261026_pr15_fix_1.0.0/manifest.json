@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "hashPolicy": "SHA-256: PNG raw bytes; text UTF-8 without BOM, CRLF normalized to LF",
+  "files": [
+    {
+      "path": "integration/corporate-links-catalog-read-only.png",
+      "sha256": "f618dceb25c31c3e42e55e629446c13b432d6cab4fad23a7c34880fcf8dcf5a5"
+    },
+    {
+      "path": "integration/corporate-links-confirmed.png",
+      "sha256": "cf1b03a022253ed5194673e490477d279c4e0ef5cbc9d0bc55dbd3a699615e22"
+    },
+    {
+      "path": "integration/corporate-links-narrow.png",
+      "sha256": "1d6a8024fd21e35ede41e448a05dcb66e6b3cb1e920d8d015b3a10d682055881"
+    },
+    {
+      "path": "integration/corporate-links-selected.png",
+      "sha256": "2de75f300c0b68b714ac1eddc1b75d8c837bbcf0552d3c1f1570eb0eb843ac32"
+    },
+    {
+      "path": "layout/geometry.json",
+      "sha256": "f8104e65950d80934f9017e8d5518a47982dbad80e9777e18e242531b4dc60e4"
+    },
+    {
+      "path": "layout/workhub-1100.png",
+      "sha256": "d36fb05076f89637ad8bb37e7bb068cf570ea67f9eaa2629d0a0a33c19fa7dce"
+    },
+    {
+      "path": "layout/workhub-520.png",
+      "sha256": "c6ef84bb1d087b9f6183c305b530a45ec4c197b91e48ed6682ac99ed210ec213"
+    },
+    {
+      "path": "layout/workhub-780.png",
+      "sha256": "e3f39c22a70ccfaf56838adbd3961c8765bdb7f1b3a274996e3f1002df81e05b"
+    },
+    {
+      "path": "layout/workhub-820.png",
+      "sha256": "7d4ba2eb2c3104ec7c72a566810f4dfae13b7d575eb74b5bc369795b6a662a90"
+    },
+    {
+      "path": "source-manifest.json",
+      "sha256": "73374963c7fc33241bc9ea13718f47d5bca22ee5463c3b3d9bb9454e4bdfaa01"
+    },
+    {
+      "path": "validation-report.md",
+      "sha256": "879d44d1461cab3191847522ecb6630bd6151b9cff393404e02fa7f0a76cf4aa"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "7b9b31070f557f1a4edad87369161f3fec4dc19eedd79fd1db94a35b522bc2a3"
+    },
+    {
+      "path": "Verify-Package.ps1",
+      "sha256": "00bd6662d76c25dc0a929fe8fd44a674a6b32cdf8dd3adef3bc347c7279e34fe"
+    }
+  ]
+}

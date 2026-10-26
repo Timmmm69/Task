@@ -53,8 +53,10 @@ public sealed partial class ProjectsViewModelTests
         client.MembersHandler = (_, _) => failure == "exception" ? AsyncTask.FromException<MembersResult>(new IOException("sensitive"))
             : AsyncTask.FromResult<MembersResult>(failure switch
             {
-                "forbidden" => new MembersResult.Forbidden(), "notfound" => new MembersResult.NotFound(),
-                "unavailable" => new MembersResult.ServerUnavailable(), _ => new MembersResult.MalformedResponse()
+                "forbidden" => new MembersResult.Forbidden(),
+                "notfound" => new MembersResult.NotFound(),
+                "unavailable" => new MembersResult.ServerUnavailable(),
+                _ => new MembersResult.MalformedResponse()
             });
         using var vm = new ProjectsViewModel(client, User, Capabilities);
         vm.Activate(); await vm.CurrentDetailsOperation;
@@ -213,7 +215,7 @@ public sealed partial class ProjectsViewModelTests
     public async AsyncTask Sections_ExistingArchiveActionStillRequiresCompletedProjectAndUsesServerResponse()
     {
         var client = SectionClient();
-        using var vm = new ProjectsViewModel(client, User, Capabilities);
+        using var vm = new ProjectsViewModel(client, User, Capabilities, confirmAction: (_, _, _) => true);
         vm.Activate(); await vm.CurrentDetailsOperation;
         Assert.False(vm.ArchiveProjectCommand.CanExecute(null));
         var completed = Project() with { Status = DesktopProjectStatus.Completed, ActualEndAt = DateTimeOffset.UtcNow };

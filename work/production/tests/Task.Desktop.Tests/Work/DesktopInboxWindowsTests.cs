@@ -21,8 +21,14 @@ public sealed partial class DesktopWorkApiClientTests
     {
         if (Environment.GetEnvironmentVariable("TASK_INBOX_CONVERSION_UI_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                RedirectStandardOutput = true, RedirectStandardError = true, WindowStyle = ProcessWindowStyle.Hidden };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(Inbox_NativeTitleOnlyConversionHasEnabledSaveAndClosesSource));
             start.Environment["TASK_INBOX_CONVERSION_UI_PROBE"] = "1";
@@ -59,8 +65,16 @@ public sealed partial class DesktopWorkApiClientTests
                     using var model = new InboxViewModel(fixture.Inbox, ["Inbox.ReadOwn", "Inbox.ManageOwn", "Task.Read"]);
                     await model.ActivateAsync(); await model.ConvertCommand.ExecuteAsync(model.SelectedItem);
                     var view = new InboxView { DataContext = model, Background = Brushes.White, MotionEnabled = () => false };
-                    window = new Window { Content = view, Width = 1280, Height = 900, Left = -20000, ShowInTaskbar = false,
-                        ShowActivated = false, Title = "Task — преобразование без срока" };
+                    window = new Window
+                    {
+                        Content = view,
+                        Width = 1280,
+                        Height = 900,
+                        Left = -20000,
+                        ShowInTaskbar = false,
+                        ShowActivated = false,
+                        Title = "Task — преобразование без срока"
+                    };
                     window.Show(); DrainInbox();
                     var save = InboxControl<Button>(view, "InboxSaveConversionButton");
                     var deadline = InboxControl<TextBox>(view, "InboxConversionDeadline");

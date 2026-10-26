@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-23",
+  "baseline": "cb23ef115176d802c6d6950299e61b3f61aad215",
+  "scope": "UX #5 archive / #6 remove project member",
+  "build": {
+    "command": "dotnet build work/production/src/Task.Desktop/Task.Desktop.csproj --configuration Release --no-restore",
+    "result": "PASS",
+    "errors": 0,
+    "warnings": 0
+  },
+  "tests": [
+    {
+      "name": "projects",
+      "total": 301,
+      "passed": 301,
+      "failed": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "name": "desktop",
+      "total": 1901,
+      "passed": 1900,
+      "failed": 1,
+      "skipped": 0,
+      "failures": [
+        "Task.Desktop.Tests.CommandPaletteTests.Debounce_SearchesOnlyLatestValidQuery_PreservesServerRanking"
+      ]
+    },
+    {
+      "name": "debounce-recheck",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "failures": []
+    }
+  ],
+  "testCommands": [
+    "dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj --filter FullyQualifiedName~Projects --no-restore",
+    "dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj --no-restore",
+    "dotnet test work/production/tests/Task.Desktop.Tests/Task.Desktop.Tests.csproj --no-build --no-restore --filter FullyQualifiedName~Debounce_SearchesOnlyLatestValidQuery_PreservesServerRanking"
+  ],
+  "formatting": "PASS: targeted dotnet format whitespace verification; existing unrelated whitespace in ProjectDetailSectionsTests.cs was preserved",
+  "diffCheck": "PASS",
+  "apiDtoPermissionsBackendChanged": false
+}

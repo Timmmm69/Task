@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-26",
+  "originalHead": "3cd03dc894c73ff4dad4d76850fd370a8ba607c2",
+  "integrationBase": "cc2933a690d37323b73f64a74ecd19be96be8dac",
+  "fullGate": {
+    "failed": 0,
+    "skipped": 0,
+    "passed": 3503
+  },
+  "postgres": {
+    "stoppedAfterTest": true,
+    "version": "16.14",
+    "listenAddress": "127.0.0.1",
+    "isolated": true
+  },
+  "productionBuild": "passed",
+  "dependencyAudit": "passed",
+  "projectBoundaries": "passed",
+  "independentSecurityReview": "passed",
+  "secretsTlsContract": "passed",
+  "changedCSharpFormatting": "passed",
+  "globalFormatting": {
+    "files": 72,
+    "result": "existing_baseline_failure"
+  },
+  "dashboardOrder": "passed",
+  "dashboardValidate": "passed",
+  "nativeRegressionSizes": [
+    "1100x730",
+    "820x730",
+    "780x730",
+    "520x730",
+    "820x480"
+  ],
+  "physicalDpiScale": 1.5,
+  "unresolvedReviewFindings": 0,
+  "testReceipts": [
+    {
+      "path": "evidence/fixed-full/novik_TIM_2026-10-26_03_48_09_net10.0.trx",
+      "exampleTest": "Task.Desktop.Tests.Today.TodayViewModelTests.Planning_WriteRequiresLiveSessionPermissionAndConnection(condition: \"permission\")",
+      "total": 1918,
+      "passed": 1918,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "7429b0416e6a1e712d1bf23df208eb55e94861b445fc802d4b0d00032f1bde24"
+    },
+    {
+      "path": "evidence/fixed-full/novik_TIM_2026-10-26_03_48_10_net10.0.trx",
+      "exampleTest": "Task.Tests.SyncableEntityMetadataTests.ArchiveAndRestore_AdvanceVersionAndMaintainAuditTrail",
+      "total": 906,
+      "passed": 851,
+      "failed": 33,
+      "skipped": 0,
+      "sha256": "fc6731e0ef2ee9b971afccbb6486e939b146e75d7bbbbe2d8cfe1f51304f14ac"
+    },
+    {
+      "path": "evidence/fixed-full/novik_TIM_2026-10-26_03_48_10_net10.0[1].trx",
+      "exampleTest": "Task.ServiceHosts.Tests.TaskEndpointsTests.ReturnTask_RejectedWithoutMutation(scenario: \"revoked\", expectedStatus: Unauthorized, expectedCode: \"SESSION_REVOKED\")",
+      "total": 671,
+      "passed": 671,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "c27e0f28aa729e10a5f341b4891b3d1e1e409dd414c1f58122e3dc4f73e3e8f6"
+    },
+    {
+      "path": "evidence/fixed-postgres16/pr15-postgres16.trx",
+      "exampleTest": "Task.Tests.Security.PermissionDecisionServiceTests.EvaluateAsync_ExplicitDenyWithoutGrants_ReturnsExplicitDeny",
+      "total": 914,
+      "passed": 914,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "c36b809d7e9862797b138eca7a2dc2bfe7fa5a7c3d18ad77e41c75095c8ba21a"
+    },
+    {
+      "path": "evidence/fixed/pr15-fixed-targeted.trx",
+      "exampleTest": "Task.Desktop.Tests.Work.ObjectLinksIntegrationTests.FailedWriteKeepsConfirmedRowsAndRequiresReconciliation(error: \"offline\")",
+      "total": 87,
+      "passed": 87,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "f190f37c014306b704e42e5efaa76ac4fc9ea886df003e2c6b7c8f81f54de97e"
+    },
+    {
+      "path": "evidence/fixed-visual/pr15-fixed-visual.trx",
+      "exampleTest": "Task.Desktop.Tests.Work.ObjectLinksIntegrationWindowsTests.EmbeddedPickerKeyboardCreateAndReadOnlyCatalog",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "sha256": "0159fcf13f2b94db8640b7050348873f661f5f03f9b57ecda73529c21ae3f86f"
+    }
+  ],
+  "limitations": [
+    "Global formatting baseline remains red",
+    "Container/Trivy not run: Docker daemon unavailable",
+    "Manual HC/physical mixed-DPI/clean-Windows not run"
+  ]
+}

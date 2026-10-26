@@ -11,9 +11,12 @@ public sealed partial class ProjectsViewModelTests
 {
     private static ProjectsViewModel RelatedModel(TasksViewModelTests.FakeTasksApiClient tasks, string[]? capabilities = null)
     {
-        var vm = new ProjectsViewModel(new FakeProjectsClient { Projects = SuccessPage(Project()),
+        var vm = new ProjectsViewModel(new FakeProjectsClient
+        {
+            Projects = SuccessPage(Project()),
             ProjectHandler = (id, _) => AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(
-                new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Id = id })) }, User, capabilities ?? Capabilities, tasks);
+                new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project() with { Id = id }))
+        }, User, capabilities ?? Capabilities, tasks);
         vm.Activate();
         return vm;
     }
@@ -201,8 +204,10 @@ public sealed partial class ProjectsViewModelTests
         if (error == "exception") tasks.EnqueuePage((_, _) => throw new InvalidOperationException("private transport details"));
         else tasks.EnqueuePage(error switch
         {
-            "forbidden" => new PageResult.Forbidden(), "auth" => new PageResult.AuthenticationFailure(),
-            "notfound" => new PageResult.NotFound(), "invalidcursor" => new PageResult.InvalidCursor(),
+            "forbidden" => new PageResult.Forbidden(),
+            "auth" => new PageResult.AuthenticationFailure(),
+            "notfound" => new PageResult.NotFound(),
+            "invalidcursor" => new PageResult.InvalidCursor(),
             _ => new PageResult.MalformedResponse()
         });
         await vm.LoadRelatedTasksCommand.ExecuteAsync();
@@ -237,8 +242,11 @@ public sealed partial class ProjectsViewModelTests
         var gate = new System.Threading.Tasks.TaskCompletionSource<DesktopProjectResult<DesktopProjectDto>>();
         CancellationToken token = default;
         var second = Project() with { Id = Guid.NewGuid(), Name = "Второй проект" };
-        var client = new FakeProjectsClient { Projects = SuccessPage(Project(), second),
-            ProjectHandler = (id, ct) => { if (id == second.Id) return AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(new DesktopProjectResult<DesktopProjectDto>.Succeeded(second)); token = ct; return gate.Task; } };
+        var client = new FakeProjectsClient
+        {
+            Projects = SuccessPage(Project(), second),
+            ProjectHandler = (id, ct) => { if (id == second.Id) return AsyncTask.FromResult<DesktopProjectResult<DesktopProjectDto>>(new DesktopProjectResult<DesktopProjectDto>.Succeeded(second)); token = ct; return gate.Task; }
+        };
         using var vm = new ProjectsViewModel(client, User, Capabilities, new TasksViewModelTests.FakeTasksApiClient());
         vm.Activate();
         var old = vm.CurrentDetailsOperation;

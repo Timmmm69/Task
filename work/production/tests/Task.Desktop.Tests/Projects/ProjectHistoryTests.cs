@@ -94,9 +94,14 @@ public sealed partial class ProjectsViewModelTests
     {
         var client = SectionClient();
         client.HistoryHandler = (_, _, _) => mode == "exception" ? AsyncTask.FromException<Result>(new IOException("secret path"))
-            : AsyncTask.FromResult<Result>(mode switch {
-                "empty" => HistoryPage(), "forbidden" => new Result.Forbidden(), "notfound" => new Result.NotFound(),
-                "unavailable" => new Result.ServerUnavailable(), _ => new Result.MalformedResponse() });
+            : AsyncTask.FromResult<Result>(mode switch
+            {
+                "empty" => HistoryPage(),
+                "forbidden" => new Result.Forbidden(),
+                "notfound" => new Result.NotFound(),
+                "unavailable" => new Result.ServerUnavailable(),
+                _ => new Result.MalformedResponse()
+            });
         using var vm = new ProjectsViewModel(client, User, HistoryCaps); vm.Activate(); await vm.CurrentDetailsOperation;
         await vm.OpenHistorySectionAsync();
         Assert.Equal(state, vm.HistorySection.State); Assert.Empty(vm.History);

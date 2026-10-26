@@ -33,7 +33,10 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(null)][InlineData("W/\"v7\"")][InlineData("\"v6\"")][InlineData("\"v07\"")]
+    [InlineData(null)]
+    [InlineData("W/\"v7\"")]
+    [InlineData("\"v6\"")]
+    [InlineData("\"v07\"")]
     public async System.Threading.Tasks.Task MissingWeakOrMismatchedVersionCannotBecomeEditableCard(string? tag)
     {
         var id = Guid.NewGuid();
@@ -42,7 +45,11 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(403)][InlineData(404)][InlineData(412)][InlineData(422)][InlineData(503)]
+    [InlineData(403)]
+    [InlineData(404)]
+    [InlineData(412)]
+    [InlineData(422)]
+    [InlineData(503)]
     public async System.Threading.Tasks.Task ContactPatchMapsServerErrors(int code)
     {
         var id = Guid.NewGuid();
