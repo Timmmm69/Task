@@ -1,0 +1,60 @@
+Тестовый запуск для C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:02.15]     Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [FAIL]
+  Не пройден Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [473 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.Markup.StaticResourceHolder" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.Input.Combo". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.MainWindow.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Desktop\MainWindow.xaml:line 1
+   at Task.Desktop.MainWindow..ctor(MainWindowViewModel viewModel) in C:\Users\novik\ðóð░Ðüð║\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 33
+   at Task.Desktop.Tests.CorporateCloseUiTests.<>c__DisplayClass0_1.<<NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 56
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush() in C:\Users\novik\ðóð░Ðüð║\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 155
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 495 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.86]     Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.CorporateCloseUiTests.NativeWpf_CloseCancelTrayExitTransitionsAndPreferenceFlush() in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\CorporateCloseUiTests.cs:line 32
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:05.24]     Task.Desktop.Tests.VisualFoundationTests.MainWindow_LoadsAndMeasuresDirection2Shell [FAIL]
+  Не пройден Task.Desktop.Tests.VisualFoundationTests.MainWindow_LoadsAndMeasuresDirection2Shell [667 ms]
+  Сообщение об ошибке:
+   WPF resource load failed: System.Windows.Markup.XamlParseException: Предоставление значения для "System.Windows.Markup.StaticResourceHolder" вызвало исключение.
+ ---> System.Exception: Не удается найти ресурс с именем "Task.Input.Combo". Имена ресурсов определяются с учетом регистра.
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+   --- End of inner exception stack trace ---
+   at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.MainWindow.InitializeComponent() in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Desktop\MainWindow.xaml:line 1
+   at Task.Desktop.MainWindow..ctor(MainWindowViewModel viewModel) in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Desktop\MainWindow.xaml.cs:line 33
+   at Task.Desktop.Tests.VisualFoundationTests.<>c.<MainWindow_LoadsAndMeasuresDirection2Shell>b__0_0() in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\VisualFoundationTests.cs:line 34
+   at Task.Desktop.Tests.VisualFoundationTests.<>c__DisplayClass13_0`1.<RunOnSta>b__0() in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\VisualFoundationTests.cs:line 382
+  Трассировка стека:
+     at Task.Desktop.Tests.VisualFoundationTests.RunOnSta[T](Func`1 action) in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\VisualFoundationTests.cs:line 395
+   at Task.Desktop.Tests.VisualFoundationTests.MainWindow_LoadsAndMeasuresDirection2Shell() in C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\VisualFoundationTests.cs:line 18
+   at System.RuntimeMethodHandle.InvokeMethod(ObjectHandleOnStack target, Void** arguments, ObjectHandleOnStack sig, BOOL isConstructor, ObjectHandleOnStack result)
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+Файл результатов: C:\Users\novik\Таск\work\pr13_pr14_review_20261026\fix-evidence\targeted\style-and-startup.trx
+
+Не пройден!: не пройдено     2, пройдено     1, пропущено     0, всего     3, длительность 4 s. - Task.Desktop.Tests.dll (net10.0)

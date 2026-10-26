@@ -1,0 +1,8 @@
+PASS template parses and validates
+PASS missing required field is rejected
+PASS low risk cannot request review route
+PASS owned paths must remain under work
+PASS valid working-tree diff passes
+PASS outside owned paths is rejected
+PASS canonical source modification is rejected
+7 passed, 0 failed

@@ -1,0 +1,1022 @@
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 2 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+* Production solution (cheap gates) (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  * Test production solution
+  * Run production dependency and static security review
+  * Verify production secrets and TLS contract
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+- Delegation policy in 0s (ID 121472669846)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 3 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+* Production solution (cheap gates) (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  * Test production solution
+  * Run production dependency and static security review
+  * Verify production secrets and TLS contract
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+- Delegation policy in 0s (ID 121472669846)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 4 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+* Production solution (cheap gates) (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  * Test production solution
+  * Run production dependency and static security review
+  * Verify production secrets and TLS contract
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+- Delegation policy in 0s (ID 121472669846)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 4 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+* Production solution (cheap gates) (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  * Test production solution
+  * Run production dependency and static security review
+  * Verify production secrets and TLS contract
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+- Delegation policy in 0s (ID 121472669846)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 5 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+* Production solution (cheap gates) (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  * Test production solution
+  * Run production dependency and static security review
+  * Verify production secrets and TLS contract
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+- Delegation policy in 0s (ID 121472669846)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 5 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+* Production solution (cheap gates) (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  * Test production solution
+  * Run production dependency and static security review
+  * Verify production secrets and TLS contract
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+- Delegation policy in 0s (ID 121472669846)
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 6 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  * Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  * Initialize containers
+  * Run actions/checkout@v6
+  * Run actions/setup-dotnet@v5
+  * Restore PostgreSQL gate projects
+  * Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 6 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  * Run actions/setup-dotnet@v5
+  * Restore PostgreSQL gate projects
+  * Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 7 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 7 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 8 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 8 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 9 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 9 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+* Production container package (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  * Verify production container package
+  * Install Trivy
+  * Scan production container vulnerabilities
+  * Post Run actions/checkout@v6
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 10 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+X Production container package in 4m17s (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Verify production container package
+  ✓ Install Trivy
+  X Scan production container vulnerabilities
+  ✓ Post Install Trivy
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+* Production tests (real PostgreSQL 16) (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  * Run tests against real PostgreSQL
+  * Post Run actions/setup-dotnet@v5
+  * Post Run actions/checkout@v6
+  * Stop containers
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+X Process completed with exit code 1.
+Production container package: .github#47
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Production container package: .github#1
+
+X codex/task-card-design CI Timmmm69/Task#13 · 40293127955
+Triggered via pull_request about 10 minutes ago
+
+JOBS
+✓ Prototype build and tests in 1m40s (ID 121472668451)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  ✓ Run npm ci
+  ✓ Run npm run build
+  ✓ Run npm test
+  ✓ Post Run actions/setup-node@v4
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation subsystem tests in 22s (ID 121472668631)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run delegation protocol tests
+  ✓ Post Run actions/checkout@v4
+  ✓ Complete job
+✓ Delegation policy (not applicable) in 4s (ID 121472668693)
+  ✓ Set up job
+  ✓ Run echo "Not a delegated DeepSeek pull request."
+  ✓ Complete job
+✓ Production solution (cheap gates) in 5m58s (ID 121472668839)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore and audit production dependencies
+  ✓ Verify production formatting
+  ✓ Verify production project boundaries
+  ✓ Build production solution
+  ✓ Test production solution
+  ✓ Run production dependency and static security review
+  ✓ Verify production secrets and TLS contract
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+- Delegation policy in 0s (ID 121472669846)
+X Production container package in 4m17s (ID 121474968042)
+  ✓ Set up job
+  ✓ Run actions/checkout@v6
+  ✓ Verify production container package
+  ✓ Install Trivy
+  X Scan production container vulnerabilities
+  ✓ Post Install Trivy
+  ✓ Post Run actions/checkout@v6
+  ✓ Complete job
+✓ Production tests (real PostgreSQL 16) in 4m42s (ID 121474968116)
+  ✓ Set up job
+  ✓ Initialize containers
+  ✓ Run actions/checkout@v6
+  ✓ Run actions/setup-dotnet@v5
+  ✓ Restore PostgreSQL gate projects
+  ✓ Build runtime required by integration tests
+  ✓ Run tests against real PostgreSQL
+  ✓ Post Run actions/setup-dotnet@v5
+  ✓ Post Run actions/checkout@v6
+  ✓ Stop containers
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Prototype build and tests: .github#2
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Delegation subsystem tests: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Delegation policy (not applicable): .github#1
+
+X Process completed with exit code 1.
+Production container package: .github#47
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Production container package: .github#1
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Production tests (real PostgreSQL 16): .github#1
+
