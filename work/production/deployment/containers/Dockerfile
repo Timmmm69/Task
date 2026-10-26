@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.7@sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720
 
-ARG SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.400-noble-amd64@sha256:5657c5f725f2e8923f31b2eb9d743662f2e0be50a2bee41de685fc9f12ae68ef
-ARG ASPNET_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0.11-noble-amd64@sha256:282c2e90dd35c6a720b744f4848d3dce9de4bfb404011270cc8ee63f07e56c36
-ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/runtime:10.0.11-noble-amd64@sha256:3e4906ba425366b848fc1899c4414cbc4d1c70f423a4e5a0d5c39c226e134f21
+ARG SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.403-noble-amd64@sha256:9c7b6b263d9d4c2e4718e16dae6d75cd8f4b5ccf206f1e7d48a98eb429981b03
+ARG ASPNET_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0.14-noble-amd64@sha256:43cbcf11fd6f88c0375c9c0f7fe59af619abeb323befe5f57dc1502b5a05d8c3
+ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/runtime:10.0.14-noble-amd64@sha256:de1261f1b137a580e6620fa3f20323efa7bb131a2aeb103cab95077d3445122d
 
 FROM ${SDK_IMAGE} AS build
 ARG VERSION=0.0.0-local
