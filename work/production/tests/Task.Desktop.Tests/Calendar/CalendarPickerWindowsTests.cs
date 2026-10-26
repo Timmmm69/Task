@@ -55,6 +55,47 @@ public sealed partial class CalendarEmployeePickerTests
                     var view = new CalendarView { DataContext = vm };
                     window = new Window { Content = view, Width = 1120, Height = 900, Title = "Task · Calendar Picker test" };
                     window.Show(); window.Activate(); Pump();
+                    var details = (StackPanel)view.FindName("CalendarEditorDetails");
+                    var attendeePanel = (Border)view.FindName("CalendarEditorAttendees");
+                    var actions = (Grid)view.FindName("CalendarEditorActions");
+                    Assert.Equal(1, Grid.GetColumn(attendeePanel));
+                    Assert.True(attendeePanel.TranslatePoint(new Point(), view).X > details.TranslatePoint(new Point(), view).X);
+                    SaveFrame(view, "calendar-today-wide.png");
+                    window.Width = 900; window.Height = 700; Pump();
+                    Assert.Equal(0, Grid.GetColumn(attendeePanel)); Assert.Equal(1, Grid.GetRow(attendeePanel));
+                    Assert.InRange(Math.Abs(details.ActualWidth - attendeePanel.ActualWidth), 0, 2);
+                    var actionBounds = actions.TransformToAncestor(view).TransformBounds(new Rect(actions.RenderSize));
+                    Assert.InRange(actionBounds.Bottom, 1, view.ActualHeight);
+                    SaveFrame(view, "calendar-today-narrow.png");
+                    window.Width = 1120; window.Height = 900; Pump();
+                    Assert.Equal(1, Grid.GetColumn(attendeePanel));
+                    // Exercise the custom DatePicker template through its native WPF parts.
+                    var datePicker = Descendants<DatePicker>(view).Single(p =>
+                        System.Windows.Automation.AutomationProperties.GetName(p) == "Дата события");
+                    datePicker.BringIntoView(); Pump(); datePicker.ApplyTemplate();
+                    Assert.IsType<System.Windows.Controls.Primitives.DatePickerTextBox>(datePicker.Template.FindName("PART_TextBox", datePicker));
+                    var calendarButton = Assert.IsType<Button>(datePicker.Template.FindName("PART_Button", datePicker));
+                    calendarButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump();
+                    var popup = Assert.IsType<System.Windows.Controls.Primitives.Popup>(datePicker.Template.FindName("PART_Popup", datePicker));
+                    Assert.True(popup.IsOpen);
+                    var originalDate = vm.Editor.Date;
+                    var calendar = Assert.IsType<System.Windows.Controls.Calendar>(popup.Child);
+                    calendar.SelectedDate = originalDate!.Value.AddDays(1); Pump();
+                    Assert.Equal(originalDate.Value.AddDays(1), vm.Editor.Date);
+                    popup.IsOpen = false; vm.Editor.Date = originalDate; Pump();
+                    var allDay = Descendants<CheckBox>(view).Single(c =>
+                        System.Windows.Automation.AutomationProperties.GetName(c) == "Событие на весь день");
+                    var startTime = Descendants<TextBox>(view).Single(t =>
+                        System.Windows.Automation.AutomationProperties.GetName(t) == "Время начала");
+                    var originalTime = vm.Editor.StartTime;
+                    allDay.IsChecked = true; Pump(); Assert.True(vm.Editor.IsAllDay); Assert.False(startTime.IsEnabled);
+                    allDay.IsChecked = false; Pump(); Assert.True(startTime.IsEnabled); Assert.Equal(originalTime, startTime.Text);
+                    var eventStatus = Descendants<ComboBox>(view).Single(c =>
+                        System.Windows.Automation.AutomationProperties.GetName(c) == "Статус события");
+                    eventStatus.BringIntoView(); Pump(); eventStatus.ApplyTemplate();
+                    eventStatus.IsDropDownOpen = true; Pump();
+                    Assert.True(Assert.IsType<System.Windows.Controls.Primitives.Popup>(eventStatus.Template.FindName("PART_Popup", eventStatus)).IsOpen);
+                    eventStatus.IsDropDownOpen = false; Pump();
                     var picker = Descendants<EmployeePickerView>(view).Single(v => v.IsVisible);
                     Assert.Same(vm.Editor.AttendeePicker, picker.DataContext);
                     vm.Editor.IsSaving = true; Pump();
