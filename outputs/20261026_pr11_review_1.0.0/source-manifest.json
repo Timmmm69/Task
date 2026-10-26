@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "pull_request": "https://github.com/Timmmm69/Task/pull/11",
+  "baseline": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "head": "48ee9a0f1fb8d05b102ac4895ef658658ea156b2",
+  "tested_tree": "7efabcfa1ecb17e9f7d7f2d0040242322a2d43ee",
+  "sources": [
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "sha256": "0c5c6b184f5e2973b088939660ab89e36d8b8e95506b076fa53493d45b987e7c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.Sections.cs",
+      "sha256": "e8f8133d13084df4a8fcc29496fafc0fdaa9d5e352d258bb56ba081d4edd59f9"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/ProjectsViewModel.cs",
+      "sha256": "7683b477f7ef8a948c222452b1470c31089436c2894218615167c410df94aac7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ProjectsView.xaml",
+      "sha256": "2a9d79cac58a5b89b080e0851923147d4252eef4fde7715ef71a129ccc212c8b"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectActionConfirmationTests.cs",
+      "sha256": "81b432cacaefa056b7918be561cafd953b25a1112164e029d81beb75be8df299"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectConfirmationUiTests.cs",
+      "sha256": "a73f38f1e560fb8a7151c8591741949ab2529ff21b982d87f368d5095b8b6440"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectDetailSectionsTests.cs",
+      "sha256": "a87b8ba94600ac227e7cdfcadf11ea59789726d16ab28cace33039c45f8efd4f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Projects/ProjectsViewModelTests.cs",
+      "sha256": "f8fb70cfa1cd66f430113b27e879e7d4cd2d10f6d3a6b64162697dbcdb1cae86"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "scope": "Published review summary; full receipts retained locally at the same outputs path",
+  "files": [
+    {
+      "path": "REPORT.md",
+      "sha256": "92cc0d1fd082865dbe304c46c26750b63cef9b4f532e4872b3b336eb7dc2eb56"
+    },
+    {
+      "path": "source-manifest.json",
+      "sha256": "85256a500e56094becb7f83097439fd3b17c71452623f27219986cf69b006b22"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "31005b3db3ff461aff80292356fda06ae79ebfae10fbac6d5e2bc39c44b7cd79"
+    }
+  ]
+}
