@@ -12,15 +12,25 @@ public sealed partial class DesktopWorkApiClientTests
     {
         ["items"] = new JsonArray(new JsonObject
         {
-            ["objectId"] = ItemId, ["objectType"] = type, ["title"] = "План", ["version"] = 1,
-            ["updatedAt"] = "2026-10-17T10:00:00Z", ["lifecycleState"] = "active",
-        }), ["nextCursor"] = null,
+            ["objectId"] = ItemId,
+            ["objectType"] = type,
+            ["title"] = "План",
+            ["version"] = 1,
+            ["updatedAt"] = "2026-10-17T10:00:00Z",
+            ["lifecycleState"] = "active",
+        }),
+        ["nextCursor"] = null,
     }.ToJsonString();
 
     [Theory]
-    [InlineData("project")][InlineData("task")][InlineData("calendar_event")]
-    [InlineData("interaction")][InlineData("employee_profile")]
-    [InlineData("network_resource")][InlineData("notification")][InlineData("inbox_item")]
+    [InlineData("project")]
+    [InlineData("task")]
+    [InlineData("calendar_event")]
+    [InlineData("interaction")]
+    [InlineData("employee_profile")]
+    [InlineData("network_resource")]
+    [InlineData("notification")]
+    [InlineData("inbox_item")]
     public async AsyncTask TargetSearchSupportsOtherLinkableSearchResources(string type)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => AsyncTask.FromResult(Json(HttpStatusCode.OK, TargetBody(type))));
@@ -44,9 +54,17 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData("file_location")][InlineData("emptyId")][InlineData("inactive")][InlineData("badJson")]
-    [InlineData("arrayRoot")][InlineData("scalarHit")][InlineData("invalidVersion")][InlineData("tooMany")]
-    [InlineData("badCursor")][InlineData("repeatCursor")][InlineData("missingLifecycle")]
+    [InlineData("file_location")]
+    [InlineData("emptyId")]
+    [InlineData("inactive")]
+    [InlineData("badJson")]
+    [InlineData("arrayRoot")]
+    [InlineData("scalarHit")]
+    [InlineData("invalidVersion")]
+    [InlineData("tooMany")]
+    [InlineData("badCursor")]
+    [InlineData("repeatCursor")]
+    [InlineData("missingLifecycle")]
     public async AsyncTask TargetSearchRejectsMalformedWirePayloads(string kind)
     {
         var node = JsonNode.Parse(TargetBody())!; var row = node["items"]![0]!;

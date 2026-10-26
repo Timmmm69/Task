@@ -17,8 +17,14 @@ public sealed partial class ProjectsViewModelTests
     {
         if (Environment.GetEnvironmentVariable("TASK_PROJECT_HISTORY_PROBE") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(ProjectsViewModelTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(ProjectsViewModelTests).FullName + "." + nameof(NativeProjectHistory_PagingReconnectRevocationAndKeyboard));
             start.Environment["TASK_PROJECT_HISTORY_PROBE"] = "1";

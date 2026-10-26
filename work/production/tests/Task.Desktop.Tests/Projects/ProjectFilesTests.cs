@@ -34,7 +34,9 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("Project.Read")][InlineData("FileCatalog.Read")][InlineData("ObjectLink.Read")]
+    [InlineData("Project.Read")]
+    [InlineData("FileCatalog.Read")]
+    [InlineData("ObjectLink.Read")]
     public async AsyncTask MissingReadPermissionMakesNoRequests(string denied)
     {
         var client = new Client(); using var vm = Create(client, Project(), Caps.Where(p => p != denied).ToArray());
@@ -43,7 +45,9 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("ObjectLink.Create")][InlineData("ObjectLink.Delete")][InlineData("Project.Update")]
+    [InlineData("ObjectLink.Create")]
+    [InlineData("ObjectLink.Delete")]
+    [InlineData("Project.Update")]
     public async AsyncTask MissingWritePermissionDisablesOnlyApplicableWrites(string denied)
     {
         var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
@@ -54,13 +58,20 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("forbidden")][InlineData("notfound")][InlineData("trashed")][InlineData("offline")]
+    [InlineData("forbidden")]
+    [InlineData("notfound")]
+    [InlineData("trashed")]
+    [InlineData("offline")]
     public async AsyncTask UnavailableMetadataHasNeutralNameAndNoOpenOrNavigation(string fault)
     {
         var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id));
         client.Metadata = (_, _) => AsyncTask.FromResult<CatalogResult>(fault switch
-        { "forbidden" => new CatalogResult.Forbidden(), "notfound" => new CatalogResult.NotFound(), "offline" => new CatalogResult.ServerUnavailable(),
-            _ => new CatalogResult.Succeeded(client.Item with { LifecycleState = "trashed" }) });
+        {
+            "forbidden" => new CatalogResult.Forbidden(),
+            "notfound" => new CatalogResult.NotFound(),
+            "offline" => new CatalogResult.ServerUnavailable(),
+            _ => new CatalogResult.Succeeded(client.Item with { LifecycleState = "trashed" })
+        });
         using var vm = Create(client, project); await vm.RefreshCommand.ExecuteAsync();
         Assert.Equal("Объект каталога недоступен", Assert.Single(vm.Items).Title);
         Assert.False(vm.OpenCommand.CanExecute(null)); Assert.False(vm.NavigateCommand.CanExecute(null));
@@ -119,14 +130,25 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("conflict")][InlineData("duplicate")][InlineData("forbidden")][InlineData("notfound")][InlineData("offline")][InlineData("malformed")]
+    [InlineData("conflict")]
+    [InlineData("duplicate")]
+    [InlineData("forbidden")]
+    [InlineData("notfound")]
+    [InlineData("offline")]
+    [InlineData("malformed")]
     public async AsyncTask MutationFailuresRequireRefreshAndNeverClaimSuccess(string failure)
     {
         var project = Project(); var client = new Client(); using var vm = Create(client, project);
         await vm.RefreshCommand.ExecuteAsync(); await SelectTarget(vm);
         client.Write = () => AsyncTask.FromResult<LinkResult>(failure switch
-        { "conflict" => new LinkResult.Conflict(), "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."),
-            "forbidden" => new LinkResult.Forbidden(), "notfound" => new LinkResult.NotFound(), "offline" => new LinkResult.ServerUnavailable(), _ => new LinkResult.MalformedResponse() });
+        {
+            "conflict" => new LinkResult.Conflict(),
+            "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."),
+            "forbidden" => new LinkResult.Forbidden(),
+            "notfound" => new LinkResult.NotFound(),
+            "offline" => new LinkResult.ServerUnavailable(),
+            _ => new LinkResult.MalformedResponse()
+        });
         await vm.AddCommand.ExecuteAsync(); Assert.Empty(vm.Items); Assert.False(vm.ChooseCommand.CanExecute(null));
         Assert.False(vm.Section.HasConfirmedData); Assert.DoesNotContain("подтверждены сервером", vm.Message);
         Assert.True(vm.RefreshCommand.CanExecute(null));
@@ -135,7 +157,8 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("archived")][InlineData("trashed")]
+    [InlineData("archived")]
+    [InlineData("trashed")]
     public async AsyncTask InactiveProjectAllowsReadingButDisablesAllWrites(string state)
     {
         var project = Project() with { LifecycleState = state }; var client = new Client(); client.Rows.Add(client.Link(project.Id));
@@ -144,7 +167,13 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("switch")][InlineData("organization")][InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("collapse")][InlineData("dispose")]
+    [InlineData("switch")]
+    [InlineData("organization")]
+    [InlineData("scope")]
+    [InlineData("session")]
+    [InlineData("offline")]
+    [InlineData("collapse")]
+    [InlineData("dispose")]
     public async AsyncTask LateLoadNeverLeaksAcrossContextTransitions(string transition)
     {
         var project = Project(); var client = new Client(); var gate = new System.Threading.Tasks.TaskCompletionSource<LinkResult>();
@@ -165,13 +194,20 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("none")][InlineData("hidden")][InlineData("other-device")][InlineData("disabled")][InlineData("offline")][InlineData("forbidden")]
+    [InlineData("none")]
+    [InlineData("hidden")]
+    [InlineData("other-device")]
+    [InlineData("disabled")]
+    [InlineData("offline")]
+    [InlineData("forbidden")]
     public async AsyncTask UnconfirmedOrUnavailablePathIsNeverPassedToWindows(string state)
     {
         var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id)); var files = new Files();
         client.Location = state switch
         {
-            "none" => new LocationResult.Succeeded(null), "offline" => new LocationResult.ServerUnavailable(), "forbidden" => new LocationResult.Forbidden(),
+            "none" => new LocationResult.Succeeded(null),
+            "offline" => new LocationResult.ServerUnavailable(),
+            "forbidden" => new LocationResult.Forbidden(),
             _ => new LocationResult.Succeeded(new(Guid.NewGuid(), 1, "local_path", state == "hidden" ? null : @"C:\private\file.txt", state != "other-device", IsEnabled: state != "disabled"))
         };
         using var vm = Create(client, project, adapter: files); await vm.RefreshCommand.ExecuteAsync(); await vm.OpenCommand.ExecuteAsync();
@@ -179,7 +215,9 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData(FileOpenStatus.NotFound)][InlineData(FileOpenStatus.AccessDenied)][InlineData(FileOpenStatus.Opened)]
+    [InlineData(FileOpenStatus.NotFound)]
+    [InlineData(FileOpenStatus.AccessDenied)]
+    [InlineData(FileOpenStatus.Opened)]
     public async AsyncTask AllowedResolutionUsesExistingFileAdapterAndItsAvailabilityResult(FileOpenStatus status)
     {
         var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id)); var files = new Files { Status = status };
@@ -199,7 +237,9 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("switch")][InlineData("session")][InlineData("permission")]
+    [InlineData("switch")]
+    [InlineData("session")]
+    [InlineData("permission")]
     public async AsyncTask LatePathResolutionCannotLaunchAfterContextChanges(string transition)
     {
         var project = Project(); var client = new Client(); client.Rows.Add(client.Link(project.Id)); var files = new Files();
@@ -223,7 +263,9 @@ public sealed class ProjectFilesTests
     }
 
     [Theory]
-    [InlineData("wrong-type")][InlineData("trashed")][InlineData("forbidden")]
+    [InlineData("wrong-type")]
+    [InlineData("trashed")]
+    [InlineData("forbidden")]
     public async AsyncTask TargetRevalidatedBeforePost(string fault)
     {
         var project = Project(); var client = new Client(); using var vm = Create(client, project);

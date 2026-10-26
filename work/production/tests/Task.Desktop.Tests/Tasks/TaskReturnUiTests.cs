@@ -141,8 +141,12 @@ public sealed class TaskReturnUiTests
                 File.WriteAllText(Path.Combine(path, $"layout-{size.Item1}x{size.Item2}.json"), System.Text.Json.JsonSerializer.Serialize(new
                 {
                     contentHeight = ((Grid)window.FindName("TasksContentGrid")).ActualHeight,
-                    inspectorHeight = inspector.ActualHeight, inspector.MaxHeight,
-                    scrollHeight = scroll.ActualHeight, scroll.ViewportHeight, scroll.ExtentHeight, scroll.VerticalOffset,
+                    inspectorHeight = inspector.ActualHeight,
+                    inspector.MaxHeight,
+                    scrollHeight = scroll.ActualHeight,
+                    scroll.ViewportHeight,
+                    scroll.ExtentHeight,
+                    scroll.VerticalOffset,
                     confirmationBounds = bounds.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 }));
                 foreach (var point in new[] { new Point(bounds.Left + 3, bounds.Top + 3), new Point(bounds.Right - 3, bounds.Bottom - 3) })

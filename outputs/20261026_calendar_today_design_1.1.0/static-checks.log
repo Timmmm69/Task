@@ -1,0 +1,7 @@
+PASS XML and unique property assignments: Views/CalendarView.xaml
+PASS XML and unique property assignments: Resources/Calendar.Forms.xaml
+PASS original bindings, commands and automation identities preserved
+PASS no new missing resource keys
+PASS native control template parts retained
+PASS responsive editor and separate action footer declared (runtime layout requires Windows)
+REFERENCE TodayView.xaml: flat Surface.Base panels, Border.Default separators, 20px panel padding, compact icon headings, queue rows and Brand.Soft accents

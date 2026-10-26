@@ -79,9 +79,14 @@ public sealed class ObjectLinksIntegrationTests
         Assert.Equal(client.Hit.ObjectId, Assert.Single(vm.Items).TargetObjectId);
     }
     [Theory]
-    [InlineData("task", "task_file,task_contact,task_project,related")][InlineData("project", "project_file,project_contact,related")]
-    [InlineData("contact", "contact_file,related")][InlineData("company", "contact_file,related")]
-    [InlineData("catalog_item", "related")][InlineData("calendar_event", "related")][InlineData("interaction", "related")][InlineData("unknown", "")]
+    [InlineData("task", "task_file,task_contact,task_project,related")]
+    [InlineData("project", "project_file,project_contact,related")]
+    [InlineData("contact", "contact_file,related")]
+    [InlineData("company", "contact_file,related")]
+    [InlineData("catalog_item", "related")]
+    [InlineData("calendar_event", "related")]
+    [InlineData("interaction", "related")]
+    [InlineData("unknown", "")]
     public void SourceMatrixHasNoImpossibleCreation(string source, string types)
     {
         using var vm = Model(new()); vm.SetSource(Guid.NewGuid(), 1, source);
@@ -132,8 +137,14 @@ public sealed class ObjectLinksIntegrationTests
         Assert.Empty(vm.TargetPicker.Results); Assert.False(vm.AddCommand.CanExecute(null));
     }
     [Theory]
-    [InlineData("version")][InlineData("forbidden")][InlineData("deleted")][InlineData("archived")]
-    [InlineData("offline")][InlineData("auth")][InlineData("unknown")][InlineData("duplicate")]
+    [InlineData("version")]
+    [InlineData("forbidden")]
+    [InlineData("deleted")]
+    [InlineData("archived")]
+    [InlineData("offline")]
+    [InlineData("auth")]
+    [InlineData("unknown")]
+    [InlineData("duplicate")]
     public async AsyncTask FailedWriteKeepsConfirmedRowsAndRequiresReconciliation(string error)
     {
         var client = new Client(); using var vm = Model(client); var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
@@ -141,10 +152,14 @@ public sealed class ObjectLinksIntegrationTests
         await vm.RefreshCommand.ExecuteAsync(); await Select(vm);
         LinkResult failure = error switch
         {
-            "version" => new LinkResult.Conflict(), "forbidden" => new LinkResult.Forbidden(), "deleted" => new LinkResult.NotFound(),
-            "offline" => new LinkResult.ServerUnavailable(), "auth" => new LinkResult.AuthenticationFailure(),
+            "version" => new LinkResult.Conflict(),
+            "forbidden" => new LinkResult.Forbidden(),
+            "deleted" => new LinkResult.NotFound(),
+            "offline" => new LinkResult.ServerUnavailable(),
+            "auth" => new LinkResult.AuthenticationFailure(),
             "archived" => new LinkResult.ValidationFailure("INTERNAL_PRIVATE_DETAILS"),
-            "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."), _ => new LinkResult.MalformedResponse(),
+            "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."),
+            _ => new LinkResult.MalformedResponse(),
         };
         client.Write = _ => AsyncTask.FromResult(failure); await vm.AddCommand.ExecuteAsync();
         if (error == "auth") Assert.Empty(vm.Items); else Assert.Same(old, Assert.Single(vm.Items));
@@ -166,7 +181,8 @@ public sealed class ObjectLinksIntegrationTests
         await add; Assert.Empty(vm.Items); Assert.Equal(0, changed); Assert.Empty(vm.Message);
     }
     [Theory]
-    [InlineData(false)][InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async AsyncTask UnexpectedExceptionIsSafeAndLateFailureDoesNotAffectNewSource(bool changeSource)
     {
         var client = new Client(); using var vm = Model(client); vm.SetSource(Guid.NewGuid(), 7, "task"); await Select(vm);
@@ -194,7 +210,9 @@ public sealed class ObjectLinksIntegrationTests
     }
 
     [Theory]
-    [InlineData("ObjectLink.Create")][InlineData("Task.Read")][InlineData("FileCatalog.Read")]
+    [InlineData("ObjectLink.Create")]
+    [InlineData("Task.Read")]
+    [InlineData("FileCatalog.Read")]
     public async AsyncTask RevokedAccessClearsSelectionAndStopsCreation(string permission)
     {
         using var vm = Model(new()); vm.SetSource(Guid.NewGuid(), 7, "task"); await Select(vm);
@@ -202,7 +220,8 @@ public sealed class ObjectLinksIntegrationTests
         Assert.Null(vm.TargetPicker!.SelectedTarget); Assert.False(vm.AddCommand.CanExecute(null)); Assert.Empty(vm.TargetPicker.Results);
     }
     [Theory]
-    [InlineData(true, false)][InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
     public async AsyncTask OfflineAndEndedSessionInvalidatePicker(bool session, bool online)
     {
         using var vm = Model(new()); vm.SetSource(Guid.NewGuid(), 7, "task"); await Select(vm);

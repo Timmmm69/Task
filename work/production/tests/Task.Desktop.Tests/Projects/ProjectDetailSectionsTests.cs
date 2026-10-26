@@ -53,8 +53,10 @@ public sealed partial class ProjectsViewModelTests
         client.MembersHandler = (_, _) => failure == "exception" ? AsyncTask.FromException<MembersResult>(new IOException("sensitive"))
             : AsyncTask.FromResult<MembersResult>(failure switch
             {
-                "forbidden" => new MembersResult.Forbidden(), "notfound" => new MembersResult.NotFound(),
-                "unavailable" => new MembersResult.ServerUnavailable(), _ => new MembersResult.MalformedResponse()
+                "forbidden" => new MembersResult.Forbidden(),
+                "notfound" => new MembersResult.NotFound(),
+                "unavailable" => new MembersResult.ServerUnavailable(),
+                _ => new MembersResult.MalformedResponse()
             });
         using var vm = new ProjectsViewModel(client, User, Capabilities);
         vm.Activate(); await vm.CurrentDetailsOperation;

@@ -8,7 +8,7 @@ namespace Task.Tests;
 
 public sealed partial class PostgresProductApiTests
 {
-    [Fact]
+    [RequiresPostgresFact]
     public async System.Threading.Tasks.Task TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification()
     {
         using var db = Database.Create(); Assert.NotNull(db);
@@ -68,7 +68,7 @@ public sealed partial class PostgresProductApiTests
         AssertReturnEffects(db, task, TaskWorkStatus.InProgress);
     }
 
-    [Fact]
+    [RequiresPostgresFact]
     public async System.Threading.Tasks.Task TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion()
     {
         using var db = Database.Create(); Assert.NotNull(db);
@@ -90,7 +90,7 @@ public sealed partial class PostgresProductApiTests
         AssertReturnEffects(db, task, current.WorkStatus);
     }
 
-    [Theory]
+    [RequiresPostgresTheory]
     [InlineData("observer")]
     [InlineData("outsider")]
     [InlineData("watcher")]
@@ -126,7 +126,7 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal(0, db.Count("iam.idempotency_records"));
     }
 
-    [Fact]
+    [RequiresPostgresFact]
     public async System.Threading.Tasks.Task TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency()
     {
         using var db = Database.Create(); Assert.NotNull(db);

@@ -6,7 +6,10 @@ namespace Task.Desktop.Tests.Work;
 public sealed partial class WorkHubViewModelTests
 {
     [Theory]
-    [InlineData("403")][InlineData("404")][InlineData("401")][InlineData("trashed")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("401")]
+    [InlineData("trashed")]
     public async System.Threading.Tasks.Task RefreshRemovesInaccessibleOffPageContactAndItsDraft(string failure)
     {
         var first = new DesktopContact(Guid.NewGuid(), 1, "Первый", "Первый", null, null, "active", "active");

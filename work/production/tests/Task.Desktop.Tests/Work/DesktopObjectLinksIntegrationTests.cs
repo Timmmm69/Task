@@ -13,9 +13,13 @@ public sealed partial class DesktopWorkApiClientTests
     {
         ["items"] = new JsonArray(Enumerable.Range(0, count).Select(_ => (JsonNode)new JsonObject
         {
-            ["id"] = Guid.NewGuid(), ["sourceObjectId"] = source,
-            ["targetObjectId"] = Guid.NewGuid(), ["linkType"] = "related",
-        }).ToArray()), ["hasMore"] = cursor is not null, ["nextCursor"] = cursor,
+            ["id"] = Guid.NewGuid(),
+            ["sourceObjectId"] = source,
+            ["targetObjectId"] = Guid.NewGuid(),
+            ["linkType"] = "related",
+        }).ToArray()),
+        ["hasMore"] = cursor is not null,
+        ["nextCursor"] = cursor,
     }.ToJsonString();
 
     [Fact]
@@ -36,7 +40,11 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData("version")][InlineData("cursor")][InlineData("duplicate")][InlineData("forbidden")][InlineData("expired")]
+    [InlineData("version")]
+    [InlineData("cursor")]
+    [InlineData("duplicate")]
+    [InlineData("forbidden")]
+    [InlineData("expired")]
     public async AsyncTask LaterLinkPageFailureNeverConfirmsPartialResults(string fault)
     {
         var source = Guid.NewGuid(); var page = 0; var first = LinksPage(source, 1, "page2");
@@ -79,14 +87,21 @@ public sealed partial class DesktopWorkApiClientTests
         Assert.Single(fixture.Requests);
     }
     [Theory]
-    [InlineData(412, "VERSION_CONFLICT", "version")][InlineData(403, "FORBIDDEN", "rights")]
-    [InlineData(404, "OBJECT_NOT_VISIBLE", "missing")][InlineData(503, "UNAVAILABLE", "offline")]
+    [InlineData(412, "VERSION_CONFLICT", "version")]
+    [InlineData(403, "FORBIDDEN", "rights")]
+    [InlineData(404, "OBJECT_NOT_VISIBLE", "missing")]
+    [InlineData(503, "UNAVAILABLE", "offline")]
     public async AsyncTask LinkFailuresDoNotReadBackOrReportSuccess(int status, string code, string kind)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => AsyncTask.FromResult(Json((HttpStatusCode)status, $$"""{"code":"{{code}}"}""")));
         var result = await fixture.Client.AddLinkAsync(Guid.NewGuid(), 4, Guid.NewGuid(), "task_file");
-        Assert.True(kind switch { "version" => result is LinkResult.Conflict, "rights" => result is LinkResult.Forbidden,
-            "missing" => result is LinkResult.NotFound, _ => result is LinkResult.ServerUnavailable });
+        Assert.True(kind switch
+        {
+            "version" => result is LinkResult.Conflict,
+            "rights" => result is LinkResult.Forbidden,
+            "missing" => result is LinkResult.NotFound,
+            _ => result is LinkResult.ServerUnavailable
+        });
         Assert.Single(fixture.Requests);
     }
     [Fact]

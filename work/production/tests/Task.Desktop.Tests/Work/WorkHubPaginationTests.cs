@@ -64,7 +64,8 @@ public sealed partial class WorkHubViewModelTests
     private static System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>> SearchPage(string title, string? cursor) =>
         System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(
             new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([
-                new(FakeClient.TaskId, "task", title, null, 1, DateTimeOffset.UtcNow)]) { NextCursor = cursor });
+                new(FakeClient.TaskId, "task", title, null, 1, DateTimeOffset.UtcNow)])
+            { NextCursor = cursor });
 
     internal sealed partial class FakeClient
     {

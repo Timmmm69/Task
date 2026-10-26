@@ -259,12 +259,13 @@ try {
     Invoke-Compose -Tail @('up', '-d', 'postgres') | Out-Null
     $healthy = $false
     for ($attempt = 0; $attempt -lt 60; $attempt++) {
-        $probe = Invoke-Compose -Tail @('exec', '-T', 'postgres', 'pg_isready', '-U', 'postgres', '-d', $databaseName) -AllowFailure
+        # The image's temporary init server accepts Unix sockets before its final TCP server starts.
+        $probe = Invoke-Compose -Tail @('exec', '-T', 'postgres', 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres', '-d', $databaseName) -AllowFailure
         if ($probe.ExitCode -eq 0) { $healthy = $true; break }
         Start-Sleep -Seconds 1
     }
     if (-not $healthy) { throw 'PostgreSQL 16 did not become ready.' }
-    Write-Ok 'PostgreSQL 16 is ready.'
+    Write-Ok 'PostgreSQL 16 TCP endpoint is ready.'
 
     $initArguments = Get-ComposeArguments -Profiles @() -Tail @(
         'exec', '-T', '-e', "PGPASSWORD=$adminPassword", 'postgres',

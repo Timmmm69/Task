@@ -7,7 +7,8 @@ public sealed class ContactCardRelationsTests
 {
     private static DesktopContactDetails Details(Guid? id = null, long version = 7) => new(new(id ?? Guid.NewGuid(), version, "Анна", "Анна", null, null, "active", "active"), null)
     {
-        Channels = [new(Guid.NewGuid(), "phone", "value")], Addresses = [new(Guid.NewGuid(), "work", "Минск")]
+        Channels = [new(Guid.NewGuid(), "phone", "value")],
+        Addresses = [new(Guid.NewGuid(), "work", "Минск")]
     };
     private static DesktopWorkResult<DesktopContactDetails> Ok(DesktopContactDetails details) => new DesktopWorkResult<DesktopContactDetails>.Succeeded(details, details.Contact.Version);
 
@@ -46,15 +47,26 @@ public sealed class ContactCardRelationsTests
     }
 
     [Theory]
-    [InlineData("403")][InlineData("404")][InlineData("412")][InlineData("offline")][InlineData("malformed")][InlineData("duplicate")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("412")]
+    [InlineData("offline")]
+    [InlineData("malformed")]
+    [InlineData("duplicate")]
     public async System.Threading.Tasks.Task FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(string failure)
     {
-        var original = Details(); var api = new Client(original) { Change = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(failure switch
+        var original = Details(); var api = new Client(original)
         {
-            "403" => new DesktopWorkResult<DesktopContactDetails>.Forbidden(), "404" => new DesktopWorkResult<DesktopContactDetails>.NotFound(),
-            "412" => new DesktopWorkResult<DesktopContactDetails>.Conflict(), "offline" => new DesktopWorkResult<DesktopContactDetails>.ServerUnavailable(),
-            "duplicate" => new DesktopWorkResult<DesktopContactDetails>.ValidationFailure("Проверьте дубликаты"), _ => new DesktopWorkResult<DesktopContactDetails>.MalformedResponse()
-        }) };
+            Change = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(failure switch
+            {
+                "403" => new DesktopWorkResult<DesktopContactDetails>.Forbidden(),
+                "404" => new DesktopWorkResult<DesktopContactDetails>.NotFound(),
+                "412" => new DesktopWorkResult<DesktopContactDetails>.Conflict(),
+                "offline" => new DesktopWorkResult<DesktopContactDetails>.ServerUnavailable(),
+                "duplicate" => new DesktopWorkResult<DesktopContactDetails>.ValidationFailure("Проверьте дубликаты"),
+                _ => new DesktopWorkResult<DesktopContactDetails>.MalformedResponse()
+            })
+        };
         using var vm = new ContactCardViewModel(api, () => true, () => true, () => true);
         await vm.SelectAsync(original.Contact.Id); await vm.AddChannelCommand.ExecuteAsync(); vm.ChannelDraft!.Value = "draft";
         await vm.SaveRelationCommand.ExecuteAsync(); Assert.DoesNotContain("подтверждены сервером", vm.Message);

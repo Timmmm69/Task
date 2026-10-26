@@ -318,7 +318,9 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         var eventId = Guid.NewGuid();
         var action = type == "task" && r.Route.Operation == "create" ? "TaskCreated" : type == "inbox_item" ? r.Route.Operation switch
         {
-            "create" => "InboxItemCreated", "patch" => "InboxItemUpdated", "convert-to-task" => "InboxItemConvertedToTask",
+            "create" => "InboxItemCreated",
+            "patch" => "InboxItemUpdated",
+            "convert-to-task" => "InboxItemConvertedToTask",
             _ => throw Invalid("Invalid inbox event.")
         } : type == "reminder" ? r.Route.Operation switch
         {

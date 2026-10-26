@@ -1,0 +1,20 @@
+{
+  "reviewed_head": "07db1a7a190e33aefe25c446787117c731cf92c3",
+  "initial_main": "cc2933a690d37323b73f64a74ecd19be96be8dac",
+  "integration": "036165ba3d6b388573c8bf63d9697935641fc24d",
+  "main": "286ee6f4d891655d8f19c8bb61ed34807182f409",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Calendar.Forms.xaml",
+      "sha256_git_blob": "50a0ee32805e8d7679d53cf92ef95850a0453f00f4f38ffb5801943bb55ca488"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "sha256_git_blob": "d88a22cba959539d68c37b246702fbbe44972d22688b27ed95f5825974e064f7"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarPickerWindowsTests.cs",
+      "sha256_git_blob": "bcd82dcac46e234c1ef402209cc0033cd29b224e93fb5670647f8db0c6dd6be4"
+    }
+  ]
+}

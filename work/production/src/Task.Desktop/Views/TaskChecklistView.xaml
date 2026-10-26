@@ -2,13 +2,13 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
  <StackPanel>
   <ItemsControl ItemsSource="{Binding Checklist}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,3">
-   <CheckBox IsChecked="{Binding Completed,Mode=OneWay}" Click="OnToggle" MinHeight="32"
+   <CheckBox Style="{StaticResource Task.Card.Check}" IsChecked="{Binding Completed,Mode=OneWay}" Click="OnToggle" MinHeight="32"
     Command="{Binding DataContext.ToggleCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}" AutomationProperties.Name="{Binding Text}">
     <TextBlock TextWrapping="Wrap" Text="{Binding Text}"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding Completed}" Value="True"><Setter Property="TextDecorations" Value="Strikethrough"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
    </CheckBox><WrapPanel>
     <Button Content="Удалить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding DataContext.RemoveCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}"/>
    </WrapPanel></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-  <TextBox Text="{Binding CheckText,UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Новый пункт чек-листа"/>
+  <TextBox Style="{StaticResource Task.Input.Text}" Margin="0,12,0,8" Text="{Binding CheckText,UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Новый пункт чек-листа"/>
   <Button Content="Добавить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding AddCheckCommand}"/>
  </StackPanel>
 </UserControl>

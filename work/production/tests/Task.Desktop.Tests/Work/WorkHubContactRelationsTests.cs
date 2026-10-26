@@ -9,8 +9,12 @@ public sealed partial class WorkHubViewModelTests
     public async System.Threading.Tasks.Task ListRefreshDoesNotRebaseAnOpenChildDraftToANewParentVersion()
     {
         var contact = new DesktopContact(Guid.NewGuid(), 1, "Анна", "Анна", null, null, "active", "active"); var reads = 0;
-        var client = new FakeClient { Contacts = [contact], ContactDetailHandler = (_, _) =>
-            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact with { Version = ++reads }, null))) };
+        var client = new FakeClient
+        {
+            Contacts = [contact],
+            ContactDetailHandler = (_, _) =>
+            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact with { Version = ++reads }, null)))
+        };
         using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update"]);
         hub.Activate(WorkHubArea.Contacts); hub.SelectedContact = contact; await hub.ContactSelectionTask;
         await hub.ContactCard!.AddChannelCommand.ExecuteAsync(); hub.ContactCard.ChannelDraft!.Value = "keep draft";
@@ -24,8 +28,12 @@ public sealed partial class WorkHubViewModelTests
     {
         var contact = new DesktopContact(Guid.NewGuid(), 1, "Анна", "Анна", null, null, "active", "active");
         var details = new DesktopContactDetails(contact, null);
-        var client = new FakeClient { Contacts = [contact], RelationState = details,
-            ContactDetailHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(details)) };
+        var client = new FakeClient
+        {
+            Contacts = [contact],
+            RelationState = details,
+            ContactDetailHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(details))
+        };
         using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update"]);
         hub.Activate(WorkHubArea.Contacts); hub.SelectedContact = contact; await hub.ContactSelectionTask;
         await hub.ContactCard!.AddChannelCommand.ExecuteAsync(); hub.ContactCard.ChannelDraft!.Value = "value";

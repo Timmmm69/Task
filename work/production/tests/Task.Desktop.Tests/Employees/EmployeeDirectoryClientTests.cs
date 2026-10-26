@@ -82,7 +82,9 @@ public sealed class EmployeeDirectoryClientTests
     }
 
     [Theory]
-    [InlineData("not json")][InlineData("null")][InlineData("[]")]
+    [InlineData("not json")]
+    [InlineData("null")]
+    [InlineData("[]")]
     [InlineData("{\"items\":[]}")]
     [InlineData("{\"items\":[],\"nextCursor\":false,\"total\":0}")]
     [InlineData("{\"items\":[],\"nextCursor\":null,\"total\":null}")]
@@ -96,8 +98,11 @@ public sealed class EmployeeDirectoryClientTests
     }
 
     [Theory]
-    [InlineData("active", true)][InlineData("blocked", true)][InlineData("pending_activation", true)]
-    [InlineData("deactivated", true)][InlineData("unknown", false)]
+    [InlineData("active", true)]
+    [InlineData("blocked", true)]
+    [InlineData("pending_activation", true)]
+    [InlineData("deactivated", true)]
+    [InlineData("unknown", false)]
     public async AsyncTask ClientRecognizesOnlyExistingAccountStatuses(string status, bool valid)
     {
         var id = Guid.NewGuid();

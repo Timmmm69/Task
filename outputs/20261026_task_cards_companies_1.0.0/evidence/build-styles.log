@@ -1,0 +1,15 @@
+  Task.Domain -> C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Desktop -> C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\src\Task.Desktop\bin\Release\net10.0-windows\Task.Desktop.dll
+C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\DesktopCredentialVaultTests.cs(347,20): warning xUnit1031: Test methods should not use blocking task operations, as they can cause deadlocks. Use an async test method and await instead. (https://xunit.net/xunit.analyzers/rules/xUnit1031) [C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj]
+C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\Personal\PersonalPlanningTests.cs(397,67): warning xUnit2031: Do not use a Where clause to filter before calling Assert.Single. Use the overload of Assert.Single that accepts a filtering function. (https://xunit.net/xunit.analyzers/rules/xUnit2031) [C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj]
+  Task.Desktop.Tests -> C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll
+
+Сборка успешно завершена.
+
+C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\DesktopCredentialVaultTests.cs(347,20): warning xUnit1031: Test methods should not use blocking task operations, as they can cause deadlocks. Use an async test method and await instead. (https://xunit.net/xunit.analyzers/rules/xUnit1031) [C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj]
+C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\Personal\PersonalPlanningTests.cs(397,67): warning xUnit2031: Do not use a Where clause to filter before calling Assert.Single. Use the overload of Assert.Single that accepts a filtering function. (https://xunit.net/xunit.analyzers/rules/xUnit2031) [C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj]
+    Предупреждений: 2
+    Ошибок: 0
+
+Прошло времени 00:00:07.07

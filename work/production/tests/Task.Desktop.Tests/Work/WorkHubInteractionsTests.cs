@@ -28,8 +28,12 @@ public sealed partial class WorkHubViewModelTests
         var api = new InteractionsViewModelTests.Client(); var old = api.Record(); var newer = api.Record() with { Subject = "Новая навигация" }; api.Values = [old, newer];
         var contact = new DesktopContact(api.Target.Id, 1, "Анна", "Анна", null, null, "active", "active");
         var pending = new TaskCompletionSource<DesktopWorkResult<DesktopContactDetails>>(); var reads = 0;
-        var fake = new FakeClient { InteractionApi = api, ContactDetailHandler = (_, _) => ++reads == 1 ? pending.Task :
-            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, null))) };
+        var fake = new FakeClient
+        {
+            InteractionApi = api,
+            ContactDetailHandler = (_, _) => ++reads == 1 ? pending.Task :
+            System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(contact, null)))
+        };
         using var hub = new WorkHubViewModel(fake, ["Contact.Read"]); hub.Activate(WorkHubArea.Contacts);
         var older = hub.OpenSearchObjectAsync("interaction", old.Id);
         await hub.OpenSearchObjectAsync("interaction", newer.Id);
@@ -57,7 +61,11 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Theory]
-    [InlineData("channel")][InlineData("address")][InlineData("delete")][InlineData("company-create")][InlineData("company-edit")]
+    [InlineData("channel")]
+    [InlineData("address")]
+    [InlineData("delete")]
+    [InlineData("company-create")]
+    [InlineData("company-edit")]
     public async System.Threading.Tasks.Task ModeSwitchGuardPreservesAllCrmDraftKinds(string draft)
     {
         var contact = new DesktopContact(Guid.NewGuid(), 1, "Анна", "Анна", null, null, "active", "active");

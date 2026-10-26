@@ -1,0 +1,26 @@
+{
+  "reviewed_head": "04b7b3bd6e16ca1a5a2a5906120f01ddbfd8c1fc",
+  "base": "28aa850d031dd1706c64e30b043e28cf1b9b122e",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Calendar.xaml",
+      "sha256": "3bb43bc94233eebe427394388fbff09ed01354dcb5f8e958914bd2f923def288"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Theme.xaml",
+      "sha256": "cc9ec08b886a83f75a6dd926380a73a21b47ba6866e56dc09bf91b8b34ad41dd"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/RecurrenceView.xaml",
+      "sha256": "e950e623b12fa71b4b46c1ed111698e25afbf67ecd0ea6a0ee012e1d6b30a605"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskDayPicker.xaml",
+      "sha256": "8b4719b3dc0833045ba074c04437890d12e9df0492a19a68019c3cb6e9a9f3f2"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarAppearanceTests.cs",
+      "sha256": "311eb34d876701c05ce282aeee04804bfdad136d6114c85be927e1f1e24ed6e1"
+    }
+  ]
+}

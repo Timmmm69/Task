@@ -37,7 +37,9 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("Project.Read")][InlineData("Contact.Read")][InlineData("ObjectLink.Read")]
+    [InlineData("Project.Read")]
+    [InlineData("Contact.Read")]
+    [InlineData("ObjectLink.Read")]
     public async AsyncTask MissingReadPermissionNeverLoadsLinksNamesOrPicker(string permission)
     {
         var api = new Client(); using var vm = Create(api, ProjectFilesTests.Project(), Caps.Where(code => code != permission).ToArray());
@@ -48,7 +50,10 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("Project.Update")][InlineData("Contact.Update")][InlineData("ObjectLink.Create")][InlineData("ObjectLink.Delete")]
+    [InlineData("Project.Update")]
+    [InlineData("Contact.Update")]
+    [InlineData("ObjectLink.Create")]
+    [InlineData("ObjectLink.Delete")]
     public async AsyncTask WritePermissionsAreSpecific_ReadingAndNavigationRemainAvailable(string permission)
     {
         var project = ProjectFilesTests.Project(); var api = new Client(); api.Rows.Add(api.Link(project.Id, api.Contact.Id));
@@ -60,7 +65,8 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("contact")][InlineData("company")]
+    [InlineData("contact")]
+    [InlineData("company")]
     public async AsyncTask AddUsesSameContractForBothTypes_AndWaitsForServerConfirmation(string type)
     {
         var project = ProjectFilesTests.Project(); var api = new Client { TargetType = type };
@@ -75,7 +81,8 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("contact")][InlineData("company")]
+    [InlineData("contact")]
+    [InlineData("company")]
     public async AsyncTask RemovalChangesOnlyTheConfirmedProjectLink(string type)
     {
         var project = ProjectFilesTests.Project(); var api = new Client();
@@ -90,13 +97,21 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("403")][InlineData("404")][InlineData("archived")][InlineData("trashed")][InlineData("offline")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("archived")]
+    [InlineData("trashed")]
+    [InlineData("offline")]
     public async AsyncTask UnavailableTargetsHaveNeutralNamesAndNoNavigation(string fault)
     {
         var project = ProjectFilesTests.Project(); var api = new Client(); api.Rows.Add(api.Link(project.Id, api.Company.Id));
         api.CompanyHandler = (_, _) => AsyncTask.FromResult<CompanyResult>(fault switch
-        { "403" => new CompanyResult.Forbidden(), "404" => new CompanyResult.NotFound(), "offline" => new CompanyResult.ServerUnavailable(),
-            _ => new CompanyResult.Succeeded(api.Company with { LifecycleState = fault }) });
+        {
+            "403" => new CompanyResult.Forbidden(),
+            "404" => new CompanyResult.NotFound(),
+            "offline" => new CompanyResult.ServerUnavailable(),
+            _ => new CompanyResult.Succeeded(api.Company with { LifecycleState = fault })
+        });
         using var vm = Create(api, project); await vm.RefreshCommand.ExecuteAsync();
         Assert.Equal("Контакт или компания недоступны", Assert.Single(vm.Items).Title);
         Assert.Equal(ProjectSectionState.PartialAccess, vm.Section.State); Assert.False(vm.NavigateCommand.CanExecute(null));
@@ -104,7 +119,8 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("contact")][InlineData("company")]
+    [InlineData("contact")]
+    [InlineData("company")]
     public async AsyncTask NavigationRevalidatesExactTypeAndUsesExistingHostEvent(string type)
     {
         var project = ProjectFilesTests.Project(); var api = new Client(); var id = type == "contact" ? api.Contact.Id : api.Company.Id;
@@ -119,7 +135,12 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("conflict")][InlineData("duplicate")][InlineData("403")][InlineData("404")][InlineData("offline")][InlineData("malformed")]
+    [InlineData("conflict")]
+    [InlineData("duplicate")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("offline")]
+    [InlineData("malformed")]
     public async AsyncTask FailedWritesNeverClaimSuccess_RequireExplicitRefresh(string fault)
     {
         var api = new Client(); using var vm = Create(api, ProjectFilesTests.Project()); await vm.RefreshCommand.ExecuteAsync(); await SelectTarget(vm);
@@ -131,7 +152,11 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("links")][InlineData("contact")][InlineData("company")][InlineData("picker")][InlineData("write")]
+    [InlineData("links")]
+    [InlineData("contact")]
+    [InlineData("company")]
+    [InlineData("picker")]
+    [InlineData("write")]
     public async AsyncTask AuthenticationFailureExpiresSessionAndScrubsNames(string stage)
     {
         var project = ProjectFilesTests.Project(); var api = new Client();
@@ -156,7 +181,13 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("switch")][InlineData("organization")][InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("collapse")][InlineData("dispose")]
+    [InlineData("switch")]
+    [InlineData("organization")]
+    [InlineData("scope")]
+    [InlineData("session")]
+    [InlineData("offline")]
+    [InlineData("collapse")]
+    [InlineData("dispose")]
     public async AsyncTask LateReadIsCancelledAndCannotPublishAcrossContextChanges(string transition)
     {
         var project = ProjectFilesTests.Project(); var api = new Client(); var gate = new System.Threading.Tasks.TaskCompletionSource<LinkResult>();
@@ -168,7 +199,11 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("switch")][InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("collapse")]
+    [InlineData("switch")]
+    [InlineData("scope")]
+    [InlineData("session")]
+    [InlineData("offline")]
+    [InlineData("collapse")]
     public async AsyncTask LateMetadataDoesNotLeakNamesOrTriggerFallback(string transition)
     {
         var project = ProjectFilesTests.Project(); var api = new Client(); api.Rows.Add(api.Link(project.Id, api.Company.Id));
@@ -189,7 +224,9 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("403")][InlineData("404")][InlineData("archived")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("archived")]
     public async AsyncTask TargetRevokedAfterPickerConfirmationNeverPosts(string fault)
     {
         var api = new Client { TargetType = "company" }; using var vm = Create(api, ProjectFilesTests.Project());
@@ -200,8 +237,10 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("403", ProjectSectionState.Forbidden)][InlineData("404", ProjectSectionState.Forbidden)]
-    [InlineData("offline", ProjectSectionState.ServerUnavailable)][InlineData("malformed", ProjectSectionState.Error)]
+    [InlineData("403", ProjectSectionState.Forbidden)]
+    [InlineData("404", ProjectSectionState.Forbidden)]
+    [InlineData("offline", ProjectSectionState.ServerUnavailable)]
+    [InlineData("malformed", ProjectSectionState.Error)]
     public async AsyncTask ReadFailuresAreNotReportedAsEmpty_RecoveryRequiresRefresh(string fault, ProjectSectionState expected)
     {
         var api = new Client(); api.Read = (_, _) => AsyncTask.FromResult(Failure(fault));
@@ -213,7 +252,11 @@ public sealed class ProjectContactsTests
     }
 
     [Theory]
-    [InlineData("switch")][InlineData("scope")][InlineData("session")][InlineData("offline")][InlineData("collapse")]
+    [InlineData("switch")]
+    [InlineData("scope")]
+    [InlineData("session")]
+    [InlineData("offline")]
+    [InlineData("collapse")]
     public async AsyncTask LateMutationCannotRestoreOldNamesOrReportSuccess(string transition)
     {
         var project = ProjectFilesTests.Project(); var api = new Client(); using var vm = Create(api, project);
@@ -238,8 +281,14 @@ public sealed class ProjectContactsTests
         }
     }
     internal static LinkResult Failure(string fault) => fault switch
-    { "conflict" => new LinkResult.Conflict(), "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."),
-        "403" => new LinkResult.Forbidden(), "404" => new LinkResult.NotFound(), "offline" => new LinkResult.ServerUnavailable(), _ => new LinkResult.MalformedResponse() };
+    {
+        "conflict" => new LinkResult.Conflict(),
+        "duplicate" => new LinkResult.ValidationFailure("Такая связь уже существует. Обновите связи."),
+        "403" => new LinkResult.Forbidden(),
+        "404" => new LinkResult.NotFound(),
+        "offline" => new LinkResult.ServerUnavailable(),
+        _ => new LinkResult.MalformedResponse()
+    };
 
     internal sealed class Client : IDesktopObjectLinksClient, IDesktopCompaniesClient, IDesktopObjectLinkTargetSearchClient
     {
