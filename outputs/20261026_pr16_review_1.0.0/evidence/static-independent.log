@@ -1,0 +1,4 @@
+PASS XML, unique properties, original bindings/commands and automation IDs vs origin/main
+PASS native template parts
+PASS active PR package 1.1.0 manifest and 9 SHA256SUMS entries against Git blobs
+PASS formatter diagnostics byte-identical between PR and main: 672 lines

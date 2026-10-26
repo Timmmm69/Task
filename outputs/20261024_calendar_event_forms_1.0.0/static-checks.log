@@ -1,0 +1,6 @@
+PASS XML and unique property assignments: work/production/src/Task.Desktop/Views/CalendarView.xaml
+PASS XML and unique property assignments: work/production/src/Task.Desktop/Resources/Calendar.Forms.xaml
+PASS no new unresolved resource references; baseline Task.Radius.Window remains outside editor
+PASS existing automation IDs and named controls retained
+PASS data bindings and commands preserved
+PASS native DatePicker template parts present
