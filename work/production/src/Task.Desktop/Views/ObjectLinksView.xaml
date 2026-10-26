@@ -29,6 +29,8 @@
    </DataTrigger></Style.Triggers>
   </Style>
  </UserControl.Resources>
+ <ScrollViewer x:Name="LinksScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+  AutomationProperties.AutomationId="ObjectLinksScrollViewer">
  <StackPanel Margin="12">
   <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="0,0,0,1" Padding="4,4,4,16">
    <StackPanel>
@@ -198,4 +200,5 @@
    </Border>
   </Grid>
  </StackPanel>
+ </ScrollViewer>
 </UserControl>
