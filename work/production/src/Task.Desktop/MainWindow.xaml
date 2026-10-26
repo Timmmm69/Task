@@ -820,7 +820,7 @@
                                                    FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
                                                    TextWrapping="Wrap" Margin="0,0,0,16"
                                                    ToolTip="{Binding Title}" />
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+                                        <WrapPanel Margin="0,0,0,18">
                                             <Border Style="{StaticResource Task.Semantic.StatusPill}" Margin="0,0,14,0">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Path Data="{Binding StatusIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
@@ -837,12 +837,19 @@
                                                 <TextBlock Text="{Binding PriorityText}" Margin="6,0,0,0"
                                                            VerticalAlignment="Center" />
                                             </StackPanel>
-                                        </StackPanel>
-                                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8,0,8" />
+                                        </WrapPanel>
+                                        <Border Style="{StaticResource Task.Card.Group}">
+                                            <StackPanel>
+                                                <TextBlock Text="О задаче" Style="{StaticResource Task.Card.Heading}" />
+<TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,8,0,8" />
                                         <TextBlock Text="{Binding PlanningText}" TextWrapping="Wrap" />
                                         <TextBlock Text="{Binding CompletedText}" TextWrapping="Wrap" />
                                         <TextBlock Text="{Binding RecurrenceText}" TextWrapping="Wrap" />
-                                        <UniformGrid Columns="2">
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+                                            <TextBlock Text="Сроки и сведения" Style="{StaticResource Task.Card.Heading}" />
+                                            <UniformGrid Columns="2">
                                             <StackPanel Margin="0,0,12,14">
                                                 <TextBlock Text="Начало" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                 <TextBlock Text="{Binding StartText}" Style="{StaticResource Task.Inspector.FactValue}" />
@@ -868,7 +875,7 @@
                                                 <TextBlock Text="Исполнитель" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                 <TextBlock Text="{Binding AssigneeText}" Style="{StaticResource Task.Inspector.FactValue}" />
                                             </StackPanel>
-                                        </UniformGrid>
+                                        </UniformGrid></StackPanel></Border>
                                         <Button Content="Изменить"
                                                 Command="{Binding DataContext.Tasks.EditTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 Margin="0,2,0,10"
@@ -1059,10 +1066,9 @@
                             <Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
                         </Style>
                     </Border.Style>
-                    <Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,18">
+                    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Margin="0,0,0,16">
+                            <Grid Margin="0,0,0,16">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Heading}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
                                            FontWeight="{DynamicResource Task.Font.Weight.Semibold}" VerticalAlignment="Center" />
@@ -1070,9 +1076,15 @@
                                         Command="{Binding DataContext.Tasks.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         AutomationProperties.Name="Закрыть форму задачи" />
                             </Grid>
+                    </Border>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+
 
                             <TextBlock Text="{Binding SimilarNotice}" TextWrapping="Wrap" Margin="0,0,0,8"
                                        AutomationProperties.Name="Основа новой задачи" AutomationProperties.LiveSetting="Polite" />
+                            <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+                            <TextBlock Text="Основное" Style="{StaticResource Task.Card.Heading}" />
                             <TextBlock Text="Название (обязательно)" FontWeight="SemiBold" Margin="0,0,0,5" />
                             <TextBox x:Name="TaskTitleTextBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                      MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="20"
@@ -1087,7 +1099,7 @@
 
                             <TextBlock Text="Приоритет (обычный по умолчанию)" FontWeight="SemiBold" Margin="0,0,0,5" />
                             <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}"
-                                      DisplayMemberPath="Text" Style="{StaticResource Task.Input.Combo}" TabIndex="21"
+                                      DisplayMemberPath="Text" Style="{StaticResource Task.Card.Combo}" TabIndex="21"
                                       AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="TaskPriorityComboBox" />
                             <TextBlock Text="{Binding PriorityError}"
                                        Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
@@ -1095,6 +1107,9 @@
                                        AutomationProperties.Name="Ошибка приоритета задачи"
                                        AutomationProperties.LiveSetting="Assertive" />
 
+                            </StackPanel></Border>
+                            <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+                            <TextBlock Text="Сроки и напоминание" Style="{StaticResource Task.Card.Heading}" />
                             <TextBlock Text="Запланировать на день (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
                             <TextBox Text="{Binding Card.Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="22"
@@ -1127,13 +1142,14 @@
                                        AutomationProperties.LiveSetting="Assertive" />
 
                             <StackPanel Margin="0,8,0,12">
- <TextBlock Text="Напомнить"/>
- <ComboBox ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
- <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Width="100" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
+ <TextBlock Text="Напомнить" FontWeight="SemiBold" Margin="0,0,0,6"/>
+ <ComboBox Style="{StaticResource Task.Card.Combo}" ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
+ <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Style="{StaticResource Task.Input.Text}" Margin="0,8,0,0" Width="100" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
  <TextBlock Text="{Binding ReminderPreview}" TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite"/>
  <TextBlock Text="{Binding ReminderRecipientHint}" TextWrapping="Wrap" FontSize="12"/>
 </StackPanel>
-                            <views:TaskCardEditorView DataContext="{Binding Card}" Margin="0,16,0,0" />
+                            </StackPanel></Border>
+                            <views:TaskCardEditorView DataContext="{Binding Card}" />
 
                             <TextBlock Text="{Binding CardError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
                             <Border Margin="0,16,0,0">
@@ -1171,7 +1187,7 @@
 
                         </StackPanel>
                     </ScrollViewer>
-                    <StackPanel Grid.Row="1"><TextBlock Text="Ctrl+Enter — сохранить" Margin="0,8,0,0"/>                            <WrapPanel Margin="0,18,0,0">
+                    <StackPanel Grid.Row="2" Margin="0,12,0,0"><TextBlock Text="Ctrl+Enter — сохранить" FontSize="{DynamicResource Task.Font.Size.Metadata}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,8,0,0"/>                            <WrapPanel Margin="0,18,0,0">
                                 <Button Content="{Binding SubmitText}" Style="{StaticResource Task.Button.Primary}"
                                         MinWidth="116" Margin="0,0,8,8" TabIndex="40"
                                         Command="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"

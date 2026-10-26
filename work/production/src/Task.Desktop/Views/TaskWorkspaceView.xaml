@@ -1,22 +1,28 @@
 <UserControl x:Class="Task.Desktop.Views.TaskWorkspaceView" x:Name="Workspace"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views">
  <UserControl.Resources>
-  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,5"/></Style>
-  <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Margin" Value="0,4,5,4"/></Style>
-  <Style TargetType="Expander"><Setter Property="Margin" Value="0,12,0,0"/><Setter Property="IsExpanded" Value="True"/></Style>
+  <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Card.Combo}"/>
+  <Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}"/>
+  <Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,5"/></Style>
+  <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}"><Setter Property="Margin" Value="0,8,0,4"/><Setter Property="HorizontalAlignment" Value="Left"/></Style>
+  <Style TargetType="Expander" BasedOn="{StaticResource Task.Card.Section}"><Setter Property="Margin" Value="0,12,0,0"/><Setter Property="IsExpanded" Value="True"/></Style>
  </UserControl.Resources>
  <StackPanel>
-  <TextBlock Text="{Binding ContextText}"/>
+  <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0" Padding="0,16,0,0">
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="Работа над задачей" Style="{StaticResource Task.Card.Heading}"/><TextBlock Text="{Binding ContextText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel>
+    <Button Grid.Column="1" Content="Обновить связи" Command="{Binding RefreshCommand}" VerticalAlignment="Top"/>
+   </Grid>
+  </Border>
   <TextBlock Text="{Binding Message}" AutomationProperties.LiveSetting="Assertive"/>
-  <Button Content="Обновить связи" Command="{Binding RefreshCommand}"/>
   <Expander Header="Чек-лист" state:ViewState.Section="task/v1/checklist"><views:TaskChecklistView/></Expander>
   <Expander Header="Подзадачи" state:ViewState.Section="task/v1/subtasks"><StackPanel>
    <TextBlock Text="Добавьте подзадачу действием в карточке выше."/>
    <ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
   </StackPanel></Expander>
-  <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,14,0,5"/>
+  <Border Style="{StaticResource Task.Card.Group}" Margin="0,16,0,0"><StackPanel>\n  <TextBlock Text="Поиск связей" Style="{StaticResource Task.Card.Heading}"/>\n  <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,0,0,6"/>
   <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск файлов и зависимостей"/>
-  <Button Content="Найти связи" Command="{Binding SearchCommand}"/>
+  <Button Content="Найти связи" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>\n  </StackPanel></Border>
   <Expander Header="Связанные файлы" state:ViewState.Section="task/v1/files"><StackPanel>
    <TextBlock Text="{Binding FilesNotice}"/>
    <ItemsControl ItemsSource="{Binding Files}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать связь" Command="{Binding DataContext.RemoveFileCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
