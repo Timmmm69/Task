@@ -32,6 +32,9 @@ public partial class MainWindow : Window
         _viewModel = viewModel;
         InitializeComponent();
         DataContext = viewModel;
+        if (viewModel.Projects is { } projects)
+            projects.ConfirmAction = (title, message, action) =>
+                Personal.PersonalConfirmationDialog.Confirm(this, title, message, action);
         viewModel.Palette.FocusRequested += OnPaletteFocusRequested;
         viewModel.Palette.Closed += OnPaletteClosed;
         viewModel.InboxCaptureRequested += OnInboxCaptureRequested;

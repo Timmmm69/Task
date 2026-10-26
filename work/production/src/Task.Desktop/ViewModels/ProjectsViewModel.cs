@@ -162,11 +162,15 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     private bool _sessionAvailable = true;
     private bool _networkAvailable = true;
     private bool _disposed;
+    private long _confirmationGeneration;
+    internal Func<string, string, string, bool> ConfirmAction { get; set; }
 
     public ProjectsViewModel(IDesktopProjectsApiClient client, Guid currentUserId,
-        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null, ProjectContactsViewModel? contacts = null)
+        IEnumerable<string>? capabilities = null, IDesktopTasksApiClient? tasks = null, IDesktopEmployeeDirectory? directory = null, ProjectFilesViewModel? files = null, ProjectContactsViewModel? contacts = null,
+        Func<string, string, string, bool>? confirmAction = null)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
+        ConfirmAction = confirmAction ?? ((_, _, _) => false);
         if (currentUserId == Guid.Empty) throw new ArgumentException("Current user id must not be empty.", nameof(currentUserId));
         _currentUserId = currentUserId; _tasks = tasks;
         _capabilities = (capabilities ?? []).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -196,10 +200,10 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         EditProjectCommand = new((_, ct) => OpenEditorAsync(SelectedItem?.Source, ct), _ => CanUpdate && SelectedItem is not null);
         SaveProjectCommand = new(SaveAsync, _ => Editor is not null && (Editor.Source is null ? CanCreate : CanUpdate));
         CancelEditorCommand = new((_, _) => { Editor = null; return System.Threading.Tasks.Task.CompletedTask; });
-        ArchiveProjectCommand = new(ArchiveAsync, _ => CanArchive && SelectedItem?.Source.Status == DesktopProjectStatus.Completed);
+        ArchiveProjectCommand = new(ArchiveAsync, _ => CanArchiveSelectedProject);
         AddMemberCommand = new(AddMemberAsync, _ => CanAddMember);
         ChangeMemberRoleCommand = new(ChangeMemberRoleAsync, parameter => CanManageMembers && !MembersSection.IsLoading && parameter is ProjectMemberItemViewModel { SelectedRole: not null } roleMember && Members.Contains(roleMember));
-        RemoveMemberCommand = new(RemoveMemberAsync, parameter => CanManageMembers && !MembersSection.IsLoading && parameter is ProjectMemberItemViewModel member && Members.Contains(member) && member.UserAccountId != SelectedItem?.Source.OwnerUserId);
+        RemoveMemberCommand = new(RemoveMemberAsync, CanRemoveMember);
     }
 
     public IReadOnlyList<ProjectItemViewModel> Items { get => _items; private set { if (SetProperty(ref _items, value)) OnPropertyChanged(nameof(HasItems)); } }
@@ -475,8 +479,11 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
 
     private async System.Threading.Tasks.Task ArchiveAsync(object? _, CancellationToken cancellationToken)
     {
-        var item = SelectedItem; if (item is null) return;
-        var result = await _closeOperations.TrackAsync(() => _client.ArchiveProjectAsync(item.Id, item.Source.Version, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
+        var item = SelectedItem; if (item is null || !CanArchiveSelectedProject || cancellationToken.IsCancellationRequested) return;
+        var source = item.Source; var generation = _confirmationGeneration; var peopleGeneration = _peopleGeneration;
+        if (!ConfirmAction("Архивировать проект?", $"Проект „{source.Name}“ будет перемещён в архив.", "Архивировать")) return;
+        if (!ConfirmationIsCurrent(item, source, generation, peopleGeneration, cancellationToken) || !CanArchiveSelectedProject) return;
+        var result = await _closeOperations.TrackAsync(() => _client.ArchiveProjectAsync(source.Id, source.Version, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanArchive || !IsActive) return;
         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded) { Items = Items.Where(candidate => candidate.Id != item.Id).ToArray(); SelectedItem = Items.FirstOrDefault(); State = Items.Count == 0 ? ProjectsScreenState.Empty : ProjectsScreenState.Loaded; Message = "Завершённый проект перемещён в архив."; }
         else ApplyFailure(result);
@@ -514,11 +521,18 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
 
     private async System.Threading.Tasks.Task RemoveMemberAsync(object? parameter, CancellationToken cancellationToken)
     {
-        var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member) return;
-        var result = await _closeOperations.TrackAsync(() => _client.RemoveMemberAsync(item.Id, item.Source.Version, member.UserAccountId, cancellationToken)).ConfigureAwait(true);
+        var item = SelectedItem; if (item is null || parameter is not ProjectMemberItemViewModel member || !CanRemoveMember(member) || cancellationToken.IsCancellationRequested) return;
+        var source = item.Source; var userId = member.UserAccountId;
+        var generation = _confirmationGeneration; var peopleGeneration = _peopleGeneration;
+        // The UUID remains unambiguous even when User.Read does not expose a name.
+        var participant = _capabilities.Contains("User.Read") ? $"{member.UserText} ({userId:D})" : userId.ToString("D");
+        if (!ConfirmAction("Исключить участника из проекта?", $"Участник „{participant}“ будет исключён из проекта „{source.Name}“. Учётная запись сотрудника не удаляется.", "Исключить")) return;
+        if (!ConfirmationIsCurrent(item, source, generation, peopleGeneration, cancellationToken)
+            || member.UserAccountId != userId || !CanRemoveMember(member)) return;
+        var result = await _closeOperations.TrackAsync(() => _client.RemoveMemberAsync(source.Id, source.Version, userId, cancellationToken)).ConfigureAwait(true);
         if (!ReferenceEquals(SelectedItem, item) || !_sessionAvailable || !CanManageMembers || !IsActive) return;
         if (result is DesktopProjectResult<DesktopProjectDto>.Succeeded success)
-        { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник удалён из проекта."; }
+        { AdvanceVersion(item, success.EntityVersion); await ReloadMembersAsync(item, cancellationToken); Message = "Участник исключён из проекта."; }
         else ApplyFailure(result);
     }
 
@@ -526,6 +540,21 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     {
         await LoadMembersSectionAsync(item, cancellationToken);
     }
+
+    private bool CanArchiveSelectedProject => CanArchive && _projectConfirmed && !IsDetailLoading
+        && OverviewSection.State == ProjectSectionState.Loaded && SelectedItem?.Source.Status == DesktopProjectStatus.Completed;
+
+    private bool CanRemoveMember(object? parameter) => CanManageMembers && _projectConfirmed && _membersConfirmed
+        && !IsDetailLoading && MembersSection.State is ProjectSectionState.Loaded or ProjectSectionState.PartialAccess
+        && parameter is ProjectMemberItemViewModel member && Members.Contains(member)
+        && member.UserAccountId != SelectedItem?.Source.OwnerUserId;
+
+    private bool ConfirmationIsCurrent(ProjectItemViewModel item, DesktopProjectDto source, long generation,
+        long peopleGeneration, CancellationToken cancellationToken) =>
+        !cancellationToken.IsCancellationRequested && !_disposed && IsActive && _sessionAvailable && _networkAvailable
+        && generation == _confirmationGeneration && peopleGeneration == _peopleGeneration
+        && ReferenceEquals(SelectedItem, item) && ReferenceEquals(item.Source, source)
+        && item.Id == source.Id && item.Source.Version == source.Version && _projectConfirmed;
 
     private void AdvanceVersion(ProjectItemViewModel item, long? version)
     { if (version is > 0) item.Replace(item.Source with { Version = version.Value }); }

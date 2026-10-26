@@ -33,6 +33,7 @@ public sealed partial class ProjectsViewModel
 
     public void CancelDetailSections()
     {
+        _confirmationGeneration++;
         Files?.Invalidate(); Contacts?.Invalidate(); ResetHistory();
         foreach (var section in DetailSections) section.Cancel();
         _detailRequest?.Cancel(); CancelRelatedTasks(); IsDetailLoading = false;
