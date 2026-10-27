@@ -3,9 +3,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
     <UserControl.Resources>
+        <DataTemplate x:Key="Task.Card.PersonName"><TextBlock Text="{Binding}" TextWrapping="Wrap" /></DataTemplate>
         <Style x:Key="Task.Editor.Label" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
-            <Setter Property="Margin" Value="0,0,0,5" />
+            <Setter Property="Margin" Value="0,0,0,6" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
         <Style x:Key="Task.Editor.Hint" TargetType="TextBlock">
@@ -14,12 +15,14 @@
             <Setter Property="Margin" Value="0,4,0,0" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
-        <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+        <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Card.Combo}">
             <Setter Property="DisplayMemberPath" Value="Name" />
         </Style>
     </UserControl.Resources>
 
     <StackPanel>
+        <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+        <TextBlock Text="Детали задачи" Style="{StaticResource Task.Card.Heading}" />
         <TextBlock Text="Описание (необязательно)" Style="{StaticResource Task.Editor.Label}" />
         <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="220"
@@ -43,13 +46,17 @@
             </StackPanel>
         </Grid>
 
-        <TextBlock Text="Исполнители (необязательно)" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
-        <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        </StackPanel></Border>
+        <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
+        <TextBlock Text="Участники" Style="{StaticResource Task.Card.Heading}" />
+        <TextBlock Text="Выберите сотрудников, которые будут выполнять задачу." Style="{StaticResource Task.Editor.Hint}" Margin="0,0,0,12" />
+        <TextBlock Text="Исполнители (необязательно)" Style="{StaticResource Task.Editor.Label}" />
+        <ScrollViewer MaxHeight="160" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding Assignees}" IsEnabled="{Binding CanAssign}">
-                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}" Margin="0,4,16,4"
+                        <CheckBox Style="{StaticResource Task.Card.Check}" Content="{Binding Name}" ContentTemplate="{StaticResource Task.Card.PersonName}" IsChecked="{Binding Selected}" Margin="0,2,0,2"
                                   MinHeight="32" VerticalContentAlignment="Center" AutomationProperties.Name="{Binding Name}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -61,7 +68,8 @@
             </Style.Triggers></Style></TextBlock.Style>
         </TextBlock>
 
-        <Expander Header="Дополнительные связи и планирование" state:ViewState.Section="task-editor/v1/planning" IsExpanded="False" Margin="0,16,0,0"
+        </StackPanel></Border>
+        <Expander Style="{StaticResource Task.Card.Section}" Header="Дополнительные связи и планирование" state:ViewState.Section="task-editor/v1/planning" IsExpanded="False" Margin="0,16,0,0"
                   AutomationProperties.Name="Дополнительные поля задачи">
             <StackPanel Margin="0,12,0,0">
                 <Grid>
@@ -90,8 +98,8 @@
                 <TextBlock Text="Наблюдатели (необязательно)" Style="{StaticResource Task.Editor.Label}" Margin="0,14,0,5" />
                 <ScrollViewer MaxHeight="112" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <ItemsControl ItemsSource="{Binding Watchers}" IsEnabled="{Binding CanWatch}">
-                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}" Margin="0,4,16,4" MinHeight="32" VerticalContentAlignment="Center" /></DataTemplate></ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate><DataTemplate><CheckBox Style="{StaticResource Task.Card.Check}" Content="{Binding Name}" ContentTemplate="{StaticResource Task.Card.PersonName}" IsChecked="{Binding Selected}" Margin="0,2,0,2" MinHeight="32" VerticalContentAlignment="Center" /></DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
 

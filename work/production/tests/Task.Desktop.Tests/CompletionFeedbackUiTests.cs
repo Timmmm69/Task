@@ -49,12 +49,18 @@ public sealed class CompletionFeedbackUiTests
             {
                 window.Show();
                 window.UpdateLayout();
+                await Dispatcher.Yield(DispatcherPriority.Loaded);
                 var size = glyph.RenderSize;
                 Assert.False(glyph.Focusable);
-                await global::System.Threading.Tasks.Task.Delay(260);
+                var playback = System.Diagnostics.Stopwatch.StartNew();
+                while (glyph.HasAnimatedProperties && playback.Elapsed < TimeSpan.FromSeconds(5))
+                    await global::System.Threading.Tasks.Task.Delay(20);
+                Assert.False(glyph.HasAnimatedProperties);
                 Assert.Equal(1, glyph.Opacity);
                 Assert.Equal(size, glyph.RenderSize);
-                Assert.False(pulse.TryPlay(dto.Id, dto.Version));
+                // Windows can suppress presentation even when the feedback was created with motion enabled.
+                Assert.Equal(!SystemParameters.ClientAreaAnimation || SystemParameters.HighContrast,
+                    pulse.TryPlay(dto.Id, dto.Version));
 
                 var next = dto with { Id = Guid.NewGuid(), Version = 3 };
                 var nextPulse = new TaskCompletionFeedback(next.Id, next.Version, true);

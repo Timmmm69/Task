@@ -52,7 +52,9 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(null)][InlineData("W/\"v7\"")][InlineData("\"v6\"")]
+    [InlineData(null)]
+    [InlineData("W/\"v7\"")]
+    [InlineData("\"v6\"")]
     public async System.Threading.Tasks.Task DetailRejectsUnconfirmedVersion(string? tag)
     {
         var id = Guid.NewGuid();
@@ -66,7 +68,9 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData("[null]")][InlineData("[\"bad\"]")][InlineData("[\"00000000-0000-0000-0000-000000000000\"]")]
+    [InlineData("[null]")]
+    [InlineData("[\"bad\"]")]
+    [InlineData("[\"00000000-0000-0000-0000-000000000000\"]")]
     public async System.Threading.Tasks.Task MalformedParticipantsNeverEscapeAsUnhandledException(string ids)
     {
         var id = Guid.NewGuid();
@@ -76,14 +80,23 @@ public sealed partial class DesktopWorkApiClientTests
     }
 
     [Theory]
-    [InlineData(403)][InlineData(404)][InlineData(412)][InlineData(422)][InlineData(503)]
+    [InlineData(403)]
+    [InlineData(404)]
+    [InlineData(412)]
+    [InlineData(422)]
+    [InlineData(503)]
     public async System.Threading.Tasks.Task InteractionWriteMapsFailures(int code)
     {
         await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(Json((HttpStatusCode)code, "{}")));
         var value = new DesktopInteraction(Guid.NewGuid(), 7, Guid.NewGuid(), "note", DateTimeOffset.UtcNow, "Тема", null, null, null, []);
         var result = await fixture.Client.SaveInteractionAsync(value, null);
-        Assert.True(code switch { 403 => result is DesktopWorkResult<DesktopInteraction>.Forbidden,
-            404 => result is DesktopWorkResult<DesktopInteraction>.NotFound, 412 => result is DesktopWorkResult<DesktopInteraction>.Conflict,
-            422 => result is DesktopWorkResult<DesktopInteraction>.ValidationFailure, _ => result is DesktopWorkResult<DesktopInteraction>.ServerUnavailable });
+        Assert.True(code switch
+        {
+            403 => result is DesktopWorkResult<DesktopInteraction>.Forbidden,
+            404 => result is DesktopWorkResult<DesktopInteraction>.NotFound,
+            412 => result is DesktopWorkResult<DesktopInteraction>.Conflict,
+            422 => result is DesktopWorkResult<DesktopInteraction>.ValidationFailure,
+            _ => result is DesktopWorkResult<DesktopInteraction>.ServerUnavailable
+        });
     }
 }

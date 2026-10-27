@@ -1,0 +1,58 @@
+[
+  {
+    "width": 1100,
+    "hostWidth": 1085.3333333333333,
+    "hostHeight": 692.6666666666666,
+    "canQuery": true,
+    "linksWidth": 1043.3333333333333,
+    "linksHeight": 303.3333333333333,
+    "addBefore": "557,6666666666666;959,6666666666665;134;40",
+    "addAfter": "557,6666666666666;631,6666666666665;134;40",
+    "addVisibleInViewport": true,
+    "verticalScrollAncestors": 1,
+    "dpiScale": 1.5,
+    "highContrast": false
+  },
+  {
+    "width": 820,
+    "hostWidth": 805.3333333333334,
+    "hostHeight": 692.6666666666666,
+    "canQuery": true,
+    "linksWidth": 763.3333333333334,
+    "linksHeight": 303.3333333333333,
+    "addBefore": "417,66666666666663;1007,6666666666665;134;40",
+    "addAfter": "417,66666666666663;631,6666666666665;134;40",
+    "addVisibleInViewport": true,
+    "verticalScrollAncestors": 1,
+    "dpiScale": 1.5,
+    "highContrast": false
+  },
+  {
+    "width": 780,
+    "hostWidth": 765.3333333333334,
+    "hostHeight": 692.6666666666666,
+    "canQuery": true,
+    "linksWidth": 723.3333333333334,
+    "linksHeight": 303.3333333333333,
+    "addBefore": "50,33333333333333;1433;134;40",
+    "addAfter": "50,33333333333333;631,6666666666667;134;40",
+    "addVisibleInViewport": true,
+    "verticalScrollAncestors": 1,
+    "dpiScale": 1.5,
+    "highContrast": false
+  },
+  {
+    "width": 520,
+    "hostWidth": 505.3333333333333,
+    "hostHeight": 692.6666666666666,
+    "canQuery": true,
+    "linksWidth": 463.3333333333333,
+    "linksHeight": 303.3333333333333,
+    "addBefore": "50,33333333333333;1433;134;40",
+    "addAfter": "50,33333333333333;631,6666666666667;134;40",
+    "addVisibleInViewport": true,
+    "verticalScrollAncestors": 1,
+    "dpiScale": 1.5,
+    "highContrast": false
+  }
+]

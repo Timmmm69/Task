@@ -20,8 +20,14 @@ public sealed class TaskFilteringWindowsTests
     {
         if (Environment.GetEnvironmentVariable("TASK_FILTER_UI_CHILD") != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(GetType().Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(Native_FourFiltersKeyboardPaginationAndSmallWindow));
             start.Environment["TASK_FILTER_UI_CHILD"] = "1";
@@ -138,8 +144,10 @@ public sealed class TaskFilteringWindowsTests
                     var bulk = Enumerable.Range(1, 10000).Select(i => first with
                     {
                         Id = Guid.Parse($"00000000-0000-0000-0001-{i:000000000000}"),
-                        Title = $"Задача {10000 - i:00000}", Priority = (DesktopTaskPriority)(i % 4),
-                        UpdatedAtUtc = now.AddMinutes(-i), DeadlineAtUtc = i % 5 == 0 ? null : now.AddMinutes(i),
+                        Title = $"Задача {10000 - i:00000}",
+                        Priority = (DesktopTaskPriority)(i % 4),
+                        UpdatedAtUtc = now.AddMinutes(-i),
+                        DeadlineAtUtc = i % 5 == 0 ? null : now.AddMinutes(i),
                     }).ToArray();
                     client.EnqueuePage(new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new(bulk, null, null)));
                     await tasks.RefreshAsync(); await tasks.ResetFiltersCommand.ExecuteAsync(); await Drain(window);
@@ -164,7 +172,8 @@ public sealed class TaskFilteringWindowsTests
                 finally { window?.CloseAfterModeSwitch(); dispatcher.InvokeShutdown(); }
             });
             Dispatcher.Run();
-        }) { IsBackground = true };
+        })
+        { IsBackground = true };
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
         try { await done.Task.WaitAsync(TimeSpan.FromSeconds(45)); }
         finally { Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5)))); }

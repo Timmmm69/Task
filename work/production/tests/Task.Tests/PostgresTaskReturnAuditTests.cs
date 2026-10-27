@@ -6,7 +6,7 @@ namespace Task.Tests;
 
 public sealed partial class PostgresProductApiTests
 {
-    [Fact]
+    [RequiresPostgresFact]
     public async System.Threading.Tasks.Task TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent()
     {
         using var db = Database.Create(); Assert.NotNull(db);
@@ -36,7 +36,7 @@ public sealed partial class PostgresProductApiTests
             permissions: ["Search.Use", "Task.Read"], query: new() { ["q"] = "Return under review", ["types"] = "task" }).Body!["items"]!.AsArray());
     }
 
-    [Fact]
+    [RequiresPostgresFact]
     public async System.Threading.Tasks.Task TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus()
     {
         using var db = Database.Create(); Assert.NotNull(db);
@@ -63,7 +63,7 @@ public sealed partial class PostgresProductApiTests
             Assert.Equal(1, db.Count(table));
     }
 
-    [Theory]
+    [RequiresPostgresTheory]
     [InlineData("revoked", false, SessionRequestState.SessionRevoked)]
     [InlineData("revoked", true, SessionRequestState.SessionRevoked)]
     [InlineData("idle", false, SessionRequestState.SessionExpired)]

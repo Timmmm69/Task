@@ -1,0 +1,39 @@
+{
+  "version": "1.1.0",
+  "parent": "3ef60359be732898f520da65942730982a55d947",
+  "reference": "work/production/src/Task.Desktop/Views/TodayView.xaml",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Calendar.Forms.xaml",
+      "sha256": "50a0ee32805e8d7679d53cf92ef95850a0453f00f4f38ffb5801943bb55ca488"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "sha256": "d88a22cba959539d68c37b246702fbbe44972d22688b27ed95f5825974e064f7"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Calendar/CalendarPickerWindowsTests.cs",
+      "sha256": "bcd82dcac46e234c1ef402209cc0033cd29b224e93fb5670647f8db0c6dd6be4"
+    },
+    {
+      "path": "outputs/20261026_calendar_today_design_1.1.0/VALIDATION.md",
+      "sha256": "1b11e452aee4c05e27eff1a22cf9f4ade98445488989d56cdd5df35a1426ab2d"
+    },
+    {
+      "path": "outputs/20261026_calendar_today_design_1.1.0/build.log",
+      "sha256": "a0dada2902b952a1c0e8f96701d630c1a35f8c9b82060b5612529adc545463dd"
+    },
+    {
+      "path": "outputs/20261026_calendar_today_design_1.1.0/static-checks.log",
+      "sha256": "1d192a2fbde19ebf71379f6c98a3f9d72901bbd92a17d68eb3baf2895ca0aa9b"
+    },
+    {
+      "path": "outputs/20261026_calendar_today_design_1.1.0/tests.log",
+      "sha256": "67914e35ebd6aa38adbe14ccf905d73f2dcac96f5e43b19e8efb15ce9b6d9c31"
+    },
+    {
+      "path": "outputs/20261026_calendar_today_design_1.1.0/verify_xaml.py",
+      "sha256": "109847b18d901caedd69c08bc8786e9ddbe2907046472980fc587cd3b6d93f51"
+    }
+  ]
+}

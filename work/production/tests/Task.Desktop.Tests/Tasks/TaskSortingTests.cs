@@ -11,7 +11,9 @@ public sealed partial class TasksViewModelTests
     private static DesktopTaskDto SortTask(int id, string title = "Задача") => CreateTask(title) with
     {
         Id = Guid.Parse($"00000000-0000-0000-0000-{id:000000000000}"),
-        CreatedAtUtc = SortTime.AddDays(-1), UpdatedAtUtc = SortTime, DeadlineAtUtc = null,
+        CreatedAtUtc = SortTime.AddDays(-1),
+        UpdatedAtUtc = SortTime,
+        DeadlineAtUtc = null,
     };
 
     [Theory]
@@ -104,8 +106,11 @@ public sealed partial class TasksViewModelTests
     public void Sort_MixedDeadlinesUseNormativeInstantPrecedenceAndCalendarDates()
     {
         var zone = new FilterClock().LocalTimeZone; // UTC+3
-        var instant = SortTask(1) with { DeadlineAtUtc = new DateTimeOffset(2026, 10, 16, 21, 30, 0, TimeSpan.Zero),
-            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 12, 1), DeadlineTimeZone = "UTC" } };
+        var instant = SortTask(1) with
+        {
+            DeadlineAtUtc = new DateTimeOffset(2026, 10, 16, 21, 30, 0, TimeSpan.Zero),
+            Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 12, 1), DeadlineTimeZone = "UTC" }
+        };
         var date = SortTask(2) with { Card = new TaskCardContent { DeadlineDate = new DateOnly(2026, 10, 17), DeadlineTimeZone = "UTC" } };
         var earlier = SortTask(3) with { Card = date.Card! with { DeadlineDate = new DateOnly(2026, 10, 16) } };
         var later = SortTask(4) with { DeadlineAtUtc = instant.DeadlineAtUtc!.Value.AddHours(1) };
@@ -195,8 +200,11 @@ public sealed partial class TasksViewModelTests
         var edited = SortTask(1, "А") with { UpdatedAtUtc = SortTime.AddDays(-1), Priority = DesktopTaskPriority.Low, DeadlineAtUtc = SortTime.AddDays(3) };
         var other = SortTask(2, "Б") with { DeadlineAtUtc = SortTime.AddDays(2) };
         var saved = edited with { Version = 2, Title = "Я", Priority = DesktopTaskPriority.Critical, DeadlineAtUtc = SortTime, UpdatedAtUtc = SortTime.AddDays(1) };
-        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(edited),
-            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, 2, false) };
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(edited),
+            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, 2, false)
+        };
         client.EnqueuePage(SucceededPage([other, edited], "next"));
         client.EnqueuePage(SucceededPage([edited])); // A stale cursor snapshot after save.
         using var vm = new TasksViewModel(client, WriteCapabilities); await vm.ActivateAsync();
@@ -216,8 +224,11 @@ public sealed partial class TasksViewModelTests
     {
         var task = SortTask(1) with { Priority = DesktopTaskPriority.High };
         var saved = task with { Version = 2, Priority = DesktopTaskPriority.Low, Card = new TaskCardContent { ProjectId = SortTask(8).Id }, Status = DesktopTaskStatus.InProgress };
-        var client = new FakeTasksApiClient { DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
-            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, 2, false) };
+        var client = new FakeTasksApiClient
+        {
+            DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task),
+            PatchResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, 2, false)
+        };
         client.EnqueuePage(SucceededPage([task])); client.EnqueuePage(SucceededPage([]));
         using var vm = new TasksViewModel(client, WriteCapabilities); await vm.ActivateAsync();
         vm.SelectedPriorityFilter = DesktopTaskPriority.High; vm.SelectedSortOrder = TaskSortOrder.PriorityHighest;

@@ -38,8 +38,11 @@ public sealed partial class WorkHubViewModelTests
     {
         var target = new DesktopContact(Guid.NewGuid(), 1, "Target", "Target", null, null, "active", "active");
         var forbidden = false;
-        var client = new FakeClient { ContactDetailHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(
-            forbidden ? new DesktopWorkResult<DesktopContactDetails>.Forbidden() : new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(target, null))) };
+        var client = new FakeClient
+        {
+            ContactDetailHandler = (_, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopContactDetails>>(
+            forbidden ? new DesktopWorkResult<DesktopContactDetails>.Forbidden() : new DesktopWorkResult<DesktopContactDetails>.Succeeded(new(target, null)))
+        };
         using var hub = new WorkHubViewModel(client, ["Contact.Read"]);
         hub.Activate(WorkHubArea.Contacts);
         await hub.OpenSearchObjectAsync("contact", target.Id);

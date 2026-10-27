@@ -4,7 +4,7 @@ namespace Task.Tests;
 
 public sealed partial class PostgresProductApiTests
 {
-    [Theory]
+    [RequiresPostgresTheory]
     [InlineData("project.create", "created")]
     [InlineData("TaskCreated", "created")]
     [InlineData("TaskStatusChanged", "state_changed")]

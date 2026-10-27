@@ -12,8 +12,14 @@ public sealed class InboxRetargetTests
     public void RetargetPreservesUneditedServerFieldsAndOnlyPatchesTheUserDraft()
     {
         var source = CreateTask("Source");
-        var task = source with { Id = Guid.NewGuid(), Title = "Server title", Priority = DesktopTaskPriority.High,
-            DeadlineAtUtc = new DateTimeOffset(2026, 10, 21, 12, 0, 0, TimeSpan.Zero), Card = new TaskCardContent { Description = "Server description" } };
+        var task = source with
+        {
+            Id = Guid.NewGuid(),
+            Title = "Server title",
+            Priority = DesktopTaskPriority.High,
+            DeadlineAtUtc = new DateTimeOffset(2026, 10, 21, 12, 0, 0, TimeSpan.Zero),
+            Card = new TaskCardContent { Description = "Server description" }
+        };
         var editor = new TaskEditorViewModel(TaskEditorMode.Edit, source);
         editor.Card.Duration = "45";
         editor.RetargetConversion(task);

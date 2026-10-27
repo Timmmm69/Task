@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "date": "2026-10-26",
+  "verdict": "APPROVE_SCOPED_CHANGE_WITH_INHERITED_BASELINE_FAILURES",
+  "release_build": "PASS",
+  "desktop": {
+    "passed": 1917,
+    "failed": 0,
+    "skipped": 0
+  },
+  "service_hosts": {
+    "passed": 671,
+    "failed": 0,
+    "skipped": 0
+  },
+  "postgres16": {
+    "passed": 914,
+    "failed": 0,
+    "skipped": 0
+  },
+  "calendar_subset": 143,
+  "total_unique_passed": 3502,
+  "layout_cases": 8,
+  "density_renders": 24,
+  "actual_monitor_dpi": 1.5,
+  "dependency_audit": "PASS",
+  "project_boundaries": "PASS",
+  "security_static": "PASS",
+  "tls_contract": "PASS",
+  "active_pr_manifest": "PASS_GIT_BLOBS",
+  "formatting": "FAIL_IDENTICAL_TO_MAIN_672_DIAGNOSTICS",
+  "github_ci": "FAIL_INHERITED_FORMATTING",
+  "escape_closes_editor": "IDENTICAL_TO_MAIN",
+  "not_verified": [
+    "system_monitor_100pct",
+    "system_monitor_200pct",
+    "high_contrast",
+    "multi_monitor_dpi_transition",
+    "container_package",
+    "live_corporate_e2e"
+  ],
+  "resumed_desktop": {
+    "passed": 1918,
+    "failed": 0,
+    "skipped": 0
+  },
+  "latest_total_unique_passed": 3503,
+  "latest_base": "286ee6f4d891655d8f19c8bb61ed34807182f409",
+  "latest_integration": "036165ba3d6b388573c8bf63d9697935641fc24d",
+  "latest_formatting": "FAIL_IDENTICAL_TO_MAIN_665_DIAGNOSTICS"
+}

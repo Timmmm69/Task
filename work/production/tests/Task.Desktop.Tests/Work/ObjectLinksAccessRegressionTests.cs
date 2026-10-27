@@ -7,7 +7,8 @@ namespace Task.Desktop.Tests.Work;
 public sealed class ObjectLinksAccessRegressionTests
 {
     [Theory]
-    [InlineData(false)][InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async AsyncTask CancelledNonCooperativeOperationCannotPublishSuccess(bool mutation)
     {
         var client = new ObjectLinksIntegrationTests.Client();
@@ -28,7 +29,8 @@ public sealed class ObjectLinksAccessRegressionTests
     }
 
     [Theory]
-    [InlineData(false)][InlineData(true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async AsyncTask InvisibleSourceReadRemovesCachedRelationsAndConfirmedTarget(bool disappeared)
     {
         var client = new ObjectLinksIntegrationTests.Client();

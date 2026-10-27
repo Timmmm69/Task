@@ -1,0 +1,23 @@
+[
+  {
+    "file": "desktop-current-main/desktop-current-main.trx",
+    "total": 1919,
+    "passed": 1919,
+    "failed": 0,
+    "notExecuted": 0
+  },
+  {
+    "file": "final-run/full-pg16/integration-pg16_net10.0_20261026112816.trx",
+    "total": 671,
+    "passed": 671,
+    "failed": 0,
+    "notExecuted": 0
+  },
+  {
+    "file": "final-run/full-pg16/integration-pg16_net10.0_20261026113106.trx",
+    "total": 914,
+    "passed": 914,
+    "failed": 0,
+    "notExecuted": 0
+  }
+]

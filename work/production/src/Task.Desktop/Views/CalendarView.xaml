@@ -6,8 +6,13 @@
              xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
              AutomationProperties.Name="Календарь"
              AutomationProperties.AutomationId="CalendarScreen"
-             PreviewKeyDown="OnCalendarPreviewKeyDown">
+             PreviewKeyDown="OnCalendarPreviewKeyDown"
+             UseLayoutRounding="True" SnapsToDevicePixels="True">
     <UserControl.Resources>
+        <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="../Resources/Calendar.Forms.xaml" />
+        </ResourceDictionary.MergedDictionaries>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="Calendar.ModeButton" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
             <Setter Property="MinWidth" Value="82" />
@@ -46,6 +51,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid Margin="24,14,24,0">
@@ -129,7 +135,7 @@
                     Margin="0,0,6,0" AutomationProperties.Name="Вернуться к текущей дате" />
             <Button Content="Вперёд" Command="{Binding NextWeekCommand}" Style="{StaticResource Task.Button.Secondary}"
                     Margin="0,0,12,0" AutomationProperties.Name="Следующий период" />
-            <DatePicker x:Name="CalendarDatePicker" SelectedDate="{Binding SelectedDate}" MinWidth="132" Height="40"
+            <DatePicker x:Name="CalendarDatePicker" SelectedDate="{Binding SelectedDate}" MinWidth="132" Style="{StaticResource Calendar.Form.Date}"
                         Margin="0,0,6,0" AutomationProperties.Name="Дата календаря" />
             <Button Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Icon}" Margin="0,0,12,0"
                     AutomationProperties.Name="Обновить календарь" AutomationProperties.AutomationId="CalendarRefresh">
@@ -655,40 +661,44 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <Border MaxWidth="680" MaxHeight="760" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Padding="20" Background="{DynamicResource Task.Brush.Surface.Base}"
+            <Border x:Name="CalendarEditorDialog" MaxWidth="1040" MaxHeight="840" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    Padding="0" Background="{DynamicResource Task.Brush.Surface.Base}"
                     BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1"
-                    CornerRadius="{DynamicResource Task.Radius.Window}"
+                    CornerRadius="{DynamicResource Task.Radius.Control}"
                     DataContext="{Binding Editor}"
                     KeyboardNavigation.TabNavigation="Cycle"
                     KeyboardNavigation.ControlTabNavigation="Cycle">
                 <Grid>
                     <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                    <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock Text="Событие календаря" FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                            <TextBlock Text="{Binding EditorTitle}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
-                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,2,0,0"
-                                       AutomationProperties.Name="{Binding EditorTitle}"
-                                       AutomationProperties.AutomationId="CalendarEventEditor" />
-                            <TextBlock Text="{Binding VersionText}" FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,3,0,0" />
-                        </StackPanel>
-                        <Button Grid.Column="1" Content="Закрыть" Command="{Binding CancelCommand}"
-                                Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Закрыть редактор события" />
-                    </Grid>
+                    <Border Padding="20,16" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="48" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                            <Border Width="36" Height="36" VerticalAlignment="Center" Background="{DynamicResource Task.Brush.Brand.Soft}"
+                                    CornerRadius="{DynamicResource Task.Radius.Control}">
+                                <Path Data="{DynamicResource Task.Icon.Calendar}" Width="20" Height="20" Stretch="Uniform"
+                                      Fill="{DynamicResource Task.Brush.Brand.Primary}" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                <TextBlock Text="Календарь · событие" Style="{StaticResource Calendar.Form.Hint}" Margin="0" />
+                                <TextBlock Text="{Binding EditorTitle}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
+                                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap" Margin="0,2,0,0"
+                                           AutomationProperties.Name="{Binding EditorTitle}" AutomationProperties.AutomationId="CalendarEventEditor" />
+                                <TextBlock Text="{Binding VersionText}" Style="{StaticResource Calendar.Form.Hint}" Margin="0,3,0,0" />
+                            </StackPanel>
+                            <Button Grid.Column="2" Content="Закрыть" Command="{Binding CancelCommand}" VerticalAlignment="Center"
+                                    Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Закрыть редактор события" />
+                        </Grid>
+                    </Border>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                                  Margin="0,16,0,14">
+                                  Margin="0" Padding="0">
                         <ScrollViewer.Style>
                             <Style TargetType="ScrollViewer"><Style.Triggers>
                                 <DataTrigger Binding="{Binding IsSaving}" Value="True"><Setter Property="IsEnabled" Value="False" /></DataTrigger>
                             </Style.Triggers></Style>
                         </ScrollViewer.Style>
                         <StackPanel>
-                            <Border Margin="0,0,0,12">
+                            <Border Margin="20,16,20,0">
                                 <Border.Style>
                                     <Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
                                         <Setter Property="Visibility" Value="Visible" />
@@ -708,137 +718,219 @@
                                 </StackPanel>
                             </Border>
 
-                            <TextBlock Text="Название *" Style="{StaticResource Calendar.FieldLabel}" />
-                            <TextBox x:Name="CalendarEditorTitle" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource Task.Input.Text}" Margin="0,0,0,12"
-                                     IsVisibleChanged="OnEditorTitleIsVisibleChanged"
-                                     AutomationProperties.Name="Название события"
-                                     AutomationProperties.AutomationId="CalendarEventTitle" />
-
-                            <WrapPanel>
-                                <StackPanel Width="300" Margin="0,0,12,12">
-                                    <TextBlock Text="Дата *" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <DatePicker SelectedDate="{Binding Date}" Height="40" AutomationProperties.Name="Дата события" />
-                                </StackPanel>
-                                <StackPanel Width="300" Margin="0,0,0,12">
-                                    <TextBlock Text="Часовой пояс" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding TimeZoneText, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource Task.Input.Text}"
-                                             AutomationProperties.Name="Часовой пояс события" AutomationProperties.IsOffscreenBehavior="Onscreen" />
-                                </StackPanel>
-                            </WrapPanel>
-
-                            <CheckBox Content="Событие на весь день" IsChecked="{Binding IsAllDay}" Margin="0,0,0,12"
-                                      AutomationProperties.Name="Событие на весь день" />
-
-                            <WrapPanel Margin="0,0,0,2">
-                                <StackPanel Width="145" Margin="0,0,10,12">
-                                    <TextBlock Text="Начало *" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"
-                                             AutomationProperties.Name="Время начала" />
-                                </StackPanel>
-                                <StackPanel Width="145" Margin="0,0,10,12">
-                                    <TextBlock Text="Окончание *" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"
-                                             AutomationProperties.Name="Время окончания" />
-                                </StackPanel>
-                                <StackPanel Width="300" Margin="0,0,0,12">
-                                    <TextBlock Text="Дата окончания" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <DatePicker SelectedDate="{Binding EndDate}" Height="40" AutomationProperties.Name="Дата окончания события" />
-                                </StackPanel>
-                            </WrapPanel>
-
-                            <WrapPanel>
-                                <StackPanel Width="300" Margin="0,0,12,12">
-                                    <TextBlock Text="Проект" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <TextBox Text="{Binding ProjectId, UpdateSourceTrigger=PropertyChanged}"
-                                             ToolTip="Идентификатор доступного проекта; поле можно оставить пустым."
-                                             AutomationProperties.Name="Идентификатор проекта">
-                                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}"><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
-                                    </TextBox>
-                                    <ComboBox ItemsSource="{Binding ProjectChoices}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name" AutomationProperties.Name="Личный проект события">
-                                        <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Width="300" Margin="0,0,0,12">
-                                    <TextBlock Text="Статус" Style="{StaticResource Calendar.FieldLabel}" />
-                                    <ComboBox ItemsSource="{Binding StatusOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
-                                              SelectedValue="{Binding Status, Mode=TwoWay}" Style="{StaticResource Task.Input.Combo}"
-                                              AutomationProperties.Name="Статус события" />
-                                </StackPanel>
-                            </WrapPanel>
-
-                            <TextBlock Text="Описание" Style="{StaticResource Calendar.FieldLabel}" />
-                            <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"
-                                     MinHeight="76" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                                     Style="{StaticResource Task.Input.Text}" Margin="0,0,0,14"
-                                     AutomationProperties.Name="Описание события" />
-
-                            <StackPanel>
-                            <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding AllowAttendees}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                            <TextBlock Text="Участники" FontSize="{DynamicResource Task.Font.Size.Section}"
-                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,8" />
-                            <ItemsControl ItemsSource="{Binding Attendees}" Margin="0,0,0,8" IsEnabled="{Binding CanEditAttendees}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1"
-                                                CornerRadius="{DynamicResource Task.Radius.Control}" Padding="10" Margin="0,0,0,6">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                            <Grid x:Name="CalendarEditorBody">
+                                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition>
+                                        <ColumnDefinition.Style><Style TargetType="ColumnDefinition">
+                                            <Setter Property="Width" Value="*" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActualWidth, ElementName=CalendarEditorDialog, Converter={StaticResource Calendar.Form.WidthAtLeast}, ConverterParameter=900}" Value="False"><Setter Property="Width" Value="0" /></DataTrigger>
+                                                <DataTrigger Binding="{Binding AllowAttendees}" Value="False"><Setter Property="Width" Value="0" /></DataTrigger>
+                                            </Style.Triggers>
+                                        </Style></ColumnDefinition.Style>
+                                    </ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel x:Name="CalendarEditorDetails">
+                                    <Border Style="{StaticResource Calendar.Form.Section}">
+                                        <StackPanel>
+                                            <TextBlock Text="Основное" Style="{StaticResource Calendar.Form.Heading}" />
+                                            <TextBlock Text="Название *" Style="{StaticResource Calendar.FieldLabel}" />
+                                            <TextBox x:Name="CalendarEditorTitle" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource Calendar.Form.Text}" Margin="0,0,0,14"
+                                                     IsVisibleChanged="OnEditorTitleIsVisibleChanged"
+                                                     AutomationProperties.Name="Название события"
+                                                     AutomationProperties.AutomationId="CalendarEventTitle" />
+                                            <Grid Margin="0,0,0,14">
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                                                 <StackPanel>
-                                                    <TextBlock Text="{Binding KindText}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
-                                                    <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" />
-                                                    <TextBlock Text="{Binding Id}" FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                                               Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" />
-                                                    <WrapPanel Margin="0,7,0,0">
-                                                        <ComboBox Width="150" SelectedValue="{Binding Role}" SelectedValuePath="Tag"
-                                                                  Style="{StaticResource Task.Input.Combo}" Margin="0,0,6,0"
-                                                                  AutomationProperties.Name="Роль участника">
-                                                            <ComboBoxItem Tag="required" Content="Обязательный" />
-                                                            <ComboBoxItem Tag="optional" Content="Необязательный" />
-                                                            <ComboBoxItem Tag="observer" Content="Наблюдатель" />
-                                                        </ComboBox>
-                                                        <ComboBox Width="150" SelectedValue="{Binding ResponseStatus}" SelectedValuePath="Tag"
-                                                                  Style="{StaticResource Task.Input.Combo}"
-                                                                  AutomationProperties.Name="Ответ участника">
-                                                            <ComboBoxItem Tag="pending" Content="Ожидается" />
-                                                            <ComboBoxItem Tag="accepted" Content="Принят" />
-                                                            <ComboBoxItem Tag="declined" Content="Отклонён" />
-                                                            <ComboBoxItem Tag="tentative" Content="Под вопросом" />
-                                                        </ComboBox>
-                                                    </WrapPanel>
+                                                    <TextBlock Text="Проект" Style="{StaticResource Calendar.FieldLabel}" />
+                                                    <TextBox Text="{Binding ProjectId, UpdateSourceTrigger=PropertyChanged}"
+                                                             ToolTip="Идентификатор доступного проекта; поле можно оставить пустым."
+                                                             AutomationProperties.Name="Идентификатор проекта">
+                                                        <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource Calendar.Form.Text}"><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+                                                    </TextBox>
+                                                    <ComboBox ItemsSource="{Binding ProjectChoices}" SelectedItem="{Binding SelectedProject}" DisplayMemberPath="Name" AutomationProperties.Name="Личный проект события">
+                                                        <ComboBox.Style><Style TargetType="ComboBox" BasedOn="{StaticResource Calendar.Form.Combo}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></ComboBox.Style>
+                                                    </ComboBox>
                                                 </StackPanel>
-                                                <Button Grid.Column="1" Content="Удалить"
-                                                        Command="{Binding DataContext.RemoveAttendeeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                        CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"
-                                                        Margin="10,0,0,0" VerticalAlignment="Top" />
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="Статус" Style="{StaticResource Calendar.FieldLabel}" />
+                                                    <ComboBox ItemsSource="{Binding StatusOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                                                              SelectedValue="{Binding Status, Mode=TwoWay}" Style="{StaticResource Calendar.Form.Combo}"
+                                                              AutomationProperties.Name="Статус события" />
+                                                </StackPanel>
                                             </Grid>
+                                            <TextBlock Text="Описание" Style="{StaticResource Calendar.FieldLabel}" />
+                                            <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"
+                                                     MinHeight="88" MaxHeight="180" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                                     Style="{StaticResource Calendar.Form.Text}" AutomationProperties.Name="Описание события" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Style="{StaticResource Calendar.Form.Section}">
+                                        <StackPanel>
+                                            <TextBlock Text="Дата и время" Style="{StaticResource Calendar.Form.Heading}" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="Дата начала *" Style="{StaticResource Calendar.FieldLabel}" />
+                                                    <DatePicker SelectedDate="{Binding Date}" Style="{StaticResource Calendar.Form.Date}"
+                                                                AutomationProperties.Name="Дата события" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="Часовой пояс" Style="{StaticResource Calendar.FieldLabel}" />
+                                                    <TextBox Text="{Binding TimeZoneText, Mode=OneWay}" IsReadOnly="True" Style="{StaticResource Calendar.Form.Text}"
+                                                             AutomationProperties.Name="Часовой пояс события" AutomationProperties.IsOffscreenBehavior="Onscreen" />
+                                                </StackPanel>
+                                            </Grid>
+                                            <Border Background="{DynamicResource Task.Brush.Surface.Subtle}" Padding="12,4" Margin="0,12,0,12"
+                                                    BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1"
+                                                    CornerRadius="{DynamicResource Task.Radius.Control}">
+                                                <StackPanel>
+                                                    <CheckBox Content="Событие на весь день" IsChecked="{Binding IsAllDay}"
+                                                              Style="{StaticResource Calendar.Form.CheckBox}" AutomationProperties.Name="Событие на весь день" />
+                                                    <TextBlock Text="Без привязки к часам. Введённое время сохранится при переключении." Style="{StaticResource Calendar.Form.Hint}" Margin="30,0,0,6" />
+                                                </StackPanel>
+                                            </Border>
+                                            <Grid>
+                                                <Grid.Style>
+                                                    <Style TargetType="Grid"><Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsAllDay}" Value="True"><Setter Property="IsEnabled" Value="False" /></DataTrigger>
+                                                    </Style.Triggers></Style>
+                                                </Grid.Style>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="Начало *" Style="{StaticResource Calendar.FieldLabel}" />
+                                                    <TextBox Text="{Binding StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Calendar.Form.Text}"
+                                                             AutomationProperties.Name="Время начала" />
+                                                    <TextBlock Text="Окончание *" Style="{StaticResource Calendar.FieldLabel}" Margin="0,12,0,5" />
+                                                    <TextBox Text="{Binding EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Calendar.Form.Text}"
+                                                             AutomationProperties.Name="Время окончания" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="Дата окончания" Style="{StaticResource Calendar.FieldLabel}" />
+                                                    <DatePicker SelectedDate="{Binding EndDate}" Style="{StaticResource Calendar.Form.Date}"
+                                                                AutomationProperties.Name="Дата окончания события" />
+                                                    <TextBlock Text="Время в формате ЧЧ:ММ, например 09:30. Для встречи через полночь укажите следующий день."
+                                                               Style="{StaticResource Calendar.Form.Hint}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
+                                </StackPanel>
+                                <Border x:Name="CalendarEditorAttendees">
+                                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Calendar.Form.Section}">
+                                        <Setter Property="Grid.Column" Value="1" /><Setter Property="Grid.Row" Value="0" />
+                                        <Setter Property="BorderThickness" Value="1,0,0,0" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActualWidth, ElementName=CalendarEditorDialog, Converter={StaticResource Calendar.Form.WidthAtLeast}, ConverterParameter=900}" Value="False">
+                                                <Setter Property="Grid.Column" Value="0" /><Setter Property="Grid.Row" Value="1" />
+                                                <Setter Property="BorderThickness" Value="0,1,0,0" />
+                                            </DataTrigger>
+                                        <DataTrigger Binding="{Binding AllowAttendees}" Value="False"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                    </Style.Triggers></Style></Border.Style>
+                                    <StackPanel>
+                                    <DockPanel Margin="0,0,0,12">
+                                        <Border DockPanel.Dock="Right" Background="{DynamicResource Task.Brush.Brand.Soft}" Padding="8,3"
+                                                CornerRadius="{DynamicResource Task.Radius.Control}" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Attendees.Count, Mode=OneWay}" Foreground="{DynamicResource Task.Brush.Brand.Strong}"
+                                                       AutomationProperties.Name="Количество участников" AutomationProperties.LiveSetting="Polite" />
                                         </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <StackPanel IsEnabled="{Binding CanEditAttendees}">
-                                <ComboBox Width="160" HorizontalAlignment="Left" ItemsSource="{Binding AttendeeKinds}" DisplayMemberPath="Label"
-                                          SelectedValue="{Binding IsUserAttendee}" SelectedValuePath="IsUser"
-                                          Style="{StaticResource Task.Input.Combo}" Margin="0,0,0,8"
-                                          AutomationProperties.Name="Тип участника" />
-                                <views:EmployeePickerView DataContext="{Binding AttendeePicker}"
-                                    Visibility="{Binding DataContext.ShowEmployeePicker, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=StackPanel}}" />
-                                <TextBox Text="{Binding AttendeeId, UpdateSourceTrigger=PropertyChanged}"
-                                         Visibility="{Binding ShowAttendeeId, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                         Style="{StaticResource Task.Input.Text}"
-                                         AutomationProperties.AutomationId="CalendarAttendeeId"
-                                         AutomationProperties.Name="UUID сотрудника или контакта" />
-                                <TextBlock Text="{Binding AttendeeEntryHint}" TextWrapping="Wrap" Margin="0,6,0,8"
-                                           Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                                <Button Content="Добавить" Command="{Binding AddAttendeeCommand}"
-                                        HorizontalAlignment="Left" AutomationProperties.AutomationId="CalendarAddAttendee"
-                                        Style="{StaticResource Task.Button.Secondary}" />
-                            </StackPanel>
-                            </StackPanel>
+                                        <TextBlock Text="Участники" Style="{StaticResource Calendar.Form.Heading}" Margin="0" VerticalAlignment="Center" />
+                                    </DockPanel>
+                                    <TextBlock Text="У вас нет разрешения менять участников. Список доступен для просмотра." TextWrapping="Wrap" Margin="0,0,0,10">
+                                        <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Calendar.Form.Hint}"><Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanEditAttendees}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                        </Style.Triggers></Style></TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Пока нет участников. Добавьте сотрудника или контакт ниже.">
+                                        <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Calendar.Form.Hint}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers><DataTrigger Binding="{Binding Attendees.Count}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                                        </Style></TextBlock.Style>
+                                    </TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Attendees}" Margin="0,0,0,8" IsEnabled="{Binding CanEditAttendees}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1"
+                                                        Background="{DynamicResource Task.Brush.Surface.Base}"
+                                                        CornerRadius="0" Padding="0,12" Margin="0">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding DisplayName}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap" />
+                                                            <TextBlock Text="{Binding KindText}" Style="{StaticResource Calendar.Form.Hint}" />
+                                                            <TextBlock Text="{Binding Id}" FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" />
+                                                            <WrapPanel Margin="0,10,0,0">
+                                                                <StackPanel Margin="0,0,8,8"><TextBlock Text="Роль" Style="{StaticResource Calendar.FieldLabel}" />
+                                                                <ComboBox MinWidth="150" SelectedValue="{Binding Role}" SelectedValuePath="Tag"
+                                                                          Style="{StaticResource Calendar.Form.Combo}"
+                                                                          AutomationProperties.Name="Роль участника">
+                                                                    <ComboBoxItem Tag="required" Content="Обязательный" />
+                                                                    <ComboBoxItem Tag="optional" Content="Необязательный" />
+                                                                    <ComboBoxItem Tag="observer" Content="Наблюдатель" />
+                                                                </ComboBox>
+                                                                </StackPanel>
+                                                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Ответ" Style="{StaticResource Calendar.FieldLabel}" />
+                                                                <ComboBox MinWidth="150" SelectedValue="{Binding ResponseStatus}" SelectedValuePath="Tag"
+                                                                          Style="{StaticResource Calendar.Form.Combo}"
+                                                                          AutomationProperties.Name="Ответ участника">
+                                                                    <ComboBoxItem Tag="pending" Content="Ожидается" />
+                                                                    <ComboBoxItem Tag="accepted" Content="Принят" />
+                                                                    <ComboBoxItem Tag="declined" Content="Отклонён" />
+                                                                    <ComboBoxItem Tag="tentative" Content="Под вопросом" />
+                                                                </ComboBox>
+                                                                </StackPanel>
+                                                            </WrapPanel>
+                                                        </StackPanel>
+                                                        <Button Grid.Column="1" Content="Удалить"
+                                                                Command="{Binding DataContext.RemoveAttendeeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"
+                                                                Margin="10,0,0,0" VerticalAlignment="Top" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <StackPanel IsEnabled="{Binding CanEditAttendees}">
+                                        <TextBlock Text="Добавить участника" Style="{StaticResource Calendar.FieldLabel}" Margin="0,8,0,5" />
+                                        <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding AttendeeKinds}" DisplayMemberPath="Label"
+                                                  SelectedValue="{Binding IsUserAttendee}" SelectedValuePath="IsUser"
+                                                  Style="{StaticResource Calendar.Form.Combo}" Margin="0,0,0,8"
+                                                  AutomationProperties.Name="Тип участника" />
+                                        <views:EmployeePickerView DataContext="{Binding AttendeePicker}"
+                                            Visibility="{Binding DataContext.ShowEmployeePicker, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=StackPanel}}">
+                                            <views:EmployeePickerView.Resources>
+                                                <Style x:Key="Task.Input.Text" TargetType="TextBox" BasedOn="{StaticResource Calendar.Form.Text}" />
+                                                <Style TargetType="ListBox" BasedOn="{StaticResource Task.DataList}">
+                                                    <Setter Property="ItemContainerStyle" Value="{StaticResource Task.DataList.Item}" />
+                                                </Style>
+                                            </views:EmployeePickerView.Resources>
+                                        </views:EmployeePickerView>
+                                        <TextBox Text="{Binding AttendeeId, UpdateSourceTrigger=PropertyChanged}"
+                                                 Visibility="{Binding ShowAttendeeId, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                 Style="{StaticResource Calendar.Form.Text}"
+                                                 AutomationProperties.AutomationId="CalendarAttendeeId"
+                                                 AutomationProperties.Name="UUID сотрудника или контакта" />
+                                        <TextBlock Text="{Binding AttendeeEntryHint}" TextWrapping="Wrap" Margin="0,6,0,8"
+                                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                                        <Button Content="Добавить" Command="{Binding AddAttendeeCommand}"
+                                                HorizontalAlignment="Left" AutomationProperties.AutomationId="CalendarAddAttendee"
+                                                Style="{StaticResource Task.Button.Secondary}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                </Border>
+                            </Grid>
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Grid Grid.Row="2">
+                    <Border Grid.Row="2" Padding="20,12" BorderThickness="0,1,0,0" Background="{DynamicResource Task.Brush.Surface.Subtle}"
+                            BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                    <Grid x:Name="CalendarEditorActions">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <ProgressBar Width="72" IsIndeterminate="True">
@@ -864,13 +956,14 @@
                             </TextBlock>
                         </StackPanel>
                         <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
-                            <Button Content="Сохранить" Command="{Binding SaveCommand}"
+                            <Button Content="Сохранить" MinWidth="120" Command="{Binding SaveCommand}"
                                     Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,0"
                                     AutomationProperties.AutomationId="CalendarEventSave" />
                             <Button Content="Отмена" Command="{Binding CancelCommand}"
                                     Style="{StaticResource Task.Button.Secondary}" />
                         </WrapPanel>
                     </Grid>
+                    </Border>
                 </Grid>
             </Border>
         </Border>

@@ -272,8 +272,12 @@ public sealed partial class TodayViewModelTests
     [Fact]
     public async AsyncTask Planning_DateOnlyDeadlineRemainsSeparate_OverdueStaysInQueueAfterFutureReschedule()
     {
-        var task = PlanningTask() with { DeadlineAtUtc = null, Card = new TaskCardContent
-            { DeadlineDate = Today.AddDays(-1), DeadlineTimeZone = "UTC", ScheduledDate = Today } };
+        var task = PlanningTask() with
+        {
+            DeadlineAtUtc = null,
+            Card = new TaskCardContent
+            { DeadlineDate = Today.AddDays(-1), DeadlineTimeZone = "UTC", ScheduledDate = Today }
+        };
         var client = new PlanningClient(task); using var vm = PlanningVm(client); await vm.ActivateAsync();
         Assert.Single(vm.AllDayItems); Assert.Single(vm.OverdueTasks);
         vm.Planning!.Date = Today.AddDays(1).ToDateTime(TimeOnly.MinValue); await vm.SavePlanningCommand.ExecuteAsync();
@@ -287,8 +291,12 @@ public sealed partial class TodayViewModelTests
     public async AsyncTask Planning_OvernightTaskClipsToCurrentDay_AndNeverUsesDeadlineAsDuration()
     {
         var start = new DateTimeOffset(Today.AddDays(-1).ToDateTime(new TimeOnly(23, 30)), TimeSpan.Zero);
-        var task = PlanningTask() with { StartAtUtc = start, Card = new TaskCardContent
-            { ScheduledDate = Today.AddDays(-1), StartTimeLocal = new(23, 30), ScheduleTimeZone = "UTC", PlannedDurationMinutes = 120 } };
+        var task = PlanningTask() with
+        {
+            StartAtUtc = start,
+            Card = new TaskCardContent
+            { ScheduledDate = Today.AddDays(-1), StartTimeLocal = new(23, 30), ScheduleTimeZone = "UTC", PlannedDurationMinutes = 120 }
+        };
         var client = new PlanningClient(task); using var vm = PlanningVm(client); await vm.ActivateAsync();
         Assert.Equal(0, Assert.Single(vm.TimelineItems).TimelineTop);
         Assert.Equal(97.5, vm.TimelineItems[0].TimelineHeight);
@@ -304,7 +312,7 @@ public sealed partial class TodayViewModelTests
     {
         var zone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tokyo");
         var draft = new TodayPlanningEditor(PlanningTask() with { DeadlineAtUtc = null }, zone)
-            { Date = Today.ToDateTime(TimeOnly.MinValue), Time = "00:30" };
+        { Date = Today.ToDateTime(TimeOnly.MinValue), Time = "00:30" };
         var command = draft.BuildPatch()!;
         Assert.Equal(new DateTimeOffset(Today.AddDays(-1).ToDateTime(new TimeOnly(15, 30)), TimeSpan.Zero), command.StartAtUtc.Value);
         Assert.Equal(Today.ToString("yyyy-MM-dd"), JsonNode.Parse(command.CardPatch!)!["scheduledDate"]!.ToString());
@@ -313,9 +321,17 @@ public sealed partial class TodayViewModelTests
     [Fact]
     public async AsyncTask Planning_DurationAcrossDstConvertsEndInstantUsingZoneRules()
     {
-        var task = PlanningTask() with { StartAtUtc = new DateTimeOffset(2026, 3, 8, 6, 30, 0, TimeSpan.Zero),
-            Card = new TaskCardContent { ScheduledDate = new(2026, 3, 8), StartTimeLocal = new(1, 30),
-                ScheduleTimeZone = "America/New_York", PlannedDurationMinutes = 120 } };
+        var task = PlanningTask() with
+        {
+            StartAtUtc = new DateTimeOffset(2026, 3, 8, 6, 30, 0, TimeSpan.Zero),
+            Card = new TaskCardContent
+            {
+                ScheduledDate = new(2026, 3, 8),
+                StartTimeLocal = new(1, 30),
+                ScheduleTimeZone = "America/New_York",
+                PlannedDurationMinutes = 120
+            }
+        };
         using var vm = new TodayViewModel(new FakeCalendarClient(), ["Task.Read", "Task.Update"],
             TimeZoneInfo.FindSystemTimeZoneById("America/New_York"),
             () => new DateTimeOffset(2026, 3, 8, 12, 0, 0, TimeSpan.Zero), new PlanningClient(task), User);
@@ -327,8 +343,11 @@ public sealed partial class TodayViewModelTests
     [Fact]
     public async AsyncTask Planning_FreshScreenDoesNotRestoreClearedPlanningFromDeadlineProjection()
     {
-        var task = PlanningTask() with { DeadlineAtUtc = Clock().AddHours(6),
-            Card = new TaskCardContent { ScheduledDate = Today } };
+        var task = PlanningTask() with
+        {
+            DeadlineAtUtc = Clock().AddHours(6),
+            Card = new TaskCardContent { ScheduledDate = Today }
+        };
         var client = new PlanningClient(task);
         var calendar = new FakeCalendarClient();
         calendar.ScheduleResults.Enqueue(Schedule([]));
@@ -355,7 +374,8 @@ public sealed partial class TodayViewModelTests
         var task = PlanningTask() with
         {
             StartAtUtc = new DateTimeOffset(Today.AddDays(-1).ToDateTime(new(23, 30)), TimeSpan.Zero),
-            DeadlineAtUtc = null, Card = new TaskCardContent { PlannedDurationMinutes = 120 }
+            DeadlineAtUtc = null,
+            Card = new TaskCardContent { PlannedDurationMinutes = 120 }
         };
         var client = new PlanningClient(task); using var vm = PlanningVm(client);
         await vm.ActivateAsync();
@@ -363,9 +383,17 @@ public sealed partial class TodayViewModelTests
         Assert.Equal(0, vm.TimelineItems[0].TimelineTop); Assert.Empty(vm.QueueItems);
     }
 
-    private static DesktopTaskDto PlanningTask() => QuickTask() with { DeadlineAtUtc = Clock().AddDays(10),
-        Card = new TaskCardContent { Description = "Keep me", ProjectId = Guid.NewGuid(), PlannedDurationMinutes = 60,
-            DeadlineReminderOffsetMinutes = 15 } };
+    private static DesktopTaskDto PlanningTask() => QuickTask() with
+    {
+        DeadlineAtUtc = Clock().AddDays(10),
+        Card = new TaskCardContent
+        {
+            Description = "Keep me",
+            ProjectId = Guid.NewGuid(),
+            PlannedDurationMinutes = 60,
+            DeadlineReminderOffsetMinutes = 15
+        }
+    };
     private static TodayViewModel PlanningVm(PlanningClient client, FakeCalendarClient? calendar = null) =>
         new(calendar ?? new FakeCalendarClient(), calendar is null ? ["Task.Read", "Task.Update", "Task.ChangeStatus"]
             : ["Task.Read", "Task.Update", "Task.ChangeStatus", "Calendar.Read"], TimeZoneInfo.Utc, Clock, client, User);
@@ -390,9 +418,12 @@ public sealed partial class TodayViewModelTests
             if (Pending is not null) return Pending;
             if (Results.Count > 0) return System.Threading.Tasks.Task.FromResult(Results.Dequeue());
             var source = Tasks[command.Id]; Assert.Equal(source.Version, command.ExpectedVersion);
-            var saved = source with { Version = source.Version + 1,
+            var saved = source with
+            {
+                Version = source.Version + 1,
                 StartAtUtc = command.StartAtUtc.IsSpecified ? command.StartAtUtc.Value : source.StartAtUtc,
-                Card = (source.Card ?? new()).Apply(command.CardPatch) };
+                Card = (source.Card ?? new()).Apply(command.CardPatch)
+            };
             saved.Card.Validate(saved.StartAtUtc); Tasks[saved.Id] = saved;
             return System.Threading.Tasks.Task.FromResult<DesktopTaskWriteResult<DesktopTaskDto>>(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(saved, saved.Version, false));
         }

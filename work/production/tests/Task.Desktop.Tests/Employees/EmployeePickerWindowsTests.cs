@@ -29,8 +29,11 @@ public sealed class EmployeePickerWindowsTests
         {
             var start = new ProcessStartInfo("dotnet")
             {
-                UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true, RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
             };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(EmployeePickerWindowsTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + typeof(EmployeePickerWindowsTests).FullName + "." + nameof(NativeControlKeyboardFocusBindingsAndAccessibleNames));
@@ -103,7 +106,8 @@ public sealed class EmployeePickerWindowsTests
     }
 
     private static void SendKey(UIElement view, Key key) => view.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
-        PresentationSource.FromVisual(view), 0, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        PresentationSource.FromVisual(view), 0, key)
+    { RoutedEvent = Keyboard.PreviewKeyDownEvent });
     private static void Pump() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
     private static IEnumerable<T> Descendants<T>(DependencyObject parent) where T : DependencyObject
     {

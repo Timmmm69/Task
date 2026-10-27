@@ -1,0 +1,16 @@
+{
+  "image": "mcr.microsoft.com/dotnet/runtime:10.0.14-noble-amd64",
+  "verified_layer": "sha256:aa37eb26c52c0ddbcd32254925809fbdc9658dfd60665475f5a8bdbecc5d516e",
+  "packages": [
+    {
+      "Package": "libssl3t64",
+      "Version": "3.0.13-0ubuntu3.16",
+      "Architecture": "amd64"
+    },
+    {
+      "Package": "openssl",
+      "Version": "3.0.13-0ubuntu3.16",
+      "Architecture": "amd64"
+    }
+  ]
+}

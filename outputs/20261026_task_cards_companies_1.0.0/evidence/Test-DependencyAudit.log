@@ -1,0 +1,4 @@
+Running NuGet dependency audit: direct + transitive dependencies, low+ severity.
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+NuGet dependency audit passed: no blocking high/critical vulnerability or audit-source failure was reported.

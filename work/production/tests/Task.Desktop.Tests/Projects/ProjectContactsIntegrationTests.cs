@@ -68,7 +68,12 @@ public sealed partial class ProjectsViewModelTests
     }
 
     [Theory]
-    [InlineData("switch")][InlineData("session")][InlineData("scope")][InlineData("offline")][InlineData("deactivate")][InlineData("close")]
+    [InlineData("switch")]
+    [InlineData("session")]
+    [InlineData("scope")]
+    [InlineData("offline")]
+    [InlineData("deactivate")]
+    [InlineData("close")]
     public async AsyncTask ProjectLinksHost_CancelsBothSectionsOnContextChanges(string transition)
     {
         var api = new ProjectContactsTests.Client(); using var host = LinkHost(api, new());
@@ -103,7 +108,8 @@ public sealed partial class ProjectsViewModelTests
     }
 
     [Theory]
-    [InlineData("contact")][InlineData("company")]
+    [InlineData("contact")]
+    [InlineData("company")]
     public async AsyncTask ProjectLinksHost_NavigationUsesExistingShellAndCrmCards(string type)
     {
         var api = new ProjectContactsTests.Client(); api.Rows.Add(api.Link(ProjectId, type == "contact" ? api.Contact.Id : api.Company.Id));

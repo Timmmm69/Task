@@ -16,8 +16,8 @@ public sealed partial class TodayViewModelTests
             (DesktopTaskStatus.InProgress, DesktopTaskStatus.Completed), (DesktopTaskStatus.InProgress, DesktopTaskStatus.Cancelled),
             (DesktopTaskStatus.Review, DesktopTaskStatus.Completed), (DesktopTaskStatus.Review, DesktopTaskStatus.Cancelled) };
         foreach (var from in Enum.GetValues<DesktopTaskStatus>())
-        foreach (var to in Enum.GetValues<DesktopTaskStatus>())
-            yield return [from, to, allowed.Contains((from, to))];
+            foreach (var to in Enum.GetValues<DesktopTaskStatus>())
+                yield return [from, to, allowed.Contains((from, to))];
     }
 
     [Fact]
@@ -331,9 +331,12 @@ public sealed partial class TodayViewModelTests
     public async AsyncTask QuickActions_RejectsInconsistentSuccessDto(string field)
     {
         var task = QuickTask(); var client = new QuickClient(task);
-        var response = task with { Id = field == "id" ? Guid.NewGuid() : task.Id,
+        var response = task with
+        {
+            Id = field == "id" ? Guid.NewGuid() : task.Id,
             Version = field == "version" ? task.Version : task.Version + 1,
-            Status = field == "status" ? DesktopTaskStatus.Cancelled : DesktopTaskStatus.InProgress };
+            Status = field == "status" ? DesktopTaskStatus.Cancelled : DesktopTaskStatus.InProgress
+        };
         client.Results.Enqueue(new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(response, response.Version, true));
         using var vm = QuickVm(client); await vm.ActivateAsync(); await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
         Assert.Equal("Запланирована", vm.SelectedItem!.StatusText); Assert.Contains("не подтверждена", vm.ActionMessage);

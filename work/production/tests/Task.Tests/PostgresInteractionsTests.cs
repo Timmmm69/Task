@@ -7,8 +7,13 @@ public sealed partial class PostgresProductApiTests
 {
     private static string InteractionBody(Guid target, params Guid[] participants) => new JsonObject
     {
-        ["counterpartyObjectId"] = target, ["interactionType"] = "call", ["occurredAt"] = "2026-10-18T10:00:00Z",
-        ["subject"] = "CRM regression", ["details"] = "Details", ["nextStep"] = "Manual next step", ["nextStepDueAt"] = "2026-10-19T10:00:00Z",
+        ["counterpartyObjectId"] = target,
+        ["interactionType"] = "call",
+        ["occurredAt"] = "2026-10-18T10:00:00Z",
+        ["subject"] = "CRM regression",
+        ["details"] = "Details",
+        ["nextStep"] = "Manual next step",
+        ["nextStepDueAt"] = "2026-10-19T10:00:00Z",
         ["participantObjectIds"] = new JsonArray(participants.Select(p => (JsonNode?)JsonValue.Create(p)).ToArray())
     }.ToJsonString();
 

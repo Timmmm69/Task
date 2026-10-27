@@ -35,11 +35,14 @@ public sealed class ObjectLinkTargetPickerTests
     public async AsyncTask SearchUsesNameAndServerTypes(string source, string link, string expected)
     {
         var hit = Hit(expected.Split(',')[0]);
-        var client = new SearchClient { Search = (q, types, cursor, _) =>
+        var client = new SearchClient
+        {
+            Search = (q, types, cursor, _) =>
         {
             Assert.Equal("План", q); Assert.Equal(expected.Split(','), types); Assert.Null(cursor);
             return AsyncTask.FromResult(Page(hit));
-        } };
+        }
+        };
         using var picker = Picker(client, source, link);
         Assert.Equal(ObjectLinkTargetPickerState.Initial, picker.State);
         picker.SearchText = "  План  "; await picker.CurrentOperation;
@@ -91,12 +94,15 @@ public sealed class ObjectLinkTargetPickerTests
     public async AsyncTask PaginationDeduplicatesAndRepeatedCursorFailsClosed()
     {
         var first = Hit(); var second = Hit();
-        var client = new SearchClient { Search = (_, _, cursor, _) => AsyncTask.FromResult<PageResult>(cursor switch
+        var client = new SearchClient
         {
-            null => new PageResult.Succeeded([first]) { NextCursor = "a" },
-            "a" => new PageResult.Succeeded([first, second]) { NextCursor = "b" },
-            _ => new PageResult.Succeeded([Hit()]) { NextCursor = "a" },
-        }) };
+            Search = (_, _, cursor, _) => AsyncTask.FromResult<PageResult>(cursor switch
+            {
+                null => new PageResult.Succeeded([first]) { NextCursor = "a" },
+                "a" => new PageResult.Succeeded([first, second]) { NextCursor = "b" },
+                _ => new PageResult.Succeeded([Hit()]) { NextCursor = "a" },
+            })
+        };
         using var picker = Picker(client); picker.SearchText = "План"; await picker.CurrentOperation;
         await picker.LoadMoreAsync(); Assert.Equal(new[] { first, second }, picker.Results);
         await picker.LoadMoreAsync(); Assert.False(picker.HasMore); Assert.Empty(picker.Results);
@@ -125,8 +131,11 @@ public sealed class ObjectLinkTargetPickerTests
     {
         var pending = new System.Threading.Tasks.TaskCompletionSource<PageResult>(); CancellationToken oldToken = default;
         var current = Hit();
-        var client = new SearchClient { Search = (q, _, _, ct) =>
-        { if (q == "старый") { oldToken = ct; return pending.Task; } return AsyncTask.FromResult(Page(current)); } };
+        var client = new SearchClient
+        {
+            Search = (q, _, _, ct) =>
+        { if (q == "старый") { oldToken = ct; return pending.Task; } return AsyncTask.FromResult(Page(current)); }
+        };
         using var picker = Picker(client);
         picker.SearchText = "старый"; var old = picker.CurrentOperation;
         picker.SearchText = "новый"; await picker.CurrentOperation; Assert.True(oldToken.IsCancellationRequested);
@@ -159,11 +168,14 @@ public sealed class ObjectLinkTargetPickerTests
     [Fact]
     public async AsyncTask RelatedUsesOnlyReadableTypesAndAllowsCatalogSourceWithUpdatePermission()
     {
-        var client = new SearchClient { Search = (_, types, _, _) =>
+        var client = new SearchClient
+        {
+            Search = (_, types, _, _) =>
         {
             Assert.Equal(new[] { "catalog_item", "employee_profile", "network_resource" }, types);
             return AsyncTask.FromResult(Page(Hit("employee_profile")));
-        } };
+        }
+        };
         using var picker = Picker(client, "catalog_item", "related");
         picker.UpdateAccess(["Search.Use", "ObjectLink.Create", "FileCatalog.Read", "FileCatalog.Update", "Employee.Read"]);
         picker.SearchText = "План"; await picker.CurrentOperation;
@@ -215,8 +227,11 @@ public sealed class ObjectLinkTargetPickerTests
         picker.Candidate = hit; Assert.True(picker.ConfirmSelection());
         client.Search = (_, _, _, _) => kind == "throw" ? throw new InvalidOperationException("SENSITIVE") : AsyncTask.FromResult<PageResult>(kind switch
         {
-            "forbidden" => new PageResult.Forbidden(), "auth" => new PageResult.AuthenticationFailure(),
-            "unavailable" => new PageResult.ServerUnavailable(), "expiredCursor" => new PageResult.Conflict(), _ => new PageResult.MalformedResponse(),
+            "forbidden" => new PageResult.Forbidden(),
+            "auth" => new PageResult.AuthenticationFailure(),
+            "unavailable" => new PageResult.ServerUnavailable(),
+            "expiredCursor" => new PageResult.Conflict(),
+            _ => new PageResult.MalformedResponse(),
         });
         await picker.LoadMoreAsync(); Assert.Equal(state, picker.State); Assert.Empty(picker.Results); Assert.Null(picker.SelectedObjectId); Assert.False(picker.HasMore);
         Assert.DoesNotContain("SENSITIVE", picker.StatusText);
@@ -226,17 +241,29 @@ public sealed class ObjectLinkTargetPickerTests
     }
 
     [Theory]
-    [InlineData("null")][InlineData("nullHit")][InlineData("emptyId")][InlineData("emptyTitle")]
-    [InlineData("wrongType")][InlineData("version")][InlineData("timestamp")][InlineData("tooMany")][InlineData("cursor")]
+    [InlineData("null")]
+    [InlineData("nullHit")]
+    [InlineData("emptyId")]
+    [InlineData("emptyTitle")]
+    [InlineData("wrongType")]
+    [InlineData("version")]
+    [InlineData("timestamp")]
+    [InlineData("tooMany")]
+    [InlineData("cursor")]
     public async AsyncTask MalformedTypedPageNeverExposesPartialResults(string kind)
     {
         var hit = Hit();
         IReadOnlyList<DesktopSearchResult> rows = kind switch
         {
-            "null" => null!, "nullHit" => [hit, null!], "emptyId" => [hit with { ObjectId = Guid.Empty }],
-            "emptyTitle" => [hit with { Title = " " }], "wrongType" => [hit, Hit("task")],
-            "version" => [hit with { Version = 0 }], "timestamp" => [hit with { UpdatedAt = default }],
-            "tooMany" => Enumerable.Repeat(hit, 51).ToArray(), _ => [hit],
+            "null" => null!,
+            "nullHit" => [hit, null!],
+            "emptyId" => [hit with { ObjectId = Guid.Empty }],
+            "emptyTitle" => [hit with { Title = " " }],
+            "wrongType" => [hit, Hit("task")],
+            "version" => [hit with { Version = 0 }],
+            "timestamp" => [hit with { UpdatedAt = default }],
+            "tooMany" => Enumerable.Repeat(hit, 51).ToArray(),
+            _ => [hit],
         };
         using var picker = Picker(new() { Search = (_, _, _, _) => AsyncTask.FromResult<PageResult>(new PageResult.Succeeded(rows) { NextCursor = kind == "cursor" ? " " : null }) });
         picker.SearchText = "План"; await picker.CurrentOperation;

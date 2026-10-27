@@ -48,9 +48,12 @@ public sealed partial class WorkHubViewModel
     {
         var display = e.PropertyName switch
         {
-            nameof(UserWorkdayStart) => nameof(WorkdayStartDisplay), nameof(UserWorkdayEnd) => nameof(WorkdayEndDisplay),
-            nameof(DateOnlyReminderTime) => nameof(ReminderTimeDisplay), nameof(QuietHoursStart) => nameof(QuietStartDisplay),
-            nameof(QuietHoursEnd) => nameof(QuietEndDisplay), _ => null,
+            nameof(UserWorkdayStart) => nameof(WorkdayStartDisplay),
+            nameof(UserWorkdayEnd) => nameof(WorkdayEndDisplay),
+            nameof(DateOnlyReminderTime) => nameof(ReminderTimeDisplay),
+            nameof(QuietHoursStart) => nameof(QuietStartDisplay),
+            nameof(QuietHoursEnd) => nameof(QuietEndDisplay),
+            _ => null,
         };
         if (display is not null) OnPropertyChanged(display);
         if (display is not null || e.PropertyName is nameof(UserLanguage) or nameof(FirstDayOfWeek) or nameof(QuietHoursTimeZone))

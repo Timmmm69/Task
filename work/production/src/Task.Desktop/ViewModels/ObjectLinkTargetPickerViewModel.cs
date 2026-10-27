@@ -53,11 +53,15 @@ public sealed class ObjectLinkTargetPickerViewModel : ViewModelBase, IDisposable
     private bool Has(string permission) => _capabilities.Contains(permission);
     private bool CanReadType(string type) => type switch
     {
-        "task" => Has("Task.Read"), "project" => Has("Project.Read"),
+        "task" => Has("Task.Read"),
+        "project" => Has("Project.Read"),
         "contact" or "company" or "interaction" => Has("Contact.Read"),
-        "catalog_item" or "network_resource" => Has("FileCatalog.Read"), "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
-        "notification" => Has("Notification.ReadOwn"), "inbox_item" => Has("Inbox.ReadOwn"),
-        "employee_profile" => Has("Employee.Read"), _ => false,
+        "catalog_item" or "network_resource" => Has("FileCatalog.Read"),
+        "calendar_event" => Has("Calendar.Read") || Has("Task.Read"),
+        "notification" => Has("Notification.ReadOwn"),
+        "inbox_item" => Has("Inbox.ReadOwn"),
+        "employee_profile" => Has("Employee.Read"),
+        _ => false,
     };
     private bool HasAccess => Has("ObjectLink.Create") && _source != Guid.Empty
         && (_sourceType switch

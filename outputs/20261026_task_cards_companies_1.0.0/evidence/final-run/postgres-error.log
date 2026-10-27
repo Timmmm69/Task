@@ -1,0 +1,467 @@
+2026-10-26 08:27:36.778 GMT [54808] LOG:  starting PostgreSQL 16.14, compiled by Visual C++ build 1944, 64-bit
+2026-10-26 08:27:36.779 GMT [54808] LOG:  listening on IPv4 address "127.0.0.1", port 54036
+2026-10-26 08:27:36.808 GMT [10784] LOG:  database system was shut down at 2026-10-26 08:27:32 GMT
+2026-10-26 08:27:36.823 GMT [54808] LOG:  database system is ready to accept connections
+2026-10-26 08:27:46.402 GMT [10960] ERROR:  relation "organizations" already exists
+2026-10-26 08:27:46.402 GMT [10960] STATEMENT:  CREATE TABLE core.organizations (
+	    id uuid PRIMARY KEY,
+	    code citext NOT NULL,
+	    name text NOT NULL,
+	    default_time_zone text NOT NULL,
+	    locale varchar(16) NOT NULL DEFAULT 'ru-RU',
+	    status varchar(20) NOT NULL DEFAULT 'active',
+	    version bigint NOT NULL DEFAULT 1,
+	    created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+	    updated_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+	    archived_at timestamptz,
+	    deleted_at timestamptz,
+	    CONSTRAINT uq_organizations_code UNIQUE (code),
+	    CONSTRAINT ck_organizations_status CHECK (status IN ('active', 'suspended', 'closed')),
+	    CONSTRAINT ck_organizations_version CHECK (version > 0),
+	    CONSTRAINT ck_organizations_name CHECK (length(btrim(name)) BETWEEN 1 AND 200),
+	    CONSTRAINT ck_organizations_timezone CHECK (length(default_time_zone) BETWEEN 1 AND 64)
+	)
+2026-10-26 08:27:46.935 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:27:48.276 GMT [54568] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-26 08:27:48.276 GMT [54568] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-26 08:27:48.276 GMT [54568] STATEMENT:  SELECT disposition,
+	       stored_record_id,
+	       stored_response_status,
+	       stored_response_headers::text,
+	       stored_response_body::text,
+	       stored_resource_id,
+	       retry_after_seconds
+	FROM iam.acquire_idempotency_record($1, $2, $3, $4, $5, $6, $7, $8, $9);
+2026-10-26 08:27:48.416 GMT [55812] ERROR:  insert or update on table "projects" violates foreign key constraint "fk_projects_manager_org"
+2026-10-26 08:27:48.416 GMT [55812] DETAIL:  Key (organization_id, manager_user_id)=(22225dda-be2a-4aac-9e97-3bdcd391a66d, 0737c237-9325-4b7d-bcdd-c4ceb1fc8693) is not present in table "user_accounts".
+2026-10-26 08:27:48.416 GMT [55812] STATEMENT:  UPDATE projects.projects SET name = $3, description = $4, owner_user_id = $5, manager_user_id = $6, status = $7, start_date = $8, planned_end_date = $9, actual_end_at = $10, default_time_zone = $11, color_code = $12 WHERE id = $1 AND organization_id = $2;
+2026-10-26 08:27:48.511 GMT [13892] ERROR:  duplicate key value violates unique constraint "uq_domain_event_aggregate_version"
+2026-10-26 08:27:48.511 GMT [13892] DETAIL:  Key (organization_id, aggregate_id, aggregate_version, event_type)=(0bba689b-3994-4cbd-82a3-b8a3557cd33e, 61a020cc-6476-4940-89d0-642ed9ac0669, 1, TaskCreated) already exists.
+2026-10-26 08:27:48.511 GMT [13892] STATEMENT:  INSERT INTO governance.domain_events (
+	    id, organization_id, aggregate_id, aggregate_type, aggregate_version,
+	    event_type, actor_user_id, correlation_id, operation_id, idempotency_key,
+	    changed_fields, payload)
+	VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, $10, $11);
+2026-10-26 08:27:49.155 GMT [50952] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-26 08:27:49.155 GMT [50952] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-26 08:27:49.155 GMT [50952] STATEMENT:  SELECT disposition,
+	       stored_record_id,
+	       stored_response_status,
+	       stored_response_headers::text,
+	       stored_response_body::text,
+	       stored_resource_id,
+	       retry_after_seconds
+	FROM iam.acquire_idempotency_record($1, $2, $3, $4, $5, $6, $7, $8, $9);
+2026-10-26 08:27:50.104 GMT [19596] ERROR:  duplicate key value violates unique constraint "uq_domain_event_aggregate_version"
+2026-10-26 08:27:50.104 GMT [19596] DETAIL:  Key (organization_id, aggregate_id, aggregate_version, event_type)=(3bb86c98-49da-47ec-8b89-ad8557da44ee, d69f87d5-c7f1-4526-8182-242c5c1eb276, 2, TaskStatusChanged) already exists.
+2026-10-26 08:27:50.104 GMT [19596] STATEMENT:  INSERT INTO governance.domain_events (
+	    id, organization_id, aggregate_id, aggregate_type, aggregate_version,
+	    event_type, actor_user_id, correlation_id, operation_id, idempotency_key,
+	    changed_fields, payload)
+	VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, $10, $11);
+2026-10-26 08:27:50.124 GMT [54232] ERROR:  duplicate key value violates unique constraint "uq_domain_event_aggregate_version"
+2026-10-26 08:27:50.124 GMT [54232] DETAIL:  Key (organization_id, aggregate_id, aggregate_version, event_type)=(4bfe55cc-49e6-4db0-a93e-e9ebd035c66f, b93b4552-571f-4554-b068-eb1749049e84, 4, TaskUpdated) already exists.
+2026-10-26 08:27:50.124 GMT [54232] STATEMENT:  INSERT INTO governance.domain_events (
+	    id, organization_id, aggregate_id, aggregate_type, aggregate_version,
+	    event_type, actor_user_id, correlation_id, operation_id, idempotency_key,
+	    changed_fields, payload)
+	VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, $10, $11);
+2026-10-26 08:27:50.769 GMT [51672] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-26 08:27:50.769 GMT [51672] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-26 08:27:50.769 GMT [51672] STATEMENT:  SELECT disposition,
+	       stored_record_id,
+	       stored_response_status,
+	       stored_response_headers::text,
+	       stored_response_body::text,
+	       stored_resource_id,
+	       retry_after_seconds
+	FROM iam.acquire_idempotency_record($1, $2, $3, $4, $5, $6, $7, $8, $9);
+2026-10-26 08:27:51.074 GMT [28424] ERROR:  insert or update on table "catalog_items" violates foreign key constraint "fk_catalog_items_parent_org"
+2026-10-26 08:27:51.074 GMT [28424] DETAIL:  Key (organization_id, parent_item_id)=(22225dda-be2a-4aac-9e97-3bdcd391a66d, 9fed0dbe-12f9-43e4-9433-c53b55178e72) is not present in table "catalog_items".
+2026-10-26 08:27:51.074 GMT [28424] STATEMENT:  INSERT INTO files.catalog_items (id, organization_id, parent_item_id, item_type, name, description, note_content, web_url, mime_type, file_extension, observed_size_bytes, observed_modified_at, sort_order, created_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);
+2026-10-26 08:27:52.058 GMT [13004] ERROR:  duplicate key value violates unique constraint "uq_domain_event_aggregate_version"
+2026-10-26 08:27:52.058 GMT [13004] DETAIL:  Key (organization_id, aggregate_id, aggregate_version, event_type)=(3bb86c98-49da-47ec-8b89-ad8557da44ee, dd37fda0-461f-4b6f-8dd4-b60c85439ad2, 1, TaskCreated) already exists.
+2026-10-26 08:27:52.058 GMT [13004] STATEMENT:  INSERT INTO governance.domain_events (
+	    id, organization_id, aggregate_id, aggregate_type, aggregate_version,
+	    event_type, actor_user_id, correlation_id, operation_id, idempotency_key,
+	    changed_fields, payload)
+	VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, $10, $11);
+2026-10-26 08:27:52.359 GMT [15084] ERROR:  insert or update on table "notifications" violates foreign key constraint "fk_notifications_recipient_org"
+2026-10-26 08:27:52.359 GMT [15084] DETAIL:  Key (organization_id, recipient_user_id)=(22225dda-be2a-4aac-9e97-3bdcd391a66d, 0737c237-9325-4b7d-bcdd-c4ceb1fc8693) is not present in table "user_accounts".
+2026-10-26 08:27:52.359 GMT [15084] STATEMENT:  INSERT INTO notify.notifications (id, organization_id, recipient_user_id, notification_type, source_object_id, title, body, severity, status, not_before, expires_at, delivered_at, read_at, dismissed_at, deduplication_key, action_payload) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
+2026-10-26 08:27:52.441 GMT [37432] ERROR:  duplicate key value violates unique constraint "uq_notifications_org_dedup"
+2026-10-26 08:27:52.441 GMT [37432] DETAIL:  Key (organization_id, recipient_user_id, deduplication_key)=(22225dda-be2a-4aac-9e97-3bdcd391a66d, 21e60f80-9cc0-4a6c-814b-49d22ef0e47c, dedup-1) already exists.
+2026-10-26 08:27:52.441 GMT [37432] STATEMENT:  INSERT INTO notify.notifications (id, organization_id, recipient_user_id, notification_type, source_object_id, title, body, severity, status, not_before, expires_at, delivered_at, read_at, dismissed_at, deduplication_key, action_payload) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
+2026-10-26 08:27:52.737 GMT [19476] ERROR:  permission denied for schema core at character 14
+2026-10-26 08:27:52.737 GMT [19476] STATEMENT:  CREATE TABLE core.forbidden_runtime_ddl (id integer)
+2026-10-26 08:27:52.769 GMT [4940] ERROR:  permission denied for table objects
+2026-10-26 08:27:52.769 GMT [4940] STATEMENT:  DELETE FROM core.objects WHERE false
+2026-10-26 08:27:53.019 GMT [12908] LOG:  checkpoint complete: wrote 10592 buffers (64.6%); 0 WAL file(s) added, 0 removed, 8 recycled; write=2.471 s, sync=3.579 s, total=6.085 s; sync files=2831, longest=0.048 s, average=0.002 s; distance=141408 kB, estimate=141408 kB; lsn=0/A6C3BB8, redo lsn=0/9F8F8C8
+2026-10-26 08:27:53.050 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:27:53.108 GMT [12908] LOG:  checkpoint complete: wrote 97 buffers (0.6%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.026 s, sync=0.019 s, total=0.059 s; sync files=43, longest=0.002 s, average=0.001 s; distance=7376 kB, estimate=128005 kB; lsn=0/A6C3CB0, redo lsn=0/A6C3C30
+2026-10-26 08:27:53.523 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:27:54.074 GMT [12908] LOG:  checkpoint complete: wrote 675 buffers (4.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.127 s, sync=0.413 s, total=0.552 s; sync files=291, longest=0.021 s, average=0.002 s; distance=3206 kB, estimate=115525 kB; lsn=0/C72BFB8, redo lsn=0/A9E5658
+2026-10-26 08:27:55.119 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:27:58.098 GMT [12908] LOG:  checkpoint complete: wrote 9183 buffers (56.0%); 0 WAL file(s) added, 0 removed, 4 recycled; write=1.305 s, sync=1.638 s, total=2.979 s; sync files=2223, longest=0.007 s, average=0.001 s; distance=64683 kB, estimate=110441 kB; lsn=0/F031B60, redo lsn=0/E910468
+2026-10-26 08:27:58.128 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:27:58.395 GMT [12908] LOG:  checkpoint complete: wrote 646 buffers (3.9%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.101 s, sync=0.103 s, total=0.268 s; sync files=197, longest=0.003 s, average=0.001 s; distance=7302 kB, estimate=100127 kB; lsn=0/F038758, redo lsn=0/F031F58
+2026-10-26 08:27:59.078 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:00.748 GMT [12908] LOG:  checkpoint complete: wrote 3956 buffers (24.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.514 s, sync=1.117 s, total=1.670 s; sync files=1436, longest=0.014 s, average=0.001 s; distance=18476 kB, estimate=91962 kB; lsn=0/10F8B058, redo lsn=0/1023CF58
+2026-10-26 08:28:00.774 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:01.190 GMT [12908] LOG:  checkpoint complete: wrote 630 buffers (3.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.123 s, sync=0.283 s, total=0.417 s; sync files=378, longest=0.004 s, average=0.001 s; distance=13624 kB, estimate=84128 kB; lsn=0/10F99090, redo lsn=0/10F8B0D0
+2026-10-26 08:28:01.753 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:03.074 GMT [42920] ERROR:  APPEND_ONLY_AUDIT_ENTRIES
+2026-10-26 08:28:03.074 GMT [42920] CONTEXT:  PL/pgSQL function governance.reject_audit_mutation() line 3 at RAISE
+2026-10-26 08:28:03.074 GMT [42920] STATEMENT:  DELETE FROM governance.audit_entries WHERE organization_id = $1;
+2026-10-26 08:28:03.458 GMT [12908] LOG:  checkpoint complete: wrote 3886 buffers (23.7%); 0 WAL file(s) added, 0 removed, 2 recycled; write=0.696 s, sync=0.978 s, total=1.705 s; sync files=1646, longest=0.012 s, average=0.001 s; distance=18542 kB, estimate=77569 kB; lsn=0/12ED3790, redo lsn=0/121A6B98
+2026-10-26 08:28:03.489 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:03.782 GMT [12908] LOG:  checkpoint complete: wrote 816 buffers (5.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.150 s, sync=0.132 s, total=0.293 s; sync files=226, longest=0.002 s, average=0.001 s; distance=13491 kB, estimate=71162 kB; lsn=0/12EDC4C0, redo lsn=0/12ED3868
+2026-10-26 08:28:03.790 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:03.840 GMT [12908] LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.033 s, sync=0.010 s, total=0.050 s; sync files=18, longest=0.002 s, average=0.001 s; distance=35 kB, estimate=64049 kB; lsn=0/12EE1350, redo lsn=0/12EDC538
+2026-10-26 08:28:03.875 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:03.901 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.011 s, sync=0.007 s, total=0.027 s; sync files=12, longest=0.001 s, average=0.001 s; distance=46 kB, estimate=57649 kB; lsn=0/12EE8658, redo lsn=0/12EE8020
+2026-10-26 08:28:05.271 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:06.848 GMT [20152] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-26 08:28:06.848 GMT [20152] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-26 08:28:06.848 GMT [20152] STATEMENT:  SELECT disposition,stored_record_id,stored_response_body::text,stored_resource_id,retry_after_seconds FROM iam.acquire_idempotency_record($1,$2,$3,$4,$5,$6,$7,$8,$9);
+2026-10-26 08:28:06.888 GMT [37188] ERROR:  duplicate key value violates unique constraint "uq_user_accounts_org_login"
+2026-10-26 08:28:06.888 GMT [37188] DETAIL:  Key (organization_id, login)=(520c1564-e152-472b-9150-ee7274eecf9e, new.employee) already exists.
+2026-10-26 08:28:06.888 GMT [37188] STATEMENT:  WITH organization AS (
+	    SELECT default_time_zone FROM core.organizations WHERE id=$1 AND status='active'
+	), profile_object AS (
+	    INSERT INTO core.objects(id,organization_id,object_type,version,created_at,created_by,updated_at,updated_by)
+	    SELECT $2,$1,'employee_profile',1,clock_timestamp(),$3,clock_timestamp(),$3 FROM organization
+	), account_object AS (
+	    INSERT INTO core.objects(id,organization_id,object_type,version,created_at,created_by,updated_at,updated_by)
+	    SELECT $4,$1,'user_account',1,clock_timestamp(),$3,clock_timestamp(),$3 FROM organization
+	), profile AS (
+	    INSERT INTO org.employee_profiles(
+	        id,organization_id,first_name,last_name,display_name,job_title,work_email,
+	        department_id,employment_status,preferred_time_zone)
+	    SELECT $2,$1,$5,$6,$7,$8,$9,$10,'active',default_time_zone FROM organization
+	), account AS (
+	    INSERT INTO iam.user_accounts(
+	        id,organization_id,employee_profile_id,login,password_hash,password_parameters,
+	        credential_version,account_status,must_change_password)
+	    VALUES($4,$1,$2,$11,$12,$13::jsonb,1,'pending',true)
+	)
+	INSERT INTO iam.authorization_scope_versions(user_account_id,version) VALUES($4,1);
+2026-10-26 08:28:07.324 GMT [12908] LOG:  checkpoint complete: wrote 3342 buffers (20.4%); 0 WAL file(s) added, 2 removed, 0 recycled; write=0.679 s, sync=1.355 s, total=2.053 s; sync files=1770, longest=0.102 s, average=0.001 s; distance=18702 kB, estimate=53754 kB; lsn=0/1468D340, redo lsn=0/1412B948
+2026-10-26 08:28:07.348 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:07.676 GMT [12908] LOG:  checkpoint complete: wrote 966 buffers (5.9%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.172 s, sync=0.146 s, total=0.329 s; sync files=296, longest=0.002 s, average=0.001 s; distance=5513 kB, estimate=48930 kB; lsn=0/1470A4B0, redo lsn=0/1468DE90
+2026-10-26 08:28:07.688 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:07.770 GMT [12908] LOG:  checkpoint complete: wrote 109 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.036 s, sync=0.031 s, total=0.082 s; sync files=58, longest=0.002 s, average=0.001 s; distance=500 kB, estimate=44087 kB; lsn=0/147143D0, redo lsn=0/1470B0B8
+2026-10-26 08:28:07.880 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:07.952 GMT [12908] LOG:  checkpoint complete: wrote 59 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.031 s, total=0.073 s; sync files=45, longest=0.002 s, average=0.001 s; distance=66 kB, estimate=39685 kB; lsn=0/1487A208, redo lsn=0/1471BA60
+2026-10-26 08:28:08.711 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:09.866 GMT [12908] LOG:  checkpoint complete: wrote 2303 buffers (14.1%); 0 WAL file(s) added, 1 removed, 0 recycled; write=0.431 s, sync=0.706 s, total=1.155 s; sync files=1201, longest=0.006 s, average=0.001 s; distance=13738 kB, estimate=37090 kB; lsn=0/15661270, redo lsn=0/15486600
+2026-10-26 08:28:10.195 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:10.393 GMT [12908] LOG:  checkpoint complete: wrote 1080 buffers (6.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.096 s, sync=0.096 s, total=0.198 s; sync files=306, longest=0.002 s, average=0.001 s; distance=6547 kB, estimate=34036 kB; lsn=0/15B009F0, redo lsn=0/15AEB4E8
+2026-10-26 08:28:10.399 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:10.426 GMT [12908] LOG:  checkpoint complete: wrote 20 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.010 s, sync=0.012 s, total=0.027 s; sync files=16, longest=0.003 s, average=0.001 s; distance=86 kB, estimate=30641 kB; lsn=0/15B1B6F0, redo lsn=0/15B00F78
+2026-10-26 08:28:11.244 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:11.594 GMT [12908] LOG:  checkpoint complete: wrote 1192 buffers (7.3%); 0 WAL file(s) added, 1 removed, 0 recycled; write=0.093 s, sync=0.244 s, total=0.351 s; sync files=610, longest=0.002 s, average=0.001 s; distance=10575 kB, estimate=28634 kB; lsn=0/165974C8, redo lsn=0/16554D40
+2026-10-26 08:28:12.292 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:12.390 GMT [6760] ERROR:  APPEND_ONLY_AUDIT_ENTRIES
+2026-10-26 08:28:12.390 GMT [6760] CONTEXT:  PL/pgSQL function governance.reject_audit_mutation() line 3 at RAISE
+2026-10-26 08:28:12.390 GMT [6760] STATEMENT:  UPDATE governance.audit_entries
+	SET reason_code = 'tampered'
+	WHERE id = $1;
+2026-10-26 08:28:12.412 GMT [7900] ERROR:  APPEND_ONLY_AUDIT_ENTRIES
+2026-10-26 08:28:12.412 GMT [7900] CONTEXT:  PL/pgSQL function governance.reject_audit_mutation() line 3 at RAISE
+2026-10-26 08:28:12.412 GMT [7900] STATEMENT:  DELETE FROM governance.audit_entries WHERE id = $1;
+2026-10-26 08:28:12.465 GMT [12908] LOG:  checkpoint complete: wrote 1196 buffers (7.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.107 s, sync=0.060 s, total=0.173 s; sync files=146, longest=0.002 s, average=0.001 s; distance=7616 kB, estimate=26532 kB; lsn=0/16D24B20, redo lsn=0/16CC4F08
+2026-10-26 08:28:12.480 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:12.522 GMT [12908] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.011 s, total=0.043 s; sync files=2, longest=0.010 s, average=0.006 s; distance=383 kB, estimate=23917 kB; lsn=0/16D24BD8, redo lsn=0/16D24B98
+2026-10-26 08:28:14.471 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:14.497 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 1 removed, 0 recycled; write=0.011 s, sync=0.005 s, total=0.026 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7320 kB, estimate=22258 kB; lsn=0/1744ACC0, redo lsn=0/1744AC88
+2026-10-26 08:28:16.096 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:16.113 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.004 s, total=0.018 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7316 kB, estimate=20763 kB; lsn=0/17B6FD20, redo lsn=0/17B6FCE8
+2026-10-26 08:28:17.561 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:17.579 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.006 s, sync=0.004 s, total=0.018 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7315 kB, estimate=19419 kB; lsn=0/18294CC0, redo lsn=0/18294C88
+2026-10-26 08:28:19.314 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:19.328 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.004 s, total=0.015 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7326 kB, estimate=18209 kB; lsn=0/189BC750, redo lsn=0/189BC718
+2026-10-26 08:28:20.995 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:21.011 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.017 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7305 kB, estimate=17119 kB; lsn=0/190DEEC8, redo lsn=0/190DEE90
+2026-10-26 08:28:22.414 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:22.427 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7314 kB, estimate=16139 kB; lsn=0/19803850, redo lsn=0/19803818
+2026-10-26 08:28:23.860 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:23.871 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.012 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7315 kB, estimate=15256 kB; lsn=0/19F286D0, redo lsn=0/19F28698
+2026-10-26 08:28:25.374 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:25.389 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.003 s, total=0.016 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7315 kB, estimate=14462 kB; lsn=0/1A64D690, redo lsn=0/1A64D658
+2026-10-26 08:28:26.874 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:26.885 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.003 s, total=0.011 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7315 kB, estimate=13747 kB; lsn=0/1AD72588, redo lsn=0/1AD72550
+2026-10-26 08:28:27.901 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:27.914 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.003 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7317 kB, estimate=13104 kB; lsn=0/1B497A18, redo lsn=0/1B4979E0
+2026-10-26 08:28:28.931 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:28.941 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.003 s, total=0.011 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7308 kB, estimate=12525 kB; lsn=0/1BBBAB18, redo lsn=0/1BBBAAE0
+2026-10-26 08:28:30.163 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:30.177 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.015 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7308 kB, estimate=12003 kB; lsn=0/1C2DDD28, redo lsn=0/1C2DDCF0
+2026-10-26 08:28:31.458 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:31.471 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.004 s, total=0.014 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7308 kB, estimate=11534 kB; lsn=0/1CA01068, redo lsn=0/1CA01030
+2026-10-26 08:28:32.856 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:32.874 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.007 s, sync=0.004 s, total=0.019 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7311 kB, estimate=11111 kB; lsn=0/1D124F30, redo lsn=0/1D124EF8
+2026-10-26 08:28:34.380 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:34.394 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.004 s, total=0.014 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7313 kB, estimate=10731 kB; lsn=0/1D849338, redo lsn=0/1D849300
+2026-10-26 08:28:35.544 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:35.561 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.004 s, total=0.018 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7313 kB, estimate=10390 kB; lsn=0/1DF6D998, redo lsn=0/1DF6D960
+2026-10-26 08:28:36.858 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:36.875 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.006 s, sync=0.004 s, total=0.018 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7308 kB, estimate=10081 kB; lsn=0/1E69D528, redo lsn=0/1E690CC8
+2026-10-26 08:28:38.560 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:38.576 GMT [12908] LOG:  checkpoint complete: wrote 53 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.007 s, total=0.017 s; sync files=18, longest=0.001 s, average=0.001 s; distance=7451 kB, estimate=9818 kB; lsn=0/1EDD7A78, redo lsn=0/1EDD7A40
+2026-10-26 08:28:40.326 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:40.344 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.007 s, sync=0.005 s, total=0.019 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7308 kB, estimate=9567 kB; lsn=0/1F4FAC78, redo lsn=0/1F4FAC40
+2026-10-26 08:28:41.724 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:41.737 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.014 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7302 kB, estimate=9341 kB; lsn=0/1FC1C7B8, redo lsn=0/1FC1C780
+2026-10-26 08:28:43.126 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:43.141 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.016 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7307 kB, estimate=9137 kB; lsn=0/2033F5D8, redo lsn=0/2033F5A0
+2026-10-26 08:28:44.948 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:44.958 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.011 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7322 kB, estimate=8956 kB; lsn=0/20A65F08, redo lsn=0/20A65ED0
+2026-10-26 08:28:46.195 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:46.210 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.015 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7318 kB, estimate=8792 kB; lsn=0/2118B9A0, redo lsn=0/2118B968
+2026-10-26 08:28:47.918 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:47.929 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.003 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7320 kB, estimate=8645 kB; lsn=0/218B1A00, redo lsn=0/218B19C8
+2026-10-26 08:28:49.408 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:49.425 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.007 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7315 kB, estimate=8512 kB; lsn=0/21FD66F8, redo lsn=0/21FD66C0
+2026-10-26 08:28:50.867 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:50.880 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.014 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7323 kB, estimate=8393 kB; lsn=0/226FD3A0, redo lsn=0/226FD368
+2026-10-26 08:28:52.094 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:52.105 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7323 kB, estimate=8286 kB; lsn=0/22E24370, redo lsn=0/22E24338
+2026-10-26 08:28:53.253 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:53.270 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7325 kB, estimate=8190 kB; lsn=0/2354B8E0, redo lsn=0/2354B8A8
+2026-10-26 08:28:54.528 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:54.542 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.014 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7317 kB, estimate=8103 kB; lsn=0/23C70D90, redo lsn=0/23C70D58
+2026-10-26 08:28:55.947 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:55.962 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.016 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7324 kB, estimate=8025 kB; lsn=0/24398158, redo lsn=0/24398120
+2026-10-26 08:28:57.383 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:57.398 GMT [12908] LOG:  checkpoint complete: wrote 20 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.006 s, total=0.015 s; sync files=13, longest=0.002 s, average=0.001 s; distance=7483 kB, estimate=7971 kB; lsn=0/24AE7008, redo lsn=0/24AE6FD0
+2026-10-26 08:28:59.574 GMT [33304] ERROR:  new row for relation "object_links" violates check constraint "object_links_check"
+2026-10-26 08:28:59.574 GMT [33304] DETAIL:  Failing row contains (7876968b-c795-44da-8203-2dcf16b3d833, 4139d2e4-818c-471f-9c42-30c0c1b512a7, 1eba9440-1f2d-4df0-93ec-3cf0ced88c63, 1eba9440-1f2d-4df0-93ec-3cf0ced88c63, related, 31b9496e-2678-4b26-9cb1-43930decc6d9, 2026-10-26 08:28:59.574035+00).
+2026-10-26 08:28:59.574 GMT [33304] STATEMENT:  INSERT INTO core.object_links (source_object_id,target_object_id,link_type,organization_id,id,created_by) SELECT source_object_id,target_object_id,link_type,organization_id,id,created_by FROM jsonb_populate_record(NULL::core.object_links,$1::jsonb)
+2026-10-26 08:28:59.690 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:28:59.706 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.005 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7342 kB, estimate=7908 kB; lsn=0/25212818, redo lsn=0/252127E0
+2026-10-26 08:29:02.639 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:02.985 GMT [12908] LOG:  checkpoint complete: wrote 1283 buffers (7.8%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.119 s, sync=0.216 s, total=0.346 s; sync files=613, longest=0.002 s, average=0.001 s; distance=14598 kB, estimate=14598 kB; lsn=0/260543A8, redo lsn=0/26054370
+2026-10-26 08:29:03.119 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:03.129 GMT [12908] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.002 s, total=0.011 s; sync files=5, longest=0.001 s, average=0.001 s; distance=15 kB, estimate=13140 kB; lsn=0/26057FF8, redo lsn=0/26057FC0
+2026-10-26 08:29:05.251 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:05.263 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.005 s, total=0.012 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7322 kB, estimate=12558 kB; lsn=0/2677E938, redo lsn=0/2677E900
+2026-10-26 08:29:06.586 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:06.598 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7312 kB, estimate=12034 kB; lsn=0/26EA2B28, redo lsn=0/26EA2AF0
+2026-10-26 08:29:08.090 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:08.106 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.016 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7304 kB, estimate=11561 kB; lsn=0/275C4DE8, redo lsn=0/275C4DB0
+2026-10-26 08:29:09.419 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:09.429 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.004 s, total=0.011 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7314 kB, estimate=11136 kB; lsn=0/27CE9808, redo lsn=0/27CE97D0
+2026-10-26 08:29:10.725 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:10.740 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.015 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7306 kB, estimate=10753 kB; lsn=0/2840C1B8, redo lsn=0/2840C180
+2026-10-26 08:29:12.044 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:12.056 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7313 kB, estimate=10409 kB; lsn=0/28B308E8, redo lsn=0/28B308B0
+2026-10-26 08:29:13.247 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:13.261 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.015 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7314 kB, estimate=10100 kB; lsn=0/292552F8, redo lsn=0/292552C0
+2026-10-26 08:29:14.375 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:14.386 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7316 kB, estimate=9821 kB; lsn=0/2997A380, redo lsn=0/2997A348
+2026-10-26 08:29:16.017 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:16.032 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.016 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7317 kB, estimate=9571 kB; lsn=0/2A09F9B8, redo lsn=0/2A09F980
+2026-10-26 08:29:17.996 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:18.017 GMT [12908] LOG:  checkpoint complete: wrote 63 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.007 s, sync=0.009 s, total=0.021 s; sync files=23, longest=0.001 s, average=0.001 s; distance=7629 kB, estimate=9377 kB; lsn=0/2A813130, redo lsn=0/2A8130F8
+2026-10-26 08:29:19.969 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:19.986 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.006 s, total=0.018 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7367 kB, estimate=9176 kB; lsn=0/2AF44E10, redo lsn=0/2AF44DD8
+2026-10-26 08:29:22.607 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:22.637 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.009 s, sync=0.006 s, total=0.030 s; sync files=10, longest=0.002 s, average=0.001 s; distance=7367 kB, estimate=8995 kB; lsn=0/2B676AE0, redo lsn=0/2B676AA8
+2026-10-26 08:29:25.114 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:25.128 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.014 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7375 kB, estimate=8833 kB; lsn=0/2BDAA848, redo lsn=0/2BDAA810
+2026-10-26 08:29:27.398 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:27.422 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.007 s, sync=0.006 s, total=0.025 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7386 kB, estimate=8688 kB; lsn=0/2C4E12F8, redo lsn=0/2C4E12C0
+2026-10-26 08:29:29.180 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:29.200 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.005 s, total=0.020 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7376 kB, estimate=8557 kB; lsn=0/2CC15678, redo lsn=0/2CC15640
+2026-10-26 08:29:31.871 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:31.888 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.006 s, sync=0.004 s, total=0.018 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7391 kB, estimate=8440 kB; lsn=0/2D34D348, redo lsn=0/2D34D310
+2026-10-26 08:29:34.318 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:34.330 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.013 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7389 kB, estimate=8335 kB; lsn=0/2DA84960, redo lsn=0/2DA84928
+2026-10-26 08:29:35.703 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:35.718 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.015 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7381 kB, estimate=8240 kB; lsn=0/2E1B9F88, redo lsn=0/2E1B9F50
+2026-10-26 08:29:37.249 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:37.262 GMT [12908] LOG:  checkpoint complete: wrote 24 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.005 s, total=0.014 s; sync files=13, longest=0.001 s, average=0.001 s; distance=7533 kB, estimate=8169 kB; lsn=0/2E915580, redo lsn=0/2E915548
+2026-10-26 08:29:38.758 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:38.780 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.008 s, sync=0.005 s, total=0.023 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7362 kB, estimate=8088 kB; lsn=0/2F045E80, redo lsn=0/2F045E48
+2026-10-26 08:29:41.531 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:41.551 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.005 s, total=0.020 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7392 kB, estimate=8019 kB; lsn=0/2F77E218, redo lsn=0/2F77E1E0
+2026-10-26 08:29:43.514 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:43.533 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.005 s, total=0.020 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7366 kB, estimate=7953 kB; lsn=0/2FEAFA48, redo lsn=0/2FEAFA10
+2026-10-26 08:29:45.361 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:45.388 GMT [12908] LOG:  checkpoint complete: wrote 16 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.006 s, sync=0.005 s, total=0.027 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7370 kB, estimate=7895 kB; lsn=0/305E2598, redo lsn=0/305E2560
+2026-10-26 08:29:46.943 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:46.956 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.014 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7371 kB, estimate=7843 kB; lsn=0/30D152F0, redo lsn=0/30D152B8
+2026-10-26 08:29:48.483 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:48.502 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.005 s, total=0.019 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7367 kB, estimate=7795 kB; lsn=0/314470F0, redo lsn=0/314470B8
+2026-10-26 08:29:50.541 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:50.568 GMT [12908] LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.011 s, sync=0.011 s, total=0.027 s; sync files=14, longest=0.002 s, average=0.001 s; distance=7399 kB, estimate=7756 kB; lsn=0/31B81068, redo lsn=0/31B81030
+2026-10-26 08:29:52.255 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:52.272 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.006 s, sync=0.004 s, total=0.018 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7410 kB, estimate=7721 kB; lsn=0/322BD950, redo lsn=0/322BD918
+2026-10-26 08:29:53.546 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:53.558 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.013 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7396 kB, estimate=7688 kB; lsn=0/329F6C58, redo lsn=0/329F6C20
+2026-10-26 08:29:54.974 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:54.992 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.005 s, total=0.018 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7395 kB, estimate=7659 kB; lsn=0/3312FBA0, redo lsn=0/3312FB68
+2026-10-26 08:29:56.214 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:56.224 GMT [12908] LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.011 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7389 kB, estimate=7632 kB; lsn=0/33867048, redo lsn=0/33867010
+2026-10-26 08:29:57.696 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:57.712 GMT [12908] LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.006 s, sync=0.006 s, total=0.016 s; sync files=13, longest=0.001 s, average=0.001 s; distance=7540 kB, estimate=7623 kB; lsn=0/33FC40F8, redo lsn=0/33FC40C0
+2026-10-26 08:29:59.602 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:29:59.618 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7367 kB, estimate=7597 kB; lsn=0/346F5DB0, redo lsn=0/346F5D78
+2026-10-26 08:30:01.689 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:01.702 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7393 kB, estimate=7577 kB; lsn=0/34E2E340, redo lsn=0/34E2E308
+2026-10-26 08:30:02.893 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:02.908 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.015 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7365 kB, estimate=7556 kB; lsn=0/3555F9C0, redo lsn=0/3555F988
+2026-10-26 08:30:04.017 GMT [42776] ERROR:  test rollback
+2026-10-26 08:30:04.017 GMT [42776] CONTEXT:  PL/pgSQL function work.fail_conversion_test() line 1 at RAISE
+2026-10-26 08:30:04.017 GMT [42776] STATEMENT:  UPDATE work.inbox_items SET status='converted',converted_object_id=$1,processed_at=statement_timestamp() WHERE organization_id=$2 AND id=$3
+2026-10-26 08:30:04.232 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:04.245 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.013 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7381 kB, estimate=7538 kB; lsn=0/35C95098, redo lsn=0/35C95060
+2026-10-26 08:30:06.637 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:06.910 GMT [12908] LOG:  checkpoint complete: wrote 1296 buffers (7.9%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.081 s, sync=0.184 s, total=0.273 s; sync files=613, longest=0.002 s, average=0.001 s; distance=14707 kB, estimate=14707 kB; lsn=0/36AF1F38, redo lsn=0/36AF1F00
+2026-10-26 08:30:07.006 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:07.016 GMT [12908] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.002 s, total=0.010 s; sync files=5, longest=0.001 s, average=0.001 s; distance=18 kB, estimate=13238 kB; lsn=0/36AF69A0, redo lsn=0/36AF6968
+2026-10-26 08:30:08.457 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:08.472 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.015 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7369 kB, estimate=12651 kB; lsn=0/37229178, redo lsn=0/37229140
+2026-10-26 08:30:09.982 GMT [18508] ERROR:  IDEMPOTENCY_KEY_REUSED
+2026-10-26 08:30:09.982 GMT [18508] CONTEXT:  PL/pgSQL function iam.acquire_idempotency_record(uuid,uuid,uuid,character varying,character varying,bytea,uuid,interval,interval) line 29 at RAISE
+2026-10-26 08:30:09.982 GMT [18508] STATEMENT:  SELECT disposition,
+	       stored_record_id,
+	       stored_response_status,
+	       stored_response_headers::text,
+	       stored_response_body::text,
+	       stored_resource_id,
+	       retry_after_seconds
+	FROM iam.acquire_idempotency_record($1, $2, $3, $4, $5, $6, $7, $8, $9);
+2026-10-26 08:30:10.311 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:10.323 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7368 kB, estimate=12123 kB; lsn=0/3795B290, redo lsn=0/3795B258
+2026-10-26 08:30:11.973 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:11.987 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.003 s, total=0.014 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7387 kB, estimate=11649 kB; lsn=0/380921A8, redo lsn=0/38092170
+2026-10-26 08:30:13.581 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:13.593 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.012 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7380 kB, estimate=11223 kB; lsn=0/387C7598, redo lsn=0/387C7560
+2026-10-26 08:30:15.548 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:15.562 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.015 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7390 kB, estimate=10839 kB; lsn=0/38EFEF50, redo lsn=0/38EFEF18
+2026-10-26 08:30:17.720 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:17.740 GMT [12908] LOG:  checkpoint complete: wrote 27 buffers (0.2%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.007 s, sync=0.005 s, total=0.020 s; sync files=14, longest=0.001 s, average=0.001 s; distance=7568 kB, estimate=10512 kB; lsn=0/39663268, redo lsn=0/39663230
+2026-10-26 08:30:20.869 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:20.882 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.005 s, total=0.014 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7349 kB, estimate=10196 kB; lsn=0/39D90980, redo lsn=0/39D90948
+2026-10-26 08:30:22.131 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:22.149 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.006 s, sync=0.005 s, total=0.019 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7359 kB, estimate=9912 kB; lsn=0/3A4C0848, redo lsn=0/3A4C0810
+2026-10-26 08:30:23.346 GMT [12356] ERROR:  notification projection fixture
+2026-10-26 08:30:23.346 GMT [12356] CONTEXT:  PL/pgSQL function fail_test_notice() line 1 at RAISE
+2026-10-26 08:30:23.346 GMT [12356] STATEMENT:  WITH source AS (
+	    SELECT e.*,o.created_by,o.object_type,task.card_content,task.status,e.occurred_at AS created_at,
+	        coalesce(task.title,project.name) AS source_title,
+	        CASE
+	            WHEN e.event_type='TaskCreated' THEN 'task.assigned'
+	            WHEN e.event_type='TaskUpdated' AND e.changed_fields && ARRAY['assigneeIds']::text[] THEN 'task.assignment_changed'
+	            WHEN e.event_type='TaskUpdated' AND e.changed_fields && ARRAY['startAtUtc','deadlineAt']::text[] THEN 'task.rescheduled'
+	            WHEN e.event_type='TaskStatusChanged' AND task.status='completed' THEN 'task.completed'
+	            WHEN e.event_type='TaskStatusChanged' AND task.status='review' THEN 'task.review'
+	            WHEN e.event_type='task.task-comment-add' THEN 'task.comment'
+	            WHEN e.event_type='project.member-add' THEN 'project.invitation'
+	        END AS notice_type
+	    FROM governance.domain_events e
+	    JOIN core.objects o ON o.organization_id=e.organization_id AND o.id=e.aggregate_id
+	    LEFT JOIN work.tasks task ON task.organization_id=o.organization_id AND task.id=o.id
+	    LEFT JOIN projects.projects project ON project.organization_id=o.organization_id AND project.id=o.id
+	    WHERE e.id=$1 AND o.lifecycle_state='active'
+	), recipients AS (
+	    SELECT s.*,recipient.id AS recipient_id FROM source s
+	    CROSS JOIN LATERAL (
+	        SELECT value::uuid AS id FROM jsonb_array_elements_text(coalesce(s.card_content->'assigneeIds','[]'::jsonb))
+	        UNION SELECT value::uuid FROM jsonb_array_elements_text(coalesce(s.card_content->'watcherIds','[]'::jsonb)) WHERE s.notice_type<>'task.assigned'
+	        UNION SELECT s.created_by WHERE s.object_type='task' AND s.notice_type<>'task.assigned'
+	        UNION SELECT (s.card_content->>'requesterUserId')::uuid WHERE s.card_content->>'requesterUserId' IS NOT NULL AND s.notice_type<>'task.assigned'
+	        UNION SELECT (s.payload->>'recipientUserId')::uuid WHERE s.notice_type='project.invitation'
+	    ) recipient
+	    JOIN iam.user_accounts account ON account.organization_id=s.organization_id AND account.id=recipient.id AND account.account_status='active'
+	    WHERE s.notice_type IS NOT NULL
+	        AND (recipient.id<>s.actor_user_id OR s.notice_type='task.assigned')
+	        AND iam.object_allowed(s.organization_id,s.aggregate_id,recipient.id,
+	            CASE s.object_type WHEN 'task' THEN 'task.read' ELSE 'project.read' END,false)
+	), notifications AS (
+	    SELECT r.*,md5('task-notification:'||r.id::text||r.recipient_id::text)::uuid AS notification_id,
+	        CASE notice_type WHEN 'task.assigned' THEN 'Вам назначена задача'
+	            WHEN 'task.assignment_changed' THEN 'Изменены исполнители задачи'
+	            WHEN 'task.rescheduled' THEN 'Изменено время задачи'
+	            WHEN 'task.completed' THEN 'Задача завершена'
+	            WHEN 'task.review' THEN 'Задача отправлена на проверку'
+	            WHEN 'task.comment' THEN 'Новый комментарий к задаче'
+	            ELSE 'Приглашение в проект' END AS notice_title
+	    FROM recipients r
+	), objects AS (
+	    INSERT INTO core.objects(id,organization_id,object_type,lifecycle_state,version,created_at,created_by,updated_at,updated_by)
+	    SELECT notification_id,organization_id,'notification','active',1,created_at,created_by,created_at,created_by FROM notifications
+	    ON CONFLICT(id) DO NOTHING RETURNING id
+	)
+	INSERT INTO notify.notifications(id,organization_id,recipient_user_id,notification_type,source_object_id,title,body,status,not_before,deduplication_key,action_payload)
+	SELECT n.notification_id,n.organization_id,n.recipient_id,n.notice_type,n.aggregate_id,n.notice_title,
+	    coalesce(n.source_title,'Откройте Task, чтобы посмотреть событие.'),'pending',n.created_at,
+	    n.id::text||'|'||n.recipient_id::text,jsonb_build_object('sourceObjectType',n.object_type,'sourceEventId',n.id)
+	FROM notifications n JOIN objects o ON o.id=n.notification_id
+	ON CONFLICT(id) DO NOTHING
+2026-10-26 08:30:23.428 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:23.440 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7364 kB, estimate=9657 kB; lsn=0/3ABF1AC0, redo lsn=0/3ABF1A88
+2026-10-26 08:30:25.327 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:25.343 GMT [12908] LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.017 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7542 kB, estimate=9446 kB; lsn=0/3B34F468, redo lsn=0/3B34F430
+2026-10-26 08:30:26.937 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:26.950 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.013 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7376 kB, estimate=9239 kB; lsn=0/3BA837F0, redo lsn=0/3BA837B8
+2026-10-26 08:30:28.224 GMT [46000] ERROR:  duplicate key value violates unique constraint "uq_domain_event_aggregate_version"
+2026-10-26 08:30:28.224 GMT [46000] DETAIL:  Key (organization_id, aggregate_id, aggregate_version, event_type)=(dbc0b62d-0b75-4821-82e2-a2ce9ad43875, 98e57382-51c0-4f77-8a0a-64f3232db6a9, 4, TaskStatusChanged) already exists.
+2026-10-26 08:30:28.224 GMT [46000] STATEMENT:  INSERT INTO governance.domain_events (
+	    id, organization_id, aggregate_id, aggregate_type, aggregate_version,
+	    event_type, actor_user_id, correlation_id, operation_id, idempotency_key,
+	    changed_fields, payload)
+	VALUES ($1, $2, $3, 'task', $4, $5, $6, $7, $8, $9, $10, $11);
+2026-10-26 08:30:28.454 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:28.469 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.016 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7373 kB, estimate=9052 kB; lsn=0/3C1B6D70, redo lsn=0/3C1B6D38
+2026-10-26 08:30:29.935 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:29.947 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7379 kB, estimate=8885 kB; lsn=0/3C8EBB70, redo lsn=0/3C8EBB38
+2026-10-26 08:30:32.149 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:32.164 GMT [12908] LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.016 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7376 kB, estimate=8734 kB; lsn=0/3D01FF10, redo lsn=0/3D01FED8
+2026-10-26 08:30:33.632 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:33.653 GMT [12908] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.009 s, sync=0.007 s, total=0.022 s; sync files=11, longest=0.002 s, average=0.001 s; distance=7382 kB, estimate=8599 kB; lsn=0/3D755828, redo lsn=0/3D7557F0
+2026-10-26 08:30:35.342 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:35.353 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.011 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7380 kB, estimate=8477 kB; lsn=0/3DE8AA88, redo lsn=0/3DE8AA50
+2026-10-26 08:30:41.075 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:41.091 GMT [12908] LOG:  checkpoint complete: wrote 21 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.016 s; sync files=13, longest=0.001 s, average=0.001 s; distance=7749 kB, estimate=8404 kB; lsn=0/3E61BF28, redo lsn=0/3E61BEF0
+2026-10-26 08:30:42.626 GMT [52424] ERROR:  fixture rollback
+2026-10-26 08:30:42.626 GMT [52424] CONTEXT:  PL/pgSQL function fail_reminder_event() line 1 at RAISE
+2026-10-26 08:30:42.626 GMT [52424] STATEMENT:  INSERT INTO governance.domain_events(id,organization_id,aggregate_id,aggregate_type,aggregate_version,event_type,actor_user_id,correlation_id,operation_id,idempotency_key,changed_fields,payload) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::jsonb)
+2026-10-26 08:30:42.702 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:42.714 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.005 s, total=0.013 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7366 kB, estimate=8300 kB; lsn=0/3ED4D9C0, redo lsn=0/3ED4D988
+2026-10-26 08:30:45.256 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:45.272 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.004 s, total=0.016 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7403 kB, estimate=8211 kB; lsn=0/3F488880, redo lsn=0/3F488848
+2026-10-26 08:30:46.437 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:46.448 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.004 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7368 kB, estimate=8126 kB; lsn=0/3FBBA888, redo lsn=0/3FBBA850
+2026-10-26 08:30:47.516 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:47.531 GMT [12908] LOG:  checkpoint complete: wrote 16 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.005 s, total=0.016 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7369 kB, estimate=8051 kB; lsn=0/402ED020, redo lsn=0/402ECFE8
+2026-10-26 08:30:49.038 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:49.048 GMT [12908] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.003 s, total=0.011 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7371 kB, estimate=7983 kB; lsn=0/40A1FDC8, redo lsn=0/40A1FD90
+2026-10-26 08:30:50.633 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:50.649 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7387 kB, estimate=7923 kB; lsn=0/41156AA0, redo lsn=0/41156A68
+2026-10-26 08:30:52.333 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:52.345 GMT [12908] LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.012 s; sync files=12, longest=0.001 s, average=0.001 s; distance=7399 kB, estimate=7871 kB; lsn=0/41890A60, redo lsn=0/41890A28
+2026-10-26 08:30:54.081 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:54.098 GMT [12908] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.008 s, sync=0.004 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7388 kB, estimate=7822 kB; lsn=0/41FC7D30, redo lsn=0/41FC7CF8
+2026-10-26 08:30:59.402 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:30:59.419 GMT [12908] LOG:  checkpoint complete: wrote 20 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.005 s, total=0.018 s; sync files=13, longest=0.001 s, average=0.001 s; distance=8262 kB, estimate=8262 kB; lsn=0/427D9580, redo lsn=0/427D9548
+2026-10-26 08:31:00.821 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:31:00.833 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.004 s, total=0.012 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7368 kB, estimate=8172 kB; lsn=0/42F0B848, redo lsn=0/42F0B810
+2026-10-26 08:31:02.321 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:31:02.336 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.016 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7447 kB, estimate=8100 kB; lsn=0/43651790, redo lsn=0/43651758
+2026-10-26 08:31:04.973 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:31:04.984 GMT [12908] LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.003 s, total=0.011 s; sync files=10, longest=0.001 s, average=0.001 s; distance=7428 kB, estimate=8033 kB; lsn=0/43D928D8, redo lsn=0/43D928A0
+2026-10-26 08:31:06.129 GMT [7260] ERROR:  duplicate key value violates unique constraint "object_links_organization_id_source_object_id_target_object_key"
+2026-10-26 08:31:06.129 GMT [7260] DETAIL:  Key (organization_id, source_object_id, target_object_id, link_type)=(0a44ed14-67e3-4fb7-8008-f84742f944c6, 162b7f95-86a9-41f4-8396-14ba164eb087, 344a2d36-4b1f-4257-aa29-cecc1d415604, contact_file) already exists.
+2026-10-26 08:31:06.129 GMT [7260] STATEMENT:  INSERT INTO core.object_links (source_object_id,target_object_id,link_type,organization_id,id,created_by) SELECT source_object_id,target_object_id,link_type,organization_id,id,created_by FROM jsonb_populate_record(NULL::core.object_links,$1::jsonb)
+2026-10-26 08:31:06.726 GMT [12908] LOG:  checkpoint starting: immediate force wait
+2026-10-26 08:31:06.742 GMT [12908] LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.005 s, sync=0.004 s, total=0.017 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7410 kB, estimate=7970 kB; lsn=0/444CF428, redo lsn=0/444CF3F0
+2026-10-26 08:31:07.096 GMT [54808] LOG:  received fast shutdown request
+2026-10-26 08:31:07.097 GMT [54808] LOG:  aborting any active transactions
+2026-10-26 08:31:07.101 GMT [54808] LOG:  background worker "logical replication launcher" (PID 6996) exited with exit code 1
+2026-10-26 08:31:07.102 GMT [12908] LOG:  shutting down
+2026-10-26 08:31:07.103 GMT [12908] LOG:  checkpoint starting: shutdown immediate
+2026-10-26 08:31:07.112 GMT [12908] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.002 s, total=0.011 s; sync files=4, longest=0.001 s, average=0.001 s; distance=6 kB, estimate=7174 kB; lsn=0/444D0DB8, redo lsn=0/444D0DB8
+2026-10-26 08:31:07.140 GMT [54808] LOG:  database system is shut down

@@ -31,7 +31,8 @@ public sealed partial class DesktopWorkApiClientTests
             var items = first ? rows.Take(limit) : rows.Skip(limit - 1);
             return System.Threading.Tasks.Task.FromResult(Json(HttpStatusCode.OK, JsonSerializer.Serialize(new
             {
-                items, nextCursor = first && total > limit ? "next+/=" : null
+                items,
+                nextCursor = first && total > limit ? "next+/=" : null
             })));
         });
         using var hub = new WorkHubViewModel(fixture.Client, ["Search.Use", "Contact.Read", "History.Read", "Trash.Read"]);

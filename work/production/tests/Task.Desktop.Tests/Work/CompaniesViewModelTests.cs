@@ -50,15 +50,24 @@ public sealed class CompaniesViewModelTests
     }
 
     [Theory]
-    [InlineData("403")][InlineData("404")][InlineData("409")][InlineData("412")][InlineData("401")][InlineData("validation")][InlineData("offline")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("409")]
+    [InlineData("412")]
+    [InlineData("401")]
+    [InlineData("validation")]
+    [InlineData("offline")]
     public async System.Threading.Tasks.Task FailedWritePreservesDraftUnlessSessionEndsAndNeverReportsSuccess(string kind)
     {
         var company = new DesktopCompany(Guid.NewGuid(), 4, "Компания"); var api = new CompanyTestClient(company);
         api.Save = (_, _, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopCompany>>(kind switch
         {
-            "403" => new DesktopWorkResult<DesktopCompany>.Forbidden(), "404" => new DesktopWorkResult<DesktopCompany>.NotFound(),
-            "409" or "412" => new DesktopWorkResult<DesktopCompany>.Conflict(), "401" => new DesktopWorkResult<DesktopCompany>.AuthenticationFailure(),
-            "validation" => new DesktopWorkResult<DesktopCompany>.ValidationFailure("Ошибка полей"), _ => new DesktopWorkResult<DesktopCompany>.ServerUnavailable()
+            "403" => new DesktopWorkResult<DesktopCompany>.Forbidden(),
+            "404" => new DesktopWorkResult<DesktopCompany>.NotFound(),
+            "409" or "412" => new DesktopWorkResult<DesktopCompany>.Conflict(),
+            "401" => new DesktopWorkResult<DesktopCompany>.AuthenticationFailure(),
+            "validation" => new DesktopWorkResult<DesktopCompany>.ValidationFailure("Ошибка полей"),
+            _ => new DesktopWorkResult<DesktopCompany>.ServerUnavailable()
         });
         using var vm = Create(api); await vm.OpenAsync(company.Id); await vm.EditCommand.ExecuteAsync(); vm.Notes = "Ввод";
         await vm.SaveCommand.ExecuteAsync(); Assert.DoesNotContain("Компания сохранена", vm.Message);
@@ -69,15 +78,23 @@ public sealed class CompaniesViewModelTests
     }
 
     [Theory]
-    [InlineData("name")][InlineData("legal")][InlineData("industry")][InlineData("tax")][InlineData("notes")][InlineData("url")]
+    [InlineData("name")]
+    [InlineData("legal")]
+    [InlineData("industry")]
+    [InlineData("tax")]
+    [InlineData("notes")]
+    [InlineData("url")]
     public async System.Threading.Tasks.Task InvalidDraftDoesNotReachServer(string kind)
     {
         var api = new CompanyTestClient(); using var vm = Create(api); await vm.NewCommand.ExecuteAsync(); vm.Name = "Компания";
         switch (kind)
         {
-            case "name": vm.Name = " "; break; case "legal": vm.LegalName = new('x', 501); break;
-            case "industry": vm.Industry = new('x', 201); break; case "tax": vm.TaxIdentifier = new('x', 101); break;
-            case "notes": vm.Notes = new('x', 20001); break; default: vm.Website = "file:///c:/secret"; break;
+            case "name": vm.Name = " "; break;
+            case "legal": vm.LegalName = new('x', 501); break;
+            case "industry": vm.Industry = new('x', 201); break;
+            case "tax": vm.TaxIdentifier = new('x', 101); break;
+            case "notes": vm.Notes = new('x', 20001); break;
+            default: vm.Website = "file:///c:/secret"; break;
         }
         await vm.SaveCommand.ExecuteAsync(); Assert.Empty(api.Saves); Assert.True(vm.IsEditing);
     }
@@ -187,15 +204,22 @@ public sealed class CompaniesViewModelTests
     }
 
     [Theory]
-    [InlineData("403")][InlineData("404")][InlineData("409")][InlineData("412")][InlineData("validation")][InlineData("offline")]
+    [InlineData("403")]
+    [InlineData("404")]
+    [InlineData("409")]
+    [InlineData("412")]
+    [InlineData("validation")]
+    [InlineData("offline")]
     public async System.Threading.Tasks.Task FailedLinkKeepsMetadataAndDoesNotInventConfirmedRelation(string kind)
     {
         var contact = CompanyTestClient.Contact("Анна"); var company = new DesktopCompany(Guid.NewGuid(), 1, "Компания");
         var api = new CompanyTestClient(company); api.Contacts.Add(contact.Id, contact);
         api.Link = (_, _, _, _, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopCompany>>(kind switch
         {
-            "403" => new DesktopWorkResult<DesktopCompany>.Forbidden(), "404" => new DesktopWorkResult<DesktopCompany>.NotFound(),
-            "409" or "412" => new DesktopWorkResult<DesktopCompany>.Conflict(), "validation" => new DesktopWorkResult<DesktopCompany>.ValidationFailure("Проверьте поля"),
+            "403" => new DesktopWorkResult<DesktopCompany>.Forbidden(),
+            "404" => new DesktopWorkResult<DesktopCompany>.NotFound(),
+            "409" or "412" => new DesktopWorkResult<DesktopCompany>.Conflict(),
+            "validation" => new DesktopWorkResult<DesktopCompany>.ValidationFailure("Проверьте поля"),
             _ => new DesktopWorkResult<DesktopCompany>.ServerUnavailable()
         });
         using var vm = Create(api); await vm.OpenAsync(company.Id); vm.ContactQuery = "Анна"; await vm.SearchContactsCommand.ExecuteAsync(); vm.SelectedCandidate = contact;
@@ -205,7 +229,9 @@ public sealed class CompaniesViewModelTests
     }
 
     [Theory]
-    [InlineData("2026-12-31", "2026-01-01")][InlineData("2026-02-30", null)][InlineData("18.10.2026", null)]
+    [InlineData("2026-12-31", "2026-01-01")]
+    [InlineData("2026-02-30", null)]
+    [InlineData("18.10.2026", null)]
     public async System.Threading.Tasks.Task InvalidLinkDatesNeverReachServer(string? from, string? to)
     {
         var contact = CompanyTestClient.Contact("Анна"); var company = new DesktopCompany(Guid.NewGuid(), 1, "Компания");

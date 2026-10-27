@@ -1,0 +1,760 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="fa49ef88-e828-49fb-8581-afa578ebc313" name="novik@TIM 2026-10-26 03:50:17" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-26T03:50:17.7120142+03:00" queuing="2026-10-26T03:50:17.7120143+03:00" start="2026-10-26T03:50:15.3887238+03:00" finish="2026-10-26T03:50:17.9426679+03:00" />
+  <TestSettings name="default" id="7b1d4470-79f3-4adc-865f-2ce4c7efce14">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-26_03_50_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="00b99749-172d-4fca-9d07-2b5a3223393f" testId="f33c76b8-e189-57c5-6333-0e0714b44892" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6039872+03:00" endTime="2026-10-26T03:50:17.6043587+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00b99749-172d-4fca-9d07-2b5a3223393f">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="acab5b5e-369e-4317-a08d-9d0db637f7a8" testId="bb4ffc85-9be7-b842-52a5-0b3ff4c630fd" testName="Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6083943+03:00" endTime="2026-10-26T03:50:17.6084276+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="acab5b5e-369e-4317-a08d-9d0db637f7a8">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7139623f-47bc-43f7-9f8d-666438ace06f" testId="878673cb-6e43-8ed2-016a-b72ef5c9eef7" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;removed&quot;)" computerName="TIM" duration="00:00:00.0008049" startTime="2026-10-26T03:50:17.6090148+03:00" endTime="2026-10-26T03:50:17.6090474+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7139623f-47bc-43f7-9f8d-666438ace06f" />
+    <UnitTestResult executionId="9cfa2def-9bf6-47da-8c81-369e1a5a2df6" testId="9802e390-e786-edd4-9ced-4e2aaa4bd51b" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;absolute&quot;)" computerName="TIM" duration="00:00:00.0000016" startTime="2026-10-26T03:50:17.6703828+03:00" endTime="2026-10-26T03:50:17.6704415+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9cfa2def-9bf6-47da-8c81-369e1a5a2df6" />
+    <UnitTestResult executionId="a68eae68-3df1-4ecb-90f1-170bc277ed0e" testId="e46a5d22-378a-9edd-54c7-8fea30d5a959" testName="Task.Tests.PostgresProductApiTests.SimilarSource_ArchiveAndTrashRespectExistingReadBoundary(trash: False)" computerName="TIM" duration="00:00:00.0014085" startTime="2026-10-26T03:50:17.6077876+03:00" endTime="2026-10-26T03:50:17.6078601+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a68eae68-3df1-4ecb-90f1-170bc277ed0e" />
+    <UnitTestResult executionId="974f02e2-2604-4e06-8e7a-8f09b2af25bd" testId="14d4a183-9d66-168a-d1be-75e7a5db83b8" testName="Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6770064+03:00" endTime="2026-10-26T03:50:17.6770240+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="974f02e2-2604-4e06-8e7a-8f09b2af25bd">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="50481d7e-b505-4191-bab2-6bf303940aa1" testId="b825f584-e450-d85f-b571-694b32515909" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CanonicalDtoRuntimePermissionRevocationAndTransactionalRollback" computerName="TIM" duration="00:00:00.0006137" startTime="2026-10-26T03:50:17.6846667+03:00" endTime="2026-10-26T03:50:17.6846983+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50481d7e-b505-4191-bab2-6bf303940aa1" />
+    <UnitTestResult executionId="ed2f1a50-8903-4cff-8cbd-15b83422c3b0" testId="30068bd1-78eb-81cf-537a-7e628d103d11" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;before_deadline&quot;)" computerName="TIM" duration="00:00:00.0008835" startTime="2026-10-26T03:50:17.6687575+03:00" endTime="2026-10-26T03:50:17.6688012+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed2f1a50-8903-4cff-8cbd-15b83422c3b0" />
+    <UnitTestResult executionId="11e1a2a3-7261-453b-ac7b-3e9eb9022150" testId="cd6bb762-1a25-2354-176d-f674aec78db9" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;denied&quot;)" computerName="TIM" duration="00:00:00.0000012" startTime="2026-10-26T03:50:17.6684538+03:00" endTime="2026-10-26T03:50:17.6684876+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11e1a2a3-7261-453b-ac7b-3e9eb9022150" />
+    <UnitTestResult executionId="45db6021-d05c-4643-8415-5212cdb2abfa" testId="8b624838-c41e-4068-d0c7-297a37f77172" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_PatchCancelRestoreConcurrencyAndOccurrenceHistory" computerName="TIM" duration="00:00:00.0007924" startTime="2026-10-26T03:50:17.6818638+03:00" endTime="2026-10-26T03:50:17.6819088+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45db6021-d05c-4643-8415-5212cdb2abfa" />
+    <UnitTestResult executionId="8f70d061-6bf1-4b8b-861e-aed124d3f34c" testId="5b02944e-1815-2874-8349-82cb73a27d0d" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_ConcurrentManualCollisionAndRestoreDoNotRepeatDelivery" computerName="TIM" duration="00:00:00.0011061" startTime="2026-10-26T03:50:17.6748549+03:00" endTime="2026-10-26T03:50:17.6748912+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f70d061-6bf1-4b8b-861e-aed124d3f34c" />
+    <UnitTestResult executionId="cc1dba1d-428a-4f2b-ae8d-2da0336d9fe5" testId="90eb24c0-0db4-269b-1cd8-9649ca6fd5f2" testName="Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6714154+03:00" endTime="2026-10-26T03:50:17.6714284+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc1dba1d-428a-4f2b-ae8d-2da0336d9fe5">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2f4588e3-1d91-4b4e-8dbd-bca35abe8ffa" testId="8766a3a7-d8af-45f3-b458-b3a7b1fb7f3d" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;before_start&quot;)" computerName="TIM" duration="00:00:00.0000060" startTime="2026-10-26T03:50:17.6689507+03:00" endTime="2026-10-26T03:50:17.6689826+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f4588e3-1d91-4b4e-8dbd-bca35abe8ffa" />
+    <UnitTestResult executionId="de000e70-8062-4878-8501-bf9c00857a13" testId="34c5f941-7549-cd82-434e-8cd60840f821" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_DefaultSnapshotsExplicitOffAndPrivateRecipientsAreIsolated" computerName="TIM" duration="00:00:00.0012836" startTime="2026-10-26T03:50:17.6706801+03:00" endTime="2026-10-26T03:50:17.6707147+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de000e70-8062-4878-8501-bf9c00857a13" />
+    <UnitTestResult executionId="0986d346-510d-49d5-bdf5-807022351904" testId="95d0624f-fb31-4ac0-2568-d075ea3a7f7b" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_DeliverSnoozeReplayDismissAndRetainDeliveryHistory" computerName="TIM" duration="00:00:00.0022012" startTime="2026-10-26T03:50:17.6082759+03:00" endTime="2026-10-26T03:50:17.6083107+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0986d346-510d-49d5-bdf5-807022351904" />
+    <UnitTestResult executionId="326cf265-ede7-40c5-8119-2e35461a234e" testId="1092501f-4ffb-2065-6909-bad2dc5294f0" testName="Task.Tests.PostgresProductApiTests.FileLocationManager_RealUncValidationResourceVisibilityAndLocalSettings" computerName="TIM" duration="00:00:00.0006754" startTime="2026-10-26T03:50:17.6764184+03:00" endTime="2026-10-26T03:50:17.6764630+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="326cf265-ede7-40c5-8119-2e35461a234e" />
+    <UnitTestResult executionId="2a8cfff0-6d5a-481c-ae72-cb68d3be1234" testId="c0dbdb67-ea42-b606-e657-d407dda542f5" testName="Task.Tests.PostgresProductApiTests.SimilarSource_ArchiveAndTrashRespectExistingReadBoundary(trash: True)" computerName="TIM" duration="00:00:00.0002360" startTime="2026-10-26T03:50:17.6081235+03:00" endTime="2026-10-26T03:50:17.6081666+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a8cfff0-6d5a-481c-ae72-cb68d3be1234" />
+    <UnitTestResult executionId="50400998-2a89-4252-b684-0c1a489d473c" testId="bc2a3143-6b43-fd90-785a-087109571b8f" testName="Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6871229+03:00" endTime="2026-10-26T03:50:17.6871523+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50400998-2a89-4252-b684-0c1a489d473c">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2c0514a-4945-416f-b930-c5c877d36550" testId="61d0b749-c4ff-4d58-8dc8-84e6ead59711" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;completed&quot;)" computerName="TIM" duration="00:00:00.0000013" startTime="2026-10-26T03:50:17.6685459+03:00" endTime="2026-10-26T03:50:17.6685779+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2c0514a-4945-416f-b930-c5c877d36550" />
+    <UnitTestResult executionId="c02de3c3-f9af-41ac-b680-f27426b1c593" testId="6e6a9e49-f927-31d7-4500-750d5bec4fff" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6837989+03:00" endTime="2026-10-26T03:50:17.6838194+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c02de3c3-f9af-41ac-b680-f27426b1c593">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="773a82ad-80a4-477a-860d-eaff3b075af9" testId="a46311df-7996-e78d-a245-23b6fc800f63" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6780633+03:00" endTime="2026-10-26T03:50:17.6780768+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="773a82ad-80a4-477a-860d-eaff3b075af9">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f9fc4564-e28c-4a6d-8c67-11c037936d0b" testId="b0fbccbc-f1ef-c042-6d0c-0a6eb54887ce" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;at_deadline&quot;)" computerName="TIM" duration="00:00:00.0002114" startTime="2026-10-26T03:50:17.6688605+03:00" endTime="2026-10-26T03:50:17.6688945+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9fc4564-e28c-4a6d-8c67-11c037936d0b" />
+    <UnitTestResult executionId="ab951ff0-d23e-4d02-906e-39fba55143d2" testId="37b18c6f-3143-ccc7-1819-54003fac4afa" testName="Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6796495+03:00" endTime="2026-10-26T03:50:17.6796661+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab951ff0-d23e-4d02-906e-39fba55143d2">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8bbebe19-3963-4311-a5b5-0f6b9b14d750" testId="0eebe8f3-f970-e50b-ee58-f40048f04f5c" testName="Task.Tests.PostgresProductApiTests.ProjectComments_RuntimeContractIsMissingDespiteGenericNormativeCommentModel" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6822476+03:00" endTime="2026-10-26T03:50:17.6822605+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8bbebe19-3963-4311-a5b5-0f6b9b14d750">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5f5b0fd5-5f6c-40ad-9e5c-d8c88c5d5d3e" testId="01d6aecf-63e5-43e6-dce1-486be8344556" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_DateOnlyAndDstUseExplicitZoneWithoutInventingDeadline" computerName="TIM" duration="00:00:00.0009013" startTime="2026-10-26T03:50:17.6839929+03:00" endTime="2026-10-26T03:50:17.6840310+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5f5b0fd5-5f6c-40ad-9e5c-d8c88c5d5d3e" />
+    <UnitTestResult executionId="7332e6cd-291a-479f-86b6-2a1e77e975e3" testId="bdd47cbd-8a3d-8aef-cc0c-2c249404c57f" testName="Task.Tests.PostgresProductApiTests.TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach" computerName="TIM" duration="00:00:00.0012035" startTime="2026-10-26T03:50:17.6865324+03:00" endTime="2026-10-26T03:50:17.6865693+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7332e6cd-291a-479f-86b6-2a1e77e975e3" />
+    <UnitTestResult executionId="afcc8d59-1473-47a1-9b08-57d336c5ff60" testId="cf513b2c-a5e6-2683-35f2-c1b2b9aaf381" testName="Task.Tests.PostgresProductApiTests.Authorization_PrivateObjectsStayHiddenAcrossEveryProjection" computerName="TIM" duration="00:00:00.0022017" startTime="2026-10-26T03:50:17.6089009+03:00" endTime="2026-10-26T03:50:17.6089335+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="afcc8d59-1473-47a1-9b08-57d336c5ff60" />
+    <UnitTestResult executionId="ef21099f-4a12-4b50-bf00-6cc210d26fb5" testId="0127c779-5619-2cda-8ed8-626d31432b31" testName="Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6801611+03:00" endTime="2026-10-26T03:50:17.6801806+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef21099f-4a12-4b50-bf00-6cc210d26fb5">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ccc5221e-81a7-427b-ada9-e3dd391cf519" testId="d66d69ef-153e-6009-2a68-a01608d08988" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;blocked&quot;)" computerName="TIM" duration="00:00:00.0000012" startTime="2026-10-26T03:50:17.6686349+03:00" endTime="2026-10-26T03:50:17.6686673+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccc5221e-81a7-427b-ada9-e3dd391cf519" />
+    <UnitTestResult executionId="ac9c0096-4ca9-4593-8137-fe54381f7e4f" testId="24120f81-50e5-6a43-5a24-1c9111e7fc1e" testName="Task.Tests.PostgresProductApiTests.Authorization_PersonalTasksCalendarAndRecurrenceArePrivate" computerName="TIM" duration="00:00:00.0025125" startTime="2026-10-26T03:50:17.6845571+03:00" endTime="2026-10-26T03:50:17.6845897+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ac9c0096-4ca9-4593-8137-fe54381f7e4f" />
+    <UnitTestResult executionId="5c39cd2d-d8d0-4070-aab5-d5900a53b212" testId="20fc59eb-08a4-24f4-6e43-578a2dbc1632" testName="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound" computerName="TIM" duration="00:00:00.0012160" startTime="2026-10-26T03:50:17.6804570+03:00" endTime="2026-10-26T03:50:17.6805011+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c39cd2d-d8d0-4070-aab5-d5900a53b212" />
+    <UnitTestResult executionId="4a4bf5c9-8f03-4cc7-8e40-af17f688537f" testId="d24e726d-4c51-d7cf-106f-3975ce0bf58e" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6830112+03:00" endTime="2026-10-26T03:50:17.6830262+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a4bf5c9-8f03-4cc7-8e40-af17f688537f">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f1800767-447a-40a0-acda-bc36b6f0c5c0" testId="3a30148e-0926-ec9f-9278-9a6851db6cb4" testName="Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6756726+03:00" endTime="2026-10-26T03:50:17.6756960+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1800767-447a-40a0-acda-bc36b6f0c5c0">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2cb78a15-45f1-4514-be41-11c6a6a1c38d" testId="d84143cf-a248-362e-63dd-7a03f3265d98" testName="Task.Tests.PostgresProductApiTests.Authorization_DepartmentAndExpiryDoNotBecomeGlobalPermanentGrants" computerName="TIM" duration="00:00:00.0011319" startTime="2026-10-26T03:50:17.6749784+03:00" endTime="2026-10-26T03:50:17.6752477+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2cb78a15-45f1-4514-be41-11c6a6a1c38d" />
+    <UnitTestResult executionId="b4a3013c-0b7b-4b21-be68-1f9cff2a7fb7" testId="a09acf15-59f4-f8b1-3e49-8d7c73f5c762" testName="Task.Tests.PostgresProductApiTests.Authorization_SystemRolesHaveExplicitMatrixAndDenyWins" computerName="TIM" duration="00:00:00.0016544" startTime="2026-10-26T03:50:17.6821314+03:00" endTime="2026-10-26T03:50:17.6821655+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4a3013c-0b7b-4b21-be68-1f9cff2a7fb7" />
+    <UnitTestResult executionId="a3c464ee-4068-4ec4-ac61-8f7024a8ca4e" testId="0881d3ff-4d9b-71c6-0f90-5a52706880e9" testName="Task.Tests.PostgresProductApiTests.ProductApi_LinksInteractionsAndFileChecksRoundTrip" computerName="TIM" duration="00:00:00.0016867" startTime="2026-10-26T03:50:17.6847767+03:00" endTime="2026-10-26T03:50:17.6848082+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3c464ee-4068-4ec4-ac61-8f7024a8ca4e" />
+    <UnitTestResult executionId="6b5435a6-0922-441e-a4bc-ccf8d08acd18" testId="a0bc0bb1-b39c-70fb-a1aa-96641d21063b" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_UpgradeV15IsIdempotentAndDoesNotSendElapsedTriggers" computerName="TIM" duration="00:00:00.0010323" startTime="2026-10-26T03:50:17.6827418+03:00" endTime="2026-10-26T03:50:17.6827776+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b5435a6-0922-441e-a4bc-ccf8d08acd18" />
+    <UnitTestResult executionId="157b6b05-e155-498a-818e-af66d31791be" testId="e178b290-390b-6aeb-b9b3-b5fe4b9c71e5" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6806029+03:00" endTime="2026-10-26T03:50:17.6806184+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="157b6b05-e155-498a-818e-af66d31791be">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a7fe6b40-25b0-4054-976c-d06eccf43c20" testId="20919372-d78b-4964-233f-72218175949e" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6976634+03:00" endTime="2026-10-26T03:50:17.6978244+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a7fe6b40-25b0-4054-976c-d06eccf43c20">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5059ac8f-3375-4a6a-9592-1c1b3815ad70" testId="fc699688-bab4-02f1-ad25-89a23faf6fd2" testName="Task.Tests.PostgresProductApiTests.NotificationProjectionFailureRollsBackTaskEventAndNotificationTogether" computerName="TIM" duration="00:00:00.0008801" startTime="2026-10-26T03:50:17.6826110+03:00" endTime="2026-10-26T03:50:17.6826466+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5059ac8f-3375-4a6a-9592-1c1b3815ad70" />
+    <UnitTestResult executionId="226a7e48-bd8a-46f3-b91b-ecbf75f72713" testId="8f938141-26dc-2d4b-ba83-2287eaa8286e" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_MultipleAssigneesEachReceiveOneAndWatchersReceiveNone" computerName="TIM" duration="00:00:00.0007403" startTime="2026-10-26T03:50:17.6862207+03:00" endTime="2026-10-26T03:50:17.6862573+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="226a7e48-bd8a-46f3-b91b-ecbf75f72713" />
+    <UnitTestResult executionId="a852a7c0-5143-4b9e-921b-725da079d5d9" testId="0be4cce9-4412-f2dc-01b1-b541ca060f5a" testName="Task.Tests.PostgresProductApiTests.Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin" computerName="TIM" duration="00:00:00.0011524" startTime="2026-10-26T03:50:17.6711894+03:00" endTime="2026-10-26T03:50:17.6712208+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a852a7c0-5143-4b9e-921b-725da079d5d9" />
+    <UnitTestResult executionId="adbb84b9-1da1-4a29-b5d2-d5f35731d5c9" testId="0aef1af7-0673-97a9-e079-c7069e9c26c4" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_TaskWriteTransactionAndReplayDeliverThroughExistingWorker" computerName="TIM" duration="00:00:00.0012373" startTime="2026-10-26T03:50:17.6841320+03:00" endTime="2026-10-26T03:50:17.6841653+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adbb84b9-1da1-4a29-b5d2-d5f35731d5c9" />
+    <UnitTestResult executionId="8bf8870e-7284-4831-99ef-688eaa5712ca" testId="0ae02a34-7f1d-92c7-d7a7-75243bd7c42e" testName="Task.Tests.PostgresProductApiTests.FileLocationManager_RealDeviceScopeAndSensitiveRedaction" computerName="TIM" duration="00:00:00.0008505" startTime="2026-10-26T03:50:17.6828920+03:00" endTime="2026-10-26T03:50:17.6829284+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8bf8870e-7284-4831-99ef-688eaa5712ca" />
+    <UnitTestResult executionId="d619d602-93b2-4238-995a-ca75bcdeb7cc" testId="6733e9f1-3a1c-96d9-f209-3a9116f50de0" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;archived&quot;)" computerName="TIM" duration="00:00:00.0000081" startTime="2026-10-26T03:50:17.6682208+03:00" endTime="2026-10-26T03:50:17.6682670+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d619d602-93b2-4238-995a-ca75bcdeb7cc" />
+    <UnitTestResult executionId="5162f3f8-61b6-4f0f-9b92-3fba9f01ee71" testId="49c0b583-48a6-4752-35ca-032e51e1c2a2" testName="Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6775318+03:00" endTime="2026-10-26T03:50:17.6775564+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5162f3f8-61b6-4f0f-9b92-3fba9f01ee71">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2789eea2-fd16-4e16-a885-7635b8bb59d0" testId="3e5592da-2918-7672-8ae1-44ba0c7f1abb" testName="Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6716095+03:00" endTime="2026-10-26T03:50:17.6716223+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2789eea2-fd16-4e16-a885-7635b8bb59d0">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f231853b-658a-4e94-b4bf-65339410293d" testId="ba6a6e97-5f33-39b6-81d0-89061439fa6f" testName="Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6848869+03:00" endTime="2026-10-26T03:50:17.6848988+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f231853b-658a-4e94-b4bf-65339410293d">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aa6c47a1-cacc-4fd2-90a9-03a43808ebd7" testId="8342e3aa-c58d-fdbe-6300-816abd6bfe28" testName="Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6778819+03:00" endTime="2026-10-26T03:50:17.6778969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa6c47a1-cacc-4fd2-90a9-03a43808ebd7">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="88cf38a5-ed6b-48ef-be40-983b2a5b1f30" testId="8445e324-9b7a-f4ba-85a8-6db1b245c8de" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_ManualSameTimeDedupesDifferentTimeSurvivesAndCancelledOwnRuleStaysOff" computerName="TIM" duration="00:00:00.0010221" startTime="2026-10-26T03:50:17.6820166+03:00" endTime="2026-10-26T03:50:17.6820498+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88cf38a5-ed6b-48ef-be40-983b2a5b1f30" />
+    <UnitTestResult executionId="9f92927a-63d5-4db1-8563-06c138aec023" testId="2c2da898-ad70-ee76-08eb-c6ec9998a37e" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;trashed&quot;)" computerName="TIM" duration="00:00:00.0000015" startTime="2026-10-26T03:50:17.6683546+03:00" endTime="2026-10-26T03:50:17.6683907+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f92927a-63d5-4db1-8563-06c138aec023" />
+    <UnitTestResult executionId="83f75fc8-b8c4-4500-b852-dc86731fa8a7" testId="3bc32f57-ec8b-52ff-c3d2-9f43b6f840df" testName="Task.Tests.PostgresProductApiTests.ContextTaskCreation_TransactionalRoundTripAndStaleRelations" computerName="TIM" duration="00:00:00.0019731" startTime="2026-10-26T03:50:17.6808063+03:00" endTime="2026-10-26T03:50:17.6808431+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83f75fc8-b8c4-4500-b852-dc86731fa8a7" />
+    <UnitTestResult executionId="28f50441-a8a8-48a2-9011-15d8390de97a" testId="f133a7c8-4568-e12d-6782-9aedd08a91d1" testName="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_ReadWriteChildrenAndCompletion" computerName="TIM" duration="00:00:00.0080132" startTime="2026-10-26T03:50:17.5559825+03:00" endTime="2026-10-26T03:50:17.5796422+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28f50441-a8a8-48a2-9011-15d8390de97a" />
+    <UnitTestResult executionId="e2cfa3ac-8ce3-41a5-bd29-4214e19c6d11" testId="27936b9f-02c6-220b-826d-43d619198cdd" testName="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6810542+03:00" endTime="2026-10-26T03:50:17.6810691+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2cfa3ac-8ce3-41a5-bd29-4214e19c6d11">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9ec2a2e0-2180-4b86-9d64-84f739ac306a" testId="1a9a1200-5d66-487d-bf63-0253a20a2cc0" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CancelClaimedDeliveryAndRejectInactiveTargetOrInvalidSnooze" computerName="TIM" duration="00:00:00.0012839" startTime="2026-10-26T03:50:17.6844396+03:00" endTime="2026-10-26T03:50:17.6844750+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ec2a2e0-2180-4b86-9d64-84f739ac306a" />
+    <UnitTestResult executionId="6a5f9f02-326b-48a8-b953-3abcb1a10606" testId="3c40a0c6-ccdc-c7a0-46e7-0c0a54d400ce" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_ChangedDeadlineOrAssigneesCancelsClaimedOccurrence" computerName="TIM" duration="00:00:00.0013122" startTime="2026-10-26T03:50:17.6809318+03:00" endTime="2026-10-26T03:50:17.6809689+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a5f9f02-326b-48a8-b953-3abcb1a10606" />
+    <UnitTestResult executionId="7f943d05-c63e-42f1-9345-be49caefd32e" testId="d83e3605-8b06-549b-a34b-18bb39ba21aa" testName="Task.Tests.PostgresProductApiTests.Authorization_RoleAssignmentIsVersionedAuditedAndCannotRemoveLastAdmin" computerName="TIM" duration="00:00:00.0016627" startTime="2026-10-26T03:50:17.6712989+03:00" endTime="2026-10-26T03:50:17.6713321+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f943d05-c63e-42f1-9345-be49caefd32e" />
+    <UnitTestResult executionId="e3c3571a-d53d-49d2-8694-7c87949f3690" testId="076e28d8-f409-5cfc-6f8b-92d6cc63c65d" testName="Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6856211+03:00" endTime="2026-10-26T03:50:17.6856394+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e3c3571a-d53d-49d2-8694-7c87949f3690">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b27ea013-ce98-455f-b77c-181efb208196" testId="04a3d23c-76fb-2807-533f-75faf6a979a5" testName="Task.Tests.PostgresProductApiTests.CorporateTaskAssignmentCommentCompletionAndProjectInvitationProduceAuthorizedDurableNotifications" computerName="TIM" duration="00:00:00.0134206" startTime="2026-10-26T03:50:17.6746630+03:00" endTime="2026-10-26T03:50:17.6747203+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b27ea013-ce98-455f-b77c-181efb208196" />
+    <UnitTestResult executionId="9b6168e1-87c5-466b-a5ae-6ffc7e94584e" testId="e60a9656-3862-178e-1e81-d646003610db" testName="Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" computerName="TIM" duration="00:00:00.0015978" startTime="2026-10-26T03:50:17.6874336+03:00" endTime="2026-10-26T03:50:17.6874734+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b6168e1-87c5-466b-a5ae-6ffc7e94584e" />
+    <UnitTestResult executionId="822dee84-2a41-48ba-8dbf-57e31ec338e3" testId="8765fe7e-d276-ad14-2af2-bcc7f7fdb1aa" testName="Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6982328+03:00" endTime="2026-10-26T03:50:17.6982536+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="822dee84-2a41-48ba-8dbf-57e31ec338e3">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="06bd0157-dd8e-434c-a097-329ef3faac37" testId="7c88553d-7045-2815-8f66-7fd784cf162f" testName="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;at_start&quot;)" computerName="TIM" duration="00:00:00.0000012" startTime="2026-10-26T03:50:17.6705518+03:00" endTime="2026-10-26T03:50:17.6705859+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06bd0157-dd8e-434c-a097-329ef3faac37" />
+    <UnitTestResult executionId="2462ec8f-0625-4763-99fd-6eeda1a8f54c" testId="f56ec44c-3bd2-5500-8382-da0516573118" testName="Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety" computerName="TIM" duration="00:00:00.0012446" startTime="2026-10-26T03:50:17.6710718+03:00" endTime="2026-10-26T03:50:17.6711071+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2462ec8f-0625-4763-99fd-6eeda1a8f54c" />
+    <UnitTestResult executionId="be3e0f80-b2aa-498b-b21a-d067ebf4346a" testId="2e43f9a4-f686-3684-aea3-8858d6094c8c" testName="Task.Tests.PostgresProductApiTests.ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe" computerName="TIM" duration="00:00:00.0029768" startTime="2026-10-26T03:50:17.6087727+03:00" endTime="2026-10-26T03:50:17.6088120+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be3e0f80-b2aa-498b-b21a-d067ebf4346a" />
+    <UnitTestResult executionId="6094a51c-7a4d-4564-8690-829dcc95e164" testId="9a92c938-9253-c1f9-6a4f-474fe01c26d6" testName="Task.Tests.PostgresProductApiTests.ProductApi_SettingsNotificationsAndDiscovery" computerName="TIM" duration="00:00:00.0019515" startTime="2026-10-26T03:50:17.6789734+03:00" endTime="2026-10-26T03:50:17.6791514+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6094a51c-7a4d-4564-8690-829dcc95e164" />
+    <UnitTestResult executionId="b5fc824c-9fa5-4a12-8b82-6c4325c08cd4" testId="482024b6-f7bf-eabc-64cd-5af7a46fa658" testName="Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6707947+03:00" endTime="2026-10-26T03:50:17.6708088+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5fc824c-9fa5-4a12-8b82-6c4325c08cd4">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="075501b3-6e53-4ce1-9940-bc6099229724" testId="09e05421-0f77-e4e5-596a-69cf9299cb3f" testName="Task.Tests.PostgresProductApiTests.SimilarTaskOptions_UseEffectiveCreatePermissionAndActiveRelations" computerName="TIM" duration="00:00:00.0006455" startTime="2026-10-26T03:50:17.6858079+03:00" endTime="2026-10-26T03:50:17.6858437+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="075501b3-6e53-4ce1-9940-bc6099229724" />
+    <UnitTestResult executionId="1887653d-d228-481c-810a-805e4d3bd546" testId="bb8e0645-fdce-d273-a24d-c4f95d948e4d" testName="Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6860421+03:00" endTime="2026-10-26T03:50:17.6860550+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1887653d-d228-481c-810a-805e4d3bd546">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="da0590ad-f88e-41c5-a010-5f5b50f234eb" testId="195d9523-ce01-af17-1bb5-f8680779cfc2" testName="Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6842442+03:00" endTime="2026-10-26T03:50:17.6842566+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da0590ad-f88e-41c5-a010-5f5b50f234eb">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f4eadf01-c8f4-4c74-95ae-1466bca2f825" testId="72ee97ee-9e47-b3ba-699a-5acab411930d" testName="Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6863373+03:00" endTime="2026-10-26T03:50:17.6863500+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4eadf01-c8f4-4c74-95ae-1466bca2f825">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="052ad405-666c-4326-85df-06ae9b7aa33e" testId="1d5eb056-13fe-0157-8c15-87f4d9c520a0" testName="Task.Tests.PostgresProductApiTests.Authorization_RevokedCapabilityCannotUseAnOldRequestSnapshot" computerName="TIM" duration="00:00:00.0004051" startTime="2026-10-26T03:50:17.6794585+03:00" endTime="2026-10-26T03:50:17.6795041+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="052ad405-666c-4326-85df-06ae9b7aa33e" />
+    <UnitTestResult executionId="4e03aed3-5039-4238-b877-b22f4f468112" testId="97393cf2-be19-3ef9-14e6-25ce057c03c4" testName="Task.Tests.PostgresProductApiTests.FileLocationManager_RealAggregateVersionsPatchPrimaryAndDeleteLast" computerName="TIM" duration="00:00:00.0009959" startTime="2026-10-26T03:50:17.6859295+03:00" endTime="2026-10-26T03:50:17.6859641+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e03aed3-5039-4238-b877-b22f4f468112" />
+    <UnitTestResult executionId="a0808b22-4aa6-4dc9-8bd7-d6973a5132b2" testId="8069d5aa-62c4-b4ca-c550-419120e2b36f" testName="Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert" computerName="TIM" duration="00:00:00.0010000" startTime="2026-10-26T03:50:17.6824507+03:00" endTime="2026-10-26T03:50:17.6824640+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a0808b22-4aa6-4dc9-8bd7-d6973a5132b2">
+      <Output>
+        <ErrorInfo>
+          <Message>Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.</Message>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="95a3145d-abdd-49e1-8217-3b1ccb616373" testId="cc633544-360a-134d-e2cf-5bde9dc77165" testName="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;cancelled&quot;)" computerName="TIM" duration="00:00:00.0002185" startTime="2026-10-26T03:50:17.6677772+03:00" endTime="2026-10-26T03:50:17.6678503+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95a3145d-abdd-49e1-8217-3b1ccb616373" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_TaskWriteTransactionAndReplayDeliverThroughExistingWorker" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0aef1af7-0673-97a9-e079-c7069e9c26c4">
+      <Execution id="adbb84b9-1da1-4a29-b5d2-d5f35731d5c9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_TaskWriteTransactionAndReplayDeliverThroughExistingWorker" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.FileLocationManager_RealDeviceScopeAndSensitiveRedaction" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0ae02a34-7f1d-92c7-d7a7-75243bd7c42e">
+      <Execution id="8bf8870e-7284-4831-99ef-688eaa5712ca" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="FileLocationManager_RealDeviceScopeAndSensitiveRedaction" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="bb8e0645-fdce-d273-a24d-c4f95d948e4d">
+      <Execution id="1887653d-d228-481c-810a-805e4d3bd546" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="49c0b583-48a6-4752-35ca-032e51e1c2a2">
+      <Execution id="5162f3f8-61b6-4f0f-9b92-3fba9f01ee71" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="27936b9f-02c6-220b-826d-43d619198cdd">
+      <Execution id="e2cfa3ac-8ce3-41a5-bd29-4214e19c6d11" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="bc2a3143-6b43-fd90-785a-087109571b8f">
+      <Execution id="50400998-2a89-4252-b684-0c1a489d473c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CanonicalDtoRuntimePermissionRevocationAndTransactionalRollback" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="b825f584-e450-d85f-b571-694b32515909">
+      <Execution id="50481d7e-b505-4191-bab2-6bf303940aa1" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CanonicalDtoRuntimePermissionRevocationAndTransactionalRollback" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="d24e726d-4c51-d7cf-106f-3975ce0bf58e">
+      <Execution id="4a4bf5c9-8f03-4cc7-8e40-af17f688537f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="bb4ffc85-9be7-b842-52a5-0b3ff4c630fd">
+      <Execution id="acab5b5e-369e-4317-a08d-9d0db637f7a8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_UpgradeV15IsIdempotentAndDoesNotSendElapsedTriggers" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="a0bc0bb1-b39c-70fb-a1aa-96641d21063b">
+      <Execution id="6b5435a6-0922-441e-a4bc-ccf8d08acd18" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_UpgradeV15IsIdempotentAndDoesNotSendElapsedTriggers" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.SimilarSource_ArchiveAndTrashRespectExistingReadBoundary(trash: False)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="e46a5d22-378a-9edd-54c7-8fea30d5a959">
+      <Execution id="a68eae68-3df1-4ecb-90f1-170bc277ed0e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="SimilarSource_ArchiveAndTrashRespectExistingReadBoundary" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_DateOnlyAndDstUseExplicitZoneWithoutInventingDeadline" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="01d6aecf-63e5-43e6-dce1-486be8344556">
+      <Execution id="5f5b0fd5-5f6c-40ad-9e5c-d8c88c5d5d3e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_DateOnlyAndDstUseExplicitZoneWithoutInventingDeadline" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;at_deadline&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="b0fbccbc-f1ef-c042-6d0c-0a6eb54887ce">
+      <Execution id="f9fc4564-e28c-4a6d-8c67-11c037936d0b" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="e60a9656-3862-178e-1e81-d646003610db">
+      <Execution id="9b6168e1-87c5-466b-a5ae-6ffc7e94584e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_ProjectsCrmCatalogLifecycleAndIdempotency" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="20919372-d78b-4964-233f-72218175949e">
+      <Execution id="a7fe6b40-25b0-4054-976c-d06eccf43c20" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Postgres_PermissionAndObjectScope" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;trashed&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="2c2da898-ad70-ee76-08eb-c6ec9998a37e">
+      <Execution id="9f92927a-63d5-4db1-8563-06c138aec023" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.FileLocationManager_RealAggregateVersionsPatchPrimaryAndDeleteLast" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="97393cf2-be19-3ef9-14e6-25ce057c03c4">
+      <Execution id="4e03aed3-5039-4238-b877-b22f4f468112" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="FileLocationManager_RealAggregateVersionsPatchPrimaryAndDeleteLast" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="482024b6-f7bf-eabc-64cd-5af7a46fa658">
+      <Execution id="b5fc824c-9fa5-4a12-8b82-6c4325c08cd4" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="e178b290-390b-6aeb-b9b3-b5fe4b9c71e5">
+      <Execution id="157b6b05-e155-498a-818e-af66d31791be" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_RoleAssignmentIsVersionedAuditedAndCannotRemoveLastAdmin" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="d83e3605-8b06-549b-a34b-18bb39ba21aa">
+      <Execution id="7f943d05-c63e-42f1-9345-be49caefd32e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_RoleAssignmentIsVersionedAuditedAndCannotRemoveLastAdmin" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.FileLocationManager_RealUncValidationResourceVisibilityAndLocalSettings" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="1092501f-4ffb-2065-6909-bad2dc5294f0">
+      <Execution id="326cf265-ede7-40c5-8119-2e35461a234e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="FileLocationManager_RealUncValidationResourceVisibilityAndLocalSettings" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.NotificationProjectionFailureRollsBackTaskEventAndNotificationTogether" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="fc699688-bab4-02f1-ad25-89a23faf6fd2">
+      <Execution id="5059ac8f-3375-4a6a-9592-1c1b3815ad70" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="NotificationProjectionFailureRollsBackTaskEventAndNotificationTogether" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="076e28d8-f409-5cfc-6f8b-92d6cc63c65d">
+      <Execution id="e3c3571a-d53d-49d2-8694-7c87949f3690" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="LinkTargetsAndGlobalSearchCannotShareCursors" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="14d4a183-9d66-168a-d1be-75e7a5db83b8">
+      <Execution id="974f02e2-2604-4e06-8e7a-8f09b2af25bd" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Administration_InvalidRoleReplacementRollsBackAllAssignments" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CancelClaimedDeliveryAndRejectInactiveTargetOrInvalidSnooze" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="1a9a1200-5d66-487d-bf63-0253a20a2cc0">
+      <Execution id="9ec2a2e0-2180-4b86-9d64-84f739ac306a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CancelClaimedDeliveryAndRejectInactiveTargetOrInvalidSnooze" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8765fe7e-d276-ad14-2af2-bcc7f7fdb1aa">
+      <Execution id="822dee84-2a41-48ba-8dbf-57e31ec338e3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0127c779-5619-2cda-8ed8-626d31432b31">
+      <Execution id="ef21099f-4a12-4b50-bf00-6cc210d26fb5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_SettingsNotificationsAndDiscovery" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="9a92c938-9253-c1f9-6a4f-474fe01c26d6">
+      <Execution id="6094a51c-7a4d-4564-8690-829dcc95e164" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_SettingsNotificationsAndDiscovery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;completed&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="61d0b749-c4ff-4d58-8dc8-84e6ead59711">
+      <Execution id="c2c0514a-4945-416f-b930-c5c877d36550" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8069d5aa-62c4-b4ca-c550-419120e2b36f">
+      <Execution id="a0808b22-4aa6-4dc9-8bd7-d6973a5132b2" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_DepartmentAndExpiryDoNotBecomeGlobalPermanentGrants" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="d84143cf-a248-362e-63dd-7a03f3265d98">
+      <Execution id="2cb78a15-45f1-4514-be41-11c6a6a1c38d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_DepartmentAndExpiryDoNotBecomeGlobalPermanentGrants" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="90eb24c0-0db4-269b-1cd8-9649ca6fd5f2">
+      <Execution id="cc1dba1d-428a-4f2b-ae8d-2da0336d9fe5" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Interactions_CreateReplayPatchCasAndParticipantsRoundTrip" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;cancelled&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="cc633544-360a-134d-e2cf-5bde9dc77165">
+      <Execution id="95a3145d-abdd-49e1-8217-3b1ccb616373" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_ConcurrentManualCollisionAndRestoreDoNotRepeatDelivery" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="5b02944e-1815-2874-8349-82cb73a27d0d">
+      <Execution id="8f70d061-6bf1-4b8b-861e-aed124d3f34c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_ConcurrentManualCollisionAndRestoreDoNotRepeatDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="20fc59eb-08a4-24f4-6e43-578a2dbc1632">
+      <Execution id="5c39cd2d-d8d0-4070-aab5-d5900a53b212" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskCard_RealPostgres_ReadWriteChildrenAndCompletion" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="f133a7c8-4568-e12d-6782-9aedd08a91d1">
+      <Execution id="28f50441-a8a8-48a2-9011-15d8390de97a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskCard_RealPostgres_ReadWriteChildrenAndCompletion" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="2e43f9a4-f686-3684-aea3-8858d6094c8c">
+      <Execution id="be3e0f80-b2aa-498b-b21a-d067ebf4346a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_ConcurrentWritesAndSearchSnapshotsAreSafe" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_PatchCancelRestoreConcurrencyAndOccurrenceHistory" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8b624838-c41e-4068-d0c7-297a37f77172">
+      <Execution id="45db6021-d05c-4643-8415-5212cdb2abfa" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_PatchCancelRestoreConcurrencyAndOccurrenceHistory" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0be4cce9-4412-f2dc-01b1-b541ca060f5a">
+      <Execution id="a852a7c0-5143-4b9e-921b-725da079d5d9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_ProjectSharingRevocationAndDenyWinForOwnerAndAdmin" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_MultipleAssigneesEachReceiveOneAndWatchersReceiveNone" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8f938141-26dc-2d4b-ba83-2287eaa8286e">
+      <Execution id="226a7e48-bd8a-46f3-b91b-ecbf75f72713" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_MultipleAssigneesEachReceiveOneAndWatchersReceiveNone" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;denied&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="cd6bb762-1a25-2354-176d-f674aec78db9">
+      <Execution id="11e1a2a3-7261-453b-ac7b-3e9eb9022150" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;blocked&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="d66d69ef-153e-6009-2a68-a01608d08988">
+      <Execution id="ccc5221e-81a7-427b-ada9-e3dd391cf519" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="6e6a9e49-f927-31d7-4500-750d5bec4fff">
+      <Execution id="c02de3c3-f9af-41ac-b680-f27426b1c593" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="3e5592da-2918-7672-8ae1-44ba0c7f1abb">
+      <Execution id="2789eea2-fd16-4e16-a885-7635b8bb59d0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProjectHistory_CurrentContractPagingVisibilityAndPermissions" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;before_deadline&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="30068bd1-78eb-81cf-537a-7e628d103d11">
+      <Execution id="ed2f1a50-8903-4cff-8cbd-15b83422c3b0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="3a30148e-0926-ec9f-9278-9a6851db6cb4">
+      <Execution id="f1800767-447a-40a0-acda-bc36b6f0c5c0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Inbox_ConcurrentReplayCreatesExactlyOneTask" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_SystemRolesHaveExplicitMatrixAndDenyWins" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="a09acf15-59f4-f8b1-3e49-8d7c73f5c762">
+      <Execution id="b4a3013c-0b7b-4b21-be68-1f9cff2a7fb7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_SystemRolesHaveExplicitMatrixAndDenyWins" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_MembershipAndFilePathSafety" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="f56ec44c-3bd2-5500-8382-da0516573118">
+      <Execution id="2462ec8f-0625-4763-99fd-6eeda1a8f54c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_MembershipAndFilePathSafety" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="bdd47cbd-8a3d-8aef-cc0c-2c249404c57f">
+      <Execution id="7332e6cd-291a-479f-86b6-2a1e77e975e3" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskCard_TransactionalValidationRejectsInvalidRelationsAndUnauthorizedProjectDetach" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.CorporateTaskAssignmentCommentCompletionAndProjectInvitationProduceAuthorizedDurableNotifications" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="04a3d23c-76fb-2807-533f-75faf6a979a5">
+      <Execution id="b27ea013-ce98-455f-b77c-181efb208196" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="CorporateTaskAssignmentCommentCompletionAndProjectInvitationProduceAuthorizedDurableNotifications" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_ChangedDeadlineOrAssigneesCancelsClaimedOccurrence" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="3c40a0c6-ccdc-c7a0-46e7-0c0a54d400ce">
+      <Execution id="6a5f9f02-326b-48a8-b953-3abcb1a10606" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_ChangedDeadlineOrAssigneesCancelsClaimedOccurrence" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_ManualSameTimeDedupesDifferentTimeSurvivesAndCancelledOwnRuleStaysOff" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8445e324-9b7a-f4ba-85a8-6db1b245c8de">
+      <Execution id="88cf38a5-ed6b-48ef-be40-983b2a5b1f30" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_ManualSameTimeDedupesDifferentTimeSurvivesAndCancelledOwnRuleStaysOff" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;before_start&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8766a3a7-d8af-45f3-b458-b3a7b1fb7f3d">
+      <Execution id="2f4588e3-1d91-4b4e-8dbd-bca35abe8ffa" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProjectComments_RuntimeContractIsMissingDespiteGenericNormativeCommentModel" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0eebe8f3-f970-e50b-ee58-f40048f04f5c">
+      <Execution id="8bbebe19-3963-4311-a5b5-0f6b9b14d750" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProjectComments_RuntimeContractIsMissingDespiteGenericNormativeCommentModel" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="72ee97ee-9e47-b3ba-699a-5acab411930d">
+      <Execution id="f4eadf01-c8f4-4c74-95ae-1466bca2f825" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ExistingLinksPageThroughAllFourHundredFiftyOneRows" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.SimilarSource_ArchiveAndTrashRespectExistingReadBoundary(trash: True)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="c0dbdb67-ea42-b606-e657-d407dda542f5">
+      <Execution id="2a8cfff0-6d5a-481c-ae72-cb68d3be1234" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="SimilarSource_ArchiveAndTrashRespectExistingReadBoundary" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_DefaultSnapshotsExplicitOffAndPrivateRecipientsAreIsolated" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="34c5f941-7549-cd82-434e-8cd60840f821">
+      <Execution id="de000e70-8062-4878-8501-bf9c00857a13" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_DefaultSnapshotsExplicitOffAndPrivateRecipientsAreIsolated" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="f33c76b8-e189-57c5-6333-0e0714b44892">
+      <Execution id="00b99749-172d-4fca-9d07-2b5a3223393f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="37b18c6f-3143-ccc7-1819-54003fac4afa">
+      <Execution id="ab951ff0-d23e-4d02-906e-39fba55143d2" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.SimilarTaskOptions_UseEffectiveCreatePermissionAndActiveRelations" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="09e05421-0f77-e4e5-596a-69cf9299cb3f">
+      <Execution id="075501b3-6e53-4ce1-9940-bc6099229724" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="SimilarTaskOptions_UseEffectiveCreatePermissionAndActiveRelations" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="ba6a6e97-5f33-39b6-81d0-89061439fa6f">
+      <Execution id="f231853b-658a-4e94-b4bf-65339410293d" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_CompanyContactUnlinkRequiresVisibleContact" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_PrivateObjectsStayHiddenAcrossEveryProjection" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="cf513b2c-a5e6-2683-35f2-c1b2b9aaf381">
+      <Execution id="afcc8d59-1473-47a1-9b08-57d336c5ff60" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_PrivateObjectsStayHiddenAcrossEveryProjection" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_PersonalTasksCalendarAndRecurrenceArePrivate" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="24120f81-50e5-6a43-5a24-1c9111e7fc1e">
+      <Execution id="ac9c0096-4ca9-4593-8137-fe54381f7e4f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_PersonalTasksCalendarAndRecurrenceArePrivate" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="a46311df-7996-e78d-a245-23b6fc800f63">
+      <Execution id="773a82ad-80a4-477a-860d-eaff3b075af9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ProductApi_LinksInteractionsAndFileChecksRoundTrip" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="0881d3ff-4d9b-71c6-0f90-5a52706880e9">
+      <Execution id="a3c464ee-4068-4ec4-ac61-8f7024a8ca4e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ProductApi_LinksInteractionsAndFileChecksRoundTrip" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;at_start&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="7c88553d-7045-2815-8f66-7fd784cf162f">
+      <Execution id="06bd0157-dd8e-434c-a097-329ef3faac37" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;archived&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="6733e9f1-3a1c-96d9-f209-3a9116f50de0">
+      <Execution id="d619d602-93b2-4238-995a-ca75bcdeb7cc" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="8342e3aa-c58d-fdbe-6300-816abd6bfe28">
+      <Execution id="aa6c47a1-cacc-4fd2-90a9-03a43808ebd7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="195d9523-ce01-af17-1bb5-f8680779cfc2">
+      <Execution id="da0590ad-f88e-41c5-a010-5f5b50f234eb" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="History_CanonicalMetadataAndLegacyClientFields" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates(trigger: &quot;absolute&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="9802e390-e786-edd4-9ced-4e2aaa4bd51b">
+      <Execution id="9cfa2def-9bf6-47da-8c81-369e1a5a2df6" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_CreateAllTriggersPersistDefaultAndReplayWithoutDuplicates" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery(state: &quot;removed&quot;)" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="878673cb-6e43-8ed2-016a-b72ef5c9eef7">
+      <Execution id="7139623f-47bc-43f7-9f8d-666438ace06f" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="AutomaticDeadline_LifecycleRightsAndAccountChangesPreventStaleDelivery" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ContextTaskCreation_TransactionalRoundTripAndStaleRelations" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="3bc32f57-ec8b-52ff-c3d2-9f43b6f840df">
+      <Execution id="83f75fc8-b8c4-4500-b852-dc86731fa8a7" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ContextTaskCreation_TransactionalRoundTripAndStaleRelations" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.Authorization_RevokedCapabilityCannotUseAnOldRequestSnapshot" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="1d5eb056-13fe-0157-8c15-87f4d9c520a0">
+      <Execution id="052ad405-666c-4326-85df-06ae9b7aa33e" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="Authorization_RevokedCapabilityCannotUseAnOldRequestSnapshot" />
+    </UnitTest>
+    <UnitTest name="Task.Tests.PostgresProductApiTests.ReminderCommands_DeliverSnoozeReplayDismissAndRetainDeliveryHistory" storage="c:\users\novik\таск\work\pr13_pr14_review_20261026\repo\work\production\tests\task.tests\bin\release\net10.0\task.tests.dll" id="95d0624f-fb31-4ac0-2568-d075ea3a7f7b">
+      <Execution id="0986d346-510d-49d5-bdf5-807022351904" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr13_pr14_review_20261026\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Tests.PostgresProductApiTests" name="ReminderCommands_DeliverSnoozeReplayDismissAndRetainDeliveryHistory" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f33c76b8-e189-57c5-6333-0e0714b44892" executionId="00b99749-172d-4fca-9d07-2b5a3223393f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bb4ffc85-9be7-b842-52a5-0b3ff4c630fd" executionId="acab5b5e-369e-4317-a08d-9d0db637f7a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="878673cb-6e43-8ed2-016a-b72ef5c9eef7" executionId="7139623f-47bc-43f7-9f8d-666438ace06f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9802e390-e786-edd4-9ced-4e2aaa4bd51b" executionId="9cfa2def-9bf6-47da-8c81-369e1a5a2df6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e46a5d22-378a-9edd-54c7-8fea30d5a959" executionId="a68eae68-3df1-4ecb-90f1-170bc277ed0e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14d4a183-9d66-168a-d1be-75e7a5db83b8" executionId="974f02e2-2604-4e06-8e7a-8f09b2af25bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b825f584-e450-d85f-b571-694b32515909" executionId="50481d7e-b505-4191-bab2-6bf303940aa1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="30068bd1-78eb-81cf-537a-7e628d103d11" executionId="ed2f1a50-8903-4cff-8cbd-15b83422c3b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd6bb762-1a25-2354-176d-f674aec78db9" executionId="11e1a2a3-7261-453b-ac7b-3e9eb9022150" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b624838-c41e-4068-d0c7-297a37f77172" executionId="45db6021-d05c-4643-8415-5212cdb2abfa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b02944e-1815-2874-8349-82cb73a27d0d" executionId="8f70d061-6bf1-4b8b-861e-aed124d3f34c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90eb24c0-0db4-269b-1cd8-9649ca6fd5f2" executionId="cc1dba1d-428a-4f2b-ae8d-2da0336d9fe5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8766a3a7-d8af-45f3-b458-b3a7b1fb7f3d" executionId="2f4588e3-1d91-4b4e-8dbd-bca35abe8ffa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34c5f941-7549-cd82-434e-8cd60840f821" executionId="de000e70-8062-4878-8501-bf9c00857a13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95d0624f-fb31-4ac0-2568-d075ea3a7f7b" executionId="0986d346-510d-49d5-bdf5-807022351904" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1092501f-4ffb-2065-6909-bad2dc5294f0" executionId="326cf265-ede7-40c5-8119-2e35461a234e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c0dbdb67-ea42-b606-e657-d407dda542f5" executionId="2a8cfff0-6d5a-481c-ae72-cb68d3be1234" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc2a3143-6b43-fd90-785a-087109571b8f" executionId="50400998-2a89-4252-b684-0c1a489d473c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="61d0b749-c4ff-4d58-8dc8-84e6ead59711" executionId="c2c0514a-4945-416f-b930-c5c877d36550" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e6a9e49-f927-31d7-4500-750d5bec4fff" executionId="c02de3c3-f9af-41ac-b680-f27426b1c593" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a46311df-7996-e78d-a245-23b6fc800f63" executionId="773a82ad-80a4-477a-860d-eaff3b075af9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0fbccbc-f1ef-c042-6d0c-0a6eb54887ce" executionId="f9fc4564-e28c-4a6d-8c67-11c037936d0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="37b18c6f-3143-ccc7-1819-54003fac4afa" executionId="ab951ff0-d23e-4d02-906e-39fba55143d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0eebe8f3-f970-e50b-ee58-f40048f04f5c" executionId="8bbebe19-3963-4311-a5b5-0f6b9b14d750" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01d6aecf-63e5-43e6-dce1-486be8344556" executionId="5f5b0fd5-5f6c-40ad-9e5c-d8c88c5d5d3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bdd47cbd-8a3d-8aef-cc0c-2c249404c57f" executionId="7332e6cd-291a-479f-86b6-2a1e77e975e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf513b2c-a5e6-2683-35f2-c1b2b9aaf381" executionId="afcc8d59-1473-47a1-9b08-57d336c5ff60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0127c779-5619-2cda-8ed8-626d31432b31" executionId="ef21099f-4a12-4b50-bf00-6cc210d26fb5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d66d69ef-153e-6009-2a68-a01608d08988" executionId="ccc5221e-81a7-427b-ada9-e3dd391cf519" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="24120f81-50e5-6a43-5a24-1c9111e7fc1e" executionId="ac9c0096-4ca9-4593-8137-fe54381f7e4f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20fc59eb-08a4-24f4-6e43-578a2dbc1632" executionId="5c39cd2d-d8d0-4070-aab5-d5900a53b212" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d24e726d-4c51-d7cf-106f-3975ce0bf58e" executionId="4a4bf5c9-8f03-4cc7-8e40-af17f688537f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a30148e-0926-ec9f-9278-9a6851db6cb4" executionId="f1800767-447a-40a0-acda-bc36b6f0c5c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d84143cf-a248-362e-63dd-7a03f3265d98" executionId="2cb78a15-45f1-4514-be41-11c6a6a1c38d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a09acf15-59f4-f8b1-3e49-8d7c73f5c762" executionId="b4a3013c-0b7b-4b21-be68-1f9cff2a7fb7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0881d3ff-4d9b-71c6-0f90-5a52706880e9" executionId="a3c464ee-4068-4ec4-ac61-8f7024a8ca4e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0bc0bb1-b39c-70fb-a1aa-96641d21063b" executionId="6b5435a6-0922-441e-a4bc-ccf8d08acd18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e178b290-390b-6aeb-b9b3-b5fe4b9c71e5" executionId="157b6b05-e155-498a-818e-af66d31791be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20919372-d78b-4964-233f-72218175949e" executionId="a7fe6b40-25b0-4054-976c-d06eccf43c20" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc699688-bab4-02f1-ad25-89a23faf6fd2" executionId="5059ac8f-3375-4a6a-9592-1c1b3815ad70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f938141-26dc-2d4b-ba83-2287eaa8286e" executionId="226a7e48-bd8a-46f3-b91b-ecbf75f72713" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0be4cce9-4412-f2dc-01b1-b541ca060f5a" executionId="a852a7c0-5143-4b9e-921b-725da079d5d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0aef1af7-0673-97a9-e079-c7069e9c26c4" executionId="adbb84b9-1da1-4a29-b5d2-d5f35731d5c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0ae02a34-7f1d-92c7-d7a7-75243bd7c42e" executionId="8bf8870e-7284-4831-99ef-688eaa5712ca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6733e9f1-3a1c-96d9-f209-3a9116f50de0" executionId="d619d602-93b2-4238-995a-ca75bcdeb7cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49c0b583-48a6-4752-35ca-032e51e1c2a2" executionId="5162f3f8-61b6-4f0f-9b92-3fba9f01ee71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3e5592da-2918-7672-8ae1-44ba0c7f1abb" executionId="2789eea2-fd16-4e16-a885-7635b8bb59d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba6a6e97-5f33-39b6-81d0-89061439fa6f" executionId="f231853b-658a-4e94-b4bf-65339410293d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8342e3aa-c58d-fdbe-6300-816abd6bfe28" executionId="aa6c47a1-cacc-4fd2-90a9-03a43808ebd7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8445e324-9b7a-f4ba-85a8-6db1b245c8de" executionId="88cf38a5-ed6b-48ef-be40-983b2a5b1f30" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c2da898-ad70-ee76-08eb-c6ec9998a37e" executionId="9f92927a-63d5-4db1-8563-06c138aec023" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3bc32f57-ec8b-52ff-c3d2-9f43b6f840df" executionId="83f75fc8-b8c4-4500-b852-dc86731fa8a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f133a7c8-4568-e12d-6782-9aedd08a91d1" executionId="28f50441-a8a8-48a2-9011-15d8390de97a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27936b9f-02c6-220b-826d-43d619198cdd" executionId="e2cfa3ac-8ce3-41a5-bd29-4214e19c6d11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a9a1200-5d66-487d-bf63-0253a20a2cc0" executionId="9ec2a2e0-2180-4b86-9d64-84f739ac306a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c40a0c6-ccdc-c7a0-46e7-0c0a54d400ce" executionId="6a5f9f02-326b-48a8-b953-3abcb1a10606" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d83e3605-8b06-549b-a34b-18bb39ba21aa" executionId="7f943d05-c63e-42f1-9345-be49caefd32e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="076e28d8-f409-5cfc-6f8b-92d6cc63c65d" executionId="e3c3571a-d53d-49d2-8694-7c87949f3690" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04a3d23c-76fb-2807-533f-75faf6a979a5" executionId="b27ea013-ce98-455f-b77c-181efb208196" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e60a9656-3862-178e-1e81-d646003610db" executionId="9b6168e1-87c5-466b-a5ae-6ffc7e94584e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8765fe7e-d276-ad14-2af2-bcc7f7fdb1aa" executionId="822dee84-2a41-48ba-8dbf-57e31ec338e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c88553d-7045-2815-8f66-7fd784cf162f" executionId="06bd0157-dd8e-434c-a097-329ef3faac37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f56ec44c-3bd2-5500-8382-da0516573118" executionId="2462ec8f-0625-4763-99fd-6eeda1a8f54c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e43f9a4-f686-3684-aea3-8858d6094c8c" executionId="be3e0f80-b2aa-498b-b21a-d067ebf4346a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a92c938-9253-c1f9-6a4f-474fe01c26d6" executionId="6094a51c-7a4d-4564-8690-829dcc95e164" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="482024b6-f7bf-eabc-64cd-5af7a46fa658" executionId="b5fc824c-9fa5-4a12-8b82-6c4325c08cd4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09e05421-0f77-e4e5-596a-69cf9299cb3f" executionId="075501b3-6e53-4ce1-9940-bc6099229724" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bb8e0645-fdce-d273-a24d-c4f95d948e4d" executionId="1887653d-d228-481c-810a-805e4d3bd546" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="195d9523-ce01-af17-1bb5-f8680779cfc2" executionId="da0590ad-f88e-41c5-a010-5f5b50f234eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72ee97ee-9e47-b3ba-699a-5acab411930d" executionId="f4eadf01-c8f4-4c74-95ae-1466bca2f825" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d5eb056-13fe-0157-8c15-87f4d9c520a0" executionId="052ad405-666c-4326-85df-06ae9b7aa33e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97393cf2-be19-3ef9-14e6-25ce057c03c4" executionId="4e03aed3-5039-4238-b877-b22f4f468112" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8069d5aa-62c4-b4ca-c550-419120e2b36f" executionId="a0808b22-4aa6-4dc9-8bd7-d6973a5132b2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc633544-360a-134d-e2cf-5bde9dc77165" executionId="95a3145d-abdd-49e1-8217-3b1ccb616373" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="74" executed="48" passed="48" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.22]   Discovering: Task.Tests&#xD;
+[xUnit.net 00:00:00.90]   Discovered:  Task.Tests&#xD;
+[xUnit.net 00:00:00.94]   Starting:    Task.Tests&#xD;
+[xUnit.net 00:00:01.02]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.02]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.09]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ProjectComments_RuntimeContractIsMissingDespiteGenericNormativeCommentModel" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.10]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask" пропущен в тестовом запуске.&#xD;
+[xUnit.net 00:00:01.11]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL role gate.&#xD;
+[xUnit.net 00:00:01.11]       Set TASK_POSTGRES_TEST_ADMIN_CONNECTION to execute the real PostgreSQL create gate.&#xD;
+[xUnit.net 00:00:01.12]   Finished:    Task.Tests&#xD;
+Тест "Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope" пропущен в тестовом запуске.&#xD;
+Тест "Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions" пропущен в тестовом запуске.&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.6059326+03:00">
+        <Text>[xUnit.net 00:00:01.02]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.6134476+03:00">
+        <Text>[xUnit.net 00:00:01.02]     Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9104024+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9104449+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9104649+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9108460+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9108629+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9108786+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9109023+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9109243+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9113046+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9113275+03:00">
+        <Text>[xUnit.net 00:00:01.09]     Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9113431+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9113611+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9117567+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.ProjectComments_RuntimeContractIsMissingDespiteGenericNormativeCommentModel [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9117718+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9117866+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9121175+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9121706+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9121873+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9127749+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9128092+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9128293+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9128454+03:00">
+        <Text>[xUnit.net 00:00:01.10]     Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9132852+03:00">
+        <Text>[xUnit.net 00:00:01.11]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope [SKIP]</Text>
+      </RunInfo>
+      <RunInfo computerName="TIM" outcome="Warning" timestamp="2026-10-26T03:50:17.9133060+03:00">
+        <Text>[xUnit.net 00:00:01.11]     Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [SKIP]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,10 @@
+{
+  "version": "1.1.0",
+  "parent": "68941d886373b8ae9bb3557add54d47843240a92",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/RecurrenceView.xaml",
+      "sha256": "a2c9d89ec905ab0d6439b84ae2aedb0c6e57872ab7aee517e16506bd20138863"
+    }
+  ]
+}
