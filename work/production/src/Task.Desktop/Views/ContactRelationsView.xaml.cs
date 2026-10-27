@@ -15,11 +15,12 @@ public partial class ContactRelationsView : UserControl
             return;
         }
 
-        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+        // Let disabled action buttons finish transferring focus before scrolling.
+        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
         {
             if (editor.IsVisible)
             {
-                editor.BringIntoView(new Rect(0, 0, editor.ActualWidth, 1));
+                editor.BringIntoView();
             }
         }));
     }

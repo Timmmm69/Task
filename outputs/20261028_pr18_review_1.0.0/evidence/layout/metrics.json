@@ -1,0 +1,66 @@
+[
+  {
+    "mode": "channel",
+    "width": 800,
+    "height": 600,
+    "editorTop": 56.66666666666674,
+    "offset": 1518,
+    "viewport": 562.6666666666666
+  },
+  {
+    "mode": "address",
+    "width": 800,
+    "height": 600,
+    "editorTop": 0,
+    "offset": 1574.6666666666667,
+    "viewport": 562.6666666666666
+  },
+  {
+    "mode": "delete",
+    "width": 800,
+    "height": 600,
+    "editorTop": 256.66666666666674,
+    "offset": 1318,
+    "viewport": 562.6666666666666
+  },
+  {
+    "mode": "readonly",
+    "width": 800,
+    "height": 600,
+    "editorTop": 0,
+    "offset": 0,
+    "viewport": 562.6666666666666
+  },
+  {
+    "mode": "channel",
+    "width": 1100,
+    "height": 1000,
+    "editorTop": 456.66666666666674,
+    "offset": 1118,
+    "viewport": 962.6666666666666
+  },
+  {
+    "mode": "address",
+    "width": 1100,
+    "height": 1000,
+    "editorTop": 123.33333333333348,
+    "offset": 1451.3333333333335,
+    "viewport": 962.6666666666666
+  },
+  {
+    "mode": "delete",
+    "width": 1100,
+    "height": 1000,
+    "editorTop": 656.6666666666667,
+    "offset": 918.0000000000001,
+    "viewport": 962.6666666666666
+  },
+  {
+    "mode": "readonly",
+    "width": 1100,
+    "height": 1000,
+    "editorTop": 0,
+    "offset": 0,
+    "viewport": 962.6666666666666
+  }
+]

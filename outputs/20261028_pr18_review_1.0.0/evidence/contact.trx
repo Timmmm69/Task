@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4f48e4b8-db2c-4bad-b0aa-fb948b62967c" name="novik@TIM 2026-10-28 00:41:17" runUser="TIM\novik" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-28T00:41:17.7866257+03:00" queuing="2026-10-28T00:41:17.7866261+03:00" start="2026-10-28T00:41:13.7119875+03:00" finish="2026-10-28T00:41:17.8633247+03:00" />
+  <TestSettings name="default" id="24d5b2c6-6658-4238-b01c-9e163113d878">
+    <Deployment runDeploymentRoot="novik_TIM_2026-10-28_00_41_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="676c5666-f446-400e-94e3-893d717535c9" testId="cfd358bd-5d74-43e2-c29f-4af5b22e520d" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;412&quot;)" computerName="TIM" duration="00:00:00.0000579" startTime="2026-10-28T00:41:17.8055575+03:00" endTime="2026-10-28T00:41:17.8056489+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="676c5666-f446-400e-94e3-893d717535c9" />
+    <UnitTestResult executionId="395ecf2e-f293-4bb9-a324-1ff60a88d899" testId="39bb9a94-7afa-6d7f-591d-2522d6a5c00f" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.DeleteNeedsConfirmationAndAddressOnlyOffersAdd" computerName="TIM" duration="00:00:00.0163373" startTime="2026-10-28T00:41:17.7756023+03:00" endTime="2026-10-28T00:41:17.7923187+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="395ecf2e-f293-4bb9-a324-1ff60a88d899" />
+    <UnitTestResult executionId="7e619437-44e5-4259-8bff-2ee5d2ab3a21" testId="260b77cb-a3ef-b912-2ebf-bb564aa90713" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.ParentEditingExcludesChildMutationsAndEmptyStateIsExplicit" computerName="TIM" duration="00:00:00.0007269" startTime="2026-10-28T00:41:17.8148232+03:00" endTime="2026-10-28T00:41:17.8156077+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e619437-44e5-4259-8bff-2ee5d2ab3a21" />
+    <UnitTestResult executionId="75184b84-5362-4b22-a4ca-28d5448ebca8" testId="8f9400cf-381f-9a65-0dd0-07b1bf78c994" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;403&quot;)" computerName="TIM" duration="00:00:00.0000685" startTime="2026-10-28T00:41:17.8052371+03:00" endTime="2026-10-28T00:41:17.8053456+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="75184b84-5362-4b22-a4ca-28d5448ebca8" />
+    <UnitTestResult executionId="9b7d6ef5-49d9-40d1-a6af-e286c75b8173" testId="7e5a4da2-aaed-8486-dc88-df4334578d2f" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;offline&quot;)" computerName="TIM" duration="00:00:00.0000600" startTime="2026-10-28T00:41:17.8054030+03:00" endTime="2026-10-28T00:41:17.8054949+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b7d6ef5-49d9-40d1-a6af-e286c75b8173" />
+    <UnitTestResult executionId="35c6ddc6-e233-46bf-97e6-53fa070d2c6c" testId="b5907647-5302-3edc-06ff-9292ee130a18" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.OneMutationAtATimeAndNextActionUsesConfirmedParentVersion" computerName="TIM" duration="00:00:00.0013955" startTime="2026-10-28T00:41:17.8057420+03:00" endTime="2026-10-28T00:41:17.8071896+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35c6ddc6-e233-46bf-97e6-53fa070d2c6c" />
+    <UnitTestResult executionId="be142824-301b-484d-8b84-15a0af1b6669" testId="72afd75c-b7ef-975f-9acd-57fa7017ef5d" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;duplicate&quot;)" computerName="TIM" duration="00:00:00.0081351" startTime="2026-10-28T00:41:17.7959120+03:00" endTime="2026-10-28T00:41:17.8043807+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be142824-301b-484d-8b84-15a0af1b6669" />
+    <UnitTestResult executionId="3aa29a1c-a3bf-4d7c-b800-2ca86c0df0b0" testId="1dd247f6-314e-3017-5179-b69a72fd7b9d" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.CancellationBlocksRetryUntilReloadAndAccessRevocationClearsPrivateDraft" computerName="TIM" duration="00:00:00.0039965" startTime="2026-10-28T00:41:17.8094215+03:00" endTime="2026-10-28T00:41:17.8138115+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3aa29a1c-a3bf-4d7c-b800-2ca86c0df0b0" />
+    <UnitTestResult executionId="57aba3fe-dbd0-42ea-ab8b-78927e53d232" testId="2fa25e48-d6cd-7398-fd8a-399c816b0f05" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;404&quot;)" computerName="TIM" duration="00:00:00.0002293" startTime="2026-10-28T00:41:17.8045500+03:00" endTime="2026-10-28T00:41:17.8048370+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="57aba3fe-dbd0-42ea-ab8b-78927e53d232" />
+    <UnitTestResult executionId="6cffadf4-b4f8-49cc-a77e-63e11f3ce122" testId="d6fee29d-b072-fb35-28b8-9e98dc4b6993" testName="Task.Desktop.Tests.Work.ContactCardWindowsTests.NativeCardSelectionEditSaveReadonlyAndCompactLayout" computerName="TIM" duration="00:00:02.3916985" startTime="2026-10-28T00:41:15.3545244+03:00" endTime="2026-10-28T00:41:17.7566896+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6cffadf4-b4f8-49cc-a77e-63e11f3ce122" />
+    <UnitTestResult executionId="a2efc0c5-e4cf-4510-801f-4d3d8b1426fb" testId="3e236df0-11da-31cb-ff0b-de3b268820a3" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.ContactSwitchIgnoresLateChildResultEvenWhenClientIgnoresCancellation" computerName="TIM" duration="00:00:00.0027886" startTime="2026-10-28T00:41:17.7927906+03:00" endTime="2026-10-28T00:41:17.7956570+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2efc0c5-e4cf-4510-801f-4d3d8b1426fb" />
+    <UnitTestResult executionId="e0e56785-af78-4e15-9748-d67cbd0994a8" testId="34220bca-575d-f77f-a92e-eb6ca41a3491" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;malformed&quot;)" computerName="TIM" duration="00:00:00.0001884" startTime="2026-10-28T00:41:17.8049183+03:00" endTime="2026-10-28T00:41:17.8051575+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0e56785-af78-4e15-9748-d67cbd0994a8" />
+    <UnitTestResult executionId="d1fcc4a8-d8cc-4e69-bef8-294810f4781a" testId="a2c59374-6a2a-8523-b477-c0f7ee8323af" testName="Task.Desktop.Tests.Work.ContactCardRelationsTests.LocalValidationAndReadOnlyOfflineNeverSendChanges" computerName="TIM" duration="00:00:00.0006622" startTime="2026-10-28T00:41:17.8139733+03:00" endTime="2026-10-28T00:41:17.8147031+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1fcc4a8-d8cc-4e69-bef8-294810f4781a" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;403&quot;)" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="8f9400cf-381f-9a65-0dd0-07b1bf78c994">
+      <Execution id="75184b84-5362-4b22-a4ca-28d5448ebca8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.OneMutationAtATimeAndNextActionUsesConfirmedParentVersion" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="b5907647-5302-3edc-06ff-9292ee130a18">
+      <Execution id="35c6ddc6-e233-46bf-97e6-53fa070d2c6c" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="OneMutationAtATimeAndNextActionUsesConfirmedParentVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;malformed&quot;)" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="34220bca-575d-f77f-a92e-eb6ca41a3491">
+      <Execution id="e0e56785-af78-4e15-9748-d67cbd0994a8" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.CancellationBlocksRetryUntilReloadAndAccessRevocationClearsPrivateDraft" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="1dd247f6-314e-3017-5179-b69a72fd7b9d">
+      <Execution id="3aa29a1c-a3bf-4d7c-b800-2ca86c0df0b0" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="CancellationBlocksRetryUntilReloadAndAccessRevocationClearsPrivateDraft" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardWindowsTests.NativeCardSelectionEditSaveReadonlyAndCompactLayout" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="d6fee29d-b072-fb35-28b8-9e98dc4b6993">
+      <Execution id="6cffadf4-b4f8-49cc-a77e-63e11f3ce122" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardWindowsTests" name="NativeCardSelectionEditSaveReadonlyAndCompactLayout" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;offline&quot;)" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="7e5a4da2-aaed-8486-dc88-df4334578d2f">
+      <Execution id="9b7d6ef5-49d9-40d1-a6af-e286c75b8173" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;412&quot;)" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="cfd358bd-5d74-43e2-c29f-4af5b22e520d">
+      <Execution id="676c5666-f446-400e-94e3-893d717535c9" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.ParentEditingExcludesChildMutationsAndEmptyStateIsExplicit" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="260b77cb-a3ef-b912-2ebf-bb564aa90713">
+      <Execution id="7e619437-44e5-4259-8bff-2ee5d2ab3a21" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="ParentEditingExcludesChildMutationsAndEmptyStateIsExplicit" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;duplicate&quot;)" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="72afd75c-b7ef-975f-9acd-57fa7017ef5d">
+      <Execution id="be142824-301b-484d-8b84-15a0af1b6669" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.ContactSwitchIgnoresLateChildResultEvenWhenClientIgnoresCancellation" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="3e236df0-11da-31cb-ff0b-de3b268820a3">
+      <Execution id="a2efc0c5-e4cf-4510-801f-4d3d8b1426fb" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="ContactSwitchIgnoresLateChildResultEvenWhenClientIgnoresCancellation" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.LocalValidationAndReadOnlyOfflineNeverSendChanges" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="a2c59374-6a2a-8523-b477-c0f7ee8323af">
+      <Execution id="d1fcc4a8-d8cc-4e69-bef8-294810f4781a" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="LocalValidationAndReadOnlyOfflineNeverSendChanges" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.DeleteNeedsConfirmationAndAddressOnlyOffersAdd" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="39bb9a94-7afa-6d7f-591d-2522d6a5c00f">
+      <Execution id="395ecf2e-f293-4bb9-a324-1ff60a88d899" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="DeleteNeedsConfirmationAndAddressOnlyOffersAdd" />
+    </UnitTest>
+    <UnitTest name="Task.Desktop.Tests.Work.ContactCardRelationsTests.FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion(failure: &quot;404&quot;)" storage="c:\users\novik\таск\work\pr18_review_20261028\repo\work\production\tests\task.desktop.tests\bin\release\net10.0-windows\task.desktop.tests.dll" id="2fa25e48-d6cd-7398-fd8a-399c816b0f05">
+      <Execution id="57aba3fe-dbd0-42ea-ab8b-78927e53d232" />
+      <TestMethod codeBase="C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Task.Desktop.Tests.Work.ContactCardRelationsTests" name="FailuresKeepDraftWithoutConfirmingOrUsingStaleVersion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cfd358bd-5d74-43e2-c29f-4af5b22e520d" executionId="676c5666-f446-400e-94e3-893d717535c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39bb9a94-7afa-6d7f-591d-2522d6a5c00f" executionId="395ecf2e-f293-4bb9-a324-1ff60a88d899" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="260b77cb-a3ef-b912-2ebf-bb564aa90713" executionId="7e619437-44e5-4259-8bff-2ee5d2ab3a21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8f9400cf-381f-9a65-0dd0-07b1bf78c994" executionId="75184b84-5362-4b22-a4ca-28d5448ebca8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e5a4da2-aaed-8486-dc88-df4334578d2f" executionId="9b7d6ef5-49d9-40d1-a6af-e286c75b8173" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b5907647-5302-3edc-06ff-9292ee130a18" executionId="35c6ddc6-e233-46bf-97e6-53fa070d2c6c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72afd75c-b7ef-975f-9acd-57fa7017ef5d" executionId="be142824-301b-484d-8b84-15a0af1b6669" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1dd247f6-314e-3017-5179-b69a72fd7b9d" executionId="3aa29a1c-a3bf-4d7c-b800-2ca86c0df0b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fa25e48-d6cd-7398-fd8a-399c816b0f05" executionId="57aba3fe-dbd0-42ea-ab8b-78927e53d232" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6fee29d-b072-fb35-28b8-9e98dc4b6993" executionId="6cffadf4-b4f8-49cc-a77e-63e11f3ce122" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3e236df0-11da-31cb-ff0b-de3b268820a3" executionId="a2efc0c5-e4cf-4510-801f-4d3d8b1426fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34220bca-575d-f77f-a92e-eb6ca41a3491" executionId="e0e56785-af78-4e15-9748-d67cbd0994a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a2c59374-6a2a-8523-b477-c0f7ee8323af" executionId="d1fcc4a8-d8cc-4e69-bef8-294810f4781a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Список результатов" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Все загруженные результаты" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="13" executed="13" passed="13" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)&#xD;
+[xUnit.net 00:00:00.55]   Discovering: Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.78]   Discovered:  Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:00.80]   Starting:    Task.Desktop.Tests&#xD;
+[xUnit.net 00:00:03.28]   Finished:    Task.Desktop.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

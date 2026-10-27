@@ -1,0 +1,14 @@
+Running NuGet dependency audit: direct + transitive dependencies, low+ severity.
+  Определение проектов для восстановления...
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Domain\Task.Domain.csproj (за 266 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj (за 304 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Application\Task.Application.csproj (за 301 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Worker\Task.Worker.csproj (за 310 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Infrastructure\Task.Infrastructure.csproj (за 302 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Desktop\Task.Desktop.csproj (за 301 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Api\Task.Api.csproj (за 309 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Tests\Task.Tests.csproj (за 304 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.DatabaseMigrator\Task.DatabaseMigrator.csproj (за 302 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.ServiceHosts.Tests\Task.ServiceHosts.Tests.csproj (за 305 мс).
+  Восстановлен C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.BackupAgent\Task.BackupAgent.csproj (за 310 мс).
+NuGet dependency audit passed: no blocking high/critical vulnerability or audit-source failure was reported.

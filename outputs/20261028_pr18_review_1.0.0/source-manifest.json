@@ -1,0 +1,23 @@
+{
+  "original_pr_head": "3d7890ca22b6394f685261175697455024cde596",
+  "integration_base": "0e170c22b2d61a99100901de58af09dfa002affb",
+  "review_parent": "eaca9196326ed9ce94d59f68fe81909a40860e36",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.ContactRelations.xaml",
+      "sha256": "6ab96e7e685e66289523e064ce428e52c5c171f5fd0d67b83bf272c93ccba881"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ContactRelationsView.xaml",
+      "sha256": "c46b7798696aeebd4412cbb0f5a7193d2f806b74b89b47430bc04563bfffcc69"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ContactRelationsView.xaml.cs",
+      "sha256": "d4a79b88f7923bc65412c5bee798d4938541fd9b44f64c79266ad61ab44e7456"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/ContactRelationsScrollWindowsTests.cs",
+      "sha256": "9bd53c29ca683d84152f684a8ac7d7c4f4c2b7623ff74bdbae014a9c201df848"
+    }
+  ]
+}
