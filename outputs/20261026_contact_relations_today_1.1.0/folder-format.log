@@ -1,0 +1,3 @@
+dotnet format whitespace . --folder --verify-no-changes --include ContactRelationsView.xaml.cs
+Working directory: work/production/src/Task.Desktop/Views
+Exit code: 0

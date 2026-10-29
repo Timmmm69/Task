@@ -1,0 +1,30 @@
+  Task.Domain -> C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Desktop -> C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\src\Task.Desktop\bin\Release\net10.0-windows\Task.Desktop.dll
+  Task.Desktop.Tests -> C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll
+Тестовый запуск для C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:02.33]     Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.OpeningRelationEditorRevealsUsableFieldsAfterLongLists [FAIL]
+  Не пройден Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.OpeningRelationEditorRevealsUsableFieldsAfterLongLists [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.OpeningRelationEditorRevealsUsableFieldsAfterLongLists [682 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   add at (800, 600): editor field outside viewport: 20;674,6666666666667;728;40, viewport 562,6666666666666
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.<>c__DisplayClass0_0.<OpeningRelationEditorRevealsUsableFieldsAfterLongLists>b__0() in C:\Users\novik\ðóð░Ðüð║\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\Work\ContactRelationsScrollWindowsTests.cs:line 88
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.OpeningRelationEditorRevealsUsableFieldsAfterLongLists() in C:\Users\novik\ðóð░Ðüð║\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\Work\ContactRelationsScrollWindowsTests.cs:line 101
+--- End of stack trace from previous location ---
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 699 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:01.01]     Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.OpeningRelationEditorRevealsUsableFieldsAfterLongLists [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Work.ContactRelationsScrollWindowsTests.OpeningRelationEditorRevealsUsableFieldsAfterLongLists() in C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\Work\ContactRelationsScrollWindowsTests.cs:line 39
+--- End of stack trace from previous location ---
+Файл результатов: C:\Users\novik\Таск\work\pr18_review_20261028\repo\outputs\20261028_pr18_review_1.0.0\evidence\scroll-before-fix.trx
+
+Не пройден!: не пройдено     1, пройдено     0, пропущено     0, всего     1, длительность 1 s. - Task.Desktop.Tests.dll (net10.0)

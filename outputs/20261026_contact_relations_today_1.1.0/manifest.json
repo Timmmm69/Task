@@ -1,0 +1,18 @@
+{
+  "version": "1.1.0",
+  "parent": "87cb4764ff7e4443359223139e84f3eab5e6066d",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/ContactRelationsView.xaml",
+      "sha256": "4da0baa4835b86bfde1a6e2c77ca7a3b30a4ee6ab988e0f8823c4204dd14810c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ContactRelationsView.xaml.cs",
+      "sha256": "e69c6d36c23582757bfc698a2c158c15ff2d711e6bf320880d2d7fd7b24f4d3e"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.ContactRelations.xaml",
+      "sha256": "bcab237ee0cf6128b11e438b997988bb4a2feb1cb09c47fb294a27a8e49ae67d"
+    }
+  ]
+}

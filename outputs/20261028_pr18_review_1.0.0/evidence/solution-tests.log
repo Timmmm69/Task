@@ -1,0 +1,77 @@
+Тестовый запуск для C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\pr18_review_20261028\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:01.29]     Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [SKIP]
+[xUnit.net 00:00:01.30]     Task.Tests.PostgresIdentityLifecycleTests.EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation [1 ms]
+[xUnit.net 00:00:01.30]     Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [SKIP]
+[xUnit.net 00:00:01.30]     Task.Tests.PostgresIdentityLifecycleTests.LastActiveAdministratorCannotBeBlockedOrDeactivated [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.LastActiveAdministratorCannotBeBlockedOrDeactivated [1 ms]
+[xUnit.net 00:00:01.75]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [1 ms]
+[xUnit.net 00:00:01.75]     Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [1 ms]
+[xUnit.net 00:00:01.77]     Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [SKIP]
+[xUnit.net 00:00:01.77]     Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [SKIP]
+[xUnit.net 00:00:01.77]     Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [1 ms]
+[xUnit.net 00:00:01.78]     Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [SKIP]
+[xUnit.net 00:00:01.78]     Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [SKIP]
+[xUnit.net 00:00:01.78]     Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [1 ms]
+[xUnit.net 00:00:01.79]     Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [SKIP]
+[xUnit.net 00:00:01.79]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [SKIP]
+[xUnit.net 00:00:01.79]     Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [SKIP]
+[xUnit.net 00:00:01.79]     Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [SKIP]
+[xUnit.net 00:00:01.79]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [1 ms]
+[xUnit.net 00:00:01.79]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay [1 ms]
+[xUnit.net 00:00:01.80]     Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [1 ms]
+[xUnit.net 00:00:01.80]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [SKIP]
+[xUnit.net 00:00:01.80]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [SKIP]
+[xUnit.net 00:00:01.80]     Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [1 ms]
+  Пропущен Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [1 ms]
+[xUnit.net 00:00:01.81]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields [SKIP]
+[xUnit.net 00:00:01.81]     Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [SKIP]
+[xUnit.net 00:00:01.82]     Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [1 ms]
+[xUnit.net 00:00:01.82]     Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [SKIP]
+[xUnit.net 00:00:01.82]     Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [SKIP]
+[xUnit.net 00:00:01.82]     Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [1 ms]
+[xUnit.net 00:00:01.82]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope [SKIP]
+[xUnit.net 00:00:01.82]     Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [1 ms]
+[xUnit.net 00:00:01.83]     Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [SKIP]
+  Пропущен Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [1 ms]
+Файл результатов: C:\Users\novik\Таск\work\pr18_review_20261028\repo\outputs\20261028_pr18_review_1.0.0\evidence\solution_net10.0_20261028004252.trx
+
+Пройден!   : не пройдено     0, пройдено   851, пропущено    31, всего   882, длительность 3 s. - Task.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\pr18_review_20261028\repo\outputs\20261028_pr18_review_1.0.0\evidence\solution_net10.0_20261028004318.trx
+
+Пройден!   : не пройдено     0, пройдено   671, пропущено     0, всего   671, длительность 30 s. - Task.ServiceHosts.Tests.dll (net10.0)
+Файл результатов: C:\Users\novik\Таск\work\pr18_review_20261028\repo\outputs\20261028_pr18_review_1.0.0\evidence\solution_net10.0_20261028004447.trx
+
+Пройден!   : не пройдено     0, пройдено  1921, пропущено     0, всего  1921, длительность 2 m. - Task.Desktop.Tests.dll (net10.0)
