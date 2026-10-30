@@ -18,7 +18,7 @@ Windows 10.0.26200, SDK 10.0.400, Microsoft.WindowsDesktop.App 10.0.11, Release.
 - PASS: dotnet test Task.sln -c Release --no-build --no-restore (work/production). Desktop 1922 passed; domain 851 passed, 31 skipped; service hosts 671 passed. No failed tests. The 31 PostgreSQL tests require a configured real database; this run did not execute them.
 - PASS: Test-DependencyAudit.ps1, Test-ProjectBoundaries.ps1, dotnet format whitespace Task.sln --verify-no-changes --no-restore.
 - PASS: Test-IndependentSecurityReview.ps1 -Configuration Release -SkipRestore -NoBuild -SkipTests; Test-ProductionSecretsTls.Contract.ps1.
-- PASS: git diff --check against reviewed main. No changes under sources/.
+- PASS: git diff --check against reviewed main for production code and dashboard (raw evidence logs preserve original whitespace). No changes under sources/.
 
 Native WPF tests actually create windows, load the production XAML and exercise interaction create/edit/type dropdown/conflict, wide/compact arrangement, project employee and manager pickers, UUID fallback, capability changes, confirmation dialogs, files/contacts/history/related tasks. Interaction test also checks binding errors. Generated screenshots were visually inspected for wide/compact interaction layout, project detail and narrow project editor with fixed save footer.
 

@@ -8,6 +8,11 @@
   ],
   "files": [
     {
+      "path": ".gitattributes",
+      "sha256": "d4d78f795c9dca347edee034545562775450d5dd82a418ed125ef44182f679b9",
+      "bytes": 35
+    },
+    {
       "path": "boundaries.log",
       "sha256": "a48e1297d824aed11453a56aa335427b83792a9444ab11741f7348c3a408d070",
       "bytes": 986
@@ -189,8 +194,8 @@
     },
     {
       "path": "validation-report.md",
-      "sha256": "9ddd6c7f7ed7aed92521cac0b9683750baf7146a81a038dcad184dbd17fd0234",
-      "bytes": 3571
+      "sha256": "7b8cb3b9e82cbfacf840d87f02118d3a99d9e96609fc8ecd6a66aff9f6772bfb",
+      "bytes": 3654
     },
     {
       "path": "validation.json",
