@@ -1,43 +1,222 @@
 <UserControl x:Class="Task.Desktop.Views.InteractionsView"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:views="clr-namespace:Task.Desktop.Views"
+ Background="{DynamicResource Task.Brush.Surface.Base}" UseLayoutRounding="True" SnapsToDevicePixels="True"
+ SizeChanged="WorkspaceSizeChanged"
  AutomationProperties.AutomationId="InteractionsWorkspace" AutomationProperties.Name="Взаимодействия CRM">
+ <UserControl.Resources>
+  <views:InteractionSelectionConverter x:Key="Interaction.IsSelected"/>
+  <Style x:Key="Interaction.Card" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+   <Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="6"/>
+   <Setter Property="Padding" Value="20"/><Setter Property="Margin" Value="0,0,0,12"/>
+  </Style>
+  <Style x:Key="Interaction.Heading" TargetType="TextBlock">
+   <Setter Property="FontSize" Value="16"/><Setter Property="FontWeight" Value="SemiBold"/>
+   <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,0,0,12"/>
+  </Style>
+  <Style x:Key="Interaction.Label" TargetType="TextBlock">
+   <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,12,0,6"/>
+  </Style>
+  <Style x:Key="Interaction.Hint" TargetType="TextBlock">
+   <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}"/>
+   <Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Margin" Value="0,6,0,0"/>
+   <Style.Triggers><DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+   </DataTrigger></Style.Triggers>
+  </Style>
+  <Style x:Key="Interaction.Type" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+   <Setter Property="MaxDropDownHeight" Value="320"/>
+   <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ComboBoxItem">
+    <Setter Property="Padding" Value="12,10"/>
+   </Style></Setter.Value></Setter>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox">
+    <Grid>
+     <ToggleButton x:Name="DropDownToggle" Focusable="False" ClickMode="Press"
+      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+      Foreground="{TemplateBinding Foreground}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+      <ToggleButton.Template><ControlTemplate TargetType="ToggleButton">
+       <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+        <Path Data="M 0 0 L 4 4 L 8 0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0"/>
+       </Border>
+       <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True">
+        <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}"/>
+       </Trigger></ControlTemplate.Triggers>
+      </ControlTemplate></ToggleButton.Template>
+     </ToggleButton>
+     <ContentPresenter Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False" Margin="12,6,36,6" VerticalAlignment="Center"/>
+     <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False">
+      <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="4"
+       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+       <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+       </ScrollViewer>
+      </Border>
+     </Popup>
+    </Grid>
+    <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True">
+     <Setter TargetName="DropDownToggle" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}"/>
+    </Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Interaction.Row" TargetType="Button" BasedOn="{StaticResource Task.Button.Base}">
+   <Setter Property="Padding" Value="0"/>
+   <Setter Property="MinHeight" Value="76"/>
+   <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+   <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+   <Setter Property="BorderThickness" Value="0,0,0,1"/>
+   <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+   <Style.Triggers>
+    <DataTrigger Value="True"><DataTrigger.Binding>
+     <MultiBinding Converter="{StaticResource Interaction.IsSelected}">
+      <Binding Path="Id"/><Binding Path="DataContext.Details.Id" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+     </MultiBinding>
+    </DataTrigger.Binding>
+     <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}"/>
+     <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}"/>
+    </DataTrigger>
+    <MultiDataTrigger><MultiDataTrigger.Conditions>
+     <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+     <Condition Value="True"><Condition.Binding><MultiBinding Converter="{StaticResource Interaction.IsSelected}">
+      <Binding Path="Id"/><Binding Path="DataContext.Details.Id" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+     </MultiBinding></Condition.Binding></Condition>
+    </MultiDataTrigger.Conditions>
+     <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+     <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+     <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+    </MultiDataTrigger>
+   </Style.Triggers>
+  </Style>
+ </UserControl.Resources>
  <StackPanel Margin="0,20,0,12" Visibility="{Binding HasCounterparty, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-  <TextBlock Text="Взаимодействия" FontSize="20" FontWeight="SemiBold"/>
-  <TextBlock Text="{Binding Counterparty.Name}" FontWeight="SemiBold" Margin="0,8"/>
-  <TextBlock Text="Просмотр совпадений в одной странице API, до 50 записей. Полная история по контрагенту недоступна: сервер не поддерживает такой фильтр. Следующая страница заменяет текущую." TextWrapping="Wrap"/>
-  <WrapPanel Margin="0,8"><Button Content="Обновить просмотр" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}"/>
-   <Button Content="Следующая страница API" Command="{Binding MoreCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/>
-   <Button Content="Новое взаимодействие" Command="{Binding NewCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="NewInteractionButton"/>
-  </WrapPanel>
-  <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsBusy, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-  <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="InteractionMessage"/>
-  <ItemsControl ItemsSource="{Binding Items}"><ItemsControl.ItemTemplate><DataTemplate>
-   <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Text.Secondary}" Padding="0,8"><StackPanel>
-    <TextBlock Text="{Binding DateLabel}"/><TextBlock Text="{Binding TypeLabel}"/>
-    <Button Content="{Binding Subject}" HorizontalContentAlignment="Left" Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"/>
-   </StackPanel></Border>
-  </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-  <StackPanel Visibility="{Binding HasDetails, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="0,12">
-   <TextBlock Text="{Binding Details.Subject}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
-   <TextBlock Text="{Binding Details.TypeLabel}"/><TextBlock Text="{Binding Details.DateLabel}"/>
-   <TextBlock Text="Детали" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.Details}" TextWrapping="Wrap"/>
-   <TextBlock Text="Следующий шаг" FontWeight="SemiBold" Margin="0,8,0,2"/><TextBlock Text="{Binding Details.NextStep}" TextWrapping="Wrap"/>
-   <TextBlock Text="{Binding Details.DueLabel}"/>
-   <TextBlock Text="Доступные участники" FontWeight="SemiBold" Margin="0,8,0,2"/>
-   <ItemsControl ItemsSource="{Binding Participants}"/>
-   <Button Content="Редактировать взаимодействие" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8"/>
-  </StackPanel>
-  <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-   <StackPanel IsEnabled="{Binding CanChangeDraft}">
-    <TextBlock Text="Тип"/><ComboBox ItemsSource="{Binding TypeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Type}"/>
-    <TextBlock Text="Дата и время (ГГГГ-ММ-ДД ЧЧ:ММ ±ЧЧ:ММ)" Margin="0,8,0,2"/><TextBox Text="{Binding OccurredAt, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Дата взаимодействия"/>
-    <TextBlock Text="Тема" Margin="0,8,0,2"/><TextBox Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="InteractionSubject" AutomationProperties.Name="Тема взаимодействия"/>
-    <TextBlock Text="Детали" Margin="0,8,0,2"/><TextBox Text="{Binding DetailText, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" MaxHeight="160" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}"/>
-    <TextBlock Text="Следующий шаг (не создаёт задачу или напоминание)" Margin="0,8,0,2"/><TextBox Text="{Binding NextStep, UpdateSourceTrigger=PropertyChanged}" MaxLength="5000" TextWrapping="Wrap" Style="{StaticResource Task.Input.Text}"/>
-    <TextBlock Text="Срок следующего шага (необязательно, тот же формат)" Margin="0,8,0,2"/><TextBox Text="{Binding DueAt, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}"/>
+  <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Padding="0,0,0,16">
+   <StackPanel>
+    <TextBlock Text="Взаимодействия" FontSize="24" FontWeight="SemiBold"/>
+    <TextBlock Text="{Binding Counterparty.Name}" Style="{StaticResource Interaction.Hint}"/>
+    <WrapPanel Margin="0,14,0,0">
+     <Button Content="Новое взаимодействие" Command="{Binding NewCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,8" AutomationProperties.AutomationId="NewInteractionButton"/>
+     <Button Content="Обновить просмотр" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8"/>
+    </WrapPanel>
    </StackPanel>
-   <WrapPanel Margin="0,12"><Button Content="Сохранить взаимодействие" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" AutomationProperties.AutomationId="SaveInteractionButton"/>
-    <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="8,0"/></WrapPanel>
-  </StackPanel>
+  </Border>
+  <ProgressBar IsIndeterminate="True" Height="3" Visibility="{Binding IsBusy, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+  <Border Margin="0,12,0,12" Padding="12,10" Style="{StaticResource Task.Surface.Subtle}" BorderThickness="1" CornerRadius="6">
+   <StackPanel>
+    <TextBlock Text="Просмотр текущей страницы" FontWeight="SemiBold"/>
+    <TextBlock Text="До 50 записей на странице. Показаны только совпадения с этим контрагентом, а не вся его история. Следующая страница заменяет текущую." Style="{StaticResource Interaction.Hint}"/>
+   </StackPanel>
+  </Border>
+  <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,12" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="InteractionMessage"/>
+  <Grid x:Name="WorkspaceGrid" AutomationProperties.AutomationId="InteractionMasterDetail">
+   <Grid.ColumnDefinitions><ColumnDefinition x:Name="ListColumn" Width="42*"/><ColumnDefinition x:Name="DetailColumn" Width="58*"/></Grid.ColumnDefinitions>
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <Border x:Name="ListRegion" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1" CornerRadius="6" Margin="0,0,16,0">
+    <StackPanel>
+     <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Padding="16,14">
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <TextBlock Text="Записи" FontSize="16" FontWeight="SemiBold"/>
+       <Border Grid.Column="1" Style="{StaticResource Task.Semantic.StatusPill}"><TextBlock Text="{Binding Items.Count}" AutomationProperties.Name="Совпадений в текущей странице"/></Border>
+      </Grid>
+     </Border>
+     <ScrollViewer MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <ItemsControl x:Name="InteractionRecords" ItemsSource="{Binding Items}"><ItemsControl.ItemTemplate><DataTemplate>
+       <Button Style="{StaticResource Interaction.Row}" Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" AutomationProperties.Name="{Binding Subject}">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="3"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+         <Border Background="{DynamicResource Task.Brush.Brand.Primary}" Margin="0,12"/>
+         <StackPanel Grid.Column="1" Margin="14,12">
+          <TextBlock Text="{Binding DateLabel}" Style="{StaticResource Interaction.Hint}" Margin="0" FontSize="{DynamicResource Task.Font.Size.Metadata}"/>
+          <TextBlock Text="{Binding Subject}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,4,0,6"/>
+          <TextBlock Text="{Binding TypeLabel}" Style="{StaticResource Interaction.Hint}" Margin="0"/>
+         </StackPanel>
+        </Grid>
+       </Button>
+      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+     </ScrollViewer>
+     <StackPanel Margin="20,28" AutomationProperties.AutomationId="InteractionEmptyPage">
+      <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/>
+       <Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions>
+        <Condition Binding="{Binding Items.Count}" Value="0"/><Condition Binding="{Binding IsBusy}" Value="False"/>
+       </MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers>
+      </Style></StackPanel.Style>
+      <Path Data="{StaticResource Task.Icon.Info}" Width="24" Height="24" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Disabled}" HorizontalAlignment="Left"/>
+      <TextBlock Text="В этой странице записей нет" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,0"/>
+      <TextBlock Text="Попробуйте следующую страницу или добавьте взаимодействие. Это не означает, что история пуста." Style="{StaticResource Interaction.Hint}"/>
+     </StackPanel>
+     <Border Padding="16,12" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0">
+      <Button Content="Следующая страница" Command="{Binding MoreCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left"/>
+     </Border>
+    </StackPanel>
+   </Border>
+   <StackPanel x:Name="DetailRegion" Grid.Column="1" AutomationProperties.Name="Карточка взаимодействия">
+    <TextBlock Text="Карточка взаимодействия" Style="{StaticResource Interaction.Heading}"/>
+    <Border Padding="24" MinHeight="220" BorderThickness="1" BorderBrush="{DynamicResource Task.Brush.Border.Default}" CornerRadius="6">
+     <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Collapsed"/>
+      <Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions>
+       <Condition Binding="{Binding HasDetails}" Value="False"/><Condition Binding="{Binding IsEditing}" Value="False"/>
+      </MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers>
+     </Style></Border.Style>
+     <StackPanel VerticalAlignment="Center">
+      <Path Data="{StaticResource Task.Icon.Info}" Width="26" Height="26" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Disabled}" HorizontalAlignment="Left"/>
+      <TextBlock Text="Выберите взаимодействие" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,12,0,0"/>
+      <TextBlock Text="Здесь появятся детали, участники и следующий шаг. Список записей останется рядом." Style="{StaticResource Interaction.Hint}"/>
+     </StackPanel>
+    </Border>
+  <Border AutomationProperties.AutomationId="InteractionDetailsPanel">
+   <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Interaction.Card}">
+    <Setter Property="Visibility" Value="Collapsed"/>
+    <Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions>
+     <Condition Binding="{Binding HasDetails}" Value="True"/>
+     <Condition Binding="{Binding IsEditing}" Value="False"/>
+    </MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible"/></MultiDataTrigger></Style.Triggers>
+   </Style></Border.Style>
+   <StackPanel>
+    <TextBlock Text="{Binding Details.Subject}" Style="{StaticResource Interaction.Heading}"/>
+    <TextBlock Text="{Binding Details.TypeLabel}" FontWeight="SemiBold"/><TextBlock Text="{Binding Details.DateLabel}" Style="{StaticResource Interaction.Hint}"/>
+    <TextBlock Text="Детали" Style="{StaticResource Interaction.Label}"/><TextBlock Text="{Binding Details.Details}" TextWrapping="Wrap"/>
+    <TextBlock Text="Следующий шаг" Style="{StaticResource Interaction.Label}"/><TextBlock Text="{Binding Details.NextStep}" TextWrapping="Wrap"/>
+    <TextBlock Text="{Binding Details.DueLabel}" Style="{StaticResource Interaction.Hint}"/>
+    <TextBlock Text="Доступные участники" Style="{StaticResource Interaction.Label}"/>
+    <ItemsControl ItemsSource="{Binding Participants}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,6"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <Button Content="Редактировать взаимодействие" Command="{Binding EditCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+   </StackPanel>
+  </Border>
+  <Border Style="{StaticResource Interaction.Card}" Visibility="{Binding IsEditing, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+   <StackPanel>
+    <TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Interaction.Heading}">
+     <Setter Property="Text" Value="Редактирование взаимодействия"/>
+     <Style.Triggers><DataTrigger Binding="{Binding Details}" Value="{x:Null}"><Setter Property="Text" Value="Новое взаимодействие"/></DataTrigger></Style.Triggers>
+    </Style></TextBlock.Style></TextBlock>
+    <StackPanel IsEnabled="{Binding CanChangeDraft}">
+     <TextBlock Text="Основное" Style="{StaticResource Interaction.Heading}" Margin="0,0,0,0"/>
+     <TextBlock Text="Тип взаимодействия" Style="{StaticResource Interaction.Label}"/>
+     <ComboBox ItemsSource="{Binding TypeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Type}"
+      Style="{StaticResource Interaction.Type}" AutomationProperties.AutomationId="InteractionType" AutomationProperties.Name="Тип взаимодействия"/>
+     <TextBlock Text="Дата и время" Style="{StaticResource Interaction.Label}"/>
+     <TextBox Text="{Binding OccurredAt, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Дата взаимодействия"
+      AutomationProperties.HelpText="Формат: ГГГГ-ММ-ДД ЧЧ:ММ ±ЧЧ:ММ. Укажите смещение часового пояса."/>
+     <TextBlock Text="Формат: ГГГГ-ММ-ДД ЧЧ:ММ ±ЧЧ:ММ. Например, 2026-10-25 14:30 +03:00." Style="{StaticResource Interaction.Hint}"/>
+     <TextBlock Text="Содержание" Style="{StaticResource Interaction.Heading}" Margin="0,24,0,0"/>
+     <TextBlock Text="Тема" Style="{StaticResource Interaction.Label}"/>
+     <TextBox Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Style="{StaticResource Task.Input.Text}" AutomationProperties.AutomationId="InteractionSubject" AutomationProperties.Name="Тема взаимодействия"/>
+     <TextBlock Text="Детали" Style="{StaticResource Interaction.Label}"/>
+     <TextBox Text="{Binding DetailText, UpdateSourceTrigger=PropertyChanged}" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="100" MaxHeight="200" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Детали взаимодействия"/>
+     <TextBlock Text="Следующий шаг" Style="{StaticResource Interaction.Heading}" Margin="0,24,0,0"/>
+     <TextBlock Text="Запишите договорённость. Задача или напоминание автоматически не создаются." Style="{StaticResource Interaction.Hint}"/>
+     <TextBlock Text="Что нужно сделать" Style="{StaticResource Interaction.Label}"/>
+     <TextBox Text="{Binding NextStep, UpdateSourceTrigger=PropertyChanged}" MaxLength="5000" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="72" MaxHeight="160" VerticalScrollBarVisibility="Auto" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Следующий шаг"/>
+     <TextBlock Text="Срок следующего шага · необязательно" Style="{StaticResource Interaction.Label}"/>
+     <TextBox Text="{Binding DueAt, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Срок следующего шага" AutomationProperties.HelpText="Формат: ГГГГ-ММ-ДД ЧЧ:ММ ±ЧЧ:ММ. Можно оставить пустым."/>
+     <TextBlock Text="Тот же формат даты и времени со смещением часового пояса. Можно оставить пустым." Style="{StaticResource Interaction.Hint}"/>
+    </StackPanel>
+    <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0" Margin="0,20,0,0" Padding="0,12,0,0">
+     <WrapPanel HorizontalAlignment="Right">
+      <Button Content="Сохранить взаимодействие" Command="{Binding SaveCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,8" AutomationProperties.AutomationId="SaveInteractionButton"/>
+      <Button Content="Отмена" Command="{Binding CancelCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8"/>
+     </WrapPanel>
+    </Border>
+   </StackPanel>
+  </Border>
+
+   </StackPanel>
+  </Grid>
  </StackPanel>
 </UserControl>
