@@ -103,6 +103,28 @@ public sealed class SettingsWindowsTests
                     await hub.LoadMoreCommand.ExecuteAsync(); Drain();
                     Assert.Equal(2, hub.SearchResults.Count); Assert.False(more.IsVisible);
                     Save(view, "search-two-pages.png");
+                    hub.UpdateCapabilities(["FileCatalog.Read", "Contact.Read", "Notification.ReadOwn", "History.Read", "Trash.Read"]);
+                    foreach (var area in new[] { WorkHubArea.Catalog, WorkHubArea.Contacts, WorkHubArea.Notifications, WorkHubArea.Archive, WorkHubArea.Trash })
+                    {
+                        hub.Activate(area); Drain();
+                        Assert.True(hub.CanReadCurrentArea);
+                        foreach (var width in new[] { 1280d, 780d })
+                        {
+                            window.Width = width; Drain();
+                            Assert.True(view.ActualWidth > 0);
+                            if (area == WorkHubArea.Catalog)
+                            {
+                                var catalog = Find<Border>(view, "FilesCatalogRegion");
+                                var inspector = Find<Grid>(view, "FilesInspectorRegion");
+                                var left = catalog.TransformToAncestor(view).TransformBounds(new Rect(catalog.RenderSize));
+                                var right = inspector.TransformToAncestor(view).TransformBounds(new Rect(inspector.RenderSize));
+                                Assert.True(right.Right <= view.ActualWidth + 1);
+                                if (width < 860) Assert.True(right.Top >= left.Bottom - 1);
+                                else Assert.True(right.Left >= left.Right - 1);
+                            }
+                            Save(view, $"{area}-{width}.png");
+                        }
+                    }
                     done.SetResult();
                 }
                 catch (Exception e) { done.SetException(e); }
