@@ -1,0 +1,5 @@
+bindings: all original values preserved
+commands: all original values preserved
+automation: all original values preserved
+XML, unique property assignments, resource keys: PASS
+git diff --check: checked separately
