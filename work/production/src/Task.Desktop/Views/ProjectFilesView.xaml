@@ -1,36 +1,49 @@
 <UserControl x:Class="Task.Desktop.Views.ProjectFilesView"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
- xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- xmlns:views="clr-namespace:Task.Desktop.Views"
- AutomationProperties.Name="Файлы проекта" KeyboardNavigation.TabNavigation="Continue">
- <StackPanel>
-  <TextBlock Text="{Binding Section.StatusText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectFilesStatus"/>
-  <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,4,0,8" AutomationProperties.LiveSetting="Polite"/>
-  <WrapPanel Margin="0,0,0,8">
-   <Button Content="Обновить файлы" Command="{Binding RefreshCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
-   <Button Content="Связать файл" Command="{Binding ChooseCommand}" Style="{DynamicResource Task.Button.Primary}" Margin="0,0,0,8" AutomationProperties.AutomationId="ProjectChooseFile"/>
-  </WrapPanel>
-  <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" MaxHeight="300"
-           AutomationProperties.Name="Связанные объекты каталога" AutomationProperties.AutomationId="ProjectFilesList"
-           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-   <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
-    <Setter Property="AutomationProperties.Name"><Setter.Value><MultiBinding StringFormat="{}{0}, {1}"><Binding Path="Title"/><Binding Path="TypeLabel"/></MultiBinding></Setter.Value></Setter>
-   </Style></ListBox.ItemContainerStyle>
-   <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="4">
-    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-    <TextBlock Text="{Binding TypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
-   </StackPanel></DataTemplate></ListBox.ItemTemplate>
-  </ListBox>
-  <WrapPanel Margin="0,8,0,0">
-   <Button Content="В каталоге" Command="{Binding NavigateCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
-   <Button Content="Открыть файл" Command="{Binding OpenCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
-   <Button Content="Убрать связь" Command="{Binding RemoveCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,0,8"
-           ToolTip="Удаляется только связь с проектом. Файл и объект каталога сохраняются."/>
-  </WrapPanel>
-  <StackPanel Margin="0,8,0,0">
-   <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding Choosing}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-   <ContentControl Content="{Binding Picker}"><ContentControl.ContentTemplate><DataTemplate><views:ObjectLinkTargetPickerView/></DataTemplate></ContentControl.ContentTemplate></ContentControl>
-   <Button Content="Подтвердить привязку" Command="{Binding AddCommand}" Style="{DynamicResource Task.Button.Primary}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
-  </StackPanel>
- </StackPanel>
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:views="clr-namespace:Task.Desktop.Views"
+    AutomationProperties.Name="Файлы проекта" KeyboardNavigation.TabNavigation="Continue" UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <StackPanel>
+        <Border Style="{StaticResource Task.Files.Header}" Padding="0,12">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Task.Files.Title}"><Run Text="Файлы проекта ("/><Run Text="{Binding Items.Count, Mode=OneWay}"/><Run Text=")"/></TextBlock>
+                <TextBlock Text="Файлы и папки, связанные с проектом" Style="{StaticResource Task.Files.Hint}"/>
+            </StackPanel>
+        </Border>
+        <WrapPanel Margin="0,12,0,0">
+            <Button Content="Связать файл" Command="{Binding ChooseCommand}" Style="{StaticResource Task.Files.PrimaryAction}" AutomationProperties.AutomationId="ProjectChooseFile"/>
+            <Button Content="Обновить файлы" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Files.Action}"/>
+        </WrapPanel>
+        <TextBlock Text="{Binding Section.StatusText}" Style="{StaticResource Task.Files.Hint}" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectFilesStatus"/>
+        <TextBlock Text="{Binding Message}" Style="{StaticResource Task.Files.Hint}" Margin="0,4,0,12" AutomationProperties.LiveSetting="Polite"/>
+        <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" MaxHeight="300" Style="{StaticResource Task.DataList}" BorderThickness="0"
+                 AutomationProperties.Name="Связанные объекты каталога" AutomationProperties.AutomationId="ProjectFilesList">
+            <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+                <Setter Property="Padding" Value="12,10"/>
+                <Setter Property="AutomationProperties.Name"><Setter.Value><MultiBinding StringFormat="{}{0}, {1}"><Binding Path="Title"/><Binding Path="TypeLabel"/></MultiBinding></Setter.Value></Setter>
+            </Style></ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate><DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="26"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <Path Data="{StaticResource Task.Icon.Catalog}" Style="{StaticResource Task.Files.Icon}"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding TypeLabel}" Style="{StaticResource Task.Files.Hint}"/>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate></ListBox.ItemTemplate>
+        </ListBox>
+        <WrapPanel Margin="0,12,0,0">
+            <Button Content="Открыть файл" Command="{Binding OpenCommand}" Style="{StaticResource Task.Files.PrimaryAction}"/>
+            <Button Content="В каталоге" Command="{Binding NavigateCommand}" Style="{StaticResource Task.Files.Action}"/>
+            <Button Content="Убрать связь" Command="{Binding RemoveCommand}" Style="{StaticResource Task.Files.RemoveAction}" ToolTip="Удаляется только связь с проектом. Файл и объект каталога сохраняются."/>
+        </WrapPanel>
+        <Border Style="{StaticResource Task.Files.Panel}" Padding="0,16" BorderThickness="0,1,0,0" Margin="0,8,0,0" Visibility="{Binding Choosing, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Text="Выбор файла из каталога" Style="{StaticResource Task.Files.Title}" Margin="0,0,0,12"/>
+                <ContentControl Content="{Binding Picker}"><ContentControl.ContentTemplate><DataTemplate><views:ObjectLinkTargetPickerView/></DataTemplate></ContentControl.ContentTemplate></ContentControl>
+                <Button Content="Подтвердить привязку" Command="{Binding AddCommand}" Style="{StaticResource Task.Files.PrimaryAction}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
 </UserControl>

@@ -1,0 +1,16 @@
+PASS XML and Task resource resolution: FileLocationsView.xaml
+PASS XML and Task resource resolution: ProjectFilesView.xaml
+PASS XML and Task resource resolution: WorkHubView.xaml
+PASS XML and Task resource resolution: Files.Controls.xaml
+PASS XML and Task resource resolution: Theme.xaml
+PASS preserved AutomationId: FileLocationsView.xaml
+PASS preserved commands, inputs and event handlers: FileLocationsView.xaml
+PASS existing data binding expressions: FileLocationsView.xaml
+PASS preserved AutomationId: ProjectFilesView.xaml
+PASS preserved commands, inputs and event handlers: ProjectFilesView.xaml
+PASS existing data binding expressions: ProjectFilesView.xaml
+PASS preserved AutomationId: WorkHubView.xaml
+PASS preserved commands, inputs and event handlers: WorkHubView.xaml
+PASS existing data binding expressions: WorkHubView.xaml
+PASS WorkHub changes restricted to catalog region
+PASS catalog does not extend outside its grid cell or overlap related links

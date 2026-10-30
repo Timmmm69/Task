@@ -12,6 +12,7 @@
         <ResourceDictionary Source="Controls.Calendar.xaml" />
         <ResourceDictionary Source="Controls.States.xaml" />
         <ResourceDictionary Source="Controls.Shell.xaml" />
+        <ResourceDictionary Source="Files.Controls.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="Task.Window.Style" TargetType="Window">
