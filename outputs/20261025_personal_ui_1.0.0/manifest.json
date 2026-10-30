@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "base_commit": "3fe76562b3c51fee3e36b933b169b101376afb47",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Controls.xaml",
+      "sha256": "ba52ce60f4d8798f2bf16be022c9e500f13c57176cbf0819c0f2327bb27eaa89"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "sha256": "ce036a2ae7f9446878c66d58af67e1ae04d8f8bcd09f4f80f40251f5d2eb9811"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalRemindersView.xaml",
+      "sha256": "f0788f575bf423d8e3998bac086ad757a2b6b8c85afe894e24cf5c56ec1e1299"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "sha256": "7a905d9aa46e75cb78dbeb30b47f2d8e5a39efc4f761ef8d8b1785c5f36cbe92"
+    },
+    {
+      "path": "outputs/20261025_personal_ui_1.0.0/validation.md",
+      "sha256": "85021118910028eddce33266cf0a0d62c10af38ee0c43d3906aeba202f7387fc"
+    }
+  ]
+}

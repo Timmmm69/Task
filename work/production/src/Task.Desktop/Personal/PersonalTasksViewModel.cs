@@ -73,7 +73,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand NewCommand { get; }
     public AsyncCommand OpenRowCommand { get; }
     public AsyncCommand AddSubtaskCommand { get; }
-    private bool _detailsExpanded;
+    private bool _detailsExpanded = true;
     public bool DetailsExpanded { get => _detailsExpanded; set => SetProperty(ref _detailsExpanded, value); }
     public bool CanAddSubtask => CanSelectTask && CanEdit && Selected?.Source.Card?.ParentTaskId is null;
     public string SubtaskActionHint => !CanSelectTask ? "Сначала завершите текущее действие или сохраните черновик."
