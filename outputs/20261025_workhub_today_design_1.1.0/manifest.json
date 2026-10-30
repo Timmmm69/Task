@@ -1,0 +1,26 @@
+{
+  "version": "1.1.0",
+  "parent_commit": "28aeb4bec75dade0bbe08c7683769ec6f9b2991e",
+  "files": [
+    {
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "sha256": "80d4b444a9f8a54260f45ba037548ec852845a67fe5ca9a761a0dd8a6b11df4b"
+    },
+    {
+      "path": "outputs/20261025_workhub_today_design_1.1.0/build.txt",
+      "sha256": "779f3ec5241928a00449d47a5fc8004067e0c2e47eb12034cb98b3a9c3a61ec4"
+    },
+    {
+      "path": "outputs/20261025_workhub_today_design_1.1.0/static-validation.txt",
+      "sha256": "b8188ca1045ca62a02bd61aa5c7c76b0da3f86168f3e127e6019048f9a1cd96a"
+    },
+    {
+      "path": "outputs/20261025_workhub_today_design_1.1.0/validation-report.md",
+      "sha256": "9d0511f30730c833d7022442607a390173e28703676823a59db9cf146c223852"
+    },
+    {
+      "path": "outputs/20261025_workhub_today_design_1.1.0/verify_contract.py",
+      "sha256": "4336463a12a8f459ead15be812741a95094c27033112beaa6b972a8da907ec85"
+    }
+  ]
+}
