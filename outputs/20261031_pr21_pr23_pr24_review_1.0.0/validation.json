@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "source_commit": "6c58c3f791a5d9ace99f3b30fd658133af670932",
+  "result": "pass_after_fixes",
+  "desktop_passed": 1922,
+  "domain_passed": 851,
+  "service_passed": 671,
+  "postgres_skipped": 31,
+  "native_matrix_passed": 1
+}

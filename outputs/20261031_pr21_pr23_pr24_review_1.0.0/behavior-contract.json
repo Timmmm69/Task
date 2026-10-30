@@ -1,0 +1,18 @@
+{
+  "WorkHubView": [
+    {
+      "property": "Text",
+      "value": "{Binding SelectedCatalogItem.Name, TargetNullValue=Выберите запись}",
+      "count": 1
+    }
+  ],
+  "AdministrationView": [
+    {
+      "property": "Text",
+      "value": "{Binding Capability}",
+      "count": 1
+    }
+  ],
+  "ProjectFilesView": [],
+  "FileLocationsView": []
+}
