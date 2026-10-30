@@ -9,8 +9,8 @@
   "files": [
     {
       "path": ".gitattributes",
-      "sha256": "d4d78f795c9dca347edee034545562775450d5dd82a418ed125ef44182f679b9",
-      "bytes": 35
+      "sha256": "f96f130f5be7ee28f19562edd5e49e6178f27968dc8fdaac0e65da256509007c",
+      "bytes": 56
     },
     {
       "path": "boundaries.log",
