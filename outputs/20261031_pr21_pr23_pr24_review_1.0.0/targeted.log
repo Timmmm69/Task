@@ -1,0 +1,37 @@
+Тестовый запуск для C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:07.52]     Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [FAIL]
+  Не пройден Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [267 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.WindowWidthAtLeastConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.WorkHubView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\WorkHubView.xaml:line 1
+   at Task.Desktop.Views.WorkHubView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\WorkHubView.xaml.cs:line 10
+   at Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.<>c__DisplayClass0_1.<<WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksLayoutWindowsTests.cs:line 68
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksLayoutWindowsTests.cs:line 127
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 292 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.65]     Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksLayoutWindowsTests.cs:line 40
+--- End of stack trace from previous location ---
+Файл результатов: C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\outputs\20261031_pr21_pr23_pr24_review_1.0.0\targeted.trx
+
+Не пройден!: не пройдено     1, пройдено   206, пропущено     0, всего   207, длительность 7 s. - Task.Desktop.Tests.dll (net10.0)

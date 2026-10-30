@@ -1,0 +1,11 @@
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+  Task.Domain -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Desktop -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\bin\Release\net10.0-windows\Task.Desktop.dll
+  Task.Desktop.Tests -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll
+Тестовый запуск для C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Файл результатов: C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\outputs\20261031_pr21_pr23_pr24_review_1.0.0\links-final.trx
+
+Пройден!   : не пройдено     0, пройдено     1, пропущено     0, всего     1, длительность 2 s. - Task.Desktop.Tests.dll (net10.0)

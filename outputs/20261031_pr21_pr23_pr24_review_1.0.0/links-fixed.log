@@ -1,0 +1,36 @@
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+  Task.Domain -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Domain\bin\Release\net10.0\Task.Domain.dll
+  Task.Application -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Application\bin\Release\net10.0\Task.Application.dll
+  Task.Desktop -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\bin\Release\net10.0-windows\Task.Desktop.dll
+C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\DesktopCredentialVaultTests.cs(347,20): warning xUnit1031: Test methods should not use blocking task operations, as they can cause deadlocks. Use an async test method and await instead. (https://xunit.net/xunit.analyzers/rules/xUnit1031) [C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj]
+C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Personal\PersonalPlanningTests.cs(397,67): warning xUnit2031: Do not use a Where clause to filter before calling Assert.Single. Use the overload of Assert.Single that accepts a filtering function. (https://xunit.net/xunit.analyzers/rules/xUnit2031) [C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Task.Desktop.Tests.csproj]
+  Task.Desktop.Tests -> C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll
+Тестовый запуск для C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:02.72]     Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [FAIL]
+  Не пройден Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [2 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [1 s]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.<>c__DisplayClass0_1.<<WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksLayoutWindowsTests.cs:line 99
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksLayoutWindowsTests.cs:line 128
+--- End of stack trace from previous location ---
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 1 s. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:01.44]     Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Work.ObjectLinksLayoutWindowsTests.WorkHubKeepsLinkActionsReachableAndReleasesCollapsedSpace() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\ObjectLinksLayoutWindowsTests.cs:line 40
+--- End of stack trace from previous location ---
+Файл результатов: C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\outputs\20261031_pr21_pr23_pr24_review_1.0.0\links-fixed.trx
+
+Не пройден!: не пройдено     1, пройдено     0, пропущено     0, всего     1, длительность 2 s. - Task.Desktop.Tests.dll (net10.0)

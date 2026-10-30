@@ -1,0 +1,266 @@
+Тестовый запуск для C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Tests\bin\Release\net10.0\Task.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.ServiceHosts.Tests\bin\Release\net10.0\Task.ServiceHosts.Tests.dll (.NETCoreApp,Version=v10.0)
+Тестовый запуск для C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\bin\Release\net10.0-windows\Task.Desktop.Tests.dll (.NETCoreApp,Version=v10.0)
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+Общее количество тестовых файлов (1), соответствующих указанному шаблону.
+[xUnit.net 00:00:00.42]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Audit_ConcurrentCardSaveCannotOverwriteStatus [1 ms]
+[xUnit.net 00:00:00.44]     Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.ObjectLinks_EnforceThePickerMatrixAndReplayCreateSafely [1 ms]
+[xUnit.net 00:00:00.52]     Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_TitleOnlyConversionIsDurableAtomicAndIdempotentWithoutDeadline [1 ms]
+[xUnit.net 00:00:00.55]     Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [SKIP]
+[xUnit.net 00:00:00.55]     Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Interactions_CreateReplayPatchCasAndParticipantsRoundTrip [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ProjectHistory_CurrentContractPagingVisibilityAndPermissions [1 ms]
+[xUnit.net 00:00:00.56]     Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_ConcurrentReplayCreatesExactlyOneTask [1 ms]
+[xUnit.net 00:00:00.56]     Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [SKIP]
+[xUnit.net 00:00:00.56]     Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [SKIP]
+[xUnit.net 00:00:00.56]     Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [SKIP]
+[xUnit.net 00:00:00.56]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Administration_InvalidRoleReplacementRollsBackAllAssignments [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_ProjectAndScheduledDateUseCanonicalFieldsAndConversionReplayRechecksAccess [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Administration_RoleReceiptPreservesScopesAndInvalidatesEffectivePermissionsOnce [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ConcurrentDifferentCommandsAndStaleVersion [1 ms]
+[xUnit.net 00:00:00.57]     Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [SKIP]
+[xUnit.net 00:00:00.57]     Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_FailedConversionRollsBackTaskEventsAndSourceAndCanRetry [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.Interactions_ObjectScopeForeignTargetsAndDeletedCounterpartiesAreEnforced [1 ms]
+[xUnit.net 00:00:00.57]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_ReplayHistoryAuditAndNoNotification [1 ms]
+[xUnit.net 00:00:00.58]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Audit_InvalidSessionCannotExecuteOrReplay [1 ms]
+[xUnit.net 00:00:00.58]     Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [SKIP]
+[xUnit.net 00:00:00.58]     Task.Tests.PostgresIdentityLifecycleTests.EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation [SKIP]
+[xUnit.net 00:00:00.58]     Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [SKIP]
+[xUnit.net 00:00:00.58]     Task.Tests.PostgresIdentityLifecycleTests.LastActiveAdministratorCannotBeBlockedOrDeactivated [SKIP]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.Devices_EnforceOwnershipAndRevokeSessionsAtomically [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.EveryTransitionStatePairUsesServerRulesAndReplaysWithoutExtraMutation [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.UserLifecycle_IsDurableVersionedIdempotentAndRevokesCredentials [1 ms]
+  Пропущен Task.Tests.PostgresIdentityLifecycleTests.LastActiveAdministratorCannotBeBlockedOrDeactivated [1 ms]
+[xUnit.net 00:00:00.60]     Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_OwnerBoundaryVersionsAndValidationDoNotLeakOrPartiallyConvert [1 ms]
+[xUnit.net 00:00:00.61]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [SKIP]
+[xUnit.net 00:00:00.61]     Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_EventFailureRollsBackTaskAuditAndIdempotency [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Audit_FreshListSearchAndFieldsAreConsistent [1 ms]
+[xUnit.net 00:00:00.61]     Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [SKIP]
+  Пропущен Task.Tests.TaskCreateCommandTests.RealPostgres_CreateIsAtomicDurableAndReadable [1 ms]
+[xUnit.net 00:00:00.61]     Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.History_CanonicalMetadataAndLegacyClientFields [1 ms]
+[xUnit.net 00:00:00.62]     Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [SKIP]
+[xUnit.net 00:00:00.62]     Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.ProductApi_CompanyContactUnlinkRequiresVisibleContact [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.LinkTargetsAndGlobalSearchCannotShareCursors [1 ms]
+[xUnit.net 00:00:00.62]     Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [SKIP]
+  Пропущен Task.Tests.TaskUpdateTests.RealPostgres_PatchIsAtomicDurableAndConcurrencySafe [1 ms]
+[xUnit.net 00:00:00.63]     Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.LinkTargetsCoverRelatedTypesWithoutSearchUseAndRecheckOwnership [1 ms]
+[xUnit.net 00:00:00.63]     Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.ExistingLinksPageThroughAllFourHundredFiftyOneRows [1 ms]
+[xUnit.net 00:00:00.63]     Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask [1 ms]
+[xUnit.net 00:00:00.64]     Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope [SKIP]
+[xUnit.net 00:00:00.64]     Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [SKIP]
+  Пропущен Task.Tests.PostgresProductApiTests.TaskReturn_Postgres_PermissionAndObjectScope [1 ms]
+  Пропущен Task.Tests.PostgresProductApiTests.ObjectLinks_RecheckLifecycleVersionsAndIndependentMutationPermissions [1 ms]
+Файл результатов: C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\outputs\20261031_pr21_pr23_pr24_review_1.0.0\final_net10.0_20261031013518.trx
+
+Пройден!   : не пройдено     0, пройдено   851, пропущено    31, всего   882, длительность 1 s. - Task.Tests.dll (net10.0)
+[xUnit.net 00:00:20.17]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates [FAIL]
+  Не пройден Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates [312 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.BooleanToVisibilityConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.ProjectsView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml:line 1
+   at Task.Desktop.Views.ProjectsView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml.cs:line 9
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.<>c__DisplayClass55_1.<<NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectFilesWindowsTests.cs:line 51
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectFilesWindowsTests.cs:line 83
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 338 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.65]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectFiles_SectionPickerCommandsFocusAndSafeStates() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectFilesWindowsTests.cs:line 32
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:21.63]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback [FAIL]
+  Не пройден Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback [295 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.BooleanToVisibilityConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.ProjectsView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml:line 1
+   at Task.Desktop.Views.ProjectsView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml.cs:line 9
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.<>c__DisplayClass66_1.<<NativeProjectsHostReusesPickersAndPreservesUuidFallback>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectPickerWindowsTests.cs:line 53
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectPickerWindowsTests.cs:line 95
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 313 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.66]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectsHostReusesPickersAndPreservesUuidFallback() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectPickerWindowsTests.cs:line 36
+--- End of stack trace from previous location ---
+Файл результатов: C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\outputs\20261031_pr21_pr23_pr24_review_1.0.0\final_net10.0_20261031013538.trx
+
+Пройден!   : не пройдено     0, пройдено   671, пропущено     0, всего   671, длительность 21 s. - Task.ServiceHosts.Tests.dll (net10.0)
+[xUnit.net 00:00:26.96]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectHistory_PagingReconnectRevocationAndKeyboard [FAIL]
+  Не пройден Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectHistory_PagingReconnectRevocationAndKeyboard [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectHistory_PagingReconnectRevocationAndKeyboard [295 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.BooleanToVisibilityConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.ProjectsView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml:line 1
+   at Task.Desktop.Views.ProjectsView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml.cs:line 9
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.<>c__DisplayClass65_1.<<NativeProjectHistory_PagingReconnectRevocationAndKeyboard>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectHistoryWindowsTests.cs:line 52
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectHistory_PagingReconnectRevocationAndKeyboard() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectHistoryWindowsTests.cs:line 81
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 313 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.60]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectHistory_PagingReconnectRevocationAndKeyboard [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectHistory_PagingReconnectRevocationAndKeyboard() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectHistoryWindowsTests.cs:line 32
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:29.27]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation [FAIL]
+  Не пройден Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation [372 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.BooleanToVisibilityConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.ProjectsView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml:line 1
+   at Task.Desktop.Views.ProjectsView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml.cs:line 9
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.<>c__DisplayClass83_1.<<NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectRelatedTasksWindowsTests.cs:line 52
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectRelatedTasksWindowsTests.cs:line 109
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 391 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.77]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeRelatedTasks_ExplicitLoadProgressCollapseResumeAndUnloadedCancellation() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectRelatedTasksWindowsTests.cs:line 35
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:30.83]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates [FAIL]
+  Не пройден Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates [304 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.BooleanToVisibilityConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.ProjectsView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml:line 1
+   at Task.Desktop.Views.ProjectsView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\ProjectsView.xaml.cs:line 9
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.<>c__DisplayClass22_1.<<NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectContactsWindowsTests.cs:line 51
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectContactsWindowsTests.cs:line 83
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 323 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.66]     Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Projects.ProjectsViewModelTests.NativeProjectContacts_SectionPickerCommandsFocusAndSafeStates() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Projects\ProjectContactsWindowsTests.cs:line 32
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:00.87]     Task.Desktop.Tests.Work.CompanyCardWindowsTests.NativeCompaniesCreateEditLinksNavigationAndCompactLayout [FAIL]
+  Не пройден Task.Desktop.Tests.Work.CompanyCardWindowsTests.NativeCompaniesCreateEditLinksNavigationAndCompactLayout [1 s]
+  Сообщение об ошибке:
+   ðÆðÁÐÇÐüð©ÐÅ VSTest 18.7.0 (x64)
+
+ð×ð▒ÐëðÁðÁ ð║ð¥ð╗ð©ÐçðÁÐüÐéð▓ð¥ ÐéðÁÐüÐéð¥ð▓ÐïÐà Ðäð░ð╣ð╗ð¥ð▓ (1), Ðüð¥ð¥Ðéð▓ðÁÐéÐüÐéð▓ÐâÐÄÐëð©Ðà Ðâð║ð░ðÀð░ð¢ð¢ð¥ð╝Ðâ Ðêð░ð▒ð╗ð¥ð¢Ðâ.
+  ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ Task.Desktop.Tests.Work.CompanyCardWindowsTests.NativeCompaniesCreateEditLinksNavigationAndCompactLayout [289 ms]
+  ðíð¥ð¥ð▒ÐëðÁð¢ð©ðÁ ð¥ð▒ ð¥Ðêð©ð▒ð║ðÁ:
+   System.Windows.Markup.XamlParseException : ðƒÐÇðÁð┤ð¥ÐüÐéð░ð▓ð╗ðÁð¢ð©ðÁ ðÀð¢ð░ÐçðÁð¢ð©ÐÅ ð┤ð╗ÐÅ "System.Windows.StaticResourceExtension" ð▓ÐïðÀð▓ð░ð╗ð¥ ð©Ðüð║ð╗ÐÄÐçðÁð¢ð©ðÁ.
+---- System.Exception : ðØðÁ Ðâð┤ð░ðÁÐéÐüÐÅ ð¢ð░ð╣Ðéð© ÐÇðÁÐüÐâÐÇÐü Ðü ð©ð╝ðÁð¢ðÁð╝ "Task.WindowWidthAtLeastConverter". ðÿð╝ðÁð¢ð░ ÐÇðÁÐüÐâÐÇÐüð¥ð▓ ð¥ð┐ÐÇðÁð┤ðÁð╗ÐÅÐÄÐéÐüÐÅ Ðü ÐâÐçðÁÐéð¥ð╝ ÐÇðÁð│ð©ÐüÐéÐÇð░.
+  ðóÐÇð░ÐüÐüð©ÐÇð¥ð▓ð║ð░ ÐüÐéðÁð║ð░:
+     at System.Windows.Markup.XamlReader.RewrapException(Exception e, IXamlLineInfo lineInfo, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.Load(XamlReader xamlReader, IXamlObjectWriterFactory writerFactory, Boolean skipJournaledProperties, Object rootObject, XamlObjectWriterSettings settings, Uri baseUri)
+   at System.Windows.Markup.WpfXamlLoader.LoadBaml(XamlReader xamlReader, Boolean skipJournaledProperties, Object rootObject, XamlAccessLevel accessLevel, Uri baseUri)
+   at System.Windows.Markup.XamlReader.LoadBaml(Stream stream, ParserContext parserContext, Object parent, Boolean closeStream)
+   at System.Windows.Application.LoadComponent(Object component, Uri resourceLocator)
+   at Task.Desktop.Views.WorkHubView.InitializeComponent() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\WorkHubView.xaml:line 1
+   at Task.Desktop.Views.WorkHubView..ctor() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\src\Task.Desktop\Views\WorkHubView.xaml.cs:line 10
+   at Task.Desktop.Tests.Work.CompanyCardWindowsTests.<>c__DisplayClass0_1.<<NativeCompaniesCreateEditLinksNavigationAndCompactLayout>b__1>d.MoveNext() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\CompanyCardWindowsTests.cs:line 61
+--- End of stack trace from previous location ---
+   at Task.Desktop.Tests.Work.CompanyCardWindowsTests.NativeCompaniesCreateEditLinksNavigationAndCompactLayout() in C:\Users\novik\ðóð░Ðüð║\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\CompanyCardWindowsTests.cs:line 99
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at System.Windows.StaticResourceExtension.ProvideValueInternal(IServiceProvider serviceProvider, Boolean allowDeferredReference)
+   at MS.Internal.Xaml.Runtime.ClrObjectRuntime.CallProvideValue(MarkupExtension me, IServiceProvider serviceProvider)
+
+ðØðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢!: ð¢ðÁ ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     1, ð┐ÐÇð¥ð╣ð┤ðÁð¢ð¥     0, ð┐ÐÇð¥ð┐ÐâÐëðÁð¢ð¥     0, ð▓ÐüðÁð│ð¥     1, ð┤ð╗ð©ÐéðÁð╗Ðîð¢ð¥ÐüÐéÐî 310 ms. - Task.Desktop.Tests.dll (net10.0)
+[xUnit.net 00:00:00.65]     Task.Desktop.Tests.Work.CompanyCardWindowsTests.NativeCompaniesCreateEditLinksNavigationAndCompactLayout [FAIL]
+
+  Трассировка стека:
+     at Task.Desktop.Tests.Work.CompanyCardWindowsTests.NativeCompaniesCreateEditLinksNavigationAndCompactLayout() in C:\Users\novik\Таск\work\pr21_pr23_pr24_review_20261031\repo\work\production\tests\Task.Desktop.Tests\Work\CompanyCardWindowsTests.cs:line 37
+--- End of stack trace from previous location ---

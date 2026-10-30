@@ -1,7 +1,11 @@
 {
   "version": "1.0.0",
-  "source_commit": "6c58c3f791a5d9ace99f3b30fd658133af670932",
+  "source_commit": "893aacba3efa6c02eee1c13af12405ac47ab3f72",
   "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
     {
       "path": "admin/AdminActivateButton-confirmation.png",
       "sha256": "d4d1edb0889eabc0347197a69a1090d78e24b28707140338b337ca42ccc606dd"
@@ -244,11 +248,11 @@
     },
     {
       "path": "validation-report.md",
-      "sha256": "e336d243f86299e773232c7f34152462d0e676a93c5da0f3f2d7d4d05ba39797"
+      "sha256": "08b39eaaa26de9acb4c63604de0621b197ac06b27423875dde2459a0b9176545"
     },
     {
       "path": "validation.json",
-      "sha256": "be206815d4afa07272d88f4c0a301e24a7d167f46f90a597bfa29e7ff93f96d2"
+      "sha256": "d15c37052bdeb99e9f26e2961462e5d858554711bed50e218cc5e90ccec912f1"
     },
     {
       "path": "verified_net10.0_20261031013616.trx",

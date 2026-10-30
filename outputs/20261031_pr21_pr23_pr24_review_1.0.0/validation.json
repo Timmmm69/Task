@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "source_commit": "6c58c3f791a5d9ace99f3b30fd658133af670932",
+  "source_commit": "893aacba3efa6c02eee1c13af12405ac47ab3f72",
   "result": "pass_after_fixes",
   "desktop_passed": 1922,
   "domain_passed": 851,

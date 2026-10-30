@@ -2,7 +2,7 @@
 Date: 2026-10-31 Europe/Minsk. Result: PASS after integration fixes.
 
 Reviewed heads: PR21 9b0fa73ed23b7234e8bd35e435ff7570543a4f38; PR23 9d71384fadc3b041aed66f41a2f3a79d0c5c5858; PR24 9adedb7bc3006d0f607df95d3dfb507c559e7403.
-Base main: 47d228e. Integrated source: 6c58c3f791a5d9ace99f3b30fd658133af670932.
+Base main: 47d228e. Integrated source: 893aacba3efa6c02eee1c13af12405ac47ab3f72.
 
 ## Fixes required before publication
 - Resolve PR21 conflict preserving main's named links expander and responsive row allocation.

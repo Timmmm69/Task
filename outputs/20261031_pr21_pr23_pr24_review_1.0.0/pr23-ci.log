@@ -1,0 +1,292 @@
+Production solution (cheap gates)	UNKNOWN STEP	﻿2026-10-25T19:13:57.3573098Z Current runner version: '2.338.0'
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3593684Z ##[group]Runner Image Provisioner
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3594277Z Hosted Compute Agent
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3594639Z Version: 20261021.618
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3595011Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3595459Z Build Date: 2026-10-21T00:45:21Z
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3595882Z Worker ID: {0f7db2fa-480b-4d72-a182-9ba9a353b3d2}
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3596292Z Region: centralus
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3596633Z Cloud: Azure
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3596968Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3598116Z ##[group]Operating System
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3598506Z Microsoft Windows Server 2025
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3598879Z 10.0.26100
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3599207Z Datacenter
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3599532Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3599873Z ##[group]Runner Image
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3600248Z Image: windows-2025-vs2026
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3600617Z Version: 20261021.278.1
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3601634Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261021.278/images/windows/Windows2025-VS2026-Readme.md
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3602604Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261021.278
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3603172Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3603839Z ##[group]GITHUB_TOKEN Permissions
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3605230Z Contents: read
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3605556Z Metadata: read
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3605885Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3607409Z Secret source: Actions
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3607967Z Cache mode: write
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.3608464Z Prepare workflow directory
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.5007870Z Prepare all required actions
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.5043448Z Getting action download info
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.7154649Z Download action repository 'actions/checkout@v6' (SHA:d23441a48e516b6c34aea4fa41551a30e30af803)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:57.7995526Z Download action repository 'actions/setup-dotnet@v5' (SHA:26b0ec14cb23fa6904739307f278c14f94c95bf1)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.3455535Z Complete job name: Production solution (cheap gates)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6079560Z ##[group]Run actions/checkout@v6
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6080255Z with:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6080478Z   repository: Timmmm69/Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6082814Z   token: ***
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6083028Z   ssh-strict: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6083248Z   ssh-user: git
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6083477Z   persist-credentials: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6083729Z   clean: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6083962Z   sparse-checkout-cone-mode: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6084236Z   fetch-depth: 1
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6084458Z   fetch-tags: false
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6084686Z   show-progress: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6084917Z   lfs: false
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6085128Z   submodules: false
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6085363Z   set-safe-directory: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6085626Z   allow-unsafe-pr-checkout: false
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6085993Z env:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6086209Z   DOTNET_CLI_TELEMETRY_OPTOUT: 1
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6086470Z   DOTNET_NOLOGO: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.6086717Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.7132962Z Syncing repository: Timmmm69/Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.7134053Z ##[group]Getting Git version info
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.7134534Z Working directory is 'D:\a\Task\Task'
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:58.7610772Z [command]"C:\Program Files\Git\bin\git.exe" version
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.0751249Z git version 2.56.0.windows.2
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.0793903Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.0809189Z Temporarily overriding HOME='D:\a\_temp\6c411c96-4d55-4736-909a-a465ae6eb271' before making global git config changes
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.0810882Z Adding repository directory to the temporary git global config as a safe directory
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.0816834Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Task\Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.1412105Z Deleting the contents of 'D:\a\Task\Task'
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.1416324Z ##[group]Determining repository object format
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.1418282Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.1421088Z ##[group]Initializing the repository
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.1425516Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\Task\Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.2287016Z Initialized empty Git repository in D:/a/Task/Task/.git/
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.2332304Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/Timmmm69/Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.2919709Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.2921708Z ##[group]Disabling automatic garbage collection
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.2926915Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.3286709Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.3287401Z ##[group]Setting up auth
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.3288239Z Removing SSH command configuration
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.3298943Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:13:59.3601623Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:00.7025754Z Removing HTTP extra header
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:00.7033761Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:00.7312639Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.1489619Z Removing includeIf entries pointing to credentials config files
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.1499729Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.1792368Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.6073119Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.6390122Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Task/Task/.git.path D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.6664912Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/Task/Task/.git/worktrees/*.path D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.6979461Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.7257466Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.7537518Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.7537893Z ##[group]Fetching the repository
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:01.7548171Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c1e58f0a18c3aa0f9629b120737d247b2edea6a5:refs/remotes/pull/23/merge
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.5817106Z From https://github.com/Timmmm69/Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.5818134Z  * [new ref]         c1e58f0a18c3aa0f9629b120737d247b2edea6a5 -> pull/23/merge
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.5858966Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.5859593Z ##[group]Determining the checkout info
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.5859984Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.5869485Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.6405078Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.6691493Z ##[group]Checking out the ref
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:11.6702219Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/23/merge
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:12.7357781Z Updating files:  19% (1864/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:12.9219303Z Updating files:  20% (1880/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:12.9532533Z Updating files:  21% (1974/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:12.9927740Z Updating files:  22% (2068/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.0208534Z Updating files:  23% (2162/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.0638370Z Updating files:  24% (2256/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.1023174Z Updating files:  25% (2350/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.1332175Z Updating files:  26% (2444/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.1644831Z Updating files:  27% (2538/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.1934975Z Updating files:  28% (2632/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.2264154Z Updating files:  29% (2726/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.2564911Z Updating files:  30% (2820/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.4685812Z Updating files:  31% (2914/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.5211404Z Updating files:  32% (3008/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.5543844Z Updating files:  33% (3102/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.5937323Z Updating files:  34% (3196/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.6355920Z Updating files:  35% (3290/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.6611258Z Updating files:  36% (3384/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.6975084Z Updating files:  37% (3478/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.7207077Z Updating files:  38% (3572/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.7285611Z Updating files:  39% (3666/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.7572852Z Updating files:  39% (3683/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.8201180Z Updating files:  40% (3760/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.8428558Z Updating files:  41% (3854/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.8506989Z Updating files:  42% (3948/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.8586360Z Updating files:  43% (4042/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.8778268Z Updating files:  44% (4136/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.9148547Z Updating files:  45% (4230/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.9227243Z Updating files:  46% (4324/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.9306218Z Updating files:  47% (4418/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.9466020Z Updating files:  48% (4512/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.9798380Z Updating files:  49% (4606/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:13.9924065Z Updating files:  50% (4699/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.0077453Z Updating files:  51% (4793/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.0727720Z Updating files:  52% (4887/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.1401831Z Updating files:  53% (4981/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.1737824Z Updating files:  54% (5075/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.1863026Z Updating files:  55% (5169/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.1997796Z Updating files:  56% (5263/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.2111526Z Updating files:  57% (5357/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.2239141Z Updating files:  58% (5451/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.2373578Z Updating files:  59% (5545/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.2502236Z Updating files:  60% (5639/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.2629211Z Updating files:  61% (5733/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.3014061Z Updating files:  62% (5827/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.3547627Z Updating files:  63% (5921/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.3668298Z Updating files:  64% (6015/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.3749028Z Updating files:  65% (6109/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.3830386Z Updating files:  66% (6203/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.4133295Z Updating files:  67% (6297/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5033484Z Updating files:  68% (6391/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5110998Z Updating files:  69% (6485/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5194585Z Updating files:  70% (6579/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5322163Z Updating files:  71% (6673/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5671176Z Updating files:  72% (6767/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5898976Z Updating files:  73% (6861/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.5976435Z Updating files:  74% (6955/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.6054988Z Updating files:  75% (7049/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.6222055Z Updating files:  76% (7143/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.8664607Z Updating files:  77% (7237/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.8881900Z Updating files:  77% (7268/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.9057645Z Updating files:  78% (7331/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.9136200Z Updating files:  79% (7425/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.9213843Z Updating files:  80% (7519/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.9475361Z Updating files:  81% (7613/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:14.9754449Z Updating files:  82% (7707/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.0209124Z Updating files:  83% (7801/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.0381546Z Updating files:  84% (7895/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.0459944Z Updating files:  85% (7989/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.0535508Z Updating files:  86% (8083/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.0808471Z Updating files:  87% (8177/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.1127918Z Updating files:  88% (8271/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.1305407Z Updating files:  89% (8365/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.1387101Z Updating files:  90% (8459/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.1460917Z Updating files:  91% (8553/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.1679148Z Updating files:  92% (8647/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.2031348Z Updating files:  93% (8741/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.2425855Z Updating files:  94% (8835/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.2815640Z Updating files:  95% (8929/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.5410208Z Updating files:  96% (9023/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.6618127Z Updating files:  97% (9117/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.7543052Z Updating files:  98% (9211/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.7887233Z Updating files:  98% (9261/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8188402Z Updating files:  99% (9305/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8188694Z Updating files: 100% (9398/9398)
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8188851Z Updating files: 100% (9398/9398), done.
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8347322Z Note: switching to 'refs/remotes/pull/23/merge'.
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8347491Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8347615Z You are in 'detached HEAD' state. You can look around, make experimental
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8347877Z changes and commit them, and you can discard any commits you make in this
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8348132Z state without impacting any branches by switching back to a branch.
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8348281Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8348380Z If you want to create a new branch to retain commits you create, you may
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8348746Z do so (now or later) by using -c with the switch command. Example:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8349125Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8349519Z   git switch -c <new-branch-name>
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8349656Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8349734Z Or undo this operation with:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8349851Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8349918Z   git switch -
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8350009Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8350398Z Turn off this advice by setting config variable advice.detachedHead to false
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8350696Z 
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8351101Z HEAD is now at c1e58f0 Merge 9d71384fadc3b041aed66f41a2f3a79d0c5c5858 into 3fe76562b3c51fee3e36b933b169b101376afb47
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.8789404Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.9156865Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:15.9410289Z c1e58f0a18c3aa0f9629b120737d247b2edea6a5
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693168Z ##[group]Run actions/setup-dotnet@v5
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693370Z with:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693477Z   dotnet-version: 10.0.x
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693599Z   cache: false
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693710Z env:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693818Z   DOTNET_CLI_TELEMETRY_OPTOUT: 1
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0693942Z   DOTNET_NOLOGO: true
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.0694049Z ##[endgroup]
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:16.2642621Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v5\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Runtime dotnet -Channel LTS
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.8695888Z dotnet-install: Downloading from "aka.ms" link has failed with error:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.8696575Z Uri: https://dotnetorigin.blob.core.windows.net/dotnet/Runtime/10.0.14/dotnet-runtime-10.0.14-win-x64.zip
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.8697022Z StatusCode: 409
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.8697910Z Error: Unable to download https://dotnetorigin.blob.core.windows.net/dotnet/Runtime/10.0.14/dotnet-runtime-10.0.14-win-x64.zip. Returned HTTP status code: 409
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.9462702Z ^[[31;1mException: ^[[0mD:\a\_actions\actions\setup-dotnet\v5\externals\install-dotnet.ps1:1443^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.9463588Z ^[[31;1m^[[0m^[[36;1mLine |^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.9464148Z ^[[31;1m^[[0m^[[36;1m^[[36;1m1443 | ^[[0m     ^[[36;1mthrow "Could not find `"$assetName`" with version = $($DownloadLi^[[0m …^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.9464738Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m     | ^[[31;1m     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.9465494Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m     | ^[[31;1mCould not find ".NET Core Runtime" with version = 10.0.14 Refer to: https://aka.ms/dotnet-os-lifecycle for^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:24.9466243Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m^[[31;1m^[[36;1m     | ^[[31;1minformation on .NET support^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:25.0121211Z ##[warning]Failed to install dotnet runtime + cli, exit code: 1. dotnet-install: Downloading from "aka.ms" link has failed with error:
+Production solution (cheap gates)	UNKNOWN STEP	Uri: https://dotnetorigin.blob.core.windows.net/dotnet/Runtime/10.0.14/dotnet-runtime-10.0.14-win-x64.zip
+Production solution (cheap gates)	UNKNOWN STEP	StatusCode: 409
+Production solution (cheap gates)	UNKNOWN STEP	Error: Unable to download https://dotnetorigin.blob.core.windows.net/dotnet/Runtime/10.0.14/dotnet-runtime-10.0.14-win-x64.zip. Returned HTTP status code: 409
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1mException: ^[[0mD:\a\_actions\actions\setup-dotnet\v5\externals\install-dotnet.ps1:1443^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1mLine |^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m1443 | ^[[0m     ^[[36;1mthrow "Could not find `"$assetName`" with version = $($DownloadLi^[[0m …^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m     | ^[[31;1m     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m     | ^[[31;1mCould not find ".NET Core Runtime" with version = 10.0.14 Refer to: https://aka.ms/dotnet-os-lifecycle for^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m^[[31;1m^[[36;1m     | ^[[31;1minformation on .NET support^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:25.0403372Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v5\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Channel 10.0
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.1794211Z dotnet-install: Downloading from "aka.ms" link has failed with error:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.1794663Z Uri: https://dotnetorigin.blob.core.windows.net/dotnet/Sdk/10.0.403/dotnet-sdk-10.0.403-win-x64.zip
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.1794933Z StatusCode: 409
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.1795276Z Error: Unable to download https://dotnetorigin.blob.core.windows.net/dotnet/Sdk/10.0.403/dotnet-sdk-10.0.403-win-x64.zip. Returned HTTP status code: 409
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.2413997Z ^[[31;1mException: ^[[0mD:\a\_actions\actions\setup-dotnet\v5\externals\install-dotnet.ps1:1443^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.2417240Z ^[[31;1m^[[0m^[[36;1mLine |^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.2417785Z ^[[31;1m^[[0m^[[36;1m^[[36;1m1443 | ^[[0m     ^[[36;1mthrow "Could not find `"$assetName`" with version = $($DownloadLi^[[0m …^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.2418389Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m     | ^[[31;1m     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.2418985Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m     | ^[[31;1mCould not find ".NET Core SDK" with version = 10.0.403 Refer to: https://aka.ms/dotnet-os-lifecycle for^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.2419458Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m^[[31;1m^[[36;1m     | ^[[31;1minformation on .NET support^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.3005134Z ##[error]Failed to install dotnet, exit code: 1. dotnet-install: Downloading from "aka.ms" link has failed with error:
+Production solution (cheap gates)	UNKNOWN STEP	Uri: https://dotnetorigin.blob.core.windows.net/dotnet/Sdk/10.0.403/dotnet-sdk-10.0.403-win-x64.zip
+Production solution (cheap gates)	UNKNOWN STEP	StatusCode: 409
+Production solution (cheap gates)	UNKNOWN STEP	Error: Unable to download https://dotnetorigin.blob.core.windows.net/dotnet/Sdk/10.0.403/dotnet-sdk-10.0.403-win-x64.zip. Returned HTTP status code: 409
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1mException: ^[[0mD:\a\_actions\actions\setup-dotnet\v5\externals\install-dotnet.ps1:1443^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1mLine |^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m1443 | ^[[0m     ^[[36;1mthrow "Could not find `"$assetName`" with version = $($DownloadLi^[[0m …^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m     | ^[[31;1m     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m     | ^[[31;1mCould not find ".NET Core SDK" with version = 10.0.403 Refer to: https://aka.ms/dotnet-os-lifecycle for^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m^[[31;1m^[[36;1m     | ^[[31;1minformation on .NET support^[[0m
+Production solution (cheap gates)	UNKNOWN STEP	
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.7168396Z Post job cleanup.
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8343559Z [command]"C:\Program Files\Git\bin\git.exe" version
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8613746Z git version 2.56.0.windows.2
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8678875Z Temporarily overriding HOME='D:\a\_temp\09a1afcf-b292-42c0-9e77-7f05efda70eb' before making global git config changes
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8679493Z Adding repository directory to the temporary git global config as a safe directory
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8687598Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Task\Task
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8977213Z Removing SSH command configuration
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.8986054Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:33.9275377Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.3687252Z Removing HTTP extra header
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.3698737Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.4060436Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9351871Z Removing includeIf entries pointing to credentials config files
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9361295Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9609783Z includeif.gitdir:D:/a/Task/Task/.git.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9610411Z includeif.gitdir:D:/a/Task/Task/.git/worktrees/*.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9610657Z includeif.gitdir:/github/workspace/.git.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9610906Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9646502Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Task/Task/.git.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9888677Z D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:34.9929968Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Task/Task/.git.path D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.0198639Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/Task/Task/.git/worktrees/*.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.0429406Z D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.0463240Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/Task/Task/.git/worktrees/*.path D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.0731268Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.1005397Z /github/runner_temp/git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.1039696Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.1302763Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.1539319Z /github/runner_temp/git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.1573850Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.1839329Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.7077665Z Removing credentials config 'D:\a\_temp\git-credentials-3a1a28d8-c4dc-4784-887f-24a00d0bbc7d.config'
+Production solution (cheap gates)	UNKNOWN STEP	2026-10-25T19:14:35.7246411Z Cleaning up orphan processes
