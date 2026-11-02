@@ -25,8 +25,14 @@ public sealed class PersonalSelectWindowsTests
         const string flag = "TASK_PERSONAL_SELECT_PROBE";
         if (Environment.GetEnvironmentVariable(flag) != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(PersonalSelectWindowsTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(PersonalDropdownsPreserveBindingsSearchKeyboardAndSharedViewIsolation));
             start.Environment[flag] = "1";
@@ -48,8 +54,13 @@ public sealed class PersonalSelectWindowsTests
                 try
                 {
                     var source = new SelectionModel();
-                    var search = new ComboBox { DisplayMemberPath = "Name", MinWidth = 260, DataContext = source,
-                        Style = (Style)app.FindResource("Task.Input.Combo") };
+                    var search = new ComboBox
+                    {
+                        DisplayMemberPath = "Name",
+                        MinWidth = 260,
+                        DataContext = source,
+                        Style = (Style)app.FindResource("Task.Input.Combo")
+                    };
                     search.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(SelectionModel.Projects)));
                     search.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(SelectionModel.Selected)) { Mode = BindingMode.TwoWay });
                     var other = new ComboBox { ItemsSource = source.Projects, DisplayMemberPath = "Name" };
@@ -237,7 +248,8 @@ public sealed class PersonalSelectWindowsTests
     private static T Part<T>(Control control, string name) where T : DependencyObject
     { control.ApplyTemplate(); return Assert.IsType<T>(control.Template.FindName(name, control)); }
     private static void PressKey(UIElement element, Key key) => element.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
-        PresentationSource.FromVisual(element), Environment.TickCount, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        PresentationSource.FromVisual(element), Environment.TickCount, key)
+    { RoutedEvent = Keyboard.PreviewKeyDownEvent });
     private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
     {
         for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)

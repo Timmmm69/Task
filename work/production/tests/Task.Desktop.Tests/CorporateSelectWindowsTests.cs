@@ -24,8 +24,14 @@ public sealed class CorporateSelectWindowsTests
         const string flag = "TASK_CORPORATE_SELECT_PROBE";
         if (Environment.GetEnvironmentVariable(flag) != "1")
         {
-            var start = new ProcessStartInfo("dotnet") { UseShellExecute = false, CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden, RedirectStandardOutput = true, RedirectStandardError = true };
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
             start.ArgumentList.Add("vstest"); start.ArgumentList.Add(typeof(CorporateSelectWindowsTests).Assembly.Location);
             start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(CorporateSelectorsKeepFilteringDraftsPermissionsAndCustomTemplates));
             start.Environment[flag] = "1";
@@ -64,9 +70,12 @@ public sealed class CorporateSelectWindowsTests
                     Assert.True(await tasks.NewTaskCommand.ExecuteAsync()); await Drain(window); Assert.NotNull(tasks.Editor);
                     tasks.Editor!.Title = "Черновик корпоративной задачи";
                     var firstId = Guid.NewGuid(); var secondId = Guid.NewGuid();
-                    tasks.Editor.Card.SetOptions(new JsonObject { ["projects"] = new JsonArray(
+                    tasks.Editor.Card.SetOptions(new JsonObject
+                    {
+                        ["projects"] = new JsonArray(
                         new JsonObject { ["id"] = firstId.ToString("D"), ["name"] = "Альфа" },
-                        new JsonObject { ["id"] = secondId.ToString("D"), ["name"] = "Бета" }) });
+                        new JsonObject { ["id"] = secondId.ToString("D"), ["name"] = "Бета" })
+                    });
                     for (var pass = 0; pass < 3; pass++)
                     {
                         foreach (var expander in Descendants<Expander>(window).Where(e => e.IsVisible).ToArray()) expander.IsExpanded = true;
@@ -138,7 +147,8 @@ public sealed class CorporateSelectWindowsTests
     private static T Part<T>(Control control, string name) where T : DependencyObject
     { control.ApplyTemplate(); return Assert.IsType<T>(control.Template.FindName(name, control)); }
     private static void Press(UIElement target, Key key) => target.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
-        PresentationSource.FromVisual(target), Environment.TickCount, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        PresentationSource.FromVisual(target), Environment.TickCount, key)
+    { RoutedEvent = Keyboard.PreviewKeyDownEvent });
     private static IEnumerable<T> Descendants<T>(DependencyObject parent) where T : DependencyObject
     {
         for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)

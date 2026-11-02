@@ -118,7 +118,8 @@ public sealed class CommandPaletteWindowsTests
         {
             ready.SetResult(Dispatcher.CurrentDispatcher);
             Dispatcher.Run();
-        }) { IsBackground = true };
+        })
+        { IsBackground = true };
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
         return ready.Task.GetAwaiter().GetResult();
     });
