@@ -1,0 +1,315 @@
+{
+  "version": "1.0.0",
+  "date": "2026-11-03",
+  "baseline": "418e7842ab16729c8e0645507011bb5eee2b0ece",
+  "desktop_tests": {
+    "total": "1939",
+    "executed": "1939",
+    "passed": "1939",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "54da72ffe7b7a9529b193ff0de762c16c29616be3c582b4ed940400e6d2a8ded",
+      "bytes": 9
+    },
+    {
+      "path": "build.log",
+      "sha256": "9d4bab8dc1614d101137659259e668656005ea1d9168d2262e3b0fe7778b67bc",
+      "bytes": 1764
+    },
+    {
+      "path": "desktop-tests.log",
+      "sha256": "c389b4f90d6aed4374f1585079d3783d6691e8451fb8a00c7c37da7909fd0b4d",
+      "bytes": 610
+    },
+    {
+      "path": "desktop.trx",
+      "sha256": "8dcc48ab0e01e1ccbdd64cfb9082ce81e1a15fd01d7c1c05b75fd2e3c06dec9f",
+      "bytes": 2834679
+    },
+    {
+      "path": "format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "source.patch",
+      "sha256": "afe097f23ffdd06fd2d6b4e2d237efbcf21c25e0d2d52c1a304621706d198d73",
+      "bytes": 388572
+    },
+    {
+      "path": "VALIDATION_REPORT.md",
+      "sha256": "177d7f1e766cde62af584c6df466a65d5df0e0824be3cdc81c11a25c39fb0059",
+      "bytes": 4127
+    },
+    {
+      "path": "VERSION",
+      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
+      "bytes": 6
+    }
+  ],
+  "source_files": [
+    {
+      "path": "work/production/src/Task.Desktop/Infrastructure/PersonalSelect.cs",
+      "sha256_git_blob": "d1aca9d9ed6cf019a8362686feeeab1cea87637ff72650008a220507ebe3f285"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Infrastructure/SearchFieldCommands.cs",
+      "sha256_git_blob": "f7ee9e7ee661398ec12e6b2bfefe7e90596bec133389616218b8304007030320"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml",
+      "sha256_git_blob": "13631509fcee194012ba2d091a0f67e5450b48b120d287f9b8428792f21c284a"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/MainWindow.xaml.cs",
+      "sha256_git_blob": "d9dda181fb5f514ca350b8fe780175731aff92613077a05ffb91d2baabda88ca"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Modes/PersonalApplicationContext.cs",
+      "sha256_git_blob": "7f2b85f540ffb6cb9110c4dfdd9e6b3783001fa4c8e9252a3f43faae16bdabd2"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalPlanningViewModel.Projects.cs",
+      "sha256_git_blob": "ef34e524762a928588de376946b9af0c9f92c8b90be00fa2e42a102086e27496"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalPlanningViewModel.cs",
+      "sha256_git_blob": "0ad809836b3edc5805dcce7ae6a4024fe4aa0f4d1eb7ab5d1dee35ca67cb8ff2"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalProjects.cs",
+      "sha256_git_blob": "722258cb75df58e9bb5be3724e966d347e408d29e66908f93b795d2d31e75be3"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalShellPalette.cs",
+      "sha256_git_blob": "b25fc1bff55623fb1da268e6590c456c917b658db822463d3518674c2962da56"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalShellViewModel.cs",
+      "sha256_git_blob": "699100bd81b5f499888819d7a7f046eae5a2a5297ac5c74e32296c6eb215c50a"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalTasksViewModel.cs",
+      "sha256_git_blob": "f7afdfa00a127546883dbe608fab068ec7d671d91a26433ec9163dbd054cfa92"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.Catalog.cs",
+      "sha256_git_blob": "3efbb3c59e3dcd8104249b5ab8691b0f5ed8f5b0d8e25bfa8f461314c5285406"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Personal/PersonalWorkspaceViewModel.cs",
+      "sha256_git_blob": "eb8ea1f671532f847ea6e55dc243adf45a0eea1c9d9fd18579ee23f5842127d2"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/PersonalWindow.xaml",
+      "sha256_git_blob": "e003f52d046b4734b55179cc41eb240aab8c52da5f929343f7d4935a4aa75bd5"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/PersonalWindow.xaml.cs",
+      "sha256_git_blob": "fab17edd2e13183af938aa44f86c7096833ae18897cd10cda949a14ce1101afa"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Capsule.Tokens.xaml",
+      "sha256_git_blob": "39e37100605ed283a8e59235c46d90765ab499b719d29f44c4caf133eea88ec8"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Buttons.xaml",
+      "sha256_git_blob": "fe03aca58a1270f9dd38c216798a34a7044ca96b6abdc48447d147965e666085"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Data.xaml",
+      "sha256_git_blob": "4f49f52fecf2b0ce1fee29664add6646385a40ff4d0450a80d3de258fd1c18e2"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Controls.Search.xaml",
+      "sha256_git_blob": "9e479b11ce37e32c4a72dacc3a9f4f0c55ddd4ba743aa10bf487bfecb7e89c43"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Airbnb.xaml",
+      "sha256_git_blob": "d6571ba2190ff30173a08e263e8188cbc7c13bf7156441422df5ea7eb02f637a"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Calendar.xaml",
+      "sha256_git_blob": "9535e94cb3a36d0f8a9decfd63b10dfb98c8b11b64eb075b2a43b004dd6e9149"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Controls.xaml",
+      "sha256_git_blob": "ec1b0f8b3374d8fcccfb01c091ccf68fbe54712d0acc46b4767a808815d945d7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Personal.Select.xaml",
+      "sha256_git_blob": "ee61a65522d50d2f18313b8633cb7f26c85369fde1aef4eece0aecd7e382cc97"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Resources/Theme.xaml",
+      "sha256_git_blob": "dfced0afff6dd08ae1291e508e4c5149ce8164ede8f027fa451f5a9ba2290701"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/ViewModels/WorkHubCatalogViewModel.cs",
+      "sha256_git_blob": "0320abcd26b98f205b96d0bfef5be29b8b33e7941075c0688308c030ebbc25fc"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/AdministrationView.xaml",
+      "sha256_git_blob": "cda9f988ebbf455a2a8af0faf142af0f59bb5f54af6c8e5820178e4820c60110"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml",
+      "sha256_git_blob": "25bcfdbb59b0f54c0027307290e27816042608a70689747a6d4e605f8431c2ba"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/CalendarView.xaml.cs",
+      "sha256_git_blob": "7649a0e61ed07ca64c03d9f0f5d9a7c3994c6e2ff38d10256df8f4801e1585d4"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/CommandPaletteView.xaml",
+      "sha256_git_blob": "870a4f4bc22ac0a9f0118f41f35a8cebf9af08da9f9cb88076efbc86388c7278"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/CompaniesView.xaml",
+      "sha256_git_blob": "90fae5291365779377f3e4eca5e027b72ebb2d2605d67e24fb3b67d48182c157"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/EmployeePickerView.xaml",
+      "sha256_git_blob": "9cf655cce594c9e02a53dd94b43b2544c9d0536954a7a3b7428abb3a3d14dc89"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/ObjectLinkTargetPickerView.xaml",
+      "sha256_git_blob": "c74a91c7bf96eb9f5494f5ea67aeffd7ca540c8f4f5da4c6709f0dfbaa091253"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalCalendarView.xaml",
+      "sha256_git_blob": "130f020d8ca5a1547112352cd5addc3dd34041d656dec1fffd75a4edb0c7531b"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalCalendarView.xaml.cs",
+      "sha256_git_blob": "e77d38caef3d3365cea300e531f06e0c613155d342b3fa921e9d1be7c8f01cff"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalCatalogView.xaml",
+      "sha256_git_blob": "8930f45eeecdab0faa4eef421e8011ffa76c66a32c3d23885e1b8add7fb9d61b"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalCatalogView.xaml.cs",
+      "sha256_git_blob": "e27ec197b74ea9676844df79c1382c5a29add787f81b2c430292d1c91958fcef"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalInboxView.xaml",
+      "sha256_git_blob": "762e222465e4653350766b33b39ed526affbb48e877f1250b1ba88d54e8ebfe7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalInboxView.xaml.cs",
+      "sha256_git_blob": "aacf8b72a071a44dd50b1d9de18949a6c43c6b90134f250eb35296e0ebf55dd5"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml",
+      "sha256_git_blob": "b225c29c2cd760f0b682a4c2ceb650bd87693d4c32cbcf778248e1dba6387216"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalProjectsView.xaml.cs",
+      "sha256_git_blob": "005ae24a11d71d964b9aa474dc5738f422a1df27028bf0a2bc2f3808d313809c"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTaskBrowserView.xaml",
+      "sha256_git_blob": "41f8a1732ac58940be8a07ee0f59aa19b1fa2e5dd4c396f5ed7e15101a261cb1"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTaskBrowserView.xaml.cs",
+      "sha256_git_blob": "147bbdcff30593a5f7ce59cc648151acc5ffc6455db9b01a8d7bc3c5e3a9def6"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml",
+      "sha256_git_blob": "79dd8723c157f9c6d90dd4712f0e9c5608e3279300d354051f8fbe237c74fad2"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTasksView.xaml.cs",
+      "sha256_git_blob": "2bc992d23749560003328f89005f25cf9d82444427e9432d0d185ee80660cba0"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTodayView.xaml",
+      "sha256_git_blob": "49153ae21d181d280bb7b0010f3305fc5f0304fcb3760541493bfa6868f33820"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalTodayView.xaml.cs",
+      "sha256_git_blob": "357a91928190027c3a227469be5280be59d5afdd3f61b3d479bb16e1b9fe1a38"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/PersonalWorkspaceView.xaml",
+      "sha256_git_blob": "228d2fbb4274a19bb1db78213b4090290be7a163e67857ce0c3c882e8043b0cf"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskCardEditorView.xaml",
+      "sha256_git_blob": "8d880b7972201cca1c2dd637ac6edf614ad41fab4493a12f57a440b69bca24b7"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/TaskWorkspaceView.xaml",
+      "sha256_git_blob": "1ca6ec629cfb826f86971fbd781653a9e3d602dbc5390a210997d2db41e709dd"
+    },
+    {
+      "path": "work/production/src/Task.Desktop/Views/WorkHubView.xaml",
+      "sha256_git_blob": "24cd49d92753f2f6d979930e888c33d142e61e69e808bc1f5c03ccdb2d01ccee"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/CommandPaletteWindowsTests.cs",
+      "sha256_git_blob": "45c919de7024e15d68c3ee44df9230797b081914f7ea07e8a276b3d8f86e3560"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/CorporateSelectWindowsTests.cs",
+      "sha256_git_blob": "010483637334da5baa0e612fb738ac83ad787a4ececded6a653053cb4d5b745f"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Employees/EmployeePickerWindowsTests.cs",
+      "sha256_git_blob": "48fbbe3749d88552c885f00768b92856bb6358f255017f1dfd744ad756e9dcaa"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalCatalogBrowserTests.cs",
+      "sha256_git_blob": "72cb5eca54c88be84971b248e0605de507c965b8db4ff054316f582746bf2c30"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalInboxTests.cs",
+      "sha256_git_blob": "3388ef4946c439b468faadbc2181af0a1d948183f70b651ecc1b45fd63975ab2"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalJourneyTests.cs",
+      "sha256_git_blob": "3a24a309fb8383fcc63281b60bdb2ff4bbdcd84793416922eb2f2c7a8529511d"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalProjectBrowserTests.cs",
+      "sha256_git_blob": "b8c62b67e3717da1706542c68db4d048feaf65a2db9df1706cab4b155afe70f9"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Personal/PersonalWorkflowTests.cs",
+      "sha256_git_blob": "60de3bc438dc77c872080b9d94b43457ec54769c16c0c493aa1a9aec7ba30350"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/PersonalSelectWindowsTests.cs",
+      "sha256_git_blob": "4db3506d8bcab26ced8766e6e00039e412a1510494ff1a7fe6ec42f8002cbdf7"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/SearchInputWindowsTests.cs",
+      "sha256_git_blob": "9fc53e0cf5509046b8f84c8764c5b779c234b6c9c206bd56a74bb540c6250d5e"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Tasks/TaskContextActionsUiTests.cs",
+      "sha256_git_blob": "e4fa1ae288a38242d0c5b87ef9eb7540ca3b26f7d64016ccbf64191f8f775ee5"
+    },
+    {
+      "path": "work/production/tests/Task.Desktop.Tests/Work/ObjectLinkTargetPickerWindowsTests.cs",
+      "sha256_git_blob": "5ad22e20df7756411a326d6ff8c7bb41ef6028ea10c4311ab54976b790efd106"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ public sealed record PersonalReminderItem(PersonalReminder Source, string Title)
         + (Source.DueAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "Ожидает точного времени");
 }
 
-public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
+public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposable
 {
     private readonly PersonalTaskStore _store;
     private readonly PersonalPlanningScheduler _scheduler;
@@ -47,11 +47,12 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
         _store = store; _clock = clock ?? TimeProvider.System; _scheduler = new(store, _clock); _trigger = Triggers[0];
         _offset = store.WorkspaceSettings().DefaultReminderOffsetMinutes.ToString(CultureInfo.InvariantCulture);
         _defaultOffset = _offset;
-        RefreshCommand = new((_, _) => Run(Refresh), _ => !IsBusy);
+        RefreshCommand = new((_, _) => Run(Refresh, "Список обновлён."), _ => !IsBusy);
         NewProjectCommand = new((_, _) => { EditProject(null); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy && !IsProjectEditing);
         EditProjectCommand = new((_, _) => { EditProject(SelectedProject); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy && !IsProjectEditing && SelectedProject is not null);
         SaveProjectCommand = new((_, _) => Run(SaveProject), _ => !IsBusy && IsProjectEditing);
-        CancelProjectCommand = new((_, _) => { IsProjectEditing = false; return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy);
+        CancelProjectCommand = new((_, _) => { IsProjectEditing = false; FilterProjects(); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy);
+        OpenProjectTaskCommand = new((p, _) => { if (p is PersonalTaskItem task) OpenObjectRequested?.Invoke("task", task.Source.Id); return System.Threading.Tasks.Task.CompletedTask; }, p => CanSelectProject && p is PersonalTaskItem task && RelatedProjectTasks.Contains(task));
         AddReminderCommand = new((_, _) => Run(AddReminder), _ => !IsBusy && Target is not null);
         CancelReminderCommand = new((_, _) => Run(() => { var r = SelectedReminder!.Source; _store.CancelReminder(r.Id, r.Version); Refresh(); }), _ => !IsBusy && SelectedReminder?.Source.State is "pending" or "due" or "delivered");
         ReadNotificationCommand = new((_, _) => Run(() => { _store.MarkNotificationRead(SelectedNotification!.Id); Refresh(); }), _ => !IsBusy && SelectedNotification is not null);
@@ -71,7 +72,7 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<PersonalReminderTarget> Targets { get => _targets; private set => SetProperty(ref _targets, value); }
     public IReadOnlyList<PersonalReminderItem> Reminders { get => _reminders; private set => SetProperty(ref _reminders, value); }
     public IReadOnlyList<PersonalNotification> Notifications { get => _notifications; private set => SetProperty(ref _notifications, value); }
-    public PersonalProject? SelectedProject { get => _selectedProject; set { SetProperty(ref _selectedProject, value); Notify(); } }
+    public PersonalProject? SelectedProject { get => _selectedProject; set { if (IsProjectEditing) return; if (SetProperty(ref _selectedProject, value)) UpdateProjectDetails(); Notify(); } }
     public PersonalReminderTarget? Target { get => _target; set { SetProperty(ref _target, value); Notify(); } }
     public PersonalReminderItem? SelectedReminder { get => _selectedReminder; set { SetProperty(ref _selectedReminder, value); Notify(); } }
     public PersonalNotification? SelectedNotification { get => _selectedNotification; set { SetProperty(ref _selectedNotification, value); Notify(); } }
@@ -129,11 +130,11 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
         else if (reminder.TargetKind == DesktopScheduleItemType.CalendarEvent && _store.GetEvent(notification.TargetId) is { Status: "scheduled" }) OpenObjectRequested?.Invoke("calendar_event", notification.TargetId);
     }
     public event Action? ProjectsChanged;
-    private IEnumerable<AsyncCommand> Commands => [RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelProjectCommand, AddReminderCommand, CancelReminderCommand, ReadNotificationCommand, ReadAllNotificationsCommand, SnoozeNotificationCommand, OpenNotificationCommand];
-    private System.Threading.Tasks.Task Run(Action action)
+    private IEnumerable<AsyncCommand> Commands => [OpenProjectTaskCommand, RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelProjectCommand, AddReminderCommand, CancelReminderCommand, ReadNotificationCommand, ReadAllNotificationsCommand, SnoozeNotificationCommand, OpenNotificationCommand];
+    private System.Threading.Tasks.Task Run(Action action, string success = "Сохранено на этом компьютере.")
     {
         IsBusy = true;
-        try { action(); Message = "Сохранено на этом компьютере."; }
+        try { action(); Message = success; }
         catch (PersonalVersionConflictException) { Message = "Данные изменены. Обновите список; черновик сохранён в форме."; }
         catch (Exception e) when (e is ArgumentException or FormatException or OverflowException) { Message = e.Message; }
         catch (Exception e) when (e is Microsoft.Data.Sqlite.SqliteException or System.IO.IOException or UnauthorizedAccessException)
@@ -154,7 +155,7 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
             ProjectStatus, StartDate is { } s ? DateOnly.FromDateTime(s) : null, EndDate is { } e ? DateOnly.FromDateTime(e) : null,
             ProjectStatus == DesktopProjectStatus.Completed ? _projectSource?.ActualEndAt ?? _clock.GetUtcNow() : null,
             _projectSource?.DefaultTimeZone, _projectSource?.ColorCode, Lifecycle);
-        var saved = _store.SaveProject(draft); IsProjectEditing = false; Refresh(); SelectedProject = Projects.FirstOrDefault(p => p.Id == saved.Id); ProjectsChanged?.Invoke();
+        var saved = _store.SaveProject(draft); IsProjectEditing = false; Refresh(); SelectedProject = VisibleProjects.FirstOrDefault(p => p.Id == saved.Id) ?? SelectedProject; ProjectsChanged?.Invoke();
     }
     private void AddReminder()
     {
@@ -170,9 +171,8 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
         var configuredOffset = _store.WorkspaceSettings().DefaultReminderOffsetMinutes.ToString(CultureInfo.InvariantCulture);
         if (_offset == _defaultOffset) OffsetMinutes = configuredOffset;
         _defaultOffset = configuredOffset;
-        var projectId = SelectedProject?.Id; Projects = _store.Projects();
-        SelectedProject = projectId is { } id ? Projects.FirstOrDefault(p => p.Id == id) : null;
-        Targets = _store.List().Where(t => t.Status is not (TaskApi.DesktopTaskStatus.Completed or TaskApi.DesktopTaskStatus.Cancelled))
+        var tasks = RefreshProjectBrowser();
+        Targets = tasks.Where(t => t.Status is not (TaskApi.DesktopTaskStatus.Completed or TaskApi.DesktopTaskStatus.Cancelled))
             .Select(t => new PersonalReminderTarget(t.Id, DesktopScheduleItemType.Task, t.Title))
             .Concat(_store.Events().Where(e => e.Status == "scheduled").Select(e => new PersonalReminderTarget(e.Id, DesktopScheduleItemType.CalendarEvent, e.Title))).ToArray();
         Reminders = _store.Reminders().Select(r => new PersonalReminderItem(r, Targets.FirstOrDefault(t => t.Id == r.TargetId)?.Title
@@ -191,6 +191,6 @@ public sealed class PersonalPlanningViewModel : ViewModelBase, IDisposable
     internal IReadOnlyList<ModeSwitchEditor> InspectDrafts() =>
     [new("Личный проект", () => IsProjectEditing, () => IsBusy, SaveProjectCommand),
         new("Личное напоминание", () => Target is not null || AbsoluteTime.Length != 0 || OffsetMinutes != _defaultOffset, () => IsBusy, AddReminderCommand)];
-    private void Notify() { foreach (var command in Commands) command?.RaiseCanExecuteChanged(); }
+    private void Notify() { foreach (var command in Commands) command?.RaiseCanExecuteChanged(); OnPropertyChanged(nameof(CanSelectProject)); OnPropertyChanged(nameof(ShowProjectEmpty)); }
     public void Dispose() { foreach (var command in Commands) command.Dispose(); }
 }

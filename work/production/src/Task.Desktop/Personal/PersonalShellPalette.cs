@@ -16,7 +16,7 @@ public sealed partial class PersonalShellViewModel
             SelectedSection = Sections.First(s => s.Route == "tasks");
             Tasks?.NewCommand.Execute(null);
         }, () => CanNavigate && Tasks?.NewCommand.CanExecute(null) == true);
-        yield return new("capture", "Быстрое добавление во Входящие", () =>
+        yield return new("capture", "Быстрое добавление в Пометки", () =>
         {
             SelectedSection = Sections.First(s => s.Route == "inbox");
             InboxCaptureRequested?.Invoke();

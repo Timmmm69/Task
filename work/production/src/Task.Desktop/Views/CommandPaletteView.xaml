@@ -8,7 +8,8 @@
         <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="19"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <TextBox x:Name="QueryField" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Padding="8"
+                <TextBox x:Name="QueryField" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" FontSize="18"
+                         Style="{StaticResource Task.Input.Search}" Tag="Найти команду или объект…"
                          AutomationProperties.Name="Команда или поисковый запрос" AutomationProperties.AutomationId="GlobalSearchOverlayTextBox"/>
                 <Button Grid.Column="1" Content="Закрыть" Click="OnClose" Margin="12,0,0,0" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Закрыть палитру команд"/>
             </Grid>

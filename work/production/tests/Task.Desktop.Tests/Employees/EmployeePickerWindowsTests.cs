@@ -78,7 +78,7 @@ public sealed class EmployeePickerWindowsTests
                     // Tab moves through the native WPF focus traversal path without trapping the host form.
                     Assert.True(search.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next))); Pump();
                     Assert.False(search.IsKeyboardFocusWithin);
-                    var buttons = Descendants<Button>(view).ToArray(); Assert.Equal(6, buttons.Length);
+                    var buttons = Descendants<Button>(view).Where(button => button.TemplatedParent != search).ToArray(); Assert.Equal(6, buttons.Length);
                     Assert.All(buttons, button => { Assert.True(button.Focusable); Assert.True(button.IsTabStop); Assert.NotEmpty(new ButtonAutomationPeer(button).GetName()); });
                     await picker.ClearCommand.ExecuteAsync(); Assert.Null(picker.SelectedUserAccountId); Pump();
                     await picker.SearchAsync(); picker.Candidate = second; Assert.True(picker.ConfirmSelection()); Pump();

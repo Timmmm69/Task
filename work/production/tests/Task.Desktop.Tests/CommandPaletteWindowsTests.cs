@@ -111,16 +111,17 @@ public sealed class CommandPaletteWindowsTests
         app.Resources["Task.ResponsiveGridLengthConverter"] = new ResponsiveGridLengthConverter();
         app.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
     }
-    private static System.Threading.Tasks.Task OnSta(Action action)
+    private static readonly Lazy<Dispatcher> TestDispatcher = new(() =>
     {
-        var done = new System.Threading.Tasks.TaskCompletionSource(System.Threading.Tasks.TaskCreationOptions.RunContinuationsAsynchronously);
+        var ready = new System.Threading.Tasks.TaskCompletionSource<Dispatcher>(System.Threading.Tasks.TaskCreationOptions.RunContinuationsAsynchronously);
         var thread = new Thread(() =>
         {
-            try { action(); done.SetResult(); }
-            catch (Exception error) { done.SetException(error); }
-            finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
-        });
+            ready.SetResult(Dispatcher.CurrentDispatcher);
+            Dispatcher.Run();
+        }) { IsBackground = true };
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
-        return done.Task;
-    }
+        return ready.Task.GetAwaiter().GetResult();
+    });
+    // Application resources and their deferred templates belong to one UI dispatcher.
+    private static System.Threading.Tasks.Task OnSta(Action action) => TestDispatcher.Value.InvokeAsync(action).Task;
 }

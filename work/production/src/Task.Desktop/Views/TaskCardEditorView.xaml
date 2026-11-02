@@ -112,7 +112,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                     <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" TabIndex="31"
-                             Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Поиск связей задачи" />
+                             Style="{StaticResource Task.Input.Search}" Tag="Найти сотрудника, проект или объект…" AutomationProperties.Name="Поиск связей задачи" />
                     <Button Grid.Column="2" Content="Найти" TabIndex="32" MinWidth="92"
                             Command="{Binding DataContext.Tasks.LoadOptionsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                             Style="{StaticResource Task.Button.Secondary}" />

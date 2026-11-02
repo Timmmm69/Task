@@ -14,7 +14,7 @@
    <Button DockPanel.Dock="Right" Content="_Найти" Command="{Binding SearchCommand}" Margin="8,0,0,0"
     Style="{DynamicResource Task.Button.Secondary}" AutomationProperties.Name="Найти связанный объект"/>
    <TextBox x:Name="SearchBox" Text="{Binding SearchText,UpdateSourceTrigger=PropertyChanged}" MaxLength="200"
-    IsEnabled="{Binding CanQuery}" Style="{DynamicResource Task.Input.Text}"
+    IsEnabled="{Binding CanQuery}" Style="{DynamicResource Task.Input.Search}" Tag="Найти связанный объект…"
     AutomationProperties.Name="Название связанного объекта" AutomationProperties.AutomationId="ObjectLinkTargetSearch"/>
   </DockPanel>
   <TextBlock Grid.Row="2" Text="{Binding StatusText,NotifyOnTargetUpdated=True}" TargetUpdated="OnStatusChanged" TextWrapping="Wrap" Margin="0,8"

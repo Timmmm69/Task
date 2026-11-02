@@ -51,7 +51,7 @@ public sealed class PersonalJourneyTests : IDisposable
         using var shell = new PersonalShellViewModel(model);
         shell.SelectedSection = shell.Sections.Single(s => s.Route == "inbox");
         var vm = model.Tasks!; vm.CaptureText = "Запись"; await vm.CaptureCommand.ExecuteAsync();
-        Assert.Contains("«Входящие»", vm.Message);
+        Assert.Contains("«Пометки»", vm.Message);
         vm.Selected = Assert.Single(vm.Items); var id = vm.Selected.Source.Id;
         await vm.EditCommand.ExecuteAsync(); vm.Editor!.Card.Description = "Уточнили задачу";
         await vm.SaveCommand.ExecuteAsync(); Assert.Empty(vm.Items);

@@ -23,7 +23,7 @@
   <Border Style="{StaticResource Task.Card.Group}" Margin="0,16,0,0"><StackPanel>
   <TextBlock Text="Поиск связей" Style="{StaticResource Task.Card.Heading}"/>
   <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,0,0,6"/>
-  <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск файлов и зависимостей"/>
+  <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Search}" Tag="Найти файл или задачу…" AutomationProperties.Name="Поиск файлов и зависимостей"/>
   <Button Content="Найти связи" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>
   </StackPanel></Border>
   <Expander Header="Связанные файлы" state:ViewState.Section="task/v1/files"><StackPanel>

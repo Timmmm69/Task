@@ -10,6 +10,7 @@ public sealed partial class WorkHubViewModel
     private bool _catalogSnapshotCurrent;
     private CatalogDestination? _moveDestination;
     public IReadOnlyList<CatalogNodeViewModel> CatalogRoots { get => _catalogRoots; private set => SetProperty(ref _catalogRoots, value); }
+    internal bool CatalogSnapshotCurrent => _catalogSnapshotCurrent;
     public bool IsCatalogEmpty => CatalogRoots.Count == 0;
     public AsyncCommand CreateCatalogFolderCommand { get; private set; } = null!;
     public AsyncCommand MoveCatalogItemCommand { get; private set; } = null!;

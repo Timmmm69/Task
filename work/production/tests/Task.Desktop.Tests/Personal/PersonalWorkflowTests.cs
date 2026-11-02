@@ -18,11 +18,11 @@ public sealed class PersonalWorkflowTests : IDisposable
     {
         using var model = new PersonalApplicationModel(_root);
         var vm = model.Tasks!;
-        vm.SelectedSection = model.Sections.Single(s => s.Title == "Входящие");
+        vm.SelectedSection = model.Sections.Single(s => s.Title == "Пометки");
         Assert.False(vm.ShowEmpty);
         await vm.RefreshAsync();
         Assert.True(vm.ShowEmpty);
-        Assert.Equal("Входящие разобраны", vm.EmptyTitle);
+        Assert.Equal("Все пометки разобраны", vm.EmptyTitle);
     }
     [Fact]
     public async System.Threading.Tasks.Task ParentChoices_AreLoadedFromLocalTasksWithoutHiddenCommandFailures()
@@ -48,13 +48,13 @@ public sealed class PersonalWorkflowTests : IDisposable
         Guid id;
         using (var model = new PersonalApplicationModel(_root))
         {
-            var vm = model.Tasks!; vm.SelectedSection = model.Sections.Single(s => s.Title == "Входящие");
+            var vm = model.Tasks!; vm.SelectedSection = model.Sections.Single(s => s.Title == "Пометки");
             vm.CaptureText = "Captured"; await vm.CaptureCommand.ExecuteAsync();
             id = Assert.Single(vm.Items).Source.Id; Assert.Empty(vm.CaptureText);
         }
         using (var model = new PersonalApplicationModel(_root))
         {
-            var vm = model.Tasks!; vm.SelectedSection = model.Sections.Single(s => s.Title == "Входящие"); await vm.RefreshAsync();
+            var vm = model.Tasks!; vm.SelectedSection = model.Sections.Single(s => s.Title == "Пометки"); await vm.RefreshAsync();
             vm.Selected = Assert.Single(vm.Items); Assert.Equal(id, vm.Selected.Source.Id);
             await vm.EditCommand.ExecuteAsync(); vm.Editor!.Card.Description = "Converted locally"; vm.Editor.Card.Date = "12.10.2026";
             await vm.SaveCommand.ExecuteAsync(); Assert.Null(vm.Editor); Assert.Empty(vm.Items);

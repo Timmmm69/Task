@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -35,7 +35,8 @@ public partial class CalendarView : UserControl
             {
                 viewModel.FreeTimeChosen -= OnFreeTimeChosen;
                 viewModel.FreeTimeChosen += OnFreeTimeChosen;
-                CalendarTimelineScroll.ScrollToVerticalOffset(viewModel.InitialTimelineOffset);
+                if (viewModel.IsPersonal) PersonalCalendarSurface.ScrollToTime(viewModel.InitialTimelineOffset);
+                else CalendarTimelineScroll.ScrollToVerticalOffset(viewModel.InitialTimelineOffset);
                 viewModel.RefreshCurrentTime();
             }
             _currentTimeTimer.Start();
@@ -51,8 +52,13 @@ public partial class CalendarView : UserControl
     {
         Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
         {
-            CalendarTimelineScroll.ScrollToVerticalOffset(Math.Max(0, slot.Top - 60));
-            CalendarTimelineScroll.Focus();
+            if (DataContext is CalendarViewModel { IsPersonal: true })
+                PersonalCalendarSurface.ScrollToTime(Math.Max(0, slot.Top - 60), focus: true);
+            else
+            {
+                CalendarTimelineScroll.ScrollToVerticalOffset(Math.Max(0, slot.Top - 60));
+                CalendarTimelineScroll.Focus();
+            }
             _slotHighlightTimer.Stop(); _slotHighlightTimer.Start();
         });
     }
@@ -76,12 +82,16 @@ public partial class CalendarView : UserControl
         e.Handled = true;
     }
 
+    public void CyclePersonalFocus() => PersonalCalendarSurface.CycleFocus();
+
     private void OnCalendarPreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (DataContext is not CalendarViewModel viewModel) return;
         if (e.Key == Key.Escape && viewModel.ShowFreeTime)
         {
-            _ = viewModel.CloseFreeTimeCommand.ExecuteAsync(); CalendarTimelineScroll.Focus(); e.Handled = true; return;
+            _ = viewModel.CloseFreeTimeCommand.ExecuteAsync();
+            if (viewModel.IsPersonal) PersonalCalendarSurface.FocusTimeline(); else CalendarTimelineScroll.Focus();
+            e.Handled = true; return;
         }
         if (e.Key == Key.Escape && viewModel.Editor is null && viewModel.SelectedItem is not null)
         {
@@ -90,6 +100,7 @@ public partial class CalendarView : UserControl
             return;
         }
         if (e.Key != Key.F6 || viewModel.Editor is not null) return;
+        if (viewModel.IsPersonal) { PersonalCalendarSurface.CycleFocus(); e.Handled = true; return; }
         if (CalendarTimelineScroll.IsKeyboardFocusWithin)
         {
             if (CalendarEditEventButton.IsVisible && CalendarEditEventButton.IsEnabled)

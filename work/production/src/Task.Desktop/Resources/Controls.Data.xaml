@@ -129,6 +129,59 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Selection remains a native ListBoxItem; only its filter-chip chrome is rounded. -->
+    <Style x:Key="Task.Filter.Chip" TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+        <Setter Property="FontFamily" Value="{DynamicResource Task.Capsule.Font}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="{DynamicResource Task.Capsule.Text}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Task.Capsule.Border}"/>
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Padding" Value="14,6"/>
+        <Setter Property="Margin" Value="0,0,8,8"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Background" Value="{DynamicResource Task.Capsule.Fill}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+            <Border x:Name="ChipChrome" CornerRadius="24" Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                    SnapsToDevicePixels="True">
+                <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+        </ControlTemplate></Setter.Value></Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource Task.Capsule.Selected}"/></Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Capsule.Selected}"/>
+                <Setter Property="Foreground" Value="{DynamicResource Task.Capsule.Accent}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Capsule.Accent}"/>
+                <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Capsule.Accent}"/></Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5"/></Trigger>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+            </DataTrigger>
+            <MultiDataTrigger><MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+            </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger><MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+                <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True"/>
+            </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="Task.Semantic.StatusPill" TargetType="Border">
         <Setter Property="MinHeight" Value="24" />
         <Setter Property="Padding" Value="8,2" />

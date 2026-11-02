@@ -12,8 +12,21 @@
         <ResourceDictionary>
         <ResourceDictionary.MergedDictionaries>
             <ResourceDictionary Source="../Resources/Calendar.Forms.xaml" />
+            <ResourceDictionary Source="../Resources/Personal.Airbnb.xaml" />
         </ResourceDictionary.MergedDictionaries>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="Calendar.EventPrimary" TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}">
+            <Style.Triggers><DataTrigger Binding="{Binding DataContext.IsPersonal,RelativeSource={RelativeSource AncestorType=views:CalendarView}}" Value="True">
+                <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Accent}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Accent}"/><Setter Property="Foreground" Value="White"/>
+                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/><Setter Property="Padding" Value="18,10"/><Setter Property="FontWeight" Value="Bold"/>
+            </DataTrigger></Style.Triggers>
+        </Style>
+        <Style x:Key="Calendar.EventSecondary" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+            <Style.Triggers><DataTrigger Binding="{Binding DataContext.IsPersonal,RelativeSource={RelativeSource AncestorType=views:CalendarView}}" Value="True">
+                <Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
+                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/><Setter Property="Padding" Value="18,10"/><Setter Property="FontWeight" Value="Bold"/>
+            </DataTrigger></Style.Triggers>
+        </Style>
         <Style x:Key="Calendar.ModeButton" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
             <Setter Property="MinWidth" Value="82" />
             <Setter Property="Margin" Value="0,0,4,0" />
@@ -54,7 +67,11 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="24,14,24,0">
+    <Grid>
+    <Grid x:Name="CorporateCalendarLayout" Margin="24,14,24,0">
+        <Grid.Style><Style TargetType="Grid"><Style.Triggers>
+            <DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+        </Style.Triggers></Style></Grid.Style>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -651,7 +668,14 @@
         <TextBlock Grid.Row="3" Text="{Binding Announcement}" Visibility="Collapsed"
                    AutomationProperties.LiveSetting="Assertive" AutomationProperties.Name="{Binding Announcement}" />
 
-        <Border Grid.RowSpan="5" Background="#99000000" Padding="20" Panel.ZIndex="50"
+    </Grid>
+        <views:PersonalCalendarView x:Name="PersonalCalendarSurface">
+            <views:PersonalCalendarView.Style><Style TargetType="views:PersonalCalendarView">
+                <Setter Property="Visibility" Value="Collapsed"/>
+                <Style.Triggers><DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+            </Style></views:PersonalCalendarView.Style>
+        </views:PersonalCalendarView>
+        <Border Grid.RowSpan="5" Background="#99000000" Padding="20" Panel.ZIndex="50" Margin="24,14,24,0"
                 PreviewKeyDown="OnEditorPreviewKeyDown">
             <Border.Style>
                 <Style TargetType="Border">
@@ -686,7 +710,7 @@
                                 <TextBlock Text="{Binding VersionText}" Style="{StaticResource Calendar.Form.Hint}" Margin="0,3,0,0" />
                             </StackPanel>
                             <Button Grid.Column="2" Content="Закрыть" Command="{Binding CancelCommand}" VerticalAlignment="Center"
-                                    Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="Закрыть редактор события" />
+                                    Style="{StaticResource Calendar.EventSecondary}" AutomationProperties.Name="Закрыть редактор события" />
                         </Grid>
                     </Border>
 
@@ -889,7 +913,7 @@
                                                         </StackPanel>
                                                         <Button Grid.Column="1" Content="Удалить"
                                                                 Command="{Binding DataContext.RemoveAttendeeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                                CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}"
+                                                                CommandParameter="{Binding}" Style="{StaticResource Calendar.EventSecondary}"
                                                                 Margin="10,0,0,0" VerticalAlignment="Top" />
                                                     </Grid>
                                                 </Border>
@@ -920,7 +944,7 @@
                                                    Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                                         <Button Content="Добавить" Command="{Binding AddAttendeeCommand}"
                                                 HorizontalAlignment="Left" AutomationProperties.AutomationId="CalendarAddAttendee"
-                                                Style="{StaticResource Task.Button.Secondary}" />
+                                                Style="{StaticResource Calendar.EventSecondary}" />
                                     </StackPanel>
                                 </StackPanel>
                                 </Border>
@@ -957,10 +981,10 @@
                         </StackPanel>
                         <WrapPanel Grid.Column="1" HorizontalAlignment="Right">
                             <Button Content="Сохранить" MinWidth="120" Command="{Binding SaveCommand}"
-                                    Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,0"
+                                    Style="{StaticResource Calendar.EventPrimary}" Margin="0,0,8,0"
                                     AutomationProperties.AutomationId="CalendarEventSave" />
                             <Button Content="Отмена" Command="{Binding CancelCommand}"
-                                    Style="{StaticResource Task.Button.Secondary}" />
+                                    Style="{StaticResource Calendar.EventSecondary}" />
                         </WrapPanel>
                     </Grid>
                     </Border>
@@ -968,7 +992,7 @@
             </Border>
         </Border>
 
-        <Border Grid.RowSpan="5" Background="#99000000" Padding="12" Panel.ZIndex="60">
+        <Border Grid.RowSpan="5" Background="#99000000" Padding="12" Panel.ZIndex="60" Margin="24,14,24,0">
             <Border.Style>
                 <Style TargetType="Border"><Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers><DataTrigger Binding="{Binding Recurrence.IsOpen}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>

@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="clr-namespace:Task.Desktop.ViewModels">
+    <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Personal.Airbnb.xaml"/></ResourceDictionary.MergedDictionaries>
+    <Style x:Key="Personal.Calendar.Action" TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}">
+        <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Accent}"/><Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Accent}"/>
+    </Style>
+    <ControlTemplate x:Key="Personal.Calendar.SelectedModeTemplate" TargetType="Button">
+                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="20" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center"/></Border>
+            </ControlTemplate>
+    <Style x:Key="Personal.Calendar.Mode" TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}">
+        <Setter Property="BorderBrush" Value="Transparent"/><Setter Property="Background" Value="Transparent"/><Setter Property="MinWidth" Value="72"/>
+    </Style>
+    <Style x:Key="Personal.Calendar.DayMode" TargetType="Button" BasedOn="{StaticResource Personal.Calendar.Mode}">
+        <Style.Triggers><DataTrigger Binding="{Binding ViewMode}" Value="{x:Static vm:CalendarViewMode.Day}">
+            <Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
+            <Setter Property="Template" Value="{StaticResource Personal.Calendar.SelectedModeTemplate}"/><Setter Property="AutomationProperties.ItemStatus" Value="Выбрано"/>
+        </DataTrigger></Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.Calendar.WeekMode" TargetType="Button" BasedOn="{StaticResource Personal.Calendar.Mode}">
+        <Style.Triggers><DataTrigger Binding="{Binding ViewMode}" Value="{x:Static vm:CalendarViewMode.Week}">
+            <Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
+            <Setter Property="Template" Value="{StaticResource Personal.Calendar.SelectedModeTemplate}"/><Setter Property="AutomationProperties.ItemStatus" Value="Выбрано"/>
+        </DataTrigger></Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.Calendar.MonthMode" TargetType="Button" BasedOn="{StaticResource Personal.Calendar.Mode}">
+        <Style.Triggers><DataTrigger Binding="{Binding ViewMode}" Value="{x:Static vm:CalendarViewMode.Month}">
+            <Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
+            <Setter Property="Template" Value="{StaticResource Personal.Calendar.SelectedModeTemplate}"/><Setter Property="AutomationProperties.ItemStatus" Value="Выбрано"/>
+        </DataTrigger></Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.Calendar.EntryChrome" TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}">
+        <Setter Property="Padding" Value="6,4"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Soft}"/><Setter Property="BorderBrush" Value="#E8E8E8"/>
+        <Setter Property="FontWeight" Value="Normal"/><Setter Property="FontSize" Value="12"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+            <Border x:Name="Chrome" CornerRadius="7" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ClipToBounds="True">
+                <ContentPresenter Margin="{TemplateBinding Padding}"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Secondary}"/></Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter TargetName="Chrome" Property="BorderThickness" Value="2"/></Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate></Setter.Value></Setter>
+
+    </Style>
+    <Style x:Key="Personal.Calendar.Entry" TargetType="Button" BasedOn="{StaticResource Personal.Calendar.EntryChrome}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsCalendarEvent}" Value="True"><Setter Property="Background" Value="#FFF2F4"/><Setter Property="BorderBrush" Value="#F0DDE1"/></DataTrigger>
+            <DataTrigger Binding="{Binding IsCompleted}" Value="True"><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Secondary}"/><Setter Property="Background" Value="#FAFAFA"/></DataTrigger>
+            <DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderThickness" Value="2"/></DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Personal.Calendar.TimelineEntry" TargetType="Button" BasedOn="{StaticResource Personal.Calendar.EntryChrome}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Item.IsCalendarEvent}" Value="True"><Setter Property="Background" Value="#FFF2F4"/><Setter Property="BorderBrush" Value="#F0DDE1"/></DataTrigger>
+            <DataTrigger Binding="{Binding Item.IsCompleted}" Value="True"><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Secondary}"/><Setter Property="Background" Value="#FAFAFA"/></DataTrigger>
+            <DataTrigger Binding="{Binding Item.IsSelected}" Value="True"><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderThickness" Value="2"/></DataTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

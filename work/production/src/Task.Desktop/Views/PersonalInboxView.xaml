@@ -1,0 +1,80 @@
+<UserControl x:Class="Task.Desktop.Views.PersonalInboxView" x:Name="InboxView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:state="clr-namespace:Task.Desktop.Infrastructure" Background="White" Foreground="#222222" FontSize="14">
+ <UserControl.Resources>
+  <ResourceDictionary>
+   <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries>
+   <Style TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}"/>
+   <Style x:Key="Inbox.Row" TargetType="ListBoxItem">
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="14,10"/>
+    <Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+     <Border x:Name="Chrome" Background="White" CornerRadius="10" BorderBrush="Transparent" BorderThickness="2" Padding="{TemplateBinding Padding}" Margin="0,1,4,1"><ContentPresenter/></Border>
+     <ControlTemplate.Triggers>
+      <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Chrome" Property="Background" Value="{StaticResource Personal.Airbnb.Soft}"/></Trigger>
+      <Trigger Property="IsSelected" Value="True"><Setter TargetName="Chrome" Property="Background" Value="#EEEEEE"/></Trigger>
+      <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}"/></Trigger>
+     </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+   </Style>
+  </ResourceDictionary>
+ </UserControl.Resources>
+ <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <StackPanel Margin="0,0,0,20">
+   <TextBlock Text="Что нужно запомнить?" FontWeight="Bold" FontSize="18" Margin="0,0,0,10"/>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <Grid><TextBox Style="{StaticResource Personal.Airbnb.Input}" x:Name="CaptureInput" Text="{Binding CaptureText,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" Height="48" MinHeight="48" VerticalContentAlignment="Center"
+     state:FormKeyboard.Capture="{Binding CaptureCommand}" AutomationProperties.AutomationId="PersonalCaptureText" AutomationProperties.Name="Быстрая запись" AutomationProperties.HelpText="Не более 500 символов. Enter — записать"/>
+     <TextBlock Text="Записать мысль или задачу…" Margin="16,0" VerticalAlignment="Center" Foreground="#717171" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CaptureText}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+    </Grid>
+    <Button Grid.Column="1" Content="Записать" Command="{Binding CaptureCommand}" MinHeight="48" Margin="12,0,0,0" Padding="24,10" Background="{StaticResource Personal.Airbnb.Accent}" Foreground="White" AutomationProperties.AutomationId="PersonalCapture"/>
+   </Grid>
+   <TextBlock Text="Enter — записать · детали можно добавить позже" Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="2,6,0,0"/>
+   <TextBlock Text="{Binding CaptureValidation}" Style="{StaticResource Personal.Validation}" AutomationProperties.AutomationId="PersonalCaptureValidation"/>
+  </StackPanel>
+  <Grid Grid.Row="1" Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="{Binding InboxResultCount}" FontWeight="Bold" AutomationProperties.LiveSetting="Polite"/><TextBlock Text=" · сначала новые" Foreground="#717171"/></StackPanel>
+   <Button Grid.Column="1" Content="Обновить" Command="{Binding RefreshCommand}" Margin="12,0,0,0" AutomationProperties.AutomationId="PersonalInboxRefresh"/>
+   <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <Grid><TextBox Style="{StaticResource Personal.Airbnb.Input}" x:Name="SearchInput" Text="{Binding InboxSearchText,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="PersonalInboxSearch" AutomationProperties.Name="Поиск в пометках по названию"/>
+     <TextBlock Text="Поиск по названию" Margin="16,0" VerticalAlignment="Center" Foreground="#717171" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding InboxSearchText}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+    </Grid>
+    <Button Grid.Column="1" Content="Очистить" Click="OnClearSearch" Margin="10,0,0,0" Visibility="{Binding HasInboxSearch,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="PersonalInboxClearSearch"/>
+   </Grid>
+  </Grid>
+  <Grid Grid.Row="2" x:Name="BrowserGrid"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition x:Name="InspectorColumn" Width="340"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition x:Name="InspectorRow" Height="0"/></Grid.RowDefinitions>
+   <Grid x:Name="ListRegion" Margin="0,0,20,0">
+    <ListBox x:Name="InboxList" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected,Mode=TwoWay}" IsEnabled="{Binding CanSelectTask}"
+     state:TaskRowAction.Command="{Binding OpenRowCommand}" PreviewKeyDown="OnListKeyDown" BorderThickness="0" Background="White" Padding="0" HorizontalContentAlignment="Stretch" ItemContainerStyle="{StaticResource Inbox.Row}"
+     ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
+     AutomationProperties.AutomationId="PersonalInboxList" AutomationProperties.Name="Пометки" AutomationProperties.HelpText="Стрелки — выбор записи. Enter или двойной щелчок — открыть редактор">
+     <ListBox.ItemTemplate><DataTemplate><StackPanel>
+      <TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="42" ToolTip="{Binding Title}"/>
+      <TextBlock Text="{Binding CapturedText}" Foreground="#717171" FontSize="12" Margin="0,5,0,0"/>
+     </StackPanel></DataTemplate></ListBox.ItemTemplate>
+    </ListBox>
+    <Border Background="White" Visibility="{Binding ShowEmpty,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="320" Margin="12">
+     <TextBlock Text="{Binding EmptyTitle}" Style="{StaticResource Personal.Airbnb.Heading}" TextAlignment="Center"/><TextBlock Text="{Binding EmptyBody}" Style="{StaticResource Personal.Airbnb.Muted}" TextAlignment="Center" Margin="0,8,0,0"/>
+    </StackPanel></Border>
+    <Border Background="White" Visibility="{Binding InboxReadFailed,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12"><TextBlock Text="Не удалось загрузить пометки" FontWeight="Bold" TextWrapping="Wrap"/><Button Content="Повторить" Command="{Binding RefreshCommand}" Margin="0,12,0,0"/></StackPanel></Border>
+    <Border Background="#F2FFFFFF" Visibility="{Binding IsBusy,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"><ProgressBar IsIndeterminate="True" Width="150"/><TextBlock Text="Обновляем пометки…" Margin="0,10,0,0" Foreground="#717171"/></StackPanel></Border>
+   </Grid>
+   <Border x:Name="Inspector" Grid.Column="1" BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" CornerRadius="16" Padding="20">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+     <DockPanel Margin="0,0,0,16"><Button DockPanel.Dock="Right" Content="Добавить детали" Command="{Binding EditCommand}" Padding="12,8" AutomationProperties.AutomationId="PersonalInboxEdit"/><TextBlock Text="Разбор записи" Foreground="#717171" FontSize="12" VerticalAlignment="Center"/></DockPanel>
+     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
+     <TextBlock Text="{Binding Selected.Title,TargetNullValue=Выберите запись в списке,FallbackValue=Выберите запись в списке}" Style="{StaticResource Personal.Airbnb.Heading}" FontSize="18"/>
+     <StackPanel Visibility="{Binding HasSelection,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+      <TextBlock Text="{Binding Selected.CapturedText,StringFormat=Записано {0}}" Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="0,12,0,0"/>
+      <TextBlock Text="{Binding Selected.PriorityText,StringFormat=Приоритет: {0}}" Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="0,4,0,0"/>
+      <TextBlock Text="Дата, проект и описание — в редакторе задачи." Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="0,12,0,0"/>
+     </StackPanel>
+    </StackPanel></ScrollViewer></Grid>
+   </Border>
+  </Grid>
+  <Border Grid.Row="3" Background="{StaticResource Personal.Airbnb.Soft}" BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" CornerRadius="12" Padding="12" Margin="0,12,0,0">
+   <Border.Style><Style TargetType="Border"><Style.Triggers><DataTrigger Binding="{Binding Message}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style>
+   <DockPanel><Button DockPanel.Dock="Right" Content="Открыть задачу" Command="{Binding OpenSavedTaskCommand}" Margin="12,0,0,0" Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.AutomationId="PersonalInboxOpenSavedTask"/><TextBlock Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.LiveSetting="Assertive"/></DockPanel>
+  </Border>
+ </Grid>
+</UserControl>

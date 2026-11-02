@@ -395,7 +395,7 @@
                             </Grid.RowDefinitions>
                             <DockPanel Margin="20,12,20,12" IsEnabled="{Binding CanSearchUsers}" Grid.Row="1">
                                 <Button DockPanel.Dock="Right" Content="Найти" Command="{Binding SearchUsersCommand}" Margin="8,0,0,0" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="AdminSearchUsersButton"/>
-                                <TextBox Text="{Binding UserSearchText, UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Поиск сотрудников по имени, логину или email" AutomationProperties.AutomationId="AdminUserSearch" Style="{StaticResource Task.Input.Text}">
+                                <TextBox Text="{Binding UserSearchText, UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Поиск сотрудников по имени, логину или email" AutomationProperties.AutomationId="AdminUserSearch" Style="{StaticResource Task.Input.Search}" Tag="Имя, логин или email…">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter" Command="{Binding SearchUsersCommand}"/>
                                     </TextBox.InputBindings>

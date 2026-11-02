@@ -12,6 +12,10 @@ public sealed record PersonalProject(Guid Id, long Version, string Name, string?
     public override string ToString() => Name;
     public string StatusText => Status switch { DesktopProjectStatus.Planning => "Планирование", DesktopProjectStatus.Active => "Активен", DesktopProjectStatus.Paused => "Приостановлен", _ => "Завершён" };
     public string LifecycleText => Lifecycle switch { "active" => "Активный", "archived" => "В архиве", _ => "В корзине" };
+    public string StartDateText => StartDate?.ToString("dd.MM.yyyy") ?? "Не указана";
+    public string PlannedEndDateText => PlannedEndDate?.ToString("dd.MM.yyyy") ?? "Не указано";
+    public string ActualEndText => ActualEndAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "Не завершён";
+    public string DateSummary => PlannedEndDate is { } end ? $"До {end:dd.MM.yyyy}" : StartDate is { } start ? $"С {start:dd.MM.yyyy}" : "Без дат";
 }
 
 public sealed partial class PersonalTaskStore

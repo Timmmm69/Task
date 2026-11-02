@@ -16,7 +16,7 @@
                     Style="{DynamicResource Task.Button.Secondary}" Margin="8,0,0,0"
                     AutomationProperties.Name="Найти сотрудника"/>
             <TextBox x:Name="SearchBox" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     MaxLength="2000" IsEnabled="{Binding CanQuery}" Style="{DynamicResource Task.Input.Text}"
+                     MaxLength="2000" IsEnabled="{Binding CanQuery}" Style="{DynamicResource Task.Input.Search}" Tag="Найти сотрудника…"
                      AutomationProperties.Name="Имя сотрудника для поиска" AutomationProperties.AutomationId="EmployeePickerSearch"/>
         </DockPanel>
         <TextBlock Grid.Row="2" Text="{Binding StatusText}" TextWrapping="Wrap" Margin="0,8"

@@ -71,7 +71,7 @@ public sealed class ObjectLinkTargetPickerWindowsTests
                     SendKey(view, Key.Enter); Assert.Equal(first.ObjectId, picker.SelectedObjectId);
                     list.SelectedIndex = 1; Pump(); SendKey(view, Key.Enter); Assert.Equal(second.ObjectId, picker.SelectedObjectId);
                     Assert.True(search.Focus()); Assert.True(search.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next))); Pump(); Assert.False(search.IsKeyboardFocusWithin);
-                    var buttons = Descendants<Button>(view).ToArray(); Assert.Equal(5, buttons.Length);
+                    var buttons = Descendants<Button>(view).Where(button => button.TemplatedParent != search).ToArray(); Assert.Equal(5, buttons.Length);
                     Assert.All(buttons, button => { Assert.True(button.Focusable); Assert.True(button.IsTabStop); Assert.NotEmpty(new ButtonAutomationPeer(button).GetName()); });
                     SaveFrame(view, "target-picker-selected.png");
                     window.Width = 360; Pump();

@@ -5,7 +5,7 @@ using Task.Desktop.Work;
 namespace Task.Desktop.Personal;
 
 public sealed record PersonalWorkspaceArea(string Title, WorkHubArea Area);
-public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
+public sealed partial class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
 {
     private readonly PersonalTaskStore _store;
     private PersonalWorkspaceArea _area;
@@ -28,6 +28,7 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
         Hub.OpenObjectRequested += OpenObject;
         Hub.Activate(WorkHubArea.Settings);
         Refresh();
+        InitializeCatalogBrowser();
     }
     public event Action<string, Guid>? OpenObjectRequested;
     private void OpenObject(string type, Guid id)
@@ -40,8 +41,10 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
     public WorkHubViewModel Hub { get; }
     public ObjectLinksViewModel Links { get; }
     public IReadOnlyList<PersonalWorkspaceArea> Areas { get; } = [new("Каталог", WorkHubArea.Catalog), new("Контакты", WorkHubArea.Contacts), new("Поиск", WorkHubArea.Search), new("Архив", WorkHubArea.Archive), new("Корзина", WorkHubArea.Trash), new("Настройки", WorkHubArea.Settings)];
-    public PersonalWorkspaceArea Area { get => _area; set { if (SetProperty(ref _area, value)) { OnPropertyChanged(nameof(ShowObjectActions)); Hub.Activate(value.Area); } } }
-    public bool ShowObjectActions => Area.Area is not (WorkHubArea.Settings or WorkHubArea.Search);
+    public PersonalWorkspaceArea Area { get => _area; set { if (SetProperty(ref _area, value)) { OnPropertyChanged(nameof(ShowObjectActions)); OnPropertyChanged(nameof(IsCatalog)); OnPropertyChanged(nameof(ShowLegacyWorkspace)); if (IsCatalog) Selected = null; Hub.Activate(value.Area); if (IsCatalog) SyncCatalogSelection(true); } } }
+    public bool IsCatalog => Area.Area == WorkHubArea.Catalog;
+    public bool ShowLegacyWorkspace => !IsCatalog;
+    public bool ShowObjectActions => Area.Area is not (WorkHubArea.Settings or WorkHubArea.Search or WorkHubArea.Catalog);
     public IReadOnlyList<PersonalObject> Objects { get => _objects; private set { SetProperty(ref _objects, value); OnPropertyChanged(nameof(ActiveObjects)); OnPropertyChanged(nameof(Folders)); } }
     public IReadOnlyList<PersonalObject> ActiveObjects => Objects.Where(o => o.Lifecycle == "active").ToArray();
     public IReadOnlyList<PersonalObject> Folders => Objects.Where(o => o.Lifecycle == "active" && _store.Catalog().Any(c => c.Id == o.Id && c.ItemType == "virtual_folder")).ToArray();
@@ -77,10 +80,10 @@ public sealed class PersonalWorkspaceViewModel : ViewModelBase, IDisposable
         return System.Threading.Tasks.Task.CompletedTask;
     }
     internal IReadOnlyList<ModeSwitchEditor> InspectDrafts() =>
-    [new("Личная запись каталога", () => Hub.NewItemName.Length > 0 || Hub.NewItemPath.Length > 0, () => IsBusy, null),
+    [new("Личная запись каталога", () => Hub.NewItemName.Length > 0 || Hub.NewItemPath.Length > 0 || HasCatalogPathDrafts, () => IsBusy, null),
      new("Личный контакт", () => Hub.NewContactFirstName.Length > 0 || Hub.NewContactLastName.Length > 0 || Hub.NewContactDisplayName.Length > 0, () => IsBusy, null),
      new("Личные настройки", () => Hub.HasProfileDraft, () => IsBusy, Hub.SaveUserSettingsCommand),
      new("Личные уведомления", () => Hub.HasNotificationDraft, () => IsBusy, Hub.SaveNotificationPreferencesCommand)];
     private void Notify() { OnPropertyChanged(nameof(NeedsProjectRecovery)); OnPropertyChanged(nameof(CanTrash)); OnPropertyChanged(nameof(CanPurge)); foreach (var c in new[] { ArchiveCommand, TrashCommand, RestoreCommand, PurgeCommand, MoveCommand, RecoverProjectCommand }) c.RaiseCanExecuteChanged(); }
-    public void Dispose() { Hub.OpenObjectRequested -= OpenObject; Hub.Dispose(); Links.Dispose(); foreach (var c in new[] { RefreshCommand, ArchiveCommand, TrashCommand, RestoreCommand, PurgeCommand, MoveCommand, RecoverProjectCommand }) c.Dispose(); }
+    public void Dispose() { DisposeCatalogBrowser(); Hub.OpenObjectRequested -= OpenObject; Hub.Dispose(); Links.Dispose(); foreach (var c in new[] { RefreshCommand, ArchiveCommand, TrashCommand, RestoreCommand, PurgeCommand, MoveCommand, RecoverProjectCommand }) c.Dispose(); }
 }

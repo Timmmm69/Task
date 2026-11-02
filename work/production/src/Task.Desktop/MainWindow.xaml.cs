@@ -271,6 +271,11 @@ public partial class MainWindow : Window
 
         if (e.Key == Key.Escape && Keyboard.Modifiers == ModifierKeys.None)
         {
+            if (Infrastructure.PersonalSelect.CloseOpenDropdown(this))
+            {
+                e.Handled = true;
+                return;
+            }
             if (GlobalSearchOverlay.Visibility == Visibility.Visible)
             {
                 CloseGlobalSearch();

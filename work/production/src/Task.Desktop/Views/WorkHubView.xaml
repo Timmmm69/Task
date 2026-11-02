@@ -462,27 +462,19 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,0,8,0" MinHeight="44" AutomationProperties.Name="Поиск задач, проектов, файлов и людей" AutomationProperties.AutomationId="GlobalSearchTextBox">
+                <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Search}" Tag="Найти задачу, проект, файл или человека…" Margin="0,0,8,0" MinHeight="44" AutomationProperties.Name="Поиск задач, проектов, файлов и людей" AutomationProperties.AutomationId="GlobalSearchTextBox">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
                     </TextBox.InputBindings>
                 </TextBox>
                 <Button Grid.Column="1" Content="Найти" Command="{Binding SearchCommand}" Style="{StaticResource Task.Button.Primary}" MinWidth="96" AutomationProperties.AutomationId="GlobalSearchButton"/>
             </Grid>
-            <ListBox Style="{StaticResource Task.DataList}" Grid.Row="1" ItemsSource="{Binding SearchTypeFilters}" SelectedItem="{Binding SearchTypeFilter}" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.DirectionalNavigation="Cycle" AutomationProperties.Name="Тип результата">
+            <ListBox Style="{StaticResource Task.DataList}" ItemContainerStyle="{StaticResource Task.Filter.Chip}" Grid.Row="1" ItemsSource="{Binding SearchTypeFilters}" SelectedItem="{Binding SearchTypeFilter}" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.DirectionalNavigation="Cycle" AutomationProperties.Name="Тип результата">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
-                        <Setter Property="MinHeight" Value="36"/>
-                        <Setter Property="Padding" Value="12,6"/>
-                        <Setter Property="Margin" Value="0,0,8,8"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
             </ListBox>
             <Border Grid.Row="2" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
                 <Grid>
@@ -697,7 +689,7 @@
                                 <TextBlock Text="Настройка напоминания" Style="{StaticResource WorkHub.SectionTitle}" Margin="0,0,0,12"/>
                                 <TextBlock Text="Задача или событие (при редактировании можно оставить прежний объект)" TextWrapping="Wrap"/>
                                 <WrapPanel Margin="0,6,0,8">
-                                    <TextBox Style="{StaticResource Task.Input.Text}" Text="{Binding ReminderSearch,UpdateSourceTrigger=PropertyChanged}" Width="220" AutomationProperties.Name="Поиск цели напоминания"/>
+                                    <TextBox Style="{StaticResource Task.Input.Search}" Tag="Найти объект напоминания…" Text="{Binding ReminderSearch,UpdateSourceTrigger=PropertyChanged}" Width="220" AutomationProperties.Name="Поиск цели напоминания"/>
                                     <Button Style="{StaticResource Task.Button.Secondary}" Content="Найти" Command="{Binding SearchReminderTargetsCommand}" Margin="8,0"/>
                                 </WrapPanel>
                                 <ComboBox Style="{StaticResource Task.Input.Combo}" ItemsSource="{Binding ReminderTargets}" SelectedItem="{Binding ReminderTarget}" DisplayMemberPath="Title" Margin="0,6" AutomationProperties.Name="Выбор задачи или события"/>
@@ -757,7 +749,7 @@
                     <ColumnDefinition Width="220"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding LifecycleQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,0,10,0" AutomationProperties.Name="Поиск в архиве и корзине" AutomationProperties.AutomationId="LifecycleSearchTextBox"/>
+                <TextBox Text="{Binding LifecycleQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Search}" Tag="Найти в архиве и корзине…" Margin="0,0,10,0" AutomationProperties.Name="Поиск в архиве и корзине" AutomationProperties.AutomationId="LifecycleSearchTextBox"/>
                 <ComboBox Grid.Column="1" ItemsSource="{Binding LifecycleTypeFilters}" SelectedItem="{Binding LifecycleTypeFilter}" Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Тип объекта"/>
                 <TextBlock Grid.Column="2" Text="{Binding VisibleLifecycleItems.Count, StringFormat={}{0} доступных объектов}" Margin="16,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
             </Grid>

@@ -62,7 +62,7 @@
       </Grid>
      </Border><StackPanel Margin="14,12,14,8">
      <TextBlock Text="Поиск по названию" Style="{StaticResource Company.Hint}"/>
-     <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Поиск компаний">
+     <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Search}" Tag="Найти компанию…" AutomationProperties.Name="Поиск компаний">
       <TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/></TextBox.InputBindings>
      </TextBox>
      <Button Content="Найти / обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,8,0,8"/>
@@ -178,7 +178,7 @@
       <Expander Header="Добавить существующий контакт" Margin="0,16,0,0" IsEnabled="{Binding CanChangeLinks}" AutomationProperties.Name="Добавить существующий контакт">
        <StackPanel Margin="0,16,0,0">
         <TextBlock Text="Поиск контакта" Style="{StaticResource Company.Label}"/>
-        <TextBox Text="{Binding ContactQuery, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Имя контактного лица">
+        <TextBox Text="{Binding ContactQuery, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" Style="{StaticResource Task.Input.Search}" Tag="Найти контакт…" AutomationProperties.Name="Имя контактного лица">
          <TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding SearchContactsCommand}"/></TextBox.InputBindings>
         </TextBox>
         <WrapPanel Margin="0,8"><Button Content="Найти контакт" Command="{Binding SearchContactsCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,8"/>

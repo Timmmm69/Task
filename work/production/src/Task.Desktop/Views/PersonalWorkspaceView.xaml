@@ -2,7 +2,8 @@
  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
  <Grid>
   <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-  <views:WorkHubView DataContext="{Binding Hub}"/>
+  <views:WorkHubView DataContext="{Binding Hub}" Visibility="{Binding DataContext.ShowLegacyWorkspace,RelativeSource={RelativeSource AncestorType=views:PersonalWorkspaceView},Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+  <views:PersonalCatalogView Visibility="{Binding IsCatalog,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
   <Expander Grid.Row="1" Header="Связи и действия с записью" state:ViewState.Section="personal-workspace/v1/actions" Margin="20,0,20,12" IsExpanded="False" Visibility="{Binding ShowObjectActions,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
    <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
     <TextBlock Text="Запись" Style="{StaticResource Personal.Label}"/><DockPanel><Button Content="Обновить" Command="{Binding RefreshCommand}" DockPanel.Dock="Right" Margin="12,0,0,0"/><ComboBox ItemsSource="{Binding Objects}" SelectedItem="{Binding Selected}" AutomationProperties.Name="Запись для действий" AutomationProperties.AutomationId="PersonalMetadataObject"/></DockPanel>

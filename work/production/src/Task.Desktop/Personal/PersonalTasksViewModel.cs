@@ -16,6 +16,7 @@ public sealed record PersonalTaskItem(DesktopTaskDto Source)
     public string PriorityText => TaskItemViewModel.LocalizePriority(Source.Priority);
     public string ScheduleText => Source.StartAtUtc is { } start ? start.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
         : Source.Card?.ScheduledDate?.ToString("dd.MM.yyyy") ?? "Без даты";
+    public string CapturedText => Source.CreatedAtUtc?.ToLocalTime().ToString("dd.MM.yyyy · HH:mm") ?? "Время не указано";
     public string DeadlineText => Source.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? TaskItemViewModel.FormatDate(Source.DeadlineAtUtc, "Без срока");
 }
 
@@ -99,8 +100,31 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand ToggleCheckCommand { get; }
     public AsyncCommand RemoveCheckCommand { get; }
     public PersonalSection SelectedSection { get => _section; set { if (value is not null && SetProperty(ref _section, value)) { Filter(); OnPropertyChanged(nameof(IsInbox)); OnPropertyChanged(nameof(IsToday)); OnPropertyChanged(nameof(IsSettings)); OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody)); } } }
-    public bool IsInbox => SelectedSection.Title == "Входящие";
+    public bool IsInbox => SelectedSection.Title == "Пометки";
     public bool IsTasks => SelectedSection.Title == "Задачи";
+    private string _inboxSearchText = "";
+    public string InboxSearchText { get => _inboxSearchText; set { if (SetProperty(ref _inboxSearchText, value)) Filter(); } }
+    public bool HasInboxSearch => !string.IsNullOrWhiteSpace(InboxSearchText);
+    public int InboxCount => _all.Count(InboxItemViewModel.IsCaptureOnly);
+    public string InboxResultCount => HasInboxSearch ? $"Найдено {Items.Count} из {InboxCount}" : $"Пометок: {InboxCount}";
+    public bool InboxReadFailed => _loadFailed && !IsBusy;
+    public string CaptureValidation => CaptureText.Length == 0 ? "" : string.IsNullOrWhiteSpace(CaptureText)
+        ? "Введите мысль или название задачи." : CaptureText.Trim().Length > 500 ? "Не более 500 символов." : "";
+    private string _searchText = "";
+    private int _statusFilter, _priorityFilter, _sortOrder;
+    public string[] StatusFilters { get; } = ["Все статусы", "Новая", "В работе", "На проверке", "Выполнена", "Отменена"];
+    public string[] PriorityFilters { get; } = ["Все приоритеты", "Низкий", "Обычный", "Высокий", "Критический"];
+    public string[] SortOrders { get; } = ["Сначала новые", "По названию · А–Я", "По приоритету ↓", "По плану · ближайшие"];
+    public string SearchText { get => _searchText; set { if (SetProperty(ref _searchText, value)) Filter(); } }
+    public int StatusFilter { get => _statusFilter; set { if (SetProperty(ref _statusFilter, value)) Filter(); } }
+    public int PriorityFilter { get => _priorityFilter; set { if (SetProperty(ref _priorityFilter, value)) Filter(); } }
+    public int SortOrder { get => _sortOrder; set { if (SetProperty(ref _sortOrder, value)) Filter(); } }
+    private bool HasTaskQueryFilters => !string.IsNullOrWhiteSpace(SearchText) || StatusFilter > 0 || PriorityFilter > 0;
+    public bool HasViewFilters => HasTaskQueryFilters || HideCompleted;
+    public string ResultCount => $"Найдено {Items.Count} из {_all.Count}";
+    public string SelectedProject => _projects().FirstOrDefault(p => p.Id == Selected?.Source.Card?.ProjectId)?.Name ?? "Без проекта";
+    public IReadOnlyList<PersonalTaskItem> Subtasks => _all.Where(t => t.Card?.ParentTaskId == Selected?.Source.Id && Selected is not null).Select(t => new PersonalTaskItem(t)).ToArray();
+    public void ResetViewFilters() { _searchText = ""; _statusFilter = _priorityFilter = _sortOrder = 0; _hideCompleted = false; foreach (var name in new[] { nameof(SearchText), nameof(StatusFilter), nameof(PriorityFilter), nameof(SortOrder), nameof(HideCompleted) }) OnPropertyChanged(name); Filter(); }
     public bool HideCompleted { get => _hideCompleted; set { if (SetProperty(ref _hideCompleted, value)) Filter(); } }
     public bool HasHiddenTasks => IsTasks && HideCompleted && _all.Any(t => TaskRules.IsTerminal((TaskWorkStatus)t.Status));
     public AsyncCommand ShowCompletedCommand => _showCompletedCommand ??= new((_, _) => { HideCompleted = false; return System.Threading.Tasks.Task.CompletedTask; });
@@ -109,15 +133,16 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<PersonalTaskItem> Items { get => _items; private set { SetProperty(ref _items, value); OnPropertyChanged(nameof(ShowEmpty)); } }
     public bool HasSelection => Selected is not null;
     public bool ShowEmpty => _hasLoaded && !IsBusy && Items.Count == 0 && !_loadFailed;
-    public string EmptyTitle => HasHiddenTasks ? "Нет незавершённых задач" : IsInbox ? "Входящие разобраны" : SelectedSection.Title == "Сегодня" ? "На сегодня задач нет" : "Задач пока нет";
-    public string EmptyBody => HasHiddenTasks ? "Завершённые и отменённые задачи скрыты фильтром." : IsInbox ? "Запишите новую задачу в поле выше." : "Создайте задачу или запланируйте существующую.";
+    public string EmptyTitle => (IsInbox && HasInboxSearch) || (IsTasks && HasTaskQueryFilters) ? "Ничего не найдено" : HasHiddenTasks ? "Нет незавершённых задач" : IsInbox ? "Все пометки разобраны" : SelectedSection.Title == "Сегодня" ? "На сегодня задач нет" : "Задач пока нет";
+    public string EmptyBody => IsInbox && HasInboxSearch ? "Попробуйте другое название или очистите поиск." : IsTasks && HasTaskQueryFilters ? "Измените запрос или сбросьте фильтры." : HasHiddenTasks ? "Завершённые и отменённые задачи скрыты фильтром." : IsInbox ? "Запишите новую задачу в поле выше." : "Создайте задачу или запланируйте существующую.";
     public PersonalTaskItem? Selected
     {
         get => _selected;
         set
         {
+            if (IsInbox && (HasEditor || !string.IsNullOrEmpty(CheckText)) && value?.Source.Id != _selected?.Source.Id) return;
             if (value is null && (_filtering || _selected is { } old && HasDrafts && !Items.Any(t => t.Source.Id == old.Source.Id))) return;
-            if (SetProperty(ref _selected, value)) { Checklist = []; OnPropertyChanged(nameof(Checklist)); OnPropertyChanged(nameof(HasSelection)); Notify(); if (value is not null) _ = LoadChecklistAsync(value.Source.Id); }
+            if (SetProperty(ref _selected, value)) { OnPropertyChanged(nameof(SelectedProject)); OnPropertyChanged(nameof(Subtasks)); Checklist = []; OnPropertyChanged(nameof(Checklist)); OnPropertyChanged(nameof(HasSelection)); Notify(); if (value is not null) _ = LoadChecklistAsync(value.Source.Id); }
         }
     }
     public TaskEditorViewModel? Editor
@@ -133,10 +158,10 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     }
     private void EditorChanged(object? sender, PropertyChangedEventArgs e) => SaveCommand.RaiseCanExecuteChanged();
     public bool HasEditor => Editor is not null;
-    public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); OnPropertyChanged(nameof(IsNotBusy)); OnPropertyChanged(nameof(ShowEmpty)); Notify(); } }
+    public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); OnPropertyChanged(nameof(IsNotBusy)); OnPropertyChanged(nameof(ShowEmpty)); OnPropertyChanged(nameof(InboxReadFailed)); Notify(); } }
     public bool IsNotBusy => !IsBusy;
     public bool CanEdit => !IsBusy && Selected is not null && !TaskRules.IsTerminal((TaskWorkStatus)Selected.Source.Status);
-    public string CaptureText { get => _capture; set { SetProperty(ref _capture, value); OnPropertyChanged(nameof(CanNavigate)); CaptureCommand.RaiseCanExecuteChanged(); OpenTasksCommand.RaiseCanExecuteChanged(); OpenSavedTaskCommand.RaiseCanExecuteChanged(); } }
+    public string CaptureText { get => _capture; set { SetProperty(ref _capture, value); OnPropertyChanged(nameof(CaptureValidation)); OnPropertyChanged(nameof(CanNavigate)); CaptureCommand.RaiseCanExecuteChanged(); OpenTasksCommand.RaiseCanExecuteChanged(); OpenSavedTaskCommand.RaiseCanExecuteChanged(); } }
     public string CheckText { get => _check; set { SetProperty(ref _check, value); Notify(); } }
     public bool CanSelectTask => !IsBusy && Editor is null && string.IsNullOrEmpty(CheckText);
     public bool CanNavigate => CanSelectTask && string.IsNullOrEmpty(CaptureText);
@@ -160,7 +185,8 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
             _loadFailed = false;
             _hasLoaded = true;
             _all = ok.Value.Items; Filter();
-            if (Selected is { } selection) Selected = Items.FirstOrDefault(t => t.Source.Id == selection.Source.Id);
+            if (Editor is null && string.IsNullOrEmpty(CheckText) && Selected is { } selection
+                && Items.FirstOrDefault(t => t.Source.Id == selection.Source.Id) is { } refreshed) Selected = refreshed;
         }
         else { _loadFailed = true; Message = "Не удалось прочитать личную базу. Проверьте доступ к файлу и обновите список."; }
         OnPropertyChanged(nameof(ShowEmpty));
@@ -168,7 +194,12 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     private void Filter()
     {
         IEnumerable<DesktopTaskDto> tasks = _all;
-        if (IsInbox) tasks = tasks.Where(InboxItemViewModel.IsCaptureOnly);
+        if (IsInbox)
+        {
+            tasks = tasks.Where(InboxItemViewModel.IsCaptureOnly);
+            if (HasInboxSearch) tasks = tasks.Where(t => t.Title.Contains(InboxSearchText.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            tasks = tasks.OrderByDescending(t => t.CreatedAtUtc).ThenBy(t => t.Id);
+        }
         else if (SelectedSection.Title == "Сегодня")
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -176,11 +207,34 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
                 (t.Card?.ScheduledDate == today || t.DeadlineAtUtc?.ToLocalTime().Date <= DateTime.Today));
         }
         if (IsTasks && HideCompleted) tasks = tasks.Where(t => !TaskRules.IsTerminal((TaskWorkStatus)t.Status));
+        if (IsTasks)
+        {
+            if (!string.IsNullOrWhiteSpace(SearchText)) tasks = tasks.Where(t => t.Title.Contains(SearchText.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            if (StatusFilter > 0) tasks = tasks.Where(t => (int)t.Status == StatusFilter - 1);
+            if (PriorityFilter > 0) tasks = tasks.Where(t => (int)t.Priority == PriorityFilter - 1);
+            tasks = SortOrder switch
+            {
+                1 => tasks.OrderBy(t => t.Title, StringComparer.CurrentCultureIgnoreCase).ThenBy(t => t.Id),
+                2 => tasks.OrderByDescending(t => t.Priority).ThenBy(t => t.Title).ThenBy(t => t.Id),
+                3 => tasks.OrderBy(t => t.StartAtUtc?.ToLocalTime().Date ?? t.Card?.ScheduledDate?.ToDateTime(TimeOnly.MinValue) ?? DateTime.MaxValue).ThenBy(t => t.Title).ThenBy(t => t.Id),
+                _ => tasks.OrderByDescending(t => t.CreatedAtUtc).ThenBy(t => t.Id)
+            };
+        }
+        var selected = Selected;
+        var selectedIndex = selected is null ? 0 : Math.Max(0, Items.ToList().FindIndex(t => t.Source.Id == selected.Source.Id));
         _filtering = true;
-        try { Items = tasks.Select(t => new PersonalTaskItem(t)).ToArray(); }
+        try
+        {
+            Items = tasks.Select(t => new PersonalTaskItem(t)).ToArray();
+            if (IsInbox) _filtering = false;
+            // A checklist draft owns its selection and loaded checklist until it is saved.
+            if (!HasDrafts) Selected = Items.FirstOrDefault(t => t.Source.Id == selected?.Source.Id)
+                ?? (IsInbox && Items.Count > 0 ? Items[Math.Min(selectedIndex, Items.Count - 1)] : null);
+        }
         finally { _filtering = false; }
-        // Retain a selected task while its editor or checklist draft still owns it.
-        if (Selected is { } selected && !Items.Any(t => t.Source.Id == selected.Source.Id) && !HasDrafts) Selected = null;
+        if (!IsInbox && !HasDrafts && selected is not null && !Items.Any(t => t.Source.Id == selected.Source.Id)) Selected = null;
+        OnPropertyChanged(nameof(InboxCount)); OnPropertyChanged(nameof(InboxResultCount)); OnPropertyChanged(nameof(HasInboxSearch));
+        OnPropertyChanged(nameof(ResultCount)); OnPropertyChanged(nameof(HasViewFilters)); OnPropertyChanged(nameof(Subtasks));
         OnPropertyChanged(nameof(IsTasks)); OnPropertyChanged(nameof(HasHiddenTasks));
         OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody));
     }
@@ -219,8 +273,10 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
             if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
             {
                 Editor = null;
-                Message = editor.Mode == TaskEditorMode.Create
-                    ? InboxItemViewModel.IsCaptureOnly(success.Value) ? "Задача создана во «Входящих» и доступна в разделе «Задачи»." : "Задача создана в разделе «Задачи»."
+                Message = IsInbox && editor.Mode == TaskEditorMode.Edit
+                    ? InboxItemViewModel.IsCaptureOnly(success.Value) ? "Изменения сохранены. Запись остаётся в «Пометках»." : "Запись разобрана и доступна в разделе «Задачи»."
+                    : editor.Mode == TaskEditorMode.Create
+                    ? InboxItemViewModel.IsCaptureOnly(success.Value) ? "Задача создана в «Пометках» и доступна в разделе «Задачи»." : "Задача создана в разделе «Задачи»."
                     : "Изменения сохранены. Задача доступна в разделе «Задачи».";
                 await ReloadAsync();
                 if (!_loadFailed) { _savedTaskId = success.Value.Id; OnPropertyChanged(nameof(ShowSavedTaskAction)); }
@@ -239,7 +295,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         try
         {
             var result = await _client.CreateTaskAsync(new(text.Trim(), DesktopTaskPriority.Normal), _lifetime.Token);
-            if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded) { if (CaptureText == text) CaptureText = ""; Message = "Задача добавлена во «Входящие»."; await ReloadAsync(); }
+            if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded) { if (CaptureText == text) CaptureText = ""; Message = "Задача добавлена в «Пометки»."; await ReloadAsync(); }
             else Message = Error(result);
         }
         finally { IsBusy = false; }
@@ -298,7 +354,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     internal IReadOnlyList<ModeSwitchEditor> InspectDrafts() =>
     [
         new("Личная задача", () => Editor is not null, () => IsBusy, SaveCommand),
-        new("Входящая задача", () => !string.IsNullOrEmpty(CaptureText), () => IsBusy, CaptureCommand),
+        new("Новая пометка", () => !string.IsNullOrEmpty(CaptureText), () => IsBusy, CaptureCommand),
         new("Чек-лист", () => !string.IsNullOrEmpty(CheckText), () => IsBusy, AddCheckCommand),
     ];
     private void Notify() { OnPropertyChanged(nameof(CanAddSubtask)); OnPropertyChanged(nameof(SubtaskActionHint)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); }

@@ -1,0 +1,12 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Capsule shapes use the application's shared colour palette. -->
+    <SolidColorBrush x:Key="Task.Capsule.Panel" Color="{DynamicResource Task.Color.Surface.Base}"/>
+    <SolidColorBrush x:Key="Task.Capsule.Fill" Color="{DynamicResource Task.Color.Surface.Base}"/>
+    <SolidColorBrush x:Key="Task.Capsule.Border" Color="{DynamicResource Task.Color.Border.Default}"/>
+    <SolidColorBrush x:Key="Task.Capsule.Selected" Color="{DynamicResource Task.Color.Brand.Soft}"/>
+    <SolidColorBrush x:Key="Task.Capsule.Accent" Color="{DynamicResource Task.Color.Brand.Primary}"/>
+    <SolidColorBrush x:Key="Task.Capsule.Text" Color="{DynamicResource Task.Color.Text.Primary}"/>
+    <SolidColorBrush x:Key="Task.Capsule.Muted" Color="{DynamicResource Task.Color.Text.Secondary}"/>
+    <FontFamily x:Key="Task.Capsule.Font">Segoe UI</FontFamily>
+</ResourceDictionary>

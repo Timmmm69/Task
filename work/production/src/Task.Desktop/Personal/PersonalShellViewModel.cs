@@ -31,7 +31,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<NavigationSection> Sections { get; } =
     [
         new("today", "Сегодня", "", "Task.Icon.Today", "Посмотрите план на сегодня"),
-        new("inbox", "Входящие", "", "Task.Icon.Inbox", "Запишите сейчас, разберите позже"),
+        new("inbox", "Пометки", "", "Task.Icon.Inbox", "Запишите сейчас, разберите позже"),
         new("calendar", "Календарь", "", "Task.Icon.Calendar", "Личное расписание"),
         new("tasks", "Задачи", "", "Task.Icon.Tasks", "Найдите задачу и измените её детали"),
         new("projects", "Проекты", "", "Task.Icon.Projects", "Личные проекты"),
@@ -91,7 +91,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         if (type == "project" && Planning is { } planning) planning.SelectedProject = planning.Projects.FirstOrDefault(p => p.Id == id);
         if (type == "calendar_event" && Calendar is { } calendar) _ = calendar.OpenEventByIdAsync(id);
     }
-    private void OpenTasks(Guid? id)
+    internal void OpenTasks(Guid? id)
     {
         if (!CanNavigate) return;
         _requestedTaskId = id;

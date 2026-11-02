@@ -35,6 +35,17 @@ public partial class PersonalWindow : Window
                 tasks.Editor?.SeedCalendarSlot(slot);
             };
         InitializeComponent();
+        AddHandler(Views.PersonalCalendarView.OpenTaskRequestedEvent, new RoutedEventHandler((_, _) =>
+        {
+            if (_shell.CanNavigate && model.Calendar?.SelectedItem is { IsCalendarEvent: false } item) _shell.OpenTasks(item.Id);
+        }));
+        AddHandler(Views.PersonalCalendarView.OpenRemindersRequestedEvent, new RoutedEventHandler((_, _) =>
+        {
+            if (!_shell.CanNavigate || model.Calendar?.SelectedItem is not { } item || model.Planning is not { } planning) return;
+            planning.Refresh();
+            _shell.SelectedSection = _shell.Sections.First(s => s.Route == "notifications");
+            planning.Target = planning.Targets.FirstOrDefault(t => t.Id == item.Id);
+        }));
         DataContext = _shell;
         _shell.Palette.FocusRequested += OnPaletteFocus;
         _shell.Palette.Closed += OnPaletteClosed;
@@ -121,7 +132,8 @@ public partial class PersonalWindow : Window
             // Project creation owns its refresh before opening the ordinary editor.
             if (_shell.IsTasks && !_shell.AddProjectTaskCommand.IsExecuting && _model.Tasks is { HasDrafts: false } tasks) await tasks.RefreshAsync();
             if (_closed || _model.IsDisposed) return;
-            if (_shell.IsProjects || _shell.IsNotifications) _model.Planning?.Refresh();
+            if (_shell.IsProjects) _model.Planning?.RefreshCommand.Execute(null);
+            else if (_shell.IsNotifications) _model.Planning?.Refresh();
             if (_shell.IsWorkspace) _model.Workspace?.Refresh();
             if (_shell.IsCalendar && _model.Calendar is { } calendar) await calendar.ActivateAsync();
         }
@@ -171,8 +183,13 @@ public partial class PersonalWindow : Window
     {
         if (e.Key == Key.K && Keyboard.Modifiers == ModifierKeys.Control) { OpenPalette(); e.Handled = true; }
         else if (_shell.Palette.IsOpen) { if (e.Key == Key.Escape) { _shell.Palette.Close(); e.Handled = true; } return; }
+        else if (e.Key == Key.Escape && Infrastructure.PersonalSelect.CloseOpenDropdown(this)) e.Handled = true;
         else if (e.Key == Key.Escape && _model.Tasks?.HasEditor == true) { TasksSurface.RequestCancel(); e.Handled = true; }
         else if (e.Key == Key.N && Keyboard.Modifiers == ModifierKeys.Alt && _shell.IsTasks) { _model.Tasks?.NewCommand.Execute(null); e.Handled = true; }
+        else if (e.Key == Key.F6 && Keyboard.Modifiers == ModifierKeys.None && _shell.IsCalendar && _model.Calendar?.Editor is null && WorkspaceRegion.IsKeyboardFocusWithin)
+        {
+            CalendarSurface.CyclePersonalFocus(); e.Handled = true;
+        }
         else if (e.Key == Key.F6 && _shell.CanNavigate)
         {
             _focusRegion = (_focusRegion + (Keyboard.Modifiers == ModifierKeys.Shift ? 2 : 1)) % 3;

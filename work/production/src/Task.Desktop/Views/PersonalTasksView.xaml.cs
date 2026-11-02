@@ -15,12 +15,34 @@ public partial class PersonalTasksView : UserControl
             if (e.NewValue is PersonalTasksViewModel model) model.PropertyChanged += OnModelChanged;
         };
     }
+    private bool _focusListAfterEditor;
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(PersonalTasksViewModel.HasEditor) && sender is PersonalTasksViewModel model)
-            Dispatcher.BeginInvoke(() => { if (!IsVisible) return; if (model.HasEditor) TitleInput.Focus(); else if (TasksList.IsEnabled) TasksList.Focus(); });
+        {
+            _focusListAfterEditor = !model.HasEditor;
+            Dispatcher.BeginInvoke(() =>
+            {
+                if (!IsVisible) return;
+                if (model.HasEditor) TitleInput.Focus();
+                else ReturnToTaskList(model);
+            });
+        }
+        if (e.PropertyName == nameof(PersonalTasksViewModel.IsBusy) && _focusListAfterEditor
+            && sender is PersonalTasksViewModel { IsBusy: false, HasEditor: false } ready)
+            Dispatcher.BeginInvoke(() => ReturnToTaskList(ready));
         if (e.PropertyName == nameof(PersonalTasksViewModel.DetailsExpanded) && sender is PersonalTasksViewModel { DetailsExpanded: true })
-            Dispatcher.BeginInvoke(() => { if (IsVisible) DetailsExpander.Focus(); });
+            Dispatcher.BeginInvoke(() => { if (!IsVisible) return; if (DataContext is PersonalTasksViewModel { IsTasks: true }) TaskBrowserSurface.FocusDetails(); else DetailsExpander.Focus(); });
+    }
+    private void ReturnToTaskList(PersonalTasksViewModel model)
+    {
+        // Save closes the editor before reloading the list. Wait until the refreshed row can receive focus.
+        if (!_focusListAfterEditor || !IsVisible || model.IsBusy || model.HasEditor) return;
+        _focusListAfterEditor = false;
+        if (model.IsInbox) InboxSurface.FocusSelection();
+        else if (model.IsTasks) TaskBrowserSurface.FocusSelection();
+        else if (model.IsToday) TodaySurface.FocusSelection();
+        else TasksList.Focus();
     }
     private void OnCancelEditor(object sender, RoutedEventArgs e) => RequestCancel();
     internal void RequestCancel()

@@ -121,14 +121,14 @@ public sealed class TaskContextActionsUiTests
                     var local = model.Tasks!; Assert.Equal(localProject.Id, local.Editor!.Card.Project!.Id);
                     Assert.True(Find<TextBox>(personal, "PersonalTaskTitle").IsKeyboardFocused);
                     local.Editor.Title = "Личная задача"; await Capture(personal, "personal-project-draft"); await local.SaveCommand.ExecuteAsync(); await local.OpenSavedTaskCommand.ExecuteAsync(); await Drain(personal);
-                    local.DetailsExpanded = true; await Drain(personal); var localChildAction = Find<Button>(personal, "PersonalAddSubtask"); localChildAction.BringIntoView(); Assert.True(localChildAction.Focus()); await Capture(personal, "personal-task-card");
+                    local.DetailsExpanded = true; await Drain(personal); var localChildAction = Find<Button>(personal, "PersonalTasksBrowserAddSubtask"); localChildAction.BringIntoView(); Assert.True(localChildAction.Focus()); await Capture(personal, "personal-task-card");
                     await PressNativeKey(personal, localChildAction, 32); await TaskContextActionsTests.Until(() => local.Editor is not null); await Drain(personal); Assert.Equal("Личная задача", local.Editor!.Card.Parent!.Name);
                     await Capture(personal, "personal-subtask-draft");
                     var planning = Descendants<Expander>(personal).Single(x => x.Header?.ToString() == "Планирование и связи"); planning.IsExpanded = true; await Drain(personal);
                     var parentCombo = Find<ComboBox>(personal, "PersonalParentTask"); parentCombo.BringIntoView(); await Drain(personal);
                     parentCombo.SelectedIndex = 0; local.Editor.Card.SetOptions(new()); await Drain(personal); Assert.Null(local.Editor.Card.Parent!.Id);
                     await local.CancelCommand.ExecuteAsync(); await Drain(personal);
-                    var localList = Find<ListBox>(personal, "PersonalTasksList"); Assert.True(localList.IsKeyboardFocused);
+                    var localList = Find<ListBox>(personal, "PersonalTasksBrowserList"); Assert.True(localList.IsKeyboardFocused);
                     var localRow = (ListBoxItem)localList.ItemContainerGenerator.ContainerFromIndex(0);
                     await DoubleClick(Descendants<TextBlock>(localRow).First(x => x.Text == "Личная задача")); await Drain(personal);
                     Assert.NotNull(local.Editor); await local.CancelCommand.ExecuteAsync(); await Drain(personal);
