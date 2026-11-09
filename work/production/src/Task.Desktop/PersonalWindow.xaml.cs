@@ -22,8 +22,12 @@ public partial class PersonalWindow : Window
     private Notifications.WindowsToastPresenter? _toast;
     private bool _explicitExit;
     private bool? _autostartApplied;
-    public PersonalWindow(PersonalApplicationModel model)
+    private readonly bool _enableWindowsIntegrations;
+    public PersonalWindow(PersonalApplicationModel model) : this(model, true) { }
+    // Isolated demo hosts use the same shell without touching Windows integrations.
+    public PersonalWindow(PersonalApplicationModel model, bool enableWindowsIntegrations)
     {
+        _enableWindowsIntegrations = enableWindowsIntegrations;
         _model = model;
         _shell = new(model);
         if (model.Calendar is { } calendar)
@@ -59,7 +63,7 @@ public partial class PersonalWindow : Window
                 if (_closed || model.IsDisposed) return;
                 if (model.Calendar is { } calendar) await calendar.ActivateAsync();
                 if (_closed || model.IsDisposed) return;
-                Reconcile(); _schedulerTimer.Start();
+                if (_enableWindowsIntegrations) { Reconcile(); _schedulerTimer.Start(); }
                 if (Environment.GetCommandLineArgs().Contains("--background") && _windowsNotifications?.IsAvailable == true) Hide();
             }
             catch (OperationCanceledException) when (_closed || model.IsDisposed) { }
@@ -67,12 +71,13 @@ public partial class PersonalWindow : Window
         SourceInitialized += (_, _) =>
         {
             WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
+            if (!_enableWindowsIntegrations) return;
             _windowsNotifications = new(this, () => { _explicitExit = true; Close(); }, "Task · Personal · работает в фоне");
             _toast = new(Dispatcher, ActivatePersonalNotification);
             _shell.BackgroundAvailable = _windowsNotifications.IsAvailable;
         };
         _schedulerTimer.Tick += (_, _) => Reconcile();
-        SystemEvents.PowerModeChanged += OnPowerModeChanged;
+        if (_enableWindowsIntegrations) SystemEvents.PowerModeChanged += OnPowerModeChanged;
         Closed += (_, _) => { _closed = true; _schedulerTimer.Stop(); SystemEvents.PowerModeChanged -= OnPowerModeChanged; _toast?.Dispose(); _windowsNotifications?.Dispose(); _shell.PropertyChanged -= OnRouteChanged; _shell.Palette.FocusRequested -= OnPaletteFocus; _shell.Palette.Closed -= OnPaletteClosed; _shell.InboxCaptureRequested -= OnInboxCapture; _shell.Dispose(); };
     }
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -100,7 +105,7 @@ public partial class PersonalWindow : Window
     }
     private void Reconcile()
     {
-        if (_model.IsDisposed) return;
+        if (_model.IsDisposed || !_enableWindowsIntegrations) return;
         _model.Planning?.Reconcile();
         try
         {

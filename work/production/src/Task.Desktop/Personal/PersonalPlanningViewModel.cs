@@ -47,7 +47,7 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
         _store = store; _clock = clock ?? TimeProvider.System; _scheduler = new(store, _clock); _trigger = Triggers[0];
         _offset = store.WorkspaceSettings().DefaultReminderOffsetMinutes.ToString(CultureInfo.InvariantCulture);
         _defaultOffset = _offset;
-        RefreshCommand = new((_, _) => Run(Refresh, "Список обновлён."), _ => !IsBusy);
+        RefreshCommand = new((_, _) => ReloadPlanningAsync(), _ => !IsBusy);
         NewProjectCommand = new((_, _) => { EditProject(null); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy && !IsProjectEditing);
         EditProjectCommand = new((_, _) => { EditProject(SelectedProject); return System.Threading.Tasks.Task.CompletedTask; }, _ => !IsBusy && !IsProjectEditing && SelectedProject is not null);
         SaveProjectCommand = new((_, _) => Run(SaveProject), _ => !IsBusy && IsProjectEditing);
@@ -57,8 +57,8 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
         CancelReminderCommand = new((_, _) => Run(() => { var r = SelectedReminder!.Source; _store.CancelReminder(r.Id, r.Version); Refresh(); }), _ => !IsBusy && SelectedReminder?.Source.State is "pending" or "due" or "delivered");
         ReadNotificationCommand = new((_, _) => Run(() => { _store.MarkNotificationRead(SelectedNotification!.Id); Refresh(); }), _ => !IsBusy && SelectedNotification is not null);
         ReadAllNotificationsCommand = new((_, _) => Run(() => { _store.MarkAllPersonalNotificationsRead(); Refresh(); }), _ => !IsBusy && Notifications.Any(n => !n.IsRead));
-        SnoozeNotificationCommand = new((_, _) => Run(() => Snooze(SelectedNotification!.Id)), _ => !IsBusy && SelectedNotification is { IsRead: false });
-        OpenNotificationCommand = new((_, _) => Run(() => OpenNotification(SelectedNotification!.Id)), _ => !IsBusy && SelectedNotification is not null);
+        SnoozeNotificationCommand = new((_, _) => Run(() => Snooze(SelectedNotification!.Id)), _ => !IsBusy && CanSnoozeSelectedNotification);
+        OpenNotificationCommand = new((_, _) => Run(() => OpenNotification(SelectedNotification!.Id), "", busy: false), _ => !IsBusy && SelectedNotification is not null);
         Refresh();
     }
     public IReadOnlyList<DesktopProjectStatus> Statuses { get; } = Enum.GetValues<DesktopProjectStatus>();
@@ -73,11 +73,11 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
     public IReadOnlyList<PersonalReminderItem> Reminders { get => _reminders; private set => SetProperty(ref _reminders, value); }
     public IReadOnlyList<PersonalNotification> Notifications { get => _notifications; private set => SetProperty(ref _notifications, value); }
     public PersonalProject? SelectedProject { get => _selectedProject; set { if (IsProjectEditing) return; if (SetProperty(ref _selectedProject, value)) UpdateProjectDetails(); Notify(); } }
-    public PersonalReminderTarget? Target { get => _target; set { SetProperty(ref _target, value); Notify(); } }
+    public PersonalReminderTarget? Target { get => _target; set { if (_refreshingReminderTargets) return; SetProperty(ref _target, value); Notify(); } }
     public PersonalReminderItem? SelectedReminder { get => _selectedReminder; set { SetProperty(ref _selectedReminder, value); Notify(); } }
-    public PersonalNotification? SelectedNotification { get => _selectedNotification; set { SetProperty(ref _selectedNotification, value); Notify(); } }
+    public PersonalNotification? SelectedNotification { get => _selectedNotification; set { SetProperty(ref _selectedNotification, value); OnPropertyChanged(nameof(SelectedNotificationRow)); RaiseNotificationState(); Notify(); } }
     public bool IsProjectEditing { get => _projectEditing; private set { SetProperty(ref _projectEditing, value); Notify(); } }
-    public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); Notify(); } }
+    public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); RaiseNotificationState(); Notify(); } }
     public string ProjectName { get => _name; set => SetProperty(ref _name, value); }
     public string ProjectDescription { get => _description; set => SetProperty(ref _description, value); }
     public DesktopProjectStatus ProjectStatus { get => _status; set => SetProperty(ref _status, value); }
@@ -103,7 +103,8 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
     public AsyncCommand SnoozeNotificationCommand { get; }
     public AsyncCommand OpenNotificationCommand { get; }
     public IReadOnlyList<string> SnoozeChoices { get; } = ["По умолчанию", "5 минут", "15 минут", "30 минут", "1 час", "До завтра", "Дата и время"];
-    public string SnoozeChoice { get; set; } = "По умолчанию";
+    private string _snoozeChoice = "По умолчанию";
+    public string SnoozeChoice { get => _snoozeChoice; set { SetProperty(ref _snoozeChoice, value); OnPropertyChanged(nameof(IsCustomSnooze)); } }
     public string SnoozeDateTime { get; set; } = "";
     public event Action<string, Guid>? OpenObjectRequested;
     public void Snooze(Guid id, bool useDefault = false)
@@ -123,23 +124,24 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
     public void OpenNotification(Guid id)
     {
         var notification = _store.Notifications().FirstOrDefault(n => n.Id == id);
-        if (notification is null) return;
+        if (notification is null) { Message = "Уведомление больше недоступно. Обновите список."; return; }
         var reminder = _store.Reminders().FirstOrDefault(r => r.Id == notification.ReminderId);
-        if (reminder is null) return;
+        if (reminder is null) { Message = "Связанный объект больше недоступен. Уведомление сохранено в истории."; return; }
         if (reminder.TargetKind == DesktopScheduleItemType.Task && _store.Get(notification.TargetId) is not null) OpenObjectRequested?.Invoke("task", notification.TargetId);
         else if (reminder.TargetKind == DesktopScheduleItemType.CalendarEvent && _store.GetEvent(notification.TargetId) is { Status: "scheduled" }) OpenObjectRequested?.Invoke("calendar_event", notification.TargetId);
+        else Message = "Связанный объект больше недоступен. Уведомление сохранено в истории.";
     }
     public event Action? ProjectsChanged;
     private IEnumerable<AsyncCommand> Commands => [OpenProjectTaskCommand, RefreshCommand, NewProjectCommand, EditProjectCommand, SaveProjectCommand, CancelProjectCommand, AddReminderCommand, CancelReminderCommand, ReadNotificationCommand, ReadAllNotificationsCommand, SnoozeNotificationCommand, OpenNotificationCommand];
-    private System.Threading.Tasks.Task Run(Action action, string success = "Сохранено на этом компьютере.")
+    private System.Threading.Tasks.Task Run(Action action, string success = "Сохранено на этом компьютере.", bool busy = true)
     {
-        IsBusy = true;
-        try { action(); Message = success; }
+        if (busy) IsBusy = true;
+        try { Message = ""; action(); if (Message.Length == 0) Message = success; }
         catch (PersonalVersionConflictException) { Message = "Данные изменены. Обновите список; черновик сохранён в форме."; }
         catch (Exception e) when (e is ArgumentException or FormatException or OverflowException) { Message = e.Message; }
         catch (Exception e) when (e is Microsoft.Data.Sqlite.SqliteException or System.IO.IOException or UnauthorizedAccessException)
-        { Message = "Данные не сохранены. Черновик остался в форме; проверьте свободное место и доступ к личной базе."; }
-        finally { IsBusy = false; }
+        { Message = "Данные не сохранены. Черновик остался в форме; проверьте свободное место и доступ к личной базе."; NotificationLoadError = "Не удалось прочитать или сохранить данные. Проверьте доступ к личной базе и повторите попытку."; }
+        finally { if (busy) IsBusy = false; }
         return System.Threading.Tasks.Task.CompletedTask;
     }
     private void EditProject(PersonalProject? source)
@@ -172,13 +174,23 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
         if (_offset == _defaultOffset) OffsetMinutes = configuredOffset;
         _defaultOffset = configuredOffset;
         var tasks = RefreshProjectBrowser();
-        Targets = tasks.Where(t => t.Status is not (TaskApi.DesktopTaskStatus.Completed or TaskApi.DesktopTaskStatus.Cancelled))
+        var draftTarget = Target;
+        _refreshingReminderTargets = true;
+        try
+        {
+            Targets = tasks.Where(t => t.Status is not (TaskApi.DesktopTaskStatus.Completed or TaskApi.DesktopTaskStatus.Cancelled))
             .Select(t => new PersonalReminderTarget(t.Id, DesktopScheduleItemType.Task, t.Title))
             .Concat(_store.Events().Where(e => e.Status == "scheduled").Select(e => new PersonalReminderTarget(e.Id, DesktopScheduleItemType.CalendarEvent, e.Title))).ToArray();
+        }
+        finally { _refreshingReminderTargets = false; }
+        Target = Targets.FirstOrDefault(t => t.Id == draftTarget?.Id) ?? draftTarget;
+        var selectedReminder = SelectedReminder?.Source.Id;
         Reminders = _store.Reminders().Select(r => new PersonalReminderItem(r, Targets.FirstOrDefault(t => t.Id == r.TargetId)?.Title
             ?? _store.Get(r.TargetId)?.Title ?? _store.GetEvent(r.TargetId)?.Title ?? "Недоступный объект")).ToArray();
         var selected = SelectedNotification?.Id;
         Notifications = _store.Notifications(); SelectedNotification = Notifications.FirstOrDefault(n => n.Id == selected);
+        SelectedReminder = Reminders.FirstOrDefault(r => r.Source.Id == selectedReminder);
+        RefreshNotificationBrowser();
         Notify();
     }
     public void Reconcile()

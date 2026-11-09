@@ -113,7 +113,7 @@ public sealed partial class PersonalTaskStore
     public IReadOnlyList<DesktopSearchResult> SearchPersonal(string query) => Locked<IReadOnlyList<DesktopSearchResult>>(() =>
     {
         query = query.Trim(); if (query.Length is < 2 or > 200) throw new ArgumentException("Введите от 2 до 200 символов.");
-        using var c = Command("SELECT id,object_type,title,version,updated_at FROM personal_objects WHERE lifecycle='active' AND (personal_contains(title,$q) OR personal_contains(search_text,$q)) ORDER BY title,id LIMIT 100;", null, ("$q", query));
+        using var c = Command("SELECT id,object_type,title,version,updated_at FROM personal_objects WHERE lifecycle='active' AND (personal_contains(title,$q) OR personal_contains(search_text,$q)) ORDER BY title,id;", null, ("$q", query));
         using var r = c.ExecuteReader(); var rows = new List<DesktopSearchResult>();
         while (r.Read()) rows.Add(new(Guid.Parse(r.GetString(0)), r.GetString(1), r.GetString(2), null, r.GetInt64(3), DateTimeOffset.Parse(r.GetString(4))));
         return rows;

@@ -21,7 +21,7 @@ public sealed partial class PersonalWorkspaceViewModel : ViewModelBase, IDisposa
         RefreshCommand = new((_, _) => Run(Refresh), _ => !IsBusy);
         ArchiveCommand = new((_, _) => Change("archive"), _ => Selected?.Lifecycle == "active" && !IsBusy);
         TrashCommand = new((_, _) => Change("trash"), _ => Selected is { Lifecycle: not "trashed" } && !IsBusy);
-        RestoreCommand = new((_, _) => Change(Selected?.Lifecycle == "trashed" ? "restore" : "unarchive"), _ => Selected is { Lifecycle: not "active" } && !IsBusy);
+        RestoreCommand = new((_, _) => Change(Selected?.Lifecycle == "trashed" ? "restore" : "unarchive"), _ => Selected is { Lifecycle: not "active" } && !NeedsProjectRecovery && !IsBusy);
         PurgeCommand = new((_, _) => Run(() => { _store.PurgeWorkspaceObject(Selected!.Id, Selected.Version); Refresh(); }), _ => Selected?.Lifecycle == "trashed" && !IsBusy);
         MoveCommand = new((_, _) => Run(() => { _store.MoveCatalog(Selected!.Id, Selected.Version, Folder?.Id); Refresh(); }), _ => Selected is { ObjectType: "catalog_item", Lifecycle: "active" } && !IsBusy);
         RecoverProjectCommand = new((state, _) => Run(() => { _store.ChangeWorkspaceLifecycle(Selected!.Id, Selected.Version, "restore", state as string); Refresh(); Hub.Activate(Area.Area); }), state => NeedsProjectRecovery && state is "active" or "archived" && !IsBusy);
@@ -29,6 +29,8 @@ public sealed partial class PersonalWorkspaceViewModel : ViewModelBase, IDisposa
         Hub.Activate(WorkHubArea.Settings);
         Refresh();
         InitializeCatalogBrowser();
+        InitializeContactsBrowser();
+        Search = new(Hub, store);
     }
     public event Action<string, Guid>? OpenObjectRequested;
     private void OpenObject(string type, Guid id)
@@ -39,12 +41,14 @@ public sealed partial class PersonalWorkspaceViewModel : ViewModelBase, IDisposa
         OpenObjectRequested?.Invoke(type, id);
     }
     public WorkHubViewModel Hub { get; }
+    public PersonalSearchViewModel Search { get; }
+    public bool IsSearch => Area.Area == WorkHubArea.Search;
     public ObjectLinksViewModel Links { get; }
     public IReadOnlyList<PersonalWorkspaceArea> Areas { get; } = [new("Каталог", WorkHubArea.Catalog), new("Контакты", WorkHubArea.Contacts), new("Поиск", WorkHubArea.Search), new("Архив", WorkHubArea.Archive), new("Корзина", WorkHubArea.Trash), new("Настройки", WorkHubArea.Settings)];
-    public PersonalWorkspaceArea Area { get => _area; set { if (SetProperty(ref _area, value)) { OnPropertyChanged(nameof(ShowObjectActions)); OnPropertyChanged(nameof(IsCatalog)); OnPropertyChanged(nameof(ShowLegacyWorkspace)); if (IsCatalog) Selected = null; Hub.Activate(value.Area); if (IsCatalog) SyncCatalogSelection(true); } } }
+    public PersonalWorkspaceArea Area { get => _area; set { if (SetProperty(ref _area, value)) { OnPropertyChanged(nameof(ShowObjectActions)); OnPropertyChanged(nameof(IsSearch)); OnPropertyChanged(nameof(IsCatalog)); OnPropertyChanged(nameof(IsContacts)); OnPropertyChanged(nameof(ShowLegacyWorkspace)); OnPropertyChanged(nameof(IsLifecycle)); OnPropertyChanged(nameof(IsTrash)); OnPropertyChanged(nameof(IsSettings)); if (IsCatalog) Selected = null; Hub.Activate(value.Area); if (IsCatalog) SyncCatalogSelection(true); if (IsContacts) ActivateContactsBrowser(); if (IsLifecycle) RefreshLifecycleBrowser(); } } }
     public bool IsCatalog => Area.Area == WorkHubArea.Catalog;
-    public bool ShowLegacyWorkspace => !IsCatalog;
-    public bool ShowObjectActions => Area.Area is not (WorkHubArea.Settings or WorkHubArea.Search or WorkHubArea.Catalog);
+    public bool ShowLegacyWorkspace => !IsCatalog && !IsContacts && !IsSearch;
+    public bool ShowObjectActions => Area.Area is not (WorkHubArea.Settings or WorkHubArea.Search or WorkHubArea.Catalog or WorkHubArea.Contacts);
     public IReadOnlyList<PersonalObject> Objects { get => _objects; private set { SetProperty(ref _objects, value); OnPropertyChanged(nameof(ActiveObjects)); OnPropertyChanged(nameof(Folders)); } }
     public IReadOnlyList<PersonalObject> ActiveObjects => Objects.Where(o => o.Lifecycle == "active").ToArray();
     public IReadOnlyList<PersonalObject> Folders => Objects.Where(o => o.Lifecycle == "active" && _store.Catalog().Any(c => c.Id == o.Id && c.ItemType == "virtual_folder")).ToArray();
@@ -66,6 +70,7 @@ public sealed partial class PersonalWorkspaceViewModel : ViewModelBase, IDisposa
     public void Refresh()
     {
         var id = Selected?.Id; Objects = _store.WorkspaceObjects(); Selected = Objects.FirstOrDefault(o => o.Id == id);
+        if (IsLifecycle) RefreshLifecycleBrowser();
     }
     private System.Threading.Tasks.Task Change(string action) => Run(() => { _store.ChangeWorkspaceLifecycle(Selected!.Id, Selected.Version, action); Refresh(); Hub.Activate(Area.Area); });
     private System.Threading.Tasks.Task Run(Action action)
@@ -85,5 +90,5 @@ public sealed partial class PersonalWorkspaceViewModel : ViewModelBase, IDisposa
      new("Личные настройки", () => Hub.HasProfileDraft, () => IsBusy, Hub.SaveUserSettingsCommand),
      new("Личные уведомления", () => Hub.HasNotificationDraft, () => IsBusy, Hub.SaveNotificationPreferencesCommand)];
     private void Notify() { OnPropertyChanged(nameof(NeedsProjectRecovery)); OnPropertyChanged(nameof(CanTrash)); OnPropertyChanged(nameof(CanPurge)); foreach (var c in new[] { ArchiveCommand, TrashCommand, RestoreCommand, PurgeCommand, MoveCommand, RecoverProjectCommand }) c.RaiseCanExecuteChanged(); }
-    public void Dispose() { DisposeCatalogBrowser(); Hub.OpenObjectRequested -= OpenObject; Hub.Dispose(); Links.Dispose(); foreach (var c in new[] { RefreshCommand, ArchiveCommand, TrashCommand, RestoreCommand, PurgeCommand, MoveCommand, RecoverProjectCommand }) c.Dispose(); }
+    public void Dispose() { Search.Dispose(); DisposeContactsBrowser(); DisposeCatalogBrowser(); Hub.OpenObjectRequested -= OpenObject; Hub.Dispose(); Links.Dispose(); foreach (var c in new[] { RefreshCommand, ArchiveCommand, TrashCommand, RestoreCommand, PurgeCommand, MoveCommand, RecoverProjectCommand }) c.Dispose(); }
 }

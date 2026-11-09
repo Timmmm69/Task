@@ -68,7 +68,7 @@ public sealed partial class WorkHubViewModel
                     else
                     { SetFeedback("Не удалось подтвердить доступ к выбранному контакту. Повторите обновление.", WorkHubFeedbackKind.Warning); return; }
                 }
-                ApplyListPage(result, append, values => Contacts = !append && values.Count > 0 && selectedBeforeRefresh is { } previous
+                ApplyListPage(result, append, values => Contacts = !IsPersonal && !append && values.Count > 0 && selectedBeforeRefresh is { } previous
                     && values.All(item => item.Id != previous.Id) ? [.. values, previous] : values,
                     Contacts, item => item.Id);
                 if (!append && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded
