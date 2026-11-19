@@ -20,7 +20,7 @@ public sealed class AdministrationViewModelTests
         viewModel.SelectedTab = viewModel.Tabs.Single(tab => tab.Area == AdministrationArea.Roles);
         await Eventually(() => viewModel.Roles.Count == 1);
         Assert.Equal("Системный администратор", viewModel.SelectedRole?.Name);
-        Assert.Contains("сервер authoritative", viewModel.AccessText);
+        Assert.Contains("Данные сервера компании", viewModel.AccessText);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public sealed class AdministrationViewModelTests
         Assert.False(viewModel.RefreshCommand.CanExecute(null));
         Assert.Empty(viewModel.Users);
         Assert.Equal(0, client.UsersReads);
-        Assert.Contains("не раскрываются", viewModel.AccessText);
+        Assert.Contains("Ограниченная роль", viewModel.AccessText);
     }
 
     [Fact]

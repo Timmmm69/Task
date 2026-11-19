@@ -71,15 +71,15 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
     public bool IsRoles => SelectedTab.Area == AdministrationArea.Roles;
     public bool IsResources => SelectedTab.Area == AdministrationArea.Resources;
     public bool IsAccessManagement => SelectedTab.Area == AdministrationArea.Access;
-    public string RoleAssignmentLimitation => "Изменение назначений ролей недоступно: действующий API не позволяет получить полный набор текущих назначений сотрудника. Замена без этих данных может удалить существующие права. Ограничение OQ-ADMIN-ROLES-READ. Каталог определений находится в разделе «Роли и права» при наличии права на его чтение.";
+    public string RoleAssignmentLimitation => "Список назначений сотрудника недоступен. Изменение ролей могло бы удалить действующие права. Определения ролей можно посмотреть в разделе «Роли и права» при наличии доступа.";
     public bool CanReadCurrentArea => _sessionAvailable && _capabilities.Contains(SelectedTab.Capability);
     public bool IsLimitedRole => !CanReadCurrentArea;
     public bool IsOffline => !_networkAvailable;
     public string AccessText => !_networkAvailable
-        ? "Офлайн · административные данные доступны только из подтверждённого состояния"
+        ? "Офлайн · показаны последние подтверждённые данные"
         : CanReadCurrentArea
-            ? $"{SelectedTab.Capability} · сервер authoritative"
-            : "Ограниченная роль · поля и количество скрытых объектов не раскрываются";
+            ? "Данные сервера компании"
+            : "Ограниченная роль";
     public string LastSuccessfulRefreshText => _lastRefresh is null ? "Раздел ещё не обновлялся" : $"Обновлено {_lastRefresh.Value.ToLocalTime():HH:mm}";
     public AsyncCommand RefreshCommand { get; }
 

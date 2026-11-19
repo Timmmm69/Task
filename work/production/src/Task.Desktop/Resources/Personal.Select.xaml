@@ -55,7 +55,7 @@
                           IsChecked="{Binding IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}">
                 <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"/></ControlTemplate></ToggleButton.Template>
             </ToggleButton>
-            <Border x:Name="Chrome" Background="{DynamicResource Task.Capsule.Fill}" BorderBrush="{DynamicResource Task.Capsule.Border}" BorderThickness="1" CornerRadius="24" MinHeight="{TemplateBinding MinHeight}" IsHitTestVisible="False"
+            <Border x:Name="Chrome" Background="{DynamicResource Task.Capsule.Fill}" BorderBrush="{DynamicResource Task.Capsule.Border}" BorderThickness="1" CornerRadius="{DynamicResource Task.Capsule.SelectRadius}" MinHeight="{TemplateBinding MinHeight}" IsHitTestVisible="False"
                     TextElement.Foreground="{DynamicResource Task.Capsule.Text}" TextElement.FontFamily="{DynamicResource Task.Capsule.Font}" TextElement.FontSize="14">
                 <Grid Margin="{TemplateBinding Padding}"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="25"/></Grid.ColumnDefinitions>
                     <ContentPresenter x:Name="Selection" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"

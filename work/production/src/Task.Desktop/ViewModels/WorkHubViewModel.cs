@@ -104,7 +104,9 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             parameter => _active && _sessionAvailable && IsSearch && Has("ObjectLink.Read") && parameter is DesktopSearchHit hit
                 && SearchResults.Any(row => row.ObjectId == hit.Source.ObjectId && row.Version == hit.Source.Version && row.ObjectType == hit.ObjectType));
         ServerAddress = serverAddress ?? "Сервер компании";
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
+        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea
+            && !_catalogMutationPending && Locations?.IsMutating != true
+            && (IsPersonal || !IsSettings || !HasSettingsDraft && !IsSavingSettings));
         InitializePagination();
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
@@ -128,6 +130,12 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         SaveNotificationPreferencesCommand = new(SaveNotificationPreferencesAsync, _ => CanUseServerWrites && IsSettings && CanUpdateSettings && _notificationPreferences is not null);
         SaveOrganizationSettingsCommand = new(SaveOrganizationSettingsAsync, _ => CanUseServerWrites && IsSettings && CanUpdateOrganization && _organizationSettings is not null);
         PropertyChanged += OnSettingsValueChanged;
+        if (!IsPersonal)
+        {
+            SaveUserSettingsCommand.CanExecuteChanged += OnSettingsCommandChanged;
+            SaveNotificationPreferencesCommand.CanExecuteChanged += OnSettingsCommandChanged;
+            SaveOrganizationSettingsCommand.CanExecuteChanged += OnSettingsCommandChanged;
+        }
         InitializeLocations();
         InitializeContactCard();
         InitializeCompanies();
@@ -274,7 +282,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public int ChangeFeedRetentionDays { get => _changeFeedRetentionDays; set => SetProperty(ref _changeFeedRetentionDays, value); }
     public int RecurrenceHorizonDays { get => _recurrenceHorizonDays; set => SetProperty(ref _recurrenceHorizonDays, value); }
     public IReadOnlyList<string> SettingsSections => IsPersonal ? ["Профиль", "Уведомления"] : ["Профиль", "Уведомления", "Подключение и сервер"];
-    public string SettingsSection { get => _settingsSection; set { if (SetProperty(ref _settingsSection, value)) { OnPropertyChanged(nameof(IsProfileSettings)); OnPropertyChanged(nameof(IsNotificationSettings)); OnPropertyChanged(nameof(IsServerSettings)); } } }
+    public string SettingsSection { get => _settingsSection; set { if (SetProperty(ref _settingsSection, value)) { OnPropertyChanged(nameof(IsProfileSettings)); OnPropertyChanged(nameof(IsNotificationSettings)); OnPropertyChanged(nameof(IsServerSettings)); NotifyCorporateSettingsEditor(); } } }
     public bool IsProfileSettings => SettingsSection == "Профиль";
     public bool IsNotificationSettings => SettingsSection == "Уведомления";
     public bool IsServerSettings => !IsPersonal && SettingsSection == "Подключение и сервер";
@@ -628,6 +636,13 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 
     private void LoadUserSettings(DesktopUserSettings value)
     {
+        RestoreUserSettingsFields(value);
+        SaveUserSettingsCommand.RaiseCanExecuteChanged();
+        UserSettingsApplied?.Invoke(value);
+    }
+
+    private void RestoreUserSettingsFields(DesktopUserSettings value)
+    {
         _userSettings = value; UserLanguage = value.Language; UserTimeFormat = value.TimeFormat;
         FirstDayOfWeek = value.FirstDayOfWeek;
         UserWorkdayStart = value.WorkdayStart; UserWorkdayEnd = value.WorkdayEnd;
@@ -635,9 +650,9 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         DefaultTaskDurationMinutes = value.DefaultTaskDurationMinutes; DefaultReminderOffsetMinutes = value.DefaultReminderOffsetMinutes;
         AutostartEnabled = value.AutostartEnabled; AllowLocalPaths = value.AllowLocalPaths;
         ConfirmCatalogDelete = value.ConfirmCatalogDelete; MissingFileBehavior = value.MissingFileBehavior;
-        SaveUserSettingsCommand.RaiseCanExecuteChanged();
-        UserSettingsApplied?.Invoke(value);
+        NotifyCorporateSettingsEditor();
     }
+
     private void LoadNotificationPreferences(DesktopNotificationPreferences value)
     {
         _notificationPreferences = value; NotificationsEnabled = value.Enabled; DesktopNotificationsEnabled = value.DesktopEnabled;

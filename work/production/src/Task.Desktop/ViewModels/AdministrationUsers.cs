@@ -41,7 +41,7 @@ public sealed partial class AdministrationViewModel
         : !_networkAvailable ? "Офлайн · сохранение недоступно. Локальная очередь изменений не создаётся."
         : !_capabilities.Contains("User.Create") && !_capabilities.Contains("User.Update")
             ? "Только чтение · создание и редактирование недоступны."
-        : "Создание и редактирование доступны в пределах ваших прав.";
+        : string.Empty;
 
     private void InitializeUserCommands()
     {

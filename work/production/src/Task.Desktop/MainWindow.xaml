@@ -1263,7 +1263,7 @@
                     </Style>
                 </views:WorkHubView.Style>
             </views:WorkHubView>
-            <views:AdministrationView DataContext="{Binding Administration}" Margin="{DynamicResource Task.Padding.Page}">
+            <views:AdministrationView DataContext="{Binding Administration}">
                 <views:AdministrationView.Style>
                     <Style TargetType="views:AdministrationView">
                         <Setter Property="Visibility" Value="Collapsed" />
