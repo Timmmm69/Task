@@ -86,6 +86,18 @@ public sealed partial class WorkHubViewModel
             }
             if (_client is IDesktopContactDetailsClient detailsClient)
             {
+                if (ContactResultsQuery.Length > 0)
+                {
+                    ContactQuery = "";
+                    await LoadListPageAsync(false, token, "");
+                    if (!Current()) return;
+                    // The deep link checks access separately if the directory could not be refreshed.
+                    if (ContactResultsQuery.Length > 0)
+                    {
+                        ContactResultsQuery = "";
+                        Contacts = [];
+                    }
+                }
                 var result = await detailsClient.GetContactAsync(id, token);
                 if (!Current() || !Has("Contact.Read")) return;
                 if (result is DesktopWorkResult<DesktopContactDetails>.Succeeded { Value.Contact.LifecycleState: "active" } found)

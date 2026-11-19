@@ -104,7 +104,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             parameter => _active && _sessionAvailable && IsSearch && Has("ObjectLink.Read") && parameter is DesktopSearchHit hit
                 && SearchResults.Any(row => row.ObjectId == hit.Source.ObjectId && row.Version == hit.Source.Version && row.ObjectType == hit.ObjectType));
         ServerAddress = serverAddress ?? "Сервер компании";
-        RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
+        RefreshCommand = new(RefreshAsync, parameter => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true
+            && (parameter is not string || IsContacts && ShowContactPeople && HasCompanies && !HasRunningMutation && !IsLoading));
         InitializePagination();
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
         CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
@@ -452,7 +453,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         finally { EndOperation(); }
     }
 
-    private async System.Threading.Tasks.Task RefreshAsync(object? _, CancellationToken ct)
+    private async System.Threading.Tasks.Task RefreshAsync(object? parameter, CancellationToken ct)
     {
         SetFeedback(null, WorkHubFeedbackKind.None);
         BeginOperation();
@@ -469,7 +470,16 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
                     }
                     break;
                 case WorkHubArea.Contacts when ShowCompanies: if (Companies is not null) await Companies.LoadListAsync(ct: ct); break;
-                case WorkHubArea.Contacts: await LoadListPageAsync(false, ct); break;
+                case WorkHubArea.Contacts:
+                    var query = (parameter as string)?.Trim();
+                    if (query is not null && query != ContactResultsQuery && HasContactCardDraft)
+                    {
+                        SetFeedback("Сохраните или отмените изменения в карточке перед поиском.", WorkHubFeedbackKind.Warning);
+                        break;
+                    }
+                    if (query is not null) ContactQuery = query;
+                    await LoadListPageAsync(false, ct, query);
+                    break;
                 case WorkHubArea.Notifications: await EnsureNotificationsAsync(ct); break;
                 case WorkHubArea.Search when SearchQuery.Trim().Length >= 2: await SearchCoreAsync(ct); break;
                 case WorkHubArea.Search: SearchResults = []; SetFeedback("Введите запрос длиной не менее двух символов.", WorkHubFeedbackKind.Info); break;
@@ -532,7 +542,11 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private async System.Threading.Tasks.Task CreateContactAsync(object? _, CancellationToken ct)
     {
         Apply(await _closeOperations.TrackAsync(() => _client.CreateContactAsync(NewContactFirstName, NewContactLastName, NewContactDisplayName, ct)), value =>
-        { Contacts = [value, .. Contacts]; NewContactFirstName = NewContactLastName = NewContactDisplayName = string.Empty; SetFeedback("Контакт создан и доступен для связей с работой.", WorkHubFeedbackKind.Success); });
+        {
+            if (ContactResultsQuery.Length == 0) Contacts = [value, .. Contacts];
+            NewContactFirstName = NewContactLastName = NewContactDisplayName = string.Empty;
+            SetFeedback("Контакт создан и доступен для связей с работой.", WorkHubFeedbackKind.Success);
+        });
     }
     private async System.Threading.Tasks.Task MarkReadAsync(object? parameter, CancellationToken ct)
     {
@@ -732,6 +746,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         {
             OnPropertyChanged(nameof(IsLoading));
             OnPropertyChanged(nameof(ShowSearchEmpty));
+            if (IsContacts) RefreshCommand.RaiseCanExecuteChanged();
         }
         NotifyPagination();
     }
@@ -768,7 +783,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); OnPropertyChanged(nameof(CanCreateContact)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
     public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); ContactInteractions?.Dispose(); CompanyInteractions?.Dispose(); Companies?.Dispose(); ShowCompaniesCommand.Dispose(); ShowContactsCommand.Dispose(); ContactCard?.Dispose(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }
