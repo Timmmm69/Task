@@ -1,42 +1,86 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Task.Desktop.Converters;
 using Task.Desktop.TaskApi;
+using Task.Desktop.Tests.Work;
 using Task.Desktop.ViewModels;
+using Task.Desktop.Views;
 
 namespace Task.Desktop.Tests;
 
 public sealed class VisualFoundationTests
 {
     [Fact]
-    public void MainWindow_LoadsAndMeasuresDirection2Shell()
+    public async System.Threading.Tasks.Task MainWindow_LoadsAndMeasuresDirection2Shell()
     {
-        var snapshot = RunOnSta(() =>
+        const string isolatedProbe = "TASK_CORPORATE_LIFECYCLE_SHELL_PROBE";
+        if (Environment.GetEnvironmentVariable(isolatedProbe) != "1")
         {
-            var application = global::System.Windows.Application.Current
-                ?? new global::System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-            if (!application.Resources.Contains("Task.Shell.NavigationSurface"))
+            // Application resources belong to their dispatcher for the lifetime of a WPF process.
+            var start = new ProcessStartInfo("dotnet")
             {
-                application.Resources.MergedDictionaries.Add((ResourceDictionary)global::System.Windows.Application.LoadComponent(
-                    new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative)));
-                application.Resources["Task.IconKeyToGeometryConverter"] = new IconKeyToGeometryConverter();
-                application.Resources["Task.ShellNavigationWidthConverter"] = new ShellNavigationWidthConverter();
-                application.Resources["Task.WindowWidthAtLeastConverter"] = new WindowWidthAtLeastConverter();
-                application.Resources["Task.ResponsiveGridLengthConverter"] = new ResponsiveGridLengthConverter();
-                application.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8,
+            };
+            start.ArgumentList.Add("vstest");
+            start.ArgumentList.Add(typeof(VisualFoundationTests).Assembly.Location);
+            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." + nameof(MainWindow_LoadsAndMeasuresDirection2Shell));
+            start.Environment[isolatedProbe] = "1";
+            using var child = Process.Start(start)!;
+            var output = child.StandardOutput.ReadToEndAsync();
+            var errors = child.StandardError.ReadToEndAsync();
+            try
+            {
+                await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
+                Assert.True(child.ExitCode == 0, await output + await errors);
+            }
+            finally
+            {
+                if (!child.HasExited) child.Kill(entireProcessTree: true);
             }
 
-            using var viewModel = new MainWindowViewModel();
+            return;
+        }
+
+        var snapshot = RunOnSta(() =>
+        {
+            var application = new App();
+            application.InitializeComponent();
+
+            using var workHub = new WorkHubViewModel(new WorkHubViewModelTests.FakeClient(),
+                ["History.Read", "Archive.Restore", "Trash.Read", "Trash.Restore"]);
+            using var viewModel = new MainWindowViewModel(null, null, workHub: workHub);
             var window = new MainWindow(viewModel);
             try
             {
                 window.Measure(new Size(1487, 1058));
                 window.Arrange(new Rect(0, 0, 1487, 1058));
                 window.UpdateLayout();
+
+                Assert.IsType<CorporateLifecycleView>(LogicalTreeHelper.FindLogicalNode(window, "LifecycleRoot"));
+                var surface = new CorporateLifecycleView { DataContext = workHub };
+                foreach (var (route, area) in new[] { ("archive", WorkHubArea.Archive), ("trash", WorkHubArea.Trash) })
+                {
+                    viewModel.SelectedSection = viewModel.Sections.Single(section => section.Route == route);
+                    surface.Measure(new Size(600, 360));
+                    surface.Arrange(new Rect(0, 0, 600, 360));
+                    Assert.Equal(area, workHub.Area);
+                    Assert.Equal("LifecycleSurface", AutomationProperties.GetAutomationId(surface));
+                    Assert.InRange(surface.ActualWidth, 1, 600);
+                }
+
                 return new
                 {
                     NavigationFound = window.FindName("NavigationListBox") is FrameworkElement,
@@ -55,6 +99,7 @@ public sealed class VisualFoundationTests
         Assert.True(snapshot.HeaderFound);
         Assert.True(snapshot.ContentFound);
     }
+
 
     [Fact]
     public void Theme_LoadsCanonicalResourcesAndIcons()
