@@ -1,5 +1,7 @@
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using Task.Desktop.ViewModels;
 
@@ -24,6 +26,43 @@ public partial class WorkHubView : UserControl
     private void CatalogSelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
         if (DataContext is WorkHubViewModel vm && e.NewValue is CatalogNodeViewModel node) vm.SelectedCatalogItem = node;
+    }
+
+    private async void CatalogSearchSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is WorkHubViewModel { IsCatalogSearchActive: true } vm &&
+            CatalogResults.SelectedItem is CatalogNodeViewModel node && vm.SelectedCatalogItem != node)
+            await vm.SelectCatalogItemAsync(node.Id);
+    }
+
+    private void ClearCatalogSearch(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is WorkHubViewModel vm) vm.CatalogSearchQuery = string.Empty;
+    }
+
+    private void CatalogSearchShortcut(object sender, TextCompositionEventArgs e)
+    {
+        if (e.Text == "/" && CatalogSearchBox is { IsVisible: true, IsEnabled: true } &&
+            Keyboard.FocusedElement is not TextBoxBase)
+            e.Handled = CatalogSearchBox.Focus();
+    }
+
+    private void ShowCatalogCreation(object sender, RoutedEventArgs e)
+    {
+        CatalogCreationPanel.Visibility = Visibility.Visible;
+        CatalogInspector.ScrollToTop();
+        if (!CatalogPickFile.Focus()) CatalogNameInput.Focus();
+    }
+
+    private void HideCatalogCreation(object sender, RoutedEventArgs e)
+    {
+        CatalogCreationPanel.Visibility = Visibility.Collapsed;
+        if (!CatalogCreateButton.Focus()) CatalogSearchBox.Focus();
+    }
+
+    private void CatalogDetailsUpdated(object sender, DataTransferEventArgs e)
+    {
+        CatalogInspector?.ScrollToTop();
     }
     private void CatalogMouseDown(object sender, MouseButtonEventArgs e)
     {

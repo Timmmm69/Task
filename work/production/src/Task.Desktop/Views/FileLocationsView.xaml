@@ -12,7 +12,7 @@
             </StackPanel>
         </Border>
         <WrapPanel Margin="0,12,0,4">
-            <Button Content="+ Добавить расположение" Command="{Binding AddCommand}" Style="{StaticResource Task.Files.PrimaryAction}" AutomationProperties.AutomationId="AddLocationButton"/>
+            <Button Content="+ Добавить расположение" Command="{Binding AddCommand}" Style="{DynamicResource Task.Files.PrimaryAction}" AutomationProperties.AutomationId="AddLocationButton"/>
             <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Files.Action}" AutomationProperties.AutomationId="RefreshLocationsButton"/>
         </WrapPanel>
         <Border Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
