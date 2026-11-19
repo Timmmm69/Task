@@ -412,13 +412,13 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     }
 
     public IReadOnlyList<TaskFilterOption<DesktopTaskStatus?>> StatusFilters { get; } =
-        [new(null, "Все статусы"), .. Enum.GetValues<DesktopTaskStatus>()
+        [new(null, "Все"), .. Enum.GetValues<DesktopTaskStatus>()
             .Select(value => new TaskFilterOption<DesktopTaskStatus?>(value, TaskItemViewModel.LocalizeStatus(value)))];
     public IReadOnlyList<TaskFilterOption<DesktopTaskPriority?>> PriorityFilters { get; } =
-        [new(null, "Все приоритеты"), .. Enum.GetValues<DesktopTaskPriority>()
+        [new(null, "Все"), .. Enum.GetValues<DesktopTaskPriority>()
             .Select(value => new TaskFilterOption<DesktopTaskPriority?>(value, TaskItemViewModel.LocalizePriority(value)))];
     public IReadOnlyList<TaskFilterOption<TaskDeadlineFilter>> DeadlineFilters { get; } =
-        [new(TaskDeadlineFilter.All, "Все сроки"), new(TaskDeadlineFilter.Overdue, "Просроченные"),
+        [new(TaskDeadlineFilter.All, "Все"), new(TaskDeadlineFilter.Overdue, "Просроченные"),
          new(TaskDeadlineFilter.Today, "На сегодня"), new(TaskDeadlineFilter.NextSevenDays, "Ближайшие 7 дней"),
          new(TaskDeadlineFilter.NoDeadline, "Без срока")];
 
@@ -429,12 +429,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     }
 
     public IReadOnlyList<TaskFilterOption<TaskSortOrder>> SortOrders { get; } =
-        [new(TaskSortOrder.UpdatedNewest, "Последнее изменение: сначала новые"),
-         new(TaskSortOrder.UpdatedOldest, "Последнее изменение: сначала старые"),
-         new(TaskSortOrder.DeadlineNearest, "Срок: сначала ближайшие"),
-         new(TaskSortOrder.DeadlineLatest, "Срок: сначала поздние"),
-         new(TaskSortOrder.PriorityHighest, "Сначала высокий приоритет"),
-         new(TaskSortOrder.PriorityLowest, "Сначала низкий приоритет"),
+        [new(TaskSortOrder.UpdatedNewest, "Изменены недавно"),
+         new(TaskSortOrder.UpdatedOldest, "Изменены раньше"),
+         new(TaskSortOrder.DeadlineNearest, "Срок: ближайшие"),
+         new(TaskSortOrder.DeadlineLatest, "Срок: поздние"),
+         new(TaskSortOrder.PriorityHighest, "Приоритет: высокий"),
+         new(TaskSortOrder.PriorityLowest, "Приоритет: низкий"),
          new(TaskSortOrder.TitleAscending, "Название: А–Я"),
          new(TaskSortOrder.TitleDescending, "Название: Я–А")];
 
@@ -503,6 +503,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             OnPropertyChanged();
             OnPropertyChanged(nameof(HasItems));
             OnPropertyChanged(nameof(DisplayedCountText));
+            OnPropertyChanged(nameof(LoadedTaskCountText));
             OnPropertyChanged(nameof(ShowBlockingState));
             OnPropertyChanged(nameof(ShowInlineMessage));
             OnPropertyChanged(nameof(IsFilteredEmpty));
@@ -728,6 +729,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(StateTitle));
                 OnPropertyChanged(nameof(StateIconKey));
                 OnPropertyChanged(nameof(DisplayedCountText));
+                OnPropertyChanged(nameof(LoadedTaskCountText));
                 RaiseCommandStateChanged();
                 NotifyMutationState();
             }
@@ -808,6 +810,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     public string StateIconKey => State == TasksScreenState.Empty
         ? "Task.Icon.Tasks"
         : "Task.Icon.Error";
+
+    public string LoadedTaskCountText => State == TasksScreenState.InvalidCursor
+        ? $"Показано {Items.Count} из {_allTasks.Count} загруженных · результат неполный"
+        : $"Показано {Items.Count} из {_allTasks.Count} загруженных";
 
     public string DisplayedCountText => State == TasksScreenState.InvalidCursor
         ? $"Найдено среди загруженных задач: {Items.Count} из {_allTasks.Count}. Результат неполный — обновите список."
@@ -1944,6 +1950,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(HasNextPage));
         OnPropertyChanged(nameof(IsFilteredEmpty));
         OnPropertyChanged(nameof(DisplayedCountText));
+        OnPropertyChanged(nameof(LoadedTaskCountText));
         RaiseCommandStateChanged();
     }
 

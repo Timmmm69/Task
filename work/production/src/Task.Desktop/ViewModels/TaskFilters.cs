@@ -6,7 +6,7 @@ public sealed record TaskFilterOption<T>(T Value, string Name);
 
 public sealed record TaskProjectFilter(Guid? ProjectId, string Name, bool IsAll = false)
 {
-    public static TaskProjectFilter AllProjects { get; } = new(null, "Все проекты", true);
+    public static TaskProjectFilter AllProjects { get; } = new(null, "Все", true);
 }
 
 public enum TaskDeadlineFilter { All, Overdue, Today, NextSevenDays, NoDeadline }
