@@ -1,0 +1,397 @@
+<UserControl x:Class="Task.Desktop.Views.CorporateLifecycleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="LifecycleRoot" AutomationProperties.AutomationId="LifecycleSurface"
+             AutomationProperties.Name="{Binding AreaTitle}"
+             Language="ru-RU" UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="Lifecycle.Teal" Color="#005A6E"/>
+        <SolidColorBrush x:Key="Lifecycle.TealSoft" Color="#E8F4F8"/>
+        <SolidColorBrush x:Key="Lifecycle.Amber" Color="#794310"/>
+        <SolidColorBrush x:Key="Lifecycle.AmberSoft" Color="#FFF3E4"/>
+
+        <Style x:Key="Lifecycle.Muted" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Lifecycle.Panel" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style x:Key="Lifecycle.Divider" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="16,10"/>
+        </Style>
+        <Style x:Key="Lifecycle.Semantic" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="{StaticResource Lifecycle.TealSoft}"/>
+            <Setter Property="TextElement.Foreground" Value="{StaticResource Lifecycle.Teal}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsTrash, ElementName=LifecycleRoot}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Lifecycle.AmberSoft}"/>
+                    <Setter Property="TextElement.Foreground" Value="{StaticResource Lifecycle.Amber}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Lifecycle.Secondary" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+            <Style.Resources>
+                <CornerRadius x:Key="Task.Radius.Control">8</CornerRadius>
+            </Style.Resources>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Padding" Value="12,5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="Lifecycle.Primary" TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}">
+            <Style.Resources>
+                <CornerRadius x:Key="Task.Radius.Control">8</CornerRadius>
+                <SolidColorBrush x:Key="Task.Brush.Brand.Primary" Color="#BE2046"/>
+                <SolidColorBrush x:Key="Task.Brush.Brand.Strong" Color="#A61639"/>
+            </Style.Resources>
+            <Setter Property="MinHeight" Value="38"/>
+            <Setter Property="Padding" Value="14,6"/>
+        </Style>
+        <Style x:Key="Lifecycle.RowMeta" TargetType="TextBlock" BasedOn="{StaticResource Lifecycle.Muted}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Lifecycle.Item" TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
+            <Setter Property="ToolTip" Value="{Binding Title}"/>
+            <Setter Property="Padding" Value="16,8,12,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Row" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,0,1">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="#FFF0F3"/>
+                                <Setter TargetName="Row" Property="BorderBrush" Value="#BE2046"/>
+                                <Setter TargetName="Row" Property="BorderThickness" Value="4,1,1,1"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="Lifecycle.AreaIcon" TargetType="Path">
+            <Setter Property="Data" Value="{StaticResource Task.Icon.Archive}"/>
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Fill" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsTrash}" Value="True">
+                    <Setter Property="Data" Value="{StaticResource Task.Icon.Trash}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource Task.Surface.Subtle}">
+        <Grid Margin="20,14,20,14">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Margin="0,0,0,12" Visibility="{Binding CanReadCurrentArea, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="154"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding LifecycleQuery, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0"
+                         AutomationProperties.Name="Поиск по названию"
+                         AutomationProperties.HelpText="Поиск по загруженным записям"
+                         AutomationProperties.AutomationId="LifecycleSearchTextBox">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Search}">
+                            <Setter Property="Tag" Value="Найти в архиве…"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsTrash}" Value="True">
+                                    <Setter Property="Tag" Value="Найти в корзине…"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <ComboBox Grid.Column="1" Margin="0,0,10,0" ItemsSource="{Binding LifecycleTypeFilters}" SelectedItem="{Binding LifecycleTypeFilter}"
+                          Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Тип объекта"
+                          AutomationProperties.AutomationId="LifecycleTypeFilter"/>
+                <Button Grid.Column="2" Style="{StaticResource Lifecycle.Secondary}"
+                        MinHeight="42" Command="{Binding RefreshCommand}" AutomationProperties.Name="Обновить"
+                        AutomationProperties.AutomationId="WorkHubRefreshButton">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource Task.Icon.Refresh}" Width="15" Height="15" Stretch="Uniform"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              VerticalAlignment="Center" Margin="0,0,7,0"/>
+                        <TextBlock Text="Обновить" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <Border Grid.Row="1" CornerRadius="8" Padding="12,8" Margin="0,0,0,10"
+                    Visibility="{Binding HasFeedback, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                    AutomationProperties.Name="Сообщение раздела" AutomationProperties.AutomationId="WorkHubFeedback"
+                    AutomationProperties.LiveSetting="Polite">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}">
+                        <Setter Property="Background" Value="{StaticResource Lifecycle.TealSoft}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding FeedbackKind}" Value="Success">
+                                <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.SuccessSoft}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding FeedbackKind}" Value="Warning">
+                                <Setter Property="Background" Value="{StaticResource Lifecycle.AmberSoft}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding FeedbackKind}" Value="Error">
+                                <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.CriticalSoft}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.AutomationId="WorkHubFeedbackText"/>
+            </Border>
+
+            <Border Grid.Row="2" Style="{StaticResource Lifecycle.Panel}"
+                    Visibility="{Binding IsLimitedRole, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                    AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleState">
+                <StackPanel Margin="16" MaxWidth="430" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Data="{StaticResource Task.Icon.Lock}" Width="23" Height="23" Stretch="Uniform"
+                          Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                    <TextBlock Text="Раздел недоступен для текущей роли" FontWeight="SemiBold" FontSize="16"
+                               Margin="0,8,0,0" TextAlignment="Center" TextWrapping="Wrap"
+                               AutomationProperties.AutomationId="WorkHubLimitedRoleText"/>
+                    <TextBlock Text="Если вам нужен доступ, обратитесь к администратору."
+                               Style="{StaticResource Lifecycle.Muted}" Margin="0,4,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Row="2" Visibility="{Binding CanReadCurrentArea, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition>
+                            <ColumnDefinition.Style>
+                                <Style TargetType="ColumnDefinition">
+                                    <Setter Property="Width" Value="0.83*"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=LifecycleRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=780}" Value="False">
+                                            <Setter Property="Width" Value="*"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=LifecycleRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=550}" Value="False">
+                                            <Setter Property="Width" Value="0"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ColumnDefinition.Style>
+                        </ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border>
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Lifecycle.Panel}">
+                                <Setter Property="Grid.RowSpan" Value="2"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ActualWidth, ElementName=LifecycleRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=550}" Value="False"/>
+                                            <Condition Binding="{Binding HasVisibleLifecycleItems}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Grid.RowSpan" Value="1"/>
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedLifecycleItem}" Value="{x:Null}">
+                                        <Setter Property="Grid.ColumnSpan" Value="2"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <DockPanel>
+                            <Border DockPanel.Dock="Top" Style="{StaticResource Lifecycle.Divider}">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding VisibleLifecycleItems.Count, StringFormat=Показано {0}}"
+                                               Style="{StaticResource Lifecycle.Muted}" FontSize="12" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Style="{StaticResource Lifecycle.Semantic}" Width="26" Height="26" Margin="0,0,9,0">
+                                            <Path Style="{StaticResource Lifecycle.AreaIcon}" Width="15" Height="15"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding LifecycleListTitle}" FontWeight="Bold" FontSize="16"
+                                                   VerticalAlignment="Center" AutomationProperties.HeadingLevel="Level2"/>
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                            <Button DockPanel.Dock="Bottom" Content="Загрузить ещё" Command="{Binding LoadMoreCommand}"
+                                    Visibility="{Binding HasMoreResults, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                    Style="{StaticResource Lifecycle.Secondary}" HorizontalAlignment="Left" Margin="12,6"
+                                    AutomationProperties.AutomationId="WorkHubLoadMoreButton"/>
+                            <Grid>
+                                <ListBox ItemsSource="{Binding VisibleLifecycleItems}" SelectedItem="{Binding SelectedLifecycleItem}"
+                                         SelectionChanged="LifecycleSelectionChanged"
+                                         Style="{StaticResource Task.DataList}" ItemContainerStyle="{StaticResource Lifecycle.Item}"
+                                         BorderThickness="0" Background="Transparent" Padding="0,0,0,6"
+                                         VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                         Visibility="{Binding HasVisibleLifecycleItems, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                         AutomationProperties.Name="Список доступных объектов" AutomationProperties.AutomationId="LifecycleItemsList">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.ColumnSpan="2" Text="{Binding Title}" FontSize="14" FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Row="1" Text="{Binding TypeLabel}" Style="{StaticResource Lifecycle.RowMeta}"
+                                                           FontSize="12" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ChangedAt, StringFormat={}{0:dd.MM.yyyy}}"
+                                                           Style="{StaticResource Lifecycle.RowMeta}" FontSize="12" Margin="8,3,0,0"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <StackPanel Margin="16,8" MaxWidth="280" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasVisibleLifecycleItems}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <TextBlock Text="{Binding LifecycleEmptyTitle}" FontWeight="SemiBold" FontSize="16"
+                                               TextWrapping="Wrap" TextAlignment="Center"/>
+                                    <TextBlock Text="{Binding LifecycleEmptyText}" Style="{StaticResource Lifecycle.Muted}"
+                                               TextWrapping="Wrap" TextAlignment="Center" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </DockPanel>
+                    </Border>
+
+                    <Border AutomationProperties.Name="Детали выбранной записи" AutomationProperties.AutomationId="LifecycleInspector">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Lifecycle.Panel}">
+                                <Setter Property="Grid.Column" Value="1"/>
+                                <Setter Property="Grid.RowSpan" Value="2"/>
+                                <Setter Property="Margin" Value="12,0,0,0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=LifecycleRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=550}" Value="False">
+                                        <Setter Property="Grid.Column" Value="0"/>
+                                        <Setter Property="Grid.Row" Value="1"/>
+                                        <Setter Property="Grid.RowSpan" Value="1"/>
+                                        <Setter Property="Margin" Value="0,8,0,0"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding SelectedLifecycleItem}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Border Style="{StaticResource Lifecycle.Divider}">
+                                <TextBlock Text="Детали записи" FontSize="16" FontWeight="Bold"
+                                           AutomationProperties.HeadingLevel="Level2"/>
+                            </Border>
+                            <Border Grid.Row="2" Style="{StaticResource Lifecycle.Divider}" BorderThickness="0,1,0,0">
+                                <Button Content="Восстановить" Command="{Binding RestoreLifecycleItemCommand}"
+                                        CommandParameter="{Binding SelectedLifecycleItem}"
+                                        Style="{StaticResource Lifecycle.Primary}" HorizontalAlignment="Left"
+                                        ToolTip="{Binding LifecycleRestoreText}" ToolTipService.ShowOnDisabled="True"
+                                        AutomationProperties.Name="Восстановить выбранный объект"
+                                        AutomationProperties.HelpText="{Binding LifecycleRestoreText}"
+                                        AutomationProperties.AutomationId="RestoreLifecycleItemButton"/>
+                            </Border>
+                            <ScrollViewer x:Name="DetailScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled" FocusVisualStyle="{StaticResource Task.FocusVisualStyle}"
+                                          AutomationProperties.Name="Сведения о выбранной записи">
+                                <StackPanel Margin="16,14,16,14" DataContext="{Binding SelectedLifecycleItem}">
+                                    <TextBlock Text="{Binding TypeLabel}" Style="{StaticResource Lifecycle.Muted}" FontSize="12"
+                                               FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap"
+                                               AutomationProperties.HeadingLevel="Level3">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontSize" Value="22"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=LifecycleRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=780}" Value="False">
+                                                        <Setter Property="FontSize" Value="18"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding ChangedText}" Style="{StaticResource Lifecycle.Muted}"
+                                               TextWrapping="Wrap" Margin="0,8,0,14"/>
+                                    <Border Style="{StaticResource Lifecycle.Semantic}" Padding="12,10">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DataContext.LifecycleStatusTitle, ElementName=LifecycleRoot}"
+                                                       FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding DataContext.LifecycleStatusText, ElementName=LifecycleRoot}"
+                                                       TextWrapping="Wrap" Margin="0,3,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Panel.ZIndex="1" Style="{StaticResource Lifecycle.Panel}"
+                            Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                            AutomationProperties.Name="Загрузка раздела" AutomationProperties.AutomationId="WorkHubLoadingState"
+                            AutomationProperties.LiveSetting="Polite">
+                        <StackPanel Margin="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ProgressBar IsIndeterminate="True" Width="132" Style="{StaticResource Task.Progress.Indeterminate}"/>
+                            <TextBlock Text="{Binding LoadingText}" Style="{StaticResource Lifecycle.Muted}"
+                                       Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>
