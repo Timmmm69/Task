@@ -37,6 +37,24 @@ public sealed class CalendarModesTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task SelectingVisibleDate_KeepsWeekAndAnchorsDayMode()
+    {
+        var date = new DateTime(2026, 11, 16);
+        using var vm = new CalendarViewModel(new EmptyCalendarClient(), ["Calendar.Read"], TimeZoneInfo.Utc, date);
+        await vm.ActivateAsync();
+        var week = vm.Days;
+        var friday = week[4];
+
+        vm.SelectVisibleDate(friday);
+
+        Assert.Same(week, vm.Days);
+        Assert.Same(friday, Assert.Single(vm.Days, day => day.IsSelectedDate));
+        Assert.Equal(date.AddDays(4), vm.SelectedDate);
+        await vm.DayModeCommand.ExecuteAsync();
+        Assert.Equal(friday.Date, Assert.Single(vm.Days).Date);
+    }
+
+    [Fact]
     public void TimedEntry_IsShownOnEveryOverlappedLocalDay()
     {
         var item = new CalendarItemViewModel(new DesktopScheduleItem(Guid.NewGuid(), DesktopScheduleItemType.CalendarEvent,

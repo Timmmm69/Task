@@ -63,9 +63,25 @@ public partial class CalendarView : UserControl
         });
     }
 
+    private void OnSelectDate(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is CalendarViewModel viewModel && sender is Button { DataContext: CalendarDayViewModel day })
+            viewModel.SelectVisibleDate(day);
+    }
+
     private void OnClearSelection(object sender, RoutedEventArgs e)
     {
-        if (DataContext is CalendarViewModel viewModel) viewModel.SelectedItem = null;
+        if (DataContext is not CalendarViewModel viewModel) return;
+        var restoreFocus = CalendarInspector.IsKeyboardFocusWithin;
+        viewModel.SelectedItem = null;
+        if (restoreFocus) FocusSchedule(viewModel);
+    }
+
+    private void FocusSchedule(CalendarViewModel viewModel)
+    {
+        if (viewModel.IsPersonal) PersonalCalendarSurface.FocusTimeline();
+        else if (viewModel.IsMonthMode) CalendarMonthScroll.Focus();
+        else CalendarTimelineScroll.Focus();
     }
 
     private void OnEditorTitleIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -90,18 +106,19 @@ public partial class CalendarView : UserControl
         if (e.Key == Key.Escape && viewModel.ShowFreeTime)
         {
             _ = viewModel.CloseFreeTimeCommand.ExecuteAsync();
-            if (viewModel.IsPersonal) PersonalCalendarSurface.FocusTimeline(); else CalendarTimelineScroll.Focus();
+            FocusSchedule(viewModel);
             e.Handled = true; return;
         }
         if (e.Key == Key.Escape && viewModel.Editor is null && viewModel.SelectedItem is not null)
         {
-            viewModel.SelectedItem = null;
+            OnClearSelection(sender, e);
             e.Handled = true;
             return;
         }
         if (e.Key != Key.F6 || viewModel.Editor is not null) return;
         if (viewModel.IsPersonal) { PersonalCalendarSurface.CycleFocus(); e.Handled = true; return; }
-        if (CalendarTimelineScroll.IsKeyboardFocusWithin)
+        var schedule = viewModel.IsMonthMode ? CalendarMonthScroll : CalendarTimelineScroll;
+        if (schedule.IsKeyboardFocusWithin)
         {
             if (CalendarEditEventButton.IsVisible && CalendarEditEventButton.IsEnabled)
                 CalendarEditEventButton.Focus();
@@ -110,7 +127,7 @@ public partial class CalendarView : UserControl
         }
         else
         {
-            CalendarTimelineScroll.Focus();
+            schedule.Focus();
         }
         e.Handled = true;
     }

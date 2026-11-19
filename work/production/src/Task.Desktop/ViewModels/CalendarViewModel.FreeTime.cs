@@ -111,9 +111,8 @@ public sealed partial class CalendarViewModel
         var to = FreeTimeCalculator.Boundary(slot.Date.AddDays(1), TimeOnly.MinValue, _timeZone);
         if (_freeTimeSearch.CachedRange(from, to) is not { } page) { FreeTimeSlots = []; FreeTimeMessage = "Диапазон больше не находится в кеше. Повторите поиск."; return; }
         _requestCancellation?.Cancel(); Interlocked.Increment(ref _generation);
-        _selectedDate = slot.Date; _weekStart = StartOfWeek(slot.Date, FirstDay); ViewMode = CalendarViewMode.Day;
+        SetDateAnchor(slot.Date); ViewMode = CalendarViewMode.Day;
         Apply(page, [], slot.Date, slot.Date.AddDays(1)); State = page.Items.Count == 0 ? CalendarScreenState.Empty : CalendarScreenState.Loaded;
-        OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
         ChosenFreeTime = slot; ShowFreeTimeHighlight = true; ShowFreeTime = false;
         Announcement = $"Выбрано окно: {slot.Label}."; Message = _freeTimeStale ? "Данные могут быть неактуальны. Сервер недоступен." : null;
         RaiseCommands(); FreeTimeChosen?.Invoke(slot);
