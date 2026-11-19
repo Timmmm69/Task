@@ -1,6 +1,32 @@
 <UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:converters="clr-namespace:Task.Desktop.Converters" xmlns:state="clr-namespace:Task.Desktop.Infrastructure" xmlns:views="clr-namespace:Task.Desktop.Views" x:Class="Task.Desktop.Views.WorkHubView" AutomationProperties.Name="Рабочие данные" AutomationProperties.AutomationId="WorkHubView" Background="{DynamicResource Task.Brush.Surface.Base}" UseLayoutRounding="True" SnapsToDevicePixels="True" x:Name="WorkHubRoot">
     <UserControl.Resources>
         <converters:WindowWidthAtLeastConverter x:Key="Task.WindowWidthAtLeastConverter"/>
+        <Style x:Key="WorkHub.SectionChrome" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSearch}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WorkHub.SectionFeedback" TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
+            <Setter Property="Visibility" Value="{Binding HasFeedback, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSearch}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WorkHub.SectionLimitedRole" TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+            <Setter Property="Visibility" Value="{Binding IsLimitedRole, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSearch}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WorkHub.SectionLoading" TargetType="Border" BasedOn="{StaticResource WorkHub.SectionChrome}">
+            <Setter Property="Visibility" Value="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+        </Style>
         <Style x:Key="WorkHub.Panel" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
             <Setter Property="Padding" Value="20"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -121,7 +147,7 @@
                 </RowDefinition.Style>
             </RowDefinition>
         </Grid.RowDefinitions>
-        <Border Style="{StaticResource Task.Surface.Base}" Padding="20,16" BorderThickness="0,0,0,1" Grid.Row="0">
+        <Border Style="{StaticResource WorkHub.SectionChrome}" Padding="20,16" BorderThickness="0,0,0,1" Grid.Row="0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -161,9 +187,6 @@
                                 <DataTrigger Binding="{Binding IsContacts}" Value="True">
                                     <Setter Property="Data" Value="{StaticResource Task.Icon.Contacts}"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsSearch}" Value="True">
-                                    <Setter Property="Data" Value="{StaticResource Task.Icon.Search}"/>
-                                </DataTrigger>
                                 <DataTrigger Binding="{Binding IsNotifications}" Value="True">
                                     <Setter Property="Data" Value="{StaticResource Task.Icon.Notifications}"/>
                                 </DataTrigger>
@@ -182,7 +205,7 @@
                 </Path>
             </Grid>
         </Border>
-        <Border Grid.Row="1" Style="{StaticResource Task.State.Inline}" Margin="0" Visibility="{Binding HasFeedback, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Сообщение раздела" AutomationProperties.AutomationId="WorkHubFeedback" AutomationProperties.LiveSetting="Polite" Padding="20,10">
+        <Border Grid.Row="1" Style="{StaticResource WorkHub.SectionFeedback}" Margin="0" AutomationProperties.Name="Сообщение раздела" AutomationProperties.AutomationId="WorkHubFeedback" AutomationProperties.LiveSetting="Polite" Padding="20,10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="24"/>
@@ -192,14 +215,14 @@
                 <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.AutomationId="WorkHubFeedbackText"/>
             </Grid>
         </Border>
-        <Border Grid.Row="2" Style="{StaticResource Task.State.Panel}" Panel.ZIndex="30" Visibility="{Binding IsLimitedRole, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleState">
+        <Border Grid.Row="2" Style="{StaticResource WorkHub.SectionLimitedRole}" Panel.ZIndex="30" AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleState">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520">
                 <Path Data="{StaticResource Task.Icon.Lock}" Width="32" Height="32" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
                 <TextBlock Text="Раздел недоступен для текущей роли" Style="{StaticResource Task.State.Title}" Margin="0,12,0,0" TextAlignment="Center" AutomationProperties.Name="Ограниченная роль" AutomationProperties.AutomationId="WorkHubLimitedRoleText"/>
                 <TextBlock Text="Названия, совпадения, количество и связи защищённых объектов не раскрываются. Обратитесь к администратору, если доступ нужен для работы." Style="{StaticResource Task.State.Body}" Margin="0,8,0,0" TextAlignment="Center" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
-        <Border Grid.Row="2" Background="{DynamicResource Task.Brush.Surface.Base}" Panel.ZIndex="20" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Загрузка раздела" AutomationProperties.AutomationId="WorkHubLoadingState" AutomationProperties.LiveSetting="Polite">
+        <Border Grid.Row="2" Style="{StaticResource WorkHub.SectionLoading}" Panel.ZIndex="20" AutomationProperties.Name="Загрузка раздела" AutomationProperties.AutomationId="WorkHubLoadingState" AutomationProperties.LiveSetting="Polite">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ProgressBar IsIndeterminate="True" Width="160" Style="{StaticResource Task.Progress.Indeterminate}"/>
                 <TextBlock Text="{Binding LoadingText}" Margin="0,12,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap"/>
@@ -449,101 +472,7 @@
                 </Grid>
             </Grid>
         </DockPanel>
-        <Grid Grid.Row="2" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Канонический глобальный поиск" AutomationProperties.AutomationId="SearchSurface" Margin="20,16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid Margin="0,0,0,16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Search}" Tag="Найти задачу, проект, файл или человека…" Margin="0,0,8,0" MinHeight="44" AutomationProperties.Name="Поиск задач, проектов, файлов и людей" AutomationProperties.AutomationId="GlobalSearchTextBox">
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
-                    </TextBox.InputBindings>
-                </TextBox>
-                <Button Grid.Column="1" Content="Найти" Command="{Binding SearchCommand}" Style="{StaticResource Task.Button.Primary}" MinWidth="96" AutomationProperties.AutomationId="GlobalSearchButton"/>
-            </Grid>
-            <ListBox Style="{StaticResource Task.DataList}" ItemContainerStyle="{StaticResource Task.Filter.Chip}" Grid.Row="1" ItemsSource="{Binding SearchTypeFilters}" SelectedItem="{Binding SearchTypeFilter}" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.DirectionalNavigation="Cycle" AutomationProperties.Name="Тип результата">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
-            <Border Grid.Row="2" Style="{StaticResource Task.State.Inline}" Margin="0,0,0,12">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="24"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Path Data="{StaticResource Task.Icon.Lock}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}"/>
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="{Binding SearchScopeTitle}" FontWeight="SemiBold"/>
-                        <TextBlock Text="{Binding SearchScopeText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-            <TextBlock Grid.Row="3" Text="{Binding SearchSummaryText}" Margin="0,4,0,16" Foreground="{DynamicResource Task.Brush.Text.Secondary}" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="GlobalSearchSummary" FontWeight="SemiBold"/>
-            <Grid Grid.Row="4">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <ItemsControl ItemsSource="{Binding SearchGroups}" AutomationProperties.Name="Сгруппированные результаты поиска" AutomationProperties.AutomationId="GlobalSearchResults">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="0,0,0,14">
-                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="4,0,0,6"/>
-                                    <ItemsControl ItemsSource="{Binding Items}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <DockPanel LastChildFill="True">
-                                                    <Button DockPanel.Dock="Right" Content="Связи" Margin="8,0,0,6" VerticalAlignment="Center" Command="{Binding DataContext.SelectLinkSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding DataContext.HasLinks, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.Name="{Binding Title, StringFormat=Выбрать связи объекта: {0}}"/>
-                                                    <Button Command="{Binding DataContext.OpenSearchResultCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Button.Secondary}" HorizontalContentAlignment="Stretch" Padding="12" Margin="0,0,0,6" AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="Открыть доступный результат">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="36"/>
-                                                                <ColumnDefinition Width="*"/>
-                                                                <ColumnDefinition Width="Auto"/>
-                                                            </Grid.ColumnDefinitions>
-                                                            <Path Data="{StaticResource Task.Icon.Search}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center"/>
-                                                            <StackPanel Grid.Column="1">
-                                                                <TextBlock Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12">
-                                                                    <Run Text="{Binding GroupLabel, Mode=OneWay}"/>
-                                                                    <Run Text=" · "/>
-                                                                    <Run Text="{Binding TypeLabel, Mode=OneWay}"/>
-                                                                </TextBlock>
-                                                                <TextBlock TextTrimming="CharacterEllipsis">
-                                                                    <Run Text="{Binding TitlePrefix, Mode=OneWay}"/>
-                                                                    <Run Text="{Binding TitleMatch, Mode=OneWay}" FontWeight="Bold" Background="{DynamicResource Task.Brush.Semantic.WarningSoft}"/>
-                                                                    <Run Text="{Binding TitleSuffix, Mode=OneWay}"/>
-                                                                </TextBlock>
-                                                                <TextBlock Text="{Binding UpdatedAt, StringFormat=Обновлено {0:g}}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="12"/>
-                                                            </StackPanel>
-                                                            <TextBlock Grid.Column="2" Text="Открыть" VerticalAlignment="Center" Foreground="{DynamicResource Task.Brush.Brand.Primary}" Margin="12,0,0,0"/>
-                                                        </Grid>
-                                                    </Button>
-                                                </DockPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-                <Border Style="{StaticResource Task.State.Panel}" Visibility="{Binding ShowSearchEmpty, Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="2" AutomationProperties.Name="Поиск не дал результатов">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
-                        <Path Data="{StaticResource Task.Icon.Search}" Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
-                        <TextBlock Text="Ничего не найдено" Style="{StaticResource Task.State.Title}" Margin="0,10,0,0"/>
-                        <TextBlock Text="Измените запрос или выберите другой тип результата." Style="{StaticResource Task.State.Body}" Margin="0,6,0,0" TextAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-            </Grid>
-        </Grid>
+        <views:CorporateSearchView Grid.Row="2" Visibility="{Binding IsSearch, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
         <Grid Grid.Row="2" Visibility="{Binding IsNotifications, Converter={StaticResource Task.BooleanToVisibilityConverter}}" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationsSurface">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

@@ -86,6 +86,75 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task SearchPageSeparatesUnsubmittedQueryLoadingAndEmptyFilter()
+    {
+        var response = new TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>();
+        using var vm = new WorkHubViewModel(new FakeClient { SearchHandler = (_, _) => response.Task }, ["Search.Use"]);
+        vm.Activate(WorkHubArea.Search);
+        Assert.Equal("Введите поисковый запрос", vm.SearchPageNotice?.Title);
+
+        vm.SearchQuery = "alpha";
+        Assert.Equal("Запрос готов", vm.SearchPageNotice?.Title);
+        var request = vm.SearchCommand.ExecuteAsync();
+        Assert.Equal("Ищем совпадения…", vm.SearchPageNotice?.Title);
+        response.SetResult(new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded(
+            [new(FakeClient.TaskId, "task", "Alpha", null, 1, DateTimeOffset.UtcNow)]));
+        await request;
+        Assert.Null(vm.SearchPageNotice);
+
+        vm.SearchTypeFilter = "Проекты";
+        Assert.Equal("Нет результатов этого типа", vm.SearchPageNotice?.Title);
+        vm.SearchTypeFilter = "Все";
+        Assert.Null(vm.SearchPageNotice);
+        vm.UpdateCapabilities([]);
+        Assert.Equal("Поиск недоступен для вашей роли", vm.SearchPageNotice?.Title);
+        Assert.Empty(vm.SearchGroups);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task SearchPageDistinguishesNoMatchesFromRequestFailure()
+    {
+        DesktopWorkResult<IReadOnlyList<DesktopSearchResult>> result =
+            new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([]);
+        using var vm = new WorkHubViewModel(new FakeClient { SearchHandler = (_, _) => System.Threading.Tasks.Task.FromResult(result) }, ["Search.Use"]);
+        vm.Activate(WorkHubArea.Search);
+        vm.SearchQuery = "alpha";
+        await vm.SearchCommand.ExecuteAsync();
+        Assert.Equal("Ничего не найдено", vm.SearchPageNotice?.Title);
+
+        result = new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden();
+        await vm.SearchCommand.ExecuteAsync();
+        Assert.Equal("Не удалось завершить поиск", vm.SearchPageNotice?.Title);
+        Assert.Contains("Недостаточно прав", vm.SearchPageNotice?.Body);
+        vm.SearchQuery = "beta";
+        Assert.Equal("Запрос готов", vm.SearchPageNotice?.Title);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task FailedRepeatSearchKeepsConfirmedRowsButDisablesOpeningOffline()
+    {
+        DesktopWorkResult<IReadOnlyList<DesktopSearchResult>> result =
+            new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded(
+                [new(FakeClient.TaskId, "task", "Alpha", null, 1, DateTimeOffset.UtcNow)]);
+        using var vm = new WorkHubViewModel(new FakeClient { SearchHandler = (_, _) => System.Threading.Tasks.Task.FromResult(result) }, ["Search.Use"]);
+        vm.Activate(WorkHubArea.Search);
+        vm.SearchQuery = "alpha";
+        await vm.SearchCommand.ExecuteAsync();
+        var confirmed = Assert.Single(vm.SearchResults);
+
+        result = new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ServerUnavailable();
+        await vm.SearchCommand.ExecuteAsync();
+        Assert.Equal("Сервер недоступен", vm.SearchPageNotice?.Title);
+        Assert.Equal(confirmed, Assert.Single(vm.SearchResults));
+        Assert.False(vm.OpenSearchResultCommand.CanExecute(confirmed));
+        Assert.False(vm.SearchCommand.CanExecute(null));
+
+        vm.UpdateSessionState(false);
+        Assert.Equal("Сессия завершена", vm.SearchPageNotice?.Title);
+        Assert.Empty(vm.SearchResults);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task SuccessfulSearchClearsStaleValidationFeedback()
     {
         using var vm = new WorkHubViewModel(new FakeClient(), ["Search.Use"]);

@@ -1,0 +1,41 @@
+{
+  "name": "Task corporate search visual verification",
+  "version": "1.0.0",
+  "date": "2026-11-20",
+  "branch": "codex/corporate-search-redesign",
+  "data": "demonstration",
+  "validation": "validation.md",
+  "artifacts": [
+    {
+      "file": "search-wide.png",
+      "bytes": 124818,
+      "sha256": "c67b56a09d553157bcc1322d9ae8aef744b49cb47cd6a9e8b5158ee146f6ec6d",
+      "windowDip": [
+        1320,
+        880
+      ],
+      "imagePixels": [
+        1305,
+        842
+      ]
+    },
+    {
+      "file": "search-narrow.png",
+      "bytes": 75983,
+      "sha256": "80b4d1c6cf991996fcae0d09a08b6ec26aae5cb6917ddf80a3133db5915a701f",
+      "windowDip": [
+        920,
+        840
+      ],
+      "imagePixels": [
+        905,
+        802
+      ]
+    },
+    {
+      "file": "validation.md",
+      "bytes": 2910,
+      "sha256": "589bca2b74405d6b147b005d46d8466e1835575a19e3b9d64b2e8fde1d04c01c"
+    }
+  ]
+}

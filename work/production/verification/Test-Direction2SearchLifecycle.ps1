@@ -236,7 +236,7 @@ try {
 
     Invoke-Phase 'StopApi'
     Invoke-Element (Wait-ById $window 'GlobalSearchButton')
-    $offlineFeedback = Wait-ById $window 'WorkHubFeedbackText' 45
+    $offlineFeedback = Wait-ById $window 'CorporateSearchStateTitle' 45
     Assert-Direction2 ($offlineFeedback.Current.Name -match 'недоступен|подтверждённые') 'Offline feedback is exposed through UIA.'
     Assert-Direction2 ($null -ne (Wait-ById $window 'GlobalSearchResults')) 'Offline state keeps the last confirmed result list available.'
     Capture-Window $window 'offline'

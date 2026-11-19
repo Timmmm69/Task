@@ -37,3 +37,6 @@
 /outputs/20260914_direction2_visual_foundation_1.0.0.zip binary
 /outputs/20260914_direction2_visual_foundation_1.0.0.zip.sha256 text eol=lf
 /work/production/verification/Build-Direction2VisualFoundationPackage.py text eol=lf
+
+# Corporate search evidence is verified by SHA-256.
+/outputs/20261120_corporate_search_1.0.0/** -text

@@ -256,7 +256,9 @@ public sealed class WindowsUxAccessibilityTests
             [Path.Combine("Views", "CalendarView.xaml")] = ["CalendarScreen"],
             [Path.Combine("Views", "ProjectsView.xaml")] = ["ProjectsView"],
             [Path.Combine("Views", "WorkHubView.xaml")] =
-                ["WorkHubView", "CatalogList", "ContactsList", "GlobalSearchResults", "NotificationsList", "LifecycleItemsList", "LifecycleInspector", "WorkHubFeedbackText", "WorkHubLimitedRoleState", "WorkHubLimitedRoleText", "WorkHubLoadingState", "SettingsView", "SettingsNavigation"],
+                ["WorkHubView", "CatalogList", "ContactsList", "NotificationsList", "LifecycleItemsList", "LifecycleInspector", "WorkHubFeedbackText", "WorkHubLimitedRoleState", "WorkHubLimitedRoleText", "WorkHubLoadingState", "SettingsView", "SettingsNavigation"],
+            [Path.Combine("Views", "CorporateSearchView.xaml")] =
+                ["SearchSurface", "GlobalSearchTextBox", "GlobalSearchButton", "GlobalSearchResults", "GlobalSearchSummary"],
             [Path.Combine("Views", "AdministrationView.xaml")] =
                 ["AdministrationView", "AdministrationTabs", "AdministrationLimitedRoleState", "AdminUsersList", "AdminRolesList", "AdminResourcesList", "AdministrationFeedback"],
             ["BootstrapWindow.xaml"] = ["BootstrapWindow", "BootstrapStatusText", "BootstrapProgress", "BootstrapError", "BootstrapRetryButton"],

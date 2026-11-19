@@ -96,7 +96,8 @@ public sealed class SettingsWindowsTests
                     Assert.True(quiet.Focusable); Assert.NotEmpty(AutomationProperties.GetName(quiet));
                     hub.Activate(WorkHubArea.Search); hub.SearchQuery = "результат";
                     await hub.SearchCommand.ExecuteAsync(); Drain();
-                    var more = Find<Button>(view, "WorkHubLoadMoreButton");
+                    var search = Find<CorporateSearchView>(view, "SearchSurface");
+                    var more = Find<Button>(search, "WorkHubLoadMoreButton");
                     Assert.True(more.IsVisible, "Load-more button must be visible.");
                     Assert.True(more.IsEnabled, "Load-more button must be enabled after the first page.");
                     Assert.True(more.Focusable);

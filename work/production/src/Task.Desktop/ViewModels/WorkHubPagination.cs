@@ -23,6 +23,7 @@ public sealed partial class WorkHubViewModel
     private void NotifyPagination()
     {
         OnPropertyChanged(nameof(HasMoreResults));
+        if (IsSearch) OnPropertyChanged(nameof(SearchPageNotice));
         LoadMoreCommand.RaiseCanExecuteChanged();
     }
 

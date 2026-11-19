@@ -9,6 +9,8 @@ public sealed record DesktopSearchHit(DesktopSearchResult Source, string TitlePr
 {
     public string ObjectType => Source.ObjectType;
     public string TypeLabel => Source.TypeLabel;
+    public bool HasDestination => MainWindowViewModel.WorkObjectRoute(ObjectType) is not null
+        && (ObjectType != "file_location" || Source.ParentObjectId is not null);
     public string GroupLabel => Source.GroupLabel;
     public string Title => Source.Title;
     public DateTimeOffset UpdatedAt => Source.UpdatedAt;
@@ -181,9 +183,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public string NewItemType { get => _newItemType; set => SetProperty(ref _newItemType, value); }
     public string FileBehaviorText => IsPersonal ? "Task хранит только ссылку. Файл открывается на этом компьютере после нажатия «Открыть»." : "Файл не загружается на сервер. Task получает разрешённый путь и передаёт Windows после нажатия «Открыть».";
     public string SettingsPersistenceText => IsPersonal ? "Параметры сохраняются только на этом компьютере." : "Личные параметры синхронизируются между устройствами.";
-    public string SearchScopeText => IsPersonal ? "Поиск только в личной базе: задачи, проекты, контакты и каталог." : "Показаны только доступные результаты. Скрытые объекты не входят в количество, подсказки и группы.";
     public string ScopeStatusText => IsPersonal ? "Данные только на этом компьютере" : "Область доступа проверена сервером";
-    public string SearchScopeTitle => IsPersonal ? "Личный поиск" : "Permission-safe partial";
     public IReadOnlyList<DesktopCatalogItem> Catalog { get => _catalog; private set => SetProperty(ref _catalog, value); }
     public IReadOnlyList<DesktopContact> Contacts
     {
@@ -233,7 +233,6 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<DesktopSearchHit> OverlaySearchHits => SearchGroups.SelectMany(group => group.Items).ToArray();
     public int SearchResultCount => FilteredSearchResults.Count;
     public bool HasSearchResults => SearchResultCount > 0;
-    public bool ShowSearchEmpty => !IsLoading && SearchQuery.Trim().Length >= 2 && !HasSearchResults && FeedbackKind is not WorkHubFeedbackKind.Error;
     public string SearchSummaryText => IsPersonal ? $"{SearchResultCount} результатов в личной базе" : IsOffline
         ? $"{SearchResultCount} доступных результатов из последнего подтверждённого кэша"
         : $"{SearchResultCount} доступных результатов · область доступа проверена сервером";
@@ -281,7 +280,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public string ServerAddress { get; }
     public string SettingsConnectionStatus => !_networkAvailable ? "Сервер недоступен · только чтение" : "Подключено · TLS обязателен";
     public string? Message { get => _message; private set => SetProperty(ref _message, value); }
-    public WorkHubFeedbackKind FeedbackKind { get => _feedbackKind; private set { if (SetProperty(ref _feedbackKind, value)) { OnPropertyChanged(nameof(HasFeedback)); OnPropertyChanged(nameof(IsFeedbackError)); OnPropertyChanged(nameof(ShowSearchEmpty)); } } }
+    public WorkHubFeedbackKind FeedbackKind { get => _feedbackKind; private set { if (SetProperty(ref _feedbackKind, value)) { OnPropertyChanged(nameof(HasFeedback)); OnPropertyChanged(nameof(IsFeedbackError)); } } }
     public bool HasFeedback => !string.IsNullOrWhiteSpace(Message);
     public bool IsFeedbackError => FeedbackKind == WorkHubFeedbackKind.Error;
     public bool IsLoading => _operationDepth > 0;
@@ -696,8 +695,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(OverlaySearchHits));
         OnPropertyChanged(nameof(SearchResultCount));
         OnPropertyChanged(nameof(HasSearchResults));
-        OnPropertyChanged(nameof(ShowSearchEmpty));
         OnPropertyChanged(nameof(SearchSummaryText));
+        OnPropertyChanged(nameof(SearchPageNotice));
         SelectedSearchHit = SearchGroups.SelectMany(group => group.Items).FirstOrDefault();
     }
 
@@ -718,21 +717,13 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private void BeginOperation()
     {
         _operationDepth++;
-        if (_operationDepth == 1)
-        {
-            OnPropertyChanged(nameof(IsLoading));
-            OnPropertyChanged(nameof(ShowSearchEmpty));
-        }
+        if (_operationDepth == 1) OnPropertyChanged(nameof(IsLoading));
     }
 
     private void EndOperation()
     {
         _operationDepth = Math.Max(0, _operationDepth - 1);
-        if (_operationDepth == 0)
-        {
-            OnPropertyChanged(nameof(IsLoading));
-            OnPropertyChanged(nameof(ShowSearchEmpty));
-        }
+        if (_operationDepth == 0) OnPropertyChanged(nameof(IsLoading));
         NotifyPagination();
     }
 
@@ -768,7 +759,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); OnPropertyChanged(nameof(CanUseSearchPage)); OnPropertyChanged(nameof(SearchPageNotice)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
     public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); ContactInteractions?.Dispose(); CompanyInteractions?.Dispose(); Companies?.Dispose(); ShowCompaniesCommand.Dispose(); ShowContactsCommand.Dispose(); ContactCard?.Dispose(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }
