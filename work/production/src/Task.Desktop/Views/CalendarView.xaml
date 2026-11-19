@@ -680,6 +680,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <ScrollViewer x:Name="CalendarMonthScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled"
+                                      IsVisibleChanged="OnMonthVisibilityChanged"
                                       VerticalScrollBarVisibility="Visible" Focusable="True" AutomationProperties.Name="Сетка месяца">
                             <ItemsControl x:Name="CalendarMonthItems" ItemsSource="{Binding MonthWeeks}">
                                 <ItemsControl.ItemTemplate>
@@ -705,7 +706,8 @@
                                                         </Border.Style>
                                                         <StackPanel>
                                                             <Button Content="{Binding DayNumberText}" Style="{StaticResource Calendar.DayButton}"
-                                                                    HorizontalAlignment="Left" Margin="0,0,0,3" Click="OnSelectDate" AutomationProperties.Name="{Binding Header}" />
+                                                                    HorizontalAlignment="Left" Margin="0,0,0,3"
+                                                                    Loaded="OnMonthDateLoaded" Click="OnSelectDate" AutomationProperties.Name="{Binding Header}" />
                                                             <ItemsControl ItemsSource="{Binding Items}">
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>

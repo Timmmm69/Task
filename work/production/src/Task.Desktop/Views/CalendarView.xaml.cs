@@ -11,6 +11,7 @@ public partial class CalendarView : UserControl
 {
     private readonly DispatcherTimer _currentTimeTimer = new() { Interval = TimeSpan.FromMinutes(1) };
     private readonly DispatcherTimer _slotHighlightTimer = new() { Interval = TimeSpan.FromSeconds(5) };
+    private DateOnly? _revealedMonthDate;
 
     public CalendarView()
     {
@@ -60,6 +61,29 @@ public partial class CalendarView : UserControl
                 CalendarTimelineScroll.Focus();
             }
             _slotHighlightTimer.Stop(); _slotHighlightTimer.Start();
+        });
+    }
+
+    private void OnMonthVisibilityChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is false) _revealedMonthDate = null;
+    }
+
+    private void OnMonthDateLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { DataContext: CalendarDayViewModel { IsSelectedDate: true } day } button
+            || _revealedMonthDate == day.Date)
+            return;
+
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, () =>
+        {
+            if (!button.IsVisible || !day.IsSelectedDate) return;
+            _revealedMonthDate = day.Date;
+            var rowTop = Math.Max(0, button.TranslatePoint(new Point(), CalendarMonthItems).Y - 4);
+            var viewportTop = CalendarMonthScroll.VerticalOffset;
+            const double dateAndFirstEntryHeight = 60;
+            if (rowTop < viewportTop || rowTop + dateAndFirstEntryHeight > viewportTop + CalendarMonthScroll.ViewportHeight)
+                CalendarMonthScroll.ScrollToVerticalOffset(rowTop);
         });
     }
 
