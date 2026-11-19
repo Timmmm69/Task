@@ -7,6 +7,16 @@ namespace Task.Desktop.Views;
 public partial class ProjectsView : UserControl
 {
     public ProjectsView() => InitializeComponent();
+
+    private void ProjectSelectionChanged(object sender, SelectionChangedEventArgs args)
+    {
+        if (sender is not ListBox list || !ReferenceEquals(sender, args.OriginalSource) || list.SelectedItem is not { } selected)
+            return;
+
+        list.ScrollIntoView(selected);
+        ProjectDetails.ScrollToTop();
+    }
+
     private void RelatedTasksCollapsed(object sender, RoutedEventArgs args)
     {
         if (ReferenceEquals(sender, args.OriginalSource)) (DataContext as ProjectsViewModel)?.CancelRelatedTasks();

@@ -97,6 +97,27 @@ public sealed partial class ProjectsViewModelTests
     }
 
     [Fact]
+    public void CapabilitiesChangeNotifiesReadAccessAndUpdatesWorkspaceHint()
+    {
+        using var vm = new ProjectsViewModel(new FakeProjectsClient { Projects = SuccessPage() }, User, ["Project.Read", "Project.Create"]);
+        vm.Activate();
+        Assert.Null(vm.AccessText);
+
+        vm.UpdateCapabilities(["Project.Read"]);
+        Assert.Contains("только для просмотра", vm.AccessText);
+
+        bool? notifiedReadAccess = null;
+        vm.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ProjectsViewModel.CanRead))
+                notifiedReadAccess = vm.CanRead;
+        };
+
+        vm.UpdateCapabilities([]);
+        Assert.False(notifiedReadAccess);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task NetworkLoss_PreservesProjectDraftAndBlocksWriteUntilReconnect()
     {
         var client = new FakeProjectsClient
