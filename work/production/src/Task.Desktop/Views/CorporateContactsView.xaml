@@ -5,7 +5,7 @@
              xmlns:converters="clr-namespace:Task.Desktop.Converters"
              x:Name="Workspace" FontFamily="{DynamicResource Task.Font.Family}" FontSize="14"
              Background="{DynamicResource Task.Brush.Surface.Base}" UseLayoutRounding="True"
-             AutomationProperties.Name="Корпоративные контакты">
+             AutomationProperties.Name="Корпоративные контакты" AutomationProperties.AutomationId="CorporateContactsView">
     <UserControl.Resources>
         <converters:WindowWidthAtLeastConverter x:Key="Contacts.WidthAtLeast"/>
         <SolidColorBrush x:Key="Contacts.Coral" Color="#C91E47"/>
@@ -299,27 +299,17 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Grid>
-                            <TextBox x:Name="ContactSearch" Style="{StaticResource Contacts.Input}" Width="284" Padding="32,7,10,7"
-                                     Text="{Binding ContactQuery, UpdateSourceTrigger=PropertyChanged}" MaxLength="200"
-                                     AutomationProperties.Name="Поиск контактов по имени или заметке" AutomationProperties.AutomationId="ContactSearch">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Key="Enter" Command="{Binding RefreshCommand}" CommandParameter="{Binding ContactQuery}"/>
-                                </TextBox.InputBindings>
-                            </TextBox>
-                            <Path Data="{StaticResource Task.Icon.Search}" Width="15" Height="15" Stretch="Uniform"
-                                  Fill="{DynamicResource Task.Brush.Text.Secondary}" HorizontalAlignment="Left" Margin="11,0,0,0" IsHitTestVisible="False"/>
-                            <TextBlock Text="Поиск по имени или заметке" Margin="33,0,6,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" IsHitTestVisible="False">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Contacts.Muted}">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=ContactSearch}" Value=""><Setter Property="Visibility" Value="Visible"/></DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Grid>
+                        <TextBox x:Name="ContactSearch" Style="{StaticResource Task.Input.Search}" Width="284"
+                                 Tag="Поиск по имени или заметке" Text="{Binding ContactQuery, UpdateSourceTrigger=PropertyChanged}" MaxLength="200"
+                                 AutomationProperties.Name="Поиск контактов по имени или заметке" AutomationProperties.AutomationId="ContactSearch">
+                            <TextBox.Resources>
+                                <CornerRadius x:Key="Task.Radius.Search">8</CornerRadius>
+                                <Visibility x:Key="Task.Search.EmptyHintVisibility">Collapsed</Visibility>
+                            </TextBox.Resources>
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding RefreshCommand}" CommandParameter="{Binding ContactQuery}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
                         <Button Grid.Column="1" Content="Найти" Command="{Binding RefreshCommand}" CommandParameter="{Binding ContactQuery}"
                                 Style="{StaticResource Contacts.Button}" Margin="6,0,0,0" AutomationProperties.AutomationId="FindContactsButton"/>
                         <Button Grid.Column="2" Content="Сбросить" Command="{Binding RefreshCommand}" CommandParameter=""
