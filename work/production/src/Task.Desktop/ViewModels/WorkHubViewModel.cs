@@ -152,6 +152,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public bool IsCorporate => !IsPersonal;
     public string LoadingText => IsPersonal ? "Загружаем личные данные…" : "Проверяем актуальные данные и область доступа…";
     public string LifecycleListTitle => IsTrash ? "Удалённые записи" : "Архивные записи";
+    public string LifecycleSearchPlaceholder => IsTrash ? "Найти в корзине…" : "Найти в архиве…";
     public string CatalogPathLabel => IsPersonal ? "Путь к файлу или сетевой папке" : "Локальный путь или разрешённый UNC-путь";
     public string ContactsListName => IsPersonal ? "Личные контакты" : "Контакты компании";
     private int _firstDayOfWeek = 1;
@@ -404,6 +405,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         if (area != Area && IsLifecycle) LifecycleItems = [];
         Area = area; _active = true;
         OnPropertyChanged(nameof(LifecycleListTitle));
+        OnPropertyChanged(nameof(LifecycleSearchPlaceholder));
         NotifyLifecycleStatus();
         NotifyLifecycleEmptyState();
         UpdateLinkAccess(); SetCurrentLinkSource();
