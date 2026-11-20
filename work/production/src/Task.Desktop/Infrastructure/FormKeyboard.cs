@@ -1,6 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using Task.Desktop.Personal;
 using Task.Desktop.ViewModels;
 
 namespace Task.Desktop.Infrastructure;
@@ -12,10 +14,68 @@ public static class FormKeyboard
         "Save", typeof(ICommand), typeof(FormKeyboard), new PropertyMetadata(null, Attach));
     public static readonly DependencyProperty CaptureProperty = DependencyProperty.RegisterAttached(
         "Capture", typeof(AsyncCommand), typeof(FormKeyboard), new PropertyMetadata(null, Attach));
+    public static readonly DependencyProperty SubmitProperty = DependencyProperty.RegisterAttached(
+        "Submit", typeof(bool), typeof(FormKeyboard), new PropertyMetadata(false, AttachSubmit));
+    public static readonly DependencyProperty FieldProperty = DependencyProperty.RegisterAttached(
+        "Field", typeof(string), typeof(FormKeyboard));
+    public static void SetSubmit(DependencyObject target, bool value) => target.SetValue(SubmitProperty, value);
+    public static bool GetSubmit(DependencyObject target) => (bool)target.GetValue(SubmitProperty);
+    public static void SetField(DependencyObject target, string value) => target.SetValue(FieldProperty, value);
+    public static string? GetField(DependencyObject target) => (string?)target.GetValue(FieldProperty);
     public static void SetSave(DependencyObject target, ICommand? value) => target.SetValue(SaveProperty, value);
     public static ICommand? GetSave(DependencyObject target) => (ICommand?)target.GetValue(SaveProperty);
     public static void SetCapture(DependencyObject target, AsyncCommand? value) => target.SetValue(CaptureProperty, value);
     public static AsyncCommand? GetCapture(DependencyObject target) => (AsyncCommand?)target.GetValue(CaptureProperty);
+
+    private static void AttachSubmit(DependencyObject target, DependencyPropertyChangedEventArgs e)
+    {
+        if (target is not Button button) return;
+        button.Click -= OnSubmit;
+        if (GetSubmit(button)) button.Click += OnSubmit;
+    }
+
+    private static void OnSubmit(object sender, RoutedEventArgs e)
+    {
+        for (var parent = VisualTreeHelper.GetParent((Button)sender); parent is not null; parent = VisualTreeHelper.GetParent(parent))
+            if (parent is FrameworkElement form && GetSave(form) is { } save)
+            {
+                AttemptSave(form, save);
+                return;
+            }
+    }
+
+    private static void AttemptSave(FrameworkElement form, ICommand save)
+    {
+        if (save.CanExecute(null))
+        {
+            save.Execute(null);
+            return;
+        }
+
+        var editor = form.DataContext as TaskEditorViewModel ?? (form.DataContext as PersonalTasksViewModel)?.Editor;
+        if (Window.GetWindow(form) is { DataContext: MainWindowViewModel { Tasks.CanAttemptSaveEditor: false } }) return;
+        if (editor is not { HasErrors: true, CanAttemptSubmit: true } || editor.RevealFirstInvalidField() is not { } field) return;
+        FocusField(form, field);
+    }
+
+    private static bool FocusField(DependencyObject element, string field)
+    {
+        if (element is Expander { IsExpanded: false } scope
+            && GetField(scope)?.Split(' ').Contains(field, StringComparer.Ordinal) == true)
+        {
+            scope.SetCurrentValue(Expander.IsExpandedProperty, true);
+            scope.UpdateLayout();
+        }
+        if (element is Control { Focusable: true, IsEnabled: true } input && GetField(input) == field)
+        {
+            input.BringIntoView();
+            return input.Focus();
+        }
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(element); index++)
+            if (FocusField(VisualTreeHelper.GetChild(element, index), field)) return true;
+        return false;
+    }
+
     private static void Attach(DependencyObject target, DependencyPropertyChangedEventArgs e)
     {
         if (target is not UIElement element) return;
@@ -57,7 +117,7 @@ public static class FormKeyboard
         if (GetSave(element) is { } save && IsShortcut(e.Key, Keyboard.Modifiers, e.IsRepeat, false))
         {
             e.Handled = true;
-            if (save.CanExecute(null)) save.Execute(null);
+            AttemptSave(element, save);
         }
         else if (element is TextBox { AcceptsReturn: false } input && GetCapture(input) is { } capture
             && IsShortcut(e.Key, Keyboard.Modifiers, e.IsRepeat, true))

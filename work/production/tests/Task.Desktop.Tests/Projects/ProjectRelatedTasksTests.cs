@@ -22,6 +22,48 @@ public sealed partial class ProjectsViewModelTests
     }
     private static PageResult RelatedPage(string? cursor = null, params DesktopTaskDto[] items) => new PageResult.Succeeded(new(items, cursor, null));
 
+    [Fact]
+    public async AsyncTask RelatedTasks_ExpandedSectionStartsOncePerConfirmedProjectAndIgnoresLatePages()
+    {
+        var tasks = new TasksViewModelTests.FakeTasksApiClient();
+        using var vm = RelatedModel(tasks);
+        var firstPage = new TaskCompletionSource<PageResult>();
+        CancellationToken firstToken = default;
+        tasks.EnqueuePage((cursor, token) =>
+        {
+            Assert.Null(cursor);
+            firstToken = token;
+            return firstPage.Task;
+        });
+
+        vm.SetRelatedTasksExpanded(true);
+        vm.SetRelatedTasksExpanded(true);
+        Assert.Equal(1, tasks.PageCallCount);
+        Assert.Equal(ProjectTasksState.Loading, vm.RelatedTasksState);
+
+        var newId = Guid.NewGuid();
+        tasks.EnqueuePage(RelatedPage("more"));
+        vm.SelectedItem = new ProjectItemViewModel(Project() with { Id = newId });
+        await vm.CurrentDetailsOperation;
+        Assert.True(firstToken.IsCancellationRequested);
+        Assert.Equal(2, tasks.PageCallCount);
+        Assert.Equal(ProjectTasksState.Partial, vm.RelatedTasksState);
+        Assert.Empty(vm.RelatedTasks);
+
+        vm.SetRelatedTasksExpanded(false);
+        vm.SetRelatedTasksExpanded(true);
+        Assert.Equal(2, tasks.PageCallCount);
+        firstPage.SetResult(RelatedPage(null, Task(Guid.NewGuid(), ProjectId, "Старый результат")));
+        tasks.EnqueuePage((cursor, _) =>
+        {
+            Assert.Equal("more", cursor);
+            return AsyncTask.FromResult(RelatedPage());
+        });
+        await vm.LoadRelatedTasksCommand.ExecuteAsync();
+        Assert.Equal(ProjectTasksState.Empty, vm.RelatedTasksState);
+        Assert.Empty(vm.RelatedTasks);
+    }
+
     [Theory]
     [InlineData(20, 5, false)]
     [InlineData(500, 10, false)]

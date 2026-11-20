@@ -78,7 +78,7 @@ public sealed partial class AdministrationViewModel : ViewModelBase, IDisposable
     public string AccessText => !_networkAvailable
         ? "Офлайн · административные данные доступны только из подтверждённого состояния"
         : CanReadCurrentArea
-            ? $"{SelectedTab.Capability} · сервер authoritative"
+            ? "Доступно для вашей роли"
             : "Ограниченная роль · поля и количество скрытых объектов не раскрываются";
     public string LastSuccessfulRefreshText => _lastRefresh is null ? "Раздел ещё не обновлялся" : $"Обновлено {_lastRefresh.Value.ToLocalTime():HH:mm}";
     public AsyncCommand RefreshCommand { get; }

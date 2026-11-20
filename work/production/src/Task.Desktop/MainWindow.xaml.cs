@@ -13,6 +13,12 @@ namespace Task.Desktop;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private void OnNavigationSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ReferenceEquals(sender, e.OriginalSource) && sender is ListBox { SelectedItem: { } section } list)
+            list.ScrollIntoView(section);
+    }
+
     private bool _authenticationTransitionClose;
     private bool _modeTransitionClose;
     public event Action? SwitchModeRequested;

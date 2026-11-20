@@ -10,6 +10,12 @@ namespace Task.Desktop;
 
 public partial class PersonalWindow : Window
 {
+    private void OnNavigationSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ReferenceEquals(sender, e.OriginalSource) && sender is System.Windows.Controls.ListBox { SelectedItem: { } section } list)
+            list.ScrollIntoView(section);
+    }
+
     public event Action? SwitchModeRequested;
     internal event Action? BackupRequested;
     internal event Action? RestoreRequested;

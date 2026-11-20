@@ -214,8 +214,18 @@ public sealed partial class ProjectsViewModelTests
         Assert.Equal(0, client.AddCalls); Assert.Contains("имя недоступно", vm.SelectedItem.OwnerText);
         Assert.True(vm.CanManageMembers); Assert.False(vm.AddMemberCommand.CanExecute(null));
         var calls = directory.GetCalls + directory.SearchCalls;
-        await vm.MemberPicker!.SearchAsync(); Assert.Equal(calls, directory.GetCalls + directory.SearchCalls);
-        Assert.Contains("User.Read", vm.MemberEntryHint);
+        Assert.Null(vm.NewMemberAccountId);
+        await vm.MemberPicker!.SearchAsync();
+        Assert.Equal(calls, directory.GetCalls + directory.SearchCalls);
+        Assert.Contains("администратору", vm.MemberEntryHint);
+        vm.UpdateCapabilities(Capabilities);
+        Assert.False(vm.UsesEmployeePicker);
+        Assert.Null(vm.MemberPicker);
+        vm.NewMemberUserId = user.Id.ToString("D");
+        Assert.True(vm.AddMemberCommand.CanExecute(null));
+        await vm.AddMemberCommand.ExecuteAsync();
+        Assert.Equal(calls, directory.GetCalls + directory.SearchCalls);
+        Assert.Equal(1, client.AddCalls);
     }
 
     [Theory]

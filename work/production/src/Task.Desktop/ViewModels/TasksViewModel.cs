@@ -215,7 +215,8 @@ public sealed class TaskDetailsViewModel
 {
     public DesktopTaskDto Source { get; }
     public string Description => Source.Card?.Description ?? "Описание не добавлено";
-    public string PlanningText => $"Дата: {Source.Card?.ScheduledDate?.ToString("dd.MM.yyyy") ?? "не указана"} · Длительность: {Source.Card?.PlannedDurationMinutes?.ToString() ?? "—"} мин";
+    public string PlanningText => $"Дата: {Source.Card?.ScheduledDate?.ToString("dd.MM.yyyy") ?? "не указана"} · "
+        + (Source.Card?.PlannedDurationMinutes is { } minutes ? $"Длительность: {minutes} мин" : "Длительность: не указана");
     public string CompletedText => TaskItemViewModel.FormatDate(Source.CompletedAtUtc, "Не завершена");
     public string RecurrenceText => Source.RecurrenceSeriesId is null ? "Не повторяется" : "Задача повторяющейся серии";
     public TaskDetailsViewModel(DesktopTaskDto task, TaskDisplayLookup? lookup = null)
@@ -1760,8 +1761,10 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private bool IsCurrentMutation(long generation, TaskEditorViewModel editor) =>
         generation == Volatile.Read(ref _mutationGeneration) && ReferenceEquals(Editor, editor) && IsActive;
 
-    private bool CanSaveEditor => Editor is { CanSubmit: true } editor
+    public bool CanAttemptSaveEditor => Editor is { CanAttemptSubmit: true } editor
         && !IsMutationBusy && HasCapabilityForEditor(editor);
+
+    private bool CanSaveEditor => Editor?.CanSubmit == true && CanAttemptSaveEditor;
 
     private bool HasCapabilityForEditor(TaskEditorViewModel editor) => editor.Mode switch
     {
@@ -1791,6 +1794,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     private void NotifyMutationState()
     {
+        OnPropertyChanged(nameof(CanAttemptSaveEditor));
         OnPropertyChanged(nameof(CanSelectTaskRows));
         OnPropertyChanged(nameof(CanOpenCreateEditor));
         OnPropertyChanged(nameof(CanAddSubtask));

@@ -112,16 +112,29 @@ public sealed class TaskCardEditor : ViewModelBase
         Message = options.Any(p => p.Key.EndsWith("HasMore") && p.Value?.GetValue<bool>() == true) ? "Показаны первые 200 результатов. Уточните поиск." : null;
     }
 
-    public TaskCardContent Build(DateTimeOffset? start)
+    public TaskCardContent Build(DateTimeOffset? start) => Build(start, out _);
+
+    internal TaskCardContent Build(DateTimeOffset? start, out string? invalidField)
     {
+        invalidField = null;
         DateOnly? date = null; int? duration = null;
         if (!string.IsNullOrWhiteSpace(Date))
         {
-            if (!DateOnly.TryParseExact(Date.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)) throw new ArgumentException("Дата: ДД.ММ.ГГГГ."); date = parsed;
+            if (!DateOnly.TryParseExact(Date.Trim(), "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            {
+                invalidField = nameof(Date);
+                throw new ArgumentException("Дата: ДД.ММ.ГГГГ.");
+            }
+            date = parsed;
         }
         if (!string.IsNullOrWhiteSpace(Duration))
         {
-            if (!int.TryParse(Duration, out var parsed) || parsed is < 1 or > 10080) throw new ArgumentException("Длительность: от 1 до 10080 минут."); duration = parsed;
+            if (!int.TryParse(Duration, out var parsed) || parsed is < 1 or > 10080)
+            {
+                invalidField = nameof(Duration);
+                throw new ArgumentException("Длительность: от 1 до 10080 минут.");
+            }
+            duration = parsed;
         }
         // Exact start owns the local schedule tuple; a date alone remains an all-day planning date.
         var effectiveZone = ScheduleZone ?? TimeZoneInfo.Local;

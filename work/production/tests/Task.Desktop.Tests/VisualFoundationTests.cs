@@ -113,7 +113,7 @@ public sealed class VisualFoundationTests
         Assert.Equal("#FF107C10", snapshot.Success.ToString());
         Assert.Equal("#FFF2A900", snapshot.Warning.ToString());
         Assert.Equal(40, snapshot.ControlHeight);
-        Assert.Equal(52, snapshot.NavigationRow);
+        Assert.Equal(44, snapshot.NavigationRow);
         Assert.Equal(58, snapshot.NavigationMenu);
         Assert.Equal(212, snapshot.ExpandedNavigation);
         Assert.Equal(178, snapshot.CompactNavigation);

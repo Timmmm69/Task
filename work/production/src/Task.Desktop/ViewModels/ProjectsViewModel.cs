@@ -218,7 +218,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         {
             if (!SetProperty(ref _selectedItem, value)) return;
             CancelDetailSections(); _projectConfirmed = false;
-            ResetPeople(); _membersConfirmed = false; Members = []; ResetRelatedTasks();
+            ResetPeople(); _membersConfirmed = false; Members = [];
+            _initialRelatedTasksStarted = false; ResetRelatedTasks();
             SetDetailContext(); IsDetailLoading = false; NotifyCommands();
             if (value is not null && IsActive && _sessionAvailable && _networkAvailable && CanRead)
             {
@@ -240,10 +241,13 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     public bool CanUpdate => CanWrite("Project.Update");
     public bool CanArchive => CanWrite("Project.Archive");
     public bool CanManageMembers => CanWrite("Project.ManageMembers");
-    public string AccessText => !CanRead ? "Нет права Project.Read."
+    public string AccessText => !CanRead ? "Проекты недоступны для вашей роли. За доступом обратитесь к администратору."
         : !_sessionAvailable ? "Сессия завершена."
         : !_networkAvailable ? "Сервер недоступен · подтверждённые данные только для просмотра."
-        : CanUpdate ? "Проекты доступны для изменения." : "Проекты доступны только для просмотра.";
+        : CanUpdate ? "Проекты доступны для изменения."
+        : CanManageMembers ? "Вы можете управлять участниками проекта."
+        : CanCreate || CanArchive ? "Доступные действия зависят от вашей роли."
+        : "Проекты доступны для просмотра. За правом на изменение обратитесь к администратору.";
     public string LastSuccessfulRefreshText => _lastRefresh is null ? "Проекты ещё не обновлялись" : $"Проекты обновлены {_lastRefresh:HH:mm}";
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand NewProjectCommand { get; }
@@ -303,6 +307,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         if (CanReadMembers && _membersConfirmed)
             MembersSection.SetState(!_networkAvailable ? ProjectSectionState.Offline : Members.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
         NotifyCommands();
+        TryLoadInitialRelatedTasks();
     }
 
     public void UpdateSessionState(bool available)
@@ -337,6 +342,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         if (!available && Editor is not null)
             Editor.SetError("Сервер недоступен. Черновик сохранён в форме и не будет отправлен автоматически.");
         NotifyCommands();
+        if (available) TryLoadInitialRelatedTasks();
     }
 
     private async System.Threading.Tasks.Task RefreshAsync(object? _, CancellationToken cancellationToken)
@@ -415,6 +421,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
             }
             // Related sections must not hold overview loading or block the existing task command.
             IsDetailLoading = false;
+            TryLoadInitialRelatedTasks();
             ReloadMembersCommand.RaiseCanExecuteChanged();
             if (CanReadMembers) await LoadMembersSectionAsync(item, cancellationToken);
             else
@@ -501,7 +508,8 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
             if (generation != _peopleGeneration || !ReferenceEquals(SelectedItem, item) || !CanManageMembers) return;
             if (picker.SelectedUserAccountId != user) { Message = picker.StatusText; return; }
         }
-        if (!CanAddMember) return;
+        if (cancellationToken.IsCancellationRequested || !CanAddMember
+            || NewMemberAccountId != user || NewMemberRole?.Id != role.Id) return;
         var result = await _closeOperations.TrackAsync(() => _client.AddMemberAsync(item.Id, item.Source.Version, user.Value, role.Id, Guid.NewGuid().ToString("D"), cancellationToken)).ConfigureAwait(true);
         if (generation != _peopleGeneration || !ReferenceEquals(SelectedItem, item) || !_sessionAvailable) return;
         if (result is DesktopProjectResult<DesktopProjectMemberDto>.Succeeded success)

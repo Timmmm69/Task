@@ -42,7 +42,7 @@
                 <TextBlock Text="Длительность, минут (необязательно)" Style="{StaticResource Task.Editor.Label}" />
                 <TextBox Text="{Binding Duration, UpdateSourceTrigger=PropertyChanged}" TabIndex="27"
                          Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="Плановая длительность"
-                         AutomationProperties.AutomationId="TaskDurationTextBox" />
+                         state:FormKeyboard.Field="Duration" AutomationProperties.AutomationId="TaskDurationTextBox" />
             </StackPanel>
         </Grid>
 

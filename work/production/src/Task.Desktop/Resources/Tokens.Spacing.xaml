@@ -8,7 +8,7 @@
     <sys:Double x:Key="Task.Space.5">20</sys:Double>
     <sys:Double x:Key="Task.Space.6">24</sys:Double>
     <sys:Double x:Key="Task.Control.Height.Compact">40</sys:Double>
-    <sys:Double x:Key="Task.Navigation.RowHeight">52</sys:Double>
+    <sys:Double x:Key="Task.Navigation.RowHeight">44</sys:Double>
     <sys:Double x:Key="Task.Navigation.MenuHeight">58</sys:Double>
     <sys:Double x:Key="Task.Shell.Navigation.ExpandedWidth">212</sys:Double>
     <sys:Double x:Key="Task.Shell.Navigation.CompactWidth">178</sys:Double>
@@ -25,7 +25,7 @@
     <CornerRadius x:Key="Task.Radius.Small">4</CornerRadius>
     <Thickness x:Key="Task.Thickness.Focus">2</Thickness>
     <Thickness x:Key="Task.Padding.Control">14,0</Thickness>
-    <Thickness x:Key="Task.Padding.NavigationItem">20,0</Thickness>
+    <Thickness x:Key="Task.Padding.NavigationItem">14,0,4,0</Thickness>
     <Thickness x:Key="Task.Padding.ShellHeader">20,0,24,0</Thickness>
     <Thickness x:Key="Task.Padding.Page">24</Thickness>
 </ResourceDictionary>

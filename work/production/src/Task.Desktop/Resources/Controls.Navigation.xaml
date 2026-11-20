@@ -1,16 +1,73 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Task.Desktop.Converters">
+    <converters:WindowWidthAtLeastConverter x:Key="Task.Navigation.WidthAtLeast" />
+    <GroupStyle x:Key="Task.Navigation.Group">
+        <GroupStyle.Panel>
+            <ItemsPanelTemplate><DockPanel LastChildFill="False" /></ItemsPanelTemplate>
+        </GroupStyle.Panel>
+        <GroupStyle.ContainerStyle>
+            <Style TargetType="GroupItem">
+                <Setter Property="DockPanel.Dock" Value="Top" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Name}" Value="">
+                        <Setter Property="DockPanel.Dock" Value="Bottom" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </GroupStyle.ContainerStyle>
+        <GroupStyle.HeaderTemplate>
+            <DataTemplate>
+                <Grid Margin="14,4,10,2" IsHitTestVisible="False">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"
+                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.Navigation.WidthAtLeast}, ConverterParameter=900}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Name}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <Border Height="1" Margin="0,2" Background="{DynamicResource Task.Brush.Border.Default}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.Navigation.WidthAtLeast}, ConverterParameter=900}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Name}" Value="">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
+                </Grid>
+            </DataTemplate>
+        </GroupStyle.HeaderTemplate>
+    </GroupStyle>
+
     <Style x:Key="Task.Navigation.List" TargetType="ListBox">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
         <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Contained" />
     </Style>
 
     <Style x:Key="Task.Navigation.Item" TargetType="ListBoxItem">
         <Setter Property="Height" Value="{DynamicResource Task.Navigation.RowHeight}" />
+        <Setter Property="ToolTip" Value="{Binding Title}" />
         <Setter Property="Margin" Value="0,0,8,0" />
         <Setter Property="Padding" Value="{DynamicResource Task.Padding.NavigationItem}" />
         <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
@@ -68,6 +125,10 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
+            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.Navigation.WidthAtLeast}, ConverterParameter=900}" Value="False">
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="Padding" Value="6,0,0,0" />
+            </DataTrigger>
             <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
                 <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />

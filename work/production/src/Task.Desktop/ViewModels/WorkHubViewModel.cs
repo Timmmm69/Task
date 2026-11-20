@@ -183,7 +183,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public string SettingsPersistenceText => IsPersonal ? "Параметры сохраняются только на этом компьютере." : "Личные параметры синхронизируются между устройствами.";
     public string SearchScopeText => IsPersonal ? "Поиск только в личной базе: задачи, проекты, контакты и каталог." : "Показаны только доступные результаты. Скрытые объекты не входят в количество, подсказки и группы.";
     public string ScopeStatusText => IsPersonal ? "Данные только на этом компьютере" : "Область доступа проверена сервером";
-    public string SearchScopeTitle => IsPersonal ? "Личный поиск" : "Permission-safe partial";
+    public string SearchScopeTitle => IsPersonal ? "Личный поиск" : "Поиск по доступным данным";
     public IReadOnlyList<DesktopCatalogItem> Catalog { get => _catalog; private set => SetProperty(ref _catalog, value); }
     public IReadOnlyList<DesktopContact> Contacts
     {
@@ -313,7 +313,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public bool CanReadOrganization => Has("Organization.Read");
     public bool CanUpdateOrganization => Has("Organization.Update");
     public string AccessText => IsPersonal ? "Личное пространство · Данные на этом компьютере · Файлы хранятся на диске" : !_networkAvailable ? "Offline · подтверждённые данные только для просмотра"
-        : CanReadCurrentArea ? IsArchive ? "Read-only история · восстановление повторно проверяет сервер" : IsTrash ? "Retention применяется сервером · физические файлы не удаляются" : IsSettings ? "Настройки синхронизируются с сервером компании" : "Данные сервера компании · доступ по текущим правам" : "Ограниченная роль · раздел не входит в текущую область доступа";
+        : CanReadCurrentArea ? IsArchive ? "Архив доступен для просмотра. При восстановлении сервер проверяет доступ." : IsTrash ? "Срок хранения определяет сервер. Файлы остаются на диске." : IsSettings ? "Настройки синхронизируются с сервером компании" : "Данные сервера компании · доступ по текущим правам" : "Ограниченная роль · раздел не входит в текущую область доступа";
     public string LastSuccessfulRefreshText => _lastRefresh is null ? "Раздел ещё не обновлялся" : $"Обновлено {_lastRefresh.Value.ToLocalTime():HH:mm}";
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand SearchCommand { get; }

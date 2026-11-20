@@ -4,16 +4,25 @@
         Title="Task — личное пространство" Icon="Assets/Task.ico" Width="1200" Height="900" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen" Style="{StaticResource Task.Window.Style}" UseLayoutRounding="True" SnapsToDevicePixels="True"
         PreviewKeyDown="OnWindowPreviewKeyDown" AutomationProperties.AutomationId="PersonalWindow" AutomationProperties.Name="Task — личное пространство">
-    <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
+    <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries>
+            <CollectionViewSource x:Key="NavigationSections" Source="{Binding Sections}">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="Group" />
+                </CollectionViewSource.GroupDescriptions>
+            </CollectionViewSource>
+        </ResourceDictionary></Window.Resources>
     <Grid>
         <Grid.RowDefinitions><RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}"/><RowDefinition Height="*"/><RowDefinition Height="{DynamicResource Task.Shell.FooterGridLength}"/></Grid.RowDefinitions>
         <Grid.ColumnDefinitions><ColumnDefinition Width="{Binding ActualWidth,ElementName=RootWindow,Converter={StaticResource Task.ShellNavigationWidthConverter}}"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
         <Border Grid.RowSpan="3" Style="{StaticResource Task.Shell.NavigationSurface}">
             <Grid><Grid.RowDefinitions><RowDefinition Height="{DynamicResource Task.Navigation.MenuGridLength}"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <Border Width="48" Height="58" Margin="10,0,0,0" HorizontalAlignment="Left" ToolTip="Основная навигация"><Path Data="{StaticResource Task.Icon.Navigation}" Width="24" Height="24" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Primary}"/></Border>
-                <ListBox x:Name="SectionsList" Grid.Row="1" ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection}" IsEnabled="{Binding CanNavigate}"
+                <ListBox x:Name="SectionsList" Grid.Row="1" ItemsSource="{Binding Source={StaticResource NavigationSections}}" SelectedItem="{Binding SelectedSection}" IsEnabled="{Binding CanNavigate}" SelectionChanged="OnNavigationSelectionChanged"
                          Style="{StaticResource Task.Navigation.List}" ItemContainerStyle="{StaticResource Personal.Navigation.Item}" ToolTip="{Binding NavigationHint}"
                          AutomationProperties.Name="Основная навигация" AutomationProperties.AutomationId="PersonalNavigationList">
+                    <ListBox.GroupStyle>
+                        <StaticResource ResourceKey="Task.Navigation.Group" />
+                    </ListBox.GroupStyle>
                     <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <Path Data="{Binding IconKey,Converter={StaticResource Task.IconKeyToGeometryConverter}}" Width="20" Height="20" Stretch="Uniform" Fill="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
                         <TextBlock Grid.Column="1" Text="{Binding Title}" Margin="10,0,0,0" FontSize="{DynamicResource Task.Font.Size.Navigation}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
