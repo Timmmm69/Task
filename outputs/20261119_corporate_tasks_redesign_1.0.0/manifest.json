@@ -1,0 +1,21 @@
+{
+  "name": "Task — корпоративный экран «Задачи»",
+  "version": "1.0.0",
+  "date": "2026-11-19",
+  "applicationCommit": "db4fa41de1ba0c301333c3cd0a649d0fd8c47a9a",
+  "data": "Локальные демонстрационные данные",
+  "screenshots": [
+    {
+      "file": "tasks-wide.png",
+      "window": "1200×900 DIP",
+      "layout": "список и сведения рядом"
+    },
+    {
+      "file": "tasks-narrow.png",
+      "window": "800×700 DIP",
+      "layout": "сведения свернуты под списком"
+    }
+  ],
+  "validation": "validation.md",
+  "checksums": "SHA256SUMS"
+}

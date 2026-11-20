@@ -75,6 +75,11 @@ public sealed class TaskFilteringWindowsTests
                     Assert.All(new[] { status, project, priority, deadline, sort }, combo => Assert.False(string.IsNullOrEmpty(AutomationProperties.GetName(combo))));
                     Assert.Equal(8, sort.Items.Count);
                     var list = Find<ListBox>(window, "TasksList");
+                    var inspector = Find<Expander>(window, "TaskInspectorExpander");
+                    var create = Find<Button>(window, "NewTaskButton");
+                    Assert.True(inspector.IsExpanded);
+                    Assert.True(create.IsVisible);
+                    Assert.False(create.IsEnabled);
                     var selected = tasks.SelectedItem;
                     var reads = client.DetailCallCount;
                     status.SelectedValue = DesktopTaskStatus.InProgress;
@@ -121,6 +126,10 @@ public sealed class TaskFilteringWindowsTests
                             Assert.InRange(origin.Y + combo.ActualHeight, 0, window.ActualHeight);
                         }
                         Assert.True(list.ActualHeight >= 40, $"List viewport is only {list.ActualHeight} DIP; " + string.Join("; ", new[] { status, project, priority, deadline, sort }.Select(combo => $"{AutomationProperties.GetAutomationId(combo)}={combo.TranslatePoint(new Point(), window)} {combo.ActualWidth}x{combo.ActualHeight}")));
+                        Assert.Equal(size.Item1 >= 1160, inspector.IsExpanded);
+                        Assert.True(create.IsVisible);
+                        Assert.InRange(create.TranslatePoint(new Point(create.ActualWidth, 0), window).X, 0, window.ActualWidth);
+                        Assert.InRange(create.TranslatePoint(new Point(0, create.ActualHeight), window).Y, 0, window.ActualHeight);
                         Assert.True(more.IsVisible && more.IsEnabled);
                         Assert.InRange(more.TranslatePoint(new Point(0, more.ActualHeight), window).Y, 0, window.ActualHeight);
                         Assert.True(status.Focus());
