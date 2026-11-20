@@ -2,6 +2,8 @@ using Task.Desktop.Work;
 
 namespace Task.Desktop.ViewModels;
 
+public sealed record SearchPageNotice(string Title, string Body);
+
 // Both the search page and the palette use the same request, DTO and result store.
 public sealed partial class WorkHubViewModel
 {
@@ -12,8 +14,50 @@ public sealed partial class WorkHubViewModel
     private bool _isSearchLoading;
     private string? _searchMessage;
     private long _searchObjectGeneration;
-    public bool IsSearchLoading { get => _isSearchLoading; private set => SetProperty(ref _isSearchLoading, value); }
-    public string? SearchMessage { get => _searchMessage; private set => SetProperty(ref _searchMessage, value); }
+    private bool _hasCompletedSearch;
+    public bool IsSearchLoading
+    {
+        get => _isSearchLoading;
+        private set
+        {
+            if (SetProperty(ref _isSearchLoading, value)) OnPropertyChanged(nameof(SearchPageNotice));
+        }
+    }
+
+    public string? SearchMessage
+    {
+        get => _searchMessage;
+        private set
+        {
+            if (SetProperty(ref _searchMessage, value)) OnPropertyChanged(nameof(SearchPageNotice));
+        }
+    }
+
+    public bool CanUseSearchPage => _sessionAvailable && CanSearch;
+
+    public SearchPageNotice? SearchPageNotice
+    {
+        get
+        {
+            if (!_sessionAvailable) return new("Сессия завершена", "Войдите в Task снова, чтобы искать по данным компании.");
+            if (!CanSearch) return new("Поиск недоступен для вашей роли", "Если для работы нужен поиск, обратитесь к администратору.");
+            if (IsOffline) return new("Сервер недоступен", HasSearchResults
+                ? "Показаны подтверждённые результаты. После восстановления связи повторите запрос, чтобы открыть объект."
+                : "Проверьте подключение к сети компании и повторите запрос.");
+            if (IsSearchLoading) return new("Ищем совпадения…", "");
+            if (SearchMessage is { } message) return new("Не удалось завершить поиск", message);
+            if (HasSearchResults) return null;
+            if (SearchQuery.Trim().Length is < 2 or > 200)
+                return new("Введите поисковый запрос", "Введите от 2 до 200 символов: например, название проекта или имя сотрудника.");
+            if (!_hasCompletedSearch) return new("Запрос готов", "Нажмите «Найти» или Enter.");
+            if (HasMoreResults)
+                return new("На загруженных страницах совпадений нет", "Загрузите ещё результаты или измените тип.");
+            return SearchResults.Count > 0
+                ? new("Нет результатов этого типа", "Выберите «Все типы» или другой тип результата.")
+                : new("Ничего не найдено", "Попробуйте более короткий запрос или другое написание.");
+        }
+    }
+
     public bool HasCapability(string capability) => _sessionAvailable && Has(capability);
     public bool CanOpenSearchResult(DesktopSearchResult result) => !_disposed && _sessionAvailable && _networkAvailable
         && CanSearch && SearchResults.Contains(result);
@@ -143,6 +187,7 @@ public sealed partial class WorkHubViewModel
         _searchDebounce?.Cancel();
         _searchRequest?.Cancel();
         SearchCommand.Cancel();
+        _hasCompletedSearch = false;
         IsSearchLoading = false;
         SearchResults = [];
         SelectedSearchHit = null;
@@ -198,9 +243,12 @@ public sealed partial class WorkHubViewModel
         {
             var result = await _client.SearchAsync(query, append ? _searchCursor : null, request.Token);
             if (request.IsCancellationRequested || _disposed || generation != _searchGeneration) return;
-            if (!append || result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden
-                or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure
-                or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Conflict)
+            var keepConfirmedRows = IsSearch && !IsPersonal && !_paletteSearchActive
+                && result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.ServerUnavailable;
+            if ((!append && !keepConfirmedRows)
+                || result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Forbidden
+                    or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.AuthenticationFailure
+                    or DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Conflict)
             {
                 SearchResults = [];
                 _searchCursor = null;
@@ -209,6 +257,7 @@ public sealed partial class WorkHubViewModel
                 .DistinctBy(item => (item.ObjectType, item.ObjectId)).ToArray());
             if (result is DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded page)
             {
+                _hasCompletedSearch = true;
                 _searchCursor = page.NextCursor;
                 if (_searchCursor is not null && !_searchCursors.Add(_searchCursor))
                 {
@@ -222,6 +271,12 @@ public sealed partial class WorkHubViewModel
             SearchMessage = Message;
         }
         catch (OperationCanceledException) when (request.IsCancellationRequested) { }
+        catch
+        {
+            if (!request.IsCancellationRequested && generation == _searchGeneration)
+                SearchMessage = "Повторите запрос.";
+            throw;
+        }
         finally
         {
             if (ReferenceEquals(_searchRequest, request)) _searchRequest = null;

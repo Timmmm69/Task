@@ -551,16 +551,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             if (_disposed || generation != _workObjectNavigationGeneration) return;
             SessionMessage = null;
             if (id == Guid.Empty) { SessionMessage = "Не удалось определить выбранный объект."; return; }
-            var route = objectType switch
-            {
-                "task" => "tasks",
-                "project" => "projects",
-                "contact" or "company" or "interaction" => "contacts",
-                "catalog_item" or "file_location" => "catalog",
-                "calendar_event" => "calendar",
-                "notification" => "notifications",
-                _ => null,
-            };
+            var route = WorkObjectRoute(objectType);
             if (route is null)
             {
                 SessionMessage = "Для этого типа результата в текущем приложении нет экрана открытия.";
@@ -580,6 +571,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         finally { _workObjectNavigationGate.Release(); }
     }
+
+    internal static string? WorkObjectRoute(string objectType) => objectType switch
+    {
+        "task" => "tasks",
+        "project" => "projects",
+        "contact" or "company" or "interaction" => "contacts",
+        "catalog_item" or "file_location" => "catalog",
+        "calendar_event" => "calendar",
+        "notification" => "notifications",
+        _ => null,
+    };
 
     private static bool TryGetWorkArea(string? route, out WorkHubArea area)
     {
