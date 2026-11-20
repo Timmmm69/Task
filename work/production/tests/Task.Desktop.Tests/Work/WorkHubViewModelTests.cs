@@ -261,6 +261,42 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task FailedTrashLoadDoesNotDisplayPreviousArchiveRecords()
+    {
+        var response = new TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>>();
+        var client = new FakeClient { TrashHandler = _ => response.Task };
+        using var vm = new WorkHubViewModel(client, ["History.Read", "Archive.Restore", "Trash.Read", "Trash.Restore"]);
+        vm.Activate(WorkHubArea.Archive);
+        await Eventually(() => !vm.IsLoading && vm.SelectedLifecycleItem?.ObjectId == FakeClient.ArchivedId);
+
+        vm.Activate(WorkHubArea.Trash);
+        Assert.Empty(vm.VisibleLifecycleItems);
+        Assert.Null(vm.SelectedLifecycleItem);
+        Assert.False(vm.RestoreLifecycleItemCommand.CanExecute(null));
+
+        response.SetResult(new DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>.MalformedResponse());
+        await Eventually(() => !vm.IsLoading && vm.IsFeedbackError);
+        Assert.Empty(vm.VisibleLifecycleItems);
+        Assert.Null(vm.SelectedLifecycleItem);
+        Assert.Equal("Записи недоступны", vm.LifecycleEmptyTitle);
+        Assert.False(vm.RestoreLifecycleItemCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task LifecycleDiscardsRowsAndSelectionWhenReadAccessEnds()
+    {
+        using var vm = new WorkHubViewModel(new FakeClient(), ["Trash.Read", "Trash.Restore"]);
+        vm.Activate(WorkHubArea.Trash);
+        await Eventually(() => vm.SelectedLifecycleItem?.ObjectId == FakeClient.TrashedId);
+
+        vm.UpdateCapabilities([]);
+        Assert.True(vm.IsLimitedRole);
+        Assert.Empty(vm.VisibleLifecycleItems);
+        Assert.Null(vm.SelectedLifecycleItem);
+        Assert.False(vm.RestoreLifecycleItemCommand.CanExecute(null));
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task SettingsLoadAndSaveOnlyThroughCapabilityGuardedApi()
     {
         var client = new FakeClient(); using var vm = new WorkHubViewModel(client,
@@ -389,6 +425,7 @@ public sealed partial class WorkHubViewModelTests
         public static readonly Guid ArchivedId = Guid.NewGuid();
         public static readonly Guid TrashedId = Guid.NewGuid();
         public string? LocationMessage { get; private set; }
+        public Func<CancellationToken, System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>>>? TrashHandler { get; init; }
         public Guid? RestoredArchiveId { get; private set; }
         public Guid? RestoredTrashId { get; private set; }
         public DesktopUserSettings? SavedUserSettings { get; private set; }
@@ -417,7 +454,7 @@ public sealed partial class WorkHubViewModelTests
         public System.Threading.Tasks.Task<DesktopWorkResult<bool>> MarkNotificationReadAsync(Guid notificationId, CancellationToken cancellationToken = default) => Ok(true);
         public System.Threading.Tasks.Task<DesktopWorkResult<bool>> MarkAllNotificationsReadAsync(IReadOnlyCollection<Guid> notificationIds, CancellationToken cancellationToken = default) => Ok(true);
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetArchiveAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopLifecycleItem>>([new(ArchivedId, "project", "Archive project", 3, "archived", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, null, null)]);
-        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetTrashAsync(CancellationToken cancellationToken = default) => Ok<IReadOnlyList<DesktopLifecycleItem>>([new(TrashedId, "task", "Deleted task", 4, "trashed", DateTimeOffset.UtcNow, null, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(30))]);
+        public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopLifecycleItem>>> GetTrashAsync(CancellationToken cancellationToken = default) => TrashHandler?.Invoke(cancellationToken) ?? Ok<IReadOnlyList<DesktopLifecycleItem>>([new(TrashedId, "task", "Deleted task", 4, "trashed", DateTimeOffset.UtcNow, null, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddDays(30))]);
         public System.Threading.Tasks.Task<DesktopWorkResult<bool>> RestoreArchiveAsync(Guid objectId, long version, CancellationToken cancellationToken = default) { RestoredArchiveId = objectId; return Ok(true); }
         public System.Threading.Tasks.Task<DesktopWorkResult<bool>> RestoreTrashAsync(Guid objectId, long version, CancellationToken cancellationToken = default) { RestoredTrashId = objectId; return Ok(true); }
         public System.Threading.Tasks.Task<DesktopWorkResult<DesktopUserSettings>> GetUserSettingsAsync(CancellationToken cancellationToken = default) => Ok(UserSettings());

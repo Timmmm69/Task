@@ -85,9 +85,10 @@ public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, stri
     };
     public bool IsRetentionBlocked => LedgerStatus == "blocked_by_hold";
     public string LifecycleLabel => LifecycleState == "archived" ? "Archived" : "Trashed";
+    public DateTimeOffset ChangedAt => ((LifecycleState == "archived" ? ArchivedAt : DeletedAt) ?? UpdatedAt).ToLocalTime();
     public string ChangedText => LifecycleState == "archived"
-        ? $"Архивирован {(ArchivedAt ?? UpdatedAt).ToLocalTime():dd MMMM yyyy, HH:mm}"
-        : $"Перемещён в корзину {(DeletedAt ?? UpdatedAt).ToLocalTime():dd MMMM yyyy, HH:mm}";
+        ? $"Архивирован {ChangedAt:dd MMMM yyyy, HH:mm}"
+        : $"Перемещён в корзину {ChangedAt:dd MMMM yyyy, HH:mm}";
     public string RetentionText => LedgerStatus == "personal" ? "Личная запись хранится до явного удаления метаданных Task" : IsRetentionBlocked
         ? "Установлено юридическое удержание · срок удаления не наступит до снятия удержания"
         : PurgeAfter is { } purge
