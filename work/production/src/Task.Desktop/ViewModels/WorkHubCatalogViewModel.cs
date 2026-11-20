@@ -9,14 +9,47 @@ public sealed partial class WorkHubViewModel
     private bool _catalogMutationPending;
     private bool _catalogSnapshotCurrent;
     private CatalogDestination? _moveDestination;
+    private string _catalogSearchQuery = string.Empty;
     public IReadOnlyList<CatalogNodeViewModel> CatalogRoots { get => _catalogRoots; private set => SetProperty(ref _catalogRoots, value); }
     internal bool CatalogSnapshotCurrent => _catalogSnapshotCurrent;
     public bool IsCatalogEmpty => CatalogRoots.Count == 0;
+    public bool CanShowCatalog => IsCatalog && _sessionAvailable && CanReadCurrentArea;
+    public string CatalogSearchQuery
+    {
+        get => _catalogSearchQuery;
+        set
+        {
+            if (!SetProperty(ref _catalogSearchQuery, value)) return;
+            OnPropertyChanged(nameof(IsCatalogSearchActive));
+            OnPropertyChanged(nameof(CatalogSearchResults));
+        }
+    }
+    public bool IsCatalogSearchActive => !string.IsNullOrWhiteSpace(CatalogSearchQuery);
+    public IReadOnlyList<CatalogNodeViewModel> CatalogSearchResults
+    {
+        get
+        {
+            var query = CatalogSearchQuery.Trim();
+            return query.Length == 0 ? [] : _catalogNodes.Values
+                .Where(node => node.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase))
+                .ToArray();
+        }
+    }
     public AsyncCommand CreateCatalogFolderCommand { get; private set; } = null!;
     public AsyncCommand MoveCatalogItemCommand { get; private set; } = null!;
     public AsyncCommand SelectCatalogRootCommand { get; private set; } = null!;
     public CatalogDestination? MoveDestination { get => _moveDestination; set { if (SetProperty(ref _moveDestination, value)) MoveCatalogItemCommand.RaiseCanExecuteChanged(); } }
     public string CatalogCreationLocation => CreationParentId is { } id && _catalogNodes.TryGetValue(id, out var parent) ? $"Создать в: {parent.Name}" : "Создать в: корень каталога";
+    public string? SelectedCatalogParentPath => SelectedCatalogItem is null ? null
+        : SelectedCatalogItem.ParentId is { } parentId && _catalogNodes.TryGetValue(parentId, out var parent)
+            ? CatalogPath(parent)
+            : "Корень каталога";
+    public bool CanStartCatalogCreation => CanWriteCatalog && CanCreateCatalog;
+    public string CatalogCreationHint => CanStartCatalogCreation ? CatalogCreationLocation
+        : !CanReadCurrentArea || !_networkAvailable ? AccessText
+        : !CanCreateCatalog ? "Для добавления записей требуется право создания в каталоге."
+        : IsLoading || _catalogMutationPending || Locations?.IsMutating == true ? "Дождитесь завершения текущей операции."
+        : "Добавление доступно после подключения и обновления каталога.";
     private Guid? CreationParentId => SelectedCatalogItem is { IsFolder: true } folder ? folder.Id : SelectedCatalogItem?.ParentId;
     private bool CanWriteCatalog => CanUseServerWrites && IsCatalog && Has("FileCatalog.Read") && _catalogSnapshotCurrent && !_catalogMutationPending && Locations?.IsMutating != true && !IsLoading;
     public IReadOnlyList<CatalogDestination> CatalogMoveDestinations => [new(null, "Корень каталога"), .. _catalogNodes.Values
@@ -65,6 +98,7 @@ public sealed partial class WorkHubViewModel
         CatalogRoots = roots;
         SelectedCatalogItem = selectedId is { } id ? nodes.GetValueOrDefault(id) ?? (fallback is { } fallbackId ? nodes.GetValueOrDefault(fallbackId) : null) : null;
         OnPropertyChanged(nameof(IsCatalogEmpty));
+        OnPropertyChanged(nameof(CatalogSearchResults));
         NotifyCatalogSelection();
     }
 
@@ -82,8 +116,17 @@ public sealed partial class WorkHubViewModel
     private void NotifyCatalogSelection()
     {
         OnPropertyChanged(nameof(CatalogCreationLocation));
+        OnPropertyChanged(nameof(SelectedCatalogParentPath));
+        OnPropertyChanged(nameof(CatalogCreationHint));
         OnPropertyChanged(nameof(CatalogMoveDestinations));
         MoveDestination = CatalogMoveDestinations.FirstOrDefault(d => d.Id == MoveDestination?.Id) ?? CatalogMoveDestinations.FirstOrDefault();
+    }
+
+    private void NotifyCatalogAccess()
+    {
+        OnPropertyChanged(nameof(CanShowCatalog));
+        OnPropertyChanged(nameof(CanStartCatalogCreation));
+        OnPropertyChanged(nameof(CatalogCreationHint));
     }
 
     private async System.Threading.Tasks.Task<bool> ReloadCatalogAsync(CancellationToken ct, Guid? selectedId = null, bool reveal = false)

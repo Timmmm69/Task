@@ -30,6 +30,7 @@ public sealed partial class WorkHubViewModel
             && openGeneration == _searchObjectGeneration && _sessionAvailable && _networkAvailable;
         if (type is "catalog_item" or "file_location")
         {
+            CatalogSearchQuery = string.Empty;
             SelectedCatalogItem = null;
             if (!Has("FileCatalog.Read")) { SetFeedback("Недостаточно прав для открытия файла.", WorkHubFeedbackKind.Warning); return; }
             var result = await _client.GetCatalogAsync(token);

@@ -107,8 +107,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         RefreshCommand = new(RefreshAsync, _ => _active && _sessionAvailable && _networkAvailable && CanReadCurrentArea && !_catalogMutationPending && Locations?.IsMutating != true);
         InitializePagination();
         SearchCommand = new(SearchAsync, _ => _sessionAvailable && _networkAvailable && CanSearch && SearchQuery.Trim().Length is >= 2 and <= 200);
-        CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
-        CreateCatalogFolderCommand = new((_, ct) => CreateCatalogEntryAsync("virtual_folder", ct), _ => CanWriteCatalog && CanCreateCatalog && !string.IsNullOrWhiteSpace(NewItemName));
+        CreateCatalogItemCommand = new(CreateCatalogItemAsync, _ => CanStartCatalogCreation && !string.IsNullOrWhiteSpace(NewItemName));
+        CreateCatalogFolderCommand = new((_, ct) => CreateCatalogEntryAsync("virtual_folder", ct), _ => CanStartCatalogCreation && !string.IsNullOrWhiteSpace(NewItemName));
         MoveCatalogItemCommand = new(MoveCatalogItemAsync, p => MoveRequest(p) is { } move && CanMoveCatalogItem(move.ItemId, move.ParentId));
         SelectCatalogRootCommand = new((_, _) => { SelectedCatalogItem = null; return System.Threading.Tasks.Task.CompletedTask; }, _ => Has("FileCatalog.Read"));
         AddLocationCommand = new(AddLocationAsync, _ => CanWriteCatalog && CanUpdateLocation && SelectedCatalogItem?.ItemType is "file_reference" or "folder_reference" && !string.IsNullOrWhiteSpace(NewItemPath));
@@ -722,6 +722,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         {
             OnPropertyChanged(nameof(IsLoading));
             OnPropertyChanged(nameof(ShowSearchEmpty));
+            if (IsCatalog) NotifyCatalogAccess();
         }
     }
 
@@ -768,7 +769,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
             TryStartActivationRefresh();
         }
     }
-    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
+    private void NotifyCommands() { ContactInteractions?.UpdateAccess(); CompanyInteractions?.UpdateAccess(); Companies?.UpdateAccess(); ShowCompaniesCommand?.RaiseCanExecuteChanged(); ShowContactsCommand?.RaiseCanExecuteChanged(); ContactCard?.UpdateAccess(); OnPropertyChanged(nameof(CanAddCatalogPaths)); NotifyCatalogAccess(); Locations?.UpdateAccess(); OnPropertyChanged(nameof(HasLinks)); OnPropertyChanged(nameof(CanReadCurrentArea)); OnPropertyChanged(nameof(CanReadArchive)); OnPropertyChanged(nameof(CanRestoreArchive)); OnPropertyChanged(nameof(CanReadTrash)); OnPropertyChanged(nameof(CanRestoreTrash)); OnPropertyChanged(nameof(CanReadSettings)); OnPropertyChanged(nameof(CanUpdateSettings)); OnPropertyChanged(nameof(CanReadOrganization)); OnPropertyChanged(nameof(CanUpdateOrganization)); OnPropertyChanged(nameof(AccessText)); OnPropertyChanged(nameof(IsLimitedRole)); foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     private void OnUnexpectedFailure(Exception _) => SetFeedback("Не удалось завершить действие. Подтверждённые данные не изменены.", WorkHubFeedbackKind.Error);
     public void Dispose() { if (_disposed) return; _disposed = true; EndPaletteSearch(); ContactInteractions?.Dispose(); CompanyInteractions?.Dispose(); Companies?.Dispose(); ShowCompaniesCommand.Dispose(); ShowContactsCommand.Dispose(); ContactCard?.Dispose(); Locations?.Dispose(); Links?.Dispose(); _activationRefreshPending = false; RefreshCommand.CanExecuteChanged -= OnRefreshCanExecuteChanged; _activation?.Cancel(); _activation?.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

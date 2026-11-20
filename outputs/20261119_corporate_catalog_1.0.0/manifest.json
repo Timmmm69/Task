@@ -1,0 +1,26 @@
+{
+  "name": "corporate-catalog-visual-evidence",
+  "version": "1.0.0",
+  "sourceCommit": "a37d8d3facaf72f2dbbd7e5edf2738259b1f3491",
+  "validation": "validation.json",
+  "files": [
+    {
+      "file": "catalog-1200x900.png",
+      "widthDip": 1200,
+      "state": "Дерево и выбранный файл",
+      "sha256": "bec784865a5c7ea9420d712c5897372a0be6546aaaf4d8acc89ecf91e4de8dd6",
+      "heightPx": 863,
+      "heightDip": 900,
+      "widthPx": 1186
+    },
+    {
+      "file": "catalog-800x900.png",
+      "widthDip": 800,
+      "state": "Результаты поиска и выбранный файл",
+      "sha256": "0888d2c4b12e4e26cca8dcaad215303dc248d92244f959600dad6e340e0b3ba7",
+      "heightPx": 863,
+      "heightDip": 900,
+      "widthPx": 786
+    }
+  ]
+}

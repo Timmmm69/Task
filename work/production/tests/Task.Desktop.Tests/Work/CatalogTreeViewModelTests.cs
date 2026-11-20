@@ -40,6 +40,33 @@ public sealed class CatalogTreeViewModelTests : IDisposable
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task CatalogSearchFindsNestedEntriesAndUsesCurrentNodesAfterRefresh()
+    {
+        using var store = Store();
+        var folder = store.CreateCatalog("Регламенты", "virtual_folder", null);
+        var file = store.CreateCatalog("Шаблон акта.docx", "file_reference", null, folder.Id);
+        using var vm = Hub(new PersonalWorkClient(store));
+        vm.CatalogSearchQuery = "  ШАБЛОН  ";
+
+        var result = Assert.Single(vm.CatalogSearchResults);
+        Assert.True(vm.IsCatalogSearchActive);
+        Assert.False(Assert.Single(vm.CatalogRoots).IsExpanded);
+        Assert.Same(Assert.Single(vm.CatalogRoots[0].Children), result);
+        Assert.True(await vm.SelectCatalogItemAsync(file.Id));
+        Assert.True(await vm.RefreshCommand.ExecuteAsync());
+
+        var refreshedResult = Assert.Single(vm.CatalogSearchResults);
+        Assert.NotSame(result, refreshedResult);
+        Assert.Same(vm.SelectedCatalogItem, refreshedResult);
+        Assert.True(refreshedResult.IsSelected);
+        Assert.Equal("Регламенты", vm.SelectedCatalogParentPath);
+        vm.CatalogSearchQuery = " ";
+        Assert.False(vm.IsCatalogSearchActive);
+        Assert.Empty(vm.CatalogSearchResults);
+        Assert.Same(refreshedResult, vm.SelectedCatalogItem);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task CreatesFoldersInRootAndSelectedFolderAndFilesBesideSelectedFile()
     {
         using var store = Store(); using var vm = Hub(new PersonalWorkClient(store));
