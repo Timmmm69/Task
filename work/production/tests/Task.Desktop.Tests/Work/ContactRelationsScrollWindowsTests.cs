@@ -75,8 +75,8 @@ public sealed class ContactRelationsScrollWindowsTests
                             {
                                 "add" => AutomationProperties.GetAutomationId(b) == "AddContactChannel",
                                 "address" => AutomationProperties.GetAutomationId(b) == "AddContactAddress",
-                                "edit" => b.Content as string == "Изменить канал",
-                                _ => b.Content as string == "Удалить канал"
+                                "edit" => AutomationProperties.GetAutomationId(b) == "EditContactChannel",
+                                _ => AutomationProperties.GetAutomationId(b) == "RemoveContactChannel"
                             });
                             button.BringIntoView(); Pump(); button.Focus();
                             ((IInvokeProvider)new ButtonAutomationPeer(button).GetPattern(PatternInterface.Invoke)!).Invoke();

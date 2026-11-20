@@ -168,24 +168,13 @@
         </Style.Triggers>
     </Style>
     <Style TargetType="Border" x:Key="Task.Contact.SectionHeader" BasedOn="{StaticResource Task.Surface.Base}">
-        <Setter Property="MinHeight" Value="49" />
+        <Setter Property="MinHeight" Value="40" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
-        <Setter Property="Padding" Value="20,10" />
+        <Setter Property="Padding" Value="16,8" />
     </Style>
     <Style TargetType="Border" x:Key="Task.Contact.Row" BasedOn="{StaticResource Task.Surface.Base}">
         <Setter Property="MinHeight" Value="61" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
-        <Setter Property="Padding" Value="20,12" />
-    </Style>
-    <Style TargetType="Border" x:Key="Task.Contact.Badge" BasedOn="{StaticResource Task.Surface.Base}">
-        <Setter Property="MinHeight" Value="38" />
-        <Setter Property="Padding" Value="10,8" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{DynamicResource Task.Radius.Control}" />
-        <Setter Property="Margin" Value="0,0,12,8" />
-    </Style>
-    <Style TargetType="StackPanel" x:Key="Task.Contact.Empty">
-        <Setter Property="Margin" Value="28" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Padding" Value="16,8" />
     </Style>
 </ResourceDictionary>

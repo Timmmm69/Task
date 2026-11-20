@@ -35,9 +35,13 @@ public sealed partial class WorkHubViewModel
         NotifyPagination();
     }
 
-    private async System.Threading.Tasks.Task LoadListPageAsync(bool append, CancellationToken ct)
+    private async System.Threading.Tasks.Task LoadListPageAsync(bool append, CancellationToken ct, string? contactQuery = null)
     {
-        if (!append) ResetListPagination();
+        var query = contactQuery ?? ContactResultsQuery;
+        var queryChanged = query != ContactResultsQuery;
+        // Keep the displayed results and their cursor if submitting a different query fails.
+        if (!append && !queryChanged) ResetListPagination();
+        var retainSelectedContact = query.Length == 0 || !queryChanged && HasContactCardDraft;
         var generation = _listGeneration;
         var activation = _activationGeneration;
         var area = Area;
@@ -47,12 +51,15 @@ public sealed partial class WorkHubViewModel
         {
             if (area == WorkHubArea.Contacts)
             {
-                var result = await _client.GetContactsAsync(append ? _listCursor : null, linked.Token);
+                var cursor = append ? _listCursor : null;
+                var result = query.Length > 0 && _client is IDesktopCompaniesClient crm
+                    ? await crm.FindCompanyContactsAsync(query, cursor, linked.Token)
+                    : await _client.GetContactsAsync(cursor, linked.Token);
                 if (!Current()) return;
                 var selectedBeforeRefresh = SelectedContact;
                 if (!append && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded page
                     && selectedBeforeRefresh is { } outsidePage && page.Value.All(item => item.Id != outsidePage.Id)
-                    && !IsPersonal && _client is IDesktopContactDetailsClient detailsClient)
+                    && retainSelectedContact && !IsPersonal && _client is IDesktopContactDetailsClient detailsClient)
                 {
                     // A missing row may be on a later page or may have lost object access.
                     // Preserve drafts only after an independent, current scope check.
@@ -68,7 +75,12 @@ public sealed partial class WorkHubViewModel
                     else
                     { SetFeedback("Не удалось подтвердить доступ к выбранному контакту. Повторите обновление.", WorkHubFeedbackKind.Warning); return; }
                 }
-                ApplyListPage(result, append, values => Contacts = !IsPersonal && !append && values.Count > 0 && selectedBeforeRefresh is { } previous
+                if (queryChanged && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded)
+                {
+                    ResetListPagination();
+                    ContactResultsQuery = query;
+                }
+                ApplyListPage(result, append, values => Contacts = retainSelectedContact && !IsPersonal && !append && values.Count > 0 && selectedBeforeRefresh is { } previous
                     && values.All(item => item.Id != previous.Id) ? [.. values, previous] : values,
                     Contacts, item => item.Id);
                 if (!append && result is DesktopWorkResult<IReadOnlyList<DesktopContact>>.Succeeded
@@ -89,7 +101,8 @@ public sealed partial class WorkHubViewModel
         finally { EndOperation(); NotifyPagination(); }
 
         bool Current() => !linked.IsCancellationRequested && !_disposed && _sessionAvailable
-            && activation == _activationGeneration && generation == _listGeneration && area == Area && CanReadCurrentArea;
+            && activation == _activationGeneration && generation == _listGeneration && area == Area && CanReadCurrentArea
+            && (area != WorkHubArea.Contacts || ShowContactPeople);
     }
 
     private void ApplyListPage<T>(DesktopWorkResult<IReadOnlyList<T>> result, bool append,

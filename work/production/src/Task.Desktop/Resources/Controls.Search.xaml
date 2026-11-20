@@ -4,6 +4,8 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Controls.Buttons.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    <CornerRadius x:Key="Task.Radius.Search">24</CornerRadius>
+    <Visibility x:Key="Task.Search.EmptyHintVisibility">Visible</Visibility>
     <!-- One capsule-shaped search field for pages, dialogs and ComboBox popups.
          Tag supplies the contextual placeholder; the editable content has no inner chrome. -->
     <Style x:Key="Task.Input.Search" TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}">
@@ -24,7 +26,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Border x:Name="SearchChrome" Background="{TemplateBinding Background}" CornerRadius="24"
+                    <Border x:Name="SearchChrome" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource Task.Radius.Search}"
                             BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             SnapsToDevicePixels="True">
                         <Grid Margin="15,9,11,9">
@@ -61,7 +63,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="Text" Value="">
                             <Setter TargetName="SearchPlaceholder" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="SearchHint" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="SearchHint" Property="Visibility" Value="{DynamicResource Task.Search.EmptyHintVisibility}"/>
                             <Setter TargetName="ClearSearch" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">

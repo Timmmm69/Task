@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -13,22 +14,43 @@ namespace Task.Desktop.Tests;
 public sealed class VisualFoundationTests
 {
     [Fact]
-    public void MainWindow_LoadsAndMeasuresDirection2Shell()
+    public async System.Threading.Tasks.Task MainWindow_LoadsAndMeasuresDirection2Shell()
     {
+        // Application resources are dispatcher-affine. The other WPF fixtures may already own them.
+        const string probe = "TASK_VISUAL_FOUNDATION_SHELL_PROBE";
+        if (Environment.GetEnvironmentVariable(probe) != "1")
+        {
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            start.ArgumentList.Add("vstest");
+            start.ArgumentList.Add(typeof(VisualFoundationTests).Assembly.Location);
+            start.ArgumentList.Add($"/TestCaseFilter:FullyQualifiedName={GetType().FullName}.{nameof(MainWindow_LoadsAndMeasuresDirection2Shell)}");
+            start.Environment[probe] = "1";
+            using var child = Process.Start(start)!;
+            var output = child.StandardOutput.ReadToEndAsync();
+            var errors = child.StandardError.ReadToEndAsync();
+            try
+            {
+                await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(55));
+                Assert.True(child.ExitCode == 0, await output + await errors);
+            }
+            finally
+            {
+                if (!child.HasExited) child.Kill(entireProcessTree: true);
+            }
+            return;
+        }
+
         var snapshot = RunOnSta(() =>
         {
-            var application = global::System.Windows.Application.Current
-                ?? new global::System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-            if (!application.Resources.Contains("Task.Shell.NavigationSurface"))
-            {
-                application.Resources.MergedDictionaries.Add((ResourceDictionary)global::System.Windows.Application.LoadComponent(
-                    new Uri("/Task.Desktop;component/Resources/Theme.xaml", UriKind.Relative)));
-                application.Resources["Task.IconKeyToGeometryConverter"] = new IconKeyToGeometryConverter();
-                application.Resources["Task.ShellNavigationWidthConverter"] = new ShellNavigationWidthConverter();
-                application.Resources["Task.WindowWidthAtLeastConverter"] = new WindowWidthAtLeastConverter();
-                application.Resources["Task.ResponsiveGridLengthConverter"] = new ResponsiveGridLengthConverter();
-                application.Resources["Task.BooleanToVisibilityConverter"] = new BooleanToVisibilityConverter();
-            }
+            var application = new App();
+            application.InitializeComponent();
 
             using var viewModel = new MainWindowViewModel();
             var window = new MainWindow(viewModel);
