@@ -81,7 +81,7 @@ public sealed class TaskCardEditor : ViewModelBase
     public bool IsDateOnly => _currentStart is null;
     public string DateHint => IsDateOnly
         ? "ДД.ММ.ГГГГ. Оставьте пустым, если день пока не выбран."
-        : "День определяется временем начала. Чтобы выбрать только день, очистите поле «Начало».";
+        : "День определяется временем начала. Чтобы выбрать только день, очистите поле «Точное время начала».";
     public void UpdateStart(DateTimeOffset? start) { _currentStart = start; OnPropertyChanged(nameof(IsDateOnly)); OnPropertyChanged(nameof(DateHint)); }
 
     public void SetOptions(JsonObject options)

@@ -397,7 +397,10 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private CalendarScreenState _state = CalendarScreenState.Inactive;
     private DateOnly _weekStart;
     private DateOnly _selectedDate;
+    private DateTime? _eventCreationDate;
     private CalendarViewMode _viewMode = CalendarViewMode.Week;
+    private Infrastructure.ViewStateStore? _viewPreferences;
+
     private IReadOnlyList<CalendarDayViewModel> _days = Array.Empty<CalendarDayViewModel>();
     private CalendarItemViewModel? _selectedItem;
     private DesktopCalendarEvent? _selectedEvent;
@@ -470,8 +473,10 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         get => _selectedDate.ToDateTime(TimeOnly.MinValue);
         set
         {
-            if (!value.HasValue || _saving) return;
+            if (_saving) return;
+            if (!value.HasValue) { ClearCreationDay(); return; }
             var date = DateOnly.FromDateTime(value.Value);
+            _eventCreationDate = date.ToDateTime(TimeOnly.MinValue);
             if (date == _selectedDate) return;
             CloseFreeTime();
             _selectedDate = date; _weekStart = StartOfWeek(date, FirstDay);
@@ -540,12 +545,21 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private CalendarEventEditorViewModel CreateEditor(DesktopCalendarEvent? source)
     {
         var editor = new CalendarEventEditorViewModel(source, _timeZone, IsPersonal) { ProjectChoices = _projects?.Invoke() ?? [] };
+        if (source is null && _eventCreationDate is { } date) editor.Date = date;
         editor.AuthenticationRequired += () => UpdateSessionState(false);
         editor.InitializePeople(_employeeDirectory, _capabilities, _active && CanRead && _sessionAllowsWrites && _networkAvailable
             && (source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update")));
         editor.AttachCommands(SaveEventCommand, CancelEditorCommand);
         return editor;
     }
+
+    internal void RestoreViewPreference(Infrastructure.ViewStateStore store)
+    {
+        _viewPreferences = store;
+        if (store.CalendarMode is { } mode) ViewMode = mode;
+    }
+
+    internal void ClearCreationDay() => _eventCreationDate = null;
 
     public void Activate()
     {
@@ -577,6 +591,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
 
     public void Deactivate()
     {
+        _eventCreationDate = null;
         if (!_active) return;
         CloseFreeTime();
         _active = false; UpdateEditorAccess(); Recurrence?.SetAccess(_capabilities, false); Interlocked.Increment(ref _generation); _requestCancellation?.Cancel();
@@ -595,6 +610,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
             ClearSelection(); HandleFailure(result, Days.Count > 0); return;
         }
         var value = success.Value;
+        ClearCreationDay();
         _selectedDate = value.EventDate; _weekStart = StartOfWeek(_selectedDate, FirstDay);
         OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
         var expectedGeneration = _generation + 1;
@@ -655,6 +671,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private async global::System.Threading.Tasks.Task MoveAsync(int direction, CancellationToken token)
     {
         CloseFreeTime();
+        _eventCreationDate = null;
         _selectedDate = ViewMode switch
         {
             CalendarViewMode.Day => _selectedDate.AddDays(direction),
@@ -672,12 +689,23 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         if (ViewMode == mode) return;
         CloseFreeTime();
         ViewMode = mode;
+        _viewPreferences?.SetCalendarMode(mode);
         ClearSelection();
         await LoadAsync(false, token);
     }
 
-    private async global::System.Threading.Tasks.Task GoTodayAsync(CancellationToken token)
-    { CloseFreeTime(); _selectedDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(_clock(), _timeZone).DateTime); _weekStart = StartOfWeek(_selectedDate, FirstDay); ClearSelection(); OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); await LoadAsync(false, token); }
+    internal async global::System.Threading.Tasks.Task GoTodayAsync(CancellationToken token)
+    {
+        CloseFreeTime();
+        ClearCreationDay();
+        _selectedDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(_clock(), _timeZone).DateTime);
+        _weekStart = StartOfWeek(_selectedDate, FirstDay);
+        ClearSelection();
+        OnPropertyChanged(nameof(SelectedDate));
+        OnPropertyChanged(nameof(WeekStart));
+        OnPropertyChanged(nameof(WeekRangeText));
+        if (IsActive && CanRead) await LoadAsync(false, token);
+    }
 
     private async global::System.Threading.Tasks.Task LoadAsync(bool refresh, CancellationToken token)
     {

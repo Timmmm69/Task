@@ -332,14 +332,22 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
         var administration = new AdministrationViewModel(
             new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
-        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration);
-        var window = new MainWindow(viewModel);
         var metadata = sessionService.CurrentSessionMetadata!;
+        var viewState = new Infrastructure.ViewStateStore(_dataDirectory,
+            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
+            Infrastructure.ViewState.DeviceNamespace);
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration, viewState);
+        var window = new MainWindow(viewModel);
+        async void RestorePreferences(object sender, System.Windows.RoutedEventArgs args)
+        {
+            window.Loaded -= RestorePreferences;
+            await viewState.Ready;
+            viewModel.RestoreWorkPreferences();
+        }
+        window.Loaded += RestorePreferences;
         window.ConfigureNotifications(workClient, _dataDirectory,
             serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D") + "/" + metadata.UserId.ToString("D"));
-        Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(_dataDirectory,
-            serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
-            Infrastructure.ViewState.DeviceNamespace));
+        Infrastructure.ViewState.Attach(window, viewState);
         _mainWindow = window;
         _mainSessionService = sessionService;
         sessionService.StateChanged += OnMainSessionStateChanged;
@@ -433,6 +441,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
                 sessionService.CurrentSessionMetadata?.Capabilities);
             viewModel.Administration?.UpdateCapabilities(
                 sessionService.CurrentSessionMetadata?.Capabilities);
+            viewModel.RefreshWorkPreferencesAccess();
         }
 
         viewModel.Tasks.UpdateSessionState(signedIn);

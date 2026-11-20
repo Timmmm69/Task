@@ -19,11 +19,12 @@ public sealed class PersonalApplicationModel : IDisposable
         _store = new(new PersonalDataPaths(dataRoot), time, ownership, restoring: restoring);
         try
         {
-            Tasks = new(new PersonalTasksClient(_store), Sections, _store.Projects);
+            var calendarClient = new PersonalCalendarClient(_store);
+            Tasks = new(new PersonalTasksClient(_store), Sections, _store.Projects, calendarClient);
             Planning = new(_store, time);
             Workspace = new(_store);
             var recurrence = new RecurrencePaneViewModel(new PersonalRecurrenceClient(_store), _store.LocalActorId, true);
-            Calendar = new(new PersonalCalendarClient(_store), ["Calendar.Read", "CalendarEvent.Create", "CalendarEvent.Update", "Recurrence.Read", "Recurrence.Manage"],
+            Calendar = new(calendarClient, ["Calendar.Read", "CalendarEvent.Create", "CalendarEvent.Update", "Recurrence.Read", "Recurrence.Manage"],
                 recurrence: recurrence, clock: time.GetUtcNow, personal: true,
                 firstDay: () => (DayOfWeek)(_store.WorkspaceSettings().FirstDayOfWeek % 7),
                 workdayStart: () => TimeOnly.Parse(_store.WorkspaceSettings().WorkdayStart),
@@ -107,9 +108,10 @@ internal sealed class PersonalApplicationContext(
     private void CloseModel() { _model?.Dispose(); _model = null; }
     private void ShowPersonal()
     {
-        var window = new PersonalWindow(_model!);
-        Infrastructure.ViewState.Attach(window, new Infrastructure.ViewStateStore(dataRoot, "personal",
-            _model!.Store.LocalActorId, Infrastructure.ViewState.DeviceNamespace));
+        var viewState = new Infrastructure.ViewStateStore(dataRoot, "personal",
+            _model!.Store.LocalActorId, Infrastructure.ViewState.DeviceNamespace);
+        var window = new PersonalWindow(_model, enableWindowsIntegrations: true, viewState: viewState);
+        Infrastructure.ViewState.Attach(window, viewState);
         window.SwitchModeRequested += switchMode;
         window.BackupRequested += Backup;
         window.RestoreRequested += Restore;

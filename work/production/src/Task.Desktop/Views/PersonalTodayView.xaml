@@ -19,6 +19,10 @@
      </Button>
     </Grid>
    </Border>
+   <ContentControl HorizontalContentAlignment="Stretch"
+                   Visibility="{Binding ShowEmptyTodayPlan, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+    <views:TodayGettingStartedView DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
+   </ContentControl>
    <Grid x:Name="ContentGrid">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition x:Name="DetailsColumn" Width="320"/></Grid.ColumnDefinitions>
@@ -53,7 +57,8 @@
       </DataTemplate></ListBox.ItemTemplate>
      </ListBox>
      <Border Background="#F7F7F7" CornerRadius="16" Padding="24" Visibility="{Binding ShowEmpty,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
-      <StackPanel><TextBlock Text="На сегодня задач нет" Style="{StaticResource Personal.Airbnb.Heading}"/><TextBlock Text="Можно запланировать что-нибудь или оставить день свободным." Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,8,0,16"/><Button Content="Открыть задачи" Command="{Binding OpenTasksCommand}" Style="{StaticResource Personal.Airbnb.Pill}" HorizontalAlignment="Left"/></StackPanel>
+      <StackPanel><TextBlock Text="На сегодня задач нет" Style="{StaticResource Personal.Airbnb.Heading}"/><TextBlock Text="Можно запланировать что-нибудь или оставить день свободным." Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,8,0,16"/><Button Content="Открыть задачи" Command="{Binding OpenTasksCommand}" Style="{StaticResource Personal.Airbnb.Pill}" HorizontalAlignment="Left"/>
+      </StackPanel>
      </Border>
      <TextBlock Text="Обновляем задачи…" Style="{StaticResource Personal.Airbnb.Muted}" Visibility="{Binding IsBusy,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Margin="16" AutomationProperties.LiveSetting="Polite"/>
     </StackPanel>
@@ -65,7 +70,7 @@
       <StackPanel Visibility="{Binding HasSelection,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
        <Border Height="1" Background="#EBEBEB" Margin="0,24"/>
        <Grid Margin="0,0,0,24"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-        <StackPanel><TextBlock Text="Запланировано" FontSize="12" Foreground="{StaticResource Personal.Airbnb.Secondary}"/><TextBlock Text="{Binding Selected.ScheduleText}" Margin="0,5,8,0" TextWrapping="Wrap"/></StackPanel>
+        <StackPanel><TextBlock Text="Запланировать на" FontSize="12" Foreground="{StaticResource Personal.Airbnb.Secondary}"/><TextBlock Text="{Binding Selected.ScheduleText}" Margin="0,5,8,0" TextWrapping="Wrap"/></StackPanel>
         <StackPanel Grid.Column="1"><TextBlock Text="Приоритет" FontSize="12" Foreground="{StaticResource Personal.Airbnb.Secondary}"/><TextBlock Text="{Binding Selected.PriorityText}" Margin="0,5,0,0"/></StackPanel>
        </Grid>
        <Button Content="Открыть задачу" Command="{Binding EditCommand}" Style="{StaticResource Personal.Airbnb.Pill}" Background="#222222" Foreground="White" BorderBrush="#222222"/>

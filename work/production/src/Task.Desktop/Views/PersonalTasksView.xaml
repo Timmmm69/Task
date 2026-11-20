@@ -44,7 +44,7 @@
   <views:PersonalInboxView x:Name="InboxSurface" Grid.RowSpan="4" Visibility="{Binding IsInbox,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
   <views:PersonalTaskBrowserView x:Name="TaskBrowserSurface" Grid.RowSpan="4" Visibility="{Binding IsTasks,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
   <views:PersonalTodayView x:Name="TodaySurface" Grid.RowSpan="3" Visibility="{Binding IsToday,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
-  <Expander x:Name="DetailsExpander" Style="{StaticResource Personal.NotToday}" Header="Сведения о задаче" Grid.Row="3" state:ViewState.Section="personal-tasks/v1/details" Margin="0,12,0,0" IsExpanded="{Binding DetailsExpanded,Mode=TwoWay}" AutomationProperties.Name="Сведения о задаче">
+  <Expander x:Name="DetailsExpander" Style="{StaticResource Personal.NotToday}" Header="Сведения о задаче" Grid.Row="3" Margin="0,12,0,0" IsExpanded="{Binding DetailsExpanded,Mode=TwoWay}" AutomationProperties.Name="Сведения о задаче">
    <Expander.HeaderTemplate><DataTemplate><WrapPanel><TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="0,0,12,0"/><Button Content="Добавить подзадачу" Command="{Binding DataContext.AddSubtaskCommand,RelativeSource={RelativeSource AncestorType=UserControl}}"  ToolTip="{Binding DataContext.SubtaskActionHint,RelativeSource={RelativeSource AncestorType=UserControl}}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="Добавить подзадачу" AutomationProperties.AutomationId="PersonalAddSubtask"/></WrapPanel></DataTemplate></Expander.HeaderTemplate>
    <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto"><Border Style="{StaticResource Task.Inspector.Panel}" Margin="0,8,0,0"><StackPanel>
     <TextBlock Text="{Binding Selected.Title,TargetNullValue=Выберите задачу}" Style="{StaticResource Task.State.Title}"/>
@@ -57,7 +57,11 @@
   </Expander>
   <Border Grid.Row="4"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource Personal.Feedback}"><Style.Triggers><DataTrigger Binding="{Binding IsInbox}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style><StackPanel>
    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive"/>
-   <Button Content="Открыть задачу" Command="{Binding OpenSavedTaskCommand}" Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="PersonalOpenSavedTask"/>
+   <TextBlock Text="Текущие фильтры скрывают задачу. При открытии фильтры будут сброшены." TextWrapping="Wrap" Visibility="{Binding SavedTaskHiddenByFilters,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+   <WrapPanel>
+    <Button Content="Открыть" Command="{Binding OpenSavedTaskCommand}" Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" Margin="0,8,8,0" AutomationProperties.AutomationId="PersonalOpenSavedTask"/>
+    <Button Content="Создать ещё" Command="{Binding CreateAnotherTaskCommand}" Visibility="{Binding ShowCreateSuccess,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Style="{StaticResource Task.Button.Secondary}" Margin="0,8,0,0" AutomationProperties.AutomationId="PersonalCreateAnotherTask"/>
+   </WrapPanel>
   </StackPanel></Border>
 
   <Grid Grid.RowSpan="5" Background="#66000000" Visibility="{Binding HasEditor,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="50" Margin="-24" KeyboardNavigation.TabNavigation="Cycle" state:FormKeyboard.Save="{Binding SaveCommand}" AutomationProperties.Name="Редактор личной задачи">
@@ -68,8 +72,9 @@
       <StackPanel IsEnabled="{Binding DataContext.IsNotBusy,ElementName=PersonalTasks}">
        <TextBlock Visibility="{Binding Card.HasParent,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Text="{Binding Card.Parent.Name,StringFormat=Родитель: {0}}" Margin="0,12,0,0" TextWrapping="Wrap"/>
        <TextBlock Text="Название (обязательно)" Style="{StaticResource Personal.Label}"/><TextBox x:Name="TitleInput" Text="{Binding Title,UpdateSourceTrigger=PropertyChanged}" MaxLength="500" TabIndex="20" AutomationProperties.Name="Название задачи" AutomationProperties.HelpText="Обязательное поле, не более 500 символов" AutomationProperties.AutomationId="PersonalTaskTitle"/><TextBlock Text="Например: подготовить договор" Style="{StaticResource Task.State.Body}" FontSize="12"/><TextBlock Text="{Binding TitleError}" Style="{StaticResource Personal.Validation}"/>
-       <TextBlock Text="Запланировать на день (необязательно)" Style="{StaticResource Personal.Label}"/>
-       <TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" TabIndex="23" AutomationProperties.Name="День задачи" AutomationProperties.AutomationId="PersonalScheduledDate" AutomationProperties.HelpText="{Binding Card.DateHint}"/>
+       <TextBlock Text="Запланировать на" Style="{StaticResource Personal.Label}"/>
+       <TextBlock Text="Когда вы собираетесь заняться задачей." TextWrapping="Wrap" Style="{StaticResource Task.State.Body}" FontSize="12"/>
+       <TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" TabIndex="23" AutomationProperties.Name="Запланировать на" AutomationProperties.AutomationId="PersonalScheduledDate" AutomationProperties.HelpText="{Binding Card.DateHint}"/>
        <views:TaskDayPicker DataContext="{Binding Card}"/>
        <TextBlock Text="{Binding Card.DateHint}" Style="{StaticResource Task.State.Body}" FontSize="12"/>
        <TextBlock Text="Описание (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Description,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="180" VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="24" AutomationProperties.AutomationId="PersonalTaskDescription" AutomationProperties.Name="Описание задачи"/>
@@ -77,7 +82,7 @@
         <StackPanel><TextBlock Text="Приоритет (обычный по умолчанию)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text" TabIndex="21" AutomationProperties.Name="Приоритет"/></StackPanel>
         <StackPanel Grid.Column="2"><TextBlock Text="Проект (необязательно)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}" DisplayMemberPath="Name" TabIndex="22" AutomationProperties.AutomationId="PersonalTaskProject" AutomationProperties.Name="Проект задачи"/></StackPanel>
        </Grid>
-         <StackPanel><TextBlock Text="Срок (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding DeadlineText,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="Срок задачи" AutomationProperties.HelpText="ДД.ММ.ГГГГ или ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalDeadline"/><TextBlock Text="{Binding DeadlineError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
+         <StackPanel><TextBlock Text="Выполнить до" Style="{StaticResource Personal.Label}"/><TextBlock Text="К какому моменту задача должна быть готова." TextWrapping="Wrap" Style="{StaticResource Task.State.Body}" FontSize="12"/><TextBox Text="{Binding DeadlineText,UpdateSourceTrigger=PropertyChanged}" TabIndex="26" AutomationProperties.Name="Выполнить до" AutomationProperties.HelpText="ДД.ММ.ГГГГ или ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalDeadline"/><TextBlock Text="{Binding DeadlineError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
 <StackPanel Margin="0,8,0,12">
  <TextBlock Text="Напомнить"/>
  <ComboBox ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
@@ -90,7 +95,7 @@
          <StackPanel Grid.ColumnSpan="3"><TextBlock Text="Длительность, минут (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Duration,UpdateSourceTrigger=PropertyChanged}" TabIndex="27" AutomationProperties.Name="Длительность"/></StackPanel>
         </Grid>
         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-         <StackPanel><TextBlock Text="Начало (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding StartText,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" AutomationProperties.Name="Дата и время начала" AutomationProperties.HelpText="ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalStart"/><TextBlock Text="{Binding StartError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
+         <StackPanel><TextBlock Text="Точное время начала (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding StartText,UpdateSourceTrigger=PropertyChanged}" TabIndex="25" AutomationProperties.Name="Дата и время начала" AutomationProperties.HelpText="ДД.ММ.ГГГГ ЧЧ:ММ, местное время" AutomationProperties.AutomationId="PersonalStart"/><TextBlock Text="{Binding StartError}" Style="{StaticResource Personal.Validation}"/></StackPanel>
 
         </Grid>
         <TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ · местное время" Style="{StaticResource Task.State.Body}" FontSize="12" Margin="0,6,0,0"/>

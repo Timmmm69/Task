@@ -18,6 +18,26 @@ public sealed partial class TasksViewModelTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task ShellCreate_WaitsForTheFirstTaskLoadBeforeOpeningEditor()
+    {
+        var page = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage((_, _) => page.Task);
+        using var vm = new TasksViewModel(client, WriteCapabilities);
+        using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, vm);
+
+        var opening = shell.NewTaskCommand.ExecuteAsync();
+        Assert.False(opening.IsCompleted);
+        Assert.Equal("tasks", shell.SelectedSection!.Route);
+        Assert.Null(vm.Editor);
+
+        page.SetResult(SucceededPage([]));
+        Assert.True(await opening);
+        Assert.Equal(TaskEditorMode.Create, vm.Editor?.Mode);
+        Assert.Equal(1, client.PageCallCount);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task CreateWithoutDetails_ConfirmsTaskDestinationWithoutInferringInboxMembership()
     {
         var created = CreateTask("Записать мысль") with { DeadlineAtUtc = null };
@@ -25,6 +45,7 @@ public sealed partial class TasksViewModelTests
         using var vm = new TasksViewModel(client, WriteCapabilities);
         await vm.ActivateAsync(); await vm.NewTaskCommand.ExecuteAsync();
         vm.Editor!.Title = created.Title; await vm.SaveEditorCommand.ExecuteAsync();
+        Assert.Contains(created.Title, vm.Announcement);
         Assert.DoesNotContain("«Входящих»", vm.Announcement); Assert.Contains("«Задачи»", vm.Announcement);
     }
 
@@ -49,6 +70,7 @@ public sealed partial class TasksViewModelTests
         Assert.Null(vm.Editor);
         Assert.Contains("разделе «Задачи»", vm.Announcement);
         Assert.DoesNotContain(vm.Items, x => x.Id == created.Id);
+        Assert.True(vm.SavedTaskHiddenByFilters);
         Assert.True(vm.ShowSavedTaskAction);
         vm.UpdateCapabilities(["Task.Read"]);
         Assert.True(vm.OpenSavedTaskCommand.CanExecute(null));
@@ -58,6 +80,32 @@ public sealed partial class TasksViewModelTests
         Assert.False(vm.ShowSavedTaskAction);
         vm.UpdateSessionState(false);
         Assert.False(vm.OpenSavedTaskCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task CreateAnother_UsesLaunchProjectInsteadOfEditedValues()
+    {
+        var created = CreateTask("Готовая задача");
+        var client = new FakeTasksApiClient { CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, false) };
+        client.EnqueuePage(SucceededPage([]));
+        using var vm = new TasksViewModel(client, WriteCapabilities);
+        await vm.ActivateAsync();
+
+        var project = new TaskChoice(Guid.NewGuid(), "Исходный проект");
+        await vm.NewTaskCommand.ExecuteAsync(project);
+        Assert.Equal(project, vm.Editor!.Card.Project);
+        vm.Editor.Title = created.Title;
+        vm.Editor.Card.Date = "12.07.2030";
+        vm.Editor.DeadlineText = "15.07.2030";
+        vm.Editor.Card.SeedProject(Guid.NewGuid(), "Другой проект");
+        await vm.SaveEditorCommand.ExecuteAsync();
+
+        Assert.True(vm.CreateAnotherTaskCommand.CanExecute(null));
+        await vm.CreateAnotherTaskCommand.ExecuteAsync();
+        Assert.Equal(project, vm.Editor!.Card.Project);
+        Assert.True(string.IsNullOrEmpty(vm.Editor.Title));
+        Assert.True(string.IsNullOrEmpty(vm.Editor.Card.Date));
+        Assert.True(string.IsNullOrEmpty(vm.Editor.DeadlineText));
     }
 
     [Fact]
