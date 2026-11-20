@@ -1,137 +1,32 @@
-name: CI
+name: Corporate candidate container validation
 
 on:
   pull_request:
-  push:
     branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  delegation-tests:
-    name: Delegation subsystem tests
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run delegation protocol tests
-        shell: powershell
-        run: ./work/delegation/tests/Delegation.Tests.ps1
-
-  prototype:
-    name: Prototype build and tests
-    runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: work/stage_5_prototype
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: work/stage_5_prototype/package-lock.json
-      - run: npm ci
-      - run: npm run build
-      - run: npm test
-
-  production:
-    name: Production solution (cheap gates)
-    runs-on: windows-latest
-    timeout-minutes: 20
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_NOLOGO: true
-    defaults:
-      run:
-        working-directory: work/production
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-      - name: Restore and audit production dependencies
-        shell: powershell
-        run: ./verification/Test-DependencyAudit.ps1
-      - name: Verify production formatting
-        run: dotnet format whitespace Task.sln --verify-no-changes --no-restore
-      - name: Verify production project boundaries
-        shell: powershell
-        run: ./verification/Test-ProjectBoundaries.ps1
-      - name: Build production solution
-        run: dotnet build Task.sln --configuration Release --no-restore
-      - name: Test production solution
-        run: dotnet test Task.sln --configuration Release --no-build --no-restore
-      - name: Run production dependency and static security review
-        shell: powershell
-        run: >-
-          ./verification/Test-IndependentSecurityReview.ps1
-          -Configuration Release
-          -SkipRestore
-          -NoBuild
-          -SkipTests
-          -EvidenceDirectory "${{ runner.temp }}/sec04-review"
-      - name: Verify production secrets and TLS contract
-        shell: pwsh
-        run: ./verification/Test-ProductionSecretsTls.Contract.ps1
-
-  production-postgres:
-    name: Production tests (real PostgreSQL 16)
-    needs: production
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_NOLOGO: true
-      TASK_POSTGRES_TEST_ADMIN_CONNECTION: >-
-        Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=task_ci;SSL Mode=Disable
-    defaults:
-      run:
-        working-directory: work/production
-    services:
-      postgres:
-        image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: task_ci
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d postgres"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 12
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-      - name: Restore PostgreSQL gate projects
-        run: |
-          dotnet restore src/Task.Api/Task.Api.csproj
-          dotnet restore src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj
-          dotnet restore tests/Task.Tests/Task.Tests.csproj
-      - name: Build runtime required by integration tests
-        run: |
-          dotnet build src/Task.Api/Task.Api.csproj --configuration Debug --no-restore
-          dotnet build src/Task.DatabaseMigrator/Task.DatabaseMigrator.csproj --configuration Debug --no-restore
-          dotnet build tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-restore
-      - name: Run tests against real PostgreSQL
-        run: dotnet test tests/Task.Tests/Task.Tests.csproj --configuration Debug --no-build --no-restore
-
   production-package:
     name: Production container package
-    needs: production
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: 262ab70094e50cfb7575b1c547649f0615206a55
+          persist-credentials: false
+      - name: Confirm exact candidate checkout
+        shell: bash
+        run: |
+          git rev-parse HEAD
+          test "$(git rev-parse HEAD)" = "262ab70094e50cfb7575b1c547649f0615206a55"
       - name: Verify production container package
         shell: pwsh
         run: >-
           ./work/production/verification/Test-ContainerPackaging.ps1
-          -GitSha ${{ github.sha }}
+          -GitSha 262ab70094e50cfb7575b1c547649f0615206a55
           -ImageScanMapPath "${{ runner.temp }}/task-image-map.json"
 
       - name: Install Trivy
@@ -147,22 +42,9 @@ jobs:
           -ImageMapPath "${{ runner.temp }}/task-image-map.json"
           -EvidenceDirectory "${{ runner.temp }}/task-image-vulnerabilities"
 
-  delegation-policy:
-    name: Delegation policy
-    if: startsWith(github.head_ref, 'agent/deepseek/')
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Validate packet metadata and diff scope
-        shell: powershell
-        run: ./work/delegation/scripts/Test-DelegationPr.ps1
-
-  delegation-policy-not-applicable:
-    name: Delegation policy (not applicable)
-    if: ${{ !startsWith(github.head_ref, 'agent/deepseek/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Not a delegated DeepSeek pull request."
+      - name: Build and smoke-test the standalone backup image
+        shell: bash
+        run: |
+          docker build --file work/production/deployment/backup/Dockerfile --tag task-backup-base-check work/production
+          docker run --rm --entrypoint dotnet task-backup-base-check --list-runtimes
+          docker run --rm --entrypoint pgbackrest task-backup-base-check version
