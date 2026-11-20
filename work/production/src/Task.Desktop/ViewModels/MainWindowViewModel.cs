@@ -33,7 +33,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         WorkHubViewModel? workHub = null,
         DesktopConnectivityService? connectivity = null,
         InboxViewModel? inbox = null,
-        AdministrationViewModel? administration = null)
+        AdministrationViewModel? administration = null,
+        Infrastructure.ViewStateStore? viewState = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
@@ -64,8 +65,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             Calendar.CreateTaskAtFreeTime = async (slot, token) =>
             {
                 if (Tasks is null || Tasks.Editor is not null || !IsConnected || !Tasks.CanCreateFromShell) return;
-                await OpenNewTaskAsync(null, token);
-                if (Tasks.Editor is { Mode: TaskEditorMode.Create } draft) draft.SeedCalendarSlot(slot);
+                await OpenNewTaskAsync(slot, token);
             };
         }
         if (Projects is not null)
@@ -106,6 +106,18 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         };
 
         Palette = new(WorkHub, PaletteCommands, new System.ComponentModel.INotifyPropertyChanged?[] { this, Tasks, Inbox, Calendar, Projects }.OfType<System.ComponentModel.INotifyPropertyChanged>().ToArray());
+        if (viewState is not null) WorkPreferences = new(viewState, Sections, CanOpenStartupSection);
+        PlanTodayCommand = new(async (_, token) =>
+        {
+            if (Calendar is not { } calendar) return;
+            await calendar.GoTodayAsync(token);
+            SelectedSection = Sections.First(section => section.Route == "calendar");
+        }, _ => CanPlanToday);
+        OpenProjectsCommand = new((_, _) =>
+        {
+            SelectedSection = Sections.First(section => section.Route == "projects");
+            return global::System.Threading.Tasks.Task.CompletedTask;
+        }, _ => CanOpenProjects);
         SelectedSection = Sections[0];
         LogoutCommand = new AsyncCommand(LogoutAsync, _ => _logout is not null);
         LogoutCommand.ExecutionFailed += OnLogoutFailed;
@@ -115,6 +127,38 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(SessionMessage));
         };
     }
+
+    public WorkPreferencesViewModel? WorkPreferences { get; }
+    public AsyncCommand PlanTodayCommand { get; }
+    public AsyncCommand OpenProjectsCommand { get; }
+    public bool CanCreateFromToday => IsConnected && Tasks?.CanCreateFromShell == true;
+    public bool CanPlanToday => Calendar?.CanRead == true;
+    public bool CanOpenProjects => Projects?.CanRead == true;
+
+    internal void RestoreWorkPreferences()
+    {
+        if (_disposed || WorkPreferences is null) return;
+        WorkPreferences.Restore(Calendar);
+        if (SelectedSection == Sections[0] && WorkPreferences.StartupSection is { } section) SelectedSection = section;
+    }
+
+    internal void RefreshWorkPreferencesAccess()
+    {
+        WorkPreferences?.RefreshStartupSections();
+        OnPropertyChanged(nameof(CanPlanToday));
+        OnPropertyChanged(nameof(CanOpenProjects));
+        PlanTodayCommand.RaiseCanExecuteChanged();
+        OpenProjectsCommand.RaiseCanExecuteChanged();
+    }
+
+    private bool CanOpenStartupSection(NavigationSection section) => section.Route switch
+    {
+        "today" => Today is { } today && (today.CanRead || today.CanReadTasks),
+        "calendar" => CanPlanToday,
+        "inbox" or "tasks" => WorkHub?.HasCapability("Task.Read") == true,
+        "projects" => CanOpenProjects,
+        _ => false,
+    };
 
     /// <summary>Navigation sections shown in the left panel.</summary>
     public ObservableCollection<NavigationSection> Sections { get; }
@@ -174,8 +218,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (Tasks is null || !IsConnected) return;
         SelectedSection = Sections.First(section => section.Route == "tasks");
         await Tasks.ActivateAsync(cancellationToken).ConfigureAwait(true);
-        if (Tasks.NewTaskCommand.CanExecute(null))
-            await Tasks.NewTaskCommand.ExecuteAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
+        if (Tasks.NewTaskCommand.CanExecute(parameter))
+            await Tasks.NewTaskCommand.ExecuteAsync(parameter, cancellationToken).ConfigureAwait(true);
     }
     private global::System.Threading.Tasks.Task OpenTasksAsync(object? parameter, CancellationToken cancellationToken)
     {
@@ -426,6 +470,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         LogoutCommand.Dispose();
         AddProjectTaskCommand.Dispose();
+        WorkPreferences?.Dispose();
+        PlanTodayCommand.Dispose();
+        OpenProjectsCommand.Dispose();
         NewTaskCommand.Dispose();
         OpenTasksCommand.Dispose();
         Tasks?.Dispose();
@@ -451,6 +498,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(DataSourceStatus));
             OnPropertyChanged(nameof(ReadOnlyActionReason));
             NewTaskCommand.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(CanCreateFromToday));
         }
     }
 
@@ -537,6 +585,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ReadOnlyNotice));
         OnPropertyChanged(nameof(DataSourceStatus));
         OnPropertyChanged(nameof(ReadOnlyActionReason));
+        OnPropertyChanged(nameof(CanCreateFromToday));
         NewTaskCommand.RaiseCanExecuteChanged();
     }
 

@@ -190,6 +190,16 @@
 
             <ScrollViewer x:Name="SettingsScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
+                    <Border Style="{StaticResource Corporate.Management.Card}" Margin="0,0,10,10"
+                            DataContext="{Binding DataContext.WorkPreferences, RelativeSource={RelativeSource AncestorType=Window}}"
+                            Visibility="{Binding IsReady, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                        <StackPanel MaxWidth="300" HorizontalAlignment="Left">
+                            <TextBlock Text="Стартовый раздел" Style="{StaticResource Corporate.Management.Label}" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding StartupSections}" SelectedItem="{Binding StartupSection}" DisplayMemberPath="Title"
+                                      AutomationProperties.Name="Стартовый раздел"
+                                      AutomationProperties.AutomationId="StartupSection"/>
+                        </StackPanel>
+                    </Border>
                     <Border Style="{StaticResource Corporate.Management.InfoPanel}" Margin="0,0,10,10" Visibility="{Binding IsServerSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                         <StackPanel>
                             <TextBlock Text="Подключение" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level2"/>

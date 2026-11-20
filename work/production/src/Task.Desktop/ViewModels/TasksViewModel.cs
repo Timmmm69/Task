@@ -228,7 +228,8 @@ public sealed class TaskDetailsViewModel
         Title = task.Title;
         StatusText = TaskItemViewModel.LocalizeStatus(task.Status);
         PriorityText = TaskItemViewModel.LocalizePriority(task.Priority);
-        StartText = TaskItemViewModel.FormatDate(task.StartAtUtc, "Не указано");
+        StartText = task.StartAtUtc.HasValue ? TaskItemViewModel.FormatDate(task.StartAtUtc, "Без даты")
+            : task.Card?.ScheduledDate?.ToString("dd.MM.yyyy") ?? "Без даты";
         DeadlineText = task.Card?.DeadlineDate?.ToString("dd.MM.yyyy") ?? TaskItemViewModel.FormatDate(task.DeadlineAtUtc, "Без срока");
         CreatedText = TaskItemViewModel.FormatDate(task.CreatedAtUtc, "Не указано");
         UpdatedText = TaskItemViewModel.FormatDate(task.UpdatedAtUtc, "Не указано");
@@ -329,6 +330,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private string _transitionReason = string.Empty;
     private string? _announcement;
     private Guid? _savedTaskId;
+    private bool _showCreateSuccess;
+    private bool _savedTaskOpened;
+    private Action<TaskEditorViewModel>? _createContext, _savedCreateContext;
     private readonly Func<bool> _completionMotionEnabled;
     private readonly Func<TimeSpan, global::System.Threading.Tasks.Task> _completionDelay;
 
@@ -349,15 +353,34 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             async (_, token) => await RefreshAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy);
         OpenSavedTaskCommand = new AsyncCommand(
-            async (_, _) => { if (_savedTaskId is { } id) await OpenByIdAsync(id).ConfigureAwait(true); },
-            _ => _savedTaskId.HasValue && IsActive && _sessionAllowsWrites && _networkAvailable
+            async (_, _) =>
+            {
+                if (_savedTaskId is not { } id) return;
+                await OpenByIdAsync(id, keepFiltersIfVisible: true).ConfigureAwait(true);
+                if (SelectedItem?.Id != id) return;
+                _savedTaskOpened = true;
+                NotifySavedTask();
+                RowDetailsRequested?.Invoke();
+            },
+            _ => ShowSavedTaskAction && IsActive && _sessionAllowsWrites && _networkAvailable
                 && _capabilities.Contains("Task.Read") && Editor is null && !IsBusy && !IsMutationBusy);
         LoadMoreCommand = new AsyncCommand(
             async (_, token) => await LoadNextPageAsync(token).ConfigureAwait(true),
             _ => IsActive && !IsBusy && HasNextPage);
         NewTaskCommand = new AsyncCommand(
-            async (p, token) => { OpenCreateEditor(); if (p is TaskChoice { Id: { } id } project) Editor?.Card.SeedProject(id, project.Name); await LoadEditorOptionsAsync(token); },
+            async (p, token) =>
+            {
+                Action<TaskEditorViewModel>? context = p switch
+                {
+                    TaskChoice { Id: { } id } project => draft => draft.Card.SeedProject(id, project.Name),
+                    Calendar.FreeTimeSlot slot => draft => draft.SeedCalendarSlot(slot),
+                    _ => null,
+                };
+                await OpenNewDraftAsync(context, token);
+            },
             _ => CanOpenCreateEditor);
+        CreateAnotherTaskCommand = new AsyncCommand((_, token) => OpenNewDraftAsync(_savedCreateContext, token),
+            _ => ShowCreateSuccess && CanOpenCreateEditor);
         EditTaskCommand = new AsyncCommand(
             async (_, token) => { OpenEditEditor(); await LoadEditorOptionsAsync(token); },
             _ => CanEdit && CanOpenTaskAction);
@@ -373,9 +396,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         AddSubtaskCommand = new(async (_, token) =>
         {
             if (SelectedDetails is not { } parent) return;
-            OpenCreateEditor();
-            Editor?.Card.SeedParent(parent.Id, parent.Source.Title);
-            await LoadEditorOptionsAsync(token);
+            await OpenNewDraftAsync(draft => draft.Card.SeedParent(parent.Id, parent.Source.Title), token);
         }, _ => CanAddSubtask);
         CreateSimilarTaskCommand = new AsyncCommand(OpenSimilarEditorAsync, _ => CanCreateSimilar);
         LoadOptionsCommand = new AsyncCommand(async (_, token) => await LoadEditorOptionsAsync(token), _ => Editor is not null && !IsMutationBusy);
@@ -488,6 +509,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         // Changing a local filter must not initiate a detail request for another row.
         ApplyFilters(SelectedItem?.Id, localOnly: true);
         NotifyFilterState();
+        OnPropertyChanged(nameof(SavedTaskHiddenByFilters));
     }
 
     public bool HasActiveFilters => SelectedStatusFilter.HasValue || !SelectedProjectFilter.IsAll
@@ -671,9 +693,30 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     public string? Announcement
     {
         get => _announcement;
-        private set { _savedTaskId = null; SetProperty(ref _announcement, value); OnPropertyChanged(nameof(ShowSavedTaskAction)); OpenSavedTaskCommand.RaiseCanExecuteChanged(); }
+        private set
+        {
+            _savedTaskId = null;
+            _savedTaskOpened = false;
+            _showCreateSuccess = false;
+            _savedCreateContext = null;
+            SetProperty(ref _announcement, value);
+            NotifySavedTask();
+        }
     }
-    public bool ShowSavedTaskAction => _savedTaskId.HasValue && SelectedItem?.Id != _savedTaskId;
+    public bool ShowCreateSuccess => _showCreateSuccess;
+    public bool ShowSavedTaskAction => _savedTaskId.HasValue && !_savedTaskOpened && _capabilities.Contains("Task.Read")
+        && (ShowCreateSuccess || SelectedItem?.Id != _savedTaskId);
+    public bool SavedTaskHiddenByFilters => ShowCreateSuccess && HasActiveFilters && _savedTaskId is { } id
+        && Items.All(row => row.Id != id);
+
+    private void NotifySavedTask()
+    {
+        OnPropertyChanged(nameof(ShowCreateSuccess));
+        OnPropertyChanged(nameof(ShowSavedTaskAction));
+        OnPropertyChanged(nameof(SavedTaskHiddenByFilters));
+        OpenSavedTaskCommand.RaiseCanExecuteChanged();
+        CreateAnotherTaskCommand.RaiseCanExecuteChanged();
+    }
 
     public AsyncCommand LoadOptionsCommand { get; }
 
@@ -830,6 +873,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand OpenSavedTaskCommand { get; }
+    public AsyncCommand CreateAnotherTaskCommand { get; }
 
     public AsyncCommand LoadMoreCommand { get; }
     public AsyncCommand NewTaskCommand { get; }
@@ -923,12 +967,15 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         NotifyMutationState();
     }
 
+    private global::System.Threading.Tasks.Task _initialLoadTask = global::System.Threading.Tasks.Task.CompletedTask;
+
     public async global::System.Threading.Tasks.Task ActivateAsync(
         CancellationToken cancellationToken = default)
     {
         ThrowIfDisposed();
         if (IsActive)
         {
+            await _initialLoadTask.WaitAsync(cancellationToken).ConfigureAwait(true);
             return;
         }
 
@@ -944,10 +991,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken,
             _activationCancellation.Token);
-        await FetchFirstPageAsync(true, generation, linkedCancellation.Token).ConfigureAwait(true);
+        _initialLoadTask = FetchFirstPageAsync(true, generation, linkedCancellation.Token);
+        await _initialLoadTask.ConfigureAwait(true);
     }
 
-    public async global::System.Threading.Tasks.Task OpenByIdAsync(Guid id)
+    public async global::System.Threading.Tasks.Task OpenByIdAsync(Guid id, bool keepFiltersIfVisible = false)
     {
         if (!IsActive || !_sessionAllowsWrites || !_capabilities.Contains("Task.Read")) return;
         if (Editor is not null)
@@ -966,7 +1014,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded success)
             {
                 _allTasks = _allTasks.Where(task => task.Id != id).Append(success.Value).ToArray();
-                ResetFilters();
+                if (!keepFiltersIfVisible || Items.All(item => item.Id != id)) ResetFilters();
                 UpdateProjectFilters();
                 ApplyFilters(id);
                 SetLoadedState();
@@ -1004,6 +1052,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         _activationCancellation?.Cancel();
         _activationCancellation?.Dispose();
         _activationCancellation = null;
+        _initialLoadTask = global::System.Threading.Tasks.Task.CompletedTask;
         CancelDetailsLoad();
         Interlocked.Increment(ref _mutationGeneration);
         _mutationCancellation?.Cancel();
@@ -1099,6 +1148,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         Deactivate();
         RefreshCommand.Dispose();
         OpenSavedTaskCommand.Dispose();
+        CreateAnotherTaskCommand.Dispose();
         LoadMoreCommand.Dispose();
         OpenRowCommand.Dispose(); AddSubtaskCommand.Dispose();
         NewTaskCommand.Dispose();
@@ -1313,12 +1363,16 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private void OpenCreateEditor()
+    private async global::System.Threading.Tasks.Task OpenNewDraftAsync(Action<TaskEditorViewModel>? context, CancellationToken token)
     {
         if (!CanOpenCreateEditor) return;
         CloseEditor();
-        Editor = new TaskEditorViewModel(TaskEditorMode.Create);
+        var editor = new TaskEditorViewModel(TaskEditorMode.Create);
+        context?.Invoke(editor);
+        _createContext = context;
+        Editor = editor;
         Announcement = "Открыта форма создания задачи.";
+        await LoadEditorOptionsAsync(token);
     }
 
     public AsyncCommand CreateSimilarTaskCommand { get; }
@@ -1382,6 +1436,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         _mutationCancellation = null;
         _pendingEditorCommand = null;
         _pendingEditorRevision = -1;
+        _createContext = null;
         Editor = null;
     }
 
@@ -1482,10 +1537,14 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 ApplyServerTask(success.Value);
                 _pendingEditorCommand = null;
                 Announcement = editor.Mode == TaskEditorMode.Create
-                    ? "Задача создана в разделе «Задачи»."
+                    ? $"Задача «{success.Value.Title}» создана в разделе «Задачи»."
                     : "Изменения сохранены. Задача доступна в разделе «Задачи».";
                 _savedTaskId = success.Value.Id;
+                _showCreateSuccess = editor.Mode == TaskEditorMode.Create;
+                _savedCreateContext = _showCreateSuccess ? _createContext : null;
+                _createContext = null;
                 Editor = null;
+                NotifySavedTask();
                 break;
             case DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation:
                 editor.ApplyServerValidation(validation.Message, validation.FieldErrors);
@@ -1816,7 +1875,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(WriteAccessText));
         OnPropertyChanged(nameof(CreateActionHint));
         OnPropertyChanged(nameof(ShowSavedTaskAction));
+        OnPropertyChanged(nameof(SavedTaskHiddenByFilters));
         OpenSavedTaskCommand?.RaiseCanExecuteChanged();
+        CreateAnotherTaskCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(CanEdit));
         OnPropertyChanged(nameof(CanStart));
         OnPropertyChanged(nameof(CanReturnForRework));

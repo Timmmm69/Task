@@ -12,10 +12,28 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     private bool _backgroundAvailable;
     private Guid? _requestedTaskId;
     public bool BackgroundAvailable { get => _backgroundAvailable; internal set => SetProperty(ref _backgroundAvailable, value); }
-    public PersonalShellViewModel(PersonalApplicationModel model)
+    public PersonalShellViewModel(PersonalApplicationModel model, Infrastructure.ViewStateStore? viewState = null)
     {
         _model = model;
         AddProjectTaskCommand = new(async (_, _) => await OpenProjectTaskAsync(), _ => CanAddProjectTask);
+        if (viewState is not null) WorkPreferences = new(viewState, Sections, section => section.Route switch
+        {
+            "today" or "inbox" or "tasks" => Tasks is not null,
+            "calendar" => CanPlanToday,
+            "projects" => CanOpenProjects,
+            _ => false,
+        });
+        PlanTodayCommand = new(async (_, token) =>
+        {
+            if (Calendar is not { } calendar) return;
+            SelectedSection = Sections.First(section => section.Route == "calendar");
+            await calendar.GoTodayAsync(token);
+        }, _ => CanNavigate && CanPlanToday);
+        OpenProjectsCommand = new((_, _) =>
+        {
+            SelectedSection = Sections.First(section => section.Route == "projects");
+            return System.Threading.Tasks.Task.CompletedTask;
+        }, _ => CanNavigate && CanOpenProjects);
         _selectedSection = Sections[0];
         Palette = new(model.Workspace?.Hub, PaletteCommands, this);
         foreach (var child in Children) child.PropertyChanged += OnChildChanged;
@@ -24,6 +42,21 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         if (model.Planning is { } planning) planning.OpenObjectRequested += OpenObject;
         ApplyRoute();
     }
+    public WorkPreferencesViewModel? WorkPreferences { get; }
+    public AsyncCommand? NewTaskCommand => Tasks?.NewCommand;
+    public AsyncCommand PlanTodayCommand { get; }
+    public AsyncCommand OpenProjectsCommand { get; }
+    public bool CanCreateFromToday => Tasks is not null;
+    public bool CanPlanToday => Calendar?.CanRead == true;
+    public bool CanOpenProjects => Planning is not null;
+
+    internal void RestoreWorkPreferences()
+    {
+        if (WorkPreferences is null) return;
+        WorkPreferences.Restore(Calendar);
+        if (SelectedSection == Sections[0] && WorkPreferences.StartupSection is { } section) SelectedSection = section;
+    }
+
     public PersonalTasksViewModel? Tasks => _model.Tasks;
     public PersonalPlanningViewModel? Planning => _model.Planning;
     public CalendarViewModel? Calendar => _model.Calendar;
@@ -49,6 +82,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         set
         {
             if (!CanNavigate || !Sections.Contains(value) || ReferenceEquals(_selectedSection, value)) return;
+            if (IsCalendar) Calendar?.ClearCreationDay();
             _selectedSection = value;
             ApplyRoute();
             foreach (var name in new[] { nameof(IsTasks), nameof(IsProjects), nameof(IsCalendar), nameof(IsNotifications), nameof(IsWorkspace), nameof(IsSettings) }) OnPropertyChanged(name);
@@ -66,6 +100,8 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     private IEnumerable<ViewModelBase> Children => new ViewModelBase?[] { Tasks, Planning, Calendar, Calendar?.Recurrence, Workspace, Workspace?.Hub }.OfType<ViewModelBase>();
     private void OnChildChanged(object? sender, PropertyChangedEventArgs e)
     {
+        PlanTodayCommand.RaiseCanExecuteChanged();
+        OpenProjectsCommand.RaiseCanExecuteChanged();
         AddProjectTaskCommand.RaiseCanExecuteChanged(); OnPropertyChanged(nameof(ProjectTaskActionHint));
         if (ReferenceEquals(sender, Tasks) && e.PropertyName == nameof(PersonalTasksViewModel.Items)) SelectRequestedTask();
         OnPropertyChanged(nameof(CanNavigate)); OnPropertyChanged(nameof(NavigationHint));
@@ -94,9 +130,14 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     internal void OpenTasks(Guid? id)
     {
         if (!CanNavigate) return;
-        _requestedTaskId = id;
+        var isSavedTask = id is { } savedId && Tasks?.IsLastSavedTask(savedId) == true;
+        _requestedTaskId = null;
         SelectedSection = Sections.First(s => s.Route == "tasks");
-        SelectRequestedTask();
+        if (id is { } taskId && (!isSavedTask || Tasks?.SelectSavedTask(taskId) != true))
+        {
+            _requestedTaskId = id;
+            SelectRequestedTask();
+        }
     }
     private void SelectRequestedTask()
     {
@@ -107,6 +148,9 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     }
     public void Dispose()
     {
+        WorkPreferences?.Dispose();
+        PlanTodayCommand.Dispose();
+        OpenProjectsCommand.Dispose();
         AddProjectTaskCommand.Dispose();
         Palette.Dispose();
         foreach (var child in Children) child.PropertyChanged -= OnChildChanged;

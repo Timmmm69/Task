@@ -35,8 +35,11 @@ internal static class ViewStateKeys
         "task/v1/comments", "task/v1/history", "task-editor/v1/planning",
         "personal-tasks/v1/details", "personal-tasks/v1/planning", "personal-projects/v1/storage",
         "personal-workspace/v1/actions", "personal-workspace/v1/links", "personal-workspace/v1/backup",
-        "personal-reminders/v1/create"
+        "personal-reminders/v1/create", TodayHelpDismissed
     ];
+    internal static readonly HashSet<string> StartupRoutes = ["today", "inbox", "calendar", "tasks", "projects"];
+    internal const string TodayHelpDismissed = "today/v1/help-dismissed";
+
     internal static bool IsWidth(string key) => LinkSurfaces.Any(surface => Columns.Any(column => key == surface + "/" + column));
 }
 
@@ -52,6 +55,8 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
     private Dictionary<string, double> _widths = [];
     private Dictionary<string, bool> _sections = [];
     private Dictionary<string, ViewSort> _sorts = [];
+    private string? _startupRoute;
+    private ViewModels.CalendarViewMode? _calendarMode;
     private long _revision;
     private long _written;
     private bool _disposed;
@@ -100,6 +105,18 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
         if (ViewStateKeys.LinkSurfaces.Contains(surface) && ViewStateKeys.SortFields.Contains(sort.Field))
             Change(() => _sorts[surface] = sort);
     }
+    internal string? StartupRoute { get { lock (_sync) return _startupRoute; } }
+    internal void SetStartupRoute(string route)
+    {
+        if (ViewStateKeys.StartupRoutes.Contains(route)) Change(() => _startupRoute = route);
+    }
+
+    internal ViewModels.CalendarViewMode? CalendarMode { get { lock (_sync) return _calendarMode; } }
+    internal void SetCalendarMode(ViewModels.CalendarViewMode mode)
+    {
+        if (Enum.IsDefined(mode)) Change(() => _calendarMode = mode);
+    }
+
     private void Change(Action change)
     {
         lock (_sync)
@@ -137,7 +154,11 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
         {
             if (_revision == _written) return;
             revision = _revision;
-            bytes = JsonSerializer.SerializeToUtf8Bytes(new { version = 1, widths = _widths, sections = _sections, sorts = _sorts });
+            bytes = JsonSerializer.SerializeToUtf8Bytes(new
+            {
+                version = 1, widths = _widths, sections = _sections, sorts = _sorts,
+                startupRoute = _startupRoute, calendarMode = _calendarMode?.ToString()
+            });
         }
         var temporary = FilePath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -161,6 +182,18 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
             using var document = JsonDocument.Parse(stream, new JsonDocumentOptions { MaxDepth = 8 });
             var root = document.RootElement;
             if (root.GetProperty("version").GetInt32() != 1) throw new JsonException();
+            if (root.TryGetProperty("startupRoute", out var route) && route.ValueKind == JsonValueKind.String
+                && route.GetString() is { } routeName && ViewStateKeys.StartupRoutes.Contains(routeName))
+                _startupRoute = routeName;
+            if (root.TryGetProperty("calendarMode", out var mode) && mode.ValueKind == JsonValueKind.String)
+                _calendarMode = mode.GetString() switch
+                {
+                    "Day" => ViewModels.CalendarViewMode.Day,
+                    "Week" => ViewModels.CalendarViewMode.Week,
+                    "Month" => ViewModels.CalendarViewMode.Month,
+                    _ => null,
+                };
+
             foreach (var item in root.GetProperty("widths").EnumerateObject())
             {
                 if (!ViewStateKeys.IsWidth(item.Name)) continue;
@@ -188,7 +221,7 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or KeyNotFoundException or FormatException or IOException or UnauthorizedAccessException)
         {
-            _widths.Clear(); _sections.Clear(); _sorts.Clear();
+            Clear();
             Report("unreadable preference discarded; using defaults");
             try { File.Delete(FilePath); } catch (Exception failure) when (failure is IOException or UnauthorizedAccessException) { }
         }
@@ -197,9 +230,15 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
     public async System.Threading.Tasks.Task ResetAsync()
     {
         await Ready.ConfigureAwait(false);
-        Change(() => { _widths.Clear(); _sections.Clear(); _sorts.Clear(); });
+        Change(Clear);
         await FlushAsync().ConfigureAwait(false);
     }
+    private void Clear()
+    {
+        _widths.Clear(); _sections.Clear(); _sorts.Clear();
+        _startupRoute = null; _calendarMode = null;
+    }
+
     public async ValueTask DisposeAsync()
     {
         System.Threading.Tasks.Task? worker;

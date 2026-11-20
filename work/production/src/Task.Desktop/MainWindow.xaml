@@ -1153,9 +1153,16 @@
                     <StackPanel>
                         <TextBlock Text="{Binding Announcement}" TextWrapping="Wrap" AutomationProperties.Name="Уведомление задач"
                                    AutomationProperties.AutomationId="TasksAnnouncement" AutomationProperties.LiveSetting="Assertive" />
-                        <Button Content="Открыть задачу" Command="{Binding OpenSavedTaskCommand}" Style="{StaticResource Task.Button.Secondary}"
-                                Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                                HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.AutomationId="TasksOpenSavedTask" />
+                        <TextBlock Text="Текущие фильтры скрывают задачу. При открытии фильтры будут сброшены."
+                                   TextWrapping="Wrap" Visibility="{Binding SavedTaskHiddenByFilters,Converter={StaticResource Task.BooleanToVisibilityConverter}}" />
+                        <WrapPanel>
+                            <Button Content="Открыть" Command="{Binding OpenSavedTaskCommand}" Style="{StaticResource Task.Button.Secondary}"
+                                    Visibility="{Binding ShowSavedTaskAction,Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                    Margin="0,8,8,0" AutomationProperties.AutomationId="TasksOpenSavedTask" />
+                            <Button Content="Создать ещё" Command="{Binding CreateAnotherTaskCommand}" Style="{StaticResource Task.Button.Secondary}"
+                                    Visibility="{Binding ShowCreateSuccess,Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                    Margin="0,8,0,0" AutomationProperties.AutomationId="TasksCreateAnotherTask" />
+                        </WrapPanel>
                     </StackPanel>
                 </Border>
 
@@ -1224,16 +1231,17 @@
                             </StackPanel></Border>
                             <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
                             <TextBlock Text="Сроки и напоминание" Style="{StaticResource Task.Card.Heading}" />
-                            <TextBlock Text="Запланировать на день (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
+                            <TextBlock Text="Запланировать на" FontWeight="SemiBold" Margin="0,14,0,5" />
+                            <TextBlock Text="Когда вы собираетесь заняться задачей." TextWrapping="Wrap" />
                             <TextBox Text="{Binding Card.Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="22"
-                                     AutomationProperties.Name="День задачи" state:FormKeyboard.Field="Date" AutomationProperties.AutomationId="TaskScheduledDateTextBox"
+                                     AutomationProperties.Name="Запланировать на" state:FormKeyboard.Field="Date" AutomationProperties.AutomationId="TaskScheduledDateTextBox"
                                      AutomationProperties.HelpText="{Binding Card.DateHint}" />
                             <views:TaskDayPicker DataContext="{Binding Card}"/>
                             <TextBlock Text="{Binding Card.DateHint}" TextWrapping="Wrap" Margin="0,4,0,0"
                                        Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}" />
 
-                            <TextBlock Text="Начало (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
+                            <TextBlock Text="Точное время начала (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
                             <TextBox Text="{Binding StartText, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="23"
                                      AutomationProperties.Name="Дата и время начала"
@@ -1244,13 +1252,13 @@
                                        TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.Name="Ошибка времени начала"
                                        AutomationProperties.LiveSetting="Assertive" />
 
-                            <TextBlock Text="Срок (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
+                            <TextBlock Text="Выполнить до" FontWeight="SemiBold" Margin="0,14,0,5" />
                             <TextBox Text="{Binding DeadlineText, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="24"
-                                     AutomationProperties.Name="Срок задачи"
+                                     AutomationProperties.Name="Выполнить до"
                                      state:FormKeyboard.Field="DeadlineText" AutomationProperties.AutomationId="TaskDeadlineTextBox"
                                      AutomationProperties.HelpText="Дата или локальная дата и время; срок не может быть раньше начала" />
-                            <TextBlock Text="ДД.ММ.ГГГГ или ДД.ММ.ГГГГ ЧЧ:ММ · местное время" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+                            <TextBlock Text="К какому моменту задача должна быть готова. ДД.ММ.ГГГГ или ДД.ММ.ГГГГ ЧЧ:ММ · местное время" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                             <TextBlock Text="{Binding DeadlineError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
                                        TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.Name="Ошибка срока задачи"
                                        AutomationProperties.LiveSetting="Assertive" />

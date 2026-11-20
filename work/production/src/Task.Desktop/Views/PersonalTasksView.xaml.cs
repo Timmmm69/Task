@@ -11,10 +11,23 @@ public partial class PersonalTasksView : UserControl
         InitializeComponent();
         DataContextChanged += (_, e) =>
         {
-            if (e.OldValue is PersonalTasksViewModel old) old.PropertyChanged -= OnModelChanged;
-            if (e.NewValue is PersonalTasksViewModel model) model.PropertyChanged += OnModelChanged;
+            if (e.OldValue is PersonalTasksViewModel old)
+            {
+                old.PropertyChanged -= OnModelChanged;
+                old.SavedTaskOpened -= OnSavedTaskOpened;
+            }
+            if (e.NewValue is PersonalTasksViewModel model)
+            {
+                model.PropertyChanged += OnModelChanged;
+                model.SavedTaskOpened += OnSavedTaskOpened;
+            }
         };
     }
+    private void OnSavedTaskOpened() => Dispatcher.BeginInvoke(() =>
+    {
+        if (TaskBrowserSurface.IsVisible) TaskBrowserSurface.FocusDetails();
+    });
+
     private bool _focusListAfterEditor;
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e)
     {

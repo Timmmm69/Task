@@ -31,18 +31,17 @@ public partial class PersonalWindow : Window
     private readonly bool _enableWindowsIntegrations;
     public PersonalWindow(PersonalApplicationModel model) : this(model, true) { }
     // Isolated demo hosts use the same shell without touching Windows integrations.
-    public PersonalWindow(PersonalApplicationModel model, bool enableWindowsIntegrations)
+    public PersonalWindow(PersonalApplicationModel model, bool enableWindowsIntegrations, Infrastructure.ViewStateStore? viewState = null)
     {
         _enableWindowsIntegrations = enableWindowsIntegrations;
         _model = model;
-        _shell = new(model);
+        _shell = new(model, viewState);
         if (model.Calendar is { } calendar)
             calendar.CreateTaskAtFreeTime = async (slot, token) =>
             {
                 if (model.Tasks is not { } tasks || tasks.Editor is not null || !tasks.NewCommand.CanExecute(null)) return;
                 Navigate("tasks");
-                await tasks.NewCommand.ExecuteAsync(cancellationToken: token);
-                tasks.Editor?.SeedCalendarSlot(slot);
+                await tasks.NewCommand.ExecuteAsync(slot, token);
             };
         InitializeComponent();
         AddHandler(Views.PersonalCalendarView.OpenTaskRequestedEvent, new RoutedEventHandler((_, _) =>
@@ -65,6 +64,12 @@ public partial class PersonalWindow : Window
         {
             try
             {
+                if (viewState is not null)
+                {
+                    await viewState.Ready;
+                    if (_closed || model.IsDisposed) return;
+                    _shell.RestoreWorkPreferences();
+                }
                 if (model.Tasks is { } tasks) await tasks.RefreshAsync();
                 if (_closed || model.IsDisposed) return;
                 if (model.Calendar is { } calendar) await calendar.ActivateAsync();

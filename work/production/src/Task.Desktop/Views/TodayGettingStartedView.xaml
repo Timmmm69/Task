@@ -1,0 +1,30 @@
+<UserControl x:Class="Task.Desktop.Views.TodayGettingStartedView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource Task.Brush.Border.Default}"
+            Margin="0,6,0,0" Padding="0,4,0,0"
+            Visibility="{Binding WorkPreferences.ShowTodayHelp, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+            AutomationProperties.Name="Первые шаги" AutomationProperties.AutomationId="TodayGettingStarted">
+        <StackPanel>
+            <DockPanel LastChildFill="True">
+                <Button DockPanel.Dock="Right" Content="×" ToolTip="Закрыть подсказку" MinWidth="28" Padding="3,0"
+                        Command="{Binding WorkPreferences.DismissTodayHelpCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        AutomationProperties.Name="Закрыть подсказку" AutomationProperties.AutomationId="TodayDismissHelp" />
+                <TextBlock Text="Первые шаги" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0" />
+            </DockPanel>
+            <WrapPanel Margin="0,4,0,0">
+                <Button Content="Создать задачу" Command="{Binding NewTaskCommand}" Style="{StaticResource Task.Button.Primary}"
+                        Visibility="{Binding CanCreateFromToday, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                        Margin="0,0,6,6" AutomationProperties.AutomationId="TodayHelpCreateTask" />
+                <Button Content="Запланировать день" Command="{Binding PlanTodayCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        Visibility="{Binding CanPlanToday, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                        Margin="0,0,6,6" AutomationProperties.AutomationId="TodayHelpPlanDay" />
+                <Button Content="Открыть проекты" Command="{Binding OpenProjectsCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        Visibility="{Binding CanOpenProjects, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                        Margin="0,0,0,6" AutomationProperties.AutomationId="TodayHelpOpenProjects" />
+            </WrapPanel>
+            <TextBlock Text="«Запланировать на» — когда вы собираетесь заняться задачей. «Выполнить до» — к какому моменту она должна быть готова."
+                       TextWrapping="Wrap" Margin="0,0,0,4" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
+        </StackPanel>
+    </Border>
+</UserControl>

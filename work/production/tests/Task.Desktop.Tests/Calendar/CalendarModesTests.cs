@@ -36,6 +36,29 @@ public sealed class CalendarModesTests
         Assert.Equal(CalendarViewMode.Month, vm.ViewMode);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async global::System.Threading.Tasks.Task NewEvent_UsesExplicitDateAndDiscardsDraftChanges(bool personal)
+    {
+        using var vm = new CalendarViewModel(new EmptyCalendarClient(), ["Calendar.Read", "CalendarEvent.Create"],
+            TimeZoneInfo.Utc, personal: personal);
+        await vm.ActivateAsync();
+        await vm.NewEventCommand.ExecuteAsync();
+        Assert.Equal(DateTime.Today, vm.Editor!.Date);
+        await vm.CancelEditorCommand.ExecuteAsync();
+
+        vm.SelectedDate = new DateTime(2030, 7, 12);
+        await vm.NewEventCommand.ExecuteAsync();
+        Assert.Equal(vm.SelectedDate, vm.Editor!.Date);
+        Assert.Equal(vm.SelectedDate, vm.Editor.EndDate);
+        vm.Editor.Date = new DateTime(2030, 7, 13);
+        await vm.CancelEditorCommand.ExecuteAsync();
+        vm.SelectedDate = new DateTime(2030, 7, 15);
+        await vm.NewEventCommand.ExecuteAsync();
+        Assert.Equal(vm.SelectedDate, vm.Editor!.Date);
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task SelectingVisibleDate_KeepsWeekAndAnchorsDayMode()
     {

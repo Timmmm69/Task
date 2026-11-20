@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using Task.Desktop.Infrastructure;
+using Task.Desktop.ViewModels;
 
 namespace Task.Desktop.Tests.ViewStateTests;
 
@@ -33,6 +34,48 @@ public sealed class ViewStateStoreTests : IDisposable
         Assert.True(restarted.Expanded("projects/v1/tasks"));
         Assert.False(restarted.Expanded("projects/v1/overview"));
         Assert.Equal(new ViewSort("Title", true), restarted.Sort("work-links/v1"));
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task WorkPreferences_RestartIndependentlyAndSkipUnavailableStartupRoute()
+    {
+        await using (var corporate = Create())
+        {
+            await corporate.Ready;
+            corporate.SetStartupRoute("projects");
+            corporate.SetCalendarMode(CalendarViewMode.Month);
+            corporate.SetExpanded("main/v1/inspector", true);
+            corporate.SetExpanded(ViewStateKeys.TodayHelpDismissed, true);
+        }
+
+        await using (var personal = new ViewStateStore(_root, "personal", _user, "device-a"))
+        {
+            await personal.Ready;
+            Assert.Null(personal.StartupRoute);
+            Assert.Null(personal.CalendarMode);
+            Assert.Null(personal.Expanded("main/v1/inspector"));
+            Assert.Null(personal.Expanded(ViewStateKeys.TodayHelpDismissed));
+            personal.SetStartupRoute("calendar");
+            personal.SetCalendarMode(CalendarViewMode.Day);
+            personal.SetExpanded("personal-tasks/v1/details", false);
+        }
+
+        await using var restarted = Create();
+        await using var restartedPersonal = new ViewStateStore(_root, "personal", _user, "device-a");
+        await System.Threading.Tasks.Task.WhenAll(restarted.Ready, restartedPersonal.Ready);
+        Assert.Equal("projects", restarted.StartupRoute);
+        Assert.Equal(CalendarViewMode.Month, restarted.CalendarMode);
+        Assert.True(restarted.Expanded("main/v1/inspector"));
+        Assert.Equal("calendar", restartedPersonal.StartupRoute);
+        Assert.Equal(CalendarViewMode.Day, restartedPersonal.CalendarMode);
+        Assert.False(restartedPersonal.Expanded("personal-tasks/v1/details"));
+
+        NavigationSection[] sections = [new("today", "Сегодня", "", "", ""), new("projects", "Проекты", "", "", "")];
+        using var preferences = new WorkPreferencesViewModel(restarted, sections, section => section.Route == "today");
+        preferences.Restore(null);
+        Assert.Equal("today", preferences.StartupSection?.Route);
+        Assert.False(preferences.ShowTodayHelp);
+        Assert.Equal("projects", restarted.StartupRoute);
     }
 
     [Theory]
