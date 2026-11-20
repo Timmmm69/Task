@@ -240,10 +240,10 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
     public bool CanUpdate => CanWrite("Project.Update");
     public bool CanArchive => CanWrite("Project.Archive");
     public bool CanManageMembers => CanWrite("Project.ManageMembers");
-    public string AccessText => !CanRead ? "Нет права Project.Read."
-        : !_sessionAvailable ? "Сессия завершена."
+    public string? AccessText => !_sessionAvailable ? "Сессия завершена."
+        : !CanRead ? null
         : !_networkAvailable ? "Сервер недоступен · подтверждённые данные только для просмотра."
-        : CanUpdate ? "Проекты доступны для изменения." : "Проекты доступны только для просмотра.";
+        : CanCreate || CanUpdate || CanArchive || CanManageMembers ? null : "Проекты доступны только для просмотра.";
     public string LastSuccessfulRefreshText => _lastRefresh is null ? "Проекты ещё не обновлялись" : $"Проекты обновлены {_lastRefresh:HH:mm}";
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand NewProjectCommand { get; }
@@ -302,6 +302,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
         if (_projectConfirmed) OverviewSection.SetState(_networkAvailable ? ProjectSectionState.Loaded : ProjectSectionState.Offline, true);
         if (CanReadMembers && _membersConfirmed)
             MembersSection.SetState(!_networkAvailable ? ProjectSectionState.Offline : Members.Count == 0 ? ProjectSectionState.Empty : ProjectSectionState.Loaded, true);
+        OnPropertyChanged(nameof(CanRead));
         NotifyCommands();
     }
 
@@ -359,7 +360,7 @@ public sealed partial class ProjectsViewModel : ViewModelBase, IDisposable
             Items = projects.Select(project => new ProjectItemViewModel(project)).ToArray();
             _lastRefresh = DateTimeOffset.Now; OnPropertyChanged(nameof(LastSuccessfulRefreshText));
             State = Items.Count == 0 ? ProjectsScreenState.Empty : ProjectsScreenState.Loaded;
-            Message = Items.Count == 0 ? "Активных проектов нет." : null;
+            Message = null;
             SelectedItem = Items.FirstOrDefault(item => item.Id == selectedId) ?? Items.FirstOrDefault();
         }
         else

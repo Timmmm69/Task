@@ -7,299 +7,739 @@
         mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="980"
         AutomationProperties.Name="Проекты" AutomationProperties.AutomationId="ProjectsView" Unloaded="ProjectsUnloaded" Background="{DynamicResource Task.Brush.Surface.Base}" UseLayoutRounding="True" SnapsToDevicePixels="True">
     <UserControl.Resources>
-        <Style x:Key="Project.Region" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="CornerRadius" Value="0"/>
-            <Setter Property="Padding" Value="20,14,20,18"/>
-            <Setter Property="Margin" Value="0"/>
+        <SolidColorBrush x:Key="Project.Canvas" Color="#F7F7F7"/>
+        <SolidColorBrush x:Key="Project.Coral" Color="#C91E47"/>
+        <SolidColorBrush x:Key="Project.CoralHover" Color="#A9183C"/>
+        <SolidColorBrush x:Key="Project.Rose" Color="#FFF0F3"/>
+        <SolidColorBrush x:Key="Project.Teal" Color="#005A6E"/>
+        <SolidColorBrush x:Key="Project.TealSoft" Color="#E8F4F8"/>
+
+        <Style x:Key="Project.Card" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="16"/>
+        </Style>
+        <Style x:Key="Project.Region" TargetType="Border" BasedOn="{StaticResource Project.Card}">
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Visibility" Value="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}"/>
         </Style>
         <Style x:Key="Project.FieldLabel" TargetType="TextBlock" BasedOn="{StaticResource Task.Inspector.FactLabel}">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
-        <Style x:Key="Project.Section" TargetType="Expander">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Style x:Key="Project.Section" TargetType="Expander" BasedOn="{StaticResource Task.Card.Section}">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="HeaderTemplate">
-                <Setter.Value><DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Task.State.Title}"/></DataTemplate></Setter.Value>
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" FontSize="15" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </Setter.Value>
             </Setter>
         </Style>
-    </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <Border Grid.Row="0" Style="{StaticResource Task.Surface.Base}" BorderThickness="0,0,0,1" Padding="20,14">
-        <Grid>
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-            <StackPanel Margin="0,0,16,0">
-                <TextBlock Text="Проекты команды" TextWrapping="Wrap" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"/>
-                <TextBlock Text="{Binding AccessText}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0"/>
-            </StackPanel>
-            <WrapPanel Grid.Column="1" VerticalAlignment="Top">
-                <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,0"
-                        AutomationProperties.Name="Обновить проекты" AutomationProperties.AutomationId="ProjectsRefreshButton"/>
-                <Button Content="Новый проект" Command="{Binding NewProjectCommand}" Style="{StaticResource Task.Button.Primary}"
-                        AutomationProperties.Name="Создать проект" AutomationProperties.AutomationId="NewProjectButton"/>
-            </WrapPanel>
-        </Grid>
-        </Border>
 
-        <Border Grid.Row="1" Padding="20,10" BorderThickness="0,0,0,1">
-            <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}">
-                <Setter Property="Visibility" Value="Visible"/>
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Message}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
-                    <DataTrigger Binding="{Binding Message}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
-                </Style.Triggers>
-            </Style></Border.Style>
-            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
-        </Border>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="32*"/><ColumnDefinition Width="1"/><ColumnDefinition Width="68*"/></Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Style="{StaticResource Task.Surface.Base}">
-                <DockPanel>
-                <Border DockPanel.Dock="Top" Style="{StaticResource Task.Surface.Base}" Height="49" Padding="20,0" BorderThickness="0,0,0,1">
-                    <DockPanel VerticalAlignment="Center">
-                        <TextBlock DockPanel.Dock="Right" Text="{Binding Items.Count, StringFormat='({0})'}" Style="{StaticResource Task.Inspector.FactLabel}" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Все проекты" Style="{StaticResource Task.State.Title}"/>
-                    </DockPanel>
-                </Border>
-                <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" BorderThickness="0"
-                         Style="{StaticResource Task.DataList}" ItemContainerStyle="{StaticResource Task.DataList.Item}"
-                         AutomationProperties.Name="Список проектов" AutomationProperties.AutomationId="ProjectsList">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,12">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                <Path Data="{StaticResource Task.Icon.Projects}" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Margin="0,2,0,0" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
-                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Text="{Binding Name}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding StatusText}" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,4,0,0"/>
-                                    <TextBlock Text="{Binding DatesText}" Style="{StaticResource Task.Inspector.FactLabel}" TextWrapping="Wrap" Margin="0,3,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                </DockPanel>
-            </Border>
-            <Border Grid.Column="1" Background="{DynamicResource Task.Brush.Border.Default}"/>
-
-            <Border Grid.Column="2" Padding="28" VerticalAlignment="Center">
-                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers><DataTrigger Binding="{Binding SelectedItem}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
-                </Style></Border.Style>
-                <StackPanel HorizontalAlignment="Center">
-                    <Path Data="{StaticResource Task.Icon.Projects}" Width="26" Height="26" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Disabled}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                    <TextBlock Text="Выберите проект" Style="{StaticResource Task.State.Title}"/>
-                    <TextBlock Text="Откройте проект из списка или создайте новый, чтобы собрать задачи и участников вместе." Style="{StaticResource Task.State.Body}" Margin="0,8,0,0"/>
-                </StackPanel>
-            </Border>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <ScrollViewer.Style><Style TargetType="ScrollViewer">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers><DataTrigger Binding="{Binding Editor}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
-                </Style></ScrollViewer.Style>
-                <StackPanel DataContext="{Binding SelectedItem}">
-                    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                    <Border Style="{StaticResource Project.Region}" Visibility="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}">
-                    <Expander Header="Основные сведения" state:ViewState.Section="projects/v1/overview" IsExpanded="True"
-                              AutomationProperties.AutomationId="ProjectOverviewSection" Style="{StaticResource Project.Section}">
-                    <StackPanel Margin="0,10,0,0">
-                    <TextBlock Text="{Binding DataContext.OverviewSection.StatusText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                               TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8"/>
-                    <TextBlock Text="{Binding Name}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                    <WrapPanel Margin="0,14,0,0">
-                        <Border Style="{StaticResource Task.Surface.Base}" MinHeight="38" Padding="10,0" BorderThickness="1" CornerRadius="{DynamicResource Task.Radius.Control}" Margin="0,0,12,8">
-                            <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"/>
+        <Style x:Key="Project.Button" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,8">
-                            <Path Data="{StaticResource Task.Icon.Calendar}" Width="17" Height="17" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
-                            <TextBlock Text="{Binding DatesText}" Margin="7,0,0,0" TextWrapping="Wrap" MaxWidth="240"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Command" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Selected}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Disabled}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Project.PrimaryButton" TargetType="Button" BasedOn="{StaticResource Project.Button}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+                        <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{StaticResource Project.Coral}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Project.Coral}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                        <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{StaticResource Project.CoralHover}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Project.CoralHover}"/>
+                </MultiDataTrigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Project.Row" TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+            <Setter Property="Padding" Value="10,9"/>
+            <Setter Property="Margin" Value="8,3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
+            <Setter Property="AutomationProperties.ItemStatus" Value="{Binding StatusText}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Project.Rose}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Project.Coral}"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+                        <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Project.Status" TargetType="Border" BasedOn="{StaticResource Task.Surface.Subtle}">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource Task.Brush.Text.Primary}"/>
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Source.Status}" Value="Active"/>
+                        <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{StaticResource Project.TealSoft}"/>
+                    <Setter Property="TextElement.Foreground" Value="{StaticResource Project.Teal}"/>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border>
+        <Border.Style>
+            <Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                        <Setter Property="Background" Value="{StaticResource Project.Canvas}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid Margin="20,16,20,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,16" LastChildFill="True">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top" Margin="12,0,0,0">
+                    <Button Command="{Binding RefreshCommand}" Style="{StaticResource Project.Button}" Margin="0,0,8,0"
+                            AutomationProperties.Name="Обновить проекты" AutomationProperties.AutomationId="ProjectsRefreshButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource Task.Icon.Refresh}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,7,0"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                            <TextBlock Text="Обновить"/>
                         </StackPanel>
-                    </WrapPanel>
-                    <Grid Margin="0,8,0,0">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="116"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                        <TextBlock Text="Владелец:" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,0,10,12"/>
-                        <TextBlock Grid.Column="1" Text="{Binding OwnerText}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-                        <TextBlock Grid.Row="1" Text="Руководитель:" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,0,10,12"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ManagerText}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-                        <TextBlock Grid.Row="2" Text="Описание:" Style="{StaticResource Task.Inspector.FactLabel}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" TextWrapping="Wrap" LineHeight="20"/>
-                    </Grid>
-                    <TextBlock Text="Действия" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,16,0,0"/>
-                    <WrapPanel Margin="0,16,0,0">
-                        <Button Content="Изменить" Command="{Binding DataContext.EditProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Style="{StaticResource Task.Button.Secondary}" Margin="0,0,8,8" AutomationProperties.Name="Изменить проект"/>
-                        <Button Content="В архив" Command="{Binding DataContext.ArchiveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8" AutomationProperties.Name="Архивировать завершённый проект"/>
-                    </WrapPanel>
-                    <Button Content="Добавить задачу" Command="{Binding DataContext.AddProjectTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,12,0,0" ToolTip="{Binding DataContext.ProjectTaskActionHint,RelativeSource={RelativeSource AncestorType=Window}}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="Добавить задачу" AutomationProperties.AutomationId="ProjectAddTask"/>
-
-
+                    </Button>
+                    <Button Command="{Binding NewProjectCommand}" Style="{StaticResource Project.PrimaryButton}"
+                            AutomationProperties.Name="Создать проект" AutomationProperties.AutomationId="NewProjectButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource Task.Icon.Add}" Width="15" Height="15" Stretch="Uniform" Margin="0,0,7,0"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                            <TextBlock Text="Новый проект"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Все проекты" FontSize="18" FontWeight="Bold" AutomationProperties.HeadingLevel="Level2"/>
+                        <TextBlock Text="{Binding Items.Count}" FontSize="14" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                   Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
-                    </Expander>
-                    </Border>
+                    <TextBlock Text="{Binding AccessText}" TextWrapping="Wrap" Margin="0,4,0,0"
+                               Foreground="{DynamicResource Task.Brush.Text.Secondary}" AutomationProperties.LiveSetting="Polite">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AccessText}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </DockPanel>
 
-                    <Border Style="{StaticResource Project.Region}" Visibility="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}">
-                    <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Collapsed="MembersCollapsed" AutomationProperties.AutomationId="ProjectMembersSection" Style="{StaticResource Project.Section}">
-                        <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
-                            <TextBlock Text="{Binding MembersSection.StatusText}" TextWrapping="Wrap" Margin="0,0,0,8"
-                                       AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectMembersStatus"/>
-                            <Button Content="Обновить участников" Command="{Binding ReloadMembersCommand}" HorizontalAlignment="Left"
-                                    Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,10" AutomationProperties.AutomationId="ReloadProjectMembers"/>
-                            <ContentControl Content="{Binding MemberPicker}" IsEnabled="{Binding CanManageMembers}" Margin="0,0,0,10">
-                                <ContentControl.Style><Style TargetType="ContentControl"><Style.Triggers><DataTrigger Binding="{Binding UsesEmployeePicker}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ContentControl.Style>
-                                <ContentControl.ContentTemplate><DataTemplate><views:EmployeePickerView/></DataTemplate></ContentControl.ContentTemplate>
-                            </ContentControl>
-                            <StackPanel Margin="0,0,0,16">
-                                <StackPanel>
-                                    <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding UsesEmployeePicker}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                                    <TextBlock Text="Сотрудник (UUID)" Style="{StaticResource Project.FieldLabel}"/>
-                                    <TextBox Text="{Binding NewMemberUserId, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanManageMembers}" Style="{StaticResource Task.Input.Text}" Margin="0,0,0,12"
-                                             AutomationProperties.Name="UUID сотрудника — каталог недоступен" AutomationProperties.AutomationId="ProjectMemberUserId"/>
-                                </StackPanel>
-                                <TextBlock Text="Роль нового участника" Style="{StaticResource Project.FieldLabel}"/>
-                                <WrapPanel>
-                                    <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding NewMemberRole}" DisplayMemberPath="Name" IsEnabled="{Binding CanManageMembers}"
-                                              Style="{StaticResource Task.Input.Combo}" Width="220" Margin="0,0,8,8" AutomationProperties.Name="Роль нового участника"/>
-                                    <Button Content="Добавить" Command="{Binding AddMemberCommand}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,0,8"
-                                            AutomationProperties.Name="Добавить участника" AutomationProperties.AutomationId="AddProjectMemberButton"/>
-                                </WrapPanel>
-                            </StackPanel>
-                            <ItemsControl ItemsSource="{Binding Members}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="0,0,0,1" Padding="12,14" Margin="0,0,0,6">
-                                            <StackPanel>
-                                                <DockPanel Margin="0,0,0,12">
-                                                    <Path Data="{StaticResource Task.Icon.Contacts}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" DockPanel.Dock="Left" Margin="0,0,8,0" VerticalAlignment="Top"/>
-                                                    <TextBlock Text="{Binding UserText}" TextWrapping="Wrap" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"/>
-                                                </DockPanel>
-                                                <TextBlock Text="Роль в проекте" Style="{StaticResource Project.FieldLabel}"/>
-                                                <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" DisplayMemberPath="Name"
-                                                          IsEnabled="{Binding DataContext.CanManageMembers, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                          Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Роль участника"/>
-                                                <WrapPanel Margin="0,12,0,0">
-                                                    <Button Content="Сохранить роль" Margin="0,0,8,8" Style="{StaticResource Task.Button.Secondary}"
-                                                            Command="{Binding DataContext.ChangeMemberRoleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                                    <Button Content="Исключить" Margin="0,0,0,8" Style="{StaticResource Task.Button.Secondary}"
-                                                            Command="{Binding DataContext.RemoveMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                                </WrapPanel>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock Text="{Binding MemberEntryHint}"
-                                       TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}"/>
-                        </StackPanel>
-                    </Expander>
-                    </Border>
+            <Border Grid.Row="1" Padding="12,8" Margin="0,0,0,8">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Project.Card}">
+                        <Setter Property="CornerRadius" Value="8"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding HasItems}" Value="False"/>
+                                    <Condition Binding="{Binding Editor}" Value="{x:Null}"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding Message}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Message}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+            </Border>
 
-                    <Border Style="{StaticResource Project.Region}" Visibility="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}">
-                    <Expander Header="Файлы" IsExpanded="False" Expanded="FilesExpanded" Collapsed="FilesCollapsed"
-                              AutomationProperties.AutomationId="ProjectFilesSection">
-                        <Expander.Style><Style TargetType="Expander" BasedOn="{StaticResource Project.Section}"><Style.Triggers><DataTrigger Binding="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Expander.Style>
-                        <views:ProjectFilesView DataContext="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
-                    </Expander>
-                    </Border>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="35*" MinWidth="204" MaxWidth="324"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="65*"/>
+                </Grid.ColumnDefinitions>
 
-                    <Border Style="{StaticResource Project.Region}" Visibility="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}">
-                    <Expander Header="Контакты и компании" IsExpanded="False" Expanded="ContactsExpanded" Collapsed="ContactsCollapsed"
-                              AutomationProperties.AutomationId="ProjectContactsSection">
-                        <Expander.Style><Style TargetType="Expander" BasedOn="{StaticResource Project.Section}"><Style.Triggers><DataTrigger Binding="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Expander.Style>
-                        <views:ProjectContactsView DataContext="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
-                    </Expander>
-                    </Border>
-
-                    <Border Style="{StaticResource Project.Region}" Visibility="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}">
-                    <Expander Header="История" Expanded="HistoryExpanded" Collapsed="HistoryCollapsed"
-                              AutomationProperties.AutomationId="ProjectHistorySection">
-                        <Expander.Style><Style TargetType="Expander" BasedOn="{StaticResource Project.Section}"><Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers><DataTrigger Binding="{Binding DataContext.CanReadHistory, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
-                        </Style></Expander.Style>
-                        <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
-                            <TextBlock Text="{Binding HistorySection.StatusText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
-                            <TextBlock Text="Сервер сообщает названия полей без прежних и новых значений." TextWrapping="Wrap" Margin="0,4,0,8"/>
-                            <Button Content="Обновить историю" Style="{StaticResource Task.Button.Secondary}" Command="{Binding RefreshHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="RefreshProjectHistory"/>
-                            <ListBox ItemsSource="{Binding History}" Style="{StaticResource Task.DataList}" ItemContainerStyle="{StaticResource Task.DataList.Item}" AutomationProperties.Name="История выбранного проекта" MaxHeight="420" Margin="0,8">
-                                <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="6">
-                                    <TextBlock Text="{Binding DateText}"/>
-                                    <TextBlock Text="{Binding ActionText}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding VersionText}"/>
-                                    <TextBlock Text="{Binding AuthorText}" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding FieldsText}" TextWrapping="Wrap"/>
-                                </StackPanel></DataTemplate></ListBox.ItemTemplate>
-                            </ListBox>
-                            <Button Content="Загрузить ещё события" Style="{StaticResource Task.Button.Secondary}" Command="{Binding MoreHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoreProjectHistory"/>
-                        </StackPanel>
-                    </Expander>
-                    </Border>
-
-                    <Border Style="{StaticResource Project.Region}" Visibility="{Binding Child.Visibility, RelativeSource={RelativeSource Self}}">
-                    <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True" Collapsed="RelatedTasksCollapsed" Style="{StaticResource Project.Section}">
-                        <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0">
-                        <TextBlock Text="{Binding RelatedTasksStatusText}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectRelatedTasksStatus"/>
-                        <Button Content="{Binding RelatedTasksActionText}" Command="{Binding LoadRelatedTasksCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" Margin="0,0,0,10" AutomationProperties.AutomationId="LoadProjectRelatedTasks"/>
-                        <ItemsControl ItemsSource="{Binding RelatedTasks}">
-                            <ItemsControl.ItemTemplate><DataTemplate>
-                                <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="0,0,0,1" Padding="12,14">
-                                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                        <Path Data="{StaticResource Task.Icon.Tasks}" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
-                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                            <TextBlock Text="{Binding Title}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap"/>
+                <Border>
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Project.Card}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasItems}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="Обновляем список…" Margin="14,8,14,2" TextWrapping="Wrap"
+                                   AutomationProperties.LiveSetting="Polite">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Inspector.FactLabel}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding State}" Value="Loading">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" BorderThickness="0"
+                                 Background="Transparent" Margin="0,4" Style="{StaticResource Task.DataList}"
+                                 VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
+                                 ItemContainerStyle="{StaticResource Project.Row}" SelectionChanged="ProjectSelectionChanged"
+                                 AutomationProperties.Name="Список проектов" AutomationProperties.AutomationId="ProjectsList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="28"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Path Data="{StaticResource Task.Icon.Projects}" Width="18" Height="18" Stretch="Uniform"
+                                              VerticalAlignment="Top" Margin="0,2,0,0"
+                                              Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" FontWeight="SemiBold"
+                                                       TextWrapping="Wrap" TextTrimming="CharacterEllipsis" LineHeight="19" MaxHeight="38"/>
                                             <TextBlock Text="{Binding StatusText}" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding DatesText}" Style="{StaticResource Task.Inspector.FactLabel}" TextWrapping="Wrap" Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Grid>
-                                </Border>
-                            </DataTemplate></ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        </StackPanel>
-                    </Expander>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
 
-            <Border Grid.Column="2" Panel.ZIndex="10"
-                    DataContext="{Binding Editor}" state:FormKeyboard.Save="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" AutomationProperties.Name="Форма проекта" AutomationProperties.AutomationId="ProjectEditorPanel">
-                <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style>
-                <Grid KeyboardNavigation.TabNavigation="Cycle">
-                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                    <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Padding="20,14">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Heading}" Style="{StaticResource Task.State.Title}"/>
-                        <TextBlock Text="Название, руководитель и сроки проекта" Style="{StaticResource Task.State.Body}" Margin="0,6,0,0"/>
+                <Border Padding="24">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Project.Card}">
+                            <Setter Property="Grid.Column" Value="2"/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding SelectedItem}" Value="{x:Null}"/>
+                                        <Condition Binding="{Binding Editor}" Value="{x:Null}"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </MultiDataTrigger>
+                                <DataTrigger Binding="{Binding HasItems}" Value="False">
+                                    <Setter Property="Grid.Column" Value="0"/>
+                                    <Setter Property="Grid.ColumnSpan" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
+                            <Path Data="{StaticResource Task.Icon.Projects}" Width="28" Height="28" Stretch="Uniform" Margin="0,0,0,12"
+                                  Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                            <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="Выберите проект"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding State}" Value="Loading"><Setter Property="Text" Value="Загрузка проектов…"/></DataTrigger>
+                                            <DataTrigger Binding="{Binding State}" Value="Empty"><Setter Property="Text" Value="Проектов пока нет"/></DataTrigger>
+                                            <DataTrigger Binding="{Binding State}" Value="Failed"><Setter Property="Text" Value="Не удалось загрузить проекты"/></DataTrigger>
+                                            <DataTrigger Binding="{Binding State}" Value="Forbidden"><Setter Property="Text" Value="Проекты недоступны"/></DataTrigger>
+                                            <DataTrigger Binding="{Binding CanRead}" Value="False"><Setter Property="Text" Value="Проекты недоступны"/></DataTrigger>
+                                            <DataTrigger Binding="{Binding State}" Value="SessionEnded"><Setter Property="Text" Value="Сессия завершена"/></DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextAlignment="Center" TextWrapping="Wrap"
+                                       Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding Message}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CanRead}" Value="False"><Setter Property="Text" Value="У текущей роли нет доступа к списку проектов."/></DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <ScrollViewer x:Name="ProjectDetails" Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Editor}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedItem}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <StackPanel DataContext="{Binding SelectedItem}">
+                        <Border Style="{StaticResource Project.Card}" Margin="0,0,0,8" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontSize="22" FontWeight="Bold" TextWrapping="Wrap"
+                                               AutomationProperties.HeadingLevel="Level2" AutomationProperties.AutomationId="SelectedProjectTitle"/>
+                                <WrapPanel Margin="0,8,0,0">
+                                    <Border Style="{StaticResource Project.Status}" Margin="0,0,10,6">
+                                        <TextBlock Text="{Binding StatusText}" FontSize="12" FontWeight="SemiBold"/>
+                                    </Border>
+                                    <DockPanel VerticalAlignment="Center" Margin="0,0,0,6">
+                                        <Path DockPanel.Dock="Left" Data="{StaticResource Task.Icon.Calendar}" Width="15" Height="15" Stretch="Uniform"
+                                              Margin="0,0,6,0" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                        <TextBlock Text="{Binding DatesText}" Style="{StaticResource Task.Inspector.FactLabel}" TextWrapping="Wrap"/>
+                                    </DockPanel>
+                                </WrapPanel>
+                                <WrapPanel Margin="0,8,0,-6">
+                                    <Button Content="Добавить задачу" Style="{StaticResource Project.Button}" Margin="0,0,8,6"
+                                            Command="{Binding DataContext.AddProjectTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            ToolTip="{Binding DataContext.ProjectTaskActionHint, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            ToolTipService.ShowOnDisabled="True" AutomationProperties.AutomationId="ProjectAddTask"/>
+                                    <Button Content="Изменить" Style="{StaticResource Project.Button}" Margin="0,0,8,6"
+                                            Command="{Binding DataContext.EditProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            AutomationProperties.Name="Изменить проект"/>
+                                    <Button Content="В архив" Style="{StaticResource Project.Button}" Margin="0,0,0,6"
+                                            Command="{Binding DataContext.ArchiveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            AutomationProperties.Name="Архивировать завершённый проект"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Project.Region}">
+                            <Expander Header="Основные сведения" state:ViewState.Section="projects/v1/overview" IsExpanded="True"
+                                      AutomationProperties.AutomationId="ProjectOverviewSection" Style="{StaticResource Project.Section}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DataContext.OverviewSection.StatusText, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Inspector.FactLabel}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding DataContext.OverviewSection.State, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Loaded">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="16"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Владелец" Style="{StaticResource Project.FieldLabel}"/>
+                                            <TextBlock Text="{Binding OwnerText}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Руководитель" Style="{StaticResource Project.FieldLabel}"/>
+                                            <TextBlock Text="{Binding ManagerText}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <TextBlock Text="Описание" Style="{StaticResource Project.FieldLabel}" Margin="0,14,0,6"/>
+                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" LineHeight="20"/>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+
+                        <Border Style="{StaticResource Project.Region}">
+                            <Expander Header="Связанные задачи" state:ViewState.Section="projects/v1/tasks" IsExpanded="True" Collapsed="RelatedTasksCollapsed" Style="{StaticResource Project.Section}">
+                                <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <TextBlock Text="{Binding RelatedTasksStatusText}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                        AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectRelatedTasksStatus">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelatedTasksState}" Value="Idle">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <Button Content="{Binding RelatedTasksActionText}" Command="{Binding LoadRelatedTasksCommand}"
+                                        HorizontalAlignment="Left" AutomationProperties.AutomationId="LoadProjectRelatedTasks">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource Project.Button}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelatedTasksState}" Value="Complete">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding RelatedTasksState}" Value="Empty">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <ItemsControl ItemsSource="{Binding RelatedTasks}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="0,0,0,1" Padding="12,14">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="24"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Path Data="{StaticResource Task.Icon.Tasks}" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                                            <TextBlock Text="{Binding Title}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap"/>
+                                                            <TextBlock Text="{Binding StatusText}" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,4,0,0"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+
+                        <Border Style="{StaticResource Project.Region}">
+                            <Expander Header="Участники проекта" state:ViewState.Section="projects/v1/members" IsExpanded="True" Collapsed="MembersCollapsed" AutomationProperties.AutomationId="ProjectMembersSection" Style="{StaticResource Project.Section}">
+                                <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <TextBlock Text="{Binding MembersSection.StatusText}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                        AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="ProjectMembersStatus"/>
+                                    <Button Content="Обновить участников" Command="{Binding ReloadMembersCommand}" HorizontalAlignment="Left"
+                                        Style="{StaticResource Project.Button}" Margin="0,0,0,10" AutomationProperties.AutomationId="ReloadProjectMembers"/>
+                                    <ContentControl Content="{Binding MemberPicker}" IsEnabled="{Binding CanManageMembers}" Margin="0,0,0,10">
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding UsesEmployeePicker}" Value="False">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                        <ContentControl.ContentTemplate>
+                                            <DataTemplate>
+                                                <views:EmployeePickerView/>
+                                            </DataTemplate>
+                                        </ContentControl.ContentTemplate>
+                                    </ContentControl>
+                                    <StackPanel Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding UsesEmployeePicker}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+                                            <TextBlock Text="Сотрудник (UUID)" Style="{StaticResource Project.FieldLabel}"/>
+                                            <TextBox Text="{Binding NewMemberUserId, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanManageMembers}" Style="{StaticResource Task.Input.Text}" Margin="0,0,0,12"
+                                                AutomationProperties.Name="UUID сотрудника — каталог недоступен" AutomationProperties.AutomationId="ProjectMemberUserId"/>
+                                        </StackPanel>
+                                        <TextBlock Text="Роль нового участника" Style="{StaticResource Project.FieldLabel}"/>
+                                        <WrapPanel>
+                                            <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding NewMemberRole}" DisplayMemberPath="Name" IsEnabled="{Binding CanManageMembers}"
+                                                Style="{StaticResource Task.Input.Combo}" MaxWidth="220" MinWidth="146" Margin="0,0,8,8" AutomationProperties.Name="Роль нового участника"/>
+                                            <Button Content="Добавить" Command="{Binding AddMemberCommand}" Style="{StaticResource Project.Button}" Margin="0,0,0,8"
+                                                AutomationProperties.Name="Добавить участника" AutomationProperties.AutomationId="AddProjectMemberButton"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                    <ItemsControl ItemsSource="{Binding Members}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource Task.Surface.Base}" BorderThickness="0,0,0,1" Padding="12,14" Margin="0,0,0,6">
+                                                    <StackPanel>
+                                                        <DockPanel Margin="0,0,0,12">
+                                                            <Path Data="{StaticResource Task.Icon.Contacts}" Width="18" Height="18" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" DockPanel.Dock="Left" Margin="0,0,8,0" VerticalAlignment="Top"/>
+                                                            <TextBlock Text="{Binding UserText}" TextWrapping="Wrap" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"/>
+                                                        </DockPanel>
+                                                        <TextBlock Text="Роль в проекте" Style="{StaticResource Project.FieldLabel}"/>
+                                                        <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole}" DisplayMemberPath="Name"
+                                                            IsEnabled="{Binding DataContext.CanManageMembers, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            Style="{StaticResource Task.Input.Combo}" AutomationProperties.Name="Роль участника"/>
+                                                        <WrapPanel Margin="0,12,0,0">
+                                                            <Button Content="Сохранить роль" Margin="0,0,8,8" Style="{StaticResource Project.Button}"
+                                                                Command="{Binding DataContext.ChangeMemberRoleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                            <Button Content="Исключить" Margin="0,0,0,8" Style="{StaticResource Project.Button}"
+                                                                Command="{Binding DataContext.RemoveMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                        </WrapPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock Text="{Binding MemberEntryHint}"
+                                        TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}"/>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+
+                        <Border Style="{StaticResource Project.Region}">
+                            <Expander Header="Файлы" IsExpanded="False" Expanded="FilesExpanded" Collapsed="FilesCollapsed"
+                                AutomationProperties.AutomationId="ProjectFilesSection">
+                                <Expander.Style>
+                                    <Style TargetType="Expander" BasedOn="{StaticResource Project.Section}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <views:ProjectFilesView DataContext="{Binding DataContext.Files, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
+                            </Expander>
+                        </Border>
+
+                        <Border Style="{StaticResource Project.Region}">
+                            <Expander Header="Контакты и компании" IsExpanded="False" Expanded="ContactsExpanded" Collapsed="ContactsCollapsed"
+                                AutomationProperties.AutomationId="ProjectContactsSection">
+                                <Expander.Style>
+                                    <Style TargetType="Expander" BasedOn="{StaticResource Project.Section}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <views:ProjectContactsView DataContext="{Binding DataContext.Contacts, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,10,0,0"/>
+                            </Expander>
+                        </Border>
+
+                        <Border Style="{StaticResource Project.Region}">
+                            <Expander Header="История" Expanded="HistoryExpanded" Collapsed="HistoryCollapsed"
+                                AutomationProperties.AutomationId="ProjectHistorySection">
+                                <Expander.Style>
+                                    <Style TargetType="Expander" BasedOn="{StaticResource Project.Section}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DataContext.CanReadHistory, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <StackPanel DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <TextBlock Text="{Binding HistorySection.StatusText}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+                                    <TextBlock Text="Сервер сообщает названия полей без прежних и новых значений." TextWrapping="Wrap" Margin="0,4,0,8"/>
+                                    <Button Content="Обновить историю" Style="{StaticResource Project.Button}" Command="{Binding RefreshHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="RefreshProjectHistory"/>
+                                    <ListBox ItemsSource="{Binding History}" Style="{StaticResource Task.DataList}" ItemContainerStyle="{StaticResource Task.DataList.Item}" AutomationProperties.Name="История выбранного проекта" MaxHeight="420" Margin="0,8">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="6">
+                                                    <TextBlock Text="{Binding DateText}"/>
+                                                    <TextBlock Text="{Binding ActionText}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding VersionText}"/>
+                                                    <TextBlock Text="{Binding AuthorText}" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding FieldsText}" TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                    <Button Content="Загрузить ещё события" Style="{StaticResource Project.Button}" Command="{Binding MoreHistoryCommand}" HorizontalAlignment="Left" AutomationProperties.AutomationId="MoreProjectHistory"/>
+                                </StackPanel>
+                            </Expander>
+                        </Border>
+
                     </StackPanel>
-                    </Border>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel Margin="20,14,20,18">
-                    <TextBlock Text="Основные сведения" Style="{StaticResource Task.State.Title}" Margin="0,8,0,16"/>
-                    <TextBlock Text="Название" Style="{StaticResource Project.FieldLabel}"/><TextBox AutomationProperties.Name="Название проекта" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12" AutomationProperties.AutomationId="ProjectNameTextBox"/>
-                    <TextBlock Text="Описание" Style="{StaticResource Project.FieldLabel}"/><TextBox AutomationProperties.Name="Описание проекта" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" MinHeight="96" MaxHeight="180" TextWrapping="Wrap" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
-                    <TextBlock Text="Управление проектом" Style="{StaticResource Task.State.Title}" Margin="0,8,0,16"/>
-                    <TextBlock Text="Руководитель (необязательно)" Style="{StaticResource Project.FieldLabel}"/>
-                    <StackPanel Margin="0,5,0,12">
-                        <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding UsesManagerPicker}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                        <ContentControl Content="{Binding ManagerPicker}"><ContentControl.ContentTemplate><DataTemplate><views:EmployeePickerView/></DataTemplate></ContentControl.ContentTemplate></ContentControl>
-                        <Button Content="Без руководителя" Command="{Binding ClearManagerCommand}" Style="{StaticResource Task.Button.Secondary}" HorizontalAlignment="Left" AutomationProperties.Name="Снять назначение руководителя"/>
-                    </StackPanel>
-                    <StackPanel Margin="0,5,0,12">
-                        <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding UsesManagerPicker}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                        <TextBox Text="{Binding ManagerId, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="UUID руководителя — необязательно"/>
-                        <TextBlock Text="Без User.Read доступен ввод UUID. Пустое поле — без руководителя." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
-                    </StackPanel>
-                    <TextBlock Text="Статус" Style="{StaticResource Project.FieldLabel}"/><ComboBox AutomationProperties.Name="Статус проекта" ItemsSource="{Binding Statuses}" SelectedItem="{Binding Status}" DisplayMemberPath="Text" Style="{StaticResource Task.Input.Combo}" Margin="0,5,0,12"/>
-                    <TextBlock Text="Сроки" Style="{StaticResource Task.State.Title}" Margin="0,8,0,16"/>
-                    <TextBlock Text="Дата начала (ДД.ММ.ГГГГ)" Style="{StaticResource Project.FieldLabel}"/><TextBox AutomationProperties.Name="Дата начала проекта, ДД.ММ.ГГГГ" Text="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
-                    <TextBlock Text="Плановое завершение (ДД.ММ.ГГГГ)" Style="{StaticResource Project.FieldLabel}"/><TextBox AutomationProperties.Name="Плановое завершение проекта, ДД.ММ.ГГГГ" Text="{Binding PlannedEndDate, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
-                    </StackPanel></ScrollViewer>
-                    <Border Grid.Row="2" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0" Padding="20,14">
-                    <StackPanel>
-                    <TextBlock Text="{Binding Error}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap" Margin="0,0,0,12" AutomationProperties.LiveSetting="Assertive"/>
-                    <TextBlock Text="Ctrl+Enter — сохранить" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,0,0,8"/><WrapPanel><Button Content="{Binding SubmitText}" Command="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Task.Button.Primary}" Margin="0,0,8,0" AutomationProperties.AutomationId="SaveProjectButton"/><Button Content="Отмена" Command="{Binding DataContext.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Task.Button.Secondary}"/></WrapPanel>
-                    </StackPanel></Border>
-                </Grid>
-            </Border>
+                </ScrollViewer>
+
+                <Border DataContext="{Binding Editor}" state:FormKeyboard.Save="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" AutomationProperties.Name="Форма проекта" AutomationProperties.AutomationId="ProjectEditorPanel">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Project.Card}">
+                            <Setter Property="Grid.Column" Value="2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding DataContext.HasItems, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False">
+                                    <Setter Property="Grid.Column" Value="0"/>
+                                    <Setter Property="Grid.ColumnSpan" Value="3"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Grid KeyboardNavigation.TabNavigation="Cycle">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Padding="20,14">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Heading}" TextWrapping="Wrap" FontSize="18" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="20,14,20,18">
+                                <TextBlock Text="Основные сведения" Style="{StaticResource Task.State.Title}" Margin="0,8,0,16"/>
+                                <TextBlock Text="Название" Style="{StaticResource Project.FieldLabel}"/>
+                                <TextBox AutomationProperties.Name="Название проекта" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12" AutomationProperties.AutomationId="ProjectNameTextBox"/>
+                                <TextBlock Text="Описание" Style="{StaticResource Project.FieldLabel}"/>
+                                <TextBox AutomationProperties.Name="Описание проекта" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" MinHeight="96" MaxHeight="180" TextWrapping="Wrap" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
+                                <TextBlock Text="Управление проектом" Style="{StaticResource Task.State.Title}" Margin="0,8,0,16"/>
+                                <TextBlock Text="Руководитель (необязательно)" Style="{StaticResource Project.FieldLabel}"/>
+                                <StackPanel Margin="0,5,0,12">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding UsesManagerPicker}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <ContentControl Content="{Binding ManagerPicker}">
+                                        <ContentControl.ContentTemplate>
+                                            <DataTemplate>
+                                                <views:EmployeePickerView/>
+                                            </DataTemplate>
+                                        </ContentControl.ContentTemplate>
+                                    </ContentControl>
+                                    <Button Content="Без руководителя" Command="{Binding ClearManagerCommand}" Style="{StaticResource Project.Button}" HorizontalAlignment="Left" AutomationProperties.Name="Снять назначение руководителя"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,5,0,12">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding UsesManagerPicker}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <TextBox Text="{Binding ManagerId, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" AutomationProperties.Name="UUID руководителя — необязательно"/>
+                                    <TextBlock Text="Без User.Read доступен ввод UUID. Пустое поле — без руководителя." TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
+                                </StackPanel>
+                                <TextBlock Text="Статус" Style="{StaticResource Project.FieldLabel}"/>
+                                <ComboBox AutomationProperties.Name="Статус проекта" ItemsSource="{Binding Statuses}" SelectedItem="{Binding Status}" DisplayMemberPath="Text" Style="{StaticResource Task.Input.Combo}" Margin="0,5,0,12"/>
+                                <TextBlock Text="Сроки" Style="{StaticResource Task.State.Title}" Margin="0,8,0,16"/>
+                                <TextBlock Text="Дата начала (ДД.ММ.ГГГГ)" Style="{StaticResource Project.FieldLabel}"/>
+                                <TextBox AutomationProperties.Name="Дата начала проекта, ДД.ММ.ГГГГ" Text="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
+                                <TextBlock Text="Плановое завершение (ДД.ММ.ГГГГ)" Style="{StaticResource Project.FieldLabel}"/>
+                                <TextBox AutomationProperties.Name="Плановое завершение проекта, ДД.ММ.ГГГГ" Text="{Binding PlannedEndDate, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Text}" Margin="0,5,0,12"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                        <Border Grid.Row="2" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0" Padding="20,14">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Error}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap" Margin="0,0,0,12" AutomationProperties.LiveSetting="Assertive">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Error}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Error}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="Ctrl+Enter — сохранить" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,0,0,8"/>
+                                <WrapPanel>
+                                    <Button Content="{Binding SubmitText}" Command="{Binding DataContext.SaveProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Project.PrimaryButton}" Margin="0,0,8,0" AutomationProperties.AutomationId="SaveProjectButton"/>
+                                    <Button Content="Отмена" Command="{Binding DataContext.CancelEditorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Style="{StaticResource Project.Button}"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </UserControl>
