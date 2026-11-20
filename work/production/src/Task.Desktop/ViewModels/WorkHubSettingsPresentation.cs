@@ -37,6 +37,59 @@ public sealed partial class WorkHubViewModel
         }
     }
 
+    public bool CanReadCurrentSettings => _sessionAvailable && (IsServerSettings ? CanReadOrganization : CanReadSettings);
+    public bool HasCurrentSettingsSnapshot => CanReadCurrentSettings && (IsServerSettings ? _organizationSettings is not null
+        : IsNotificationSettings ? _notificationPreferences is not null : _userSettings is not null);
+    public bool HasCurrentSettingsDraft => HasCurrentSettingsSnapshot && (IsServerSettings ? HasOrganizationDraft
+        : IsNotificationSettings ? HasNotificationDraft : HasProfileDraft);
+    public bool HasSettingsDraft => (CanReadSettings && (HasProfileDraft || HasNotificationDraft))
+        || (CanReadOrganization && HasOrganizationDraft);
+    public bool IsSavingSettings => SaveUserSettingsCommand.IsExecuting || SaveNotificationPreferencesCommand.IsExecuting
+        || SaveOrganizationSettingsCommand.IsExecuting;
+    public bool CanEditCurrentSettings => HasCurrentSettingsSnapshot && !IsLoading && !IsSavingSettings && CanUseServerWrites
+        && (IsServerSettings ? CanUpdateOrganization : CanUpdateSettings);
+    public bool CanDiscardCurrentSettings => HasCurrentSettingsSnapshot && !IsLoading && !IsSavingSettings;
+    public string? CurrentSettingsError => IsServerSettings ? null
+        : IsNotificationSettings ? NotificationSettingsError : ProfileSettingsError;
+    public AsyncCommand CurrentSettingsSaveCommand => IsServerSettings ? SaveOrganizationSettingsCommand
+        : IsNotificationSettings ? SaveNotificationPreferencesCommand : SaveUserSettingsCommand;
+
+    internal bool DiscardCurrentSettingsDraft()
+    {
+        if (IsPersonal || !IsSettings || !CanDiscardCurrentSettings) return false;
+
+        if (IsServerSettings && _organizationSettings is { } organization)
+            LoadOrganizationSettings(organization);
+        else if (IsNotificationSettings && _notificationPreferences is { } notifications)
+            LoadNotificationPreferences(notifications);
+        else if (_userSettings is { } profile)
+            RestoreUserSettingsFields(profile);
+
+        SetFeedback(null, WorkHubFeedbackKind.None);
+        return true;
+    }
+
+    private void OnSettingsCommandChanged(object? sender, EventArgs e)
+    {
+        NotifyCorporateSettingsEditor();
+        if (IsSettings) RefreshCommand.RaiseCanExecuteChanged();
+    }
+
+    private void NotifyCorporateSettingsEditor()
+    {
+        if (IsPersonal) return;
+
+        OnPropertyChanged(nameof(CanReadCurrentSettings));
+        OnPropertyChanged(nameof(HasCurrentSettingsSnapshot));
+        OnPropertyChanged(nameof(IsSavingSettings));
+        OnPropertyChanged(nameof(CanEditCurrentSettings));
+        OnPropertyChanged(nameof(CanDiscardCurrentSettings));
+        OnPropertyChanged(nameof(HasCurrentSettingsDraft));
+        OnPropertyChanged(nameof(HasSettingsDraft));
+        OnPropertyChanged(nameof(CurrentSettingsError));
+        OnPropertyChanged(nameof(CurrentSettingsSaveCommand));
+    }
+
     private static bool TryTime(string? value, out TimeOnly time) => TimeOnly.TryParseExact(value?.Trim(),
         ["HH:mm", "HH:mm:ss", "HH:mm:ss.FFFFFFF"], CultureInfo.InvariantCulture, DateTimeStyles.None, out time);
     private static string NormalizeTime(string? value) => TryTime(value, out var time)
@@ -60,6 +113,24 @@ public sealed partial class WorkHubViewModel
         {
             OnPropertyChanged(nameof(ProfileSettingsError));
             OnPropertyChanged(nameof(NotificationSettingsError));
+            OnPropertyChanged(nameof(CurrentSettingsError));
+        }
+        if (!IsPersonal && (display is not null || e.PropertyName is
+            nameof(UserLanguage) or nameof(FirstDayOfWeek) or nameof(UserTimeFormat) or nameof(DefaultTaskDurationMinutes)
+            or nameof(DefaultReminderOffsetMinutes) or nameof(AutostartEnabled) or nameof(AllowLocalPaths)
+            or nameof(ConfirmCatalogDelete) or nameof(MissingFileBehavior) or nameof(NotificationsEnabled)
+            or nameof(DesktopNotificationsEnabled) or nameof(NotificationSoundEnabled) or nameof(DefaultSnoozeMinutes)
+            or nameof(QuietHoursTimeZone) or nameof(TrashRetentionDays) or nameof(HistoryRetentionDays)
+            or nameof(ChangeFeedRetentionDays) or nameof(RecurrenceHorizonDays)))
+        {
+            OnPropertyChanged(nameof(HasCurrentSettingsDraft));
+            OnPropertyChanged(nameof(HasSettingsDraft));
+            if (IsSettings) RefreshCommand.RaiseCanExecuteChanged();
+        }
+        if (!IsPersonal && e.PropertyName == nameof(IsLoading))
+        {
+            OnPropertyChanged(nameof(CanEditCurrentSettings));
+            OnPropertyChanged(nameof(CanDiscardCurrentSettings));
         }
     }
 }

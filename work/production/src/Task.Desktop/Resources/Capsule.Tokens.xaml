@@ -8,5 +8,6 @@
     <SolidColorBrush x:Key="Task.Capsule.Accent" Color="{DynamicResource Task.Color.Brand.Primary}"/>
     <SolidColorBrush x:Key="Task.Capsule.Text" Color="{DynamicResource Task.Color.Text.Primary}"/>
     <SolidColorBrush x:Key="Task.Capsule.Muted" Color="{DynamicResource Task.Color.Text.Secondary}"/>
+    <CornerRadius x:Key="Task.Capsule.SelectRadius">24</CornerRadius>
     <FontFamily x:Key="Task.Capsule.Font">Segoe UI</FontFamily>
 </ResourceDictionary>

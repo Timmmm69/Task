@@ -1,0 +1,410 @@
+<UserControl x:Class="Task.Desktop.Views.CorporateSettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="SettingsRoot" UseLayoutRounding="True" SnapsToDevicePixels="True"
+    AutomationProperties.Name="Настройки" AutomationProperties.AutomationId="SettingsView">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Corporate.Management.xaml"/>
+                <ResourceDictionary Source="../Resources/Calendar.Forms.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <CornerRadius x:Key="Task.Capsule.SelectRadius">8</CornerRadius>
+            <Style x:Key="Settings.Card" TargetType="Border" BasedOn="{StaticResource Corporate.Management.Card}">
+                <Setter Property="Padding" Value="14,12,14,12"/>
+                <Setter Property="Margin" Value="0,0,10,10"/>
+            </Style>
+            <Style x:Key="Settings.Cards" TargetType="UniformGrid">
+                <Setter Property="Columns" Value="2"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ActualWidth, ElementName=SettingsRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=630}" Value="False">
+                        <Setter Property="Columns" Value="1"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Field" TargetType="StackPanel">
+                <Setter Property="Margin" Value="0,10,8,0"/>
+            </Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource Calendar.Form.Text}">
+                <Setter Property="MinHeight" Value="34"/>
+                <Setter Property="Padding" Value="4,0"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Critical}"/>
+                        <Setter Property="ToolTip" Value="Введите целое число"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+                <Setter Property="MinHeight" Value="34"/>
+            </Style>
+            <Style TargetType="CheckBox">
+                <Setter Property="Margin" Value="0,8,8,0"/>
+                <Setter Property="MinHeight" Value="27"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}"/>
+            </Style>
+            <Style x:Key="Settings.Explanation" TargetType="TextBlock" BasedOn="{StaticResource Corporate.Management.Muted}">
+                <Setter Property="Text" Value="Личные параметры синхронизируются между устройствами и применяются после сохранения."/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsServerSettings}" Value="True">
+                        <Setter Property="Text" Value="Изменения вступают в силу после сохранения на сервере."/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsOffline}" Value="True">
+                        <Setter Property="Text" Value="Сервер недоступен. Показаны последние подтверждённые параметры."/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Error" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="Margin" Value="0,0,0,6"/>
+                <Style.Triggers>
+                    <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger>
+                    <Trigger Property="Text" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Refresh" TargetType="Button" BasedOn="{StaticResource Corporate.Management.Button}">
+                <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasSettingsDraft}" Value="True">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Setter Property="ToolTip" Value="Сохраните или отмените правки перед обновлением."/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding HasInvalidFields, ElementName=SettingsRoot}" Value="True">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Setter Property="ToolTip" Value="Исправьте или отмените правки перед обновлением."/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Discard" TargetType="Button" BasedOn="{StaticResource Corporate.Management.Button}">
+                <Setter Property="IsEnabled" Value="False"/>
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding CanDiscardCurrentSettings}" Value="True"/>
+                            <Condition Binding="{Binding HasCurrentSettingsDraft}" Value="True"/>
+                        </MultiDataTrigger.Conditions>
+                        <Setter Property="IsEnabled" Value="True"/>
+                    </MultiDataTrigger>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding CanDiscardCurrentSettings}" Value="True"/>
+                            <Condition Binding="{Binding HasInvalidInput, ElementName=SettingsRoot}" Value="True"/>
+                        </MultiDataTrigger.Conditions>
+                        <Setter Property="IsEnabled" Value="True"/>
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Save" TargetType="Button" BasedOn="{StaticResource Corporate.Management.Primary}">
+                <Setter Property="AutomationProperties.AutomationId" Value="SaveUserSettingsButton"/>
+                <Setter Property="IsEnabled" Value="False"/>
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding CanEditCurrentSettings}" Value="True"/>
+                            <Condition Binding="{Binding HasCurrentSettingsDraft}" Value="True"/>
+                            <Condition Binding="{Binding HasInvalidInput, ElementName=SettingsRoot}" Value="False"/>
+                            <Condition Binding="{Binding CurrentSettingsError}" Value="{x:Null}"/>
+                        </MultiDataTrigger.Conditions>
+                        <Setter Property="IsEnabled" Value="True"/>
+                    </MultiDataTrigger>
+                    <DataTrigger Binding="{Binding IsNotificationSettings}" Value="True">
+                        <Setter Property="AutomationProperties.AutomationId" Value="SaveNotificationPreferencesButton"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsServerSettings}" Value="True">
+                        <Setter Property="AutomationProperties.AutomationId" Value="SaveOrganizationSettingsButton"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Status" TargetType="TextBlock" BasedOn="{StaticResource Corporate.Management.Muted}">
+                <Setter Property="Text" Value="Нет несохранённых изменений"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding CanEditCurrentSettings}" Value="False">
+                        <Setter Property="Text" Value="Только просмотр"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding HasSettingsDraft}" Value="True">
+                        <Setter Property="Text" Value="Есть правки в другом разделе"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding HasCurrentSettingsDraft}" Value="True">
+                        <Setter Property="Text" Value="Есть несохранённые изменения"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding HasInvalidInput, ElementName=SettingsRoot}" Value="True">
+                        <Setter Property="Text" Value="Есть несохранённые изменения"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsSavingSettings}" Value="True">
+                        <Setter Property="Text" Value="Сохраняем изменения…"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="Settings.Tab" TargetType="ListBoxItem" BasedOn="{StaticResource Corporate.Management.Tab}">
+                <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12">
+        <Grid MaxWidth="1170">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <DockPanel Margin="0,0,0,6">
+                <Button DockPanel.Dock="Right" Content="Обновить" Command="{Binding RefreshCommand}"
+                    Style="{StaticResource Settings.Refresh}" Margin="6,0,0,0" VerticalAlignment="Top"
+                    AutomationProperties.AutomationId="WorkHubRefreshButton"/>
+                <ListBox x:Name="SectionNavigation" ItemsSource="{Binding SettingsSections}" SelectedItem="{Binding SettingsSection}"
+                    ItemContainerStyle="{StaticResource Settings.Tab}" Background="Transparent" BorderThickness="0" Padding="0"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="OnSectionChanged"
+                    AutomationProperties.Name="Разделы настроек" AutomationProperties.AutomationId="SettingsNavigation">
+                    <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                </ListBox>
+            </DockPanel>
+
+            <StackPanel Grid.Row="1">
+                <Border Margin="0,0,10,10" Padding="10,8" Visibility="{Binding HasFeedback, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                    AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="WorkHubFeedback">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Corporate.Management.InfoPanel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsFeedbackError}" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.WarningSoft}"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Warning}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.AutomationId="WorkHubFeedbackText"/>
+                </Border>
+                <StackPanel Margin="0,0,10,10" Visibility="{Binding IsLoading, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                    AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="WorkHubLoadingState">
+                    <TextBlock Text="Загружаем настройки…" Style="{StaticResource Corporate.Management.Muted}" Margin="0,0,0,4"/>
+                    <ProgressBar IsIndeterminate="True" Height="3" Style="{StaticResource Task.Progress.Indeterminate}"/>
+                </StackPanel>
+
+            </StackPanel>
+
+            <ScrollViewer x:Name="SettingsScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <Border Style="{StaticResource Corporate.Management.InfoPanel}" Margin="0,0,10,10" Visibility="{Binding IsServerSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="Подключение" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level2"/>
+                            <TextBlock Text="{Binding ServerAddress}" TextWrapping="Wrap" Margin="0,4,0,0" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding SettingsConnectionStatus}" Style="{StaticResource Corporate.Management.Muted}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Padding="14" Margin="0,0,10,10" AutomationProperties.AutomationId="WorkHubLimitedRoleState">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Corporate.Management.Card}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanReadCurrentSettings}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock Text="Параметры недоступны для вашей роли" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.AutomationId="WorkHubLimitedRoleText"/>
+                            <TextBlock Text="Обратитесь к администратору, если вам нужен доступ." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="Подтверждённых настроек пока нет. Обновите раздел после подключения к серверу."
+                        Margin="0,0,10,10" TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Corporate.Management.Muted}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding CanReadCurrentSettings}" Value="True"/>
+                                            <Condition Binding="{Binding HasCurrentSettingsSnapshot}" Value="False"/>
+                                            <Condition Binding="{Binding IsLoading}" Value="False"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <StackPanel Visibility="{Binding HasCurrentSettingsSnapshot, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                        <Border Style="{StaticResource Corporate.Management.InfoPanel}" Padding="10,7" Margin="0,0,10,10">
+                            <TextBlock Style="{StaticResource Settings.Explanation}"/>
+                        </Border>
+                        <StackPanel x:Name="ProfileFields" IsEnabled="{Binding CanEditCurrentSettings}" Visibility="{Binding IsProfileSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                            <UniformGrid Style="{StaticResource Settings.Cards}">
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Интерфейс и календарь" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Язык интерфейса" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <ComboBox ItemsSource="{Binding LanguageChoices}" DisplayMemberPath="Value" SelectedValuePath="Key"
+                                                SelectedValue="{Binding UserLanguage}" AutomationProperties.Name="Язык интерфейса" AutomationProperties.AutomationId="SettingsLanguage"/>
+                                        </StackPanel>
+                                        <UniformGrid Columns="2">
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Первый день недели" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <ComboBox ItemsSource="{Binding WeekdayChoices}" DisplayMemberPath="Value" SelectedValuePath="Key"
+                                                    SelectedValue="{Binding FirstDayOfWeek}" AutomationProperties.Name="Первый день недели" AutomationProperties.AutomationId="SettingsFirstDay"/>
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Формат времени" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <ComboBox ItemsSource="{Binding TimeFormatChoices}" DisplayMemberPath="Value" SelectedValuePath="Key"
+                                                    SelectedValue="{Binding UserTimeFormat}" AutomationProperties.Name="Формат времени" AutomationProperties.AutomationId="SettingsTimeFormat"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Рабочий день" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <TextBlock Text="Укажите границы рабочего дня в формате ЧЧ:ММ." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
+                                        <UniformGrid Columns="2">
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Начало дня" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding WorkdayStartDisplay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" MaxLength="16" AutomationProperties.Name="Начало рабочего дня" AutomationProperties.AutomationId="SettingsWorkdayStart"/>
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Конец дня" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding WorkdayEndDisplay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" MaxLength="16" AutomationProperties.Name="Конец рабочего дня" AutomationProperties.AutomationId="SettingsWorkdayEnd"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Задачи и напоминания" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <UniformGrid Columns="2">
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Длительность, мин" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding DefaultTaskDurationMinutes, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Длительность задачи, мин" AutomationProperties.AutomationId="SettingsTaskDuration"/>
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Напоминать за, мин" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding DefaultReminderOffsetMinutes, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Напоминать за, мин" AutomationProperties.AutomationId="SettingsReminderOffset"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Напоминание для срока без времени · ЧЧ:ММ" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <TextBox Text="{Binding ReminderTimeDisplay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" MaxLength="16" AutomationProperties.Name="Напоминание для срока без времени · ЧЧ:ММ" AutomationProperties.AutomationId="SettingsReminderTime"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Файлы и запуск" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <CheckBox IsChecked="{Binding AutostartEnabled}"><TextBlock Text="Запускать Task вместе с Windows" TextWrapping="Wrap"/></CheckBox>
+                                        <CheckBox IsChecked="{Binding AllowLocalPaths}"><TextBlock Text="Разрешать локальные пути" TextWrapping="Wrap"/></CheckBox>
+                                        <CheckBox IsChecked="{Binding ConfirmCatalogDelete}"><TextBlock Text="Подтверждать удаление записей каталога" TextWrapping="Wrap"/></CheckBox>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Если файл недоступен" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <ComboBox SelectedValue="{Binding MissingFileBehavior}" SelectedValuePath="Tag" AutomationProperties.Name="Если файл недоступен">
+                                                <ComboBoxItem Content="Показать действия" Tag="show_actions"/>
+                                                <ComboBoxItem Content="Оставить неактивным" Tag="keep_inactive"/>
+                                                <ComboBoxItem Content="Предложить новый путь" Tag="prompt_relink"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                        </StackPanel>
+                        <StackPanel x:Name="NotificationFields" IsEnabled="{Binding CanEditCurrentSettings}" Visibility="{Binding IsNotificationSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                            <UniformGrid Style="{StaticResource Settings.Cards}">
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Способы уведомления" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <TextBlock Text="Чтобы уведомления приходили после закрытия окна, оставьте Task в области уведомлений Windows." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
+                                        <CheckBox IsChecked="{Binding NotificationsEnabled}"><TextBlock Text="Получать уведомления" TextWrapping="Wrap"/></CheckBox>
+                                        <CheckBox IsChecked="{Binding DesktopNotificationsEnabled}"><TextBlock Text="Показывать уведомления на рабочем столе" TextWrapping="Wrap"/></CheckBox>
+                                        <CheckBox IsChecked="{Binding NotificationSoundEnabled}"><TextBlock Text="Воспроизводить звук" TextWrapping="Wrap"/></CheckBox>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Отсрочка по умолчанию, мин" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <TextBox Text="{Binding DefaultSnoozeMinutes, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Отсрочка по умолчанию, мин" AutomationProperties.AutomationId="SettingsSnooze"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Не беспокоить" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <TextBlock Text="Задайте период и часовой пояс или очистите все три поля, чтобы отключить режим." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
+                                        <UniformGrid Columns="2">
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="С · ЧЧ:ММ" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding QuietStartDisplay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" MaxLength="16" AutomationProperties.Name="С · ЧЧ:ММ" AutomationProperties.AutomationId="SettingsQuietStart"/>
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="До · ЧЧ:ММ" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding QuietEndDisplay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" MaxLength="16" AutomationProperties.Name="До · ЧЧ:ММ" AutomationProperties.AutomationId="SettingsQuietEnd"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Часовой пояс" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <TextBox Text="{Binding QuietHoursTimeZone, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Часовой пояс" AutomationProperties.AutomationId="SettingsQuietTimeZone"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                        </StackPanel>
+                        <StackPanel x:Name="OrganizationFields" IsEnabled="{Binding CanEditCurrentSettings}" Visibility="{Binding IsServerSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                            <UniformGrid Style="{StaticResource Settings.Cards}">
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Хранение данных" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <TextBlock Text="Сроки хранения действуют для всей организации." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
+                                        <UniformGrid Columns="2">
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="Корзина, дней" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding TrashRetentionDays, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Корзина, дней" AutomationProperties.AutomationId="SettingsTrashRetention"/>
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Settings.Field}">
+                                                <TextBlock Text="История, дней" Style="{StaticResource Corporate.Management.Label}"/>
+                                                <TextBox Text="{Binding HistoryRetentionDays, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="История, дней" AutomationProperties.AutomationId="SettingsHistoryRetention"/>
+                                            </StackPanel>
+                                        </UniformGrid>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Журнал синхронизации, дней" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <TextBox Text="{Binding ChangeFeedRetentionDays, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Журнал синхронизации, дней" AutomationProperties.AutomationId="SettingsChangeFeedRetention"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Settings.Card}">
+                                    <StackPanel>
+                                        <TextBlock Text="Повторения" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
+                                        <TextBlock Text="На сколько дней вперёд сервер формирует повторения." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
+                                        <StackPanel Style="{StaticResource Settings.Field}">
+                                            <TextBlock Text="Горизонт повторений, дней" Style="{StaticResource Corporate.Management.Label}"/>
+                                            <TextBox Text="{Binding RecurrenceHorizonDays, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" AutomationProperties.Name="Горизонт повторений, дней" AutomationProperties.AutomationId="SettingsRecurrenceHorizon"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Row="3" Style="{StaticResource Corporate.Management.Card}" Padding="10,8" Margin="0,6,10,0" Visibility="{Binding HasCurrentSettingsSnapshot, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                <StackPanel>
+                    <TextBlock Text="Введите целое число в выделенном поле." Visibility="{Binding HasInvalidInput, ElementName=SettingsRoot, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                        Foreground="{DynamicResource Task.Brush.Semantic.Critical}" TextWrapping="Wrap"
+                        Margin="0,0,0,6" AutomationProperties.LiveSetting="Polite"/>
+                    <TextBlock Text="{Binding CurrentSettingsError}" Style="{StaticResource Settings.Error}" AutomationProperties.LiveSetting="Polite"/>
+                    <DockPanel>
+                        <WrapPanel DockPanel.Dock="Right" Margin="10,0,0,0">
+                            <Button Content="Отменить правки" Click="OnDiscard"
+                                Style="{StaticResource Settings.Discard}" Margin="0,0,6,0" AutomationProperties.AutomationId="DiscardSettingsButton"/>
+                            <Button Content="Сохранить" Command="{Binding CurrentSettingsSaveCommand}" Style="{StaticResource Settings.Save}"/>
+                        </WrapPanel>
+                        <TextBlock Style="{StaticResource Settings.Status}" VerticalAlignment="Center"
+                            AutomationProperties.LiveSetting="Polite"/>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

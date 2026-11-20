@@ -318,6 +318,43 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task DiscardRestoresOnlyTheActiveSettingsSectionWithoutSaving()
+    {
+        var client = new FakeClient();
+        using var vm = new WorkHubViewModel(client, ["Settings.ReadOwn", "Settings.UpdateOwn", "Organization.Read", "Organization.Update"]);
+        vm.Activate(WorkHubArea.Settings);
+        await Eventually(() => vm.HasCurrentSettingsSnapshot && !vm.IsLoading);
+
+        var originalSnooze = vm.DefaultSnoozeMinutes;
+        vm.DefaultTaskDurationMinutes = 90;
+        vm.DefaultSnoozeMinutes = originalSnooze + 10;
+        vm.TrashRetentionDays = 45;
+        Assert.False(vm.RefreshCommand.CanExecute(null));
+
+        vm.SettingsSection = "Уведомления";
+        Assert.True(vm.HasCurrentSettingsDraft);
+        Assert.True(vm.DiscardCurrentSettingsDraft());
+        Assert.Equal(originalSnooze, vm.DefaultSnoozeMinutes);
+        Assert.False(vm.HasCurrentSettingsDraft);
+        Assert.Equal(90, vm.DefaultTaskDurationMinutes);
+        Assert.Equal(45, vm.TrashRetentionDays);
+        Assert.True(vm.HasSettingsDraft);
+        Assert.Null(client.SavedNotificationPreferences);
+
+        vm.SettingsSection = "Подключение и сервер";
+        Assert.True(vm.DiscardCurrentSettingsDraft());
+        Assert.Equal(30, vm.TrashRetentionDays);
+        Assert.Null(client.SavedOrganizationSettings);
+
+        vm.SettingsSection = "Профиль";
+        Assert.True(vm.DiscardCurrentSettingsDraft());
+        Assert.Equal(60, vm.DefaultTaskDurationMinutes);
+        Assert.False(vm.HasSettingsDraft);
+        Assert.True(vm.RefreshCommand.CanExecute(null));
+        Assert.Null(client.SavedUserSettings);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task NetworkLoss_PreservesSettingsDraftAndBlocksServerWritesUntilReconnect()
     {
         var client = new FakeClient();

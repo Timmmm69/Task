@@ -25,7 +25,7 @@ public sealed class AdministrationAccessTests
         Assert.True(vm.IsAccessManagement);
         Assert.False(vm.IsUsers);
         Assert.Equal(capability == "User.ManageRoles", vm.CanReadCurrentArea);
-        Assert.Contains("OQ-ADMIN-ROLES-READ", vm.RoleAssignmentLimitation);
+        Assert.Contains("могло бы удалить действующие права", vm.RoleAssignmentLimitation);
         Assert.False(await vm.RefreshCommand.ExecuteAsync());
         Assert.False(await vm.CreateUserCommand.ExecuteAsync());
         Assert.False(await vm.EditUserCommand.ExecuteAsync());

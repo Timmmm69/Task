@@ -1,0 +1,158 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="Corporate.Management.Coral" Color="#C91E47"/>
+    <SolidColorBrush x:Key="Corporate.Management.CoralStrong" Color="#AA183B"/>
+    <SolidColorBrush x:Key="Corporate.Management.Rose" Color="#FFF0F3"/>
+    <SolidColorBrush x:Key="Corporate.Management.RoseLine" Color="#F0CBD4"/>
+    <SolidColorBrush x:Key="Corporate.Management.TealSoft" Color="#E8F4F8"/>
+    <SolidColorBrush x:Key="Corporate.Management.TealLine" Color="#D4E8EE"/>
+
+    <Style x:Key="Corporate.Management.Card" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="16"/>
+    </Style>
+    <Style x:Key="Corporate.Management.RosePanel" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="12"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="Background" Value="{StaticResource Corporate.Management.Rose}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Corporate.Management.RoseLine}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Corporate.Management.InfoPanel" TargetType="Border" BasedOn="{StaticResource Corporate.Management.RosePanel}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="Background" Value="{StaticResource Corporate.Management.TealSoft}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Corporate.Management.TealLine}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Corporate.Management.Heading" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="Corporate.Management.Muted" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    <Style x:Key="Corporate.Management.Label" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Margin" Value="0,0,0,6"/>
+    </Style>
+
+    <ControlTemplate x:Key="Corporate.Management.ButtonChrome" TargetType="Button">
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+            <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Border>
+    </ControlTemplate>
+    <Style x:Key="Corporate.Management.Button" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+        <Setter Property="Template" Value="{StaticResource Corporate.Management.ButtonChrome}"/>
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Strong}"/>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Corporate.Management.Primary" TargetType="Button" BasedOn="{StaticResource Corporate.Management.Button}">
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource Corporate.Management.Coral}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Corporate.Management.Coral}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Background" Value="{StaticResource Corporate.Management.CoralStrong}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Corporate.Management.CoralStrong}"/>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Corporate.Management.Danger" TargetType="Button" BasedOn="{StaticResource Corporate.Management.Button}">
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}"/>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Corporate.Management.Row" TargetType="ListBoxItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="10,7"/>
+        <Setter Property="Margin" Value="0,0,0,3"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource Corporate.Management.Rose}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Corporate.Management.Coral}"/>
+            </Trigger>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Padding" Value="9,6"/>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Corporate.Management.Tab" TargetType="ListBoxItem" BasedOn="{StaticResource Corporate.Management.Row}">
+        <Setter Property="MinHeight" Value="36"/>
+        <Setter Property="Margin" Value="0,0,6,4"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+</ResourceDictionary>
