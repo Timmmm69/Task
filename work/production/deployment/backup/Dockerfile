@@ -1,5 +1,5 @@
-ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/runtime:10.0.14-noble-amd64@sha256:de1261f1b137a580e6620fa3f20323efa7bb131a2aeb103cab95077d3445122d
-ARG SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.403-noble-amd64@sha256:9c7b6b263d9d4c2e4718e16dae6d75cd8f4b5ccf206f1e7d48a98eb429981b03
+ARG RUNTIME_IMAGE=mcr.microsoft.com/dotnet/runtime:10.0.15-noble-amd64@sha256:785257773ab481e31d7f42401b03917433978ef53724a1162e3c60616b8b7de8
+ARG SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.404-noble-amd64@sha256:a82c44c2efe00953d66a37e90d307c4cfbd1e974b16e3b2a2fc665331946c9af
 FROM ${SDK_IMAGE} AS build
 WORKDIR /src
 COPY deployment/containers/NuGet.Config ./NuGet.Config
