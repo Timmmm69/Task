@@ -22,363 +22,286 @@
         <KeyBinding Key="Escape" Command="{Binding Tasks.CancelEditorCommand}" />
         <KeyBinding Key="N" Modifiers="Alt" Command="{Binding NewTaskCommand}" />
     </Window.InputBindings>
+    <Window.Resources>
+        <Style x:Key="RailItem" TargetType="ListBoxItem" BasedOn="{StaticResource Task.Workspace.NavigationItem}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                    <Setter Property="Height" Value="34" />
+                    <Setter Property="Padding" Value="0" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=540}" Value="False">
+                    <Setter Property="Height" Value="24" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RailLabel" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WideHeaderLabel" TargetType="TextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="{DynamicResource Task.Shell.FooterGridLength}" />
+            <RowDefinition Height="36" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ShellNavigationWidthConverter}}" />
+            <ColumnDefinition Width="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.ShellNavigationWidthConverter}}">
+                <ColumnDefinition.Style>
+                    <Style TargetType="ColumnDefinition">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="True">
+                                <Setter Property="MinWidth" Value="204" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- CMP-024 NavigationRail -->
-        <Border Grid.RowSpan="3" Grid.Column="0"
-                Style="{StaticResource Task.Shell.NavigationSurface}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="{DynamicResource Task.Navigation.MenuGridLength}" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Border Grid.Row="0" Width="48" Height="58" Margin="10,0,0,0"
-                        HorizontalAlignment="Left" Background="Transparent"
-                        ToolTip="Основная навигация">
-                    <Path Data="{StaticResource Task.Icon.Navigation}"
-                          Width="24" Height="24" Stretch="Uniform"
-                          Fill="{DynamicResource Task.Brush.Text.Primary}"
-                          HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-
-                <StackPanel Grid.Row="2" Margin="8,16">
-                    <TextBlock Text="Компания" Margin="8,0,0,8"/>
-                    <Button Content="Сменить режим" Click="OnSwitchMode" Style="{StaticResource Task.Button.Secondary}"
-                            AutomationProperties.AutomationId="SwitchModeButton"/>
+        <Border Grid.RowSpan="3" Style="{StaticResource Task.Shell.NavigationSurface}">
+            <DockPanel Margin="8,0">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="48" Margin="5,0" ToolTip="Task · Пространство компании">
+                    <Border Width="36" Height="36" VerticalAlignment="Center"
+                            Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="12">
+                        <Path Data="{StaticResource Task.Icon.Tasks}" Width="20" Height="20" Stretch="Uniform"
+                              Fill="{DynamicResource Task.Brush.Text.Primary}" />
+                    </Border>
+                    <TextBlock Text="Task" FontSize="19" FontWeight="Bold" VerticalAlignment="Center"
+                               Margin="8,0,0,0" Style="{StaticResource RailLabel}" />
                 </StackPanel>
-                <ListBox x:Name="NavigationListBox" Grid.Row="1"
-                         ItemsSource="{Binding Sections}"
+
+                <Button DockPanel.Dock="Bottom" Click="OnSwitchMode" Margin="0,4,0,6" Padding="8,0"
+                        Style="{StaticResource Task.Workspace.Button}" ToolTip="Сменить режим"
+                        AutomationProperties.Name="Сменить режим" AutomationProperties.AutomationId="SwitchModeButton">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⇄" FontSize="18" VerticalAlignment="Center" />
+                        <TextBlock Text="Сменить режим" Margin="7,0,0,0" VerticalAlignment="Center" Style="{StaticResource RailLabel}" />
+                    </StackPanel>
+                </Button>
+
+                <ListBox x:Name="NavigationListBox" ItemsSource="{Binding Sections}"
                          SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
-                         Style="{StaticResource Task.Navigation.List}"
-                         ItemContainerStyle="{StaticResource Task.Navigation.Item}"
-                         TabIndex="0"
-                         AutomationProperties.Name="Основная навигация"
+                         Style="{StaticResource Task.Navigation.List}" ItemContainerStyle="{StaticResource RailItem}"
+                         TabIndex="0" AutomationProperties.Name="Основная навигация"
                          AutomationProperties.HelpText="Стрелки выбирают раздел, Enter открывает его"
                          AutomationProperties.AutomationId="NavigationListBox">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="24" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                            <DockPanel>
+                                <DockPanel.Style>
+                                    <Style TargetType="DockPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DockPanel.Style>
                                 <Path Data="{Binding IconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
-                                      Width="20" Height="20" Stretch="Uniform"
+                                      Width="18" Height="18" Stretch="Uniform" Margin="4,0"
                                       Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
                                       IsHitTestVisible="False" />
-                                <TextBlock Grid.Column="1" Text="{Binding Title}"
-                                           Margin="10,0,0,0"
-                                           FontSize="{DynamicResource Task.Font.Size.Navigation}"
-                                           VerticalAlignment="Center"
-                                           TextTrimming="CharacterEllipsis">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Grid>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource RailLabel}" Margin="4,0,0,0"
+                                           FontSize="{DynamicResource Task.Font.Size.Body}" VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </Grid>
+            </DockPanel>
         </Border>
 
-        <!-- CMP-001 SurfaceTitle + CMP-022 CommandBar + CMP-023 ConnectionStatus -->
-        <Border x:Name="HeaderRegion" Grid.Row="0" Grid.Column="1"
-                Style="{StaticResource Task.Shell.HeaderSurface}">
+        <Border x:Name="HeaderRegion" Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Task.Shell.HeaderSurface}">
+                    <Setter Property="Padding" Value="20,12,20,10" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=540}" Value="False">
+                            <Setter Property="Padding" Value="16,5,16,5" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition>
-                        <ColumnDefinition.Style>
-                            <Style TargetType="ColumnDefinition">
-                                <Setter Property="Width" Value="260" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                        <Setter Property="Width" Value="150" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ColumnDefinition.Style>
-                    </ColumnDefinition>
-                    <ColumnDefinition Width="44" />
-                    <ColumnDefinition Width="44" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding SelectedSection.Title}"
-                                   ToolTip="{Binding SelectedSection.Title}"
-                                   AutomationProperties.LiveSetting="Polite"
-                                   AutomationProperties.HeadingLevel="Level1">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Shell.PageTitle}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                            <Setter Property="FontSize" Value="22" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding SelectedSectionSupportingText}"
-                                   Margin="18,2,0,0"
-                                   ToolTip="{Binding SelectedSectionSupportingText}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Shell.PageContext}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsTodaySectionSelected}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
-                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                    <TextBlock Text="{Binding SelectedSection.SupportingText}" TextWrapping="Wrap" Margin="0,4,0,0" Style="{StaticResource Task.Shell.StatusText}" AutomationProperties.AutomationId="SectionHelpText" />
-                    <TextBlock Text="{Binding SessionMessage}"
-                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                               Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
-                               AutomationProperties.Name="Состояние сессии"
-                               AutomationProperties.AutomationId="SessionMessageText"
-                               AutomationProperties.LiveSetting="Assertive">
+                <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                    <TextBlock Text="{Binding SelectedSection.Title}"
+                               TextTrimming="CharacterEllipsis" ToolTip="{Binding SelectedSection.Title}"
+                               AutomationProperties.LiveSetting="Polite" AutomationProperties.HeadingLevel="Level1">
                         <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Visibility" Value="Visible" />
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Title}">
                                 <Style.Triggers>
-                                    <Trigger Property="Text" Value="{x:Null}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </Trigger>
-                                    <Trigger Property="Text" Value="">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsTodaySectionSelected}" Value="True">
+                                        <Setter Property="FontSize" Value="28" />
+                                    </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
+                    <TextBlock Text="{Binding SelectedSectionSupportingText}" Style="{StaticResource Task.Workspace.Body}"
+                               ToolTip="{Binding SelectedSection.SupportingText}" AutomationProperties.AutomationId="SectionHelpText" />
                 </StackPanel>
 
-                <Button x:Name="GlobalSearchButton" Grid.Column="1" Click="OnOpenGlobalSearch"
-                        Margin="0,0,10,0"
-                        ToolTip="Палитра команд · Ctrl+K"
-                        AutomationProperties.Name="Палитра команд" AutomationProperties.AutomationId="GlobalSearchOverlayButton"
-                        AutomationProperties.HelpText="Команды и поиск доступных объектов. Сочетание клавиш Ctrl+K.">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
-                            <Setter Property="MinWidth" Value="184" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                    <Setter Property="MinWidth" Value="40" />
-                                    <Setter Property="Width" Value="40" />
-                                    <Setter Property="Padding" Value="0" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource Task.Icon.Search}" Width="17" Height="17" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                        <TextBlock Text="Поиск по Task" Margin="8,0,12,0">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </StackPanel>
-                </Button>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsTodaySectionSelected}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    <Button x:Name="TasksRefreshButton" Command="{Binding FooterRefreshCommand}"
-                            Style="{StaticResource Task.Button.Icon}"
-                            Margin="0,0,8,0"
-                            TabIndex="2"
-                            ToolTip="Обновить текущий раздел"
-                            AutomationProperties.Name="Обновить текущий раздел"
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="TasksRefreshButton" Command="{Binding FooterRefreshCommand}" Margin="0,0,8,0"
+                            TabIndex="2" ToolTip="Обновить текущий раздел" AutomationProperties.Name="Обновить текущий раздел"
                             AutomationProperties.AutomationId="TasksRefreshButton"
                             AutomationProperties.HelpText="Повторно загрузить данные текущего раздела">
-                        <Path Data="{StaticResource Task.Icon.Refresh}"
-                              Width="20" Height="20" Stretch="Uniform"
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource Task.Workspace.IconButton}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                    <DataTrigger Binding="{Binding IsTodaySectionSelected}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                    <Trigger Property="Command" Value="{x:Null}"><Setter Property="IsEnabled" Value="False" /></Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Path Data="{StaticResource Task.Icon.Refresh}" Width="18" Height="18" Stretch="Uniform"
                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                     <Button Command="{Binding NewTaskCommand}"
-                            TabIndex="3"
-                            ToolTip="{Binding ReadOnlyActionReason}"
-                            AutomationProperties.Name="Новая задача"
-                            AutomationProperties.AutomationId="NewTaskButton"
+                            Margin="0,0,12,0" TabIndex="3" MinWidth="112" VerticalAlignment="Center"
+                            ToolTip="{Binding ReadOnlyActionReason, TargetNullValue=Новая задача · Alt+N}"
+                            ToolTipService.ShowOnDisabled="True"
+                            AutomationProperties.Name="Новая задача" AutomationProperties.AutomationId="NewTaskButton"
                             AutomationProperties.HelpText="{Binding ReadOnlyActionReason}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}">
-                                <Setter Property="MinWidth" Value="208" />
+                            <Style TargetType="Button" BasedOn="{StaticResource Task.Workspace.Primary}">
+                                <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                        <Setter Property="MinWidth" Value="40" />
-                                        <Setter Property="Width" Value="40" />
-                                        <Setter Property="Padding" Value="0" />
-                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource Task.Icon.Add}"
-                                  Width="18" Height="18" Stretch="Uniform"
+                            <Path Data="{StaticResource Task.Icon.Add}" Width="14" Height="14" Stretch="Uniform"
                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                            <TextBlock Text="Новая задача" Margin="8,0,0,0" VerticalAlignment="Center">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <TextBlock Text="Alt+N" Margin="9,0,0,0" VerticalAlignment="Center"
-                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                       FontWeight="{DynamicResource Task.Font.Weight.Regular}"
-                                       Foreground="#B7D4F5">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                            <TextBlock Text="Новая задача" Margin="7,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
+                    </Button>
+                    <Button x:Name="GlobalSearchButton" Click="OnOpenGlobalSearch" Margin="0,0,8,0" Padding="9,0"
+                            Style="{StaticResource Task.Workspace.Button}" MinWidth="38" Height="38" VerticalAlignment="Center"
+                            ToolTip="Поиск и команды · Ctrl+K"
+                            AutomationProperties.Name="Палитра команд" AutomationProperties.AutomationId="GlobalSearchOverlayButton"
+                            AutomationProperties.HelpText="Команды и поиск доступных объектов. Сочетание клавиш Ctrl+K.">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource Task.Icon.Search}" Width="17" Height="17" Stretch="Uniform"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                            <TextBlock Text="Поиск по Task" Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />
+                            <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                       VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="NotificationsButton" Click="OnOpenNotifications" Margin="0,0,8,0"
+                            Style="{StaticResource Task.Workspace.IconButton}" IsEnabled="{Binding WorkHub.CanReadNotifications, FallbackValue=False}"
+                            ToolTip="Центр уведомлений"
+                            AutomationProperties.Name="{Binding WorkHub.UnreadCount, StringFormat=Уведомления: {0} непрочитанных, FallbackValue=Центр уведомлений}"
+                            AutomationProperties.AutomationId="NotificationCenterButton">
+                        <Grid>
+                            <Path Data="{StaticResource Task.Icon.Notifications}" Width="18" Height="18" Stretch="Uniform"
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                            <Border Background="{DynamicResource Task.Brush.Semantic.Critical}" CornerRadius="8"
+                                    MinWidth="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12,-8,-8,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding WorkHub.UnreadCount, FallbackValue=0}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding WorkHub.UnreadCount}" Foreground="White" FontSize="10"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0" />
+                            </Border>
+                        </Grid>
+                    </Button>
+                    <Button Command="{Binding LogoutCommand}" Style="{StaticResource Task.Workspace.IconButton}" TabIndex="4"
+                            ToolTip="Выйти из Task" AutomationProperties.Name="Выйти из Task" AutomationProperties.AutomationId="LogoutButton"
+                            AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
+                        <Path Data="{StaticResource Task.Icon.SignOut}" Width="18" Height="18" Stretch="Uniform"
+                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                     </Button>
                 </StackPanel>
 
-                <Border Grid.Column="3" Padding="12,0" VerticalAlignment="Stretch"
-                        AutomationProperties.Name="{Binding ConnectionStatus}"
+                <Border Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="10"
+                        ToolTip="{Binding ConnectionStatus}" AutomationProperties.Name="{Binding ConnectionStatus}"
                         AutomationProperties.HelpText="{Binding ConnectionContext}">
-                    <Grid VerticalAlignment="Center">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="24" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Ellipse Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Task.Workspace.Background}">
+                            <Setter Property="Margin" Value="0,9,0,0" />
+                            <Setter Property="Padding" Value="10,6" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=540}" Value="False">
+                                    <Setter Property="Margin" Value="0,4,0,0" />
+                                    <Setter Property="Padding" Value="8,3" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsConnected}" Value="False" />
+                                        <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.WarningSoft}" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel>
+                        <Ellipse Width="8" Height="8" Margin="0,0,8,0" VerticalAlignment="Center">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
                                     <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Success}" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsConnected}" Value="False">
-                                            <Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
-                                            <Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="False"><Setter Property="Fill" Value="{DynamicResource Task.Brush.Semantic.Critical}" /></DataTrigger>
+                                        <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"><Setter Property="Fill" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" /></DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Ellipse.Style>
                         </Ellipse>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding ConnectionTitle}"
-                                       FontSize="{DynamicResource Task.Font.Size.Label}"
-                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
-                                       TextTrimming="CharacterEllipsis"
-                                       AutomationProperties.AutomationId="ConnectionStatusText"
-                                       AutomationProperties.LiveSetting="Polite" />
-                            <TextBlock Text="{Binding ConnectionContext}"
-                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                                       TextTrimming="CharacterEllipsis">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=1080}" Value="False">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </StackPanel>
-                    </Grid>
+                        <WrapPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding ConnectionTitle}" FontWeight="SemiBold" Margin="0,0,12,0"
+                                       AutomationProperties.AutomationId="ConnectionStatusText" AutomationProperties.LiveSetting="Polite" />
+                            <TextBlock Text="{Binding ConnectionContext}" Style="{StaticResource Task.Workspace.Meta}"
+                                       VerticalAlignment="Center" />
+                        </WrapPanel>
+                    </DockPanel>
                 </Border>
-
-                <Button x:Name="NotificationsButton" Grid.Column="4" Click="OnOpenNotifications"
-                        Style="{StaticResource Task.Button.Icon}" VerticalAlignment="Center"
-                        IsEnabled="{Binding WorkHub.CanReadNotifications}" ToolTip="Центр уведомлений"
-                        AutomationProperties.Name="{Binding WorkHub.UnreadCount, StringFormat=Уведомления: {0} непрочитанных}"
-                        AutomationProperties.AutomationId="NotificationCenterButton">
-                    <Grid><Path Data="{StaticResource Task.Icon.Notifications}" Width="20" Height="20" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/><Border Background="{DynamicResource Task.Brush.Semantic.Critical}" CornerRadius="8" MinWidth="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12,-8,-8,0"><Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Visible"/><Style.Triggers><DataTrigger Binding="{Binding WorkHub.UnreadCount}" Value="0"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Border.Style><TextBlock Text="{Binding WorkHub.UnreadCount}" Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0"/></Border></Grid>
-                </Button>
-
-                <Button Grid.Column="5"
-                        Command="{Binding LogoutCommand}"
-                        Style="{StaticResource Task.Button.Icon}"
-                        VerticalAlignment="Center"
-                        TabIndex="4"
-                        ToolTip="Выйти из Task"
-                        AutomationProperties.Name="Выйти из Task"
-                        AutomationProperties.AutomationId="LogoutButton"
-                        AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
-                    <Path Data="{StaticResource Task.Icon.SignOut}"
-                          Width="20" Height="20" Stretch="Uniform"
-                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                </Button>
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding SessionMessage}" Margin="0,8,0,0"
+                           AutomationProperties.AutomationId="SessionMessageText"
+                           AutomationProperties.LiveSetting="Assertive">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Body}">
+                            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+                            <Style.Triggers>
+                                <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger>
+                                <Trigger Property="Text" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></Trigger>
+                                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </Grid>
         </Border>
 
@@ -386,7 +309,7 @@
               Style="{StaticResource Task.Grid.SurfaceBase}"
               AutomationProperties.AutomationId="SelectedSectionArea">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                        MaxWidth="520" Margin="40">
+                        MaxWidth="520" Margin="24">
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Visible" />
@@ -419,14 +342,10 @@
                       Width="36" Height="36" Stretch="Uniform"
                       Fill="{DynamicResource Task.Brush.Text.Secondary}"
                       Margin="0,0,0,16" />
-                <TextBlock Text="{Binding SelectedSection.Title}"
-                           FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
-                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
+                <TextBlock Text="{Binding SelectedSection.Title}" Style="{StaticResource Task.Workspace.Title}"
                            HorizontalAlignment="Center" Margin="0,0,0,8" />
-                <TextBlock Text="{Binding SelectedSection.PlaceholderText}"
-                           FontSize="{DynamicResource Task.Font.Size.Body}"
-                           Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                           TextWrapping="Wrap" TextAlignment="Center" />
+                <TextBlock Text="{Binding SelectedSection.PlaceholderText}" Style="{StaticResource Task.Workspace.Body}"
+                           TextAlignment="Center" />
             </StackPanel>
 
             <!-- CMP-009 PageLayout and Task read vertical slice -->
@@ -1283,28 +1202,49 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <DockPanel VerticalAlignment="Center" ToolTip="{Binding DataSourceStatus}">
                     <Path Data="{StaticResource Task.Icon.Lock}" Width="16" Height="16"
                           Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" />
                     <TextBlock Text="{Binding DataSourceStatus}" Margin="8,0,0,0"
                                FontSize="{DynamicResource Task.Font.Size.Metadata}"
                                Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                                TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                </StackPanel>
+                </DockPanel>
                 <TextBlock Grid.Column="1" Text="{Binding LastSuccessfulRefreshText}"
                            FontSize="{DynamicResource Task.Font.Size.Metadata}"
                            Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                            VerticalAlignment="Center" Margin="12,0,4,0"
                            AutomationProperties.LiveSetting="Polite" />
                 <Button Grid.Column="2" Command="{Binding FooterRefreshCommand}"
-                        Style="{StaticResource Task.Button.FooterIcon}"
-                        ToolTip="Обновить состояние задач"
-                        AutomationProperties.Name="Обновить состояние задач">
-                    <Path Data="{StaticResource Task.Icon.Refresh}" Width="16" Height="16"
-                          Stretch="Uniform"
-                          Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                        MinHeight="0" Height="34" Padding="8,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource Task.Button.FooterIcon}">
+                            <Setter Property="ToolTip" Value="Обновить текущий раздел" />
+                            <Setter Property="AutomationProperties.Name" Value="Обновить текущий раздел" />
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <Path Data="{StaticResource Task.Icon.Refresh}" Width="16" Height="16" Stretch="Uniform"
+                                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsConnected}" Value="False">
+                                    <Setter Property="Width" Value="Auto" />
+                                    <Setter Property="ContentTemplate" Value="{x:Null}" />
+                                    <Setter Property="Content" Value="Повторить" />
+                                    <Setter Property="ToolTip" Value="Повторить загрузку текущего раздела" />
+                                    <Setter Property="AutomationProperties.Name" Value="Повторить загрузку текущего раздела" />
+                                </DataTrigger>
+                                <Trigger Property="Command" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
             </Grid>
         </Border>

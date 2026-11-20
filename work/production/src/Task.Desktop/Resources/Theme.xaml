@@ -15,6 +15,7 @@
         <ResourceDictionary Source="Controls.Calendar.xaml" />
         <ResourceDictionary Source="Controls.States.xaml" />
         <ResourceDictionary Source="Controls.Shell.xaml" />
+        <ResourceDictionary Source="Personal.Airbnb.xaml" />
         <ResourceDictionary Source="Files.Controls.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -51,6 +52,147 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
                 <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <!-- Shared Personal visual language for Corporate shell and startup. -->
+    <Style x:Key="Task.Workspace.Title" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Heading}">
+        <Setter Property="FontSize" Value="26" />
+    </Style>
+
+    <Style x:Key="Task.Workspace.Body" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Muted}">
+        <Setter Property="FontSize" Value="14" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Task.Workspace.Meta" TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Body}">
+        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Metadata}" />
+    </Style>
+
+    <Style x:Key="Task.Workspace.Background" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Task.Workspace.Card" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="24" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Task.Workspace.Button" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+        <Setter Property="MinHeight" Value="38" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="Padding" Value="14,7" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}" />
+                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Task.Workspace.Primary" TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}">
+        <Setter Property="MinHeight" Value="38" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="Padding" Value="16,7" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}" />
+                <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Ink}" />
+                <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Surface.Base}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Task.Workspace.IconButton" TargetType="Button" BasedOn="{StaticResource Task.Workspace.Button}">
+        <Setter Property="Width" Value="38" />
+        <Setter Property="Height" Value="38" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Both Corporate startup windows present their own form and switch-mode action. -->
+    <Style x:Key="Task.Workspace.StartupFrame" TargetType="HeaderedContentControl">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="HeaderedContentControl">
+                    <Border Style="{StaticResource Task.Workspace.Background}">
+                        <DockPanel>
+                            <Border DockPanel.Dock="Top" Style="{StaticResource Task.Shell.HeaderSurface}" Padding="24,9">
+                                <DockPanel>
+                                    <ContentPresenter DockPanel.Dock="Right" ContentSource="Header" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="34" Height="34" CornerRadius="10" Style="{StaticResource Task.Workspace.Background}">
+                                            <Path Data="{StaticResource Task.Icon.Tasks}" Width="18" Height="18" Stretch="Uniform"
+                                                  Fill="{DynamicResource Task.Brush.Text.Primary}" />
+                                        </Border>
+                                        <TextBlock Text="Task" FontSize="18" FontWeight="Bold" Margin="9,0,0,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Пространство компании" Margin="16,0,0,0" VerticalAlignment="Center"
+                                                   Style="{StaticResource Task.Workspace.Body}" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                            <ContentPresenter />
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Task.Workspace.NavigationItem" TargetType="ListBoxItem" BasedOn="{StaticResource Task.Navigation.Item}">
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Padding" Value="9,0" />
+        <Setter Property="ToolTip" Value="{Binding Title}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Task.FocusVisualStyle}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border x:Name="Chrome" Background="Transparent" BorderBrush="Transparent"
+                                    BorderThickness="1" CornerRadius="12" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
+                                    <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}" />
+                                    <Setter TargetName="Chrome" Property="BorderThickness" Value="2" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </DataTrigger>
         </Style.Triggers>
     </Style>

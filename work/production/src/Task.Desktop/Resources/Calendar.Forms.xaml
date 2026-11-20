@@ -9,9 +9,8 @@
         <Setter Property="CornerRadius" Value="0" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
     </Style>
-    <Style x:Key="Calendar.Form.Heading" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Section}" />
-        <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
+    <Style x:Key="Calendar.Form.Heading" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Heading}">
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="Margin" Value="0,0,0,12" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
@@ -22,22 +21,24 @@
         <Setter Property="Margin" Value="0,5,0,0" />
     </Style>
     <Style x:Key="Calendar.Form.Text" TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}">
+        <Setter Property="BorderBrush" Value="{DynamicResource Personal.Airbnb.Hairline}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource Task.Radius.Control}">
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12">
                         <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" /></Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}" /></Trigger>
             <Trigger Property="Validation.HasError" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Critical}" /></Trigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="Calendar.Form.Combo" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
+        <Setter Property="BorderBrush" Value="{DynamicResource Personal.Airbnb.Hairline}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
@@ -49,7 +50,7 @@
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
                                     <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="1" CornerRadius="{DynamicResource Task.Radius.Control}" />
+                                            BorderThickness="1" CornerRadius="12" />
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
@@ -64,7 +65,7 @@
                                AllowsTransparency="True" Focusable="False" PopupAnimation="None">
                             <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                     Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="1" CornerRadius="{DynamicResource Task.Radius.Control}" Padding="4" Margin="0,4,0,0">
+                                    BorderThickness="1" CornerRadius="12" Padding="4" Margin="0,4,0,0">
                                 <ScrollViewer MaxHeight="{TemplateBinding MaxDropDownHeight}" CanContentScroll="True">
                                     <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
@@ -76,17 +77,17 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}" /></Trigger>
-            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" /></Trigger>
-            <Trigger Property="IsDropDownOpen" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" /></Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}" /></Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}" /></Trigger>
             <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5" /></Trigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="Calendar.Form.Date" TargetType="DatePicker">
+        <Setter Property="BorderBrush" Value="{DynamicResource Personal.Airbnb.Hairline}" />
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="Padding" Value="8,0,0,0" />
         <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
         <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Strong}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
@@ -96,7 +97,7 @@
                     <Grid x:Name="PART_Root">
                         <Border x:Name="Chrome" Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{DynamicResource Task.Radius.Control}">
+                                CornerRadius="12">
                             <Grid Margin="{TemplateBinding Padding}">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="40" /></Grid.ColumnDefinitions>
                                 <DatePickerTextBox x:Name="PART_TextBox" BorderThickness="0" Background="Transparent"
@@ -117,7 +118,7 @@
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}" />
                             <Setter TargetName="Chrome" Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Chrome" Property="Opacity" Value="0.5" /></Trigger>

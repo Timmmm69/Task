@@ -10,86 +10,77 @@
         Width="1120" Height="700" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource Task.Window.Style}"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
         KeyboardNavigation.TabNavigation="Cycle"
         AutomationProperties.HelpText="Используйте Tab и Shift+Tab для перехода между элементами формы"
         AutomationProperties.Name="Авторизация Task"
         AutomationProperties.AutomationId="AuthWindow">
     <Window.Resources>
-        <Style x:Key="HeadingStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="26" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="0,0,0,10" />
+        <Style x:Key="HeadingStyle" TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Title}">
+            <Setter Property="Margin" Value="0,0,0,6" />
         </Style>
-
-        <Style x:Key="BodyStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
+        <Style x:Key="BodyStyle" TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Body}" />
+        <Style x:Key="StepStyle" TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Meta}">
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
 
         <Style x:Key="FieldStyle" TargetType="Control">
-            <Setter Property="MinHeight" Value="42" />
+            <Setter Property="MinHeight" Value="38" />
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="Padding" Value="10,7" />
-            <Setter Property="Margin" Value="0,5,0,14" />
+            <Setter Property="Margin" Value="0,4,0,8" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Control">
+                        <Border x:Name="Chrome" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+                                BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1"
+                                CornerRadius="12" Padding="12,0">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                                <Setter TargetName="Chrome" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Chrome" Property="Opacity" Value="0.6" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                    <Setter Property="IsEnabled" Value="False" />
-                </DataTrigger>
+                <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="IsEnabled" Value="False" /></DataTrigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-            <Setter Property="MinHeight" Value="42" />
-            <Setter Property="MinWidth" Value="145" />
-            <Setter Property="Padding" Value="18,8" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Primary}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Strong}" />
-            <Setter Property="BorderThickness" Value="1" />
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource Task.Workspace.Primary}">
+            <Setter Property="MinWidth" Value="116" />
             <Style.Triggers>
-                <Trigger Property="IsKeyboardFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#102A56" />
-                    <Setter Property="BorderThickness" Value="3" />
-                </Trigger>
-                <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                    <Setter Property="IsEnabled" Value="False" />
-                </DataTrigger>
+                <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="IsEnabled" Value="False" /></DataTrigger>
             </Style.Triggers>
         </Style>
-
-        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
-            <Setter Property="MinHeight" Value="42" />
-            <Setter Property="MinWidth" Value="145" />
-            <Setter Property="Padding" Value="18,8" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Strong}" />
-            <Setter Property="BorderThickness" Value="1" />
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource Task.Workspace.Button}">
             <Style.Triggers>
-                <Trigger Property="IsKeyboardFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#24569F" />
-                    <Setter Property="BorderThickness" Value="3" />
-                </Trigger>
-                <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                    <Setter Property="IsEnabled" Value="False" />
-                </DataTrigger>
+                <DataTrigger Binding="{Binding IsBusy}" Value="True"><Setter Property="IsEnabled" Value="False" /></DataTrigger>
             </Style.Triggers>
         </Style>
 
         <Style x:Key="ErrorTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStyle}">
-            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Primary}" />
             <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.CriticalSoft}" />
-            <Setter Property="Padding" Value="12" />
-            <Setter Property="Margin" Value="0,2,0,14" />
+            <Setter Property="Padding" Value="12,9" />
+            <Setter Property="Margin" Value="0,2,0,10" />
             <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
-            <Setter Property="AutomationProperties.Name" Value="Ошибка" />
             <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                </DataTrigger>
                 <Trigger Property="Text" Value="">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Trigger>
@@ -103,8 +94,10 @@
             <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Success}" />
             <Setter Property="Margin" Value="0,2,0,14" />
             <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
-            <Setter Property="AutomationProperties.Name" Value="Состояние операции" />
             <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                </DataTrigger>
                 <Trigger Property="Text" Value="">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Trigger>
@@ -116,11 +109,11 @@
 
         <DataTemplate DataType="{x:Type vm:ServerSetupViewModel}">
             <StackPanel AutomationProperties.Name="Первое подключение">
-                <TextBlock Text="Шаг 1 из 3" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Шаг 1 из 3" Style="{StaticResource StepStyle}" />
                 <TextBlock Text="Первое подключение" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Укажите адрес сервера, выданный ИТ-администратором. Task принимает только защищённый HTTPS-адрес."
-                           Style="{StaticResource BodyStyle}" Margin="0,0,0,22" />
+                           Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <Label Content="Адрес сервера компании" Target="{Binding ElementName=ServerAddressTextBox}" Padding="0" />
                 <TextBox x:Name="ServerAddressTextBox"
                          Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
@@ -150,11 +143,11 @@
 
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <StackPanel AutomationProperties.Name="Вход в Task">
-                <TextBlock Text="Шаг 2 из 3" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Шаг 2 из 3" Style="{StaticResource StepStyle}" />
                 <TextBlock Text="Вход в Task" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Используйте корпоративную учётную запись. Пароль не сохраняется на компьютере."
-                           Style="{StaticResource BodyStyle}" Margin="0,0,0,22" />
+                           Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <Label Content="Логин" Target="{Binding ElementName=LoginTextBox}" Padding="0" />
                 <TextBox x:Name="LoginTextBox" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource FieldStyle}" TabIndex="0"
@@ -185,13 +178,13 @@
 
         <DataTemplate DataType="{x:Type vm:PasswordChangeViewModel}">
             <StackPanel AutomationProperties.Name="Обязательная смена пароля">
-                <TextBlock Text="Шаг 3 из 3" Foreground="{DynamicResource Task.Brush.Brand.Primary}" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Шаг 3 из 3" Style="{StaticResource StepStyle}" />
                 <TextBlock Text="Измените временный пароль" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Без смены пароля открыть Task нельзя. После подтверждения текущая сессия продолжит работу."
-                           Style="{StaticResource BodyStyle}" Margin="0,0,0,18" />
+                           Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <TextBlock Text="{Binding PasswordPolicy}" Style="{StaticResource BodyStyle}"
-                           AutomationProperties.Name="Требования к новому паролю" Margin="0,0,0,18" />
+                           AutomationProperties.Name="Требования к новому паролю" Margin="0,0,0,12" />
                 <Label Content="Текущий пароль" Target="{Binding ElementName=CurrentPasswordBox}" Padding="0" />
                 <PasswordBox x:Name="CurrentPasswordBox" Style="{StaticResource FieldStyle}" TabIndex="0"
                              AutomationProperties.Name="Текущий пароль"
@@ -227,15 +220,15 @@
 
         <DataTemplate DataType="{x:Type vm:SessionRecoveryViewModel}">
             <StackPanel AutomationProperties.Name="Восстановление сессии">
-                <TextBlock Text="Проверка сессии" Foreground="#316BC4" FontWeight="SemiBold" Margin="0,0,0,14" />
+                <TextBlock Text="Проверка сессии" Style="{StaticResource StepStyle}" />
                 <TextBlock Text="Не удалось подтвердить сессию" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
-                <TextBlock Text="{Binding Message}" Style="{StaticResource BodyStyle}" Margin="0,0,0,18"
+                <TextBlock Text="{Binding Message}" Style="{StaticResource BodyStyle}" Margin="0,0,0,12"
                            AutomationProperties.Name="Причина блокировки"
                            AutomationProperties.AutomationId="RecoveryMessageText"
                            AutomationProperties.LiveSetting="Assertive" />
                 <TextBlock Text="Основное окно останется закрытым, пока сервер не подтвердит состояние сессии."
-                           Style="{StaticResource BodyStyle}" Margin="0,0,0,18" />
+                           Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <TextBlock Text="{Binding ErrorMessage}" Style="{StaticResource ErrorTextStyle}"
                            AutomationProperties.AutomationId="RecoveryErrorText" />
                 <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource StatusTextStyle}"
@@ -255,44 +248,16 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*" MinWidth="0" />
-            <ColumnDefinition Width="6*" MinWidth="0" />
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Column="0" Background="{DynamicResource Task.Brush.Brand.Soft}">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="48" Focusable="False">
-            <StackPanel VerticalAlignment="Center" MaxWidth="420">
-                <Border Width="56" Height="56" CornerRadius="10" Background="{DynamicResource Task.Brush.Brand.Primary}"
-                        HorizontalAlignment="Left" Margin="0,0,0,20">
-                    <TextBlock Text="✓" Foreground="White" FontSize="30" FontWeight="Bold"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-                <TextBlock Text="ЛОКАЛЬНАЯ СЕТЬ КОМПАНИИ" Foreground="{DynamicResource Task.Brush.Brand.Primary}"
-                           FontSize="12" FontWeight="Bold" Margin="0,0,0,24" />
-                <TextBlock Text="Рабочие задачи — в одном спокойном пространстве."
-                           FontSize="38" FontWeight="SemiBold" Foreground="{DynamicResource Task.Brush.Text.Primary}"
-                           TextWrapping="Wrap" LineHeight="46" Margin="0,0,0,18" />
-                <TextBlock Text="Task подключается только к одобренному серверу компании и загружает данные, разрешённые вашей ролью."
-                           Style="{StaticResource BodyStyle}" FontSize="16" LineHeight="24" />
-                <StackPanel Margin="0,22,0,0">
-                    <TextBlock Text="✓  Сервер — источник актуальных данных" Margin="0,0,0,12" />
-                    <TextBlock Text="✓  Локальный кэш учитывает права доступа" Margin="0,0,0,12" />
-                    <TextBlock Text="✓  Состояние подключения видно всегда" />
-                    <TextBlock Text="Corporate" Margin="0,20,0,8"/>
-                    <Button Content="Сменить режим" Click="OnSwitchMode" Style="{StaticResource Task.Button.Secondary}"
-                            AutomationProperties.AutomationId="SwitchModeButton"/>
-                </StackPanel>
-            </StackPanel>
-            </ScrollViewer>
-        </Border>
-
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                      Focusable="False" Padding="28">
-            <Grid MinHeight="500">
-                <Border Background="{DynamicResource Task.Brush.Surface.Base}" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1" CornerRadius="10"
-                        Padding="32" MaxWidth="520" VerticalAlignment="Center" HorizontalAlignment="Center">
+    <HeaderedContentControl Style="{StaticResource Task.Workspace.StartupFrame}">
+        <HeaderedContentControl.Header>
+            <Button Content="Сменить режим" Click="OnSwitchMode" Style="{StaticResource Task.Workspace.Button}"
+                    AutomationProperties.AutomationId="SwitchModeButton" />
+        </HeaderedContentControl.Header>
+        <ScrollViewer x:Name="StartupViewport" Padding="28" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <Grid MinHeight="{Binding ViewportHeight, ElementName=StartupViewport}">
+                <Border MaxWidth="500" Padding="24,16" VerticalAlignment="Center"
+                        Style="{StaticResource Task.Workspace.Card}">
                     <Grid>
                         <ContentControl Content="{Binding CurrentViewModel}"
                                         AutomationProperties.AutomationId="AuthenticationPane" />
@@ -310,7 +275,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-                            <ProgressBar IsIndeterminate="True" Width="260" Height="6" Margin="0,0,0,22"
+                            <ProgressBar IsIndeterminate="True" Width="260" Height="6" Margin="0,0,0,12"
                                          AutomationProperties.Name="Выполняется проверка сессии" />
                             <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource HeadingStyle}"
                                        TextAlignment="Center" AutomationProperties.LiveSetting="Polite"
@@ -322,5 +287,5 @@
                 </Border>
             </Grid>
         </ScrollViewer>
-    </Grid>
+    </HeaderedContentControl>
 </Window>

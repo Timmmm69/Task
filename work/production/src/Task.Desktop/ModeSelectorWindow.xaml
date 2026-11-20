@@ -4,26 +4,49 @@
         Title="Task — выбор режима" Icon="Assets/Task.ico"
         Width="580" Height="480" MinWidth="440" MinHeight="340"
         WindowStartupLocation="CenterScreen" Style="{StaticResource Task.Window.Style}"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        KeyboardNavigation.TabNavigation="Cycle"
         AutomationProperties.AutomationId="ModeSelectorWindow">
-    <Grid Margin="32">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock Text="Выберите пространство" Style="{StaticResource Task.Shell.PageTitle}" TextWrapping="Wrap"/>
-            <TextBlock Text="Личное и корпоративное пространства разделены." TextWrapping="Wrap" Margin="0,12,0,16"/>
-        </StackPanel>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel VerticalAlignment="Center">
-            <Button Content="Личное пространство" Click="OnPersonal"
-                    Style="{StaticResource Task.Button.Primary}" Margin="0,0,0,8"
-                    AutomationProperties.AutomationId="SelectPersonalModeButton"/>
-            <TextBlock Text="Личные задачи, календарь и напоминания. Работает без подключения к серверу и входа." TextWrapping="Wrap" Margin="0,0,0,20"/>
-            <Button Content="Пространство компании" Click="OnCorporate"
-                    Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,8"
-                    AutomationProperties.AutomationId="SelectCorporateModeButton"/>
-            <TextBlock Text="Для совместной работы. Понадобятся подключение к серверу и учётная запись компании." TextWrapping="Wrap"/>
-        </StackPanel>
-        </ScrollViewer>
-        <Button Grid.Row="2" Content="Отмена" IsCancel="True" HorizontalAlignment="Right"
-                Style="{StaticResource Task.Button.Secondary}" Margin="0,16,0,0"/>
-    </Grid>
+    <Window.Resources>
+        <Style x:Key="ModeOption" TargetType="Button" BasedOn="{StaticResource Task.Workspace.Button}">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="16,12" />
+        </Style>
+    </Window.Resources>
+    <Border Style="{StaticResource Task.Workspace.Background}" Padding="18,12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock Text="Выберите пространство" Style="{StaticResource Task.Workspace.Title}"
+                           AutomationProperties.HeadingLevel="Level1" />
+                <TextBlock Text="Личные данные и данные компании хранятся отдельно." Style="{StaticResource Task.Workspace.Body}" Margin="0,5,0,0" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                <StackPanel>
+                    <Button Click="OnPersonal" Style="{StaticResource ModeOption}" Margin="0,0,0,8"
+                            AutomationProperties.Name="Личное пространство" AutomationProperties.AutomationId="SelectPersonalModeButton">
+                        <StackPanel>
+                            <TextBlock Text="Личное пространство" FontWeight="SemiBold" Margin="0,0,0,4" />
+                            <TextBlock Text="Задачи, календарь и напоминания без сервера и входа." Style="{StaticResource Task.Workspace.Body}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Click="OnCorporate" Style="{StaticResource ModeOption}"
+                            AutomationProperties.Name="Пространство компании" AutomationProperties.AutomationId="SelectCorporateModeButton">
+                        <StackPanel>
+                            <TextBlock Text="Пространство компании" FontWeight="SemiBold" Margin="0,0,0,4" />
+                            <TextBlock Text="Совместная работа через сервер и учётную запись компании." Style="{StaticResource Task.Workspace.Body}" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Button Grid.Row="2" Content="Отмена" IsCancel="True" HorizontalAlignment="Right" Margin="0,8,0,0"
+                    Style="{StaticResource Task.Workspace.Button}" />
+        </Grid>
+    </Border>
 </Window>

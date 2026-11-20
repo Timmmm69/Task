@@ -271,7 +271,7 @@ public sealed class VisualFoundationTests
     {
         var xaml = File.ReadAllText(ProjectFile("src", "Task.Desktop", "Views", "TodayView.xaml"));
 
-        Assert.Contains("Width=\"47.6*\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("x:Name=\"TodayThreeZoneGrid\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Height=\"69\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"TodayPlannerRegion\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"TodayQueueRegion\"", xaml, StringComparison.Ordinal);
@@ -282,7 +282,7 @@ public sealed class VisualFoundationTests
         Assert.Contains("Task.TimelineLaneMarginConverter", xaml, StringComparison.Ordinal);
         Assert.Contains("Canvas.Top=\"{Binding CurrentTimeTop}\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Command=\"{Binding DataContext.SelectItemCommand, ElementName=TodayRoot}\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Task.Brush.Brand.Soft", xaml, StringComparison.Ordinal);
+        Assert.Contains("Personal.Calendar.EntryChrome", xaml, StringComparison.Ordinal);
         Assert.Contains("Несрочные и просроченные", xaml, StringComparison.Ordinal);
     }
 
@@ -299,9 +299,12 @@ public sealed class VisualFoundationTests
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarEventEditor\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarReadOnlyBanner\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarRollbackBanner\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("LineHeight=\"18\" LineStackingStrategy=\"BlockLineHeight\" MaxHeight=\"36\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Personal.Calendar.TimelineEntry", xaml, StringComparison.Ordinal);
         Assert.Contains("KeyboardNavigation.TabNavigation=\"Cycle\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("MinWidth=\"1060\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Width=\"{Binding ViewportWidth, ElementName=CalendarHorizontalScroll}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Command=\"{Binding DayModeCommand}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Command=\"{Binding WeekModeCommand}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Command=\"{Binding MonthModeCommand}\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Task.CalendarLaneWidthConverter", app, StringComparison.Ordinal);
         Assert.Contains("Task.CalendarLaneLeftConverter", app, StringComparison.Ordinal);
     }
@@ -329,7 +332,7 @@ public sealed class VisualFoundationTests
         Assert.Contains("AutomationProperties.AutomationId=\"InboxConversionPanel\"", inbox, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"InboxSaveConversionButton\"", inbox, StringComparison.Ordinal);
         Assert.Contains("KeyDown=\"OnInboxListKeyDown\"", inbox, StringComparison.Ordinal);
-        Assert.Contains("ConverterParameter=640:320", inbox, StringComparison.Ordinal);
+        Assert.Contains("ConverterParameter=700:320", inbox, StringComparison.Ordinal);
         Assert.Contains("TextWrapping=\"Wrap\"", inbox, StringComparison.Ordinal);
         Assert.Contains("TextTrimming=\"CharacterEllipsis\"", main, StringComparison.Ordinal);
         Assert.Contains("TextWrapping=\"Wrap\"", main, StringComparison.Ordinal);

@@ -4,337 +4,641 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
              AutomationProperties.Name="Входящие"
              AutomationProperties.AutomationId="InboxScreen" AllowDrop="True" PreviewDragOver="RejectFileDrag" PreviewDrop="RejectFileDrop" DragLeave="FileDragLeave">
-    <Grid Background="{DynamicResource Task.Brush.Surface.Subtle}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="280" />
-            <ColumnDefinition Width="{Binding ActualWidth, ElementName=InboxRoot, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=640:8}" />
-            <ColumnDefinition Width="{Binding ActualWidth, ElementName=InboxRoot, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=640:320}" />
-        </Grid.ColumnDefinitions>
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="Inbox.Coral" Color="#C91E47" />
+        <SolidColorBrush x:Key="Inbox.Rose" Color="#FFF0F3" />
+        <SolidColorBrush x:Key="Inbox.TealSoft" Color="#E8F4F8" />
+        <SolidColorBrush x:Key="Inbox.Teal" Color="#005A6E" />
 
-        <Border Grid.Row="0" Grid.Column="0" Background="{DynamicResource Task.Brush.Surface.Base}"
-                BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,1,0"
-                Padding="22">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+        <Style x:Key="Inbox.Heading" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Heading}">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="AutomationProperties.HeadingLevel" Value="Level2" />
+        </Style>
 
-                <Grid Grid.Row="0" Margin="0,0,0,18">
+        <Style x:Key="Inbox.Action" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome" CornerRadius="8" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Chrome" Property="Opacity" Value="0.85" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Inbox.Primary" TargetType="Button" BasedOn="{StaticResource Inbox.Action}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True" />
+                        <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{StaticResource Inbox.Coral}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource Inbox.Coral}" />
+                    <Setter Property="Foreground" Value="White" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Inbox.Badge" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Inbox.TealSoft}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="8,3" />
+            <Setter Property="TextElement.Foreground" Value="{StaticResource Inbox.Teal}" />
+            <Setter Property="TextElement.FontSize" Value="{DynamicResource Task.Font.Size.Metadata}" />
+            <Setter Property="TextElement.FontWeight" Value="Bold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Inbox.QueueRow" TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,4,6" />
+            <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}" />
+            <Setter Property="AutomationProperties.AutomationId" Value="{Binding Id}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Row" CornerRadius="8" Padding="{TemplateBinding Padding}" BorderThickness="1"
+                                Background="{DynamicResource Task.Brush.Surface.Subtle}" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="{StaticResource Inbox.TealSoft}" />
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource Inbox.Teal}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}" />
+                                <Setter TargetName="Row" Property="BorderThickness" Value="2" />
+                                <Setter TargetName="Row" Property="Padding" Value="11,7" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True" />
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                                <Setter TargetName="Row" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Inbox.FieldError" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,4,0,8" />
+            <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Border>
+        <Border.Style>
+            <Style TargetType="Border" BasedOn="{StaticResource Task.Workspace.Background}">
+                <Setter Property="Padding" Value="20,16" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False">
+                        <Setter Property="Padding" Value="20,6" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="InboxColumnGap"
+                                  Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=980:16}" />
+                <ColumnDefinition Width="{Binding ActualWidth, ElementName=InboxRoot, Converter={StaticResource Task.ResponsiveGridLengthConverter}, ConverterParameter=700:320}">
+                    <ColumnDefinition.Style>
+                        <Style TargetType="ColumnDefinition">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0">
+                                    <Setter Property="MaxWidth" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ColumnDefinition.Style>
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.ColumnSpan="3">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Task.Workspace.Card}">
+                        <Setter Property="Margin" Value="0,0,0,12" />
+                        <Setter Property="Padding" Value="16,12" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False">
+                                <Setter Property="Margin" Value="0,0,0,8" />
+                                <Setter Property="Padding" Value="12,8" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                                <Setter Property="Background" Value="{StaticResource Inbox.Rose}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Path Data="{StaticResource Task.Icon.Inbox}" Width="20" Height="20" Stretch="Uniform"
-                          Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center" />
-                    <TextBox x:Name="InboxCaptureTextBox" state:FormKeyboard.Capture="{Binding CaptureCommand}" Grid.Column="1" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="500" Margin="10,0" TabIndex="10"
-                             Style="{StaticResource Task.Input.Text}"
-                             AutomationProperties.Name="Быстро добавить во входящие"
-                             AutomationProperties.AutomationId="InboxCaptureTextBox"
-                             AutomationProperties.HelpText="Enter — записать. Введите короткую запись без проекта, срока и исполнителя" />
-                    <Button Grid.Column="2" Content="Добавить · Enter" Command="{Binding CaptureCommand}"
-                            Style="{StaticResource Task.Button.Primary}" MinWidth="104" TabIndex="11"
-                            AutomationProperties.Name="Добавить запись во входящие"
-                            AutomationProperties.AutomationId="InboxCaptureButton" />
-                </Grid>
-
-                <Border Grid.Row="1" Margin="0,0,0,12" AutomationProperties.LiveSetting="Polite"
-                        AutomationProperties.AutomationId="InboxReadOnlyNotice">
-                    <Border.Style>
-                        <Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers><DataTrigger Binding="{Binding IsReadOnly}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <DockPanel>
-                        <Path DockPanel.Dock="Left" Data="{StaticResource Task.Icon.Lock}" Width="17" Height="17"
-                              Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" Margin="0,0,9,0" />
-                        <TextBlock Text="{Binding WriteAccessText}" TextWrapping="Wrap" VerticalAlignment="Center" />
-                    </DockPanel>
-                </Border>
-
-                <Border Grid.Row="2" Margin="0,0,0,10" Padding="0,0,0,8"
-                        BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1"
-                        AutomationProperties.LiveSetting="Polite">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Visible" />
-                            <Style.Triggers><DataTrigger Binding="{Binding ScreenMessage}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{Binding ScreenMessage}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                               FontSize="{DynamicResource Task.Font.Size.Label}" TextWrapping="Wrap" />
-                </Border>
-
-                <Grid Grid.Row="3">
-                    <Border x:Name="InboxZeroPanel" Style="{StaticResource Task.State.Panel}"
-                            Visibility="{Binding ShowInboxZero, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
-                            AutomationProperties.AutomationId="InboxZeroPanel">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
-                            <Path Data="{StaticResource Task.Icon.Inbox}" Width="28" Height="28" Stretch="Uniform"
-                                  Fill="{DynamicResource Task.Brush.Brand.Primary}" />
-                            <TextBlock x:Name="InboxZeroHeading" Text="Входящие разобраны" Style="{StaticResource Task.State.Title}"
-                                       Margin="0,12,0,0" TextAlignment="Center" Focusable="True"
-                                       AutomationProperties.HeadingLevel="Level2" AutomationProperties.LiveSetting="Polite" />
-                            <TextBlock Text="Все записи разобраны. Новую мысль можно записать, когда она появится."
-                                       Style="{StaticResource Task.State.Body}" Margin="0,6,0,16" TextAlignment="Center" />
-                            <Button x:Name="InboxZeroCreateButton" Content="Добавить запись" Click="OnStartCapture"
-                                    IsEnabled="{Binding CanCaptureFromShell}" Style="{StaticResource Task.Button.Secondary}"
-                                    AutomationProperties.Name="Добавить новую запись во входящие" />
-                        </StackPanel>
-                    </Border>
-                    <Border AutomationProperties.Name="Загрузка входящих" AutomationProperties.LiveSetting="Polite">
-                        <Border.Style>
-                            <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                                <Style.Triggers><DataTrigger Binding="{Binding IsInitialLoading}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                    <TextBlock Text="Быстрая запись" AutomationProperties.HeadingLevel="Level2">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Heading}">
+                                <Setter Property="Grid.ColumnSpan" Value="2" />
+                                <Setter Property="Margin" Value="0,0,0,8" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False">
+                                        <Setter Property="Grid.ColumnSpan" Value="1" />
+                                        <Setter Property="Margin" Value="0,0,12,0" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                        <Setter Property="FontSize" Value="18" />
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
-                        </Border.Style>
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <ProgressBar IsIndeterminate="True" Width="210" Style="{StaticResource Task.Progress.Indeterminate}" />
-                            <TextBlock Text="Загружаем входящие…" Style="{StaticResource Task.State.Title}" Margin="0,14,0,0" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border AutomationProperties.Name="{Binding StateTitle}" AutomationProperties.LiveSetting="Assertive">
-                        <Border.Style>
-                            <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                                <Style.Triggers><DataTrigger Binding="{Binding ShowBlockingState}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
-                            <Path Data="{Binding StateIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
-                                  Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" />
-                            <TextBlock Text="{Binding StateTitle}" Style="{StaticResource Task.State.Title}" Margin="0,12,0,0" TextAlignment="Center" />
-                            <TextBlock Text="{Binding ScreenMessage}" Style="{StaticResource Task.State.Body}" Margin="0,6,0,16" TextAlignment="Center" />
-                            <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}"
-                                    AutomationProperties.Name="Повторить загрузку входящих" />
-                        </StackPanel>
-                    </Border>
-
-                    <ListBox x:Name="InboxList" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                             BorderThickness="0" Background="Transparent"
-                             TabIndex="12" KeyDown="OnInboxListKeyDown"
-                             AutomationProperties.Name="Записи входящих" AutomationProperties.AutomationId="InboxList"
-                             AutomationProperties.HelpText="Стрелки выбирают запись, Enter открывает преобразование">
-                        <ListBox.Style>
-                            <Style TargetType="ListBox" BasedOn="{StaticResource Task.DataList}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                                <Style.Triggers><DataTrigger Binding="{Binding HasItems}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
-                            </Style>
-                        </ListBox.Style>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
-                                <Setter Property="MinHeight" Value="72" />
-                                <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}" />
-                                <Setter Property="AutomationProperties.AutomationId" Value="{Binding Id}" />
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="24" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Path Data="{StaticResource Task.Icon.Inbox}" Width="18" Height="18" Stretch="Uniform"
-                                          Fill="{DynamicResource Task.Brush.Brand.Primary}" VerticalAlignment="Center" />
-                                    <StackPanel Grid.Column="1" Margin="10,0,12,0">
-                                        <TextBlock Text="{Binding Title}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}"
-                                                   TextWrapping="Wrap" MaxHeight="42" ToolTip="{Binding Title}" />
-                                        <TextBlock Text="{Binding CreatedText, StringFormat='Без классификации · {0}'}"
-                                                   Margin="0,3,0,0" FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                                   Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextTrimming="CharacterEllipsis" />
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="2" Text="{Binding StatusText}" VerticalAlignment="Center"
-                                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                               Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <GridSplitter Grid.Row="0" Grid.Column="1" Width="8" HorizontalAlignment="Stretch" Background="Transparent"
-                      AutomationProperties.Name="Изменить ширину входящих и сведений" />
-
-        <Expander x:Name="InboxInspectorExpander" state:ViewState.Section="inbox/v1/inspector"
-                  AutomationProperties.Name="Сведения о записи входящих"
-                  AutomationProperties.AutomationId="InboxInspectorExpander">
-            <Expander.Style>
-                <Style TargetType="Expander">
-                    <Setter Property="Grid.Row" Value="0" />
-                    <Setter Property="Grid.Column" Value="2" />
-                    <Setter Property="Grid.ColumnSpan" Value="1" />
-                    <Setter Property="Header" Value="{x:Null}" />
-                    <Setter Property="IsExpanded" Value="True" />
-                    <Setter Property="MaxHeight" Value="10000" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ActualWidth, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=640}" Value="False">
-                            <Setter Property="Grid.Row" Value="1" />
-                            <Setter Property="Grid.Column" Value="0" />
-                            <Setter Property="Grid.ColumnSpan" Value="3" />
-                            <Setter Property="Header" Value="Сведения о записи" />
-                            <Setter Property="IsExpanded" Value="False" />
-                            <Setter Property="MaxHeight" Value="260" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Expander.Style>
-            <Border Background="{DynamicResource Task.Brush.Surface.Subtle}" Padding="28"
-                    BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="1,0,0,0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        </TextBlock.Style>
+                    </TextBlock>
                     <Grid>
-                        <StackPanel>
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding SelectedItem}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style>
-                            </StackPanel.Style>
-                            <TextBlock Text="ЗАПИСЬ ВХОДЯЩИХ" FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                            <TextBlock Text="{Binding SelectedItem.Title}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
-                                       FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap" Margin="0,12,0,20" />
-                            <Grid Margin="0,0,0,18">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="112" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                                <TextBlock Text="Создано" Style="{StaticResource Task.Inspector.FactLabel}" />
-                                <TextBlock Grid.Column="1" Text="{Binding SelectedItem.CreatedText}" Style="{StaticResource Task.Inspector.FactValue}" />
-                                <TextBlock Grid.Row="1" Text="Состояние" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,10,0,0" />
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="Без классификации" Style="{StaticResource Task.Inspector.FactValue}" Margin="0,10,0,0" />
-                            </Grid>
-                            <TextBlock Text="Классифицируйте запись: при необходимости выберите проект и укажите срок. Исходная запись закроется, а связь сохранится в истории задачи."
-                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" LineHeight="21" />
-                            <Button Content="Преобразовать в задачу" Command="{Binding ConvertCommand}"
-                                    CommandParameter="{Binding SelectedItem}" Style="{StaticResource Task.Button.Primary}"
-                                    HorizontalAlignment="Left" Margin="0,20,0,0" TabIndex="13"
-                                    AutomationProperties.Name="Преобразовать выбранную запись в задачу"
-                                    AutomationProperties.AutomationId="InboxConvertButton" />
-                        </StackPanel>
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding HasSelectedItem}" Value="False"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style>
-                            </StackPanel.Style>
-                            <Path Data="{StaticResource Task.Icon.Inbox}" Width="28" Height="28" Stretch="Uniform"
-                                  Fill="{DynamicResource Task.Brush.Text.Disabled}" HorizontalAlignment="Center" />
-                            <TextBlock Text="Выберите запись" Margin="0,10,0,0" Style="{StaticResource Task.State.Title}" />
-                        </StackPanel>
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Grid.Row" Value="1" />
+                                <Setter Property="Grid.ColumnSpan" Value="2" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False">
+                                        <Setter Property="Grid.Row" Value="0" />
+                                        <Setter Property="Grid.Column" Value="1" />
+                                        <Setter Property="Grid.ColumnSpan" Value="1" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="InboxCaptureTextBox" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
+                                 state:FormKeyboard.Capture="{Binding CaptureCommand}" Style="{StaticResource Personal.Airbnb.Input}"
+                                 MaxLength="500" TabIndex="10"
+                                 AutomationProperties.Name="Быстро добавить во входящие"
+                                 AutomationProperties.AutomationId="InboxCaptureTextBox"
+                                 AutomationProperties.HelpText="Нажмите Enter, чтобы записать. Детали можно добавить при разборе." />
+                        <TextBlock Text="Например, уточнить сроки поставки" Margin="15,0" VerticalAlignment="Center"
+                                   IsHitTestVisible="False" TextTrimming="CharacterEllipsis">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Meta}">
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CaptureText}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Button Grid.Column="1" Command="{Binding CaptureCommand}" Style="{StaticResource Inbox.Primary}"
+                                Margin="8,0,0,0" MinWidth="112" TabIndex="11"
+                                AutomationProperties.Name="Добавить запись во входящие"
+                                AutomationProperties.AutomationId="InboxCaptureButton">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource Task.Icon.Add}" Width="14" Height="14" Stretch="Uniform"
+                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Margin="0,0,6,0" />
+                                <TextBlock Text="Записать" />
+                            </StackPanel>
+                        </Button>
                     </Grid>
-                </ScrollViewer>
+                    <TextBlock Margin="0,6,0,0" TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Meta}">
+                                <Setter Property="Grid.Row" Value="2" />
+                                <Setter Property="Grid.ColumnSpan" Value="2" />
+                                <Setter Property="Text" Value="Черновик записи · ещё не добавлена" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False">
+                                        <Setter Property="Grid.Row" Value="1" />
+                                        <Setter Property="Grid.Column" Value="1" />
+                                        <Setter Property="Grid.ColumnSpan" Value="1" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding CaptureText}" Value="">
+                                        <Setter Property="Text" Value="Нажмите Enter, чтобы записать. Детали можно добавить при разборе." />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
             </Border>
-        </Expander>
 
-        <Border Grid.RowSpan="2" Grid.ColumnSpan="3" Background="#66000000" Panel.ZIndex="30">
-            <Border.Style>
-                <Style TargetType="Border"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasConversion}" Value="False"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style>
-            </Border.Style>
-            <Border HorizontalAlignment="Right" Width="510" MaxWidth="510"
-                    Background="{DynamicResource Task.Brush.Surface.Base}"
-                    BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0"
-                    Padding="26" DataContext="{Binding Conversion}"
-                    state:FormKeyboard.Save="{Binding DataContext.SaveConversionCommand, ElementName=InboxRoot}" KeyboardNavigation.TabNavigation="Cycle"
-                    AutomationProperties.Name="Преобразовать в задачу"
-                    AutomationProperties.AutomationId="InboxConversionPanel">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel>
-                        <Grid Margin="0,0,0,20">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="ИЗ ЗАПИСИ В ЗАДАЧУ" FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                           Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                                <TextBlock Text="Преобразовать в задачу" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
-                                           FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,8,0,0" />
-                            </StackPanel>
-                            <Button Grid.Column="1" Content="Закрыть" Style="{StaticResource Task.Button.Secondary}"
-                                    Command="{Binding DataContext.CancelConversionCommand, ElementName=InboxRoot}"
-                                    AutomationProperties.Name="Закрыть преобразование" />
-                        </Grid>
-
-                        <TextBlock Text="Название задачи (обязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
-                        <TextBox x:Name="InboxConversionTitleBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                 MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="30"
-                                 AutomationProperties.Name="Название преобразуемой задачи"
-                                 AutomationProperties.AutomationId="InboxConversionTitleBox" />
-                        <TextBlock Text="{Binding TitleError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
-                                   TextWrapping="Wrap" Margin="0,4,0,12" AutomationProperties.LiveSetting="Assertive" />
-
-                        <TextBlock Text="Проект (необязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
-                        <ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}"
-                                  DisplayMemberPath="Name" Style="{StaticResource Task.Input.Combo}" TabIndex="31"
-                                  AutomationProperties.Name="Проект задачи" AutomationProperties.AutomationId="InboxConversionProject" />
-                        <TextBlock Text="{Binding Card.Message}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
-                                   FontSize="{DynamicResource Task.Font.Size.Metadata}" TextWrapping="Wrap" Margin="0,4,0,12" />
-
-                        <Grid Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="Приоритет" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
-                                <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text"
-                                          Style="{StaticResource Task.Input.Combo}" TabIndex="32"
-                                          AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="InboxConversionPriority" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="Срок (необязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
-                                <TextBox Text="{Binding DeadlineText, UpdateSourceTrigger=PropertyChanged}"
-                                         Style="{StaticResource Task.Input.Text}" TabIndex="33"
-                                         AutomationProperties.Name="Срок задачи" AutomationProperties.AutomationId="InboxConversionDeadline"
-                                         AutomationProperties.HelpText="Дата и время, например 29.07.2026 17:00" />
-                            </StackPanel>
-                        </Grid>
-                        <TextBlock Text="{Binding DeadlineError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
-                                   TextWrapping="Wrap" Margin="0,-12,0,12" AutomationProperties.LiveSetting="Assertive" />
-
-                        <Border Background="{DynamicResource Task.Brush.Brand.Soft}" BorderBrush="{DynamicResource Task.Brush.Brand.Primary}"
-                                BorderThickness="3,0,0,0" Padding="12" Margin="0,0,0,20">
-                            <DockPanel>
-                                <Path DockPanel.Dock="Left" Data="{StaticResource Task.Icon.Inbox}" Width="16" Height="16"
-                                      Stretch="Uniform" Fill="{DynamicResource Task.Brush.Brand.Primary}" Margin="0,1,9,0" />
-                                <StackPanel>
-                                    <TextBlock Text="Исходная запись будет закрыта" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
-                                    <TextBlock Text="Связь с задачей сохранится в истории." Margin="0,3,0,0"
-                                               FontSize="{DynamicResource Task.Font.Size.Metadata}"
-                                               Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" />
-                                </StackPanel>
-                            </DockPanel>
-                        </Border>
-
-                        <Border Margin="0,0,0,16">
-                            <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding StatusMessage}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Border.Style>
-                            <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
-                        </Border>
-
-                        <StackPanel Margin="0,0,0,16">
-                            <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding HasConflict}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                            <TextBlock Text="Запись изменилась на сервере. Ваш черновик сохранён; Task ничего не перезапишет автоматически."
-                                       TextWrapping="Wrap" Margin="0,0,0,10" />
-                            <Button Content="Загрузить актуальную версию" Style="{StaticResource Task.Button.Secondary}"
-                                    HorizontalAlignment="Left" Command="{Binding DataContext.ReloadConflictCommand, ElementName=InboxRoot}"
-                                    AutomationProperties.Name="Загрузить актуальную версию входящей записи"
-                                    AutomationProperties.AutomationId="InboxReloadConflictButton" />
+            <Border Grid.Row="1" Style="{StaticResource Task.Workspace.Card}" Padding="0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Padding" Value="16,10" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False">
+                                        <Setter Property="Padding" Value="12,6" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="К разбору" Style="{StaticResource Inbox.Heading}" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource Inbox.Badge}" Margin="8,0,0,0" VerticalAlignment="Center"
+                                    ToolTip="{Binding DisplayedCountText}" AutomationProperties.Name="{Binding DisplayedCountText}">
+                                <TextBlock Text="{Binding Items.Count}" />
+                            </Border>
                         </StackPanel>
+                    </Border>
 
-                        <TextBlock Text="Ctrl+Enter — создать задачу" Margin="0,0,0,8"/>
-                        <WrapPanel HorizontalAlignment="Right">
-                            <Button Content="Отмена" Style="{StaticResource Task.Button.Secondary}" Margin="0,0,10,0" TabIndex="34"
-                                    Command="{Binding DataContext.CancelConversionCommand, ElementName=InboxRoot}" />
-                            <Button Content="Создать задачу" Style="{StaticResource Task.Button.Primary}" MinWidth="142" TabIndex="35"
-                                    Command="{Binding DataContext.SaveConversionCommand, ElementName=InboxRoot}"
-                                    AutomationProperties.Name="Создать задачу из входящей записи"
-                                    AutomationProperties.AutomationId="InboxSaveConversionButton" />
-                        </WrapPanel>
-                    </StackPanel>
-                </ScrollViewer>
+                    <Border DockPanel.Dock="Top" Margin="12,8,12,0" AutomationProperties.LiveSetting="Polite"
+                            AutomationProperties.AutomationId="InboxReadOnlyNotice">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers><DataTrigger Binding="{Binding IsReadOnly}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <DockPanel>
+                            <Path DockPanel.Dock="Left" Data="{StaticResource Task.Icon.Lock}" Width="17" Height="17"
+                                  Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Primary}" Margin="0,0,9,0" />
+                            <TextBlock Text="{Binding WriteAccessText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Border>
+
+                    <Border DockPanel.Dock="Top" Margin="12,8,12,0" Padding="0,0,0,6"
+                            BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1"
+                            AutomationProperties.LiveSetting="Polite">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ScreenMessage}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                    <DataTrigger Binding="{Binding IsInitialLoading}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                    <DataTrigger Binding="{Binding ShowBlockingState}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding ScreenMessage}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                   FontSize="{DynamicResource Task.Font.Size.Label}" TextWrapping="Wrap" />
+                    </Border>
+
+                    <Grid Margin="0,0,0,4">
+                            <Border x:Name="InboxZeroPanel" Style="{StaticResource Task.State.Panel}"
+                                    Visibility="{Binding ShowInboxZero, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                    AutomationProperties.AutomationId="InboxZeroPanel">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
+                                    <Path Data="{StaticResource Task.Icon.Inbox}" Width="28" Height="28" Stretch="Uniform"
+                                          Fill="{DynamicResource Task.Brush.Text.Primary}" />
+                                    <TextBlock x:Name="InboxZeroHeading" Text="Входящие разобраны" Style="{StaticResource Personal.Airbnb.Heading}"
+                                               Margin="0,12,0,0" TextAlignment="Center" Focusable="True"
+                                               AutomationProperties.HeadingLevel="Level2" AutomationProperties.LiveSetting="Polite" />
+                                    <TextBlock Text="Все записи разобраны. Новую мысль можно записать, когда она появится."
+                                               Style="{StaticResource Task.Workspace.Body}" Margin="0,6,0,16" TextAlignment="Center" />
+                                    <Button x:Name="InboxZeroCreateButton" Content="Добавить запись" Click="OnStartCapture"
+                                            IsEnabled="{Binding CanCaptureFromShell}" Style="{StaticResource Inbox.Action}"
+                                            AutomationProperties.Name="Добавить новую запись во входящие" />
+                                </StackPanel>
+                            </Border>
+                            <Border AutomationProperties.Name="Загрузка входящих" AutomationProperties.LiveSetting="Polite">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers><DataTrigger Binding="{Binding IsInitialLoading}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <ProgressBar IsIndeterminate="True" Width="210" Style="{StaticResource Task.Progress.Indeterminate}" />
+                                    <TextBlock Text="Загружаем входящие…" Style="{StaticResource Personal.Airbnb.Heading}" Margin="0,14,0,0" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border AutomationProperties.Name="{Binding StateTitle}" AutomationProperties.LiveSetting="Assertive">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers><DataTrigger Binding="{Binding ShowBlockingState}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440">
+                                    <Path Data="{Binding StateIconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                          Width="28" Height="28" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                                    <TextBlock Text="{Binding StateTitle}" Style="{StaticResource Personal.Airbnb.Heading}" Margin="0,12,0,0" TextAlignment="Center" />
+                                    <TextBlock Text="{Binding ScreenMessage}" Style="{StaticResource Task.Workspace.Body}" Margin="0,6,0,16" TextAlignment="Center" />
+                                    <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Inbox.Action}"
+                                            AutomationProperties.Name="Повторить загрузку входящих" />
+                                </StackPanel>
+                            </Border>
+
+                            <ListBox x:Name="InboxList" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                     Margin="12,8,8,4" Background="Transparent" ItemContainerStyle="{StaticResource Inbox.QueueRow}"
+                                     TabIndex="12" KeyDown="OnInboxListKeyDown"
+                                     AutomationProperties.Name="Записи входящих" AutomationProperties.AutomationId="InboxList"
+                                     AutomationProperties.HelpText="Стрелки выбирают запись. Enter открывает преобразование.">
+                                <ListBox.Style>
+                                    <Style TargetType="ListBox" BasedOn="{StaticResource Personal.Airbnb.VirtualList}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers><DataTrigger Binding="{Binding HasItems}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                                    </Style>
+                                </ListBox.Style>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap"
+                                                       LineStackingStrategy="BlockLineHeight" LineHeight="19" MaxHeight="38"
+                                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                                            <TextBlock Text="{Binding CreatedText}" Margin="0,3,0,0"
+                                                       FontSize="{DynamicResource Task.Font.Size.Metadata}" TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                                                                <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                    </Grid>
+                </DockPanel>
             </Border>
-        </Border>
-    </Grid>
+
+            <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Background="Transparent"
+                          AutomationProperties.Name="Изменить ширину входящих и сведений">
+                <GridSplitter.Style>
+                    <Style TargetType="GridSplitter">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </GridSplitter.Style>
+            </GridSplitter>
+
+            <Border Padding="16,0">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Task.Workspace.Card}">
+                        <Setter Property="Grid.Row" Value="1" />
+                        <Setter Property="Grid.Column" Value="2" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0">
+                                <Setter Property="Grid.Row" Value="2" />
+                                <Setter Property="Grid.Column" Value="0" />
+                                <Setter Property="Grid.ColumnSpan" Value="3" />
+                                <Setter Property="Margin" Value="0,12,0,0" />
+                                <Setter Property="MaxHeight" Value="144" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0" />
+                                    <Condition Binding="{Binding ActualHeight, ElementName=InboxRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=400}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Margin" Value="0,8,0,0" />
+                                <Setter Property="MaxHeight" Value="92" />
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0" />
+                                    <Condition Binding="{Binding HasSelectedItem}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <DockPanel>
+                    <Button Content="Преобразовать в задачу" Command="{Binding ConvertCommand}"
+                            CommandParameter="{Binding SelectedItem}" TabIndex="13"
+                            AutomationProperties.Name="Преобразовать выбранную запись в задачу"
+                            AutomationProperties.AutomationId="InboxConvertButton">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource Inbox.Action}">
+                                <Setter Property="DockPanel.Dock" Value="Bottom" />
+                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                <Setter Property="Margin" Value="0,0,0,16" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasSelectedItem}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0">
+                                        <Setter Property="DockPanel.Dock" Value="Right" />
+                                        <Setter Property="VerticalAlignment" Value="Top" />
+                                        <Setter Property="Margin" Value="12,10,0,10" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                        <Expander x:Name="InboxInspectorExpander" state:ViewState.Section="inbox/v1/inspector"
+                                  AutomationProperties.Name="Сведения о записи входящих"
+                                  AutomationProperties.AutomationId="InboxInspectorExpander">
+                            <Expander.Style>
+                                <Style TargetType="Expander" BasedOn="{StaticResource Task.Card.Section}">
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="IsExpanded" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0">
+                                            <Setter Property="IsExpanded" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Expander.Style>
+                            <Expander.Header>
+                                <TextBlock ToolTip="{Binding SelectedItem.Title}" TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Inbox.Heading}">
+                                            <Setter Property="Text" Value="Разбор записи" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Width.Value, ElementName=InboxColumnGap}" Value="0">
+                                                    <Setter Property="Text" Value="{Binding SelectedItem.Title}" />
+                                                    <Setter Property="FontSize" Value="14" />
+                                                    <Setter Property="TextWrapping" Value="NoWrap" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Expander.Header>
+                            <Grid>
+                                <StackPanel Visibility="{Binding HasSelectedItem, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                                    <Border Style="{StaticResource Inbox.Badge}" HorizontalAlignment="Left" Margin="0,0,0,8">
+                                        <TextBlock Text="{Binding SelectedItem.StatusText}" />
+                                    </Border>
+                                    <TextBlock Text="{Binding SelectedItem.Title}" Style="{StaticResource Personal.Airbnb.Heading}"
+                                               Margin="0,0,0,8" />
+                                    <TextBlock Text="{Binding SelectedItem.CreatedText, StringFormat='Создано: {0}'}"
+                                               Style="{StaticResource Task.Workspace.Meta}" TextWrapping="Wrap" />
+                                    <TextBlock Text="При преобразовании можно указать проект и срок."
+                                               Style="{StaticResource Task.Workspace.Body}" Margin="0,12,0,0" />
+                                </StackPanel>
+                                <TextBlock Text="Выберите запись в списке, чтобы увидеть её сведения и преобразовать в задачу.">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Body}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasSelectedItem}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </Expander>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.RowSpan="3" Grid.ColumnSpan="3" Background="#66000000" Padding="8" Panel.ZIndex="30">
+                <Border.Style>
+                    <Style TargetType="Border"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasConversion}" Value="False"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style>
+                </Border.Style>
+                <Border HorizontalAlignment="Stretch" MaxWidth="540" Padding="0" ClipToBounds="True" Style="{StaticResource Task.Workspace.Card}"
+                        DataContext="{Binding Conversion}"
+                        state:FormKeyboard.Save="{Binding DataContext.SaveConversionCommand, ElementName=InboxRoot}" KeyboardNavigation.TabNavigation="Cycle"
+                        AutomationProperties.Name="Преобразовать в задачу"
+                        AutomationProperties.AutomationId="InboxConversionPanel">
+                    <Grid>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                        <Border Padding="16,12" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Task.Brush.Border.Default}">
+                            <StackPanel>
+                                <TextBlock Text="Входящие · черновик задачи" Style="{StaticResource Task.Workspace.Meta}" />
+                                <TextBlock Text="Преобразовать в задачу" Style="{StaticResource Personal.Airbnb.Heading}" TextWrapping="Wrap"
+                                           AutomationProperties.HeadingLevel="Level2" />
+                            </StackPanel>
+                        </Border>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="16,12">
+                                <TextBlock Text="Название задачи (обязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
+                                <TextBox x:Name="InboxConversionTitleBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxLength="500" Style="{StaticResource Personal.Airbnb.Input}" TabIndex="30"
+                                         AutomationProperties.Name="Название преобразуемой задачи"
+                                         AutomationProperties.AutomationId="InboxConversionTitleBox" />
+                                <TextBlock Text="{Binding TitleError, TargetNullValue=''}" Style="{StaticResource Inbox.FieldError}" />
+
+                                <TextBlock Text="Проект (необязательно)" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,12,0,5" />
+                                <ComboBox ItemsSource="{Binding Card.Projects}" SelectedItem="{Binding Card.Project}"
+                                          DisplayMemberPath="Name" Style="{StaticResource Task.Input.Combo}" TabIndex="31"
+                                          AutomationProperties.Name="Проект задачи" AutomationProperties.AutomationId="InboxConversionProject" />
+                                <TextBlock Text="{Binding Card.Message}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                                           FontSize="{DynamicResource Task.Font.Size.Metadata}" TextWrapping="Wrap" Margin="0,4,0,12" />
+
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Приоритет" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
+                                        <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" DisplayMemberPath="Text"
+                                                  Style="{StaticResource Task.Input.Combo}" TabIndex="32"
+                                                  AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="InboxConversionPriority" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Срок (необязательно)" TextWrapping="Wrap" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" Margin="0,0,0,5" />
+                                        <TextBox Text="{Binding DeadlineText, UpdateSourceTrigger=PropertyChanged}"
+                                                 Style="{StaticResource Personal.Airbnb.Input}" TabIndex="33"
+                                                 AutomationProperties.Name="Срок задачи" AutomationProperties.AutomationId="InboxConversionDeadline"
+                                                 AutomationProperties.HelpText="Дата и время, например 29.07.2026 17:00" />
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Text="{Binding DeadlineError, TargetNullValue=''}" Style="{StaticResource Inbox.FieldError}" />
+
+                                <Border Style="{StaticResource Task.Workspace.Background}" CornerRadius="12" Padding="12" Margin="0,0,0,20">
+                                    <DockPanel>
+                                        <Path DockPanel.Dock="Left" Data="{StaticResource Task.Icon.Inbox}" Width="16" Height="16"
+                                              Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Primary}" Margin="0,1,9,0" />
+                                        <StackPanel>
+                                            <TextBlock Text="Исходная запись будет закрыта" TextWrapping="Wrap" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" />
+                                            <TextBlock Text="Связь с задачей сохранится в истории." Margin="0,3,0,0"
+                                                       FontSize="{DynamicResource Task.Font.Size.Metadata}"
+                                                       Foreground="{DynamicResource Task.Brush.Text.Secondary}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+
+                                <Border Margin="0,0,0,16">
+                                    <Border.Style><Style TargetType="Border" BasedOn="{StaticResource Task.State.Inline}"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding StatusMessage}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Border.Style>
+                                    <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Assertive" />
+                                </Border>
+
+                                <StackPanel Margin="0,0,0,16">
+                                    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding HasConflict}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
+                                    <TextBlock Text="Запись изменилась на сервере. Ваш черновик сохранён; Task ничего не перезапишет автоматически."
+                                               TextWrapping="Wrap" Margin="0,0,0,10" />
+                                    <Button Content="Загрузить актуальную версию" Style="{StaticResource Inbox.Action}"
+                                            HorizontalAlignment="Left" Command="{Binding DataContext.ReloadConflictCommand, ElementName=InboxRoot}"
+                                            AutomationProperties.Name="Загрузить актуальную версию входящей записи"
+                                            AutomationProperties.AutomationId="InboxReloadConflictButton" />
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                        <Border Grid.Row="2" Padding="16,10" Background="{DynamicResource Task.Brush.Surface.Subtle}"
+                                BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Ctrl+Enter · создать задачу" Style="{StaticResource Task.Workspace.Meta}" Margin="0,0,0,6" />
+                                <WrapPanel HorizontalAlignment="Right">
+                                    <Button Content="Отмена" Style="{StaticResource Inbox.Action}" Margin="0,0,10,0" TabIndex="34"
+                                            Command="{Binding DataContext.CancelConversionCommand, ElementName=InboxRoot}" />
+                                    <Button Content="Создать задачу" Style="{StaticResource Inbox.Primary}" MinWidth="142" TabIndex="35"
+                                            Command="{Binding DataContext.SaveConversionCommand, ElementName=InboxRoot}"
+                                            AutomationProperties.Name="Создать задачу из входящей записи"
+                                            AutomationProperties.AutomationId="InboxSaveConversionButton" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Border>
+        </Grid>
+    </Border>
 </UserControl>
