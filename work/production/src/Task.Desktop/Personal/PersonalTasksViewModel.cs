@@ -9,6 +9,7 @@ namespace Task.Desktop.Personal;
 
 public sealed record PersonalTaskItem(DesktopTaskDto Source)
 {
+    public string CompactDurationText => Source.Card?.PlannedDurationMinutes is { } minutes ? $" · {minutes} мин" : "";
     // WPF automation must never expose the compatibility DTO's technical actor.
     public override string ToString() => Title;
     public string Title => Source.Title;
@@ -283,7 +284,12 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
             }
             else
             {
-                var message = Error(result); editor.SetStatus(message); Message = message;
+                var message = Error(result);
+                if (result is DesktopTaskWriteResult<DesktopTaskDto>.ValidationFailure validation)
+                    editor.ApplyServerValidation(message, validation.FieldErrors);
+                else
+                    editor.SetStatus(message);
+                Message = message;
                 if (result is DesktopTaskWriteResult<DesktopTaskDto>.VersionConflict) { editor.SetConflict(); editor.SetStatus(message); }
             }
         }

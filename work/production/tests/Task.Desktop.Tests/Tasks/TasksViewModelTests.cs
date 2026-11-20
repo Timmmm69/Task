@@ -587,6 +587,34 @@ public sealed partial class TasksViewModelTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task BlankDraft_HidesTitleErrorUntilInteractionOrSubmitAndNeverWrites()
+    {
+        var client = new FakeTasksApiClient();
+        client.EnqueuePage(SucceededPage([]));
+        using var viewModel = new TasksViewModel(client, WriteCapabilities);
+        await viewModel.ActivateAsync();
+        await viewModel.NewTaskCommand.ExecuteAsync();
+
+        var editor = Assert.IsType<TaskEditorViewModel>(viewModel.Editor);
+        Assert.True(editor.HasErrors);
+        Assert.False(editor.CanSubmit);
+        Assert.True(viewModel.CanAttemptSaveEditor);
+        Assert.Null(editor.VisibleTitleError);
+        Assert.Equal(nameof(editor.Title), editor.RevealFirstInvalidField());
+        Assert.NotNull(editor.VisibleTitleError);
+        Assert.False(await viewModel.SaveEditorCommand.ExecuteAsync());
+        Assert.Equal(0, client.CreateCallCount);
+
+        editor.Title = "Название";
+        Assert.True(editor.CanSubmit);
+        Assert.Null(editor.VisibleTitleError);
+        editor.Title = "";
+        Assert.NotNull(editor.VisibleTitleError);
+        Assert.False(await viewModel.SaveEditorCommand.ExecuteAsync());
+        Assert.Equal(0, client.CreateCallCount);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task CapabilityRevoke_PreservesCreateDraftAndBlocksSubmission()
     {
         var client = new FakeTasksApiClient();

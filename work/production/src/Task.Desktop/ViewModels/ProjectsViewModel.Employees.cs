@@ -74,10 +74,13 @@ public sealed partial class ProjectsViewModel
     private bool _writesForbidden;
     public EmployeePickerViewModel? MemberPicker { get; private set; }
     public bool UsesEmployeePicker => _directory is not null && _capabilities.Contains("User.Read");
-    public string MemberEntryHint => _directoryForbidden ? "Сервер запретил доступ к каталогу сотрудников (User.Read). Обновите права или выполните вход снова."
+    public string MemberEntryHint => _directoryForbidden
+        ? "Справочник сотрудников недоступен. За доступом обратитесь к администратору."
         : UsesEmployeePicker
-        ? "Выберите активного сотрудника и проектную роль. Повторное участие не допускается."
-        : "Каталог недоступен без User.Read. Укажите UUID активной учётной записи; сервер проверит доступ. Полный переход на выбор по имени требует решения по правам.";
+        ? "Найдите активного сотрудника по имени и выберите его роль в проекте."
+        : _directory is null
+            ? "Справочник сотрудников не подключён. Если идентификатор учётной записи известен, его можно указать вручную."
+            : "У вашей роли нет доступа к справочнику сотрудников. За доступом обратитесь к администратору.";
     public Guid? NewMemberAccountId => UsesEmployeePicker ? MemberPicker?.SelectedUserAccountId
         : Guid.TryParse(NewMemberUserId.Trim(), out var id) && id != Guid.Empty ? id : null;
     private bool CanAddMember => CanManageMembers && !IsDetailLoading && !MembersSection.IsLoading && _membersConfirmed
@@ -123,7 +126,7 @@ public sealed partial class ProjectsViewModel
     {
         if (picker.State == EmployeePickerState.AuthenticationRequired && _sessionAvailable) UpdateSessionState(false);
         else if (picker.State == EmployeePickerState.Forbidden && !_directoryForbidden && UsesEmployeePicker)
-        { _directoryForbidden = true; ResetPeople(); Editor?.UpdatePeopleAccess([], _sessionAvailable, _networkAvailable); Message = "Каталог сотрудников недоступен (User.Read)."; }
+        { _directoryForbidden = true; ResetPeople(); Editor?.UpdatePeopleAccess([], _sessionAvailable, _networkAvailable); Message = MemberEntryHint; }
     }
 
     private async AsyncTask ResolvePeopleAsync(ProjectItemViewModel item, CancellationToken cancellationToken)
@@ -143,7 +146,7 @@ public sealed partial class ProjectsViewModel
             else if (result is DesktopWorkResult<DesktopAdminUser>.AuthenticationFailure)
             { UpdateSessionState(false); return; }
             else if (result is DesktopWorkResult<DesktopAdminUser>.Forbidden)
-            { _directoryForbidden = true; ResetPeople(); Editor?.UpdatePeopleAccess([], _sessionAvailable, _networkAvailable); Message = "Каталог сотрудников недоступен (User.Read)."; return; }
+            { _directoryForbidden = true; ResetPeople(); Editor?.UpdatePeopleAccess([], _sessionAvailable, _networkAvailable); Message = MemberEntryHint; return; }
         }
         if (!Current()) return;
         item.SetPeopleNames(names.GetValueOrDefault(item.Source.OwnerUserId), item.Source.ManagerUserId is { } mid ? names.GetValueOrDefault(mid) : null);

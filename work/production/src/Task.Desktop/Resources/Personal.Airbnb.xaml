@@ -40,7 +40,7 @@
  </ControlTemplate></Setter.Value></Setter>
 </Style>
 <ControlTemplate x:Key="Personal.Airbnb.NavigationTemplate" TargetType="ListBoxItem">
-                    <Border x:Name="TodayNav" Background="Transparent" CornerRadius="12" Padding="12" Margin="0,2"><ContentPresenter/></Border>
+                    <Border x:Name="TodayNav" Background="Transparent" CornerRadius="12" Padding="{TemplateBinding Padding}" Margin="0,2"><ContentPresenter VerticalAlignment="Center"/></Border>
                     <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/><Setter Property="FontWeight" Value="Bold"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/></Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="TodayNav" Property="BorderBrush" Value="#222222"/><Setter TargetName="TodayNav" Property="BorderThickness" Value="1"/></Trigger></ControlTemplate.Triggers>
                 </ControlTemplate>
 <!-- Shared compact browser rows; opt-in so existing screens retain their layout. -->

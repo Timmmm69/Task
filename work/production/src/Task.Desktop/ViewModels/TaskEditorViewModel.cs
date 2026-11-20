@@ -159,7 +159,24 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
     public bool RetryAvailable => _retryAvailable;
     public bool HasErrors => TitleError is not null || PriorityError is not null
         || StartError is not null || DeadlineError is not null || CardError is not null;
-    public bool CanSubmit => !_isBusy && !_hasConflict && _retryAvailable && !HasErrors;
+    public bool CanSubmit => CanAttemptSubmit && !HasErrors;
+    public bool CanAttemptSubmit => !_isBusy && !_hasConflict && _retryAvailable;
+    private bool _showTitleError;
+    public string? VisibleTitleError => _showTitleError ? TitleError : null;
+
+    internal string? RevealFirstInvalidField()
+    {
+        _showTitleError = true;
+        OnPropertyChanged(nameof(VisibleTitleError));
+        if (TitleError is not null) return nameof(Title);
+        if (PriorityError is not null) return nameof(Priority);
+        if (_invalidCardField == nameof(TaskCardEditor.Date)) return _invalidCardField;
+        if (StartError is not null) return nameof(StartText);
+        if (DeadlineError is not null) return nameof(DeadlineText);
+        return _invalidCardField;
+    }
+
+    private string? _invalidCardField;
 
     public string Title
     {
@@ -168,6 +185,7 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
         {
             if (SetProperty(ref _title, value ?? string.Empty))
             {
+                if (!_suppressChanges) _showTitleError = true;
                 Changed();
             }
         }
@@ -283,6 +301,7 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
         string message,
         IReadOnlyDictionary<string, IReadOnlyList<string>> fieldErrors)
     {
+        _showTitleError = true;
         StatusMessage = string.IsNullOrWhiteSpace(message)
             ? "Проверьте заполненные поля."
             : message;
@@ -323,6 +342,7 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
 
     private void Load(DesktopTaskDto? source)
     {
+        _showTitleError = false;
         _suppressChanges = true;
         _source = source;
         Title = source?.Title ?? string.Empty;
@@ -384,9 +404,11 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
         }
 
         CardError = null;
+        _invalidCardField = nameof(CustomReminderMinutes);
         if (_source is not null && StartText.Trim() == FormatLocal(_source.StartAtUtc)) startUtc = _source.StartAtUtc;
         Card.UpdateStart(startUtc);
-        try { ValidateReminder(); _ = Card.Build(startUtc); } catch (ArgumentException e) { CardError = e.Message; }
+        try { ValidateReminder(); _ = Card.Build(startUtc, out _invalidCardField); }
+        catch (ArgumentException e) { CardError = e.Message; }
         OnPropertyChanged(nameof(CardError));
         OnPropertyChanged(nameof(ReminderPreview));
         NotifyState();
@@ -427,6 +449,8 @@ public sealed partial class TaskEditorViewModel : ViewModelBase
 
     private void NotifyState()
     {
+        OnPropertyChanged(nameof(VisibleTitleError));
+        OnPropertyChanged(nameof(CanAttemptSubmit));
         OnPropertyChanged(nameof(HasErrors));
         OnPropertyChanged(nameof(CanSubmit));
     }

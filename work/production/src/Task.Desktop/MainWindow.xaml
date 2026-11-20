@@ -18,6 +18,13 @@
         AutomationProperties.Name="Task — рабочее пространство"
         AutomationProperties.AutomationId="MainWindow"
         AutomationProperties.HelpText="F6 переключает основные области; Ctrl+K открывает глобальный поиск; Escape закрывает overlay и возвращает фокус">
+    <Window.Resources>
+        <CollectionViewSource x:Key="NavigationSections" Source="{Binding Sections}">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="Group" />
+                </CollectionViewSource.GroupDescriptions>
+            </CollectionViewSource>
+    </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding Tasks.CancelEditorCommand}" />
         <KeyBinding Key="N" Modifiers="Alt" Command="{Binding NewTaskCommand}" />
@@ -126,12 +133,16 @@
                     </StackPanel>
                 </Button>
 
-                <ListBox x:Name="NavigationListBox" ItemsSource="{Binding Sections}"
+                <ListBox x:Name="NavigationListBox" ItemsSource="{Binding Source={StaticResource NavigationSections}}"
+                         SelectionChanged="OnNavigationSelectionChanged"
                          SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
                          Style="{StaticResource Task.Navigation.List}" ItemContainerStyle="{StaticResource RailItem}"
                          TabIndex="0" AutomationProperties.Name="Основная навигация"
                          AutomationProperties.HelpText="Стрелки выбирают раздел, Enter открывает его"
                          AutomationProperties.AutomationId="NavigationListBox">
+                    <ListBox.GroupStyle>
+                        <StaticResource ResourceKey="Task.Navigation.Group" />
+                    </ListBox.GroupStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <DockPanel>
@@ -1179,21 +1190,31 @@
                             <Border Style="{StaticResource Task.Card.Group}"><StackPanel>
                             <TextBlock Text="Основное" Style="{StaticResource Task.Card.Heading}" />
                             <TextBlock Text="Название (обязательно)" FontWeight="SemiBold" Margin="0,0,0,5" />
-                            <TextBox x:Name="TaskTitleTextBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBox x:Name="TaskTitleTextBox" state:FormKeyboard.Field="Title" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                      MaxLength="500" Style="{StaticResource Task.Input.Text}" TabIndex="20"
                                      AutomationProperties.Name="Название задачи"
                                      AutomationProperties.AutomationId="TaskTitleTextBox"
                                      AutomationProperties.HelpText="Обязательное поле, не более 500 символов" />
                             <TextBlock Visibility="{Binding Card.HasParent,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Text="{Binding Card.Parent.Name,StringFormat=Родитель: {0}}" TextWrapping="Wrap" Margin="0,4,0,8"/>
                             <TextBlock Text="Например: подготовить договор" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
-                            <TextBlock Text="{Binding TitleError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                            <TextBlock Text="{Binding VisibleTitleError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
                                        TextWrapping="Wrap" Margin="0,4,0,12" AutomationProperties.Name="Ошибка названия задачи"
-                                       AutomationProperties.LiveSetting="Assertive" />
+                                       AutomationProperties.LiveSetting="Assertive">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding VisibleTitleError}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
 
                             <TextBlock Text="Приоритет (обычный по умолчанию)" FontWeight="SemiBold" Margin="0,0,0,5" />
                             <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}"
                                       DisplayMemberPath="Text" Style="{StaticResource Task.Card.Combo}" TabIndex="21"
-                                      AutomationProperties.Name="Приоритет задачи" AutomationProperties.AutomationId="TaskPriorityComboBox" />
+                                      AutomationProperties.Name="Приоритет задачи" state:FormKeyboard.Field="Priority" AutomationProperties.AutomationId="TaskPriorityComboBox" />
                             <TextBlock Text="{Binding PriorityError}"
                                        Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
                                        TextWrapping="Wrap" Margin="0,4,0,0"
@@ -1206,7 +1227,7 @@
                             <TextBlock Text="Запланировать на день (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
                             <TextBox Text="{Binding Card.Date, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="22"
-                                     AutomationProperties.Name="День задачи" AutomationProperties.AutomationId="TaskScheduledDateTextBox"
+                                     AutomationProperties.Name="День задачи" state:FormKeyboard.Field="Date" AutomationProperties.AutomationId="TaskScheduledDateTextBox"
                                      AutomationProperties.HelpText="{Binding Card.DateHint}" />
                             <views:TaskDayPicker DataContext="{Binding Card}"/>
                             <TextBlock Text="{Binding Card.DateHint}" TextWrapping="Wrap" Margin="0,4,0,0"
@@ -1216,7 +1237,7 @@
                             <TextBox Text="{Binding StartText, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="23"
                                      AutomationProperties.Name="Дата и время начала"
-                                     AutomationProperties.AutomationId="TaskStartTextBox"
+                                     state:FormKeyboard.Field="StartText" AutomationProperties.AutomationId="TaskStartTextBox"
                                      AutomationProperties.HelpText="Локальная дата и время, например 28.08.2026 14:30" />
                             <TextBlock Text="ДД.ММ.ГГГГ ЧЧ:ММ · местное время" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                             <TextBlock Text="{Binding StartError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
@@ -1227,7 +1248,7 @@
                             <TextBox Text="{Binding DeadlineText, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource Task.Input.Text}" TabIndex="24"
                                      AutomationProperties.Name="Срок задачи"
-                                     AutomationProperties.AutomationId="TaskDeadlineTextBox"
+                                     state:FormKeyboard.Field="DeadlineText" AutomationProperties.AutomationId="TaskDeadlineTextBox"
                                      AutomationProperties.HelpText="Дата или локальная дата и время; срок не может быть раньше начала" />
                             <TextBlock Text="ДД.ММ.ГГГГ или ДД.ММ.ГГГГ ЧЧ:ММ · местное время" TextWrapping="Wrap" Margin="0,4,0,0" Foreground="{DynamicResource Task.Brush.Text.Secondary}" />
                             <TextBlock Text="{Binding DeadlineError}" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
@@ -1237,7 +1258,7 @@
                             <StackPanel Margin="0,8,0,12">
  <TextBlock Text="Напомнить" FontWeight="SemiBold" Margin="0,0,0,6"/>
  <ComboBox Style="{StaticResource Task.Card.Combo}" ItemsSource="{Binding ReminderOptions}" SelectedItem="{Binding ReminderOption}" DisplayMemberPath="Text" AutomationProperties.Name="Напомнить" AutomationProperties.AutomationId="TaskDeadlineReminder"/>
- <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Style="{StaticResource Task.Input.Text}" Margin="0,8,0,0" Width="100" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
+ <StackPanel Orientation="Horizontal" Visibility="{Binding IsCustomReminder,Converter={StaticResource Task.BooleanToVisibilityConverter}}"><TextBox Style="{StaticResource Task.Input.Text}" Margin="0,8,0,0" Width="100" state:FormKeyboard.Field="CustomReminderMinutes" Text="{Binding CustomReminderMinutes,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Другой интервал, минут"/><TextBlock Text="минут до срока" VerticalAlignment="Center" Margin="8,0,0,0"/></StackPanel>
  <TextBlock Text="{Binding ReminderPreview}" TextWrapping="Wrap" Margin="0,6,0,0" AutomationProperties.LiveSetting="Polite"/>
  <TextBlock Text="{Binding ReminderRecipientHint}" TextWrapping="Wrap" FontSize="12"/>
 </StackPanel>
@@ -1283,7 +1304,7 @@
                     <StackPanel Grid.Row="2" Margin="0,12,0,0"><TextBlock Text="Ctrl+Enter — сохранить" FontSize="{DynamicResource Task.Font.Size.Metadata}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,8,0,0"/>                            <WrapPanel Margin="0,18,0,0">
                                 <Button Content="{Binding SubmitText}" Style="{StaticResource Task.Button.Primary}"
                                         MinWidth="116" Margin="0,0,8,8" TabIndex="40"
-                                        Command="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        state:FormKeyboard.Submit="True" IsEnabled="{Binding DataContext.Tasks.CanAttemptSaveEditor, RelativeSource={RelativeSource AncestorType=Window}}"
                                         AutomationProperties.Name="{Binding SubmitText}" AutomationProperties.AutomationId="SaveTaskButton" />
                                 <Button Content="Отмена" Style="{StaticResource Task.Button.Secondary}"
                                         Margin="0,0,0,8" TabIndex="41"

@@ -36,5 +36,13 @@ public sealed class NavigationSection
 
     public string AutomationId => $"Navigation_{Route}";
 
+    public string Group => Route switch
+    {
+        "today" or "inbox" or "calendar" or "tasks" or "projects" => "Работа",
+        "catalog" or "contacts" => "Материалы",
+        "search" or "notifications" or "archive" or "trash" => "Сервис",
+        _ => string.Empty,
+    };
+
     public string NavigationHelpText => $"Открыть раздел «{Title}»";
 }

@@ -65,6 +65,7 @@
     <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"/>
     <Style x:Key="Personal.Navigation.Item" TargetType="ListBoxItem" BasedOn="{StaticResource Task.Navigation.Item}">
         <Setter Property="ToolTip" Value="{Binding Title}"/>
+        <Setter Property="Padding" Value="12,0"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="today">
                 <Setter Property="Foreground" Value="#222222"/>

@@ -61,7 +61,7 @@ public sealed partial class ProjectsViewModelTests
                     results.SelectedItem = vm.MemberPicker.Results.Single(u => u.Id == employee.Id); PumpProject();
                     var confirm = ProjectDescendants<Button>(memberView).Single(b => new ButtonAutomationPeer(b).GetName() == "Подтвердить выбор сотрудника");
                     confirm.Command.Execute(null); PumpProject(); Assert.Equal(employee.Id, vm.NewMemberAccountId);
-                    Assert.False(ProjectDescendants<TextBox>(view).Single(t => System.Windows.Automation.AutomationProperties.GetAutomationId(t) == "ProjectMemberUserId").IsVisible);
+                    Assert.DoesNotContain(ProjectDescendants<TextBox>(view), t => t.IsVisible && System.Windows.Automation.AutomationProperties.GetAutomationId(t) == "ProjectMemberUserId");
                     SaveProjectFrame(view, "project-member-picker.png");
                     await vm.EditProjectCommand.ExecuteAsync(); PumpProject();
                     var managerView = ProjectDescendants<EmployeePickerView>(view).Single(v => ReferenceEquals(v.DataContext, vm.Editor!.ManagerPicker));
@@ -75,6 +75,9 @@ public sealed partial class ProjectsViewModelTests
                     SaveProjectFrame(view, "project-manager-save.png");
                     await vm.CancelEditorCommand.ExecuteAsync(); vm.UpdateCapabilities(Capabilities); PumpProject();
                     Assert.DoesNotContain(ProjectDescendants<EmployeePickerView>(view), v => v.IsVisible);
+                    var manual = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "Указать идентификатор вручную"));
+                    Assert.False(manual.IsExpanded);
+                    manual.IsExpanded = true; PumpProject();
                     Assert.True(ProjectDescendants<TextBox>(view).Single(t => System.Windows.Automation.AutomationProperties.GetAutomationId(t) == "ProjectMemberUserId").IsVisible);
                     SaveProjectFrame(view, "project-uuid-fallback.png");
                     await vm.EditProjectCommand.ExecuteAsync(); PumpProject();

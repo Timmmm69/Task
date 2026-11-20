@@ -11,6 +11,8 @@ public sealed partial class ProjectsViewModel
     private string? _relatedCursor;
     private readonly HashSet<string> _relatedCursors = new(StringComparer.Ordinal);
     private bool _restartRelated;
+    private bool _relatedTasksExpanded;
+    private bool _initialRelatedTasksStarted;
     private ProjectTasksState _relatedState;
     public ProjectTasksState RelatedTasksState
     {
@@ -32,13 +34,13 @@ public sealed partial class ProjectsViewModel
         ProjectTasksState.Partial => $"Найдено пока {RelatedTasks.Count} задач. Для полного списка продолжите поиск.",
         ProjectTasksState.Complete => $"Все доступные задачи проекта загружены: {RelatedTasks.Count}.",
         ProjectTasksState.Empty => "В проекте нет доступных задач.",
-        ProjectTasksState.Forbidden => "Нет доступа к связанным задачам (Task.Read / Project.Read).",
+        ProjectTasksState.Forbidden => "Связанные задачи недоступны для вашей роли. За доступом обратитесь к администратору.",
         ProjectTasksState.SessionEnded => "Сессия завершена. Выполните вход снова.",
         ProjectTasksState.Offline => $"Нет соединения. Найдено пока {RelatedTasks.Count}; полнота списка не подтверждена.",
         ProjectTasksState.ServerUnavailable => $"Сервер недоступен. Найдено пока {RelatedTasks.Count}; повторите поиск.",
         ProjectTasksState.Cancelled => $"Поиск остановлен. Найдено пока {RelatedTasks.Count}; можно продолжить.",
         ProjectTasksState.Failed => $"Не удалось завершить поиск. Найдено пока {RelatedTasks.Count}; полнота списка не подтверждена.",
-        _ => "Загрузите связанные задачи при необходимости. Поиск выполняется по страницам доступных задач."
+        _ => "Поиск начнётся после загрузки сведений о проекте."
     };
     public AsyncCommand LoadRelatedTasksCommand { get; private set; } = null!;
     private bool CanLoadRelatedTasks => !_disposed && IsActive && _sessionAvailable && _networkAvailable
@@ -67,6 +69,20 @@ public sealed partial class ProjectsViewModel
         LoadRelatedTasksCommand?.RaiseCanExecuteChanged();
     }
 
+    public void SetRelatedTasksExpanded(bool expanded)
+    {
+        _relatedTasksExpanded = expanded;
+        if (expanded) TryLoadInitialRelatedTasks();
+        else if (IsRelatedTasksLoading) CancelRelatedTasks();
+    }
+
+    private void TryLoadInitialRelatedTasks()
+    {
+        if (!_relatedTasksExpanded || _initialRelatedTasksStarted || !CanLoadRelatedTasks
+            || RelatedTasksState is not (ProjectTasksState.Idle or ProjectTasksState.Offline)) return;
+        _ = LoadRelatedTasksPageAsync(null, CancellationToken.None);
+    }
+
     public void CancelRelatedTasks()
     {
         _relatedGeneration++;
@@ -88,6 +104,7 @@ public sealed partial class ProjectsViewModel
     {
         if (!CanLoadRelatedTasks) return;
         if (_restartRelated) ResetRelatedTasks();
+        _initialRelatedTasksStarted = true;
         var item = SelectedItem!;
         var generation = ++_relatedGeneration;
         using var request = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _activation!.Token);
