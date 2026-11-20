@@ -23,6 +23,8 @@ public sealed class CalendarItemViewModel : ViewModelBase
         TimeText = source.IsAllDay ? "Весь день" : source.StartAtUtc is null
             ? source.EndAtUtc.HasValue ? $"Срок {Time(source.EndAtUtc.Value)}" : "Без времени"
             : source.EndAtUtc.HasValue ? $"{Time(source.StartAtUtc.Value)}–{Time(source.EndAtUtc.Value)}" : Time(source.StartAtUtc.Value);
+        CompactTimeText = source.StartAtUtc is { } startAtUtc ? Time(startAtUtc)
+            : source.EndAtUtc is { } endAtUtc ? Time(endAtUtc) : TimeText;
         StatusText = source.Status switch
         {
             "scheduled" => "Запланировано",
@@ -56,6 +58,7 @@ public sealed class CalendarItemViewModel : ViewModelBase
     public string? Description => Source.Description;
     public string TypeText { get; }
     public string TimeText { get; }
+    public string CompactTimeText { get; }
     public string StatusText { get; }
     public string? PriorityText { get; }
     public string? ConflictText { get; }
@@ -112,6 +115,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
     private const double HourHeight = 69d;
     private readonly TimeZoneInfo _timeZone;
     private bool _isToday;
+    private bool _isSelectedDate;
     private bool _showCurrentTime;
     private string _currentTimeText = string.Empty;
     private double _currentTimeTop;
@@ -149,6 +153,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
     public IReadOnlyList<CalendarItemViewModel> AllDayItems { get; }
     public bool IsToday { get => _isToday; private set => SetProperty(ref _isToday, value); }
     public bool IsCurrentMonth { get; }
+    public bool IsSelectedDate { get => _isSelectedDate; internal set => SetProperty(ref _isSelectedDate, value); }
     public bool ShowCurrentTime { get => _showCurrentTime; private set => SetProperty(ref _showCurrentTime, value); }
     public string CurrentTimeText { get => _currentTimeText; private set => SetProperty(ref _currentTimeText, value); }
     public double CurrentTimeTop { get => _currentTimeTop; private set => SetProperty(ref _currentTimeTop, value); }
@@ -445,7 +450,22 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         InitializeFreeTime(userSettings);
     }
 
-    public IReadOnlyList<CalendarDayViewModel> Days { get => _days; private set => SetProperty(ref _days, value); }
+    public IReadOnlyList<CalendarDayViewModel> Days
+    {
+        get => _days;
+        private set
+        {
+            if (!SetProperty(ref _days, value)) return;
+            OnPropertyChanged(nameof(MonthWeeks));
+            OnPropertyChanged(nameof(MonthWeekdays));
+            OnPropertyChanged(nameof(CorporateTimelineHeight));
+        }
+    }
+
+    public IEnumerable<CalendarDayViewModel[]> MonthWeeks => Days.Chunk(7);
+    public IEnumerable<CalendarDayViewModel> MonthWeekdays => Days.Take(7);
+    public double CorporateTimelineHeight => Math.Max(TimelineCanvasHeight, Days.SelectMany(day => day.TimelineItems)
+        .Select(item => item.TimelineEnd).DefaultIfEmpty(0).Max());
     public IReadOnlyList<CalendarHourMarker> HourMarkers { get; } = Enumerable.Range(0, 24).Select(hour => new CalendarHourMarker($"{hour:00}:00", hour * TimelineHourHeight)).ToArray();
     public double TimelineCanvasHeight => 24d * TimelineHourHeight;
     public double InitialTimelineOffset => (_workdayStart?.Invoke().ToTimeSpan().TotalHours ?? 8d) * TimelineHourHeight;
@@ -460,7 +480,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private void OnRecurrenceChanged() { if (_active && CanRead) _ = LoadAsync(true, CancellationToken.None); }
     private void OnRecurrenceAccessLost() { Message = "Доступ к сериям отозван или сессия завершена. Обновите календарь."; }
     public DateOnly WeekStart => _weekStart;
-    public CalendarViewMode ViewMode { get => _viewMode; private set { if (SetProperty(ref _viewMode, value)) { OnPropertyChanged(nameof(WeekRangeText)); OnPropertyChanged(nameof(CalendarColumns)); OnPropertyChanged(nameof(DayCellHeight)); OnPropertyChanged(nameof(IsTimelineMode)); OnPropertyChanged(nameof(IsMonthMode)); RaiseCommands(); } } }
+    public CalendarViewMode ViewMode { get => _viewMode; private set { if (SetProperty(ref _viewMode, value)) { OnPropertyChanged(nameof(WeekRangeText)); OnPropertyChanged(nameof(CorporatePeriodText)); OnPropertyChanged(nameof(CalendarColumns)); OnPropertyChanged(nameof(DayCellHeight)); OnPropertyChanged(nameof(IsTimelineMode)); OnPropertyChanged(nameof(IsMonthMode)); RaiseCommands(); } } }
     public int CalendarColumns => ViewMode == CalendarViewMode.Day ? 1 : 7;
     public double DayCellHeight => ViewMode == CalendarViewMode.Month ? 150 : 470;
     public bool IsTimelineMode => ViewMode is CalendarViewMode.Day or CalendarViewMode.Week;
@@ -474,18 +494,66 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
             var date = DateOnly.FromDateTime(value.Value);
             if (date == _selectedDate) return;
             CloseFreeTime();
-            _selectedDate = date; _weekStart = StartOfWeek(date, FirstDay);
+            SetDateAnchor(date);
             ClearSelection();
-            OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
             if (_active && CanRead) _ = LoadAsync(false, CancellationToken.None);
         }
     }
+    internal void SelectVisibleDate(CalendarDayViewModel day)
+    {
+        if (!_active || !CanRead || IsBusy || day.Date == _selectedDate || !Days.Contains(day)) return;
+        if (ViewMode == CalendarViewMode.Month && !day.IsCurrentMonth)
+        {
+            SelectedDate = day.Date.ToDateTime(TimeOnly.MinValue);
+            return;
+        }
+
+        // The visible period is already loaded. Keep the date control and its keyboard focus alive.
+        CloseFreeTime();
+        SetDateAnchor(day.Date);
+        ClearSelection();
+        foreach (var visibleDay in Days)
+            visibleDay.IsSelectedDate = ReferenceEquals(visibleDay, day);
+    }
+
+    private void SetDateAnchor(DateOnly date)
+    {
+        _selectedDate = date;
+        _weekStart = StartOfWeek(date, FirstDay);
+        OnPropertyChanged(nameof(SelectedDate));
+        OnPropertyChanged(nameof(WeekStart));
+        OnPropertyChanged(nameof(WeekRangeText));
+        OnPropertyChanged(nameof(CorporatePeriodText));
+        OnPropertyChanged(nameof(SelectedDateUtcOffsetText));
+    }
+
     public string WeekRangeText => ViewMode switch
     {
         CalendarViewMode.Day => _selectedDate.ToDateTime(TimeOnly.MinValue).ToString("dddd, d MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")),
         CalendarViewMode.Month => _selectedDate.ToDateTime(TimeOnly.MinValue).ToString("MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")),
         _ => string.Create(CultureInfo.GetCultureInfo("ru-RU"), $"{_weekStart.ToDateTime(TimeOnly.MinValue):d MMM} — {_weekStart.AddDays(6).ToDateTime(TimeOnly.MinValue):d MMM yyyy}"),
     };
+    public string CorporatePeriodText
+    {
+        get
+        {
+            var culture = CultureInfo.GetCultureInfo("ru-RU");
+            var title = WeekRangeText;
+            if (ViewMode == CalendarViewMode.Week && _weekStart.Month == _weekStart.AddDays(6).Month)
+                title = string.Create(culture, $"{_weekStart.Day}–{_weekStart.AddDays(6):d MMMM yyyy}");
+            return char.ToUpper(title[0], culture) + title[1..];
+        }
+    }
+
+    public string SelectedDateUtcOffsetText
+    {
+        get
+        {
+            var offset = _timeZone.GetUtcOffset(_selectedDate.ToDateTime(new TimeOnly(12, 0)));
+            return $"UTC{(offset < TimeSpan.Zero ? "-" : "+")}{offset.Duration():hh\\:mm}";
+        }
+    }
+
     public CalendarScreenState State { get => _state; private set { if (SetProperty(ref _state, value)) { OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsSaving)); OnPropertyChanged(nameof(ShowMessage)); OnPropertyChanged(nameof(ShowInitialLoading)); OnPropertyChanged(nameof(ShowEmptyState)); OnPropertyChanged(nameof(ShowStateBanner)); OnPropertyChanged(nameof(StateTitle)); OnPropertyChanged(nameof(StateDescription)); RaiseCommands(); } } }
     public bool IsActive => _active;
     public bool IsBusy => IsFindingTime || _saving || State is CalendarScreenState.Loading or CalendarScreenState.Refreshing;
@@ -595,8 +663,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
             ClearSelection(); HandleFailure(result, Days.Count > 0); return;
         }
         var value = success.Value;
-        _selectedDate = value.EventDate; _weekStart = StartOfWeek(_selectedDate, FirstDay);
-        OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
+        SetDateAnchor(value.EventDate);
         var expectedGeneration = _generation + 1;
         await LoadAsync(false, CancellationToken.None);
         if (!_active || !CanRead || _disposed || _generation != expectedGeneration || State is not (CalendarScreenState.Loaded or CalendarScreenState.Empty)) return;
@@ -655,15 +722,14 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     private async global::System.Threading.Tasks.Task MoveAsync(int direction, CancellationToken token)
     {
         CloseFreeTime();
-        _selectedDate = ViewMode switch
+        var date = ViewMode switch
         {
             CalendarViewMode.Day => _selectedDate.AddDays(direction),
             CalendarViewMode.Month => _selectedDate.AddMonths(direction),
             _ => _selectedDate.AddDays(7 * direction),
         };
-        _weekStart = StartOfWeek(_selectedDate, FirstDay);
+        SetDateAnchor(date);
         ClearSelection();
-        OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
         await LoadAsync(false, token);
     }
 
@@ -677,7 +743,12 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     }
 
     private async global::System.Threading.Tasks.Task GoTodayAsync(CancellationToken token)
-    { CloseFreeTime(); _selectedDate = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(_clock(), _timeZone).DateTime); _weekStart = StartOfWeek(_selectedDate, FirstDay); ClearSelection(); OnPropertyChanged(nameof(SelectedDate)); OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); await LoadAsync(false, token); }
+    {
+        CloseFreeTime();
+        SetDateAnchor(DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(_clock(), _timeZone).DateTime));
+        ClearSelection();
+        await LoadAsync(false, token);
+    }
 
     private async global::System.Threading.Tasks.Task LoadAsync(bool refresh, CancellationToken token)
     {
@@ -692,7 +763,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         {
             var (firstDate, lastDateExclusive) = GetVisibleDateRange(_selectedDate, ViewMode, FirstDay);
             _weekStart = StartOfWeek(_selectedDate, FirstDay);
-            OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText));
+            OnPropertyChanged(nameof(WeekStart)); OnPropertyChanged(nameof(WeekRangeText)); OnPropertyChanged(nameof(CorporatePeriodText));
             var (fromUtc, toUtc) = GetUtcRange(firstDate, lastDateExclusive, _timeZone);
             var scheduleTask = _client.GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, ct);
             var conflictsTask = _client.GetConflictsAsync(fromUtc, toUtc, ct);
@@ -737,7 +808,10 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         Days = Enumerable.Range(0, lastDateExclusive.DayNumber - firstDate.DayNumber).Select(offset =>
         {
             var date = firstDate.AddDays(offset);
-            return new CalendarDayViewModel(date, items.Where(i => i.AppearsOn(date, _timeZone)), date.Month == _selectedDate.Month, _timeZone, _clock());
+            return new CalendarDayViewModel(date, items.Where(i => i.AppearsOn(date, _timeZone)), date.Month == _selectedDate.Month, _timeZone, _clock())
+            {
+                IsSelectedDate = date == _selectedDate,
+            };
         }).ToArray();
         ClearSelection();
     }

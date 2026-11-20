@@ -299,9 +299,9 @@ public sealed class VisualFoundationTests
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarEventEditor\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarReadOnlyBanner\"", xaml, StringComparison.Ordinal);
         Assert.Contains("AutomationProperties.AutomationId=\"CalendarRollbackBanner\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Personal.Calendar.TimelineEntry", xaml, StringComparison.Ordinal);
+        Assert.Contains("x:Name=\"CalendarMonthScroll\"", xaml, StringComparison.Ordinal);
         Assert.Contains("KeyboardNavigation.TabNavigation=\"Cycle\"", xaml, StringComparison.Ordinal);
-        Assert.Contains("Width=\"{Binding ViewportWidth, ElementName=CalendarHorizontalScroll}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("x:Name=\"CalendarHorizontalScroll\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Command=\"{Binding DayModeCommand}\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Command=\"{Binding WeekModeCommand}\"", xaml, StringComparison.Ordinal);
         Assert.Contains("Command=\"{Binding MonthModeCommand}\"", xaml, StringComparison.Ordinal);
