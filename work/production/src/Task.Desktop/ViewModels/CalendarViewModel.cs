@@ -506,7 +506,9 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     }
     internal void SelectVisibleDate(CalendarDayViewModel day)
     {
-        if (!_active || !CanRead || IsBusy || day.Date == _selectedDate || !Days.Contains(day)) return;
+        if (!_active || !CanRead || IsBusy || !Days.Contains(day)) return;
+        _eventCreationDate = day.Date.ToDateTime(TimeOnly.MinValue);
+        if (day.Date == _selectedDate) return;
         if (ViewMode == CalendarViewMode.Month && !day.IsCurrentMonth)
         {
             SelectedDate = day.Date.ToDateTime(TimeOnly.MinValue);

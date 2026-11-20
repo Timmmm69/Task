@@ -1,6 +1,7 @@
 <UserControl x:Class="Task.Desktop.Views.CorporateSettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Task.Desktop.Converters"
     x:Name="SettingsRoot" UseLayoutRounding="True" SnapsToDevicePixels="True"
     AutomationProperties.Name="Настройки" AutomationProperties.AutomationId="SettingsView">
     <UserControl.Resources>
@@ -9,6 +10,7 @@
                 <ResourceDictionary Source="../Resources/Corporate.Management.xaml"/>
                 <ResourceDictionary Source="../Resources/Calendar.Forms.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <converters:WindowWidthAtLeastConverter x:Key="Settings.WidthAtLeast"/>
             <CornerRadius x:Key="Task.Capsule.SelectRadius">8</CornerRadius>
             <Style x:Key="Settings.Card" TargetType="Border" BasedOn="{StaticResource Corporate.Management.Card}">
                 <Setter Property="Padding" Value="14,12,14,12"/>
@@ -17,7 +19,7 @@
             <Style x:Key="Settings.Cards" TargetType="UniformGrid">
                 <Setter Property="Columns" Value="2"/>
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding ActualWidth, ElementName=SettingsRoot, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=630}" Value="False">
+                    <DataTrigger Binding="{Binding ActualWidth, ElementName=SettingsRoot, Converter={StaticResource Settings.WidthAtLeast}, ConverterParameter=630}" Value="False">
                         <Setter Property="Columns" Value="1"/>
                     </DataTrigger>
                 </Style.Triggers>
@@ -59,8 +61,15 @@
             <Style x:Key="Settings.Error" TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Critical}"/>
                 <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="AutomationProperties.AutomationId" Value="SettingsProfileError"/>
                 <Setter Property="Margin" Value="0,0,0,6"/>
                 <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsNotificationSettings}" Value="True">
+                        <Setter Property="AutomationProperties.AutomationId" Value="SettingsNotificationError"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsServerSettings}" Value="True">
+                        <Setter Property="AutomationProperties.AutomationId" Value="SettingsOrganizationError"/>
+                    </DataTrigger>
                     <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger>
                     <Trigger Property="Text" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></Trigger>
                 </Style.Triggers>
@@ -190,7 +199,7 @@
 
             <ScrollViewer x:Name="SettingsScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <Border Style="{StaticResource Corporate.Management.Card}" Margin="0,0,10,10"
+                    <Border Style="{StaticResource Settings.Card}"
                             DataContext="{Binding DataContext.WorkPreferences, RelativeSource={RelativeSource AncestorType=Window}}"
                             Visibility="{Binding IsReady, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
                         <StackPanel MaxWidth="300" HorizontalAlignment="Left">

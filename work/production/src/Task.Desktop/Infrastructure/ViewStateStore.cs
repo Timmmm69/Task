@@ -156,8 +156,12 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
             revision = _revision;
             bytes = JsonSerializer.SerializeToUtf8Bytes(new
             {
-                version = 1, widths = _widths, sections = _sections, sorts = _sorts,
-                startupRoute = _startupRoute, calendarMode = _calendarMode?.ToString()
+                version = 1,
+                widths = _widths,
+                sections = _sections,
+                sorts = _sorts,
+                startupRoute = _startupRoute,
+                calendarMode = _calendarMode?.ToString()
             });
         }
         var temporary = FilePath + "." + Guid.NewGuid().ToString("N") + ".tmp";

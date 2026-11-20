@@ -293,9 +293,9 @@ public sealed class VisualFoundationTests
         Assert.Contains("x:Name=\"SelectedRail\"", data, StringComparison.Ordinal);
         Assert.Contains("Task.Thickness.Focus", buttons, StringComparison.Ordinal);
         Assert.Contains("Task.Button.Primary", mainWindow, StringComparison.Ordinal);
-        Assert.Contains("Text=\"Alt+N\"", mainWindow, StringComparison.Ordinal);
+        Assert.Contains("Key=\"N\" Modifiers=\"Alt\" Command=\"{Binding NewTaskCommand}\"", mainWindow, StringComparison.Ordinal);
         Assert.Contains("Text=\"{Binding ConnectionTitle}\"", mainWindow, StringComparison.Ordinal);
-        Assert.Contains("Task.Icon.Navigation", mainWindow, StringComparison.Ordinal);
+        Assert.Contains("Task.Workspace.NavigationItem", mainWindow, StringComparison.Ordinal);
         Assert.Contains("IsMouseCaptured", navigation, StringComparison.Ordinal);
         Assert.Contains("Task.Brush.Surface.Selected", navigation, StringComparison.Ordinal);
         Assert.Contains("Task.Brush.Brand.Strong", buttons, StringComparison.Ordinal);

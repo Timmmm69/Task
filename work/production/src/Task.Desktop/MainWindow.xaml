@@ -18,18 +18,16 @@
         AutomationProperties.Name="Task — рабочее пространство"
         AutomationProperties.AutomationId="MainWindow"
         AutomationProperties.HelpText="F6 переключает основные области; Ctrl+K открывает глобальный поиск; Escape закрывает overlay и возвращает фокус">
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding Tasks.CancelEditorCommand}" />
+        <KeyBinding Key="N" Modifiers="Alt" Command="{Binding NewTaskCommand}" />
+    </Window.InputBindings>
     <Window.Resources>
         <CollectionViewSource x:Key="NavigationSections" Source="{Binding Sections}">
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="Group" />
                 </CollectionViewSource.GroupDescriptions>
             </CollectionViewSource>
-    </Window.Resources>
-    <Window.InputBindings>
-        <KeyBinding Key="Escape" Command="{Binding Tasks.CancelEditorCommand}" />
-        <KeyBinding Key="N" Modifiers="Alt" Command="{Binding NewTaskCommand}" />
-    </Window.InputBindings>
-    <Window.Resources>
         <Style x:Key="RailItem" TargetType="ListBoxItem" BasedOn="{StaticResource Task.Workspace.NavigationItem}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
@@ -103,7 +101,7 @@
                     <Style TargetType="ColumnDefinition">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="True">
-                                <Setter Property="MinWidth" Value="204" />
+                                <Setter Property="MinWidth" Value="220" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -113,7 +111,17 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.RowSpan="3" Style="{StaticResource Task.Shell.NavigationSurface}">
-            <DockPanel Margin="8,0">
+            <DockPanel>
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Setter Property="Margin" Value="8,0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualWidth, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=900}" Value="False">
+                                <Setter Property="Margin" Value="3,0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="48" Margin="5,0" ToolTip="Task · Пространство компании">
                     <Border Width="36" Height="36" VerticalAlignment="Center"
                             Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="12">
@@ -156,7 +164,7 @@
                                     </Style>
                                 </DockPanel.Style>
                                 <Path Data="{Binding IconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
-                                      Width="18" Height="18" Stretch="Uniform" Margin="4,0"
+                                      Width="18" Height="18" Stretch="Uniform" Margin="2,0"
                                       Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
                                       IsHitTestVisible="False" />
                                 <TextBlock Text="{Binding Title}" Style="{StaticResource RailLabel}" Margin="4,0,0,0"
@@ -1038,11 +1046,11 @@
                                                     <TextBlock Text="{Binding AssigneeText}" Style="{StaticResource Task.Inspector.FactValue}" />
                                                 </StackPanel>
                                                 <StackPanel Grid.Row="1" Margin="0,0,10,0">
-                                                    <TextBlock Text="Срок" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                    <TextBlock Text="Выполнить до" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                     <TextBlock Text="{Binding DeadlineText}" Style="{StaticResource Task.Inspector.FactValue}" />
                                                 </StackPanel>
                                                 <StackPanel Grid.Row="1" Grid.Column="1">
-                                                    <TextBlock Text="Начало" Style="{StaticResource Task.Inspector.FactLabel}" />
+                                                    <TextBlock Text="Запланировать на" Style="{StaticResource Task.Inspector.FactLabel}" />
                                                     <TextBlock Text="{Binding StartText}" Style="{StaticResource Task.Inspector.FactValue}" />
                                                 </StackPanel>
                                                 <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ReminderText}"
@@ -1169,17 +1177,24 @@
                 <Border Grid.RowSpan="6" HorizontalAlignment="Right" Width="510" MaxWidth="510"
                         Background="{DynamicResource Task.Brush.Surface.Base}"
                         BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1,0,0,0"
-                        Padding="20" Panel.ZIndex="20" DataContext="{Binding Editor}"
+                        Panel.ZIndex="20" DataContext="{Binding Editor}"
                         state:FormKeyboard.Save="{Binding DataContext.Tasks.SaveEditorCommand, RelativeSource={RelativeSource AncestorType=Window}}" AutomationProperties.Name="Форма задачи" AutomationProperties.AutomationId="TaskEditorPanel">
                     <Border.Style>
                         <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Visible" />
-                            <Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+                            <Setter Property="Padding" Value="20" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ActualHeight, ElementName=RootWindow, Converter={StaticResource Task.WindowWidthAtLeastConverter}, ConverterParameter=600}" Value="False">
+                                    <Setter Property="Padding" Value="16,8" />
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </Border.Style>
                     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                    <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Margin="0,0,0,16">
-                            <Grid Margin="0,0,0,16">
+                    <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1" Margin="0,0,0,8">
+                            <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Heading}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}"
                                            FontWeight="{DynamicResource Task.Font.Weight.Semibold}" VerticalAlignment="Center" />

@@ -60,10 +60,10 @@ public sealed class CalendarModesTests
     }
 
     [Fact]
-    public async global::System.Threading.Tasks.Task SelectingVisibleDate_KeepsWeekAndAnchorsDayMode()
+    public async global::System.Threading.Tasks.Task SelectingVisibleDate_KeepsWeekAndAnchorsDayModeAndNewEvent()
     {
         var date = new DateTime(2026, 11, 16);
-        using var vm = new CalendarViewModel(new EmptyCalendarClient(), ["Calendar.Read"], TimeZoneInfo.Utc, date);
+        using var vm = new CalendarViewModel(new EmptyCalendarClient(), ["Calendar.Read", "CalendarEvent.Create"], TimeZoneInfo.Utc, date);
         await vm.ActivateAsync();
         var week = vm.Days;
         var friday = week[4];
@@ -75,6 +75,25 @@ public sealed class CalendarModesTests
         Assert.Equal(date.AddDays(4), vm.SelectedDate);
         await vm.DayModeCommand.ExecuteAsync();
         Assert.Equal(friday.Date, Assert.Single(vm.Days).Date);
+        await vm.NewEventCommand.ExecuteAsync();
+        Assert.Equal(vm.SelectedDate, vm.Editor!.Date);
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task CorporateCalendar_ConnectionIndicatesWriteAccessWithOpenEditor()
+    {
+        var capabilities = new[] { "Calendar.Read", "CalendarEvent.Create" };
+        using var calendar = new CalendarViewModel(new EmptyCalendarClient(), capabilities, TimeZoneInfo.Utc);
+        using var shell = new MainWindowViewModel(new Uri("https://task.example.test"), null, calendar: calendar);
+        shell.SelectedSection = shell.Sections.Single(section => section.Route == "calendar");
+        await calendar.ActivateAsync();
+        await calendar.NewEventCommand.ExecuteAsync();
+
+        Assert.NotNull(calendar.Editor);
+        Assert.Equal("Онлайн · запись календаря доступна", shell.ConnectionContext);
+
+        calendar.UpdateCapabilities(["Calendar.Read"]);
+        Assert.Equal("Онлайн · календарь только для просмотра", shell.ConnectionContext);
     }
 
     [Fact]

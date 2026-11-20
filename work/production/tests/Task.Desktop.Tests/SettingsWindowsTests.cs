@@ -116,12 +116,12 @@ public sealed class SettingsWindowsTests
                             if (area == WorkHubArea.Catalog)
                             {
                                 var catalog = Find<Border>(view, "FilesCatalogRegion");
-                                var inspector = Find<Grid>(view, "FilesInspectorRegion");
+                                var inspector = Find<Border>(view, "FilesInspectorRegion");
                                 var left = catalog.TransformToAncestor(view).TransformBounds(new Rect(catalog.RenderSize));
                                 var right = inspector.TransformToAncestor(view).TransformBounds(new Rect(inspector.RenderSize));
                                 Assert.True(right.Right <= view.ActualWidth + 1);
-                                if (width < 860) Assert.True(right.Top >= left.Bottom - 1);
-                                else Assert.True(right.Left >= left.Right - 1);
+                                Assert.True(right.Left >= left.Right - 1);
+                                Assert.True(left.Width > 0 && right.Width > 0);
                             }
                             Save(view, $"{area}-{width}.png");
                         }

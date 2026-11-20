@@ -324,7 +324,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         : IsInboxSectionSelected
             ? Inbox?.IsReadOnly == true ? "Онлайн · входящие только для просмотра" : "Онлайн · разбор входящих доступен"
         : IsCalendarSectionSelected
-            ? Calendar?.CanCreate == true ? "Онлайн · запись календаря доступна" : "Онлайн · календарь только для просмотра"
+            ? Calendar is { CanRead: true, IsReadOnly: false } ? "Онлайн · запись календаря доступна" : "Онлайн · календарь только для просмотра"
         : IsProjectsSectionSelected
             ? Projects?.CanUpdate == true ? "Онлайн · управление проектами доступно" : "Онлайн · проекты только для просмотра"
         : IsWorkHubSectionSelected
@@ -516,7 +516,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void OnCalendarPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(CalendarViewModel.CanCreate)
+        if (e.PropertyName is nameof(CalendarViewModel.IsReadOnly) or nameof(CalendarViewModel.CanRead)
             or nameof(CalendarViewModel.WriteAccessText)
             or nameof(CalendarViewModel.LastSuccessfulRefreshText))
         {

@@ -100,7 +100,18 @@
             </StackPanel>
             <Grid Grid.Row="2" IsEnabled="{Binding CanInteract}" Margin="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="230"/>
+                    <ColumnDefinition>
+                        <ColumnDefinition.Style>
+                            <Style TargetType="ColumnDefinition">
+                                <Setter Property="Width" Value="230"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource Recurrence.WidthAtLeast}, ConverterParameter=760}" Value="False">
+                                        <Setter Property="Width" Value="168"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ColumnDefinition.Style>
+                    </ColumnDefinition>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition>
                         <ColumnDefinition.Style>
@@ -116,8 +127,20 @@
                     </ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition>
+                        <RowDefinition.Style>
+                            <Style TargetType="RowDefinition">
+                                <Setter Property="Height" Value="0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource Recurrence.WidthAtLeast}, ConverterParameter=1050}" Value="False">
+                                        <Setter Property="Height" Value="*"/>
+                                        <Setter Property="MaxHeight" Value="220"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </RowDefinition.Style>
+                    </RowDefinition>
                 </Grid.RowDefinitions>
                 <DockPanel Grid.RowSpan="2" Margin="12,0,12,12">
                     <TextBlock Text="Серии задач" Style="{StaticResource Recurrence.PanelTitle}" DockPanel.Dock="Top"/>
@@ -299,10 +322,10 @@
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
-                    <Border Style="{StaticResource Task.Shell.FooterSurface}" Padding="16,12" Grid.Row="2">
+                    <Border Style="{StaticResource Task.Shell.FooterSurface}" Padding="12,8" Grid.Row="2">
                         <WrapPanel>
-                            <Button Content="Предпросмотр" Command="{Binding PreviewCommand}" Style="{StaticResource Task.Workspace.Button}" Margin="0,0,8,8"/>
-                            <Button Content="Сохранить правило серии" Command="{Binding SaveCommand}" Style="{StaticResource Task.Workspace.Primary}" Margin="0,0,0,8"/>
+                            <Button Content="Предпросмотр" Command="{Binding PreviewCommand}" Style="{StaticResource Task.Workspace.Button}" Margin="0,0,8,4"/>
+                            <Button Content="Сохранить правило серии" Command="{Binding SaveCommand}" Style="{StaticResource Task.Workspace.Primary}" Margin="0,0,0,4"/>
                         </WrapPanel>
                     </Border>
                 </Grid>
@@ -315,7 +338,6 @@
                                     <Setter Property="Grid.Column" Value="1"/>
                                     <Setter Property="Grid.Row" Value="1"/>
                                     <Setter Property="Grid.ColumnSpan" Value="2"/>
-                                    <Setter Property="MaxHeight" Value="280"/>
                                     <Setter Property="BorderThickness" Value="0,1,0,0"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -346,7 +368,7 @@
                             <Border Style="{StaticResource Recurrence.Card}">
                                 <StackPanel>
                                     <TextBlock Text="Изменить созданные задачи" FontSize="16" FontWeight="SemiBold" Margin="0,12,0,8" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Выберите задачу и область. Будут применены название, приоритет и длительность из формы." TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Выберите задачу и область. Будут применены название, приоритет и длительность из формы." TextWrapping="Wrap" Margin="0,0,0,4"/>
                                     <ComboBox ItemsSource="{Binding Occurrences}" SelectedItem="{Binding SelectedOccurrence}" Margin="0,0,0,8" AutomationProperties.Name="Экземпляр серии">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
@@ -368,7 +390,7 @@
                                     <TextBlock Text="Горизонт расписания" Style="{StaticResource Recurrence.Heading}" TextWrapping="Wrap"/>
                                     <TextBlock Text="Создать задачи до даты" Margin="0,12,0,4" TextWrapping="Wrap"/>
                                     <DatePicker SelectedDate="{Binding ThroughDate}" Margin="0,0,0,8" AutomationProperties.Name="Создать задачи до даты"/>
-                                    <TextBlock Text="Расширяйте горизонт шагами до одного года. Повторный запрос не создаёт дубликаты." TextWrapping="Wrap" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Расширяйте горизонт шагами до одного года. Повторный запрос не создаёт дубликаты." TextWrapping="Wrap" Margin="0,0,0,4"/>
                                     <Button Content="Расширить расписание" Command="{Binding GenerateCommand}" Style="{StaticResource Task.Workspace.Button}" HorizontalAlignment="Left" Margin="0,0,0,12"/>
                                 </StackPanel>
                             </Border>

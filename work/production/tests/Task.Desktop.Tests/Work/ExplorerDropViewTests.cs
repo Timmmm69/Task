@@ -90,9 +90,17 @@ public sealed class ExplorerDropViewTests
                 area.RaiseEvent(Drag(data, area, DragDrop.PreviewDropEvent));
                 Assert.Null(AdornerLayer.GetAdornerLayer(area).GetAdorners(area)); Assert.Equal(0, state.Creates);
                 vm.UpdateConnectivity(true); vm.RefreshCommand.Execute(null); Pump();
+                var add = AllVisual<Button>(view).Single(button =>
+                    System.Windows.Automation.AutomationProperties.GetAutomationId(button) == "CatalogAddButton");
+                Assert.True(add.Focus());
+                var peer = new System.Windows.Automation.Peers.ButtonAutomationPeer(add);
+                var invoke = Assert.IsAssignableFrom<System.Windows.Automation.Provider.IInvokeProvider>(
+                    peer.GetPattern(System.Windows.Automation.Peers.PatternInterface.Invoke));
+                invoke.Invoke();
+                Pump();
                 var buttons = AllVisual<Button>(view).Where(b => System.Windows.Automation.AutomationProperties.GetAutomationId(b).StartsWith("AddCatalog")).ToArray();
                 Assert.Equal(2, buttons.Length);
-                foreach (var button in buttons) { Assert.True(button.Focusable); Assert.True(button.IsTabStop); Assert.Contains("_", button.Content.ToString()); Assert.True(button.Focus()); }
+                foreach (var button in buttons) { Assert.True(button.IsVisible); Assert.True(button.Focusable); Assert.True(button.IsTabStop); Assert.Contains("_", button.Content.ToString()); Assert.True(button.Focus()); }
                 var realPath = System.IO.Path.GetTempFileName();
                 try
                 {
