@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using Task.Desktop.Analytics;
 using Task.Desktop.Security;
 using Task.Desktop.TaskApi;
 
@@ -10,6 +11,38 @@ namespace Task.Desktop.Tests.TaskApi;
 
 public sealed class DesktopTasksApiClientTests
 {
+    [Fact]
+    public async global::System.Threading.Tasks.Task CorporateAnalyticsCountsValidatedNewWritesOnce()
+    {
+        var events = new List<UsageEvent>();
+        var completed = TaskJson().Replace("in_progress", "completed", StringComparison.Ordinal);
+        var responses = new Queue<HttpResponseMessage>(
+        [
+            WriteSuccess(HttpStatusCode.Created, replayed: false),
+            WriteSuccess(HttpStatusCode.Created, replayed: true),
+            ProblemResponse(HttpStatusCode.Conflict, "version_conflict"),
+            WriteSuccess(HttpStatusCode.OK, replayed: false),
+            WriteSuccess(HttpStatusCode.OK, replayed: false),
+            WriteSuccess(HttpStatusCode.OK, replayed: false),
+            WriteResponse(HttpStatusCode.OK, completed, "\"v7\"", "false"),
+        ]);
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(responses.Dequeue()), usage: events.Add);
+
+        var create = new DesktopCreateTaskCommand("Test", DesktopTaskPriority.High);
+        var title = new DesktopPatchTaskCommand(TaskId, 6, DesktopTaskField<string>.From("Test edit"));
+        var plan = new DesktopPatchTaskCommand(TaskId, 6, startAtUtc: DesktopTaskField<DateTimeOffset?>.From(null));
+        await fixture.Client.CreateTaskAsync(create);
+        await fixture.Client.CreateTaskAsync(create);
+        await fixture.Client.PatchTaskAsync(title);
+        await fixture.Client.PatchTaskAsync(title);
+        await fixture.Client.PatchTaskAsync(plan);
+        await fixture.Client.PatchTaskAsync(plan, CancellationToken.None, recordUsage: false);
+        await fixture.Client.TransitionTaskAsync(new(TaskId, 6, DesktopTaskStatus.Completed));
+
+        Assert.Equal(new[] { UsageEvent.TaskCreated, UsageEvent.TaskUpdated, UsageEvent.TaskPlanned, UsageEvent.TaskCompleted }, events);
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task TodayPlanning_RealSerializerSendsOnlyChangedFieldsAndStableWriteHeaders()
     {
@@ -712,7 +745,7 @@ public sealed class DesktopTasksApiClientTests
         public static async global::System.Threading.Tasks.Task<Fixture> CreateAsync(
             Func<HttpRequestMessage, CancellationToken, global::System.Threading.Tasks.Task<HttpResponseMessage>> taskResponder,
             Func<HttpRequestMessage, CancellationToken, global::System.Threading.Tasks.Task<HttpResponseMessage>>? refreshResponder = null,
-            DesktopConnectivityService? connectivity = null)
+            DesktopConnectivityService? connectivity = null, Action<UsageEvent>? usage = null)
         {
             var directory = Path.Combine(Path.GetTempPath(), "TaskDesktopTasksTests", Guid.NewGuid().ToString("N"));
             var refreshRequests = 0;
@@ -760,7 +793,7 @@ public sealed class DesktopTasksApiClientTests
                 tasksHttpClient,
                 new Uri("https://task.example.test"),
                 sessionService,
-                connectivity);
+                connectivity) { Usage = usage };
             return new Fixture(
                 directory,
                 authHttpClient,

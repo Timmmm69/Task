@@ -1,4 +1,5 @@
 using System.Globalization;
+using Task.Desktop.Analytics;
 using Task.Desktop.Calendar;
 using Task.Desktop.Modes;
 using Task.Desktop.Projects;
@@ -157,7 +158,9 @@ public sealed partial class PersonalPlanningViewModel : ViewModelBase, IDisposab
             ProjectStatus, StartDate is { } s ? DateOnly.FromDateTime(s) : null, EndDate is { } e ? DateOnly.FromDateTime(e) : null,
             ProjectStatus == DesktopProjectStatus.Completed ? _projectSource?.ActualEndAt ?? _clock.GetUtcNow() : null,
             _projectSource?.DefaultTimeZone, _projectSource?.ColorCode, Lifecycle);
-        var saved = _store.SaveProject(draft); IsProjectEditing = false; Refresh(); SelectedProject = VisibleProjects.FirstOrDefault(p => p.Id == saved.Id) ?? SelectedProject; ProjectsChanged?.Invoke();
+        var saved = _store.SaveProject(draft);
+        if (draft.Id == Guid.Empty) UsageInstrumentation.Record(_store.Usage, UsageEvent.ProjectCreated);
+        IsProjectEditing = false; Refresh(); SelectedProject = VisibleProjects.FirstOrDefault(p => p.Id == saved.Id) ?? SelectedProject; ProjectsChanged?.Invoke();
     }
     private void AddReminder()
     {

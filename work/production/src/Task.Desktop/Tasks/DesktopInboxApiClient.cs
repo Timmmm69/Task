@@ -1,4 +1,5 @@
 using System.Globalization;
+using Task.Desktop.Analytics;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http;
@@ -24,6 +25,8 @@ public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInbo
     private readonly Uri _root;
     private readonly ConcurrentDictionary<Guid, byte> _convertedTasks = new();
     private readonly ConcurrentDictionary<(Guid, long), string> _conversionTitles = new();
+    internal Action<UsageEvent>? Usage { get; init; }
+
     public DesktopInboxApiClient(HttpClient http, Uri endpoint, SessionService session, DesktopTasksApiClient tasks, DesktopConnectivityService? connectivity = null)
     {
         _tasks = tasks;
@@ -64,7 +67,9 @@ public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInbo
         {
             var item = MapInbox(JsonNode.Parse(ok.Body)!);
             if (ok.EntityTag != $"\"v{item.Version}\"") return new DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse();
-            return new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(item, item.Version, ok.IdempotencyReplayed == "true");
+            var replayed = ok.IdempotencyReplayed == "true";
+            if (!replayed) UsageInstrumentation.Record(Usage, UsageEvent.InboxItemCaptured);
+            return new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(item, item.Version, replayed);
         }
         catch (Exception e) when (e is JsonException or InvalidOperationException or FormatException or ArgumentException or NullReferenceException)
         { return new DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse(); }
@@ -89,10 +94,16 @@ public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInbo
         var result = await _executor.SendAsync(HttpMethod.Post, new(_root + $"/{id:D}/convert-to-task"),
             JsonSerializer.SerializeToUtf8Bytes(new { expectedInboxVersion = version }), Guid.NewGuid().ToString("D"), $"\"v{version}\"", key, token).ConfigureAwait(false);
         var mapped = DesktopTasksApiClient.MapWriteResult(result, HttpStatusCode.Created);
-        if (mapped is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success) _convertedTasks.TryAdd(success.Value.Id, 0);
+        if (mapped is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
+        {
+            _convertedTasks.TryAdd(success.Value.Id, 0);
+            if (!success.WasReplayed) UsageInstrumentation.Record(Usage, UsageEvent.TaskCreated);
+        }
         return mapped;
     }
-    public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default) => _tasks.PatchTaskAsync(command, cancellationToken);
+    // This patch applies optional details when converting an inbox item. The conversion already counts as task creation.
+    public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(DesktopPatchTaskCommand command, CancellationToken cancellationToken = default) =>
+        _tasks.PatchTaskAsync(command, cancellationToken, recordUsage: false);
     public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync(DesktopTransitionTaskCommand command, CancellationToken cancellationToken = default) => _tasks.TransitionTaskAsync(command, cancellationToken);
     public System.Threading.Tasks.Task<TaskWorkspaceResult> GetOptionsAsync(string query, CancellationToken token) => _tasks.GetOptionsAsync(query, token);
     public System.Threading.Tasks.Task<TaskWorkspaceResult> GetWorkspaceAsync(Guid id, CancellationToken token) => _tasks.GetWorkspaceAsync(id, token);

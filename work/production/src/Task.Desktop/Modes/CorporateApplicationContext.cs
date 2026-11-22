@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Task.Desktop.Analytics;
 using System.Net.Http;
 using System.Reflection;
 using System.Windows;
@@ -32,15 +33,17 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
     private readonly string _dataDirectory;
     private readonly Action _shutdown;
     private readonly Action _switchMode;
+    private readonly ProductAnalytics? _analytics;
     public ApplicationMode Mode => ApplicationMode.Corporate;
 
     public CorporateApplicationContext(global::System.Windows.Application application, string dataDirectory,
-        Action shutdown, Action switchMode)
+        Action shutdown, Action switchMode, ProductAnalytics? analytics = null)
     {
         _application = application;
         _dataDirectory = dataDirectory;
         _shutdown = shutdown;
         _switchMode = switchMode;
+        _analytics = analytics;
     }
 
     public async global::System.Threading.Tasks.Task<bool> PrepareSwitchAsync()
@@ -292,16 +295,18 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
 
         var connectivity = new DesktopConnectivityService(new DispatcherSynchronizationContext(_application.Dispatcher));
 
+        void RecordUsage(UsageEvent usage) => _analytics?.Record(usage, Mode);
+
         var tasksClient = new DesktopTasksApiClient(
             CreateHttpClient(),
             serverEndpoint,
             sessionService,
-            connectivity);
+            connectivity) { Usage = RecordUsage };
         var tasks = new TasksViewModel(
             tasksClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var inbox = new InboxViewModel(
-            new DesktopInboxApiClient(CreateHttpClient(), serverEndpoint, sessionService, tasksClient, connectivity),
+            new DesktopInboxApiClient(CreateHttpClient(), serverEndpoint, sessionService, tasksClient, connectivity) { Usage = RecordUsage },
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
         var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
@@ -310,14 +315,14 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
                 sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync,
-            employeeDirectory: new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity));
+            employeeDirectory: new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity)) { Usage = RecordUsage };
         var today = new TodayViewModel(
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             tasksClient: tasksClient,
             currentUserId: sessionService.CurrentSessionMetadata!.UserId);
         var projects = new ProjectsViewModel(
-            new DesktopProjectsApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
+            new DesktopProjectsApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity) { Usage = RecordUsage },
             sessionService.CurrentSessionMetadata!.UserId,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             tasksClient, new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity),
@@ -355,6 +360,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
         window.Closed += OnMainWindowClosed;
         window.SwitchModeRequested += _switchMode;
         window.Show();
+        _analytics?.ModeOpened(Mode);
         ApplyMainSessionState(sessionService);
 
         if (_authWindow is not null)

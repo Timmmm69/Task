@@ -1,4 +1,5 @@
 using Task.Domain;
+using Task.Desktop.Analytics;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -210,6 +211,8 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
     private readonly DesktopAuthenticatedGetExecutor _executor;
     private readonly Uri _tasksUri;
 
+    internal Action<UsageEvent>? Usage { get; init; }
+
     public DesktopTasksApiClient(
         HttpClient httpClient,
         Uri serverEndpoint,
@@ -276,12 +279,18 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
         var body = JsonSerializer.SerializeToUtf8Bytes(createBody, JsonOptions);
         var response = await SendWriteAsync(
             HttpMethod.Post, _tasksUri, body, null, command.IdempotencyKey, cancellationToken);
-        return MapWriteResult(response, HttpStatusCode.Created);
+        var result = MapWriteResult(response, HttpStatusCode.Created);
+        if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded { WasReplayed: false })
+            UsageInstrumentation.Record(Usage, UsageEvent.TaskCreated);
+        return result;
     }
 
-    public async global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(
+    public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(
         DesktopPatchTaskCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => PatchTaskAsync(command, cancellationToken, recordUsage: true);
+
+    internal async global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> PatchTaskAsync(
+        DesktopPatchTaskCommand command, CancellationToken cancellationToken, bool recordUsage)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -318,7 +327,11 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
             FormatEntityTag(command.ExpectedVersion),
             command.IdempotencyKey,
             cancellationToken);
-        return MapWriteResult(response, HttpStatusCode.OK);
+        var result = MapWriteResult(response, HttpStatusCode.OK);
+        if (recordUsage && Usage is not null && result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded { WasReplayed: false } saved
+            && saved.Value.Version > command.ExpectedVersion)
+            UsageInstrumentation.Record(Usage, body.Keys.Any(UsageInstrumentation.IsPlanningField) ? UsageEvent.TaskPlanned : UsageEvent.TaskUpdated);
+        return result;
     }
 
     public async global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync(
@@ -340,7 +353,11 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
             FormatEntityTag(command.ExpectedVersion),
             command.IdempotencyKey,
             cancellationToken);
-        return MapWriteResult(response, HttpStatusCode.OK);
+        var result = MapWriteResult(response, HttpStatusCode.OK);
+        if (command.TargetStatus == DesktopTaskStatus.Completed
+            && result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded { WasReplayed: false, Value.Status: DesktopTaskStatus.Completed })
+            UsageInstrumentation.Record(Usage, UsageEvent.TaskCompleted);
+        return result;
     }
 
     private async global::System.Threading.Tasks.Task<AuthenticatedGetResult> SendWriteAsync(
