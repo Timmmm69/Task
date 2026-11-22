@@ -5,7 +5,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Control">
                     <Border Margin="-3"
-                            BorderBrush="{DynamicResource Task.Brush.Brand.Primary}"
+                            BorderBrush="{DynamicResource Task.Brush.Text.Primary}"
                             BorderThickness="{DynamicResource Task.Thickness.Focus}"
                             CornerRadius="{DynamicResource Task.Radius.Control}" />
                     <ControlTemplate.Triggers>
@@ -129,6 +129,39 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="Task.Button.Toggle" TargetType="ToggleButton">
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Chrome" Background="{DynamicResource Task.Brush.Surface.Base}"
+                                    BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{DynamicResource Task.Radius.Control}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter RecognizesAccessKey="True" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}" />
+                                    <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="Task.Button.Icon" TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
         <Setter Property="Width" Value="40" />
         <Setter Property="MinWidth" Value="40" />
@@ -144,7 +177,29 @@
         <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
 
+    <ControlTemplate x:Key="Task.Input.FieldTemplate" TargetType="Control">
+        <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource Task.Radius.Control}"
+                SnapsToDevicePixels="True">
+            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Text.Primary}" />
+            </Trigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True" />
+                    <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+            </MultiDataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <Style x:Key="Task.Input.Text" TargetType="TextBox">
+        <Setter Property="Template" Value="{StaticResource Task.Input.FieldTemplate}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Task.Brush.Text.Selection}" />
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="Padding" Value="10,7" />
         <Setter Property="FontFamily" Value="{DynamicResource Task.Font.Family}" />
@@ -165,6 +220,7 @@
                 <Setter Property="Opacity" Value="0.5" />
             </Trigger>
             <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
                 <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />

@@ -68,7 +68,7 @@ public partial class WorkHubView
         else RemoveOverlay(ref _folderOverlay);
     }
 
-    private static void ShowExplorerOverlay(ref ExplorerDropOverlay? overlay, UIElement target, bool accepted, string message)
+    private static void ShowExplorerOverlay(ref ExplorerDropOverlay? overlay, FrameworkElement target, bool accepted, string message)
     {
         if (overlay is not null && !ReferenceEquals(overlay.AdornedElement, target)) RemoveOverlay(ref overlay);
         if (overlay is null && AdornerLayer.GetAdornerLayer(target) is { } layer)

@@ -3,7 +3,7 @@
   <Style TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}"/>
   <Style x:Key="Catalog.Row" TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}"><Setter Property="AutomationProperties.Name" Value="{Binding Name}"/><Setter Property="AutomationProperties.HelpText" Value="{Binding TypeLabel}"/><Setter Property="Padding" Value="10,8"/><Setter Property="Margin" Value="0,1"/></Style>
   <Style TargetType="TextBox" BasedOn="{StaticResource Personal.Airbnb.Input}"/>
-  <Style TargetType="Expander"><Setter Property="Margin" Value="0,16,0,0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style>
+  <Style TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}"><Setter Property="Margin" Value="0,16,0,0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style>
  </ResourceDictionary></UserControl.Resources>
  <Grid Margin="24,16,24,16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <WrapPanel Margin="0,0,0,8">

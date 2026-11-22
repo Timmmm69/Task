@@ -19,6 +19,80 @@
         <ResourceDictionary Source="Files.Controls.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="8,3" />
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}">
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="5,3" />
+    </Style>
+    <Style TargetType="ComboBoxItem" BasedOn="{StaticResource Personal.Select.Item}" />
+    <Style TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}">
+        <Setter Property="Padding" Value="6,4" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style x:Key="Task.Expander.Compact" TargetType="Expander" BasedOn="{StaticResource Task.Card.Section}">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}" />
+    <Style TargetType="ProgressBar">
+        <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="CheckBox">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <DockPanel Background="Transparent" SnapsToDevicePixels="True">
+                                <Border x:Name="Indicator" DockPanel.Dock="Left" Width="16" Height="16" VerticalAlignment="Center" CornerRadius="4"
+                                        Background="{DynamicResource Task.Brush.Surface.Base}"
+                                        BorderBrush="{DynamicResource Task.Brush.Text.Secondary}" BorderThickness="1">
+                                    <Path x:Name="Mark" Visibility="Collapsed" Data="M 0,4 L 3,7 L 9,1" Stroke="White"
+                                          StrokeThickness="1.6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
+                                                  VerticalAlignment="Center" />
+                            </DockPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="HasContent" Value="True">
+                                    <Setter TargetName="Indicator" Property="Margin" Value="0,0,6,0" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Indicator" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Strong}" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Indicator" Property="Background" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                                    <Setter TargetName="Indicator" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                                    <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="{x:Null}">
+                                    <Setter TargetName="Indicator" Property="Background" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                                    <Setter TargetName="Indicator" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}" />
+                                    <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="Mark" Property="Data" Value="M 0,0 L 8,0" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Indicator" Property="Opacity" Value="0.5" />
+                                    <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="Task.Window.Style" TargetType="Window">
         <Setter Property="FontFamily" Value="{DynamicResource Task.Font.Family}" />
         <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Body}" />

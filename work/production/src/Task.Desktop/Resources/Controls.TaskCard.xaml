@@ -165,8 +165,8 @@
         <Setter Property="Template"><Setter.Value>
             <ControlTemplate TargetType="Expander">
                 <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                    <StackPanel>
-                        <ToggleButton x:Name="HeaderToggle" Content="{TemplateBinding Header}"
+                    <DockPanel>
+                        <ToggleButton x:Name="HeaderToggle" DockPanel.Dock="Top" Content="{TemplateBinding Header}"
                                       ContentTemplate="{TemplateBinding HeaderTemplate}"
                                       Foreground="{TemplateBinding Foreground}"
                                       HorizontalContentAlignment="Stretch"
@@ -192,7 +192,7 @@
                         </ToggleButton>
                         <ContentPresenter x:Name="SectionContent" Visibility="Collapsed" Margin="0,0,0,16"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
-                    </StackPanel>
+                    </DockPanel>
                 </Border>
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsExpanded" Value="True"><Setter TargetName="SectionContent" Property="Visibility" Value="Visible" /></Trigger>

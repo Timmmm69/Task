@@ -449,7 +449,7 @@
                         <Setter Property="Padding" Value="8,2" />
                         <Setter Property="Background" Value="#F3F0EE" />
                         <Style.Triggers>
-                            <Trigger Property="Tag" Value="{x:Static vm:TaskVisualTone.Brand}"><Setter Property="Background" Value="#EAF3FC" /></Trigger>
+                            <Trigger Property="Tag" Value="{x:Static vm:TaskVisualTone.Brand}"><Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}" /></Trigger>
                             <Trigger Property="Tag" Value="{x:Static vm:TaskVisualTone.Warning}"><Setter Property="Background" Value="#FFF2DA" /></Trigger>
                             <Trigger Property="Tag" Value="{x:Static vm:TaskVisualTone.Success}"><Setter Property="Background" Value="#E8F5ED" /></Trigger>
                             <Trigger Property="Tag" Value="{x:Static vm:TaskVisualTone.Critical}"><Setter Property="Background" Value="{StaticResource TasksSelection}" /></Trigger>
@@ -857,7 +857,7 @@
                     <Expander x:Name="TaskInspectorExpander" state:ViewState.Section="main/v1/inspector"
                               AutomationProperties.Name="Сведения о выбранной задаче">
                         <Expander.Style>
-                            <Style TargetType="Expander">
+                            <Style TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}">
                                 <Setter Property="Grid.Row" Value="0" />
                                 <Setter Property="Grid.Column" Value="2" />
                                 <Setter Property="Grid.ColumnSpan" Value="1" />

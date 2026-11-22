@@ -53,7 +53,7 @@
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="Margin" Value="0"/>
         </Style>
-        <Style x:Key="WorkHub.Expander" TargetType="Expander">
+        <Style x:Key="WorkHub.Expander" TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}">
             <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>

@@ -85,7 +85,7 @@
     <!-- Non-editable selectors: native ComboBox selection, keyboard navigation and automation are retained. -->
     <Style x:Key="Task.Files.Combo" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
         <Setter Property="MaxDropDownHeight" Value="280"/>
-        <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ComboBoxItem"><Setter Property="MinHeight" Value="40"/><Setter Property="Padding" Value="10,8"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style></Setter.Value></Setter>
+        <Setter Property="ItemContainerStyle" Value="{DynamicResource Personal.Select.Item}"/>
         <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox">
             <Grid>
                 <ToggleButton Focusable="False" ClickMode="Press" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"

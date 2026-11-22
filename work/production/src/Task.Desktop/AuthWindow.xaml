@@ -58,6 +58,23 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="TextFieldStyle" TargetType="TextBox" BasedOn="{StaticResource FieldStyle}">
+            <Setter Property="SelectionBrush" Value="{DynamicResource Task.Brush.Text.Selection}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="PasswordFieldStyle" TargetType="PasswordBox" BasedOn="{StaticResource FieldStyle}">
+            <Setter Property="SelectionBrush" Value="{DynamicResource Task.Brush.Text.Selection}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource Task.Workspace.Primary}">
             <Setter Property="MinWidth" Value="116" />
             <Style.Triggers>
@@ -117,7 +134,7 @@
                 <Label Content="Адрес сервера компании" Target="{Binding ElementName=ServerAddressTextBox}" Padding="0" />
                 <TextBox x:Name="ServerAddressTextBox"
                          Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource FieldStyle}" TabIndex="0"
+                         Style="{StaticResource TextFieldStyle}" TabIndex="0"
                          AutomationProperties.Name="Адрес сервера компании"
                          AutomationProperties.AutomationId="ServerAddressTextBox"
                          AutomationProperties.HelpText="Абсолютный HTTPS-адрес без параметров и фрагмента"
@@ -150,12 +167,12 @@
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <Label Content="Логин" Target="{Binding ElementName=LoginTextBox}" Padding="0" />
                 <TextBox x:Name="LoginTextBox" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource FieldStyle}" TabIndex="0"
+                         Style="{StaticResource TextFieldStyle}" TabIndex="0"
                          AutomationProperties.Name="Логин"
                          AutomationProperties.AutomationId="LoginTextBox"
                          Loaded="InitialFocus_Loaded" />
                 <Label Content="Пароль" Target="{Binding ElementName=LoginPasswordBox}" Padding="0" />
-                <PasswordBox x:Name="LoginPasswordBox" Style="{StaticResource FieldStyle}" TabIndex="1"
+                <PasswordBox x:Name="LoginPasswordBox" Style="{StaticResource PasswordFieldStyle}" TabIndex="1"
                              AutomationProperties.Name="Пароль"
                              AutomationProperties.AutomationId="LoginPasswordBox"
                              Loaded="LoginPasswordBox_Loaded" Unloaded="LoginPasswordBox_Unloaded" />
@@ -186,18 +203,18 @@
                 <TextBlock Text="{Binding PasswordPolicy}" Style="{StaticResource BodyStyle}"
                            AutomationProperties.Name="Требования к новому паролю" Margin="0,0,0,12" />
                 <Label Content="Текущий пароль" Target="{Binding ElementName=CurrentPasswordBox}" Padding="0" />
-                <PasswordBox x:Name="CurrentPasswordBox" Style="{StaticResource FieldStyle}" TabIndex="0"
+                <PasswordBox x:Name="CurrentPasswordBox" Style="{StaticResource PasswordFieldStyle}" TabIndex="0"
                              AutomationProperties.Name="Текущий пароль"
                              AutomationProperties.AutomationId="CurrentPasswordBox"
                              Loaded="PasswordChangeBox_Loaded" Unloaded="PasswordChangeBox_Unloaded" />
                 <Label Content="Новый пароль" Target="{Binding ElementName=NewPasswordBox}" Padding="0" />
-                <PasswordBox x:Name="NewPasswordBox" Style="{StaticResource FieldStyle}" TabIndex="1"
+                <PasswordBox x:Name="NewPasswordBox" Style="{StaticResource PasswordFieldStyle}" TabIndex="1"
                              AutomationProperties.Name="Новый пароль"
                              AutomationProperties.AutomationId="NewPasswordBox"
                              AutomationProperties.HelpText="Не менее 10 символов, заглавная буква, цифра и специальный символ"
                              Loaded="PasswordChangeBox_Loaded" Unloaded="PasswordChangeBox_Unloaded" />
                 <Label Content="Подтверждение нового пароля" Target="{Binding ElementName=ConfirmPasswordBox}" Padding="0" />
-                <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource FieldStyle}" TabIndex="2"
+                <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource PasswordFieldStyle}" TabIndex="2"
                              AutomationProperties.Name="Подтверждение нового пароля"
                              AutomationProperties.AutomationId="ConfirmPasswordBox"
                              Loaded="PasswordChangeBox_Loaded" Unloaded="PasswordChangeBox_Unloaded" />

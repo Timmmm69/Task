@@ -69,6 +69,7 @@ public sealed class VisualFoundationTests
                 window.Arrange(new Rect(0, 0, 1487, 1058));
                 window.UpdateLayout();
 
+                VerifyProjectContactsAndDefaultControls();
                 Assert.IsType<CorporateLifecycleView>(LogicalTreeHelper.FindLogicalNode(window, "LifecycleRoot"));
                 var surface = new CorporateLifecycleView { DataContext = workHub };
                 foreach (var (route, area) in new[] { ("archive", WorkHubArea.Archive), ("trash", WorkHubArea.Trash) })
@@ -100,6 +101,41 @@ public sealed class VisualFoundationTests
         Assert.True(snapshot.ContentFound);
     }
 
+
+    private static void VerifyProjectContactsAndDefaultControls()
+    {
+        if (SystemParameters.HighContrast) return;
+
+        var contacts = new ProjectContactsView();
+        var controls = new StackPanel();
+        var checkBox = new CheckBox { IsChecked = true, Content = "Completed" };
+        var input = new TextBox { Text = "Selected text" };
+        controls.Children.Add(contacts);
+        controls.Children.Add(checkBox);
+        controls.Children.Add(input);
+        controls.Measure(new Size(600, 500));
+        controls.Arrange(new Rect(0, 0, 600, 500));
+
+        var choose = Assert.IsType<Button>(FindAutomationElement(contacts, "ProjectChooseContact"));
+        Assert.Equal(Color.FromRgb(201, 30, 71), Assert.IsType<SolidColorBrush>(choose.Background).Color);
+        var list = Assert.IsType<ListBox>(FindAutomationElement(contacts, "ProjectContactsList"));
+        Assert.Same(contacts.FindResource("Personal.Airbnb.BrowserRow"), list.ItemContainerStyle.BasedOn);
+
+        var indicator = Assert.IsType<Border>(checkBox.Template.FindName("Indicator", checkBox));
+        Assert.Equal(Color.FromRgb(201, 30, 71), Assert.IsType<SolidColorBrush>(indicator.Background).Color);
+        Assert.Equal(Color.FromRgb(244, 178, 193), Assert.IsType<SolidColorBrush>(input.SelectionBrush).Color);
+    }
+
+    private static DependencyObject? FindAutomationElement(DependencyObject root, string id)
+    {
+        if (AutomationProperties.GetAutomationId(root) == id) return root;
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            if (FindAutomationElement(VisualTreeHelper.GetChild(root, i), id) is { } element) return element;
+        }
+
+        return null;
+    }
 
     [Fact]
     public void Theme_LoadsCanonicalResourcesAndIcons()
@@ -144,16 +180,16 @@ public sealed class VisualFoundationTests
             };
         });
 
-        Assert.Equal("#FF0F6CBD", snapshot.Brand.ToString());
-        Assert.Equal("#FF005A9E", snapshot.Strong.ToString());
-        Assert.Equal("#FF1473E6", snapshot.Accent.ToString());
-        Assert.Equal("#FFEAF3FF", snapshot.Soft.ToString());
-        Assert.Equal("#FF1B1A19", snapshot.Text.ToString());
-        Assert.Equal("#FF605E5C", snapshot.Secondary.ToString());
+        Assert.Equal("#FFC91E47", snapshot.Brand.ToString());
+        Assert.Equal("#FFA9183C", snapshot.Strong.ToString());
+        Assert.Equal("#FFC91E47", snapshot.Accent.ToString());
+        Assert.Equal("#FFFFF0F3", snapshot.Soft.ToString());
+        Assert.Equal("#FF222222", snapshot.Text.ToString());
+        Assert.Equal("#FF595959", snapshot.Secondary.ToString());
         Assert.Equal("#FFFFFFFF", snapshot.Surface.ToString());
-        Assert.Equal("#FFFAFAFA", snapshot.Subtle.ToString());
-        Assert.Equal("#FFF1F3F5", snapshot.Selected.ToString());
-        Assert.Equal("#FFE1DFDD", snapshot.Border.ToString());
+        Assert.Equal("#FFF7F7F7", snapshot.Subtle.ToString());
+        Assert.Equal("#FFEEEEEE", snapshot.Selected.ToString());
+        Assert.Equal("#FFDDDDDD", snapshot.Border.ToString());
         Assert.Equal("#FFD13438", snapshot.Critical.ToString());
         Assert.Equal("#FF107C10", snapshot.Success.ToString());
         Assert.Equal("#FFF2A900", snapshot.Warning.ToString());
@@ -167,7 +203,7 @@ public sealed class VisualFoundationTests
         Assert.Equal(46, snapshot.Footer);
         Assert.Equal(60, snapshot.TaskRow);
         Assert.Equal(2, snapshot.Focus);
-        Assert.Equal(new CornerRadius(5), snapshot.Radius);
+        Assert.Equal(new CornerRadius(8), snapshot.Radius);
         Assert.NotNull(snapshot.TasksIcon);
         Assert.NotNull(snapshot.NavigationIcon);
         Assert.NotNull(snapshot.ConnectedIcon);

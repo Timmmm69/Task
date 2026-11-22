@@ -25,9 +25,7 @@
   </Style>
   <Style x:Key="Interaction.Type" TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}">
    <Setter Property="MaxDropDownHeight" Value="320"/>
-   <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ComboBoxItem">
-    <Setter Property="Padding" Value="12,10"/>
-   </Style></Setter.Value></Setter>
+   <Setter Property="ItemContainerStyle" Value="{DynamicResource Personal.Select.Item}"/>
    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox">
     <Grid>
      <ToggleButton x:Name="DropDownToggle" Focusable="False" ClickMode="Press"

@@ -153,7 +153,7 @@ public sealed class ViewStateUiTests
                     await Dispatcher.Yield(DispatcherPriority.ApplicationIdle); window.UpdateLayout();
                     var queue = (Expander)today.FindName("TodayQueueRegionExpansion");
                     var queuePeer = new ExpanderAutomationPeer(queue);
-                    Assert.Equal("Несрочные и просроченные", queuePeer.GetName());
+                    Assert.Equal("Очередь задач", queuePeer.GetName());
                     ((IExpandCollapseProvider)queuePeer.GetPattern(PatternInterface.ExpandCollapse)).Collapse();
                     await store.FlushAsync();
                     Assert.False(store.Expanded("today/v1/queue"));

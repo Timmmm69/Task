@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <CornerRadius x:Key="Catalog.ControlRadius">8</CornerRadius>
-    <SolidColorBrush x:Key="Catalog.Accent" Color="#C91E47" />
-    <SolidColorBrush x:Key="Catalog.AccentHover" Color="#AA163A" />
-    <SolidColorBrush x:Key="Catalog.Selection" Color="#FFF0F3" />
+    <SolidColorBrush x:Key="Catalog.Accent" Color="{DynamicResource Task.Color.Brand.Primary}" />
+    <SolidColorBrush x:Key="Catalog.AccentHover" Color="{DynamicResource Task.Color.Brand.Strong}" />
+    <SolidColorBrush x:Key="Catalog.Selection" Color="{DynamicResource Task.Color.Brand.Soft}" />
 
     <Style x:Key="Catalog.Card" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
         <Setter Property="CornerRadius" Value="16" />

@@ -10,10 +10,10 @@
    <Button Content="Обновить раздел" Command="{Binding RefreshCommand}" Style="{DynamicResource Task.Button.Secondary}" Margin="0,0,8,8"/>
    <Button Content="Связать контакт или компанию" Command="{Binding ChooseCommand}" Style="{DynamicResource Task.Button.Primary}" Margin="0,0,0,8" AutomationProperties.AutomationId="ProjectChooseContact"/>
   </WrapPanel>
-  <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" MaxHeight="300"
+  <ListBox Style="{StaticResource Task.DataList}" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" MaxHeight="300"
            AutomationProperties.Name="Связанные контакты и компании" AutomationProperties.AutomationId="ProjectContactsList"
            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-   <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
+   <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}">
     <Setter Property="AutomationProperties.Name"><Setter.Value><MultiBinding StringFormat="{}{0}, {1}"><Binding Path="Title"/><Binding Path="TypeLabel"/></MultiBinding></Setter.Value></Setter>
    </Style></ListBox.ItemContainerStyle>
    <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="4">

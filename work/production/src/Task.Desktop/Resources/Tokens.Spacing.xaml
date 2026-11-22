@@ -21,7 +21,7 @@
     <sys:Double x:Key="Task.TaskRow.MinHeight">60</sys:Double>
     <sys:Double x:Key="Task.Stroke.Default">1</sys:Double>
     <sys:Double x:Key="Task.Stroke.Focus">2</sys:Double>
-    <CornerRadius x:Key="Task.Radius.Control">5</CornerRadius>
+    <CornerRadius x:Key="Task.Radius.Control">8</CornerRadius>
     <CornerRadius x:Key="Task.Radius.Small">4</CornerRadius>
     <Thickness x:Key="Task.Thickness.Focus">2</Thickness>
     <Thickness x:Key="Task.Padding.Control">14,0</Thickness>

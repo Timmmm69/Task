@@ -2,7 +2,7 @@
  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries>
   <Style TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}"/>
   <Style TargetType="TextBox" BasedOn="{StaticResource Personal.Airbnb.Input}"/>
-  <Style TargetType="Expander"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Margin" Value="0,16,0,0"/></Style>
+  <Style TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}"><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Margin" Value="0,16,0,0"/></Style>
   <Style x:Key="Contacts.AddButton" TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}">
    <Setter Property="Height" Value="44"/><Setter Property="Padding" Value="18,0"/><Setter Property="BorderThickness" Value="0"/>
    <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Accent}"/><Setter Property="Foreground" Value="White"/>

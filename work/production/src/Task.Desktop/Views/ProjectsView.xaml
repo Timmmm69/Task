@@ -517,7 +517,7 @@
                                     <StackPanel Margin="0,0,0,16">
                                         <Expander Header="Указать идентификатор вручную" Margin="0,0,0,12" IsEnabled="{Binding CanManageMembers}">
                                             <Expander.Style>
-                                                <Style TargetType="Expander">
+                                                <Style TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding UsesEmployeePicker}" Value="True">
                                                             <Setter Property="Visibility" Value="Collapsed"/>
