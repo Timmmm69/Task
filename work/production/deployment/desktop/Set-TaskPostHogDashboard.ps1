@@ -49,7 +49,7 @@ SELECT segment, count() AS launched,
     round(100.0 * acted_after_open / launched, 1) AS conversion_pct
 FROM installs WHERE opens > 0 GROUP BY segment ORDER BY segment LIMIT 3
 "@
-    New-Insight 'Стадии использования' 'Доли установок по стадиям. Начал: ≥3 действия в ≥2 дня, регулярно: ≥5 в ≥3 дня, обе стадии за 7 календарных дней UTC.' @"
+    New-Insight 'Стадии использования' 'Доли установок по стадиям и среднее число дней с полезным действием за неделю. Дни считаются по UTC.' @"
 WITH task_events AS ($taskEvents),
 installs AS (
     SELECT segment, installation,
@@ -66,11 +66,13 @@ stages AS (
             recent_actions = 0, 'Нет действий 7 дней',
             actions_total <= 2, 'Попробовал',
             'Активен ниже порога') AS stage,
-        count() AS installations
+        count() AS installations,
+        round(avg(recent_days), 1) AS avg_active_days
     FROM installs GROUP BY segment, stage
 )
 SELECT segment, stage, installations,
-    round(100.0 * installations / sum(installations) OVER (PARTITION BY segment), 1) AS share_pct
+    round(100.0 * installations / sum(installations) OVER (PARTITION BY segment), 1) AS share_pct,
+    avg_active_days AS ``Активных дней из 7``
 FROM stages ORDER BY segment, installations DESC LIMIT 18
 "@
     New-Insight 'Возвращаемость · D1 / D7' 'Когорты первого полезного действия за 30 дней UTC. Возврат считается по полезному действию в точный день. Незавершённые окна исключены.' @"

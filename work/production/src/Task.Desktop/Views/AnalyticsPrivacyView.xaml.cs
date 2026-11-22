@@ -7,6 +7,7 @@ namespace Task.Desktop.Views;
 public partial class AnalyticsPrivacyView : UserControl
 {
     private bool _refreshing;
+    private ProductAnalytics? _observed;
 
     public AnalyticsPrivacyView() => InitializeComponent();
 
@@ -15,9 +16,22 @@ public partial class AnalyticsPrivacyView : UserControl
     private async void OnLoaded(object sender, RoutedEventArgs args)
     {
         if (Analytics is not { } analytics) return;
+        _observed = analytics;
+        analytics.PreferenceChanged += OnPreferenceChanged;
         await analytics.Ready;
-        Refresh(analytics);
+        if (IsLoaded) Refresh(analytics);
     }
+
+    private void OnUnloaded(object sender, RoutedEventArgs args)
+    {
+        if (_observed is not null) _observed.PreferenceChanged -= OnPreferenceChanged;
+        _observed = null;
+    }
+
+    private void OnPreferenceChanged() => Dispatcher.InvokeAsync(() =>
+    {
+        if (IsLoaded && _observed is { } analytics) Refresh(analytics);
+    });
 
     private async void OnConsentChanged(object sender, RoutedEventArgs args)
     {

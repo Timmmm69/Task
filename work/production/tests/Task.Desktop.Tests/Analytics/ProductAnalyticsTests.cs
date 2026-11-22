@@ -49,6 +49,114 @@ public sealed class ProductAnalyticsTests : IDisposable
     }
 
     [Fact]
+    public async AsyncTask FirstNoticeStartsCaptureAutomaticallyAndDoesNotRepeatOnRestart()
+    {
+        Guid installation;
+        using (var transport = new FakeTransport())
+        using (var analytics = new ProductAnalytics(_root, Configuration, _clock, transport))
+        {
+            analytics.ModeOpened(ApplicationMode.Personal);
+            await analytics.Ready;
+            Assert.Empty(transport.Requests);
+            Assert.False(await analytics.EnableAfterNoticeAsync());
+            Assert.False(File.Exists(StatePath));
+
+            Assert.True(analytics.TryClaimNotice());
+            Assert.False(analytics.TryClaimNotice());
+            Assert.True(await analytics.EnableAfterNoticeAsync());
+            await UntilAsync(() => !transport.Requests.IsEmpty);
+            Assert.Equal("app_opened", Assert.Single(transport.Requests.First().Events).GetProperty("event").GetString());
+            installation = ReadState()!.Installation;
+        }
+
+        using var reopenedTransport = new FakeTransport();
+        using var reopened = new ProductAnalytics(_root, Configuration, _clock, reopenedTransport);
+        await reopened.Ready;
+        Assert.True(reopened.Enabled);
+        Assert.False(reopened.TryClaimNotice());
+        Assert.Equal(installation, ReadState()!.Installation);
+    }
+
+    [Fact]
+    public async AsyncTask OptOutSurvivesRestartAndPreventsAutomaticReenable()
+    {
+        using (var transport = new FakeTransport())
+        using (var analytics = new ProductAnalytics(_root, Configuration, _clock, transport))
+        {
+            await analytics.Ready;
+            Assert.True(analytics.TryClaimNotice());
+            var optedOut = analytics.SetEnabledAsync(false);
+            Assert.False(await analytics.EnableAfterNoticeAsync());
+            Assert.True(await optedOut);
+        }
+
+        using var reopenedTransport = new FakeTransport();
+        using var reopened = new ProductAnalytics(_root, Configuration, _clock, reopenedTransport);
+        reopened.ModeOpened(ApplicationMode.Corporate);
+        await reopened.Ready;
+        Assert.False(reopened.Enabled);
+        Assert.False(reopened.TryClaimNotice());
+        Assert.Empty(reopenedTransport.Requests);
+        Assert.False(File.Exists(StatePath));
+        Assert.True(File.Exists(Path.Combine(_root, "analytics", "usage-disabled")));
+
+        Assert.True(await reopened.SetEnabledAsync(true));
+        Assert.True(reopened.Enabled);
+        Assert.False(File.Exists(Path.Combine(_root, "analytics", "usage-disabled")));
+        await UntilAsync(() => !reopenedTransport.Requests.IsEmpty);
+    }
+
+    [Fact]
+    public async AsyncTask ClosingAsOptOutIsRequestedStillPersistsThePreference()
+    {
+        using (var transport = new FakeTransport())
+        {
+            var analytics = new ProductAnalytics(_root, Configuration, _clock, transport);
+            await analytics.Ready;
+            Assert.True(analytics.TryClaimNotice());
+            Assert.True(await analytics.EnableAfterNoticeAsync());
+            var optOut = analytics.SetEnabledAsync(false);
+            analytics.Dispose();
+            await optOut;
+        }
+
+        using var reopenedTransport = new FakeTransport();
+        using var reopened = new ProductAnalytics(_root, Configuration, _clock, reopenedTransport);
+        await reopened.Ready;
+        Assert.False(reopened.Enabled);
+        Assert.False(reopened.TryClaimNotice());
+        Assert.False(File.Exists(StatePath));
+    }
+
+    [Fact]
+    public async AsyncTask ConsentOnlyConfigurationDoesNotReuseAutomaticPermission()
+    {
+        using (var transport = new FakeTransport())
+        using (var analytics = new ProductAnalytics(_root, Configuration, _clock, transport))
+        {
+            await analytics.Ready;
+            Assert.True(analytics.TryClaimNotice());
+            Assert.True(await analytics.EnableAfterNoticeAsync());
+            Assert.True(ReadState()!.EnabledByNotice);
+        }
+
+
+        using var explicitTransport = new FakeTransport();
+        using var explicitConsent = new ProductAnalytics(_root, Configuration with { RequiresConsent = true }, _clock, explicitTransport);
+        explicitConsent.ModeOpened(ApplicationMode.Personal);
+        await explicitConsent.Ready;
+        Assert.False(explicitConsent.Enabled);
+        Assert.False(explicitConsent.TryClaimNotice());
+        Assert.False(File.Exists(StatePath));
+        Assert.Empty(explicitTransport.Requests);
+
+        Assert.True(await explicitConsent.SetEnabledAsync(true));
+        Assert.False(ReadState()!.EnabledByNotice);
+
+        await UntilAsync(() => !explicitTransport.Requests.IsEmpty);
+    }
+
+    [Fact]
     public async AsyncTask ConsentIsSharedBetweenModesAndRevocationRotatesInstallation()
     {
         Guid installation;

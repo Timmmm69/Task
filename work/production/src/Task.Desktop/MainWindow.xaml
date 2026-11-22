@@ -93,6 +93,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="36" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -110,7 +111,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.RowSpan="3" Style="{StaticResource Task.Shell.NavigationSurface}">
+        <Border Grid.RowSpan="4" Style="{StaticResource Task.Shell.NavigationSurface}">
             <DockPanel>
                 <DockPanel.Style>
                     <Style TargetType="DockPanel">
@@ -1413,7 +1414,8 @@
             </views:AdministrationView>
         </Grid>
 
-        <Border Grid.Row="2" Grid.Column="1"
+        <views:AnalyticsNoticeView Grid.Row="2" Grid.Column="1"/>
+        <Border Grid.Row="3" Grid.Column="1"
                 Style="{StaticResource Task.Shell.FooterSurface}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -1466,13 +1468,13 @@
             </Grid>
         </Border>
 
-        <Grid x:Name="GlobalSearchOverlay" Grid.RowSpan="3" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="100"
+        <Grid x:Name="GlobalSearchOverlay" Grid.RowSpan="4" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="100"
               Background="#66000000" MouseLeftButtonDown="OnGlobalSearchBackdropClick"
               AutomationProperties.Name="Палитра команд" AutomationProperties.AutomationId="GlobalSearchOverlay">
             <views:CommandPaletteView x:Name="PaletteSurface" MaxWidth="760" MaxHeight="640" Margin="24" VerticalAlignment="Center" DataContext="{Binding Palette}" MouseLeftButtonDown="OnOverlaySurfaceClick"/>
         </Grid>
 
-        <Grid x:Name="NotificationOverlay" Grid.RowSpan="3" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="110" Background="#22000000" MouseLeftButtonDown="OnNotificationBackdropClick" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationCenterOverlay">
+        <Grid x:Name="NotificationOverlay" Grid.RowSpan="4" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="110" Background="#22000000" MouseLeftButtonDown="OnNotificationBackdropClick" AutomationProperties.Name="Центр уведомлений" AutomationProperties.AutomationId="NotificationCenterOverlay">
             <Border Width="470" MaxWidth="470" Margin="0,72,72,72" HorizontalAlignment="Right" VerticalAlignment="Top" MaxHeight="650" Background="{DynamicResource Task.Brush.Surface.Base}" BorderBrush="{DynamicResource Task.Brush.Border.Strong}" BorderThickness="1" CornerRadius="8" DataContext="{Binding WorkHub}" MouseLeftButtonDown="OnOverlaySurfaceClick">
                 <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                     <Grid Margin="18,16,14,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Центр уведомлений" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/><TextBlock Text="Уведомления" FontSize="22" FontWeight="SemiBold"/></StackPanel><Button Grid.Column="1" Click="OnCloseNotifications" Style="{StaticResource Task.Button.Icon}" ToolTip="Закрыть уведомления" AutomationProperties.Name="Закрыть уведомления"><Path Data="{StaticResource Task.Icon.Status.Cancelled}" Width="18" Height="18" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/></Button></Grid>

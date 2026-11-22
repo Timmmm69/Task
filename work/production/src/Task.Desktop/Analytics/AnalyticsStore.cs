@@ -3,13 +3,14 @@ using System.Text.Json;
 
 namespace Task.Desktop.Analytics;
 
-internal sealed record AnalyticsState(string Destination, Guid Installation, List<UsageRecord> Events, CaptureBatch? Batch = null);
+internal sealed record AnalyticsState(string Destination, Guid Installation, List<UsageRecord> Events, CaptureBatch? Batch = null, bool EnabledByNotice = false);
 
 /// <summary>A separate, size-limited snapshot. Each replace preserves the previous complete snapshot until commit.</summary>
 internal sealed class AnalyticsStore : IDisposable
 {
     private readonly string _file;
     private readonly string _temporary;
+    private readonly string _optOut;
     private readonly FileStream _lease;
 
     public AnalyticsStore(string root)
@@ -18,9 +19,24 @@ internal sealed class AnalyticsStore : IDisposable
         Directory.CreateDirectory(directory);
         _file = Path.Combine(directory, "usage-v1.json");
         _temporary = _file + ".tmp";
+        _optOut = Path.Combine(directory, "usage-disabled");
         // Only one desktop process may collect or change consent for this data directory.
         _lease = new FileStream(Path.Combine(directory, "usage.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
     }
+
+    public bool IsOptedOut()
+    {
+        try { _ = File.GetAttributes(_optOut); return true; }
+        catch (FileNotFoundException) { return false; }
+    }
+
+    public void RememberOptOut()
+    {
+        using var marker = new FileStream(_optOut, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+        marker.Flush(flushToDisk: true);
+    }
+
+    public void ClearOptOut() => File.Delete(_optOut);
 
     public AnalyticsState? Read()
     {

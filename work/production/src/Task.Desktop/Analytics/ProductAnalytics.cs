@@ -35,6 +35,9 @@ internal sealed class ProductAnalytics : IDisposable
     private ApplicationMode? _readyMode;
     private bool _accepting;
     private bool _disposed;
+    private bool _noticeClaimed;
+    private volatile bool _optedOut;
+    private volatile bool _disableRequested;
     private volatile bool _enabled;
     private volatile bool _storageAvailable;
 
@@ -60,6 +63,27 @@ internal sealed class ProductAnalytics : IDisposable
     public bool Enabled => _enabled;
     public bool StorageAvailable => _storageAvailable;
     public bool Configured => _configuration is not null;
+    public bool RequiresConsent => _configuration?.RequiresConsent == true;
+    public event Action? PreferenceChanged;
+
+    public bool TryClaimNotice()
+    {
+        lock (_inboxLock)
+        {
+            if (_disposed || !_storageAvailable || !Configured || RequiresConsent
+                || _enabled || _optedOut || _disableRequested || _noticeClaimed)
+                return false;
+            _noticeClaimed = true;
+            return true;
+        }
+    }
+
+    public void ReleaseNotice()
+    {
+        lock (_inboxLock) _noticeClaimed = false;
+    }
+
+    public Task<bool> EnableAfterNoticeAsync() => ChangePreferenceAsync(enabled: true, automatic: true);
 
     public void ModeOpened(ApplicationMode mode)
     {
@@ -97,12 +121,15 @@ internal sealed class ProductAnalytics : IDisposable
         _wake.Writer.TryWrite(true);
     }
 
-    public Task<bool> SetEnabledAsync(bool enabled)
+    public Task<bool> SetEnabledAsync(bool enabled) => ChangePreferenceAsync(enabled, automatic: false);
+
+    private Task<bool> ChangePreferenceAsync(bool enabled, bool automatic)
     {
         if (!enabled)
         {
             lock (_inboxLock)
             {
+                _disableRequested = true;
                 _accepting = false;
                 if (_request is not null) _ = _request.CancelAsync();
             }
@@ -118,13 +145,24 @@ internal sealed class ProductAnalytics : IDisposable
                 if (enabled)
                 {
                     if (_configuration is null) return false;
-                    var state = _state ?? new(_configuration.Destination, Guid.NewGuid(), []);
+                    if (automatic)
+                    {
+                        lock (_inboxLock)
+                        {
+                            if (!_noticeClaimed || RequiresConsent || _disableRequested || _optedOut) return false;
+                        }
+                    }
+
+                    var state = _state ?? new(_configuration.Destination, Guid.NewGuid(), [], EnabledByNotice: automatic);
                     _store.Write(state);
+                    if (!automatic) _store.ClearOptOut();
                     _state = state;
                     _enabled = true;
                     lock (_inboxLock)
                     {
-                        _accepting = !_disposed;
+                        if (!automatic) _disableRequested = false;
+                        _optedOut = false;
+                        _accepting = !_disposed && !_disableRequested;
                         RecordOpened();
                     }
                 }
@@ -136,9 +174,7 @@ internal sealed class ProductAnalytics : IDisposable
                         _inbox.Clear();
                     }
 
-                    _store.Delete();
-                    _state = null;
-                    _enabled = false;
+                    PersistOptOut();
                 }
                 return true;
             }
@@ -151,6 +187,8 @@ internal sealed class ProductAnalytics : IDisposable
             {
                 _gate.Release();
                 _wake.Writer.TryWrite(true);
+                try { PreferenceChanged?.Invoke(); }
+                catch (Exception error) { TraceFailure(error); }
             }
         });
     }
@@ -160,11 +198,17 @@ internal sealed class ProductAnalytics : IDisposable
         try
         {
             _store = new(root);
-            _state = _store.Read();
-            if (_configuration is not null && _state is not null && _state.Destination != _configuration.Destination)
+            _optedOut = _store.IsOptedOut();
+            if (_optedOut) _store.Delete();
+            else
             {
-                _store.Delete();
-                _state = null;
+                _state = _store.Read();
+                if (_configuration is not null && _state is not null &&
+                    (_state.Destination != _configuration.Destination || RequiresConsent && _state.EnabledByNotice))
+                {
+                    _store.Delete();
+                    _state = null;
+                }
             }
             _enabled = _state is not null;
             _storageAvailable = true;
@@ -192,7 +236,7 @@ internal sealed class ProductAnalytics : IDisposable
             {
                 TimeSpan? next;
                 try { next = await ProcessAsync(stop).ConfigureAwait(false); }
-                catch (IOException error)
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException)
                 {
                     TraceFailure(error);
                     await AsyncTask.Delay(TimeSpan.FromMinutes(1), _clock, stop).ConfigureAwait(false);
@@ -226,7 +270,8 @@ internal sealed class ProductAnalytics : IDisposable
             await _gate.WaitAsync().ConfigureAwait(false);
             try
             {
-                if (_store is not null && _state is not null) PersistInbox(_clock.GetUtcNow());
+                if (_store is not null && _disableRequested) PersistOptOut();
+                else if (_store is not null && _state is not null) PersistInbox(_clock.GetUtcNow());
             }
             catch (Exception error) { TraceFailure(error); }
             finally
@@ -335,6 +380,16 @@ internal sealed class ProductAnalytics : IDisposable
         }
 
         return TimeSpan.Zero;
+    }
+
+    private void PersistOptOut()
+    {
+        // The persisted preference takes precedence over the queue on restart.
+        _store!.RememberOptOut();
+        _optedOut = true;
+        _enabled = false;
+        _state = null;
+        _store.Delete();
     }
 
     private void PersistInbox(DateTimeOffset now)
