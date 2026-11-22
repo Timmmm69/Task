@@ -65,8 +65,10 @@ public sealed class TaskFilteringWindowsTests
                     using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
                     shell.SelectedSection = shell.Sections.Single(section => section.Route == "tasks");
                     await tasks.ActivateAsync();
-                    window = new MainWindow(shell) { ShowInTaskbar = false, ShowActivated = false };
-                    window.Show(); await Drain(window);
+                    window = new MainWindow(shell) { Width = 800, ShowInTaskbar = false, ShowActivated = false };
+                    window.Show();
+                    // Startup fits the window to the monitor; set the test viewport after that fit.
+                    await ResizeTo(window, 1200, 900);
                     var status = Find<ComboBox>(window, "TasksStatusFilter");
                     var project = Find<ComboBox>(window, "TasksProjectFilter");
                     var priority = Find<ComboBox>(window, "TasksPriorityFilter");
@@ -117,7 +119,7 @@ public sealed class TaskFilteringWindowsTests
                     // The physical desktop DPI is recorded separately; these are layout equivalents.
                     foreach (var size in new[] { (800d, 480d), (1200d, 900d), (1536d, 864d), (1280d, 720d), (960d, 540d) })
                     {
-                        window.Width = size.Item1; window.Height = size.Item2; await Drain(window);
+                        await ResizeTo(window, size.Item1, size.Item2);
                         foreach (var combo in new[] { status, project, priority, deadline, sort })
                         {
                             var origin = combo.TranslatePoint(new Point(), window);
@@ -186,6 +188,16 @@ public sealed class TaskFilteringWindowsTests
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
         try { await done.Task.WaitAsync(TimeSpan.FromSeconds(45)); }
         finally { Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5)))); }
+    }
+
+    private static async System.Threading.Tasks.Task ResizeTo(Window window, double width, double height)
+    {
+        window.Width = width;
+        window.Height = height;
+        await Drain(window);
+        // The native window rounds dimensions to physical pixels.
+        Assert.InRange(window.ActualWidth, width - 1, width + 1);
+        Assert.InRange(window.ActualHeight, height - 1, height + 1);
     }
 
     private static async System.Threading.Tasks.Task Drain(Window window)
