@@ -1,3 +1,4 @@
+using Task.Desktop.Analytics;
 using System.Globalization;
 using Task.Desktop.Calendar;
 using Task.Desktop.ViewModels;
@@ -227,8 +228,10 @@ public sealed class CalendarViewModelTests
         client.UpdateResults.Enqueue(Event(id, 5, "Локальный черновик"));
         client.ScheduleResults.Enqueue(Schedule([]));
         client.ConflictResults.Enqueue(Conflicts());
+        var usage = new List<UsageEvent>();
         using var vm = new CalendarViewModel(client,
-            ["Calendar.Read", "CalendarEvent.Update"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue));
+            ["Calendar.Read", "CalendarEvent.Update"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue))
+        { Usage = usage.Add };
         await vm.ActivateAsync();
         vm.SelectedItem = vm.Days.SelectMany(day => day.Items).Single();
         await SpinUntilAsync(() => vm.SelectedEvent is not null);
@@ -240,8 +243,10 @@ public sealed class CalendarViewModelTests
         Assert.Equal("Локальный черновик", vm.Editor.Title);
         Assert.Equal(4, vm.Editor.Source!.Version);
         Assert.Contains("черновик сохранён", vm.Editor.ValidationMessage);
+        Assert.Empty(usage);
 
         await vm.SaveEventCommand.ExecuteAsync();
+        Assert.Equal(UsageEvent.CalendarEventUpdated, Assert.Single(usage));
         Assert.Equal([3L, 4L], client.UpdateVersions);
         Assert.Null(vm.Editor);
     }

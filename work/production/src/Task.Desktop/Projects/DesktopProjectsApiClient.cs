@@ -1,4 +1,5 @@
 using System.Net;
+using Task.Desktop.Analytics;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -159,9 +160,18 @@ public sealed partial class DesktopProjectsApiClient : IDesktopProjectsApiClient
         return new DesktopProjectResult<IReadOnlyList<DesktopProjectMemberDto>>.MalformedResponse();
     }
 
-    public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> CreateProjectAsync(
-        DesktopProjectDraft draft, string idempotencyKey, CancellationToken cancellationToken = default) =>
-        SendProjectAsync(HttpMethod.Post, _projectsUri, ValidateDraft(draft, true), null, RequireKey(idempotencyKey), cancellationToken);
+    internal Action<UsageEvent>? Usage { get; init; }
+
+    public async System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> CreateProjectAsync(
+        DesktopProjectDraft draft, string idempotencyKey, CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(HttpMethod.Post, _projectsUri, ValidateDraft(draft, true), null, RequireKey(idempotencyKey), cancellationToken).ConfigureAwait(false);
+        var result = ReadProjectResult(response);
+        if (response is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Created, IdempotencyReplayed: not "true" }
+            && result is DesktopProjectResult<DesktopProjectDto>.Succeeded)
+            UsageInstrumentation.Record(Usage, UsageEvent.ProjectCreated);
+        return result;
+    }
 
     public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> UpdateProjectAsync(
         Guid id, long version, DesktopProjectDraft draft, CancellationToken cancellationToken = default)

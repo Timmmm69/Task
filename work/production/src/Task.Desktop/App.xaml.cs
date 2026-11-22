@@ -1,4 +1,5 @@
 using System.Configuration;
+using Task.Desktop.Analytics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -13,6 +14,7 @@ public partial class App : global::System.Windows.Application
 {
     private ApplicationModeLifecycle? _lifecycle;
     private bool _switching;
+    internal ProductAnalytics? Analytics { get; private set; }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -20,10 +22,11 @@ public partial class App : global::System.Windows.Application
         try
         {
             var directory = GetDesktopDataDirectory();
+            Analytics = new ProductAnalytics(directory, AnalyticsConfiguration.Load());
             _lifecycle = new(new ApplicationModePreference(directory), mode => mode switch
             {
-                ApplicationMode.Personal => new PersonalApplicationContext(this, directory, Shutdown, SwitchMode, SwitchToCorporate),
-                ApplicationMode.Corporate => new CorporateApplicationContext(this, directory, Shutdown, SwitchMode),
+                ApplicationMode.Personal => new PersonalApplicationContext(this, directory, Shutdown, SwitchMode, SwitchToCorporate, Analytics),
+                ApplicationMode.Corporate => new CorporateApplicationContext(this, directory, Shutdown, SwitchMode, Analytics),
                 _ => throw new ArgumentOutOfRangeException(nameof(mode)),
             });
             if (!await _lifecycle.RestoreAsync())
@@ -83,7 +86,8 @@ public partial class App : global::System.Windows.Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        _lifecycle?.Dispose();
+        try { _lifecycle?.Dispose(); }
+        finally { Analytics?.Dispose(); }
         base.OnExit(e);
     }
 

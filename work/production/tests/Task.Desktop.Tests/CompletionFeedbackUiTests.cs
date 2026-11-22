@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -81,6 +82,38 @@ public sealed class CompletionFeedbackUiTests
     [Fact]
     public async global::System.Threading.Tasks.Task RecycledListContainers_DoNotCarryFeedbackToOtherTasksOrStealKeyboardFocus()
     {
+        // The native list template uses WPF theme resources cached by the process.
+        const string childMarker = "TASK_COMPLETION_RECYCLING_UI_CHILD";
+        if (Environment.GetEnvironmentVariable(childMarker) != "1")
+        {
+            var start = new ProcessStartInfo("dotnet")
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            start.ArgumentList.Add("vstest");
+            start.ArgumentList.Add(GetType().Assembly.Location);
+            start.ArgumentList.Add("/TestCaseFilter:FullyQualifiedName=" + GetType().FullName + "." +
+                nameof(RecycledListContainers_DoNotCarryFeedbackToOtherTasksOrStealKeyboardFocus));
+            start.Environment[childMarker] = "1";
+            using var process = Process.Start(start) ?? throw new InvalidOperationException("Could not start the WPF test process.");
+            var stdout = process.StandardOutput.ReadToEndAsync();
+            var stderr = process.StandardError.ReadToEndAsync();
+            try
+            {
+                await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
+                Assert.True(process.ExitCode == 0, await stdout + await stderr);
+            }
+            finally
+            {
+                if (!process.HasExited) process.Kill(true);
+            }
+
+            return;
+        }
+
         await RunStaAsync(async () =>
         {
             var first = new DesktopTaskDto(Guid.NewGuid(), Guid.NewGuid(), 2,

@@ -1,4 +1,5 @@
 using Task.Desktop.Personal;
+using Task.Desktop.Analytics;
 using Task.Desktop.ViewModels;
 
 namespace Task.Desktop.Modes;
@@ -13,10 +14,10 @@ public sealed class PersonalApplicationModel : IDisposable
     public PersonalApplicationModel() { }
     public PersonalApplicationModel(string dataRoot, TimeProvider? clock = null)
         : this(dataRoot, clock, null) { }
-    internal PersonalApplicationModel(string dataRoot, TimeProvider? clock, PersonalStoreOwnership? ownership, bool restoring = false)
+    internal PersonalApplicationModel(string dataRoot, TimeProvider? clock, PersonalStoreOwnership? ownership, bool restoring = false, Action<UsageEvent>? usage = null)
     {
         var time = clock ?? TimeProvider.System;
-        _store = new(new PersonalDataPaths(dataRoot), time, ownership, restoring: restoring);
+        _store = new(new PersonalDataPaths(dataRoot), time, ownership, restoring: restoring) { Usage = usage };
         try
         {
             var calendarClient = new PersonalCalendarClient(_store);
@@ -30,7 +31,8 @@ public sealed class PersonalApplicationModel : IDisposable
                 workdayStart: () => TimeOnly.Parse(_store.WorkspaceSettings().WorkdayStart),
                 userSettings: _ => System.Threading.Tasks.Task.FromResult<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>>(
                     new Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>.Succeeded(_store.WorkspaceSettings())),
-                projects: () => new CalendarProjectChoice[] { new(null, "Без проекта") }.Concat(_store.Projects().Where(p => p.Lifecycle == "active").Select(p => new CalendarProjectChoice(p.Id, p.Name))).ToArray());
+                projects: () => new CalendarProjectChoice[] { new(null, "Без проекта") }.Concat(_store.Projects().Where(p => p.Lifecycle == "active").Select(p => new CalendarProjectChoice(p.Id, p.Name))).ToArray())
+            { Usage = usage };
             _ = _store.List();
             _ = _store.Projects();
         }
@@ -88,7 +90,7 @@ public sealed class PersonalApplicationModel : IDisposable
 }
 
 internal sealed class PersonalApplicationContext(
-    global::System.Windows.Application application, string dataRoot, Action shutdown, Action switchMode, Action corporate) : IApplicationExecutionContext
+    global::System.Windows.Application application, string dataRoot, Action shutdown, Action switchMode, Action corporate, ProductAnalytics? analytics = null) : IApplicationExecutionContext
 {
     private global::System.Windows.Window? _window;
     private PersonalApplicationModel? _model;
@@ -104,7 +106,7 @@ internal sealed class PersonalApplicationContext(
         catch (Exception error) { ShowRecovery(error); }
         return global::System.Threading.Tasks.Task.CompletedTask;
     }
-    private void Open(bool restoring = false) => _model = new(dataRoot, null, _ownership, restoring);
+    private void Open(bool restoring = false) => _model = new(dataRoot, null, _ownership, restoring, usage => analytics?.Record(usage, Mode));
     private void CloseModel() { _model?.Dispose(); _model = null; }
     private void ShowPersonal()
     {
@@ -116,6 +118,7 @@ internal sealed class PersonalApplicationContext(
         window.BackupRequested += Backup;
         window.RestoreRequested += Restore;
         Show(window);
+        analytics?.ModeOpened(Mode);
     }
     private void ShowRecovery(Exception error)
     {

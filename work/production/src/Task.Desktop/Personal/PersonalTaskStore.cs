@@ -1,4 +1,5 @@
 using System.Globalization;
+using Task.Desktop.Analytics;
 using Microsoft.Data.Sqlite;
 using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
@@ -146,6 +147,8 @@ public sealed partial class PersonalTaskStore : IDisposable
         ReconcileDeadlineReminder(task.Id, tx);
     }
 
+    internal Action<UsageEvent>? Usage { get; init; }
+
     public DesktopTaskDto Create(DesktopCreateTaskCommand input) => Locked(() =>
     {
         var now = _clock.GetUtcNow();
@@ -153,7 +156,9 @@ public sealed partial class PersonalTaskStore : IDisposable
             DesktopTaskStatus.New, input.Priority, input.StartAtUtc, input.DeadlineAtUtc, [], [], null, input.Card ?? new());
         using var tx = _database.Connection.BeginTransaction();
         var replay = ReplayTaskCommand(input.IdempotencyKey, input, tx); if (replay is not null) { tx.Commit(); return replay; }
-        Validate(task, tx); Save(task, tx, true); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit(); return saved;
+        Validate(task, tx); Save(task, tx, true); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit();
+        UsageInstrumentation.Record(Usage, UsageEvent.TaskCreated);
+        return saved;
     });
     private DesktopTaskDto Current(Guid id, long version, SqliteTransaction tx)
     {
@@ -183,7 +188,9 @@ public sealed partial class PersonalTaskStore : IDisposable
             using var clear = Command("UPDATE tasks SET deadline_suppressed_due=NULL WHERE id=$id;", tx, ("$id", task.Id.ToString("D")));
             clear.ExecuteNonQuery();
         }
-        Validate(task, tx); Save(task, tx, false); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit(); return saved;
+        Validate(task, tx); Save(task, tx, false); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit();
+        UsageInstrumentation.RecordPatchedTask(Usage, old, saved);
+        return saved;
     });
     public DesktopTaskDto Transition(DesktopTransitionTaskCommand input) => Locked(() =>
     {
@@ -197,7 +204,9 @@ public sealed partial class PersonalTaskStore : IDisposable
             UpdatedAtUtc = now,
             CompletedAtUtc = input.TargetStatus == DesktopTaskStatus.Completed ? now : null
         };
-        Save(task, tx, false); var saved = Get(task.Id, tx)!; tx.Commit(); return saved;
+        Save(task, tx, false); var saved = Get(task.Id, tx)!; tx.Commit();
+        if (saved.Status == DesktopTaskStatus.Completed) UsageInstrumentation.Record(Usage, UsageEvent.TaskCompleted);
+        return saved;
     });
 
     public IReadOnlyList<TaskWorkspaceItem> Checklist(Guid taskId) => Locked<IReadOnlyList<TaskWorkspaceItem>>(() =>

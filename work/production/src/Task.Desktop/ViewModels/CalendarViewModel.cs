@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Task.Desktop.Analytics;
 using System.Globalization;
 using Task.Desktop.Calendar;
 
@@ -880,6 +881,13 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         else Message = "Не удалось загрузить детали события.";
     }
 
+    internal Action<UsageEvent>? Usage { get; init; }
+
+    private static bool EventChanged(DesktopCalendarEvent before, DesktopCalendarEvent after) =>
+        before != (after with { Version = before.Version, UpdatedAtUtc = before.UpdatedAtUtc, EntityTag = before.EntityTag, Attendees = before.Attendees })
+        || !before.Attendees.Select(attendee => (attendee.Id, attendee.IsUser, attendee.Role)).ToHashSet()
+            .SetEquals(after.Attendees.Select(attendee => (attendee.Id, attendee.IsUser, attendee.Role)));
+
     private async global::System.Threading.Tasks.Task SaveAsync(CancellationToken token)
     {
         var editor = Editor;
@@ -902,6 +910,11 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         finally { _saving = false; editor.IsSaving = false; OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(IsSaving)); RaiseCommands(); }
         if (result is DesktopCalendarResult<DesktopCalendarEvent>.Succeeded success)
         {
+            if (Usage is not null)
+            {
+                if (editor.Source is null) UsageInstrumentation.Record(Usage, UsageEvent.CalendarEventCreated);
+                else if (EventChanged(editor.Source, success.Value)) UsageInstrumentation.Record(Usage, UsageEvent.CalendarEventUpdated);
+            }
             if (ReferenceEquals(editor, Editor)) Editor = null;
             if (_active && _sessionAllowsWrites && generation == _generation) await LoadAsync(true, token);
             Announcement = $"Событие «{success.Value.Title}» сохранено.";

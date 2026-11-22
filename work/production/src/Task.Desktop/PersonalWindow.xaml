@@ -12,9 +12,9 @@
             </CollectionViewSource>
         </ResourceDictionary></Window.Resources>
     <Grid>
-        <Grid.RowDefinitions><RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}"/><RowDefinition Height="*"/><RowDefinition Height="{DynamicResource Task.Shell.FooterGridLength}"/></Grid.RowDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="{DynamicResource Task.Shell.HeaderGridLength}"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="{DynamicResource Task.Shell.FooterGridLength}"/></Grid.RowDefinitions>
         <Grid.ColumnDefinitions><ColumnDefinition Width="{Binding ActualWidth,ElementName=RootWindow,Converter={StaticResource Task.ShellNavigationWidthConverter}}"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-        <Border Grid.RowSpan="3" Style="{StaticResource Task.Shell.NavigationSurface}">
+        <Border Grid.RowSpan="4" Style="{StaticResource Task.Shell.NavigationSurface}">
             <Grid><Grid.RowDefinitions><RowDefinition Height="{DynamicResource Task.Navigation.MenuGridLength}"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <Border Width="48" Height="58" Margin="10,0,0,0" HorizontalAlignment="Left" ToolTip="Основная навигация"><Path Data="{StaticResource Task.Icon.Navigation}" Width="24" Height="24" Stretch="Uniform" Fill="{DynamicResource Task.Brush.Text.Primary}"/></Border>
                 <ListBox x:Name="SectionsList" Grid.Row="1" ItemsSource="{Binding Source={StaticResource NavigationSections}}" SelectedItem="{Binding SelectedSection}" IsEnabled="{Binding CanNavigate}" SelectionChanged="OnNavigationSelectionChanged"
@@ -57,8 +57,9 @@
             <views:PersonalRemindersView DataContext="{Binding Planning}" Visibility="{Binding DataContext.IsNotifications,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
             <views:PersonalWorkspaceView DataContext="{Binding Workspace}" Visibility="{Binding DataContext.IsWorkspace,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}" BackupRequested="OnBackup" RestoreRequested="OnRestore" BackgroundRequested="OnBackground"/>
         </Grid>
-        <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource Task.Shell.FooterSurface}"><TextBlock Text="{Binding NavigationHint}" Style="{StaticResource Task.Shell.StatusText}" AutomationProperties.LiveSetting="Polite"/></Border>
-        <Grid x:Name="PaletteOverlay" Grid.RowSpan="3" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="100" Background="#66000000" MouseLeftButtonDown="OnPaletteBackdrop">
+        <views:AnalyticsNoticeView Grid.Row="2" Grid.Column="1"/>
+        <Border Grid.Row="3" Grid.Column="1" Style="{StaticResource Task.Shell.FooterSurface}"><TextBlock Text="{Binding NavigationHint}" Style="{StaticResource Task.Shell.StatusText}" AutomationProperties.LiveSetting="Polite"/></Border>
+        <Grid x:Name="PaletteOverlay" Grid.RowSpan="4" Grid.ColumnSpan="2" Visibility="Collapsed" Panel.ZIndex="100" Background="#66000000" MouseLeftButtonDown="OnPaletteBackdrop">
             <views:CommandPaletteView x:Name="PaletteSurface" MaxWidth="760" MaxHeight="640" Margin="24" VerticalAlignment="Center" DataContext="{Binding Palette}" MouseLeftButtonDown="OnPaletteSurface"/>
         </Grid>    </Grid>
 </Window>
