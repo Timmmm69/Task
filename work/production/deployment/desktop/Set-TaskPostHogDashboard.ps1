@@ -9,7 +9,7 @@
 $ErrorActionPreference = 'Stop'
 
 $dashboardName = 'Task — Product Usage'
-$dashboardDescription = 'Запуски, полезные действия и возвращаемость установок Task с разрезом Personal / Corporate.'
+$dashboardDescription = 'Сколько установок запускалось, сколько продолжают пользоваться Task и как часто возвращаются. Есть фильтр Personal / Corporate.'
 $eventNames = "'app_opened', 'task_created', 'task_updated', 'task_completed', 'task_planned', 'calendar_event_created', 'calendar_event_updated', 'project_created', 'inbox_item_captured'"
 
 $taskEvents = @"
@@ -35,36 +35,6 @@ function New-Insight($Name, $Description, $Sql, $Display = 'ActionsTable', $Char
 }
 
 $insights = @(
-    New-Insight 'Активные установки · DAU / WAU / MAU' 'Уникальные установки с полезными действиями за текущий день и окна 7 и 30 дней (UTC).' @"
-WITH task_events AS ($taskEvents)
-SELECT segment,
-    uniqExactIf(installation, day = toDate(toTimeZone(now(), 'UTC'))) AS DAU,
-    uniqExactIf(installation, day >= toDate(toTimeZone(now(), 'UTC')) - 6) AS WAU,
-    uniqExact(installation) AS MAU
-FROM task_events
-WHERE event != 'app_opened' AND day BETWEEN toDate(toTimeZone(now(), 'UTC')) - 29 AND toDate(toTimeZone(now(), 'UTC'))
-GROUP BY segment ORDER BY segment LIMIT 3
-"@
-    New-Insight 'Новые и вернувшиеся установки' 'По дням UTC. Новые впервые выполнили полезное действие в этом режиме, вернувшиеся уже делали это ранее.' @"
-WITH task_events AS ($taskEvents),
-first_days AS (
-    SELECT segment, installation, min(day) AS first_day FROM task_events
-    WHERE event != 'app_opened' GROUP BY segment, installation
-)
-SELECT e.day AS activity_day, e.segment AS segment,
-    uniqExactIf(e.installation, e.day = f.first_day) AS new_installations,
-    uniqExactIf(e.installation, e.day > f.first_day) AS returning_installations
-FROM task_events e INNER JOIN first_days f ON e.segment = f.segment AND e.installation = f.installation
-WHERE e.event != 'app_opened' AND e.day BETWEEN toDate(toTimeZone(now(), 'UTC')) - 29 AND toDate(toTimeZone(now(), 'UTC'))
-GROUP BY activity_day, segment ORDER BY activity_day DESC, segment LIMIT 90
-"@
-    New-Insight 'Полезные действия по функциям' 'Подтверждённые действия за 30 календарных дней UTC. Повтор запроса с тем же UUID учитывается один раз.' @"
-WITH task_events AS ($taskEvents)
-SELECT event AS feature, segment, uniqExact(uuid) AS successful_actions
-FROM task_events
-WHERE event != 'app_opened' AND day BETWEEN toDate(toTimeZone(now(), 'UTC')) - 29 AND toDate(toTimeZone(now(), 'UTC'))
-GROUP BY feature, segment ORDER BY successful_actions DESC, feature, segment LIMIT 30
-"@ 'ActionsBarValue' @{ xAxis = @{ column = 'feature' }; yAxis = @(@{ column = 'successful_actions' }); seriesBreakdownColumn = 'segment' }
     New-Insight 'Воронка · запуск → полезное действие' 'Установки, открывшие Task за 30 календарных дней UTC. Конверсия требует подтверждённого действия в тот же момент или позже.' @"
 WITH task_events AS ($taskEvents),
 installs AS (
@@ -171,12 +141,9 @@ foreach ($insight in $insights) {
 if ($created) {
     $dashboard = Invoke-PostHog Get $dashboardPath
     $layout = @(
-        @{ x = 0; y = 0; w = 6; h = 4 },
-        @{ x = 6; y = 4; w = 6; h = 5 },
-        @{ x = 0; y = 4; w = 6; h = 5 },
-        @{ x = 6; y = 0; w = 6; h = 4 },
-        @{ x = 0; y = 9; w = 6; h = 5 },
-        @{ x = 6; y = 9; w = 6; h = 5 }
+        @{ x = 0; y = 0; w = 6; h = 5 },
+        @{ x = 6; y = 0; w = 6; h = 5 },
+        @{ x = 0; y = 5; w = 12; h = 4 }
     )
     $tiles = for ($index = 0; $index -lt $insights.Count; $index++) {
         $tile = $dashboard.tiles | Where-Object { $_.insight.name -ceq $insights[$index].name }
