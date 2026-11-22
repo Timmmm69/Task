@@ -793,7 +793,8 @@ public sealed class DesktopTasksApiClientTests
                 tasksHttpClient,
                 new Uri("https://task.example.test"),
                 sessionService,
-                connectivity) { Usage = usage };
+                connectivity)
+            { Usage = usage };
             return new Fixture(
                 directory,
                 authHttpClient,

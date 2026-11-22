@@ -301,7 +301,8 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             CreateHttpClient(),
             serverEndpoint,
             sessionService,
-            connectivity) { Usage = RecordUsage };
+            connectivity)
+        { Usage = RecordUsage };
         var tasks = new TasksViewModel(
             tasksClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
@@ -315,7 +316,8 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
             recurrence: new RecurrencePaneViewModel(new DesktopRecurrenceApiClient(CreateHttpClient(), serverEndpoint, sessionService),
                 sessionService.CurrentSessionMetadata!.UserId), userSettings: workClient.GetUserSettingsAsync,
-            employeeDirectory: new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity)) { Usage = RecordUsage };
+            employeeDirectory: new DesktopAdministrationApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity))
+        { Usage = RecordUsage };
         var today = new TodayViewModel(
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),

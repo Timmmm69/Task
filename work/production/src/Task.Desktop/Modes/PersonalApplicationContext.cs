@@ -31,7 +31,8 @@ public sealed class PersonalApplicationModel : IDisposable
                 workdayStart: () => TimeOnly.Parse(_store.WorkspaceSettings().WorkdayStart),
                 userSettings: _ => System.Threading.Tasks.Task.FromResult<Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>>(
                     new Task.Desktop.Work.DesktopWorkResult<Task.Desktop.Work.DesktopUserSettings>.Succeeded(_store.WorkspaceSettings())),
-                projects: () => new CalendarProjectChoice[] { new(null, "Без проекта") }.Concat(_store.Projects().Where(p => p.Lifecycle == "active").Select(p => new CalendarProjectChoice(p.Id, p.Name))).ToArray()) { Usage = usage };
+                projects: () => new CalendarProjectChoice[] { new(null, "Без проекта") }.Concat(_store.Projects().Where(p => p.Lifecycle == "active").Select(p => new CalendarProjectChoice(p.Id, p.Name))).ToArray())
+            { Usage = usage };
             _ = _store.List();
             _ = _store.Projects();
         }

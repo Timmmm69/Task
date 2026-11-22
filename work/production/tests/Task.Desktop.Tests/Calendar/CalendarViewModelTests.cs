@@ -230,7 +230,8 @@ public sealed class CalendarViewModelTests
         client.ConflictResults.Enqueue(Conflicts());
         var usage = new List<UsageEvent>();
         using var vm = new CalendarViewModel(client,
-            ["Calendar.Read", "CalendarEvent.Update"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue)) { Usage = usage.Add };
+            ["Calendar.Read", "CalendarEvent.Update"], TimeZoneInfo.Utc, Monday.ToDateTime(TimeOnly.MinValue))
+        { Usage = usage.Add };
         await vm.ActivateAsync();
         vm.SelectedItem = vm.Days.SelectMany(day => day.Items).Single();
         await SpinUntilAsync(() => vm.SelectedEvent is not null);
