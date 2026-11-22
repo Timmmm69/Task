@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -65,9 +67,13 @@ public sealed class TaskFilteringWindowsTests
                     using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
                     shell.SelectedSection = shell.Sections.Single(section => section.Route == "tasks");
                     await tasks.ActivateAsync();
-                    window = new MainWindow(shell) { Width = 800, ShowInTaskbar = false, ShowActivated = false };
+                    // Logical viewports for 1920x1080 at 125/150/200%, plus the minimum window.
+                    // The physical desktop DPI is recorded separately; these are layout equivalents.
+                    var viewports = new (double Width, double Height)[] { (800, 480), (1200, 900), (1536, 864), (1280, 720), (960, 540) };
+                    window = new MainWindow(shell) { ShowInTaskbar = false, ShowActivated = false };
                     window.Show();
                     // Startup fits the window to the monitor; set the test viewport after that fit.
+                    AllowTestViewports(window, viewports.Max(size => size.Width), viewports.Max(size => size.Height));
                     await ResizeTo(window, 1200, 900);
                     var status = Find<ComboBox>(window, "TasksStatusFilter");
                     var project = Find<ComboBox>(window, "TasksProjectFilter");
@@ -115,11 +121,9 @@ public sealed class TaskFilteringWindowsTests
                     Assert.True(((TaskProjectFilter)project.SelectedItem).IsAll);
                     Assert.Equal(TaskSortOrder.TitleDescending, sort.SelectedValue);
                     status.SelectedValue = DesktopTaskStatus.InProgress; // Keep reset enabled for the Tab traversal.
-                    // Logical viewports for 1920x1080 at 125/150/200%, plus the minimum window.
-                    // The physical desktop DPI is recorded separately; these are layout equivalents.
-                    foreach (var size in new[] { (800d, 480d), (1200d, 900d), (1536d, 864d), (1280d, 720d), (960d, 540d) })
+                    foreach (var (width, height) in viewports)
                     {
-                        await ResizeTo(window, size.Item1, size.Item2);
+                        await ResizeTo(window, width, height);
                         foreach (var combo in new[] { status, project, priority, deadline, sort })
                         {
                             var origin = combo.TranslatePoint(new Point(), window);
@@ -128,7 +132,8 @@ public sealed class TaskFilteringWindowsTests
                             Assert.InRange(origin.Y + combo.ActualHeight, 0, window.ActualHeight);
                         }
                         Assert.True(list.ActualHeight >= 40, $"List viewport is only {list.ActualHeight} DIP; " + string.Join("; ", new[] { status, project, priority, deadline, sort }.Select(combo => $"{AutomationProperties.GetAutomationId(combo)}={combo.TranslatePoint(new Point(), window)} {combo.ActualWidth}x{combo.ActualHeight}")));
-                        Assert.Equal(size.Item1 >= 1160, inspector.IsExpanded);
+                        Assert.True(inspector.IsExpanded == (width >= 1160),
+                            $"Inspector IsExpanded={inspector.IsExpanded} at {window.ActualWidth} DIP.");
                         Assert.True(create.IsVisible);
                         Assert.InRange(create.TranslatePoint(new Point(create.ActualWidth, 0), window).X, 0, window.ActualWidth);
                         Assert.InRange(create.TranslatePoint(new Point(0, create.ActualHeight), window).Y, 0, window.ActualHeight);
@@ -147,7 +152,7 @@ public sealed class TaskFilteringWindowsTests
                             var visual = (FrameworkElement)VisualTreeHelper.GetChild(window, 0);
                             var bitmap = new RenderTargetBitmap((int)visual.ActualWidth, (int)visual.ActualHeight, 96, 96, PixelFormats.Pbgra32);
                             bitmap.Render(visual); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                            using var file = File.Create(Path.Combine(evidence, $"filters-{size.Item1}.png")); encoder.Save(file);
+                            using var file = File.Create(Path.Combine(evidence, $"filters-{width}.png")); encoder.Save(file);
                         }
                     }
                     Assert.Equal(2, client.PageCallCount);
@@ -190,11 +195,46 @@ public sealed class TaskFilteringWindowsTests
         finally { Assert.True(await System.Threading.Tasks.Task.Run(() => thread.Join(TimeSpan.FromSeconds(5)))); }
     }
 
+    private static void AllowTestViewports(Window window, double width, double height)
+    {
+        var source = (HwndSource)PresentationSource.FromVisual(window)!;
+        var dpi = VisualTreeHelper.GetDpi(window);
+        var widthPixels = (int)Math.Ceiling(width * dpi.DpiScaleX);
+        var heightPixels = (int)Math.Ceiling(height * dpi.DpiScaleY);
+
+        // Let this HWND exceed the CI monitor's tracking limit while testing a wide layout.
+        // WPF still processes the message and applies the window's own size constraints.
+        source.AddHook((IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam, ref bool handled) =>
+        {
+            const int wmGetMinMaxInfo = 0x0024;
+            if (message == wmGetMinMaxInfo)
+            {
+                var limits = Marshal.PtrToStructure<MinMaxInfo>(lParam);
+                limits.MaxTrackSize.X = Math.Max(limits.MaxTrackSize.X, widthPixels);
+                limits.MaxTrackSize.Y = Math.Max(limits.MaxTrackSize.Y, heightPixels);
+                Marshal.StructureToPtr(limits, lParam, false);
+            }
+
+            return IntPtr.Zero;
+        });
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MinMaxInfo
+    {
+        public System.Drawing.Point Reserved;
+        public System.Drawing.Point MaxSize;
+        public System.Drawing.Point MaxPosition;
+        public System.Drawing.Point MinTrackSize;
+        public System.Drawing.Point MaxTrackSize;
+    }
+
     private static async System.Threading.Tasks.Task ResizeTo(Window window, double width, double height)
     {
         window.Width = width;
         window.Height = height;
         await Drain(window);
+        await Dispatcher.Yield(DispatcherPriority.Background);
         // The native window rounds dimensions to physical pixels.
         Assert.InRange(window.ActualWidth, width - 1, width + 1);
         Assert.InRange(window.ActualHeight, height - 1, height + 1);
