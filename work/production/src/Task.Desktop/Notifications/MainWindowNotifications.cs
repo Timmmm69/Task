@@ -29,7 +29,8 @@ public partial class MainWindow
                 _notificationJournal = new(Path.Combine(dataDirectory, "notification-presentations"), context);
                 var hub = _viewModel.WorkHub!;
                 _notificationAgent = new(client, _toast, _notificationJournal,
-                    () => hub.BackgroundNotificationAccess, () => hub.BackgroundSettingsAccess, hub.ApplyBackgroundNotifications, canSnooze: () => hub.CanManageCorporateReminders);
+                    () => hub.BackgroundNotificationAccess, () => hub.BackgroundSettingsAccess, hub.ApplyBackgroundNotifications,
+                    canSnooze: () => hub.CanManageCorporateReminders, applyAutostart: ApplyAutostart);
                 hub.NotificationAccessChanged += OnNotificationAccessChanged;
                 hub.UserSettingsApplied += ApplyAutostart;
                 _notificationTimer.Tick += OnNotificationTick;
@@ -49,23 +50,19 @@ public partial class MainWindow
         try
         {
             await _notificationAgent.RunPassAsync(ct);
-            if (!_notificationClosed && _viewModel.WorkHub?.BackgroundSettingsAccess == true)
-            {
-                var settings = await _notificationClient.GetUserSettingsAsync(ct);
-                if (!_notificationClosed && !ct.IsCancellationRequested && settings is DesktopWorkResult<DesktopUserSettings>.Succeeded ok) ApplyAutostart(ok.Value);
-            }
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
         catch (Exception ex) when (ex is Microsoft.Data.Sqlite.SqliteException or IOException or UnauthorizedAccessException)
         { _viewModel.ReportNotificationError("Не удалось показать Windows-уведомление. Проверьте локальные настройки; история доступна в центре."); }
         finally { _notificationBusy = false; }
     }
-    private void ApplyAutostart(DesktopUserSettings settings)
+    private void ApplyAutostart(DesktopUserSettings settings) => ApplyAutostart(settings.AutostartEnabled);
+    private void ApplyAutostart(bool enabled)
     {
-        if (_autostartApplied == settings.AutostartEnabled) return;
-        if (!Notifications.WindowsAutostart.Apply(settings.AutostartEnabled))
+        if (_autostartApplied == enabled) return;
+        if (!Notifications.WindowsAutostart.Apply(enabled))
             _viewModel.ReportNotificationError("Автозапуск не применён: проверьте доступ к настройкам Windows и расположение Task.");
-        else _autostartApplied = settings.AutostartEnabled;
+        else _autostartApplied = enabled;
     }
     private void OnNotificationAccessChanged()
     {

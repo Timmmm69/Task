@@ -6,6 +6,9 @@ namespace Task.Infrastructure.Persistence;
 
 internal sealed partial class PostgresProductApiStore
 {
+    private const bool DefaultAutostartEnabled = true;
+    private const string NotificationDue = "p.not_before<=statement_timestamp() AND (p.expires_at IS NULL OR p.expires_at>statement_timestamp())";
+
     private ProductApiResponse Settings(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
         ValidateQuery(r, "");
@@ -41,7 +44,7 @@ internal sealed partial class PostgresProductApiStore
             ["defaultTaskDurationMinutes"] = 60,
             ["defaultReminderOffsetMinutes"] = 15,
             ["dateOnlyReminderTime"] = "09:00:00",
-            ["autostartEnabled"] = true,
+            ["autostartEnabled"] = DefaultAutostartEnabled,
             ["allowLocalPaths"] = true,
             ["confirmCatalogDelete"] = true,
             ["missingFileBehavior"] = "show_actions",
@@ -74,23 +77,20 @@ internal sealed partial class PostgresProductApiStore
         return new(current, Version: oldVersion + 1);
     }
 
-    private static ProductApiResponse PreferenceResponse(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r, int version)
+    private const string NotificationPreferencesSelect = "SELECT to_jsonb(p)-'organization_id'-'user_account_id'-'notification_type'-'updated_at' FROM notify.notification_preferences p " +
+        "WHERE organization_id=@org AND user_account_id=@user AND notification_type='default'";
+
+    private static JsonObject DefaultNotificationPreferences() => new()
     {
-        var preference = One(c, t, "SELECT to_jsonb(p)-'organization_id'-'user_account_id'-'notification_type'-'updated_at' FROM notify.notification_preferences p " +
-            "WHERE organization_id=@org AND user_account_id=@user AND notification_type='default';", r) ??
-            new JsonObject
-            {
-                ["enabled"] = true,
-                ["desktopEnabled"] = true,
-                ["soundEnabled"] = true,
-                ["defaultSnoozeMinutes"] = 15,
-                ["quietHoursStart"] = null,
-                ["quietHoursEnd"] = null,
-                ["quietHoursTimeZone"] = null
-            };
-        preference["version"] = version;
-        return new(preference, Version: version);
-    }
+        ["enabled"] = true,
+        ["desktopEnabled"] = true,
+        ["soundEnabled"] = true,
+        ["defaultSnoozeMinutes"] = 15,
+        ["quietHoursStart"] = null,
+        ["quietHoursEnd"] = null,
+        ["quietHoursTimeZone"] = null,
+        ["version"] = 1,
+    };
 
     private static void ValidatePreference(JsonObject body)
     {
@@ -105,9 +105,7 @@ internal sealed partial class PostgresProductApiStore
 
     private ProductApiResponse NotificationPreferences(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)
     {
-        var current = One(c, t, "SELECT to_jsonb(p)-'organization_id'-'user_account_id'-'notification_type'-'updated_at' FROM notify.notification_preferences p " +
-            "WHERE organization_id=@org AND user_account_id=@user AND notification_type='default' FOR UPDATE;", r)
-            ?? (JsonObject)PreferenceResponse(c, t, r, 1).Body!;
+        var current = One(c, t, NotificationPreferencesSelect + " FOR UPDATE;", r) ?? DefaultNotificationPreferences();
         var version = Version(current);
         if (r.Route.Method == "GET") return new(current, Version: version);
         if (r.ExpectedVersion != version) throw Error(412, "VERSION_CONFLICT", "Notification preferences version has changed.");

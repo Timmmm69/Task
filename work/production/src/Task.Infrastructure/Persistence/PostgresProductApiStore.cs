@@ -31,7 +31,10 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
     public ProductApiResponse Execute(ProductApiRequest request)
     {
         using var connection = dataSource.OpenConnection();
-        using var transaction = connection.BeginTransaction();
+        var notificationPoll = request.Route is { Resource: "notifications", Operation: "poll" };
+        using var transaction = notificationPoll
+            ? connection.BeginTransaction(System.Data.IsolationLevel.RepeatableRead)
+            : connection.BeginTransaction();
         try
         {
             Run(connection, transaction, "SET LOCAL lock_timeout='3s'; SET LOCAL statement_timeout='15s';", request);
@@ -44,7 +47,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
                     "SELECT jsonb_build_object('code',p.code) FROM iam.permissions p WHERE p.is_active AND iam.permission_available(@org,@user,p.code);", request)
                     .Select(row => Text(row, "code")!).ToHashSet(StringComparer.OrdinalIgnoreCase);
                 if (allowed.Contains("Task.Read")) allowed.Add("Calendar.Read");
-                if (!allowed.Contains(request.Route.Permission)) throw Error(403, "FORBIDDEN", "Permission has been revoked.");
+                if (!request.Route.Allows(allowed)) throw Error(403, "FORBIDDEN", "Permission has been revoked.");
                 request = request with { Permissions = request.Permissions.Where(allowed.Contains).ToHashSet(StringComparer.OrdinalIgnoreCase) };
             }
             if (request.Route.Resource == "user-roles" && !IsAdmin(request)) throw Error(403, "FORBIDDEN", "Organization administration is required.");
@@ -114,6 +117,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         if (r.Route.Resource == "objects") return Links(c, t, r);
         if (r.Route.Resource == "file-locations") return FileCheck(c, t, r);
         if (r.Route.Resource is "archive" or "trash") return Discovery(c, t, r);
+        if (r.Route is { Resource: "notifications", Operation: "poll" }) return PollNotifications(c, t, r);
         if (r.Route.Resource == "notifications" && r.Route.Operation is not ("list" or "get")) return Notifications(c, t, r);
         var resource = Resources[r.Route.Resource];
         if (r.Route.Operation is "list" or "tree") return List(c, t, r, resource);

@@ -25,7 +25,12 @@ public sealed class ProductApiException(int status, string code, string message)
 }
 
 public sealed record ProductApiRoute(string Method, string Path, string Resource,
-    string Operation, string Permission, bool Versioned = false, bool Idempotent = false);
+    string Operation, string Permission, bool Versioned = false, bool Idempotent = false,
+    string? AlternativePermission = null)
+{
+    public bool Allows(IReadOnlySet<string> granted) =>
+        granted.Contains(Permission) || AlternativePermission is { } alternative && granted.Contains(alternative);
+}
 
 public static class ProductApiRoutes
 {
@@ -93,6 +98,8 @@ public static class ProductApiRoutes
         Extra("POST", "network-resources", "network-resources", "create", "NetworkResource.Manage", false, true);
         Extra("PATCH", "network-resources/{id}", "network-resources", "patch", "NetworkResource.Manage", true, true);
         Extra("GET", "notifications", "notifications", "list", "Notification.ReadOwn");
+        routes.Add(new("GET", "/api/v1/notifications/poll", "notifications", "poll", "Notification.ReadOwn",
+            AlternativePermission: "Settings.ReadOwn"));
         Extra("GET", "reminders", "reminders", "list", "Reminder.ManageOwn");
         Extra("GET", "reminders/upcoming", "reminders", "upcoming", "Reminder.ManageOwn");
         Extra("POST", "reminders", "reminders", "create", "Reminder.ManageOwn", false, true);

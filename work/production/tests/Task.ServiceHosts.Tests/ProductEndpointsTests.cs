@@ -26,8 +26,26 @@ public sealed partial class ProductEndpointsTests
     private static readonly Guid ObjectId = Guid.NewGuid();
     public static IEnumerable<object[]> Routes => ProductApiRoutes.All.Select(route => new object[] { route.Method, route.Path });
     public static IEnumerable<object[]> RoutePolicies =>
-        ProductApiRoutes.All.Select(route =>
+        ProductApiRoutes.All.Where(route => route.AlternativePermission is null).Select(route =>
             new object[] { route.Method, route.Path, route.Permission });
+
+    [Theory]
+    [InlineData("notification.readown", "Settings.ReadOwn")]
+    [InlineData("settings.readown", "Notification.ReadOwn")]
+    public async System.Threading.Tasks.Task NotificationPollAcceptsEitherOwnReadPermission(string denied, string granted)
+    {
+        var store = new RecordingStore();
+        using var server = Server(store, deniedPermission: denied);
+        using var client = server.CreateClient();
+        using var response = await client.GetAsync("/api/v1/notifications/poll");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.Headers.CacheControl?.NoStore);
+        var request = Assert.IsType<ProductApiRequest>(store.LastRequest);
+        Assert.Equal("poll", request.Route.Operation);
+        Assert.Contains(granted, request.Permissions);
+        Assert.DoesNotContain(denied, request.Permissions, StringComparer.OrdinalIgnoreCase);
+        Assert.True(request.RevalidatePermissions);
+    }
 
     [Theory]
     [MemberData(nameof(RoutePolicies))]
