@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -22,6 +23,11 @@ public static class TaskReadCursorCodec
     private static readonly string NormalizedQueryHash = Base64UrlEncode(
         SHA256.HashData(Encoding.UTF8.GetBytes(NormalizedQuery)));
 
+    private static string QueryHash(TaskTodayWindow? today) => today is null
+        ? NormalizedQueryHash
+        : Base64UrlEncode(SHA256.HashData(Encoding.UTF8.GetBytes(string.Create(CultureInfo.InvariantCulture,
+            $"task-today:v1|{today.Date:yyyy-MM-dd}|{today.FromUtc:O}|{today.ToUtc:O}"))));
+
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -34,7 +40,8 @@ public static class TaskReadCursorCodec
         long authorizationScopeVersion,
         DateTimeOffset snapshotBoundaryUtc,
         DateTimeOffset lastUpdatedAtUtc,
-        Guid lastId)
+        Guid lastId,
+        TaskTodayWindow? today = null)
     {
         EnsureBinding(organizationId, userAccountId, authorizationScopeVersion);
         EnsureContinuation(snapshotBoundaryUtc, lastUpdatedAtUtc, lastId);
@@ -47,7 +54,7 @@ public static class TaskReadCursorCodec
             snapshotBoundaryUtc,
             lastUpdatedAtUtc,
             lastId,
-            NormalizedQueryHash);
+            QueryHash(today));
         var encoded = Base64UrlEncode(JsonSerializer.SerializeToUtf8Bytes(payload, SerializerOptions));
         if (encoded.Length > MaximumEncodedLength)
         {
@@ -61,7 +68,8 @@ public static class TaskReadCursorCodec
         string cursor,
         Guid organizationId,
         Guid userAccountId,
-        long authorizationScopeVersion)
+        long authorizationScopeVersion,
+        TaskTodayWindow? today = null)
     {
         EnsureBinding(organizationId, userAccountId, authorizationScopeVersion);
         if (string.IsNullOrWhiteSpace(cursor) || cursor.Length > MaximumEncodedLength)
@@ -79,7 +87,7 @@ public static class TaskReadCursorCodec
                 payload.OrganizationId != organizationId ||
                 payload.UserAccountId != userAccountId ||
                 payload.AuthorizationScopeVersion != authorizationScopeVersion ||
-                payload.QueryHash != NormalizedQueryHash)
+                payload.QueryHash != QueryHash(today))
             {
                 throw new TaskReadCursorException();
             }

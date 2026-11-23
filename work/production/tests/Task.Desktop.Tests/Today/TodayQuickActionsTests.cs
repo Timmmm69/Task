@@ -21,6 +21,30 @@ public sealed partial class TodayViewModelTests
     }
 
     [Fact]
+    public async AsyncTask Projection_ReconcilesPendingTransitionByIdWhenTaskLeavesProjection()
+    {
+        var task = QuickTask();
+        var client = new QuickClient(task) { TodayPage = Page([task], null) };
+        client.Results.Enqueue(new DesktopTaskWriteResult<DesktopTaskDto>.RequestInProgress());
+        using var vm = QuickVm(client);
+        await vm.ActivateAsync();
+        await vm.TransitionCommand.ExecuteAsync(DesktopTaskStatus.InProgress);
+        Assert.True(vm.HasUnconfirmedMutation);
+
+        client.TodayPage = Page([], null);
+        client.Detail = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(task with
+        {
+            Version = task.Version + 1,
+            Status = DesktopTaskStatus.Completed,
+        });
+        await vm.RefreshCommand.ExecuteAsync();
+        Assert.False(vm.HasUnconfirmedMutation);
+        Assert.Equal(1, client.DetailCalls);
+        Assert.Equal(0, client.ListCalls);
+        Assert.Empty(vm.QueueItems);
+    }
+
+    [Fact]
     public async AsyncTask QuickActions_ReturnIsSeparateFromStartAndRequiresConfirmation()
     {
         var task = QuickTask() with { Status = DesktopTaskStatus.Review };
@@ -369,17 +393,21 @@ public sealed partial class TodayViewModelTests
         new(calendar ?? new FakeCalendarClient(), grants ?? (calendar is null
             ? ["Task.Read", "Task.ChangeStatus"] : ["Task.Read", "Task.ChangeStatus", "Calendar.Read"]), TimeZoneInfo.Utc, Clock, client, User);
 
-    private sealed class QuickClient(params DesktopTaskDto[] tasks) : IDesktopTasksApiClient
+    private sealed class QuickClient(params DesktopTaskDto[] tasks) : IDesktopTasksApiClient, IDesktopTodayTasksApiClient
     {
         public List<DesktopTransitionTaskCommand> Commands { get; } = [];
         public Queue<DesktopTaskWriteResult<DesktopTaskDto>> Results { get; } = [];
         public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>>? Pending { get; init; }
         public DesktopTasksApiResult<DesktopTaskDto> Detail { get; set; } = new DesktopTasksApiResult<DesktopTaskDto>.ServerUnavailable();
+        public DesktopTasksApiResult<DesktopTaskPage> TodayPage { get; set; } = new DesktopTasksApiResult<DesktopTaskPage>.NotFound();
         public bool CancelWrite { get; set; }
         public int ListCalls { get; private set; }
         public int DetailCalls { get; private set; }
         public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default)
         { ListCalls++; return System.Threading.Tasks.Task.FromResult(Page(tasks, null)); }
+        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTodayTasksAsync(
+            DateOnly date, DateTimeOffset fromUtc, DateTimeOffset toUtc, string? cursor, CancellationToken cancellationToken) =>
+            System.Threading.Tasks.Task.FromResult(TodayPage);
         public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(Guid id, CancellationToken cancellationToken = default)
         { DetailCalls++; return System.Threading.Tasks.Task.FromResult(Detail); }
         public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> TransitionTaskAsync(DesktopTransitionTaskCommand command, CancellationToken cancellationToken = default)

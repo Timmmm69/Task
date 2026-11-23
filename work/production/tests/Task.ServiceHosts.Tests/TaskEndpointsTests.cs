@@ -49,6 +49,7 @@ public sealed partial class TaskEndpointsTests
     [Theory]
     [InlineData(TasksUrl)]
     [InlineData(TasksUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")]
+    [InlineData(TasksUrl + "/today")]
     public async global::System.Threading.Tasks.Task GetTaskEndpoints_WithoutToken_Return401(string url)
     {
         using var server = CreateServer(new FakeTaskReadStore(Projection));
@@ -76,15 +77,50 @@ public sealed partial class TaskEndpointsTests
         await AssertProblemAsync(response, HttpStatusCode.Unauthorized, expectedCode);
     }
 
-    [Fact]
-    public async global::System.Threading.Tasks.Task GetTasks_WithoutTaskManagePermission_Returns403()
+    [Theory]
+    [InlineData(TasksUrl)]
+    [InlineData(TasksUrl + "/today")]
+    public async global::System.Threading.Tasks.Task GetTasks_WithoutTaskManagePermission_Returns403(string url)
     {
         using var server = CreateServer(new FakeTaskReadStore(Projection), grantTaskRead: false);
         using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
 
-        var response = await client.GetAsync(TasksUrl);
+        var response = await client.GetAsync(url);
 
         await AssertProblemAsync(response, HttpStatusCode.Forbidden, "FORBIDDEN");
+    }
+
+    [Fact]
+    public async global::System.Threading.Tasks.Task GetTodayTasks_BindsDayAndCursorToAuthenticatedActor()
+    {
+        var store = new FakeTaskReadStore(Projection) { Page = new TaskReadPage([Projection], "next") };
+        using var server = CreateServer(store);
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+
+        var response = await client.GetAsync(TasksUrl + "/today?date=2026-03-08&fromUtc=2026-03-08T05:00:00Z&toUtc=2026-03-09T04:00:00Z&cursor=day-cursor");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var request = Assert.IsType<TaskReadPageRequest>(store.LastPageRequest);
+        Assert.Equal(OrganizationId, request.OrganizationId);
+        Assert.Equal(UserId, request.UserAccountId);
+        Assert.Equal("day-cursor", request.Cursor);
+        Assert.Equal(new TaskTodayWindow(new DateOnly(2026, 3, 8), DateTimeOffset.Parse("2026-03-08T05:00:00Z"),
+            DateTimeOffset.Parse("2026-03-09T04:00:00Z")), request.Today);
+        using var json = await ReadJsonAsync(response);
+        AssertTaskContract(Assert.Single(json.RootElement.GetProperty("items").EnumerateArray()));
+    }
+
+    [Theory]
+    [InlineData("date=2026-03-08&fromUtc=2026-03-08T05:00:00Z&toUtc=2026-03-11T04:00:00Z")]
+    [InlineData("date=2026-03-08&fromUtc=2026-03-08T05:00:00&toUtc=2026-03-09T04:00:00Z")]
+    [InlineData("date=2026-03-08&date=2026-03-09&fromUtc=2026-03-08T05:00:00Z&toUtc=2026-03-09T04:00:00Z")]
+    public async global::System.Threading.Tasks.Task GetTodayTasks_RejectsInvalidDayBeforeRead(string query)
+    {
+        var store = new FakeTaskReadStore(Projection);
+        using var server = CreateServer(store);
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        var response = await client.GetAsync(TasksUrl + "/today?" + query);
+        await AssertProblemAsync(response, HttpStatusCode.BadRequest, "VALIDATION_FAILED");
+        Assert.Null(store.LastPageRequest);
     }
 
     [Fact]
