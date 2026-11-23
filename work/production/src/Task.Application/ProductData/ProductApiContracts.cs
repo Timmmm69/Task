@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Task.Application.Security;
 
 namespace Task.Application.ProductData;
 
@@ -9,7 +10,8 @@ public sealed record ProductApiRequest(
     IReadOnlyDictionary<string, string> Query, int? ExpectedVersion,
     string? IdempotencyKey, string RequestHash, IReadOnlySet<string> Permissions,
     CancellationToken CancellationToken = default,
-    bool RevalidatePermissions = false);
+    bool RevalidatePermissions = false,
+    AuthenticatedRequestContext? AuthenticatedSession = null);
 
 public sealed record ProductApiResponse(JsonNode? Body, int Status = 200, int? Version = null, bool WasReplayed = false);
 
@@ -28,6 +30,20 @@ public sealed record ProductApiRoute(string Method, string Path, string Resource
     string Operation, string Permission, bool Versioned = false, bool Idempotent = false,
     string? AlternativePermission = null)
 {
+    public string? RequiredReadPermission => Resource switch
+    {
+        "projects" => "Project.Read",
+        "contacts" or "companies" or "interactions" => "Contact.Read",
+        "catalog-items" or "file-locations" => "FileCatalog.Read",
+        "tasks" => "Task.Read",
+        _ => null,
+    };
+
+    public static string GetBackingPermission(string code) =>
+        string.Equals(code, "Calendar.Read", StringComparison.OrdinalIgnoreCase)
+            ? "task.read"
+            : code.ToLowerInvariant();
+
     public bool Allows(IReadOnlySet<string> granted) =>
         granted.Contains(Permission) || AlternativePermission is { } alternative && granted.Contains(alternative);
 }

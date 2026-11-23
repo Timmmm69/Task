@@ -88,6 +88,49 @@ public sealed class PostgresAuthorizationPolicyStoreTests
             Assert.Empty(await store.GetUserGrantsAsync(organizationB, userA, "tasks.view"));
             Assert.Empty(await store.GetUserDeniesAsync(organizationB, userA, "tasks.view"));
 
+            var service = new PermissionDecisionService(store);
+            var codes = new[] { "tasks.view", "tasks.edit", "missing.code", "tasks.view" };
+            var decisions = await service.EvaluateManyAsync(organizationA, userA, codes);
+            Assert.Equal(3, decisions.Count);
+            Assert.Equal(AuthorizationDenyReason.ExplicitDeny, decisions["tasks.view"].Reason);
+            Assert.True(decisions["tasks.edit"].Allowed);
+            Assert.Equal(AuthorizationDenyReason.DefaultDeny, decisions["missing.code"].Reason);
+            Assert.All((await service.EvaluateManyAsync(organizationB, userA, codes)).Values,
+                decision => Assert.Equal(AuthorizationDenyReason.NoOrg, decision.Reason));
+
+            var departmentId = Guid.NewGuid();
+            using (var department = dataSource.CreateCommand("""
+                       INSERT INTO core.objects (id, organization_id, object_type, created_at, updated_at, created_by, updated_by)
+                       VALUES ($1, $2, 'department', statement_timestamp(), statement_timestamp(), $3, $3);
+                       """))
+            {
+                department.Parameters.AddWithValue(departmentId);
+                department.Parameters.AddWithValue(organizationA);
+                department.Parameters.AddWithValue(userA);
+                await department.ExecuteNonQueryAsync();
+            }
+            using (var scopedDeny = dataSource.CreateCommand(
+                       "UPDATE iam.user_roles SET department_id = $1 WHERE user_account_id = $2 AND role_id = $3;"))
+            {
+                scopedDeny.Parameters.AddWithValue(departmentId);
+                scopedDeny.Parameters.AddWithValue(userA);
+                scopedDeny.Parameters.AddWithValue(denyRoleA);
+                await scopedDeny.ExecuteNonQueryAsync();
+            }
+            var scopedDecisions = await service.EvaluateManyAsync(organizationA, userA, codes);
+            Assert.True(scopedDecisions["tasks.view"].Allowed);
+            Assert.True(scopedDecisions["tasks.edit"].Allowed);
+
+            using (var expire = dataSource.CreateCommand(
+                       "UPDATE iam.user_roles SET valid_until = clock_timestamp() - interval '1 second' WHERE role_id = $1;"))
+            {
+                expire.Parameters.AddWithValue(denyRoleA);
+                await expire.ExecuteNonQueryAsync();
+            }
+            var expiredDecisions = await service.EvaluateManyAsync(organizationA, userA, codes);
+            Assert.True(expiredDecisions["tasks.view"].Allowed);
+            Assert.Equal(AuthorizationDenyReason.DefaultDeny, expiredDecisions["tasks.edit"].Reason);
+
             await Assert.ThrowsAsync<ArgumentException>(() => store.GetUserOrgAsync(Guid.Empty));
             await Assert.ThrowsAsync<ArgumentException>(() => store.GetUserGrantsAsync(Guid.Empty, userA, "tasks.view"));
             await Assert.ThrowsAsync<ArgumentException>(() => store.GetUserGrantsAsync(organizationA, Guid.Empty, "tasks.view"));

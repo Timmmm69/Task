@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json;
 using Npgsql;
 using Task.Application.ProductData;
+using Task.Application.Security;
 using Task.Domain;
 using Task.Infrastructure.Persistence;
 
@@ -232,6 +233,69 @@ public sealed partial class PostgresProductApiTests
         Assert.Single(next.Body!["items"]!.AsArray()); Assert.False(next.Body!["hasMore"]!.GetValue<bool>());
     }
 
+    [Fact]
+    public async global::System.Threading.Tasks.Task ProductApi_RejectsCommandsAfterConcurrentSessionRevocation()
+    {
+        using var db = Database.Create();
+        if (db is null) return;
+
+        var role = Guid.NewGuid();
+        db.Sql("INSERT INTO iam.roles (id, organization_id, code, display_name) VALUES ($1, $2, 'project_writer', 'Project writer');",
+            role, db.Organization);
+        db.Sql("INSERT INTO iam.role_permissions (role_id, permission_code, effect) VALUES ($1, 'project.create', 'grant'), ($1, 'project.read', 'grant');", role);
+        db.Sql("INSERT INTO iam.user_roles (user_account_id, role_id) VALUES ($1, $2);", db.User, role);
+        using var version = db.Source.CreateCommand("SELECT version FROM iam.authorization_scope_versions WHERE user_account_id = $1;");
+        version.Parameters.AddWithValue(db.User);
+        var scopeVersion = (long)(await version.ExecuteScalarAsync())!;
+        var session = new AuthenticatedRequestContext(db.User, db.Session, db.Organization, 1, scopeVersion, "test", "test");
+
+        var body = $$"""{"name":"Authorization test","ownerUserId":"{{db.User}}"}""";
+        var created = db.Call("projects", "create", body, session: db.Session,
+            admin: false, permissions: ["Project.Create", "Project.Read"], revalidatePermissions: true, authenticatedSession: session);
+        Assert.Equal(201, created.Status);
+        db.Sql("DELETE FROM iam.role_permissions WHERE role_id = $1 AND permission_code = 'project.read';", role);
+        var missingRead = Assert.Throws<ProductApiException>(() => db.Call("projects", "create", body,
+            admin: false, permissions: ["Project.Create", "Project.Read"], revalidatePermissions: true, authenticatedSession: session));
+        Assert.Equal(403, missingRead.Status);
+        db.Sql("INSERT INTO iam.role_permissions (role_id, permission_code, effect) VALUES ($1, 'project.read', 'grant');", role);
+
+        using var revokeConnection = db.Source.OpenConnection();
+        using var revokeTransaction = revokeConnection.BeginTransaction();
+        using (var revoke = new NpgsqlCommand(
+                   "UPDATE iam.sessions SET revoked_at = clock_timestamp() WHERE id = $1;", revokeConnection, revokeTransaction))
+        {
+            revoke.Parameters.AddWithValue(db.Session);
+            await revoke.ExecuteNonQueryAsync();
+        }
+
+        var command = global::System.Threading.Tasks.Task.Run(() => Record.Exception(() =>
+            db.Call("projects", "create", body, admin: false,
+                permissions: ["Project.Create", "Project.Read"], revalidatePermissions: true, authenticatedSession: session)));
+        // The write must wait for the competing session update before using its authorization.
+        using var waiter = db.Source.CreateCommand("""
+            SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+                WHERE datname = current_database() AND wait_event_type = 'Lock'
+                    AND $1 = ANY(pg_blocking_pids(pid)));
+            """);
+        waiter.Parameters.AddWithValue(revokeConnection.ProcessID);
+        var started = System.Diagnostics.Stopwatch.StartNew();
+        var waiting = false;
+        while (!command.IsCompleted && started.Elapsed < TimeSpan.FromSeconds(2))
+        {
+            if ((bool)(await waiter.ExecuteScalarAsync())!)
+            {
+                waiting = true;
+                break;
+            }
+            await global::System.Threading.Tasks.Task.Delay(20);
+        }
+        await revokeTransaction.CommitAsync();
+        var rejected = Assert.IsType<ProductApiException>(await command.WaitAsync(TimeSpan.FromSeconds(5)));
+        Assert.True(waiting);
+        Assert.Equal("SESSION_REVOKED", rejected.Code);
+        Assert.Equal(1, db.Count("projects.projects"));
+    }
+
     private sealed class Database : IDisposable
     {
         private readonly NpgsqlDataSource admin;
@@ -277,14 +341,16 @@ public sealed partial class PostgresProductApiTests
         }
         public ProductApiResponse Call(string resource, string operation, string body = "{}", Guid? id = null, int? version = null,
             string? key = null, Guid? child = null, Guid? user = null, bool admin = true, Dictionary<string, string>? query = null,
-            string[]? permissions = null, Guid? session = null, bool revalidatePermissions = false)
+            string[]? permissions = null, Guid? session = null, bool revalidatePermissions = false,
+            AuthenticatedRequestContext? authenticatedSession = null)
         {
             var route = ProductApiRoutes.All.First(route => route.Resource == resource && route.Operation == operation);
             var granted = (permissions ?? ProductApiRoutes.All.Select(route => route.Permission).ToArray()).ToHashSet();
             if (admin) granted.Add("organization.manage");
             return apiRuntime.CreateProductApiStore().Execute(new(Organization, user ?? User, session ?? Session, Guid.NewGuid(),
                 route, id, child, JsonNode.Parse(body)!.AsObject(), query ?? new(), version, key,
-                Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(body + version))), granted, RevalidatePermissions: revalidatePermissions));
+                Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(body + version))), granted,
+                RevalidatePermissions: revalidatePermissions, AuthenticatedSession: authenticatedSession));
         }
         public void Sql(string sql, params object[] args)
         { using var command = source.CreateCommand(sql); foreach (var arg in args) command.Parameters.Add(new NpgsqlParameter { Value = arg }); command.ExecuteNonQuery(); }
