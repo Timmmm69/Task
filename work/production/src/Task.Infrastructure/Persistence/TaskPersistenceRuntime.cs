@@ -12,6 +12,7 @@ namespace Task.Infrastructure.Persistence;
 
 public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 {
+    public const int SearchSnapshotCleanupBatchSize = 1000;
     public static int ExpectedMigrationVersion => TaskPersistenceMigrationCatalog.LatestVersion;
     public static readonly TimeSpan DefaultReadinessTimeout = TimeSpan.FromSeconds(3);
 
@@ -66,6 +67,24 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
         new PostgresProjectStore(GetConfiguredDataSource());
 
     public IProductApiStore CreateProductApiStore() => new PostgresProductApiStore(GetConfiguredDataSource());
+
+    public async Task<int> PurgeExpiredSearchSnapshotsAsync(CancellationToken cancellationToken = default)
+    {
+        // Tuple IDs are scoped to this statement and let DELETE visit only the selected rows.
+        await using var command = GetConfiguredDataSource().CreateCommand(
+            """
+            DELETE FROM core.product_search_snapshots
+            WHERE ctid = ANY (ARRAY(
+                SELECT ctid
+                FROM core.product_search_snapshots
+                WHERE expires_at < statement_timestamp()
+                ORDER BY expires_at
+                LIMIT @batchSize
+            ));
+            """);
+        command.Parameters.AddWithValue("batchSize", SearchSnapshotCleanupBatchSize);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
 
     public IContactStore CreateContactStore() =>
         new PostgresContactStore(GetConfiguredDataSource());
