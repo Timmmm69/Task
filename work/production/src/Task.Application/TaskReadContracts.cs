@@ -25,7 +25,15 @@ public sealed record TaskReadPageRequest(
     Guid OrganizationId,
     Guid UserAccountId,
     long AuthorizationScopeVersion,
-    string? Cursor = null);
+    string? Cursor = null,
+    TaskTodayWindow? Today = null);
+
+/// <summary>The selected local day and its half-open UTC interval.</summary>
+public sealed record TaskTodayWindow(DateOnly Date, DateTimeOffset FromUtc, DateTimeOffset ToUtc)
+{
+    public bool IsValid => FromUtc.Offset == TimeSpan.Zero && ToUtc.Offset == TimeSpan.Zero &&
+        ToUtc > FromUtc && ToUtc - FromUtc <= TimeSpan.FromDays(2);
+}
 
 /// <summary>One active-task page. Exact totals are deliberately not counted.</summary>
 public sealed record TaskReadPage(

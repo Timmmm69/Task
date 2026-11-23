@@ -207,6 +207,28 @@ public sealed class DesktopTasksApiClientTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task GetTodayTasks_SendsLocalDateUtcWindowAndOpaqueCursor()
+    {
+        await using var fixture = await Fixture.CreateAsync((_, _) =>
+            global::System.Threading.Tasks.Task.FromResult(JsonResponse(
+                HttpStatusCode.OK, $$"""{"items":[{{TaskJson()}}],"nextCursor":null}""")));
+        var from = new DateTimeOffset(2026, 3, 8, 5, 0, 0, TimeSpan.Zero);
+
+        var result = await fixture.Client.GetTodayTasksAsync(new DateOnly(2026, 3, 8), from, from.AddHours(23),
+            "next/+?", CancellationToken.None);
+
+        var page = Assert.IsType<DesktopTasksApiResult<DesktopTaskPage>.Succeeded>(result);
+        Assert.Equal(TaskId, Assert.Single(page.Value.Items).Id);
+        var request = Assert.Single(fixture.TaskRequests);
+        Assert.Equal("/api/v1/tasks/today", request.Uri.AbsolutePath);
+        Assert.Contains("date=2026-03-08", request.Uri.Query);
+        Assert.Contains("fromUtc=2026-03-08T05%3A00%3A00.0000000%2B00%3A00", request.Uri.Query);
+        Assert.Contains("toUtc=2026-03-09T04%3A00%3A00.0000000%2B00%3A00", request.Uri.Query);
+        Assert.Contains("cursor=next%2F%2B%3F", request.Uri.Query);
+        Assert.Equal("AT_initial", request.AuthorizationParameter);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task GetTaskById_UsesCanonicalRoute_AndParsesDetails()
     {
         await using var fixture = await Fixture.CreateAsync((_, _) =>

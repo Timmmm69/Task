@@ -10,6 +10,29 @@ public sealed partial class TodayViewModelTests
     private static readonly Guid Other = Guid.NewGuid();
 
     [Fact]
+    public async System.Threading.Tasks.Task Projection_ShowsCalendarWhileTasksArePendingAndAvoidsGlobalList()
+    {
+        var pending = new TaskCompletionSource<DesktopTasksApiResult<DesktopTaskPage>>();
+        var tasks = new SummaryClient { TodayPending = pending.Task };
+        var calendar = new FakeCalendarClient();
+        calendar.ScheduleResults.Enqueue(Schedule([AllDayEvent(Today, "Встреча"), TimedTask(Today, "Несовпадающая строка календаря")]));
+        using var vm = new TodayViewModel(calendar, ["Calendar.Read", "Task.Read"], TimeZoneInfo.Utc, Clock, tasks, User);
+
+        var load = vm.ActivateAsync();
+        Assert.False(load.IsCompleted);
+        Assert.False(vm.ShowInitialLoading);
+        Assert.Equal("Встреча", Assert.Single(vm.UntimedItems).Title);
+        Assert.Equal(Today, Assert.Single(tasks.TodayRequests).Date);
+        Assert.Empty(tasks.Cursors);
+        var review = SummaryTask("Review", Other, [User], Clock().AddDays(-1)) with { Status = DesktopTaskStatus.Review };
+        pending.SetResult(Page([review], null));
+        await load;
+        Assert.Equal(review.Id, Assert.Single(vm.ReviewTasks).Id);
+        Assert.Empty(vm.TimedItems);
+        Assert.Equal(1, calendar.ScheduleCalls);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task Summary_LoadsAllPagesAndExcludesTerminalAndUnrelatedTasks()
     {
         var tasks = new SummaryClient();
@@ -250,15 +273,23 @@ public sealed partial class TodayViewModelTests
     private static DesktopTasksApiResult<DesktopTaskPage> Page(DesktopTaskDto[] tasks, string? cursor) =>
         new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new(tasks, cursor, null));
 
-    private sealed class SummaryClient : IDesktopTasksApiClient
+    private sealed class SummaryClient : IDesktopTasksApiClient, IDesktopTodayTasksApiClient
     {
         public Queue<DesktopTasksApiResult<DesktopTaskPage>> Pages { get; } = new();
         public List<string?> Cursors { get; } = [];
+        public List<(DateOnly Date, string? Cursor)> TodayRequests { get; } = [];
+        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>? TodayPending { get; init; }
         public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>>? Pending { get; init; }
         public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default)
         {
             Cursors.Add(cursor);
             return Pending ?? System.Threading.Tasks.Task.FromResult(Pages.Dequeue());
+        }
+        public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTodayTasksAsync(
+            DateOnly date, DateTimeOffset fromUtc, DateTimeOffset toUtc, string? cursor, CancellationToken cancellationToken)
+        {
+            TodayRequests.Add((date, cursor));
+            return TodayPending ?? System.Threading.Tasks.Task.FromResult<DesktopTasksApiResult<DesktopTaskPage>>(new DesktopTasksApiResult<DesktopTaskPage>.NotFound());
         }
         public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(Guid id, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(DesktopCreateTaskCommand command, CancellationToken cancellationToken = default) => throw new NotSupportedException();

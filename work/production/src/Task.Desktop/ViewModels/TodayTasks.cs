@@ -10,6 +10,7 @@ public sealed partial class TodayViewModel
     private IReadOnlyList<TaskItemViewModel> _reviewTasks = [];
     private IReadOnlyList<TaskItemViewModel> _waitingTasks = [];
     private string? _tasksMessage;
+    private bool _todayProjectionUnsupported;
 
     public IReadOnlyList<TaskItemViewModel> OverdueTasks => _overdueTasks;
     public IReadOnlyList<TaskItemViewModel> ReviewTasks => _reviewTasks;
@@ -41,57 +42,86 @@ public sealed partial class TodayViewModel
         OnPropertyChanged(nameof(HasItems));
     }
 
-    private async global::System.Threading.Tasks.Task LoadTaskItemsAsync(long generation, CancellationToken token)
+    private async global::System.Threading.Tasks.Task<bool> LoadTaskItemsAsync(
+        DateOnly date, DateTimeOffset fromUtc, DateTimeOffset toUtc, long generation, CancellationToken token)
     {
-        if (_tasksClient is null) return;
+        if (_tasksClient is null) return false;
         if (!CanReadTasks)
         {
             ClearTaskItems();
             TasksMessage = "Нет права Task.Read для просмотра задач.";
-            return;
+            return false;
+        }
+
+        if (!_currentUserId.HasValue)
+        {
+            ClearTaskItems();
+            return false;
         }
 
         var tasks = new Dictionary<Guid, DesktopTaskDto>();
         var cursors = new HashSet<string>(StringComparer.Ordinal);
+        var projection = _todayProjectionUnsupported ? null : _tasksClient as IDesktopTodayTasksApiClient;
         string? cursor = null;
         try
         {
-            do
+            while (true)
             {
-                var result = await _tasksClient.GetTasksAsync(cursor, token).ConfigureAwait(true);
-                if (!_active || !_sessionAvailable || !CanReadTasks || token.IsCancellationRequested || generation != _generation) return;
+                var result = projection is null
+                    ? await _tasksClient.GetTasksAsync(cursor, token).ConfigureAwait(true)
+                    : await projection.GetTodayTasksAsync(date, fromUtc, toUtc, cursor, token).ConfigureAwait(true);
+                if (!CanApplyTodayLoad(generation, token) || !CanReadTasks) return false;
+                if (projection is not null && cursor is null && result is DesktopTasksApiResult<DesktopTaskPage>.NotFound)
+                {
+                    _todayProjectionUnsupported = true;
+                    projection = null;
+                    continue;
+                }
                 if (result is not DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
                 {
                     if (result is DesktopTasksApiResult<DesktopTaskPage>.AuthenticationFailure)
                     {
                         UpdateSessionState(false);
-                        return;
+                        return false;
                     }
                     if (result is DesktopTasksApiResult<DesktopTaskPage>.Forbidden) ClearTaskItems();
                     TasksMessage = result is DesktopTasksApiResult<DesktopTaskPage>.Forbidden
                         ? "Нет права Task.Read для просмотра задач."
                         : "Не удалось обновить задачи. Повторите обновление; ранее загруженные задачи могут быть неактуальны.";
-                    return;
+                    return false;
                 }
                 foreach (var task in success.Value.Items) tasks[task.Id] = task;
                 cursor = success.Value.NextCursor;
-                if (!string.IsNullOrEmpty(cursor) && !cursors.Add(cursor))
+                if (string.IsNullOrEmpty(cursor)) break;
+                if (!cursors.Add(cursor))
                 {
                     TasksMessage = "Сервер повторил страницу задач. Повторите обновление.";
-                    return;
+                    return false;
                 }
-            } while (!string.IsNullOrEmpty(cursor));
+            }
 
-            if (!_currentUserId.HasValue)
+            if (projection is not null)
             {
-                _activeTaskItems = [];
-                _overdueTasks = [];
-                _reviewTasks = [];
-                _waitingTasks = [];
-                TasksMessage = null;
-                NotifyTaskItems();
-                RebuildPlannerItems();
-                return;
+                var missing = _unconfirmedCommands.Keys.Concat(_planningRetries.Keys).Concat(_tasksNeedingReload)
+                    .Distinct().Where(id => !tasks.ContainsKey(id)).ToArray();
+                foreach (var id in missing)
+                {
+                    var result = await _tasksClient.GetTaskByIdAsync(id, token).ConfigureAwait(true);
+                    if (!CanApplyTodayLoad(generation, token) || !CanReadTasks) return false;
+                    if (result is DesktopTasksApiResult<DesktopTaskDto>.AuthenticationFailure)
+                    {
+                        UpdateSessionState(false);
+                        return false;
+                    }
+                    if (result is DesktopTasksApiResult<DesktopTaskDto>.Forbidden)
+                    {
+                        ClearTaskItems();
+                        TasksMessage = "Нет права Task.Read для просмотра задач.";
+                        return false;
+                    }
+                    if (result is DesktopTasksApiResult<DesktopTaskDto>.Succeeded { Value: var task } && task.Id == id)
+                        tasks[id] = task;
+                }
             }
 
             _taskSnapshots = tasks;
@@ -105,6 +135,7 @@ public sealed partial class TodayViewModel
             RebuildTaskSummaries();
             TasksMessage = null;
             RebuildPlannerItems();
+            return projection is not null;
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { }
         catch (Exception)
@@ -112,6 +143,7 @@ public sealed partial class TodayViewModel
             if (_active && generation == _generation && CanReadTasks)
                 TasksMessage = "Сервер задач недоступен. Повторите обновление.";
         }
+        return false;
     }
 
     private void RebuildTaskSummaries()

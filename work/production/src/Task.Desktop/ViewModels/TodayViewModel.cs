@@ -369,28 +369,34 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
 
         try
         {
-            await LoadTaskItemsAsync(generation, token).ConfigureAwait(true);
-            if (!_active || token.IsCancellationRequested || generation != _generation) return;
-
             var (fromUtc, toUtc) = CalendarViewModel.GetUtcRange(
-                _today,
-                _today.AddDays(1),
+                requestedToday,
+                requestedToday.AddDays(1),
                 _timeZone);
 
-            var result = CanRead
-                ? await _client.GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, token).ConfigureAwait(true)
-                : new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new DesktopSchedulePage([], fromUtc, toUtc));
-
-            if (!_active
-                || token.IsCancellationRequested
-                || generation != _generation)
+            var schedule = CanRead
+                ? _client.GetScheduleAsync(fromUtc, toUtc, _timeZone.Id, token)
+                : global::System.Threading.Tasks.Task.FromResult<DesktopCalendarResult<DesktopSchedulePage>>(
+                    new DesktopCalendarResult<DesktopSchedulePage>.Succeeded(new DesktopSchedulePage([], fromUtc, toUtc)));
+            var tasks = LoadTaskItemsAsync(requestedToday, fromUtc, toUtc, generation, token);
+            if (await global::System.Threading.Tasks.Task.WhenAny(schedule, tasks).ConfigureAwait(true) == schedule
+                && !tasks.IsCompleted && schedule.IsCompletedSuccessfully && CanApplyTodayLoad(generation, token))
             {
-                return;
+                if (schedule.Result is DesktopCalendarResult<DesktopSchedulePage>.AuthenticationFailure)
+                    UpdateSessionState(false);
+                else if (schedule.Result is DesktopCalendarResult<DesktopSchedulePage>.Succeeded early && !hadConfirmedData)
+                {
+                    ApplySchedule(early.Value, waitingForTasks: true);
+                    OnPropertyChanged(nameof(ShowInitialLoading));
+                }
             }
+            await global::System.Threading.Tasks.Task.WhenAll(schedule, tasks).ConfigureAwait(true);
+            if (!CanApplyTodayLoad(generation, token)) return;
+            var result = schedule.Result;
 
             if (result is DesktopCalendarResult<DesktopSchedulePage>.Succeeded succeeded)
             {
-                ApplySchedule(succeeded.Value);
+                ApplySchedule(succeeded.Value, projectedTasks: tasks.Result);
 
                 if (TasksMessage is null) _lastSuccessfulRefresh = _clock();
                 OnPropertyChanged(nameof(LastSuccessfulRefreshText));
@@ -437,9 +443,13 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private void ApplySchedule(DesktopSchedulePage page)
+    private bool CanApplyTodayLoad(long generation, CancellationToken token) =>
+        _active && _sessionAvailable && !token.IsCancellationRequested && generation == _generation;
+
+    private void ApplySchedule(DesktopSchedulePage page, bool projectedTasks = false, bool waitingForTasks = false)
     {
         var items = page.Items
+            .Where(item => !(projectedTasks || waitingForTasks) || item.ItemType == DesktopScheduleItemType.CalendarEvent)
             .Select(item => new CalendarItemViewModel(item, null, _timeZone))
             .Where(item => item.AppearsOn(_today, _timeZone))
             .ToArray();
@@ -458,10 +468,10 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             .ThenBy(item => item.Title, StringComparer.CurrentCulture)
             .ToArray();
 
-        // Calendar's legacy Task rows use deadlines as interval ends and omit date-only/duration-only plans.
-        // Reconcile every known Task from its canonical DTO on each load, including cleared planning.
-        foreach (var task in _taskSnapshots.Values)
-            UpdateTaskPlanningProjection(task);
+        // Task planning uses the canonical DTO, including date-only plans and planned durations.
+        if (!waitingForTasks)
+            foreach (var task in _taskSnapshots.Values)
+                UpdateTaskPlanningProjection(task);
         RebuildPlannerItems();
     }
 

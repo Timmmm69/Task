@@ -141,6 +141,12 @@ public interface IDesktopTasksApiClient : IDesktopTaskWriteApiClient
         CancellationToken cancellationToken = default);
 }
 
+internal interface IDesktopTodayTasksApiClient
+{
+    global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTodayTasksAsync(
+        DateOnly date, DateTimeOffset fromUtc, DateTimeOffset toUtc, string? cursor, CancellationToken cancellationToken);
+}
+
 /// <summary>Typed Task write boundary; UI code never handles HTTP status or raw JSON.</summary>
 public interface IDesktopTaskWriteApiClient
 {
@@ -204,7 +210,7 @@ public abstract record DesktopTaskWriteResult<T>
 }
 
 /// <summary>Desktop client for the typed Task read/write API boundary.</summary>
-public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
+public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDesktopTodayTasksApiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -259,6 +265,17 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient
             .GetAsync(requestUri, Guid.NewGuid().ToString("D"), cancellationToken)
             .ConfigureAwait(false);
         return MapTaskResult(response);
+    }
+
+    public async global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTodayTasksAsync(
+        DateOnly date, DateTimeOffset fromUtc, DateTimeOffset toUtc, string? cursor, CancellationToken cancellationToken)
+    {
+        var query = string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"date={date:yyyy-MM-dd}&fromUtc={Uri.EscapeDataString(fromUtc.ToString("O"))}&toUtc={Uri.EscapeDataString(toUtc.ToString("O"))}");
+        if (cursor is not null) query += "&cursor=" + Uri.EscapeDataString(cursor);
+        var response = await _executor.GetAsync(new Uri($"{_tasksUri.AbsoluteUri}/today?{query}"),
+            Guid.NewGuid().ToString("D"), cancellationToken).ConfigureAwait(false);
+        return MapPageResult(response);
     }
 
     public async global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(

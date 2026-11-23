@@ -28,6 +28,9 @@ internal static partial class TaskEndpoints
         app.MapGet(TasksRoute, GetTasksAsync)
             .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
 
+        app.MapGet(TasksRoute + "/today", GetTodayTasksAsync)
+            .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
+
         app.MapPost(TasksRoute, CreateTaskAsync)
             .RequireAuthorization(TaskPermissionAuthorization.TaskCreatePolicyName);
 
@@ -48,8 +51,15 @@ internal static partial class TaskEndpoints
         "title", "priority", "startAtUtc", "deadlineAt", "authorUserId",
     };
 
-    private static async Task<IResult> GetTasksAsync(
+    private static Task<IResult> GetTasksAsync(HttpContext context, CancellationToken cancellationToken) =>
+        ReadTasksAsync(context, false, cancellationToken);
+
+    private static Task<IResult> GetTodayTasksAsync(HttpContext context, CancellationToken cancellationToken) =>
+        ReadTasksAsync(context, true, cancellationToken);
+
+    private static async Task<IResult> ReadTasksAsync(
         HttpContext context,
+        bool today,
         CancellationToken cancellationToken)
     {
         var requestContext = ReadRequestContext(context);
@@ -74,7 +84,15 @@ internal static partial class TaskEndpoints
                 retryable: true);
         }
 
-        if (!TryReadListQuery(context.Request.Query, out var cursor))
+        TaskTodayWindow? todayWindow = null;
+        string? cursor;
+        if (today)
+        {
+            if (!TryReadTodayQuery(context.Request.Query, out todayWindow, out cursor))
+                return await WriteProblemAsync(context, StatusCodes.Status400BadRequest, "VALIDATION_FAILED",
+                    "Today requires a local date and a valid UTC day interval.", retryable: false);
+        }
+        else if (!TryReadListQuery(context.Request.Query, out cursor))
         {
             return await WriteProblemAsync(
                 context,
@@ -91,7 +109,8 @@ internal static partial class TaskEndpoints
                     requestContext.OrganizationId,
                     requestContext.UserAccountId,
                     requestContext.AuthorizationScopeVersion,
-                    cursor),
+                    cursor,
+                    todayWindow),
                 cancellationToken);
 
             return Results.Json(new TaskPageResponse(
@@ -288,6 +307,25 @@ internal static partial class TaskEndpoints
         return pageValue is null
             || int.TryParse(pageValue, NumberStyles.None, CultureInfo.InvariantCulture, out var page)
                 && page == 1;
+    }
+
+    private static bool TryReadTodayQuery(IQueryCollection query, out TaskTodayWindow? today, out string? cursor)
+    {
+        today = null;
+        cursor = Normalize(query["cursor"].ToString());
+        if (query.Any(pair => pair.Key is not ("cursor" or "date" or "fromUtc" or "toUtc") || pair.Value.Count != 1) ||
+            !DateOnly.TryParseExact(query["date"].ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ||
+            !TryReadUtc(query["fromUtc"].ToString(), out var from) || !TryReadUtc(query["toUtc"].ToString(), out var to))
+            return false;
+        today = new(date, from, to);
+        return today.IsValid;
+
+        static bool TryReadUtc(string value, out DateTimeOffset instant)
+        {
+            instant = default;
+            return (value.EndsWith('Z') || value.EndsWith("+00:00", StringComparison.Ordinal))
+                && DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out instant);
+        }
     }
 
     private static string? Normalize(string? value) =>

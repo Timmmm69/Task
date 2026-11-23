@@ -1,5 +1,6 @@
 using Npgsql;
 using NpgsqlTypes;
+using System.Globalization;
 using Task.Application;
 using Task.Domain;
 
@@ -13,6 +14,21 @@ namespace Task.Infrastructure.Persistence;
 public sealed class PostgresTaskReadStore : ITaskReadStore
 {
     public const int PageSize = 50;
+    public const int TodayPageSize = 200;
+
+    private const string TodayPredicate = """
+        AND t.status NOT IN ('completed','cancelled')
+        AND (
+            o.created_by=$6 OR t.card_content->'assigneeIds' ? $6::text OR t.card_content->'watcherIds' ? $6::text
+            OR (t.start_at_utc IS NULL AND t.card_content->>'scheduledDate'=$9)
+            OR (t.start_at_utc < $8 AND (
+                t.start_at_utc >= $7
+                OR CASE WHEN t.card_content->>'plannedDurationMinutes' ~ '^[0-9]{1,5}$'
+                        THEN t.start_at_utc + make_interval(mins => (t.card_content->>'plannedDurationMinutes')::int) > $7
+                        ELSE false END
+            ))
+        )
+        """;
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -86,18 +102,23 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 "Authorization scope version must be positive.");
         }
 
-        PostgresAuthorizationAudit.AdministrativeRead(_dataSource, request.OrganizationId, request.UserAccountId, "task.list");
+        if (request.Today is { IsValid: false }) throw new ArgumentException("Invalid Today window.", nameof(request));
+        var today = request.Today;
+        var pageSize = today is null ? PageSize : TodayPageSize;
+        PostgresAuthorizationAudit.AdministrativeRead(_dataSource, request.OrganizationId, request.UserAccountId,
+            today is null ? "task.list" : "task.today");
         var continuation = request.Cursor is null
             ? null
             : TaskReadCursorCodec.Parse(
                 request.Cursor,
                 request.OrganizationId,
                 request.UserAccountId,
-                request.AuthorizationScopeVersion);
+                request.AuthorizationScopeVersion,
+                today);
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            """
+            $$"""
             WITH snapshot AS MATERIALIZED (
                 SELECT COALESCE($2::timestamptz, statement_timestamp()) AS boundary
             )
@@ -128,6 +149,7 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
               AND ($3::timestamptz IS NULL
                    OR o.updated_at < $3
                    OR (o.updated_at = $3 AND o.id < $4::uuid))
+              {{(today is null ? "" : TodayPredicate)}}
             ORDER BY o.updated_at DESC, o.id DESC
             LIMIT $5;
             """,
@@ -136,11 +158,17 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
         AddNullableTimestamp(command, continuation?.SnapshotBoundaryUtc);
         AddNullableTimestamp(command, continuation?.LastUpdatedAtUtc);
         AddNullableGuid(command, continuation?.LastId);
-        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = PageSize + 1 });
+        command.Parameters.Add(new NpgsqlParameter<int> { TypedValue = pageSize + 1 });
 
-        var items = new List<TaskReadProjection>(PageSize + 1);
+        var items = new List<TaskReadProjection>(pageSize + 1);
         DateTimeOffset? snapshotBoundaryUtc = null;
         command.Parameters.AddWithValue(request.UserAccountId);
+        if (today is not null)
+        {
+            command.Parameters.AddWithValue(today.FromUtc);
+            command.Parameters.AddWithValue(today.ToUtc);
+            command.Parameters.AddWithValue(today.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        }
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
@@ -149,9 +177,9 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
         }
 
         string? nextCursor = null;
-        if (items.Count == PageSize + 1)
+        if (items.Count == pageSize + 1)
         {
-            items.RemoveAt(PageSize);
+            items.RemoveAt(pageSize);
             var last = items[^1];
             nextCursor = TaskReadCursorCodec.Create(
                 request.OrganizationId,
@@ -159,7 +187,8 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                 request.AuthorizationScopeVersion,
                 snapshotBoundaryUtc!.Value,
                 last.UpdatedAtUtc,
-                last.Id);
+                last.Id,
+                today);
         }
 
         return new TaskReadPage(items, nextCursor);
