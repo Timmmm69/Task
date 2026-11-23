@@ -36,7 +36,7 @@ public sealed partial class PostgresProductApiTests
     public void Inbox_UpgradeFromSixteenPreservesLegacyCaptureWithoutCloningItsTask()
     {
         using var db = Database.Create(); Assert.NotNull(db); DeadlineRoles(db);
-        db.Sql("DROP TABLE work.inbox_items; DELETE FROM infrastructure.schema_migrations WHERE version=17;");
+        db.Sql("DROP INDEX core.ix_product_search_snapshots_expires_at; DROP TABLE work.inbox_items; DELETE FROM infrastructure.schema_migrations WHERE version>=17;");
         var legacy = DeadlineTask(db, null);
         DeadlineTask(db, DateTimeOffset.UtcNow.AddDays(1));
         db.Runtime.CreateMigrator().ApplyPending(); db.Runtime.CreateMigrator().ApplyPending();

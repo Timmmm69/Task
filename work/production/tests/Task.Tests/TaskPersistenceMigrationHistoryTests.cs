@@ -7,8 +7,8 @@ public sealed class TaskPersistenceMigrationHistoryTests
     [Fact]
     public void Catalog_ExpectsInboxConversionVersionSeventeen()
     {
-        Assert.Equal(17, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("inbox_conversion", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(18, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("search_snapshot_expiry", TaskPersistenceMigrationCatalog.All[^1].Name);
     }
 
     [Fact]

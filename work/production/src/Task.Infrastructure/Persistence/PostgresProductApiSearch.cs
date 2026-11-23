@@ -39,11 +39,12 @@ internal sealed partial class PostgresProductApiStore
         var scope = One(c, t, "SELECT jsonb_build_object('version',COALESCE((SELECT version FROM iam.authorization_scope_versions WHERE user_account_id=@user),1));", r)!["version"]!.GetValue<long>();
         var filterHash = CursorScope(r);
         var offset = 0;
-        Guid snapshotId;
+        Guid snapshotId = default;
         JsonArray candidates;
-        if (normalized.TryGetValue("cursor", out var cursor))
+        var isContinuation = normalized.TryGetValue("cursor", out var cursor);
+        if (isContinuation)
         {
-            var parts = cursor.Split('.');
+            var parts = cursor!.Split('.');
             if (parts.Length != 2 || !Guid.TryParseExact(parts[0], "N", out snapshotId) || !int.TryParse(parts[1], out offset) || offset < 0)
                 throw Error(400, "SEARCH_CURSOR_INVALID", "Invalid search cursor.");
             var snapshot = One(c, t, "SELECT jsonb_build_object('results',results,'filterHash',filter_hash,'scopeVersion',scope_version,'expired',expires_at<=statement_timestamp()) " +
@@ -56,7 +57,6 @@ internal sealed partial class PostgresProductApiStore
         }
         else
         {
-            snapshotId = Guid.NewGuid();
             var union = new List<string>();
             var args = new List<(string, object?)> { ("q", q), ("limit", 10001) };
             foreach (var key in new[] { "projectIds", "userIds", "departments", "contactIds" }) args.Add((key, Values(key)));
@@ -120,11 +120,6 @@ internal sealed partial class PostgresProductApiStore
             var rows = union.Count == 0 ? [] : Many(c, t, "SELECT result FROM (" + string.Join(" UNION ALL ", union) + ") matches ORDER BY relevance DESC,updated_at DESC,object_type,id LIMIT @limit;", r, args.ToArray());
             if (rows.Count > 10000) throw Invalid("Search is too broad; refine the filters.");
             candidates = new JsonArray(rows.ToArray<JsonNode?>());
-            // Bounded, expiring query cache only; no product object is changed by searching.
-            Run(c, t, "DELETE FROM core.product_search_snapshots WHERE organization_id=@org AND expires_at<statement_timestamp();", r);
-            Run(c, t, "INSERT INTO core.product_search_snapshots(id,organization_id,user_account_id,filter_hash,scope_version,results,expires_at) " +
-                "VALUES(@snapshot,@org,@user,@hash,@scope,@results::jsonb,statement_timestamp()+interval '15 minutes');", r,
-                ("snapshot", snapshotId), ("hash", filterHash), ("scope", scope), ("results", candidates.ToJsonString()));
         }
         var page = new JsonArray();
         while (offset < candidates.Count && page.Count < limit)
@@ -146,7 +141,21 @@ internal sealed partial class PostgresProductApiStore
                 $"WHERE o.organization_id=@org AND o.id=@id AND o.lifecycle_state='active' AND {Visibility(resource)};", r, ("id", GuidValue(candidate, "objectId")));
             if (visible is not null && r.Permissions.Contains(resource.ReadPermission)) page.Add(candidate.DeepClone());
         }
-        return r.Route.Operation == "suggestions" ? new(page) : new(new JsonObject { ["items"] = page, ["nextCursor"] = offset < candidates.Count ? snapshotId.ToString("N") + "." + offset : null, ["tookMs"] = timer.ElapsedMilliseconds });
+        if (r.Route.Operation == "suggestions") return new(page);
+
+        string? nextCursor = null;
+        if (offset < candidates.Count)
+        {
+            if (!isContinuation)
+            {
+                snapshotId = Guid.NewGuid();
+                Run(c, t, "INSERT INTO core.product_search_snapshots(id,organization_id,user_account_id,filter_hash,scope_version,results,expires_at) " +
+                    "VALUES(@snapshot,@org,@user,@hash,@scope,@results::jsonb,statement_timestamp()+interval '15 minutes');", r,
+                    ("snapshot", snapshotId), ("hash", filterHash), ("scope", scope), ("results", candidates.ToJsonString()));
+            }
+            nextCursor = snapshotId.ToString("N") + "." + offset;
+        }
+        return new(new JsonObject { ["items"] = page, ["nextCursor"] = nextCursor, ["tookMs"] = timer.ElapsedMilliseconds });
 
         string[] Values(string key) => normalized.TryGetValue(key, out var value) ? value.Split(',', StringSplitOptions.RemoveEmptyEntries) : [];
     }
