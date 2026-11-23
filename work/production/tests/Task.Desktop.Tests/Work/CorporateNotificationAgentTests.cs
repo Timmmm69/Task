@@ -16,14 +16,67 @@ public sealed class CorporateNotificationAgentTests : IDisposable
     private IReadOnlyList<DesktopNotification> _center = [];
     public CorporateNotificationAgentTests()
     {
-        _client = DispatchProxy.Create<IDesktopWorkApiClient, ApiProxy>(); _api = (ApiProxy)_client;
+        _client = DispatchProxy.Create<IPollTestApi, ApiProxy>(); _api = (ApiProxy)_client;
     }
-    private CorporateNotificationAgent Agent(NotificationPresentationJournal journal) => new(_client, _presenter, journal,
-        () => _allowed, () => _settingsAllowed, items => _center = items, _clock);
+    private CorporateNotificationAgent Agent(NotificationPresentationJournal journal, Action<bool>? autostart = null) => new(_client, _presenter, journal,
+        () => _allowed, () => _settingsAllowed, items => _center = items, _clock, applyAutostart: autostart);
     private DesktopNotification Notification(string status = "delivered") => new(Guid.NewGuid(), 1, "task.assigned",
         "Task", "Content", "info", status, Guid.NewGuid(), _clock.Now.AddMinutes(-1));
     private void Set(params DesktopNotification[] notifications) => _api.Response = new DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Succeeded(notifications);
     private async System.Threading.Tasks.Task Seed(CorporateNotificationAgent agent) { Set(); await agent.RunPassAsync(); }
+
+    [Fact]
+    public async System.Threading.Tasks.Task PollAppliesDeltasAndResetsWithoutReadingHistoryOrRepeatingToasts()
+    {
+        var autostart = new List<bool>();
+        using var journal = new NotificationPresentationJournal(_directory, "poll");
+        using var agent = Agent(journal, autostart.Add);
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        var third = Guid.NewGuid();
+        var old = Notification();
+        var current = Notification() with { DeliveredAt = _clock.Now };
+        _api.Poll = new(first, true, false, true, [old], [], _api.Preferences, true);
+        await agent.RunPassAsync();
+        Assert.Null(_api.LastPollRevision);
+        Assert.Empty(_presenter.Items);
+
+        _api.Poll = new(second, false, false, true, [current], [old.Id], _api.Preferences with { SoundEnabled = false }, false);
+        await agent.RunPassAsync();
+        Assert.Equal(first, _api.LastPollRevision);
+        Assert.Equal(current, Assert.Single(_center));
+        Assert.False(Assert.Single(_presenter.Items).Sound);
+
+        _api.Poll = new(third, true, false, true, [current], [], _api.Preferences, false);
+        await agent.RunPassAsync();
+        Assert.Equal(second, _api.LastPollRevision);
+        Assert.Single(_presenter.Items);
+        Assert.Equal(new[] { true, false, false }, autostart);
+        Assert.Equal(3, _api.PollCalls);
+        Assert.Equal(3, _api.Calls);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task PollFallsBackToHistoryForLargeResetAndWorksWithSettingsOnly()
+    {
+        var autostart = new List<bool>();
+        using var journal = new NotificationPresentationJournal(_directory, "poll");
+        using var agent = Agent(journal, autostart.Add);
+        var old = Notification();
+        Set(old);
+        _api.Poll = new(null, true, true, true, [], [], _api.Preferences, true);
+        await agent.RunPassAsync();
+        Assert.Equal(old, Assert.Single(_center));
+        Assert.Equal(2, _api.Calls);
+
+        _allowed = false;
+        _api.Poll = new(null, true, false, false, [], [], _api.Preferences, false);
+        await agent.RunPassAsync();
+        Assert.False(_api.PollRequestedNotifications);
+        Assert.Empty(_center);
+        Assert.Equal(new[] { true, false }, autostart);
+        Assert.Equal(3, _api.Calls);
+    }
 
     [Fact]
     public async System.Threading.Tasks.Task FirstPassShowsNewlyDeliveredReminderEvenWhenCalculatedTriggerAlreadyPassed()
@@ -172,15 +225,31 @@ public sealed class CorporateNotificationAgentTests : IDisposable
         public bool Submit(WindowsNotification item) { if (!Available) return false; Items.Add(item); return true; }
         public void Clear() { }
     }
+    public interface IPollTestApi : IDesktopWorkApiClient, IDesktopNotificationPollClient;
+
     public class ApiProxy : DispatchProxy
     {
         public int Calls { get; private set; }
+        public int PollCalls { get; private set; }
+        public Guid? LastPollRevision { get; private set; }
+        public bool PollRequestedNotifications { get; private set; }
+        public DesktopNotificationPoll? Poll { get; set; }
         public DesktopNotificationPreferences Preferences { get; set; } = new(1, true, true, true, 15, null, null, null);
         public DesktopWorkResult<IReadOnlyList<DesktopNotification>> Response { get; set; } = new DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Succeeded([]);
         public System.Threading.Tasks.Task<DesktopWorkResult<IReadOnlyList<DesktopNotification>>>? Pending { get; set; }
         protected override object? Invoke(MethodInfo? method, object?[]? args)
         {
             Calls++;
+            if (method?.Name == nameof(IDesktopNotificationPollClient.PollNotificationsAsync))
+            {
+                PollCalls++;
+                LastPollRevision = (Guid?)args![0];
+                PollRequestedNotifications = (bool)args[1]!;
+                DesktopWorkResult<DesktopNotificationPoll> response = Poll is null
+                    ? new DesktopWorkResult<DesktopNotificationPoll>.NotFound()
+                    : new DesktopWorkResult<DesktopNotificationPoll>.Succeeded(Poll);
+                return System.Threading.Tasks.Task.FromResult(response);
+            }
             return method?.Name switch
             {
                 nameof(IDesktopWorkApiClient.GetNotificationPreferencesAsync) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<DesktopNotificationPreferences>>(new DesktopWorkResult<DesktopNotificationPreferences>.Succeeded(Preferences)),

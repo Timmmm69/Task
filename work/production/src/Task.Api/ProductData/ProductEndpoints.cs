@@ -14,8 +14,13 @@ internal static class ProductEndpoints
     public static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     {
         foreach (var route in ProductApiRoutes.All)
-            app.MapMethods(route.Path, [route.Method], (Delegate)((HttpContext context) => HandleAsync(context, route)))
-                .RequireAuthorization(TaskPermissionAuthorization.GetProductRoutePolicyName(route.Permission));
+        {
+            var endpoint = app.MapMethods(route.Path, [route.Method], (Delegate)((HttpContext context) => HandleAsync(context, route)));
+            if (route.AlternativePermission is null)
+                endpoint.RequireAuthorization(TaskPermissionAuthorization.GetProductRoutePolicyName(route.Permission));
+            else
+                endpoint.RequireAuthorization();
+        }
         return app;
     }
 
@@ -37,7 +42,8 @@ internal static class ProductEndpoints
                     code == "Calendar.Read" ? "task.read" : code.ToLowerInvariant(), context.RequestAborted)).Allowed) granted.Add(code);
             }
             await Check(route.Permission);
-            if (!granted.Contains(route.Permission)) throw new ProductApiException(403, "FORBIDDEN", "Permission denied.");
+            if (route.AlternativePermission is { } alternative) await Check(alternative);
+            if (!route.Allows(granted)) throw new ProductApiException(403, "FORBIDDEN", "Permission denied.");
             await Check("organization.manage");
             var readCapability = route.Resource switch { "projects" => "Project.Read", "contacts" or "companies" or "interactions" => "Contact.Read", "catalog-items" or "file-locations" => "FileCatalog.Read", _ => null };
             if (readCapability is not null)
@@ -110,6 +116,7 @@ internal static class ProductEndpoints
             var correlation = Guid.TryParse(context.Response.Headers["X-Correlation-ID"], out var parsed) ? parsed : Guid.NewGuid();
             var response = store.Execute(new(identity.OrganizationId, identity.UserAccountId, identity.SessionId,
                 correlation, route, id, childId, body, query, version, key.Length == 0 ? null : key, hash, granted, context.RequestAborted, RevalidatePermissions: true));
+            if (route is { Resource: "notifications", Operation: "poll" }) context.Response.Headers.CacheControl = "no-store";
             if (response.Version is { } responseVersion) context.Response.Headers.ETag = $"\"v{responseVersion}\"";
             if (route.Idempotent || key.Length > 0) context.Response.Headers["Idempotency-Replayed"] = response.WasReplayed ? "true" : "false";
             return response.Status == 204 ? Results.NoContent() : Results.Json(response.Body, statusCode: response.Status);

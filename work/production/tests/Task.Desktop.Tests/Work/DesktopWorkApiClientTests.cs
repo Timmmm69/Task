@@ -17,6 +17,35 @@ public sealed partial class DesktopWorkApiClientTests
     private static readonly Guid NotificationId = Guid.NewGuid();
 
     [Fact]
+    public async System.Threading.Tasks.Task NotificationPollSendsOneAuthorizedRequestAndValidatesDelta()
+    {
+        var revision = Guid.NewGuid();
+        var next = Guid.NewGuid();
+        var responses = new Queue<HttpResponseMessage>([
+            Json(HttpStatusCode.OK, $$"""
+                {"revision":"{{next:N}}","reset":false,"historyRequired":false,"notificationsIncluded":true,
+                 "items":[{"id":"{{NotificationId:D}}","version":2,"notificationType":"task.due","title":"Deadline","body":"Today","status":"read","notBefore":"2026-09-09T08:00:00Z"}],
+                 "removedIds":["{{ItemId:D}}"],"preferences":null,"autostartEnabled":false}
+                """),
+            Json(HttpStatusCode.OK, """{"revision":null,"reset":false,"historyRequired":false,"notificationsIncluded":true,"items":[],"removedIds":[]}""")
+        ]);
+        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(responses.Dequeue()));
+
+        var result = Assert.IsType<DesktopWorkResult<DesktopNotificationPoll>.Succeeded>(
+            await fixture.Client.PollNotificationsAsync(revision, true, true, CancellationToken.None)).Value;
+        var request = Assert.Single(fixture.Requests);
+        Assert.Equal("/api/v1/notifications/poll", request.Uri.AbsolutePath);
+        Assert.Contains($"revision={revision:N}", request.Uri.Query);
+        Assert.Equal("AT_initial", request.Bearer);
+        Assert.Equal(next, result.Revision);
+        Assert.Equal("read", Assert.Single(result.Items).Status);
+        Assert.Equal(ItemId, Assert.Single(result.RemovedIds));
+        Assert.False(result.AutostartEnabled);
+        Assert.IsType<DesktopWorkResult<DesktopNotificationPoll>.MalformedResponse>(
+            await fixture.Client.PollNotificationsAsync(next, true, true, CancellationToken.None));
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task ReadScenariosUseCanonicalRoutesAndStrictlyMapPayloads()
     {
         var responses = new Queue<HttpResponseMessage>([

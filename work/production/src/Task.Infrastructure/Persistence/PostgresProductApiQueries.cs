@@ -29,7 +29,7 @@ internal sealed partial class PostgresProductApiStore
         }
         if (r.Query.TryGetValue("status", out var status))
         { clauses.Add("to_jsonb(p)->>'status'=@status"); args.Add(("status", status)); }
-        if (r.Route.Resource == "notifications") clauses.Add("p.not_before<=statement_timestamp() AND (p.expires_at IS NULL OR p.expires_at>statement_timestamp())");
+        if (r.Route.Resource == "notifications") clauses.Add(NotificationDue);
         if (r.Query.TryGetValue("parentId", out var parent))
         {
             if (resource.Type != "catalog_item") throw Invalid("parentId applies only to catalog items.");
