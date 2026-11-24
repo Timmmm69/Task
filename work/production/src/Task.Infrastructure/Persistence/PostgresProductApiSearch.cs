@@ -182,14 +182,15 @@ internal sealed partial class PostgresProductApiStore
         if (parts.Length != 2 || !Guid.TryParseExact(parts[0], "N", out var snapshotId) || !int.TryParse(parts[1], out var offset) || offset < 0)
             throw Error(400, "SEARCH_CURSOR_INVALID", "Invalid search cursor.");
 
+        // Keep the EXISTS checks correlated. A hashed subplan can otherwise check every object in the organization.
         var cases = Resources.Values.Where(resource => r.Permissions.Contains(resource.ReadPermission))
             .Select(resource => $"WHEN '{resource.Type}' THEN EXISTS(SELECT 1 {SearchObjectSource(resource)} " +
-                $"AND o.id=(candidate->>'objectId')::uuid AND {Visibility(resource)})")
+                $"AND o.id=(candidate->>'objectId')::uuid AND {Visibility(resource)} OFFSET 0)")
             .ToList();
         if (CanSearchFileLocations(r))
         {
             cases.Add($"WHEN 'file_location' THEN EXISTS(SELECT 1 {SearchFileLocationSource} " +
-                "AND fl.id=(candidate->>'objectId')::uuid AND fl.version=(candidate->>'version')::int)");
+                "AND fl.id=(candidate->>'objectId')::uuid AND fl.version=(candidate->>'version')::int OFFSET 0)");
         }
         var visible = cases.Count == 0 ? "false" : $"CASE candidate->>'objectType' {string.Join(" ", cases)} ELSE false END";
         var windowSize = limit;
