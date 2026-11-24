@@ -96,8 +96,11 @@ public sealed class CommandPaletteTests
         using var hub = new WorkHubViewModel(new FakeClient(), ["Task.Read", "Contact.Read"]);
         using var shell = new MainWindowViewModel(new Uri("https://task.test"), null, workHub: hub);
         shell.Palette.Open();
-        Assert.Equal(new[] { "tasks", "inbox", "contacts" }.Order(), shell.Palette.Items.Select(i => i.Id).Order());
+        Assert.Equal(new[] { "tasks", "inbox", "monthly-plan", "contacts" }.Order(), shell.Palette.Items.Select(i => i.Id).Order());
         Assert.DoesNotContain(shell.Palette.Items, i => i.Id is "new-task" or "capture" or "catalog");
+        shell.Palette.Query = "План на месяц"; shell.Palette.ExecuteSelected();
+        Assert.Equal("monthly-plan", shell.SelectedSection?.Route);
+        shell.Palette.Open();
         shell.Palette.Query = "конт"; shell.Palette.ExecuteSelected();
         Assert.Equal("contacts", shell.SelectedSection?.Route);
     }
