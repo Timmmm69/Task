@@ -64,6 +64,7 @@ internal sealed partial class PostgresProductApiStore
     {
         var normalized = r.Query;
         var union = new List<string>();
+        var taskCandidates = "";
         var args = new List<(string, object?)> { ("q", q), ("candidateLimit", SearchCandidateLimit + 1), ("pageLimit", limit) };
         foreach (var key in new[] { "projectIds", "userIds", "departments", "contactIds" }) args.Add((key, SearchFilterValues(r, key)));
         args.Add(("from", normalized.GetValueOrDefault("from", ""))); args.Add(("to", normalized.GetValueOrDefault("to", "")));
@@ -102,9 +103,19 @@ internal sealed partial class PostgresProductApiStore
                     "AND (@sensitive OR fl.owner_user_id=@user) AND (fl.location_type='unc_path' OR (fl.owner_user_id=@user AND fl.device_id=(SELECT device_id FROM iam.sessions WHERE id=@session AND user_account_id=@user AND organization_id=@org))))";
                 clauses.Add(hasFiles == "true" ? accessible : "NOT(" + accessible + ")");
             }
-            union.Add($"SELECT o.id,o.object_type,o.updated_at,CASE WHEN lower({title})=lower(@q) THEN 2 ELSE 1 END relevance," +
+            var projection = $"SELECT o.id,o.object_type,o.updated_at,CASE WHEN lower({title})=lower(@q) THEN 2 ELSE 1 END relevance," +
                 $"jsonb_build_object('objectId',o.id,'objectType',o.object_type,'title',{title},'version',o.version,'updatedAt',o.updated_at,'lifecycleState',o.lifecycle_state) result " +
-                $"{SearchObjectSource(resource)} AND {string.Join(" AND ", clauses)}");
+                $"{SearchObjectSource(resource)} AND {string.Join(" AND ", clauses)}";
+            if (resource.Type == "task")
+            {
+                // Keep authorization after text matching even when the planner prefers a sequential scan.
+                taskCandidates = $"task_candidates AS MATERIALIZED ({projection}),";
+                union.Add($"SELECT * FROM task_candidates o WHERE {Visibility(resource)}");
+            }
+            else
+            {
+                union.Add($"{projection} AND {Visibility(resource)}");
+            }
         }
         if ((types.Length == 0 || types.Contains("file_location")) && CanSearchFileLocations(r) && hasFiles != "false" && !(states.Length == 1 && states[0] == "completed"))
         {
@@ -143,7 +154,7 @@ internal sealed partial class PostgresProductApiStore
         args.Add(("scope", scope));
         args.Add(("hash", filterHash));
         var result = One(c, t, $$"""
-            WITH matches AS MATERIALIZED (
+            WITH {{taskCandidates}} matches AS MATERIALIZED (
                 SELECT * FROM ({{string.Join(" UNION ALL ", union)}}) candidates
                 ORDER BY {{SearchOrder}} LIMIT @candidateLimit
             ), statistics AS (SELECT count(*) AS total FROM matches)
@@ -172,7 +183,8 @@ internal sealed partial class PostgresProductApiStore
             throw Error(400, "SEARCH_CURSOR_INVALID", "Invalid search cursor.");
 
         var cases = Resources.Values.Where(resource => r.Permissions.Contains(resource.ReadPermission))
-            .Select(resource => $"WHEN '{resource.Type}' THEN EXISTS(SELECT 1 {SearchObjectSource(resource)} AND o.id=(candidate->>'objectId')::uuid)")
+            .Select(resource => $"WHEN '{resource.Type}' THEN EXISTS(SELECT 1 {SearchObjectSource(resource)} " +
+                $"AND o.id=(candidate->>'objectId')::uuid AND {Visibility(resource)})")
             .ToList();
         if (CanSearchFileLocations(r))
         {
@@ -238,7 +250,7 @@ internal sealed partial class PostgresProductApiStore
 
     private static string SearchObjectSource(Resource resource) =>
         $"FROM {resource.Table} p JOIN core.objects o ON o.id=p.id AND o.organization_id=p.organization_id " +
-        $"WHERE o.organization_id=@org AND o.lifecycle_state='active' AND {Visibility(resource)}";
+        "WHERE o.organization_id=@org AND o.lifecycle_state='active'";
 
     private static string SearchTextMatch(Resource resource, string query)
     {
