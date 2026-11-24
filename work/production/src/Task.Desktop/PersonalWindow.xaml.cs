@@ -87,7 +87,7 @@ public partial class PersonalWindow : Window
             _toast = new(Dispatcher, ActivatePersonalNotification);
             _shell.BackgroundAvailable = _windowsNotifications.IsAvailable;
         };
-        _schedulerTimer.Tick += (_, _) => Reconcile();
+        _schedulerTimer.Tick += (_, _) => { _shell.MonthlyPlan?.RefreshUrgency(); Reconcile(); };
         if (_enableWindowsIntegrations) SystemEvents.PowerModeChanged += OnPowerModeChanged;
         Closed += (_, _) => { _closed = true; _schedulerTimer.Stop(); SystemEvents.PowerModeChanged -= OnPowerModeChanged; _toast?.Dispose(); _windowsNotifications?.Dispose(); _shell.PropertyChanged -= OnRouteChanged; _shell.Palette.FocusRequested -= OnPaletteFocus; _shell.Palette.Closed -= OnPaletteClosed; _shell.InboxCaptureRequested -= OnInboxCapture; _shell.Dispose(); };
     }

@@ -1,0 +1,22 @@
+<UserControl x:Class="Task.Desktop.Views.TaskPlanningMonthEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
+    <StackPanel Margin="0,12,0,0">
+        <TextBlock Text="Плановый месяц" FontWeight="SemiBold" Margin="0,0,0,4"/>
+        <CheckBox Content="Определять по дате" IsChecked="{Binding DerivePlanningMonth}"
+                  Style="{StaticResource Task.Card.Check}" AutomationProperties.AutomationId="TaskPlanningMonthAutomatic"/>
+        <TextBox Text="{Binding PlanningMonthText, UpdateSourceTrigger=PropertyChanged}" MaxLength="7"
+                 Margin="0,6,0,0" ToolTip="ГГГГ-ММ"
+                 state:FormKeyboard.Field="PlanningMonthText" AutomationProperties.Name="Плановый месяц, ГГГГ-ММ"
+                 AutomationProperties.AutomationId="TaskPlanningMonthText">
+            <TextBox.Style>
+                <Style TargetType="TextBox" BasedOn="{StaticResource Task.Input.Text}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DerivePlanningMonth}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+    </StackPanel>
+</UserControl>

@@ -52,6 +52,7 @@
         </Border>
         <Grid Grid.Row="1" Grid.Column="1" x:Name="WorkspaceRegion">
             <views:PersonalTasksView x:Name="TasksSurface" DataContext="{Binding Tasks}" Visibility="{Binding DataContext.IsTasks,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+            <views:MonthlyTasksView DataContext="{Binding MonthlyPlan}" Visibility="{Binding DataContext.IsMonthlyPlan,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
             <views:PersonalProjectsView DataContext="{Binding Planning}" Visibility="{Binding DataContext.IsProjects,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
             <views:CalendarView x:Name="CalendarSurface" DataContext="{Binding Calendar}" Visibility="{Binding DataContext.IsCalendar,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
             <views:PersonalRemindersView DataContext="{Binding Planning}" Visibility="{Binding DataContext.IsNotifications,ElementName=RootWindow,Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>

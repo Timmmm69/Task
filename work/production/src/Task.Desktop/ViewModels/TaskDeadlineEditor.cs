@@ -25,7 +25,8 @@ public sealed partial class TaskEditorViewModel
     public IReadOnlyList<TaskReminderOption> ReminderOptions { get; } =
     [
         new(null,"По настройке"), new(-1,"Не напоминать"), new(5,"За 5 минут"), new(15,"За 15 минут"),
-        new(30,"За 30 минут"), new(60,"За 1 час"), new(1440,"За 1 день"), new(0,"В момент срока"), new(-2,"Другой интервал")
+        new(30,"За 30 минут"), new(60,"За 1 час"), new(1440,"За день"), new(2880,"За 2 дня"),
+        new(0,"В срок"), new(-2,"Другой интервал")
     ];
     private TaskReminderOption _reminderOption = null!;
     private string _customReminderMinutes = "15";

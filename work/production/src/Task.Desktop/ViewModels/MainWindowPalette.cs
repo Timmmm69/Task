@@ -12,7 +12,7 @@ public sealed partial class MainWindowViewModel
             var capability = section.Route switch
             {
                 "today" or "calendar" => "Calendar.Read",
-                "inbox" or "tasks" => "Task.Read",
+                "inbox" or "tasks" or "monthly-plan" => "Task.Read",
                 "projects" => "Project.Read",
                 "catalog" => "FileCatalog.Read",
                 "contacts" => "Contact.Read",

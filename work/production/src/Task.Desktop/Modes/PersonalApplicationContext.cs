@@ -21,7 +21,7 @@ public sealed class PersonalApplicationModel : IDisposable
         try
         {
             var calendarClient = new PersonalCalendarClient(_store);
-            Tasks = new(new PersonalTasksClient(_store), Sections, _store.Projects, calendarClient);
+            Tasks = new(new PersonalTasksClient(_store), Sections, _store.Projects, calendarClient, time);
             Planning = new(_store, time);
             Workspace = new(_store);
             Inventory = new PersonalInventoryClient(_store, time);

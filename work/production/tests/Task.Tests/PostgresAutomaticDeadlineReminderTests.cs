@@ -206,15 +206,20 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal(-1, DeadlineValue<int>(db, "SELECT offset_minutes FROM calendar.task_deadline_preferences"));
     }
 
-    [Fact]
-    public async System.Threading.Tasks.Task AutomaticDeadline_DateOnlyAndDstUseExplicitZoneWithoutInventingDeadline()
+    [Theory]
+    [InlineData(null, 60)]
+    [InlineData(2880, 2880)]
+    public async System.Threading.Tasks.Task AutomaticDeadline_DateOnlyAndDstUseExplicitZoneWithoutInventingDeadline(int? preference, int interval)
     {
         using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
         db.Call("user-settings", "patch", "{\"dateOnlyReminderTime\":\"09:00\",\"defaultReminderOffsetMinutes\":60}", version: 1);
         var day = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
-        var id = DeadlineTask(db, null, new() { ["deadlineDate"] = day.ToString("yyyy-MM-dd"), ["deadlineTimeZone"] = "Europe/Minsk" });
+        var card = new JsonObject { ["deadlineDate"] = day.ToString("yyyy-MM-dd"), ["deadlineTimeZone"] = "Europe/Minsk" };
+        if (preference is { } offset) card["deadlineReminderOffsetMinutes"] = offset;
+        var id = DeadlineTask(db, null, card);
         Assert.True(DeadlineValue<bool>(db, "SELECT deadline_at IS NULL AND start_at_utc IS NULL FROM work.tasks WHERE id=$1", id));
-        Assert.Equal(new DateTimeOffset(day.ToDateTime(new TimeOnly(5, 0)), TimeSpan.Zero), DeadlineValue<DateTimeOffset>(db, "SELECT next_trigger_at FROM calendar.reminders WHERE target_object_id=$1", id));
+        var expected = new DateTimeOffset(day.ToDateTime(new TimeOnly(6, 0)), TimeSpan.Zero).AddMinutes(-interval);
+        Assert.Equal(expected, DeadlineValue<DateTimeOffset>(db, "SELECT next_trigger_at FROM calendar.reminders WHERE target_object_id=$1", id));
         db.Call("user-settings", "patch", "{\"dateOnlyReminderTime\":\"11:00\"}", version: 2); await DeliverDeadlines(db);
         Assert.Equal("09:00:00", (await db.Runtime.CreateTaskReadStore().GetVisibleByIdAsync(db.Organization, id, db.User))!.Content!.DeadlineReminderTime);
         Assert.Equal(new DateTimeOffset(2026, 3, 29, 1, 0, 0, TimeSpan.Zero), DeadlineValue<DateTimeOffset>(db, "SELECT calendar.deadline_local_anchor('2026-03-29','02:30','Europe/Berlin')"));

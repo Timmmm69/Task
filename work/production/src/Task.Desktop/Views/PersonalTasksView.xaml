@@ -77,6 +77,7 @@
        <TextBox Text="{Binding Card.Date,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Card.IsDateOnly}" TabIndex="23" AutomationProperties.Name="Запланировать на" state:FormKeyboard.Field="Date" AutomationProperties.AutomationId="PersonalScheduledDate" AutomationProperties.HelpText="{Binding Card.DateHint}"/>
        <views:TaskDayPicker DataContext="{Binding Card}"/>
        <TextBlock Text="{Binding Card.DateHint}" Style="{StaticResource Task.State.Body}" FontSize="12"/>
+       <views:TaskPlanningMonthEditor DataContext="{Binding Card}"/>
        <TextBlock Text="Описание (необязательно)" Style="{StaticResource Personal.Label}"/><TextBox Text="{Binding Card.Description,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="96" MaxHeight="180" VerticalScrollBarVisibility="Auto" MaxLength="50000" TabIndex="24" AutomationProperties.AutomationId="PersonalTaskDescription" AutomationProperties.Name="Описание задачи"/>
        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
         <StackPanel><TextBlock Text="Приоритет (обычный по умолчанию)" Style="{StaticResource Personal.Label}"/><ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}" state:FormKeyboard.Field="Priority" DisplayMemberPath="Text" TabIndex="21" AutomationProperties.Name="Приоритет"/></StackPanel>

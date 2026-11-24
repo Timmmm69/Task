@@ -603,6 +603,20 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand OpenRowCommand { get; }
     public AsyncCommand AddSubtaskCommand { get; }
     public event Action? RowDetailsRequested;
+    internal bool CanOpenFromMonthlyPlan => CanSelectTaskRows && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("Task.Read");
+    internal MonthlyTasksViewModel CreateMonthlyPlan(Func<bool> isConnected,
+        Func<Guid, CancellationToken, global::System.Threading.Tasks.Task<bool>> open) =>
+        new(_client, () => isConnected() && CanCreateFromShell, () => isConnected() && CanOpenFromMonthlyPlan, open);
+
+    internal async global::System.Threading.Tasks.Task<bool> OpenMonthlyTaskAsync(Guid id)
+    {
+        await OpenByIdAsync(id);
+        if (SelectedItem?.Id != id) return false;
+        await _detailsLoadTask;
+        if (!IsActive || SelectedItem?.Id != id) return false;
+        RowDetailsRequested?.Invoke();
+        return true;
+    }
     public bool CanCreateSimilar => CanCreate && _capabilities.Contains("Task.Read")
         && DetailsState == TaskDetailsState.Loaded && SelectedDetails?.Id == SelectedItem?.Id
         && SelectedItem is not null && !HasEditor && !IsMutationBusy;

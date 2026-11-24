@@ -43,6 +43,8 @@ internal static class ModeSwitchGuard
         void Add(string name, Func<bool> state, Func<bool> busy, AsyncCommand? save,
             Func<bool>? saved = null, object? parameter = null, Func<bool>? unconfirmed = null) =>
             editors.Add(new(name, state, busy, save, saved, parameter, unconfirmed));
+        if (shell.MonthlyPlan is { } plan)
+            Add("Новая задача в месячном плане", () => !string.IsNullOrWhiteSpace(plan.Title), () => plan.IsSaving, plan.CreateCommand);
         if (shell.Tasks is { } tasks)
         {
             Add("Задача", () => tasks.Editor is not null, () => tasks.IsMutationBusy, tasks.SaveEditorCommand, unconfirmed: () => tasks.HasUnconfirmedMutation);

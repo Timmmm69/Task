@@ -34,7 +34,7 @@ public sealed class PersonalShellViewModelTests : IDisposable
             Assert.False(shell.IsTasks);
             Assert.Equal(area.Area, model.Workspace.Hub.Area);
         }
-        Assert.Equal(13, shell.Sections.Count);
+        Assert.Equal(14, shell.Sections.Count);
         Assert.DoesNotContain(shell.Sections, s => s.Route == "administration");
     }
     [Fact]

@@ -33,17 +33,18 @@ public partial class MainWindow
                     canSnooze: () => hub.CanManageCorporateReminders, applyAutostart: ApplyAutostart);
                 hub.NotificationAccessChanged += OnNotificationAccessChanged;
                 hub.UserSettingsApplied += ApplyAutostart;
-                _notificationTimer.Tick += OnNotificationTick;
-                _notificationTimer.Start();
             }
             catch (Exception e) when (e is Microsoft.Data.Sqlite.SqliteException or IOException or UnauthorizedAccessException)
             { _viewModel.ReportNotificationError("Windows-уведомления недоступны: проверьте доступ к локальному журналу. Центр уведомлений доступен."); }
+            _notificationTimer.Tick += OnNotificationTick;
+            _notificationTimer.Start();
         };
         Loaded += OnNotificationTick;
         Loaded += (_, _) => { if (Environment.GetCommandLineArgs().Contains("--background") && _tray?.IsAvailable == true) Hide(); };
     }
     private async void OnNotificationTick(object? sender, EventArgs e)
     {
+        _viewModel.MonthlyPlan?.RefreshUrgency();
         if (_notificationClosed || _notificationBusy || _notificationAgent is null || _notificationClient is null) return;
         _notificationBusy = true;
         var ct = _notificationPass.Token;

@@ -69,7 +69,7 @@ public class MainWindowViewModelTests
         var vm = new MainWindowViewModel();
         var expected = new[]
         {
-            "today", "inbox", "calendar", "tasks", "projects", "catalog",
+            "today", "inbox", "calendar", "tasks", "monthly-plan", "projects", "catalog",
             "contacts", "search", "notifications", "archive", "trash", "administration", "settings",
         };
 
