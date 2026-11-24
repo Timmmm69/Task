@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Http.Features;
 using Task.Api.Security;
 using Task.Application.ProductData;
 using Task.Application.Security;
@@ -68,29 +69,13 @@ internal static class ProductEndpoints
             var key = context.Request.Headers["Idempotency-Key"].ToString();
             if ((route.Idempotent || key.Length > 0) && (key.Length is < 8 or > 200 || key.Any(c => c < '!' || c > '~')))
                 throw new ProductApiException(400, "VALIDATION_FAILED", "A printable 8-200 character Idempotency-Key is required.");
-            using var buffer = new MemoryStream();
-            var maximumBodyBytes = context.RequestServices.GetService<IProductSettingsStore>()?
-                .GetOrganization(identity.OrganizationId)?.MaxRequestBytes ?? 1_048_576;
-            var chunk = new byte[8192];
-            int count;
-            while ((count = await context.Request.Body.ReadAsync(chunk, context.RequestAborted)) > 0)
-            {
-                if (buffer.Length + count > maximumBodyBytes) throw new ProductApiException(413, "PAYLOAD_TOO_LARGE", "Body exceeds the request limit.");
-                buffer.Write(chunk, 0, count);
-            }
-            var bytes = buffer.ToArray();
-            JsonObject body = new();
-            if (bytes.Length > 0)
-            {
-                if (!context.Request.HasJsonContentType()) throw new ProductApiException(415, "UNSUPPORTED_MEDIA_TYPE", "Use application/json.");
-                using var document = JsonDocument.Parse(bytes);
-                ValidateJson(document.RootElement);
-                body = JsonNode.Parse(bytes) as JsonObject ?? throw new JsonException();
-            }
+            var canHaveBody = context.Features.Get<IHttpRequestBodyDetectionFeature>()?.CanHaveBody
+                ?? context.Request.ContentLength is not 0;
+            var body = canHaveBody ? await ReadBodyAsync(context, identity.OrganizationId) : new JsonObject();
             if (route.Method is "POST" or "PUT" or "PATCH" && route.Operation is "create" or "patch" && body.Count == 0)
                 throw new ProductApiException(422, "VALIDATION_FAILED", "At least one writable field is required.");
             var query = context.Request.Query.ToDictionary(p => p.Key, p => p.Value.ToString());
-            var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(
+            var hash = key.Length == 0 ? string.Empty : Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(
                 route.Method + context.Request.Path + context.Request.QueryString + "|" + version + "|" + body.ToJsonString())));
             var correlation = Guid.TryParse(context.Response.Headers["X-Correlation-ID"], out var parsed) ? parsed : Guid.NewGuid();
             var response = store.Execute(new(identity.OrganizationId, identity.UserAccountId, identity.SessionId,
@@ -113,6 +98,29 @@ internal static class ProductEndpoints
                 .LogError("Product API operation {Operation} failed ({Type}).", route.Operation, exception.GetType().Name);
             return await Problem(context, 503, "INTERNAL_ERROR", "Product API is temporarily unavailable.");
         }
+    }
+
+    private static async Task<JsonObject> ReadBodyAsync(HttpContext context, Guid organizationId)
+    {
+        var maximumBodyBytes = context.RequestServices.GetService<IProductSettingsStore>()?
+            .GetOrganization(organizationId)?.MaxRequestBytes ?? 1_048_576;
+        using var buffer = new MemoryStream();
+        var chunk = new byte[8192];
+        int count;
+        while ((count = await context.Request.Body.ReadAsync(chunk, context.RequestAborted)) > 0)
+        {
+            if (buffer.Length + count > maximumBodyBytes)
+                throw new ProductApiException(413, "PAYLOAD_TOO_LARGE", "Body exceeds the request limit.");
+            buffer.Write(chunk, 0, count);
+        }
+        if (buffer.Length == 0) return new JsonObject();
+
+        if (!context.Request.HasJsonContentType())
+            throw new ProductApiException(415, "UNSUPPORTED_MEDIA_TYPE", "Use application/json.");
+        var bytes = buffer.GetBuffer().AsMemory(0, (int)buffer.Length);
+        using var document = JsonDocument.Parse(bytes);
+        ValidateJson(document.RootElement);
+        return JsonNode.Parse(bytes.Span) as JsonObject ?? throw new JsonException();
     }
 
     private static HashSet<string> RequestedPermissions(ProductApiRoute route)
