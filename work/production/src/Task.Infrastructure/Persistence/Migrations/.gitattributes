@@ -1,1 +1,3 @@
 017_inbox_conversion.sql text eol=lf
+021_material_inventory.sql text eol=lf
+022_preserve_at_deadline_delivery.sql text eol=lf

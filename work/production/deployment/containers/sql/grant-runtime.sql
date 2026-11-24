@@ -16,6 +16,7 @@ GRANT SELECT ON TABLE core.organizations TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE core.objects TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE work.tasks TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE work.inbox_items TO task_runtime;
+GRANT SELECT, INSERT, UPDATE ON TABLE work.material_inventory TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE org.employee_profiles TO task_runtime;
 GRANT SELECT, INSERT, UPDATE ON TABLE iam.user_accounts, iam.devices, iam.sessions, iam.refresh_tokens, iam.authorization_scope_versions TO task_runtime;
 GRANT SELECT, INSERT ON TABLE iam.password_history, iam.user_roles, iam.role_permissions TO task_runtime;

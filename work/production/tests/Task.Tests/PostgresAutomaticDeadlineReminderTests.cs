@@ -27,6 +27,32 @@ public sealed partial class PostgresProductApiTests
         foreach (var delivery in await worker.ClaimReminderDeliveriesAsync("auto-test", Guid.NewGuid(), TimeSpan.FromMinutes(1), 100)) await worker.DeliverReminderAsync(delivery);
     }
 
+    [RequiresPostgresFact]
+    public async System.Threading.Tasks.Task AutomaticDeadline_UpgradePreservesScheduledZeroOffsetDelivery()
+    {
+        using var db = Database.Create(21)!;
+        DeadlineRoles(db);
+        var id = DeadlineTask(db, DateTimeOffset.UtcNow.AddHours(1), new() { ["deadlineReminderOffsetMinutes"] = 0 });
+        var originalRule = DeadlineValue<Guid>(db, "SELECT id FROM calendar.reminders WHERE target_object_id=$1", id);
+        await db.Runtime.CreateMigrator().ApplyPendingAsync();
+
+        var due = DateTimeOffset.UtcNow.AddSeconds(-5);
+        db.Sql("UPDATE calendar.reminders SET absolute_trigger_at=$2,next_trigger_at=$2 WHERE target_object_id=$1;", id, due);
+        db.Sql("UPDATE work.tasks SET deadline_at=$2 WHERE id=$1;", id, due);
+        db.Sql("UPDATE calendar.task_deadline_scan SET next_check_at='-infinity' WHERE task_id=$1;", id);
+        await DeliverDeadlines(db);
+        await DeliverDeadlines(db);
+
+        Assert.Equal(originalRule, DeadlineValue<Guid>(db, "SELECT id FROM calendar.reminders WHERE target_object_id=$1", id));
+        Assert.Equal("delivered", DeadlineValue<string>(db, "SELECT status FROM calendar.reminders WHERE target_object_id=$1", id));
+        Assert.Equal(1, db.Count("notify.notifications"));
+
+        var historical = DeadlineTask(db, due, new() { ["deadlineReminderOffsetMinutes"] = 0 });
+        await DeliverDeadlines(db);
+        Assert.Equal("expired", DeadlineValue<string>(db, "SELECT status FROM calendar.reminders WHERE target_object_id=$1", historical));
+        Assert.Equal(1, db.Count("notify.notifications"));
+    }
+
     [Fact]
     public async System.Threading.Tasks.Task AutomaticDeadline_IdleAndUnrelatedUpdatesDoNotRewriteScansAndRecoveryIsBounded()
     {

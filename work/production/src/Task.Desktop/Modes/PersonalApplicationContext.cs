@@ -24,6 +24,7 @@ public sealed class PersonalApplicationModel : IDisposable
             Tasks = new(new PersonalTasksClient(_store), Sections, _store.Projects, calendarClient);
             Planning = new(_store, time);
             Workspace = new(_store);
+            Inventory = new PersonalInventoryClient(_store, time);
             var recurrence = new RecurrencePaneViewModel(new PersonalRecurrenceClient(_store), _store.LocalActorId, true);
             Calendar = new(calendarClient, ["Calendar.Read", "CalendarEvent.Create", "CalendarEvent.Update", "Recurrence.Read", "Recurrence.Manage"],
                 recurrence: recurrence, clock: time.GetUtcNow, personal: true,
@@ -43,6 +44,7 @@ public sealed class PersonalApplicationModel : IDisposable
     public PersonalPlanningViewModel? Planning { get; }
     public CalendarViewModel? Calendar { get; }
     public PersonalWorkspaceViewModel? Workspace { get; }
+    public Inventory.IDesktopInventoryClient? Inventory { get; }
     public bool IsBusy => Tasks?.IsBusy == true || Planning?.IsBusy == true || Calendar?.IsBusy == true || Calendar?.Recurrence?.IsBusy == true || Workspace?.IsBusy == true;
     internal IReadOnlyList<ModeSwitchEditor> InspectDrafts()
     {

@@ -6,6 +6,11 @@ namespace Task.Infrastructure.Persistence;
 
 public sealed class TaskPersistenceMigrator
 {
+    private const int FirstWindowsDeliveryMigration = 18;
+    private const int WindowsDeliveryInventoryVersion = 19;
+    private const int MainInventoryVersion = 21;
+    private const string WindowsDeliveryDeadlineChecksum = "7316049939299BF05212C67FE9B8FA4A1DC33D8E4193C399B5D45C8AB9660211";
+
     private const long MigrationLockId = 0x5441534B;
     private const int MinimumPostgresVersionNumber = 160000;
     private readonly NpgsqlDataSource _dataSource;
@@ -84,11 +89,33 @@ public sealed class TaskPersistenceMigrator
             await bootstrap.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        var appliedCount = inspection.Status == TaskPersistenceMigrationStatus.Pending
-            ? inspection.AppliedMigrationCount
-            : 0;
+        var appliedCount = inspection.AppliedMigrationCount;
+        if (inspection.IsWindowsDeliveryHistory)
+        {
+            await ArchiveWindowsDeliveryHistoryAsync(connection, transaction, inspection, cancellationToken);
+            appliedCount = FirstWindowsDeliveryMigration - 1;
+        }
+
         foreach (var migration in TaskPersistenceMigrationCatalog.All.Skip(appliedCount))
         {
+            if (inspection.IsWindowsDeliveryHistory &&
+                inspection.ActualMigrationVersion == WindowsDeliveryInventoryVersion &&
+                migration.Version == MainInventoryVersion)
+            {
+                // The archived row describes the same SQL and table under its delivery version.
+                await using var retain = new NpgsqlCommand(
+                    """
+                    INSERT INTO infrastructure.schema_migrations (version, name, sha256, applied_at)
+                    SELECT $1, name, sha256, applied_at
+                    FROM infrastructure.windows_delivery_schema_migrations
+                    WHERE version = $2;
+                    """, connection, transaction);
+                retain.Parameters.Add(new NpgsqlParameter<int> { TypedValue = MainInventoryVersion });
+                retain.Parameters.Add(new NpgsqlParameter<int> { TypedValue = WindowsDeliveryInventoryVersion });
+                await retain.ExecuteNonQueryAsync(cancellationToken);
+                continue;
+            }
+
             await using (var command = new NpgsqlCommand(migration.Sql, connection, transaction))
             {
                 await command.ExecuteNonQueryAsync(cancellationToken);
@@ -110,9 +137,48 @@ public sealed class TaskPersistenceMigrator
         await transaction.CommitAsync(cancellationToken);
     }
 
-    internal static TaskPersistenceMigrationStatus EvaluateHistory(
-        IReadOnlyList<TaskPersistenceAppliedMigration> applied)
+    private static async global::System.Threading.Tasks.Task ArchiveWindowsDeliveryHistoryAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction,
+        TaskPersistenceMigrationInspection inspection, CancellationToken cancellationToken)
     {
+        await using var inventoryExists = new NpgsqlCommand(
+            "SELECT to_regclass('work.material_inventory') IS NOT NULL;", connection, transaction);
+        if (await inventoryExists.ExecuteScalarAsync(cancellationToken) is not bool exists ||
+            exists != (inspection.ActualMigrationVersion == WindowsDeliveryInventoryVersion))
+        {
+            throw new TaskPersistenceMigrationException(TaskPersistenceMigrationError.SchemaIncompatible);
+        }
+
+        await using (var create = new NpgsqlCommand(
+            """
+            CREATE TABLE infrastructure.windows_delivery_schema_migrations
+                (LIKE infrastructure.schema_migrations INCLUDING ALL);
+            """, connection, transaction))
+        {
+            await create.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await using var archive = new NpgsqlCommand(
+            """
+            WITH delivery AS (
+                DELETE FROM infrastructure.schema_migrations WHERE version >= $1
+                RETURNING version, name, sha256, applied_at
+            )
+            INSERT INTO infrastructure.windows_delivery_schema_migrations (version, name, sha256, applied_at)
+            SELECT version, name, sha256, applied_at FROM delivery;
+            """, connection, transaction);
+        archive.Parameters.Add(new NpgsqlParameter<int> { TypedValue = FirstWindowsDeliveryMigration });
+        await archive.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    internal static TaskPersistenceMigrationStatus EvaluateHistory(
+        IReadOnlyList<TaskPersistenceAppliedMigration> applied) =>
+        EvaluateHistory(applied, out _);
+
+    private static TaskPersistenceMigrationStatus EvaluateHistory(
+        IReadOnlyList<TaskPersistenceAppliedMigration> applied, out bool isWindowsDeliveryHistory)
+    {
+        isWindowsDeliveryHistory = false;
         var expected = TaskPersistenceMigrationCatalog.All;
         if (applied.Count > expected.Count)
         {
@@ -121,18 +187,42 @@ public sealed class TaskPersistenceMigrator
 
         for (var index = 0; index < applied.Count; index++)
         {
-            if (applied[index].Version != expected[index].Version ||
-                !string.Equals(applied[index].Name, expected[index].Name, StringComparison.Ordinal) ||
-                !string.Equals(applied[index].Sha256, expected[index].Sha256, StringComparison.OrdinalIgnoreCase))
+            if (Matches(applied[index], expected[index].Version, expected[index].Name, expected[index].Sha256))
             {
-                return TaskPersistenceMigrationStatus.HistoryMismatch;
+                continue;
             }
+
+            // Both packaged Windows editions shared the canonical prefix through migration 17.
+            isWindowsDeliveryHistory = index == FirstWindowsDeliveryMigration - 1 &&
+                MatchesWindowsDeliverySuffix(applied);
+            return isWindowsDeliveryHistory
+                ? TaskPersistenceMigrationStatus.Pending
+                : TaskPersistenceMigrationStatus.HistoryMismatch;
         }
 
         return applied.Count == expected.Count
             ? TaskPersistenceMigrationStatus.Current
             : TaskPersistenceMigrationStatus.Pending;
     }
+
+    private static bool MatchesWindowsDeliverySuffix(IReadOnlyList<TaskPersistenceAppliedMigration> applied)
+    {
+        if (applied.Count is not (FirstWindowsDeliveryMigration or WindowsDeliveryInventoryVersion) ||
+            !Matches(applied[FirstWindowsDeliveryMigration - 1], FirstWindowsDeliveryMigration,
+                "at_deadline_reminder_delivery", WindowsDeliveryDeadlineChecksum))
+        {
+            return false;
+        }
+
+        var inventory = TaskPersistenceMigrationCatalog.All[MainInventoryVersion - 1];
+        return applied.Count == FirstWindowsDeliveryMigration ||
+            Matches(applied[^1], WindowsDeliveryInventoryVersion, inventory.Name, inventory.Sha256);
+    }
+
+    private static bool Matches(TaskPersistenceAppliedMigration actual, int version, string name, string checksum) =>
+        actual.Version == version &&
+        string.Equals(actual.Name, name, StringComparison.Ordinal) &&
+        string.Equals(actual.Sha256, checksum, StringComparison.OrdinalIgnoreCase);
 
     private static async Task<TaskPersistenceMigrationInspection> InspectConnectionAsync(
         NpgsqlConnection connection,
@@ -173,10 +263,13 @@ public sealed class TaskPersistenceMigrator
             }
         }
 
-        var historyStatus = EvaluateHistory(applied);
+        var historyStatus = EvaluateHistory(applied, out var isWindowsDeliveryHistory);
         if (historyStatus != TaskPersistenceMigrationStatus.Current)
         {
-            return Result(historyStatus, serverVersionNumber, applied);
+            return Result(historyStatus, serverVersionNumber, applied) with
+            {
+                IsWindowsDeliveryHistory = isWindowsDeliveryHistory,
+            };
         }
 
         await using var requiredTables = new NpgsqlCommand(
@@ -185,6 +278,7 @@ public sealed class TaskPersistenceMigrator
                AND to_regclass('core.objects') IS NOT NULL
                AND to_regclass('work.tasks') IS NOT NULL
                AND to_regclass('work.inbox_items') IS NOT NULL
+               AND to_regclass('work.material_inventory') IS NOT NULL
                AND to_regclass('org.employee_profiles') IS NOT NULL
                AND to_regclass('iam.user_accounts') IS NOT NULL
                AND to_regclass('governance.audit_entries') IS NOT NULL
@@ -261,7 +355,10 @@ public sealed record TaskPersistenceMigrationInspection(
     int ServerVersionNumber,
     int ExpectedMigrationVersion,
     int? ActualMigrationVersion,
-    int AppliedMigrationCount);
+    int AppliedMigrationCount)
+{
+    internal bool IsWindowsDeliveryHistory { get; init; }
+}
 
 public enum TaskPersistenceMigrationStatus
 {
