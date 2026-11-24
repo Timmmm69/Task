@@ -37,6 +37,18 @@ public sealed partial class DesktopProjectsApiClientTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task SearchAndContinuationAreEncodedInTheSameProjectQuery()
+    {
+        await using var fixture = await Fixture.CreateAsync((_, _) => System.Threading.Tasks.Task.FromResult(
+            Json(HttpStatusCode.OK, """{"items":[],"nextCursor":null,"hasMore":false}""")));
+
+        Assert.IsType<DesktopProjectResult<DesktopProjectPage>.Succeeded>(
+            await fixture.Client.GetProjectsAsync("a+b=", search: " Альфа & Бета "));
+        Assert.Equal("?q=" + Uri.EscapeDataString("Альфа & Бета") + "&cursor=a%2Bb%3D",
+            Assert.Single(fixture.Requests).Uri.Query);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task WritesSendStrongEtagAndIdempotencyKey()
     {
         var memberId = Guid.NewGuid();

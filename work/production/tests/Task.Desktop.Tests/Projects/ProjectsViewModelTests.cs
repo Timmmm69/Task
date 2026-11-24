@@ -9,6 +9,43 @@ namespace Task.Desktop.Tests.Projects;
 public sealed partial class ProjectsViewModelTests
 {
     [Fact]
+    public async System.Threading.Tasks.Task ProjectsShowFirstPageThenLoadMoreAndSearchOnServer()
+    {
+        var later = Project() with { Id = Guid.NewGuid(), Name = "Дальний проект" };
+        var client = new FakeProjectsClient
+        {
+            PageHandler = (cursor, search, _) => System.Threading.Tasks.Task.FromResult<DesktopProjectResult<DesktopProjectPage>>(
+                cursor == "next" || search == "Дальний"
+                    ? new DesktopProjectResult<DesktopProjectPage>.Succeeded(new([later], null, false))
+                    : new DesktopProjectResult<DesktopProjectPage>.Succeeded(new([Project()], "next", true))),
+            ProjectHandler = (id, _) => System.Threading.Tasks.Task.FromResult<DesktopProjectResult<DesktopProjectDto>>(
+                new DesktopProjectResult<DesktopProjectDto>.Succeeded(id == later.Id ? later : Project())),
+        };
+        using var vm = new ProjectsViewModel(client, User, ["Project.Read"]);
+        vm.Activate();
+        Assert.Single(vm.Items);
+        Assert.Equal(1, client.ProjectPageCalls);
+        Assert.True(vm.HasMoreProjects);
+
+        await vm.OpenByIdAsync(later.Id);
+        Assert.Equal(later.Id, vm.SelectedItem?.Id);
+        Assert.Equal(1, client.ProjectPageCalls);
+        await vm.LoadMoreProjectsCommand.ExecuteAsync();
+        Assert.Equal(2, client.ProjectPageCalls);
+        Assert.Equal(2, vm.Items.Count);
+        Assert.Equal(later.Id, vm.SelectedItem?.Id);
+        Assert.False(vm.HasMoreProjects);
+
+        await vm.RefreshCommand.ExecuteAsync();
+        Assert.Equal(later.Id, vm.SelectedItem?.Id);
+        vm.ProjectSearchText = " Дальний ";
+        await vm.RefreshCommand.ExecuteAsync();
+        Assert.Equal("Дальний", client.LastSearch);
+        Assert.Equal(later.Id, Assert.Single(vm.Items).Id);
+        Assert.False(vm.HasMoreProjects);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task SearchNavigation_SelectsRequestedProjectAfterAuthoritativeGet_RefusesStaleAccess()
     {
         var client = new FakeProjectsClient { Projects = SuccessPage(), Project = new DesktopProjectResult<DesktopProjectDto>.Succeeded(Project()) };
@@ -269,6 +306,8 @@ public sealed partial class ProjectsViewModelTests
             return HistoryHandler?.Invoke(projectId, page, cancellationToken) ?? System.Threading.Tasks.Task.FromResult<DesktopProjectResult<DesktopProjectHistoryPage>>(new DesktopProjectResult<DesktopProjectHistoryPage>.Succeeded(new([])));
         }
         public DesktopProjectResult<DesktopProjectPage> Projects { get; set; } = SuccessPage();
+        public Func<string?, string?, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>>>? PageHandler { get; set; }
+        public string? LastSearch { get; private set; }
         public DesktopProjectResult<DesktopProjectDto> Project { get; set; } = new DesktopProjectResult<DesktopProjectDto>.NotFound();
         public Exception? ProjectException { get; set; }
         public Func<Guid, CancellationToken, System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>>>? ProjectHandler { get; set; }
@@ -296,8 +335,12 @@ public sealed partial class ProjectsViewModelTests
         public int RemoveCalls { get; private set; }
         public (Guid ProjectId, long Version, Guid? UserId)? LastAction { get; private set; }
 
-        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(string? cursor = null, CancellationToken cancellationToken = default)
-        { ProjectPageCalls++; return System.Threading.Tasks.Task.FromResult(Projects); }
+        public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(string? cursor = null, CancellationToken cancellationToken = default, string? search = null)
+        {
+            ProjectPageCalls++;
+            LastSearch = search;
+            return PageHandler?.Invoke(cursor, search, cancellationToken) ?? System.Threading.Tasks.Task.FromResult(Projects);
+        }
         public System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> GetProjectAsync(Guid id, CancellationToken cancellationToken = default) =>
             ProjectHandler is not null ? ProjectHandler(id, cancellationToken) : ProjectException is null
                 ? System.Threading.Tasks.Task.FromResult(Project)
