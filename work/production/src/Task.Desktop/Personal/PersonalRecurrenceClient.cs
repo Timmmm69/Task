@@ -62,6 +62,55 @@ public sealed partial class PersonalTaskStore
             throw new ArgumentException("Участники и контакты компании недоступны в Personal.");
         ValidateProjectLink(t.ProjectId, tx);
     }
+    private RecurrenceTemplateData CaptureTaskTemplate(Guid sourceId, RecurrenceTemplateData template, bool monthOnly, SqliteTransaction tx)
+    {
+        var source = Get(sourceId, tx) ?? throw new PersonalTaskNotFoundException();
+        var steps = new List<string>();
+        using (var command = Command("SELECT text FROM checklist WHERE task_id=$source ORDER BY sort_order,id LIMIT 501;",
+            tx, ("$source", sourceId.ToString("D"))))
+        using (var reader = command.ExecuteReader())
+            while (reader.Read()) steps.Add(reader.GetString(0));
+        var targets = new List<Guid>();
+        using (var command = Command("""
+            SELECT c.id FROM object_links l JOIN personal_catalog c ON c.id=l.target_id
+            WHERE l.source_id=$source AND l.link_type='task_file' AND c.lifecycle='active';
+            """, tx, ("$source", sourceId.ToString("D"))))
+        using (var reader = command.ExecuteReader())
+            while (reader.Read()) targets.Add(Guid.Parse(reader.GetString(0)));
+        return template with
+        {
+            Description = template.Description ?? source.Card?.Description,
+            ChecklistSteps = steps.ToArray(),
+            CatalogItemIds = targets.ToArray(),
+            DeadlineReminderOffsetMinutes = monthOnly ? null :
+                template.DeadlineReminderOffsetMinutes ?? source.Card?.DeadlineReminderOffsetMinutes
+        };
+    }
+
+    private void ReplaceOccurrenceChecklist(Guid taskId, IReadOnlyList<string> steps, SqliteTransaction tx)
+    {
+        using (var clear = Command("DELETE FROM checklist WHERE task_id=$task;", tx, ("$task", taskId.ToString("D"))))
+            clear.ExecuteNonQuery();
+        for (var i = 0; i < steps.Count; i++)
+        {
+            using var insert = Command("INSERT INTO checklist VALUES($id,$task,$text,0,$order);", tx,
+                ("$id", Guid.NewGuid().ToString("D")), ("$task", taskId.ToString("D")), ("$text", steps[i]), ("$order", i));
+            insert.ExecuteNonQuery();
+        }
+    }
+
+    private void AddOccurrenceCatalogLinks(Guid taskId, IReadOnlyList<Guid> targets, SqliteTransaction tx)
+    {
+        foreach (var target in targets)
+        {
+            using var command = Command("""
+                INSERT INTO object_links(id,source_id,target_id,link_type)
+                SELECT $id,$task,id,'task_file' FROM personal_catalog WHERE id=$target AND lifecycle='active';
+                """, tx, ("$id", Guid.NewGuid().ToString("D")), ("$task", taskId.ToString("D")), ("$target", target.ToString("D")));
+            command.ExecuteNonQuery();
+        }
+    }
+
     private DesktopTaskDto OccurrenceTask(RecurrenceDefinition definition, DateOnly date, DesktopTaskDto? previous = null)
     {
         var preview = RecurrenceService.PreviewDate(definition, date);
@@ -73,7 +122,11 @@ public sealed partial class PersonalTaskStore
         {
             Description = t.Description,
             ProjectId = t.ProjectId,
-            ScheduledDate = local is { } ld ? DateOnly.FromDateTime(ld) : date,
+            PlanningMonth = definition.PlanningMonthFor(date),
+            ScheduledDate = definition.MonthOnly ? null : local is { } ld ? DateOnly.FromDateTime(ld) : date,
+            DeadlineDate = definition.MonthOnly ? null : previous?.Card?.DeadlineDate,
+            DeadlineTimeZone = definition.MonthOnly ? null : previous?.Card?.DeadlineTimeZone,
+            DeadlineReminderOffsetMinutes = definition.MonthOnly ? null : t.DeadlineReminderOffsetMinutes,
             StartTimeLocal = local is { } lt ? TimeOnly.FromDateTime(lt) : null,
             ScheduleTimeZone = start is null ? null : definition.TimeZone,
             PlannedDurationMinutes = t.PlannedDurationMinutes
@@ -104,6 +157,8 @@ public sealed partial class PersonalTaskStore
         foreach (var date in RecurrenceGenerator.GenerateMissing(definition.ToRule(), start, through, existing))
         {
             var task = OccurrenceTask(definition, date); Validate(task, tx); Save(task, tx, true);
+            if (definition.Template.ChecklistSteps is { Length: > 0 } steps) ReplaceOccurrenceChecklist(task.Id, steps, tx);
+            if (definition.Template.CatalogItemIds is { Length: > 0 } targets) AddOccurrenceCatalogLinks(task.Id, targets, tx);
             SaveOccurrence(series.Id, new(date, task.Id, task.Version, false, false, definition.Template,
                 RecurrenceService.PreviewDate(definition, date).DstAdjustment), tx); count++;
         }
@@ -149,16 +204,25 @@ public sealed partial class PersonalTaskStore
         {
             case DesktopRecurrenceCommand.Save save:
                 {
-                    ValidateDefinition(save.Definition, tx);
                     var old = save.SeriesId is { } id ? Require(id, save.Version ?? 0) : null;
+                    var input = save.Definition;
+                    if (old is null && input.Template.CatalogItemIds is not null || old is not null && input.SourceTaskId is not null)
+                        throw new ArgumentException("Catalog links must come from the original source task.");
+                    var template = input.SourceTaskId is { } source
+                        ? CaptureTaskTemplate(source, input.Template, input.MonthOnly, tx)
+                        : input.Template with { CatalogItemIds = old?.Definition.Template.CatalogItemIds };
+                    input = input with { Template = template, SourceTaskId = null };
+                    ValidateDefinition(input, tx);
                     if (save.Definition.Status is not ("active" or "paused") || old?.Definition.Status is "cancelled" or "completed")
                         throw new ArgumentException("A terminal series cannot be edited.");
-                    var definition = save.Definition with { NextGenerationDate = save.Definition.OccurrenceStartDate };
+                    var definition = input with { NextGenerationDate = input.OccurrenceStartDate };
                     var series = new DesktopRecurrenceSeries(old?.Id ?? Guid.NewGuid(), (old?.Version ?? 0) + 1, definition);
                     SaveSeries(series, tx); // referenced by occurrences in this same transaction
                     var occurrences = old is null ? [] : Occurrences(series.Id, tx);
                     if (occurrences.Count > 500) throw new ArgumentException("Rule update exceeds 500 generated tasks.");
                     var through = occurrences.Count == 0 ? definition.OccurrenceStartDate.AddDays(62) : occurrences.Max(o => o.Date);
+                    if (old?.Definition.NextGenerationDate is { } previousCursor && previousCursor.AddDays(-1) > through)
+                        through = previousCursor.AddDays(-1);
                     if (through < definition.OccurrenceStartDate) through = definition.OccurrenceStartDate.AddDays(62);
                     var dates = new HashSet<DateOnly>();
                     for (var cursor = definition.OccurrenceStartDate; cursor <= through;)
@@ -171,6 +235,8 @@ public sealed partial class PersonalTaskStore
                         var task = Get(o.TaskId, tx); if (!CanRegenerate(o, task)) continue;
                         if (!dates.Contains(o.Date)) { CancelOccurrence(series.Id, o, task!, tx); continue; }
                         var updated = OccurrenceTask(definition, o.Date, task); Validate(updated, tx); Save(updated, tx, false);
+                        var steps = definition.Template.ChecklistSteps ?? [];
+                        if (!steps.SequenceEqual(o.Template.ChecklistSteps ?? [])) ReplaceOccurrenceChecklist(updated.Id, steps, tx);
                         SaveOccurrence(series.Id, o with
                         {
                             GeneratedVersion = updated.Version,
@@ -207,6 +273,8 @@ public sealed partial class PersonalTaskStore
                 {
                     var old = Require(apply.SeriesId, apply.Version);
                     if (old.Definition.Status is "cancelled" or "completed" || !Enum.IsDefined(apply.Scope)) throw new ArgumentException("Invalid series change.");
+                    if (old.Definition.MonthOnly && apply.Duration is not null)
+                        throw new ArgumentException("Month-only occurrences have no planned duration.");
                     var occurrences = Occurrences(old.Id, tx);
                     var target = occurrences.SingleOrDefault(o => o.Date == apply.Date) ?? throw new PersonalTaskNotFoundException();
                     if (Get(target.TaskId, tx)?.Version != apply.TaskVersion) throw new PersonalVersionConflictException();
@@ -232,7 +300,7 @@ public sealed partial class PersonalTaskStore
                         SaveOccurrence(old.Id, o with
                         {
                             GeneratedVersion = updated.Version,
-                            Template = changedTemplate,
+                            Template = apply.Scope == RecurrenceChangeScope.ThisOccurrence ? changedTemplate : template,
                             Exception = o.Exception || apply.Scope == RecurrenceChangeScope.ThisOccurrence
                         }, tx);
                     }

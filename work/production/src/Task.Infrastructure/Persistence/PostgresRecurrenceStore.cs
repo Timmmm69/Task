@@ -167,9 +167,135 @@ public sealed class PostgresRecurrenceStore(NpgsqlDataSource dataSource) : IRecu
                 if (task.Metadata.Version == expectedVersion.Value) return;
                 PostgresTaskAggregateStore.Save(connection, transaction, task, expectedVersion.Value);
             }
-            else PostgresTaskAggregateStore.Add(connection, transaction, task);
+            else
+            {
+                if (task.Content.DeadlineReminderOffsetMinutes is not null
+                    && (actor != task.Metadata.CreatedBy || !CanManageOwnReminder()))
+                {
+                    task = TaskAggregate.Reconstitute(task.Metadata, task.Title, task.WorkStatus, task.CompletedAtUtc,
+                        task.CompletedBy, task.Priority, task.Schedule, task.Content with { DeadlineReminderOffsetMinutes = null });
+                }
+                PostgresTaskAggregateStore.Add(connection, transaction, task);
+            }
             Changed = true;
         }
+        // The snapshot contains only the data needed by occurrences. Neither capture nor
+        // generation reads file locations or touches the filesystem.
+        public RecurrenceTemplateData CaptureTaskTemplate(Guid sourceId, RecurrenceTemplateData template, bool monthOnly)
+        {
+            using (var access = new NpgsqlCommand("""
+                SELECT 1 FROM core.objects o
+                WHERE o.organization_id=$1 AND o.id=$2 AND o.object_type='task' AND o.lifecycle_state<>'trashed'
+                  AND iam.permission_available($1,$3,'task.read') AND iam.object_allowed($1,o.id,$3,'task.read')
+                FOR UPDATE;
+                """, connection, transaction))
+            {
+                access.Parameters.AddWithValue(org);
+                access.Parameters.AddWithValue(sourceId);
+                access.Parameters.AddWithValue(actor);
+                if (access.ExecuteScalar() is null)
+                    throw new RecurrenceRequestException(404, "OBJECT_NOT_VISIBLE", "Source task is absent or not visible.");
+            }
+            var source = PostgresTaskAggregateStore.Get(connection, transaction, sourceId, org)
+                ?? throw new RecurrenceRequestException(404, "OBJECT_NOT_VISIBLE", "Source task is absent or not visible.");
+            var steps = new List<string>();
+            using (var checklist = new NpgsqlCommand("""
+                SELECT text FROM work.task_checklist
+                WHERE organization_id=$1 AND task_id=$2 ORDER BY sort_order,id LIMIT 501;
+                """, connection, transaction))
+            {
+                checklist.Parameters.AddWithValue(org);
+                checklist.Parameters.AddWithValue(sourceId);
+                using var reader = checklist.ExecuteReader();
+                while (reader.Read()) steps.Add(reader.GetString(0));
+            }
+            var targets = new List<Guid>();
+            using (var links = new NpgsqlCommand("""
+                SELECT p.id FROM core.object_links l
+                JOIN files.catalog_items p ON p.organization_id=l.organization_id AND p.id=l.target_object_id
+                JOIN core.objects o ON o.organization_id=p.organization_id AND o.id=p.id
+                WHERE l.organization_id=$1 AND l.source_object_id=$2 AND l.link_type='task_file'
+                  AND iam.permission_available($1,$3,'objectlink.read') AND iam.object_allowed($1,$2,$3,'objectlink.read')
+                  AND
+                """ + "\n" + CatalogLinkTarget, connection, transaction))
+            {
+                links.Parameters.AddWithValue(org);
+                links.Parameters.AddWithValue(sourceId);
+                links.Parameters.AddWithValue(actor);
+                using var reader = links.ExecuteReader();
+                while (reader.Read()) targets.Add(reader.GetGuid(0));
+            }
+            int? reminderOffset = null;
+            if (!monthOnly && CanManageOwnReminder())
+            {
+                using var reminder = new NpgsqlCommand("""
+                    SELECT offset_minutes FROM calendar.task_deadline_preferences
+                    WHERE organization_id=$1 AND task_id=$2 AND recipient_user_id=$3;
+                    """, connection, transaction);
+                reminder.Parameters.AddWithValue(org);
+                reminder.Parameters.AddWithValue(sourceId);
+                reminder.Parameters.AddWithValue(actor);
+                reminderOffset = reminder.ExecuteScalar() as int?;
+            }
+            return template with
+            {
+                Description = template.Description ?? source.Content.Description,
+                ChecklistSteps = steps.Count == 0 ? null : steps.ToArray(),
+                CatalogItemIds = targets.Count == 0 ? null : targets.ToArray(),
+                DeadlineReminderOffsetMinutes = reminderOffset
+            };
+        }
+
+        private bool CanManageOwnReminder()
+        {
+            using var command = new NpgsqlCommand("SELECT iam.permission_available($1,$2,'reminder.manageown');", connection, transaction);
+            command.Parameters.AddWithValue(org);
+            command.Parameters.AddWithValue(actor);
+            return command.ExecuteScalar() is true;
+        }
+
+        public void ReplaceChecklist(Guid taskId, IReadOnlyList<string> steps)
+        {
+            using var command = new NpgsqlCommand("""
+                WITH previous AS (
+                    DELETE FROM work.task_checklist WHERE organization_id=$1 AND task_id=$2
+                )
+                INSERT INTO work.task_checklist(id,organization_id,task_id,text,sort_order,updated_by)
+                SELECT gen_random_uuid(),$1,$2,step.text,step.position::integer,$3
+                FROM unnest($4::text[]) WITH ORDINALITY AS step(text,position);
+                """, connection, transaction);
+            command.Parameters.AddWithValue(org);
+            command.Parameters.AddWithValue(taskId);
+            command.Parameters.AddWithValue(actor);
+            command.Parameters.AddWithValue(steps.ToArray());
+            command.ExecuteNonQuery();
+        }
+
+        private const string CatalogLinkTarget = """
+            o.lifecycle_state='active'
+            AND iam.permission_available($1,$3,'filecatalog.read') AND iam.object_allowed($1,o.id,$3,'filecatalog.read')
+            AND iam.permission_available($1,$3,'filecatalog.update') AND iam.object_allowed($1,o.id,$3,'filecatalog.update')
+            """;
+
+        public void AddCatalogLinks(Guid taskId, IReadOnlyList<Guid> catalogItemIds)
+        {
+            using var command = new NpgsqlCommand("""
+                INSERT INTO core.object_links(id,organization_id,source_object_id,target_object_id,link_type,created_by)
+                SELECT gen_random_uuid(),$1,$2,p.id,'task_file',$3
+                FROM files.catalog_items p
+                JOIN core.objects o ON o.organization_id=p.organization_id AND o.id=p.id
+                WHERE p.organization_id=$1 AND p.id=ANY($4)
+                  AND iam.permission_available($1,$3,'task.read') AND iam.object_allowed($1,$2,$3,'task.read')
+                  AND iam.permission_available($1,$3,'objectlink.create') AND iam.object_allowed($1,$2,$3,'objectlink.create')
+                  AND
+                """ + "\n" + CatalogLinkTarget, connection, transaction);
+            command.Parameters.AddWithValue(org);
+            command.Parameters.AddWithValue(taskId);
+            command.Parameters.AddWithValue(actor);
+            command.Parameters.AddWithValue(catalogItemIds.ToArray());
+            command.ExecuteNonQuery();
+        }
+
         public void SaveOccurrence(RecurrenceOccurrenceRecord occurrence)
         {
             using var command = new NpgsqlCommand("INSERT INTO calendar.recurrence_occurrences(organization_id,series_id,local_date,task_id,skipped,generated_task_version,template,is_exception) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(organization_id,series_id,local_date) DO UPDATE SET skipped=EXCLUDED.skipped,generated_task_version=EXCLUDED.generated_task_version,template=EXCLUDED.template,is_exception=EXCLUDED.is_exception", connection, transaction);

@@ -69,6 +69,7 @@ public sealed partial class MonthlyPlanWindowsTests
                 {
                     await CheckPersonalAsync();
                     await CheckCorporateAsync();
+                    await CheckMonthOnlyRecurrenceAsync();
                     done.SetResult();
                 }
                 catch (Exception error) { done.SetException(error); }

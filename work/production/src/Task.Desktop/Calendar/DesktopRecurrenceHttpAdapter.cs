@@ -21,7 +21,9 @@ public sealed class DesktopRecurrenceHttpAdapter(IDesktopRecurrenceApiClient tra
             case DesktopRecurrenceCommand.Save c:
                 method = c.SeriesId is null ? HttpMethod.Post : HttpMethod.Patch; path = c.SeriesId is null ? "" : $"/{c.SeriesId}";
                 var definition = JsonSerializer.SerializeToNode(c.Definition, RecurrenceService.JsonOptions)!.AsObject();
-                definition.Remove("nextGenerationDate"); body = definition; version = c.Version; key = c.Key; break;
+                definition.Remove("nextGenerationDate");
+                if (c.SeriesId is not null) definition["monthOnly"] = c.Definition.MonthOnly;
+                body = definition; version = c.Version; key = c.Key; break;
             case DesktopRecurrenceCommand.Generate c:
                 method = HttpMethod.Post; path = $"/{c.SeriesId}/generate"; body = new { throughDate = c.Through, expectedSeriesVersion = c.Version }; key = c.Key; break;
             case DesktopRecurrenceCommand.SetStatus c:

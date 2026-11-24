@@ -57,7 +57,7 @@
             </StackPanel></Border>
             <Button Content="+  Новое событие" Command="{Binding NewEventCommand}" Style="{StaticResource Personal.Calendar.Action}" Margin="0,3,8,8" AutomationProperties.AutomationId="PersonalCalendarNewEvent"/>
             <Button Content="Найти время" Command="{Binding FindTimeCommand}" Style="{StaticResource Personal.Airbnb.Compact}" Margin="0,3,8,8"/>
-            <Button Content="Повторения" Command="{Binding Recurrence.OpenCommand}" Style="{StaticResource Personal.Airbnb.Compact}" Margin="0,3,8,8"/>
+            <Button Content="Повторения" Command="{Binding Recurrence.OpenCommand}" AutomationProperties.AutomationId="PersonalOpenRecurrences" Style="{StaticResource Personal.Airbnb.Compact}" Margin="0,3,8,8"/>
             <Button Content="↻" Command="{Binding RefreshCommand}" Style="{StaticResource Personal.Airbnb.Compact}" Margin="0,3,8,8" AutomationProperties.Name="Обновить календарь"/>
             <TextBlock Text="○ Событие   □ Задача · ✓ Завершена" Foreground="{StaticResource Personal.Airbnb.Secondary}" FontSize="12" VerticalAlignment="Center" Margin="0,0,0,6"/>
         </WrapPanel>

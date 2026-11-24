@@ -1,5 +1,6 @@
 <UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:converters="clr-namespace:Task.Desktop.Converters" x:Class="Task.Desktop.Views.RecurrenceView" x:Name="Root" AutomationProperties.Name="Повторяющиеся задачи" FontFamily="{DynamicResource Task.Font.Family}" FontSize="{DynamicResource Task.Font.Size.Body}" Foreground="{DynamicResource Task.Brush.Text.Primary}" UseLayoutRounding="True" SnapsToDevicePixels="True" AutomationProperties.AutomationId="RecurrenceScreen">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="Recurrence.Visible"/>
         <converters:WindowWidthAtLeastConverter x:Key="Recurrence.WidthAtLeast"/>
         <Style TargetType="TextBox" BasedOn="{StaticResource Personal.Airbnb.Input}"/>
         <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"/>
@@ -184,6 +185,16 @@
                                 <Border Style="{StaticResource Recurrence.Card}">
                                     <StackPanel>
                                         <TextBlock Text="Задача" Style="{StaticResource Recurrence.Heading}" TextWrapping="Wrap"/>
+                                        <StackPanel Visibility="{Binding DataContext.CanChooseSource, ElementName=Root, Converter={StaticResource Recurrence.Visible}}" Margin="0,0,0,10">
+                                            <TextBlock Text="Исходная задача (необязательно)" TextWrapping="Wrap"/>
+                                            <ComboBox ItemsSource="{Binding DataContext.SourceTasks, ElementName=Root}" DisplayMemberPath="Label"
+                                                      SelectedItem="{Binding SourceTask}" Margin="0,4,0,6"
+                                                      AutomationProperties.Name="Исходная задача" AutomationProperties.AutomationId="RecurrenceSourceTask"/>
+                                            <Button Content="{Binding DataContext.SourceTasksButtonText, ElementName=Root}" Command="{Binding DataContext.LoadSourcesCommand, ElementName=Root}"
+                                                    Style="{StaticResource Task.Workspace.Button}" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="Из исходной задачи будут скопированы шаги и доступные связи с документами."
+                                                       TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                        </StackPanel>
                                         <TextBlock Text="Название задачи" TextWrapping="Wrap"/>
                                         <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Название повторяющейся задачи"/>
                                         <TextBlock Text="Описание" TextWrapping="Wrap"/>
@@ -193,6 +204,8 @@
                                 <Border Style="{StaticResource Recurrence.Card}">
                                     <StackPanel>
                                         <TextBlock Text="Правило повторения" Style="{StaticResource Recurrence.Heading}" TextWrapping="Wrap"/>
+                                        <CheckBox Content="Без дня и времени" IsChecked="{Binding MonthOnly}" Margin="0,0,0,10"
+                                                  AutomationProperties.AutomationId="RecurrenceMonthOnly"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
@@ -201,7 +214,7 @@
                                             </Grid.ColumnDefinitions>
                                             <StackPanel>
                                                 <TextBlock Text="Повторять" TextWrapping="Wrap"/>
-                                                <ComboBox ItemsSource="{Binding Frequencies}" SelectedValuePath="Code" DisplayMemberPath="Label" SelectedValue="{Binding Frequency}" Margin="0,4,0,10" AutomationProperties.Name="Частота повторения"/>
+                                                <ComboBox ItemsSource="{Binding Frequencies}" SelectedValuePath="Code" DisplayMemberPath="Label" SelectedValue="{Binding Frequency}" Margin="0,4,0,10" AutomationProperties.Name="Частота повторения" AutomationProperties.AutomationId="RecurrenceFrequency"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="2">
                                                 <TextBlock Text="Каждые N" TextWrapping="Wrap"/>
@@ -211,58 +224,87 @@
                                         <StackPanel>
                                             <StackPanel.Style>
                                                 <Style TargetType="StackPanel">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Frequency}" Value="daily">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Frequency}" Value="weekly">
-                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        <DataTrigger Binding="{Binding MonthOnly}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </StackPanel.Style>
-                                            <TextBlock Text="Дни недели через запятую: 1 — пн, 7 — вс" TextWrapping="Wrap"/>
-                                            <TextBox Text="{Binding Weekdays, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Дни недели"/>
+                                            <StackPanel>
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Frequency}" Value="daily">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Frequency}" Value="weekly">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                                <TextBlock Text="Дни недели через запятую: 1 — пн, 7 — вс" TextWrapping="Wrap"/>
+                                                <TextBox Text="{Binding Weekdays, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Дни недели"/>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Frequency}" Value="monthly">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Frequency}" Value="yearly">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                                <TextBlock Text="Дни месяца: 1–31; −1 — последний день" TextWrapping="Wrap"/>
+                                                <TextBox Text="{Binding MonthDays, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Дни месяца"/>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Frequency}" Value="yearly">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                                <TextBlock Text="Месяц года (1–12, для ежегодного повтора)" TextWrapping="Wrap"/>
+                                                <TextBox Text="{Binding Month, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Месяц года"/>
+                                            </StackPanel>
                                         </StackPanel>
-                                        <StackPanel>
-                                            <StackPanel.Style>
-                                                <Style TargetType="StackPanel">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Frequency}" Value="monthly">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Frequency}" Value="yearly">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </StackPanel.Style>
-                                            <TextBlock Text="Дни месяца: 1–31; −1 — последний день" TextWrapping="Wrap"/>
-                                            <TextBox Text="{Binding MonthDays, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Дни месяца"/>
-                                        </StackPanel>
-                                        <StackPanel>
-                                            <StackPanel.Style>
-                                                <Style TargetType="StackPanel">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Frequency}" Value="yearly">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </StackPanel.Style>
-                                            <TextBlock Text="Месяц года (1–12, для ежегодного повтора)" TextWrapping="Wrap"/>
-                                            <TextBox Text="{Binding Month, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,10" AutomationProperties.Name="Месяц года"/>
+                                        <StackPanel Visibility="{Binding MonthOnly, Converter={StaticResource Recurrence.Visible}}">
+                                            <TextBlock Text="Первый месяц серии" TextWrapping="Wrap"/>
+                                            <ComboBox ItemsSource="{Binding Months}" SelectedValuePath="Value" DisplayMemberPath="Name"
+                                                      SelectedValue="{Binding FirstMonth}" Margin="0,4,0,10"
+                                                      AutomationProperties.Name="Первый месяц серии" AutomationProperties.AutomationId="RecurrenceFirstMonth"/>
+                                            <TextBlock Text="Год начала" TextWrapping="Wrap"/>
+                                            <TextBox Text="{Binding FirstYear, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" Margin="0,4,0,10"
+                                                     AutomationProperties.Name="Год начала серии" AutomationProperties.AutomationId="RecurrenceFirstYear"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
-                                <Border Style="{StaticResource Recurrence.Card}">
+                                <Border>
+                                    <Border.Style>
+                                        <Style TargetType="Border" BasedOn="{StaticResource Recurrence.Card}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding MonthOnly}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <StackPanel>
                                         <TextBlock Text="Дата и время" Style="{StaticResource Recurrence.Heading}" TextWrapping="Wrap"/>
                                         <TextBlock Text="Начало серии" TextWrapping="Wrap"/>
-                                        <DatePicker SelectedDate="{Binding StartDate}" Margin="0,4,0,10" AutomationProperties.Name="Начало серии"/>
+                                        <DatePicker SelectedDate="{Binding StartDate}" Margin="0,4,0,10" AutomationProperties.Name="Начало серии" AutomationProperties.AutomationId="RecurrenceStartDate"/>
                                         <CheckBox Content="Весь день" IsChecked="{Binding IsAllDay}" Margin="0,0,0,10"/>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -325,7 +367,7 @@
                     <Border Style="{StaticResource Task.Shell.FooterSurface}" Padding="12,8" Grid.Row="2">
                         <WrapPanel>
                             <Button Content="Предпросмотр" Command="{Binding PreviewCommand}" Style="{StaticResource Task.Workspace.Button}" Margin="0,0,8,4"/>
-                            <Button Content="Сохранить правило серии" Command="{Binding SaveCommand}" Style="{StaticResource Task.Workspace.Primary}" Margin="0,0,0,4"/>
+                            <Button Content="Сохранить правило серии" Command="{Binding SaveCommand}" AutomationProperties.AutomationId="RecurrenceSave" Style="{StaticResource Task.Workspace.Primary}" Margin="0,0,0,4"/>
                         </WrapPanel>
                     </Border>
                 </Grid>
@@ -373,7 +415,18 @@
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock TextWrapping="Wrap">
-                                                    <Run Text="{Binding LocalDate, StringFormat=dd.MM.yyyy}"/>
+                                                    <Run>
+                                                        <Run.Style>
+                                                            <Style TargetType="Run">
+                                                                <Setter Property="Text" Value="{Binding LocalDate, StringFormat=dd.MM.yyyy}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.Selected.Definition.MonthOnly, ElementName=Root}" Value="True">
+                                                                        <Setter Property="Text" Value="{Binding LocalDate, StringFormat=MM.yyyy}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Run.Style>
+                                                    </Run>
                                                     <Run Text=" — "/>
                                                     <Run Text="{Binding Title}"/>
                                                 </TextBlock>
