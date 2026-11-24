@@ -40,6 +40,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
         Tasks = tasks;
+        MonthlyPlan = tasks?.CreateMonthlyPlan(() => IsConnected, OpenMonthlyTaskAsync);
+        if (MonthlyPlan is { } monthlyPlan) monthlyPlan.PropertyChanged += OnMonthlyPlanPropertyChanged;
         Calendar = calendar;
         Today = today;
         Projects = projects;
@@ -96,6 +98,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             new("inbox", "Входящие", "Раздел «Входящие»: новые и назначенные задачи появятся после подключения к серверу.", "Task.Icon.Inbox", "Запишите сейчас, разберите позже"),
             new("calendar", "Календарь", "Раздел «Календарь»: календарная сетка появится после подключения к серверу.", "Task.Icon.Calendar", "Расписание компании"),
             new("tasks", "Задачи", "Раздел «Задачи»: список задач появится после подключения к серверу.", "Task.Icon.Tasks", "Найдите задачу и измените её детали"),
+            new("monthly-plan", "План на месяц", "Месячный план доступен после подключения к серверу.", "Task.Icon.Calendar", "Задачи за выбранный месяц"),
             new("projects", "Проекты", "Раздел «Проекты»: список проектов появится после подключения к серверу.", "Task.Icon.Projects", "Рабочие проекты компании"),
             new("catalog", "Каталог", "Раздел «Каталог»: файлы и записи каталога появятся после подключения к серверу.", "Task.Icon.Catalog", "Файлы и записи каталога"),
             new("contacts", "Контакты", "Раздел «Контакты»: список контактов появится после подключения к серверу.", "Task.Icon.Contacts", "Контакты компании"),
@@ -160,7 +163,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         "today" => Today is { } today && (today.CanRead || today.CanReadTasks),
         "calendar" => CanPlanToday,
-        "inbox" or "tasks" => WorkHub?.HasCapability("Task.Read") == true,
+        "inbox" or "tasks" or "monthly-plan" => WorkHub?.HasCapability("Task.Read") == true,
         "projects" => CanOpenProjects,
         _ => false,
     };
@@ -180,6 +183,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
 
             OnPropertyChanged(nameof(IsTasksSectionSelected));
+            OnPropertyChanged(nameof(IsMonthlyPlanSelected));
             OnPropertyChanged(nameof(IsCalendarSectionSelected));
             OnPropertyChanged(nameof(IsTodaySectionSelected));
             OnPropertyChanged(nameof(IsInboxSectionSelected));
@@ -205,11 +209,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 Tasks?.Deactivate();
             }
             if (IsInboxSectionSelected) Inbox?.Activate(); else Inbox?.Deactivate();
+            if (IsMonthlyPlanSelected && MonthlyPlan is { } plan) _ = plan.ActivateAsync(); else MonthlyPlan?.Deactivate();
             if (IsCalendarSectionSelected) Calendar?.Activate(); else Calendar?.Deactivate();
             if (IsProjectsSectionSelected) Projects?.Activate(); else Projects?.Deactivate();
             if (TryGetWorkArea(SelectedSection?.Route, out var workArea)) WorkHub?.Activate(workArea); else WorkHub?.Deactivate();
             if (IsAdministrationSectionSelected) Administration?.Activate(); else Administration?.Deactivate();
             OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(IsReadOnlyMode));
             OnPropertyChanged(nameof(DataSourceStatus));
             OnPropertyChanged(nameof(LastSuccessfulRefreshText));
             OnPropertyChanged(nameof(FooterRefreshCommand));
@@ -234,6 +240,14 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     }
 
     private void OpenTodayItem(object? item) => _ = OpenTodayItemAsync(item);
+
+    private async global::System.Threading.Tasks.Task<bool> OpenMonthlyTaskAsync(Guid id, CancellationToken token)
+    {
+        if (Tasks is not { CanOpenFromMonthlyPlan: true } tasks) return false;
+        SelectedSection = Sections.First(section => section.Route == "tasks");
+        await tasks.ActivateAsync(token);
+        return await tasks.OpenMonthlyTaskAsync(id);
+    }
 
     internal async global::System.Threading.Tasks.Task OpenTodayItemAsync(object? item)
     {
@@ -261,6 +275,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     }
 
     public TasksViewModel? Tasks { get; }
+    public MonthlyTasksViewModel? MonthlyPlan { get; }
+    public bool IsMonthlyPlanSelected => SelectedSection?.Route == "monthly-plan";
 
     public InboxViewModel? Inbox { get; }
 
@@ -342,7 +358,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             ? WorkHub?.AccessText ?? "Онлайн · рабочие данные"
         : IsAdministrationSectionSelected
             ? Administration?.AccessText ?? "Онлайн · административные данные"
-            : Tasks?.IsReadOnly == true ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
+            : IsReadOnlyMode ? "Онлайн · только просмотр" : "Онлайн · запись доступна";
 
     public string ConnectionIconKey => ServerAddress is null || _connectivity?.Status != DesktopConnectivityStatus.Online
         ? "Task.Icon.Warning"
@@ -354,7 +370,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// True while the shell has no network client: the interface is view-only.
     /// </summary>
-    public bool IsReadOnlyMode => !IsConnected || (Tasks?.IsReadOnly ?? true);
+    public bool IsReadOnlyMode => !IsConnected || (IsMonthlyPlanSelected
+        ? MonthlyPlan?.CanEnterTitle != true : Tasks?.IsReadOnly ?? true);
 
     /// <summary>
     /// Notice shown in read-only mode: the server is not connected,
@@ -386,11 +403,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             ? WorkHub?.AccessText ?? "Рабочие данные сервера компании"
         : IsAdministrationSectionSelected
             ? Administration?.AccessText ?? "Административные данные сервера компании"
-            : Tasks?.IsReadOnly == true
+            : IsReadOnlyMode
             ? "Данные предоставляются сервером компании · только просмотр"
             : "Данные и изменения синхронизируются с сервером компании";
 
-    public string LastSuccessfulRefreshText => IsInventorySectionSelected
+    public string LastSuccessfulRefreshText => IsMonthlyPlanSelected
+        ? MonthlyPlan?.LastSuccessfulRefreshText ?? "Данные ещё не обновлялись"
+        : IsInventorySectionSelected
         ? string.Empty
         : IsTodaySectionSelected
         ? Today?.LastSuccessfulRefreshText ?? "Сегодняшний план ещё не обновлялся"
@@ -406,7 +425,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         ? Administration?.LastSuccessfulRefreshText ?? "Раздел ещё не обновлялся"
         : Tasks?.LastSuccessfulRefreshText ?? "Данные ещё не обновлялись";
 
-    public AsyncCommand? FooterRefreshCommand => IsInventorySectionSelected
+    public AsyncCommand? FooterRefreshCommand => IsMonthlyPlanSelected
+        ? MonthlyPlan?.RefreshCommand
+        : IsInventorySectionSelected
         ? null
         : IsTodaySectionSelected
         ? Today?.RefreshCommand
@@ -496,6 +517,11 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Inbox?.Dispose();
         Calendar?.Dispose();
         Today?.Dispose();
+        if (MonthlyPlan is { } plan)
+        {
+            plan.PropertyChanged -= OnMonthlyPlanPropertyChanged;
+            plan.Dispose();
+        }
         Projects?.Dispose();
         WorkHub?.Dispose();
         Administration?.Dispose();
@@ -503,6 +529,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void OnTasksPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName is nameof(TasksViewModel.CanCreateFromShell) or nameof(TasksViewModel.CanSelectTaskRows))
+            MonthlyPlan?.NotifyCommands();
         NotifyProjectTaskAction();
         if (e.PropertyName is nameof(TasksViewModel.IsReadOnly)
             or nameof(TasksViewModel.WriteAccessText)
@@ -516,6 +544,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(ReadOnlyActionReason));
             NewTaskCommand.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(CanCreateFromToday));
+        }
+    }
+
+    private void OnMonthlyPlanPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (!IsMonthlyPlanSelected) return;
+        if (e.PropertyName == nameof(MonthlyTasksViewModel.LastSuccessfulRefreshText))
+            OnPropertyChanged(nameof(LastSuccessfulRefreshText));
+        if (e.PropertyName == nameof(MonthlyTasksViewModel.CanEnterTitle))
+        {
+            OnPropertyChanged(nameof(ConnectionContext));
+            OnPropertyChanged(nameof(IsReadOnlyMode));
+            OnPropertyChanged(nameof(DataSourceStatus));
         }
     }
 
@@ -593,6 +634,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         WorkHub?.UpdateConnectivity(available);
         Administration?.UpdateConnectivity(available);
         Today?.UpdateConnectivity(available);
+        MonthlyPlan?.NotifyCommands();
         OnPropertyChanged(nameof(ConnectionStatus));
         OnPropertyChanged(nameof(ConnectionTitle));
         OnPropertyChanged(nameof(ConnectionContext));

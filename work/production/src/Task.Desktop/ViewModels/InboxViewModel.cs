@@ -47,6 +47,7 @@ public sealed class InboxItemViewModel
                  && card.ParentTaskId is null
                  && card.RequesterUserId is null
                  && card.PrimaryCounterpartyObjectId is null
+                 && card.PlanningMonth is null
                  && card.ScheduledDate is null
                  && card.StartTimeLocal is null
                  && string.IsNullOrWhiteSpace(card.ScheduleTimeZone)

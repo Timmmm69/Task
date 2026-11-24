@@ -1,0 +1,112 @@
+<UserControl x:Class="Task.Desktop.Views.MonthlyTasksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:state="clr-namespace:Task.Desktop.Infrastructure">
+    <Grid Margin="24,8" MaxWidth="1200">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="{Binding PeriodText}" Style="{StaticResource Task.Card.Heading}"
+                       AutomationProperties.AutomationId="MonthlyPeriod" AutomationProperties.LiveSetting="Polite"/>
+            <WrapPanel IsEnabled="{Binding CanChoosePeriod}">
+                <Button Content="‹" Command="{Binding PreviousCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        Margin="0,0,6,6" AutomationProperties.Name="Предыдущий месяц" AutomationProperties.AutomationId="MonthlyPrevious"/>
+                <ComboBox Width="120" ItemsSource="{Binding Months}" DisplayMemberPath="Name" SelectedValuePath="Value"
+                          SelectedValue="{Binding SelectedMonth, Mode=TwoWay}" Style="{StaticResource Task.Card.Combo}"
+                          Margin="0,0,6,6" AutomationProperties.Name="Месяц" AutomationProperties.AutomationId="MonthlyMonth"/>
+                <TextBox Width="64" MaxLength="4" Text="{Binding YearText, UpdateSourceTrigger=PropertyChanged}"
+                         state:FormKeyboard.Capture="{Binding ApplyYearCommand}" Style="{StaticResource Task.Input.Text}"
+                         Margin="0,0,6,6" AutomationProperties.Name="Год" AutomationProperties.AutomationId="MonthlyYear"/>
+                <Button Content="Выбрать год" Command="{Binding ApplyYearCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        Margin="0,0,6,6" AutomationProperties.AutomationId="MonthlyApplyYear"/>
+                <Button Content="›" Command="{Binding NextCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        Margin="0,0,6,6" AutomationProperties.Name="Следующий месяц" AutomationProperties.AutomationId="MonthlyNext"/>
+                <Button Content="Текущий месяц" Command="{Binding CurrentCommand}" Style="{StaticResource Task.Button.Secondary}"
+                        Margin="0,0,6,6" AutomationProperties.AutomationId="MonthlyCurrent"/>
+                <Button Content="{Binding WithoutMonthAction}" Command="{Binding WithoutMonthCommand}"
+                        Style="{StaticResource Task.Button.Secondary}" Margin="0,0,0,6" AutomationProperties.AutomationId="MonthlyWithoutMonth"/>
+            </WrapPanel>
+            <TextBlock Text="{Binding YearError}" TextWrapping="Wrap" Foreground="{DynamicResource Task.Brush.Semantic.Critical}"
+                       AutomationProperties.LiveSetting="Polite">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding YearError}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,2,0,6" IsEnabled="{Binding CanEnterTitle}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Content="Название новой задачи" Target="{Binding ElementName=MonthlyTitleInput}" Padding="0,0,0,4"/>
+            <TextBox x:Name="MonthlyTitleInput" Grid.Row="1" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="500" IsReadOnly="{Binding IsSaving}" Style="{StaticResource Task.Input.Text}" state:FormKeyboard.Capture="{Binding CreateCommand}"
+                     AutomationProperties.AutomationId="MonthlyTitle"/>
+            <Button Grid.Row="1" Grid.Column="1" Content="Добавить" Command="{Binding CreateCommand}"
+                    Style="{StaticResource Task.Button.Primary}" Margin="8,0,0,0" AutomationProperties.AutomationId="MonthlyCreate"/>
+        </Grid>
+
+        <WrapPanel Grid.Row="2" Margin="0,0,0,2">
+            <CheckBox Content="Только активные" IsChecked="{Binding HideCompleted}" Style="{StaticResource Task.Card.Check}"
+                      VerticalAlignment="Center" Margin="0,0,14,6" AutomationProperties.AutomationId="MonthlyHideCompleted"/>
+            <ComboBox ItemsSource="{Binding SortOrders}" DisplayMemberPath="Name" SelectedValuePath="Value" SelectedValue="{Binding SortOrder, Mode=TwoWay}"
+                      Style="{StaticResource Task.Card.Combo}" MinWidth="164" Margin="0,0,6,6" AutomationProperties.Name="Сортировка"
+                      AutomationProperties.AutomationId="MonthlySort"/>
+            <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource Task.Button.Secondary}"
+                    Margin="0,0,0,6" AutomationProperties.AutomationId="MonthlyRefresh"/>
+        </WrapPanel>
+
+        <TextBlock Grid.Row="3" Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,4"
+                   Style="{StaticResource Task.Shell.StatusText}" AutomationProperties.LiveSetting="Polite"
+                   AutomationProperties.AutomationId="MonthlyMessage"/>
+
+        <ListBox Grid.Row="4" ItemsSource="{Binding Rows}" Style="{StaticResource Task.DataList}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.IsVirtualizing="True"
+                 VirtualizingPanel.VirtualizationMode="Recycling"
+                 AutomationProperties.Name="Задачи выбранного месяца" AutomationProperties.AutomationId="MonthlyTasksList"
+                 AutomationProperties.HelpText="Щёлкните строку или выберите её стрелками и нажмите Enter."
+                 PreviewMouseLeftButtonUp="OpenClickedRow" PreviewKeyDown="OpenFocusedRow">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource Task.DataList.Item}">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="AutomationProperties.Name" Value="{Binding AutomationName}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="4,3">
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                   TextTrimming="CharacterEllipsis" MaxHeight="52" ToolTip="{Binding Title}"/>
+                        <WrapPanel Margin="0,4,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,18,0">
+                                <Path Data="{Binding StatusIcon, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                      Tag="{Binding StatusTone}" Style="{StaticResource Task.Semantic.Icon}" Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding StatusText}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource Task.Icon.Calendar}" Tag="{Binding UrgencyTone}"
+                                      Style="{StaticResource Task.Semantic.Icon}" Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding DeadlineText}"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -17,7 +17,8 @@ public sealed class TaskPersonSelection : ViewModelBase
 public sealed class TaskCardEditor : ViewModelBase
 {
     private TaskCardContent _source;
-    private string _description, _date, _duration, _search = "";
+    private string _description, _date, _duration, _planningMonthText, _search = "";
+    private bool _derivePlanningMonth;
     private TaskChoice? _project, _parent, _requester, _counterparty;
     private IReadOnlyList<TaskChoice> _projects = [], _tasks = [], _people = [], _counterparties = [];
     private IReadOnlyList<TaskPersonSelection> _assignees = [], _watchers = [];
@@ -44,6 +45,8 @@ public sealed class TaskCardEditor : ViewModelBase
         _description = _source.Description ?? "";
         _date = _source.ScheduledDate?.ToString("dd.MM.yyyy") ?? "";
         _duration = _source.PlannedDurationMinutes?.ToString(CultureInfo.InvariantCulture) ?? "";
+        _derivePlanningMonth = _source.PlanningMonth is null;
+        _planningMonthText = _source.EffectivePlanningMonth ?? DateTime.Today.ToString("yyyy-MM", CultureInfo.InvariantCulture);
         SetOptions(new JsonObject());
     }
     public string Description { get => _description; set { if (SetProperty(ref _description, value)) Changed?.Invoke(); } }
@@ -61,6 +64,8 @@ public sealed class TaskCardEditor : ViewModelBase
         CalendarDate = local.Date.AddDays(offset);
     }
     public string Duration { get => _duration; set { if (SetProperty(ref _duration, value)) Changed?.Invoke(); } }
+    public bool DerivePlanningMonth { get => _derivePlanningMonth; set { if (SetProperty(ref _derivePlanningMonth, value)) Changed?.Invoke(); } }
+    public string PlanningMonthText { get => _planningMonthText; set { if (SetProperty(ref _planningMonthText, value)) Changed?.Invoke(); } }
     public string Search { get => _search; set => SetProperty(ref _search, value); }
     public string? Message { get => _message; set => SetProperty(ref _message, value); }
     public TaskChoice? Project { get => _project; set { if (!_updatingOptions && SetProperty(ref _project, value ?? new(null, "Не указано"))) Changed?.Invoke(); } }
@@ -136,6 +141,12 @@ public sealed class TaskCardEditor : ViewModelBase
             }
             duration = parsed;
         }
+        var planningMonth = DerivePlanningMonth ? null : PlanningMonthText;
+        if (!DerivePlanningMonth && (string.IsNullOrEmpty(planningMonth) || !TaskCardContent.IsValidPlanningMonth(planningMonth)))
+        {
+            invalidField = nameof(PlanningMonthText);
+            throw new ArgumentException("Плановый месяц: ГГГГ-ММ.");
+        }
         // Exact start owns the local schedule tuple; a date alone remains an all-day planning date.
         var effectiveZone = ScheduleZone ?? TimeZoneInfo.Local;
         var local = start is { } instant ? TimeZoneInfo.ConvertTime(instant, effectiveZone) : (DateTimeOffset?)null;
@@ -146,6 +157,7 @@ public sealed class TaskCardEditor : ViewModelBase
         var utcOnly = ScheduleZone is not null && local is { } at && effectiveZone.IsAmbiguousTime(at.DateTime);
         var content = _source with
         {
+            PlanningMonth = planningMonth,
             DeadlineDate = DeadlineDate,
             DeadlineTimeZone = DeadlineTimeZone,
             DeadlineReminderOffsetMinutes = DeadlineReminderOffsetMinutes,

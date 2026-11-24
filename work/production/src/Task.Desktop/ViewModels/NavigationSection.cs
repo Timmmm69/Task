@@ -38,7 +38,7 @@ public sealed class NavigationSection
 
     public string Group => Route switch
     {
-        "today" or "inbox" or "calendar" or "tasks" or "projects" => "Работа",
+        "today" or "inbox" or "calendar" or "tasks" or "monthly-plan" or "projects" => "Работа",
         "inventory" => "Работа",
         "catalog" or "contacts" => "Материалы",
         "search" or "notifications" or "archive" or "trash" => "Сервис",

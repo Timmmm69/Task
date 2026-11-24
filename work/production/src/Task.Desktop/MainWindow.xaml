@@ -372,6 +372,9 @@
                             <DataTrigger Binding="{Binding IsTasksSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding IsMonthlyPlanSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
                             <DataTrigger Binding="{Binding IsInboxSectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
@@ -1259,6 +1262,7 @@
                             <views:TaskDayPicker DataContext="{Binding Card}"/>
                             <TextBlock Text="{Binding Card.DateHint}" TextWrapping="Wrap" Margin="0,4,0,0"
                                        Foreground="{DynamicResource Task.Brush.Text.Secondary}" FontSize="{DynamicResource Task.Font.Size.Metadata}" />
+                            <views:TaskPlanningMonthEditor DataContext="{Binding Card}"/>
 
                             <TextBlock Text="Точное время начала (необязательно)" FontWeight="SemiBold" Margin="0,14,0,5" />
                             <TextBox Text="{Binding StartText, UpdateSourceTrigger=PropertyChanged}"
@@ -1367,6 +1371,8 @@
                     </Style>
                 </views:TodayView.Style>
             </views:TodayView>
+            <views:MonthlyTasksView DataContext="{Binding MonthlyPlan}"
+                                    Visibility="{Binding DataContext.IsMonthlyPlanSelected, ElementName=RootWindow, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
             <views:CalendarView DataContext="{Binding Calendar}">
                 <views:CalendarView.Style>
                     <Style TargetType="views:CalendarView">

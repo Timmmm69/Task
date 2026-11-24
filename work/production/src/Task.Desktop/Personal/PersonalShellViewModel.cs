@@ -18,7 +18,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         AddProjectTaskCommand = new(async (_, _) => await OpenProjectTaskAsync(), _ => CanAddProjectTask);
         if (viewState is not null) WorkPreferences = new(viewState, Sections, section => section.Route switch
         {
-            "today" or "inbox" or "tasks" => Tasks is not null,
+            "today" or "inbox" or "tasks" or "monthly-plan" => Tasks is not null,
             "calendar" => CanPlanToday,
             "projects" => CanOpenProjects,
             _ => false,
@@ -58,6 +58,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     }
 
     public PersonalTasksViewModel? Tasks => _model.Tasks;
+    public MonthlyTasksViewModel? MonthlyPlan => Tasks?.MonthlyPlan;
     public PersonalPlanningViewModel? Planning => _model.Planning;
     public CalendarViewModel? Calendar => _model.Calendar;
     public PersonalWorkspaceViewModel? Workspace => _model.Workspace;
@@ -68,6 +69,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         new("inbox", "Пометки", "", "Task.Icon.Inbox", "Запишите сейчас, разберите позже"),
         new("calendar", "Календарь", "", "Task.Icon.Calendar", "Личное расписание"),
         new("tasks", "Задачи", "", "Task.Icon.Tasks", "Найдите задачу и измените её детали"),
+        new("monthly-plan", "План на месяц", "", "Task.Icon.Calendar", "Задачи за выбранный месяц"),
         new("projects", "Проекты", "", "Task.Icon.Projects", "Личные проекты"),
         new("inventory", "Материалы", "", "Task.Icon.Inventory", "Личный склад"),
         new("catalog", "Каталог", "", "Task.Icon.Catalog", "Файлы и папки"),
@@ -87,11 +89,12 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
             if (IsCalendar) Calendar?.ClearCreationDay();
             _selectedSection = value;
             ApplyRoute();
-            foreach (var name in new[] { nameof(IsTasks), nameof(IsProjects), nameof(IsCalendar), nameof(IsNotifications), nameof(IsWorkspace), nameof(IsSettings), nameof(IsInventory) }) OnPropertyChanged(name);
+            foreach (var name in new[] { nameof(IsTasks), nameof(IsMonthlyPlan), nameof(IsProjects), nameof(IsCalendar), nameof(IsNotifications), nameof(IsWorkspace), nameof(IsSettings), nameof(IsInventory) }) OnPropertyChanged(name);
             OnPropertyChanged(nameof(SelectedSection));
         }
     }
     public bool IsTasks => SelectedSection.Route is "today" or "inbox" or "tasks";
+    public bool IsMonthlyPlan => SelectedSection.Route == "monthly-plan";
     public bool IsInventory => SelectedSection.Route == "inventory";
     public bool IsProjects => SelectedSection.Route == "projects";
     public bool IsCalendar => SelectedSection.Route == "calendar";
@@ -112,6 +115,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     private void ApplyRoute()
     {
         if (IsTasks && Tasks is { } tasks) tasks.SelectedSection = _model.Sections.First(s => s.Title == SelectedSection.Title);
+        if (IsMonthlyPlan && MonthlyPlan is { } plan) _ = plan.ActivateAsync(); else MonthlyPlan?.Deactivate();
         if (IsWorkspace && Workspace is { } workspace)
         {
             var area = workspace.Areas.First(a => a.Title == SelectedSection.Title);
@@ -151,6 +155,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     }
     public void Dispose()
     {
+        MonthlyPlan?.Deactivate();
         WorkPreferences?.Dispose();
         PlanTodayCommand.Dispose();
         OpenProjectsCommand.Dispose();

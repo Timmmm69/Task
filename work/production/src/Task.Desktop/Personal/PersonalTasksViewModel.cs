@@ -43,7 +43,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     private string _capture = "", _check = "", _message = "";
     private bool _busy, _disposed, _hideCompleted, _filtering;
     private PersonalSection _section;
-    public PersonalTasksViewModel(PersonalTasksClient client, IReadOnlyList<PersonalSection> sections, Func<IReadOnlyList<PersonalProject>>? projects = null, PersonalCalendarClient? calendar = null)
+    public PersonalTasksViewModel(PersonalTasksClient client, IReadOnlyList<PersonalSection> sections, Func<IReadOnlyList<PersonalProject>>? projects = null, PersonalCalendarClient? calendar = null, TimeProvider? clock = null)
     {
         _projects = projects ?? (() => []);
         _calendar = calendar;
@@ -75,10 +75,12 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         AddCheckCommand = new(async (_, _) => await ChecklistWriteAsync(null), _ => CanEdit && Editor is null && !string.IsNullOrWhiteSpace(CheckText) && CheckText.Trim().Length <= 2000);
         ToggleCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item); }, _ => CanEdit && CanSelectTask);
         RemoveCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item, true); }, _ => CanEdit && CanSelectTask);
+        MonthlyPlan = new(client, () => CanSelectTask, () => CanNavigate, OpenMonthlyTaskAsync, clock, UpdateTask);
         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить действие. Введённые данные остались в форме.";
     }
     private IEnumerable<AsyncCommand> Commands => [OpenRowCommand, AddSubtaskCommand, RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, CreateAnotherTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand, ShowCompletedCommand];
     public AsyncCommand RefreshCommand { get; }
+    public MonthlyTasksViewModel MonthlyPlan { get; }
     public AsyncCommand NewCommand { get; }
     public AsyncCommand OpenRowCommand { get; }
     public AsyncCommand AddSubtaskCommand { get; }
@@ -105,6 +107,22 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     public bool SavedTaskHiddenByFilters => _createdTask is { } task && !MatchesTaskFilters(task);
 
     internal bool IsLastSavedTask(Guid id) => _savedTaskId == id;
+
+    private async System.Threading.Tasks.Task<bool> OpenMonthlyTaskAsync(Guid id, CancellationToken token)
+    {
+        var result = await _client.GetTaskByIdAsync(id, token);
+        if (_disposed || token.IsCancellationRequested || !CanNavigate || !MonthlyPlan.IsActive
+            || result is not DesktopTasksApiResult<DesktopTaskDto>.Succeeded found) return false;
+        UpdateTask(found.Value);
+        OpenTasksRequested?.Invoke(id);
+        return SelectSavedTask(id);
+    }
+
+    private void UpdateTask(DesktopTaskDto task)
+    {
+        _all = _all.Where(current => current.Id != task.Id).Prepend(task).ToArray();
+        Filter();
+    }
 
     internal bool SelectSavedTask(Guid id)
     {
@@ -357,8 +375,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
                     _createdTask = success.Value;
                     _savedTaskId = success.Value.Id;
                     _savedCreateContext = _createContext;
-                    _all = _all.Where(task => task.Id != success.Value.Id).Prepend(success.Value).ToArray();
-                    Filter();
+                    UpdateTask(success.Value);
                 }
                 else
                 {
@@ -449,15 +466,17 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     };
     internal IReadOnlyList<ModeSwitchEditor> InspectDrafts() =>
     [
+        new("Новая задача в месячном плане", () => !string.IsNullOrWhiteSpace(MonthlyPlan.Title), () => MonthlyPlan.IsSaving, MonthlyPlan.CreateCommand),
         new("Личная задача", () => Editor is not null, () => IsBusy, SaveCommand),
         new("Новая пометка", () => !string.IsNullOrEmpty(CaptureText), () => IsBusy, CaptureCommand),
         new("Чек-лист", () => !string.IsNullOrEmpty(CheckText), () => IsBusy, AddCheckCommand),
     ];
-    private void Notify() { OnPropertyChanged(nameof(CanAddSubtask)); OnPropertyChanged(nameof(SubtaskActionHint)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); }
+    private void Notify() { OnPropertyChanged(nameof(CanAddSubtask)); OnPropertyChanged(nameof(SubtaskActionHint)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); MonthlyPlan?.NotifyCommands(); }
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
         _lifetime.Cancel(); foreach (var command in Commands) command.Dispose();
+        MonthlyPlan.Dispose();
         Editor = null; _lifetime.Dispose();
     }
 }
