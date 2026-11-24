@@ -135,6 +135,61 @@ public sealed partial class ProductEndpointsTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task BodylessGetSkipsOrganizationLimitAndHashesOnlyKeyedRequests()
+    {
+        var store = new RecordingStore();
+        using var server = Server(store, settings: () => throw new InvalidOperationException("Unexpected settings lookup."));
+        using var client = server.CreateClient();
+        using var response = await client.GetAsync("/api/v1/projects");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Empty(store.LastRequest!.Body);
+        Assert.Empty(store.LastRequest.RequestHash);
+
+        using var keyed = new HttpRequestMessage(HttpMethod.Get, "/api/v1/projects");
+        keyed.Headers.Add("Idempotency-Key", "bodyless-001");
+        using var keyedResponse = await client.SendAsync(keyed);
+        Assert.Equal(HttpStatusCode.OK, keyedResponse.StatusCode);
+        Assert.Equal("bodyless-001", store.LastRequest.IdempotencyKey);
+        Assert.Equal(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("GET/api/v1/projects||{}"u8)),
+            store.LastRequest.RequestHash);
+    }
+
+    [Theory]
+    [InlineData("application/json", HttpStatusCode.OK)]
+    [InlineData("text/plain", HttpStatusCode.UnsupportedMediaType)]
+    public async System.Threading.Tasks.Task GetWithUnknownLengthBodyStillValidatesAndParsesIt(
+        string mediaType, HttpStatusCode expectedStatus)
+    {
+        var store = new RecordingStore();
+        using var server = Server(store);
+        using var client = server.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/projects")
+        {
+            Content = new StreamingContent(mediaType),
+        };
+        using var response = await client.SendAsync(request);
+        Assert.Equal(expectedStatus, response.StatusCode);
+        if (expectedStatus == HttpStatusCode.OK)
+            Assert.True(store.LastRequest!.Body["probe"]!.GetValue<bool>());
+        else
+            Assert.Null(store.LastRequest);
+    }
+
+    private sealed class StreamingContent : HttpContent
+    {
+        public StreamingContent(string mediaType) => Headers.ContentType = new(mediaType);
+
+        protected override System.Threading.Tasks.Task SerializeToStreamAsync(Stream stream, TransportContext? context) =>
+            stream.WriteAsync("{\"probe\":true}"u8.ToArray()).AsTask();
+
+        protected override bool TryComputeLength(out long length)
+        {
+            length = 0;
+            return false;
+        }
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task MissingKeyAndOversizedPayloadAreRejected()
     {
         var store = new RecordingStore(); using var server = Server(store); using var client = server.CreateClient();
@@ -174,12 +229,14 @@ public sealed partial class ProductEndpointsTests
     { Content = new StringContent(body, Encoding.UTF8, "application/json") };
 
 #pragma warning disable ASPDEPR004 // Match the established service-host TestServer harness.
-    private static TestServer Server(RecordingStore store, bool permitted = true, string? deniedPermission = null) => new(new WebHostBuilder()
+    private static TestServer Server(RecordingStore store, bool permitted = true, string? deniedPermission = null,
+        Func<IProductSettingsStore>? settings = null) => new(new WebHostBuilder()
         .ConfigureServices(services =>
         {
             services.AddRouting();
             services.AddLogging();
             services.AddSingleton<IProductApiStore>(store);
+            if (settings is not null) services.AddSingleton(_ => settings());
             services.AddSingleton<IAuthorizationPolicyStore>(new Policy(permitted, deniedPermission));
             services.AddSingleton<PermissionDecisionService>();
             services.AddTaskPermissionAuthorization();

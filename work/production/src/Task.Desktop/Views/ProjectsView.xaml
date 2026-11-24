@@ -203,7 +203,7 @@
                 <StackPanel VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Все проекты" FontSize="18" FontWeight="Bold" AutomationProperties.HeadingLevel="Level2"/>
-                        <TextBlock Text="{Binding Items.Count}" FontSize="14" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
+                        <TextBlock Text="{Binding ProjectCountText}" FontSize="14" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                                    Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                     <TextBlock Text="{Binding AccessText}" TextWrapping="Wrap" Margin="0,4,0,0"
@@ -218,6 +218,18 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
+                    <DockPanel Margin="0,8,0,0" MaxWidth="400" HorizontalAlignment="Left">
+                        <Button DockPanel.Dock="Right" Content="Найти" Command="{Binding RefreshCommand}"
+                                Style="{StaticResource Project.Button}" Margin="6,0,0,0"
+                                AutomationProperties.Name="Найти проекты"/>
+                        <TextBox MinWidth="168" MaxLength="200" Style="{StaticResource Task.Input.Search}" Tag="Поиск проектов"
+                                 Text="{Binding ProjectSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="Поиск проектов" AutomationProperties.AutomationId="ProjectSearchTextBox">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </DockPanel>
                 </StackPanel>
             </DockPanel>
 
@@ -263,6 +275,19 @@
                         </Style>
                     </Border.Style>
                     <DockPanel>
+                        <Button DockPanel.Dock="Bottom" Content="Загрузить ещё" Command="{Binding LoadMoreProjectsCommand}"
+                                Margin="10,4,10,10" AutomationProperties.AutomationId="LoadMoreProjectsButton">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource Project.Button}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasMoreProjects}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <TextBlock DockPanel.Dock="Top" Text="Обновляем список…" Margin="14,8,14,2" TextWrapping="Wrap"
                                    AutomationProperties.LiveSetting="Polite">
                             <TextBlock.Style>
@@ -334,7 +359,7 @@
                                         <Setter Property="Text" Value="Выберите проект"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding State}" Value="Loading"><Setter Property="Text" Value="Загрузка проектов…"/></DataTrigger>
-                                            <DataTrigger Binding="{Binding State}" Value="Empty"><Setter Property="Text" Value="Проектов пока нет"/></DataTrigger>
+                                            <DataTrigger Binding="{Binding State}" Value="Empty"><Setter Property="Text" Value="{Binding EmptyProjectsText}"/></DataTrigger>
                                             <DataTrigger Binding="{Binding State}" Value="Failed"><Setter Property="Text" Value="Не удалось загрузить проекты"/></DataTrigger>
                                             <DataTrigger Binding="{Binding State}" Value="Forbidden"><Setter Property="Text" Value="Проекты недоступны"/></DataTrigger>
                                             <DataTrigger Binding="{Binding CanRead}" Value="False"><Setter Property="Text" Value="Проекты недоступны"/></DataTrigger>

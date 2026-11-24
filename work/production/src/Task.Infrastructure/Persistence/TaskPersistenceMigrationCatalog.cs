@@ -25,6 +25,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(16, "automatic_deadline_reminders", "016_automatic_deadline_reminders.sql"),
         Load(17, "inbox_conversion", "017_inbox_conversion.sql"),
         Load(18, "search_snapshot_expiry", "018_search_snapshot_expiry.sql"),
+        Load(19, "reminder_reconciliation", "019_reminder_reconciliation.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

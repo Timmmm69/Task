@@ -49,7 +49,7 @@ public abstract record DesktopProjectResult<T> where T : class
 public interface IDesktopProjectsApiClient
 {
     System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(
-        string? cursor = null, CancellationToken cancellationToken = default);
+        string? cursor = null, CancellationToken cancellationToken = default, string? search = null);
     System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectDto>> GetProjectAsync(
         Guid id, CancellationToken cancellationToken = default);
     System.Threading.Tasks.Task<DesktopProjectResult<IReadOnlyList<DesktopProjectRoleDto>>> GetRolesAsync(
@@ -93,10 +93,12 @@ public sealed partial class DesktopProjectsApiClient : IDesktopProjectsApiClient
     }
 
     public async System.Threading.Tasks.Task<DesktopProjectResult<DesktopProjectPage>> GetProjectsAsync(
-        string? cursor = null, CancellationToken cancellationToken = default)
+        string? cursor = null, CancellationToken cancellationToken = default, string? search = null)
     {
-        var uri = string.IsNullOrWhiteSpace(cursor) ? _projectsUri
-            : new Uri($"{_projectsUri.AbsoluteUri}?cursor={Uri.EscapeDataString(cursor.Trim())}");
+        var parameters = new List<string>(2);
+        if (!string.IsNullOrWhiteSpace(search)) parameters.Add($"q={Uri.EscapeDataString(search.Trim())}");
+        if (!string.IsNullOrWhiteSpace(cursor)) parameters.Add($"cursor={Uri.EscapeDataString(cursor.Trim())}");
+        var uri = parameters.Count == 0 ? _projectsUri : new Uri($"{_projectsUri.AbsoluteUri}?{string.Join('&', parameters)}");
         var result = await _executor.GetAsync(uri, NewCorrelation(), cancellationToken).ConfigureAwait(false);
         return result is AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.OK } response
             ? TryReadPage(response.Body, out var page) ? new DesktopProjectResult<DesktopProjectPage>.Succeeded(page) : new DesktopProjectResult<DesktopProjectPage>.MalformedResponse()
