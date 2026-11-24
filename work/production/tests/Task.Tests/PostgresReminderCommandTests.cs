@@ -30,6 +30,24 @@ public sealed partial class PostgresProductApiTests
     private static int OccurrenceVersion(ProductApiResponse result) => result.Body!["currentOccurrence"]!["version"]!.GetValue<int>();
 
     [Fact]
+    public void ReminderCommands_TaskTimingChangeUpdatesOnlyItsRulesAndCancelsTheOldOccurrence()
+    {
+        using var db = Database.Create(); if (db is null) return;
+        var target = ReminderTarget(db);
+        var unrelated = ReminderTarget(db);
+        var affected = ReminderCall(db, "create", ReminderBody(db, target, "at_deadline"), key: "timing-reminder-01");
+        var untouched = ReminderCall(db, "create", ReminderBody(db, unrelated, "at_deadline"), key: "timing-reminder-02");
+        var oldOccurrence = affected.Body!["currentOccurrence"]!["id"]!.GetValue<Guid>();
+        var moved = DateTimeOffset.UtcNow.AddDays(3);
+        db.Sql("UPDATE work.tasks SET deadline_at=$2 WHERE id=$1;", target, moved);
+
+        Assert.Equal(moved.ToUnixTimeMilliseconds(), DeadlineValue<DateTimeOffset>(db,
+            "SELECT next_trigger_at FROM calendar.reminders WHERE id=$1;", Id(affected)).ToUnixTimeMilliseconds());
+        Assert.Equal("cancelled", DeadlineValue<string>(db, "SELECT status FROM calendar.reminder_occurrences WHERE id=$1;", oldOccurrence));
+        Assert.Equal(1, ReminderCall(db, "get", id: Id(untouched)).Version);
+    }
+
+    [Fact]
     public void ReminderCommands_CanonicalDtoRuntimePermissionRevocationAndTransactionalRollback()
     {
         using var db = Database.Create(); if (db is null) return;

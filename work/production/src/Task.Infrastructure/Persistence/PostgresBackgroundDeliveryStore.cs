@@ -193,49 +193,19 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         await using var reconcile = new NpgsqlCommand(
-            """
-            -- Recheck recipients/access on each pass, including account or role changes.
-            SELECT calendar.reconcile_task_deadline(s.organization_id,s.task_id)
-            FROM (SELECT organization_id,task_id FROM calendar.task_deadline_scan
-                ORDER BY checked_at,organization_id,task_id LIMIT @batch) s;
-            WITH definitions AS (
-                SELECT r.id, o.lifecycle_state,
-                    CASE o.object_type WHEN 'task' THEN task.status WHEN 'calendar_event' THEN event.status END AS target_status,
-                    CASE r.trigger_type
-                        WHEN 'absolute' THEN r.absolute_trigger_at
-                        WHEN 'at_start' THEN coalesce(task.start_at_utc,event.start_at_utc)
-                        WHEN 'at_deadline' THEN coalesce(task.deadline_at,event.end_at_utc)
-                        WHEN 'before_start' THEN coalesce(task.start_at_utc,event.start_at_utc)-make_interval(mins=>r.offset_minutes)
-                        WHEN 'before_deadline' THEN coalesce(task.deadline_at,event.end_at_utc)-make_interval(mins=>r.offset_minutes)
-                    END AS due
-                FROM calendar.reminders r JOIN core.objects o ON o.organization_id=r.organization_id AND o.id=r.target_object_id
-                LEFT JOIN work.tasks task ON task.organization_id=o.organization_id AND task.id=o.id
-                LEFT JOIN calendar.events event ON event.organization_id=o.organization_id AND event.id=o.id
-                WHERE r.status IN ('scheduled','due','snoozed')
-            )
-            UPDATE calendar.reminders r SET
-                status=CASE WHEN d.lifecycle_state<>'active' OR d.target_status IS NULL OR d.target_status IN ('completed','cancelled')
-                    OR (r.status<>'snoozed' AND d.due IS NULL) THEN 'expired' ELSE 'scheduled' END,
-                next_trigger_at=coalesce(d.due,r.next_trigger_at), version=r.version+1, updated_at=clock_timestamp()
-            FROM definitions d WHERE r.id=d.id AND
-                (d.lifecycle_state<>'active' OR d.target_status IS NULL OR d.target_status IN ('completed','cancelled')
-                    OR (r.status<>'snoozed' AND (d.due IS NULL OR r.next_trigger_at<>d.due)));
-
-            UPDATE calendar.reminder_occurrences occurrence SET status='cancelled',
-                claimed_by_worker=NULL,lock_token=NULL,lease_expires_at=NULL,heartbeat_at=NULL
-            FROM calendar.reminders reminder WHERE occurrence.reminder_id=reminder.id
-                AND occurrence.status IN ('created','failed','claimed')
-                AND (reminder.status IN ('expired','cancelled') OR reminder.next_trigger_at<>occurrence.due_at);
-            """, connection, transaction);
-        reconcile.Parameters.AddWithValue("batch", batchSize);
+            "SELECT calendar.reconcile_due_deadlines($1);", connection, transaction);
+        reconcile.Parameters.Add(new NpgsqlParameter<int> { TypedValue = batchSize });
         await reconcile.ExecuteNonQueryAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
             """
             WITH candidates AS (
-                SELECT id, organization_id, next_trigger_at
-                  FROM calendar.reminders
-                 WHERE status IN ('scheduled','snoozed') AND next_trigger_at <= clock_timestamp()
-                 ORDER BY next_trigger_at, id
+                SELECT r.id, r.organization_id, r.next_trigger_at
+                  FROM calendar.reminders r
+                 WHERE r.status IN ('scheduled','snoozed') AND r.next_trigger_at <= statement_timestamp()
+                   AND (r.managed_source IS NOT NULL OR NOT EXISTS (
+                       SELECT 1 FROM calendar.reminder_recovery_queue q
+                       WHERE q.organization_id = r.organization_id AND q.target_object_id = r.target_object_id))
+                 ORDER BY r.next_trigger_at, r.id
                  FOR UPDATE SKIP LOCKED
                  LIMIT $1
             ), inserted AS (
@@ -292,6 +262,9 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
                        OR (occurrence.status = 'claimed' AND occurrence.attempt_count < 10
                             AND occurrence.lease_expires_at < clock_timestamp()))
                     AND reminder.status IN ('due','scheduled','snoozed') AND reminder.next_trigger_at=occurrence.due_at
+                    AND (reminder.managed_source IS NOT NULL OR NOT EXISTS (
+                        SELECT 1 FROM calendar.reminder_recovery_queue q
+                        WHERE q.organization_id=reminder.organization_id AND q.target_object_id=reminder.target_object_id))
                  ORDER BY occurrence.due_at, occurrence.id
                  FOR UPDATE OF occurrence SKIP LOCKED
                  LIMIT $4
@@ -377,9 +350,18 @@ internal sealed class PostgresBackgroundDeliveryStore(NpgsqlDataSource dataSourc
                         UPDATE calendar.reminders r SET status='expired',version=version+1,updated_at=clock_timestamp()
                         FROM cancelled WHERE r.id=cancelled.reminder_id AND r.status='due' AND r.next_trigger_at=cancelled.due_at
                         RETURNING r.id)
-                    SELECT count(*) FROM cancelled;
+                    SELECT (SELECT count(*) FROM cancelled) +
+                        CASE WHEN EXISTS (
+                            SELECT 1 FROM calendar.reminder_occurrences x
+                            JOIN calendar.reminders r ON r.id = x.reminder_id
+                            WHERE x.id = @id AND x.reminder_id = @reminder AND x.organization_id = @org
+                                AND x.status = 'cancelled' AND r.status = 'expired' AND r.managed_source IS NULL
+                        ) THEN 1 ELSE 0 END;
                     """, connection, transaction);
-                cancel.Parameters.AddWithValue("id", delivery.OccurrenceId); cancel.Parameters.AddWithValue("token", delivery.LeaseToken);
+                cancel.Parameters.AddWithValue("id", delivery.OccurrenceId);
+                cancel.Parameters.AddWithValue("token", delivery.LeaseToken);
+                cancel.Parameters.AddWithValue("reminder", delivery.ReminderId);
+                cancel.Parameters.AddWithValue("org", delivery.OrganizationId);
                 if ((long)(await cancel.ExecuteScalarAsync(cancellationToken))! != 1) throw new InvalidOperationException("REMINDER_LEASE_LOST");
                 await transaction.CommitAsync(cancellationToken); return;
             }

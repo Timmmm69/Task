@@ -28,6 +28,58 @@ public sealed partial class PostgresProductApiTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task AutomaticDeadline_IdleAndUnrelatedUpdatesDoNotRewriteScansAndRecoveryIsBounded()
+    {
+        using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
+        var first = DeadlineTask(db, DateTimeOffset.UtcNow.AddHours(1));
+        var second = DeadlineTask(db, DateTimeOffset.UtcNow.AddHours(1));
+        var checkedAt = DeadlineValue<DateTimeOffset>(db, "SELECT checked_at FROM calendar.task_deadline_scan WHERE task_id=$1;", first);
+        db.Sql("UPDATE work.tasks SET title='Уточнённый заголовок' WHERE id=$1;", first);
+        var worker = db.ApiRuntime.CreateBackgroundDeliveryStore();
+        Assert.Equal(0, await worker.MaterializeDueRemindersAsync(100));
+        Assert.Equal(checkedAt, DeadlineValue<DateTimeOffset>(db, "SELECT checked_at FROM calendar.task_deadline_scan WHERE task_id=$1;", first));
+
+        db.Sql("UPDATE calendar.task_deadline_scan SET next_check_at='-infinity';");
+        Assert.Equal(0, await worker.MaterializeDueRemindersAsync(1));
+        Assert.Equal(1L, DeadlineValue<long>(db, "SELECT count(*) FROM calendar.task_deadline_scan WHERE next_check_at='-infinity';"));
+        await System.Threading.Tasks.Task.WhenAll(worker.MaterializeDueRemindersAsync(1), worker.MaterializeDueRemindersAsync(1));
+        Assert.Equal(0L, DeadlineValue<long>(db, "SELECT count(*) FROM calendar.task_deadline_scan WHERE next_check_at='-infinity';"));
+        Assert.Equal(2, db.Count("calendar.reminders"));
+        Assert.Equal(0, db.Count("calendar.reminder_occurrences"));
+
+        db.Sql("UPDATE work.tasks SET card_content=jsonb_build_object('assigneeIds', jsonb_build_array($2::uuid)) WHERE id=$1;", second, db.OtherUser);
+        db.Sql("UPDATE iam.user_accounts SET account_status='blocked' WHERE id=$1;", db.User);
+        Assert.Equal(first, DeadlineValue<Guid>(db, "SELECT task_id FROM calendar.task_deadline_scan WHERE next_check_at='-infinity';"));
+        Assert.Equal(1L, DeadlineValue<long>(db, "SELECT count(*) FROM calendar.task_deadline_scan WHERE next_check_at='-infinity';"));
+        await worker.MaterializeDueRemindersAsync(100);
+        Assert.Equal("cancelled", DeadlineValue<string>(db, "SELECT status FROM calendar.reminders WHERE target_object_id=$1 AND recipient_user_id=$2;", first, db.User));
+        Assert.Equal("scheduled", DeadlineValue<string>(db, "SELECT status FROM calendar.reminders WHERE target_object_id=$1 AND recipient_user_id=$2;", second, db.OtherUser));
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task AutomaticDeadline_UpgradeV18ReconcilesExistingRowsWithoutCreatingDuplicates()
+    {
+        using var db = Database.Create(schemaVersion: 18); if (db is null) return; DeadlineRoles(db);
+        var id = DeadlineTask(db, DateTimeOffset.UtcNow.AddHours(1));
+        var rule = DeadlineValue<Guid>(db, "SELECT id FROM calendar.reminders WHERE target_object_id=$1;", id);
+        var manual = Id(ReminderCall(db, "create", ReminderBody(db, id, "at_deadline"), key: "upgrade-reminder-01"));
+        db.Sql("UPDATE work.tasks SET deadline_at=statement_timestamp()+interval '2 hours' WHERE id=$1;", id);
+        var migrator = db.Runtime.CreateMigrator();
+        Assert.Equal(18, (await migrator.InspectAsync()).ActualMigrationVersion);
+        migrator.ApplyPending();
+        migrator.ApplyPending();
+
+        Assert.Equal(1, db.Count("calendar.reminder_recovery_queue"));
+        await db.ApiRuntime.CreateBackgroundDeliveryStore().MaterializeDueRemindersAsync(100);
+        Assert.Equal(rule, DeadlineValue<Guid>(db, "SELECT id FROM calendar.reminders WHERE target_object_id=$1 AND managed_source='task_deadline';", id));
+        Assert.Equal(2, db.Count("calendar.reminders"));
+        Assert.Equal(0, db.Count("calendar.reminder_recovery_queue"));
+        Assert.True(DeadlineValue<bool>(db, "SELECT r.next_trigger_at=t.deadline_at FROM calendar.reminders r JOIN work.tasks t ON t.id=r.target_object_id WHERE r.id=$1;", manual));
+        Assert.Equal("cancelled", DeadlineValue<string>(db, "SELECT status FROM calendar.reminder_occurrences WHERE reminder_id=$1;", manual));
+        Assert.True(DeadlineValue<bool>(db, "SELECT next_check_at > clock_timestamp() FROM calendar.task_deadline_scan WHERE task_id=$1;", id));
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task AutomaticDeadline_TaskWriteTransactionAndReplayDeliverThroughExistingWorker()
     {
         using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
@@ -170,11 +222,7 @@ public sealed partial class PostgresProductApiTests
     [Fact]
     public async System.Threading.Tasks.Task AutomaticDeadline_UpgradeV15IsIdempotentAndDoesNotSendElapsedTriggers()
     {
-        using var db = Database.Create(); if (db is null) return; DeadlineRoles(db);
-        // Recreate the exact pre-v16 schema, then run the accepted migrator on populated data.
-        db.Sql("DROP INDEX core.ix_product_search_snapshots_expires_at; DROP TABLE work.inbox_items; DELETE FROM infrastructure.schema_migrations WHERE version>=17;");
-        db.Sql("DROP TRIGGER task_deadline_saved ON work.tasks; DROP TRIGGER task_deadline_lifecycle ON core.objects; DROP FUNCTION calendar.task_deadline_saved(); DROP FUNCTION calendar.task_deadline_lifecycle(); DROP FUNCTION calendar.reconcile_task_deadline(uuid,uuid,boolean); DROP FUNCTION calendar.deadline_local_anchor(date,time,text); DROP TABLE calendar.task_deadline_preferences; DROP TABLE calendar.task_deadline_scan; DROP INDEX calendar.uq_task_deadline_reminder; ALTER TABLE calendar.reminders DROP COLUMN managed_source; ALTER TABLE org.user_settings DROP COLUMN date_only_reminder_time;");
-        db.Sql("DELETE FROM infrastructure.schema_migrations WHERE version=16;");
+        using var db = Database.Create(schemaVersion: 15); if (db is null) return; DeadlineRoles(db);
         var future = DeadlineTask(db, DateTimeOffset.UtcNow.AddHours(1));
         DeadlineTask(db, DateTimeOffset.UtcNow.AddMinutes(10)); DeadlineTask(db, DateTimeOffset.UtcNow.AddMinutes(-10));
         ReminderCall(db, "create", ReminderBody(db, future, "before_deadline"));

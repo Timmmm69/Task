@@ -312,22 +312,46 @@ public sealed partial class PostgresProductApiTests
         public NpgsqlDataSource Source => source;
         public Guid Role(string code)
         { using var command = source.CreateCommand("SELECT id FROM iam.roles WHERE organization_id=$1 AND code=$2"); command.Parameters.AddWithValue(Organization); command.Parameters.AddWithValue(code); return (Guid)command.ExecuteScalar()!; }
-        public static Database? Create() => Environment.GetEnvironmentVariable("TASK_POSTGRES_TEST_ADMIN_CONNECTION") is { Length: > 0 } connection ? new(connection) : null;
-        private Database(string connection)
+        public static Database? Create(int? schemaVersion = null) =>
+            Environment.GetEnvironmentVariable("TASK_POSTGRES_TEST_ADMIN_CONNECTION") is { Length: > 0 } connection
+                ? new(connection, schemaVersion) : null;
+        private Database(string connection, int? schemaVersion)
         {
             name = "task_api04_" + Guid.NewGuid().ToString("N"); admin = NpgsqlDataSource.Create(connection);
             using (var command = admin.CreateCommand($"CREATE DATABASE {name};")) command.ExecuteNonQuery();
             var runtimeConnection = new NpgsqlConnectionStringBuilder(connection) { Database = name }.ConnectionString;
             source = NpgsqlDataSource.Create(runtimeConnection); Runtime = new(runtimeConnection);
-            Runtime.CreateMigrator().ApplyPending();
+            if (schemaVersion is { } version) ApplyMigrationPrefix(version);
+            else Runtime.CreateMigrator().ApplyPending();
             Sql("INSERT INTO core.organizations(id,code,name,default_time_zone) VALUES($1,$2,'API04 tests','UTC');", Organization, Organization.ToString("N"));
             SeedUser(User, Session); SeedUser(OtherUser, OtherSession);
             Sql($"CREATE ROLE {name}_role LOGIN PASSWORD 'api04-test-only' NOSUPERUSER NOCREATEDB NOCREATEROLE;");
             var assembly = typeof(PostgresProductApiTests).Assembly;
             using var grants = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().Single(n => n.EndsWith("grant-runtime.sql")))!;
             using var reader = new StreamReader(grants);
-            Sql(string.Join('\n', reader.ReadToEnd().Split('\n').Where(line => !line.TrimStart().StartsWith('\\'))).Replace("task_runtime", name + "_role"));
+            var grantLines = reader.ReadToEnd().Split('\n').Where(line => !line.TrimStart().StartsWith('\\'));
+            if (schemaVersion < 19) grantLines = grantLines.Where(line => !line.Contains("calendar.reconcile_due_deadlines", StringComparison.Ordinal)
+                && !line.Contains("calendar.reminder_recovery_queue", StringComparison.Ordinal));
+            if (schemaVersion < 17) grantLines = grantLines.Where(line => !line.Contains("work.inbox_items", StringComparison.Ordinal));
+            if (schemaVersion < 16) grantLines = grantLines.Where(line => !line.Contains("calendar.task_deadline_preferences", StringComparison.Ordinal)
+                && !line.Contains("calendar.reconcile_task_deadline", StringComparison.Ordinal));
+            Sql(string.Join('\n', grantLines).Replace("task_runtime", name + "_role"));
             apiRuntime = new(new NpgsqlConnectionStringBuilder(runtimeConnection) { Username = name + "_role", Password = "api04-test-only" }.ConnectionString);
+        }
+        private void ApplyMigrationPrefix(int schemaVersion)
+        {
+            Sql("""
+                CREATE SCHEMA infrastructure;
+                CREATE TABLE infrastructure.schema_migrations (
+                    version integer PRIMARY KEY, name text NOT NULL, sha256 char(64) NOT NULL,
+                    applied_at timestamptz NOT NULL DEFAULT clock_timestamp());
+                """);
+            foreach (var migration in TaskPersistenceMigrationCatalog.All.Take(schemaVersion))
+            {
+                Sql(migration.Sql);
+                Sql("INSERT INTO infrastructure.schema_migrations(version,name,sha256) VALUES($1,$2,$3);",
+                    migration.Version, migration.Name, migration.Sha256);
+            }
         }
         private void SeedUser(Guid user, Guid session)
         {
