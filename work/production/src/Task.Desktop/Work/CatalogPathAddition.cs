@@ -3,7 +3,10 @@ using Task.Application.Files;
 
 namespace Task.Desktop.Work;
 
-public sealed record CatalogPathResult(int Index, string Name, Guid? ItemId, bool Added, string Message);
+public sealed record CatalogPathResult(int Index, string Name, Guid? ItemId, bool Added, string Message)
+{
+    public bool HasLocation { get; init; }
+}
 
 /// <summary>Shared picker/drop application flow over existing catalog and location commands.
 /// Stores metadata only; never enumerates directories or opens file contents.</summary>
@@ -27,7 +30,7 @@ public sealed class CatalogPathAddition(IDesktopWorkApiClient client, Func<strin
 
     public async System.Threading.Tasks.Task<IReadOnlyList<CatalogPathResult>> AddAsync(
         IReadOnlyList<string> paths, Guid? parent, Func<bool> canWrite,
-        IReadOnlyList<DesktopCatalogItem> catalog, CancellationToken ct = default)
+        IReadOnlyList<DesktopCatalogItem> catalog, CancellationToken ct = default, bool reuseAcrossFolders = false)
     {
         if (paths.Count is < 1 or > MaximumBatch)
             return [new(0, "Выбор", null, false, $"Выберите от 1 до {MaximumBatch} элементов.")];
@@ -46,7 +49,7 @@ public sealed class CatalogPathAddition(IDesktopWorkApiClient client, Func<strin
                 if (connectionLost || ct.IsCancellationRequested || !canWrite()) { results.Add(Fail("Добавление требует подключения и разрешений.")); continue; }
                 if (path is null) { results.Add(Fail("Неподдерживаемый путь.")); continue; }
                 var key = (parent, Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.Unicode.GetBytes(path.ToUpperInvariant()))));
-                if (_attempts.TryGetValue(key, out var previous))
+                if (_attempts.TryGetValue(key, out var previous) && (!reuseAcrossFolders || !previous.HasLocation))
                 { results.Add(previous with { Index = index + 1, Added = false, Message = previous.Added ? "Уже добавлен." : previous.Message }); continue; }
                 if (_attempts.Count >= 10000) { results.Add(Fail("Достигнут лимит текущей сессии добавления.")); continue; }
                 Guid? createdId = null;
@@ -69,7 +72,7 @@ public sealed class CatalogPathAddition(IDesktopWorkApiClient client, Func<strin
                     var type = (attributes & FileAttributes.Directory) != 0 ? "folder_reference" : "file_reference";
                     // Compare only locations visible and usable by the current user/device.
                     var duplicate = false;
-                    foreach (var item in catalog.Where(i => i.ParentId == parent && i.ItemType == type && string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase)))
+                    foreach (var item in catalog.Where(i => (reuseAcrossFolders || i.ParentId == parent) && i.ItemType == type && string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase)))
                     {
                         IReadOnlyList<DesktopFileLocation> candidates = [];
                         if (client is IDesktopFileLocationsClient existingLocations)
@@ -88,7 +91,7 @@ public sealed class CatalogPathAddition(IDesktopWorkApiClient client, Func<strin
                         if (candidates.Any(l => l.CanOpenOnDevice && l.IsEnabled && string.Equals(Normalize(l.RawPath), path, StringComparison.OrdinalIgnoreCase)))
                         { duplicate = true; createdId = item.Id; break; }
                     }
-                    if (duplicate) { results.Add(Fail("Уже добавлен.", createdId)); continue; }
+                    if (duplicate) { results.Add(Fail("Уже добавлен.", createdId) with { HasLocation = true }); continue; }
                     if (!canWrite() || ct.IsCancellationRequested) { results.Add(Fail("Добавление требует подключения и разрешений.")); continue; }
                     // Retain uncertain outcomes. Never replay a create with a fresh idempotency key.
                     _attempts[key] = Fail("Результат не подтверждён. Обновите каталог перед дальнейшими действиями.");
@@ -110,7 +113,7 @@ public sealed class CatalogPathAddition(IDesktopWorkApiClient client, Func<strin
                         ? await locationClient.CreateLocationAsync(createdId.Value, success.Value.Version, draft, ct).ConfigureAwait(true)
                         : await client.AddLocationAsync(createdId.Value, success.Value.Version, path, ct).ConfigureAwait(true);
                     var result = saved is DesktopWorkResult<bool>.Succeeded
-                        ? new CatalogPathResult(index + 1, name, createdId, true, "Добавлен.")
+                        ? new CatalogPathResult(index + 1, name, createdId, true, "Добавлен.") { HasLocation = true }
                         : partial with { Message = partial.Message + " " + Error(saved) };
                     _attempts[key] = result; results.Add(result);
                     if (saved is DesktopWorkResult<bool>.ServerUnavailable or DesktopWorkResult<bool>.AuthenticationFailure or DesktopWorkResult<bool>.MalformedResponse) connectionLost = true;

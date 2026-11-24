@@ -8,30 +8,23 @@
   <Style TargetType="Expander" BasedOn="{StaticResource Task.Card.Section}"><Setter Property="Margin" Value="0,12,0,0"/><Setter Property="IsExpanded" Value="True"/></Style>
  </UserControl.Resources>
  <StackPanel>
+  <TextBlock Text="{Binding Message}" AutomationProperties.LiveSetting="Assertive"/>
+  <Expander Header="Шаги чек-листа" state:ViewState.Section="task/v1/checklist"><views:TaskChecklistView/></Expander>
+  <Expander Header="Файлы и папки" state:ViewState.Section="task/v1/files"><views:TaskDocumentsView DataContext="{Binding Documents}"/></Expander>
   <Border BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0" Padding="0,16,0,0">
    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
     <StackPanel><TextBlock Text="Работа над задачей" Style="{StaticResource Task.Card.Heading}"/><TextBlock Text="{Binding ContextText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/></StackPanel>
     <Button Grid.Column="1" Content="Обновить связи" Command="{Binding RefreshCommand}" VerticalAlignment="Top"/>
    </Grid>
   </Border>
-  <TextBlock Text="{Binding Message}" AutomationProperties.LiveSetting="Assertive"/>
-  <Expander Header="Чек-лист" state:ViewState.Section="task/v1/checklist"><views:TaskChecklistView/></Expander>
   <Expander Header="Подзадачи" state:ViewState.Section="task/v1/subtasks"><StackPanel>
    <TextBlock Text="Добавьте подзадачу действием в карточке выше."/>
    <ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
   </StackPanel></Expander>
   <Border Style="{StaticResource Task.Card.Group}" Margin="0,16,0,0"><StackPanel>
-  <TextBlock Text="Поиск связей" Style="{StaticResource Task.Card.Heading}"/>
-  <TextBlock Text="Поиск файлов и предшествующих задач" Margin="0,0,0,6"/>
-  <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Search}" Tag="Найти файл или задачу…" AutomationProperties.Name="Поиск файлов и зависимостей"/>
-  <Button Content="Найти связи" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>
+  <TextBox Text="{Binding Search,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Task.Input.Search}" Tag="Найти предшествующую задачу…" AutomationProperties.Name="Поиск предшествующей задачи"/>
+  <Button Content="Найти задачи" Command="{Binding SearchCommand}" HorizontalAlignment="Left"/>
   </StackPanel></Border>
-  <Expander Header="Связанные файлы" state:ViewState.Section="task/v1/files"><StackPanel>
-   <TextBlock Text="{Binding FilesNotice}"/>
-   <ItemsControl ItemsSource="{Binding Files}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать связь" Command="{Binding DataContext.RemoveFileCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-   <ComboBox ItemsSource="{Binding FileOptions}" SelectedItem="{Binding File}" DisplayMemberPath="Name" AutomationProperties.Name="Файл для задачи"/>
-   <Button Content="Связать с файлом" Command="{Binding AddFileCommand}"/>
-  </StackPanel></Expander>
   <Expander Header="Предшествующие задачи" state:ViewState.Section="task/v1/predecessors"><StackPanel>
    <TextBlock Text="Зависимость «окончание — начало». Перед завершением проверьте состояния предшествующих задач."/>
    <ItemsControl ItemsSource="{Binding Dependencies}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel><TextBlock TextWrapping="Wrap" Text="{Binding Text}"/><Button Content="Убрать зависимость" Command="{Binding DataContext.RemoveDependencyCommand,ElementName=Workspace}" CommandParameter="{Binding}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>

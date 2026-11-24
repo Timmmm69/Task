@@ -9,6 +9,6 @@
     <Button Content="Удалить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding DataContext.RemoveCheckCommand,ElementName=ChecklistView}" CommandParameter="{Binding}"/>
    </WrapPanel></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
   <TextBox Style="{StaticResource Task.Input.Text}" Margin="0,12,0,8" Text="{Binding CheckText,UpdateSourceTrigger=PropertyChanged}" MaxLength="2000" AutomationProperties.Name="Новый пункт чек-листа"/>
-  <Button Content="Добавить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding AddCheckCommand}"/>
+  <Button Content="Добавить пункт" Style="{StaticResource Task.Button.Secondary}" Command="{Binding AddCheckCommand}" AutomationProperties.AutomationId="TaskChecklistAdd"/>
  </StackPanel>
 </UserControl>

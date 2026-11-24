@@ -22,7 +22,7 @@ public sealed record PersonalTaskItem(DesktopTaskDto Source)
 }
 
 /// <summary>Personal presentation uses the shared draft, statuses and Inbox semantics.</summary>
-public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
+public sealed partial class PersonalTasksViewModel : ViewModelBase, IDisposable
 {
     private readonly PersonalTasksClient _client;
     private readonly Func<IReadOnlyList<PersonalProject>> _projects;
@@ -75,7 +75,8 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         AddCheckCommand = new(async (_, _) => await ChecklistWriteAsync(null), _ => CanEdit && Editor is null && !string.IsNullOrWhiteSpace(CheckText) && CheckText.Trim().Length <= 2000);
         ToggleCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item); }, _ => CanEdit && CanSelectTask);
         RemoveCheckCommand = new(async (p, _) => { if (p is TaskWorkspaceItem item) await ChecklistWriteAsync(item, true); }, _ => CanEdit && CanSelectTask);
-        MonthlyPlan = new(client, () => CanSelectTask, () => CanNavigate, OpenMonthlyTaskAsync, clock, UpdateTask);
+        _documentAccess = new(client.Work, client.Work);
+        MonthlyPlan = new(client, () => CanSelectTask, () => CanNavigate, OpenMonthlyTaskAsync, clock, UpdateTask, _documentAccess);
         foreach (var command in Commands) command.ExecutionFailed += _ => Message = "Не удалось выполнить действие. Введённые данные остались в форме.";
     }
     private IEnumerable<AsyncCommand> Commands => [OpenRowCommand, AddSubtaskCommand, RefreshCommand, NewCommand, OpenTasksCommand, OpenSavedTaskCommand, CreateAnotherTaskCommand, EditCommand, SaveCommand, CancelCommand, CaptureCommand, TransitionCommand, ReloadEditorCommand, AddCheckCommand, ToggleCheckCommand, RemoveCheckCommand, ShowCompletedCommand];
@@ -151,7 +152,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand AddCheckCommand { get; }
     public AsyncCommand ToggleCheckCommand { get; }
     public AsyncCommand RemoveCheckCommand { get; }
-    public PersonalSection SelectedSection { get => _section; set { if (value is not null && SetProperty(ref _section, value)) { Filter(); OnPropertyChanged(nameof(IsInbox)); OnPropertyChanged(nameof(IsToday)); OnPropertyChanged(nameof(IsSettings)); OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody)); } } }
+    public PersonalSection SelectedSection { get => _section; set { if (value is not null && SetProperty(ref _section, value)) { Filter(); UpdateDocuments(); OnPropertyChanged(nameof(IsInbox)); OnPropertyChanged(nameof(IsToday)); OnPropertyChanged(nameof(IsSettings)); OnPropertyChanged(nameof(EmptyTitle)); OnPropertyChanged(nameof(EmptyBody)); } } }
     public bool IsInbox => SelectedSection.Title == "Пометки";
     public bool IsTasks => SelectedSection.Title == "Задачи";
     private string _inboxSearchText = "";
@@ -195,7 +196,7 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         {
             if (IsInbox && (HasEditor || !string.IsNullOrEmpty(CheckText)) && value?.Source.Id != _selected?.Source.Id) return;
             if (value is null && (_filtering || _selected is { } old && HasDrafts && !Items.Any(t => t.Source.Id == old.Source.Id))) return;
-            if (SetProperty(ref _selected, value)) { OnPropertyChanged(nameof(SelectedProject)); OnPropertyChanged(nameof(Subtasks)); Checklist = []; OnPropertyChanged(nameof(Checklist)); OnPropertyChanged(nameof(HasSelection)); Notify(); if (value is not null) _ = LoadChecklistAsync(value.Source.Id); }
+            if (SetProperty(ref _selected, value)) { OnPropertyChanged(nameof(SelectedProject)); OnPropertyChanged(nameof(Subtasks)); Checklist = []; OnPropertyChanged(nameof(Checklist)); OnPropertyChanged(nameof(HasSelection)); UpdateDocuments(); Notify(); if (value is not null) _ = LoadChecklistAsync(value.Source.Id); }
         }
     }
     public TaskEditorViewModel? Editor
@@ -213,10 +214,11 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
     public bool HasEditor => Editor is not null;
     public bool IsBusy { get => _busy; private set { SetProperty(ref _busy, value); OnPropertyChanged(nameof(IsNotBusy)); OnPropertyChanged(nameof(ShowEmpty)); OnPropertyChanged(nameof(ShowEmptyTodayPlan)); OnPropertyChanged(nameof(InboxReadFailed)); Notify(); } }
     public bool IsNotBusy => !IsBusy;
-    public bool CanEdit => !IsBusy && Selected is not null && !TaskRules.IsTerminal((TaskWorkStatus)Selected.Source.Status);
+    public bool CanEdit => CanEditTask && Documents?.IsMutating != true;
+    private bool CanEditTask => !IsBusy && Selected is not null && !TaskRules.IsTerminal((TaskWorkStatus)Selected.Source.Status);
     public string CaptureText { get => _capture; set { SetProperty(ref _capture, value); OnPropertyChanged(nameof(CaptureValidation)); OnPropertyChanged(nameof(CanNavigate)); CaptureCommand.RaiseCanExecuteChanged(); OpenTasksCommand.RaiseCanExecuteChanged(); OpenSavedTaskCommand.RaiseCanExecuteChanged(); } }
     public string CheckText { get => _check; set { SetProperty(ref _check, value); Notify(); } }
-    public bool CanSelectTask => !IsBusy && Editor is null && string.IsNullOrEmpty(CheckText);
+    public bool CanSelectTask => !IsBusy && Documents?.IsMutating != true && Editor is null && string.IsNullOrEmpty(CheckText);
     public bool CanNavigate => CanSelectTask && string.IsNullOrEmpty(CaptureText);
     public string Message
     {
@@ -470,13 +472,15 @@ public sealed class PersonalTasksViewModel : ViewModelBase, IDisposable
         new("Личная задача", () => Editor is not null, () => IsBusy, SaveCommand),
         new("Новая пометка", () => !string.IsNullOrEmpty(CaptureText), () => IsBusy, CaptureCommand),
         new("Чек-лист", () => !string.IsNullOrEmpty(CheckText), () => IsBusy, AddCheckCommand),
+        new("Связи задачи", () => Documents?.HasDraft == true, () => Documents?.IsMutating == true, null),
     ];
-    private void Notify() { OnPropertyChanged(nameof(CanAddSubtask)); OnPropertyChanged(nameof(SubtaskActionHint)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); MonthlyPlan?.NotifyCommands(); }
+    private void Notify() { Documents?.Notify(); OnPropertyChanged(nameof(CanAddSubtask)); OnPropertyChanged(nameof(SubtaskActionHint)); OnPropertyChanged(nameof(CanEdit)); OnPropertyChanged(nameof(CanSelectTask)); OnPropertyChanged(nameof(CanNavigate)); foreach (var command in Commands) command?.RaiseCanExecuteChanged(); MonthlyPlan?.NotifyCommands(); }
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
         _lifetime.Cancel(); foreach (var command in Commands) command.Dispose();
         MonthlyPlan.Dispose();
+        Documents?.Dispose();
         Editor = null; _lifetime.Dispose();
     }
 }

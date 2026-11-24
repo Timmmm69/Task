@@ -1,6 +1,8 @@
 using System.Globalization;
 using Task.Desktop.TaskApi;
 using Task.Domain;
+using Task.Desktop.Work;
+using Task.Application;
 using Operation = System.Threading.Tasks.Task;
 
 namespace Task.Desktop.ViewModels;
@@ -12,6 +14,9 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
     private readonly Func<bool> _canOpen;
     private readonly Action<DesktopTaskDto>? _onCreated;
     private readonly TimeProvider _clock;
+    private readonly TaskDocumentAccess? _documents;
+    private readonly Func<bool> _canOpenFolders;
+    internal IReadOnlyList<TaskFolderReference> FolderChoices { get; private set; } = [];
     private CancellationTokenSource? _load;
     private DateOnly _period;
     private string _yearText;
@@ -27,12 +32,14 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
 
     internal MonthlyTasksViewModel(IDesktopTasksApiClient client, Func<bool> canCreate,
         Func<bool> canOpen, Func<Guid, CancellationToken, System.Threading.Tasks.Task<bool>> open, TimeProvider? clock = null,
-        Action<DesktopTaskDto>? onCreated = null)
+        Action<DesktopTaskDto>? onCreated = null, TaskDocumentAccess? documents = null, Func<bool>? canOpenFolders = null)
     {
         _client = client;
         _canCreate = canCreate;
         _canOpen = canOpen;
         _onCreated = onCreated;
+        _documents = documents;
+        _canOpenFolders = canOpenFolders ?? canOpen;
         _clock = clock ?? TimeProvider.System;
         _period = CurrentMonth();
         _yearText = FormatYear(_period);
@@ -52,6 +59,10 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
         },
             row => _active && _canOpen() && !IsSaving && row is MonthlyTaskRow task && Rows.Contains(task));
         OpenCommand.ExecutionFailed += _ => Message = "Не удалось открыть задачу. Повторите попытку.";
+        FolderCommand = new(UseFolderAsync, parameter => CanOfferFolders && !IsSaving
+            && parameter is MonthlyFolderRequest request && Rows.Contains(request.Row) && request.Row.HasFolders
+            && (request.Target is null || request.Row.Folders.Any(folder => folder.Id == request.Target)));
+        FolderCommand.ExecutionFailed += _ => Message = "Не удалось открыть связанную папку. Проверьте подключение и повторите попытку.";
     }
 
     public IReadOnlyList<TaskFilterOption<int>> Months { get; } = CultureInfo.GetCultureInfo("ru-RU").DateTimeFormat.MonthNames
@@ -118,6 +129,32 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand RefreshCommand { get; }
     public AsyncCommand CreateCommand { get; }
     public AsyncCommand OpenCommand { get; }
+    public AsyncCommand FolderCommand { get; }
+    public bool CanOfferFolders => _active && _documents is not null && _canOpenFolders();
+
+    private async Operation UseFolderAsync(object? parameter, CancellationToken token)
+    {
+        var request = (MonthlyFolderRequest)parameter!;
+        var task = request.Row.Source.Id;
+        var folders = request.Row.Folders;
+        FolderChoices = [];
+        Message = "Проверяем доступ к папке…";
+        var target = request.Target ?? (folders.Count == 1 ? folders[0].Id : (Guid?)null);
+        if (target is null)
+        {
+            var available = await _documents!.FindAvailableFoldersAsync(task, folders, token);
+            if (!CanOfferFolders || !Rows.Contains(request.Row) || token.IsCancellationRequested) return;
+            if (available.Count != 1)
+            {
+                FolderChoices = available;
+                Message = available.Count == 0 ? "Связанные папки недоступны на этом компьютере." : "Выберите папку.";
+                return;
+            }
+            target = available[0].Id;
+        }
+        var message = await _documents!.OpenAsync(task, target.Value, true, token);
+        if (CanOfferFolders && Rows.Contains(request.Row) && !token.IsCancellationRequested) Message = message;
+    }
 
     private DateOnly CurrentMonth()
     {
@@ -260,10 +297,13 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
         var now = _clock.GetUtcNow();
         var zone = _clock.LocalTimeZone;
         var tasks = HideCompleted ? _tasks.Where(task => !TaskRules.IsTerminal((TaskWorkStatus)task.Status)) : _tasks;
+        FolderCommand.Cancel();
+        FolderChoices = [];
         Rows = TaskSorting.Apply(tasks, SortOrder, zone).Select(task => new MonthlyTaskRow(task, now, zone)).ToArray();
         _nextUrgencyChange = Rows.Select(row => row.NextChange).Min();
         if (_active && !IsLoading && _tasks.Count > 0) Message = CountMessage();
         OpenCommand.RaiseCanExecuteChanged();
+        FolderCommand.RaiseCanExecuteChanged();
     }
 
     internal void RefreshUrgency(bool force = false)
@@ -278,6 +318,8 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
 
     internal void NotifyCommands()
     {
+        OnPropertyChanged(nameof(CanOfferFolders));
+        if (!CanOfferFolders) { FolderCommand.Cancel(); FolderChoices = []; }
         OnPropertyChanged(nameof(CanChoosePeriod));
         OnPropertyChanged(nameof(CanEnterTitle));
         OnPropertyChanged(nameof(CanQuickCreate));
@@ -285,7 +327,7 @@ public sealed class MonthlyTasksViewModel : ViewModelBase, IDisposable
     }
 
     private AsyncCommand[] Commands =>
-        [PreviousCommand, NextCommand, CurrentCommand, WithoutMonthCommand, ApplyYearCommand, RefreshCommand, CreateCommand, OpenCommand];
+        [PreviousCommand, NextCommand, CurrentCommand, WithoutMonthCommand, ApplyYearCommand, RefreshCommand, CreateCommand, OpenCommand, FolderCommand];
 
     public void Dispose()
     {

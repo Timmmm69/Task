@@ -17,7 +17,7 @@ public static class MonthlyTaskQuery
         do
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var result = await client.GetTasksAsync(cursor, cancellationToken).ConfigureAwait(false);
+            var result = await client.GetMonthlyPageAsync(cursor, cancellationToken).ConfigureAwait(false);
             if (result is not DesktopTasksApiResult<DesktopTaskPage>.Succeeded page) return result;
             matches.AddRange(page.Value.Items.Where(task => task.Card?.EffectivePlanningMonth == month));
             cursor = page.Value.NextCursor;

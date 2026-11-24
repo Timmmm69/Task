@@ -8,10 +8,20 @@ namespace Task.Desktop.Personal;
 public sealed class PersonalTasksClient(PersonalTaskStore store) : IDesktopDeadlineSettingsClient, IDesktopTasksApiClient
 {
     public System.Threading.Tasks.Task<Task.Desktop.Work.DesktopUserSettings?> GetDeadlineSettingsAsync(CancellationToken token = default) => System.Threading.Tasks.Task.FromResult<Task.Desktop.Work.DesktopUserSettings?>(store.WorkspaceSettings());
-    public async System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default)
+    internal PersonalWorkClient Work { get; } = new(store);
+    internal System.Threading.Tasks.Task<IReadOnlyList<TaskDocument>> ReadDocumentsAsync(Guid id, CancellationToken token) =>
+        System.Threading.Tasks.Task.Run(() => store.TaskDocuments(id), token);
+
+    public System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(string? cursor = null, CancellationToken cancellationToken = default) =>
+        ReadPageAsync(cursor, false, cancellationToken);
+
+    System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> IDesktopTasksApiClient.GetMonthlyPageAsync(string? cursor, CancellationToken token) =>
+        ReadPageAsync(cursor, true, token);
+
+    private async System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> ReadPageAsync(string? cursor, bool includeLinkedFolders, CancellationToken cancellationToken)
     {
         if (cursor is not null) return new DesktopTasksApiResult<DesktopTaskPage>.InvalidCursor();
-        try { var tasks = await System.Threading.Tasks.Task.Run(store.List, cancellationToken); return new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new(tasks, null, tasks.Count)); }
+        try { var tasks = await System.Threading.Tasks.Task.Run(() => store.List(includeLinkedFolders), cancellationToken); return new DesktopTasksApiResult<DesktopTaskPage>.Succeeded(new(tasks, null, tasks.Count)); }
         catch (Exception e) when (e is SqliteException or System.IO.IOException or UnauthorizedAccessException) { return new DesktopTasksApiResult<DesktopTaskPage>.ServerUnavailable(); }
     }
     public async System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskDto>> GetTaskByIdAsync(Guid id, CancellationToken cancellationToken = default)

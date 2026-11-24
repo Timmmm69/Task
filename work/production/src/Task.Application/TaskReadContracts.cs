@@ -14,7 +14,12 @@ public sealed record TaskReadProjection(
     TaskWorkStatus Status,
     TaskPriority Priority,
     DateTimeOffset? StartAtUtc,
-    DateTimeOffset? DeadlineAtUtc, TaskCardContent? Content = null, DateTimeOffset? CompletedAtUtc = null, Guid? RecurrenceSeriesId = null);
+    DateTimeOffset? DeadlineAtUtc, TaskCardContent? Content = null, DateTimeOffset? CompletedAtUtc = null, Guid? RecurrenceSeriesId = null)
+{
+    public IReadOnlyList<TaskFolderReference>? LinkedFolders { get; init; }
+}
+
+public sealed record TaskFolderReference(Guid Id, string Name);
 
 /// <summary>
 /// Security binding and opaque continuation supplied to one task-list query.
@@ -26,7 +31,7 @@ public sealed record TaskReadPageRequest(
     Guid UserAccountId,
     long AuthorizationScopeVersion,
     string? Cursor = null,
-    TaskTodayWindow? Today = null);
+    TaskTodayWindow? Today = null, bool IncludeLinkedFolders = false, bool CanManageOrganization = false);
 
 /// <summary>The selected local day and its half-open UTC interval.</summary>
 public sealed record TaskTodayWindow(DateOnly Date, DateTimeOffset FromUtc, DateTimeOffset ToUtc)

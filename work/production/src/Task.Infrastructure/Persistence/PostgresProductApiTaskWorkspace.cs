@@ -50,15 +50,16 @@ internal sealed partial class PostgresProductApiStore
         {
             ValidateQuery(r, "");
             JsonArray Rows(string sql) => new(Many(c, t, sql, r, ("id", r.Id)).ToArray<JsonNode?>());
+            var canReadFiles = r.Permissions.Contains("FileCatalog.Read") && r.Permissions.Contains("ObjectLink.Read");
             var body = new JsonObject
             {
                 ["checklist"] = Rows("SELECT to_jsonb(i) FROM work.task_checklist i WHERE organization_id=@org AND task_id=@id ORDER BY sort_order,id;"),
                 ["comments"] = Rows("SELECT to_jsonb(i)||jsonb_build_object('authorName',e.display_name) FROM work.task_comments i JOIN iam.user_accounts u ON u.organization_id=i.organization_id AND u.id=i.author_user_id JOIN org.employee_profiles e ON e.organization_id=u.organization_id AND e.id=u.employee_profile_id WHERE i.organization_id=@org AND i.task_id=@id ORDER BY i.created_at DESC,i.id LIMIT 200;"),
                 ["subtasks"] = Rows("SELECT jsonb_build_object('id',p.id,'name',p.title,'status',p.status) FROM work.tasks p JOIN core.objects o ON o.id=p.id WHERE p.organization_id=@org AND p.parent_task_id=@id AND o.lifecycle_state='active' AND work.task_visible(@org,p.id,@user) ORDER BY p.title,p.id;"),
                 ["dependencies"] = Rows("SELECT jsonb_build_object('id',d.id,'targetId',p.id,'name',p.title,'status',p.status) FROM work.task_dependencies d JOIN work.tasks p ON p.organization_id=d.organization_id AND p.id=d.predecessor_id JOIN core.objects o ON o.id=p.id WHERE d.organization_id=@org AND d.task_id=@id AND o.lifecycle_state='active' AND work.task_visible(@org,p.id,@user) ORDER BY p.title,p.id;"),
-                ["files"] = r.Permissions.Contains("FileCatalog.Read") ? Rows("SELECT jsonb_build_object('id',l.id,'targetId',p.id,'name',p.name) FROM core.object_links l JOIN files.catalog_items p ON p.organization_id=l.organization_id AND p.id=l.target_object_id JOIN core.objects o ON o.id=p.id WHERE l.organization_id=@org AND l.source_object_id=@id AND l.link_type='task_file' AND o.lifecycle_state='active' AND iam.object_allowed(@org,o.id,@user,'filecatalog.read',@admin) ORDER BY p.name,p.id;") : new JsonArray(),
+                ["files"] = canReadFiles ? Rows("SELECT jsonb_build_object('id',l.id,'targetId',p.id,'name',p.name,'itemType',p.item_type) FROM core.object_links l JOIN files.catalog_items p ON p.organization_id=l.organization_id AND p.id=l.target_object_id JOIN core.objects o ON o.id=p.id WHERE l.organization_id=@org AND l.source_object_id=@id AND l.link_type='task_file' AND o.lifecycle_state='active' AND iam.object_allowed(@org,o.id,@user,'filecatalog.read',@admin) ORDER BY p.name,p.id;") : new JsonArray(),
                 ["history"] = r.Permissions.Contains("History.Read") ? Rows("SELECT jsonb_build_object('id',id,'action',event_type,'version',aggregate_version,'occurredAt',occurred_at,'changedFields',changed_fields) FROM governance.domain_events WHERE organization_id=@org AND aggregate_id=@id ORDER BY occurred_at DESC,id LIMIT 200;") : new JsonArray(),
-                ["filesVisible"] = r.Permissions.Contains("FileCatalog.Read"),
+                ["filesVisible"] = canReadFiles,
                 ["historyVisible"] = r.Permissions.Contains("History.Read")
             };
             return new(body, Version: Version(current));

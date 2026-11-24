@@ -37,6 +37,8 @@ internal readonly record struct MonthlyDeadline(MonthlyUrgency Urgency, string? 
     private static DateTimeOffset Midnight(DateOnly date, TimeZoneInfo zone) => DeadlineReminderTime.Anchor(date, TimeOnly.MinValue, zone);
 }
 
+internal sealed record MonthlyFolderRequest(MonthlyTaskRow Row, Guid? Target = null);
+
 public sealed class MonthlyTaskRow : ViewModelBase
 {
     private MonthlyDeadline _deadline;
@@ -48,6 +50,8 @@ public sealed class MonthlyTaskRow : ViewModelBase
     }
 
     internal DesktopTaskDto Source { get; }
+    internal IReadOnlyList<Task.Application.TaskFolderReference> Folders => Source.LinkedFolders ?? [];
+    public bool HasFolders => Folders.Count > 0;
     internal DateTimeOffset? NextChange => _deadline.NextChange;
     public string Title => Source.Title;
     public string StatusText => TaskItemViewModel.LocalizeStatus(Source.Status);

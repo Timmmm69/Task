@@ -89,22 +89,42 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="4,3">
-                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"
-                                   TextTrimming="CharacterEllipsis" MaxHeight="52" ToolTip="{Binding Title}"/>
-                        <WrapPanel Margin="0,4,0,0">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,18,0">
-                                <Path Data="{Binding StatusIcon, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
-                                      Tag="{Binding StatusTone}" Style="{StaticResource Task.Semantic.Icon}" Margin="0,0,6,0"/>
-                                <TextBlock Text="{Binding StatusText}"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="{StaticResource Task.Icon.Calendar}" Tag="{Binding UrgencyTone}"
-                                      Style="{StaticResource Task.Semantic.Icon}" Margin="0,0,6,0"/>
-                                <TextBlock Text="{Binding DeadlineText}"/>
-                            </StackPanel>
-                        </WrapPanel>
-                    </StackPanel>
+                    <DockPanel Margin="4,3">
+                        <Button DockPanel.Dock="Right" Content="Папка" Margin="8,0,0,0" VerticalAlignment="Center"
+                                Click="OpenFolders" AutomationProperties.AutomationId="MonthlyFolder"
+                                AutomationProperties.Name="Открыть связанную папку">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding HasFolders}" Value="True"/>
+                                                <Condition Binding="{Binding DataContext.CanOfferFolders, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="True"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                       TextTrimming="CharacterEllipsis" MaxHeight="52" ToolTip="{Binding Title}"/>
+                            <WrapPanel Margin="0,4,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,18,0">
+                                    <Path Data="{Binding StatusIcon, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
+                                          Tag="{Binding StatusTone}" Style="{StaticResource Task.Semantic.Icon}" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding StatusText}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource Task.Icon.Calendar}" Tag="{Binding UrgencyTone}"
+                                          Style="{StaticResource Task.Semantic.Icon}" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding DeadlineText}"/>
+                                </StackPanel>
+                            </WrapPanel>
+                        </StackPanel>
+                    </DockPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

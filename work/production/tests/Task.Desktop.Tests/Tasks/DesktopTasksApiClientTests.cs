@@ -107,15 +107,20 @@ public sealed class DesktopTasksApiClientTests
     [Fact]
     public async global::System.Threading.Tasks.Task MonthlyQueryReadsBeyondEmptyFirstPageAndIncludesCompletedTasks()
     {
+        var folder = Guid.NewGuid();
         await using var fixture = await Fixture.CreateAsync((request, _) =>
         {
-            var next = request.RequestUri!.Query == "?cursor=next";
+            var query = request.RequestUri!.Query;
+            Assert.Contains("includeLinkedFolders=true", query, StringComparison.Ordinal);
+            var next = query.Contains("cursor=next", StringComparison.Ordinal);
             var item = System.Text.Json.Nodes.JsonNode.Parse(TaskJson())!.AsObject();
             item["planningMonth"] = next ? "2027-01" : "2026-01";
             if (next)
             {
                 item["id"] = Guid.NewGuid();
                 item["status"] = "completed";
+                item["linkedFolders"] = new System.Text.Json.Nodes.JsonArray(
+                    new System.Text.Json.Nodes.JsonObject { ["id"] = folder, ["name"] = "Рабочая папка" });
             }
             var body = new System.Text.Json.Nodes.JsonObject
             {
@@ -127,7 +132,9 @@ public sealed class DesktopTasksApiClientTests
 
         var result = await fixture.Client.GetMonthlyTasksAsync("2027-01");
         var page = Assert.IsType<DesktopTasksApiResult<DesktopTaskPage>.Succeeded>(result).Value;
-        Assert.Equal(DesktopTaskStatus.Completed, Assert.Single(page.Items).Status);
+        var completed = Assert.Single(page.Items);
+        Assert.Equal(DesktopTaskStatus.Completed, completed.Status);
+        Assert.Equal(folder, Assert.Single(completed.LinkedFolders!).Id);
         Assert.Null(page.NextCursor);
         Assert.Equal(1, page.Total);
     }

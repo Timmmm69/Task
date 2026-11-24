@@ -116,6 +116,69 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal(409, Assert.Throws<ProductApiException>(() => db.Call("objects", "link-add", new JsonObject { ["sourceObjectId"] = id, ["targetObjectId"] = Id(file), ["linkType"] = "task_file" }.ToJsonString(), id, (int)reloaded.Version)).Status);
     }
 
+    [RequiresPostgresFact]
+    public async System.Threading.Tasks.Task TaskDocuments_RealPostgres_PreserveHistoryAndScopeFolderProjection()
+    {
+        using var db = Database.Create()!;
+        var work = TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Подготовить материалы", DateTimeOffset.UtcNow,
+            content: new() { Description = "Сверить список, открыть рабочую папку.", PlanningMonth = "2027-01" });
+        var other = TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Другая работа", DateTimeOffset.UtcNow);
+        db.Runtime.CreateTaskStore().Add(work);
+        db.Runtime.CreateTaskStore().Add(other);
+        var task = work.Metadata.Id;
+        var folder = Id(db.Call("catalog-items", "create", """{"name":"Рабочая папка","itemType":"folder_reference"}"""));
+        var hidden = Id(db.Call("catalog-items", "create", """{"name":"Закрытая папка","itemType":"folder_reference"}"""));
+        var file = Id(db.Call("catalog-items", "create", """{"name":"Реестр","itemType":"file_reference"}"""));
+        ProductApiResponse Attach(Guid owner, Guid target, int version) => db.Call("objects", "link-add",
+            new JsonObject { ["sourceObjectId"] = owner, ["targetObjectId"] = target, ["linkType"] = "task_file" }.ToJsonString(), owner, version);
+        Attach(task, folder, 1);
+        Attach(task, hidden, 2);
+        var detach = Id(Attach(task, file, 3));
+        Attach(other.Metadata.Id, file, 1);
+        Assert.Equal(409, Assert.Throws<ProductApiException>(() => Attach(task, folder, 4)).Status);
+        Assert.Equal(200, db.Call("objects", "link-remove", id: task, version: 4, child: detach).Status);
+        Assert.Equal(3, db.Count("files.catalog_items"));
+        Assert.Equal(3, db.Count("core.object_links"));
+        Assert.Single(db.Call("tasks", "task-workspace", id: other.Metadata.Id).Body!["files"]!.AsArray());
+
+        var check = Id(db.Call("tasks", "task-check-add", """{"text":"Сверить список"}""", task, 5));
+        db.Call("tasks", "task-check-add", """{"text":"Открыть папку"}""", task, 6);
+        db.Call("tasks", "task-check-patch", """{"isCompleted":true}""", task, 7, child: check);
+        var before = db.Runtime.CreateTaskStore().Get(task, db.Organization)!;
+        db.Runtime.CreateTaskStore().Save(before.Complete(db.User, DateTimeOffset.UtcNow), before.Metadata.Version);
+
+        var read = db.Runtime.CreateTaskReadStore();
+        var page = await read.GetPageAsync(new(db.Organization, db.User, 1, IncludeLinkedFolders: true));
+        var row = Assert.Single(page.Items, item => item.Id == task);
+        Assert.Equal(TaskWorkStatus.Completed, row.Status);
+        Assert.Equal(work.Content.Description, row.Content!.Description);
+        Assert.Equal(2, row.LinkedFolders!.Count);
+        Assert.Null(Assert.Single((await read.GetPageAsync(new(db.Organization, db.User, 1))).Items, item => item.Id == task).LinkedFolders);
+        var card = db.Call("tasks", "task-workspace", id: task).Body!;
+        Assert.Equal(new[] { "Сверить список", "Открыть папку" }, card["checklist"]!.AsArray().Select(step => step!["text"]!.ToString()));
+        Assert.True(card["checklist"]![0]!["isCompleted"]!.GetValue<bool>());
+        Assert.Equal(2, card["files"]!.AsArray().Count);
+        Assert.Equal(409, Assert.Throws<ProductApiException>(() => Attach(task, file, (int)row.Version)).Status);
+        Assert.Empty(db.Call("tasks", "task-workspace", id: task, permissions: ["Task.Read", "FileCatalog.Read"]).Body!["files"]!.AsArray());
+
+        // Restrict a single target by its creator's department, leaving the task and other link readable.
+        var department = Guid.NewGuid(); var denyRole = Guid.NewGuid();
+        db.Sql("INSERT INTO core.objects(id,organization_id,object_type,created_by,updated_by,created_at,updated_at) VALUES($1,$2,'department',$3,$3,statement_timestamp(),statement_timestamp());",
+            department, db.Organization, db.User);
+        db.Sql("UPDATE org.employee_profiles SET department_id=$1 WHERE id=(SELECT employee_profile_id FROM iam.user_accounts WHERE id=$2);",
+            department, db.OtherUser);
+        db.Sql("UPDATE core.objects SET created_by=$1 WHERE id=$2;", db.OtherUser, hidden);
+        db.Sql("INSERT INTO iam.roles(id,organization_id,code,display_name,is_system) VALUES($1,$2,'folder_deny','Folder deny',false);",
+            denyRole, db.Organization);
+        db.Sql("INSERT INTO iam.role_permissions(role_id,permission_code,effect) VALUES($1,'filecatalog.read','deny');", denyRole);
+        db.Sql("INSERT INTO iam.user_roles(user_account_id,role_id,granted_by,department_id) VALUES($1,$2,$1,$3);",
+            db.User, denyRole, department);
+        var scoped = await read.GetPageAsync(new(db.Organization, db.User, 1, IncludeLinkedFolders: true, CanManageOrganization: true));
+        Assert.Equal(folder, Assert.Single(Assert.Single(scoped.Items, item => item.Id == task).LinkedFolders!).Id);
+        var files = db.Call("tasks", "task-workspace", id: task).Body!["files"]!.AsArray();
+        Assert.Equal(folder.ToString("D"), Assert.Single(files)!["targetId"]!.ToString());
+    }
+
     [Fact]
     public async System.Threading.Tasks.Task TaskCard_RealPostgres_VisibilityAndOptionsArePermissionBound()
     {

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Data;
 using Task.Desktop.Personal;
 namespace Task.Desktop.Views;
 
@@ -17,11 +18,15 @@ public partial class PersonalTaskBrowserView : UserControl
     private void UpdateInspectorLayout()
     {
         var narrow = ActualWidth < 850;
-        BrowserLayout.MinHeight = narrow ? 440 : 0;
+        // A short, stacked layout needs one scroll surface so the full card can be reached.
+        if (narrow)
+            BindingOperations.ClearBinding(BrowserLayout, HeightProperty);
+        else if (!BindingOperations.IsDataBound(BrowserLayout, HeightProperty))
+            BrowserLayout.SetBinding(HeightProperty, new Binding(nameof(ScrollViewer.ViewportHeight)) { Source = BrowserViewport });
+        InspectorScroll.VerticalScrollBarVisibility = narrow ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto;
         InspectorColumn.Width = new GridLength(narrow ? 0 : 340);
-        InspectorRow.Height = !narrow ? new GridLength(0)
-            : Inspector.IsExpanded ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
-        BrowserGrid.RowDefinitions[0].Height = new GridLength(narrow && Inspector.IsExpanded ? 0.85 : 1, GridUnitType.Star);
+        InspectorRow.Height = narrow ? GridLength.Auto : new GridLength(0);
+        BrowserGrid.RowDefinitions[0].Height = narrow ? new GridLength(220) : new GridLength(1, GridUnitType.Star);
         Grid.SetColumn(Inspector, narrow ? 0 : 1);
         Grid.SetRow(Inspector, narrow ? 1 : 0);
         Inspector.Margin = narrow ? new Thickness(0, 12, 16, 0) : new Thickness(0);
@@ -30,7 +35,7 @@ public partial class PersonalTaskBrowserView : UserControl
     internal void FocusDetails()
     {
         Inspector.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-        BrowserViewport.ScrollToBottom();
+        Inspector.BringIntoView(new Rect(0, 0, 1, 32));
     }
     private void OnReset(object sender, RoutedEventArgs e) { if (DataContext is PersonalTasksViewModel model && model.CanSelectTask) model.ResetViewFilters(); }
 }

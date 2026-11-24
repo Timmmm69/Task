@@ -97,11 +97,24 @@ public sealed partial class PersonalTaskStore : IDisposable
         return reader.Read() ? Read(reader) : null;
     }
     public DesktopTaskDto? Get(Guid id) => Locked(() => Get(id, null));
-    public IReadOnlyList<DesktopTaskDto> List() => Locked<IReadOnlyList<DesktopTaskDto>>(() =>
+    public IReadOnlyList<DesktopTaskDto> List() => List(false);
+
+    internal IReadOnlyList<DesktopTaskDto> List(bool includeLinkedFolders) => Locked<IReadOnlyList<DesktopTaskDto>>(() =>
     {
-        using var command = Command($"SELECT {Columns} FROM tasks WHERE archived_at IS NULL AND trashed_at IS NULL ORDER BY created_at DESC,id;");
+        const string folders = """
+            , (SELECT json_group_array(json_object('Id', c.id, 'Name', c.name) ORDER BY c.name,c.id)
+               FROM object_links l JOIN personal_catalog c ON c.id=l.target_id AND c.lifecycle='active'
+               WHERE l.source_id=tasks.id AND l.link_type='task_file' AND c.item_type='folder_reference')
+            """;
+        using var command = Command($"SELECT {Columns}{(includeLinkedFolders ? folders : "")} FROM tasks WHERE archived_at IS NULL AND trashed_at IS NULL ORDER BY created_at DESC,id;");
         using var reader = command.ExecuteReader(); var tasks = new List<DesktopTaskDto>();
-        while (reader.Read()) tasks.Add(Read(reader));
+        while (reader.Read())
+        {
+            var task = Read(reader);
+            if (includeLinkedFolders)
+                task = task with { LinkedFolders = System.Text.Json.JsonSerializer.Deserialize<Task.Application.TaskFolderReference[]>(reader.GetString(23)) };
+            tasks.Add(task);
+        }
         return tasks;
     });
 
