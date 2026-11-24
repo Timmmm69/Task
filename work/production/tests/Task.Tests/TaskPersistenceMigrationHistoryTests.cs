@@ -5,10 +5,10 @@ namespace Task.Tests;
 public sealed class TaskPersistenceMigrationHistoryTests
 {
     [Fact]
-    public void Catalog_ExpectsTaskSearchTrigramVersionTwenty()
+    public void Catalog_ExpectsPreserveAtDeadlineDeliveryVersionTwentyTwo()
     {
-        Assert.Equal(20, TaskPersistenceRuntime.ExpectedMigrationVersion);
-        Assert.Equal("task_search_trigram", TaskPersistenceMigrationCatalog.All[^1].Name);
+        Assert.Equal(22, TaskPersistenceRuntime.ExpectedMigrationVersion);
+        Assert.Equal("preserve_at_deadline_delivery", TaskPersistenceMigrationCatalog.All[^1].Name);
     }
 
     [Fact]

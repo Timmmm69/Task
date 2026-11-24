@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
+        xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:inv="clr-namespace:Task.Desktop.Inventory" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
         mc:Ignorable="d"
         state:PersonalSelect.Scope="True"
         Title="Task — пространство компании"
@@ -385,6 +385,9 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsWorkHubSectionSelected}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsInventorySectionSelected}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsAdministrationSectionSelected}" Value="True">
@@ -1400,6 +1403,8 @@
                     </Style>
                 </views:WorkHubView.Style>
             </views:WorkHubView>
+            <inv:InventoryView DataContext="{Binding Inventory}"
+                               Visibility="{Binding DataContext.IsInventorySectionSelected, ElementName=RootWindow, Converter={StaticResource Task.BooleanToVisibilityConverter}}" />
             <views:AdministrationView DataContext="{Binding Administration}">
                 <views:AdministrationView.Style>
                     <Style TargetType="views:AdministrationView">

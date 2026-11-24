@@ -16,6 +16,8 @@ using Task.Api.Tasks;
 using Task.Api.Users;
 using Task.Api.ProductData;
 using Task.Api.Server;
+using Task.Api.Inventory;
+using Task.Application.Inventory;
 using Task.Application.Server;
 using Task.Infrastructure.Identity;
 using Task.Infrastructure.Persistence;
@@ -80,6 +82,8 @@ if (!string.IsNullOrWhiteSpace(taskDatabaseConnectionString))
         services.GetRequiredService<TaskPersistenceRuntime>().CreateProductApiStore());
     builder.Services.AddSingleton<IContactStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateContactStore());
+    builder.Services.AddSingleton<IInventoryStore>(services =>
+        services.GetRequiredService<TaskPersistenceRuntime>().CreateInventoryStore());
     builder.Services.AddSingleton<ICatalogItemStore>(services =>
         services.GetRequiredService<TaskPersistenceRuntime>().CreateCatalogItemStore());
     builder.Services.AddSingleton<INotificationStore>(services =>
@@ -201,6 +205,7 @@ app.MapTaskEndpoints();
 app.MapCalendarEndpoints();
 app.MapRecurrenceEndpoints();
 app.MapProductEndpoints();
+app.MapInventoryEndpoints();
 
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse(Status: "Alive"))).AllowAnonymous();
 

@@ -1,4 +1,5 @@
 using System.IO;
+using Task.Application.Inventory;
 using Task.Desktop.Modes;
 using Task.Desktop.Personal;
 using Task.Desktop.ViewModels;
@@ -33,9 +34,34 @@ public sealed class PersonalShellViewModelTests : IDisposable
             Assert.False(shell.IsTasks);
             Assert.Equal(area.Area, model.Workspace.Hub.Area);
         }
-        Assert.Equal(12, shell.Sections.Count);
+        Assert.Equal(13, shell.Sections.Count);
         Assert.DoesNotContain(shell.Sections, s => s.Route == "administration");
     }
+    [Fact]
+    public async global::System.Threading.Tasks.Task InventoryRouteIsLocalAndPersistsAcrossRestart()
+    {
+        using (var model = new PersonalApplicationModel(_root))
+        using (var shell = new PersonalShellViewModel(model))
+        {
+            shell.SelectedSection = Assert.Single(shell.Sections, section => section.Route == "inventory");
+            Assert.True(shell.IsInventory);
+            Assert.False(shell.IsWorkspace);
+            var inventory = Assert.IsAssignableFrom<Task.Desktop.Inventory.IDesktopInventoryClient>(shell.Inventory);
+            Assert.False(inventory.IsCorporate);
+            var initial = await inventory.ReadAsync(default);
+            Assert.True(initial.CanAdminister);
+            Assert.Empty(initial.Stock);
+            var updated = await inventory.ApplyAsync(new(initial.Revision, "demo"), default);
+            Assert.Equal(27, updated.Stock.Length);
+        }
+
+        using var reopened = new PersonalApplicationModel(_root);
+        var restored = await reopened.Inventory!.ReadAsync(default);
+        Assert.Equal(1, restored.Revision);
+        Assert.Equal(27, restored.Stock.Length);
+        Assert.Throws<InventoryConflictException>(() => reopened.Store.ApplyInventory(new(0, "demo"), new(2026, 11, 22), 0));
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task TaskDraft_BlocksNavigationAndKeepsValuesUntilExplicitCancel()
     {

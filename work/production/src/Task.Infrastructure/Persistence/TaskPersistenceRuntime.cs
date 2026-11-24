@@ -1,6 +1,7 @@
 using Npgsql;
 using Task.Application;
 using Task.Application.Audit;
+using Task.Application.Inventory;
 using Task.Application.Calendar;
 using Task.Application.ProductData;
 using Task.Application.Background;
@@ -88,6 +89,8 @@ public sealed class TaskPersistenceRuntime : IDisposable, IAsyncDisposable
 
     public IContactStore CreateContactStore() =>
         new PostgresContactStore(GetConfiguredDataSource());
+
+    public IInventoryStore CreateInventoryStore() => new PostgresInventoryStore(GetConfiguredDataSource());
 
     public ICatalogItemStore CreateCatalogItemStore() =>
         new PostgresCatalogItemStore(GetConfiguredDataSource());

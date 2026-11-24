@@ -1,0 +1,12 @@
+<UserControl x:Class="Task.Desktop.Inventory.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:web="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+             Loaded="OnLoaded" Unloaded="OnUnloaded" IsVisibleChanged="OnVisibleChanged"
+             AutomationProperties.Name="Склад материалов">
+    <Grid>
+        <web:WebView2CompositionControl x:Name="Browser"/>
+        <TextBlock x:Name="Unavailable" Visibility="Collapsed" Margin="24" TextWrapping="Wrap"
+                   Style="{StaticResource Task.Workspace.Body}" AutomationProperties.LiveSetting="Polite"/>
+    </Grid>
+</UserControl>

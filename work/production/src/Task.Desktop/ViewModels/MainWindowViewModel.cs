@@ -34,7 +34,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         DesktopConnectivityService? connectivity = null,
         InboxViewModel? inbox = null,
         AdministrationViewModel? administration = null,
-        Infrastructure.ViewStateStore? viewState = null)
+        Infrastructure.ViewStateStore? viewState = null,
+        Inventory.IDesktopInventoryClient? inventory = null)
     {
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
@@ -45,6 +46,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         WorkHub = workHub;
         Inbox = inbox;
         Administration = administration;
+        Inventory = inventory;
         _connectivity = connectivity;
         AddProjectTaskCommand = new AsyncCommand(OpenProjectTaskAsync, _ => CanAddProjectTask);
         NewTaskCommand = new AsyncCommand(OpenNewTaskAsync,
@@ -104,6 +106,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             new("administration", "Администрирование", "Пользователи, роли и ресурсы доступны в пределах опубликованных прав.", "Task.Icon.Lock", "Пользователи, роли и сетевые ресурсы"),
             new("settings", "Настройки", "Раздел «Настройки»: параметры приложения появятся после подключения к серверу.", "Task.Icon.Settings", "Параметры приложения"),
         };
+
+        if (inventory is not null)
+            Sections.Insert(5, new("inventory", "Материалы", "", "Task.Icon.Inventory", "Общий склад компании"));
 
         Palette = new(WorkHub, PaletteCommands, new System.ComponentModel.INotifyPropertyChanged?[] { this, Tasks, Inbox, Calendar, Projects }.OfType<System.ComponentModel.INotifyPropertyChanged>().ToArray());
         if (viewState is not null) WorkPreferences = new(viewState, Sections, CanOpenStartupSection);
@@ -181,6 +186,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(IsProjectsSectionSelected));
             OnPropertyChanged(nameof(IsWorkHubSectionSelected));
             OnPropertyChanged(nameof(IsAdministrationSectionSelected));
+            OnPropertyChanged(nameof(IsInventorySectionSelected));
             OnPropertyChanged(nameof(SelectedSectionSupportingText));
             if (IsTodaySectionSelected)
             {
@@ -283,6 +289,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
     public bool IsProjectsSectionSelected =>
         string.Equals(SelectedSection?.Route, "projects", StringComparison.Ordinal);
 
+    public Inventory.IDesktopInventoryClient? Inventory { get; }
+    public bool IsInventorySectionSelected => SelectedSection?.Route == "inventory";
+
     public bool IsWorkHubSectionSelected => TryGetWorkArea(SelectedSection?.Route, out _);
 
     public bool IsAdministrationSectionSelected => string.Equals(SelectedSection?.Route, "administration", StringComparison.Ordinal);
@@ -327,6 +336,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             ? Calendar is { CanRead: true, IsReadOnly: false } ? "Онлайн · запись календаря доступна" : "Онлайн · календарь только для просмотра"
         : IsProjectsSectionSelected
             ? Projects?.CanUpdate == true ? "Онлайн · управление проектами доступно" : "Онлайн · проекты только для просмотра"
+        : IsInventorySectionSelected
+            ? "Онлайн · доступ по роли склада"
         : IsWorkHubSectionSelected
             ? WorkHub?.AccessText ?? "Онлайн · рабочие данные"
         : IsAdministrationSectionSelected
@@ -355,7 +366,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             ? "Сервер временно недоступен: подтверждённые данные сохранены, изменения не отправляются. Нажмите «Повторить» для проверки связи."
         : Tasks?.WriteAccessText ?? "Доступен только просмотр задач.";
 
-    public string DataSourceStatus => ServerAddress is null
+    public string DataSourceStatus => IsInventorySectionSelected
+        ? "Остатки хранятся на сервере компании"
+        : ServerAddress is null
         ? "Источник данных недоступен"
         : !IsConnected
             ? $"Показаны последние подтверждённые данные · {LastSuccessfulRefreshText}"
@@ -377,7 +390,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
             ? "Данные предоставляются сервером компании · только просмотр"
             : "Данные и изменения синхронизируются с сервером компании";
 
-    public string LastSuccessfulRefreshText => IsTodaySectionSelected
+    public string LastSuccessfulRefreshText => IsInventorySectionSelected
+        ? string.Empty
+        : IsTodaySectionSelected
         ? Today?.LastSuccessfulRefreshText ?? "Сегодняшний план ещё не обновлялся"
         : IsInboxSectionSelected
         ? Inbox?.LastSuccessfulRefreshText ?? "Входящие ещё не обновлялись"
@@ -391,7 +406,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         ? Administration?.LastSuccessfulRefreshText ?? "Раздел ещё не обновлялся"
         : Tasks?.LastSuccessfulRefreshText ?? "Данные ещё не обновлялись";
 
-    public AsyncCommand? FooterRefreshCommand => IsTodaySectionSelected
+    public AsyncCommand? FooterRefreshCommand => IsInventorySectionSelected
+        ? null
+        : IsTodaySectionSelected
         ? Today?.RefreshCommand
         : IsInboxSectionSelected
         ? Inbox?.RefreshCommand

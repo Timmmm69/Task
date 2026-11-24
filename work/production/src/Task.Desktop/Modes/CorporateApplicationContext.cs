@@ -343,7 +343,8 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
         var viewState = new Infrastructure.ViewStateStore(_dataDirectory,
             serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
             Infrastructure.ViewState.DeviceNamespace);
-        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration, viewState);
+        var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration, viewState,
+            new Inventory.CorporateInventoryClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity));
         var window = new MainWindow(viewModel);
         async void RestorePreferences(object sender, System.Windows.RoutedEventArgs args)
         {

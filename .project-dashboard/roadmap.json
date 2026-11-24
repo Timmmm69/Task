@@ -257,6 +257,29 @@
       "next_action": "При rollout обновить API/Worker/Migrator и применить migration 16; подтвердить видимый баннер на компьютере заказчика и собрать серверные Linux images штатным CI. Открыть OBJECT-LINKS-MANUAL-ACCEPTANCE.md и закрыть ручную приёмку Object Links с evidence."
     },
     {
+      "id": "PROD-06",
+      "title": "Учёт материалов в личном и корпоративном режимах",
+      "description": "Вкладка «Материалы» поддерживает приход, списание по партиям, остатки, справочники, историю, экспорт и резервные копии.",
+      "category": "product",
+      "weight": 8,
+      "criticality": "high",
+      "status": "in_progress",
+      "progress": 75,
+      "evidence": [
+        "work/production/tests/Task.Tests/InventoryAccountingTests.cs",
+        "work/production/tests/Task.Tests/PostgresInventoryTests.cs",
+        "work/production/tests/Task.ServiceHosts.Tests/InventoryEndpointsTests.cs",
+        "work/production/tests/Task.Desktop.Tests/Personal/PersonalShellViewModelTests.cs"
+      ],
+      "note": "Проверены учёт партий, права API, запись через ограниченную роль PostgreSQL 16 и переход с истории установщика 1.1.1 с сохранением склада. В Windows WebView2 открыт склад на копии личной базы из проверенной установки.",
+      "updated_at": "2026-11-24",
+      "priority": 2,
+      "dependencies": [],
+      "blocked_by": [],
+      "recommended_order": 1,
+      "next_action": "Проверить обновление установщика и совместную работу корпоративного клиента и сервера на стенде."
+    },
+    {
       "id": "DESK-01",
       "title": "Сотрудник безопасно подключается и входит",
       "description": "Выбор сервера, вход, восстановление сессии, смена пароля и выход работают в Windows.",
@@ -1160,7 +1183,7 @@
         "SEC-03"
       ],
       "blocked_by": [],
-      "recommended_order": 1,
+      "recommended_order": 2,
       "next_action": "Предоставить чистый Windows стенд и подтвердить offline/visible-popup acceptance; повторить native backup/restore system dialogs."
     },
     {
@@ -1299,7 +1322,7 @@
         "QA-04"
       ],
       "blocked_by": [],
-      "recommended_order": 2,
+      "recommended_order": 3,
       "next_action": "Закрыть mandatory clean-Windows, physical-offline и visible-popup gates, затем выпустить новый acceptance receipt для конкретного ZIP и обновить readiness sign-off."
     }
   ],

@@ -61,6 +61,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     public PersonalPlanningViewModel? Planning => _model.Planning;
     public CalendarViewModel? Calendar => _model.Calendar;
     public PersonalWorkspaceViewModel? Workspace => _model.Workspace;
+    public Inventory.IDesktopInventoryClient? Inventory => _model.Inventory;
     public IReadOnlyList<NavigationSection> Sections { get; } =
     [
         new("today", "Сегодня", "", "Task.Icon.Today", "Посмотрите план на сегодня"),
@@ -68,6 +69,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         new("calendar", "Календарь", "", "Task.Icon.Calendar", "Личное расписание"),
         new("tasks", "Задачи", "", "Task.Icon.Tasks", "Найдите задачу и измените её детали"),
         new("projects", "Проекты", "", "Task.Icon.Projects", "Личные проекты"),
+        new("inventory", "Материалы", "", "Task.Icon.Inventory", "Личный склад"),
         new("catalog", "Каталог", "", "Task.Icon.Catalog", "Файлы и папки"),
         new("contacts", "Контакты", "", "Task.Icon.Contacts", "Личные контакты"),
         new("search", "Поиск", "", "Task.Icon.Search", "Поиск по личному пространству"),
@@ -85,11 +87,12 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
             if (IsCalendar) Calendar?.ClearCreationDay();
             _selectedSection = value;
             ApplyRoute();
-            foreach (var name in new[] { nameof(IsTasks), nameof(IsProjects), nameof(IsCalendar), nameof(IsNotifications), nameof(IsWorkspace), nameof(IsSettings) }) OnPropertyChanged(name);
+            foreach (var name in new[] { nameof(IsTasks), nameof(IsProjects), nameof(IsCalendar), nameof(IsNotifications), nameof(IsWorkspace), nameof(IsSettings), nameof(IsInventory) }) OnPropertyChanged(name);
             OnPropertyChanged(nameof(SelectedSection));
         }
     }
     public bool IsTasks => SelectedSection.Route is "today" or "inbox" or "tasks";
+    public bool IsInventory => SelectedSection.Route == "inventory";
     public bool IsProjects => SelectedSection.Route == "projects";
     public bool IsCalendar => SelectedSection.Route == "calendar";
     public bool IsNotifications => SelectedSection.Route == "notifications";
