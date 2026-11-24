@@ -282,7 +282,27 @@ public sealed class PostgresSessionRepository : ISessionRepository
         EnsurePositiveVersion(expectedCredentialVersion, nameof(expectedCredentialVersion));
         EnsurePositiveVersion(expectedAuthorizationScopeVersion, nameof(expectedAuthorizationScopeVersion));
 
-        using var command = _dataSource.CreateCommand(
+        using var command = _dataSource.CreateCommand();
+        return ReadSessionRequestState(command, organizationId, sessionId,
+            expectedCredentialVersion, expectedAuthorizationScopeVersion);
+    }
+
+    internal static SessionRequestState GetSessionRequestState(
+        NpgsqlConnection connection, NpgsqlTransaction transaction,
+        AuthenticatedRequestContext session, bool lockSession)
+    {
+        using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        return ReadSessionRequestState(command, session.OrganizationId, session.SessionId,
+            session.CredentialVersion, session.AuthorizationScopeVersion, session.UserAccountId, lockSession);
+    }
+
+    private static SessionRequestState ReadSessionRequestState(
+        NpgsqlCommand command, Guid organizationId, Guid sessionId,
+        long expectedCredentialVersion, long expectedAuthorizationScopeVersion,
+        Guid? userId = null, bool lockSession = false)
+    {
+        command.CommandText =
             """
             SELECT
                 CASE
@@ -302,12 +322,18 @@ public sealed class PostgresSessionRepository : ISessionRepository
                 ON ua.id = s.user_account_id AND ua.organization_id = s.organization_id
             LEFT JOIN iam.authorization_scope_versions av ON av.user_account_id = ua.id
             LEFT JOIN iam.devices d ON d.id=s.device_id AND d.organization_id=s.organization_id
-            WHERE s.organization_id = $1 AND s.id = $2;
-            """);
+            WHERE s.organization_id = $1 AND s.id = $2
+                AND ($5 IS NULL OR s.user_account_id = $5)
+            """ + (lockSession ? " FOR SHARE OF s;" : ";");
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = organizationId });
         command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = sessionId });
         command.Parameters.Add(new NpgsqlParameter<long> { TypedValue = expectedCredentialVersion });
         command.Parameters.Add(new NpgsqlParameter<long> { TypedValue = expectedAuthorizationScopeVersion });
+        command.Parameters.Add(new NpgsqlParameter<Guid?>
+        {
+            NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Uuid,
+            TypedValue = userId,
+        });
 
         var state = command.ExecuteScalar();
         return state switch

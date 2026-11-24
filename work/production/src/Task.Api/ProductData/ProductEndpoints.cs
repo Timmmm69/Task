@@ -35,36 +35,15 @@ internal static class ProductEndpoints
             var store = context.RequestServices.GetService<IProductApiStore>();
             if (permissions is null || store is null)
                 throw new ProductApiException(503, "INTERNAL_ERROR", "Product API is not configured.");
-            var granted = new HashSet<string>(StringComparer.Ordinal);
-            async System.Threading.Tasks.Task Check(string code)
-            {
-                if ((await permissions.EvaluateAsync(identity.OrganizationId, identity.UserAccountId,
-                    code == "Calendar.Read" ? "task.read" : code.ToLowerInvariant(), context.RequestAborted)).Allowed) granted.Add(code);
-            }
-            await Check(route.Permission);
-            if (route.AlternativePermission is { } alternative) await Check(alternative);
+            var requested = RequestedPermissions(route);
+            var decisions = await permissions.EvaluateManyAsync(identity.OrganizationId, identity.UserAccountId,
+                requested.Select(ProductApiRoute.GetBackingPermission), context.RequestAborted);
+            var granted = requested.Where(code => decisions[ProductApiRoute.GetBackingPermission(code)].Allowed)
+                .ToHashSet(StringComparer.Ordinal);
             if (!route.Allows(granted)) throw new ProductApiException(403, "FORBIDDEN", "Permission denied.");
-            await Check("organization.manage");
-            var readCapability = route.Resource switch { "projects" => "Project.Read", "contacts" or "companies" or "interactions" => "Contact.Read", "catalog-items" or "file-locations" => "FileCatalog.Read", _ => null };
-            if (readCapability is not null)
-            {
-                await Check(readCapability);
-                if (!granted.Contains(readCapability)) throw new ProductApiException(403, "FORBIDDEN", "Object read access is required.");
-            }
-            if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks" or "reminders" or "inbox-items")
-                foreach (var code in new[] { "Project.Read", "Contact.Read", "FileCatalog.Read", "Task.Read", "Calendar.Read", "Employee.Read" })
-                    await Check(code);
-            if (route.Resource == "tasks") { await Check("History.Read"); if (route.Permission != "Task.Read" && !granted.Contains("Task.Read")) throw new ProductApiException(403, "FORBIDDEN", "Task read access is required."); }
-            if (route.Operation is "locations" or "resolve" || route.Resource is "network-resources" or "search") await Check("FileLocation.ReadSensitivePath");
-            if (route.Resource == "search") await Check("FileReference.Open");
-            if (route.Resource == "objects" || route.Operation == "link-targets")
-                foreach (var code in new[] { "Notification.ReadOwn", "Inbox.ReadOwn" }) await Check(code);
-            if (route.Resource == "inbox-items") await Check("Task.Update");
-            if (route.Resource is "archive" or "trash")
-                foreach (var code in new[] { "Project.Restore", "Contact.Restore", "FileCatalog.Restore", "Task.Update", "CalendarEvent.Update", "Interaction.Update" }) await Check(code);
-            if (route.Resource == "objects" && route.Method != "GET")
-                foreach (var code in new[] { "Project.Update", "Contact.Update", "FileCatalog.Update", "Task.Update", "CalendarEvent.Update", "Interaction.Update" })
-                    await Check(code);
+            if (route.RequiredReadPermission is { } read && !granted.Contains(read))
+                throw new ProductApiException(403, "FORBIDDEN",
+                    route.Resource == "tasks" ? "Task read access is required." : "Object read access is required.");
 
             Guid? ReadId(string name)
             {
@@ -115,7 +94,8 @@ internal static class ProductEndpoints
                 route.Method + context.Request.Path + context.Request.QueryString + "|" + version + "|" + body.ToJsonString())));
             var correlation = Guid.TryParse(context.Response.Headers["X-Correlation-ID"], out var parsed) ? parsed : Guid.NewGuid();
             var response = store.Execute(new(identity.OrganizationId, identity.UserAccountId, identity.SessionId,
-                correlation, route, id, childId, body, query, version, key.Length == 0 ? null : key, hash, granted, context.RequestAborted, RevalidatePermissions: true));
+                correlation, route, id, childId, body, query, version, key.Length == 0 ? null : key, hash, granted, context.RequestAborted,
+                RevalidatePermissions: true, AuthenticatedSession: identity));
             if (route is { Resource: "notifications", Operation: "poll" }) context.Response.Headers.CacheControl = "no-store";
             if (response.Version is { } responseVersion) context.Response.Headers.ETag = $"\"v{responseVersion}\"";
             if (route.Idempotent || key.Length > 0) context.Response.Headers["Idempotency-Replayed"] = response.WasReplayed ? "true" : "false";
@@ -135,6 +115,27 @@ internal static class ProductEndpoints
         }
     }
 
+    private static HashSet<string> RequestedPermissions(ProductApiRoute route)
+    {
+        var codes = new HashSet<string>(StringComparer.Ordinal) { route.Permission, "organization.manage" };
+        if (route.AlternativePermission is { } alternative) codes.Add(alternative);
+        if (route.RequiredReadPermission is { } read) codes.Add(read);
+        if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks" or "reminders" or "inbox-items")
+            codes.UnionWith(["Project.Read", "Contact.Read", "FileCatalog.Read", "Task.Read", "Calendar.Read", "Employee.Read"]);
+        if (route.Resource == "tasks") codes.Add("History.Read");
+        if (route.Operation is "locations" or "resolve" || route.Resource is "network-resources" or "search")
+            codes.Add("FileLocation.ReadSensitivePath");
+        if (route.Resource == "search") codes.Add("FileReference.Open");
+        if (route.Resource == "objects" || route.Operation == "link-targets")
+            codes.UnionWith(["Notification.ReadOwn", "Inbox.ReadOwn"]);
+        if (route.Resource == "inbox-items") codes.Add("Task.Update");
+        if (route.Resource is "archive" or "trash")
+            codes.UnionWith(["Project.Restore", "Contact.Restore", "FileCatalog.Restore", "Task.Update", "CalendarEvent.Update", "Interaction.Update"]);
+        if (route.Resource == "objects" && route.Method != "GET")
+            codes.UnionWith(["Project.Update", "Contact.Update", "FileCatalog.Update", "Task.Update", "CalendarEvent.Update", "Interaction.Update"]);
+        return codes;
+    }
+
     private static void ValidateJson(JsonElement element)
     {
         if (element.ValueKind == JsonValueKind.Object)
@@ -152,7 +153,7 @@ internal static class ProductEndpoints
 
     private static async Task<IResult> Problem(HttpContext context, int status, string code, string title)
     {
-        await TaskApiProblemResponse.WriteAsync(context, status, code, title, status == 503);
+        await TaskApiProblemResponse.WriteAsync(context, status, code, title, status == 503 || code == "SESSION_EXPIRED");
         return Results.Empty;
     }
 }

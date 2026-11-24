@@ -611,21 +611,14 @@ internal static class AuthSessionEndpoints
         AuthenticatedRequestContext requestContext,
         CancellationToken cancellationToken)
     {
-        var capabilities = new List<string>(TaskPermissionAuthorization.TaskCapabilities.Count);
-        foreach (var (permissionCode, capability) in TaskPermissionAuthorization.TaskCapabilities)
-        {
-            var decision = await decisionService.EvaluateAsync(
-                requestContext.OrganizationId,
-                requestContext.UserAccountId,
-                permissionCode,
-                cancellationToken);
-            if (decision.Allowed)
-            {
-                capabilities.Add(capability);
-            }
-        }
-
-        return capabilities;
+        var capabilities = TaskPermissionAuthorization.TaskCapabilities;
+        var decisions = await decisionService.EvaluateManyAsync(
+            requestContext.OrganizationId,
+            requestContext.UserAccountId,
+            capabilities.Select(entry => entry.PermissionCode),
+            cancellationToken);
+        return capabilities.Where(entry => decisions[entry.PermissionCode].Allowed)
+            .Select(entry => entry.Capability).ToArray();
     }
 
     internal sealed record ChangePasswordRequest(

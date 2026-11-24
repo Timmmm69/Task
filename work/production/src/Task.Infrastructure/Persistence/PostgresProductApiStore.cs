@@ -4,7 +4,9 @@ using System.Text.Json.Nodes;
 using Npgsql;
 using NpgsqlTypes;
 using Task.Application.ProductData;
+using Task.Application.Security;
 using Task.Domain;
+using Task.Infrastructure.Postgres;
 
 namespace Task.Infrastructure.Persistence;
 
@@ -43,12 +45,21 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
             if (write) Run(connection, transaction, "SELECT pg_advisory_xact_lock(hashtextextended('task-product-api:' || @org::text,0));", request);
             if (request.RevalidatePermissions)
             {
-                var allowed = Many(connection, transaction,
-                    "SELECT jsonb_build_object('code',p.code) FROM iam.permissions p WHERE p.is_active AND iam.permission_available(@org,@user,p.code);", request)
-                    .Select(row => Text(row, "code")!).ToHashSet(StringComparer.OrdinalIgnoreCase);
-                if (allowed.Contains("Task.Read")) allowed.Add("Calendar.Read");
-                if (!request.Route.Allows(allowed)) throw Error(403, "FORBIDDEN", "Permission has been revoked.");
-                request = request with { Permissions = request.Permissions.Where(allowed.Contains).ToHashSet(StringComparer.OrdinalIgnoreCase) };
+                // Commands hold the organization lock before looking up the current session and roles.
+                if (request.AuthenticatedSession is { } session)
+                    RequireCurrentSession(connection, transaction, request, session, write);
+
+                var codes = request.Permissions.Select(ProductApiRoute.GetBackingPermission)
+                    .Distinct(StringComparer.Ordinal).ToArray();
+                var rules = PostgresAuthorizationPolicyStore.ReadRules(connection, transaction,
+                    request.OrganizationId, request.UserId, codes);
+                var allowed = request.Permissions
+                    .Where(code => PermissionDecisionService.Decide(rules, ProductApiRoute.GetBackingPermission(code)).Allowed)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                if (!request.Route.Allows(allowed) ||
+                    request.Route.RequiredReadPermission is { } read && !allowed.Contains(read))
+                    throw Error(403, "FORBIDDEN", "Permission has been revoked.");
+                request = request with { Permissions = allowed };
             }
             if (request.Route.Resource == "user-roles" && !IsAdmin(request)) throw Error(403, "FORBIDDEN", "Organization administration is required.");
             if (write && request.Route.Resource == "catalog-items")
@@ -104,6 +115,27 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         { throw Error(422, "VALIDATION_FAILED", "A field or related object is invalid."); }
         catch (PostgresException exception) when (exception.SqlState == "23505")
         { throw Error(409, "CONFLICT", "The record already exists."); }
+    }
+
+    private static void RequireCurrentSession(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, ProductApiRequest request,
+        AuthenticatedRequestContext session, bool write)
+    {
+        if (session.OrganizationId != request.OrganizationId || session.SessionId != request.SessionId ||
+            session.UserAccountId != request.UserId)
+            throw Error(401, "SESSION_EXPIRED", "The session has expired.");
+
+        switch (PostgresSessionRepository.GetSessionRequestState(connection, transaction, session, lockSession: write))
+        {
+            case SessionRequestState.Active:
+                return;
+            case SessionRequestState.SessionRevoked:
+                throw Error(401, "SESSION_REVOKED", "The session was revoked.");
+            case SessionRequestState.AccountBlocked:
+                throw Error(423, "ACCOUNT_BLOCKED", "The account is blocked.");
+            default:
+                throw Error(401, "SESSION_EXPIRED", "The session has expired.");
+        }
     }
 
     private ProductApiResponse Dispatch(NpgsqlConnection c, NpgsqlTransaction t, ProductApiRequest r)

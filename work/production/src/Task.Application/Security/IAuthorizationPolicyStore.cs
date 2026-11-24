@@ -24,6 +24,11 @@ public sealed record PolicyGrantRow(bool HasDirectRoleMembership);
 /// </summary>
 public sealed record PolicyDenyRow(bool HasDirectRoleMembership);
 
+public sealed record PermissionRuleSet(
+    bool IsOrganizationMember,
+    IReadOnlySet<string> GrantCodes,
+    IReadOnlySet<string> DenyCodes);
+
 /// <summary>
 /// Data-access port for authorization policy reads (iam.user_accounts, iam.roles,
 /// iam.role_permissions, iam.user_roles). This is a pure data layer: it returns raw rule
@@ -61,4 +66,26 @@ public interface IAuthorizationPolicyStore
         Guid userId,
         string permissionCode,
         CancellationToken cancellationToken = default);
+
+    async Task<PermissionRuleSet> ReadRulesAsync(
+        Guid orgId,
+        Guid userId,
+        string[] permissionCodes,
+        CancellationToken cancellationToken = default)
+    {
+        var grants = new HashSet<string>(StringComparer.Ordinal);
+        var denies = new HashSet<string>(StringComparer.Ordinal);
+        var isMember = await GetUserOrgAsync(userId, cancellationToken) == orgId;
+        if (isMember)
+        {
+            foreach (var code in permissionCodes)
+            {
+                if ((await GetUserDeniesAsync(orgId, userId, code, cancellationToken)).Count > 0)
+                    denies.Add(code);
+                else if ((await GetUserGrantsAsync(orgId, userId, code, cancellationToken)).Count > 0)
+                    grants.Add(code);
+            }
+        }
+        return new(isMember, grants, denies);
+    }
 }

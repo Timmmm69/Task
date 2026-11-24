@@ -25,6 +25,60 @@ public sealed class PostgresAuthorizationPolicyStore : IAuthorizationPolicyStore
         _dataSource = dataSource;
     }
 
+    public async Task<PermissionRuleSet> ReadRulesAsync(
+        Guid orgId, Guid userId, string[] permissionCodes, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = CreateRulesCommand(connection, null, orgId, userId, permissionCodes);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        await reader.ReadAsync(cancellationToken);
+        return ReadRules(reader);
+    }
+
+    internal static PermissionRuleSet ReadRules(
+        NpgsqlConnection connection, NpgsqlTransaction transaction,
+        Guid orgId, Guid userId, string[] permissionCodes)
+    {
+        using var command = CreateRulesCommand(connection, transaction, orgId, userId, permissionCodes);
+        using var reader = command.ExecuteReader();
+        reader.Read();
+        return ReadRules(reader);
+    }
+
+    private static NpgsqlCommand CreateRulesCommand(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction,
+        Guid orgId, Guid userId, string[] permissionCodes)
+    {
+        var command = new NpgsqlCommand(
+            """
+            WITH member AS (
+                SELECT id FROM iam.user_accounts
+                WHERE organization_id = $1 AND id = $2 AND account_status = 'active'
+            )
+            SELECT EXISTS (SELECT 1 FROM member),
+                COALESCE(array_agg(DISTINCT rp.permission_code) FILTER (WHERE rp.effect = 'grant'), ARRAY[]::text[]),
+                COALESCE(array_agg(DISTINCT rp.permission_code) FILTER (WHERE rp.effect = 'deny'), ARRAY[]::text[])
+            FROM member
+            JOIN iam.user_roles ur ON ur.user_account_id = member.id
+            JOIN iam.roles r ON r.id = ur.role_id AND r.organization_id = $1
+            JOIN iam.role_permissions rp ON rp.role_id = r.id
+            JOIN iam.permissions p ON p.code = rp.permission_code AND p.is_active
+            WHERE rp.permission_code = ANY($3)
+              AND (ur.valid_until IS NULL OR ur.valid_until > statement_timestamp())
+              AND (rp.effect <> 'deny' OR ur.department_id IS NULL);
+            """,
+            connection, transaction);
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = orgId });
+        command.Parameters.Add(new NpgsqlParameter<Guid> { TypedValue = userId });
+        command.Parameters.Add(new NpgsqlParameter<string[]> { TypedValue = permissionCodes });
+        return command;
+    }
+
+    private static PermissionRuleSet ReadRules(NpgsqlDataReader reader) =>
+        new(reader.GetBoolean(0),
+            reader.GetFieldValue<string[]>(1).ToHashSet(StringComparer.Ordinal),
+            reader.GetFieldValue<string[]>(2).ToHashSet(StringComparer.Ordinal));
+
     public async Task<Guid?> GetUserOrgAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         EnsureIdentifier(userId, nameof(userId));

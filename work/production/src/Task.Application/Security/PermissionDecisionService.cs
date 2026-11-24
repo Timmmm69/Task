@@ -24,7 +24,7 @@ public sealed record AuthorizationDecision(
 
 /// <summary>
 /// Stateless authorization decision engine (solution D3). Evaluates whether a user of an
-/// organization may exercise a permission code, stopping at the first explicit outcome:
+/// organization may exercise a permission code, with outcomes in this order:
 /// 1) no organization for the user (or an organization mismatch) — DENIED_NO_ORG;
 /// 2) an explicit deny rule for the user — DENIED_EXPLICIT (deny outranks any grant);
 /// 3) a grant through a role the user holds directly (iam.user_roles);
@@ -52,35 +52,34 @@ public sealed class PermissionDecisionService
         EnsureIdentifier(orgId, nameof(orgId));
         EnsureIdentifier(userId, nameof(userId));
         EnsureCode(permissionCode, nameof(permissionCode));
-
-        var userOrg = await _store.GetUserOrgAsync(userId, cancellationToken);
-        if (userOrg is null || userOrg.Value != orgId)
-        {
-            return Deny(AuthorizationDenyReason.NoOrg, permissionCode);
-        }
-
-        var denies = await _store.GetUserDeniesAsync(orgId, userId, permissionCode, cancellationToken);
-        if (denies.Count > 0)
-        {
-            return Deny(AuthorizationDenyReason.ExplicitDeny, permissionCode);
-        }
-
-        var grants = await _store.GetUserGrantsAsync(orgId, userId, permissionCode, cancellationToken);
-        if (grants.Any(grant => grant.HasDirectRoleMembership))
-        {
-            return new AuthorizationDecision(true, AuthorizationDenyReason.None, permissionCode);
-        }
-
-        if (grants.Count > 0)
-        {
-            return new AuthorizationDecision(true, AuthorizationDenyReason.None, permissionCode);
-        }
-
-        return Deny(AuthorizationDenyReason.DefaultDeny, permissionCode);
+        var rules = await _store.ReadRulesAsync(orgId, userId, [permissionCode], cancellationToken);
+        return Decide(rules, permissionCode);
     }
 
-    private static AuthorizationDecision Deny(AuthorizationDenyReason reason, string permissionCode) =>
-        new(false, reason, permissionCode);
+    public async Task<IReadOnlyDictionary<string, AuthorizationDecision>> EvaluateManyAsync(
+        Guid orgId,
+        Guid userId,
+        IEnumerable<string> permissionCodes,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureIdentifier(orgId, nameof(orgId));
+        EnsureIdentifier(userId, nameof(userId));
+        var codes = permissionCodes.Distinct(StringComparer.Ordinal).ToArray();
+        foreach (var code in codes)
+            EnsureCode(code, nameof(permissionCodes));
+
+        var rules = await _store.ReadRulesAsync(orgId, userId, codes, cancellationToken);
+        return codes.ToDictionary(code => code, code => Decide(rules, code), StringComparer.Ordinal);
+    }
+
+    public static AuthorizationDecision Decide(PermissionRuleSet rules, string code)
+    {
+        var reason = !rules.IsOrganizationMember ? AuthorizationDenyReason.NoOrg
+            : rules.DenyCodes.Contains(code) ? AuthorizationDenyReason.ExplicitDeny
+            : rules.GrantCodes.Contains(code) ? AuthorizationDenyReason.None
+            : AuthorizationDenyReason.DefaultDeny;
+        return new(reason == AuthorizationDenyReason.None, reason, code);
+    }
 
     private static void EnsureIdentifier(Guid value, string parameterName)
     {
