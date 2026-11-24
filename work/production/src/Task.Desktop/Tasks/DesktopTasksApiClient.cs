@@ -40,7 +40,10 @@ public sealed record DesktopTaskDto(
     DateTimeOffset? DeadlineAtUtc,
     IReadOnlyList<Guid> AssigneeIds,
     IReadOnlyList<Guid> WatcherIds,
-    Guid? RecurrenceSeriesId, TaskCardContent? Card = null, DateTimeOffset? CompletedAtUtc = null);
+    Guid? RecurrenceSeriesId, TaskCardContent? Card = null, DateTimeOffset? CompletedAtUtc = null)
+{
+    public IReadOnlyList<Task.Application.TaskFolderReference>? LinkedFolders { get; init; }
+}
 
 public sealed record DesktopTaskPage(
     IReadOnlyList<DesktopTaskDto> Items,
@@ -132,6 +135,9 @@ public sealed record DesktopTransitionTaskCommand
 /// <summary>Typed Task API boundary used by the desktop presentation layer.</summary>
 public interface IDesktopTasksApiClient : IDesktopTaskWriteApiClient
 {
+    internal global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetMonthlyPageAsync(string? cursor, CancellationToken token) =>
+        GetTasksAsync(cursor, token);
+
     global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(
         string? cursor = null,
         CancellationToken cancellationToken = default);
@@ -238,13 +244,20 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDes
         _tasksUri = new Uri($"{serverEndpoint.AbsoluteUri.TrimEnd('/')}/api/v1/tasks", UriKind.Absolute);
     }
 
-    public async global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(
-        string? cursor = null,
-        CancellationToken cancellationToken = default)
+    global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> IDesktopTasksApiClient.GetMonthlyPageAsync(string? cursor, CancellationToken token) =>
+        ReadPageAsync(cursor, true, token);
+
+    public global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> GetTasksAsync(
+        string? cursor = null, CancellationToken cancellationToken = default) =>
+        ReadPageAsync(cursor, false, cancellationToken);
+
+    private async global::System.Threading.Tasks.Task<DesktopTasksApiResult<DesktopTaskPage>> ReadPageAsync(
+        string? cursor, bool includeLinkedFolders, CancellationToken cancellationToken)
     {
-        var requestUri = string.IsNullOrWhiteSpace(cursor)
-            ? _tasksUri
-            : new Uri($"{_tasksUri.AbsoluteUri}?cursor={Uri.EscapeDataString(cursor.Trim())}");
+        var query = new List<string>();
+        if (includeLinkedFolders) query.Add("includeLinkedFolders=true");
+        if (!string.IsNullOrWhiteSpace(cursor)) query.Add("cursor=" + Uri.EscapeDataString(cursor.Trim()));
+        var requestUri = query.Count == 0 ? _tasksUri : new Uri($"{_tasksUri.AbsoluteUri}?{string.Join("&", query)}");
         var response = await _executor
             .GetAsync(requestUri, Guid.NewGuid().ToString("D"), cancellationToken)
             .ConfigureAwait(false);
@@ -751,7 +764,8 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDes
             payload.DeadlineAt,
             payload.AssigneeIds!.ToArray(),
             payload.WatcherIds!.ToArray(),
-            payload.RecurrenceSeriesId, payload.Card, payload.CompletedAt);
+            payload.RecurrenceSeriesId, payload.Card, payload.CompletedAt)
+        { LinkedFolders = payload.LinkedFolders };
         return true;
     }
 
@@ -837,6 +851,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDes
         public Guid? RequesterUserId { get; init; }
         public Guid? PrimaryCounterpartyObjectId { get; init; }
         public string? PlanningMonth { get; init; }
+        public IReadOnlyList<Task.Application.TaskFolderReference>? LinkedFolders { get; init; }
         public DateOnly? ScheduledDate { get; init; }
         public TimeOnly? StartTimeLocal { get; init; }
         public string? ScheduleTimeZone { get; init; }

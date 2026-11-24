@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Task.Api.Security;
 using Task.Application;
 using Task.Application.Security;
+using Task.Application.ProductData;
 using Task.Domain;
 
 namespace Task.Api.Tasks;
@@ -104,13 +105,26 @@ internal static partial class TaskEndpoints
 
         try
         {
+            var includeLinkedFolders = false;
+            var canManageOrganization = false;
+            if (!today && context.Request.Query["includeLinkedFolders"] == "true"
+                && context.RequestServices.GetService<PermissionDecisionService>() is { } permissions)
+            {
+                var required = new[] { "ObjectLink.Read", "FileCatalog.Read", "FileReference.Open" }
+                    .Select(ProductApiRoute.GetBackingPermission).ToArray();
+                var manage = ProductApiRoute.GetBackingPermission("organization.manage");
+                var decisions = await permissions.EvaluateManyAsync(requestContext.OrganizationId, requestContext.UserAccountId,
+                    required.Append(manage), cancellationToken);
+                includeLinkedFolders = required.All(code => decisions[code].Allowed);
+                canManageOrganization = decisions[manage].Allowed;
+            }
             var page = await readStore.GetPageAsync(
                 new TaskReadPageRequest(
                     requestContext.OrganizationId,
                     requestContext.UserAccountId,
                     requestContext.AuthorizationScopeVersion,
                     cursor,
-                    todayWindow),
+                    todayWindow, includeLinkedFolders, canManageOrganization),
                 cancellationToken);
 
             return Results.Json(new TaskPageResponse(
@@ -1268,7 +1282,7 @@ internal static partial class TaskEndpoints
             AssigneeIds: task.Content?.AssigneeIds ?? [],
             WatcherIds: task.Content?.WatcherIds ?? [],
             RecurrenceSeriesId: task.RecurrenceSeriesId, CompletedAt: task.CompletedAtUtc?.UtcDateTime, DeadlineDate: task.Content?.DeadlineDate, DeadlineTimeZone: task.Content?.DeadlineTimeZone, DeadlineReminderOffsetMinutes: task.Content?.DeadlineReminderOffsetMinutes, DeadlineReminderTime: task.Content?.DeadlineReminderTime,
-            PlanningMonth: task.Content?.PlanningMonth);
+            PlanningMonth: task.Content?.PlanningMonth, LinkedFolders: task.LinkedFolders);
 
     private static string ToContractValue(TaskWorkStatus status) => status switch
     {
@@ -1342,7 +1356,9 @@ internal static partial class TaskEndpoints
         [property: JsonPropertyName("deadlineTimeZone")] string? DeadlineTimeZone = null,
         [property: JsonPropertyName("deadlineReminderOffsetMinutes")] int? DeadlineReminderOffsetMinutes = null,
         [property: JsonPropertyName("deadlineReminderTime")] string? DeadlineReminderTime = null,
-        [property: JsonPropertyName("planningMonth")] string? PlanningMonth = null);
+        [property: JsonPropertyName("planningMonth")] string? PlanningMonth = null,
+        [property: JsonPropertyName("linkedFolders"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        IReadOnlyList<TaskFolderReference>? LinkedFolders = null);
 
     internal sealed record TaskPageResponse(
         [property: JsonPropertyName("items")] IReadOnlyList<TaskResponse> Items,

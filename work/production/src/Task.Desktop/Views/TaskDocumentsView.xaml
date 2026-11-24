@@ -1,0 +1,68 @@
+<UserControl x:Class="Task.Desktop.Views.TaskDocumentsView" x:Name="DocumentsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource Task.Button.Secondary}">
+            <Setter Property="Margin" Value="0,4,8,4"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel AutomationProperties.AutomationId="TaskDocuments">
+        <TextBlock Text="{Binding EmptyText}" TextWrapping="Wrap" Margin="0,4,0,4">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource Task.State.Body}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasItems}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <ItemsControl ItemsSource="{Binding Items}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,4,0,4">
+                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Kind}" Style="{StaticResource Task.State.Body}"/>
+                        <WrapPanel>
+                            <Button Content="Открыть" Command="{Binding DataContext.OpenCommand, ElementName=DocumentsPanel}"
+                                    CommandParameter="{Binding}" AutomationProperties.AutomationId="TaskDocumentOpen"
+                                    Visibility="{Binding CanOpen, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                    AutomationProperties.Name="{Binding Name, StringFormat=Открыть {0}}"/>
+                            <Button Content="Отвязать" Command="{Binding DataContext.RemoveCommand, ElementName=DocumentsPanel}"
+                                    CommandParameter="{Binding}" AutomationProperties.AutomationId="TaskDocumentUnlink"
+                                    AutomationProperties.Name="{Binding Name, StringFormat=Отвязать {0}}"
+                                    Visibility="{Binding DataContext.CanRemove, ElementName=DocumentsPanel, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Expander Header="Связать файл или папку" Style="{StaticResource Task.Card.Section}" Margin="0,8,0,0"
+                  Visibility="{Binding ShowLinkEditor, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                  AutomationProperties.AutomationId="TaskDocumentAttach">
+            <StackPanel Margin="0,6,0,0">
+                <Label Content="Название в каталоге" Target="{Binding ElementName=CatalogQuery}"/>
+                <TextBox x:Name="CatalogQuery" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource Task.Input.Search}" Tag="Найти файл или папку…" MaxLength="200"
+                         AutomationProperties.AutomationId="TaskDocumentQuery"/>
+                <Button Content="Найти в каталоге" Command="{Binding SearchCommand}" HorizontalAlignment="Left"
+                        AutomationProperties.AutomationId="TaskDocumentSearch"/>
+                <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Selected}" DisplayMemberPath="Name"
+                          Style="{StaticResource Task.Card.Combo}" AutomationProperties.Name="Объект каталога"
+                          AutomationProperties.AutomationId="TaskDocumentChoice"/>
+                <Button Content="Связать выбранное" Command="{Binding AddCommand}" HorizontalAlignment="Left"
+                        AutomationProperties.AutomationId="TaskDocumentLink"/>
+                <StackPanel Margin="0,8,0,0" Visibility="{Binding ShowPathEditor, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+                    <Label Content="Путь к файлу или папке" Target="{Binding ElementName=PathInput}"/>
+                    <TextBox x:Name="PathInput" Style="{StaticResource Task.Input.Text}" MaxLength="4096"
+                             Text="{Binding PathText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="TaskDocumentPath"/>
+                    <Button Content="Связать по пути" Command="{Binding AddPathCommand}" HorizontalAlignment="Left"
+                            AutomationProperties.AutomationId="TaskDocumentLinkPath"/>
+                </StackPanel>
+            </StackPanel>
+        </Expander>
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,4,0,0"
+                   Style="{StaticResource Task.State.Body}" AutomationProperties.LiveSetting="Polite"/>
+    </StackPanel>
+</UserControl>

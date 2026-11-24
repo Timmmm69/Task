@@ -105,6 +105,15 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
         if (request.Today is { IsValid: false }) throw new ArgumentException("Invalid Today window.", nameof(request));
         var today = request.Today;
         var pageSize = today is null ? PageSize : TodayPageSize;
+        var includeLinkedFolders = today is null && request.IncludeLinkedFolders;
+        const string linkedFolders = """
+            (SELECT COALESCE(jsonb_agg(jsonb_build_object('Id', p.id, 'Name', p.name) ORDER BY p.name,p.id), '[]'::jsonb)
+             FROM core.object_links l
+             JOIN files.catalog_items p ON p.organization_id=l.organization_id AND p.id=l.target_object_id
+             JOIN core.objects target ON target.organization_id=p.organization_id AND target.id=p.id AND target.lifecycle_state='active'
+             WHERE l.organization_id=o.organization_id AND l.source_object_id=o.id AND l.link_type='task_file'
+               AND p.item_type='folder_reference' AND iam.object_allowed(o.organization_id,p.id,$6,'filecatalog.read',$7))
+            """;
         PostgresAuthorizationAudit.AdministrativeRead(_dataSource, request.OrganizationId, request.UserAccountId,
             today is null ? "task.list" : "task.today");
         var continuation = request.Cursor is null
@@ -137,7 +146,7 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
                     (SELECT p.offset_minutes FROM calendar.task_deadline_preferences p WHERE p.organization_id=o.organization_id AND p.task_id=o.id AND p.recipient_user_id=$6), 'deadlineReminderTime',
                     (SELECT p.date_only_time::text FROM calendar.task_deadline_preferences p WHERE p.organization_id=o.organization_id AND p.task_id=o.id AND p.recipient_user_id=$6)), t.completed_at,
                 (SELECT series_id FROM calendar.recurrence_occurrences ro WHERE ro.organization_id=o.organization_id AND ro.task_id=o.id LIMIT 1),
-                snapshot.boundary
+                snapshot.boundary{{(includeLinkedFolders ? ", " + linkedFolders : "")}}
             FROM snapshot
             CROSS JOIN core.objects AS o
             INNER JOIN work.tasks AS t
@@ -169,10 +178,14 @@ public sealed class PostgresTaskReadStore : ITaskReadStore
             command.Parameters.AddWithValue(today.ToUtc);
             command.Parameters.AddWithValue(today.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
         }
+        if (includeLinkedFolders) command.Parameters.AddWithValue(request.CanManageOrganization);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            items.Add(ReadProjection(reader));
+            var task = ReadProjection(reader);
+            if (includeLinkedFolders)
+                task = task with { LinkedFolders = System.Text.Json.JsonSerializer.Deserialize<TaskFolderReference[]>(reader.GetString(15)) };
+            items.Add(task);
             snapshotBoundaryUtc ??= ReadUtcTimestamp(reader, 14);
         }
 

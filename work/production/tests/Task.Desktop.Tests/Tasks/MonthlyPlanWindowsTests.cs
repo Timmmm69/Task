@@ -18,11 +18,12 @@ using Task.Desktop.Security;
 using Task.Desktop.TaskApi;
 using Task.Desktop.ViewModels;
 using Task.Desktop.Views;
+using Task.Desktop.Work;
 using AsyncTask = System.Threading.Tasks.Task;
 
 namespace Task.Desktop.Tests.TaskScreen;
 
-public sealed class MonthlyPlanWindowsTests
+public sealed partial class MonthlyPlanWindowsTests
 {
     private const string ChildFlag = "TASK_MONTHLY_PLAN_WINDOWS_PROBE";
     private static readonly string LongTitle = string.Concat(Enumerable.Repeat("Подготовить и согласовать подробный отчёт по результатам работы. ", 7)).Trim();
@@ -86,28 +87,51 @@ public sealed class MonthlyPlanWindowsTests
         var root = Path.Combine(Path.GetTempPath(), "task-month-wpf-" + Guid.NewGuid().ToString("N"));
         try
         {
-            using var model = new PersonalApplicationModel(root);
-            var window = new PersonalWindow(model, enableWindowsIntegrations: false);
-            var shell = (PersonalShellViewModel)window.DataContext;
-            try
+            Guid taskId;
+            using (var model = new PersonalApplicationModel(root))
             {
-                window.Show();
-                await WaitFor(() => !model.IsBusy);
-                var navigation = Assert.IsType<ListBox>(window.FindName("SectionsList"));
-                navigation.SelectedItem = shell.Sections.Single(section => section.Route == "monthly-plan");
-                var plan = shell.MonthlyPlan!;
-                await WaitFor(() => !plan.IsLoading && plan.CanEnterTitle);
-                await CreateAndCheckLayout(window, plan, "personal");
-                var row = Assert.Single(plan.Rows);
-                OpenWithEnter(window, row);
-                await WaitFor(() => shell.IsTasks && model.Tasks!.Selected?.Source.Id == row.Source.Id);
-                await model.Tasks!.EditCommand.ExecuteAsync();
-                ChooseDeadline(window, model.Tasks.Editor!, "PersonalDeadline");
-                await model.Tasks.SaveCommand.ExecuteAsync();
-                Assert.Equal(2880, model.Store.Get(row.Source.Id)!.Card!.DeadlineReminderOffsetMinutes);
-                Assert.Equal(row.Source.Id, Assert.Single(model.Store.Reminders()).TargetId);
+                var window = new PersonalWindow(model, enableWindowsIntegrations: false);
+                var shell = (PersonalShellViewModel)window.DataContext;
+                try
+                {
+                    window.Show();
+                    await WaitFor(() => !model.IsBusy);
+                    var navigation = Assert.IsType<ListBox>(window.FindName("SectionsList"));
+                    navigation.SelectedItem = shell.Sections.Single(section => section.Route == "monthly-plan");
+                    var plan = shell.MonthlyPlan!;
+                    await WaitFor(() => !plan.IsLoading && plan.CanEnterTitle);
+                    await CreateAndCheckLayout(window, plan, "personal");
+                    var row = Assert.Single(plan.Rows);
+                    taskId = row.Source.Id;
+                    AssertNoFolderAction(window);
+                    OpenWithEnter(window, row);
+                    await WaitFor(() => shell.IsTasks && model.Tasks!.Selected?.Source.Id == row.Source.Id);
+                    await model.Tasks!.EditCommand.ExecuteAsync();
+                    model.Tasks.Editor!.Card.Description = Instruction;
+                    ChooseDeadline(window, model.Tasks.Editor!, "PersonalDeadline");
+                    await model.Tasks.SaveCommand.ExecuteAsync();
+                    Assert.Equal(2880, model.Store.Get(row.Source.Id)!.Card!.DeadlineReminderOffsetMinutes);
+                    Assert.Equal(row.Source.Id, Assert.Single(model.Store.Reminders()).TargetId);
+                    var tasks = model.Tasks;
+                    await ExerciseDocumentsAsync(window, plan, () => tasks.Documents!, () => tasks.Checklist,
+                        text => tasks.CheckText = text, () => tasks.ToggleCheckCommand,
+                        () => navigation.SelectedItem = shell.Sections.Single(section => section.Route == "monthly-plan"),
+                        () => OpenWithEnter(window, Assert.Single(plan.Rows)),
+                        () => shell.IsTasks && tasks.Selected?.Source.Id == taskId, Path.Combine(root, "documents"), "personal");
+                    await WaitFor(() => tasks.TransitionCommand.CanExecute(DesktopTaskStatus.Completed));
+                    Assert.True(await tasks.TransitionCommand.ExecuteAsync(DesktopTaskStatus.Completed));
+                    Assert.True(model.Store.Get(taskId)!.Status == DesktopTaskStatus.Completed, tasks.Message);
+                }
+                finally { window.Close(); }
             }
-            finally { window.Close(); }
+            using var reopened = new PersonalApplicationModel(root);
+            var completed = reopened.Store.Get(taskId)!;
+            Assert.Equal(Instruction, completed.Card!.Description);
+            Assert.Equal(DesktopTaskStatus.Completed, completed.Status);
+            AssertChecklist(reopened.Store.Checklist(taskId));
+            Assert.Equal(4, reopened.Store.PersonalLinks(taskId).Items.Count);
+            var link = reopened.Store.PersonalLinks(taskId).Items[0];
+            Assert.Throws<PersonalTransitionException>(() => reopened.Store.RemovePersonalLink(taskId, completed.Version, link.Id));
         }
         finally
         {
@@ -132,7 +156,9 @@ public sealed class MonthlyPlanWindowsTests
         }
         IDesktopTasksApiClient client = session is null ? new ActionTasksClient() : new DesktopTasksApiClient(http, server, session);
         Guid taskId;
-        using var tasks = new TasksViewModel(client, ["Task.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"]);
+        var work = session is null ? null : new DesktopWorkApiClient(http, server, session);
+        var capabilities = session?.CurrentSessionMetadata?.Capabilities ?? ["Task.Read", "Task.Create", "Task.Update", "Task.ChangeStatus"];
+        using var tasks = new TasksViewModel(client, capabilities, work: work);
         using var shell = new MainWindowViewModel(server, null, tasks: tasks);
         var window = new MainWindow(shell);
         try
@@ -148,11 +174,13 @@ public sealed class MonthlyPlanWindowsTests
             await CreateAndCheckLayout(window, plan, "corporate");
             var row = Assert.Single(plan.Rows);
             taskId = row.Source.Id;
+            AssertNoFolderAction(window);
             OpenWithClick(window);
             await WaitFor(() => shell.IsTasksSectionSelected && tasks.SelectedDetails?.Id == row.Source.Id);
             await tasks.EditTaskCommand.ExecuteAsync();
             await WaitFor(() => tasks.Editor is not null);
             window.UpdateLayout();
+            tasks.Editor!.Card.Description = Instruction;
             ChooseDeadline(window, tasks.Editor!, "TaskDeadlineTextBox");
             var patch = tasks.Editor!.BuildPatchCommand()!;
             Assert.Equal(row.Source.Id, patch.Id);
@@ -166,15 +194,22 @@ public sealed class MonthlyPlanWindowsTests
             {
                 await tasks.SaveEditorCommand.ExecuteAsync();
                 Assert.Null(tasks.Editor);
+                await ExerciseDocumentsAsync(window, plan, () => tasks.Workspace!.Documents!, () => tasks.Workspace!.Checklist,
+                    text => tasks.Workspace!.CheckText = text, () => tasks.Workspace!.ToggleCheckCommand,
+                    () => shell.SelectedSection = shell.Sections.Single(section => section.Route == "monthly-plan"),
+                    () => OpenWithEnter(window, Assert.Single(plan.Rows)),
+                    () => shell.IsTasksSectionSelected && tasks.SelectedDetails?.Id == taskId,
+                    Path.Combine(dataDirectory!, "task-documents-fixture"), "corporate");
             }
         }
         finally { window.CloseForAuthenticationTransition(); }
-        if (session is not null) await CheckCorporateRestartAsync(client, server, taskId);
+        if (work is not null) await CheckCorporateRestartAsync(client, server, taskId, capabilities, work);
     }
 
-    private static async AsyncTask CheckCorporateRestartAsync(IDesktopTasksApiClient client, Uri server, Guid taskId)
+    private static async AsyncTask CheckCorporateRestartAsync(IDesktopTasksApiClient client, Uri server, Guid taskId,
+        IEnumerable<string> capabilities, DesktopWorkApiClient work)
     {
-        using var tasks = new TasksViewModel(client, ["Task.Read", "Task.ChangeStatus"]);
+        using var tasks = new TasksViewModel(client, capabilities, work: work);
         using var shell = new MainWindowViewModel(server, null, tasks: tasks);
         var window = new MainWindow(shell);
         try
@@ -186,12 +221,19 @@ public sealed class MonthlyPlanWindowsTests
             await SelectVerificationYear(window, plan);
             var row = Assert.Single(plan.Rows, item => item.Source.Id == taskId);
             Assert.Equal(2880, row.Source.Card!.DeadlineReminderOffsetMinutes);
+            Assert.Equal(Instruction, row.Source.Card.Description);
             OpenWithEnter(window, row);
             await WaitFor(() => tasks.SelectedDetails?.Id == taskId && tasks.CanComplete);
+            await WaitFor(() => tasks.Workspace?.Documents?.Items.Count == 4);
+            AssertChecklist(tasks.Workspace!.Checklist);
             Assert.True(await tasks.TransitionCommand.ExecuteAsync(DesktopTaskStatus.Completed));
             Assert.True(await tasks.ConfirmTransitionCommand.ExecuteAsync());
             var stored = Assert.IsType<DesktopTasksApiResult<DesktopTaskDto>.Succeeded>(await client.GetTaskByIdAsync(taskId));
             Assert.Equal(DesktopTaskStatus.Completed, stored.Value.Status);
+            await WaitFor(() => tasks.Workspace?.Documents?.Items.Count == 4);
+            AssertChecklist(tasks.Workspace!.Checklist);
+            Assert.False(tasks.Workspace.Documents!.CanRemove);
+            Assert.False(tasks.Workspace.Documents.CanAdd);
             shell.SelectedSection = shell.Sections.Single(section => section.Route == "monthly-plan");
             await WaitFor(() => !plan.IsLoading);
             Assert.Equal("Действий не требуется", Assert.Single(plan.Rows, item => item.Source.Id == taskId).UrgencyText);

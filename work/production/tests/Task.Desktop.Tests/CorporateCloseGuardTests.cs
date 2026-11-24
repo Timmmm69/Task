@@ -148,14 +148,14 @@ public sealed class CorporateCloseGuardTests
         await tasks.ActivateAsync(); await tasks.OpenByIdAsync(source.Id);
         var workspace = Assert.IsType<TaskWorkspaceViewModel>(tasks.Workspace);
         workspace.Comment = "Комментарий"; workspace.CheckText = "Пункт";
-        workspace.File = new TaskChoice(Guid.NewGuid(), "Файл");
+        workspace.Dependency = new TaskChoice(Guid.NewGuid(), "Предшествующая задача");
         Assert.False(Check(shell, names =>
         {
             Assert.Contains("Комментарий задачи", names); Assert.Contains("Чек-лист задачи", names);
             Assert.Contains("Связи задачи", names); return false;
         }));
         Assert.Same(workspace, tasks.Workspace); Assert.Equal("Комментарий", workspace.Comment);
-        Assert.Equal("Пункт", workspace.CheckText); Assert.NotNull(workspace.File); Assert.Equal(0, client.Writes);
+        Assert.Equal("Пункт", workspace.CheckText); Assert.NotNull(workspace.Dependency); Assert.Equal(0, client.Writes);
         client.FailWrite = true;
         await workspace.AddCommentCommand.ExecuteAsync();
         var blocked = false;

@@ -131,6 +131,7 @@ internal static class ProductEndpoints
         if (route.Resource is "search" or "archive" or "trash" or "objects" or "interactions" or "tasks" or "reminders" or "inbox-items")
             codes.UnionWith(["Project.Read", "Contact.Read", "FileCatalog.Read", "Task.Read", "Calendar.Read", "Employee.Read"]);
         if (route.Resource == "tasks") codes.Add("History.Read");
+        if (route.Operation == "task-workspace") codes.Add("ObjectLink.Read");
         if (route.Operation is "locations" or "resolve" || route.Resource is "network-resources" or "search")
             codes.Add("FileLocation.ReadSensitivePath");
         if (route.Resource == "search") codes.Add("FileReference.Open");

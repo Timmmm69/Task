@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Text.Json.Nodes;
 using Task.Desktop.TaskApi;
 
+using Task.Desktop.Work;
+
 namespace Task.Desktop.ViewModels;
 
 public enum TasksScreenState
@@ -336,14 +338,17 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private readonly Func<bool> _completionMotionEnabled;
     private readonly Func<TimeSpan, global::System.Threading.Tasks.Task> _completionDelay;
 
+    private readonly TaskDocumentAccess? _taskDocuments;
+
     public TasksViewModel(
         IDesktopTasksApiClient client,
         IEnumerable<string>? capabilities = null,
         Func<bool>? completionMotionEnabled = null,
         Func<TimeSpan, global::System.Threading.Tasks.Task>? completionDelay = null,
-        TimeProvider? filterTimeProvider = null)
+        TimeProvider? filterTimeProvider = null, DesktopWorkApiClient? work = null)
     {
         _filterTimeProvider = filterTimeProvider ?? TimeProvider.System;
+        if (work is not null) _taskDocuments = new(work, work);
         _completionMotionEnabled = completionMotionEnabled ?? (() => System.Windows.SystemParameters.ClientAreaAnimation
             && !System.Windows.SystemParameters.HighContrast);
         _completionDelay = completionDelay ?? (duration => global::System.Threading.Tasks.Task.Delay(duration));
@@ -589,9 +594,11 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
 
     public bool CanCreate => CanWrite("Task.Create");
     public bool CanSelectTaskRows => Editor is null && !IsMutationBusy
+        && Workspace?.IsChangingDocuments != true
         && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment);
     public bool CanOpenTaskAction => IsActive && !IsBusy && !IsMutationBusy && Editor is null
         && !PendingTransition.HasValue
+        && Workspace?.IsChangingDocuments != true
         && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment);
     public bool CanOpenCreateEditor => CanCreate && CanOpenTaskAction && Workspace?.IsBusy != true;
     public bool CanAddSubtask => CanOpenCreateEditor && _capabilities.Contains("Task.Read")
@@ -606,7 +613,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     internal bool CanOpenFromMonthlyPlan => CanSelectTaskRows && _sessionAllowsWrites && _networkAvailable && _capabilities.Contains("Task.Read");
     internal MonthlyTasksViewModel CreateMonthlyPlan(Func<bool> isConnected,
         Func<Guid, CancellationToken, global::System.Threading.Tasks.Task<bool>> open) =>
-        new(_client, () => isConnected() && CanCreateFromShell, () => isConnected() && CanOpenFromMonthlyPlan, open);
+        new(_client, () => isConnected() && CanCreateFromShell, () => isConnected() && CanOpenFromMonthlyPlan, open,
+            documents: _taskDocuments, canOpenFolders: () => isConnected() && CanOpenFromMonthlyPlan &&
+                _capabilities.Contains("ObjectLink.Read") && _capabilities.Contains("FileCatalog.Read") && _capabilities.Contains("FileReference.Open"));
 
     internal async global::System.Threading.Tasks.Task<bool> OpenMonthlyTaskAsync(Guid id)
     {
@@ -641,7 +650,8 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         : IsBusy || IsMutationBusy || Workspace?.IsBusy == true ? "Дождитесь завершения текущего действия."
         : "Создать задачу";
     public bool CanEdit => IsActive && CanUpdate && SelectedItem is { Source.Status: not DesktopTaskStatus.Completed and not DesktopTaskStatus.Cancelled }
-        && (SelectedDetails?.Id != SelectedItem.Id || SelectedDetails.Source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled)) && !IsMutationBusy;
+        && (SelectedDetails?.Id != SelectedItem.Id || SelectedDetails.Source.Status is not (DesktopTaskStatus.Completed or DesktopTaskStatus.Cancelled))
+        && !IsMutationBusy && Workspace?.IsChangingDocuments != true;
     public bool CanStart => SelectedItem?.Source.Status == DesktopTaskStatus.New
         && CanTransitionTo(DesktopTaskStatus.InProgress);
     public bool CanReturnForRework => SelectedItem?.Source.Status == DesktopTaskStatus.Review
@@ -754,16 +764,20 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         get => _selectedDetails;
         private set
         {
-            if (Workspace is not null) Workspace.PropertyChanged -= OnWorkspaceChanged;
+            if (Workspace is not null)
+            {
+                Workspace.PropertyChanged -= OnWorkspaceChanged;
+                Workspace.Documents?.Dispose();
+            }
             var previousWorkspace = SelectedDetails?.Id == value?.Id ? Workspace : null;
             SetProperty(ref _selectedDetails, value);
             Workspace = value is not null && _client is IDesktopTaskWorkspaceClient client
                 ? new TaskWorkspaceViewModel(_client, client, value.Source, _capabilities,
                     task => { if (IsActive && SelectedDetails?.Id == task.Id) ApplyServerTask(task); },
-                    _activationCancellation?.Token ?? CancellationToken.None) : null;
+                    _activationCancellation?.Token ?? CancellationToken.None, _taskDocuments) : null;
             if (previousWorkspace is not null) Workspace?.CopyDrafts(previousWorkspace);
             if (Workspace is not null) Workspace.PropertyChanged += OnWorkspaceChanged;
-            Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites);
+            Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites && _networkAvailable);
             OnPropertyChanged(nameof(Workspace));
             if (Workspace is not null) _ = Workspace.LoadAsync();
         }
@@ -923,7 +937,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
             ScreenMessage = "Право на изменение статуса было отозвано. Подтверждение отменено.";
         }
 
-        Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites);
+        Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites && _networkAvailable, refreshDocuments: true);
         if (Editor is not null) { Editor.Card.CanAssign = _capabilities.Contains("Task.Assign"); Editor.Card.CanWatch = _capabilities.Contains("Task.Watch"); }
         NotifyMutationState();
     }
@@ -937,7 +951,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         }
 
         _sessionAllowsWrites = allowsWrites;
-        Workspace?.UpdateAccess(_capabilities, allowsWrites);
+        Workspace?.UpdateAccess(_capabilities, allowsWrites && _networkAvailable, refreshDocuments: true);
         if (!allowsWrites)
         {
             Interlocked.Increment(ref _mutationGeneration);
@@ -962,6 +976,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         ThrowIfDisposed();
         if (_networkAvailable == available) return;
         _networkAvailable = available;
+        Workspace?.UpdateAccess(_capabilities, _sessionAllowsWrites && available, refreshDocuments: true);
         if (!available)
         {
             Interlocked.Increment(ref _mutationGeneration);
@@ -1755,7 +1770,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     }
 
     private bool CanChangeSelectedTaskStatus => IsActive && CanChangeStatus && !IsBusy
-        && !IsMutationBusy && Editor is null && Workspace?.IsBusy != true
+        && !IsMutationBusy && Editor is null && Workspace?.IsBusy != true && Workspace?.IsChangingDocuments != true
         && string.IsNullOrEmpty(Workspace?.CheckText) && string.IsNullOrEmpty(Workspace?.Comment)
         && SelectedItem is not null;
 

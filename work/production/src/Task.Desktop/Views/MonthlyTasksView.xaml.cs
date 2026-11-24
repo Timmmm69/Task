@@ -10,6 +10,7 @@ namespace Task.Desktop.Views;
 public partial class MonthlyTasksView : UserControl
 {
     private Window? _window;
+    private ContextMenu? _folderMenu;
 
     public MonthlyTasksView()
     {
@@ -25,6 +26,7 @@ public partial class MonthlyTasksView : UserControl
         {
             if (_window is not null) _window.Activated -= OnActivated;
             _window = null;
+            if (_folderMenu is not null) _folderMenu.IsOpen = false;
             SystemEvents.PowerModeChanged -= OnPowerModeChanged;
             SystemEvents.TimeChanged -= OnTimeChanged;
         };
@@ -38,8 +40,50 @@ public partial class MonthlyTasksView : UserControl
 
     private void OpenFocusedRow(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter && ((ListBox)sender).SelectedItem is MonthlyTaskRow row && TryOpen(row))
+        var list = (ListBox)sender;
+        var row = ReferenceEquals(e.OriginalSource, list) ? list.SelectedItem : TaskRowAction.ResolveRow(list, e.OriginalSource as DependencyObject);
+        if (e.Key == Key.Enter && row is MonthlyTaskRow task && TryOpen(task))
             e.Handled = true;
+    }
+
+    private async void OpenFolders(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { DataContext: MonthlyTaskRow row } button || DataContext is not MonthlyTasksViewModel vm) return;
+        if (_folderMenu is not null) _folderMenu.IsOpen = false;
+        var request = new MonthlyFolderRequest(row);
+        if (!vm.FolderCommand.CanExecute(request)) return;
+        button.IsEnabled = false;
+        try
+        {
+            if (!await vm.FolderCommand.ExecuteAsync(request) || !button.IsVisible || !ReferenceEquals(button.DataContext, row)
+                || !vm.FolderCommand.CanExecute(request) || vm.FolderChoices.Count == 0) return;
+            var menu = new ContextMenu
+            {
+                PlacementTarget = button,
+                Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom,
+                MaxHeight = 320
+            };
+            foreach (var folder in vm.FolderChoices)
+                menu.Items.Add(new MenuItem
+                {
+                    Header = new TextBlock { Text = folder.Name, TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = 320 },
+                    Command = vm.FolderCommand,
+                    CommandParameter = new MonthlyFolderRequest(row, folder.Id)
+                });
+            _folderMenu = menu;
+            void CloseIfUnavailable(object? _, EventArgs args)
+            {
+                if (!vm.FolderCommand.CanExecute(request)) menu.IsOpen = false;
+            }
+            vm.FolderCommand.CanExecuteChanged += CloseIfUnavailable;
+            menu.Closed += (_, _) =>
+            {
+                vm.FolderCommand.CanExecuteChanged -= CloseIfUnavailable;
+                if (ReferenceEquals(_folderMenu, menu)) _folderMenu = null;
+            };
+            menu.IsOpen = true;
+        }
+        finally { button.IsEnabled = true; }
     }
 
     private bool TryOpen(MonthlyTaskRow row)

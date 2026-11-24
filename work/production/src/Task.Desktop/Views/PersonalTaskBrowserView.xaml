@@ -23,16 +23,18 @@
  <Expander x:Name="Inspector" Grid.Column="1" Header="Сведения о задаче"
            IsExpanded="{Binding DetailsExpanded, Mode=TwoWay}" state:ViewState.Section="personal-tasks/v1/details"
            AutomationProperties.Name="Сведения о задаче" AutomationProperties.AutomationId="PersonalTaskInspector">
- <Border BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" CornerRadius="16" Padding="20" Margin="0,8,0,0"><ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
+ <Border BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" CornerRadius="16" Padding="20" Margin="0,8,0,0"><ScrollViewer x:Name="InspectorScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
  <TextBlock Text="{Binding Selected.Title,TargetNullValue=Выберите задачу}" Style="{StaticResource Personal.Airbnb.Heading}" FontSize="18"/>
  <StackPanel Visibility="{Binding HasSelection,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
  <TextBlock Text="{Binding SelectedProject}" Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,8,0,0"/>
  <TextBlock Text="{Binding Selected.ScheduleText, StringFormat=Запланировать на: {0}}" Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,4,0,0" TextWrapping="Wrap"/>
  <TextBlock Text="{Binding Selected.DeadlineText, StringFormat=Выполнить до: {0}}" Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,4,0,0" TextWrapping="Wrap"/>
- <TextBlock Text="{Binding Selected.Source.Card.Description}" TextWrapping="Wrap" Margin="0,16,0,16"/>
+ <TextBlock Text="Описание и инструкция" FontWeight="SemiBold" Margin="0,12,0,4"/>
+ <TextBlock Text="{Binding Selected.Source.Card.Description}" TextWrapping="Wrap" Margin="0,0,0,12"/>
  <WrapPanel><Button Content="Изменить" Command="{Binding EditCommand}" Margin="0,0,8,8"/><Button Content="Подзадача" Command="{Binding AddSubtaskCommand}" AutomationProperties.AutomationId="PersonalTasksBrowserAddSubtask" ToolTip="{Binding SubtaskActionHint}" Margin="0,0,0,8"/></WrapPanel>
+ <Expander Header="Шаги чек-листа" Margin="0,8" IsExpanded="True"><views:TaskChecklistView Margin="0,8,0,0"/></Expander>
+ <Expander Header="Файлы и папки" Margin="0,8" IsExpanded="True"><views:TaskDocumentsView DataContext="{Binding Documents}" Margin="0,8,0,0"/></Expander>
  <Expander Header="Изменить статус" Margin="0,8"><WrapPanel Margin="0,8,0,0"><Button Content="В работу" Command="{Binding TransitionCommand}" CommandParameter="{x:Static api:DesktopTaskStatus.InProgress}" Margin="0,0,8,8"/><Button Content="На проверку" Command="{Binding TransitionCommand}" CommandParameter="{x:Static api:DesktopTaskStatus.Review}" Margin="0,0,8,8"/><Button Content="Выполнить" Command="{Binding TransitionCommand}" CommandParameter="{x:Static api:DesktopTaskStatus.Completed}" Margin="0,0,8,8"/><Button Content="Отменить задачу" Command="{Binding TransitionCommand}" CommandParameter="{x:Static api:DesktopTaskStatus.Cancelled}"/></WrapPanel></Expander>
- <Expander Header="Чек-лист" Margin="0,8" IsExpanded="True"><views:TaskChecklistView Margin="0,8,0,0"/></Expander>
  <Expander Header="Подзадачи" Margin="0,8"><ItemsControl ItemsSource="{Binding Subtasks}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,8"><TextBlock Text="{Binding Title}" TextWrapping="Wrap"/><TextBlock Text="{Binding StatusText}" Style="{StaticResource Personal.Airbnb.Muted}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Expander>
  </StackPanel></StackPanel></ScrollViewer></Border>
  </Expander>

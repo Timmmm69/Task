@@ -1,4 +1,5 @@
 using Task.Desktop.Work;
+using Task.Desktop.ViewModels;
 
 namespace Task.Desktop.Personal;
 
@@ -19,6 +20,20 @@ public sealed partial class PersonalTaskStore
         while (r.Read()) rows.Add(new(Guid.Parse(r.GetString(0)), Guid.Parse(r.GetString(1)), Guid.Parse(r.GetString(2)), r.GetString(3), r.GetString(4)));
         return new DesktopObjectLinks(rows, item.Version);
     });
+    internal IReadOnlyList<TaskDocument> TaskDocuments(Guid source) => Locked<IReadOnlyList<TaskDocument>>(() =>
+    {
+        using var command = Command("""
+            SELECT l.id,c.id,c.name,c.item_type FROM object_links l
+            JOIN personal_catalog c ON c.id=l.target_id AND c.lifecycle='active'
+            WHERE l.source_id=$id AND l.link_type='task_file' ORDER BY c.name,c.id;
+            """, null, ("$id", source.ToString("D")));
+        using var reader = command.ExecuteReader();
+        var items = new List<TaskDocument>();
+        while (reader.Read())
+            items.Add(new(Guid.Parse(reader.GetString(0)), Guid.Parse(reader.GetString(1)), reader.GetString(2), reader.GetString(3)));
+        return items;
+    });
+
     public void AddPersonalLink(Guid source, long version, Guid target, string type) => Locked(() =>
     {
         using var tx = _database.Connection.BeginTransaction(); var s = RequireWorkspaceObject(source, version, tx); var t = RequireWorkspaceObject(target, null, tx);

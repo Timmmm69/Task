@@ -1066,7 +1066,7 @@
                                         </Border>
                                         <Border Style="{StaticResource Task.Card.Group}">
                                             <StackPanel>
-                                                <TextBlock Text="Описание" FontWeight="SemiBold" />
+                                                <TextBlock Text="Описание и инструкция" FontWeight="SemiBold" />
                                                 <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,6,0,10" />
                                                 <TextBlock Text="{Binding PlanningText}" Style="{StaticResource Task.State.Body}" />
                                                 <TextBlock Text="{Binding RecurrenceText}" Style="{StaticResource Task.State.Body}" />

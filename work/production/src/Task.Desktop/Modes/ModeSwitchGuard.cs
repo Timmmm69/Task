@@ -55,7 +55,8 @@ internal static class ModeSwitchGuard
                 Add("Комментарий задачи", () => !string.IsNullOrEmpty(workspace.Comment), () => workspace.IsBusy, workspace.AddCommentCommand, unconfirmed: () => workspace.HasUnconfirmedMutation);
                 Add("Чек-лист задачи", () => !string.IsNullOrEmpty(workspace.CheckText), () => workspace.IsBusy, workspace.AddCheckCommand);
                 // Selections for explicit link actions are drafts, not an instruction to create a link.
-                Add("Связи задачи", () => workspace.File is not null || workspace.Dependency is not null, () => workspace.IsBusy, null);
+                Add("Связи задачи", () => workspace.Documents?.HasDraft == true || workspace.Dependency is not null,
+                    () => workspace.IsBusy || workspace.IsChangingDocuments, null);
             }
         }
         if (shell.Today is { } today)

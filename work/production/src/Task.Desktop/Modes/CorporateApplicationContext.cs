@@ -303,14 +303,14 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             sessionService,
             connectivity)
         { Usage = RecordUsage };
+        var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
         var tasks = new TasksViewModel(
             tasksClient,
-            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
+            sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(), work: workClient);
         var inbox = new InboxViewModel(
             new DesktopInboxApiClient(CreateHttpClient(), serverEndpoint, sessionService, tasksClient, connectivity) { Usage = RecordUsage },
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>());
         var calendarClient = new DesktopCalendarApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
-        var workClient = new DesktopWorkApiClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity);
         var calendar = new CalendarViewModel(
             calendarClient,
             sessionService.CurrentSessionMetadata?.Capabilities ?? Array.Empty<string>(),
