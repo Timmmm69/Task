@@ -22,7 +22,7 @@ public sealed partial class PersonalTaskStore : IDisposable
     private readonly Guid _actor;
     private readonly TimeProvider _clock;
     public Guid LocalActorId => _actor;
-    private const string Columns = "id,version,created_at,updated_at,title,description,status,priority,start_at,deadline,scheduled_date,start_time,time_zone,duration,project_id,parent_task_id,counterparty_id,completed_at,deadline_date,deadline_zone,deadline_reminder_offset,deadline_reminder_time";
+    private const string Columns = "id,version,created_at,updated_at,title,description,status,priority,start_at,deadline,scheduled_date,start_time,time_zone,duration,project_id,parent_task_id,counterparty_id,completed_at,deadline_date,deadline_zone,deadline_reminder_offset,deadline_reminder_time,planning_month";
 
     public PersonalTaskStore(PersonalDataPaths paths, TimeProvider? clock = null) : this(paths, clock, null) { }
     internal PersonalTaskStore(PersonalDataPaths paths, TimeProvider? clock, PersonalStoreOwnership? ownership, Action<string>? fault = null, bool restoring = false)
@@ -80,6 +80,7 @@ public sealed partial class PersonalTaskStore : IDisposable
             DeadlineTimeZone = r.IsDBNull(19) ? null : r.GetString(19),
             DeadlineReminderOffsetMinutes = r.IsDBNull(20) ? null : r.GetInt32(20),
             DeadlineReminderTime = r.IsDBNull(21) ? null : r.GetString(21),
+            PlanningMonth = r.IsDBNull(22) ? null : r.GetString(22),
             ScheduledDate = r.IsDBNull(10) ? null : DateOnly.Parse(r.GetString(10), CultureInfo.InvariantCulture),
             StartTimeLocal = r.IsDBNull(11) ? null : TimeOnly.Parse(r.GetString(11), CultureInfo.InvariantCulture),
             ScheduleTimeZone = r.IsDBNull(12) ? null : r.GetString(12),
@@ -130,13 +131,14 @@ public sealed partial class PersonalTaskStore : IDisposable
     {
         var card = task.Card ?? new();
         var sql = create
-            ? $"INSERT INTO tasks ({Columns}) VALUES ($id,$version,$created,$updated,$title,$description,$status,$priority,$start,$deadline,$date,$time,$zone,$duration,$project,$parent,$counterparty,$completed,$deadlineDate,$deadlineZone,$reminderOffset,$reminderTime);"
-            : "UPDATE tasks SET version=$version,updated_at=$updated,title=$title,description=$description,status=$status,priority=$priority,start_at=$start,deadline=$deadline,scheduled_date=$date,start_time=$time,time_zone=$zone,duration=$duration,project_id=$project,parent_task_id=$parent,counterparty_id=$counterparty,completed_at=$completed,deadline_date=$deadlineDate,deadline_zone=$deadlineZone,deadline_reminder_offset=COALESCE($reminderOffset,deadline_reminder_offset) WHERE id=$id AND version=$expected;";
+            ? $"INSERT INTO tasks ({Columns}) VALUES ($id,$version,$created,$updated,$title,$description,$status,$priority,$start,$deadline,$date,$time,$zone,$duration,$project,$parent,$counterparty,$completed,$deadlineDate,$deadlineZone,$reminderOffset,$reminderTime,$month);"
+            : "UPDATE tasks SET planning_month=$month,version=$version,updated_at=$updated,title=$title,description=$description,status=$status,priority=$priority,start_at=$start,deadline=$deadline,scheduled_date=$date,start_time=$time,time_zone=$zone,duration=$duration,project_id=$project,parent_task_id=$parent,counterparty_id=$counterparty,completed_at=$completed,deadline_date=$deadlineDate,deadline_zone=$deadlineZone,deadline_reminder_offset=COALESCE($reminderOffset,deadline_reminder_offset) WHERE id=$id AND version=$expected;";
         using var command = Command(sql, tx,
             ("$id", task.Id.ToString("D")), ("$version", task.Version), ("$expected", task.Version - 1),
             ("$created", Instant(task.CreatedAtUtc)), ("$updated", Instant(task.UpdatedAtUtc)),
             ("$title", task.Title), ("$description", card.Description), ("$status", (int)task.Status), ("$priority", (int)task.Priority),
             ("$start", Instant(task.StartAtUtc)), ("$deadline", Instant(task.DeadlineAtUtc)),
+            ("$month", card.PlanningMonth),
             ("$date", card.ScheduledDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
             ("$time", card.StartTimeLocal?.ToString("HH:mm:ss.fffffff", CultureInfo.InvariantCulture)),
             ("$zone", card.ScheduleTimeZone), ("$duration", card.PlannedDurationMinutes),

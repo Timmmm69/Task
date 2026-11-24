@@ -49,18 +49,43 @@ public sealed partial class PostgresProductApiTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task PlanningMonth_RealPostgres_UndatedTaskAndExplicitClear()
+    {
+        using var db = Database.Create(); if (db is null) return;
+        var id = Guid.NewGuid();
+        var task = TaskAggregate.Create(id, db.Organization, db.User, "January work", DateTimeOffset.UtcNow,
+            content: new TaskCardContent { PlanningMonth = "2027-01" });
+        db.Runtime.CreateTaskStore().Add(task);
+        var stored = db.Runtime.CreateTaskStore().Get(id, db.Organization)!;
+        Assert.Equal("2027-01", stored.Content.PlanningMonth);
+        Assert.Null(stored.Schedule.StartsAtUtc);
+        Assert.Null(stored.Schedule.DeadlineUtc);
+        Assert.Null(stored.Content.ScheduledDate);
+        Assert.Null(stored.Content.DeadlineDate);
+        Assert.Equal(0L, DeadlineValue<long>(db, "SELECT count(*) FROM calendar.reminders"));
+
+        var cleared = stored.UpdateEditableFields(db.User, DateTimeOffset.UtcNow, null, null, default, default,
+            stored.Content.Apply("""{"planningMonth":null,"scheduledDate":"2026-12-31"}"""));
+        db.Runtime.CreateTaskStore().Save(cleared, stored.Metadata.Version);
+        var read = await db.Runtime.CreateTaskReadStore().GetVisibleByIdAsync(db.Organization, id, db.User);
+        Assert.Null(read!.Content!.PlanningMonth);
+        Assert.Equal("2026-12", read.Content.EffectivePlanningMonth);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task TaskCard_RealPostgres_ReadWriteChildrenAndCompletion()
     {
         using var db = Database.Create(); if (db is null) return;
         var project = db.Call("projects", "create", new JsonObject { ["name"] = "Внедрение", ["ownerUserId"] = db.User }.ToJsonString());
         var contact = db.Call("contacts", "create", "{\"firstName\":\"Анна\",\"displayName\":\"Анна\"}");
         var file = db.Call("catalog-items", "create", "{\"name\":\"Договор\",\"itemType\":\"file_reference\"}");
-        var card = new TaskCardContent { Description = "Полный контекст", ProjectId = Id(project), RequesterUserId = db.OtherUser, PrimaryCounterpartyObjectId = Id(contact), AssigneeIds = [db.OtherUser], WatcherIds = [db.User], ScheduledDate = new(2026, 9, 4), PlannedDurationMinutes = 30 };
+        var card = new TaskCardContent { PlanningMonth = "2027-01", Description = "Полный контекст", ProjectId = Id(project), RequesterUserId = db.OtherUser, PrimaryCounterpartyObjectId = Id(contact), AssigneeIds = [db.OtherUser], WatcherIds = [db.User], ScheduledDate = new(2026, 9, 4), PlannedDurationMinutes = 30 };
         var task = TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Подготовить договор", DateTimeOffset.UtcNow, content: card);
         db.Runtime.CreateTaskStore().Add(task);
         var read = await db.Runtime.CreateTaskReadStore().GetVisibleByIdAsync(db.Organization, task.Metadata.Id, db.OtherUser);
         Assert.NotNull(read); Assert.Equal(card.ToJson(), read.Content!.ToJson());
-        Assert.Single((await db.Runtime.CreateTaskReadStore().GetPageAsync(new(db.Organization, db.OtherUser, 1))).Items);
+        var listed = Assert.Single((await db.Runtime.CreateTaskReadStore().GetPageAsync(new(db.Organization, db.OtherUser, 1))).Items);
+        Assert.Equal("2027-01", listed.Content!.EffectivePlanningMonth);
         var id = task.Metadata.Id;
         var added = db.Call("tasks", "task-check-add", "{\"text\":\"Согласовать\"}", id, 1, key: "checklist-0001");
         var replay = db.Call("tasks", "task-check-add", "{\"text\":\"Согласовать\"}", id, 1, key: "checklist-0001");
@@ -85,7 +110,8 @@ public sealed partial class PostgresProductApiTests
         db.Runtime.CreateTaskStore().Save(updated, loaded.Metadata.Version);
         var completed = updated.Complete(db.User, DateTimeOffset.UtcNow); db.Runtime.CreateTaskStore().Save(completed, updated.Metadata.Version);
         var reloaded = await db.Runtime.CreateTaskReadStore().GetVisibleByIdAsync(db.Organization, id, db.OtherUser);
-        Assert.Equal(TaskWorkStatus.Completed, reloaded!.Status); Assert.NotNull(reloaded.CompletedAtUtc); Assert.Equal("Согласовано", reloaded.Content!.Description); Assert.Empty(reloaded.Content.WatcherIds);
+        Assert.Equal("2027-01", reloaded!.Content!.PlanningMonth);
+        Assert.Equal(TaskWorkStatus.Completed, reloaded.Status); Assert.NotNull(reloaded.CompletedAtUtc); Assert.Equal("Согласовано", reloaded.Content!.Description); Assert.Empty(reloaded.Content.WatcherIds);
         Assert.Equal(409, Assert.Throws<ProductApiException>(() => db.Call("tasks", "task-check-add", "{\"text\":\"Поздно\"}", id, (int)reloaded.Version)).Status);
         Assert.Equal(409, Assert.Throws<ProductApiException>(() => db.Call("objects", "link-add", new JsonObject { ["sourceObjectId"] = id, ["targetObjectId"] = Id(file), ["linkType"] = "task_file" }.ToJsonString(), id, (int)reloaded.Version)).Status);
     }

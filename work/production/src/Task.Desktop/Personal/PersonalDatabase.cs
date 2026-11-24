@@ -7,7 +7,7 @@ namespace Task.Desktop.Personal;
 internal sealed class PersonalDatabase : IDisposable
 {
     internal const int ApplicationId = 0x54534B50;
-    internal const int CurrentSchemaVersion = 5;
+    internal const int CurrentSchemaVersion = 6;
     internal SqliteConnection Connection { get; }
 
     public PersonalDatabase(PersonalDataPaths paths, Action<string>? fault = null, bool restoring = false, int targetVersion = CurrentSchemaVersion)
@@ -121,6 +121,18 @@ internal sealed class PersonalDatabase : IDisposable
         if (version == 4 && targetVersion >= 5)
         {
             command.CommandText = PersonalDeadlineMigration.Sql;
+            command.ExecuteNonQuery();
+            version = 5;
+        }
+        if (version == 5 && targetVersion >= 6)
+        {
+            command.CommandText = """
+                ALTER TABLE tasks ADD COLUMN planning_month TEXT CHECK(
+                    planning_month GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]'
+                    AND substr(planning_month,1,4) <> '0000'
+                    AND substr(planning_month,6,2) BETWEEN '01' AND '12');
+                PRAGMA user_version=6;
+                """;
             command.ExecuteNonQuery();
         }
         command.CommandText = "SELECT value FROM personal_metadata WHERE key='PersonalActorId';";

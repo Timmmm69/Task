@@ -144,7 +144,7 @@ public sealed class TaskCardEditor : ViewModelBase
         // The existing server contract rejects ambiguous wall-clock fields.
         // Keep the explicit UTC instant from a selected slot without inventing a new DST write policy.
         var utcOnly = ScheduleZone is not null && local is { } at && effectiveZone.IsAmbiguousTime(at.DateTime);
-        var content = new TaskCardContent
+        var content = _source with
         {
             DeadlineDate = DeadlineDate,
             DeadlineTimeZone = DeadlineTimeZone,
@@ -167,7 +167,9 @@ public sealed class TaskCardEditor : ViewModelBase
     public string? Patch(TaskCardContent value)
     {
         var before = JsonNode.Parse(_source.ToJson())!.AsObject(); var after = JsonNode.Parse(value.ToJson())!.AsObject();
-        var patch = new JsonObject(); foreach (var (key, v) in after) if (!JsonNode.DeepEquals(before[key], v)) patch[key] = v?.DeepClone();
+        var patch = new JsonObject();
+        foreach (var key in TaskCardContent.Fields)
+            if (!JsonNode.DeepEquals(before[key], after[key])) patch[key] = after[key]?.DeepClone();
         return patch.Count == 0 ? null : patch.ToJsonString();
     }
     internal void RebaseSource(TaskCardContent? source) => _source = source ?? new();

@@ -729,6 +729,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDes
             || !IsUtc(payload.UpdatedAt)
             || !IsUtc(payload.StartAtUtc)
             || !IsUtc(payload.DeadlineAt)
+            || !TaskCardContent.IsValidPlanningMonth(payload.PlanningMonth)
             || !IsValidIds(payload.AssigneeIds)
             || !IsValidIds(payload.WatcherIds)
             || payload.RecurrenceSeriesId == Guid.Empty)
@@ -835,6 +836,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDes
         public Guid? ParentTaskId { get; init; }
         public Guid? RequesterUserId { get; init; }
         public Guid? PrimaryCounterpartyObjectId { get; init; }
+        public string? PlanningMonth { get; init; }
         public DateOnly? ScheduledDate { get; init; }
         public TimeOnly? StartTimeLocal { get; init; }
         public string? ScheduleTimeZone { get; init; }
@@ -854,6 +856,7 @@ public sealed partial class DesktopTasksApiClient : IDesktopTasksApiClient, IDes
             ParentTaskId = ParentTaskId,
             RequesterUserId = RequesterUserId,
             PrimaryCounterpartyObjectId = PrimaryCounterpartyObjectId,
+            PlanningMonth = PlanningMonth,
             ScheduledDate = ScheduledDate,
             StartTimeLocal = StartTimeLocal,
             ScheduleTimeZone = ScheduleTimeZone,

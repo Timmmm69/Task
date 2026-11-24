@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Json.Nodes;
 
 namespace Task.Domain;
@@ -11,6 +13,18 @@ public sealed record TaskCardContent
     public Guid? ParentTaskId { get; init; }
     public Guid? RequesterUserId { get; init; }
     public Guid? PrimaryCounterpartyObjectId { get; init; }
+    // Omitting an unset month preserves legacy command fingerprints and card JSON.
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? PlanningMonth { get; init; }
+
+    [JsonIgnore]
+    public string? EffectivePlanningMonth =>
+        PlanningMonth ?? (ScheduledDate ?? DeadlineDate)?.ToString("yyyy-MM", CultureInfo.InvariantCulture);
+
+    public static bool IsValidPlanningMonth(string? month) => month is null ||
+        (month.Length == 7 && DateOnly.TryParseExact(month + "-01", "yyyy-MM-dd",
+            CultureInfo.InvariantCulture, DateTimeStyles.None, out _));
+
     public DateOnly? ScheduledDate { get; init; }
     public TimeOnly? StartTimeLocal { get; init; }
     public string? ScheduleTimeZone { get; init; }
@@ -30,7 +44,7 @@ public sealed record TaskCardContent
     {
         "description", "projectId", "parentTaskId", "requesterUserId", "primaryCounterpartyObjectId",
         "scheduledDate", "startTimeLocal", "scheduleTimeZone", "plannedDurationMinutes", "assigneeIds", "watcherIds",
-        "deadlineDate", "deadlineTimeZone", "deadlineReminderOffsetMinutes"
+        "deadlineDate", "deadlineTimeZone", "deadlineReminderOffsetMinutes", "planningMonth"
     };
 
     public string ToJson() => JsonSerializer.Serialize(this, JsonOptions);
@@ -46,7 +60,7 @@ public sealed record TaskCardContent
             if (!Fields.Contains(key)) throw new ArgumentException("Unsupported task card field.");
             values[key] = value?.DeepClone();
         }
-        try { return FromJson(values.ToJsonString()); }
+        try { return FromJson(values.ToJsonString()) with { DeadlineReminderTime = DeadlineReminderTime }; }
         catch (JsonException exception) { throw new ArgumentException("Invalid task card field.", exception); }
     }
 
@@ -56,6 +70,7 @@ public sealed record TaskCardContent
     /// <summary>Explicit resolved overlap policy. Default validation still rejects ambiguous wall-clock input.</summary>
     public void Validate(DateTimeOffset? startAtUtc, bool allowEarlierAmbiguousInstant)
     {
+        if (!IsValidPlanningMonth(PlanningMonth)) throw new ArgumentException("Planning month must be yyyy-MM.");
         if (Description?.Length > 50000) throw new ArgumentException("Description is too long.");
         if (new[] { ProjectId, ParentTaskId, RequesterUserId, PrimaryCounterpartyObjectId }.Any(id => id == Guid.Empty))
             throw new ArgumentException("A related identifier is empty.");
