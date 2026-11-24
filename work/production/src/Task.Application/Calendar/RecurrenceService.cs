@@ -15,29 +15,32 @@ public sealed class RecurrenceService(IRecurrenceStore store)
     public RecurrenceRecord Get(Guid organizationId, Guid id, Guid? actorId = null) =>
         actorId is { } actor && !store.CanAccess(organizationId, id, actor) ? throw Missing() : store.Get(organizationId, id) ?? throw Missing();
     public IReadOnlyList<RecurrenceOccurrenceDetails> GetOccurrences(Guid organizationId, Guid id, Guid? actorId = null)
-    { _ = Get(organizationId, id, actorId); return store.GetOccurrences(organizationId, id, actorId); }
-
-    public static object ToResponse(RecurrenceRecord r) => new
     {
-        r.Id,
-        r.OrganizationId,
-        r.Version,
-        createdAt = r.CreatedAt.UtcDateTime,
-        updatedAt = r.UpdatedAt.UtcDateTime,
-        r.Definition.Status,
-        r.Definition.Frequency,
-        r.Definition.Interval,
-        r.Definition.Weekdays,
-        r.Definition.MonthDays,
-        r.Definition.MonthOfYear,
-        r.Definition.OccurrenceStartDate,
-        r.Definition.LocalStartTime,
-        r.Definition.TimeZone,
-        r.Definition.UntilDate,
-        r.Definition.MaxOccurrences,
-        r.Definition.NextGenerationDate,
-        r.Definition.Template,
+        _ = Get(organizationId, id, actorId);
+        return store.GetOccurrences(organizationId, id, actorId)
+            .Select(o => o with { Template = o.Template is { } template ? PublicTemplate(template) : null }).ToArray();
+    }
+
+    // Related data is read through the task workspace. In particular, catalog visibility
+    // can change between a write and its replay, and the deadline preference is private.
+    private static RecurrenceTemplateData PublicTemplate(RecurrenceTemplateData template) => template with
+    {
+        ChecklistSteps = null,
+        CatalogItemIds = null,
+        DeadlineReminderOffsetMinutes = null
     };
+
+    public static object ToResponse(RecurrenceRecord record)
+    {
+        var definition = record.Definition with { Template = PublicTemplate(record.Definition.Template) };
+        var response = JsonSerializer.SerializeToNode(definition, JsonOptions)!.AsObject();
+        response["id"] = record.Id;
+        response["organizationId"] = record.OrganizationId;
+        response["version"] = record.Version;
+        response["createdAt"] = record.CreatedAt.UtcDateTime;
+        response["updatedAt"] = record.UpdatedAt.UtcDateTime;
+        return response;
+    }
 
     public RecurrenceReply Create(Guid org, Guid actor, string key, string body)
     {
@@ -46,6 +49,17 @@ public sealed class RecurrenceService(IRecurrenceStore store)
         {
             var definition = ParseDefinition(body);
             if (definition.Status is not ("active" or "paused")) throw Invalid("A new series must be active or paused.");
+            if (definition.Template.CatalogItemIds is not null || definition.Template.DeadlineReminderOffsetMinutes is not null)
+                throw Invalid("Catalog links and private reminder preferences must come from an existing task.");
+            if (definition.SourceTaskId is { } source)
+            {
+                definition = definition with
+                {
+                    Template = tx.CaptureTaskTemplate(source, definition.Template, definition.MonthOnly),
+                    SourceTaskId = null
+                };
+                definition.Validate();
+            }
             if (definition.Template.AuthorUserId != actor) throw Invalid("The author of a new series must be the authenticated user.");
             if (definition.NextGenerationDate is not null && definition.NextGenerationDate != definition.OccurrenceStartDate)
                 throw Invalid("The generation cursor is managed by the server.");
@@ -74,6 +88,19 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             foreach (var property in patch) original[property.Key] = property.Value?.DeepClone();
             var definition = ParseDefinition(original.ToJsonString());
             if (definition.Status is "cancelled" or "completed") throw Invalid("Use the series lifecycle action.");
+            if (definition.SourceTaskId is not null || patch["template"] is JsonObject templatePatch &&
+                (templatePatch.ContainsKey("catalogItemIds") || templatePatch.ContainsKey("deadlineReminderOffsetMinutes")))
+                throw Invalid("Catalog links must come from the original source task.");
+            definition = definition with
+            {
+                Template = definition.Template with
+                {
+                    ChecklistSteps = (patch["template"] as JsonObject)?.ContainsKey("checklistSteps") == true
+                        ? definition.Template.ChecklistSteps : record.Definition.Template.ChecklistSteps,
+                    CatalogItemIds = record.Definition.Template.CatalogItemIds,
+                    DeadlineReminderOffsetMinutes = definition.MonthOnly ? null : record.Definition.Template.DeadlineReminderOffsetMinutes
+                }
+            };
             if (definition.Template.AuthorUserId != record.Definition.Template.AuthorUserId)
                 throw Invalid("The series author cannot be changed.");
             var now = DateTimeOffset.UtcNow;
@@ -83,6 +110,8 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             if (occurrences.Count > 500) throw Invalid("Rule update exceeds 500 generated tasks.");
             var through = occurrences.Count == 0 ? AddDaysClamped(definition.OccurrenceStartDate, 62)
                 : occurrences.Max(o => o.LocalDate);
+            if (record.Definition.NextGenerationDate is { } previousCursor && previousCursor.AddDays(-1) > through)
+                through = previousCursor.AddDays(-1);
             var start = definition.OccurrenceStartDate;
             var dates = through < start ? new HashSet<DateOnly>() : GenerateDatesInWindows(definition, start, through);
             foreach (var occurrence in occurrences)
@@ -101,7 +130,14 @@ public sealed class RecurrenceService(IRecurrenceStore store)
                     var schedule = Schedule(definition, preview);
                     var updated = task!.UpdateEditableFields(actor, now, definition.Template.Title,
                         RecurrenceTemplateData.ParsePriority(definition.Template.Priority),
-                        new(true, schedule.StartsAtUtc), new(true, schedule.DeadlineUtc));
+                        new(true, schedule.StartsAtUtc), new(true, schedule.DeadlineUtc),
+                        OccurrenceContent(definition, occurrence.LocalDate, task.Content));
+                    var steps = definition.Template.ChecklistSteps ?? [];
+                    if (!steps.SequenceEqual(occurrence.Template?.ChecklistSteps ?? []))
+                    {
+                        tx.ReplaceChecklist(task.Metadata.Id, steps);
+                        if (updated.Metadata.Version == task.Metadata.Version) updated = task.Rename(actor, task.Title, now);
+                    }
                     tx.SaveTask(updated, task.Metadata.Version);
                     tx.SaveOccurrence(occurrence with { GeneratedTaskVersion = updated.Metadata.Version, Template = definition.Template });
                 }
@@ -163,6 +199,7 @@ public sealed class RecurrenceService(IRecurrenceStore store)
         {
             var record = RequireVersion(current, version);
             if (!Enum.IsDefined(scope)) throw Invalid("Choose a change scope.");
+            if (record.Definition.MonthOnly && duration is not null) throw Invalid("Month-only occurrences have no planned duration.");
             if (record.Definition.Status is "cancelled" or "completed") throw Invalid("A terminal series cannot be edited.");
             var target = tx.Occurrences.SingleOrDefault(o => o.LocalDate == targetDate) ?? throw Missing();
             var targetTask = tx.GetTask(target.TaskId) ?? throw Missing();
@@ -240,7 +277,7 @@ public sealed class RecurrenceService(IRecurrenceStore store)
 
     public static RecurrencePreviewItem PreviewDate(RecurrenceDefinition definition, DateOnly date)
     {
-        if (definition.LocalStartTime is null) return new(date.ToString("yyyy-MM-dd"), date, null, null, "none");
+        if (definition.MonthOnly || definition.LocalStartTime is null) return new(date.ToString("yyyy-MM-dd"), date, null, null, "none");
         var zone = TimeZoneInfo.FindSystemTimeZoneById(definition.TimeZone);
         var local = date.ToDateTime(definition.LocalStartTime.Value, DateTimeKind.Unspecified);
         var adjustment = "none";
@@ -324,16 +361,10 @@ public sealed class RecurrenceService(IRecurrenceStore store)
             var preview = PreviewDate(definition, date);
             var task = TaskAggregate.Create(Guid.NewGuid(), record.OrganizationId, definition.Template.AuthorUserId, definition.Template.Title,
                 DateTimeOffset.UtcNow, RecurrenceTemplateData.ParsePriority(definition.Template.Priority), Schedule(definition, preview),
-                new TaskCardContent
-                {
-                    ProjectId = definition.Template.ProjectId,
-                    RequesterUserId = definition.Template.RequesterUserId,
-                    PrimaryCounterpartyObjectId = definition.Template.PrimaryCounterpartyObjectId,
-                    AssigneeIds = definition.Template.AssigneeIds,
-                    WatcherIds = definition.Template.WatcherIds,
-                    Description = definition.Template.Description
-                });
+                OccurrenceContent(definition, date));
             tx.SaveTask(task, null);
+            if (definition.Template.ChecklistSteps is { Length: > 0 } steps) tx.ReplaceChecklist(task.Metadata.Id, steps);
+            if (definition.Template.CatalogItemIds is { Length: > 0 } targets) tx.AddCatalogLinks(task.Metadata.Id, targets);
             tx.SaveOccurrence(new(date, task.Metadata.Id, GeneratedTaskVersion: task.Metadata.Version, Template: definition.Template));
             count++;
         }
@@ -342,8 +373,26 @@ public sealed class RecurrenceService(IRecurrenceStore store)
         return record with { Definition = definition with { NextGenerationDate = through.AddDays(1) } };
     }
 
+    private static TaskCardContent OccurrenceContent(RecurrenceDefinition definition, DateOnly date, TaskCardContent? previous = null)
+    {
+        var template = definition.Template;
+        var card = previous ?? new();
+        return card with
+        {
+            ProjectId = previous is null ? template.ProjectId : previous.ProjectId,
+            RequesterUserId = previous is null ? template.RequesterUserId : previous.RequesterUserId,
+            PrimaryCounterpartyObjectId = previous is null ? template.PrimaryCounterpartyObjectId : previous.PrimaryCounterpartyObjectId,
+            AssigneeIds = previous?.AssigneeIds ?? template.AssigneeIds,
+            WatcherIds = previous?.WatcherIds ?? template.WatcherIds,
+            Description = template.Description,
+            PlanningMonth = definition.PlanningMonthFor(date),
+            DeadlineReminderOffsetMinutes = previous is null && !definition.MonthOnly ? template.DeadlineReminderOffsetMinutes : null
+        };
+    }
+
     private static TaskSchedule Schedule(RecurrenceDefinition definition, RecurrencePreviewItem preview)
     {
+        if (definition.MonthOnly) return TaskSchedule.Create(null, null);
         if (preview.StartAtUtc.HasValue)
             return TaskSchedule.Create(new DateTimeOffset(preview.StartAtUtc.Value), preview.DeadlineAt.HasValue ? new DateTimeOffset(preview.DeadlineAt.Value) : null);
         var zone = TimeZoneInfo.FindSystemTimeZoneById(definition.TimeZone);

@@ -21,11 +21,12 @@ public sealed class PersonalApplicationModel : IDisposable
         try
         {
             var calendarClient = new PersonalCalendarClient(_store);
-            Tasks = new(new PersonalTasksClient(_store), Sections, _store.Projects, calendarClient, time);
+            var tasksClient = new PersonalTasksClient(_store);
+            Tasks = new(tasksClient, Sections, _store.Projects, calendarClient, time);
             Planning = new(_store, time);
             Workspace = new(_store);
             Inventory = new PersonalInventoryClient(_store, time);
-            var recurrence = new RecurrencePaneViewModel(new PersonalRecurrenceClient(_store), _store.LocalActorId, true);
+            var recurrence = new RecurrencePaneViewModel(new PersonalRecurrenceClient(_store), _store.LocalActorId, true, tasksClient);
             Calendar = new(calendarClient, ["Calendar.Read", "CalendarEvent.Create", "CalendarEvent.Update", "Recurrence.Read", "Recurrence.Manage"],
                 recurrence: recurrence, clock: time.GetUtcNow, personal: true,
                 firstDay: () => (DayOfWeek)(_store.WorkspaceSettings().FirstDayOfWeek % 7),

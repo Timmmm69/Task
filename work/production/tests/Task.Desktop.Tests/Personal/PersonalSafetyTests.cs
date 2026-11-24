@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
+using Task.Desktop.Calendar;
 using Task.Desktop.Modes;
 using Task.Desktop.Personal;
 using Task.Desktop.Security;
@@ -247,6 +248,25 @@ public sealed class PersonalSafetyTests : IDisposable
             using var insert = old.Connection.CreateCommand();
             insert.CommandText = "INSERT INTO tasks(id,version,created_at,updated_at,title,status,priority,scheduled_date,description) VALUES('11111111-1111-1111-1111-111111111111',1,'2026-10-05T00:00:00+00:00','2026-10-05T00:00:00+00:00','Historical backup',0,1,'2026-12-31','Steps');";
             insert.ExecuteNonQuery();
+            if (version >= 3)
+            {
+                using var actor = old.Connection.CreateCommand();
+                actor.CommandText = "SELECT value FROM personal_metadata WHERE key='PersonalActorId';";
+                var actorId = (string)actor.ExecuteScalar()!;
+                using var legacy = old.Connection.CreateCommand();
+                legacy.CommandText = """
+                    INSERT INTO personal_series VALUES($series,1,$definition,'2026-12-31',NULL);
+                    INSERT INTO personal_occurrences VALUES($series,'2026-12-31','11111111-1111-1111-1111-111111111111',1,0,0,$template,'none');
+                    """;
+                var template = $$"""{"title":"Legacy dated recurrence","authorUserId":"{{actorId}}","priority":"normal","description":"Steps","checklists":[],"reminderRules":[]}""";
+                legacy.Parameters.AddWithValue("$series", Guid.NewGuid().ToString("D"));
+                legacy.Parameters.AddWithValue("$template", template);
+                legacy.Parameters.AddWithValue("$definition", $$"""
+                    {"frequency":"monthly","interval":1,"monthDays":[31],"occurrenceStartDate":"2026-12-31","timeZone":"UTC",
+                     "nextGenerationDate":"2027-01-01","template":{{template}}}
+                    """);
+                legacy.ExecuteNonQuery();
+            }
         }
         using (var archive = ZipFile.Open(Package, ZipArchiveMode.Create))
         {
@@ -278,6 +298,18 @@ public sealed class PersonalSafetyTests : IDisposable
                 Assert.Equal("Steps", restored.Card!.Description);
                 Assert.Null(restored.Card.PlanningMonth);
                 Assert.Equal("2026-12", restored.Card.EffectivePlanningMonth);
+                if (version >= 3)
+                {
+                    var series = Assert.Single(store.RecurrenceSeries());
+                    Assert.False(series.Definition.MonthOnly);
+                    var generation = store.ExecuteRecurrence(new DesktopRecurrenceCommand.Generate(
+                        series.Id, series.Version, new(2027, 2, 28), "extend-restored-series"));
+                    Assert.Equal(1, generation.GeneratedCount);
+                    var next = Assert.Single(store.List(), task => task.Id != restored.Id);
+                    Assert.Equal(new DateOnly(2027, 1, 31), next.Card!.ScheduledDate);
+                    Assert.Equal("2027-01", next.Card.PlanningMonth);
+                    Assert.Empty(store.Checklist(next.Id));
+                }
                 Assert.Equal(PersonalDatabase.CurrentSchemaVersion, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath));
             }
             Assert.False(service.HasPendingRestore);

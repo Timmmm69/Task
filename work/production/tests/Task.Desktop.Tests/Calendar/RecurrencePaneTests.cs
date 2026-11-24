@@ -101,6 +101,33 @@ public sealed class RecurrencePaneTests
         Assert.Equal("daily", roundTrip.Frequency);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async global::System.Threading.Tasks.Task CorporateRuleEditSendsExplicitMonthOnlyMode(bool monthOnly)
+    {
+        var actor = Guid.NewGuid();
+        var original = Definition(actor) with
+        {
+            MonthOnly = !monthOnly,
+            Frequency = "monthly",
+            Weekdays = [],
+            MonthDays = [1],
+            OccurrenceStartDate = new(2027, 12, 1)
+        };
+        var editor = new RecurrenceEditorViewModel(original) { MonthOnly = monthOnly };
+        var definition = editor.Build(actor);
+        var transport = new FakeClient(_ => global::System.Threading.Tasks.Task.FromResult<DesktopCalendarResult<JsonElement>>(
+            Succeeded(SeriesJson(definition))));
+        var response = await new DesktopRecurrenceHttpAdapter(transport).ExecuteAsync(
+            new DesktopRecurrenceCommand.Save(Guid.NewGuid(), 1, definition, "edit-rule"), CancellationToken.None);
+        Assert.IsType<DesktopCalendarResult<DesktopRecurrenceReply>.Succeeded>(response);
+        var call = Assert.Single(transport.Calls);
+        Assert.Equal(HttpMethod.Patch, call.Method);
+        using var json = JsonDocument.Parse(call.Body!);
+        Assert.Equal(monthOnly, json.RootElement.GetProperty("monthOnly").GetBoolean());
+    }
+
     private static RecurrencePaneViewModel CreatePane(FakeClient client) => new(client, Guid.NewGuid());
     private static RecurrenceDefinition Definition(Guid author) => new()
     {
@@ -130,7 +157,7 @@ public sealed class RecurrencePaneTests
     {
         public List<Call> Calls { get; } = [];
         public global::System.Threading.Tasks.Task<DesktopCalendarResult<JsonElement>> SendAsync(HttpMethod method, string path, string? json, long? version, string? key, CancellationToken cancellationToken)
-        { var call = new Call(method, path, key); Calls.Add(call); return send(call); }
+        { var call = new Call(method, path, key, json); Calls.Add(call); return send(call); }
     }
-    private sealed record Call(HttpMethod Method, string Path, string? Key);
+    private sealed record Call(HttpMethod Method, string Path, string? Key, string? Body);
 }

@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Task.Application.Calendar;
 using Task.Desktop.Calendar;
+using Task.Desktop.TaskApi;
 using Task.Domain.Recurrence;
 
 namespace Task.Desktop.ViewModels;
@@ -18,6 +20,10 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
     private readonly IDesktopRecurrenceClient _client;
     private readonly bool _personal;
     private readonly Guid _actor;
+    private readonly IDesktopTasksApiClient? _tasks;
+    private string? _sourceCursor;
+    private bool _sourcesLoaded;
+    private IReadOnlyList<RecurrenceSourceTask> _sources = [];
     private CancellationTokenSource _lifetime = new();
     private long _generation;
     private bool _isOpen, _isBusy, _canRead, _canManage;
@@ -31,12 +37,13 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
     private string _scope = "this_occurrence";
     private string? _attemptIdentity, _attemptKey;
 
-    public RecurrencePaneViewModel(IDesktopRecurrenceApiClient client, Guid actor)
-        : this(new DesktopRecurrenceHttpAdapter(client), actor, false) { }
+    public RecurrencePaneViewModel(IDesktopRecurrenceApiClient client, Guid actor, IDesktopTasksApiClient? tasks = null)
+        : this(new DesktopRecurrenceHttpAdapter(client), actor, false, tasks) { }
 
-    public RecurrencePaneViewModel(IDesktopRecurrenceClient client, Guid actor, bool personal)
+    public RecurrencePaneViewModel(IDesktopRecurrenceClient client, Guid actor, bool personal, IDesktopTasksApiClient? tasks = null)
     {
-        _client = client; _actor = actor; _personal = personal;
+        _client = client; _actor = actor; _personal = personal; _tasks = tasks;
+        LoadSourcesCommand = new AsyncCommand((_, _) => RunAsync(LoadSourcesAsync), _ => CanChooseSource && !IsBusy && (!_sourcesLoaded || _sourceCursor is not null));
         OpenCommand = new AsyncCommand(async (_, _) => { IsOpen = true; await RunAsync(LoadAsync); }, _ => _canRead && !IsBusy);
         CloseCommand = new AsyncCommand((_, _) => { Close(); return global::System.Threading.Tasks.Task.CompletedTask; });
         NewCommand = new AsyncCommand((_, _) => { Selected = null; Editor = new(); PreviewText = null; return global::System.Threading.Tasks.Task.CompletedTask; }, _ => _canManage && !IsBusy);
@@ -61,12 +68,16 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
     public string? PreviewText { get => _preview; private set => SetProperty(ref _preview, value); }
     public IReadOnlyList<RecurrenceListItem> Series { get => _series; private set => SetProperty(ref _series, value); }
     public IReadOnlyList<RecurrenceOccurrenceDetails> Occurrences { get => _occurrences; private set => SetProperty(ref _occurrences, value); }
-    public RecurrenceListItem? Selected { get => _selected; set { if (SetProperty(ref _selected, value)) { Editor = new(value?.Definition); SelectedOccurrence = null; Occurrences = []; PreviewText = null; RaiseCommands(); if (value is not null && !IsBusy) _ = RunAsync(LoadOccurrencesAsync); } } }
+    public RecurrenceListItem? Selected { get => _selected; set { if (SetProperty(ref _selected, value)) { Editor = new(value?.Definition); OnPropertyChanged(nameof(CanChooseSource)); SelectedOccurrence = null; Occurrences = []; PreviewText = null; RaiseCommands(); if (value is not null && !IsBusy) _ = RunAsync(LoadOccurrencesAsync); } } }
     public RecurrenceOccurrenceDetails? SelectedOccurrence { get => _occurrence; set { if (SetProperty(ref _occurrence, value)) RaiseCommands(); } }
     public RecurrenceEditorViewModel Editor { get => _editor; private set => SetProperty(ref _editor, value); }
     public DateTime? ThroughDate { get => _throughDate; set => SetProperty(ref _throughDate, value); }
     public string Scope { get => _scope; set => SetProperty(ref _scope, value); }
     public IReadOnlyList<RecurrenceChoice> Scopes { get; } = [new("this_occurrence", "Только выбранная задача"), new("this_and_future", "Выбранная и последующие"), new("entire_series", "Вся серия")];
+    public bool CanChooseSource => CanManage && Selected is null && _tasks is not null;
+    public string SourceTasksButtonText => _sourcesLoaded ? "Загрузить ещё задачи" : "Загрузить задачи";
+    public IReadOnlyList<RecurrenceSourceTask> SourceTasks { get => _sources; private set => SetProperty(ref _sources, value); }
+    public AsyncCommand LoadSourcesCommand { get; }
     public AsyncCommand OpenCommand { get; }
     public AsyncCommand CloseCommand { get; }
     public AsyncCommand NewCommand { get; }
@@ -85,11 +96,13 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
         var set = capabilities.ToHashSet(StringComparer.Ordinal);
         _canRead = active && set.Contains("Recurrence.Read"); _canManage = _canRead && set.Contains("Recurrence.Manage");
         if (!_canRead || previousManage && !_canManage) { Close(); Series = []; Selected = null; Editor = new(); }
-        OnPropertyChanged(nameof(CanManage)); RaiseCommands();
+        OnPropertyChanged(nameof(CanManage)); OnPropertyChanged(nameof(CanChooseSource)); RaiseCommands();
     }
     public void Close()
     {
         _generation++; _lifetime.Cancel(); _lifetime.Dispose(); _lifetime = new();
+        _sourceCursor = null; _sourcesLoaded = false; SourceTasks = [];
+        OnPropertyChanged(nameof(SourceTasksButtonText));
         IsOpen = false; IsBusy = false; Series = []; Selected = null; Occurrences = []; Editor = new(); Message = null; PreviewText = null;
     }
     private async global::System.Threading.Tasks.Task RunAsync(Func<global::System.Threading.Tasks.Task> action)
@@ -132,6 +145,28 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
         };
         return null;
     }
+    private async global::System.Threading.Tasks.Task LoadSourcesAsync()
+    {
+        if (_tasks is null) return;
+        var generation = _generation;
+        var response = await _tasks.GetTasksAsync(_sourceCursor, _lifetime.Token);
+        if (generation != _generation || !CanChooseSource) return;
+        if (response is not DesktopTasksApiResult<DesktopTaskPage>.Succeeded success)
+        {
+            Message = "Не удалось загрузить исходные задачи.";
+            return;
+        }
+
+        _sourcesLoaded = true;
+        _sourceCursor = success.Value.NextCursor;
+        var selected = Editor.SourceTask;
+        SourceTasks = SourceTasks.Concat(success.Value.Items.Select(task => new RecurrenceSourceTask(task)))
+            .DistinctBy(source => source.Task.Id).ToArray();
+        if (selected is not null && Editor.SourceTask is null) Editor.RestoreSourceSelection(selected);
+        OnPropertyChanged(nameof(SourceTasksButtonText));
+        if (SourceTasks.Count == 0) Message = "Доступных исходных задач нет.";
+    }
+
     private async global::System.Threading.Tasks.Task LoadAsync()
     {
         var selectedId = Selected?.Id;
@@ -151,7 +186,7 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
         var result = await Request(new DesktopRecurrenceCommand.Preview(rule, rule.OccurrenceStartDate, 10));
         if (result is null) return;
         var dates = result.Preview ?? [];
-        PreviewText = dates.Count == 0 ? "В этом диапазоне нет повторений." : string.Join(Environment.NewLine, dates.Select(d => $"{d.LocalDate:dd.MM.yyyy}  {(d.StartAtUtc.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(d.StartAtUtc.Value, DateTimeKind.Utc), TimeZoneInfo.FindSystemTimeZoneById(rule.TimeZone)).ToString("HH:mm") : "весь день")}{(d.DstAdjustment != "none" ? " · переход часового пояса" : "")}"));
+        PreviewText = dates.Count == 0 ? "В этом диапазоне нет повторений." : string.Join(Environment.NewLine, dates.Select(d => rule.MonthOnly ? d.LocalDate.ToString("MMMM yyyy", CultureInfo.GetCultureInfo("ru-RU")) : $"{d.LocalDate:dd.MM.yyyy}  {(d.StartAtUtc.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(d.StartAtUtc.Value, DateTimeKind.Utc), TimeZoneInfo.FindSystemTimeZoneById(rule.TimeZone)).ToString("HH:mm") : "весь день")}{(d.DstAdjustment != "none" ? " · переход часового пояса" : "")}"));
     }
     private async global::System.Threading.Tasks.Task SaveAsync()
     {
@@ -160,7 +195,7 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
             WriteKey(new { action = "save", id = selected?.Id, version = selected?.Version, rule })));
         if (result?.Series is not { } saved) return;
         SuccessfulSaveRevision++;
-        _selected = new(saved.Id, saved.Version, saved.Definition); await LoadAsync(); Message = "Серия сохранена. Созданные задачи доступны в календаре."; Changed?.Invoke();
+        _selected = new(saved.Id, saved.Version, saved.Definition); await LoadAsync(); Message = rule.MonthOnly ? "Серия сохранена. Созданные задачи доступны в плане на месяц." : "Серия сохранена. Созданные задачи доступны в календаре."; Changed?.Invoke();
     }
     private async global::System.Threading.Tasks.Task GenerateAsync()
     {
@@ -191,7 +226,7 @@ public sealed class RecurrencePaneViewModel : ViewModelBase, IDisposable
         foreach (var name in new[] { "id", "organizationId", "version", "createdAt", "updatedAt" }) definition.Remove(name);
         return new(json.GetProperty("id").GetGuid(), json.GetProperty("version").GetInt64(), definition.Deserialize<RecurrenceDefinition>(RecurrenceService.JsonOptions)!);
     }
-    private IEnumerable<AsyncCommand> Commands => new[] { OpenCommand, CloseCommand, NewCommand, ReloadCommand, PreviewCommand, SaveCommand, GenerateCommand, PauseCommand, ResumeCommand, CancelSeriesCommand, ApplyCommand };
+    private IEnumerable<AsyncCommand> Commands => new[] { OpenCommand, CloseCommand, NewCommand, LoadSourcesCommand, ReloadCommand, PreviewCommand, SaveCommand, GenerateCommand, PauseCommand, ResumeCommand, CancelSeriesCommand, ApplyCommand };
     private void RaiseCommands() { foreach (var command in Commands) command.RaiseCanExecuteChanged(); }
     public void Dispose() { Close(); _lifetime.Dispose(); foreach (var command in Commands) command.Dispose(); }
 }

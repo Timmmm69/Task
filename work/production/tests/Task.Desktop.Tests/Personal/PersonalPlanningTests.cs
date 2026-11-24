@@ -265,6 +265,180 @@ public sealed class PersonalPlanningTests : IDisposable
         Assert.Equal(scope == RecurrenceChangeScope.ThisOccurrence ? "Scoped title" : "Rule edit", afterPatch[2].Title);
         Assert.Equal("Manual change", afterPatch[4].Title); Assert.Equal("completed", afterPatch[0].Status);
     }
+    [Theory]
+    [InlineData("monthly", "2027-12-01", "2028-03-31", "2028-03")]
+    [InlineData("yearly", "2028-02-01", "2029-02-28", "2029-02")]
+    public void MonthOnlyRecurrenceCopiesCleanInstructionsAndActiveCatalogLinksOnReopen(
+        string frequency, string anchor, string through, string nextMonth)
+    {
+        var start = DateOnly.ParseExact(anchor, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        var horizon = DateOnly.ParseExact(through, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        DesktopRecurrenceCommand.Save request;
+        DesktopRecurrenceSeries series;
+        Guid sourceId, folderId, missingId, firstStep;
+        int sourceVersion;
+        var steps = new[] { "Check the list", "Open the folder" };
+        using (var store = Open())
+        {
+            var source = store.Create(new("Source", DesktopTaskPriority.Normal, card: new()
+            {
+                Description = "Follow the monthly instructions",
+                PlanningMonth = "2027-12"
+            }));
+            sourceId = source.Id;
+            foreach (var step in steps) source = store.WriteChecklist(source.Id, source.Version, null, step, null, false);
+            firstStep = store.Checklist(source.Id)[0].Id;
+            source = store.WriteChecklist(source.Id, source.Version, firstStep, null, true, false);
+            var folder = store.CreateCatalog("Unavailable on disk", "folder_reference", null);
+            var missing = store.CreateCatalog("Will be removed", "file_reference", null);
+            folderId = folder.Id;
+            missingId = missing.Id;
+            store.AddPersonalLink(source.Id, source.Version, folderId, "task_file");
+            store.AddPersonalLink(source.Id, source.Version + 1, missingId, "task_file");
+            sourceVersion = checked((int)store.Get(sourceId)!.Version);
+
+            var definition = Definition(store, frequency, allDay: true) with
+            {
+                MonthOnly = true,
+                MonthDays = [1],
+                MonthOfYear = frequency == "yearly" ? start.Month : null,
+                OccurrenceStartDate = start,
+                SourceTaskId = sourceId,
+                Template = new() { Title = "Local recurring", AuthorUserId = store.LocalActorId }
+            };
+            request = new(null, null, definition, Key());
+            series = store.ExecuteRecurrence(request).Series!;
+            var generated = Occurrences(store, series.Id);
+            Assert.Equal(frequency == "monthly" ? 3 : 1, generated.Count);
+            var uniqueSteps = store.Checklist(sourceId).Select(step => step.Id).ToHashSet();
+            foreach (var occurrence in generated)
+            {
+                Assert.False(occurrence.Skipped);
+                CheckOccurrence(store, occurrence);
+                Assert.All(store.Checklist(occurrence.TaskId), step => Assert.True(uniqueSteps.Add(step.Id)));
+                Assert.Equal(2, store.TaskDocuments(occurrence.TaskId).Count);
+            }
+            var historical = generated[0];
+            store.Transition(new(historical.TaskId, historical.TaskVersion, DesktopTaskStatus.Completed));
+            if (frequency == "monthly")
+            {
+                var exception = generated[2];
+                series = store.ExecuteRecurrence(new DesktopRecurrenceCommand.Apply(series.Id, series.Version, exception.LocalDate, (int)exception.TaskVersion,
+                    RecurrenceChangeScope.ThisOccurrence, "Exception", "normal", null, Key())).Series!;
+                var future = generated[1];
+                series = store.ExecuteRecurrence(new DesktopRecurrenceCommand.Apply(series.Id, series.Version, future.LocalDate, (int)future.TaskVersion,
+                    RecurrenceChangeScope.ThisAndFuture, "After January", "normal", null, Key())).Series!;
+            }
+            store.ChangeWorkspaceLifecycle(missing.Id, missing.Version, "archive");
+        }
+
+        using (var store = Open())
+        {
+            Assert.Equal(series.Id, store.ExecuteRecurrence(request).Series!.Id);
+            var generate = new DesktopRecurrenceCommand.Generate(series.Id, series.Version, horizon, Key());
+            Assert.Equal(1, store.ExecuteRecurrence(generate).GeneratedCount);
+            Assert.Equal(1, store.ExecuteRecurrence(generate).GeneratedCount);
+            var generated = Occurrences(store, series.Id);
+            Assert.Equal(generated.Count, generated.Select(o => o.TaskId).Distinct().Count());
+            Assert.Equal(frequency == "monthly" ? 4 : 2, generated.Count);
+            Assert.Equal("completed", generated[0].Status);
+            var latest = generated[^1];
+            CheckOccurrence(store, latest);
+            Assert.Equal(nextMonth, store.Get(latest.TaskId)!.Card!.PlanningMonth);
+            Assert.Equal(folderId, Assert.Single(store.TaskDocuments(latest.TaskId)).TargetId);
+            if (frequency == "monthly")
+            {
+                Assert.Equal("Exception", generated[2].Title);
+                Assert.Equal("After January", latest.Title);
+            }
+            Assert.Empty(store.Reminders());
+            Assert.Equal(sourceVersion, store.Get(sourceId)!.Version);
+            Assert.Equal(firstStep, store.Checklist(sourceId)[0].Id);
+            Assert.True(store.Checklist(sourceId)[0].Completed);
+        }
+
+        void CheckOccurrence(PersonalTaskStore store, RecurrenceOccurrenceDetails occurrence)
+        {
+            var item = store.Get(occurrence.TaskId)!;
+            Assert.NotEqual(sourceId, item.Id);
+            Assert.Equal("Follow the monthly instructions", item.Card!.Description);
+            Assert.Equal(occurrence.LocalDate.ToString("yyyy-MM"), item.Card.PlanningMonth);
+            Assert.Null(item.Card.ScheduledDate);
+            Assert.Null(item.Card.DeadlineDate);
+            Assert.Null(item.Card.DeadlineReminderOffsetMinutes);
+            Assert.Null(item.StartAtUtc);
+            Assert.Null(item.DeadlineAtUtc);
+            var checklist = store.Checklist(item.Id);
+            Assert.Equal(steps, checklist.Select(step => step.Text));
+            Assert.All(checklist, step => Assert.False(step.Completed));
+        }
+    }
+
+    [Fact]
+    public void DatedRecurrenceFromTaskKeepsItsDeadlineAndManagedReminder()
+    {
+        using var store = Open();
+        var source = store.Create(new("Dated source", DesktopTaskPriority.Normal,
+            deadlineAtUtc: new DateTimeOffset(2028, 2, 29, 10, 0, 0, TimeSpan.Zero),
+            card: new() { DeadlineReminderOffsetMinutes = 2880 }));
+        var definition = Definition(store, "yearly") with
+        {
+            SourceTaskId = source.Id,
+            MonthOfYear = 2,
+            MonthDays = [29],
+            OccurrenceStartDate = new(2028, 2, 29)
+        };
+        var series = CreateSeries(store, definition);
+        var item = store.Get(Assert.Single(Occurrences(store, series.Id)).TaskId)!;
+        Assert.Equal("2028-02", item.Card!.PlanningMonth);
+        Assert.Equal(new DateOnly(2028, 2, 29), item.Card.ScheduledDate);
+        Assert.Equal(2880, item.Card.DeadlineReminderOffsetMinutes);
+        Assert.Equal(new DateTimeOffset(2028, 2, 29, 9, 45, 0, TimeSpan.Zero), item.DeadlineAtUtc);
+        Assert.Equal(item.DeadlineAtUtc!.Value.AddDays(-2), Assert.Single(store.Reminders(), r => r.TargetId == item.Id).DueAt);
+    }
+
+    [Fact]
+    public void MonthOnlyRecurrenceRollsBackStepsAndLinksAndCanRetryTheSameCommand()
+    {
+        DesktopRecurrenceCommand.Save request;
+        Guid sourceId;
+        using (var store = Open())
+        {
+            var source = store.Create(new("Rollback", DesktopTaskPriority.Normal));
+            sourceId = source.Id;
+            source = store.WriteChecklist(source.Id, source.Version, null, "Step", null, false);
+            var folder = store.CreateCatalog("Folder", "folder_reference", null);
+            store.AddPersonalLink(source.Id, source.Version, folder.Id, "task_file");
+            request = new(null, null, Definition(store, "monthly", allDay: true) with
+            {
+                SourceTaskId = sourceId,
+                MonthOnly = true,
+                MonthDays = [1],
+                OccurrenceStartDate = new(2026, 12, 1)
+            }, Key());
+        }
+
+        Sql("CREATE TRIGGER fail_r4 BEFORE INSERT ON personal_occurrences BEGIN SELECT RAISE(ABORT,'test'); END;");
+        using (var store = Open())
+        {
+            Assert.Throws<SqliteException>(() => store.ExecuteRecurrence(request));
+            Assert.Empty(store.RecurrenceSeries());
+            Assert.Equal(sourceId, Assert.Single(store.List()).Id);
+            Assert.Single(store.Checklist(sourceId));
+            Assert.Single(store.TaskDocuments(sourceId));
+        }
+
+        Sql("DROP TRIGGER fail_r4;");
+        using var reopened = Open();
+        var result = reopened.ExecuteRecurrence(request);
+        Assert.Equal(3, result.GeneratedCount);
+        Assert.All(Occurrences(reopened, result.Series!.Id), item =>
+        {
+            Assert.Single(reopened.Checklist(item.TaskId));
+            Assert.Single(reopened.TaskDocuments(item.TaskId));
+        });
+    }
+
     [Fact]
     public void RecurrenceCommandReplayAndSqlFailure_AreAtomicAcrossReopen()
     {
