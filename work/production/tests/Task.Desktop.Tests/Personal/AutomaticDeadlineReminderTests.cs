@@ -142,7 +142,7 @@ public sealed class AutomaticDeadlineReminderTests : IDisposable
         }
         using (var store = Open())
         {
-            Assert.Equal(5, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath)); Assert.Equal(3, store.List().Count);
+            Assert.Equal(PersonalDatabase.CurrentSchemaVersion, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath)); Assert.Equal(3, store.List().Count);
             Assert.Equal(0, store.ReconcileReminders()); Assert.Empty(store.Notifications());
             _clock.Now = _clock.Now.AddMinutes(50); Assert.Equal(1, store.ReconcileReminders()); Assert.Single(store.Notifications());
         }

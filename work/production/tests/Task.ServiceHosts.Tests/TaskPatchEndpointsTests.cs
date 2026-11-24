@@ -14,6 +14,24 @@ public sealed partial class TaskEndpointsTests
     private static readonly DateTimeOffset TransitionAt = DateTimeOffset.Parse("2026-08-24T10:00:00Z");
     private static readonly DateTimeOffset TransitionAt2 = DateTimeOffset.Parse("2026-08-24T11:00:00Z");
 
+    [Theory]
+    [InlineData("""{"planningMonth":"2027-01"}""", "2027-01")]
+    [InlineData("""{"planningMonth":null}""", null)]
+    [InlineData("""{"title":"Updated by old client"}""", "2026-12")]
+    public async global::System.Threading.Tasks.Task PlanningMonthPatchDistinguishesSetClearAndOmission(string json, string? expected)
+    {
+        var current = CurrentTask(new TaskCardContent { PlanningMonth = "2026-12" });
+        var executor = new FakeUpdateExecutor { Current = current };
+        using var server = CreateServer(new FakeTaskReadStore(Projection), writeExecutor: executor,
+            aggregateStore: new FakeUpdateAggregateStore(current));
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var response = await PatchTaskAsync(client, TaskId.ToString("D"), json);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = await ReadJsonAsync(response);
+        Assert.Equal(expected, body.RootElement.GetProperty("planningMonth").GetString());
+        Assert.Equal(current.Schedule, executor.Current!.Schedule);
+    }
+
     [Fact]
     public async global::System.Threading.Tasks.Task PatchTask_WithSingleField_Returns200WithNewVersionAndEtag()
     {
@@ -584,7 +602,7 @@ public sealed partial class TaskEndpointsTests
         return await client.SendAsync(request, cancellationToken);
     }
 
-    private static TaskAggregate CurrentTask()
+    private static TaskAggregate CurrentTask(TaskCardContent? content = null)
     {
         var metadata = SyncableEntityMetadata.Reconstitute(
             TaskId,
@@ -608,7 +626,7 @@ public sealed partial class TaskEndpointsTests
             TaskPriority.High,
             TaskSchedule.Create(
                 DateTimeOffset.Parse("2026-08-24T07:00:00Z"),
-                DateTimeOffset.Parse("2026-08-25T15:00:00Z")));
+                DateTimeOffset.Parse("2026-08-25T15:00:00Z")), content);
     }
 
     private static TaskAggregate CompletedTask() => CurrentTask().Complete(UserId, TransitionAt);

@@ -61,6 +61,19 @@ public sealed partial class TaskEndpointsTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task PostTask_PlanningMonthOnlyCreatesUndatedTask()
+    {
+        using var server = CreateServer(new FakeTaskReadStore(Projection), writeExecutor: new FakeTaskWriteCommandExecutor());
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        using var response = await PostTaskAsync(client, """{"title":"January work","planningMonth":"2027-01"}""");
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        using var json = await ReadJsonAsync(response);
+        Assert.Equal("2027-01", json.RootElement.GetProperty("planningMonth").GetString());
+        foreach (var field in new[] { "scheduledDate", "startAtUtc", "deadlineAt", "deadlineDate", "deadlineReminderOffsetMinutes" })
+            Assert.Equal(JsonValueKind.Null, json.RootElement.GetProperty(field).ValueKind);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task PostTask_WithMatchingAuthor_Succeeds()
     {
         using var server = CreateServer(new FakeTaskReadStore(Projection), writeExecutor: new FakeTaskWriteCommandExecutor());

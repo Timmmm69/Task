@@ -3,6 +3,34 @@ namespace Task.Tests;
 
 public sealed class TaskCardContentTests
 {
+    [Theory]
+    [InlineData("0000-01")]
+    [InlineData("10000-01")]
+    [InlineData("2026-00")]
+    [InlineData("2026-13")]
+    [InlineData("2026-1")]
+    [InlineData("2026-12-01")]
+    [InlineData("")]
+    public void InvalidPlanningMonthIsRejected(string month) =>
+        Assert.Throws<ArgumentException>(() => new TaskCardContent { PlanningMonth = month }.Validate(null));
+
+    [Fact]
+    public void PlanningMonthIsIndependentOfScheduleAndDeadline()
+    {
+        var card = TaskCardContent.FromJson("""{"deadlineDate":"2027-01-03","deadlineTimeZone":"UTC"}""");
+        Assert.Equal("2027-01", card.EffectivePlanningMonth);
+        card = card.Apply("""{"scheduledDate":"2026-12-31","planningMonth":"0001-01"}""");
+        card.Validate(null);
+        Assert.Equal("0001-01", card.EffectivePlanningMonth);
+        Assert.Equal(new DateOnly(2026, 12, 31), card.ScheduledDate);
+        card = card.Apply("""{"scheduledDate":"2028-01-01","description":"Updated"}""");
+        Assert.Equal("0001-01", card.EffectivePlanningMonth);
+        Assert.Equal("2028-01", card.Apply("""{"planningMonth":null}""").EffectivePlanningMonth);
+        Assert.Equal(new DateOnly(2027, 1, 3), card.DeadlineDate);
+        Assert.Null(new TaskCardContent().EffectivePlanningMonth);
+        new TaskCardContent { PlanningMonth = "9999-12" }.Validate(null);
+    }
+
     [Fact]
     public void CardSurvivesEveryLifecycleCopyAndNoOpDoesNotAdvanceVersion()
     {

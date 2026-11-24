@@ -105,6 +105,34 @@ public sealed class DesktopTasksApiClientTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task MonthlyQueryReadsBeyondEmptyFirstPageAndIncludesCompletedTasks()
+    {
+        await using var fixture = await Fixture.CreateAsync((request, _) =>
+        {
+            var next = request.RequestUri!.Query == "?cursor=next";
+            var item = System.Text.Json.Nodes.JsonNode.Parse(TaskJson())!.AsObject();
+            item["planningMonth"] = next ? "2027-01" : "2026-01";
+            if (next)
+            {
+                item["id"] = Guid.NewGuid();
+                item["status"] = "completed";
+            }
+            var body = new System.Text.Json.Nodes.JsonObject
+            {
+                ["items"] = new System.Text.Json.Nodes.JsonArray(item),
+                ["nextCursor"] = next ? null : "next"
+            };
+            return global::System.Threading.Tasks.Task.FromResult(JsonResponse(HttpStatusCode.OK, body.ToJsonString()));
+        });
+
+        var result = await fixture.Client.GetMonthlyTasksAsync("2027-01");
+        var page = Assert.IsType<DesktopTasksApiResult<DesktopTaskPage>.Succeeded>(result).Value;
+        Assert.Equal(DesktopTaskStatus.Completed, Assert.Single(page.Items).Status);
+        Assert.Null(page.NextCursor);
+        Assert.Equal(1, page.Total);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task ViewPreferences_CannotInjectUnsupportedSortOrReorderCursorPages()
     {
         var directory = Path.Combine(Path.GetTempPath(), "Task-view-state-query", Guid.NewGuid().ToString("N"));
@@ -149,7 +177,7 @@ public sealed class DesktopTasksApiClientTests
         var source = new DesktopTaskDto(Guid.NewGuid(), OrganizationId, 42, DateTimeOffset.UtcNow,
             DateTimeOffset.UtcNow, "Похожая", AuthorId, DesktopTaskStatus.Completed, DesktopTaskPriority.High,
             DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, [], [], Guid.NewGuid(),
-            new Task.Domain.TaskCardContent { Description = "Текст", PlannedDurationMinutes = 30 }, DateTimeOffset.UtcNow);
+            new Task.Domain.TaskCardContent { Description = "Текст", PlannedDurationMinutes = 30, PlanningMonth = "2026-12" }, DateTimeOffset.UtcNow);
         var editor = Task.Desktop.ViewModels.TaskEditorViewModel.FromSimilar(source, new System.Text.Json.Nodes.JsonObject(), true, true);
         var command = editor.BuildCreateCommand()!;
         await using var fixture = await Fixture.CreateAsync((_, _) =>
@@ -162,6 +190,7 @@ public sealed class DesktopTasksApiClientTests
         var body = System.Text.Json.Nodes.JsonNode.Parse(request.Body!)!.AsObject();
         Assert.Equal("Похожая", body["title"]!.ToString());
         Assert.Equal(30, body["plannedDurationMinutes"]!.GetValue<int>());
+        Assert.False(body.ContainsKey("planningMonth")); // A similar draft starts with a fresh schedule.
         foreach (var field in new[] { "startAtUtc", "deadlineAt", "scheduledDate", "startTimeLocal", "scheduleTimeZone", "parentTaskId", "requesterUserId" }) Assert.Null(body[field]);
         foreach (var forbidden in new[] { "id", "version", "organizationId", "authorUserId", "status", "lifecycleState", "createdAt", "updatedAt", "completedAt", "cancelledAt", "recurrenceSeriesId", "recurrenceOccurrenceId", "recurrenceExceptions", "reminders", "comments", "commentVersions", "history", "audit", "checklist", "subtasks", "objectLinks", "fileLinks" }) Assert.False(body.ContainsKey(forbidden), forbidden);
     }

@@ -84,6 +84,7 @@ internal static class PersonalDatabaseValidation
             columns["personal_reminders"] += ",managed_source";
             columns["personal_task_commands"] = "key,fingerprint,result";
         }
+        if (version >= 6) columns["tasks"] += ",planning_month";
         foreach (var (table, expected) in columns)
         {
             command.CommandText = $"PRAGMA table_info({table});";

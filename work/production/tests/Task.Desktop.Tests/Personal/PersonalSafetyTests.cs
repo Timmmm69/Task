@@ -52,7 +52,7 @@ public sealed class PersonalSafetyTests : IDisposable
         PersonalTaskStore? store = Open(owner);
         try
         {
-            var task = store.Create(new("Snapshot", DesktopTaskPriority.High));
+            var task = store.Create(new("Snapshot", DesktopTaskPriority.High, card: new() { PlanningMonth = "2026-12" }));
             store.WriteChecklist(task.Id, 1, null, "Checklist", null, false);
             var file = Path.Combine(_root, "external.txt"); File.WriteAllText(file, "physical file excluded");
             var catalog = store.CreateCatalog("Reference", "file_reference", null); store.AddPersonalLocation(catalog.Id, catalog.Version, file);
@@ -69,6 +69,7 @@ public sealed class PersonalSafetyTests : IDisposable
             store.Patch(new(task.Id, 2, title: DesktopTaskField<string>.From("Changed")));
             var safety = service.Restore(Package, () => { store?.Dispose(); store = null; }, () => store = Open(owner, true));
             Assert.Equal("Snapshot", store!.Get(task.Id)!.Title); Assert.Single(store.Checklist(task.Id)); Assert.Single(store.Catalog());
+            Assert.Equal("2026-12", store.Get(task.Id)!.Card!.PlanningMonth);
             Assert.True(File.Exists(safety));
             using (var old = PersonalDatabaseValidation.Open(safety, SqliteOpenMode.ReadOnly))
             { using var command = old.CreateCommand(); command.CommandText = "SELECT title FROM tasks;"; Assert.Equal("Changed", command.ExecuteScalar()); }
@@ -232,21 +233,25 @@ public sealed class PersonalSafetyTests : IDisposable
         Assert.Throws<InvalidDataException>(() => Open(owner));
     }
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void HistoricalBackup_RestoresAndMigrates_OrMigrationFailureReturnsCurrentDb(bool failMigration)
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    [InlineData(3, false)]
+    [InlineData(4, false)]
+    [InlineData(5, false)]
+    [InlineData(5, true)]
+    public void HistoricalBackup_RestoresAndMigrates_OrMigrationFailureReturnsCurrentDb(int version, bool failMigration)
     {
         var historical = new PersonalDataPaths(Path.Combine(_root, "historical"));
-        using (var old = new PersonalDatabase(historical, targetVersion: 3))
+        using (var old = new PersonalDatabase(historical, targetVersion: version))
         {
             using var insert = old.Connection.CreateCommand();
-            insert.CommandText = "INSERT INTO tasks(id,version,created_at,updated_at,title,status,priority) VALUES('11111111-1111-1111-1111-111111111111',1,'2026-10-05T00:00:00+00:00','2026-10-05T00:00:00+00:00','Historical backup',0,1);";
+            insert.CommandText = "INSERT INTO tasks(id,version,created_at,updated_at,title,status,priority,scheduled_date,description) VALUES('11111111-1111-1111-1111-111111111111',1,'2026-10-05T00:00:00+00:00','2026-10-05T00:00:00+00:00','Historical backup',0,1,'2026-12-31','Steps');";
             insert.ExecuteNonQuery();
         }
         using (var archive = ZipFile.Open(Package, ZipArchiveMode.Create))
         {
             using var input = File.OpenRead(historical.DatabasePath);
-            var metadata = new PersonalBackupMetadata("Task.Personal", 1, 3, "0.9.0", DateTimeOffset.UtcNow, Convert.ToHexString(SHA256.HashData(input)));
+            var metadata = new PersonalBackupMetadata("Task.Personal", 1, version, "0.9.0", DateTimeOffset.UtcNow, Convert.ToHexString(SHA256.HashData(input)));
             using (var entry = archive.CreateEntry("metadata.json").Open()) JsonSerializer.Serialize(entry, metadata, JsonOptions);
             archive.CreateEntryFromFile(historical.DatabasePath, "personal.db");
         }
@@ -267,7 +272,12 @@ public sealed class PersonalSafetyTests : IDisposable
             }
             else
             {
-                service.Restore(Package, close, reopen); Assert.Equal("Historical backup", Assert.Single(store!.List()).Title);
+                service.Restore(Package, close, reopen);
+                var restored = Assert.Single(store!.List());
+                Assert.Equal("Historical backup", restored.Title);
+                Assert.Equal("Steps", restored.Card!.Description);
+                Assert.Null(restored.Card.PlanningMonth);
+                Assert.Equal("2026-12", restored.Card.EffectivePlanningMonth);
                 Assert.Equal(PersonalDatabase.CurrentSchemaVersion, PersonalDatabaseValidation.ValidateFile(Paths.DatabasePath));
             }
             Assert.False(service.HasPendingRestore);
@@ -294,6 +304,8 @@ public sealed class PersonalSafetyTests : IDisposable
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void FreshHistoricalSchemaFixture_UpgradesWithoutDependingOnCurrentSchema(int version)
     {
         using var owner = PersonalStoreOwnership.Acquire(Paths);

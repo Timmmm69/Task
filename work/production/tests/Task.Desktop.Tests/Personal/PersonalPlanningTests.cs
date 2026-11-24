@@ -23,6 +23,7 @@ public sealed class PersonalPlanningTests : IDisposable
     private PersonalDataPaths Paths => new(_root);
     private readonly Clock _clock = new(new(2026, 10, 5, 8, 0, 0, TimeSpan.Zero));
     internal const string RemoveDeadlineSchema = """
+        ALTER TABLE tasks DROP COLUMN planning_month;
         DROP INDEX personal_task_deadline_reminder;
         ALTER TABLE personal_reminders DROP COLUMN managed_source;
         ALTER TABLE tasks DROP COLUMN deadline_date;
@@ -46,6 +47,36 @@ public sealed class PersonalPlanningTests : IDisposable
         public DateTimeOffset Now { get; set; } = now;
         public override DateTimeOffset GetUtcNow() => Now;
     }
+    [Fact]
+    public void PlanningMonth_RestartPatchClearAndTransition()
+    {
+        Guid id;
+        using (var store = Open())
+            id = store.Create(new("Month only", DesktopTaskPriority.Normal, card: new() { PlanningMonth = "2026-12" })).Id;
+
+        using var restarted = Open();
+        var task = restarted.Get(id)!;
+        Assert.Equal("2026-12", task.Card!.EffectivePlanningMonth);
+        Assert.Null(task.Card.ScheduledDate);
+        Assert.Null(task.Card.DeadlineDate);
+        Assert.Null(task.StartAtUtc);
+        Assert.Null(task.DeadlineAtUtc);
+        Assert.Empty(restarted.Reminders());
+        var editor = new TaskCardEditor(task.Card, personal: true) { Description = "edit in card" };
+        var edited = editor.Build(null);
+        Assert.Equal("2026-12", edited.PlanningMonth);
+        Assert.DoesNotContain("planningMonth", editor.Patch(edited)!);
+        Assert.Null(edited.Apply(editor.Patch(edited with { PlanningMonth = null })).PlanningMonth);
+        task = restarted.Patch(new(id, task.Version, cardPatch: """{"scheduledDate":"2027-01-01","description":"detail"}"""));
+        Assert.Equal("2026-12", task.Card!.EffectivePlanningMonth);
+        task = restarted.Transition(new(id, task.Version, DesktopTaskStatus.InProgress));
+        Assert.Equal("2026-12", task.Card!.PlanningMonth);
+        task = restarted.Patch(new(id, task.Version, cardPatch: """{"planningMonth":null}"""));
+        Assert.Null(task.Card!.PlanningMonth);
+        Assert.Equal("2027-01", task.Card.EffectivePlanningMonth);
+        Assert.Equal("detail", task.Card.Description);
+    }
+
     private PersonalTaskStore Open() => new(Paths, _clock);
     private void Sql(string sql)
     {
