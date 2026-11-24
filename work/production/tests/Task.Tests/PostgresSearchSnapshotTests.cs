@@ -145,6 +145,152 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal(last.ToString(), Assert.Single(SearchIds(Search().Body!["items"]!.AsArray())));
     }
 
+    [RequiresPostgresFact]
+    public void TaskSearchPreservesLiteralAndShortSubstringsAcrossMigration()
+    {
+        using var db = Database.Create(schemaVersion: 19)!;
+        Guid AddTask(string title)
+        {
+            var id = Guid.NewGuid();
+            db.Sql("INSERT INTO core.objects(id,organization_id,object_type,created_by,updated_by,created_at,updated_at) VALUES ($1,$2,'task',$3,$3,statement_timestamp(),statement_timestamp());",
+                id, db.Organization, db.User);
+            db.Sql("INSERT INTO work.tasks(id,organization_id,title) VALUES ($1,$2,$3);", id, db.Organization, title);
+            return id;
+        }
+
+        var exact = AddTask("Ключ%_!");
+        var partial = AddTask("Старый ключ%_! в заголовке");
+        AddTask("КЛЮЧАБ!");
+        var contact = Id(db.Call("contacts", "create", """{"firstName":"Cursor","displayName":"Cursor"}"""));
+        var olderContact = Id(db.Call("contacts", "create", """{"firstName":"Cursor","displayName":"Cursor last"}"""));
+        var oldQuery = new Dictionary<string, string> { ["q"] = "Cursor", ["types"] = "contact", ["limit"] = "1" };
+        var oldPage = db.Call("search", "search", query: oldQuery).Body!;
+        Assert.Equal(contact.ToString(), Assert.Single(SearchIds(oldPage["items"]!.AsArray())));
+        oldQuery["cursor"] = oldPage["nextCursor"]!.GetValue<string>();
+
+        db.Runtime.CreateMigrator().ApplyPending();
+
+        var continuation = db.Call("search", "search", query: oldQuery).Body!;
+        Assert.Equal(olderContact.ToString(), Assert.Single(SearchIds(continuation["items"]!.AsArray())));
+        Assert.Null(continuation["nextCursor"]);
+
+        var query = new Dictionary<string, string>
+        {
+            ["q"] = "КЛЮЧ%_!",
+            ["types"] = "task",
+            ["limit"] = "10",
+            ["lifecycle"] = "active",
+            ["userIds"] = db.User.ToString(),
+        };
+        JsonArray Search() => db.Call("search", "search", query: query).Body!["items"]!.AsArray();
+        Assert.Equal(new[] { exact.ToString(), partial.ToString() }, SearchIds(Search()));
+
+        query["q"] = "%_";
+        Assert.Equal(new[] { exact.ToString(), partial.ToString() }.Order(), SearchIds(Search()).Order());
+        query["q"] = "_";
+        var suggestions = db.Call("search", "suggestions", query: query).Body!.AsArray();
+        Assert.Equal(new[] { exact.ToString(), partial.ToString() }.Order(), SearchIds(suggestions).Order());
+    }
+
+    [RequiresPostgresFact]
+    public void SearchFillsPageAcrossWindowsAndKeepsTheOriginalCursorPosition()
+    {
+        using var db = Database.Create()!;
+        var exact = Id(db.Call("contacts", "create", """{"firstName":"Window","displayName":"Window"}"""));
+        var tail = Id(db.Call("contacts", "create", """{"firstName":"Window","displayName":"Window tail"}"""));
+        var last = Id(db.Call("contacts", "create", """{"firstName":"Window","displayName":"Window last"}"""));
+        db.Sql("UPDATE core.objects SET updated_at=created_at+interval '1 minute' WHERE id=$1;", tail);
+        db.Sql("""
+            WITH filler AS (
+                INSERT INTO core.objects(id,organization_id,object_type,created_by,updated_by,created_at,updated_at)
+                SELECT gen_random_uuid(),$1,'contact',$2,$2,statement_timestamp(),statement_timestamp()+interval '2 minutes'
+                FROM generate_series(1,70) RETURNING id,organization_id
+            )
+            INSERT INTO crm.contacts(id,organization_id,first_name,display_name)
+            SELECT id,organization_id,'Window','Window filler' FROM filler;
+            """, db.Organization, db.User);
+
+        var query = new Dictionary<string, string> { ["q"] = "Window", ["types"] = "contact", ["limit"] = "1" };
+        JsonNode Search() => db.Call("search", "search", query: query).Body!;
+        var first = Search();
+        Assert.Equal(exact.ToString(), Assert.Single(SearchIds(first["items"]!.AsArray())));
+        var cursor = first["nextCursor"]!.GetValue<string>();
+        db.Sql("""
+            UPDATE core.objects o SET lifecycle_state='archived',archived_at=updated_at
+            FROM crm.contacts c WHERE o.organization_id=c.organization_id AND o.id=c.id AND c.display_name='Window filler';
+            """);
+
+        query["cursor"] = cursor;
+        var second = Search();
+        Assert.Equal(tail.ToString(), Assert.Single(SearchIds(second["items"]!.AsArray())));
+        query["cursor"] = second["nextCursor"]!.GetValue<string>();
+        Assert.Equal(cursor[..^1] + "72", query["cursor"]);
+        var third = Search();
+        Assert.Equal(last.ToString(), Assert.Single(SearchIds(third["items"]!.AsArray())));
+        Assert.Null(third["nextCursor"]);
+
+        query["cursor"] = cursor[..^1] + "73";
+        Assert.Empty(Search()["items"]!.AsArray());
+        query["cursor"] = cursor[..^1] + int.MaxValue;
+        AssertSearchError(400, "SEARCH_CURSOR_INVALID", () => db.Call("search", "search", query: query));
+    }
+
+    [RequiresPostgresFact]
+    public void SearchWindowRechecksFileDeviceAndVersionAndOmitsPaths()
+    {
+        using var db = Database.Create()!;
+        var firstItem = Id(db.Call("catalog-items", "create", """{"name":"Window file","itemType":"file_reference"}"""));
+        var localItem = Id(db.Call("catalog-items", "create", """{"name":"Window file local","itemType":"file_reference"}"""));
+        var sharedItem = Id(db.Call("catalog-items", "create", """{"name":"Window file shared","itemType":"file_reference"}"""));
+        Guid AddUncLocation(Guid catalogItem, string rawPath)
+        {
+            var id = Guid.NewGuid();
+            db.Sql("""
+                INSERT INTO files.file_locations(id,organization_id,catalog_item_id,location_type,raw_path,owner_user_id)
+                VALUES ($1,$2,$3,'unc_path',$4,$5);
+                """, id, db.Organization, catalogItem, rawPath, db.User);
+            return id;
+        }
+
+        var first = AddUncLocation(firstItem, @"\\server\share\first.txt");
+        var local = Id(db.Call("catalog-items", "location-add", """{"locationType":"local_path","rawPath":"C:\\Work\\local.txt"}""", localItem, 1));
+        var shared = AddUncLocation(sharedItem, @"\\server\share\shared.txt");
+        db.Sql("UPDATE core.objects SET updated_at=created_at+interval '1 minute' WHERE id=$1;", localItem);
+        var otherDevice = Guid.NewGuid();
+        var otherSession = Guid.NewGuid();
+        db.Sql("INSERT INTO core.objects(id,organization_id,object_type,created_by,updated_by,created_at,updated_at) VALUES ($1,$2,'device',$3,$3,statement_timestamp(),statement_timestamp());",
+            otherDevice, db.Organization, db.User);
+        db.Sql("INSERT INTO iam.devices(id,organization_id,user_account_id,device_fingerprint_hash) VALUES ($1,$2,$3,$4);",
+            otherDevice, db.Organization, db.User, otherDevice.ToString("N"));
+        db.Sql("""
+            INSERT INTO iam.sessions(id,organization_id,user_account_id,device_id,credential_version,authorization_scope_version,idle_expires_at,absolute_expires_at)
+            VALUES ($1,$2,$3,$4,1,1,statement_timestamp()+interval '1 day',statement_timestamp()+interval '2 days');
+            """, otherSession, db.Organization, db.User, otherDevice);
+
+        var query = new Dictionary<string, string> { ["q"] = "Window file", ["types"] = "file_location", ["limit"] = "1" };
+        var permissions = new[] { "Search.Use", "FileCatalog.Read", "FileReference.Open" };
+        JsonNode Search(Guid session) => db.Call("search", "search", query: query, permissions: permissions, session: session).Body!;
+        void AssertHit(Guid id, JsonNode page)
+        {
+            var row = Assert.Single(page["items"]!.AsArray())!;
+            Assert.Equal(id.ToString(), row["objectId"]!.ToString());
+            Assert.Null(row["rawPath"]);
+        }
+
+        var initial = Search(db.Session);
+        AssertHit(first, initial);
+        query["cursor"] = initial["nextCursor"]!.GetValue<string>();
+        AssertHit(local, Search(db.Session));
+        var fromOtherDevice = Search(otherSession);
+        AssertHit(shared, fromOtherDevice);
+        Assert.Null(fromOtherDevice["nextCursor"]);
+
+        db.Sql("UPDATE files.file_locations SET version=version+1 WHERE id=$1;", local);
+        var afterChange = Search(db.Session);
+        AssertHit(shared, afterChange);
+        Assert.Null(afterChange["nextCursor"]);
+    }
+
     private static string[] SearchIds(JsonArray items) =>
         items.Select(item => item!["objectId"]!.GetValue<string>()).ToArray();
 

@@ -26,6 +26,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(17, "inbox_conversion", "017_inbox_conversion.sql"),
         Load(18, "search_snapshot_expiry", "018_search_snapshot_expiry.sql"),
         Load(19, "reminder_reconciliation", "019_reminder_reconciliation.sql"),
+        Load(20, "task_search_trigram", "020_task_search_trigram.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;
