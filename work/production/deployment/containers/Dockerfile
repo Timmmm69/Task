@@ -41,10 +41,10 @@ RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubun
     && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
         libssl3t64=3.0.13-0ubuntu3.16 \
         openssl=3.0.13-0ubuntu3.16 \
-        libgssapi-krb5-2=1.20.1-6ubuntu2.10 \
-        libkrb5-3=1.20.1-6ubuntu2.10 \
-        libk5crypto3=1.20.1-6ubuntu2.10 \
-        libkrb5support0=1.20.1-6ubuntu2.10 \
+        libgssapi-krb5-2=1.20.1-6ubuntu2.12 \
+        libkrb5-3=1.20.1-6ubuntu2.12 \
+        libk5crypto3=1.20.1-6ubuntu2.12 \
+        libkrb5support0=1.20.1-6ubuntu2.12 \
         libkeyutils1=1.6.3-3build1 \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log \
         /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache \
@@ -101,10 +101,10 @@ USER root
 RUN sed -i 's|http://archive\.ubuntu\.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|http://security\.ubuntu\.com/ubuntu|https://security.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources \
     && apt-get -o Acquire::Retries=3 update \
     && apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
-        libgssapi-krb5-2=1.20.1-6ubuntu2.10 \
-        libkrb5-3=1.20.1-6ubuntu2.10 \
-        libk5crypto3=1.20.1-6ubuntu2.10 \
-        libkrb5support0=1.20.1-6ubuntu2.10 \
+        libgssapi-krb5-2=1.20.1-6ubuntu2.12 \
+        libkrb5-3=1.20.1-6ubuntu2.12 \
+        libk5crypto3=1.20.1-6ubuntu2.12 \
+        libkrb5support0=1.20.1-6ubuntu2.12 \
         libkeyutils1=1.6.3-3build1 \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/* /var/log/apt/* /var/log/dpkg.log \
         /var/lib/apt/extended_states /var/cache/ldconfig/aux-cache \

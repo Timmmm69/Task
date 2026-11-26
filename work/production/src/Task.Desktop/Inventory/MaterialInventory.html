@@ -75,6 +75,17 @@
     body:not(.can-manage) .mobile-mat-cost, body:not(.can-manage) .mobile-mat-right>.caret{display:none}
     body:not(.can-manage) .material-row,body:not(.can-manage) .mobile-material-button{cursor:default}
     body.saving #modal button:not(.close-modal){pointer-events:none;opacity:.6}
+    button.metric{color:inherit;text-align:left}
+    button.metric:hover{border-color:var(--pink);background:#fffafb}
+    .metric-value,.metric-foot{display:block}
+    #inventoryHeading,#supplierHeading{scroll-margin-top:calc(80px + 16px)}
+    .supplier-item{cursor:default}
+    button.supplier-name{display:block;max-width:100%;padding:0;border:0;background:none;color:inherit;text-align:left}
+    button.supplier-name:hover,.catalog-line-name.supplier-name:hover{text-decoration:underline}
+    .supplier-toggle{border:0;background:none;border-radius:8px;padding:8px;color:#666}
+    .supplier-toggle:hover{background:var(--soft)}
+    .supplier-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .supplier-fields .wide{grid-column:1/-1}
   </style>
 </head>
 <body aria-busy="true">
@@ -123,9 +134,9 @@
 
     <div class="layout-main">
       <section class="panel" aria-labelledby="inventoryHeading" id="inventorySection">
-        <div class="panel-heading"><div><h2 class="panel-title" id="inventoryHeading">Остатки на складе</h2><p class="panel-subtitle" id="inventoryHint">Нажмите на материал, чтобы увидеть цены и поставщиков</p></div><button class="section-action manage-only" type="button" id="newMaterialButton"><svg class="icon sm"><use href="#i-plus"/></svg>Новый материал</button></div>
-        <div class="inventory-tools"><label class="search-wrap"><svg class="icon"><use href="#i-search"/></svg><input id="materialSearch" type="search" placeholder="Найти материал..." autocomplete="off" aria-label="Поиск материалов" /></label><div class="filter-controls" id="filterControls"><button class="filter-button active" type="button" data-filter="all">Все</button><button class="filter-button" type="button" data-filter="attention">Заканчиваются</button><button class="filter-button" type="button" data-filter="out">Нет в наличии</button></div></div>
-        <div class="table-scroll" id="inventoryTable"></div><div class="material-cards" id="materialCards"></div><div class="table-foot"><span id="inventoryFoot">Все материалы</span><span class="manage-only">Стоимость по фактическим закупкам</span></div>
+        <div class="panel-heading"><div><h2 class="panel-title" id="inventoryHeading" tabindex="-1">Остатки на складе</h2><p class="panel-subtitle" id="inventoryHint">Нажмите на материал, чтобы увидеть цены и поставщиков</p></div><button class="section-action manage-only" type="button" id="newMaterialButton"><svg class="icon sm"><use href="#i-plus"/></svg>Новый материал</button></div>
+        <div class="inventory-tools"><label class="search-wrap"><svg class="icon"><use href="#i-search"/></svg><input id="materialSearch" type="search" placeholder="Найти материал..." autocomplete="off" aria-label="Поиск материалов" /></label><div class="filter-controls" id="filterControls"><button class="filter-button active" type="button" data-filter="all">Все</button><button class="filter-button" type="button" data-filter="stock">В наличии</button><button class="filter-button" type="button" data-filter="attention">Требуют внимания</button><button class="filter-button" type="button" data-filter="out">Нет в наличии</button></div></div>
+        <div class="table-scroll" id="inventoryTable"></div><div class="material-cards" id="materialCards"></div><div class="table-foot"><span id="inventoryFoot" role="status">Все материалы</span><span class="manage-only">Стоимость по фактическим закупкам</span></div>
       </section>
       <aside class="sidebar">
         <section class="panel" aria-labelledby="alertHeading"><div class="panel-heading"><div><h2 class="panel-title" id="alertHeading">Заканчиваются</h2><p class="panel-subtitle">По заданным минимальным остаткам</p></div><span id="alertCount" style="font-size:12px;color:#9b9b9b;font-weight:700"></span></div><div class="warning-list" id="warningList"></div></section>
@@ -134,7 +145,7 @@
     </div>
 
     <div class="bottom-grid manage-only">
-      <section class="panel" id="supplierSection" aria-labelledby="supplierHeading"><div class="panel-heading"><div><h2 class="panel-title" id="supplierHeading">По поставщикам</h2><p class="panel-subtitle">Стоимость и остатки из их поставок</p></div><button class="section-action" type="button" data-action="catalog-suppliers">Все поставщики <svg class="icon sm"><use href="#i-chevron"/></svg></button></div><div class="supplier-list" id="supplierList"></div></section>
+      <section class="panel" id="supplierSection" aria-labelledby="supplierHeading"><div class="panel-heading"><div><h2 class="panel-title" id="supplierHeading" tabindex="-1">По поставщикам</h2><p class="panel-subtitle">Стоимость и остатки из их поставок</p></div><button class="section-action" type="button" data-action="catalog-suppliers">Все поставщики <svg class="icon sm"><use href="#i-chevron"/></svg></button></div><div class="supplier-list" id="supplierList"></div></section>
       <section class="panel" id="journalSection" aria-labelledby="journalHeading"><div class="panel-heading"><div><h2 class="panel-title" id="journalHeading">История операций</h2><p class="panel-subtitle">Накладные, поступления и списания</p></div><span class="muted small" id="journalCount"></span></div><div class="journal-list" id="journalList"></div></section>
     </div>
 
@@ -164,6 +175,7 @@
     const shortDate = s => { if(!/^\d{4}-\d{2}-\d{2}$/.test(String(s))) return '—'; const [y,m,d]=s.split('-'); return `${d}.${m}`; };
     const byId=(list,lookup)=>list.find(item=>item.id===lookup);
     const textPart=s=>String(s??'').trim();
+    const supplierAction=(action,supplierId)=>`[data-action="${action}"][data-id=${CSS.escape(supplierId)}]`;
 
     function calculateLedger(data, moves=data.movements){
       const lots=[];
@@ -234,6 +246,7 @@
     let state=emptyData(),ledger=calculateLedger(state),access=null,corporate=false,writing=false,requestId=0;
     let filter='all', search='',expandedMaterial=null,expandedSupplier=null,expandedMovement=null,showFullHistory=false;
     let mode=null,draft=null,catalogTab='materials',editingItemId=null,miniForm=null,toastTimer=null;
+    let supplierCard=null;
     const bridge=window.chrome?.webview;
     const requests=new Map();
     bridge?.addEventListener('message',event=>{
@@ -301,26 +314,43 @@
     function risk(mat,qty){if(qty<=EPS)return 0;if(mat.threshold>0&&qty<=mat.threshold+EPS)return 1;if(mat.threshold>0&&qty<=mat.threshold*1.5+EPS)return 2;return 3;}
     function stockInfo(mat){return ledger.materialTotals[mat.id]||{qty:0,value:0,avg:0};}
 
+    function materialsFor(scope){
+      if(scope==='stock')return state.materials.filter(mat=>stockInfo(mat).qty>EPS);
+      if(scope==='attention')return state.materials.filter(mat=>risk(mat,stockInfo(mat).qty)<=2);
+      if(scope==='out')return state.materials.filter(mat=>stockInfo(mat).qty<=EPS);
+      return state.materials;
+    }
+    function compareStock(a,b){
+      return risk(a,stockInfo(a).qty)-risk(b,stockInfo(b).qty)||a.name.localeCompare(b.name,'ru');
+    }
     function renderMetrics(){
       const value=Object.values(ledger.materialTotals).reduce((n,m)=>n+m.value,0);
-      const active=state.materials.filter(m=>stockInfo(m).qty>EPS).length;
-      const low=state.materials.filter(m=>risk(m,stockInfo(m).qty)<=2).length;
       const cards=[
-        {label:'Материалов в наличии',value:amount(active),detail:`из ${state.materials.length} позиций в справочнике`,icon:'box'},
-        {label:'Стоимость склада',value:money(value),detail:'По закупочным ценам партий',icon:'receipt'},
-        {label:'Требуют внимания',value:amount(low),detail:'Мало или закончились',icon:'alert',warn:true},
-        {label:'Поставщиков',value:amount(state.suppliers.length),detail:'В вашем справочнике',icon:'truck'}
+        {label:'Материалов в наличии',value:amount(materialsFor('stock').length),detail:`из ${state.materials.length} позиций в справочнике`,icon:'box',target:'stock'},
+        {label:'Стоимость склада',value:money(value),detail:'По закупочным ценам партий',icon:'receipt',manage:true},
+        {label:'Требуют внимания',value:amount(materialsFor('attention').length),detail:'Мало или закончились',icon:'alert',warn:true,target:'attention'},
+        {label:'Поставщиков',value:amount(state.suppliers.length),detail:'В вашем справочнике',icon:'truck',target:'suppliers',manage:true}
       ];
-      $('#metrics').innerHTML=cards.filter(card=>access?.canManage||card.icon==='box'||card.warn).map(card=>`<div class="metric ${card.warn?'warn':''}"><div class="metric-head"><div class="metric-label">${card.label}</div><div class="metric-icon ${card.warn?'amber':''}">${svg(card.icon)}</div></div><div><div class="metric-value">${card.value}</div><div class="metric-foot">${card.detail}</div></div></div>`).join('');
+      $('#metrics').innerHTML=cards.filter(card=>!card.manage||access?.canManage).map(card=>{
+        const tag=card.target?'button':'div';
+        return `<${tag} class="metric ${card.warn?'warn':''}" ${card.target?`type="button" data-metric="${card.target}" aria-controls="${card.target==='suppliers'?'supplierSection':'inventorySection'}"`:''}><span class="metric-head"><span class="metric-label">${card.label}</span><span class="metric-icon ${card.warn?'amber':''}">${svg(card.icon)}</span></span><span><span class="metric-value">${card.value}</span><span class="metric-foot">${card.detail}</span></span></${tag}>`;
+      }).join('');
     }
 
     function displayedMaterials(){
-      return state.materials.filter(mat=>{
-        const q=stockInfo(mat).qty;
-        const match=(mat.name+' '+mat.unit).toLocaleLowerCase('ru-RU').includes(search.toLocaleLowerCase('ru-RU'));
-        const matchesFilter=filter==='all'||(filter==='attention'&&risk(mat,q)<=2)||(filter==='out'&&q<=EPS);
-        return match&&matchesFilter;
-      }).sort((a,b)=>risk(a,stockInfo(a).qty)-risk(b,stockInfo(b).qty)||a.name.localeCompare(b.name,'ru'));
+      const term=search.toLocaleLowerCase('ru-RU');
+      return materialsFor(filter).filter(mat=>(mat.name+' '+mat.unit).toLocaleLowerCase('ru-RU').includes(term)).sort(compareStock);
+    }
+    function openMetric(target){
+      let heading=$('#supplierHeading');
+      if(target!=='suppliers'){
+        filter=target;
+        search=$('#materialSearch').value='';
+        renderInventory();
+        heading=$('#inventoryHeading');
+      }
+      heading.focus({preventScroll:true});
+      heading.scrollIntoView({block:'start',behavior:'instant'});
     }
     function supplierMaterialRows(mat){
       return state.suppliers.map(s=>{
@@ -339,10 +369,12 @@
     }
     function renderInventory(){
       const visible=displayedMaterials();
-      $$('.filter-button').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+      $$('.filter-button').forEach(b=>b.setAttribute('aria-pressed',b.classList.toggle('active',b.dataset.filter===filter)));
       $('#inventoryFoot').textContent=`Показано ${visible.length} из ${state.materials.length} материалов`;
       if(visible.length===0){
-        const e=`<div class="empty-state">${svg('search')}<h3>Ничего не найдено</h3><p>Измените поиск или фильтр.</p></div>`;
+        const message=search?'Ничего не найдено':filter==='stock'?'Нет материалов в наличии':
+          filter==='attention'?'Нет материалов, требующих внимания':filter==='out'?'Нет отсутствующих материалов':'Материалов ещё нет';
+        const e=`<div class="empty-state">${svg('search')}<h3>${message}</h3>${search?'<p>Измените поиск или фильтр.</p>':''}</div>`;
         $('#inventoryTable').innerHTML=e;$('#materialCards').innerHTML=e;return;
       }
       const heads=`<thead><tr><th>Материал</th><th>Ед.</th><th class="num">Остаток</th><th class="num">Мин.</th><th class="num">Ср. цена</th><th class="num">Стоимость</th><th></th></tr></thead>`;
@@ -359,7 +391,7 @@
       }).join('');
     }
     function renderWarnings(){
-      const warnings=state.materials.filter(m=>risk(m,stockInfo(m).qty)<=2).sort((a,b)=>risk(a,stockInfo(a).qty)-risk(b,stockInfo(b).qty)||a.name.localeCompare(b.name,'ru'));
+      const warnings=materialsFor('attention').sort(compareStock);
       $('#alertCount').textContent=warnings.length?`${warnings.length} поз.`:'';
       $('#warningList').innerHTML=warnings.length?warnings.map(mat=>{
         const qty=stockInfo(mat).qty,k=risk(mat,qty),p=mat.threshold?Math.min(100,qty/mat.threshold*100):0;
@@ -369,8 +401,17 @@
     function renderSuppliers(){
       $('#supplierList').innerHTML=state.suppliers.length?state.suppliers.map((s,i)=>{
         const t=ledger.supplierTotals[s.id],expanded=expandedSupplier===s.id;
-        const materials=state.materials.map(m=>({m,key:m.id+'|'+s.id})).filter(x=>ledger.latestPrices[x.key]);
-        return `<div class="supplier-item" data-supplier="${escapeHTML(s.id)}" tabindex="0" aria-expanded="${expanded}"><div class="supplier-avatar">${escapeHTML(s.name.replace(/[«»"'\s]/g,'').slice(0,2).toUpperCase())}</div><div class="supplier-info"><div class="supplier-name">${escapeHTML(s.name)}</div><div class="supplier-description">${t.receiptCount} ${plural(t.receiptCount,'поставка','поставки','поставок')} · ${t.materialIds.size} ${plural(t.materialIds.size,'материал','материала','материалов')} в остатке</div></div><div class="supplier-total">${money(t.value)}<span>остаток из поставок</span></div>${svg('chevron','sm caret '+(expanded?'rotate':''))}</div>${expanded?`<div class="supplier-detail"><div style="font-size:11px;color:#858585;margin-bottom:7px">Всего закуплено: <b>${money(t.purchases)}</b></div><table><thead><tr><th>Материал</th><th>Осталось</th><th class="num">Посл. цена</th></tr></thead><tbody>${materials.map(x=>{const v=ledger.materialSupplier[x.key]||{qty:0};return `<tr><td>${escapeHTML(x.m.name)}</td><td>${amount(v.qty)} ${escapeHTML(x.m.unit)}</td><td class="num">${money(ledger.latestPrices[x.key].price)}</td></tr>`}).join('')}</tbody></table></div>`:''}`;
+        const materials=expanded?state.materials.map(m=>({m,key:m.id+'|'+s.id})).filter(x=>ledger.latestPrices[x.key]):[];
+        const detailsId=`supplier-materials-${i}`;
+        return `<div class="supplier-item">
+          <div class="supplier-avatar" aria-hidden="true">${escapeHTML(s.name.replace(/[«»"'\s]/g,'').slice(0,2).toUpperCase())}</div>
+          <div class="supplier-info"><button type="button" class="supplier-name" data-action="open-supplier" data-id="${escapeHTML(s.id)}" aria-haspopup="dialog">${escapeHTML(s.name)}</button><div class="supplier-description">${t.receiptCount} ${plural(t.receiptCount,'поставка','поставки','поставок')} · ${t.materialIds.size} ${plural(t.materialIds.size,'материал','материала','материалов')} в остатке</div></div>
+          <div class="supplier-total">${money(t.value)}<span>остаток из поставок</span></div>
+          <button type="button" class="supplier-toggle" data-action="toggle-supplier" data-id="${escapeHTML(s.id)}" aria-label="Материалы поставщика: ${escapeHTML(s.name)}" aria-expanded="${expanded}" aria-controls="${detailsId}">${svg('chevron','sm caret '+(expanded?'rotate':''))}</button>
+        </div><div id="${detailsId}" class="supplier-detail" ${expanded?'':'hidden'}>${expanded?
+          `<div style="font-size:11px;color:#858585;margin-bottom:7px">Всего закуплено: <b>${money(t.purchases)}</b></div>${materials.length?
+          `<table><thead><tr><th>Материал</th><th>Осталось</th><th class="num">Посл. цена</th></tr></thead><tbody>${materials.map(x=>{const v=ledger.materialSupplier[x.key]||{qty:0};return `<tr><td>${escapeHTML(x.m.name)}</td><td>${amount(v.qty)} ${escapeHTML(x.m.unit)}</td><td class="num">${money(ledger.latestPrices[x.key].price)}</td></tr>`}).join('')}</tbody></table>`:
+          '<div class="inline-empty">Поставок пока нет.</div>'}`:''}</div>`;
       }).join(''):'<div class="inline-empty">Поставщиков ещё нет. Добавьте первого в справочнике.</div>';
     }
     function plural(n,one,two,many){const m=Math.abs(n)%100,p=m%10;return m>10&&m<20?many:p===1?one:p>=2&&p<=4?two:many;}
@@ -406,12 +447,32 @@
         writing=false;document.body.classList.remove('saving');
       }
     }
-    function openOverlay(){const overlay=$('#overlay');overlay.classList.remove('hidden');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(()=>$('#modal input:not([type="hidden"]),#modal select,#modal button:not(.close-modal)')?.focus({preventScroll:true}),40);}
-    function closeOverlay(){mode=null;draft=null;miniForm=null;editingItemId=null;$('#overlay').classList.add('hidden');$('#overlay').setAttribute('aria-hidden','true');document.body.style.overflow='';}
-    function modalFrame(title,subtitle,body,footer,extraClass=''){
+    function openOverlay(initialFocus){
+      const overlay=$('#overlay');
+      overlay.classList.remove('hidden');overlay.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+      const control=$(initialFocus||'#modal input:not([type="hidden"]),#modal select,#modal button:not(.close-modal)');
+      setTimeout(()=>{if(!overlay.classList.contains('hidden'))control?.focus({preventScroll:!initialFocus});},40);
+    }
+    function closeOverlay(){
+      if(supplierCard)$$('.topbar,main,.mobile-actions').forEach(el=>el.inert=false);
+      supplierCard=null;mode=null;draft=null;miniForm=null;editingItemId=null;
+      $('#overlay').classList.add('hidden');$('#overlay').setAttribute('aria-hidden','true');document.body.style.overflow='';
+    }
+    function dismissOverlay(){
+      const card=supplierCard;
+      closeOverlay();
+      if(!card||!access?.canManage)return;
+      if(card.catalogAction){
+        mode='catalog';catalogTab='suppliers';
+        renderCatalog(supplierAction(card.catalogAction,card.id));
+      }else{
+        $(supplierAction('open-supplier',card.id))?.focus();
+      }
+    }
+    function modalFrame(title,subtitle,body,footer,extraClass='',initialFocus){
       $('#modal').className='modal '+extraClass;
       $('#modal').innerHTML=`<div class="modal-header"><div><div class="modal-heading" id="modalTitle">${title}</div><div class="modal-description">${subtitle}</div></div><button type="button" class="btn btn-icon btn-subtle close-modal" data-action="close-modal" aria-label="Закрыть">${svg('x')}</button></div><div class="modal-body" id="modalBody">${body}</div>${footer}`;
-      openOverlay();
+      openOverlay(initialFocus);
     }
     function makeSelectOptions(selected,items,placeholder){return `<option value="">${placeholder}</option>`+items.map(item=>`<option value="${escapeHTML(item.id)}" ${item.id===selected?'selected':''}>${escapeHTML(item.name)}</option>`).join('');}
     function lastPrice(materialId,supplierId){const records=state.movements.filter(op=>op.type==='receipt'&&op.supplierId===supplierId).sort((a,b)=>b.date.localeCompare(a.date)||(Number(b.createdAt)||0)-(Number(a.createdAt)||0));for(const op of records){const found=[...op.lines].reverse().find(l=>l.materialId===materialId);if(found)return found.unitPrice;}return null;}
@@ -534,7 +595,7 @@
       }
     }
     function openCatalog(tab='materials',editId=null){mode='catalog';draft=null;catalogTab=tab;editingItemId=editId;renderCatalog();}
-    function renderCatalog(){
+    function renderCatalog(initialFocus){
       const tabs=`<div class="catalog-tabs"><button class="catalog-tab ${catalogTab==='materials'?'active':''}" type="button" data-action="catalog-tab" data-tab="materials">Материалы</button><button class="catalog-tab ${catalogTab==='suppliers'?'active':''}" type="button" data-action="catalog-tab" data-tab="suppliers">Поставщики</button><button class="catalog-tab ${catalogTab==='units'?'active':''}" type="button" data-action="catalog-tab" data-tab="units">Единицы</button></div>`;
       let content='';
       if(catalogTab==='materials'){
@@ -543,12 +604,15 @@
           return `<div class="catalog-line"><div class="catalog-line-name">${escapeHTML(mat.name)} <span class="catalog-line-meta">· ${escapeHTML(mat.unit)}</span></div><div class="catalog-line-meta">Остаток: ${amount(stock.qty)}</div><div class="catalog-line-meta small-hide">Мин.: ${amount(mat.threshold)}</div><button type="button" class="edit-button" data-action="edit-catalog-material" data-id="${escapeHTML(mat.id)}" title="Редактировать">${svg('pencil','sm')}</button></div>${editing?`<div class="catalog-edit"><div class="form-grid"><div class="field"><label>Название</label><input id="editMatName" value="${escapeHTML(mat.name)}" maxlength="120"/></div><div class="field"><label>Единица ${state.movements.some(o=>o.lines.some(l=>l.materialId===mat.id))?'(зафиксирована)':''}</label><input id="editMatUnit" value="${escapeHTML(mat.unit)}" maxlength="30" ${state.movements.some(o=>o.lines.some(l=>l.materialId===mat.id))?'disabled':''}/></div><div class="field"><label>Минимальный остаток</label><input id="editMatThreshold" type="number" min="0" step="any" value="${mat.threshold}" /></div></div><div class="catalog-edit-actions"><button type="button" class="btn btn-small" data-action="catalog-cancel-edit">Отмена</button><button type="button" class="btn btn-small btn-primary" data-action="catalog-save-material" data-id="${escapeHTML(mat.id)}">Сохранить</button></div></div>`:''}`;
         }).join('')}</div>`;
       }else if(catalogTab==='suppliers'){
-        content=`<div class="catalog-add"><div class="field"><label>Название нового поставщика</label><input id="catSupplierName" maxlength="120" placeholder="Например, СтомСнаб" /></div><button type="button" class="btn btn-primary btn-small" data-action="catalog-add-supplier">${svg('plus','sm')} Добавить</button></div><div class="catalog-list">${state.suppliers.map(s=>`<div class="catalog-line"><div class="catalog-line-name">${escapeHTML(s.name)}</div><div class="catalog-line-meta">${ledger.supplierTotals[s.id].receiptCount} ${plural(ledger.supplierTotals[s.id].receiptCount,'поставка','поставки','поставок')}</div><button type="button" class="edit-button" data-action="edit-catalog-supplier" data-id="${escapeHTML(s.id)}" title="Изменить название">${svg('pencil','sm')}</button></div>${editingItemId===s.id?`<div class="catalog-edit"><div class="field"><label>Название поставщика</label><input id="editSupplierName" maxlength="120" value="${escapeHTML(s.name)}" /></div><div class="catalog-edit-actions" style="margin-top:12px"><button class="btn btn-small" type="button" data-action="catalog-cancel-edit">Отмена</button><button class="btn btn-small btn-primary" type="button" data-action="catalog-save-supplier" data-id="${escapeHTML(s.id)}">Сохранить</button></div></div>`:''}`).join('')}</div><div class="notice">${svg('info','sm')}<span>Цены поставщиков не нужно заполнять отдельно: они автоматически берутся из последних накладных для каждого материала.</span></div>`;
+        content=`<div class="catalog-add"><div class="field"><label for="catSupplierName">Название нового поставщика</label><input id="catSupplierName" maxlength="120" placeholder="Например, СтомСнаб" /></div><button type="button" class="btn btn-primary btn-small" data-action="catalog-add-supplier">${svg('plus','sm')} Добавить</button></div><div class="catalog-list">${state.suppliers.map(s=>`
+          <div class="catalog-line"><button type="button" class="catalog-line-name supplier-name" data-action="open-catalog-supplier" data-id="${escapeHTML(s.id)}">${escapeHTML(s.name)}</button>
+          <div class="catalog-line-meta">${ledger.supplierTotals[s.id].receiptCount} ${plural(ledger.supplierTotals[s.id].receiptCount,'поставка','поставки','поставок')}</div>
+          <button type="button" class="edit-button" data-action="edit-catalog-supplier" data-id="${escapeHTML(s.id)}" aria-label="Редактировать поставщика: ${escapeHTML(s.name)}">${svg('pencil','sm')}</button></div>`).join('')}</div><div class="notice">${svg('info','sm')}<span>Цены поставщиков не нужно заполнять отдельно: они автоматически берутся из последних накладных для каждого материала.</span></div>`;
       }else{
         content=`<div class="catalog-add"><div class="field"><label>Новая единица измерения</label><input id="catUnitName" maxlength="30" placeholder="Например, набор" /></div><button class="btn btn-primary btn-small" type="button" data-action="catalog-add-unit">${svg('plus','sm')} Добавить</button></div><div class="unit-chip-list">${state.units.map(u=>`<span class="unit-chip">${escapeHTML(u)}</span>`).join('')}</div><div class="notice">${svg('info','sm')}<span>Единицы выбираются при создании материала. Для материала с историей операций единицу менять нельзя, чтобы не исказить остатки.</span></div>`;
       }
       const footer=`<div class="modal-footer"><div class="modal-total-label">Настройки действуют для всех операций</div><button type="button" class="btn btn-primary" data-action="close-modal">Готово</button></div>`;
-      modalFrame('Справочники','Материалы, поставщики и единицы. Добавьте один раз, используйте в каждой накладной.',tabs+content,footer,'catalog-modal');
+      modalFrame('Справочники','Материалы, поставщики и единицы. Добавьте один раз, используйте в каждой накладной.',tabs+content,footer,'catalog-modal',initialFocus);
     }
     async function editMaterialSave(matId){
       const mat=byId(state.materials,matId);if(!mat)return;
@@ -559,10 +623,44 @@
       if(state.materials.some(m=>m.id!==mat.id&&m.name.toLowerCase()===n.toLowerCase()&&m.unit.toLowerCase()===u.toLowerCase())){toast('Такой материал уже есть.');return;}
       if(await mutate({action:'material',material:{...mat,name:n,unit:u,threshold:t}},'Материал обновлён.')&&mode==='catalog'){editingItemId=null;renderCatalog();}
     }
-    async function editSupplierSave(supplierId){
-      const s=byId(state.suppliers,supplierId),n=textPart($('#editSupplierName')?.value);if(!s||!n||n.length>120){toast('Укажите название поставщика.');return;}
-      if(state.suppliers.some(x=>x.id!==supplierId&&x.name.toLowerCase()===n.toLowerCase())){toast('Такой поставщик уже есть.');return;}
-      if(await mutate({action:'supplier',supplier:{...s,name:n}},'Поставщик обновлён.')&&mode==='catalog'){editingItemId=null;renderCatalog();}
+    const supplierFields=[
+      {key:'name',label:'Название поставщика',max:120,wide:true},
+      {key:'phone',label:'Телефон',max:120,type:'tel'},
+      {key:'contact',label:'Контактное лицо / контакты',max:250},
+      {key:'taxDetails',label:'УНП / реквизиты',max:250,wide:true,multiline:true},
+      {key:'note',label:'Заметка',max:1000,wide:true,multiline:true}
+    ];
+    function openSupplierCard(supplierId,catalogAction=null,editing=false){
+      const supplier=byId(state.suppliers,supplierId);
+      if(!supplier)return;
+      mode='supplier';
+      supplierCard={id:supplierId,catalogAction,revision:access.revision};
+      const fields=supplierFields.map(({key,label,max,type,wide,multiline})=>{
+        const attrs=`id="supplier-${key}" maxlength="${max}" ${editing?'':'readonly'}`;
+        return `<div class="field ${wide?'wide':''}"><label for="supplier-${key}">${label}</label>${multiline?
+          `<textarea ${attrs}></textarea>`:`<input type="${type||'text'}" ${attrs}/>`}</div>`;
+      }).join('');
+      const buttons=editing
+        ?'<button type="button" class="btn" data-action="cancel-supplier-edit">Отмена</button><button type="button" class="btn btn-primary" data-action="save-supplier-card">Сохранить</button>'
+        :'<button type="button" class="btn" data-action="close-modal">Закрыть карточку</button><button type="button" class="btn btn-primary" id="editSupplierCard" data-action="edit-supplier-card">Редактировать</button>';
+      $$('.topbar,main,.mobile-actions').forEach(el=>el.inert=true);
+      modalFrame('Карточка поставщика','',`<div class="supplier-fields">${fields}</div>`,
+        `<div class="modal-footer">${buttons}</div>`,'',editing?'#supplier-name':'#editSupplierCard');
+      for(const {key} of supplierFields)$(`#supplier-${key}`).value=supplier[key]??'';
+    }
+    async function editSupplierSave(){
+      const card=supplierCard;
+      if(!card)return;
+      if(card.revision!==access.revision){toast('Склад изменился. Откройте карточку заново.');return;}
+      const supplier={id:card.id};
+      for(const {key} of supplierFields){
+        const value=$(`#supplier-${key}`).value;
+        supplier[key]=key==='name'?textPart(value):value||null;
+      }
+      if(!supplier.name){toast('Укажите название поставщика.');return;}
+      if(state.suppliers.some(x=>x.id!==card.id&&x.name.toLowerCase()===supplier.name.toLowerCase())){toast('Такой поставщик уже есть.');return;}
+      if(await mutate({action:'supplier',revision:card.revision,supplier},'Поставщик обновлён.')&&supplierCard===card)
+        openSupplierCard(card.id,card.catalogAction);
     }
     async function removeMovement(idToRemove){
       const op=byId(state.movements,idToRemove);if(!op)return;
@@ -609,7 +707,16 @@
         if(action==='open-issue')return openOperation('issue',targetId||'');
         if(action==='open-catalog')return openCatalog();
         if(action==='catalog-suppliers')return openCatalog('suppliers');
-        if(action==='close-modal')return closeOverlay();
+        if(action==='close-modal')return dismissOverlay();
+        if(action==='open-supplier')return openSupplierCard(targetId);
+        if(action==='toggle-supplier'){
+          expandedSupplier=expandedSupplier===targetId?null:targetId;
+          renderSuppliers();
+          return $(supplierAction(action,targetId))?.focus({preventScroll:true});
+        }
+        if(action==='open-catalog-supplier'||action==='edit-catalog-supplier')return openSupplierCard(targetId,action,action==='edit-catalog-supplier');
+        if(action==='edit-supplier-card'||action==='cancel-supplier-edit')return openSupplierCard(supplierCard.id,supplierCard.catalogAction,action==='edit-supplier-card');
+        if(action==='save-supplier-card')return editSupplierSave();
         if(action==='save-operation')return saveOperation();
         if(action==='add-row'){draft.rows.push(freshRow(mode));return updateRowsOnly();}
         if(action==='remove-row'){if(draft.rows.length<=1){toast('Нужна хотя бы одна строка.');return;}draft.rows=draft.rows.filter(r=>r.id!==targetId);return updateRowsOnly();}
@@ -623,15 +730,12 @@
         if(action==='catalog-add-supplier'){const s=await createSupplier($('#catSupplierName').value);if(s&&mode==='catalog')return renderCatalog();return;}
         if(action==='catalog-add-unit'){const u=textPart($('#catUnitName').value);if(!u||u.length>30){toast('Введите единицу измерения.');return;}if(state.units.some(x=>x.toLowerCase()===u.toLowerCase())){toast('Такая единица уже есть.');return;}if(await mutate({action:'unit',unit:u},'Единица добавлена.')&&mode==='catalog')return renderCatalog();return;}
         if(action==='edit-catalog-material'){editingItemId=editingItemId===targetId?null:targetId;return renderCatalog();}
-        if(action==='edit-catalog-supplier'){editingItemId=editingItemId===targetId?null:targetId;return renderCatalog();}
         if(action==='catalog-cancel-edit'){editingItemId=null;return renderCatalog();}
         if(action==='catalog-save-material')return editMaterialSave(targetId);
-        if(action==='catalog-save-supplier')return editSupplierSave(targetId);
         if(action==='edit-material')return openCatalog('materials',targetId);
         if(action==='delete-movement'&&access?.canAdminister)return removeMovement(targetId);
       }
       const materialRow=event.target.closest('[data-material]');if(materialRow&&access?.canManage){expandedMaterial=expandedMaterial===materialRow.dataset.material?null:materialRow.dataset.material;renderInventory();return;}
-      const supplierRow=event.target.closest('[data-supplier]');if(supplierRow){expandedSupplier=expandedSupplier===supplierRow.dataset.supplier?null:supplierRow.dataset.supplier;renderSuppliers();return;}
       const movementRow=event.target.closest('[data-movement]');if(movementRow){expandedMovement=expandedMovement===movementRow.dataset.movement?null:movementRow.dataset.movement;renderHistory();return;}
       if(event.target.id==='showAllHistory'){showFullHistory=!showFullHistory;renderHistory();}
     });
@@ -654,10 +758,11 @@
       if(draft&&el.dataset.rowField==='supplierId'){const row=byId(draft.rows,el.closest('[data-row]').dataset.row);if(row){row.supplierId=el.value;updateDraftTotals();}}
     });
     document.addEventListener('keydown',event=>{
-      if(event.key==='Escape'&&!$('#overlay').classList.contains('hidden'))closeOverlay();
-      if((event.key==='Enter'||event.key===' ')&&!event.target.closest('input,textarea,select,button')&&event.target.matches('[data-material],[data-supplier],[data-movement]')){event.preventDefault();event.target.click();}
+      if(event.key==='Escape'&&!$('#overlay').classList.contains('hidden'))dismissOverlay();
+      if((event.key==='Enter'||event.key===' ')&&!event.target.closest('input,textarea,select,button')&&event.target.matches('[data-material],[data-movement]')){event.preventDefault();event.target.click();}
     });
-    $('#overlay').addEventListener('click',event=>{if(event.target.id==='overlay')closeOverlay();});
+    $('#overlay').addEventListener('click',event=>{if(event.target.id==='overlay')dismissOverlay();});
+    $('#metrics').addEventListener('click',event=>{const button=event.target.closest('[data-metric]');if(button)openMetric(button.dataset.metric);});
     $('#filterControls').addEventListener('click',event=>{const btn=event.target.closest('[data-filter]');if(btn){filter=btn.dataset.filter;renderInventory();}});
     $('#catalogButton').addEventListener('click',()=>openCatalog());
     $('#newMaterialButton').addEventListener('click',()=>openCatalog('materials'));

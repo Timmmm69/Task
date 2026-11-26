@@ -11,7 +11,8 @@ public sealed record InventoryData(int Version, InventoryMaterial[] Materials, I
 }
 
 public sealed record InventoryMaterial(string Id, string Name, string Unit, decimal Threshold);
-public sealed record InventorySupplier(string Id, string Name);
+public sealed record InventorySupplier(string Id, string Name,
+    string? Phone = null, string? Contact = null, string? TaxDetails = null, string? Note = null);
 public sealed record InventoryLine(string Id, string MaterialId, decimal Quantity, decimal? UnitPrice = null, string? SupplierId = null);
 public sealed record InventoryMovement(string Id, string Type, DateOnly Date, long CreatedAt, InventoryLine[] Lines,
     string? SupplierId = null, string? Invoice = null, string? Note = null);

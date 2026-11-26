@@ -50,6 +50,46 @@ public sealed class InventoryAccountingTests
     }
 
     [Fact]
+    public void SupplierCardRoundTripsANameOnlyBackupAndPreservesInventoryAccounting()
+    {
+        var legacy = InventoryJson.Read(JsonSerializer.Serialize(Seed with
+        {
+            Movements = [.. Seed.Movements, new("issue", "issue", Date, 3, [new("l3", "gloves", 6)])],
+        }, InventoryJson.Options));
+        var before = InventoryAccounting.Calculate(legacy);
+        var supplier = legacy.Suppliers[0];
+        Assert.Null(supplier.Phone);
+        Assert.Null(supplier.Contact);
+        Assert.Null(supplier.TaxDetails);
+        Assert.Null(supplier.Note);
+
+        var edited = supplier with
+        {
+            Name = "Медснаб Плюс",
+            Phone = "00 (123) 04-50",
+            Contact = "<Иван> & партнёры",
+            TaxDetails = "001234567\nР/с 0004",
+            Note = "Уточнять сроки\nпосле заказа.",
+        };
+        var saved = InventoryAccounting.Apply(new(7, legacy), new(7, "supplier", Supplier: edited), Date, 4);
+        var backup = InventoryJson.Read(JsonSerializer.Serialize(saved.Data, InventoryJson.Options));
+        var restored = InventoryAccounting.Apply(new(0, InventoryData.Empty()), new(0, "import", Backup: backup), Date, 5);
+        Assert.Equal(edited, restored.Data.Suppliers[0]);
+        Assert.Equal(legacy.Suppliers.Select(item => item.Id), restored.Data.Suppliers.Select(item => item.Id));
+        Assert.Equal(JsonSerializer.Serialize(legacy.Movements), JsonSerializer.Serialize(restored.Data.Movements));
+        var after = InventoryAccounting.Calculate(restored.Data);
+        Assert.Equal(before.Stock, after.Stock);
+        Assert.Equal(before.Suppliers, after.Suppliers);
+        Assert.Equal(before.Allocations["issue"], after.Allocations["issue"]);
+        Assert.Equal(before.MovementTotals["issue"], after.MovementTotals["issue"]);
+
+        var cleared = InventoryAccounting.Apply(saved, new(8, "supplier", Supplier: new(edited.Id, edited.Name)), Date, 6);
+        Assert.Null(cleared.Data.Suppliers[0].Phone);
+        Assert.Throws<InventoryValidationException>(() => InventoryAccounting.Apply(saved,
+            new(8, "supplier", Supplier: edited with { Note = new string('a', 1001) }), Date, 6));
+    }
+
+    [Fact]
     public void DemoUsesTheHtmlDataAndCanRoundTripThroughTheBackupFormat()
     {
         var demo = InventoryAccounting.Apply(new(0, InventoryData.Empty(), null), new(0, "demo"), Date, 0).Data;
