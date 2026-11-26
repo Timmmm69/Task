@@ -268,6 +268,8 @@ public sealed partial class MonthlyPlanWindowsTests
             list.ScrollIntoView(Assert.Single(plan.Rows));
             window.UpdateLayout();
             var item = Assert.IsType<ListBoxItem>(list.ItemContainerGenerator.ContainerFromIndex(0));
+            var focusVisual = item.FocusVisualStyle;
+            Assert.Same(item.FindResource("Task.FocusVisualStyle"), focusVisual);
             Assert.True(item.ActualWidth <= list.ActualWidth);
             Assert.True(item.ActualHeight <= list.ActualHeight - 2);
             Assert.Contains(LongTitle, AutomationProperties.GetName(item));
