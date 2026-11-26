@@ -29,7 +29,8 @@ $releaseRoot = Join-Path $output "VoravaDent-$Version"
 $appRoot = Join-Path $releaseRoot 'app'
 $toolsRoot = Join-Path $releaseRoot 'tools'
 New-Item -ItemType Directory -Path $appRoot,$toolsRoot | Out-Null
-dotnet publish (Join-Path $desktopRoot 'Task.Desktop.csproj') -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -o $appRoot
+# Keep self-contained runtime locks separate from source dependency locks.
+dotnet publish (Join-Path $desktopRoot 'Task.Desktop.csproj') -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -p:RestorePackagesWithLockFile=true -p:NuGetLockFilePath=obj/signed-desktop.packages.lock.json -o $appRoot
 if ($LASTEXITCODE -ne 0) { throw 'Desktop publish failed.' }
 Rename-Item -LiteralPath (Join-Path $appRoot 'Task.Desktop.exe') -NewName 'VoravaDent.exe'
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Install-TaskDesktop.ps1') -Destination $releaseRoot
