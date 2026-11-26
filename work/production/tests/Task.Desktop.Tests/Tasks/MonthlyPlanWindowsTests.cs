@@ -278,6 +278,7 @@ public sealed partial class MonthlyPlanWindowsTests
             var item = Assert.IsType<ListBoxItem>(list.ItemContainerGenerator.ContainerFromIndex(0));
             var focusVisual = item.FocusVisualStyle;
             Assert.Same(item.FindResource("Task.FocusVisualStyle"), focusVisual);
+            CheckVisibleFocusStyles(window);
             Assert.True(item.ActualWidth <= list.ActualWidth);
             Assert.True(item.ActualHeight <= list.ActualHeight - 2);
             Assert.Contains(LongTitle, AutomationProperties.GetName(item));
@@ -293,6 +294,7 @@ public sealed partial class MonthlyPlanWindowsTests
 
     private static void ChooseDeadline(Window window, TaskEditorViewModel editor, string field)
     {
+        CheckVisibleFocusStyles(window);
         var deadline = Find<TextBox>(window, field);
         deadline.Text = DateTime.Today.AddDays(4).ToString("dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
         var reminder = Find<ComboBox>(window, "TaskDeadlineReminder");
@@ -304,6 +306,19 @@ public sealed partial class MonthlyPlanWindowsTests
         Assert.Equal(2880, editor.ReminderOption.Minutes);
         Assert.Contains("Напомним", editor.ReminderPreview);
         Assert.True(Find<CheckBox>(window, "TaskPlanningMonthAutomatic").IsVisible);
+    }
+
+    private static void CheckVisibleFocusStyles(Window window)
+    {
+        foreach (var element in Descendants(window).OfType<Control>().Where(control => control.IsVisible && control.Focusable))
+        {
+            try { _ = element.FocusVisualStyle; }
+            catch (InvalidOperationException error)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot resolve focus for {element.GetType().Name} '{AutomationProperties.GetAutomationId(element)}'.", error);
+            }
+        }
     }
 
     private static void OpenWithEnter(Window window, MonthlyTaskRow row)
