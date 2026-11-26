@@ -226,15 +226,23 @@ public sealed partial class MonthlyPlanWindowsTests
             OpenWithEnter(window, row);
             await WaitFor(() => tasks.SelectedDetails?.Id == taskId && tasks.CanComplete);
             await WaitFor(() => tasks.Workspace?.Documents?.Items.Count == 4);
-            AssertChecklist(tasks.Workspace!.Checklist);
+            var activeWorkspace = tasks.Workspace!;
+            AssertChecklist(activeWorkspace.Checklist);
             Assert.True(await tasks.TransitionCommand.ExecuteAsync(DesktopTaskStatus.Completed));
             Assert.True(await tasks.ConfirmTransitionCommand.ExecuteAsync());
             var stored = Assert.IsType<DesktopTasksApiResult<DesktopTaskDto>.Succeeded>(await client.GetTaskByIdAsync(taskId));
             Assert.Equal(DesktopTaskStatus.Completed, stored.Value.Status);
-            await WaitFor(() => tasks.Workspace?.Documents?.Items.Count == 4);
-            AssertChecklist(tasks.Workspace!.Checklist);
-            Assert.False(tasks.Workspace.Documents!.CanRemove);
-            Assert.False(tasks.Workspace.Documents.CanAdd);
+            TaskWorkspaceViewModel? completedWorkspace = null;
+            await WaitFor(() =>
+            {
+                if (tasks.Workspace is not { IsBusy: false, Documents.Items.Count: 4 } workspace
+                    || ReferenceEquals(workspace, activeWorkspace)) return false;
+                completedWorkspace = workspace;
+                return true;
+            });
+            AssertChecklist(completedWorkspace!.Checklist);
+            Assert.False(completedWorkspace.Documents!.CanRemove);
+            Assert.False(completedWorkspace.Documents.CanAdd);
             shell.SelectedSection = shell.Sections.Single(section => section.Route == "monthly-plan");
             await WaitFor(() => !plan.IsLoading);
             Assert.Equal("Действий не требуется", Assert.Single(plan.Rows, item => item.Source.Id == taskId).UrgencyText);
@@ -268,6 +276,9 @@ public sealed partial class MonthlyPlanWindowsTests
             list.ScrollIntoView(Assert.Single(plan.Rows));
             window.UpdateLayout();
             var item = Assert.IsType<ListBoxItem>(list.ItemContainerGenerator.ContainerFromIndex(0));
+            var focusVisual = item.FocusVisualStyle;
+            Assert.Same(item.FindResource("Task.FocusVisualStyle"), focusVisual);
+            CheckVisibleFocusStyles(window);
             Assert.True(item.ActualWidth <= list.ActualWidth);
             Assert.True(item.ActualHeight <= list.ActualHeight - 2);
             Assert.Contains(LongTitle, AutomationProperties.GetName(item));
@@ -283,6 +294,7 @@ public sealed partial class MonthlyPlanWindowsTests
 
     private static void ChooseDeadline(Window window, TaskEditorViewModel editor, string field)
     {
+        CheckVisibleFocusStyles(window);
         var deadline = Find<TextBox>(window, field);
         deadline.Text = DateTime.Today.AddDays(4).ToString("dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
         var reminder = Find<ComboBox>(window, "TaskDeadlineReminder");
@@ -294,6 +306,19 @@ public sealed partial class MonthlyPlanWindowsTests
         Assert.Equal(2880, editor.ReminderOption.Minutes);
         Assert.Contains("Напомним", editor.ReminderPreview);
         Assert.True(Find<CheckBox>(window, "TaskPlanningMonthAutomatic").IsVisible);
+    }
+
+    private static void CheckVisibleFocusStyles(Window window)
+    {
+        foreach (var element in Descendants(window).OfType<Control>().Where(control => control.IsVisible && control.Focusable))
+        {
+            try { _ = element.FocusVisualStyle; }
+            catch (InvalidOperationException error)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot resolve focus for {element.GetType().Name} '{AutomationProperties.GetAutomationId(element)}'.", error);
+            }
+        }
     }
 
     private static void OpenWithEnter(Window window, MonthlyTaskRow row)

@@ -45,7 +45,7 @@
         <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}" />
         <Setter Property="BorderThickness" Value="0,0,0,1" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Task.FocusVisualStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">

@@ -76,7 +76,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource Task.FocusVisualStyle}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource Task.FocusVisualStyle}" />
         <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
         <Setter Property="AutomationProperties.AutomationId" Value="{Binding AutomationId}" />
         <Setter Property="AutomationProperties.HelpText" Value="{Binding NavigationHelpText}" />
