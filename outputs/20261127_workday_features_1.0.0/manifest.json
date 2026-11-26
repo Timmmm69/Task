@@ -1,0 +1,110 @@
+{
+  "product": "Task",
+  "version": "1.0.0",
+  "date": "2026-11-27",
+  "branch": "codex/workday-nine",
+  "baseCommit": "66ac30845f5066130c2814b0e7e0465841b5d415",
+  "codeCommit": "2c3be02bb0eee146ae7ba1d4b0905bf5cdc60e0f",
+  "files": [
+    {
+      "path": "implementation.patch.gz",
+      "bytes": 63864,
+      "sha256": "3fdea6df59002e7086584af8517dabffe66728d2829e08624e69ff1ed58951a4"
+    },
+    {
+      "path": "screenshots/corporate-calendar-draft.png",
+      "bytes": 70559,
+      "sha256": "2a7616f41c1b6f1a8a1da7db73d5d5692f61c4bd924d211e11f238063268f770"
+    },
+    {
+      "path": "screenshots/corporate-calendar-menu.png",
+      "bytes": 1353,
+      "sha256": "5e52ade3fd2ab2a02ce99fcd0c9d221f786299ec582af94d331214ec2c626a61"
+    },
+    {
+      "path": "screenshots/corporate-catalog-copy-path.png",
+      "bytes": 31996,
+      "sha256": "475e489b182c539b4884f48c6c4d667614ea6311a8e4a01c8cd481851e6f1b91"
+    },
+    {
+      "path": "screenshots/corporate-logo-wink.png",
+      "bytes": 1361,
+      "sha256": "f645af9ea7ed36b4fad9f9fdf3f68799dd688ac192bef52f9f41276462092c7b"
+    },
+    {
+      "path": "screenshots/corporate-my-view.png",
+      "bytes": 100206,
+      "sha256": "02b24deb213629bdb7ee79a441ad38d275557466f40805290b70451a5fab767e"
+    },
+    {
+      "path": "screenshots/corporate-today-compact.png",
+      "bytes": 80038,
+      "sha256": "de1f47baca0d8fde7462d1883df84b53a020e67ff144eabc6dc183cdf2e3683b"
+    },
+    {
+      "path": "screenshots/corporate-today-normal.png",
+      "bytes": 119099,
+      "sha256": "8657adf53427c16377d6a3eda4f46cc616b221418fb9ae9a123e84c7e4d2dca7"
+    },
+    {
+      "path": "screenshots/personal-calendar-draft.png",
+      "bytes": 58256,
+      "sha256": "34fa6684627b5ab179eae60084402030d696f0d4a90c1c8b754d828350442a41"
+    },
+    {
+      "path": "screenshots/personal-calendar-menu.png",
+      "bytes": 1353,
+      "sha256": "5e52ade3fd2ab2a02ce99fcd0c9d221f786299ec582af94d331214ec2c626a61"
+    },
+    {
+      "path": "screenshots/personal-catalog-copy-path.png",
+      "bytes": 132285,
+      "sha256": "18023c6c9c6beb2aed94cbebd38ce482148763e763fe5732e326fa11390c9b71"
+    },
+    {
+      "path": "screenshots/personal-logo-wink.png",
+      "bytes": 1549,
+      "sha256": "2d95c728d086266fb53e0b9b6c53980278c33fa2406c1a90a09cd29d67a11752"
+    },
+    {
+      "path": "screenshots/personal-my-view.png",
+      "bytes": 91487,
+      "sha256": "a9b22a710e3a0727b6d8905c647534d6332c9dccaeb1b205685c695378370b31"
+    },
+    {
+      "path": "screenshots/personal-search.png",
+      "bytes": 104790,
+      "sha256": "4ca492e0a5d1c120066914adef8b29e8bd1578a8c7dec875028a7ad3bb894ec5"
+    },
+    {
+      "path": "screenshots/personal-today-compact.png",
+      "bytes": 47875,
+      "sha256": "e29a5d9accb70bd86d37cf897cf17d3f5737548f8a0586367750fb2f97e1cfbe"
+    },
+    {
+      "path": "screenshots/personal-today-normal.png",
+      "bytes": 102448,
+      "sha256": "ee306d984f7782fdc3e3b47d7f2f92ebc400604c1323760adb0811caa47a1369"
+    },
+    {
+      "path": "screenshots/search-two-pages.png",
+      "bytes": 37967,
+      "sha256": "ebfb92720a7305c51b558d8f38971381fd72f28dde107c9729aff461d1325308"
+    },
+    {
+      "path": "test-results.json",
+      "bytes": 3537,
+      "sha256": "fe4acfe21d1a2bf518b3f259b39eca157aaff5d937af2c1e53bc7831e426db45"
+    },
+    {
+      "path": "validation-report.md",
+      "bytes": 7907,
+      "sha256": "cf2813e471b47573eb3b0c6860b56c5153d61ff853343f210df98b92a166fd5c"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    }
+  ]
+}

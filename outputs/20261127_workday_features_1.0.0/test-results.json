@@ -1,0 +1,65 @@
+{
+  "total": 3682,
+  "suites": [
+    {
+      "assembly": "Task.Desktop.Tests.dll",
+      "total": 2035,
+      "passed": 2035,
+      "failed": 0,
+      "notExecuted": 0,
+      "trx": "novik_TIM_2026-11-27_01_03_40_net10.0.trx",
+      "sha256": "8582257e1b7b4d9684fd46d993f5e32d5cc664ecf80b8cddd497de7162660a02",
+      "targetedTests": [
+        "Task.Desktop.Tests.Calendar.RecurrencePaneTests.SourceWorkdays_RoundTripRetainsWeekdays",
+        "Task.Desktop.Tests.CorporateSelectWindowsTests.CorporateSelectorsKeepFilteringDraftsPermissionsAndCustomTemplates",
+        "Task.Desktop.Tests.Personal.PersonalInboxTests.CalendarNote_SurvivesRestartThenConvertsToOrdinaryScheduledTask",
+        "Task.Desktop.Tests.Personal.PersonalShellViewModelTests.MyView_SavesRestoresAllPersonalFiltersAndFallsBackForRemovedOptions",
+        "Task.Desktop.Tests.PersonalSelectWindowsTests.PersonalDropdownsPreserveBindingsSearchKeyboardAndSharedViewIsolation",
+        "Task.Desktop.Tests.SettingsWindowsTests.NativeSettingsChoicesBindingsKeyboardValidationAndPagination",
+        "Task.Desktop.Tests.TaskFilteringWindowsTests.Native_FourFiltersKeyboardPaginationAndSmallWindow",
+        "Task.Desktop.Tests.Today.WorkdayResultTests.DayEndDeliverySkipsClosedAppEmptyAndDisabledAndClaimsOncePerMode",
+        "Task.Desktop.Tests.Today.WorkdayResultTests.PhrasesAdvanceWithoutRepetitionAcrossRestartsWeekendsAndManualReplacement",
+        "Task.Desktop.Tests.Today.WorkdayResultTests.SqliteResultUsesPlanAtCutoffEvenAfterMoveCompletionAndRestart",
+        "Task.Desktop.Tests.Today.WorkdayResultTests.WeekAndCutoffUseSavedFirstDayWeekendAndTimeZone",
+        "Task.Desktop.Tests.Today.WorkdayWindowsTests.Shells_DateFromFreeCellAndWorkdayCardsAtTwoSizes",
+        "Task.Desktop.Tests.ViewStateTests.ViewStateStoreTests.TaskListMyViews_RestorePerModeAndDiscardInvalidValues",
+        "Task.Desktop.Tests.Work.FileLocationsViewModelTests.CopyPathIsAvailableOnlyForAnAccessibleExistingFileSystemPath"
+      ]
+    },
+    {
+      "assembly": "Task.ServiceHosts.Tests.dll",
+      "total": 694,
+      "passed": 694,
+      "failed": 0,
+      "notExecuted": 0,
+      "trx": "novik_TIM_2026-11-27_01_03_17_net10.0.trx",
+      "sha256": "c48490c145fae6334aa827b60bb53ce527ee5e685a23733d2d5b1d9ad4550e49",
+      "targetedTests": [
+        "Task.ServiceHosts.Tests.TaskEndpointsTests.WorkdayRoutesBindActorAndCutoffAndEnforceHistoryAccess(history: False)",
+        "Task.ServiceHosts.Tests.TaskEndpointsTests.WorkdayRoutesBindActorAndCutoffAndEnforceHistoryAccess(history: True)"
+      ]
+    },
+    {
+      "assembly": "Task.Tests.dll",
+      "total": 953,
+      "passed": 953,
+      "failed": 0,
+      "notExecuted": 0,
+      "trx": "novik_TIM_2026-11-27_01_00_06_net10.0.trx",
+      "sha256": "fa7a126ab69d8623219ce94017ab9185a9e776812b1d53c8aafe66fddbc6a16e",
+      "targetedTests": [
+        "Task.Tests.PostgresProductApiTests.Inbox_CapturedScheduledDateSurvivesReadAndConversion",
+        "Task.Tests.PostgresProductApiTests.SearchTaskPreviewUsesCardDescriptionAndKeepsLiteralTitleMatch",
+        "Task.Tests.PostgresProductApiTests.WorkdayAndWeek_UseCutoffActualCompletionsAndCurrentVisibility",
+        "Task.Tests.Recurrence.RecurrenceGeneratorTests.GenerateDates_DailyWorkdaysSkipsWeekends"
+      ]
+    }
+  ],
+  "windowsShellSmoke": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "notExecuted": 0,
+    "sha256": "19b63944e8ae528acdc9d57bf1b3639a2292346c6fc14b4c8f51195d83430276"
+  }
+}

@@ -76,6 +76,7 @@
       "status": "done",
       "progress": 100,
       "evidence": [
+        "outputs/20261127_workday_features_1.0.0/validation-report.md: сохранение и восстановление фильтров и сортировки",
         "outputs/20260829_task_write_vertical_slice_1.0.0/validation-report.md: real PostgreSQL + HTTPS API + WPF E2E PASS",
         "outputs/20260904_task_product_completion_1.0.0/VALIDATION_REPORT.md",
         "outputs/20261008_task_similar_create_1.0.0/VALIDATION_REPORT.md: существующий create editor, безопасное предзаполнение, capabilities, ordinary POST; PostgreSQL 16 solution gate 2002 PASS",
@@ -104,6 +105,7 @@
       "status": "done",
       "progress": 100,
       "evidence": [
+        "outputs/20261127_workday_features_1.0.0/validation-report.md: фраза дня, итог по рабочему графику и недельная открытка",
         "sources/concept/Task_Concept_Final.txt: раздел 9",
         "work/production/src/Task.Desktop/ViewModels/TodayViewModel.cs: daily schedule, Calendar.Read and session guards",
         "work/production/tests/Task.Desktop.Tests/Today/TodayViewModelTests.cs: DST, refresh, navigation and late responses",
@@ -143,6 +145,7 @@
       "status": "done",
       "progress": 100,
       "evidence": [
+        "outputs/20261127_workday_features_1.0.0/validation-report.md: свободная ячейка, явное сохранение пометки и дата задачи",
         "work/production/src/Task.Domain/Calendar",
         "work/production/src/Task.Infrastructure/Persistence/PostgresCalendarEventStore.cs",
         "outputs/20260830_calendar_read_vertical_slice_specs_1.0.0",
@@ -217,6 +220,7 @@
       "status": "done",
       "progress": 100,
       "evidence": [
+        "outputs/20261127_workday_features_1.0.0/validation-report.md: подсветка совпадений, копирование пути и уведомление об итоге",
         "work/production/src/Task.Desktop/Work/DesktopWorkApiClient.cs",
         "work/production/src/Task.Desktop/Work/FileAccessAdapter.cs",
         "work/production/src/Task.Desktop/ViewModels/WorkHubViewModel.cs",
