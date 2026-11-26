@@ -280,7 +280,7 @@
                                     <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
+                                    <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Semantic.InfoSoft}" />
                                     <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Info}" />
                                     <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
                                 </Trigger>
