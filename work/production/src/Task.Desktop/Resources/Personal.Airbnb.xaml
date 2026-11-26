@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 <SolidColorBrush x:Key="Personal.Airbnb.Accent" Color="#FF385C"/>
 <SolidColorBrush x:Key="Personal.Airbnb.Hairline" Color="{DynamicResource Task.Color.Border.Default}"/>
@@ -16,11 +16,11 @@
     </ControlTemplate.Triggers>
    </ControlTemplate>
   <Style x:Key="Personal.Airbnb.Muted" TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Secondary}"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
-  <Style x:Key="Personal.Airbnb.Heading" TargetType="TextBlock"><Setter Property="FontSize" Value="22"/><Setter Property="FontWeight" Value="Bold"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="Personal.Airbnb.Heading" TargetType="TextBlock"><Setter Property="FontSize" Value="22"/><Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
   <Style x:Key="Personal.Airbnb.Pill" TargetType="Button">
    <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
    <Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/><Setter Property="BorderThickness" Value="1"/>
-   <Setter Property="FontWeight" Value="Bold"/><Setter Property="Padding" Value="20,12"/>
+   <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/><Setter Property="Padding" Value="20,12"/>
    <Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
    <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
   </Style>
@@ -46,8 +46,8 @@
  </Style.Triggers>
 </Style>
 <ControlTemplate x:Key="Personal.Airbnb.NavigationTemplate" TargetType="ListBoxItem">
-                    <Border x:Name="TodayNav" Background="Transparent" CornerRadius="12" Padding="{TemplateBinding Padding}" Margin="0,2"><ContentPresenter VerticalAlignment="Center"/></Border>
-                    <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/><Setter Property="FontWeight" Value="Bold"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/></Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="TodayNav" Property="BorderBrush" Value="#222222"/><Setter TargetName="TodayNav" Property="BorderThickness" Value="1"/></Trigger></ControlTemplate.Triggers>
+                    <Border x:Name="TodayNav" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="12" Padding="{TemplateBinding Padding}" Margin="0,2"><ContentPresenter VerticalAlignment="Center"/></Border>
+                    <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/><Setter TargetName="TodayNav" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/><Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/></Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="TodayNav" Property="BorderBrush" Value="#222222"/></Trigger></ControlTemplate.Triggers>
                 </ControlTemplate>
 <!-- Shared compact browser rows; opt-in so existing screens retain their layout. -->
 <Style x:Key="Personal.Airbnb.BrowserRow" TargetType="ListBoxItem">

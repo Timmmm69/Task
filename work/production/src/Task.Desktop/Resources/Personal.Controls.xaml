@@ -1,62 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="Personal.Airbnb.xaml"/></ResourceDictionary.MergedDictionaries>
-    <Style x:Key="Personal.Header.Icon" TargetType="Button" BasedOn="{StaticResource Task.Button.Icon}">
-        <Style.Triggers><DataTrigger Binding="{Binding SelectedSection.Route}" Value="today">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#222222"/><Setter Property="BorderBrush" Value="#DDDDDD"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="notifications">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#222222"/><Setter Property="BorderBrush" Value="#DDDDDD"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="inbox">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#222222"/><Setter Property="BorderBrush" Value="#DDDDDD"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="calendar">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="projects">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="catalog">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="contacts">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="search">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="archive">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="trash">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="settings">
-            <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/><Setter Property="MinHeight" Value="40"/><Setter Property="MinWidth" Value="40"/>
-            <Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Padding" Value="0"/>
-            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/>
-            <Setter Property="Template" Value="{StaticResource Personal.Airbnb.ButtonTemplate}"/>
-        </DataTrigger></Style.Triggers>
+    <Style x:Key="Personal.Header.Icon" TargetType="Button" BasedOn="{StaticResource Task.Workspace.IconButton}">
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
     </Style>
     <Style x:Key="Personal.Header.NotToday" TargetType="FrameworkElement"><Style.Triggers><DataTrigger Binding="{Binding SelectedSection.Route}" Value="today"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="notifications"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="inbox"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="calendar"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="projects"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="catalog"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="contacts"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="search"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="archive"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="trash"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding SelectedSection.Route}" Value="settings"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style>
     <!-- Scoped to PersonalWindow; the canonical theme and Corporate are unchanged. -->
@@ -65,42 +11,13 @@
     <Style TargetType="ComboBox" BasedOn="{StaticResource Task.Input.Combo}"/>
     <Style x:Key="Personal.Navigation.Item" TargetType="ListBoxItem" BasedOn="{StaticResource Task.Navigation.Item}">
         <Setter Property="ToolTip" Value="{Binding Title}"/>
-        <Setter Property="Padding" Value="12,0"/>
+        <Setter Property="Padding" Value="8,0,2,0"/>
+        <Setter Property="Margin" Value="0,0,4,0"/>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="today">
-                <Setter Property="Foreground" Value="#222222"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="notifications">
-                <Setter Property="Foreground" Value="#222222"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="inbox">
-                <Setter Property="Foreground" Value="#222222"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="calendar">
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False">
                 <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="projects">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="catalog">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="contacts">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="search">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="archive">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="trash">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            </DataTrigger><DataTrigger Binding="{Binding DataContext.SelectedSection.Route,RelativeSource={RelativeSource AncestorType=Window}}" Value="settings">
-                <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
-                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template" Value="{StaticResource Personal.Airbnb.NavigationTemplate}"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=Window},Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=900}" Value="False"><Setter Property="Padding" Value="4,0"/><Setter Property="Margin" Value="0"/></DataTrigger></Style.Triggers>
     </Style>

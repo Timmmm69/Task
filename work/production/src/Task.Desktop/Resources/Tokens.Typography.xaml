@@ -8,7 +8,7 @@
     <sys:Double x:Key="Task.Font.Size.Navigation">15</sys:Double>
     <sys:Double x:Key="Task.Font.Size.Section">16</sys:Double>
     <sys:Double x:Key="Task.Font.Size.DetailTitle">21</sys:Double>
-    <sys:Double x:Key="Task.Font.Size.PageTitle">29</sys:Double>
+    <sys:Double x:Key="Task.Font.Size.PageTitle">28</sys:Double>
     <FontWeight x:Key="Task.Font.Weight.Regular">Regular</FontWeight>
     <FontWeight x:Key="Task.Font.Weight.Semibold">SemiBold</FontWeight>
 </ResourceDictionary>

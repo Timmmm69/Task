@@ -131,7 +131,7 @@
     </Style>
     <!-- Shared Personal visual language for Corporate shell and startup. -->
     <Style x:Key="Task.Workspace.Title" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Heading}">
-        <Setter Property="FontSize" Value="26" />
+        <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.PageTitle}" />
     </Style>
 
     <Style x:Key="Task.Workspace.Body" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Muted}">
@@ -219,7 +219,7 @@
                                         <Border Width="34" Height="34" CornerRadius="10" Style="{StaticResource Task.Workspace.Background}">
                                             <Image Source="/Task.Desktop;component/Assets/VoravaDent.png" Width="28" Height="28" Stretch="Uniform" />
                                         </Border>
-                                        <TextBlock Text="Варава Дент" FontSize="18" FontWeight="Bold" Margin="9,0,0,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Варава Дент" FontSize="18" FontWeight="SemiBold" Margin="8,0,0,0" VerticalAlignment="Center" />
                                         <TextBlock Text="Пространство компании" Margin="16,0,0,0" VerticalAlignment="Center"
                                                    Style="{StaticResource Task.Workspace.Body}" />
                                     </StackPanel>
@@ -256,7 +256,7 @@
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
                                     <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}" />
-                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
                                 </Trigger>
                                 <Trigger Property="IsKeyboardFocusWithin" Value="True">
                                     <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}" />
