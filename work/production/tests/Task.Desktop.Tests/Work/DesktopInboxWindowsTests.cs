@@ -73,7 +73,7 @@ public sealed partial class DesktopWorkApiClientTests
                         Left = -20000,
                         ShowInTaskbar = false,
                         ShowActivated = false,
-                        Title = "Task — преобразование без срока"
+                        Title = "Варава Дент — преобразование без срока"
                     };
                     window.Show(); DrainInbox();
                     var save = InboxControl<Button>(view, "InboxSaveConversionButton");

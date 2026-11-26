@@ -22,7 +22,7 @@ public partial class MainWindow
         _notificationClient = client;
         SourceInitialized += (_, _) =>
         {
-            _tray = new(this, RequestExit, "Task · Corporate · работает в фоне");
+            _tray = new(this, RequestExit, "Варава Дент · Corporate · работает в фоне");
             _toast = new(Dispatcher, ActivateCorporateNotification);
             try
             {
@@ -62,7 +62,7 @@ public partial class MainWindow
     {
         if (_autostartApplied == enabled) return;
         if (!Notifications.WindowsAutostart.Apply(enabled))
-            _viewModel.ReportNotificationError("Автозапуск не применён: проверьте доступ к настройкам Windows и расположение Task.");
+            _viewModel.ReportNotificationError("Автозапуск не применён: проверьте доступ к настройкам Windows и расположение приложения.");
         else _autostartApplied = enabled;
     }
     private void OnNotificationAccessChanged()

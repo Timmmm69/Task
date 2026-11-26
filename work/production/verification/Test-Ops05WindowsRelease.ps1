@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 if (-not $IsWindows) { throw 'OPS-05 acceptance requires Windows.' }
 $deployment = (Resolve-Path (Join-Path $PSScriptRoot '..\deployment\desktop')).Path
 $temp = Join-Path ([IO.Path]::GetTempPath()) "task-ops05-$([Guid]::NewGuid().ToString('N'))"
-$subject = "CN=Task OPS-05 Acceptance $([Guid]::NewGuid().ToString('N'))"
+$subject = "CN=Vorava Dent OPS-05 Acceptance $([Guid]::NewGuid().ToString('N'))"
 $rsa = [Security.Cryptography.RSA]::Create(3072)
 $request = [Security.Cryptography.X509Certificates.CertificateRequest]::new(
     $subject, $rsa, [Security.Cryptography.HashAlgorithmName]::SHA256,
@@ -26,7 +26,7 @@ try {
     Write-Host 'OPS-05: building signed mandatory 1.1.0 release'
     & (Join-Path $deployment 'Build-TaskDesktopRelease.ps1') -Version '1.1.0' -Certificate $certificate -OutputDirectory $v2 -MinimumClientVersion '1.1.0' -RolloutPercent 0 | Out-Null
     Write-Host 'OPS-05: installing, updating, rejecting tamper/downgrade, and rolling back'
-    $release1 = Join-Path $v1 'Task.Desktop-1.0.0'
+    $release1 = Join-Path $v1 'VoravaDent-1.0.0'
     & (Join-Path $release1 'Install-TaskDesktop.ps1') -ExpectedPublisherThumbprint $certificate.Thumbprint -InstallRoot $installRoot -NoShellIntegration | Out-Null
     $state = Get-Content -LiteralPath (Join-Path $installRoot 'state.json') -Raw | ConvertFrom-Json
     if ($state.currentVersion -ne '1.0.0') { throw 'Initial installation did not activate 1.0.0.' }
@@ -42,8 +42,8 @@ try {
     try { & (Join-Path $release1 'Install-TaskDesktop.ps1') -ExpectedPublisherThumbprint $certificate.Thumbprint -InstallRoot $installRoot -NoShellIntegration | Out-Null } catch { $downgradeRejected = $_.Exception.Message -like '*prohibited*' }
     if (-not $downgradeRejected) { throw 'Uncontrolled downgrade was not rejected.' }
     $tampered = Join-Path $temp 'tampered'
-    Copy-Item -LiteralPath (Join-Path $v2 'Task.Desktop-1.1.0') -Destination $tampered -Recurse
-    Add-Content -LiteralPath (Join-Path $tampered 'app\Task.Desktop.exe') -Value 'tamper' -NoNewline
+    Copy-Item -LiteralPath (Join-Path $v2 'VoravaDent-1.1.0') -Destination $tampered -Recurse
+    Add-Content -LiteralPath (Join-Path $tampered 'app\VoravaDent.exe') -Value 'tamper' -NoNewline
     $tamperRejected = $false
     try { & (Join-Path $tampered 'Install-TaskDesktop.ps1') -ExpectedPublisherThumbprint $certificate.Thumbprint -InstallRoot (Join-Path $temp 'tamper-install') -NoShellIntegration | Out-Null } catch { $tamperRejected = $_.Exception.Message -like '*hash mismatch*' }
     if (-not $tamperRejected) { throw 'Tampered release was not rejected.' }

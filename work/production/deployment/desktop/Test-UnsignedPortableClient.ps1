@@ -4,8 +4,12 @@ param([Parameter(Mandatory)][string]$PackageDirectory)
 $ErrorActionPreference = 'Stop'
 $package = (Resolve-Path -LiteralPath $PackageDirectory).Path
 $manifest = Get-Content -LiteralPath (Join-Path $package 'manifest.json') -Raw | ConvertFrom-Json
-if ($manifest.schemaVersion -ne 1 -or $manifest.product -ne 'Task unsigned portable Windows client') { throw 'Unexpected manifest.' }
-$payload = Join-Path $package 'Task'
+if ($manifest.schemaVersion -ne 1 -or $manifest.product -ne 'Варава Дент') { throw 'Unexpected manifest.' }
+$payload = Join-Path $package 'VoravaDent'
+$exe = Join-Path $payload 'VoravaDent.exe'
+if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw 'Missing branded executable.' }
+$info = [Diagnostics.FileVersionInfo]::GetVersionInfo($exe)
+if ($info.ProductName -ne $manifest.product -or $info.FileDescription -ne $manifest.product) { throw 'Incorrect executable branding.' }
 $root = [IO.Path]::GetFullPath($payload).TrimEnd('\') + '\'
 foreach ($entry in @($manifest.files)) {
     $path = [IO.Path]::GetFullPath((Join-Path $payload ([string]$entry.path)))
@@ -17,7 +21,7 @@ foreach ($entry in @($manifest.files)) {
 }
 $actualFiles = @(Get-ChildItem -LiteralPath $payload -Recurse -File)
 if ($actualFiles.Count -ne @($manifest.files).Count) { throw 'Unexpected number of payload files.' }
-$archive = Join-Path $package "Task-$($manifest.version)-win-x64-unsigned.zip"
+$archive = Join-Path $package "VoravaDent-$($manifest.version)-win-x64-unsigned.zip"
 if (-not (Test-Path -LiteralPath $archive -PathType Leaf)) { throw 'Archive is missing.' }
 $expectedLine = (Get-Content -LiteralPath (Join-Path $package 'SHA256SUMS') -Raw).Trim()
 $actualLine = "$( (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() )  $([IO.Path]::GetFileName($archive))"
@@ -25,7 +29,7 @@ if ($actualLine -ne $expectedLine) { throw 'Archive hash mismatch.' }
 $temporary = Join-Path ([IO.Path]::GetTempPath()) "task-portable-check-$([Guid]::NewGuid().ToString('N'))"
 try {
     Expand-Archive -LiteralPath $archive -DestinationPath $temporary
-    $expanded = Join-Path $temporary 'Task'
+    $expanded = Join-Path $temporary 'VoravaDent'
     foreach ($entry in @($manifest.files)) {
         $path = Join-Path $expanded ([string]$entry.path)
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Archive payload missing: $($entry.path)" }

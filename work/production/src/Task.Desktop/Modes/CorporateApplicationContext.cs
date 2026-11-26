@@ -52,7 +52,7 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
         if (ModeSwitchGuard.HasPendingOperations(ModeSwitchGuard.Inspect(shell)))
         {
             MessageBox.Show(_mainWindow, "Результат операции ещё не подтверждён. Дождитесь завершения или проверьте исходный запрос, затем повторите переключение.",
-                "Смена режима Task", MessageBoxButton.OK, MessageBoxImage.Information);
+                "Смена режима", MessageBoxButton.OK, MessageBoxImage.Information);
             return false;
         }
         var window = _mainWindow;
@@ -97,8 +97,8 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
         {
             Console.Error.WriteLine(exception);
             MessageBox.Show(
-                "Task не удалось запустить. Перезапустите приложение или обратитесь к ИТ-администратору.",
-                "Ошибка запуска Task",
+                "Не удалось запустить «Варава Дент». Перезапустите приложение или обратитесь к ИТ-администратору.",
+                "Ошибка запуска «Варава Дент»",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
             BeginShutdown();

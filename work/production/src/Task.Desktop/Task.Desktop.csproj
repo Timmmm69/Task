@@ -2,7 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Task.Application\Task.Application.csproj" />
-    <Resource Include="Assets\Task.ico" />
+    <Resource Include="Assets\VoravaDent.ico" />
+    <Resource Include="Assets\VoravaDent.png" />
     <AssemblyMetadata Include="TASK_POSTHOG_HOST" Value="$(TASK_POSTHOG_HOST)" Condition="'$(TASK_POSTHOG_HOST)' == 'https://eu.i.posthog.com' Or '$(TASK_POSTHOG_HOST)' == 'https://us.i.posthog.com'" />
     <AssemblyMetadata Include="TASK_POSTHOG_PROJECT_TOKEN" Value="$(TASK_POSTHOG_PROJECT_TOKEN)" Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TASK_POSTHOG_PROJECT_TOKEN)', '^phc_[A-Za-z0-9_-]{4,196}$'))" />
     <AssemblyMetadata Include="TASK_POSTHOG_REQUIRE_CONSENT" Value="1" Condition="'$(TASK_POSTHOG_REQUIRE_CONSENT)' == '1'" />
@@ -21,7 +22,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>Assets\Task.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\VoravaDent.ico</ApplicationIcon>
+    <AssemblyTitle>Варава Дент</AssemblyTitle>
+    <Product>Варава Дент</Product>
     <Version>1.0.0</Version>
   </PropertyGroup>
 

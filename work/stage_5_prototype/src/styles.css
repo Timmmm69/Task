@@ -1143,18 +1143,10 @@ button {
 }
 
 .app-mark {
-  display: grid;
-  place-items: center;
   width: 20px;
   height: 20px;
-  border-radius: 4px;
-  color: white;
-  background: #0f6cbd;
-}
-
-.app-mark svg {
-  width: 15px;
-  height: 15px;
+  object-fit: contain;
+  flex: none;
 }
 
 .window-controls {

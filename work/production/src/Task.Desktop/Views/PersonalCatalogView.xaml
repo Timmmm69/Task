@@ -55,7 +55,7 @@
         <TextBlock Text="Путь к файлу или папке" Style="{StaticResource Personal.Label}"/>
         <TextBox x:Name="PathEditor" Text="{Binding CatalogPathDraft,UpdateSourceTrigger=PropertyChanged}" Height="Auto" MinHeight="64" MaxHeight="128" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Путь выбранной записи"/>
         <Button Content="Сохранить путь" Command="{Binding SaveCatalogPathCommand}" HorizontalAlignment="Left" Margin="0,10,0,0"/>
-        <TextBlock Text="Доступность проверяется при открытии. Task хранит ссылку на файл." Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="0,10,0,0"/>
+        <TextBlock Text="Доступность проверяется при открытии. Приложение хранит ссылку на файл." Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="0,10,0,0"/>
        </StackPanel>
        <Expander Header="Перемещение и управление"><StackPanel Margin="0,10,0,0">
         <ComboBox ItemsSource="{Binding Hub.CatalogMoveDestinations}" SelectedItem="{Binding Hub.MoveDestination}" DisplayMemberPath="Label" AutomationProperties.Name="Папка назначения"/>

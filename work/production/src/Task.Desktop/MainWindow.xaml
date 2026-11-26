@@ -7,15 +7,15 @@
         xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:inv="clr-namespace:Task.Desktop.Inventory" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
         mc:Ignorable="d"
         state:PersonalSelect.Scope="True"
-        Title="Task — пространство компании"
-        Icon="Assets/Task.ico"
+        Title="Варава Дент — пространство компании"
+        Icon="Assets/VoravaDent.ico"
         Width="1200" Height="900" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource Task.Window.Style}"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
         PreviewKeyDown="OnWindowPreviewKeyDown"
-        AutomationProperties.Name="Task — рабочее пространство"
+        AutomationProperties.Name="Варава Дент — рабочее пространство"
         AutomationProperties.AutomationId="MainWindow"
         AutomationProperties.HelpText="F6 переключает основные области; Ctrl+K открывает глобальный поиск; Escape закрывает overlay и возвращает фокус">
     <Window.InputBindings>
@@ -123,13 +123,12 @@
                         </Style.Triggers>
                     </Style>
                 </DockPanel.Style>
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="48" Margin="5,0" ToolTip="Task · Пространство компании">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="48" Margin="5,0" ToolTip="Варава Дент · Пространство компании">
                     <Border Width="36" Height="36" VerticalAlignment="Center"
                             Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="12">
-                        <Path Data="{StaticResource Task.Icon.Tasks}" Width="20" Height="20" Stretch="Uniform"
-                              Fill="{DynamicResource Task.Brush.Text.Primary}" />
+                        <Image Source="/Task.Desktop;component/Assets/VoravaDent.png" Width="30" Height="30" Stretch="Uniform" />
                     </Border>
-                    <TextBlock Text="Task" FontSize="19" FontWeight="Bold" VerticalAlignment="Center"
+                    <TextBlock Text="Варава Дент" FontSize="19" FontWeight="Bold" VerticalAlignment="Center"
                                Margin="8,0,0,0" Style="{StaticResource RailLabel}" />
                 </StackPanel>
 
@@ -264,7 +263,7 @@
                         <StackPanel Orientation="Horizontal">
                             <Path Data="{StaticResource Task.Icon.Search}" Width="17" Height="17" Stretch="Uniform"
                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                            <TextBlock Text="Поиск по Task" Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />
+                            <TextBlock Text="Поиск по приложению" Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />
                             <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                                        VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />
                         </StackPanel>
@@ -292,7 +291,7 @@
                         </Grid>
                     </Button>
                     <Button Command="{Binding LogoutCommand}" Style="{StaticResource Task.Workspace.IconButton}" TabIndex="4"
-                            ToolTip="Выйти из Task" AutomationProperties.Name="Выйти из Task" AutomationProperties.AutomationId="LogoutButton"
+                            ToolTip="Выйти из учётной записи" AutomationProperties.Name="Выйти из учётной записи" AutomationProperties.AutomationId="LogoutButton"
                             AutomationProperties.HelpText="Завершить серверную сессию и удалить локальные данные входа">
                         <Path Data="{StaticResource Task.Icon.SignOut}" Width="18" Height="18" Stretch="Uniform"
                               Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -50,7 +50,7 @@ public sealed partial class ProjectsViewModelTests
                     using var vm = new ProjectsViewModel(client, User, HistoryCaps);
                     vm.Activate(); await vm.CurrentDetailsOperation;
                     var view = new ProjectsView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Project history test" };
+                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Варава Дент · Project history test" };
                     window.Show(); PumpProject();
                     var expander = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "История"));
                     Assert.True(expander.IsVisible); Assert.Empty(client.HistoryCalls);

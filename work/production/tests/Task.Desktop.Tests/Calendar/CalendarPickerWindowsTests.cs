@@ -53,7 +53,7 @@ public sealed partial class CalendarEmployeePickerTests
                     using var vm = new CalendarViewModel(new Client(), Grants, employeeDirectory: Directory()); await vm.ActivateAsync();
                     await vm.NewEventCommand.ExecuteAsync(); vm.Editor!.Title = "Рабочая встреча";
                     var view = new CalendarView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 900, Title = "Task · Calendar Picker test" };
+                    window = new Window { Content = view, Width = 1120, Height = 900, Title = "Варава Дент · Calendar Picker test" };
                     window.Show(); window.Activate(); Pump();
                     var details = (StackPanel)view.FindName("CalendarEditorDetails");
                     var attendeePanel = (Border)view.FindName("CalendarEditorAttendees");

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Task.Desktop;
 
@@ -12,7 +13,8 @@ internal sealed class PersonalRecoveryWindow : Window
     internal event Action? ExitRequested;
     internal PersonalRecoveryWindow(string reason, string databasePath, bool canRestore, bool pending)
     {
-        Title = "Task — Personal recovery"; Width = 680; Height = 380;
+        Title = "Варава Дент — восстановление личного пространства"; Width = 680; Height = 380;
+        Icon = BitmapFrame.Create(new Uri("pack://application:,,,/Assets/VoravaDent.ico"));
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         AutomationProperties.SetAutomationId(this, "PersonalRecoveryWindow");
         var panel = new StackPanel { Margin = new Thickness(24) };

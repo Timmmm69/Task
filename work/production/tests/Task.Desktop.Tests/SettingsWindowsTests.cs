@@ -66,7 +66,7 @@ public sealed class SettingsWindowsTests
                     using var hub = new WorkHubViewModel(client, ["Settings.ReadOwn", "Settings.UpdateOwn", "Search.Use"]);
                     hub.Activate(WorkHubArea.Settings);
                     var view = new WorkHubView { DataContext = hub, Background = Brushes.White };
-                    window = new Window { Content = view, Width = 1280, Height = 900, Title = "Task — проверка настроек" };
+                    window = new Window { Content = view, Width = 1280, Height = 900, Title = "Варава Дент — проверка настроек" };
                     window.Show(); window.Activate(); Drain();
                     var language = Find<ComboBox>(view, "SettingsLanguage");
                     var weekday = Find<ComboBox>(view, "SettingsFirstDay");

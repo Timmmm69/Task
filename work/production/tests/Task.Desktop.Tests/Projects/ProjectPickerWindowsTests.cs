@@ -51,7 +51,7 @@ public sealed partial class ProjectsViewModelTests
                     var employee = Employee(login: "ivan2"); var client = PickerClient();
                     using var vm = PickerModel(client, Directory(Employee(User, "owner"), employee)); vm.Activate();
                     var view = new ProjectsView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Project Picker test" };
+                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Варава Дент · Project Picker test" };
                     window.Show(); window.Activate(); PumpProject();
                     var memberView = ProjectDescendants<EmployeePickerView>(view).Single(v => v.IsVisible);
                     Assert.Same(vm.MemberPicker, memberView.DataContext);

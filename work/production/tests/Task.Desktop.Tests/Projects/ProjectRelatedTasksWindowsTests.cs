@@ -52,7 +52,7 @@ public sealed partial class ProjectsViewModelTests
                     using var vm = RelatedModel(tasks);
                     tasks.EnqueuePage(RelatedPage("next", Task(Guid.NewGuid(), ProjectId, "Связанная задача")));
                     var view = new ProjectsView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Related tasks test" };
+                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Варава Дент · Related tasks test" };
                     window.Show(); PumpProject();
                     foreach (var expander in ProjectDescendants<Expander>(view).Where(expander => expander.IsVisible).ToArray())
                     {

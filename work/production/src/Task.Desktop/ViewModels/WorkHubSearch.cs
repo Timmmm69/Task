@@ -39,7 +39,7 @@ public sealed partial class WorkHubViewModel
     {
         get
         {
-            if (!_sessionAvailable) return new("Сессия завершена", "Войдите в Task снова, чтобы искать по данным компании.");
+            if (!_sessionAvailable) return new("Сессия завершена", "Войдите снова, чтобы искать по данным компании.");
             if (!CanSearch) return new("Поиск недоступен для вашей роли", "Если для работы нужен поиск, обратитесь к администратору.");
             if (IsOffline) return new("Сервер недоступен", HasSearchResults
                 ? "Показаны подтверждённые результаты. После восстановления связи повторите запрос, чтобы открыть объект."

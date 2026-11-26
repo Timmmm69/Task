@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
         mc:Ignorable="d"
-        Title="Task — вход в пространство компании"
-        Icon="Assets/Task.ico"
+        Title="Варава Дент — вход в пространство компании"
+        Icon="Assets/VoravaDent.ico"
         Width="1120" Height="700" MinWidth="800" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource Task.Window.Style}"
         UseLayoutRounding="True" SnapsToDevicePixels="True"
         KeyboardNavigation.TabNavigation="Cycle"
         AutomationProperties.HelpText="Используйте Tab и Shift+Tab для перехода между элементами формы"
-        AutomationProperties.Name="Авторизация Task"
+        AutomationProperties.Name="Вход в «Варава Дент»"
         AutomationProperties.AutomationId="AuthWindow">
     <Window.Resources>
         <Style x:Key="HeadingStyle" TargetType="TextBlock" BasedOn="{StaticResource Task.Workspace.Title}">
@@ -129,7 +129,7 @@
                 <TextBlock Text="Шаг 1 из 3" Style="{StaticResource StepStyle}" />
                 <TextBlock Text="Первое подключение" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
-                <TextBlock Text="Укажите адрес сервера, выданный ИТ-администратором. Task принимает только защищённый HTTPS-адрес."
+                <TextBlock Text="Укажите адрес сервера, выданный ИТ-администратором. Приложение принимает только защищённый HTTPS-адрес."
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <Label Content="Адрес сервера компании" Target="{Binding ElementName=ServerAddressTextBox}" Padding="0" />
                 <TextBox x:Name="ServerAddressTextBox"
@@ -159,9 +159,9 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
-            <StackPanel AutomationProperties.Name="Вход в Task">
+            <StackPanel AutomationProperties.Name="Вход в «Варава Дент»">
                 <TextBlock Text="Шаг 2 из 3" Style="{StaticResource StepStyle}" />
-                <TextBlock Text="Вход в Task" Style="{StaticResource HeadingStyle}"
+                <TextBlock Text="Вход в «Варава Дент»" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
                 <TextBlock Text="Используйте корпоративную учётную запись. Пароль не сохраняется на компьютере."
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
@@ -198,7 +198,7 @@
                 <TextBlock Text="Шаг 3 из 3" Style="{StaticResource StepStyle}" />
                 <TextBlock Text="Измените временный пароль" Style="{StaticResource HeadingStyle}"
                            AutomationProperties.HeadingLevel="Level1" />
-                <TextBlock Text="Без смены пароля открыть Task нельзя. После подтверждения текущая сессия продолжит работу."
+                <TextBlock Text="Без смены пароля открыть приложение нельзя. После подтверждения текущая сессия продолжит работу."
                            Style="{StaticResource BodyStyle}" Margin="0,0,0,12" />
                 <TextBlock Text="{Binding PasswordPolicy}" Style="{StaticResource BodyStyle}"
                            AutomationProperties.Name="Требования к новому паролю" Margin="0,0,0,12" />

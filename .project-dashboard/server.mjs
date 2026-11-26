@@ -7,7 +7,7 @@ import { buildDashboard, dashboardDir, readJson } from "./lib.mjs";
 const host = process.env.DASHBOARD_HOST || "127.0.0.1";
 const port = Number(process.env.DASHBOARD_PORT || 4178);
 const publicDir = join(dashboardDir, "public");
-const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8" };
+const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".png": "image/png" };
 
 function json(res, status, value) {
   res.writeHead(status, { "content-type": mime[".json"], "cache-control": "no-store" });
@@ -43,7 +43,7 @@ const server = createServer((req, res) => {
 
 server.listen(port, host, () => {
   const url = `http://${host}:${port}`;
-  console.log(`Task readiness dashboard: ${url}`);
+  console.log(`Варава Дент — готовность к передаче: ${url}`);
   if (process.argv.includes("--open")) {
     const command = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";
     const args = process.platform === "win32" ? ["/c", "start", "", url] : [url];

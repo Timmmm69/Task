@@ -55,7 +55,7 @@ public partial class PersonalLifecycleView : UserControl
         var body = new StackPanel { Margin = new Thickness(24) };
         body.Children.Add(new TextBlock { Text = "Удалить навсегда?", Style = (Style)FindResource("Personal.Airbnb.Heading") });
         body.Children.Add(new TextBlock { Text = selected.Title, TextWrapping = TextWrapping.Wrap, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 16, 0, 12) });
-        body.Children.Add(new TextBlock { Text = "Запись и её связи в Task нельзя будет восстановить. Файлы на диске останутся.", TextWrapping = TextWrapping.Wrap });
+        body.Children.Add(new TextBlock { Text = "Запись и её связи в приложении нельзя будет восстановить. Файлы на диске останутся.", TextWrapping = TextWrapping.Wrap });
         var actions = new WrapPanel { Margin = new Thickness(0, 24, 0, 0), HorizontalAlignment = HorizontalAlignment.Right };
         var cancel = new Button { Content = "Отмена", IsCancel = true, IsDefault = true, Style = (Style)FindResource("Personal.Airbnb.Compact"), Margin = new Thickness(0, 0, 10, 0) };
         var confirm = new Button { Content = "Удалить навсегда", Style = (Style)FindResource("Management.Danger"), Name = "ConfirmDelete" };

@@ -120,7 +120,7 @@ public partial class MainWindow : Window
 
     private void ShowPendingOperation() => MessageBox.Show(this,
         "Результат операции ещё не подтверждён. Дождитесь ответа сервера или проверьте исходный запрос в открытой форме, затем повторите выход.",
-        "Выход из Task", MessageBoxButton.OK, MessageBoxImage.Information);
+        "Выход из учётной записи", MessageBoxButton.OK, MessageBoxImage.Information);
 
     internal void RequestExit()
     {

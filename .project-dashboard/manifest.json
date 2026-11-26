@@ -1,48 +1,53 @@
 {
-  "package": "Task Development / Handoff Readiness Dashboard",
+  "package": "Варава Дент — готовность к передаче",
   "version": "1.1.0",
-  "generated_at": "2026-09-12T10:45:10.526Z",
+  "generated_at": "2026-11-26T15:41:45.462Z",
   "algorithm": "SHA-256",
   "files": [
     {
       "path": "DESIGN_QA.md",
-      "sha256": "a6e7ffeb136cda5a450021df1b52dc61a6034648a62a8b9c52a5034c6083a542",
-      "bytes": 4052
+      "sha256": "26fe590948216133933237d6f371f0e858215ab741c38e9c9bba3d056cd657d8",
+      "bytes": 4101
     },
     {
       "path": "execution-plan.mjs",
-      "sha256": "51fa71e63604e49050292830ac21f43537d5e42b4c822f18379aab20f0e08f32",
-      "bytes": 2652
+      "sha256": "21026645e35d0ae10faed59a30acbf14c07e0f6b00e9fd972c5123969e5b684c",
+      "bytes": 2717
     },
     {
       "path": "lib.mjs",
-      "sha256": "f8b4e5906e95fe62a655ef209abca0e3f7a0d7ce955e6590af28ee8abf21a9dd",
-      "bytes": 5265
+      "sha256": "0be69d2174ffb45c9e0ef14c480fa4a4ac42345b86acb25eeddc7a81ea7b71be",
+      "bytes": 5387
     },
     {
       "path": "package-manifest.mjs",
-      "sha256": "858d861287e88efeb6f630ca2b0d091288be0f32417a4dc5bd0e975b2ba5a33a",
-      "bytes": 1354
+      "sha256": "1400bfc3757487263b69db18635ee1e348f3c0be5510aba2a16690d270554ca5",
+      "bytes": 1404
     },
     {
       "path": "package.json",
-      "sha256": "4ca2f913ff0e0bee03216628ecfdbd531248f63a75ae437130232a7ce7eca549",
-      "bytes": 306
+      "sha256": "7137025fd7dfba45f9912c2d32e032527eb54d204736ec55d11977dace2354c2",
+      "bytes": 318
     },
     {
       "path": "public/app.js",
-      "sha256": "7ee03e5d7011c2bfeb4e4e232b8cf6fb8fefe30d2bba31060334c8b8950f69b1",
-      "bytes": 9434
+      "sha256": "d681fecc4b6267ced7d5fa98a9a376080df7f7f043ef9202cccd243241befbfa",
+      "bytes": 9619
     },
     {
       "path": "public/index.html",
-      "sha256": "585356452cb0a6c1244a5260927b146a4e15fa12523d49ece292ffa66e509d77",
-      "bytes": 6013
+      "sha256": "a968a1bb72a48fbf0fe1679995407d28cbdabf8962e6cfae329f4ffa13ca455d",
+      "bytes": 6230
     },
     {
       "path": "public/styles.css",
-      "sha256": "fdf301459ac69b508cdb128b29dbd2b6f6781b8770ccc9611edac7fbba055253",
-      "bytes": 15573
+      "sha256": "edf0a22b8406a46ed4748d7feb91bd01a7dcbaf7f824a693c5d0fecdaa45ffe7",
+      "bytes": 15656
+    },
+    {
+      "path": "public/vorava-dent.png",
+      "sha256": "eed335e62e1c93a77d1c29d60617c59dd2f6c9ff9fe60b3fc2ea871181982f96",
+      "bytes": 80330
     },
     {
       "path": "qa/execution-plan-1440x1000.png",
@@ -61,48 +66,48 @@
     },
     {
       "path": "README.md",
-      "sha256": "4b84a3dd5efb23a79a41f6afa1c32eb88e1bd898a9bff3750f150f3152d8a244",
-      "bytes": 3975
+      "sha256": "18643a6895ececcb101ce3897b690852e24e538404d1bb603736fb2e6b6f339f",
+      "bytes": 4008
     },
     {
       "path": "recalculate-order.mjs",
-      "sha256": "98536a22bc024a9cb7b7f52337c29fc0e5ee93b19a45e438b92f36b950a0992a",
-      "bytes": 539
+      "sha256": "03255e3145192d7b09949640aa34c03ffe1d1ea210975998a0d11275a069d31b",
+      "bytes": 549
     },
     {
       "path": "roadmap.json",
-      "sha256": "d76e0b67c1e321cc0a1826fa955a459635650865c87c67a1830eec7f16e3f03e",
-      "bytes": 77860
+      "sha256": "e9735f6c7a06b557d8fd23fca4c5955f4f7881f47c7d91f7c6a814e5d3e9c6e7",
+      "bytes": 167670
     },
     {
       "path": "server.mjs",
-      "sha256": "17b4f160a5a01857e433da3bee43d232415e76001777b91f6ea65ec208e669e2",
-      "bytes": 2466
+      "sha256": "2c7dd0ca4dccbf256fe7ff92c4280a800c3b22252593bc92da355110a49905a5",
+      "bytes": 2585
     },
     {
       "path": "test-results.json",
-      "sha256": "4b20a2b68429cca7aa28966c2e2e71921e741afc8de90c0398739c7d807216bd",
-      "bytes": 572
+      "sha256": "ed8d88ff6ea85e5e57f62c8819a9dd9662ec0d6c3c99dc97480582cefc29fb39",
+      "bytes": 586
     },
     {
       "path": "validate.mjs",
-      "sha256": "cb82334f025abb9a38da689cc45ff6198decafd2d5340c35828fa2a3f9b364de",
-      "bytes": 4494
+      "sha256": "4d73b08b979779329d0cf4aa888930efbb7a6d023e9f8cbf280b6deb6a0d8ef2",
+      "bytes": 4559
     },
     {
       "path": "VALIDATION_REPORT.md",
-      "sha256": "070945a02650cb408d5dbf5ce2ef7533881bb6fc343b56bc96213e973e75e4be",
-      "bytes": 2572
+      "sha256": "a10a7919a2d3e7ea08119e907d91e93529bb62d2a0ba1b13ea9ec13da755f1e6",
+      "bytes": 2617
     },
     {
       "path": "verify-manifest.mjs",
-      "sha256": "0ea986e554018ef4a1edf41bfc4bc64de8c11996e1a9c159ab998951089f8e37",
-      "bytes": 1081
+      "sha256": "1405fc3265cbb071f6cd5b8284c3d93758543963aecfb1b7ea8e317d32e8789f",
+      "bytes": 1106
     },
     {
       "path": "VERSION",
-      "sha256": "1575e1af4a95f12f70b4ee6a6adce8160953d93ea17dc2611b90883ccc3ad3b8",
-      "bytes": 6
+      "sha256": "6ca2e3356014241331fb2b399428fca23c558e3f3d428edcf4f56eb0fe907069",
+      "bytes": 7
     }
   ]
 }

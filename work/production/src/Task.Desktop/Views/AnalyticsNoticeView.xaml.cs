@@ -42,7 +42,7 @@ public partial class AnalyticsNoticeView : UserControl
 
         DisableButton.IsEnabled = true;
         Feedback.Visibility = Visibility.Visible;
-        Feedback.Text = "Не удалось сохранить отключение. Проверьте доступ к локальным данным Task и повторите попытку.";
+        Feedback.Text = "Не удалось сохранить отключение. Проверьте доступ к локальным данным приложения и повторите попытку.";
     }
 
     private void OnDismiss(object sender, RoutedEventArgs args) => Visibility = Visibility.Collapsed;

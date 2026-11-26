@@ -1,7 +1,7 @@
 <Window x:Class="Task.Desktop.ModeSwitchDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Task — несохранённые формы" Icon="Assets/Task.ico"
+        Title="Варава Дент — несохранённые формы" Icon="Assets/VoravaDent.ico"
         Width="560" SizeToContent="Height" MaxHeight="640"
         WindowStartupLocation="CenterOwner" Style="{StaticResource Task.Window.Style}"
         UseLayoutRounding="True" SnapsToDevicePixels="True"

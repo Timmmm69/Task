@@ -150,7 +150,7 @@ internal sealed class PersonalApplicationContext(
     private void Backup()
     {
         if (_model is null || _model.IsBusy) return;
-        var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "Резервная копия Task|*.taskbackup", DefaultExt = ".taskbackup", FileName = $"Task-Personal-{DateTime.Now:yyyyMMdd-HHmmss}.taskbackup" };
+        var dialog = new Microsoft.Win32.SaveFileDialog { Filter = "Резервная копия «Варава Дент»|*.taskbackup", DefaultExt = ".taskbackup", FileName = $"Task-Personal-{DateTime.Now:yyyyMMdd-HHmmss}.taskbackup" };
         if (dialog.ShowDialog(_window) != true) return;
         try
         {
@@ -162,14 +162,14 @@ internal sealed class PersonalApplicationContext(
     private void Restore()
     {
         if (_ownership is null) return;
-        var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Резервная копия Task|*.taskbackup" };
+        var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Резервная копия «Варава Дент»|*.taskbackup" };
         if (dialog.ShowDialog(_window) != true) return;
         if (_model is { } model && (model.IsBusy || model.InspectDrafts().Any(d => d.HasState())))
         {
             PersonalConfirmationDialog.Notice(_window!, "Восстановление из копии", "Перед восстановлением сохраните или отмените открытые редакторы.");
             return;
         }
-        if (!PersonalConfirmationDialog.Confirm(_window!, "Восстановить личное пространство?", "Данные будут заменены выбранной копией. Перед заменой Task сохранит страховочную копию текущей базы.", "Восстановить")) return;
+        if (!PersonalConfirmationDialog.Confirm(_window!, "Восстановить личное пространство?", "Данные будут заменены выбранной копией. Перед заменой приложение сохранит страховочную копию текущей базы.", "Восстановить")) return;
         try
         {
             var safety = BackupService.Restore(dialog.FileName, CloseModel, () => Open(restoring: true));

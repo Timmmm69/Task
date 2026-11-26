@@ -164,7 +164,7 @@ public sealed partial class WorkHubViewModel
                 ReplaceCatalog([.. Catalog, success.Value], success.Value.Id);
                 NewItemName = string.Empty;
                 if (await ReloadCatalogAsync(ct, success.Value.Id, true))
-                    SetFeedback(type == "virtual_folder" ? "Виртуальная папка создана в каталоге Task." : "Запись создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success);
+                    SetFeedback(type == "virtual_folder" ? "Виртуальная папка создана в каталоге приложения." : "Запись создана. Теперь добавьте путь.", WorkHubFeedbackKind.Success);
             }
             else await RecoverCatalogErrorAsync(result, ct);
         }

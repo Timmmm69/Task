@@ -321,7 +321,7 @@
                                 <Border Style="{StaticResource Settings.Card}">
                                     <StackPanel>
                                         <TextBlock Text="Файлы и запуск" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
-                                        <CheckBox IsChecked="{Binding AutostartEnabled}"><TextBlock Text="Запускать Task вместе с Windows" TextWrapping="Wrap"/></CheckBox>
+                                        <CheckBox IsChecked="{Binding AutostartEnabled}"><TextBlock Text="Запускать «Варава Дент» вместе с Windows" TextWrapping="Wrap"/></CheckBox>
                                         <CheckBox IsChecked="{Binding AllowLocalPaths}"><TextBlock Text="Разрешать локальные пути" TextWrapping="Wrap"/></CheckBox>
                                         <CheckBox IsChecked="{Binding ConfirmCatalogDelete}"><TextBlock Text="Подтверждать удаление записей каталога" TextWrapping="Wrap"/></CheckBox>
                                         <StackPanel Style="{StaticResource Settings.Field}">
@@ -341,7 +341,7 @@
                                 <Border Style="{StaticResource Settings.Card}">
                                     <StackPanel>
                                         <TextBlock Text="Способы уведомления" Style="{StaticResource Corporate.Management.Heading}" AutomationProperties.HeadingLevel="Level3"/>
-                                        <TextBlock Text="Чтобы уведомления приходили после закрытия окна, оставьте Task в области уведомлений Windows." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
+                                        <TextBlock Text="Чтобы уведомления приходили после закрытия окна, оставьте приложение в области уведомлений Windows." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
                                         <CheckBox IsChecked="{Binding NotificationsEnabled}"><TextBlock Text="Получать уведомления" TextWrapping="Wrap"/></CheckBox>
                                         <CheckBox IsChecked="{Binding DesktopNotificationsEnabled}"><TextBlock Text="Показывать уведомления на рабочем столе" TextWrapping="Wrap"/></CheckBox>
                                         <CheckBox IsChecked="{Binding NotificationSoundEnabled}"><TextBlock Text="Воспроизводить звук" TextWrapping="Wrap"/></CheckBox>

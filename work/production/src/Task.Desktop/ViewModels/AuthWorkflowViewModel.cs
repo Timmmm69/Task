@@ -163,7 +163,7 @@ public sealed class AuthWorkflowViewModel : ViewModelBase, IDisposable
                 _vault.Clear();
             }
 
-            ShowLogin("Вы вышли из Task.");
+            ShowLogin("Вы вышли из учётной записи.");
         }
         finally
         {
@@ -300,7 +300,7 @@ public sealed class AuthWorkflowViewModel : ViewModelBase, IDisposable
                     ? new WorkflowOperationResult(true)
                     : new WorkflowOperationResult(
                         false,
-                        "Переход в Task заблокирован до подтверждения состояния сессии.");
+                        "Открытие рабочего пространства заблокирован до подтверждения состояния сессии.");
 
             case ChangePasswordResult.AuthError { Error.ProblemCode: AuthProblemCode.InvalidCredentials }:
                 return new WorkflowOperationResult(false, "Неверно указан текущий пароль.");
@@ -530,7 +530,7 @@ public sealed class AuthWorkflowViewModel : ViewModelBase, IDisposable
             ? $"Слишком много попыток входа. Повторите через {error.RetryAfterSeconds.Value} сек."
             : "Слишком много попыток входа. Повторите позже.",
         AuthProblemCode.ClientVersionUnsupported =>
-            "Эта версия Task больше не поддерживается. Установите подписанное обновление, предоставленное ИТ-администратором.",
+            "Эта версия «Варава Дент» больше не поддерживается. Установите подписанное обновление, предоставленное ИТ-администратором.",
         _ => "Вход отклонён из соображений безопасности. Обратитесь к администратору.",
     };
 
@@ -557,7 +557,7 @@ public sealed class AuthWorkflowViewModel : ViewModelBase, IDisposable
         SessionSignOutReason.AuthenticationRequired => "Сессия больше недействительна. Войдите снова.",
         SessionSignOutReason.ServerChanged => "Адрес сервера изменён. Выполните вход снова.",
         SessionSignOutReason.ClientVersionUnsupported =>
-            "Эта версия Task больше не поддерживается. Установите подписанное обновление, предоставленное ИТ-администратором.",
+            "Эта версия «Варава Дент» больше не поддерживается. Установите подписанное обновление, предоставленное ИТ-администратором.",
         _ => "Сессия завершена из соображений безопасности. Войдите снова.",
     };
 }

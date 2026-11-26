@@ -18,7 +18,7 @@ const entries = files(dashboardDir)
   .filter((entry) => !excluded.has(entry.path))
   .sort((a, b) => a.path.localeCompare(b.path));
 const manifest = {
-  package: "Task Development / Handoff Readiness Dashboard",
+  package: "Варава Дент — готовность к передаче",
   version: readFileSync(join(dashboardDir, "VERSION"), "utf8").trim(),
   generated_at: new Date().toISOString(),
   algorithm: "SHA-256",

@@ -56,7 +56,7 @@ public sealed class ObjectLinksIntegrationWindowsTests
                     var client = new ObjectLinksIntegrationTests.Client(); using var vm = ObjectLinksIntegrationTests.Model(client, delete: () => false);
                     var source = Guid.NewGuid(); vm.SetSource(source, 7, "task");
                     var view = new ObjectLinksView { DataContext = vm };
-                    window = new Window { Content = view, Width = 520, Height = 730, Title = "Task · Корпоративные связи" };
+                    window = new Window { Content = view, Width = 520, Height = 730, Title = "Варава Дент · Корпоративные связи" };
                     window.Show(); window.Activate(); Pump();
                     var pickerView = Assert.Single(Descendants<ObjectLinkTargetPickerView>(view));
                     var search = (TextBox)pickerView.FindName("SearchBox"); var list = (ListBox)pickerView.FindName("ResultsList");

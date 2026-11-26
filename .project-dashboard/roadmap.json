@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": {
-    "name": "Task",
+    "name": "Варава Дент",
     "subtitle": "Автономно проверяемый Windows-органайзер для передачи заказчику",
     "current_stage_number": 6,
     "current_stage": "Production vertical slices",
