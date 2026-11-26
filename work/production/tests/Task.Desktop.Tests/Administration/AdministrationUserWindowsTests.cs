@@ -53,7 +53,7 @@ public sealed class AdministrationUserWindowsTests
                 {
                     var client = new AdministrationUserEditorTests.Client(); using var vm = AdministrationUserEditorTests.Vm(client);
                     var view = new AdministrationView { DataContext = vm, Margin = new Thickness(16) };
-                    window = new Window { Content = view, Width = 1120, Height = 900, ShowActivated = false, ShowInTaskbar = false, Title = "Task · сотрудники · проверка" };
+                    window = new Window { Content = view, Width = 1120, Height = 900, ShowActivated = false, ShowInTaskbar = false, Title = "Варава Дент · сотрудники · проверка" };
                     window.Show(); Pump();
                     T Find<T>(string id) where T : DependencyObject => Descendants<T>(view).Single(c => AutomationProperties.GetAutomationId(c) == id);
                     void Invoke(string id)

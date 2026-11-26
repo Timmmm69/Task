@@ -55,7 +55,7 @@ public sealed class ObjectLinkTargetPickerWindowsTests
                     { Search = (_, _, _, _) => AsyncTask.FromResult<PageResult>(new PageResult.Succeeded([first, second])) };
                     using var picker = ObjectLinkTargetPickerTests.Picker(client);
                     var view = new ObjectLinkTargetPickerView { DataContext = picker, Margin = new Thickness(16) };
-                    window = new Window { Content = view, Width = 520, Height = 700, Title = "Task · Object Link Target Picker" };
+                    window = new Window { Content = view, Width = 520, Height = 700, Title = "Варава Дент · Object Link Target Picker" };
                     window.Show(); window.Activate(); Pump();
                     var search = (TextBox)view.FindName("SearchBox"); var list = (ListBox)view.FindName("ResultsList");
                     search.Text = "План"; await picker.CurrentOperation; Pump();

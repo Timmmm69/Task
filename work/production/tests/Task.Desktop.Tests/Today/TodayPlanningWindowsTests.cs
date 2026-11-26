@@ -53,7 +53,7 @@ public sealed partial class TodayViewModelTests
                 {
                     var client = new PlanningClient(PlanningTask()); using var vm = PlanningVm(client); await vm.ActivateAsync();
                     var view = new TodayView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 900, Title = "Task · Сегодня · планирование" };
+                    window = new Window { Content = view, Width = 1120, Height = 900, Title = "Варава Дент · Сегодня · планирование" };
                     window.Show(); window.Activate(); PumpToday();
                     T Find<T>(string id) where T : DependencyObject => TodayDescendants<T>(view).Single(c => AutomationProperties.GetAutomationId(c) == id);
                     void Invoke(string id)

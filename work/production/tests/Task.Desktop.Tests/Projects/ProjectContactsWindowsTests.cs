@@ -49,7 +49,7 @@ public sealed partial class ProjectsViewModelTests
                     using var vm = new ProjectsViewModel(SectionClient(), User, ProjectContactsTests.Caps, contacts: files);
                     vm.Activate(); await vm.CurrentDetailsOperation;
                     var view = new ProjectsView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Task · Project contacts test" };
+                    window = new Window { Content = view, Width = 1120, Height = 820, Title = "Варава Дент · Project contacts test" };
                     window.Show(); PumpProject();
                     var expander = ProjectDescendants<Expander>(view).Single(e => Equals(e.Header, "Контакты и компании"));
                     Assert.True(expander.IsVisible); Assert.Equal(0, work.Reads);

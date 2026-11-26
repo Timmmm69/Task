@@ -505,7 +505,7 @@ public sealed class AuthWorkflowViewModelTests
         await workflow.LogoutAsync();
 
         Assert.Equal(AuthWorkflowState.Login, workflow.CurrentState);
-        Assert.Equal("Вы вышли из Task.", workflow.Login!.ErrorMessage);
+        Assert.Equal("Вы вышли из учётной записи.", workflow.Login!.ErrorMessage);
         Assert.Null(harness.Vault.GetRefreshToken());
         Assert.False(workflow.IsReady);
     }

@@ -63,7 +63,7 @@ public sealed class EmployeePickerWindowsTests
                     };
                     using var picker = new EmployeePickerViewModel(directory, ["User.Read"], debounce: TimeSpan.Zero);
                     var view = new EmployeePickerView { DataContext = picker, Margin = new Thickness(16) };
-                    window = new Window { Content = view, Width = 480, Height = 620, Title = "Task · Employee Picker test" };
+                    window = new Window { Content = view, Width = 480, Height = 620, Title = "Варава Дент · Employee Picker test" };
                     window.Show(); window.Activate(); await picker.CurrentOperation; Pump();
                     var search = (TextBox)view.FindName("SearchBox"); var list = (ListBox)view.FindName("ResultsList");
                     search.Text = "Иван"; await picker.CurrentOperation; Pump();

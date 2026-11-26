@@ -61,7 +61,7 @@ public sealed partial class TodayViewModelTests
                     using var vm = QuickVm(client, calendar); await vm.ActivateAsync();
                     await vm.SelectItemCommand.ExecuteAsync(Assert.Single(vm.QueueItems));
                     var view = new TodayView { DataContext = vm };
-                    window = new Window { Content = view, Width = 1120, Height = 900, Title = "Task · Сегодня · быстрые действия" };
+                    window = new Window { Content = view, Width = 1120, Height = 900, Title = "Варава Дент · Сегодня · быстрые действия" };
                     window.Show(); window.Activate(); PumpToday();
                     Button Button(string id) => TodayDescendants<Button>(view).Single(b => AutomationProperties.GetAutomationId(b) == id);
                     void Invoke(Button button)
