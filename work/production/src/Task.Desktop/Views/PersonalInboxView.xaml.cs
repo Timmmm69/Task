@@ -39,6 +39,11 @@ public partial class PersonalInboxView : UserControl
         if (DataContext is PersonalTasksViewModel model) model.InboxSearchText = "";
         SearchInput.Focus();
     }
+    private void OnClearCalendarDate(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is PersonalTasksViewModel model) model.ClearCalendarDate();
+        CaptureInput.Focus();
+    }
     private async void OnListKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter || Keyboard.Modifiers != ModifierKeys.None || e.IsRepeat

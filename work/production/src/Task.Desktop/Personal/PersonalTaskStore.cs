@@ -22,7 +22,7 @@ public sealed partial class PersonalTaskStore : IDisposable
     private readonly Guid _actor;
     private readonly TimeProvider _clock;
     public Guid LocalActorId => _actor;
-    private const string Columns = "id,version,created_at,updated_at,title,description,status,priority,start_at,deadline,scheduled_date,start_time,time_zone,duration,project_id,parent_task_id,counterparty_id,completed_at,deadline_date,deadline_zone,deadline_reminder_offset,deadline_reminder_time,planning_month";
+    private const string Columns = "id,version,created_at,updated_at,title,description,status,priority,start_at,deadline,scheduled_date,start_time,time_zone,duration,project_id,parent_task_id,counterparty_id,completed_at,deadline_date,deadline_zone,deadline_reminder_offset,deadline_reminder_time,planning_month,calendar_note_date";
 
     public PersonalTaskStore(PersonalDataPaths paths, TimeProvider? clock = null) : this(paths, clock, null) { }
     internal PersonalTaskStore(PersonalDataPaths paths, TimeProvider? clock, PersonalStoreOwnership? ownership, Action<string>? fault = null, bool restoring = false)
@@ -88,7 +88,8 @@ public sealed partial class PersonalTaskStore : IDisposable
             ProjectId = ReadId(r, 14),
             ParentTaskId = ReadId(r, 15),
             PrimaryCounterpartyObjectId = ReadId(r, 16),
-        }, ReadInstant(r, 17));
+        }, ReadInstant(r, 17))
+    { CalendarNoteDate = r.IsDBNull(23) ? null : DateOnly.Parse(r.GetString(23), CultureInfo.InvariantCulture) };
 
     private DesktopTaskDto? Get(Guid id, SqliteTransaction? tx)
     {
@@ -112,7 +113,7 @@ public sealed partial class PersonalTaskStore : IDisposable
         {
             var task = Read(reader);
             if (includeLinkedFolders)
-                task = task with { LinkedFolders = System.Text.Json.JsonSerializer.Deserialize<Task.Application.TaskFolderReference[]>(reader.GetString(23)) };
+                task = task with { LinkedFolders = System.Text.Json.JsonSerializer.Deserialize<Task.Application.TaskFolderReference[]>(reader.GetString(24)) };
             tasks.Add(task);
         }
         return tasks;
@@ -144,14 +145,15 @@ public sealed partial class PersonalTaskStore : IDisposable
     {
         var card = task.Card ?? new();
         var sql = create
-            ? $"INSERT INTO tasks ({Columns}) VALUES ($id,$version,$created,$updated,$title,$description,$status,$priority,$start,$deadline,$date,$time,$zone,$duration,$project,$parent,$counterparty,$completed,$deadlineDate,$deadlineZone,$reminderOffset,$reminderTime,$month);"
-            : "UPDATE tasks SET planning_month=$month,version=$version,updated_at=$updated,title=$title,description=$description,status=$status,priority=$priority,start_at=$start,deadline=$deadline,scheduled_date=$date,start_time=$time,time_zone=$zone,duration=$duration,project_id=$project,parent_task_id=$parent,counterparty_id=$counterparty,completed_at=$completed,deadline_date=$deadlineDate,deadline_zone=$deadlineZone,deadline_reminder_offset=COALESCE($reminderOffset,deadline_reminder_offset) WHERE id=$id AND version=$expected;";
+            ? $"INSERT INTO tasks ({Columns}) VALUES ($id,$version,$created,$updated,$title,$description,$status,$priority,$start,$deadline,$date,$time,$zone,$duration,$project,$parent,$counterparty,$completed,$deadlineDate,$deadlineZone,$reminderOffset,$reminderTime,$month,$calendarNoteDate);"
+            : "UPDATE tasks SET planning_month=$month,calendar_note_date=$calendarNoteDate,version=$version,updated_at=$updated,title=$title,description=$description,status=$status,priority=$priority,start_at=$start,deadline=$deadline,scheduled_date=$date,start_time=$time,time_zone=$zone,duration=$duration,project_id=$project,parent_task_id=$parent,counterparty_id=$counterparty,completed_at=$completed,deadline_date=$deadlineDate,deadline_zone=$deadlineZone,deadline_reminder_offset=COALESCE($reminderOffset,deadline_reminder_offset) WHERE id=$id AND version=$expected;";
         using var command = Command(sql, tx,
             ("$id", task.Id.ToString("D")), ("$version", task.Version), ("$expected", task.Version - 1),
             ("$created", Instant(task.CreatedAtUtc)), ("$updated", Instant(task.UpdatedAtUtc)),
             ("$title", task.Title), ("$description", card.Description), ("$status", (int)task.Status), ("$priority", (int)task.Priority),
             ("$start", Instant(task.StartAtUtc)), ("$deadline", Instant(task.DeadlineAtUtc)),
             ("$month", card.PlanningMonth),
+            ("$calendarNoteDate", task.CalendarNoteDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
             ("$date", card.ScheduledDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)),
             ("$time", card.StartTimeLocal?.ToString("HH:mm:ss.fffffff", CultureInfo.InvariantCulture)),
             ("$zone", card.ScheduleTimeZone), ("$duration", card.PlannedDurationMinutes),
@@ -164,16 +166,28 @@ public sealed partial class PersonalTaskStore : IDisposable
 
     internal Action<UsageEvent>? Usage { get; init; }
 
-    public DesktopTaskDto Create(DesktopCreateTaskCommand input) => Locked(() =>
+    private sealed record CalendarNoteCreateCommand(DesktopCreateTaskCommand Task, DateOnly Date);
+    public DesktopTaskDto Create(DesktopCreateTaskCommand input) => CreateCore(input, null);
+    public DesktopTaskDto CreateCalendarNote(DesktopCreateTaskCommand input, DateOnly date) => CreateCore(input, date);
+    private DesktopTaskDto CreateCore(DesktopCreateTaskCommand input, DateOnly? calendarNoteDate) => Locked(() =>
     {
         var now = _clock.GetUtcNow();
+        var card = calendarNoteDate is null ? input.Card ?? new() : (input.Card ?? new()) with { ScheduledDate = null, StartTimeLocal = null, ScheduleTimeZone = null };
         var task = new DesktopTaskDto(Guid.NewGuid(), Guid.Empty, 1, now, now, TaskRules.NormalizeTitle(input.Title), _actor,
-            DesktopTaskStatus.New, input.Priority, input.StartAtUtc, input.DeadlineAtUtc, [], [], null, input.Card ?? new());
+            DesktopTaskStatus.New, input.Priority, calendarNoteDate is null ? input.StartAtUtc : null, input.DeadlineAtUtc, [], [], null, card)
+        { CalendarNoteDate = calendarNoteDate };
         using var tx = _database.Connection.BeginTransaction();
-        var replay = ReplayTaskCommand(input.IdempotencyKey, input, tx); if (replay is not null) { tx.Commit(); return replay; }
-        Validate(task, tx); Save(task, tx, true); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, saved, tx); tx.Commit();
+        if (calendarNoteDate is { } date)
+        {
+            var replay = ReplayTaskCommand(input.IdempotencyKey, new CalendarNoteCreateCommand(input, date), tx); if (replay is not null) { tx.Commit(); return replay; }
+            Validate(task, tx); Save(task, tx, true); var saved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, new CalendarNoteCreateCommand(input, date), saved, tx); tx.Commit();
+            UsageInstrumentation.Record(Usage, UsageEvent.TaskCreated);
+            return saved;
+        }
+        var ordinaryReplay = ReplayTaskCommand(input.IdempotencyKey, input, tx); if (ordinaryReplay is not null) { tx.Commit(); return ordinaryReplay; }
+        Validate(task, tx); Save(task, tx, true); var ordinarySaved = Get(task.Id, tx)!; CompleteTaskCommand(input.IdempotencyKey, input, ordinarySaved, tx); tx.Commit();
         UsageInstrumentation.Record(Usage, UsageEvent.TaskCreated);
-        return saved;
+        return ordinarySaved;
     });
     private DesktopTaskDto Current(Guid id, long version, SqliteTransaction tx)
     {
@@ -196,6 +210,11 @@ public sealed partial class PersonalTaskStore : IDisposable
             Card = (old.Card ?? new()).Apply(input.CardPatch),
             Version = checked(old.Version + 1),
             UpdatedAtUtc = _clock.GetUtcNow(),
+            // A title/priority-only edit is still a note. Any actual card or schedule
+            // edit promotes it to an ordinary task.
+            CalendarNoteDate = old.CalendarNoteDate is not null
+                && input.CardPatch is null && !input.StartAtUtc.IsSpecified && !input.DeadlineAtUtc.IsSpecified
+                    ? old.CalendarNoteDate : null,
         };
         if (old.DeadlineAtUtc != task.DeadlineAtUtc || old.Card?.DeadlineDate != task.Card?.DeadlineDate
             || old.Card?.DeadlineTimeZone != task.Card?.DeadlineTimeZone || old.Card?.DeadlineReminderOffsetMinutes != task.Card?.DeadlineReminderOffsetMinutes)
@@ -217,7 +236,11 @@ public sealed partial class PersonalTaskStore : IDisposable
             Status = input.TargetStatus,
             Version = checked(old.Version + 1),
             UpdatedAtUtc = now,
-            CompletedAtUtc = input.TargetStatus == DesktopTaskStatus.Completed ? now : null
+            CompletedAtUtc = input.TargetStatus == DesktopTaskStatus.Completed ? now : null,
+            // Status changes leave the inbox too; retain its intended day as an
+            // ordinary date-only schedule rather than dropping it.
+            Card = old.CalendarNoteDate is { } noteDate ? (old.Card ?? new()) with { ScheduledDate = noteDate } : old.Card,
+            CalendarNoteDate = null,
         };
         Save(task, tx, false); var saved = Get(task.Id, tx)!; tx.Commit();
         if (saved.Status == DesktopTaskStatus.Completed) UsageInstrumentation.Record(Usage, UsageEvent.TaskCompleted);

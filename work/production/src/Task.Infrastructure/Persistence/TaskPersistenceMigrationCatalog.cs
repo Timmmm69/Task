@@ -29,6 +29,7 @@ internal static class TaskPersistenceMigrationCatalog
         Load(20, "task_search_trigram", "020_task_search_trigram.sql"),
         Load(21, "material_inventory", "021_material_inventory.sql"),
         Load(22, "preserve_at_deadline_delivery", "022_preserve_at_deadline_delivery.sql"),
+        Load(23, "inbox_scheduled_date", "023_inbox_scheduled_date.sql"),
     ];
 
     public static int LatestVersion => All[^1].Version;

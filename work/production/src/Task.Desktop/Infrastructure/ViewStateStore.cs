@@ -45,7 +45,7 @@ internal static class ViewStateKeys
 
 /// <summary>Small device-local preference file, separate from credentials and business caches.
 /// All disk operations run on workers; UI setters only mutate bounded in-memory primitives.</summary>
-public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
+public sealed partial class ViewStateStore : IViewStateStore, IAsyncDisposable
 {
     private const int MaxBytes = 32 * 1024;
     private readonly object _sync = new();
@@ -161,6 +161,9 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
                 sections = _sections,
                 sorts = _sorts,
                 startupRoute = _startupRoute,
+                notifyAtDayEnd = _notifyAtDayEnd,
+                phrase = _phrase,
+                taskListViews = _taskListViews,
                 calendarMode = _calendarMode?.ToString()
             });
         }
@@ -189,6 +192,8 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
             if (root.TryGetProperty("startupRoute", out var route) && route.ValueKind == JsonValueKind.String
                 && route.GetString() is { } routeName && ViewStateKeys.StartupRoutes.Contains(routeName))
                 _startupRoute = routeName;
+            ReadWorkdayPreferences(root);
+            ReadTaskListViews(root);
             if (root.TryGetProperty("calendarMode", out var mode) && mode.ValueKind == JsonValueKind.String)
                 _calendarMode = mode.GetString() switch
                 {
@@ -240,7 +245,7 @@ public sealed class ViewStateStore : IViewStateStore, IAsyncDisposable
     private void Clear()
     {
         _widths.Clear(); _sections.Clear(); _sorts.Clear();
-        _startupRoute = null; _calendarMode = null;
+        _startupRoute = null; _calendarMode = null; _notifyAtDayEnd = true; _phrase = null; _taskListViews.Clear();
     }
 
     public async ValueTask DisposeAsync()

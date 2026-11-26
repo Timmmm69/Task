@@ -211,6 +211,7 @@
                             <ComboBox ItemsSource="{Binding StartupSections}" SelectedItem="{Binding StartupSection}" DisplayMemberPath="Title"
                                       AutomationProperties.Name="Стартовый раздел"
                                       AutomationProperties.AutomationId="StartupSection"/>
+
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource Corporate.Management.InfoPanel}" Margin="0,0,10,10" Visibility="{Binding IsServerSettings, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
@@ -344,6 +345,9 @@
                                         <TextBlock Text="Чтобы уведомления приходили после закрытия окна, оставьте приложение в области уведомлений Windows." Style="{StaticResource Corporate.Management.Muted}" Margin="0,4,0,10"/>
                                         <CheckBox IsChecked="{Binding NotificationsEnabled}"><TextBlock Text="Получать уведомления" TextWrapping="Wrap"/></CheckBox>
                                         <CheckBox IsChecked="{Binding DesktopNotificationsEnabled}"><TextBlock Text="Показывать уведомления на рабочем столе" TextWrapping="Wrap"/></CheckBox>
+                                        <CheckBox Content="Уведомлять об итоге дня"
+                                                  DataContext="{Binding DataContext.Workday, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  IsChecked="{Binding NotifyAtDayEnd}" AutomationProperties.AutomationId="WorkdayNotifyToggle"/>
                                         <CheckBox IsChecked="{Binding NotificationSoundEnabled}"><TextBlock Text="Воспроизводить звук" TextWrapping="Wrap"/></CheckBox>
                                         <StackPanel Style="{StaticResource Settings.Field}">
                                             <TextBlock Text="Отсрочка по умолчанию, мин" Style="{StaticResource Corporate.Management.Label}"/>

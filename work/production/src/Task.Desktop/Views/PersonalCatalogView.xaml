@@ -52,6 +52,7 @@
        <Button Content="Перейти в папку" Click="OnEnterFolder" Visibility="{Binding CatalogSelection.IsFolder,Converter={StaticResource Task.BooleanToVisibilityConverter}}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
        <StackPanel Visibility="{Binding CanEditCatalogPath,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
         <Button Content="Открыть" Command="{Binding Hub.OpenFileCommand}" HorizontalAlignment="Left" Margin="0,12,0,0" AutomationProperties.AutomationId="PersonalCatalogOpen"/>
+        <Button Content="Скопировать путь" Click="OnCopyPath" Visibility="{Binding CanCopyCatalogPath,IsAsync=True,FallbackValue=Collapsed,Converter={StaticResource Task.BooleanToVisibilityConverter}}" HorizontalAlignment="Left" Margin="0,8,0,0" AutomationProperties.Name="Скопировать путь к файлу"/>
         <TextBlock Text="Путь к файлу или папке" Style="{StaticResource Personal.Label}"/>
         <TextBox x:Name="PathEditor" Text="{Binding CatalogPathDraft,UpdateSourceTrigger=PropertyChanged}" Height="Auto" MinHeight="64" MaxHeight="128" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Путь выбранной записи"/>
         <Button Content="Сохранить путь" Command="{Binding SaveCatalogPathCommand}" HorizontalAlignment="Left" Margin="0,10,0,0"/>

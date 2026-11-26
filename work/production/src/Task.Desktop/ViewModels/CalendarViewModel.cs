@@ -447,6 +447,17 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
             if (parameter is CalendarItemViewModel item) SelectedItem = item;
             return global::System.Threading.Tasks.Task.CompletedTask;
         }, parameter => IsActive && parameter is CalendarItemViewModel);
+        RecordThoughtCommand = new AsyncCommand(async (parameter, token) =>
+        {
+            var date = parameter switch
+            {
+                CalendarDayViewModel day => day.Date,
+                DateOnly selected => selected,
+                _ => _selectedDate,
+            };
+            if (RecordThoughtAtDate is { } open) await open(date, token);
+        }, parameter => parameter is CalendarDayViewModel or DateOnly && IsActive && CanRead && !IsReadOnly && !IsBusy &&
+            Editor is null && Recurrence?.IsOpen != true && RecordThoughtAtDate is not null && CanRecordThought?.Invoke() == true);
         NewEventCommand = new AsyncCommand((_, _) => { Editor = CreateEditor(null); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => CanCreate && Editor is null);
         EditEventCommand = new AsyncCommand((_, _) => { if (SelectedEvent is not null) Editor = CreateEditor(SelectedEvent); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => CanEdit);
         SaveEventCommand = new AsyncCommand((_, token) => SaveAsync(token), _ => CanSave);
@@ -608,6 +619,10 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     public AsyncCommand WeekModeCommand { get; }
     public AsyncCommand MonthModeCommand { get; }
     public AsyncCommand SelectItemCommand { get; }
+    /// <summary>Shell routing for an unsaved note whose planning day came from the calendar.</summary>
+    public Func<DateOnly, CancellationToken, global::System.Threading.Tasks.Task>? RecordThoughtAtDate { get; set; }
+    internal Func<bool>? CanRecordThought { get; set; }
+    public AsyncCommand RecordThoughtCommand { get; }
     public AsyncCommand NewEventCommand { get; }
     public AsyncCommand EditEventCommand { get; }
     public AsyncCommand SaveEventCommand { get; }
@@ -967,7 +982,7 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
     }
     private void UpdateEditorAccess() => Editor?.UpdatePeopleAccess(_capabilities, _active && CanRead && _sessionAllowsWrites && _networkAvailable
         && (Editor.Source is null ? _capabilities.Contains("CalendarEvent.Create") : _capabilities.Contains("CalendarEvent.Update")));
-    private void RaiseCommands() { RaiseFreeTimeCommands(); RefreshCommand.RaiseCanExecuteChanged(); PreviousWeekCommand.RaiseCanExecuteChanged(); NextWeekCommand.RaiseCanExecuteChanged(); TodayCommand.RaiseCanExecuteChanged(); DayModeCommand.RaiseCanExecuteChanged(); WeekModeCommand.RaiseCanExecuteChanged(); MonthModeCommand.RaiseCanExecuteChanged(); SelectItemCommand.RaiseCanExecuteChanged(); NewEventCommand.RaiseCanExecuteChanged(); EditEventCommand.RaiseCanExecuteChanged(); SaveEventCommand.RaiseCanExecuteChanged(); CancelEditorCommand.RaiseCanExecuteChanged(); }
+    private void RaiseCommands() { RaiseFreeTimeCommands(); RefreshCommand.RaiseCanExecuteChanged(); PreviousWeekCommand.RaiseCanExecuteChanged(); NextWeekCommand.RaiseCanExecuteChanged(); TodayCommand.RaiseCanExecuteChanged(); DayModeCommand.RaiseCanExecuteChanged(); WeekModeCommand.RaiseCanExecuteChanged(); MonthModeCommand.RaiseCanExecuteChanged(); SelectItemCommand.RaiseCanExecuteChanged(); RecordThoughtCommand.RaiseCanExecuteChanged(); NewEventCommand.RaiseCanExecuteChanged(); EditEventCommand.RaiseCanExecuteChanged(); SaveEventCommand.RaiseCanExecuteChanged(); CancelEditorCommand.RaiseCanExecuteChanged(); }
     internal static DateOnly StartOfWeek(DateOnly date, DayOfWeek firstDay = DayOfWeek.Monday) => date.AddDays(-(((int)date.DayOfWeek - (int)firstDay + 7) % 7));
     internal static (DateOnly FirstDate, DateOnly LastDateExclusive) GetVisibleDateRange(DateOnly anchor, CalendarViewMode mode, DayOfWeek firstDay = DayOfWeek.Monday) => mode switch
     {
@@ -995,6 +1010,6 @@ public sealed partial class CalendarViewModel : ViewModelBase, IDisposable
         if (_disposed) return;
         DisposeFreeTime();
         _disposed = true; Deactivate(); Editor = null; Recurrence?.Dispose(); _requestCancellation?.Dispose();
-        foreach (var command in new[] { RefreshCommand, PreviousWeekCommand, NextWeekCommand, TodayCommand, DayModeCommand, WeekModeCommand, MonthModeCommand, SelectItemCommand, NewEventCommand, EditEventCommand, SaveEventCommand, CancelEditorCommand }) command.Dispose();
+        foreach (var command in new[] { RefreshCommand, PreviousWeekCommand, NextWeekCommand, TodayCommand, DayModeCommand, WeekModeCommand, MonthModeCommand, SelectItemCommand, RecordThoughtCommand, NewEventCommand, EditEventCommand, SaveEventCommand, CancelEditorCommand }) command.Dispose();
     }
 }

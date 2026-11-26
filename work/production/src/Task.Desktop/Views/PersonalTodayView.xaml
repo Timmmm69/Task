@@ -86,6 +86,7 @@
      </StackPanel>
     </Border>
    </Grid>
+   <views:WorkdayFooter DataContext="{Binding DataContext.Workday, RelativeSource={RelativeSource AncestorType=Window}}"/>
   </StackPanel>
  </ScrollViewer>
 </UserControl>

@@ -45,6 +45,8 @@ public partial class MainWindow
     private async void OnNotificationTick(object? sender, EventArgs e)
     {
         _viewModel.MonthlyPlan?.RefreshUrgency();
+        if (!_notificationClosed && _viewModel.Workday is { } workday)
+            _ = workday.TickAsync(message => _tray?.SubmitMessage("Итог дня", message) == true);
         if (_notificationClosed || _notificationBusy || _notificationAgent is null || _notificationClient is null) return;
         _notificationBusy = true;
         var ct = _notificationPass.Token;

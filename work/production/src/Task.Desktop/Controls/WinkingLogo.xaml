@@ -1,0 +1,11 @@
+<UserControl x:Class="Task.Desktop.Controls.WinkingLogo" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Focusable="False" PreviewMouseLeftButtonDown="OnPress" Unloaded="OnUnloaded"
+ AutomationProperties.Name="Логотип Варава Дент">
+ <Viewbox Stretch="Uniform"><Grid Width="36" Height="36" Background="Transparent">
+  <Image Source="/Task.Desktop;component/Assets/VoravaDent.png" Stretch="Uniform"/>
+  <Canvas x:Name="Face" Opacity="0" IsHitTestVisible="False">
+   <Ellipse Width="2.1" Height="2.7" Fill="#153E55" Canvas.Left="11.5" Canvas.Top="14.2"/>
+   <Path Data="M 20,16 Q 22,13 24,15.2" Stroke="#153E55" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+  </Canvas>
+ </Grid></Viewbox>
+</UserControl>

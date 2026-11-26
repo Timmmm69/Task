@@ -27,7 +27,7 @@ internal sealed partial class PostgresProductApiStore(NpgsqlDataSource dataSourc
         ["calendar-events"] = new("calendar.events", "calendar_event", "Calendar.Read", ""),
         ["interactions"] = new("crm.interactions", "interaction", "Contact.Read", "counterpartyObjectId interactionType occurredAt subject details nextStep nextStepDueAt participantObjectIds"),
         ["employees"] = new("org.employee_profiles", "employee_profile", "Employee.Read", ""),
-        ["inbox-items"] = new("work.inbox_items", "inbox_item", "Inbox.ReadOwn", "itemType title content rawUrl rawPath status"),
+        ["inbox-items"] = new("work.inbox_items", "inbox_item", "Inbox.ReadOwn", "itemType title content rawUrl rawPath scheduledDate status"),
     };
 
     public ProductApiResponse Execute(ProductApiRequest request)

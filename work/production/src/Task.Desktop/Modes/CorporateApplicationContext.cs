@@ -344,7 +344,19 @@ internal sealed class CorporateApplicationContext : IApplicationExecutionContext
             serverEndpoint.AbsoluteUri + "/" + metadata.OrganizationId.ToString("D"), metadata.UserId,
             Infrastructure.ViewState.DeviceNamespace);
         var viewModel = new MainWindowViewModel(serverEndpoint, workflow.LogoutAsync, tasks, calendar, today, projects, workHub, connectivity, inbox, administration, viewState,
-            new Inventory.CorporateInventoryClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity));
+            new Inventory.CorporateInventoryClient(CreateHttpClient(), serverEndpoint, sessionService, connectivity))
+        {
+            Workday = new(viewState, TimeProvider.System,
+                async ct => workHub.BackgroundSettingsAccess && await workClient.GetUserSettingsAsync(ct) is DesktopWorkResult<DesktopUserSettings>.Succeeded ok ? ok.Value : null,
+                tasksClient.ReadDayAsync, tasksClient.ReadWeekAsync,
+                () => today.WorkdayAccess, () => today.WorkweekAccess,
+                async ct => workHub.BackgroundNotificationAccess && workHub.BackgroundSettingsAccess &&
+                    await workClient.GetNotificationPreferencesAsync(ct) is DesktopWorkResult<DesktopNotificationPreferences>.Succeeded ok &&
+                    Notifications.NotificationPresentationPolicy.Allows(ok.Value, DateTimeOffset.UtcNow))
+        };
+        today.Workday = viewModel.Workday;
+        viewModel.Workday.ZoneApplied += today.ApplyWorkdayZone;
+        workHub.UserSettingsApplied += viewModel.Workday.UpdateSettings;
         var window = new MainWindow(viewModel);
         async void RestorePreferences(object sender, System.Windows.RoutedEventArgs args)
         {

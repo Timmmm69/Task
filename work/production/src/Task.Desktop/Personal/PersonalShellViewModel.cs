@@ -15,6 +15,9 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     public PersonalShellViewModel(PersonalApplicationModel model, Infrastructure.ViewStateStore? viewState = null)
     {
         _model = model;
+        if (viewState is not null) Workday = model.CreateWorkday(viewState);
+        if (Workday is not null && model.Workspace is not null) model.Workspace.Hub.UserSettingsApplied += Workday.UpdateSettings;
+        if (viewState is not null && Tasks is not null) Tasks.AttachViewState(viewState);
         AddProjectTaskCommand = new(async (_, _) => await OpenProjectTaskAsync(), _ => CanAddProjectTask);
         if (viewState is not null) WorkPreferences = new(viewState, Sections, section => section.Route switch
         {
@@ -38,10 +41,16 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         Palette = new(model.Workspace?.Hub, PaletteCommands, this);
         foreach (var child in Children) child.PropertyChanged += OnChildChanged;
         if (Tasks is { } tasks) tasks.OpenTasksRequested += OpenTasks;
+        if (Calendar is { } calendar)
+        {
+            calendar.CanRecordThought = () => CanNavigate && Tasks is not null && Tasks.NewCommand.CanExecute(null);
+            calendar.RecordThoughtAtDate = OpenCalendarThoughtAsync;
+        }
         if (model.Workspace is { } workspace) workspace.OpenObjectRequested += OpenObject;
         if (model.Planning is { } planning) planning.OpenObjectRequested += OpenObject;
         ApplyRoute();
     }
+    public WorkdayViewModel? Workday { get; }
     public WorkPreferencesViewModel? WorkPreferences { get; }
     public AsyncCommand? NewTaskCommand => Tasks?.NewCommand;
     public AsyncCommand PlanTodayCommand { get; }
@@ -106,6 +115,7 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     private IEnumerable<ViewModelBase> Children => new ViewModelBase?[] { Tasks, Planning, Calendar, Calendar?.Recurrence, Workspace, Workspace?.Hub }.OfType<ViewModelBase>();
     private void OnChildChanged(object? sender, PropertyChangedEventArgs e)
     {
+        Calendar?.RecordThoughtCommand.RaiseCanExecuteChanged();
         PlanTodayCommand.RaiseCanExecuteChanged();
         OpenProjectsCommand.RaiseCanExecuteChanged();
         AddProjectTaskCommand.RaiseCanExecuteChanged(); OnPropertyChanged(nameof(ProjectTaskActionHint));
@@ -134,6 +144,13 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
         if (type == "project" && Planning is { } planning) planning.SelectedProject = planning.Projects.FirstOrDefault(p => p.Id == id);
         if (type == "calendar_event" && Calendar is { } calendar) _ = calendar.OpenEventByIdAsync(id);
     }
+    private async global::System.Threading.Tasks.Task OpenCalendarThoughtAsync(DateOnly date, CancellationToken token)
+    {
+        if (!CanNavigate || Tasks is null || token.IsCancellationRequested) return;
+        SelectedSection = Sections.First(section => section.Route == "inbox");
+        await Tasks.OpenCalendarThoughtAsync(date);
+        if (Tasks.HasCaptureScheduledDate) InboxCaptureRequested?.Invoke();
+    }
     internal void OpenTasks(Guid? id)
     {
         if (!CanNavigate) return;
@@ -156,6 +173,8 @@ public sealed partial class PersonalShellViewModel : ViewModelBase, IDisposable
     public void Dispose()
     {
         MonthlyPlan?.Deactivate();
+        if (Workday is not null && _model.Workspace is not null) _model.Workspace.Hub.UserSettingsApplied -= Workday.UpdateSettings;
+        Workday?.Dispose();
         WorkPreferences?.Dispose();
         PlanTodayCommand.Dispose();
         OpenProjectsCommand.Dispose();

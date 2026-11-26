@@ -78,6 +78,8 @@ internal sealed partial class PostgresProductApiStore
             if (!linkTargets && !compatible) continue;
             if (hasFiles is not null && resource.Type is "interaction" or "calendar_event" or "employee_profile") continue;
             var title = resource.Type is "contact" or "employee_profile" ? "p.display_name" : resource.Type == "interaction" ? "p.subject" : resource.Type is "task" or "calendar_event" or "notification" or "inbox_item" ? "p.title" : "p.name";
+            var description = resource.Type == "task" ? "p.card_content->>'description'" :
+                "COALESCE(to_jsonb(p)->>'description',to_jsonb(p)->>'details',to_jsonb(p)->>'notes')";
             var project = resource.Type == "project" ? "p.id::text" : "to_jsonb(p)->>'project_id'";
             var date = "COALESCE((to_jsonb(p)->>'start_at_utc')::timestamptz,(to_jsonb(p)->>'deadline_at')::timestamptz,(to_jsonb(p)->>'event_date')::timestamptz,o.updated_at)";
             var terminal = "COALESCE(to_jsonb(p)->>'status','') IN ('completed','cancelled','inactive')";
@@ -104,7 +106,7 @@ internal sealed partial class PostgresProductApiStore
                 clauses.Add(hasFiles == "true" ? accessible : "NOT(" + accessible + ")");
             }
             var projection = $"SELECT o.id,o.object_type,o.updated_at,CASE WHEN lower({title})=lower(@q) THEN 2 ELSE 1 END relevance," +
-                $"jsonb_build_object('objectId',o.id,'objectType',o.object_type,'title',{title},'version',o.version,'updatedAt',o.updated_at,'lifecycleState',o.lifecycle_state) result " +
+                $"jsonb_build_object('objectId',o.id,'objectType',o.object_type,'title',{title},'description',left(COALESCE({description},''),240),'version',o.version,'updatedAt',o.updated_at,'lifecycleState',o.lifecycle_state) result " +
                 $"{SearchObjectSource(resource)} AND {string.Join(" AND ", clauses)}";
             if (resource.Type == "task")
             {
@@ -129,7 +131,7 @@ internal sealed partial class PostgresProductApiStore
             if (SearchFilterValues(r, "userIds").Length > 0) clauses.Add("fl.owner_user_id::text=ANY(@userIds)");
             if (SearchFilterValues(r, "departments").Length > 0) clauses.Add("EXISTS(SELECT 1 FROM iam.user_accounts ua JOIN org.employee_profiles ep ON ep.id=ua.employee_profile_id AND ep.organization_id=ua.organization_id WHERE ua.organization_id=@org AND ua.id=fl.owner_user_id AND to_jsonb(ep)->>'department_id'=ANY(@departments))");
             union.Add("SELECT fl.id,'file_location'::text object_type,o.updated_at,CASE WHEN lower(ci.name)=lower(@q) THEN 2 ELSE 1 END relevance," +
-                "jsonb_build_object('objectId',fl.id,'objectType','file_location','parentObjectId',ci.id,'title',ci.name,'version',fl.version,'updatedAt',o.updated_at,'lifecycleState',o.lifecycle_state) result " +
+                "jsonb_build_object('objectId',fl.id,'objectType','file_location','parentObjectId',ci.id,'title',ci.name,'description',left(COALESCE(ci.description,''),240),'version',fl.version,'updatedAt',o.updated_at,'lifecycleState',o.lifecycle_state) result " +
                 $"{SearchFileLocationSource} AND {string.Join(" AND ", clauses)}");
         }
         if (hasFiles is not null && types.Length > 0 && !types.Any(type => type is "task" or "project" or "catalog_item" or "contact" or "company" or "file_location")) throw Invalid("hasFiles is incompatible with requested types.");

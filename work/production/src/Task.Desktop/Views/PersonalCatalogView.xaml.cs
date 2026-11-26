@@ -37,6 +37,13 @@ public partial class PersonalCatalogView : UserControl
     {
         if (Model?.CatalogSelection is { IsFolder: true } row) Model.BrowseCatalogFolder(row.Id);
     }
+    private async void OnCopyPath(object sender, RoutedEventArgs e)
+    {
+        var model = Model;
+        if (model?.CatalogSelection is not { CopyAllowed: true, Path: { Length: > 0 } path } row) return;
+        await Work.CatalogPathClipboard.CopyAsync(path,
+            () => IsVisible && Model == model && model.CatalogSelection is { CopyAllowed: true } current && current.Id == row.Id && current.Path == path, model.SetCatalogMessage);
+    }
     private void ActivateSelection()
     {
         if (Model is not { } model) return;

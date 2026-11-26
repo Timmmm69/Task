@@ -124,6 +124,23 @@ public sealed class InboxViewModelTests
     }
 
     [Fact]
+    public async global::System.Threading.Tasks.Task CalendarCapture_StaysUnsavedUntilExplicitSaveAndPreservesPlanningDate()
+    {
+        var date = new DateOnly(2026, 11, 27);
+        var created = CreateTask("Мысль после полуночи", new TaskCardContent { ScheduledDate = date });
+        var client = new FakeInboxClient { PageResult = Page(), CreateResult = new DesktopTaskWriteResult<DesktopTaskDto>.Succeeded(created, 1, false) };
+        using var model = new InboxViewModel(client, Capabilities);
+        await model.ActivateAsync();
+        model.BeginCalendarCapture(date);
+        Assert.Equal(date, model.CaptureScheduledDate);
+        Assert.Null(client.LastCreate);
+        model.CaptureText = created.Title;
+        await model.CaptureCommand.ExecuteAsync();
+        Assert.Equal(date, client.LastCaptureDate);
+        Assert.Equal(date, Assert.Single(model.Items).Source.Card!.ScheduledDate);
+    }
+
+    [Fact]
     public async global::System.Threading.Tasks.Task ConversionPatchesSameTaskAndClosesInboxSource()
     {
         var projectId = Guid.NewGuid();
@@ -426,13 +443,14 @@ public sealed class InboxViewModelTests
         Guid.NewGuid(), Guid.NewGuid(), 1, DateTimeOffset.UtcNow.AddMinutes(-10), DateTimeOffset.UtcNow,
         title, Guid.NewGuid(), DesktopTaskStatus.New, DesktopTaskPriority.Normal, null, null, [], [], null, card);
 
-    internal sealed class FakeInboxClient : IDesktopTasksApiClient, IDesktopTaskWorkspaceClient
+    internal sealed class FakeInboxClient : IDesktopTasksApiClient, IDesktopInboxCalendarCaptureClient, IDesktopTaskWorkspaceClient
     {
         public DesktopTasksApiResult<DesktopTaskPage> PageResult { get; set; } = Page();
         public DesktopTaskWriteResult<DesktopTaskDto> CreateResult { get; set; } = new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
         public DesktopTaskWriteResult<DesktopTaskDto> PatchResult { get; set; } = new DesktopTaskWriteResult<DesktopTaskDto>.ServerUnavailable();
         public TaskWorkspaceResult OptionsResult { get; set; } = new(new JsonObject(), 0, null);
         public DesktopCreateTaskCommand? LastCreate { get; private set; }
+        public DateOnly? LastCaptureDate { get; private set; }
         public DesktopPatchTaskCommand? LastPatch { get; private set; }
         public int PatchCalls { get; private set; }
         public CancellationToken PatchCancellationToken { get; private set; }
@@ -448,6 +466,11 @@ public sealed class InboxViewModelTests
         public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(DesktopCreateTaskCommand command, CancellationToken cancellationToken = default)
         {
             LastCreate = command;
+            return global::System.Threading.Tasks.Task.FromResult(CreateResult);
+        }
+        public global::System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateInboxAsync(DesktopCreateTaskCommand command, DateOnly? scheduledDate, CancellationToken cancellationToken)
+        {
+            LastCreate = command; LastCaptureDate = scheduledDate;
             return global::System.Threading.Tasks.Task.FromResult(CreateResult);
         }
 

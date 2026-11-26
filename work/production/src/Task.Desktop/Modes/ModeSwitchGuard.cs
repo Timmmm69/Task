@@ -99,7 +99,7 @@ internal static class ModeSwitchGuard
         if (shell.Inbox is { } inbox)
         {
             Add("Преобразование входящей задачи", () => inbox.Conversion is not null, () => inbox.IsBusy, inbox.SaveConversionCommand, unconfirmed: () => inbox.HasUnconfirmedMutation);
-            Add("Новая входящая задача", () => !string.IsNullOrEmpty(inbox.CaptureText), () => inbox.CaptureCommand.IsExecuting, inbox.CaptureCommand);
+            Add("Новая входящая задача", () => !string.IsNullOrEmpty(inbox.CaptureText) || inbox.HasCaptureScheduledDate, () => inbox.CaptureCommand.IsExecuting, inbox.CaptureCommand);
         }
         if (shell.WorkHub is { } work)
         {

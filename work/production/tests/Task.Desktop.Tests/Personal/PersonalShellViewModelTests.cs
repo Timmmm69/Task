@@ -1,6 +1,7 @@
 using System.IO;
 using Task.Application.Inventory;
 using Task.Desktop.Modes;
+using Task.Desktop.Infrastructure;
 using Task.Desktop.Personal;
 using Task.Desktop.ViewModels;
 
@@ -9,6 +10,30 @@ namespace Task.Desktop.Tests.Personal;
 public sealed class PersonalShellViewModelTests : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), "Task-personal-shell", Guid.NewGuid().ToString("N"));
+    [Fact]
+    public async System.Threading.Tasks.Task MyView_SavesRestoresAllPersonalFiltersAndFallsBackForRemovedOptions()
+    {
+        await using var preferences = new ViewStateStore(Path.Combine(_root, "preferences"), "personal", Guid.NewGuid(), "device");
+        await preferences.Ready;
+        using var model = new PersonalApplicationModel(_root);
+        using var shell = new PersonalShellViewModel(model, preferences);
+        var tasks = model.Tasks!;
+        shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks");
+        tasks.SearchText = "смета"; tasks.StatusFilter = 3; tasks.PriorityFilter = 4; tasks.SortOrder = 2; tasks.HideCompleted = true;
+        await tasks.SaveMyViewCommand.ExecuteAsync();
+        Assert.True(tasks.HasMyView);
+        tasks.SearchText = "другое"; tasks.StatusFilter = 0; tasks.PriorityFilter = 0; tasks.SortOrder = 0; tasks.HideCompleted = false;
+        await tasks.ApplyMyViewCommand.ExecuteAsync();
+        Assert.Equal("смета", tasks.SearchText); Assert.Equal(3, tasks.StatusFilter); Assert.Equal(4, tasks.PriorityFilter);
+        Assert.Equal(2, tasks.SortOrder); Assert.True(tasks.HideCompleted);
+
+        preferences.SetTaskListView("personal", new TaskListViewPreference(99, null, 99, "All", "RemovedSort", "смета", true));
+        await tasks.ApplyMyViewCommand.ExecuteAsync();
+        Assert.Equal(0, tasks.StatusFilter); Assert.Equal(0, tasks.PriorityFilter); Assert.Equal(0, tasks.SortOrder);
+        await tasks.DeleteMyViewCommand.ExecuteAsync();
+        Assert.False(tasks.HasMyView); Assert.False(tasks.ApplyMyViewCommand.CanExecute(null));
+    }
+
     [Fact]
     public async System.Threading.Tasks.Task Palette_UsesExistingPersonalSearchAndNavigation()
     {

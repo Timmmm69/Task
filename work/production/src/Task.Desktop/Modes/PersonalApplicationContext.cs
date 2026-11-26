@@ -11,12 +11,13 @@ public sealed class PersonalApplicationModel : IDisposable
 {
     private readonly CancellationTokenSource _lifetime = new();
     private readonly PersonalTaskStore? _store;
+    private readonly TimeProvider _clock = TimeProvider.System;
     public PersonalApplicationModel() { }
     public PersonalApplicationModel(string dataRoot, TimeProvider? clock = null)
         : this(dataRoot, clock, null) { }
     internal PersonalApplicationModel(string dataRoot, TimeProvider? clock, PersonalStoreOwnership? ownership, bool restoring = false, Action<UsageEvent>? usage = null)
     {
-        var time = clock ?? TimeProvider.System;
+        var time = _clock = clock ?? TimeProvider.System;
         _store = new(new PersonalDataPaths(dataRoot), time, ownership, restoring: restoring) { Usage = usage };
         try
         {
@@ -40,6 +41,18 @@ public sealed class PersonalApplicationModel : IDisposable
         }
         catch { Dispose(); throw; }
     }
+    internal WorkdayViewModel? CreateWorkday(Infrastructure.ViewStateStore preferences)
+    {
+        if (_store is null) return null;
+        return new(preferences, _clock,
+            _ => System.Threading.Tasks.Task.FromResult<Work.DesktopUserSettings?>(_store.WorkspaceSettings()),
+            (day, end, ct) => System.Threading.Tasks.Task.Run(() => _store.ReadDay(day, end, _clock.LocalTimeZone), ct),
+            (from, end, ct) => System.Threading.Tasks.Task.Run<Task.Application.WorkweekResults?>(() => _store.ReadWeek(from, end), ct),
+            () => !IsDisposed, () => !IsDisposed,
+            _ => System.Threading.Tasks.Task.FromResult(Notifications.NotificationPresentationPolicy.Allows(
+                _store.WorkspaceNotificationPreferences(), _clock.GetUtcNow())));
+    }
+
     internal PersonalTaskStore Store => _store ?? throw new InvalidOperationException("Personal storage not initialized.");
     public PersonalTasksViewModel? Tasks { get; }
     public PersonalPlanningViewModel? Planning { get; }

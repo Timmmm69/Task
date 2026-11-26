@@ -117,6 +117,7 @@ public partial class PersonalWindow : Window
     private void Reconcile()
     {
         if (_model.IsDisposed || !_enableWindowsIntegrations) return;
+        if (_shell.Workday is { } workday) _ = workday.TickAsync(message => _windowsNotifications?.SubmitMessage("Итог дня", message) == true);
         _model.Planning?.Reconcile();
         try
         {
@@ -146,7 +147,7 @@ public partial class PersonalWindow : Window
         try
         {
             // Project creation owns its refresh before opening the ordinary editor.
-            if (_shell.IsTasks && !_shell.AddProjectTaskCommand.IsExecuting && _model.Tasks is { HasDrafts: false } tasks) await tasks.RefreshAsync();
+            if (_shell.IsTasks && !_shell.AddProjectTaskCommand.IsExecuting && _model.Calendar?.RecordThoughtCommand.IsExecuting != true && _model.Tasks is { HasDrafts: false } tasks) await tasks.RefreshAsync();
             if (_closed || _model.IsDisposed) return;
             if (_shell.IsProjects) _model.Planning?.RefreshCommand.Execute(null);
             else if (_shell.IsNotifications) _model.Planning?.Refresh();

@@ -37,6 +37,29 @@ public sealed class ViewStateStoreTests : IDisposable
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task TaskListMyViews_RestorePerModeAndDiscardInvalidValues()
+    {
+        await using (var store = Create())
+        {
+            await store.Ready;
+            store.SetTaskListView("corporate", new TaskListViewPreference(2, Guid.NewGuid(), 1, "Today", "PriorityHighest"));
+            store.SetTaskListView("personal", new TaskListViewPreference(3, null, 2, "All", "TitleAscending", "смета", true));
+            await store.FlushAsync();
+        }
+
+        await using var restarted = Create(); await restarted.Ready;
+        Assert.Equal("Today", restarted.TaskListView("corporate")!.Deadline);
+        Assert.Equal("смета", restarted.TaskListView("personal")!.Search);
+        Assert.True(restarted.TaskListView("personal")!.HideCompleted);
+        restarted.SetTaskListView("corporate", restarted.TaskListView("corporate")! with { Sort = "RemovedSort" });
+        restarted.SetTaskListView("personal", null); await restarted.FlushAsync();
+
+        await using var afterDelete = Create(); await afterDelete.Ready;
+        Assert.Equal("Today", afterDelete.TaskListView("corporate")!.Deadline);
+        Assert.Null(afterDelete.TaskListView("personal"));
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task WorkPreferences_RestartIndependentlyAndSkipUnavailableStartupRoute()
     {
         await using (var corporate = Create())

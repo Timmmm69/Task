@@ -59,10 +59,11 @@ internal sealed partial class PostgresProductApiStore
             if (!r.Permissions.Contains("Project.Read") || Text(project, "lifecycleState") != "active") throw Error(403, "FORBIDDEN", "Project access is required.");
             card["projectId"] = r.Body["projectId"]!.DeepClone();
         }
-        if (r.Body["scheduledDate"] is not null)
+        var plannedDate = r.Body.ContainsKey("scheduledDate") ? r.Body["scheduledDate"] : current["scheduledDate"];
+        if (plannedDate is not null)
         {
-            if (!DateOnly.TryParseExact(Text(r.Body, "scheduledDate"), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _)) throw Invalid("Invalid scheduled date.");
-            card["scheduledDate"] = r.Body["scheduledDate"]!.DeepClone();
+            if (!DateOnly.TryParseExact(plannedDate.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _)) throw Invalid("Invalid scheduled date.");
+            card["scheduledDate"] = plannedDate.DeepClone();
         }
         Guid taskId;
         if (current["legacyTaskId"] is not null)
@@ -70,7 +71,7 @@ internal sealed partial class PostgresProductApiStore
             taskId = GuidValue(current, "legacyTaskId");
             var existing = RequireObject(c, t, r with { Id = taskId }, Resources["tasks"]);
             if (Text(existing, "lifecycleState") != "active") throw Error(409, "INVALID_STATE_TRANSITION", "The task is not active.");
-            if (r.Body["projectId"] is not null || r.Body["scheduledDate"] is not null)
+            if (card["projectId"] is not null || card["scheduledDate"] is not null)
             {
                 if (!r.Permissions.Contains("Task.Update")) throw Error(403, "FORBIDDEN", "Task update access is required.");
                 CheckObjectAction(c, t, r, taskId, "Task.Update");
@@ -109,18 +110,19 @@ internal sealed partial class PostgresProductApiStore
         Run(c, t, "UPDATE core.objects SET version=version+1,updated_at=statement_timestamp(),updated_by=@user WHERE organization_id=@org AND id=@id;", r, ("id", r.Id));
     private static JsonObject RedactInbox(JsonObject item)
     {
-        var fields = "id organizationId version createdAt updatedAt ownerUserId itemType title content rawUrl rawPath status convertedObjectId".Split(' ').ToHashSet();
+        var fields = "id organizationId version createdAt updatedAt ownerUserId itemType title content rawUrl rawPath scheduledDate status convertedObjectId".Split(' ').ToHashSet();
         foreach (var key in item.Select(pair => pair.Key).Where(key => !fields.Contains(key)).ToArray()) item.Remove(key);
         return item;
     }
     private static void ValidateInbox(JsonObject body, bool create)
     {
-        var fields = new Dictionary<string, int> { ["itemType"] = 20, ["title"] = 500, ["content"] = 20000, ["rawUrl"] = 2048, ["rawPath"] = 4096, ["status"] = 20 };
+        var fields = new Dictionary<string, int> { ["itemType"] = 20, ["title"] = 500, ["content"] = 20000, ["rawUrl"] = 2048, ["rawPath"] = 4096, ["scheduledDate"] = 10, ["status"] = 20 };
         if (body.Count == 0 || body.Any(pair => !fields.ContainsKey(pair.Key))) throw Invalid("Invalid inbox fields.");
         foreach (var pair in body)
             if (pair.Value is not null && (pair.Value.GetValueKind() != JsonValueKind.String || pair.Value.GetValue<string>().Length > fields[pair.Key])) throw Invalid("Invalid inbox field value.");
         if (create && Text(body, "itemType") is null || body.ContainsKey("itemType") && Text(body, "itemType") is not ("task" or "note" or "file_link" or "web_link" or "idea" or "assignment")) throw Invalid("Invalid inbox type.");
         if (body.ContainsKey("status") && Text(body, "status") is not ("unprocessed" or "discarded")) throw Invalid("Use conversion to set converted status.");
+        if (body["scheduledDate"] is not null && !DateOnly.TryParseExact(Text(body, "scheduledDate"), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _)) throw Invalid("Invalid scheduled date.");
         if (create) ValidateInboxContent(body);
     }
     private static void ValidateInboxContent(JsonObject body)

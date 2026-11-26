@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using System.IO;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -15,7 +16,7 @@ public sealed record DesktopCatalogItem(Guid Id, long Version, string Name, stri
 public sealed record DesktopContact(Guid Id, long Version, string DisplayName, string FirstName,
     string? LastName, string? Notes, string Status, string LifecycleState);
 public sealed record DesktopSearchResult(Guid ObjectId, string ObjectType, string Title,
-    Guid? ParentObjectId, long Version, DateTimeOffset UpdatedAt)
+    Guid? ParentObjectId, long Version, DateTimeOffset UpdatedAt, string? Description = null)
 {
     public string TypeLabel => ObjectType switch
     {
@@ -61,12 +62,14 @@ public sealed record DesktopFileLocation(Guid Id, long Version, string LocationT
     int Priority = 0, Guid? NetworkResourceId = null, Guid? DeviceId = null)
 {
     public bool IsPathVisible => !string.IsNullOrWhiteSpace(RawPath);
+    public bool CanCopyPath => CanOpenOnDevice && IsEnabled && IsPathVisible && CatalogPathClipboard.IsAvailable(RawPath);
     public string PathLabel => IsPathVisible ? RawPath! : "Путь скрыт вашей областью доступа";
     public string TypeLabel => LocationType switch { "unc_path" => "Сетевое расположение", "mapped_drive" => "Подключённый диск", _ => "Локальный путь" };
     public string PrimaryLabel => IsPrimary ? "Основное" : "Дополнительное";
     public string EnabledLabel => IsEnabled ? "Включено" : "Отключено";
     public string ScopeLabel => LocationType == "unc_path" ? "Разрешённый сетевой ресурс" : CanOpenOnDevice ? "Доступно на этом компьютере" : "Доступ зависит от пользователя и компьютера";
     public override string ToString() => $"{PrimaryLabel} · {TypeLabel} · {PathLabel} · {EnabledLabel}";
+
 }
 public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, string Title,
     long Version, string LifecycleState, DateTimeOffset UpdatedAt, DateTimeOffset? ArchivedAt,
@@ -98,7 +101,7 @@ public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, stri
 public sealed record DesktopUserSettings(long Version, string Language, string TimeFormat,
     int FirstDayOfWeek, string WorkdayStart, string WorkdayEnd, IReadOnlyList<int> WeekendDays,
     int DefaultTaskDurationMinutes, int DefaultReminderOffsetMinutes, bool AutostartEnabled,
-    bool AllowLocalPaths, bool ConfirmCatalogDelete, string MissingFileBehavior, string DateOnlyReminderTime = "09:00:00");
+    bool AllowLocalPaths, bool ConfirmCatalogDelete, string MissingFileBehavior, string DateOnlyReminderTime = "09:00:00", string? TimeZone = null);
 public sealed record DesktopNotificationPreferences(long Version, bool Enabled, bool DesktopEnabled,
     bool SoundEnabled, int DefaultSnoozeMinutes, string? QuietHoursStart, string? QuietHoursEnd,
     string? QuietHoursTimeZone);
@@ -431,7 +434,7 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
     private static DesktopContact? MapContact(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "displayName") is { Length: > 0 } display && Text(n, "firstName") is { Length: > 0 } first
         ? new(id, version, display, first, Text(n, "lastName"), Text(n, "notes"), Text(n, "status") ?? "active", Text(n, "lifecycleState") ?? "active") : null;
     private static DesktopSearchResult? MapSearch(JsonNode n) => Guid.TryParse(Text(n, "objectId"), out var id) && Text(n, "objectType") is { Length: > 0 } type && Text(n, "title") is { Length: > 0 } title && n["version"]?.GetValue<long>() is > 0 and var version && DateTimeOffset.TryParse(Text(n, "updatedAt"), out var updated)
-        ? new(id, type, title, Guid.TryParse(Text(n, "parentObjectId"), out var parent) ? parent : null, version, updated) : null;
+        ? new(id, type, title, Guid.TryParse(Text(n, "parentObjectId"), out var parent) ? parent : null, version, updated, Text(n, "description")) : null;
     private static DesktopNotification? MapNotification(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "notificationType") is { Length: > 0 } notificationType && Text(n, "title") is { Length: > 0 } title && Text(n, "body") is { } body && DateTimeOffset.TryParse(Text(n, "notBefore"), out var at)
         ? new(id, version, notificationType, title, body, Text(n, "severity") ?? "info", Text(n, "status") ?? "pending", Guid.TryParse(Text(n, "sourceObjectId"), out var source) ? source : null, at, DateEither(n, "expiresAt", "expires_at"), n["actionPayload"] is { } payload ? Text(payload, "sourceObjectType") : null, n["actionPayload"] is { } actions && Guid.TryParse(Text(actions, "reminderId"), out var reminder) ? reminder : null, DateEither(n, "deliveredAt", "delivered_at")) : null;
     private static DesktopFileLocation? MapLocation(JsonNode n) => Guid.TryParse(Text(n, "id"), out var id) && n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "locationType") is { Length: > 0 } type && Text(n, "rawPath") is { Length: > 0 } path && n["canOpenOnDevice"] is JsonValue flag && flag.TryGetValue<bool>(out var canOpen)
@@ -442,7 +445,7 @@ public sealed partial class DesktopWorkApiClient : IDesktopWorkApiClient
             DateEither(n, "purgeAfter", "purge_after"), Text(n, "status") ?? string.Empty) : null;
     private static DesktopUserSettings? MapUserSettings(JsonNode n) =>
         n["version"]?.GetValue<long>() is > 0 and var version && Text(n, "language") is { Length: > 0 } language && Text(n, "timeFormat") is { Length: > 0 } format && Text(n, "workdayStart") is { Length: > 0 } start && Text(n, "workdayEnd") is { Length: > 0 } end && Text(n, "missingFileBehavior") is { Length: > 0 } missing && Int(n, "firstDayOfWeek") is { } first && Int(n, "defaultTaskDurationMinutes") is { } duration && Int(n, "defaultReminderOffsetMinutes") is { } reminder && Bool(n, "autostartEnabled") is { } autostart && Bool(n, "allowLocalPaths") is { } local && Bool(n, "confirmCatalogDelete") is { } confirm && ReadIntArray(n, "weekendDays") is { } weekends
-            ? new(version, language, format, first, start, end, weekends, duration, reminder, autostart, local, confirm, missing, Text(n, "dateOnlyReminderTime") ?? "09:00:00") : null;
+            ? new(version, language, format, first, start, end, weekends, duration, reminder, autostart, local, confirm, missing, Text(n, "dateOnlyReminderTime") ?? "09:00:00", Text(n, "timeZone")) : null;
     private static DesktopNotificationPreferences? MapNotificationPreferences(JsonNode n) =>
         n["version"]?.GetValue<long>() is > 0 and var version && Bool(n, "enabled") is { } enabled && Bool(n, "desktopEnabled") is { } desktop && Bool(n, "soundEnabled") is { } sound && Int(n, "defaultSnoozeMinutes") is { } snooze
             ? new(version, enabled, desktop, sound, snooze, Text(n, "quietHoursStart"), Text(n, "quietHoursEnd"), Text(n, "quietHoursTimeZone")) : null;

@@ -1,5 +1,5 @@
 <UserControl x:Class="Task.Desktop.Views.PersonalCalendarView" x:Name="Surface"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:calendarActions="clr-namespace:Task.Desktop.Calendar" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Task.Desktop.Views" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
     Background="White" Foreground="{DynamicResource Personal.Airbnb.Ink}" FontSize="13" SizeChanged="OnSurfaceSizeChanged"
     AutomationProperties.Name="Личный календарь" AutomationProperties.AutomationId="PersonalCalendarScreen">
@@ -15,7 +15,8 @@
             </Button>
         </DataTemplate>
         <DataTemplate x:Key="DayHeader"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-            <Button Click="OnChooseDay" Tag="{Binding}" Padding="2,5" ToolTip="{Binding AutomationName}" AutomationProperties.Name="{Binding AutomationName}">
+            <Button Click="OnChooseDay" Tag="{Binding}" Padding="2,5" ToolTip="{Binding AutomationName}" AutomationProperties.Name="{Binding AutomationName}" calendarActions:CalendarThoughtMenu.Command="{Binding DataContext.RecordThoughtCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
                 <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Personal.Airbnb.Compact}">
                     <Setter Property="BorderThickness" Value="0,0,0,2"/><Setter Property="BorderBrush" Value="Transparent"/>
                     <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
@@ -99,7 +100,7 @@
                                 <TextBlock Text="Без&#10;времени" Foreground="{StaticResource Personal.Airbnb.Secondary}" FontSize="11" Margin="6,2"/>
                                 <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                     <ItemsControl ItemsSource="{Binding Days}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="{Binding CalendarColumns}"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate><DataTemplate><Border BorderBrush="#EEEEEE" BorderThickness="1,1,0,1" Padding="3"><ItemsControl ItemsSource="{Binding AllDayItems}" ItemTemplate="{StaticResource CompactEntry}"/></Border></DataTemplate></ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemTemplate><DataTemplate><Border Background="Transparent" calendarActions:CalendarThoughtMenu.Command="{Binding DataContext.RecordThoughtCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" BorderBrush="#EEEEEE" BorderThickness="1,1,0,1" Padding="3"><ItemsControl ItemsSource="{Binding AllDayItems}" ItemTemplate="{StaticResource CompactEntry}"/></Border></DataTemplate></ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </ScrollViewer>
                             </Grid>
@@ -111,7 +112,8 @@
                                     </ItemsControl>
                                     <ItemsControl ItemsSource="{Binding Days}" Margin="58,0,0,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="{Binding CalendarColumns}"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate><DataTemplate>
-                                            <Grid Height="{Binding DataContext.TimelineCanvasHeight,ElementName=Surface}" ClipToBounds="True">
+                                            <Grid Background="Transparent" Height="{Binding DataContext.TimelineCanvasHeight,ElementName=Surface}" ClipToBounds="True" calendarActions:CalendarThoughtMenu.Command="{Binding DataContext.RecordThoughtCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
                                                 <Border BorderBrush="#EEEEEE" BorderThickness="1,0,0,0" IsHitTestVisible="False"/>
                                                 <Canvas IsHitTestVisible="False" Panel.ZIndex="20" Visibility="{Binding ShowCurrentTime,Converter={StaticResource Visible}}"><Border Canvas.Top="{Binding CurrentTimeTop}" Height="1" Background="{StaticResource Personal.Airbnb.Accent}" Width="{Binding ActualWidth,RelativeSource={RelativeSource AncestorType=Grid}}"/></Canvas>
                                                 <ItemsControl ItemsSource="{Binding TimelineItems}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
@@ -142,7 +144,7 @@
                     </ScrollViewer>
                     <ScrollViewer x:Name="MonthScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Visibility="{Binding IsMonthMode,Converter={StaticResource Visible}}">
                         <ItemsControl ItemsSource="{Binding Days}" Width="{Binding ViewportWidth,ElementName=MonthScroll}" MinWidth="700"><ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="7"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate><DataTemplate><Border BorderBrush="#EEEEEE" BorderThickness="0,0,1,1" Padding="4" Height="188">
+                            <ItemsControl.ItemTemplate><DataTemplate><Border Background="Transparent" calendarActions:CalendarThoughtMenu.Command="{Binding DataContext.RecordThoughtCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" BorderBrush="#EEEEEE" BorderThickness="0,0,1,1" Padding="4" Height="188">
                                 <StackPanel><ContentControl Content="{Binding}" ContentTemplate="{StaticResource DayHeader}"/>
                                     <ItemsControl ItemsSource="{Binding Items,Converter={StaticResource Value},ConverterParameter=Preview}" ItemTemplate="{StaticResource CompactEntry}"/>
                                     <Button Click="OnOpenDay" Tag="{Binding}" Content="{Binding Items.Count,Converter={StaticResource Value},ConverterParameter=OverflowText}" Visibility="{Binding Items.Count,Converter={StaticResource Value},ConverterParameter=OverflowVisibility}" Style="{StaticResource Personal.Airbnb.Compact}" Padding="6,3" HorizontalAlignment="Left" AutomationProperties.Name="{Binding AutomationName}"/>

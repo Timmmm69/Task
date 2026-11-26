@@ -16,9 +16,13 @@ public interface IDesktopInboxConversionClient
 {
     System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> ConvertAsync(Guid id, long version, string title, CancellationToken token);
 }
+public interface IDesktopInboxCalendarCaptureClient
+{
+    System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateInboxAsync(DesktopCreateTaskCommand command, DateOnly? scheduledDate, CancellationToken token);
+}
 
 /// <summary>Existing InboxItem wire contract adapted to the shared desktop task editor.</summary>
-public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInboxConversionClient, IDesktopTaskWorkspaceClient
+public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInboxConversionClient, IDesktopInboxCalendarCaptureClient, IDesktopTaskWorkspaceClient
 {
     private readonly DesktopTasksApiClient _tasks;
     private readonly DesktopAuthenticatedGetExecutor _executor;
@@ -59,8 +63,12 @@ public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInbo
         { return new DesktopTasksApiResult<DesktopTaskDto>.MalformedResponse(); }
     }
     public async System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateTaskAsync(DesktopCreateTaskCommand command, CancellationToken cancellationToken = default)
+        => await CreateInboxAsync(command, null, cancellationToken).ConfigureAwait(false);
+    public async System.Threading.Tasks.Task<DesktopTaskWriteResult<DesktopTaskDto>> CreateInboxAsync(DesktopCreateTaskCommand command, DateOnly? scheduledDate, CancellationToken cancellationToken = default)
     {
-        var body = JsonSerializer.SerializeToUtf8Bytes(new { itemType = "task", title = command.Title });
+        var request = new JsonObject { ["itemType"] = "task", ["title"] = command.Title };
+        if (scheduledDate is { } date) request["scheduledDate"] = date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var body = JsonSerializer.SerializeToUtf8Bytes(request);
         var result = await _executor.SendAsync(HttpMethod.Post, _root, body, Guid.NewGuid().ToString("D"), null, command.IdempotencyKey, cancellationToken).ConfigureAwait(false);
         if (result is not AuthenticatedGetResult.Response { StatusCode: HttpStatusCode.Created } ok) return DesktopTasksApiClient.MapWriteResult(result, HttpStatusCode.Created);
         try
@@ -91,8 +99,9 @@ public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInbo
         { return new DesktopTaskWriteResult<DesktopTaskDto>.MalformedResponse(); }
         // The same logical source/version always retries the same canonical conversion.
         var key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes($"inbox-convert-task:{id:D}:{version.ToString(CultureInfo.InvariantCulture)}")));
+        var conversion = new JsonObject { ["expectedInboxVersion"] = version };
         var result = await _executor.SendAsync(HttpMethod.Post, new(_root + $"/{id:D}/convert-to-task"),
-            JsonSerializer.SerializeToUtf8Bytes(new { expectedInboxVersion = version }), Guid.NewGuid().ToString("D"), $"\"v{version}\"", key, token).ConfigureAwait(false);
+            JsonSerializer.SerializeToUtf8Bytes(conversion), Guid.NewGuid().ToString("D"), $"\"v{version}\"", key, token).ConfigureAwait(false);
         var mapped = DesktopTasksApiClient.MapWriteResult(result, HttpStatusCode.Created);
         if (mapped is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
         {
@@ -117,7 +126,7 @@ public sealed class DesktopInboxApiClient : IDesktopTasksApiClient, IDesktopInbo
         var content = node["content"]?.GetValue<string>();
         var title = node["title"]?.GetValue<string>() ?? content ?? "Входящая запись";
         return new(id, org, version, Date(node, "createdAt"), Date(node, "updatedAt"), title, owner,
-            DesktopTaskStatus.New, DesktopTaskPriority.Normal, null, null, [], [], null, new TaskCardContent { Description = content });
+            DesktopTaskStatus.New, DesktopTaskPriority.Normal, null, null, [], [], null, new TaskCardContent { Description = content, ScheduledDate = DateOnly.TryParse(node["scheduledDate"]?.GetValue<string>(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : null });
     }
     private static DateTimeOffset? Date(JsonNode node, string key) => node[key] is null ? null : DateTimeOffset.Parse(node[key]!.GetValue<string>(), CultureInfo.InvariantCulture);
     private static DesktopTasksApiResult<DesktopTaskPage> PageFailure(AuthenticatedGetResult result) => result switch

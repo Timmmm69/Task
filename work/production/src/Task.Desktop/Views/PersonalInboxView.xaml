@@ -29,6 +29,10 @@
     </Grid>
     <Button Grid.Column="1" Content="Записать" Command="{Binding CaptureCommand}" MinHeight="48" Margin="12,0,0,0" Padding="24,10" Background="{StaticResource Personal.Airbnb.Accent}" Foreground="White" AutomationProperties.AutomationId="PersonalCapture"/>
    </Grid>
+   <DockPanel Margin="2,6,0,0" Visibility="{Binding HasCaptureScheduledDate,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
+    <Button DockPanel.Dock="Right" Content="Снять дату" Click="OnClearCalendarDate" Padding="10,4" AutomationProperties.AutomationId="PersonalCaptureClearDate"/>
+    <TextBlock Text="{Binding CaptureScheduledDateText}" Style="{StaticResource Personal.Airbnb.Muted}" VerticalAlignment="Center"/>
+   </DockPanel>
    <TextBlock Text="Enter — записать · детали можно добавить позже" Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" Margin="2,6,0,0"/>
    <TextBlock Text="{Binding CaptureValidation}" Style="{StaticResource Personal.Validation}" AutomationProperties.AutomationId="PersonalCaptureValidation"/>
   </StackPanel>

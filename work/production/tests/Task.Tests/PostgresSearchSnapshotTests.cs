@@ -7,6 +7,21 @@ namespace Task.Tests;
 public sealed partial class PostgresProductApiTests
 {
     [RequiresPostgresFact]
+    public void SearchTaskPreviewUsesCardDescriptionAndKeepsLiteralTitleMatch()
+    {
+        using var db = Database.Create()!;
+        var description = "Смета [1] со скидкой. " + new string('я', 280);
+        var task = Domain.TaskAggregate.Create(Guid.NewGuid(), db.Organization, db.User, "Смета [1]",
+            DateTimeOffset.UtcNow, content: new() { Description = description });
+        new PostgresTaskAggregateStore(db.Source).Add(task);
+        var result = db.Call("search", "search", query: new Dictionary<string, string>
+        { ["q"] = "[1]", ["types"] = "task" });
+        var item = Assert.Single(result.Body!["items"]!.AsArray());
+        Assert.Equal(task.Metadata.Id.ToString(), item!["objectId"]!.GetValue<string>());
+        Assert.Equal(description[..240], item["description"]!.GetValue<string>());
+    }
+
+    [RequiresPostgresFact]
     public void SearchSuggestionsAndSinglePageDoNotWriteSnapshots()
     {
         using var db = Database.Create()!;

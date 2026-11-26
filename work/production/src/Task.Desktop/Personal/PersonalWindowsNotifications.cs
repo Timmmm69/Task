@@ -67,9 +67,13 @@ internal sealed class PersonalWindowsNotifications : IDisposable
     }
     public bool Submit(PersonalNotification notification, bool sound = true)
     {
+        return SubmitMessage(notification.Title, $"Личное напоминание · {notification.DueAt.ToLocalTime():dd.MM.yyyy HH:mm}. Откройте «Варава Дент», чтобы посмотреть уведомление.", sound);
+    }
+    internal bool SubmitMessage(string title, string body, bool sound = false)
+    {
         if (!_registered) return false;
-        _data.Flags = 0x10; _data.InfoTitle = notification.Title.Length > 63 ? notification.Title[..63] : notification.Title;
-        _data.Info = $"Личное напоминание · {notification.DueAt.ToLocalTime():dd.MM.yyyy HH:mm}. Откройте «Варава Дент», чтобы посмотреть уведомление.";
+        _data.Flags = 0x10; _data.InfoTitle = title.Length > 63 ? title[..63] : title;
+        _data.Info = body.Length > 255 ? body[..255] : body;
         _data.InfoFlags = 1 | 0x80 | (sound ? 0u : 0x10u); // information, quiet time, optional no-sound
         return NotifyIcon(1, ref _data);
     }

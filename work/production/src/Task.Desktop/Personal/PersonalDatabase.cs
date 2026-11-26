@@ -7,7 +7,7 @@ namespace Task.Desktop.Personal;
 internal sealed class PersonalDatabase : IDisposable
 {
     internal const int ApplicationId = 0x54534B50;
-    internal const int CurrentSchemaVersion = 6;
+    internal const int CurrentSchemaVersion = 7;
     internal SqliteConnection Connection { get; }
 
     public PersonalDatabase(PersonalDataPaths paths, Action<string>? fault = null, bool restoring = false, int targetVersion = CurrentSchemaVersion)
@@ -133,6 +133,12 @@ internal sealed class PersonalDatabase : IDisposable
                     AND substr(planning_month,6,2) BETWEEN '01' AND '12');
                 PRAGMA user_version=6;
                 """;
+            command.ExecuteNonQuery();
+            version = 6;
+        }
+        if (version == 6 && targetVersion >= 7)
+        {
+            command.CommandText = "ALTER TABLE tasks ADD COLUMN calendar_note_date TEXT; PRAGMA user_version=7;";
             command.ExecuteNonQuery();
         }
         command.CommandText = "SELECT value FROM personal_metadata WHERE key='PersonalActorId';";

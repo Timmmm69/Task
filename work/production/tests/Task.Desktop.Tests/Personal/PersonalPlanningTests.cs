@@ -23,6 +23,7 @@ public sealed class PersonalPlanningTests : IDisposable
     private PersonalDataPaths Paths => new(_root);
     private readonly Clock _clock = new(new(2026, 10, 5, 8, 0, 0, TimeSpan.Zero));
     internal const string RemoveDeadlineSchema = """
+        ALTER TABLE tasks DROP COLUMN calendar_note_date;
         ALTER TABLE tasks DROP COLUMN planning_month;
         DROP INDEX personal_task_deadline_reminder;
         ALTER TABLE personal_reminders DROP COLUMN managed_source;

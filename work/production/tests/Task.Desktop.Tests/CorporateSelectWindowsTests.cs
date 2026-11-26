@@ -3,6 +3,8 @@ using System.IO;
 using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -13,6 +15,7 @@ using System.Windows.Threading;
 using Task.Desktop.Infrastructure;
 using Task.Desktop.Tests.TaskScreen;
 using Task.Desktop.ViewModels;
+using Task.Desktop.TaskApi;
 
 namespace Task.Desktop.Tests;
 
@@ -53,10 +56,47 @@ public sealed class CorporateSelectWindowsTests
                 {
                     var client = new ActionTasksClient(ActionTasksClient.Source("Корпоративная задача"));
                     using var tasks = new TasksViewModel(client, ["Task.Read", "Task.Create", "Task.Update"]);
-                    using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks);
+                    await using var preferences = new ViewStateStore(Path.Combine(Path.GetTempPath(), "Task-my-view-ui", Guid.NewGuid().ToString("N")),
+                        "server/org", Guid.NewGuid(), "device");
+                    await preferences.Ready;
+                    using var shell = new MainWindowViewModel(new Uri("https://fixture.invalid"), null, tasks, viewState: preferences);
                     shell.SelectedSection = shell.Sections.Single(s => s.Route == "tasks"); await tasks.ActivateAsync();
                     window = new MainWindow(shell) { ShowInTaskbar = false };
                     window.Show(); window.Activate(); await Drain(window);
+                    var viewMenu = Descendants<MenuItem>(window).Single(item => AutomationProperties.GetName(item) == "Мой вид задач");
+                    MenuItem Action(string name) => viewMenu.Items.OfType<MenuItem>().Single(item => AutomationProperties.GetName(item) == name);
+                    async System.Threading.Tasks.Task Choose(string name)
+                    {
+                        viewMenu.IsSubmenuOpen = true; await Drain(window);
+                        var item = Action(name);
+                        Assert.True(item.IsVisible && item.IsEnabled);
+                        ((IInvokeProvider)new MenuItemAutomationPeer(item).GetPattern(PatternInterface.Invoke)).Invoke();
+                        await Drain(window);
+                    }
+                    var priorityFilter = Find(window, "TasksPriorityFilter");
+                    Find(window, "TasksStatusFilter").SelectedValue = DesktopTaskStatus.InProgress;
+                    priorityFilter.SelectedValue = DesktopTaskPriority.High; await Drain(window);
+                    Find(window, "TasksDeadlineFilter").SelectedValue = TaskDeadlineFilter.Today;
+                    Find(window, "TasksSortOrder").SelectedValue = TaskSortOrder.TitleAscending;
+                    await Choose("Сохранить Мой вид");
+                    Find(window, "TasksStatusFilter").SelectedValue = null;
+                    priorityFilter.SelectedValue = DesktopTaskPriority.Low;
+                    Find(window, "TasksDeadlineFilter").SelectedValue = TaskDeadlineFilter.All;
+                    Find(window, "TasksSortOrder").SelectedValue = TaskSortOrder.UpdatedNewest; await Drain(window);
+                    await Choose("Применить Мой вид");
+                    Assert.Equal(DesktopTaskPriority.High, tasks.SelectedPriorityFilter);
+                    Assert.Equal(DesktopTaskStatus.InProgress, tasks.SelectedStatusFilter);
+                    Assert.Equal(TaskDeadlineFilter.Today, tasks.SelectedDeadlineFilter);
+                    Assert.Equal(TaskSortOrder.TitleAscending, tasks.SelectedSortOrder);
+                    preferences.SetTaskListView("corporate", new TaskListViewPreference(99, Guid.NewGuid(), 99, "RemovedDeadline", "RemovedSort"));
+                    await Choose("Применить Мой вид");
+                    Assert.Null(tasks.SelectedStatusFilter); Assert.Null(tasks.SelectedPriorityFilter);
+                    Assert.Equal(TaskDeadlineFilter.All, tasks.SelectedDeadlineFilter); Assert.Equal(TaskSortOrder.UpdatedNewest, tasks.SelectedSortOrder);
+                    await Choose("Удалить Мой вид");
+                    Assert.False(tasks.HasMyView);
+                    viewMenu.IsSubmenuOpen = true; await Drain(window);
+                    CaptureWindow(window, "corporate-my-view.png");
+                    viewMenu.IsSubmenuOpen = false;
                     var template = app.FindResource("Personal.Select.Template");
                     Assert.True(PersonalSelect.GetScope(window));
                     foreach (var combo in Descendants<ComboBox>(window).Where(c => c.IsLoaded)) Assert.Same(template, combo.Template);
@@ -161,6 +201,14 @@ public sealed class CorporateSelectWindowsTests
         var surface = (FrameworkElement)Part<Popup>(combo, "PART_Popup").Child;
         var image = new RenderTargetBitmap((int)Math.Ceiling(surface.ActualWidth), (int)Math.Ceiling(surface.ActualHeight), 96, 96, PixelFormats.Pbgra32);
         image.Render(surface); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(image));
+        using var output = File.Create(Path.Combine(directory, name)); encoder.Save(output);
+    }
+    private static void CaptureWindow(Window window, string name)
+    {
+        if (Environment.GetEnvironmentVariable("TASK_CORPORATE_SELECT_EVIDENCE") is not { Length: > 0 } directory) return;
+        Directory.CreateDirectory(directory);
+        var image = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth), (int)Math.Ceiling(window.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+        image.Render(window); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(image));
         using var output = File.Create(Path.Combine(directory, name)); encoder.Save(output);
     }
 }

@@ -43,6 +43,11 @@ public partial class InboxView : UserControl
         e.Effects = DragDropEffects.None; e.Handled = true; ClearFileDrag();
         MessageBox.Show(Window.GetWindow(this), FileDropBlocker, "Входящие", MessageBoxButton.OK, MessageBoxImage.Information);
     }
+    private void OnClearCalendarDate(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is InboxViewModel { IsBusy: false } model) model.ClearCalendarDate();
+    }
+
     public InboxView()
     {
         InitializeComponent();

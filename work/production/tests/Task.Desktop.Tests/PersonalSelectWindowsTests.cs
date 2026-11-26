@@ -3,6 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
+using System.Windows.Documents;
+using Task.Desktop.Controls;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -143,18 +147,76 @@ public sealed class PersonalSelectWindowsTests
 
                     using var model = new PersonalApplicationModel(data);
                     model.Store.SaveProject(new(Guid.Empty, 0, "Проверка списков", null, Task.Desktop.Projects.DesktopProjectStatus.Active, null, null));
+                    var personalCopyPath = Path.Combine(data, "файл с пробелами.txt");
+                    File.WriteAllText(personalCopyPath, "проверка копирования");
+                    var personalCopyItem = model.Store.CreateCatalog("Файл для копирования", "file_reference", "Образец: ФАЙЛ для проверки");
+                    model.Store.AddPersonalLocation(personalCopyItem.Id, personalCopyItem.Version, personalCopyPath);
+                    model.Store.SaveWorkspaceSettings(model.Store.WorkspaceSettings() with { AllowLocalPaths = true });
                     model.Planning!.Refresh();
                     Exception? createError = null;
                     model.Tasks!.NewCommand.ExecutionFailed += error => createError = error;
-                    personal = new PersonalWindow(model) { ShowInTaskbar = false };
+                    await using var savedViews = new ViewStateStore(data, "personal", model.Store.LocalActorId, "display");
+                    await savedViews.Ready;
+                    personal = new PersonalWindow(model, false, savedViews) { ShowInTaskbar = false };
                     personal.Show(); personal.Activate(); await Drain(personal);
                     var shell = (PersonalShellViewModel)personal.DataContext;
+                    shell.SelectedSection = shell.Sections.Single(section => section.Route == "catalog"); await Drain(personal);
+                    Assert.Equal("catalog", shell.SelectedSection.Route);
+                    var catalog = Descendants<ListBox>(personal).Single(list => AutomationProperties.GetAutomationId(list) == "PersonalCatalogList");
+                    catalog.SelectedIndex = 0; await Drain(personal);
+                    var originalClipboard = new ClipboardSnapshot();
+                    try
+                    {
+                        var copyPath = Descendants<Button>(personal).Single(button => AutomationProperties.GetName(button) == "Скопировать путь к файлу");
+                        for (var i = 0; i < 100 && !copyPath.IsVisible; i++) await System.Threading.Tasks.Task.Delay(20);
+                        Assert.True(copyPath.IsVisible);
+                        copyPath.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Drain(personal);
+                        for (var i = 0; i < 100 && !model.Workspace!.Message.Contains("скопирован"); i++) await System.Threading.Tasks.Task.Delay(20);
+                        Assert.True(model.Workspace!.Message.Contains("скопирован"), $"Copy result: {model.Workspace.Message}; route: {shell.SelectedSection.Route}; selected: {model.Workspace.CatalogSelection?.Name}, enabled: {model.Workspace.CanCopyCatalogPath}");
+                        Assert.Equal(personalCopyPath, Clipboard.GetText());
+                        Assert.Contains("скопирован", model.Workspace!.Message, StringComparison.CurrentCultureIgnoreCase);
+                        Capture(personal, "personal-catalog-copy-path.png");
+                    }
+                    finally
+                    {
+                        originalClipboard.Dispose();
+                    }
+                    shell.SelectedSection = shell.Sections.Single(section => section.Route == "search");
+                    await Drain(personal);
+                    var searchInput = Descendants<TextBox>(personal).Single(box => AutomationProperties.GetAutomationId(box) == "PersonalSearchInput");
+                    searchInput.Text = "файл";
+                    await model.Workspace!.Search.SubmitCommand.ExecuteAsync();
+                    await Drain(personal);
+                    var matches = Descendants<SearchHighlightTextBlock>(personal).Where(block => block.IsVisible)
+                        .SelectMany(block => block.Inlines.OfType<Run>()).Where(run => run.Background is not null).ToList();
+                    Assert.Contains(matches, run => run.Text == "Файл");
+                    Assert.Contains(matches, run => run.Text == "ФАЙЛ");
+                    Capture(personal, "personal-search.png");
+
                     var inspected = new HashSet<ComboBox>();
                     foreach (var section in shell.Sections)
                     {
                         shell.SelectedSection = section; await Drain(personal);
                         if (section.Route == "tasks")
                         {
+                            var menu = Descendants<MenuItem>(personal).Single(item => AutomationProperties.GetName(item) == "Мой вид задач");
+                            async System.Threading.Tasks.Task Choose(string name)
+                            {
+                                menu.IsSubmenuOpen = true; await Drain(personal);
+                                var item = menu.Items.OfType<MenuItem>().Single(item => AutomationProperties.GetName(item) == name);
+                                Assert.True(item.IsEnabled && item.IsVisible);
+                                ((IInvokeProvider)new MenuItemAutomationPeer(item).GetPattern(PatternInterface.Invoke)).Invoke();
+                                await Drain(personal);
+                            }
+                            model.Tasks!.SortOrder = 1;
+                            await Choose("Сохранить Мой вид");
+                            model.Tasks.ResetViewFilters();
+                            Assert.Equal(0, model.Tasks.SortOrder);
+                            await Choose("Применить Мой вид");
+                            Assert.Equal(1, model.Tasks.SortOrder);
+                            Capture(personal, "personal-my-view.png");
+                            await Choose("Удалить Мой вид");
+                            Assert.False(model.Tasks.HasMyView);
                             Assert.True(await model.Tasks!.NewCommand.ExecuteAsync(), "Personal new-task command disabled");
                             Assert.True(model.Tasks.Editor is not null, "Personal editor failed: " + createError);
                             await Drain(personal);

@@ -11,7 +11,7 @@ namespace Task.Infrastructure.Persistence;
 /// Every query independently applies organization, object type, and lifecycle
 /// predicates; cursor contents can never broaden those predicates.
 /// </summary>
-public sealed class PostgresTaskReadStore : ITaskReadStore
+public sealed partial class PostgresTaskReadStore : ITaskReadStore
 {
     public const int PageSize = 50;
     public const int TodayPageSize = 200;

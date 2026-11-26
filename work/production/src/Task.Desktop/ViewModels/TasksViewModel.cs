@@ -339,6 +339,7 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     private readonly Func<TimeSpan, global::System.Threading.Tasks.Task> _completionDelay;
 
     private readonly TaskDocumentAccess? _taskDocuments;
+    private Infrastructure.ViewStateStore? _viewState;
 
     public TasksViewModel(
         IDesktopTasksApiClient client,
@@ -379,6 +380,12 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 {
                     TaskChoice { Id: { } id } project => draft => draft.Card.SeedProject(id, project.Name),
                     Calendar.FreeTimeSlot slot => draft => draft.SeedCalendarSlot(slot),
+                    DateOnly date => draft =>
+                    {
+                        draft.Card.Date = date.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+                        draft.SetStatus($"Черновик запланирован на {date:dd.MM.yyyy}. Сохраните задачу после проверки.");
+                    }
+                    ,
                     _ => null,
                 };
                 await OpenNewDraftAsync(context, token);
@@ -436,6 +443,14 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
                 return global::System.Threading.Tasks.Task.CompletedTask;
             },
             _ => HasActiveFilters);
+        SaveMyViewCommand = new AsyncCommand((_, _) => { SaveMyView(); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => IsActive && _viewState?.Ready.IsCompletedSuccessfully == true);
+        ApplyMyViewCommand = new AsyncCommand((_, _) => { ApplyMyView(); return global::System.Threading.Tasks.Task.CompletedTask; }, _ => HasMyView);
+        DeleteMyViewCommand = new AsyncCommand((_, _) =>
+        {
+            _viewState?.SetTaskListView("corporate", null);
+            NotifyMyViewChanged();
+            return global::System.Threading.Tasks.Task.CompletedTask;
+        }, _ => HasMyView);
     }
 
     public IReadOnlyList<TaskFilterOption<DesktopTaskStatus?>> StatusFilters { get; } =
@@ -915,6 +930,53 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
     public AsyncCommand ConfirmTransitionCommand { get; }
     public AsyncCommand CancelTransitionCommand { get; }
     public AsyncCommand ResetFiltersCommand { get; }
+    public AsyncCommand SaveMyViewCommand { get; }
+    public AsyncCommand ApplyMyViewCommand { get; }
+    public AsyncCommand DeleteMyViewCommand { get; }
+    public bool HasMyView => _viewState?.TaskListView("corporate") is not null;
+
+    internal void AttachViewState(Infrastructure.ViewStateStore viewState)
+    {
+        _viewState = viewState;
+        _ = RefreshSavedViewAvailabilityAsync(viewState);
+        NotifyMyViewChanged();
+    }
+
+    private async global::System.Threading.Tasks.Task RefreshSavedViewAvailabilityAsync(Infrastructure.ViewStateStore viewState)
+    {
+        await viewState.Ready;
+        if (!ReferenceEquals(_viewState, viewState)) return;
+        NotifyMyViewChanged();
+    }
+
+    private void NotifyMyViewChanged()
+    {
+        OnPropertyChanged(nameof(HasMyView));
+        SaveMyViewCommand.RaiseCanExecuteChanged();
+        ApplyMyViewCommand.RaiseCanExecuteChanged();
+        DeleteMyViewCommand.RaiseCanExecuteChanged();
+    }
+
+    private void SaveMyView()
+    {
+        _viewState?.SetTaskListView("corporate", new((int?)SelectedStatusFilter, SelectedProjectFilter.ProjectId,
+            (int?)SelectedPriorityFilter, SelectedDeadlineFilter.ToString(), SelectedSortOrder.ToString(),
+            WithoutProject: !SelectedProjectFilter.IsAll && SelectedProjectFilter.ProjectId is null));
+        NotifyMyViewChanged();
+    }
+
+    private void ApplyMyView()
+    {
+        var saved = _viewState?.TaskListView("corporate");
+        if (saved is null) return;
+        _selectedStatusFilter = saved.Status is { } status && Enum.IsDefined((DesktopTaskStatus)status) ? (DesktopTaskStatus)status : null;
+        _selectedPriorityFilter = saved.Priority is { } priority && Enum.IsDefined((DesktopTaskPriority)priority) ? (DesktopTaskPriority)priority : null;
+        _selectedDeadlineFilter = Enum.TryParse<TaskDeadlineFilter>(saved.Deadline, out var deadline) && Enum.IsDefined(deadline) ? deadline : TaskDeadlineFilter.All;
+        _selectedSortOrder = Enum.TryParse<TaskSortOrder>(saved.Sort, out var sort) && Enum.IsDefined(sort) ? sort : TaskSortOrder.UpdatedNewest;
+        _selectedProjectFilter = ProjectFilters.FirstOrDefault(item => item.ProjectId == saved.ProjectId && item.IsAll == (saved.ProjectId is null && !saved.WithoutProject)) ?? TaskProjectFilter.AllProjects;
+        foreach (var name in new[] { nameof(SelectedStatusFilter), nameof(SelectedPriorityFilter), nameof(SelectedDeadlineFilter), nameof(SelectedSortOrder), nameof(SelectedProjectFilter) }) OnPropertyChanged(name);
+        ApplyLocalFilters();
+    }
 
     internal void UpdateCapabilities(IEnumerable<string>? capabilities)
     {
@@ -1192,6 +1254,9 @@ public sealed partial class TasksViewModel : ViewModelBase, IDisposable
         ConfirmTransitionCommand.Dispose();
         CancelTransitionCommand.Dispose();
         ResetFiltersCommand.Dispose();
+        SaveMyViewCommand.Dispose();
+        ApplyMyViewCommand.Dispose();
+        DeleteMyViewCommand.Dispose();
         _mutationCancellation?.Dispose();
     }
 

@@ -337,6 +337,7 @@ public sealed partial class TodayViewModel
     {
         if (_disposed || _isConnected == isConnected) return;
         _isConnected = isConnected;
+        Workday?.InvalidateAccess();
         OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(IsReadOnly));
         OnPropertyChanged(nameof(ShowReadOnlyState));

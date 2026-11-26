@@ -7,6 +7,7 @@ namespace Task.Desktop.Personal;
 public sealed record PersonalCatalogRow(DesktopCatalogItem Source, string Path, string Location)
 {
     public string ParentLocation { get; init; } = "Каталог";
+    public bool CopyAllowed { get; init; }
     public Guid Id => Source.Id;
     public string Name => Source.Name;
     public string TypeLabel => Source.ItemTypeLabel;
@@ -51,6 +52,8 @@ public sealed partial class PersonalWorkspaceViewModel
     }
     public bool HasCatalogSelection => CatalogSelection is not null;
     public bool CanEditCatalogPath => CatalogSelection is { IsFolder: false };
+    public bool CanCopyCatalogPath => CatalogSelection is { CopyAllowed: true, Path: { Length: > 0 } path }
+        && Work.CatalogPathClipboard.IsAvailable(path);
     public string CatalogPathDraft
     {
         get => CatalogSelection is { } row ? _catalogPathDrafts.GetValueOrDefault(row.Id, row.Path) : "";
@@ -106,7 +109,16 @@ public sealed partial class PersonalWorkspaceViewModel
         }
         try
         {
-            _catalogRows = Hub.Catalog.Select(i => new PersonalCatalogRow(i, i.ItemType == "virtual_folder" ? "" : _store.PersonalLocation(i.Id)?.RawPath ?? "", Location(i)) { ParentLocation = i.ParentId is { } parentId && items.TryGetValue(parentId, out var parent) ? Location(parent) : "Каталог" }).ToArray();
+            var allowLocal = _store.WorkspaceSettings().AllowLocalPaths;
+            _catalogRows = Hub.Catalog.Select(item =>
+            {
+                var location = item.ItemType == "virtual_folder" ? null : _store.PersonalLocation(item.Id);
+                return new PersonalCatalogRow(item, location?.RawPath ?? "", Location(item))
+                {
+                    ParentLocation = item.ParentId is { } parent && items.TryGetValue(parent, out var folder) ? Location(folder) : "Каталог",
+                    CopyAllowed = location is { CanOpenOnDevice: true, IsEnabled: true } && (location.LocationType != "local_path" || allowLocal)
+                };
+            }).ToArray();
             if (_catalogFolderId is { } id && !_catalogRows.Any(r => r.Id == id && r.IsFolder)) _catalogFolderId = null;
             Refresh();
             var selectedId = Hub.SelectedCatalogItem?.Id ?? CatalogSelection?.Id;
@@ -127,9 +139,13 @@ public sealed partial class PersonalWorkspaceViewModel
     }
     private void NotifyCatalogInspector()
     {
-        foreach (var name in new[] { nameof(CatalogSelection), nameof(HasCatalogSelection), nameof(CanEditCatalogPath), nameof(CatalogPathDraft) }) OnPropertyChanged(name);
+        foreach (var name in new[] { nameof(CatalogSelection), nameof(HasCatalogSelection), nameof(CanEditCatalogPath), nameof(CanCopyCatalogPath), nameof(CatalogPathDraft) }) OnPropertyChanged(name);
         SaveCatalogPathCommand.RaiseCanExecuteChanged();
     }
+
+    internal void SetCatalogMessage(string message) => Message = message;
+
+
     private void FilterCatalog()
     {
         IEnumerable<PersonalCatalogRow> rows = _catalogRows;

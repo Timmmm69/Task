@@ -42,6 +42,9 @@ public sealed record DesktopTaskDto(
     IReadOnlyList<Guid> WatcherIds,
     Guid? RecurrenceSeriesId, TaskCardContent? Card = null, DateTimeOffset? CompletedAtUtc = null)
 {
+    // Personal-only planning marker. It is intentionally distinct from an ordinary
+    // scheduled date, which means the task remains an inbox note until conversion.
+    public DateOnly? CalendarNoteDate { get; init; }
     public IReadOnlyList<Task.Application.TaskFolderReference>? LinkedFolders { get; init; }
 }
 

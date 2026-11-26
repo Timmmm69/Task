@@ -21,7 +21,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         CultureInfo.GetCultureInfo("ru-RU");
 
     private readonly IDesktopCalendarApiClient _client;
-    private readonly TimeZoneInfo _timeZone;
+    private TimeZoneInfo _timeZone;
     private readonly Func<DateTimeOffset> _clock;
     private readonly HashSet<string> _capabilities;
 
@@ -94,6 +94,17 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
             NotifyQuickActions();
         }
     }
+
+    internal void ApplyWorkdayZone(TimeZoneInfo zone)
+    {
+        if (_timeZone.Equals(zone) || _disposed) return;
+        _timeZone = zone;
+        if (_active && _sessionAvailable && IsConnected) _ = LoadAsync(false, CancellationToken.None);
+    }
+
+    internal WorkdayViewModel? Workday { get; set; }
+    internal bool WorkdayAccess => !_disposed && _sessionAvailable && IsConnected && CanReadTasks;
+    internal bool WorkweekAccess => WorkdayAccess && _capabilities.Contains("History.Read");
 
     public DateOnly Today => _today;
 
@@ -241,6 +252,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
         }
 
         var updatedCapabilities = capabilities?.ToArray() ?? [];
+        if (!_capabilities.SetEquals(updatedCapabilities)) Workday?.InvalidateAccess();
         var taskAccessChanged = CanReadTasks != updatedCapabilities.Contains("Task.Read");
         var calendarAccessChanged = CanRead != updatedCapabilities.Contains("Calendar.Read");
         if (taskAccessChanged) StopQuickActions();
@@ -299,6 +311,7 @@ public sealed partial class TodayViewModel : ViewModelBase, IDisposable
 
         var changed = _sessionAvailable != sessionAvailable;
         _sessionAvailable = sessionAvailable;
+        if (changed) Workday?.InvalidateAccess();
         RefreshCommand.RaiseCanExecuteChanged();
         OpenItemCommand.RaiseCanExecuteChanged();
 

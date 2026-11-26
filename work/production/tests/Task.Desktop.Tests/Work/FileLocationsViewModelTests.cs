@@ -1,3 +1,4 @@
+using System.IO;
 using Task.Desktop.Administration;
 using Task.Desktop.ViewModels;
 using Task.Desktop.Work;
@@ -178,6 +179,20 @@ public sealed class FileLocationsViewModelTests
         Assert.Contains("скрыт", location.ToString());
         var resource = new DesktopNetworkResource(Guid.NewGuid(), 1, "Документы", null, null, "active"); Assert.Equal("Документы", resource.ToString());
         Assert.Equal("Сетевое расположение", new CatalogItemTypeChoice("unc_path", "Сетевое расположение").ToString());
+    }
+
+    [Fact]
+    public void CopyPathIsAvailableOnlyForAnAccessibleExistingFileSystemPath()
+    {
+        var path = Path.GetTempFileName();
+        try
+        {
+            Assert.True(new DesktopFileLocation(Guid.NewGuid(), 1, "local_path", path, true).CanCopyPath);
+            Assert.False(new DesktopFileLocation(Guid.NewGuid(), 1, "local_path", "https://intranet.example/file", true).CanCopyPath);
+            Assert.False(new DesktopFileLocation(Guid.NewGuid(), 1, "local_path", path, false).CanCopyPath);
+            Assert.False(new DesktopFileLocation(Guid.NewGuid(), 1, "local_path", path, true, IsEnabled: false).CanCopyPath);
+        }
+        finally { File.Delete(path); }
     }
 
     private sealed class Client : IDesktopFileLocationsClient

@@ -50,6 +50,8 @@ public sealed partial class TaskEndpointsTests
     [InlineData(TasksUrl)]
     [InlineData(TasksUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")]
     [InlineData(TasksUrl + "/today")]
+    [InlineData(TasksUrl + "/day-result")]
+    [InlineData(TasksUrl + "/week")]
     public async global::System.Threading.Tasks.Task GetTaskEndpoints_WithoutToken_Return401(string url)
     {
         using var server = CreateServer(new FakeTaskReadStore(Projection));
@@ -80,6 +82,8 @@ public sealed partial class TaskEndpointsTests
     [Theory]
     [InlineData(TasksUrl)]
     [InlineData(TasksUrl + "/today")]
+    [InlineData(TasksUrl + "/day-result")]
+    [InlineData(TasksUrl + "/week")]
     public async global::System.Threading.Tasks.Task GetTasks_WithoutTaskManagePermission_Returns403(string url)
     {
         using var server = CreateServer(new FakeTaskReadStore(Projection), grantTaskRead: false);
@@ -88,6 +92,31 @@ public sealed partial class TaskEndpointsTests
         var response = await client.GetAsync(url);
 
         await AssertProblemAsync(response, HttpStatusCode.Forbidden, "FORBIDDEN");
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async global::System.Threading.Tasks.Task WorkdayRoutesBindActorAndCutoffAndEnforceHistoryAccess(bool history)
+    {
+        var store = new WorkdayStore(Projection);
+        var permissions = new HashSet<string> { TaskPermissionAuthorization.TaskReadBackingPermissionCode };
+        if (history) permissions.Add(Application.ProductData.ProductApiRoute.GetBackingPermission("History.Read"));
+        using var server = CreateServer(store, grantedPermissions: permissions);
+        using var client = await CreateAuthenticatedClientAsync(server, OrganizationId);
+        var start = new DateTimeOffset(2026, 11, 27, 0, 0, 0, TimeSpan.Zero);
+        var cutoff = start.AddHours(18);
+        static string Stamp(DateTimeOffset value) => Uri.EscapeDataString(value.ToString("O"));
+        var route = $"{TasksUrl}/day-result?date=2026-11-27&from={Stamp(start)}&to={Stamp(start.AddDays(1))}";
+        var day = await client.GetAsync($"{route}&through={Stamp(cutoff)}");
+        Assert.Equal(HttpStatusCode.OK, day.StatusCode);
+        Assert.Equal(1, JsonDocument.Parse(await day.Content.ReadAsStringAsync()).RootElement.GetProperty("completed").GetInt32());
+        Assert.Equal((OrganizationId, UserId, cutoff), store.Day);
+        Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync($"{route}&through={Stamp(start.AddDays(2))}")).StatusCode);
+        var week = await client.GetAsync($"{TasksUrl}/week?from={Stamp(start.AddDays(-4))}&through={Stamp(cutoff)}");
+        Assert.Equal(history ? HttpStatusCode.OK : HttpStatusCode.Forbidden, week.StatusCode);
+        if (history) Assert.Equal((OrganizationId, UserId, cutoff), store.Week);
+        else Assert.Null(store.Week);
     }
 
     [Fact]
@@ -490,7 +519,27 @@ public sealed partial class TaskEndpointsTests
 
     private sealed record TestKeyMaterial(string PrivateKeyPath, string VerificationKeysDirectory);
 
-    private sealed class FakeTaskReadStore : ITaskReadStore
+    private sealed class WorkdayStore(TaskReadProjection task) : FakeTaskReadStore(task), IWorkdayReadStore, IWorkweekReadStore
+    {
+        public (Guid, Guid, DateTimeOffset)? Day { get; private set; }
+        public (Guid, Guid, DateTimeOffset)? Week { get; private set; }
+
+        public global::System.Threading.Tasks.Task<WorkdayResult?> ReadDayAsync(Guid organization, Guid actor,
+            TaskTodayWindow day, DateTimeOffset cutoff, CancellationToken token)
+        {
+            Day = (organization, actor, cutoff);
+            return global::System.Threading.Tasks.Task.FromResult<WorkdayResult?>(new(1, 2));
+        }
+
+        public global::System.Threading.Tasks.Task<WorkweekResults> ReadWeekAsync(Guid organization, Guid actor,
+            DateTimeOffset from, DateTimeOffset through, CancellationToken token)
+        {
+            Week = (organization, actor, through);
+            return global::System.Threading.Tasks.Task.FromResult(new WorkweekResults(0, []));
+        }
+    }
+
+    private class FakeTaskReadStore : ITaskReadStore
     {
         private readonly List<TaskReadProjection> _tasks;
 

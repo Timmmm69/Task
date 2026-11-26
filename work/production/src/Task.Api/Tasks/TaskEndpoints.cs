@@ -29,6 +29,12 @@ internal static partial class TaskEndpoints
         app.MapGet(TasksRoute, GetTasksAsync)
             .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
 
+        app.MapGet(TasksRoute + "/day-result", GetDayResultAsync)
+            .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
+
+        app.MapGet(TasksRoute + "/week", GetWorkweekAsync)
+            .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
+
         app.MapGet(TasksRoute + "/today", GetTodayTasksAsync)
             .RequireAuthorization(TaskPermissionAuthorization.TaskReadPolicyName);
 

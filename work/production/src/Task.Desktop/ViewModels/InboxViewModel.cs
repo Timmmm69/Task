@@ -30,6 +30,8 @@ public sealed class InboxItemViewModel
     public Guid Id => Source.Id;
     public string Title => Source.Title;
     public string CreatedText { get; }
+    public bool HasPlanningDate => Source.Card?.ScheduledDate is not null;
+    public string PlanningDateText => HasPlanningDate ? $"Дата планирования: {Source.Card!.ScheduledDate:dd.MM.yyyy}" : "";
     public string StatusText => "Новая";
     public string AutomationName { get; }
 
@@ -71,6 +73,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
     private DesktopPatchTaskCommand? _conversionPatch;
     private long _conversionPatchRevision;
     private string _captureText = string.Empty;
+    private DateOnly? _captureScheduledDate;
     private string _screenMessage = string.Empty;
     private InboxScreenState _state;
     private bool _isActive;
@@ -166,6 +169,28 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
             OnPropertyChanged(nameof(CanCapture));
             CaptureCommand.RaiseCanExecuteChanged();
         }
+    }
+    public DateOnly? CaptureScheduledDate => _captureScheduledDate;
+    public bool HasCaptureScheduledDate => _captureScheduledDate.HasValue;
+    public string CaptureScheduledDateText => _captureScheduledDate is { } date ? $"Дата планирования: {date:dd.MM.yyyy}" : string.Empty;
+    internal bool CanBeginCalendarCapture => CanCaptureFromShell && _client is IDesktopInboxCalendarCaptureClient
+        && !IsBusy && !HasConversion && string.IsNullOrEmpty(CaptureText) && !HasCaptureScheduledDate;
+
+    public void ClearCalendarDate()
+    {
+        _captureScheduledDate = null;
+        OnPropertyChanged(nameof(CaptureScheduledDate));
+        OnPropertyChanged(nameof(HasCaptureScheduledDate));
+        OnPropertyChanged(nameof(CaptureScheduledDateText));
+    }
+
+    public void BeginCalendarCapture(DateOnly date)
+    {
+        if (!CanBeginCalendarCapture) return;
+        _captureScheduledDate = date;
+        OnPropertyChanged(nameof(CaptureScheduledDate));
+        OnPropertyChanged(nameof(HasCaptureScheduledDate));
+        OnPropertyChanged(nameof(CaptureScheduledDateText));
     }
 
     public InboxScreenState State
@@ -474,7 +499,9 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
             }
             var previousUnknownCapture = _unconfirmedCapture;
             _unconfirmedCapture = true;
-            var result = await _client.CreateTaskAsync(command, cancellationToken).ConfigureAwait(true);
+            var result = _captureScheduledDate is { } date && _client is IDesktopInboxCalendarCaptureClient calendarCapture
+                ? await calendarCapture.CreateInboxAsync(command, date, cancellationToken).ConfigureAwait(true)
+                : await _client.CreateTaskAsync(command, cancellationToken).ConfigureAwait(true);
             _unconfirmedCapture = previousUnknownCapture || IsUnconfirmed(result);
             if (result is DesktopTaskWriteResult<DesktopTaskDto>.Succeeded success)
             {
@@ -482,6 +509,7 @@ public sealed class InboxViewModel : ViewModelBase, IDisposable
                 Items = [item, .. Items.Where(existing => existing.Id != item.Id)];
                 SelectedItem = item;
                 if (CaptureText == capturedText) CaptureText = string.Empty;
+                ClearCalendarDate();
                 State = InboxScreenState.Loaded;
                 ScreenMessage = "Запись добавлена во входящие.";
             }

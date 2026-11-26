@@ -40,6 +40,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         ServerAddress = serverEndpoint?.GetLeftPart(UriPartial.Authority);
         _logout = logout;
         Tasks = tasks;
+        if (tasks is not null && viewState is not null) tasks.AttachViewState(viewState);
         MonthlyPlan = tasks?.CreateMonthlyPlan(() => IsConnected, OpenMonthlyTaskAsync);
         if (MonthlyPlan is { } monthlyPlan) monthlyPlan.PropertyChanged += OnMonthlyPlanPropertyChanged;
         Calendar = calendar;
@@ -71,6 +72,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
                 if (Tasks is null || Tasks.Editor is not null || !IsConnected || !Tasks.CanCreateFromShell) return;
                 await OpenNewTaskAsync(slot, token);
             };
+            Calendar.CanRecordThought = () => IsConnected && Inbox?.CanBeginCalendarCapture == true;
+            Calendar.RecordThoughtAtDate = OpenCalendarThoughtAsync;
         }
         if (Projects is not null)
         {
@@ -136,6 +139,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         };
     }
 
+    public WorkdayViewModel? Workday { get; internal init; }
     public WorkPreferencesViewModel? WorkPreferences { get; }
     public AsyncCommand PlanTodayCommand { get; }
     public AsyncCommand OpenProjectsCommand { get; }
@@ -508,6 +512,8 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         LogoutCommand.Dispose();
         AddProjectTaskCommand.Dispose();
+        if (Workday is not null && WorkHub is not null) WorkHub.UserSettingsApplied -= Workday.UpdateSettings;
+        Workday?.Dispose();
         WorkPreferences?.Dispose();
         PlanTodayCommand.Dispose();
         OpenProjectsCommand.Dispose();
@@ -608,8 +614,20 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private System.Threading.Tasks.Task OpenCalendarThoughtAsync(DateOnly date, CancellationToken token)
+    {
+        if (!token.IsCancellationRequested && Inbox?.CanBeginCalendarCapture == true && IsConnected)
+        {
+            Inbox.BeginCalendarCapture(date);
+            SelectedSection = Sections.First(section => section.Route == "inbox");
+            InboxCaptureRequested?.Invoke();
+        }
+        return System.Threading.Tasks.Task.CompletedTask;
+    }
+
     private void OnInboxPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        Calendar?.RecordThoughtCommand.RaiseCanExecuteChanged();
         if (e.PropertyName is nameof(InboxViewModel.IsReadOnly)
             or nameof(InboxViewModel.WriteAccessText)
             or nameof(InboxViewModel.LastSuccessfulRefreshText))

@@ -8,6 +8,14 @@
  <StackPanel Margin="0,0,12,8"><TextBlock Text="Статус" Style="{StaticResource Personal.Airbnb.Muted}"/><ComboBox Width="150" ItemsSource="{Binding StatusFilters}" SelectedIndex="{Binding StatusFilter}" AutomationProperties.Name="Фильтр по статусу" Margin="0,4,0,0"/></StackPanel>
  <StackPanel Margin="0,0,12,8"><TextBlock Text="Приоритет" Style="{StaticResource Personal.Airbnb.Muted}"/><ComboBox Width="160" ItemsSource="{Binding PriorityFilters}" SelectedIndex="{Binding PriorityFilter}" AutomationProperties.Name="Фильтр по приоритету" Margin="0,4,0,0"/></StackPanel>
  <StackPanel Margin="0,0,12,8"><TextBlock Text="Сортировка" Style="{StaticResource Personal.Airbnb.Muted}"/><ComboBox Width="200" ItemsSource="{Binding SortOrders}" SelectedIndex="{Binding SortOrder}" AutomationProperties.Name="Сортировка задач" Margin="0,4,0,0"/></StackPanel>
+ <Menu Background="Transparent" VerticalAlignment="Bottom" Margin="0,0,8,8" KeyboardNavigation.TabIndex="8">
+     <MenuItem Header="Мой вид ▾" AutomationProperties.Name="Мой вид задач" Padding="8,6">
+         <MenuItem Header="Применить" Command="{Binding ApplyMyViewCommand}" AutomationProperties.Name="Применить Мой вид"/>
+         <MenuItem Header="Сохранить текущий вид" Command="{Binding SaveMyViewCommand}" AutomationProperties.Name="Сохранить Мой вид"/>
+         <Separator/>
+         <MenuItem Header="Удалить" Command="{Binding DeleteMyViewCommand}" AutomationProperties.Name="Удалить Мой вид"/>
+     </MenuItem>
+ </Menu>
  <Button Content="Сбросить" Click="OnReset" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
  </WrapPanel>
  <Grid Grid.Row="2" x:Name="BrowserGrid"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition x:Name="InspectorColumn" Width="340"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition x:Name="InspectorRow" Height="0"/></Grid.RowDefinitions>

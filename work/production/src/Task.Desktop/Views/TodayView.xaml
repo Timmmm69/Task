@@ -244,8 +244,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <views:WorkdayFooter Grid.Row="4" DataContext="{Binding DataContext.Workday, RelativeSource={RelativeSource AncestorType=Window}}"/>
         <Border Grid.RowSpan="3" Style="{StaticResource Task.Workspace.Background}" />
 
         <Border x:Name="TodayStateBanner" Grid.Row="0" Padding="16,10"

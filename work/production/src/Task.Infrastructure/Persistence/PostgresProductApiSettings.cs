@@ -51,7 +51,20 @@ internal sealed partial class PostgresProductApiStore
             ["customPreferences"] = new JsonObject(),
             ["version"] = 1,
         };
-        if (r.Route.Method == "GET") return new(current, Version: Version(current));
+        ProductApiResponse Response()
+        {
+            if (!organization)
+            {
+                var profile = One(c, t, """
+                    SELECT jsonb_build_object('timeZone',COALESCE(p.preferred_time_zone,o.default_time_zone))
+                    FROM iam.user_accounts u JOIN org.employee_profiles p ON p.organization_id=u.organization_id AND p.id=u.employee_profile_id
+                    JOIN core.organizations o ON o.id=u.organization_id WHERE u.organization_id=@org AND u.id=@user
+                    """, r);
+                current["timeZone"] = profile?["timeZone"]?.DeepClone();
+            }
+            return new(current, Version: Version(current));
+        }
+        if (r.Route.Method == "GET") return Response();
         if (r.ExpectedVersion != Version(current)) throw Error(412, "VERSION_CONFLICT", "Settings version has changed.");
         ValidateFields(r.Body, organization
             ? "trashRetentionDays historyRetentionDays changeFeedRetentionDays recurrenceHorizonDays recurrenceMinInstances defaultWorkdayStart defaultWorkdayEnd firstDayOfWeek maxRequestBytes"
@@ -74,7 +87,7 @@ internal sealed partial class PostgresProductApiStore
         }
         Record(c, t, r, r.Route.Resource, organization ? r.OrganizationId : r.UserId, oldVersion + 1,
             new JsonObject { ["version"] = oldVersion }, current);
-        return new(current, Version: oldVersion + 1);
+        return Response();
     }
 
     private const string NotificationPreferencesSelect = "SELECT to_jsonb(p)-'organization_id'-'user_account_id'-'notification_type'-'updated_at' FROM notify.notification_preferences p " +

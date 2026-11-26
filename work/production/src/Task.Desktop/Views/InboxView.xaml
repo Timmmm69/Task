@@ -218,7 +218,11 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <Button Grid.Column="2" Content="Снять дату" Margin="4,0,0,0" Click="OnClearCalendarDate"
+                                Visibility="{Binding HasCaptureScheduledDate, Converter={StaticResource Task.BooleanToVisibilityConverter}}"
+                                AutomationProperties.Name="Снять дату планирования черновика"/>
                         <TextBox x:Name="InboxCaptureTextBox" Text="{Binding CaptureText, UpdateSourceTrigger=PropertyChanged}"
                                  state:FormKeyboard.Capture="{Binding CaptureCommand}" Style="{StaticResource Personal.Airbnb.Input}"
                                  MaxLength="500" TabIndex="10"
@@ -262,6 +266,9 @@
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding CaptureText}" Value="">
                                         <Setter Property="Text" Value="Нажмите Enter, чтобы записать. Детали можно добавить при разборе." />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding HasCaptureScheduledDate}" Value="True">
+                                        <Setter Property="Text" Value="{Binding CaptureScheduledDateText}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -517,7 +524,8 @@
                                     </Border>
                                     <TextBlock Text="{Binding SelectedItem.Title}" Style="{StaticResource Personal.Airbnb.Heading}"
                                                Margin="0,0,0,8" />
-                                    <TextBlock Text="{Binding SelectedItem.CreatedText, StringFormat='Создано: {0}'}"
+                                    <TextBlock Text="{Binding SelectedItem.PlanningDateText}" TextWrapping="Wrap" Visibility="{Binding SelectedItem.HasPlanningDate, Converter={StaticResource Task.BooleanToVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding SelectedItem.CreatedText, StringFormat='Создано: {0}'}"
                                                Style="{StaticResource Task.Workspace.Meta}" TextWrapping="Wrap" />
                                     <TextBlock Text="При преобразовании можно указать проект и срок."
                                                Style="{StaticResource Task.Workspace.Body}" Margin="0,12,0,0" />

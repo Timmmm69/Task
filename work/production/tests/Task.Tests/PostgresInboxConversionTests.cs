@@ -103,4 +103,17 @@ public sealed partial class PostgresProductApiTests
         Assert.Equal(Id(project).ToString(), converted.Body["projectId"]!.GetValue<string>());
         Assert.Equal(403, Assert.Throws<ProductApiException>(() => db.Call("inbox-items", "convert-to-task", body, Id(source), 1, key: "project-conversion-001", admin: false, permissions: ["Inbox.ManageOwn"])).Status);
     }
+
+    [RequiresPostgresFact]
+    public void Inbox_CapturedScheduledDateSurvivesReadAndConversion()
+    {
+        using var db = Database.Create(); Assert.NotNull(db);
+        var source = db.Call("inbox-items", "create", "{\"itemType\":\"note\",\"title\":\"From calendar\",\"scheduledDate\":\"2026-11-27\"}");
+        Assert.Equal("2026-11-27", source.Body!["scheduledDate"]!.GetValue<string>());
+        var id = Id(source);
+        var reread = db.Call("inbox-items", "get", id: id);
+        Assert.Equal("2026-11-27", reread.Body!["scheduledDate"]!.GetValue<string>());
+        var converted = db.Call("inbox-items", "convert-to-task", "{\"expectedInboxVersion\":1}", id, 1);
+        Assert.Equal("2026-11-27", converted.Body!["scheduledDate"]!.GetValue<string>());
+    }
 }

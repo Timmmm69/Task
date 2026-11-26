@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:inv="clr-namespace:Task.Desktop.Inventory" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
+        xmlns:logo="clr-namespace:Task.Desktop.Controls" xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:inv="clr-namespace:Task.Desktop.Inventory" xmlns:vm="clr-namespace:Task.Desktop.ViewModels"
         mc:Ignorable="d"
         state:PersonalSelect.Scope="True"
         Title="Варава Дент — пространство компании"
@@ -124,7 +124,7 @@
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="48" Margin="5,0" ToolTip="Варава Дент · Пространство компании">
                     <Border Width="36" Height="36" VerticalAlignment="Center"
                             Background="{DynamicResource Task.Brush.Surface.Hover}" CornerRadius="12">
-                        <Image Source="/Task.Desktop;component/Assets/VoravaDent.png" Width="30" Height="30" Stretch="Uniform" />
+                        <logo:WinkingLogo Width="30" Height="30" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Text="Варава Дент" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"
                                Margin="8,0,0,0" Style="{StaticResource RailLabel}" />
@@ -1113,6 +1113,14 @@
                                FontSize="{DynamicResource Task.Font.Size.Metadata}"
                                AutomationProperties.Name="Количество показанных задач" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Menu Background="Transparent" VerticalAlignment="Center" Margin="0,0,8,0" KeyboardNavigation.TabIndex="8">
+                            <MenuItem Header="Мой вид ▾" AutomationProperties.Name="Мой вид задач" Padding="8,6">
+                                <MenuItem Header="Применить" Command="{Binding ApplyMyViewCommand}" AutomationProperties.Name="Применить Мой вид"/>
+                                <MenuItem Header="Сохранить текущий вид" Command="{Binding SaveMyViewCommand}" AutomationProperties.Name="Сохранить Мой вид"/>
+                                <Separator/>
+                                <MenuItem Header="Удалить" Command="{Binding DeleteMyViewCommand}" AutomationProperties.Name="Удалить Мой вид"/>
+                            </MenuItem>
+                        </Menu>
                         <Button Content="Сбросить фильтры" Command="{Binding ResetFiltersCommand}"
                                 Style="{StaticResource Task.Button.Secondary}" TabIndex="7" VerticalAlignment="Center" Margin="0,0,12,0"
                                 AutomationProperties.Name="Сбросить все фильтры задач" AutomationProperties.AutomationId="TasksResetFilters" />

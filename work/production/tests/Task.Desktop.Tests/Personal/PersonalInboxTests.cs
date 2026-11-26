@@ -69,6 +69,58 @@ public sealed class PersonalInboxTests : IDisposable
         await vm.SaveCommand.ExecuteAsync(); Assert.Equal(vm.Items.Last().Source.Id, vm.Selected?.Source.Id);
     }
     [Fact]
+    public async System.Threading.Tasks.Task CalendarNote_SurvivesRestartThenConvertsToOrdinaryScheduledTask()
+    {
+        Guid noteId;
+        var date = new DateOnly(2026, 12, 14);
+        using (var model = Create())
+        {
+            var vm = model.Tasks!;
+            vm.BeginCalendarCapture(date);
+            Assert.Equal(date, vm.CaptureScheduledDate);
+            Assert.Null(vm.Editor);
+            vm.ClearCalendarDate();
+            Assert.Null(vm.CaptureScheduledDate);
+            vm.BeginCalendarCapture(date);
+            vm.CaptureText = "Позвонить после встречи";
+            await vm.CaptureCommand.ExecuteAsync();
+            noteId = Assert.Single(vm.Items).Source.Id;
+            var saved = model.Store.Get(noteId)!;
+            Assert.Equal(date, saved.CalendarNoteDate);
+            Assert.Null(saved.Card!.ScheduledDate);
+            model.Store.Create(new("Обычная задача с датой", DesktopTaskPriority.Normal, card: new() { ScheduledDate = date }));
+        }
+
+        using var restarted = Create();
+        var inbox = restarted.Tasks!;
+        await inbox.RefreshAsync();
+        var note = Assert.Single(inbox.Items);
+        Assert.Equal(noteId, note.Source.Id);
+        Assert.Equal("14.12.2026", note.ScheduleText);
+        Assert.Equal(1, inbox.InboxCount);
+        inbox.SelectedSection = restarted.Sections.Single(section => section.Title == "Задачи");
+        Assert.Contains(inbox.Items, item => item.Title == "Обычная задача с датой");
+        inbox.SelectedSection = restarted.Sections.Single(section => section.Title == "Пометки");
+        await inbox.EditCommand.ExecuteAsync();
+        Assert.Equal("14.12.2026", inbox.Editor!.Card.Date);
+        inbox.Editor.Title = "Позвонить после встречи (уточнено)";
+        await inbox.SaveCommand.ExecuteAsync();
+        var renamed = restarted.Store.Get(noteId)!;
+        Assert.Equal(date, renamed.CalendarNoteDate);
+        Assert.Null(renamed.Card!.ScheduledDate);
+        Assert.Equal(1, inbox.InboxCount);
+        await inbox.EditCommand.ExecuteAsync();
+        inbox.Editor.Card.Description = "Перезвонить по итогам";
+        await inbox.SaveCommand.ExecuteAsync();
+
+        var converted = restarted.Store.Get(noteId)!;
+        Assert.Null(converted.CalendarNoteDate);
+        Assert.Equal(date, converted.Card!.ScheduledDate);
+        await inbox.RefreshAsync();
+        Assert.Empty(inbox.Items);
+        Assert.Equal(0, inbox.InboxCount);
+    }
+    [Fact]
     public async System.Threading.Tasks.Task ValidationAndFailedCapturePreserveTextAndAllowRetry()
     {
         using var model = Create(); var vm = model.Tasks!; await vm.RefreshAsync();

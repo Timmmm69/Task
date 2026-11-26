@@ -52,6 +52,7 @@ public sealed class FileLocationsViewModel : ViewModelBase, IDisposable
     public bool IsEmpty => IsVisible && _snapshotCurrent && !IsLoading && Items.Count == 0;
     public bool HasPartialAccess => Items.Any(i => !i.IsPathVisible || i.LocationType != "unc_path" && !i.CanOpenOnDevice);
     public string Message { get => _message; private set => SetProperty(ref _message, value); }
+    internal void SetMessage(string message) => Message = message;
     public bool EditorVisible { get => _editorVisible; private set { SetProperty(ref _editorVisible, value); NotifyCommands(); } }
     public bool IsFormEnabled => !IsMutating && !IsLoading && _canWrite();
     public bool PathEditable { get => _pathEditable; private set => SetProperty(ref _pathEditable, value); }

@@ -44,6 +44,9 @@
                             <Border Style="{StaticResource Task.Semantic.StatusPill}" Margin="0,0,0,4"><TextBlock Text="{Binding EnabledLabel}" FontSize="{DynamicResource Task.Font.Size.Metadata}"/></Border>
                         </WrapPanel>
                         <WrapPanel Margin="0,8,0,-8">
+                            <Button Content="Скопировать путь" Click="CopyPath" CommandParameter="{Binding}" AutomationProperties.Name="Скопировать путь">
+                                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource Task.Files.Action}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanCopyPath, IsAsync=True}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style>
+                            </Button>
                             <Button Content="Изменить" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Files.Action}" AutomationProperties.AutomationId="EditLocationButton"/>
                             <Button Content="Сделать основным" Command="{Binding DataContext.MakePrimaryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Files.Action}" AutomationProperties.AutomationId="MakePrimaryLocationButton"/>
                             <Button Content="Удалить" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource Task.Files.RemoveAction}" ToolTip="Удалить только ссылку на расположение" AutomationProperties.AutomationId="DeleteLocationButton"/>

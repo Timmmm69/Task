@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,7 +11,9 @@ using System.Windows.Threading;
 using Task.Desktop.Converters;
 using Task.Desktop.ViewModels;
 using Task.Desktop.Views;
+using Task.Desktop.Controls;
 using Task.Desktop.Work;
+using Task.Desktop.Tests.Work;
 using FakeClient = Task.Desktop.Tests.Work.WorkHubViewModelTests.FakeClient;
 
 namespace Task.Desktop.Tests;
@@ -60,7 +63,7 @@ public sealed class SettingsWindowsTests
                     {
                         SearchPageHandler = (_, _, _) => System.Threading.Tasks.Task.FromResult<DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>>(
                         new DesktopWorkResult<IReadOnlyList<DesktopSearchResult>>.Succeeded([
-                            new(Guid.NewGuid(), "task", "Результат " + ++calls, null, 1, DateTimeOffset.UtcNow)])
+                            new(Guid.NewGuid(), "task", "Результат " + ++calls, null, 1, DateTimeOffset.UtcNow, "Описание: РЕЗУЛЬТАТ!")])
                         { NextCursor = calls == 1 ? "next" : null })
                     };
                     using var hub = new WorkHubViewModel(client, ["Settings.ReadOwn", "Settings.UpdateOwn", "Search.Use"]);
@@ -97,6 +100,48 @@ public sealed class SettingsWindowsTests
                     hub.Activate(WorkHubArea.Search); hub.SearchQuery = "результат";
                     await hub.SearchCommand.ExecuteAsync(); Drain();
                     var search = Find<CorporateSearchView>(view, "SearchSurface");
+                    var highlighted = Descendants<SearchHighlightTextBlock>(search).ToArray();
+                    Assert.NotEmpty(highlighted);
+                    Assert.Contains(highlighted.SelectMany(item => item.Inlines.OfType<Run>()),
+                        run => run.Background is SolidColorBrush brush && brush.Color == Color.FromRgb(217, 240, 248));
+                    Assert.Contains(highlighted, item => item.HighlightText == "Описание: РЕЗУЛЬТАТ!" &&
+                        item.Inlines.OfType<Run>().Any(run => run.Background is SolidColorBrush));
+                    var repeatedCyrillic = new SearchHighlightTextBlock { HighlightText = "Смета: ёлка; СМЕТА.", Query = "смета" };
+                    Assert.Equal(2, repeatedCyrillic.Inlines.OfType<Run>().Count(run => run.Background is SolidColorBrush));
+                    var punctuation = new SearchHighlightTextBlock { HighlightText = "Версия 2.0? готова", Query = "2.0?" };
+                    Assert.Contains(punctuation.Inlines.OfType<Run>(), run => run.Text == "2.0?" && run.Background is SolidColorBrush);
+                    var name = $"Task путь {Guid.NewGuid():N}.txt";
+                    var localFile = Path.Combine(Path.GetTempPath(), name);
+                    File.WriteAllText(localFile, "");
+                    var uncTemp = Environment.GetEnvironmentVariable("TASK_QA_UNC_TEMP");
+                    var copiedPath = uncTemp is null ? localFile : Path.Combine(uncTemp, name);
+                    var originalClipboard = new ClipboardSnapshot();
+                    try
+                    {
+                        var (locationClient, locationState) = PathClientProxy.Make();
+                        var catalogItem = new DesktopCatalogItem(Guid.NewGuid(), 1, "Договор", "file_reference", null, null, "active");
+                        locationState.Items.Add(catalogItem);
+                        locationState.Locations.Add((catalogItem.Id, 1, new DesktopLocationDraft(uncTemp is null ? "local_path" : "unc_path", copiedPath, 0, true, true)));
+                        using var locations = new FileLocationsViewModel(locationClient, () => true, () => true);
+                        locations.SetItem(catalogItem); await locations.SelectionLoad;
+                        var locationView = new FileLocationsView { DataContext = locations };
+                        var copyWindow = new Window { Content = locationView, Width = 700, Height = 450, ShowInTaskbar = false };
+                        copyWindow.Show(); Drain();
+                        var copy = Descendants<Button>(locationView).Single(button => AutomationProperties.GetName(button) == "Скопировать путь");
+                        for (var i = 0; i < 100 && !copy.IsVisible; i++) await System.Threading.Tasks.Task.Delay(20);
+                        Assert.True(copy.IsVisible);
+                        copy.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Drain();
+                        for (var i = 0; i < 100 && !locations.Message.Contains("скопирован"); i++) await System.Threading.Tasks.Task.Delay(20);
+                        Assert.Equal(copiedPath, Clipboard.GetText());
+                        Assert.Contains("скопирован", locations.Message);
+                        Save(copyWindow, "corporate-catalog-copy-path.png");
+                        copyWindow.Close();
+                    }
+                    finally
+                    {
+                        originalClipboard.Dispose();
+                        File.Delete(localFile);
+                    }
                     var more = Find<Button>(search, "WorkHubLoadMoreButton");
                     Assert.True(more.IsVisible, "Load-more button must be visible.");
                     Assert.True(more.IsEnabled, "Load-more button must be enabled after the first page.");
@@ -152,6 +197,15 @@ public sealed class SettingsWindowsTests
         return null;
     }
     private static void Drain() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.Background);
+    private static IEnumerable<T> Descendants<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            if (child is T value) yield return value;
+            foreach (var nested in Descendants<T>(child)) yield return nested;
+        }
+    }
     private static void Save(FrameworkElement view, string name)
     {
         Drain();
