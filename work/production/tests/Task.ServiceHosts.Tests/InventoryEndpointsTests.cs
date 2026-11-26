@@ -56,6 +56,8 @@ public sealed class InventoryEndpointsTests
         Assert.True(basic.Headers.CacheControl?.NoStore);
         var movement = new InventoryMovement("issue", "issue", new(2026, 1, 2), 1, [new("line", "mask", 2)]);
         Assert.Equal(HttpStatusCode.Forbidden, await PostAsync(client, new(1, "move", Movement: movement)));
+        var updatedSupplier = seed.Suppliers[0] with { Phone = "00 (123) 45-67", TaxDetails = "00123456" };
+        Assert.Equal(HttpStatusCode.Forbidden, await PostAsync(client, new(1, "supplier", Supplier: updatedSupplier)));
         Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync(Route + "/managers")).StatusCode);
 
         SetActor(client, Manager);
@@ -74,6 +76,18 @@ public sealed class InventoryEndpointsTests
         var restored = await client.GetFromJsonAsync<InventorySnapshot>(Route, InventoryJson.Options);
         Assert.True(restored!.CanAdminister);
         Assert.Equal(5m, Assert.Single(restored.Stock).Quantity);
+
+        SetActor(client, Manager);
+        Assert.Equal(HttpStatusCode.OK, await PostAsync(client, new(3, "supplier", Supplier: updatedSupplier)));
+        Assert.Equal(HttpStatusCode.Conflict, await PostAsync(client, new(3, "supplier", Supplier: seed.Suppliers[0])));
+        var saved = await client.GetFromJsonAsync<InventorySnapshot>(Route, InventoryJson.Options);
+        Assert.Equal(updatedSupplier, Assert.Single(saved!.Details!.Suppliers));
+        Assert.Equal(updatedSupplier.Id, Assert.Single(saved.Details.Movements).SupplierId);
+        Assert.Equal(restored.Stock, saved.Stock);
+
+        SetActor(client, Viewer);
+        var restricted = await client.GetFromJsonAsync<InventorySnapshot>(Route, InventoryJson.Options);
+        Assert.Null(restricted!.Details);
     }
 
     private static void SetActor(HttpClient client, Guid actor)

@@ -25,8 +25,13 @@ public static class InventoryAccounting
         var suppliers = new HashSet<string>();
         var supplierNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var supplier in data.Suppliers!)
+        {
             Require(supplier is not null && Text(supplier.Id, 100) && Text(supplier.Name, 120) &&
                 suppliers.Add(supplier.Id) && supplierNames.Add(supplier.Name), "Проверьте названия поставщиков.");
+            Require(supplier!.Phone is not { Length: > 120 } && supplier.Contact is not { Length: > 250 } &&
+                supplier.TaxDetails is not { Length: > 250 } && supplier.Note is not { Length: > 1000 },
+                "Сведения о поставщике слишком длинные.");
+        }
 
         var lots = new Dictionary<string, List<Lot>>();
         var total = new Dictionary<string, decimal>();

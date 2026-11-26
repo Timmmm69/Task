@@ -49,6 +49,17 @@ public sealed partial class PostgresProductApiTests
         archive.Parameters.AddWithValue(deliveredDeadlineChecksum);
         archive.Parameters.AddWithValue(inventory.Sha256);
         Assert.Equal(2L, await archive.ExecuteScalarAsync());
+
+        var supplier = retained.Data.Suppliers[0];
+        Assert.Null(supplier.Phone);
+        var updated = supplier with { Phone = "00 (123) 04-50", TaxDetails = "001234567", Contact = "Отдел поставок" };
+        var runtimeStore = db.ApiRuntime.CreateInventoryStore();
+        var next = InventoryAccounting.Apply(retained, new(retained.Revision, "supplier", Supplier: updated), new(2026, 11, 22), 1);
+        Assert.True(await runtimeStore.TrySaveAsync(db.Organization, next, default));
+        var reopened = await db.ApiRuntime.CreateInventoryStore().ReadAsync(db.Organization, default);
+        Assert.Equal(updated, Assert.Single(reopened.Data.Suppliers, item => item.Id == supplier.Id));
+        Assert.Equal(retained.Data.Suppliers.Select(item => item.Id), reopened.Data.Suppliers.Select(item => item.Id));
+        Assert.Equal(InventoryAccounting.Calculate(retained.Data).Suppliers, InventoryAccounting.Calculate(reopened.Data).Suppliers);
     }
 
     [RequiresPostgresFact]

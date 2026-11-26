@@ -260,7 +260,7 @@
     {
       "id": "PROD-06",
       "title": "Учёт материалов в личном и корпоративном режимах",
-      "description": "Вкладка «Материалы» поддерживает приход, списание по партиям, остатки, справочники, историю, экспорт и резервные копии.",
+      "description": "Вкладка «Материалы» поддерживает переход от показателей к остаткам и поставщикам, карточки поставщиков, приход, списание по партиям, историю, экспорт и резервные копии.",
       "category": "product",
       "weight": 8,
       "criticality": "high",
@@ -272,8 +272,8 @@
         "work/production/tests/Task.ServiceHosts.Tests/InventoryEndpointsTests.cs",
         "work/production/tests/Task.Desktop.Tests/Personal/PersonalShellViewModelTests.cs"
       ],
-      "note": "Проверены учёт партий, права API, запись через ограниченную роль PostgreSQL 16 и переход с истории установщика 1.1.1 с сохранением склада. В Windows WebView2 открыт склад на копии личной базы из проверенной установки.",
-      "updated_at": "2026-11-24",
+      "note": "Проверены переходы из трёх показателей, карточка поставщика, локальное хранение в Personal, права API, PostgreSQL 16 и сохранность партий и FIFO. Проверка Windows и складской копии описана в work/customer-feedback/STATE.md.",
+      "updated_at": "2026-11-26",
       "priority": 2,
       "dependencies": [],
       "blocked_by": [],
