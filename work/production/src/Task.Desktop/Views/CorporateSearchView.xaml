@@ -9,8 +9,8 @@
         <SolidColorBrush x:Key="Search.Muted" Color="#616161"/>
         <SolidColorBrush x:Key="Search.Soft" Color="#F7F7F7"/>
         <SolidColorBrush x:Key="Search.Line" Color="#DDDDDD"/>
-        <SolidColorBrush x:Key="Search.Coral" Color="#CB2349"/>
-        <SolidColorBrush x:Key="Search.CoralHover" Color="#AB1738"/>
+        <SolidColorBrush x:Key="Search.Coral" Color="{DynamicResource Task.Color.Brand.Primary}"/>
+        <SolidColorBrush x:Key="Search.CoralHover" Color="{DynamicResource Task.Color.Brand.Strong}"/>
         <SolidColorBrush x:Key="Search.TealSoft" Color="#E8F4F8"/>
         <SolidColorBrush x:Key="Task.Capsule.Accent" Color="#222222"/>
 

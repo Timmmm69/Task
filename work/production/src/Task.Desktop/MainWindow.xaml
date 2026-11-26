@@ -53,11 +53,9 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Color x:Key="TasksAccentColor">#C72A46</Color>
-        <SolidColorBrush x:Key="TasksAccent" Color="{StaticResource TasksAccentColor}" />
-        <SolidColorBrush x:Key="TasksAccentPressed" Color="#A91E38" />
-        <Color x:Key="TasksSelectionColor">#FFF0F2</Color>
-        <SolidColorBrush x:Key="TasksSelection" Color="{StaticResource TasksSelectionColor}" />
+        <SolidColorBrush x:Key="TasksAccent" Color="{DynamicResource Task.Color.Brand.Primary}" />
+        <SolidColorBrush x:Key="TasksAccentPressed" Color="{DynamicResource Task.Color.Brand.Strong}" />
+        <SolidColorBrush x:Key="TasksSelection" Color="{DynamicResource Task.Color.Brand.Soft}" />
 
         <ControlTemplate x:Key="TasksPrimaryTemplate" TargetType="Button">
             <Border x:Name="Chrome" Background="{StaticResource TasksAccent}" CornerRadius="9"
@@ -407,8 +405,8 @@
                     <CornerRadius x:Key="Task.Radius.Control">9</CornerRadius>
                     <SolidColorBrush x:Key="TasksCanvas" Color="#FAF8F7" />
                     <SolidColorBrush x:Key="TasksDivider" Color="#EBE5E2" />
-                    <SolidColorBrush x:Key="Personal.Select.Accent" Color="{StaticResource TasksAccentColor}" />
-                    <SolidColorBrush x:Key="Personal.Select.Soft" Color="{StaticResource TasksSelectionColor}" />
+                    <SolidColorBrush x:Key="Personal.Select.Accent" Color="{DynamicResource Task.Color.Brand.Primary}" />
+                    <SolidColorBrush x:Key="Personal.Select.Soft" Color="{DynamicResource Task.Color.Brand.Soft}" />
 
                     <Style x:Key="TasksPanel" TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
                         <Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Base}" />
@@ -814,7 +812,7 @@
                                                     </Trigger>
                                                     <Trigger Property="IsSelected" Value="True">
                                                         <Setter TargetName="Row" Property="Background" Value="{StaticResource TasksSelection}" />
-                                                        <Setter TargetName="Row" Property="BorderBrush" Value="#EFC8CF" />
+                                                        <Setter TargetName="Row" Property="BorderBrush" Value="#E8CCD2" />
                                                         <Setter TargetName="SelectionMark" Property="Visibility" Value="Visible" />
                                                     </Trigger>
                                                     <MultiDataTrigger>

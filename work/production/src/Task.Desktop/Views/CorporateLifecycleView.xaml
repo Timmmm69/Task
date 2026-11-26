@@ -57,8 +57,8 @@
         <Style x:Key="Lifecycle.Primary" TargetType="Button" BasedOn="{StaticResource Task.Button.Primary}">
             <Style.Resources>
                 <CornerRadius x:Key="Task.Radius.Control">8</CornerRadius>
-                <SolidColorBrush x:Key="Task.Brush.Brand.Primary" Color="#BE2046"/>
-                <SolidColorBrush x:Key="Task.Brush.Brand.Strong" Color="#A61639"/>
+                <SolidColorBrush x:Key="Task.Brush.Brand.Primary" Color="{DynamicResource Task.Color.Brand.Primary}"/>
+                <SolidColorBrush x:Key="Task.Brush.Brand.Strong" Color="{DynamicResource Task.Color.Brand.Strong}"/>
             </Style.Resources>
             <Setter Property="MinHeight" Value="38"/>
             <Setter Property="Padding" Value="14,6"/>
@@ -86,8 +86,8 @@
                                 <Setter TargetName="Row" Property="Background" Value="{DynamicResource Task.Brush.Surface.Hover}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Row" Property="Background" Value="#FFF0F3"/>
-                                <Setter TargetName="Row" Property="BorderBrush" Value="#BE2046"/>
+                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource Task.Brush.Brand.Soft}"/>
+                                <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}"/>
                                 <Setter TargetName="Row" Property="BorderThickness" Value="4,1,1,1"/>
                             </Trigger>
                             <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">

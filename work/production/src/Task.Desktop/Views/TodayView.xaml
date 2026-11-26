@@ -13,9 +13,9 @@
         <ResourceDictionary.MergedDictionaries>
             <ResourceDictionary Source="../Resources/Personal.Calendar.xaml" />
         </ResourceDictionary.MergedDictionaries>
-        <SolidColorBrush x:Key="Today.CoralInk" Color="#C91E47" />
-        <SolidColorBrush x:Key="Today.Rose" Color="#FFF0F3" />
-        <SolidColorBrush x:Key="Today.RoseLine" Color="#F0CBD4" />
+        <SolidColorBrush x:Key="Today.CoralInk" Color="{DynamicResource Task.Color.Brand.Primary}" />
+        <SolidColorBrush x:Key="Today.Rose" Color="{DynamicResource Task.Color.Brand.Soft}" />
+        <SolidColorBrush x:Key="Today.RoseLine" Color="#E8CCD2" />
         <SolidColorBrush x:Key="Today.Teal" Color="#005A6E" />
         <SolidColorBrush x:Key="Today.TealSoft" Color="#E8F4F8" />
         <SolidColorBrush x:Key="Today.TealLine" Color="#D4E8EE" />

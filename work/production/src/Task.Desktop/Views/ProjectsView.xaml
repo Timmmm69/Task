@@ -8,9 +8,9 @@
         AutomationProperties.Name="Проекты" AutomationProperties.AutomationId="ProjectsView" Unloaded="ProjectsUnloaded" Background="{DynamicResource Task.Brush.Surface.Base}" UseLayoutRounding="True" SnapsToDevicePixels="True">
     <UserControl.Resources>
         <SolidColorBrush x:Key="Project.Canvas" Color="#F7F7F7"/>
-        <SolidColorBrush x:Key="Project.Coral" Color="#C91E47"/>
-        <SolidColorBrush x:Key="Project.CoralHover" Color="#A9183C"/>
-        <SolidColorBrush x:Key="Project.Rose" Color="#FFF0F3"/>
+        <SolidColorBrush x:Key="Project.Coral" Color="{DynamicResource Task.Color.Brand.Primary}"/>
+        <SolidColorBrush x:Key="Project.CoralHover" Color="{DynamicResource Task.Color.Brand.Strong}"/>
+        <SolidColorBrush x:Key="Project.Rose" Color="{DynamicResource Task.Color.Brand.Soft}"/>
         <SolidColorBrush x:Key="Project.Teal" Color="#005A6E"/>
         <SolidColorBrush x:Key="Project.TealSoft" Color="#E8F4F8"/>
 

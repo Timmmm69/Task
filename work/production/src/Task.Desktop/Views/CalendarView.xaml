@@ -16,8 +16,8 @@
         </ResourceDictionary.MergedDictionaries>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <SolidColorBrush x:Key="Calendar.Line" Color="#E9E5E5" />
-        <SolidColorBrush x:Key="Calendar.Coral" Color="#CC244C" />
-        <SolidColorBrush x:Key="Calendar.Rose" Color="#FFF2F5" />
+        <SolidColorBrush x:Key="Calendar.Coral" Color="{DynamicResource Task.Color.Brand.Primary}" />
+        <SolidColorBrush x:Key="Calendar.Rose" Color="{DynamicResource Task.Color.Brand.Soft}" />
         <Style x:Key="Calendar.Meta" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Secondary}" />
@@ -46,7 +46,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Chrome" Property="BorderBrush" Value="#A98691" />
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="#A7858D" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True"><Setter TargetName="Chrome" Property="Opacity" Value="0.8" /></Trigger>
                             <Trigger Property="IsKeyboardFocused" Value="True">
@@ -90,7 +90,7 @@
             <Setter Property="BorderBrush" Value="{StaticResource Calendar.Coral}" />
             <Setter Property="Foreground" Value="White" />
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#B51C40" /></Trigger>
+                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource Task.Brush.Brand.Strong}" /></Trigger>
                 <DataTrigger Binding="{Binding DataContext.IsPersonal, RelativeSource={RelativeSource AncestorType=views:CalendarView}}" Value="True">
                     <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Accent}" />
                     <Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Accent}" />
@@ -177,7 +177,7 @@
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsCalendarEvent}" Value="True">
                     <Setter Property="Background" Value="{StaticResource Calendar.Rose}" />
-                    <Setter Property="BorderBrush" Value="#F1D2DC" />
+                    <Setter Property="BorderBrush" Value="#E8CCD2" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsHighPriority}" Value="True">
                     <Setter Property="BorderBrush" Value="#B88849" />
@@ -552,7 +552,7 @@
                                                         <Border.Style>
                                                             <Style TargetType="Border">
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Background" Value="#13FF385C" /></DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Background" Value="#13B5394E" /></DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Border.Style>
@@ -697,7 +697,7 @@
                                                                     <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False">
                                                                         <Setter Property="Background" Value="{StaticResource Personal.Airbnb.Soft}" />
                                                                     </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding IsSelectedDate}" Value="True"><Setter Property="Background" Value="#FFF8FA" /></DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsSelectedDate}" Value="True"><Setter Property="Background" Value="#FCF7F8" /></DataTrigger>
                                                                     <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
                                                                         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
                                                                     </DataTrigger>

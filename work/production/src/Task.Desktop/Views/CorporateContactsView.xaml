@@ -8,10 +8,10 @@
              AutomationProperties.Name="Корпоративные контакты" AutomationProperties.AutomationId="CorporateContactsView">
     <UserControl.Resources>
         <converters:WindowWidthAtLeastConverter x:Key="Contacts.WidthAtLeast"/>
-        <SolidColorBrush x:Key="Contacts.Coral" Color="#C91E47"/>
-        <SolidColorBrush x:Key="Contacts.CoralPressed" Color="#A8173A"/>
-        <SolidColorBrush x:Key="Contacts.Rose" Color="#FFF0F3"/>
-        <SolidColorBrush x:Key="Contacts.RoseLine" Color="#F0CBD4"/>
+        <SolidColorBrush x:Key="Contacts.Coral" Color="{DynamicResource Task.Color.Brand.Primary}"/>
+        <SolidColorBrush x:Key="Contacts.CoralPressed" Color="{DynamicResource Task.Color.Brand.Strong}"/>
+        <SolidColorBrush x:Key="Contacts.Rose" Color="{DynamicResource Task.Color.Brand.Soft}"/>
+        <SolidColorBrush x:Key="Contacts.RoseLine" Color="#E8CCD2"/>
         <Style x:Key="Contacts.Panel" TargetType="Border" BasedOn="{StaticResource Task.Surface.Base}">
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="BorderThickness" Value="1"/>

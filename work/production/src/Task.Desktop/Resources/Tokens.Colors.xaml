@@ -1,10 +1,10 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Shared Airbnb palette for both workspaces. -->
-    <Color x:Key="Task.Color.Brand.Primary">#C91E47</Color>
-    <Color x:Key="Task.Color.Brand.Strong">#A9183C</Color>
-    <Color x:Key="Task.Color.Brand.Accent">#C91E47</Color>
-    <Color x:Key="Task.Color.Brand.Soft">#FFF0F3</Color>
+    <Color x:Key="Task.Color.Brand.Primary">#B5394E</Color>
+    <Color x:Key="Task.Color.Brand.Strong">#963047</Color>
+    <Color x:Key="Task.Color.Brand.Accent">#B5394E</Color>
+    <Color x:Key="Task.Color.Brand.Soft">#F9EDF0</Color>
     <Color x:Key="Task.Color.Text.Primary">#222222</Color>
     <Color x:Key="Task.Color.Text.Secondary">#595959</Color>
     <Color x:Key="Task.Color.Text.Disabled">#8A8886</Color>
@@ -27,7 +27,7 @@
     <SolidColorBrush x:Key="Task.Brush.Brand.Strong" Color="{StaticResource Task.Color.Brand.Strong}" />
     <SolidColorBrush x:Key="Task.Brush.Brand.Accent" Color="{StaticResource Task.Color.Brand.Accent}" />
     <SolidColorBrush x:Key="Task.Brush.Brand.Soft" Color="{StaticResource Task.Color.Brand.Soft}" />
-    <SolidColorBrush x:Key="Task.Brush.Text.Selection" Color="#F4B2C1" />
+    <SolidColorBrush x:Key="Task.Brush.Text.Selection" Color="#E8B7C0" />
     <SolidColorBrush x:Key="Task.Brush.Text.Primary" Color="{StaticResource Task.Color.Text.Primary}" />
     <SolidColorBrush x:Key="Task.Brush.Text.Secondary" Color="{StaticResource Task.Color.Text.Secondary}" />
     <SolidColorBrush x:Key="Task.Brush.Text.Disabled" Color="{StaticResource Task.Color.Text.Disabled}" />

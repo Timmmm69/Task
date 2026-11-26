@@ -5,8 +5,8 @@
              AutomationProperties.Name="Входящие"
              AutomationProperties.AutomationId="InboxScreen" AllowDrop="True" PreviewDragOver="RejectFileDrag" PreviewDrop="RejectFileDrop" DragLeave="FileDragLeave">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="Inbox.Coral" Color="#C91E47" />
-        <SolidColorBrush x:Key="Inbox.Rose" Color="#FFF0F3" />
+        <SolidColorBrush x:Key="Inbox.Coral" Color="{DynamicResource Task.Color.Brand.Primary}" />
+        <SolidColorBrush x:Key="Inbox.Rose" Color="{DynamicResource Task.Color.Brand.Soft}" />
         <SolidColorBrush x:Key="Inbox.TealSoft" Color="#E8F4F8" />
         <SolidColorBrush x:Key="Inbox.Teal" Color="#005A6E" />
 
