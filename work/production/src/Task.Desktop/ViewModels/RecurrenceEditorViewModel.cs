@@ -131,4 +131,6 @@ public sealed class RecurrenceEditorViewModel : ViewModelBase
 public sealed record RecurrenceSourceTask(DesktopTaskDto Task)
 {
     public string Label => Task.Card?.EffectivePlanningMonth is { } month ? $"{Task.Title} ({month})" : Task.Title;
+
+    public override string ToString() => Label;
 }

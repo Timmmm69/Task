@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Microsoft.Data.Sqlite;
@@ -38,6 +39,12 @@ public sealed partial class MonthlyPlanWindowsTests
 
                 await recurrence.LoadSourcesCommand.ExecuteAsync();
                 var sourcePicker = Find<ComboBox>(window, "RecurrenceSourceTask");
+                sourcePicker.IsDropDownOpen = true;
+                await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+                var pickerPeer = new ComboBoxAutomationPeer(sourcePicker);
+                Assert.Contains(Assert.IsType<List<AutomationPeer>>(pickerPeer.GetChildren()),
+                    item => item.GetName() == "Подготовить отчёт (2027-12)");
+                sourcePicker.IsDropDownOpen = false;
                 sourcePicker.SelectedItem = Assert.Single(recurrence.SourceTasks);
                 await WaitFor(() => recurrence.Editor.MonthOnly);
                 Assert.True(Find<CheckBox>(window, "RecurrenceMonthOnly").IsChecked);
