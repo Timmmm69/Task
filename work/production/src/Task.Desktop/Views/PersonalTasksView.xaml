@@ -2,7 +2,7 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:state="clr-namespace:Task.Desktop.Infrastructure"
  xmlns:views="clr-namespace:Task.Desktop.Views" xmlns:api="clr-namespace:Task.Desktop.TaskApi">
  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Controls.xaml"/></ResourceDictionary.MergedDictionaries><Style x:Key="Personal.NotToday" TargetType="FrameworkElement"><Style.Triggers><DataTrigger Binding="{Binding IsInbox}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding IsTasks}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ResourceDictionary></UserControl.Resources>
- <Grid Margin="24">
+ <Grid Margin="{DynamicResource Task.Padding.Workspace}">
   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <Grid Margin="0,0,0,14" Style="{StaticResource Personal.NotToday}"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
    <TextBlock Text="{Binding Items.Count,StringFormat=Показано задач: {0}}" Style="{StaticResource Task.Shell.StatusText}"/>
@@ -64,7 +64,7 @@
    </WrapPanel>
   </StackPanel></Border>
 
-  <Grid Grid.RowSpan="5" Background="#66000000" Visibility="{Binding HasEditor,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="50" Margin="-24" KeyboardNavigation.TabNavigation="Cycle" state:FormKeyboard.Save="{Binding SaveCommand}" AutomationProperties.Name="Редактор личной задачи">
+  <Grid Grid.RowSpan="5" Background="#66000000" Visibility="{Binding HasEditor,Converter={StaticResource Task.BooleanToVisibilityConverter}}" Panel.ZIndex="50" Margin="-20,-16" KeyboardNavigation.TabNavigation="Cycle" state:FormKeyboard.Save="{Binding SaveCommand}" AutomationProperties.Name="Редактор личной задачи">
    <Border MaxWidth="660" Margin="20" Style="{StaticResource Task.Inspector.Panel}" Padding="0">
     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
      <Border Padding="24,18" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1"><TextBlock Text="{Binding Editor.Heading}" Style="{StaticResource Task.Shell.PageTitle}"/></Border>

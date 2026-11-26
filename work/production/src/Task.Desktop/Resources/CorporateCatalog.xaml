@@ -12,7 +12,7 @@
 
     <Style x:Key="Catalog.Heading" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{DynamicResource Task.Font.Size.Section}" />
-        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="AutomationProperties.HeadingLevel" Value="Level2" />
     </Style>

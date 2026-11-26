@@ -203,7 +203,7 @@
     </UserControl.Resources>
 
     <Grid>
-    <Grid x:Name="CorporateCalendarLayout" Margin="16,12,16,12">
+    <Grid x:Name="CorporateCalendarLayout" Margin="20,12">
         <Grid.Style><Style TargetType="Grid"><Style.Triggers>
             <DataTrigger Binding="{Binding IsPersonal}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
         </Style.Triggers></Style></Grid.Style>
@@ -218,7 +218,7 @@
         <Grid Margin="0,0,0,10">
             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
-                <TextBlock Text="{Binding CorporatePeriodText}" FontSize="24" FontWeight="Bold"
+                <TextBlock Text="{Binding CorporatePeriodText}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold"
                            TextTrimming="CharacterEllipsis"
                            ToolTip="{Binding CorporatePeriodText}" AutomationProperties.LiveSetting="Polite"
                            AutomationProperties.AutomationId="CalendarWeekRange" />
@@ -308,7 +308,7 @@
                     </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,6,2">
-                    <DatePicker x:Name="CalendarDatePicker" SelectedDate="{Binding SelectedDate}" Width="112" MinHeight="34"
+                    <DatePicker x:Name="CalendarDatePicker" SelectedDate="{Binding SelectedDate}" Width="136" MinHeight="34"
                                 Style="{StaticResource Calendar.Form.Date}" AutomationProperties.Name="Дата календаря" />
                     <Button Command="{Binding RefreshCommand}" Style="{StaticResource Calendar.PeriodButton}" Margin="4,0,0,0"
                             ToolTip="Обновить календарь" AutomationProperties.Name="Обновить календарь" AutomationProperties.AutomationId="CalendarRefresh">

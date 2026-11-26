@@ -7,7 +7,7 @@
  Background="White" Foreground="#222222" FontFamily="Segoe UI" FontSize="14">
  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Airbnb.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-  <StackPanel Margin="8,8,8,24">
+  <StackPanel Margin="0,0,0,16">
    <Border Background="White" CornerRadius="40" BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" Padding="24,10,10,10" Margin="0,0,0,28">
     <Border.Effect><DropShadowEffect Color="#000000" BlurRadius="12" ShadowDepth="3" Opacity="0.08"/></Border.Effect>
     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
@@ -65,7 +65,7 @@
     <Border x:Name="DetailsCard" Grid.Column="1" CornerRadius="16" BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" Padding="24" VerticalAlignment="Top" Margin="0,0,0,8">
      <StackPanel>
       <TextBlock Text="Детали задачи" Style="{StaticResource Personal.Airbnb.Heading}"/>
-      <TextBlock Text="{Binding Selected.Title,TargetNullValue=Выберите задачу из списка,FallbackValue=Выберите задачу из списка}" FontSize="18" FontWeight="Bold" TextWrapping="Wrap" Margin="0,24,0,0"/>
+      <TextBlock Text="{Binding Selected.Title,TargetNullValue=Выберите задачу из списка,FallbackValue=Выберите задачу из списка}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,24,0,0"/>
       <TextBlock Text="{Binding Selected.Source.Card.Description}" Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,12,0,0"/>
       <StackPanel Visibility="{Binding HasSelection,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
        <Border Height="1" Background="#EBEBEB" Margin="0,24"/>

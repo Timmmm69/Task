@@ -5,7 +5,7 @@
   <Style TargetType="TextBox" BasedOn="{StaticResource Personal.Airbnb.Input}"/>
   <Style TargetType="Expander" BasedOn="{StaticResource Task.Expander.Compact}"><Setter Property="Margin" Value="0,16,0,0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/></Style>
  </ResourceDictionary></UserControl.Resources>
- <Grid Margin="24,16,24,16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+ <Grid Margin="{DynamicResource Task.Padding.Workspace}"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <WrapPanel Margin="0,0,0,8">
    <Button Content="+ Добавить файл…" Click="OnAddFile" Background="{StaticResource Personal.Airbnb.Accent}" Foreground="White" IsEnabled="{Binding Hub.CanAddCatalogPaths}" Margin="0,0,8,8" AutomationProperties.AutomationId="PersonalCatalogAddFile"/>
    <Button Content="Папка на диске…" Click="OnAddFolder" IsEnabled="{Binding Hub.CanAddCatalogPaths}" Margin="0,0,8,8"/>
@@ -27,7 +27,7 @@
       <TextBlock Text="{Binding CatalogLocation}" ToolTip="{Binding CatalogLocation}" TextTrimming="CharacterEllipsis" Margin="2,4,0,6"/>
       <TextBlock Text="{Binding CatalogCountText}" Style="{StaticResource Personal.Airbnb.Muted}" FontSize="12" AutomationProperties.LiveSetting="Polite"/>
      </StackPanel>
-     <Border Grid.Row="1" Background="{StaticResource Personal.Airbnb.Soft}" CornerRadius="8" Padding="14,9" Margin="0,0,0,4"><TextBlock Text="Название · тип · путь" FontWeight="Bold"/></Border>
+     <Border Grid.Row="1" Background="{StaticResource Personal.Airbnb.Soft}" CornerRadius="8" Padding="14,9" Margin="0,0,0,4"><TextBlock Text="Название · тип · путь" FontWeight="SemiBold"/></Border>
      <ListBox x:Name="CatalogList" Style="{StaticResource Personal.Airbnb.VirtualList}" Grid.Row="2" ItemsSource="{Binding VisibleCatalogRows}" SelectedItem="{Binding CatalogSelection}" Background="White" BorderThickness="0" HorizontalContentAlignment="Stretch" ItemContainerStyle="{StaticResource Catalog.Row}" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel" MouseDoubleClick="OnActivate" PreviewKeyDown="OnListKey" AllowDrop="True" DragOver="OnDragOver" Drop="OnDrop" AutomationProperties.Name="Личный каталог" AutomationProperties.AutomationId="PersonalCatalogList">
       <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
        <Path Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Fill="{StaticResource Personal.Airbnb.Secondary}"><Path.Style><Style TargetType="Path"><Setter Property="Data" Value="M3,1 L11,1 17,7 17,21 3,21 Z M4,2 L4,20 16,20 16,8 10,8 10,2 Z M11,2 L11,7 16,7 Z"/><Style.Triggers><DataTrigger Binding="{Binding Source.ItemType}" Value="virtual_folder"><Setter Property="Data" Value="{StaticResource Task.Icon.Projects}"/></DataTrigger><DataTrigger Binding="{Binding Source.ItemType}" Value="folder_reference"><Setter Property="Data" Value="{StaticResource Task.Icon.Projects}"/></DataTrigger></Style.Triggers></Style></Path.Style></Path>
@@ -42,7 +42,7 @@
     </Grid>
     <Border x:Name="DetailsPanel" Grid.Column="1" BorderBrush="{StaticResource Personal.Airbnb.Hairline}" BorderThickness="1" CornerRadius="16" Padding="20" Background="White">
      <ScrollViewer x:Name="DetailsScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel Width="{Binding ViewportWidth,ElementName=DetailsScroll}">
-      <TextBlock Text="Сведения и действия" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+      <TextBlock Text="Сведения и действия" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,16"/>
       <TextBlock Text="Выберите запись в списке"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Muted}"><Style.Triggers><DataTrigger Binding="{Binding HasCatalogSelection}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
       <StackPanel Visibility="{Binding HasCatalogSelection,Converter={StaticResource Task.BooleanToVisibilityConverter}}">
        <TextBox Text="{Binding CatalogSelection.Name,Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" Height="Auto" MaxHeight="100" VerticalScrollBarVisibility="Auto" BorderThickness="0" Padding="0" FontWeight="Bold" FontSize="18" Background="Transparent" AutomationProperties.Name="Название выбранной записи"/>

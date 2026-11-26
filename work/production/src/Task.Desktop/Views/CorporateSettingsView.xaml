@@ -153,7 +153,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12">
+    <Border Style="{StaticResource Task.Surface.Subtle}" Padding="20,12">
         <Grid MaxWidth="1170">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

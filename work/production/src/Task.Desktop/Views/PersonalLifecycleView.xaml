@@ -2,7 +2,7 @@
  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/Personal.Management.xaml"/></ResourceDictionary.MergedDictionaries>
   <Style x:Key="Lifecycle.Row" TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}"><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="AutomationProperties.HelpText" Value="{Binding Type}"/></Style>
  </ResourceDictionary></UserControl.Resources>
- <Grid Margin="24,16,24,18"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+ <Grid Margin="{DynamicResource Task.Padding.Workspace}"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <TextBlock Text="{Binding LifecycleDescription}" Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,0,0,18"/>
   <WrapPanel Grid.Row="1" Margin="0,0,0,8">
    <StackPanel Width="300" Margin="0,0,12,10"><TextBlock Text="Поиск по названию" Margin="0,0,0,6"/><TextBox Text="{Binding LifecycleQuery,UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Поиск по названию" AutomationProperties.AutomationId="LifecycleSearch"/></StackPanel>

@@ -45,7 +45,7 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Border Style="{StaticResource Task.Surface.Subtle}" Padding="12">
+    <Border Style="{StaticResource Task.Surface.Subtle}" Padding="20,12">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

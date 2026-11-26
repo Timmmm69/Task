@@ -27,5 +27,6 @@
     <Thickness x:Key="Task.Padding.Control">14,0</Thickness>
     <Thickness x:Key="Task.Padding.NavigationItem">14,0,4,0</Thickness>
     <Thickness x:Key="Task.Padding.ShellHeader">20,0,24,0</Thickness>
+    <Thickness x:Key="Task.Padding.Workspace">20,16</Thickness>
     <Thickness x:Key="Task.Padding.Page">24</Thickness>
 </ResourceDictionary>

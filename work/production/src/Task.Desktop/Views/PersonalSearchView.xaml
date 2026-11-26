@@ -18,7 +18,7 @@
   <Style x:Key="Search.Row" TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}"><Setter Property="Padding" Value="12,8"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="AutomationProperties.HelpText" Value="{Binding TypeLabel}"/></Style>
   <Style TargetType="TextBox" BasedOn="{StaticResource Personal.Airbnb.Input}"/>
  </ResourceDictionary></UserControl.Resources>
- <Grid Margin="24,12,24,16">
+ <Grid Margin="{DynamicResource Task.Padding.Workspace}">
   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <StackPanel x:Name="IntroPanel" Margin="0,0,0,18"><TextBlock Text="Найдите нужное среди ваших записей" Style="{StaticResource Personal.Airbnb.Heading}"/><TextBlock Text="Задачи, проекты, каталог и контакты — в одном месте." Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,6,0,0"/></StackPanel>
   <StackPanel Grid.Row="1">

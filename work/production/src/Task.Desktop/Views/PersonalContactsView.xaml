@@ -13,7 +13,7 @@
   </Style>
   <Style x:Key="Contacts.Row" TargetType="ListBoxItem" BasedOn="{StaticResource Personal.Airbnb.BrowserRow}"><Setter Property="Padding" Value="12,10"/><Setter Property="Margin" Value="0,1"/><Setter Property="AutomationProperties.Name" Value="{Binding Name}"/><Setter Property="AutomationProperties.HelpText" Value="{Binding Preview}"/></Style>
  </ResourceDictionary></UserControl.Resources>
- <Grid Margin="24,20,24,16"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+ <Grid Margin="{DynamicResource Task.Padding.Workspace}"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <Grid Margin="0,0,0,18"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
    <StackPanel VerticalAlignment="Center"><TextBlock Text="Ваши контакты" Style="{StaticResource Personal.Airbnb.Heading}"/><TextBlock Text="Люди, с которыми вы на связи" Style="{StaticResource Personal.Airbnb.Muted}" Margin="0,5,12,0"/></StackPanel>
    <Button Grid.Column="1" Click="OnNew" Style="{StaticResource Contacts.AddButton}" VerticalAlignment="Center" AutomationProperties.Name="Новый контакт" AutomationProperties.AutomationId="PersonalContactsNew" ToolTip="Новый контакт · Ctrl+N"><StackPanel Orientation="Horizontal"><Path Data="{StaticResource Task.Icon.Add}" Width="16" Height="16" Stretch="Uniform" Fill="White" Margin="0,0,9,0"/><TextBlock Text="Новый контакт" VerticalAlignment="Center"/></StackPanel></Button>

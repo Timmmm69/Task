@@ -138,7 +138,7 @@
                 </RowDefinition.Style>
             </RowDefinition>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Padding="24,16,24,12" Style="{StaticResource Task.Surface.Subtle}"
+        <Border Grid.Row="0" Padding="20,16,20,12" Style="{StaticResource Task.Surface.Subtle}"
                 Visibility="{Binding IsCatalog, Converter={StaticResource Task.BooleanToVisibilityConverter}}">
             <Border.Resources>
                 <StaticResource x:Key="Task.Radius.Control" ResourceKey="Catalog.ControlRadius" />
@@ -193,7 +193,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Margin="44,0,16,0">
-                    <TextBlock Text="{Binding AreaTitle}" FontSize="{DynamicResource Task.Font.Size.PageTitle}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding AreaTitle}" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold" TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding AccessText}" Foreground="{DynamicResource Task.Brush.Text.Secondary}" Margin="0,4,0,0" TextWrapping="Wrap"/>
                 </StackPanel>
                 <WrapPanel VerticalAlignment="Top">
@@ -268,7 +268,7 @@
                 <StaticResource x:Key="Task.Brush.Brand.Strong" ResourceKey="Catalog.AccentHover" />
                 <StaticResource x:Key="Task.Brush.Brand.Soft" ResourceKey="Catalog.Selection" />
             </Grid.Resources>
-            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="24,0,24,16">
+            <Border Style="{StaticResource Task.Surface.Subtle}" Padding="20,0,20,16">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="46*" />
@@ -572,7 +572,7 @@
                 </StackPanel>
                 <Button Grid.Column="1" Content="Прочитать все" Command="{Binding MarkAllReadCommand}" Style="{StaticResource Task.Button.Secondary}" AutomationProperties.AutomationId="MarkAllNotificationsReadButton"/>
             </Grid>
-            <Grid Grid.Row="1" Grid.RowSpan="2">
+            <Grid Grid.Row="1" Grid.RowSpan="2" Margin="20,0,20,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Style="{StaticResource WorkHub.LeftColumn}"/>
                     <ColumnDefinition>

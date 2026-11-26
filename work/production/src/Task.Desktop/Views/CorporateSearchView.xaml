@@ -184,7 +184,7 @@
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-        <StackPanel MaxWidth="1040" Margin="24,20,24,24" TextElement.FontFamily="{DynamicResource Task.Font.Family}">
+        <StackPanel MaxWidth="1040" Margin="{DynamicResource Task.Padding.Workspace}" TextElement.FontFamily="{DynamicResource Task.Font.Family}">
             <Border Style="{StaticResource Search.Panel}" IsEnabled="{Binding CanUseSearchPage}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,8">

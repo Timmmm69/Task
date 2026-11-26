@@ -204,7 +204,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="22,16,22,14">
+    <Grid Margin="{DynamicResource Task.Padding.Workspace}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -467,7 +467,7 @@
                                                     <StackPanel AutomationProperties.AutomationId="ContactCard">
                                                         <Border Padding="16,12" BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,0,0,1">
                                                             <StackPanel>
-                                                                <TextBlock FontSize="23" FontWeight="Bold" TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level2">
+                                                                <TextBlock FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level2">
                                                                     <TextBlock.Style>
                                                                         <Style TargetType="TextBlock">
                                                                             <Setter Property="Text" Value="{Binding DataContext.SelectedContact.DisplayName, RelativeSource={RelativeSource AncestorType=views:CorporateContactsView}}"/>
@@ -547,7 +547,7 @@
                                 <ScrollViewer x:Name="CreatePanel" Visibility="Collapsed" IsEnabled="{Binding CanCreateContact}" VerticalScrollBarVisibility="Auto"
                                               HorizontalScrollBarVisibility="Disabled" AutomationProperties.AutomationId="WorkHubNewContactPanel">
                                     <StackPanel Margin="16,14">
-                                        <TextBlock Text="Новый контакт" FontSize="23" FontWeight="Bold" TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level2"/>
+                                        <TextBlock Text="Новый контакт" FontSize="{DynamicResource Task.Font.Size.DetailTitle}" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level2"/>
                                         <TextBlock Text="Имя" Style="{StaticResource Contacts.Label}" Margin="0,14,0,5"/>
                                         <TextBox x:Name="CreateFirstName" Text="{Binding NewContactFirstName, UpdateSourceTrigger=PropertyChanged}"
                                                  Style="{StaticResource Contacts.Input}" AutomationProperties.Name="Имя нового контакта" AutomationProperties.AutomationId="ContactFirstNameTextBox"/>
