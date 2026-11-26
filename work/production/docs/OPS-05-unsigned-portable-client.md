@@ -18,7 +18,7 @@ to the build. Portable runtime/linker locks are generated under each project's `
 directory, preserving the ordinary source locks. The package verifier checks archive
 integrity; separately run startup/restart/replacement smoke from that exact ZIP.
 
-Extract the ZIP and launch `Task/Task.Desktop.exe`. Windows may display Unknown
+Extract the ZIP and launch `VoravaDent/VoravaDent.exe`. Windows may display Unknown
 Publisher or SmartScreen warnings; there is no programmatic bypass. Package hashes
 detect corruption, but establish publisher identity only when received through a
 separately trusted distribution channel.

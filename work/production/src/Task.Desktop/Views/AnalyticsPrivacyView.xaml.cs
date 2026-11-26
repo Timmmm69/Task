@@ -40,7 +40,7 @@ public partial class AnalyticsPrivacyView : UserControl
         var applied = await analytics.SetEnabledAsync(Consent.IsChecked == true);
         Refresh(analytics);
         if (!applied)
-            Feedback.Text = "Не удалось изменить настройку. Проверьте доступ к локальным данным Task и повторите попытку.";
+            Feedback.Text = "Не удалось изменить настройку. Проверьте доступ к локальным данным приложения и повторите попытку.";
     }
 
     private void Refresh(ProductAnalytics analytics)
@@ -49,7 +49,7 @@ public partial class AnalyticsPrivacyView : UserControl
         Consent.IsChecked = analytics.Enabled;
         _refreshing = false;
         Consent.IsEnabled = analytics.StorageAvailable && (analytics.Configured || analytics.Enabled);
-        Feedback.Text = !analytics.StorageAvailable ? "Настройка недоступна в этом экземпляре Task."
+        Feedback.Text = !analytics.StorageAvailable ? "Настройка недоступна в этом экземпляре приложения."
             : !analytics.Configured ? "Отправка статистики не настроена."
             : "";
     }

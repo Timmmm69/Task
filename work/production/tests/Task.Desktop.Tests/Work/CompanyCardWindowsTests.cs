@@ -59,7 +59,7 @@ public sealed class CompanyCardWindowsTests
                     using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update", "Contact.Create"]);
                     hub.Activate(WorkHubArea.Contacts); await hub.ShowCompaniesCommand.ExecuteAsync();
                     var view = new WorkHubView { DataContext = hub, Background = Brushes.White };
-                    window = new Window { Content = view, Width = 1100, Height = 1000, ShowInTaskbar = false, ShowActivated = false, Title = "Task — проверка компаний" };
+                    window = new Window { Content = view, Width = 1100, Height = 1000, ShowInTaskbar = false, ShowActivated = false, Title = "Варава Дент — проверка компаний" };
                     window.Show(); Pump();
                     var list = Find<ListBox>(view, "CompaniesList"); Assert.True(list.IsVisible);
                     list.SelectedItem = company; await hub.Companies!.SelectionTask; Pump();

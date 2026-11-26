@@ -37,7 +37,7 @@ internal static class PersonalDatabaseValidation
         var version = Convert.ToInt32(command.ExecuteScalar());
         command.CommandText = "PRAGMA application_id;";
         if (version < 1 || version > PersonalDatabase.CurrentSchemaVersion || Convert.ToInt32(command.ExecuteScalar()) != PersonalDatabase.ApplicationId)
-            throw new InvalidOperationException("Неподдерживаемая версия Personal DB. Обновите Task; база сохранена без изменений.");
+            throw new InvalidOperationException("Неподдерживаемая версия Personal DB. Обновите приложение; база сохранена без изменений.");
         command.CommandText = "SELECT value FROM personal_metadata WHERE key='PersonalActorId';";
         if (!Guid.TryParse(command.ExecuteScalar()?.ToString(), out var actor) || actor == Guid.Empty)
             throw new InvalidDataException("Personal schema metadata invalid. Файл сохранён.");

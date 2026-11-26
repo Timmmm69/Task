@@ -217,10 +217,9 @@
                                     <ContentPresenter DockPanel.Dock="Right" ContentSource="Header" />
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Border Width="34" Height="34" CornerRadius="10" Style="{StaticResource Task.Workspace.Background}">
-                                            <Path Data="{StaticResource Task.Icon.Tasks}" Width="18" Height="18" Stretch="Uniform"
-                                                  Fill="{DynamicResource Task.Brush.Text.Primary}" />
+                                            <Image Source="/Task.Desktop;component/Assets/VoravaDent.png" Width="28" Height="28" Stretch="Uniform" />
                                         </Border>
-                                        <TextBlock Text="Task" FontSize="18" FontWeight="Bold" Margin="9,0,0,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Варава Дент" FontSize="18" FontWeight="Bold" Margin="9,0,0,0" VerticalAlignment="Center" />
                                         <TextBlock Text="Пространство компании" Margin="16,0,0,0" VerticalAlignment="Center"
                                                    Style="{StaticResource Task.Workspace.Body}" />
                                     </StackPanel>

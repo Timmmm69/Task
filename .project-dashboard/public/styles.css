@@ -29,7 +29,7 @@ button:active { transform: translateY(1px); }
 .shell { width: min(1640px, calc(100% - 64px)); margin: 0 auto; padding: 26px 0 40px; }
 .topbar { display: flex; justify-content: space-between; align-items: start; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
 .brandline { display: flex; align-items: center; gap: 9px; font-weight: 650; font-size: 15px; letter-spacing: -.01em; }
-.brandmark { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 6px; background: var(--text); color: var(--bg); font: 800 13px var(--mono); }
+.brandmark { width: 23px; height: 23px; object-fit: contain; }
 .slash { color: var(--faint); }
 .subtitle { margin: 7px 0 0 32px; color: var(--muted); font-size: 12px; }
 .live-chip { display: flex; align-items: center; gap: 8px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; font: 10px var(--mono); }

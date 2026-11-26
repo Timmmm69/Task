@@ -71,7 +71,11 @@ foreach ($image in $container.images) {
     Add-Check "OCI digest $($image.target)" ($imageMap.($image.target) -eq $record.indexDigest -and $image.imageDigest -eq $record.imageDigest -and $image.configDigest -eq $record.configDigest) $record.indexDigest
 }
 
-$desktopRoot = Join-Path $root "components/desktop/Task.Desktop-$($manifest.components.desktop.version)"
+$desktopVersion = $manifest.components.desktop.version
+$desktopRoot = Join-Path $root "components/desktop/VoravaDent-$desktopVersion"
+if (-not (Test-Path -LiteralPath $desktopRoot -PathType Container)) {
+    $desktopRoot = Join-Path $root "components/desktop/Task.Desktop-$desktopVersion"
+}
 Import-Module (Join-Path $desktopRoot 'tools/TaskDesktop.Release.psm1') -Force
 Assert-TaskRelease $desktopRoot $certificate.Thumbprint | Out-Null
 $desktopManifest = Read-Json (Join-Path $desktopRoot 'release-manifest.json')

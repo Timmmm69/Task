@@ -612,7 +612,7 @@
 
                                 <StackPanel Margin="0,0,0,16">
                                     <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding HasConflict}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                                    <TextBlock Text="Запись изменилась на сервере. Ваш черновик сохранён; Task ничего не перезапишет автоматически."
+                                    <TextBlock Text="Запись изменилась на сервере. Ваш черновик сохранён; приложение ничего не перезапишет автоматически."
                                                TextWrapping="Wrap" Margin="0,0,0,10" />
                                     <Button Content="Загрузить актуальную версию" Style="{StaticResource Inbox.Action}"
                                             HorizontalAlignment="Left" Command="{Binding DataContext.ReloadConflictCommand, ElementName=InboxRoot}"

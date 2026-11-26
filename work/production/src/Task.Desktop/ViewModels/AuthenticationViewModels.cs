@@ -84,7 +84,7 @@ public sealed class BootstrapViewModel : ViewModelBase, IDisposable
             RefreshResult.AuthError => "Сессия больше не подтверждена. Выйдите и выполните вход снова.",
             _ => "Сервер вернул неподтверждённое состояние. Локальные данные не изменены.",
         };
-        Message = "Task не откроет рабочее пространство, пока сервер не подтвердит сессию и область доступа.";
+        Message = "Приложение не откроет рабочее пространство, пока сервер не подтвердит сессию и область доступа.";
     }
 
     private void HandleUnexpectedFailure(Exception _)
@@ -208,7 +208,7 @@ public sealed class ServerSetupViewModel : ViewModelBase, IDisposable
 
                 case ServerProbeResult.TlsFailure:
                     ErrorMessage =
-                        "Сертификат сервера не прошёл проверку. Task не обходит проверку TLS. " +
+                        "Сертификат сервера не прошёл проверку. Приложение не обходит проверку TLS. " +
                         "Проверьте адрес и обратитесь к ИТ-администратору.";
                     break;
 

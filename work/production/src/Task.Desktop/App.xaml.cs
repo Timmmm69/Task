@@ -43,8 +43,8 @@ public partial class App : global::System.Windows.Application
         catch (Exception error)
         {
             Console.Error.WriteLine(error);
-            MessageBox.Show("Task не удалось запустить. Проверьте доступ к локальным настройкам приложения.",
-                "Ошибка запуска Task", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Не удалось запустить «Варава Дент». Проверьте доступ к локальным настройкам приложения.",
+                "Ошибка запуска «Варава Дент»", MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown();
         }
     }
@@ -69,7 +69,7 @@ public partial class App : global::System.Windows.Application
         {
             Console.Error.WriteLine(error);
             MessageBox.Show("Режим не удалось переключить. Проверьте доступ к локальным настройкам и повторите попытку.",
-                "Смена режима Task", MessageBoxButton.OK, MessageBoxImage.Warning);
+                "Смена режима", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         finally { _switching = false; }
     }
@@ -80,7 +80,7 @@ public partial class App : global::System.Windows.Application
         try { await _lifecycle.SwitchAsync(ApplicationMode.Corporate); }
         catch (Exception error)
         {
-            MessageBox.Show("Corporate не удалось открыть.\n" + error.Message, "Task", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Corporate не удалось открыть.\n" + error.Message, "Варава Дент", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 

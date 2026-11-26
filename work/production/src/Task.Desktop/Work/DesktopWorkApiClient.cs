@@ -89,7 +89,7 @@ public sealed record DesktopLifecycleItem(Guid ObjectId, string ObjectType, stri
     public string ChangedText => LifecycleState == "archived"
         ? $"Архивирован {ChangedAt:dd MMMM yyyy, HH:mm}"
         : $"Перемещён в корзину {ChangedAt:dd MMMM yyyy, HH:mm}";
-    public string RetentionText => LedgerStatus == "personal" ? "Личная запись хранится до явного удаления метаданных Task" : IsRetentionBlocked
+    public string RetentionText => LedgerStatus == "personal" ? "Личная запись хранится до явного удаления метаданных приложения" : IsRetentionBlocked
         ? "Установлено юридическое удержание · срок удаления не наступит до снятия удержания"
         : PurgeAfter is { } purge
             ? $"Автоматическое удаление метаданных после {purge.ToLocalTime():dd MMMM yyyy}"

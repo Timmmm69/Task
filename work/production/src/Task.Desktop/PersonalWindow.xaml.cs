@@ -83,7 +83,7 @@ public partial class PersonalWindow : Window
         {
             WindowsUxLayout.FitStartupWindowToPrimaryWorkArea(this);
             if (!_enableWindowsIntegrations) return;
-            _windowsNotifications = new(this, () => { _explicitExit = true; Close(); }, "Task · Personal · работает в фоне");
+            _windowsNotifications = new(this, () => { _explicitExit = true; Close(); }, "Варава Дент · Personal · работает в фоне");
             _toast = new(Dispatcher, ActivatePersonalNotification);
             _shell.BackgroundAvailable = _windowsNotifications.IsAvailable;
         };
@@ -127,7 +127,7 @@ public partial class PersonalWindow : Window
             if (_autostartApplied != autostart)
             {
                 if (Notifications.WindowsAutostart.Apply(autostart)) _autostartApplied = autostart;
-                else _model.Planning?.ReportPresentationError("Автозапуск не применён: проверьте доступ к настройкам Windows и расположение Task.");
+                else _model.Planning?.ReportPresentationError("Автозапуск не применён: проверьте доступ к настройкам Windows и расположение приложения.");
             }
             foreach (var notification in _model.ClaimPresentations())
                 _model.CompletePresentation(notification.Id, _toast?.Submit(new(notification.Id, notification.Title,

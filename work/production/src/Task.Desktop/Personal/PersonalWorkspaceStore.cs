@@ -198,7 +198,7 @@ public sealed partial class PersonalTaskStore
             _ => throw new ArgumentException("Неподдерживаемый тип объекта."),
         };
         using var dependencies = Command(blocked + " LIMIT 1;", tx, ("$id", id.ToString("D")));
-        if (dependencies.ExecuteScalar() is not null) throw new ArgumentException("Объект используется. Сначала удалите или переназначьте зависимые записи Task.");
+        if (dependencies.ExecuteScalar() is not null) throw new ArgumentException("Объект используется. Сначала удалите или переназначьте зависимые записи приложения.");
         using var c = Command("""
             DELETE FROM object_links WHERE source_id=$id OR target_id=$id;
             DELETE FROM personal_lifecycle WHERE object_id=$id;

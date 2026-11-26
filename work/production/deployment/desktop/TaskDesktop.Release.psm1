@@ -112,20 +112,48 @@ function Write-TaskInstallState([string]$InstallRoot, [object]$State) {
 }
 
 function Set-TaskShellIntegration([string]$InstallRoot, [string]$Version) {
-    $exe = Join-Path $InstallRoot "releases\$Version\app\Task.Desktop.exe"
+    $appRoot = Join-Path $InstallRoot "releases\$Version\app"
+    $exe = Join-Path $appRoot 'VoravaDent.exe'
+    if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
+        $exe = Join-Path $appRoot 'Task.Desktop.exe'
+    }
     $programs = [Environment]::GetFolderPath([Environment+SpecialFolder]::Programs)
-    $shortcutPath = Join-Path $programs 'Task.lnk'
+    $product = 'Варава Дент'
+    $releasePrefix = [IO.Path]::GetFullPath((Join-Path $InstallRoot 'releases')) + [IO.Path]::DirectorySeparatorChar
+    $shortcutPath = Join-Path $programs "$product.lnk"
     $shell = New-Object -ComObject WScript.Shell
     $shortcut = $shell.CreateShortcut($shortcutPath)
     $shortcut.TargetPath = $exe
     $shortcut.WorkingDirectory = Split-Path $exe
-    $shortcut.Description = 'Task company organizer'
+    $shortcut.Description = $product
+    $shortcut.IconLocation = "$exe,0"
     $shortcut.Save()
+    $legacyPath = Join-Path $programs 'Task.lnk'
+    if (Test-Path -LiteralPath $legacyPath -PathType Leaf) {
+        $legacy = $shell.CreateShortcut($legacyPath)
+        if ($legacy.TargetPath.StartsWith($releasePrefix, [StringComparison]::OrdinalIgnoreCase) -and
+            [IO.Path]::GetFileName($legacy.TargetPath) -eq 'Task.Desktop.exe') {
+            Remove-Item -LiteralPath $legacyPath
+        }
+    }
+    $runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+    if (Test-Path -LiteralPath $runKey) {
+        foreach ($name in 'Task', $product) {
+            $command = Get-ItemPropertyValue -LiteralPath $runKey -Name $name -ErrorAction SilentlyContinue
+            if ($command -match '^"([^"]+)" --background$' -and
+                $Matches[1].StartsWith($releasePrefix, [StringComparison]::OrdinalIgnoreCase) -and
+                [IO.Path]::GetFileName($Matches[1]) -in 'Task.Desktop.exe', 'VoravaDent.exe') {
+                Set-ItemProperty -LiteralPath $runKey -Name $product -Value "`"$exe`" --background"
+                if ($name -eq 'Task') { Remove-ItemProperty -LiteralPath $runKey -Name $name }
+            }
+        }
+    }
     $uninstall = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TaskDesktop'
     New-Item -Path $uninstall -Force | Out-Null
-    Set-ItemProperty -Path $uninstall -Name DisplayName -Value 'Task'
+    Set-ItemProperty -Path $uninstall -Name DisplayName -Value $product
+    Set-ItemProperty -Path $uninstall -Name DisplayIcon -Value $exe
     Set-ItemProperty -Path $uninstall -Name DisplayVersion -Value $Version
-    Set-ItemProperty -Path $uninstall -Name Publisher -Value 'Task'
+    Set-ItemProperty -Path $uninstall -Name Publisher -Value $product
     Set-ItemProperty -Path $uninstall -Name InstallLocation -Value $InstallRoot
 }
 

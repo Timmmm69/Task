@@ -20,12 +20,13 @@ $workingTreeChanges = @(git -C $projectRoot status --short -- work/production/sr
 if ($RequireCleanSourceTree -and $workingTreeChanges.Count -ne 0) {
     throw 'Final delivery requires committed production source.'
 }
-$payload = Join-Path $output 'Task'
+$payload = Join-Path $output 'VoravaDent'
 New-Item -ItemType Directory -Path $payload -Force | Out-Null
 # Self-contained restore adds runtime/linker dependencies; keep those locks in obj/.
 # Never rewrite the ordinary source locks just by publishing a portable client.
 dotnet publish $desktopProject -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:Version=$Version -p:DebugType=None -p:RestorePackagesWithLockFile=true -p:NuGetLockFilePath=obj/portable.packages.lock.json -o $payload
-if ($LASTEXITCODE -ne 0) { throw 'Task desktop publish failed.' }
+if ($LASTEXITCODE -ne 0) { throw 'Desktop publish failed.' }
+Rename-Item -LiteralPath (Join-Path $payload 'Task.Desktop.exe') -NewName 'VoravaDent.exe'
 if ($RequireCleanSourceTree -and @(git -C $projectRoot status --short -- work/production/src).Count -ne 0) {
     throw 'Production source changed during final publish.'
 }
@@ -37,10 +38,9 @@ $files = @(Get-ChildItem -LiteralPath $payload -Recurse -File | Sort-Object Full
         sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     }
 })
-if (-not (Test-Path -LiteralPath (Join-Path $payload 'Task.Desktop.exe'))) { throw 'Desktop executable is missing.' }
 $manifest = [ordered]@{
     schemaVersion = 1
-    product = 'Task unsigned portable Windows client'
+    product = 'Варава Дент'
     version = $Version
     architecture = 'win-x64'
     sourceRevision = $revision
@@ -49,7 +49,7 @@ $manifest = [ordered]@{
     files = $files
 }
 $manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $output 'manifest.json') -Encoding utf8
-$archive = Join-Path $output "Task-$Version-win-x64-unsigned.zip"
+$archive = Join-Path $output "VoravaDent-$Version-win-x64-unsigned.zip"
 Compress-Archive -LiteralPath $payload -DestinationPath $archive -CompressionLevel Optimal
 $hash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
 "$hash  $([IO.Path]::GetFileName($archive))" | Set-Content -LiteralPath (Join-Path $output 'SHA256SUMS') -Encoding ascii

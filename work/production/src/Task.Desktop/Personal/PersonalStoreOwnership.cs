@@ -6,7 +6,7 @@ namespace Task.Desktop.Personal;
 
 internal sealed class PersonalStoreBusyException : IOException
 {
-    public PersonalStoreBusyException() : base("Personal открыт в другом окне Task. Доступны Corporate и выход.") { }
+    public PersonalStoreBusyException() : base("Personal открыт в другом окне приложения. Доступны Corporate и выход.") { }
 }
 
 /// <summary>A dedicated thread owns the Windows mutex, including across async continuations.</summary>

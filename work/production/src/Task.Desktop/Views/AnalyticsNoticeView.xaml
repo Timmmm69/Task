@@ -6,7 +6,7 @@
     <Border Background="{DynamicResource Task.Brush.Surface.Subtle}"
             BorderBrush="{DynamicResource Task.Brush.Border.Default}" BorderThickness="0,1,0,0" Padding="16,10">
         <StackPanel>
-            <TextBlock Text="Task автоматически отправляет в PostHog статистику запусков и успешных действий. Содержимое задач, событий и проектов не передаётся. Отправку можно отключить здесь или в настройках."
+            <TextBlock Text="Приложение автоматически отправляет в PostHog статистику запусков и успешных действий. Содержимое задач, событий и проектов не передаётся. Отправку можно отключить здесь или в настройках."
                        TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
             <WrapPanel Margin="0,6,0,0">
                 <Button x:Name="DisableButton" Content="Отключить статистику" Click="OnDisable"

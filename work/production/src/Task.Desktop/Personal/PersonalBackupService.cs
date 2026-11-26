@@ -96,7 +96,7 @@ internal sealed class PersonalBackupService(PersonalDataPaths paths, PersonalSto
                 throw new InvalidDataException("SHA-256 не совпадает. Текущая база не изменена.");
         if (metadata.FormatVersion != FormatVersion) throw new InvalidDataException("Неподдерживаемая версия backup.");
         if (metadata.SchemaVersion < 1 || metadata.SchemaVersion > PersonalDatabase.CurrentSchemaVersion)
-            throw new InvalidDataException("Неподдерживаемая версия схемы backup. Обновите Task.");
+            throw new InvalidDataException("Неподдерживаемая версия схемы резервной копии. Обновите приложение.");
         var temporary = Path.Combine(paths.DirectoryPath, $"restore-{Guid.NewGuid():N}.tmp");
         try
         {

@@ -63,7 +63,7 @@ public sealed class ContactCardWindowsTests
                     using var hub = new WorkHubViewModel(client, ["Contact.Read", "Contact.Update", "Contact.Create"]);
                     hub.Activate(WorkHubArea.Contacts);
                     var view = new WorkHubView { DataContext = hub, Background = Brushes.White };
-                    window = new Window { Content = view, Width = 1100, Height = 1000, ShowInTaskbar = false, Title = "Task — проверка карточки контакта" };
+                    window = new Window { Content = view, Width = 1100, Height = 1000, ShowInTaskbar = false, Title = "Варава Дент — проверка карточки контакта" };
                     window.Show(); Pump();
                     var list = Find<ListBox>(view, "ContactsList"); list.SelectedItem = contact; await hub.ContactSelectionTask; Pump();
                     Assert.Equal("Петровна", hub.ContactCard!.Details!.MiddleName); Save(view, "contact-view.png");

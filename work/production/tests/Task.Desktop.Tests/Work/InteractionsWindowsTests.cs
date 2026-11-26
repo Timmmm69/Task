@@ -56,7 +56,7 @@ public sealed class InteractionsWindowsTests
                     using var vm = api.Model();
                     var view = new InteractionsView { DataContext = vm, Background = Brushes.White };
                     var scroll = new ScrollViewer { Content = view, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-                    window = new Window { Content = scroll, Width = 1100, Height = 1000, ShowInTaskbar = false, ShowActivated = false, Title = "Task — взаимодействия CRM" };
+                    window = new Window { Content = scroll, Width = 1100, Height = 1000, ShowInTaskbar = false, ShowActivated = false, Title = "Варава Дент — взаимодействия CRM" };
                     window.Show(); Pump();
                     var detailRegion = (FrameworkElement)view.FindName("DetailRegion");
                     Assert.Equal(1, Grid.GetColumn(detailRegion));

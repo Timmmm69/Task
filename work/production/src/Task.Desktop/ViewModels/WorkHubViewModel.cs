@@ -188,7 +188,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private string _newItemType = "file_reference";
     public IReadOnlyList<CatalogItemTypeChoice> CatalogItemTypes { get; } = [new("file_reference", "Файл"), new("folder_reference", "Папка на диске"), new("virtual_folder", "Виртуальная папка")];
     public string NewItemType { get => _newItemType; set => SetProperty(ref _newItemType, value); }
-    public string FileBehaviorText => IsPersonal ? "Task хранит только ссылку. Файл открывается на этом компьютере после нажатия «Открыть»." : "Файл не загружается на сервер. Task получает разрешённый путь и передаёт Windows после нажатия «Открыть».";
+    public string FileBehaviorText => IsPersonal ? "Приложение хранит только ссылку. Файл открывается на этом компьютере после нажатия «Открыть»." : "Файл не загружается на сервер. Приложение получает разрешённый путь и передаёт Windows после нажатия «Открыть».";
     public string SettingsPersistenceText => IsPersonal ? "Параметры сохраняются только на этом компьютере." : "Личные параметры синхронизируются между устройствами.";
     public string ScopeStatusText => IsPersonal ? "Данные только на этом компьютере" : "Область доступа проверена сервером";
     public IReadOnlyList<DesktopCatalogItem> Catalog { get => _catalog; private set => SetProperty(ref _catalog, value); }
